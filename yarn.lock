@@ -1198,7 +1198,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.26.0, @babel/core@npm:^7.1.0, @babel/core@npm:^7.11.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.14.0, @babel/core@npm:^7.16.0, @babel/core@npm:^7.22.9, @babel/core@npm:^7.23.9, @babel/core@npm:^7.24.0, @babel/core@npm:^7.25.2, @babel/core@npm:^7.7.2, @babel/core@npm:^7.8.0":
+"@babel/core@npm:7.26.0, @babel/core@npm:^7.1.0, @babel/core@npm:^7.11.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.14.0, @babel/core@npm:^7.16.0, @babel/core@npm:^7.22.9, @babel/core@npm:^7.23.9, @babel/core@npm:^7.24.0, @babel/core@npm:^7.26.0, @babel/core@npm:^7.7.2, @babel/core@npm:^7.8.0":
   version: 7.26.0
   resolution: "@babel/core@npm:7.26.0"
   dependencies:
@@ -2383,7 +2383,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-react-jsx-self@npm:^7.24.7":
+"@babel/plugin-transform-react-jsx-self@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-react-jsx-self@npm:7.25.9"
   dependencies:
@@ -2394,7 +2394,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-react-jsx-source@npm:^7.24.7":
+"@babel/plugin-transform-react-jsx-source@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/plugin-transform-react-jsx-source@npm:7.25.9"
   dependencies:
@@ -5062,7 +5062,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.98.4"
     "@types/react": "npm:18.3.12"
     "@types/react-dom": "npm:18.3.1"
-    "@vitejs/plugin-react": "npm:4.3.3"
+    "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.9.0"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
@@ -5169,7 +5169,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.4"
     "@graphql-mesh/openapi": "npm:0.108.4"
-    "@sinclair/typebox": "npm:0.34.8"
+    "@sinclair/typebox": "npm:0.34.9"
     concurrently: "npm:9.1.0"
     fets: "npm:0.8.4"
     graphql: "npm:16.9.0"
@@ -9635,8 +9635,8 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^6.0.0":
-  version: 6.1.0
-  resolution: "@neo4j/graphql@npm:6.1.0"
+  version: 6.1.1
+  resolution: "@neo4j/graphql@npm:6.1.1"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
@@ -9657,7 +9657,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/20eb54060ecc18a50f617a7b0cc20a32d49b6e74a96f978264e0d5652162a55c44bb2842371f25f1fbf6b8ed53dffcb9410593475cbc1d004890550179668147
+  checksum: 10c0/66cadc9d1c8e05068b2dce5896ab8731882bc9475b3c9b9419cb76daa3a4b5b375341d4b56a847a2a74732f8fd6fc6794a287d356efac73dcbd7077c9884ed22
   languageName: node
   linkType: hard
 
@@ -11167,10 +11167,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.34.8, @sinclair/typebox@npm:^0.34.0":
-  version: 0.34.8
-  resolution: "@sinclair/typebox@npm:0.34.8"
-  checksum: 10c0/6b565c49fc2dafbd665e2471641cbf5f307692baa1b525530b85534242f941e19a89229a7416da2443163f34ec659270630d9d8291f5483982a94dd843b3b857
+"@sinclair/typebox@npm:0.34.9":
+  version: 0.34.9
+  resolution: "@sinclair/typebox@npm:0.34.9"
+  checksum: 10c0/07c16654f4ad0d9b2ce80d4758f56c62d7dc94e958f16508dd2dd881e17f33ca34b716d2090bf76cd5d751fd50d990e68e8bf14c4943035713b3a1c8615e9969
   languageName: node
   linkType: hard
 
@@ -11185,6 +11185,13 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
+  languageName: node
+  linkType: hard
+
+"@sinclair/typebox@npm:^0.34.0":
+  version: 0.34.8
+  resolution: "@sinclair/typebox@npm:0.34.8"
+  checksum: 10c0/6b565c49fc2dafbd665e2471641cbf5f307692baa1b525530b85534242f941e19a89229a7416da2443163f34ec659270630d9d8291f5483982a94dd843b3b857
   languageName: node
   linkType: hard
 
@@ -13970,18 +13977,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-react@npm:4.3.3":
-  version: 4.3.3
-  resolution: "@vitejs/plugin-react@npm:4.3.3"
+"@vitejs/plugin-react@npm:4.3.4":
+  version: 4.3.4
+  resolution: "@vitejs/plugin-react@npm:4.3.4"
   dependencies:
-    "@babel/core": "npm:^7.25.2"
-    "@babel/plugin-transform-react-jsx-self": "npm:^7.24.7"
-    "@babel/plugin-transform-react-jsx-source": "npm:^7.24.7"
+    "@babel/core": "npm:^7.26.0"
+    "@babel/plugin-transform-react-jsx-self": "npm:^7.25.9"
+    "@babel/plugin-transform-react-jsx-source": "npm:^7.25.9"
     "@types/babel__core": "npm:^7.20.5"
     react-refresh: "npm:^0.14.2"
   peerDependencies:
-    vite: ^4.2.0 || ^5.0.0
-  checksum: 10c0/b370c25fb47bb96f0cc51f3aadbbcfce54e40f95a4de67cf932e5ec526f139648da703725c6ea2c71a1b525eb3dd6e3e8ff877da143627cd2575de5ec4f00aa3
+    vite: ^4.2.0 || ^5.0.0 || ^6.0.0
+  checksum: 10c0/38a47a1dbafae0b97142943d83ee3674cb3331153a60b1a3fd29d230c12c9dfe63b7c345b231a3450168ed8a9375a9a1a253c3d85e9efdc19478c0d56b98496c
   languageName: node
   linkType: hard
 
