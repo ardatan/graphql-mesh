@@ -1,4 +1,5 @@
 import type {
+  ArgumentNode,
   DocumentNode,
   FieldNode,
   GraphQLObjectType,
@@ -6,6 +7,7 @@ import type {
   GraphQLSchema,
   OperationDefinitionNode,
   OperationTypeNode,
+  SelectionNode,
   SelectionSetNode,
 } from 'graphql';
 import { getNamedType, isLeafType, Kind, print } from 'graphql';
@@ -219,6 +221,7 @@ export function getInContextSDK(
                 onDelegateHook => onDelegateHook(onDelegatePayload),
                 onDelegateHookDones,
               );
+              fixInfo(batchDelegationOptions.info, operationType as OperationTypeNode);
               return mapMaybePromise(onDelegateResult$, () =>
                 handleIterationResult(
                   batchDelegateToSchema,
@@ -253,6 +256,7 @@ export function getInContextSDK(
                 onDelegateHook => onDelegateHook(onDelegatePayload),
                 onDelegateHookDones,
               );
+              fixInfo(regularDelegateOptions.info, operationType as OperationTypeNode);
               return mapMaybePromise(onDelegateResult$, () =>
                 handleIterationResult(
                   delegateToSchema,
@@ -332,4 +336,28 @@ function handleIterationResult<TDelegateFn extends (...args: any) => any>(
     );
     return mapMaybePromise(onDelegateDoneResult$, () => delegationResult);
   });
+}
+
+function fixInfo(info: GraphQLResolveInfo, operationType: OperationTypeNode) {
+  (info.operation as OperationDefinitionNode) ||= {
+    kind: Kind.OPERATION_DEFINITION,
+    operation: operationType as OperationTypeNode,
+    selectionSet: {
+      kind: Kind.SELECTION_SET,
+      selections: [],
+    },
+  };
+  (info.operation.selectionSet as SelectionSetNode) ||= {
+    kind: Kind.SELECTION_SET,
+    selections: [],
+  };
+  info.operation.selectionSet.selections ||= [];
+  (info.operation.selectionSet.selections[0] as SelectionNode) ||= {
+    kind: Kind.FIELD,
+    name: {
+      kind: Kind.NAME,
+      value: '__typename',
+    },
+  } as FieldNode;
+  ((info.operation.selectionSet.selections[0] as FieldNode).arguments as ArgumentNode[]) ||= [];
 }
