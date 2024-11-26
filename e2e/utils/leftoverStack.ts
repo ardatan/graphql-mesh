@@ -20,10 +20,9 @@ if (typeof afterAll === 'function') {
   afterAll(() => {
     try {
       const disposeRes$ = leftoverStack.disposeAsync();
+      leftoverStack = new AsyncDisposableStack();
       if (disposeRes$?.catch) {
-        return disposeRes$.catch(handleSuppressedError).finally(() => {
-          leftoverStack = new AsyncDisposableStack();
-        });
+        disposeRes$.catch(handleSuppressedError);
       }
     } catch (e) {
       handleSuppressedError(e);
