@@ -324,6 +324,7 @@ jobs:
           command: yarn bob check
 
   e2e:
+    needs: [typecheck]
     name: e2e / node v${{matrix.node-version}}
     runs-on: ubuntu-latest
     strategy:
@@ -359,6 +360,7 @@ jobs:
         run: |
           yarn test:e2e --detectOpenHandles --forceExit
   apollo-federation-compatibility:
+    needs: [typecheck]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
