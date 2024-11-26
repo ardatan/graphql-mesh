@@ -21794,7 +21794,7 @@ __metadata:
     minimatch: "npm:10.0.1"
     node-gyp: "npm:^10.2.0"
     patch-package: "npm:8.0.0"
-    prettier: "npm:3.4.0"
+    prettier: "npm:3.4.1"
     threads: "npm:^1.7.0"
     ts-jest: "npm:29.2.5"
     tsx: "npm:^4.19.0"
@@ -30885,12 +30885,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.4.0, prettier@npm:^3.3.3":
-  version: 3.4.0
-  resolution: "prettier@npm:3.4.0"
+"prettier@npm:3.4.1, prettier@npm:^3.3.3":
+  version: 3.4.1
+  resolution: "prettier@npm:3.4.1"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/00974e5053dcf04cefe8d6bdef16d6a311d834ff074e927dcb85a425c8a300113fe60dc269373c892edb58e0e57749541f2a7a91ee51cdd40ab3092587772cae
+  checksum: 10c0/2d6cc3101ad9de72b49c59339480b0983e6ff6742143da0c43f476bf3b5ef88ede42ebd9956d7a0a8fa59f7a5990e8ef03c9ad4c37f7e4c9e5db43ee0853156c
   languageName: node
   linkType: hard
 
