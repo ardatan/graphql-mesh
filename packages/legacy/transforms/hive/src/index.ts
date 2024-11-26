@@ -1,14 +1,14 @@
-import type { ExecutionResult, GraphQLSchema } from 'graphql';
+import { isSchema, type ExecutionResult, type GraphQLSchema } from 'graphql';
 import type { HiveClient, HivePluginOptions } from '@graphql-hive/core';
 import { createHive } from '@graphql-hive/yoga';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import type { DelegationContext } from '@graphql-tools/delegate';
-import type { ExecutionRequest } from '@graphql-tools/utils';
+import { mapMaybePromise, type ExecutionRequest } from '@graphql-tools/utils';
 
 interface TransformationContext {
-  collectUsageCallback: ReturnType<HiveClient['collectUsage']>;
+  collectUsageCallback?: ReturnType<HiveClient['collectUsage']>;
   request: ExecutionRequest;
 }
 
@@ -80,10 +80,21 @@ export default class HiveTransform implements MeshTransform {
       selfHosting: config.selfHosting,
     });
     const id = pubsub.subscribe('destroy', () => {
-      this.hiveClient
-        .dispose()
-        .catch(e => logger.error(`Hive client failed to dispose`, e))
-        .finally(() => pubsub.unsubscribe(id));
+      try {
+        mapMaybePromise(
+          this.hiveClient.dispose(),
+          () => {
+            pubsub.unsubscribe(id);
+          },
+          e => {
+            logger.error(`Hive client failed to dispose`, e);
+            pubsub.unsubscribe(id);
+          },
+        );
+      } catch (e) {
+        logger.error(`Failed to dispose hive client`, e);
+        pubsub.unsubscribe(id);
+      }
     });
   }
 
@@ -97,8 +108,12 @@ export default class HiveTransform implements MeshTransform {
     delegationContext: DelegationContext,
     transformationContext: TransformationContext,
   ) {
-    transformationContext.collectUsageCallback = this.hiveClient.collectUsage();
-    transformationContext.request = request;
+    try {
+      transformationContext.collectUsageCallback = this.hiveClient.collectUsage();
+      transformationContext.request = request;
+    } catch (e) {
+      this.logger.error(`Failed to collect usage`, e);
+    }
     return request;
   }
 
@@ -110,9 +125,11 @@ export default class HiveTransform implements MeshTransform {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises -- we dont really care about usage reporting result
     try {
       transformationContext
-        .collectUsageCallback(
+        .collectUsageCallback?.(
           {
-            schema: delegationContext.transformedSchema,
+            schema: isSchema(delegationContext.subschema)
+              ? delegationContext.subschema
+              : delegationContext.subschema.schema,
             document: transformationContext.request.document,
             rootValue: transformationContext.request.rootValue,
             contextValue: transformationContext.request.context,
@@ -121,7 +138,7 @@ export default class HiveTransform implements MeshTransform {
           },
           result,
         )
-        .catch(e => {
+        ?.catch(e => {
           this.logger.error(`Failed to report usage`, e);
         });
     } catch (e) {
