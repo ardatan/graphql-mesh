@@ -101,7 +101,7 @@
     "minimatch": "10.0.1",
     "node-gyp": "^10.2.0",
     "patch-package": "8.0.0",
-    "prettier": "3.4.0",
+    "prettier": "3.4.1",
     "threads": "^1.7.0",
     "ts-jest": "29.2.5",
     "tsx": "^4.19.0",
