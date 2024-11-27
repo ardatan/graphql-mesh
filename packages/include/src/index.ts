@@ -11,7 +11,7 @@ const jiti = createJiti(
    * This is because `import.meta.url` is not available in CJS (and cant even be in the syntax)
    * and `__filename` is not available in ESM.
    */
-  typeof __filename === 'undefined' ? '' : __filename,
+  '',
   {
     debug: !!process.env.DEBUG,
   },
