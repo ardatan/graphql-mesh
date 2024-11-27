@@ -15,6 +15,7 @@ interface TransformationContext {
 export default class HiveTransform implements MeshTransform {
   private hiveClient: HiveClient;
   private logger: MeshTransformOptions<YamlConfig.HivePlugin>['logger'];
+  private schema: GraphQLSchema;
   constructor({ config, pubsub, logger }: MeshTransformOptions<YamlConfig.HivePlugin>) {
     this.logger = logger;
     const enabled =
@@ -100,6 +101,7 @@ export default class HiveTransform implements MeshTransform {
 
   transformSchema(schema: GraphQLSchema) {
     this.hiveClient.reportSchema({ schema });
+    this.schema = schema;
     return schema;
   }
 
@@ -127,9 +129,7 @@ export default class HiveTransform implements MeshTransform {
       transformationContext
         .collectUsageCallback?.(
           {
-            schema: isSchema(delegationContext.subschema)
-              ? delegationContext.subschema
-              : delegationContext.subschema.schema,
+            schema: this.schema,
             document: visit(transformationContext.request.document, {
               [Kind.FIELD](node) {
                 if (!node.arguments) {
