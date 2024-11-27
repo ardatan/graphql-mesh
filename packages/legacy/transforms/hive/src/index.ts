@@ -1,4 +1,4 @@
-import { isSchema, type ExecutionResult, type GraphQLSchema } from 'graphql';
+import { isSchema, Kind, visit, type ExecutionResult, type GraphQLSchema } from 'graphql';
 import type { HiveClient, HivePluginOptions } from '@graphql-hive/core';
 import { createHive } from '@graphql-hive/yoga';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -130,7 +130,16 @@ export default class HiveTransform implements MeshTransform {
             schema: isSchema(delegationContext.subschema)
               ? delegationContext.subschema
               : delegationContext.subschema.schema,
-            document: transformationContext.request.document,
+            document: visit(transformationContext.request.document, {
+              [Kind.FIELD](node) {
+                if (!node.arguments) {
+                  return {
+                    ...node,
+                    arguments: [],
+                  };
+                }
+              },
+            }),
             rootValue: transformationContext.request.rootValue,
             contextValue: transformationContext.request.context,
             variableValues: transformationContext.request.variables,
