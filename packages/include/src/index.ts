@@ -1,16 +1,20 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import Module from 'node:module';
 import { createPathsMatcher, getTsconfig } from 'get-tsconfig';
-import createJITI from 'jiti';
+import { createJiti } from 'jiti';
 
-const jiti = createJITI(
+const jiti = createJiti(
   /**
    * We intentionally provide an empty string here and let jiti handle the base URL.
    *
    * This is because `import.meta.url` is not available in CJS (and cant even be in the syntax)
    * and `__filename` is not available in ESM.
    */
-  '',
+  typeof __filename === 'undefined' ? '' : __filename,
+  {
+    tryNative: true,
+    debug: !!process.env.DEBUG,
+  },
 );
 
 /**
@@ -20,16 +24,15 @@ const jiti = createJITI(
  *
  * If the module at {@link path} is not found, `null` will be returned.
  */
-export async function include<T = any>(path: string, nativeImport?: boolean): Promise<T> {
-  const module = await (nativeImport ? import(path) : jiti.import(path, {}));
+export async function include<T = any>(path: string): Promise<T> {
+  const module = await jiti.import(path, {
+    default: true,
+  });
   if (!module) {
     throw new Error('Included module is empty');
   }
   if (typeof module !== 'object') {
     throw new Error(`Included module is not an object, is instead "${typeof module}"`);
-  }
-  if ('default' in module) {
-    return module.default as T;
   }
   return module as T;
 }
