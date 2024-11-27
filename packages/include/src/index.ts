@@ -2,6 +2,7 @@
 import Module from 'node:module';
 import { createPathsMatcher, getTsconfig } from 'get-tsconfig';
 import { createJiti } from 'jiti';
+import { defaultImportFn } from '@graphql-mesh/utils';
 
 const jiti = createJiti(
   /**
@@ -24,17 +25,16 @@ const jiti = createJiti(
  *
  * If the module at {@link path} is not found, `null` will be returned.
  */
-export async function include<T = any>(path: string): Promise<T> {
-  const module = await jiti.import(path, {
-    default: true,
-  });
-  if (!module) {
-    throw new Error('Included module is empty');
+export function include<T = any>(path: string): Promise<T> {
+  try {
+    // JITI's tryNative tries native at first but with \`import\`
+    // So in CJS, this becomes \`require\`, but it still satisfies JITI's native import
+    return defaultImportFn(path).then(mod => mod.default ?? mod);
+  } catch {
+    return jiti.import(path, {
+      default: true,
+    });
   }
-  if (typeof module !== 'object') {
-    throw new Error(`Included module is not an object, is instead "${typeof module}"`);
-  }
-  return module as T;
 }
 
 export interface RegisterTsconfigPathsOptions {
