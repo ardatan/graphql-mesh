@@ -13,10 +13,12 @@ import {
   type SubgraphConfig,
 } from '@graphql-mesh/fusion-composition';
 import type { Logger } from '@graphql-mesh/types';
+import { parseWithCache } from '@graphql-mesh/utils';
+import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { isDocumentString, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
@@ -54,32 +56,44 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
   );
   let additionalTypeDefs: DocumentNode[] | undefined;
   if (config.additionalTypeDefs != null) {
-    const result = await loadTypedefs(config.additionalTypeDefs, {
-      noLocation: true,
-      assumeValid: true,
-      assumeValidSDL: true,
-      loaders: [new GraphQLFileLoader()],
-    });
     let additionalFieldDirectiveUsed = false;
-    additionalTypeDefs = result
-      .map(r => r.document || parse(r.rawSDL, { noLocation: true }))
-      .map(doc =>
-        visit(doc, {
-          [Kind.FIELD_DEFINITION](node) {
-            additionalFieldDirectiveUsed = true;
-            return {
-              ...node,
-              directives: [
-                ...(node.directives || []),
-                {
-                  kind: Kind.DIRECTIVE,
-                  name: { kind: Kind.NAME, value: 'additionalField' },
-                },
-              ],
-            };
-          },
-        }),
+    if (typeof config.additionalTypeDefs === 'string' && config.additionalTypeDefs?.includes(' ')) {
+      try {
+        additionalTypeDefs = [parseWithCache(config.additionalTypeDefs)];
+      } catch (e) {
+        logger.error(`Failed to parse additional type definitions: ${e.message || e}`);
+        process.exit(1);
+      }
+    } else {
+      const result = await loadTypedefs(config.additionalTypeDefs, {
+        noLocation: true,
+        assumeValid: true,
+        assumeValidSDL: true,
+        loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
+      });
+      additionalTypeDefs = result.map(
+        source =>
+          source.document ||
+          parseWithCache(source.rawSDL || printSchemaWithDirectives(source.schema)),
       );
+    }
+    additionalTypeDefs = additionalTypeDefs.map(doc =>
+      visit(doc, {
+        [Kind.FIELD_DEFINITION](node) {
+          additionalFieldDirectiveUsed = true;
+          return {
+            ...node,
+            directives: [
+              ...(node.directives || []),
+              {
+                kind: Kind.DIRECTIVE,
+                name: { kind: Kind.NAME, value: 'additionalField' },
+              },
+            ],
+          };
+        },
+      }),
+    );
     if (additionalFieldDirectiveUsed) {
       additionalTypeDefs.unshift(
         parse(/* GraphQL */ `
