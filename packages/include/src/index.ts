@@ -25,11 +25,11 @@ const jiti = createJiti(
  *
  * If the module at {@link path} is not found, `null` will be returned.
  */
-export function include<T = any>(path: string): Promise<T> {
+export async function include<T = any>(path: string): Promise<T> {
   try {
     // JITI's tryNative tries native at first but with \`import\`
     // So in CJS, this becomes \`require\`, but it still satisfies JITI's native import
-    return defaultImportFn(path).then(mod => mod.default ?? mod);
+    return await defaultImportFn(path).then(mod => mod.default ?? mod);
   } catch {
     return jiti.import(path, {
       default: true,
