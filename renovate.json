@@ -25,7 +25,8 @@
         "husky",
         "@opentelemetry/*",
         "@graphql-hive/*",
-        "@graphql-mesh/*"
+        "@graphql-mesh/*",
+        "@graphql-tools/*"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
