@@ -13,7 +13,6 @@ const jiti = createJiti(
    */
   typeof __filename === 'undefined' ? '' : __filename,
   {
-    tryNative: true,
     debug: !!process.env.DEBUG,
   },
 );
@@ -31,9 +30,13 @@ export async function include<T = any>(path: string): Promise<T> {
     // So in CJS, this becomes \`require\`, but it still satisfies JITI's native import
     return await defaultImportFn(path);
   } catch {
-    return jiti.import(path, {
+    const mod = await jiti.import<T>(path, {
       default: true,
     });
+    if (!mod) {
+      throw new Error(`Module at path "${path}" not found`);
+    }
+    return mod;
   }
 }
 
