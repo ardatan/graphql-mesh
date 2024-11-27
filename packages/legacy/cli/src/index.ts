@@ -124,6 +124,7 @@ export async function graphqlMesh(
             configName: cliParams.configName,
             additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
             initialLoggerPrefix: cliParams.initialLoggerPrefix,
+            importFn: include,
           });
           logger = meshConfig.logger;
 

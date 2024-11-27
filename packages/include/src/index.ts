@@ -1,9 +1,10 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import Module from 'node:module';
 import { createPathsMatcher, getTsconfig } from 'get-tsconfig';
-import createJITI from 'jiti';
+import { createJiti } from 'jiti';
+import { defaultImportFn } from '@graphql-mesh/utils';
 
-const jiti = createJITI(
+const jiti = createJiti(
   /**
    * We intentionally provide an empty string here and let jiti handle the base URL.
    *
@@ -11,6 +12,9 @@ const jiti = createJITI(
    * and `__filename` is not available in ESM.
    */
   '',
+  {
+    debug: !!process.env.DEBUG,
+  },
 );
 
 /**
@@ -20,18 +24,20 @@ const jiti = createJITI(
  *
  * If the module at {@link path} is not found, `null` will be returned.
  */
-export async function include<T = any>(path: string, nativeImport?: boolean): Promise<T> {
-  const module = await (nativeImport ? import(path) : jiti.import(path, {}));
-  if (!module) {
-    throw new Error('Included module is empty');
+export async function include<T = any>(path: string): Promise<T> {
+  try {
+    // JITI's tryNative tries native at first but with \`import\`
+    // So in CJS, this becomes \`require\`, but it still satisfies JITI's native import
+    return await defaultImportFn(path);
+  } catch {
+    const mod = await jiti.import<T>(path, {
+      default: true,
+    });
+    if (!mod) {
+      throw new Error(`Module at path "${path}" not found`);
+    }
+    return mod;
   }
-  if (typeof module !== 'object') {
-    throw new Error(`Included module is not an object, is instead "${typeof module}"`);
-  }
-  if ('default' in module) {
-    return module.default as T;
-  }
-  return module as T;
 }
 
 export interface RegisterTsconfigPathsOptions {
