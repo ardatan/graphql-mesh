@@ -1,9 +1,18 @@
 import { OperationTypeNode } from 'graphql';
 import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway-runtime';
+import type { Logger } from '@graphql-mesh/types';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
 import { composeSubgraphs } from '../src/compose';
 
 describe('Loaders', () => {
+  const logger: Logger = {
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    child: () => logger,
+  };
   it('works', async () => {
     const loadedSubgraph = loadJSONSchemaSubgraph('TEST', {
       endpoint: 'http://localhost/my-test-api',
@@ -24,6 +33,7 @@ describe('Loaders', () => {
     })({
       fetch,
       cwd: process.cwd(),
+      logger,
     });
     const { supergraphSdl } = composeSubgraphs([
       {
