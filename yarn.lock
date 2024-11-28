@@ -13381,7 +13381,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:22.10.0, @types/node@npm:>=13.7.0, @types/node@npm:^22.0.0, @types/node@npm:^22.5.5, @types/node@npm:^22.7.5":
+"@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^22.0.0, @types/node@npm:^22.5.5, @types/node@npm:^22.7.5":
+  version: 22.10.1
+  resolution: "@types/node@npm:22.10.1"
+  dependencies:
+    undici-types: "npm:~6.20.0"
+  checksum: 10c0/0fbb6d29fa35d807f0223a4db709c598ac08d66820240a2cd6a8a69b8f0bc921d65b339d850a666b43b4e779f967e6ed6cf6f0fca3575e08241e6b900364c234
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:22.10.0":
   version: 22.10.0
   resolution: "@types/node@npm:22.10.0"
   dependencies:
@@ -13405,11 +13414,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.11.18":
-  version: 18.19.66
-  resolution: "@types/node@npm:18.19.66"
+  version: 18.19.67
+  resolution: "@types/node@npm:18.19.67"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/d6a31a3f03c4e2c62cdd319ab7f6ff66038d7408158304cfe0a852c9b0247893f5173bafffa0a090bcc279a6015a7c8399a51bf8e44f781edd4d41c43f274edb
+  checksum: 10c0/72b06802ac291c2e710bcf527b040f5490e1f85f26fdedad417e13ce3ed3aeb67e1bf3eef0ba5f581986bf361dcdc5f2d1229a9e284bf3dbd85db5c595e67bc6
   languageName: node
   linkType: hard
 
@@ -22109,13 +22118,13 @@ __metadata:
   linkType: hard
 
 "graphql-scalars@npm:^1.22.4, graphql-scalars@npm:^1.23.0":
-  version: 1.23.0
-  resolution: "graphql-scalars@npm:1.23.0"
+  version: 1.24.0
+  resolution: "graphql-scalars@npm:1.24.0"
   dependencies:
     tslib: "npm:^2.5.0"
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/7666c305b8367528c4fbb583a2731d93d52f36043d71f4957ecc1d2db71d710d268e25535243beb1b2497db921daa94d3cfa83daaf4a3101a667f358ddbf3436
+  checksum: 10c0/c4a3b8d3e65aad77bd27f21bf2619edec664f4e399c94bae412dc89f7687c4494ac84409224c8acf1f0431459c6ec76a49a193b1cc1f285878609fc0b4bb903e
   languageName: node
   linkType: hard
 
@@ -28149,32 +28158,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"neo4j-driver-bolt-connection@npm:5.26.0":
-  version: 5.26.0
-  resolution: "neo4j-driver-bolt-connection@npm:5.26.0"
+"neo4j-driver-bolt-connection@npm:5.27.0":
+  version: 5.27.0
+  resolution: "neo4j-driver-bolt-connection@npm:5.27.0"
   dependencies:
     buffer: "npm:^6.0.3"
-    neo4j-driver-core: "npm:5.26.0"
+    neo4j-driver-core: "npm:5.27.0"
     string_decoder: "npm:^1.3.0"
-  checksum: 10c0/fb9083040da296cbb375a9662063cb70b461e798f7d1778ddf84c4b6d89ad7dbadf14b7e276aec9350f1f87ade65554a5d71b3efdff1390dd70ce502df2062dc
+  checksum: 10c0/c1c00f50b26bad213b227563de96d62d3521eeec1e29d843078857ee3087c46348bf9263f13aabb956e86fe69c2e134fd33b4366c1d8e95510c930300f8a989c
   languageName: node
   linkType: hard
 
-"neo4j-driver-core@npm:5.26.0":
-  version: 5.26.0
-  resolution: "neo4j-driver-core@npm:5.26.0"
-  checksum: 10c0/ed5d0f43f42359693a7be4036b1d0362b99bf92031e2ddfbf8ea4064c4929a2bb55284013912070a53f1ffd5a1ae26ddb82844a0872fc8becd027e97331549b0
+"neo4j-driver-core@npm:5.27.0":
+  version: 5.27.0
+  resolution: "neo4j-driver-core@npm:5.27.0"
+  checksum: 10c0/8ce9a3297d632b3d03e792012456a070f0fefc8ed49c95230bad56b6f78f51f133f8ce9255f07a0149d73318c7445758086a5cc80e9679e42069d9442fa70fed
   languageName: node
   linkType: hard
 
 "neo4j-driver@npm:^5.17.0, neo4j-driver@npm:^5.9.2":
-  version: 5.26.0
-  resolution: "neo4j-driver@npm:5.26.0"
+  version: 5.27.0
+  resolution: "neo4j-driver@npm:5.27.0"
   dependencies:
-    neo4j-driver-bolt-connection: "npm:5.26.0"
-    neo4j-driver-core: "npm:5.26.0"
+    neo4j-driver-bolt-connection: "npm:5.27.0"
+    neo4j-driver-core: "npm:5.27.0"
     rxjs: "npm:^7.8.1"
-  checksum: 10c0/56c39c5fe61d2985d02c62d4c23f2d3da3bcb94a5b6594ad9f2cf55ea5399791769af31c29ef6618302a57a52b7a787e0e13eabbefb6e701877633bb56192f27
+  checksum: 10c0/07f58891a608524889b99367f9de9e2d473e30b01530384bbe51a4c7a88c667e476d60ba3e87360a1d1637a72f99a35a2c3e1869c7294a30add9877707284937
   languageName: node
   linkType: hard
 
