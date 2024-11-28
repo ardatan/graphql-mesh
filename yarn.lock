@@ -3219,10 +3219,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20241112.0":
-  version: 4.20241112.0
-  resolution: "@cloudflare/workers-types@npm:4.20241112.0"
-  checksum: 10c0/acb8a65a3018702f09ad57b3eb4b72f3122766592cc901af3d94b75a3bd77eabe163f1d5ae1720a510d2654feba2db5728f0102f8880d1450ab9349f0b029aad
+"@cloudflare/workers-types@npm:4.20241127.0":
+  version: 4.20241127.0
+  resolution: "@cloudflare/workers-types@npm:4.20241127.0"
+  checksum: 10c0/4a87b5fadce857f3393b81e38da946229282420c89dbbbfc6bbebb95fa127eb489a2c963feb5359c9f3ae17f35f95eb30abf2cc8a81e3c07bee8e1f63a493e07
   languageName: node
   linkType: hard
 
@@ -4662,7 +4662,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.4.2"
     "@graphql-mesh/cli": "npm:0.98.4"
     "@graphql-mesh/json-schema": "npm:0.108.4"
-    "@types/node": "npm:22.10.0"
+    "@types/node": "npm:22.10.1"
     graphql: "npm:16.9.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -4678,7 +4678,7 @@ __metadata:
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:22.10.0"
+    "@types/node": "npm:22.10.1"
     "@types/react": "npm:18.3.12"
     "@types/react-dom": "npm:18.3.1"
     apollo-upload-client: "npm:18.0.1"
@@ -4867,7 +4867,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.4"
     "@graphql-mesh/json-schema": "npm:0.108.4"
-    "@types/node": "npm:22.10.0"
+    "@types/node": "npm:22.10.1"
     concurrently: "npm:9.1.0"
     fets: "npm:0.8.4"
     graphql: "npm:16.9.0"
@@ -5155,7 +5155,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.103.4"
     "@graphql-mesh/runtime": "npm:0.105.4"
     "@graphql-mesh/transform-prefix": "npm:0.103.4"
-    "@types/node": "npm:22.10.0"
+    "@types/node": "npm:22.10.1"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -5901,7 +5901,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20241112.0"
+    "@cloudflare/workers-types": "npm:4.20241127.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.103.4
     "@graphql-mesh/utils": ^0.103.4
@@ -13180,21 +13180,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^22.0.0, @types/node@npm:^22.5.5, @types/node@npm:^22.7.5":
+"@types/node@npm:*, @types/node@npm:22.10.1, @types/node@npm:>=13.7.0, @types/node@npm:^22.0.0, @types/node@npm:^22.5.5, @types/node@npm:^22.7.5":
   version: 22.10.1
   resolution: "@types/node@npm:22.10.1"
   dependencies:
     undici-types: "npm:~6.20.0"
   checksum: 10c0/0fbb6d29fa35d807f0223a4db709c598ac08d66820240a2cd6a8a69b8f0bc921d65b339d850a666b43b4e779f967e6ed6cf6f0fca3575e08241e6b900364c234
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:22.10.0":
-  version: 22.10.0
-  resolution: "@types/node@npm:22.10.0"
-  dependencies:
-    undici-types: "npm:~6.20.0"
-  checksum: 10c0/efb3783b6fe74b4300c5bdd4f245f1025887d9b1d0950edae584af58a30d95cc058c10b4b3428f8300e4318468b605240c2ede8fcfb6ead2e0f05bca31e54c1b
   languageName: node
   linkType: hard
 
@@ -20019,7 +20010,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:1.5.3"
     "@graphql-mesh/compose-cli": "npm:1.2.6"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.10.3"
-    "@types/node": "npm:22.10.0"
+    "@types/node": "npm:22.10.1"
     concurrently: "npm:9.1.0"
     esbuild: "npm:^0.24.0"
     graphql: "npm:16.9.0"
@@ -21681,7 +21672,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:22.10.0"
+    "@types/node": "npm:22.10.1"
     "@typescript-eslint/eslint-plugin": "npm:8.16.0"
     "@typescript-eslint/parser": "npm:8.16.0"
     babel-jest: "npm:29.7.0"
@@ -36606,7 +36597,7 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^7.0.0"
     "@theguild/tailwind-config": "npm:0.5.0"
-    "@types/node": "npm:22.10.0"
+    "@types/node": "npm:22.10.1"
     "@types/react": "npm:18.3.12"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:15.0.3"
