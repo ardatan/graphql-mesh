@@ -1,5 +1,12 @@
 # @graphql-mesh/fusion-composition
 
+## 0.7.8
+
+### Patch Changes
+
+- [`b35fb59`](https://github.com/ardatan/graphql-mesh/commit/b35fb59db0ef49b915400c715da5fea3016c498e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fixes the transforms with resolveTo directive
+
 ## 0.7.7
 
 ### Patch Changes
