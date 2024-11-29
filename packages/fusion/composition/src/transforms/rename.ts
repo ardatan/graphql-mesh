@@ -1,6 +1,4 @@
 import {
-  isInterfaceType,
-  isObjectType,
   isSpecifiedScalarType,
   type GraphQLFieldConfig,
   type GraphQLFieldConfigArgumentMap,
@@ -210,69 +208,67 @@ export function createRenameTransform(opts: RenameTransformConfig) {
       };
     }
     const fieldRenameMap = new Map<string, Map<string, string>>();
-    if (fieldRenamers.length || argRenamers.length) {
-      schemaMapper[MapperKind.FIELD] = (field, fieldName, typeName, schema) => {
-        let newFieldName = fieldName;
-        if (fieldRenamers.length) {
-          const type = schema.getType(typeName);
-          for (const renamer of fieldRenamers) {
-            newFieldName =
+    schemaMapper[MapperKind.FIELD] = (field, fieldName, typeName, schema) => {
+      let newFieldName = fieldName;
+      if (fieldRenamers.length) {
+        const type = schema.getType(typeName);
+        for (const renamer of fieldRenamers) {
+          newFieldName =
+            renamer({
+              typeName,
+              fieldName: newFieldName,
+              type,
+              field,
+              subgraphConfig,
+            }) || newFieldName;
+        }
+        let typeFieldRenameMap = fieldRenameMap.get(typeName);
+        if (!typeFieldRenameMap) {
+          typeFieldRenameMap = new Map();
+          fieldRenameMap.set(typeName, typeFieldRenameMap);
+        }
+        typeFieldRenameMap.set(fieldName, newFieldName);
+      }
+      const fieldDirectives = getDirectiveExtensions(field, schema);
+      if (fieldDirectives.resolveTo) {
+        fieldDirectives.resolveTo = fieldDirectives.resolveTo.map(resolveTo => ({
+          ...resolveTo,
+          sourceTypeName:
+            (resolveTo.sourceTypeName && typeRenameMap.get(resolveTo.sourceTypeName)) ||
+            resolveTo.sourceTypeName,
+          sourceFieldName:
+            (resolveTo.sourceFieldName &&
+              fieldRenameMap.get(resolveTo.sourceTypeName)?.get(resolveTo.sourceFieldName)) ||
+            resolveTo.sourceFieldName,
+        }));
+        const fieldExtensions: Record<string, any> = (field.extensions ||= {});
+        fieldExtensions.directives = fieldDirectives;
+      }
+      if (argRenamers.length && 'args' in field && field.args) {
+        const newArgs: GraphQLFieldConfigArgumentMap = {};
+        for (const argName in field.args) {
+          let newArgName = argName;
+          for (const renamer of argRenamers) {
+            newArgName =
               renamer({
                 typeName,
-                fieldName: newFieldName,
-                type,
-                field,
+                fieldName,
+                argName: newArgName,
                 subgraphConfig,
-              }) || newFieldName;
+              }) || newArgName;
           }
-          let typeFieldRenameMap = fieldRenameMap.get(typeName);
-          if (!typeFieldRenameMap) {
-            typeFieldRenameMap = new Map();
-            fieldRenameMap.set(typeName, typeFieldRenameMap);
-          }
-          typeFieldRenameMap.set(fieldName, newFieldName);
+          newArgs[newArgName] = field.args[argName];
         }
-        if (argRenamers.length && 'args' in field && field.args) {
-          const newArgs: GraphQLFieldConfigArgumentMap = {};
-          for (const argName in field.args) {
-            let newArgName = argName;
-            for (const renamer of argRenamers) {
-              newArgName =
-                renamer({
-                  typeName,
-                  fieldName,
-                  argName: newArgName,
-                  subgraphConfig,
-                }) || newArgName;
-            }
-            newArgs[newArgName] = field.args[argName];
-          }
-          return [
-            newFieldName,
-            {
-              ...field,
-              args: newArgs,
-            },
-          ];
-        }
-        const fieldDirectives = getDirectiveExtensions(field, schema);
-        if (fieldDirectives.resolveTo) {
-          fieldDirectives.resolveTo = fieldDirectives.resolveTo.map(resolveTo => ({
-            ...resolveTo,
-            sourceTypeName:
-              (resolveTo.sourceTypeName && typeRenameMap.get(resolveTo.sourceTypeName)) ||
-              resolveTo.sourceTypeName,
-            sourceFieldName:
-              (resolveTo.sourceFieldName &&
-                fieldRenameMap.get(resolveTo.sourceTypeName)?.get(resolveTo.sourceFieldName)) ||
-              resolveTo.sourceFieldName,
-          }));
-          const fieldExtensions: Record<string, any> = (field.extensions ||= {});
-          fieldExtensions.directives = fieldDirectives;
-        }
-        return [newFieldName, field];
-      };
-    }
+        return [
+          newFieldName,
+          {
+            ...field,
+            args: newArgs,
+          },
+        ];
+      }
+      return [newFieldName, field];
+    };
     return mapSchema(schema, schemaMapper);
   };
 }
@@ -293,19 +289,40 @@ export function createRenameTypeTransform(
 ): SubgraphTransform {
   return function renameTypeTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
     const rootTypes: Set<GraphQLNamedType> = getRootTypes(schema);
+    const renamedTypeMap = new Map<string, string>();
     return mapSchema(schema, {
-      [kind]: (type: GraphQLNamedType) =>
-        isSpecifiedScalarType(type) || rootTypes.has(type)
-          ? type
-          : new (Object.getPrototypeOf(type).constructor)({
-              ...type.toConfig(),
-              name:
-                renameFn({
-                  typeName: type.name,
-                  type,
-                  subgraphConfig,
-                }) || type.name,
-            }),
+      [kind]: type => {
+        if (isSpecifiedScalarType(type) || rootTypes.has(type)) {
+          return type;
+        }
+        const newName =
+          renameFn({
+            typeName: type.name,
+            type,
+            subgraphConfig,
+          }) || type.name;
+        if (type.name === newName) {
+          return type;
+        }
+        renamedTypeMap.set(type.name, newName);
+        return new (Object.getPrototypeOf(type).constructor)({
+          ...type.toConfig(),
+          name: newName,
+        });
+      },
+      [MapperKind.FIELD](field) {
+        const fieldDirectives = getDirectiveExtensions(field, schema);
+        if (fieldDirectives?.resolveTo) {
+          fieldDirectives.resolveTo = fieldDirectives.resolveTo.map(resolveTo => ({
+            ...resolveTo,
+            sourceTypeName:
+              renamedTypeMap.get(resolveTo.sourceTypeName) || resolveTo.sourceTypeName,
+          }));
+        }
+        const fieldExtensions: any = (field.extensions ||= {});
+        fieldExtensions.directives = fieldDirectives;
+        return field;
+      },
     });
   };
 }
@@ -322,21 +339,48 @@ export function createRenameFieldTransform(
   kind: MapperFieldKind = MapperKind.FIELD,
 ): SubgraphTransform {
   return function renameFieldTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
-    return mapSchema(schema, {
+    const fieldRenameMap = new Map<string, Map<string, string>>();
+    const mapper = {
       [kind]: (
         field: GraphQLFieldConfig<any, any> | GraphQLInputFieldConfig,
         fieldName: string,
         typeName: string,
-      ) => [
-        renameFn({
-          typeName,
-          fieldName,
-          type: schema.getType(typeName),
-          field,
-          subgraphConfig,
-        }) || fieldName,
-        field,
-      ],
-    });
+      ) => {
+        const type = schema.getType(typeName);
+        const newFieldName =
+          renameFn({
+            typeName,
+            fieldName,
+            type,
+            field,
+            subgraphConfig,
+          }) || fieldName;
+        let typeFieldRenameMap = fieldRenameMap.get(typeName);
+        if (!typeFieldRenameMap) {
+          typeFieldRenameMap = new Map();
+          fieldRenameMap.set(typeName, typeFieldRenameMap);
+        }
+        typeFieldRenameMap.set(fieldName, newFieldName);
+        return [newFieldName, resolveToUpdater(field, schema)];
+      },
+    };
+    function resolveToUpdater(
+      field: GraphQLFieldConfig<any, any> | GraphQLInputFieldConfig,
+      schema: GraphQLSchema,
+    ) {
+      const fieldDirectives = getDirectiveExtensions(field, schema);
+      if (fieldDirectives?.resolveTo) {
+        fieldDirectives.resolveTo = fieldDirectives.resolveTo.map(resolveTo => ({
+          ...resolveTo,
+          sourceFieldName:
+            fieldRenameMap.get(resolveTo.sourceTypeName)?.get(resolveTo.sourceFieldName) ||
+            resolveTo.sourceFieldName,
+        }));
+      }
+      const fieldExtensions: any = (field.extensions ||= {});
+      fieldExtensions.directives = fieldDirectives;
+      return field;
+    }
+    return mapSchema(schema, mapper);
   };
 }
