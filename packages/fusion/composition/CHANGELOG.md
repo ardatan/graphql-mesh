@@ -1,5 +1,16 @@
 # @graphql-mesh/fusion-composition
 
+## 0.7.7
+
+### Patch Changes
+
+- [`750ce54`](https://github.com/ardatan/graphql-mesh/commit/750ce5452b61bf78ee056fe7b9b3d283c40114b4)
+  Thanks [@ardatan](https://github.com/ardatan)! - Respect resolveTo directives in rename transform
+
+- Updated dependencies
+  [[`9f9f6fe`](https://github.com/ardatan/graphql-mesh/commit/9f9f6fe61c74eaa6572866eddd97c348307107a8)]:
+  - @graphql-mesh/utils@0.103.5
+
 ## 0.7.6
 
 ### Patch Changes

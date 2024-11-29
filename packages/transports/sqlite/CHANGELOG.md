@@ -1,5 +1,12 @@
 # @graphql-mesh/transport-sqlite
 
+## 0.8.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/sqlite@0.7.5
+
 ## 0.8.4
 
 ### Patch Changes

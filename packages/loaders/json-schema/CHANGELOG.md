@@ -1,5 +1,19 @@
 # @omnigraph/json-schema
 
+## 0.108.5
+
+### Patch Changes
+
+- [#8007](https://github.com/ardatan/graphql-mesh/pull/8007)
+  [`9f9f6fe`](https://github.com/ardatan/graphql-mesh/commit/9f9f6fe61c74eaa6572866eddd97c348307107a8)
+  Thanks [@ardatan](https://github.com/ardatan)! - DEBUG logs were accidentially written to the
+  output, now it correctly prints logs to the logger not the output
+- Updated dependencies
+  [[`9f9f6fe`](https://github.com/ardatan/graphql-mesh/commit/9f9f6fe61c74eaa6572866eddd97c348307107a8)]:
+  - @graphql-mesh/utils@0.103.5
+  - @graphql-mesh/transport-rest@0.8.5
+  - @graphql-mesh/types@0.103.5
+
 ## 0.108.4
 
 ### Patch Changes

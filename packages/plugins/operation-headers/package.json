@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-operation-headers",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -33,8 +33,8 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "@graphql-hive/gateway-runtime": "^1.1.7",
-    "@graphql-mesh/types": "^0.103.4",
-    "@graphql-mesh/utils": "^0.103.4",
+    "@graphql-mesh/types": "^0.103.5",
+    "@graphql-mesh/utils": "^0.103.5",
     "graphql": "*",
     "tslib": "^2.4.0"
   },

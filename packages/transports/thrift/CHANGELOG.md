@@ -1,5 +1,13 @@
 # @graphql-mesh/transport-thrift
 
+## 0.8.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9f9f6fe`](https://github.com/ardatan/graphql-mesh/commit/9f9f6fe61c74eaa6572866eddd97c348307107a8)]:
+  - @graphql-mesh/utils@0.103.5
+
 ## 0.8.4
 
 ### Patch Changes
