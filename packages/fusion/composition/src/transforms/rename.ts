@@ -1,4 +1,6 @@
 import {
+  isInterfaceType,
+  isObjectType,
   isSpecifiedScalarType,
   type GraphQLFieldConfig,
   type GraphQLFieldConfigArgumentMap,
@@ -7,7 +9,13 @@ import {
   type GraphQLSchema,
 } from 'graphql';
 import { resolvers as scalarsResolversMap } from 'graphql-scalars';
-import { getRootTypes, MapperKind, mapSchema, type SchemaMapper } from '@graphql-tools/utils';
+import {
+  getDirectiveExtensions,
+  getRootTypes,
+  MapperKind,
+  mapSchema,
+  type SchemaMapper,
+} from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 
 export const ignoreList = [
@@ -179,6 +187,7 @@ export function createRenameTransform(opts: RenameTransformConfig) {
   }
   return function renameTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
     const schemaMapper: SchemaMapper = {};
+    const typeRenameMap = new Map<string, string>();
     if (typeRenamers.length) {
       schemaMapper[MapperKind.TYPE] = type => {
         let newTypeName = type.name;
@@ -191,6 +200,7 @@ export function createRenameTransform(opts: RenameTransformConfig) {
             }) || newTypeName;
         }
         if (newTypeName !== type.name) {
+          typeRenameMap.set(type.name, newTypeName);
           return new (Object.getPrototypeOf(type).constructor)({
             ...type.toConfig(),
             name: newTypeName,
@@ -199,6 +209,7 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         return type;
       };
     }
+    const fieldRenameMap = new Map<string, Map<string, string>>();
     if (fieldRenamers.length || argRenamers.length) {
       schemaMapper[MapperKind.FIELD] = (field, fieldName, typeName, schema) => {
         let newFieldName = fieldName;
@@ -214,6 +225,12 @@ export function createRenameTransform(opts: RenameTransformConfig) {
                 subgraphConfig,
               }) || newFieldName;
           }
+          let typeFieldRenameMap = fieldRenameMap.get(typeName);
+          if (!typeFieldRenameMap) {
+            typeFieldRenameMap = new Map();
+            fieldRenameMap.set(typeName, typeFieldRenameMap);
+          }
+          typeFieldRenameMap.set(fieldName, newFieldName);
         }
         if (argRenamers.length && 'args' in field && field.args) {
           const newArgs: GraphQLFieldConfigArgumentMap = {};
@@ -237,6 +254,21 @@ export function createRenameTransform(opts: RenameTransformConfig) {
               args: newArgs,
             },
           ];
+        }
+        const fieldDirectives = getDirectiveExtensions(field, schema);
+        if (fieldDirectives.resolveTo) {
+          fieldDirectives.resolveTo = fieldDirectives.resolveTo.map(resolveTo => ({
+            ...resolveTo,
+            sourceTypeName:
+              (resolveTo.sourceTypeName && typeRenameMap.get(resolveTo.sourceTypeName)) ||
+              resolveTo.sourceTypeName,
+            sourceFieldName:
+              (resolveTo.sourceFieldName &&
+                fieldRenameMap.get(resolveTo.sourceTypeName)?.get(resolveTo.sourceFieldName)) ||
+              resolveTo.sourceFieldName,
+          }));
+          const fieldExtensions: Record<string, any> = (field.extensions ||= {});
+          fieldExtensions.directives = fieldDirectives;
         }
         return [newFieldName, field];
       };
