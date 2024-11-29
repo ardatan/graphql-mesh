@@ -1,5 +1,23 @@
 # @graphql-mesh/compose-cli
 
+## 1.2.7
+
+### Patch Changes
+
+- [`e92d4f8`](https://github.com/ardatan/graphql-mesh/commit/e92d4f8201b68ff0468fc8f6943d73071e61615d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Show parse errors correctly when a string passed
+  to \`additionalTypeDefs\`
+
+- Updated dependencies
+  [[`9f9f6fe`](https://github.com/ardatan/graphql-mesh/commit/9f9f6fe61c74eaa6572866eddd97c348307107a8),
+  [`750ce54`](https://github.com/ardatan/graphql-mesh/commit/750ce5452b61bf78ee056fe7b9b3d283c40114b4),
+  [`9f9f6fe`](https://github.com/ardatan/graphql-mesh/commit/9f9f6fe61c74eaa6572866eddd97c348307107a8),
+  [`9f9f6fe`](https://github.com/ardatan/graphql-mesh/commit/9f9f6fe61c74eaa6572866eddd97c348307107a8)]:
+  - @graphql-mesh/include@0.2.4
+  - @graphql-mesh/fusion-composition@0.7.7
+  - @graphql-mesh/utils@0.103.5
+  - @graphql-mesh/types@0.103.5
+
 ## 1.2.6
 
 ### Patch Changes
