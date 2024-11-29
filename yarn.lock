@@ -5844,8 +5844,8 @@ __metadata:
   linkType: hard
 
 "@graphql-hive/yoga@npm:^0.39.0":
-  version: 0.39.0
-  resolution: "@graphql-hive/yoga@npm:0.39.0"
+  version: 0.39.1
+  resolution: "@graphql-hive/yoga@npm:0.39.1"
   dependencies:
     "@graphql-hive/core": "npm:0.8.2"
     "@graphql-yoga/plugin-persisted-operations": "npm:^3.9.0"
@@ -5853,7 +5853,7 @@ __metadata:
   peerDependencies:
     graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     graphql-yoga: ^5.9.0
-  checksum: 10c0/66dc9444e01fa4896211755aeb51551fee32fe76c24e87f8fda70680f94abc8153b1856e45555a5f0929ea0797a95c431a4583c441ee50fcc958655f777f6a05
+  checksum: 10c0/f197aa0f0069247c393b0d298817a9f513026e73bee8a8dca2fd61e93b71c43ebf3b66c35cceea5056e89a1f7dc3ecd1f313765dab8ce16f20809211fb4af1f7
   languageName: node
   linkType: hard
 
