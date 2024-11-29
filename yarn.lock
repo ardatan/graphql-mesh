@@ -4452,7 +4452,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/hive-example-my-graphql@workspace:examples/v1-next/hive-example/my-graphql"
   dependencies:
-    "@graphql-hive/cli": "npm:0.44.3"
+    "@graphql-hive/cli": "npm:0.44.4"
     graphql: "npm:16.9.0"
     graphql-yoga: "npm:5.10.3"
   languageName: unknown
@@ -4462,7 +4462,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/hive-example-my-rest@workspace:examples/v1-next/hive-example/my-rest"
   dependencies:
-    "@graphql-hive/cli": "npm:0.44.3"
+    "@graphql-hive/cli": "npm:0.44.4"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
     fets: "npm:0.8.4"
@@ -4798,7 +4798,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-sources-authors@workspace:examples/hive-example/sources/authors"
   dependencies:
-    "@graphql-hive/cli": "npm:0.44.3"
+    "@graphql-hive/cli": "npm:0.44.4"
     "@graphql-mesh/cli": "npm:0.98.5"
     "@graphql-mesh/openapi": "npm:0.108.5"
     fets: "npm:^0.8.0"
@@ -4812,7 +4812,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-sources-books@workspace:examples/hive-example/sources/books"
   dependencies:
-    "@graphql-hive/cli": "npm:0.44.3"
+    "@graphql-hive/cli": "npm:0.44.4"
     "@graphql-mesh/cli": "npm:0.98.5"
     "@graphql-mesh/openapi": "npm:0.108.5"
     fets: "npm:^0.8.0"
@@ -5707,9 +5707,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/cli@npm:0.44.3":
-  version: 0.44.3
-  resolution: "@graphql-hive/cli@npm:0.44.3"
+"@graphql-hive/cli@npm:0.44.4":
+  version: 0.44.4
+  resolution: "@graphql-hive/cli@npm:0.44.4"
   dependencies:
     "@graphql-hive/core": "npm:0.8.2"
     "@graphql-inspector/core": "npm:5.1.0-alpha-20231208113249-34700c8a"
@@ -5718,7 +5718,7 @@ __metadata:
     "@graphql-tools/json-file-loader": "npm:~8.0.0"
     "@graphql-tools/load": "npm:~8.0.0"
     "@graphql-tools/url-loader": "npm:~8.0.0"
-    "@graphql-tools/utils": "npm:10.5.5"
+    "@graphql-tools/utils": "npm:10.5.6"
     "@graphql-typed-document-node/core": "npm:3.2.0"
     "@oclif/core": "npm:^3.26.6"
     "@oclif/plugin-help": "npm:6.0.22"
@@ -5729,11 +5729,11 @@ __metadata:
     graphql: "npm:^16.8.1"
     graphql-tag: "npm:2.12.6"
     mkdirp: "npm:3.0.1"
-    tslib: "npm:2.8.0"
+    tslib: "npm:2.8.1"
     zod: "npm:3.23.8"
   bin:
     hive: bin/run
-  checksum: 10c0/ffc67785f1ddd4a53422e84f0d8999938d8fd8afa5e59b45c66601eddc887e3a3827d81cfc5c6841abd32e363a78304e0e446db43479e838f4be08be23f0dc0c
+  checksum: 10c0/c3ac052a2273eef6ca43d819ae03abb9bff3bcf5e7b15ce728b3f8bdfa5a07d867ec86f2210475773e0c4147ed2769cf32c7110653471f3392147ae1476df70c
   languageName: node
   linkType: hard
 
@@ -8054,9 +8054,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.5.5":
-  version: 10.5.5
-  resolution: "@graphql-tools/utils@npm:10.5.5"
+"@graphql-tools/utils@npm:10.5.6":
+  version: 10.5.6
+  resolution: "@graphql-tools/utils@npm:10.5.6"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     cross-inspect: "npm:1.0.1"
@@ -8064,7 +8064,7 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/826f853dd51681165513e92e2d1c85f605bcc42fb2383db2c9645f82821f07866a65e4b2a293c5e4717b38f74c6f4d798500c61b5a68e4cb7dd707189b18cdb6
+  checksum: 10c0/b71d47ccaf937a4b658f9441c8d49acdb77e3b0f0fe0075a1987c8738ada8cbb3aab1181d6b2cb8e0585e40cac3099487be5309896b0dcfd5dbd76b5f1a86808
   languageName: node
   linkType: hard
 
