@@ -9,7 +9,7 @@ import {
   GraphQLString,
 } from 'graphql';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
-import { addHiddenDirective, hiddenDirective } from './filter-schema.js';
+import { addInaccessibleDirective } from './filter-schema.js';
 
 const OPERATION_TYPE_SUFFIX_MAP = {
   query: 'Query',
@@ -67,7 +67,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             ...originalFieldConfig,
             astNode: undefined,
           };
-          addHiddenDirective(newOriginalFieldConfig);
+          addInaccessibleDirective(newOriginalFieldConfig);
           originalFieldMapWithHidden[fieldName] = newOriginalFieldConfig;
         }
         const wrappedType = new GraphQLObjectType({
@@ -102,9 +102,6 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     const newDirectives = [...schemaConfig.directives];
     if (!newDirectives.some(directive => directive.name === 'resolveTo')) {
       newDirectives.push(resolveToDirective);
-    }
-    if (!newDirectives.some(directive => directive.name === 'hidden')) {
-      newDirectives.push(hiddenDirective);
     }
     return new GraphQLSchema({
       ...schemaConfig,

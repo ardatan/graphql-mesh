@@ -11,9 +11,11 @@ import type { SubgraphTransform } from '../compose.js';
 
 export interface FilterTransformConfig {}
 
-export function addHiddenDirective(directableObj: Parameters<typeof getDirectiveExtensions>[0]) {
+export function addInaccessibleDirective(
+  directableObj: Parameters<typeof getDirectiveExtensions>[0],
+) {
   const directives = getDirectiveExtensions(directableObj);
-  directives.hidden = [{}];
+  directives.inaccessible = [{}];
   const extensions: any = (directableObj.extensions ||= {});
   extensions.directives = directives;
   directableObj.astNode = undefined;
@@ -122,7 +124,7 @@ export function createFilterTransform({
     schemaMapper[MapperKind.ROOT_FIELD] = (fieldConfig, fieldName, typeName: string) => {
       const filterResult = programmaticFilters.rootFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
-        addHiddenDirective(fieldConfig);
+        addInaccessibleDirective(fieldConfig);
       }
       return [fieldName, fieldConfig];
     };
@@ -132,7 +134,7 @@ export function createFilterTransform({
       for (const filter of typeFilters) {
         const filterResult = filter(type);
         if (filterResult != null && !filterResult) {
-          addHiddenDirective(type);
+          addInaccessibleDirective(type);
           return type;
         }
       }
@@ -144,7 +146,7 @@ export function createFilterTransform({
       for (const filter of fieldFilters) {
         const filterResult = filter(typeName, fieldName, fieldConfig);
         if (filterResult != null && !filterResult) {
-          addHiddenDirective(fieldConfig);
+          addInaccessibleDirective(fieldConfig);
           return fieldConfig;
         }
       }
@@ -154,7 +156,7 @@ export function createFilterTransform({
           for (const argFilter of argumentFilters) {
             const argFilterResult = argFilter(typeName, fieldName, argName);
             if (argFilterResult != null && !argFilterResult) {
-              addHiddenDirective(argConfig);
+              addInaccessibleDirective(argConfig);
               break;
             }
           }
@@ -167,7 +169,7 @@ export function createFilterTransform({
     schemaMapper[MapperKind.OBJECT_FIELD] = (fieldConfig, fieldName, typeName: string) => {
       const filterResult = programmaticFilters.objectFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
-        addHiddenDirective(fieldConfig);
+        addInaccessibleDirective(fieldConfig);
         return [fieldName, fieldConfig];
       }
     };
@@ -176,7 +178,7 @@ export function createFilterTransform({
     schemaMapper[MapperKind.INTERFACE_FIELD] = (fieldConfig, fieldName, typeName: string) => {
       const filterResult = programmaticFilters.interfaceFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
-        addHiddenDirective(fieldConfig);
+        addInaccessibleDirective(fieldConfig);
         return [fieldName, fieldConfig];
       }
     };
@@ -185,34 +187,13 @@ export function createFilterTransform({
     schemaMapper[MapperKind.INPUT_OBJECT_FIELD] = (fieldConfig, fieldName, typeName: string) => {
       const filterResult = programmaticFilters.inputObjectFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
-        addHiddenDirective(fieldConfig);
+        addInaccessibleDirective(fieldConfig);
         return fieldConfig;
       }
     };
   }
 
   return function filterTransform(schema) {
-    const mappedSchema = mapSchema(schema, schemaMapper);
-    const mappedSchemaConfig = mappedSchema.toConfig();
-    const newDirectives = [...mappedSchemaConfig.directives];
-    if (!newDirectives.some(directive => directive.name === 'hidden')) {
-      newDirectives.push(hiddenDirective);
-    }
-    return new GraphQLSchema({
-      ...mappedSchemaConfig,
-      directives: newDirectives,
-    });
+    return mapSchema(schema, schemaMapper);
   };
 }
-
-export const hiddenDirective = new GraphQLDirective({
-  name: 'hidden',
-  locations: [
-    DirectiveLocation.FIELD_DEFINITION,
-    DirectiveLocation.OBJECT,
-    DirectiveLocation.INTERFACE,
-    DirectiveLocation.INPUT_FIELD_DEFINITION,
-    DirectiveLocation.ARGUMENT_DEFINITION,
-    DirectiveLocation.INPUT_OBJECT,
-  ],
-});
