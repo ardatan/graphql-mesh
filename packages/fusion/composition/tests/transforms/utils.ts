@@ -1,5 +1,7 @@
 import {
+  buildClientSchema,
   buildSchema,
+  getIntrospectionQuery,
   GraphQLSchema,
   lexicographicSortSchema,
   parse,
@@ -13,19 +15,10 @@ import { normalizedExecutor } from '@graphql-tools/executor';
 import { isAsyncIterable, mapMaybePromise } from '@graphql-tools/utils';
 
 export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
-  const manager = new UnifiedGraphManager({
-    getUnifiedGraph: () => getUnifiedGraphGracefully(subgraphs),
-    transports() {
-      return {
-        getSubgraphExecutor({ subgraphName }) {
-          return createDefaultExecutor(
-            subgraphs.find(subgraph => subgraph.name === subgraphName).schema,
-          );
-        },
-      };
-    },
-  });
-  return manager.getUnifiedGraph();
+  const executor = composeAndGetExecutor(subgraphs);
+  return mapMaybePromise(executor({ query: getIntrospectionQuery() }), result =>
+    buildClientSchema(result),
+  );
 }
 
 export function composeAndGetExecutor(subgraphs: SubgraphConfig[]) {

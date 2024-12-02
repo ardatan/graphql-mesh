@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@envelop/generic-auth": "8.0.0",
-    "@graphql-hive/gateway-runtime": "^1.1.7",
+    "@graphql-hive/gateway-runtime": "^1.3.3",
     "graphql-yoga": "^5.7.0",
     "jsonwebtoken": "9.0.2"
   },

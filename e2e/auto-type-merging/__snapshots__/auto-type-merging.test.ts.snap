@@ -6,13 +6,13 @@ schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
   
-  
+  @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY)
   
   
   
   @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@enum", "@httpOperation", "@transport", "@hidden", "@merge", "@source", "@extraSchemaDefinitionDirective"]
+  import: ["@enum", "@httpOperation", "@transport", "@merge", "@source", "@extraSchemaDefinitionDirective"]
 )
 {
   query: Query
@@ -76,6 +76,8 @@ schema
 
 
 
+  directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ENUM | ENUM_VALUE | SCALAR | INPUT_OBJECT | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
+
 
 
 
@@ -108,8 +110,6 @@ directive @transport(
   queryStringOptions: ObjMap
   queryParams: [[String]]
 ) repeatable on SCHEMA
-
-directive @hidden on FIELD_DEFINITION | OBJECT | INTERFACE | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_OBJECT
 
 directive @merge(
   subgraph: String
@@ -170,7 +170,7 @@ type Query @extraSchemaDefinitionDirective(
     httpMethod: GET
     queryParamArgMap: "{\\"status\\":\\"status\\"}"
     queryStringOptionsByParam: "{\\"status\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}"
-  ) @hidden @join__field(graph: PETSTORE) 
+  ) @join__field(graph: PETSTORE)  @inaccessible
   """
   Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
   """
@@ -184,7 +184,7 @@ type Query @extraSchemaDefinitionDirective(
     httpMethod: GET
     queryParamArgMap: "{\\"tags\\":\\"tags\\"}"
     queryStringOptionsByParam: "{\\"tags\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}"
-  ) @hidden @join__field(graph: PETSTORE) 
+  ) @join__field(graph: PETSTORE)  @inaccessible
   """
   Returns a single pet
   """
@@ -205,7 +205,7 @@ type Query @extraSchemaDefinitionDirective(
     path: "/store/inventory"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @hidden @join__field(graph: PETSTORE) 
+  ) @join__field(graph: PETSTORE)  @inaccessible
   """
   For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
   """
@@ -217,7 +217,7 @@ type Query @extraSchemaDefinitionDirective(
     path: "/store/order/{args.orderId}"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @hidden @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")  @join__field(graph: PETSTORE) 
+  ) @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")  @join__field(graph: PETSTORE)  @inaccessible
   """
   Logs user into the system
   """
@@ -236,11 +236,11 @@ type Query @extraSchemaDefinitionDirective(
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
     queryParamArgMap: "{\\"username\\":\\"username\\",\\"password\\":\\"password\\"}"
-  ) @hidden @join__field(graph: PETSTORE) 
+  ) @join__field(graph: PETSTORE)  @inaccessible
   """
   Logs out current logged in user session
   """
-  logoutUser: JSON @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET)  @hidden @join__field(graph: PETSTORE) 
+  logoutUser: JSON @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET)  @join__field(graph: PETSTORE)  @inaccessible
   """
   Get user by user name
   """
@@ -254,7 +254,7 @@ type Query @extraSchemaDefinitionDirective(
     path: "/user/{args.username}"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @hidden @join__field(graph: PETSTORE) 
+  ) @join__field(graph: PETSTORE)  @inaccessible
   petById(id: BigInt!) : Pet @source(name: "pet_by_id", type: "Pet", subgraph: "vaccination")  @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")  @join__field(graph: VACCINATION) 
 }
 
@@ -304,7 +304,7 @@ type User @join__type(graph: PETSTORE)  {
   userStatus: Int
 }
 
-type Mutation @join__type(graph: PETSTORE)  {
+type Mutation @join__type(graph: PETSTORE)  @inaccessible {
   """
   Update an existing pet by Id
   """
@@ -313,7 +313,7 @@ type Mutation @join__type(graph: PETSTORE)  {
     path: "/pet"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: PUT
-  ) @hidden
+  ) @inaccessible
   """
   Add a new pet to the store
   """
@@ -322,7 +322,7 @@ type Mutation @join__type(graph: PETSTORE)  {
     path: "/pet"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
-  ) @hidden
+  ) @inaccessible
   """
   Updates a pet in the store with form data
   """
@@ -344,7 +344,7 @@ type Mutation @join__type(graph: PETSTORE)  {
     path: "/pet/{args.petId}"
     httpMethod: POST
     queryParamArgMap: "{\\"name\\":\\"name\\",\\"status\\":\\"status\\"}"
-  ) @hidden
+  ) @inaccessible
   """
   Deletes a pet
   """
@@ -356,7 +356,7 @@ type Mutation @join__type(graph: PETSTORE)  {
     path: "/pet/{args.petId}"
     operationSpecificHeaders: [["api_key", "{args.api_key}"]]
     httpMethod: DELETE
-  ) @hidden
+  ) @inaccessible
   """
   uploads an image
   """
@@ -376,7 +376,7 @@ type Mutation @join__type(graph: PETSTORE)  {
     operationSpecificHeaders: [["Content-Type", "application/octet-stream"], ["accept", "application/json"]]
     httpMethod: POST
     queryParamArgMap: "{\\"additionalMetadata\\":\\"additionalMetadata\\"}"
-  ) @hidden
+  ) @inaccessible
   """
   Place a new order in the store
   """
@@ -385,14 +385,14 @@ type Mutation @join__type(graph: PETSTORE)  {
     path: "/store/order"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
-  ) @hidden
+  ) @inaccessible
   """
   For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
   """
   deleteOrder("""
   ID of the order that needs to be deleted
   """
-  orderId: BigInt!) : JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE)  @hidden
+  orderId: BigInt!) : JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE)  @inaccessible
   """
   This can only be done by the logged in user.
   """
@@ -401,7 +401,7 @@ type Mutation @join__type(graph: PETSTORE)  {
     path: "/user"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
-  ) @hidden
+  ) @inaccessible
   """
   Creates list of users with given input array
   """
@@ -410,7 +410,7 @@ type Mutation @join__type(graph: PETSTORE)  {
     path: "/user/createWithList"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
     httpMethod: POST
-  ) @hidden
+  ) @inaccessible
   """
   This can only be done by the logged in user.
   """
@@ -422,14 +422,14 @@ type Mutation @join__type(graph: PETSTORE)  {
     path: "/user/{args.username}"
     operationSpecificHeaders: [["Content-Type", "application/json"]]
     httpMethod: PUT
-  ) @hidden
+  ) @inaccessible
   """
   This can only be done by the logged in user.
   """
   deleteUser("""
   The name that needs to be deleted
   """
-  username: String!) : JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE)  @hidden
+  username: String!) : JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE)  @inaccessible
 }
 
 type ApiResponse @join__type(graph: PETSTORE)  {
