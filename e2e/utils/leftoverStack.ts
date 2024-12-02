@@ -22,7 +22,7 @@ if (typeof afterAll === 'function') {
       const disposeRes$ = leftoverStack.disposeAsync();
       leftoverStack = new AsyncDisposableStack();
       if (disposeRes$?.catch) {
-        disposeRes$.catch(handleSuppressedError);
+        return disposeRes$.catch(handleSuppressedError);
       }
     } catch (e) {
       handleSuppressedError(e);

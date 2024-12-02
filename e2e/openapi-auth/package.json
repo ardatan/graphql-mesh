@@ -1,0 +1,9 @@
+{
+  "name": "@e2e/openapi-auth",
+  "private": true,
+  "dependencies": {
+    "@graphql-hive/gateway": "^1.5.6",
+    "fets": "^0.8.4",
+    "graphql": "16.9.0"
+  }
+}

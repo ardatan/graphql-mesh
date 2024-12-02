@@ -3821,6 +3821,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/openapi-auth@workspace:e2e/openapi-auth":
+  version: 0.0.0-use.local
+  resolution: "@e2e/openapi-auth@workspace:e2e/openapi-auth"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^1.5.6"
+    fets: "npm:^0.8.4"
+    graphql: "npm:16.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/openapi-javascript-wiki@workspace:e2e/openapi-javascript-wiki":
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-javascript-wiki@workspace:e2e/openapi-javascript-wiki"
@@ -20675,7 +20685,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fets@npm:0.8.4, fets@npm:^0.8.0, fets@npm:^0.8.1":
+"fets@npm:0.8.4, fets@npm:^0.8.0, fets@npm:^0.8.1, fets@npm:^0.8.4":
   version: 0.8.4
   resolution: "fets@npm:0.8.4"
   dependencies:
