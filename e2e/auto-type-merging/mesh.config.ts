@@ -20,7 +20,6 @@ export const composeConfig = defineConfig({
       }),
       transforms: [
         createFilterTransform({
-          typeFilter: type => type.name !== 'Mutation',
           rootFieldFilter: (typeName, fieldName) =>
             typeName === 'Query' && fieldName === 'getPetById',
         }),
