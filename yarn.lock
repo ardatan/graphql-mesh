@@ -5859,50 +5859,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/gateway-runtime@npm:^1.3.3":
-  version: 1.3.3
-  resolution: "@graphql-hive/gateway-runtime@npm:1.3.3"
-  dependencies:
-    "@envelop/core": "npm:^5.0.0"
-    "@envelop/disable-introspection": "npm:^6.0.0"
-    "@envelop/generic-auth": "npm:^8.0.0"
-    "@graphql-hive/core": "npm:^0.8.1"
-    "@graphql-mesh/cross-helpers": "npm:^0.4.8"
-    "@graphql-mesh/fusion-runtime": "npm:^0.10.9"
-    "@graphql-mesh/hmac-upstream-signature": "npm:^1.2.11"
-    "@graphql-mesh/plugin-hive": "npm:^0.103.0"
-    "@graphql-mesh/plugin-response-cache": "npm:^0.103.0"
-    "@graphql-mesh/store": "npm:^0.103.4"
-    "@graphql-mesh/transport-common": "npm:^0.7.18"
-    "@graphql-mesh/types": "npm:^0.103.4"
-    "@graphql-mesh/utils": "npm:^0.103.4"
-    "@graphql-tools/batch-delegate": "npm:^9.0.19"
-    "@graphql-tools/delegate": "npm:^10.2.3"
-    "@graphql-tools/executor-http": "npm:^1.1.11"
-    "@graphql-tools/federation": "npm:^2.2.34"
-    "@graphql-tools/stitch": "npm:^9.4.4"
-    "@graphql-tools/utils": "npm:^10.6.0"
-    "@graphql-tools/wrap": "npm:^10.0.21"
-    "@graphql-yoga/plugin-apollo-usage-report": "npm:^0.5.0"
-    "@graphql-yoga/plugin-csrf-prevention": "npm:^3.7.0"
-    "@graphql-yoga/plugin-defer-stream": "npm:^3.7.0"
-    "@graphql-yoga/plugin-persisted-operations": "npm:^3.7.0"
-    "@types/node": "npm:^22.7.5"
-    "@whatwg-node/disposablestack": "npm:^0.0.5"
-    "@whatwg-node/server": "npm:^0.9.60"
-    graphql-yoga: "npm:^5.10.3"
-    tslib: "npm:^2.8.0"
-  peerDependencies:
-    "@parcel/watcher": ^2.1.0
-    graphql: ^15.9.0 || ^16.9.0
-  peerDependenciesMeta:
-    "@parcel/watcher":
-      optional: true
-  checksum: 10c0/47420c6bea7ef3935e183e2eb70d06c07e0e07b5eba2d4cfa3217452414e4fc630ff08c298a27a81616c51b375007a2387a6722e51bbcb586b5d641982edf399
-  languageName: node
-  linkType: hard
-
-"@graphql-hive/gateway-runtime@npm:^1.3.4":
+"@graphql-hive/gateway-runtime@npm:^1.3.3, @graphql-hive/gateway-runtime@npm:^1.3.4":
   version: 1.3.4
   resolution: "@graphql-hive/gateway-runtime@npm:1.3.4"
   dependencies:
@@ -7572,7 +7529,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/batch-delegate@npm:^9.0.10, @graphql-tools/batch-delegate@npm:^9.0.16, @graphql-tools/batch-delegate@npm:^9.0.19, @graphql-tools/batch-delegate@npm:^9.0.20, @graphql-tools/batch-delegate@npm:^9.0.9":
+"@graphql-tools/batch-delegate@npm:^9.0.10, @graphql-tools/batch-delegate@npm:^9.0.16, @graphql-tools/batch-delegate@npm:^9.0.20, @graphql-tools/batch-delegate@npm:^9.0.9":
   version: 9.0.20
   resolution: "@graphql-tools/batch-delegate@npm:9.0.20"
   dependencies:
