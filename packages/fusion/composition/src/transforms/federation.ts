@@ -305,8 +305,22 @@ export function createFederationTransform(config: FederationTransformConfig): Su
         }
         const mergeDirectiveConfigForOperation = mergeDirectiveConfigMap.get(operation);
         const mergeDirectiveConfig = mergeDirectiveConfigForOperation?.get(fieldName);
+        const fieldDirectives = getDirectiveExtensions(fieldConfig) || {};
+        const fieldTransformConfig = configurationByField.get(typeName)?.get(fieldName);
+        if (fieldTransformConfig) {
+          for (const directiveName in fieldTransformConfig) {
+            const directiveConfigs = asArray(fieldTransformConfig[directiveName]);
+            const specificDirectiveExtensions = (fieldDirectives[directiveName] ||= []);
+            for (let directiveConfig of directiveConfigs) {
+              if (typeof directiveConfig === 'boolean') {
+                directiveConfig = {};
+              }
+              specificDirectiveExtensions.push(directiveConfig);
+              usedFederationDirectives.add(`@${directiveName}`);
+            }
+          }
+        }
         if (mergeDirectiveConfig) {
-          const fieldDirectives = getDirectiveExtensions(fieldConfig) || {};
           const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
           let argsExpr = mergeDirectiveConfig.argsExpr;
           if (!argsExpr && fieldConfig.args && !mergeDirectiveConfig.keyArg) {
@@ -336,6 +350,8 @@ export function createFederationTransform(config: FederationTransformConfig): Su
             argsExpr,
           });
           mergeDirectiveUsed = true;
+        }
+        if (fieldTransformConfig || mergeDirectiveConfig) {
           return {
             ...fieldConfig,
             astNode: undefined,

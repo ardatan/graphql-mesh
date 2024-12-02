@@ -1,0 +1,18 @@
+type Post {
+  id: ID!
+  date: String!
+  description: String!
+}
+
+input PostsInput {
+  id: ID
+  date: String
+}
+
+type Query {
+  posts(postsInput: PostsInput): [Post]
+  bla: String!
+}
+schema {
+  query: Query
+}

@@ -317,6 +317,9 @@ export function getAnnotatedSubgraphs(
         if (directive.name === 'transport' && removeTransportDirective) {
           return null;
         }
+        if (!sourceDirectiveUsed && directive.name === 'source') {
+          return null;
+        }
       },
     });
     let transformedSubgraph = annotatedSubgraph;
