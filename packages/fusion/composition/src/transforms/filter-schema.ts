@@ -1,9 +1,12 @@
-import type { GraphQLFieldConfig, GraphQLInputFieldConfig, GraphQLNamedType ,
-  DirectiveLocation,
-  GraphQLDirective,
-  type GraphQLSchema,
+import {
   isNonNullType,
-  isObjectType,
+  type DirectiveLocation,
+  type GraphQLDirective,
+  type GraphQLFieldConfig,
+  type GraphQLInputFieldConfig,
+  type GraphQLNamedType,
+  type GraphQLSchema,
+  type isObjectType,
 } from 'graphql';
 import { Minimatch } from 'minimatch';
 import {
