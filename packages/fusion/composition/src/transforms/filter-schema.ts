@@ -1,10 +1,16 @@
-import type { GraphQLFieldConfig, GraphQLInputFieldConfig, GraphQLNamedType } from 'graphql';
-import { DirectiveLocation, GraphQLDirective, GraphQLSchema } from 'graphql';
+import type { GraphQLFieldConfig, GraphQLInputFieldConfig, GraphQLNamedType ,
+  DirectiveLocation,
+  GraphQLDirective,
+  type GraphQLSchema,
+  isNonNullType,
+  isObjectType,
+} from 'graphql';
 import { Minimatch } from 'minimatch';
 import {
   getDirectiveExtensions,
   MapperKind,
   mapSchema,
+  type DirectableObject,
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
@@ -19,6 +25,61 @@ export function addInaccessibleDirective(
   const extensions: any = (directableObj.extensions ||= {});
   extensions.directives = directives;
   directableObj.astNode = undefined;
+}
+
+function compareAndAddInaccessibleDirective(
+  originalSchema: GraphQLSchema,
+  filteredSchema: GraphQLSchema,
+) {
+  return mapSchema(originalSchema, {
+    [MapperKind.TYPE]: type => {
+      const typeInFiltered = filteredSchema.getType(type.name);
+      if (!typeInFiltered) {
+        addInaccessibleDirective(type);
+      } else if ('getFields' in type) {
+        if (!('getFields' in typeInFiltered)) {
+          addInaccessibleDirective(type);
+        } else {
+          const numOfFieldsInFiltered = Object.keys(typeInFiltered.getFields()).length;
+          if (numOfFieldsInFiltered === 0) {
+            addInaccessibleDirective(type);
+          }
+        }
+      }
+      return type;
+    },
+    [MapperKind.FIELD]: (fieldConfig, fieldName, typeName) => {
+      const typeInFiltered = filteredSchema.getType(typeName);
+      if (!typeInFiltered || !('getFields' in typeInFiltered)) {
+        addInaccessibleDirective(fieldConfig);
+      } else {
+        const filteredFields = typeInFiltered.getFields();
+        const fieldInFiltered = filteredFields[fieldName];
+        if (!fieldInFiltered) {
+          addInaccessibleDirective(fieldConfig);
+        } else {
+          if ('args' in fieldConfig && !('args' in fieldInFiltered)) {
+            for (const argName in fieldConfig.args) {
+              const argConfig = fieldConfig.args[argName];
+              addInaccessibleDirective(argConfig);
+            }
+          } else if ('args' in fieldConfig && 'args' in fieldInFiltered) {
+            const filteredArgs = fieldInFiltered.args;
+            for (const argName in fieldConfig.args) {
+              if (!filteredArgs.some(arg => arg.name === argName)) {
+                const argConfig = fieldConfig.args[argName];
+                addInaccessibleDirective(argConfig);
+                if (isNonNullType(argConfig.type)) {
+                  argConfig.type = argConfig.type.ofType;
+                }
+              }
+            }
+          }
+        }
+      }
+      return fieldConfig;
+    },
+  });
 }
 
 export interface CreateFilterTransformOpts {
@@ -121,12 +182,11 @@ export function createFilterTransform({
 
   const schemaMapper: SchemaMapper = {};
   if (programmaticFilters.rootFieldFilter) {
-    schemaMapper[MapperKind.ROOT_FIELD] = (fieldConfig, fieldName, typeName: string) => {
+    schemaMapper[MapperKind.ROOT_FIELD] = (fieldConfig, fieldName, typeName: string, schema) => {
       const filterResult = programmaticFilters.rootFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
-        addInaccessibleDirective(fieldConfig);
+        return null;
       }
-      return [fieldName, fieldConfig];
     };
   }
   if (typeFilters.length) {
@@ -134,66 +194,77 @@ export function createFilterTransform({
       for (const filter of typeFilters) {
         const filterResult = filter(type);
         if (filterResult != null && !filterResult) {
-          addInaccessibleDirective(type);
-          return type;
+          return null;
         }
       }
       return type;
     };
   }
   if (argumentFilters.length || fieldFilters.length) {
-    schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName: string) => {
+    schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName: string, schema) => {
       for (const filter of fieldFilters) {
         const filterResult = filter(typeName, fieldName, fieldConfig);
         if (filterResult != null && !filterResult) {
-          addInaccessibleDirective(fieldConfig);
-          return fieldConfig;
+          return null;
         }
       }
       if (argumentFilters.length && 'args' in fieldConfig && fieldConfig.args) {
+        const newArgs = {};
         for (const argName in fieldConfig.args) {
           const argConfig = fieldConfig.args[argName];
+          let filtered = false;
           for (const argFilter of argumentFilters) {
             const argFilterResult = argFilter(typeName, fieldName, argName);
             if (argFilterResult != null && !argFilterResult) {
-              addInaccessibleDirective(argConfig);
+              filtered = true;
               break;
             }
           }
+          if (!filtered) {
+            newArgs[argName] = argConfig;
+          }
         }
+        fieldConfig.args = newArgs;
       }
       return fieldConfig;
     };
   }
   if (programmaticFilters.objectFieldFilter) {
-    schemaMapper[MapperKind.OBJECT_FIELD] = (fieldConfig, fieldName, typeName: string) => {
+    schemaMapper[MapperKind.OBJECT_FIELD] = (fieldConfig, fieldName, typeName, schema) => {
       const filterResult = programmaticFilters.objectFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
-        addInaccessibleDirective(fieldConfig);
-        return [fieldName, fieldConfig];
+        return null;
       }
     };
   }
   if (programmaticFilters.interfaceFieldFilter) {
-    schemaMapper[MapperKind.INTERFACE_FIELD] = (fieldConfig, fieldName, typeName: string) => {
+    schemaMapper[MapperKind.INTERFACE_FIELD] = (
+      fieldConfig,
+      fieldName,
+      typeName: string,
+      schema,
+    ) => {
       const filterResult = programmaticFilters.interfaceFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
-        addInaccessibleDirective(fieldConfig);
-        return [fieldName, fieldConfig];
+        return null;
       }
     };
   }
   if (programmaticFilters.inputObjectFieldFilter) {
-    schemaMapper[MapperKind.INPUT_OBJECT_FIELD] = (fieldConfig, fieldName, typeName: string) => {
+    schemaMapper[MapperKind.INPUT_OBJECT_FIELD] = (
+      fieldConfig,
+      fieldName,
+      typeName: string,
+      schema,
+    ) => {
       const filterResult = programmaticFilters.inputObjectFieldFilter(typeName, fieldName);
       if (filterResult != null && !filterResult) {
-        addInaccessibleDirective(fieldConfig);
-        return fieldConfig;
+        return null;
       }
     };
   }
 
   return function filterTransform(schema) {
-    return mapSchema(schema, schemaMapper);
+    return compareAndAddInaccessibleDirective(schema, mapSchema(schema, schemaMapper));
   };
 }

@@ -1,10 +1,13 @@
 diff --git a/node_modules/@graphql-mesh/fusion-runtime/dist/index.cjs b/node_modules/@graphql-mesh/fusion-runtime/dist/index.cjs
-index 1699c3e..bd5efbf 100644
+index 5831df0..a8fdb26 100644
 --- a/node_modules/@graphql-mesh/fusion-runtime/dist/index.cjs
 +++ b/node_modules/@graphql-mesh/fusion-runtime/dist/index.cjs
-@@ -14,7 +14,7 @@ var transportCommon = require('@graphql-mesh/transport-common');
+@@ -12,9 +12,9 @@ var stitchingDirectives = require('@graphql-tools/stitching-directives');
+ var wrap = require('@graphql-tools/wrap');
+ var transportCommon = require('@graphql-mesh/transport-common');
  
- async function defaultTransportsGetter(kind) {
+-async function defaultTransportsGetter(kind) {
++function defaultTransportsGetter(kind) {
    try {
 -    let transport = await import(`@graphql-mesh/transport-${kind}`);
 +    let transport = require(`@graphql-mesh/transport-${kind}`);
