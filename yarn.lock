@@ -4471,7 +4471,7 @@ __metadata:
   dependencies:
     "@envelop/auth0": "npm:^6.0.0"
     "@graphql-hive/gateway": "npm:^1.5.6"
-    "@graphql-mesh/compose-cli": "npm:^1.2.8"
+    "@graphql-mesh/compose-cli": "npm:^1.2.9"
     "@graphql-mesh/plugin-operation-field-permissions": "npm:^0.103.5"
     "@omnigraph/json-schema": "npm:^0.108.5"
     graphql: "npm:16.9.0"
@@ -4486,7 +4486,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^1.5.6"
     "@graphql-mesh/cache-cfw-kv": "npm:^0.104.5"
     "@graphql-mesh/cache-localforage": "npm:^0.103.5"
-    "@graphql-mesh/compose-cli": "npm:^1.2.8"
+    "@graphql-mesh/compose-cli": "npm:^1.2.9"
     "@graphql-mesh/plugin-response-cache": "npm:^0.103.5"
     "@omnigraph/json-schema": "npm:^0.108.5"
     graphql: "npm:16.9.0"
@@ -4513,7 +4513,7 @@ __metadata:
   resolution: "@examples-v1-next/fastify@workspace:examples/v1-next/integrations/fastify"
   dependencies:
     "@graphql-hive/gateway": "npm:^1.5.6"
-    "@graphql-mesh/compose-cli": "npm:^1.2.8"
+    "@graphql-mesh/compose-cli": "npm:^1.2.9"
     "@omnigraph/openapi": "npm:^0.108.5"
     fastify: "npm:^5.0.0"
     graphql: "npm:16.9.0"
@@ -4529,7 +4529,7 @@ __metadata:
   dependencies:
     "@google-cloud/functions-framework": "npm:^3.3.0"
     "@graphql-hive/gateway": "npm:^1.5.6"
-    "@graphql-mesh/compose-cli": "npm:^1.2.8"
+    "@graphql-mesh/compose-cli": "npm:^1.2.9"
     "@omnigraph/json-schema": "npm:^0.108.5"
     "@types/node": "npm:^22.0.0"
     graphql: "npm:^16.9.0"
@@ -4592,7 +4592,7 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway": "npm:^1.5.6"
     "@graphql-mesh/cache-localforage": "npm:^0.103.5"
-    "@graphql-mesh/compose-cli": "npm:^1.2.8"
+    "@graphql-mesh/compose-cli": "npm:^1.2.9"
     "@omnigraph/openapi": "npm:^0.108.5"
     graphql: "npm:^16.9.0"
   languageName: unknown
@@ -4603,7 +4603,7 @@ __metadata:
   resolution: "@examples-v1-next/openapi-youtrack@workspace:examples/v1-next/openapi-youtrack"
   dependencies:
     "@graphql-hive/gateway": "npm:^1.5.6"
-    "@graphql-mesh/compose-cli": "npm:^1.2.8"
+    "@graphql-mesh/compose-cli": "npm:^1.2.9"
     "@omnigraph/openapi": "npm:^0.108.5"
     graphql: "npm:^16.9.0"
   languageName: unknown
@@ -4651,7 +4651,7 @@ __metadata:
   resolution: "@examples/fastify@workspace:examples/fastify"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.5"
-    "@graphql-mesh/graphql": "npm:0.103.5"
+    "@graphql-mesh/graphql": "npm:0.103.6"
     fastify: "npm:5.1.0"
     graphql: "npm:16.9.0"
     ts-node: "npm:^10.9.2"
@@ -4665,7 +4665,7 @@ __metadata:
   resolution: "@examples/federation-example-gateway-supergraph@workspace:examples/federation-example/gateway-supergraph"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.5"
-    "@graphql-mesh/supergraph": "npm:0.9.5"
+    "@graphql-mesh/supergraph": "npm:0.9.6"
     graphql: "npm:16.9.0"
   languageName: unknown
   linkType: soft
@@ -4675,7 +4675,7 @@ __metadata:
   resolution: "@examples/federation-example-gateway@workspace:examples/federation-example/gateway"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.5"
-    "@graphql-mesh/graphql": "npm:0.103.5"
+    "@graphql-mesh/graphql": "npm:0.103.6"
     "@graphql-mesh/transform-federation": "npm:0.103.5"
     graphql: "npm:16.9.0"
   languageName: unknown
@@ -4795,7 +4795,7 @@ __metadata:
   resolution: "@examples/graphql-file-upload-example@workspace:examples/graphql-file-upload-example"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.5"
-    "@graphql-mesh/graphql": "npm:0.103.5"
+    "@graphql-mesh/graphql": "npm:0.103.6"
     concurrently: "npm:9.1.0"
     graphql: "npm:16.9.0"
     graphql-yoga: "npm:5.10.4"
@@ -4926,7 +4926,7 @@ __metadata:
   resolution: "@examples/json-schema-covid@workspace:examples/json-schema-covid"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.5"
-    "@graphql-mesh/graphql": "npm:0.103.5"
+    "@graphql-mesh/graphql": "npm:0.103.6"
     "@graphql-mesh/json-schema": "npm:0.108.5"
     graphql: "npm:16.9.0"
     jest: "npm:29.7.0"
@@ -5223,7 +5223,7 @@ __metadata:
   resolution: "@examples/openwhisk-example@workspace:examples/openwhisk-example"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.5"
-    "@graphql-mesh/graphql": "npm:0.103.5"
+    "@graphql-mesh/graphql": "npm:0.103.6"
     esbuild: "npm:^0.24.0"
     graphql: "npm:16.9.0"
     typescript: "npm:^5.4.2"
@@ -5250,7 +5250,7 @@ __metadata:
     "@graphql-mesh/cache-file": "npm:0.103.5"
     "@graphql-mesh/cli": "npm:0.98.5"
     "@graphql-mesh/config": "npm:0.106.5"
-    "@graphql-mesh/graphql": "npm:0.103.5"
+    "@graphql-mesh/graphql": "npm:0.103.6"
     "@graphql-mesh/postgraphile": "npm:0.103.5"
     "@graphql-mesh/runtime": "npm:0.105.5"
     "@graphql-mesh/transform-prefix": "npm:0.103.5"
@@ -5326,7 +5326,7 @@ __metadata:
     "@envelop/depth-limit": "npm:4.0.0"
     "@graphql-mesh/cache-cfw-kv": "npm:0.104.5"
     "@graphql-mesh/cli": "npm:0.98.5"
-    "@graphql-mesh/graphql": "npm:0.103.5"
+    "@graphql-mesh/graphql": "npm:0.103.6"
     "@graphql-mesh/plugin-rate-limit": "npm:0.103.5"
     "@graphql-mesh/plugin-response-cache": "npm:0.103.5"
     graphql: "npm:16.9.0"
@@ -5367,7 +5367,7 @@ __metadata:
   resolution: "@examples/type-merging-batching-example@workspace:examples/type-merging-batching-example"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.5"
-    "@graphql-mesh/graphql": "npm:0.103.5"
+    "@graphql-mesh/graphql": "npm:0.103.6"
     "@graphql-mesh/transform-rename": "npm:0.103.5"
     "@graphql-mesh/transform-type-merging": "npm:0.103.5"
     graphql: "npm:16.9.0"
@@ -6152,12 +6152,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/compose-cli@npm:1.2.8, @graphql-mesh/compose-cli@npm:^1.2.8, @graphql-mesh/compose-cli@workspace:*, @graphql-mesh/compose-cli@workspace:packages/compose-cli":
+"@graphql-mesh/compose-cli@npm:1.2.9, @graphql-mesh/compose-cli@npm:^1.2.9, @graphql-mesh/compose-cli@workspace:*, @graphql-mesh/compose-cli@workspace:packages/compose-cli":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
     "@commander-js/extra-typings": "npm:^12.1.0"
-    "@graphql-mesh/fusion-composition": "npm:^0.7.8"
+    "@graphql-mesh/fusion-composition": "npm:^0.7.9"
     "@graphql-mesh/include": "npm:^0.2.4"
     "@graphql-mesh/utils": "npm:^0.103.5"
     "@graphql-tools/code-file-loader": "npm:^8.1.7"
@@ -6215,7 +6215,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/fusion-composition@npm:^0.7.8, @graphql-mesh/fusion-composition@workspace:packages/fusion/composition":
+"@graphql-mesh/fusion-composition@npm:^0.7.9, @graphql-mesh/fusion-composition@workspace:packages/fusion/composition":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-composition@workspace:packages/fusion/composition"
   dependencies:
@@ -6267,7 +6267,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-mesh/graphql@npm:0.103.5, @graphql-mesh/graphql@workspace:packages/legacy/handlers/graphql":
+"@graphql-mesh/graphql@npm:0.103.6, @graphql-mesh/graphql@workspace:packages/legacy/handlers/graphql":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/graphql@workspace:packages/legacy/handlers/graphql"
   dependencies:
@@ -6411,7 +6411,7 @@ __metadata:
   resolution: "@graphql-mesh/migrate-config-cli@workspace:packages/legacy/migrate-config-cli"
   dependencies:
     "@graphql-mesh/cli": "npm:^0.98.5"
-    "@graphql-mesh/compose-cli": "npm:^1.2.8"
+    "@graphql-mesh/compose-cli": "npm:^1.2.9"
     "@graphql-mesh/config": "npm:^0.106.5"
     "@graphql-mesh/types": "npm:^0.103.5"
     "@graphql-mesh/utils": "npm:^0.103.5"
@@ -6899,7 +6899,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/supergraph@npm:0.9.5, @graphql-mesh/supergraph@workspace:packages/legacy/handlers/supergraph":
+"@graphql-mesh/supergraph@npm:0.9.6, @graphql-mesh/supergraph@workspace:packages/legacy/handlers/supergraph":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/supergraph@workspace:packages/legacy/handlers/supergraph"
   dependencies:
@@ -20155,7 +20155,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:4.1.2"
     "@graphql-codegen/typescript-resolvers": "npm:4.4.1"
     "@graphql-hive/gateway": "npm:1.5.5"
-    "@graphql-mesh/compose-cli": "npm:1.2.8"
+    "@graphql-mesh/compose-cli": "npm:1.2.9"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.10.4"
     "@types/node": "npm:22.10.1"
     concurrently: "npm:9.1.0"
