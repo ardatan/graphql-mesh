@@ -1,5 +1,13 @@
 # @graphql-mesh/fusion-composition
 
+## 0.7.10
+
+### Patch Changes
+
+- [`6a4d978`](https://github.com/ardatan/graphql-mesh/commit/6a4d978a9c337241a9c2fe909452647f4645ba9b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add federation annotations correctly to the root
+  fields
+
 ## 0.7.9
 
 ### Patch Changes
