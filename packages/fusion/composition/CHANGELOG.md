@@ -1,5 +1,13 @@
 # @graphql-mesh/fusion-composition
 
+## 0.7.9
+
+### Patch Changes
+
+- [#8040](https://github.com/ardatan/graphql-mesh/pull/8040)
+  [`a4942c3`](https://github.com/ardatan/graphql-mesh/commit/a4942c3aeffab1b868fbbdba144ce6601d296c9e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use \`@inaccessible\` instead of \`@hidden\`
+
 ## 0.7.8
 
 ### Patch Changes
