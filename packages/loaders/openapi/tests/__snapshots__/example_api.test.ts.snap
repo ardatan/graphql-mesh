@@ -274,9 +274,7 @@ type product_with_id {
   product_id: String @resolveRootField(subgraph: "example_api", field: "product-id")
   """A tag associated with the product"""
   product_tag: String @resolveRootField(subgraph: "example_api", field: "product-tag")
-  """Obtain reviews for a product."""
   reviews: [query_getProductReviews_items] @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
-  """Obtain reviews for a product."""
   reviewsWithOperationRef: [query_getProductReviews_items] @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
 }
 
