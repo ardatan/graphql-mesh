@@ -1,5 +1,15 @@
 # @graphql-mesh/cache-file
 
+## 0.103.6
+
+### Patch Changes
+
+- [#8060](https://github.com/ardatan/graphql-mesh/pull/8060)
+  [`08b3671`](https://github.com/ardatan/graphql-mesh/commit/08b3671a0a0ad3e0cf457c08a6b1accf3e5960bd)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`dataloader@2.2.3` ↗︎](https://www.npmjs.com/package/dataloader/v/2.2.3)
+    (from `2.2.2`, in `dependencies`)
+
 ## 0.103.5
 
 ### Patch Changes
