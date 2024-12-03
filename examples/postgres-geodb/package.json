@@ -8,7 +8,7 @@
     "start": "ts-node --transpile-only src/test-sdk.ts London"
   },
   "dependencies": {
-    "@graphql-mesh/cache-file": "0.103.5",
+    "@graphql-mesh/cache-file": "0.103.6",
     "@graphql-mesh/cli": "0.98.5",
     "@graphql-mesh/config": "0.106.5",
     "@graphql-mesh/graphql": "0.103.6",
