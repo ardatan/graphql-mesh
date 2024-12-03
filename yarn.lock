@@ -7650,15 +7650,15 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^2.2.34, @graphql-tools/federation@npm:^2.2.35":
-  version: 2.2.35
-  resolution: "@graphql-tools/federation@npm:2.2.35"
+  version: 2.2.36
+  resolution: "@graphql-tools/federation@npm:2.2.36"
   dependencies:
     "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0"
     "@graphql-tools/delegate": "npm:^10.2.4"
     "@graphql-tools/executor-http": "npm:^1.1.11"
     "@graphql-tools/merge": "npm:^9.0.9"
     "@graphql-tools/schema": "npm:^10.0.8"
-    "@graphql-tools/stitch": "npm:^9.4.5"
+    "@graphql-tools/stitch": "npm:^9.4.6"
     "@graphql-tools/utils": "npm:^10.6.0"
     "@graphql-tools/wrap": "npm:^10.0.22"
     "@whatwg-node/fetch": "npm:^0.10.1"
@@ -7668,7 +7668,7 @@ __metadata:
   dependenciesMeta:
     "@apollo/client":
       optional: true
-  checksum: 10c0/619bac738149e9c823073ab05e26371fa75eee27e8f092d0133cae83514ed2d47adc6ae0c8e76996c87050f02a37d32461598c2fda8274c4292a4145879cb221
+  checksum: 10c0/f54444cc996a80495dccbd15780a378746309218658e09f52128c4bc74eda7ec15640a3fca055aa76fdb5efc2be315fa90dced34a406a733413ab57e8608bbcf
   languageName: node
   linkType: hard
 
@@ -8070,6 +8070,24 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/583e6caa138e079da862165ecba80357947cc3dc0535e90a17409d8cab2780901448235470b2778ace2408a45a77ee1ea8284ba54be2fdc3bcfb85f04135796c
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/stitch@npm:^9.4.6":
+  version: 9.4.6
+  resolution: "@graphql-tools/stitch@npm:9.4.6"
+  dependencies:
+    "@graphql-tools/batch-delegate": "npm:^9.0.20"
+    "@graphql-tools/delegate": "npm:^10.2.4"
+    "@graphql-tools/executor": "npm:^1.3.3"
+    "@graphql-tools/merge": "npm:^9.0.9"
+    "@graphql-tools/schema": "npm:^10.0.8"
+    "@graphql-tools/utils": "npm:^10.6.0"
+    "@graphql-tools/wrap": "npm:^10.0.22"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/1ae1f11f4faa26af5bcc0368e99c5f522ac2e040ac59288d83b444ef528bcf1e5d99df848cd729a037076bc3e6bf68b542d187b36b44356ded9759dba468e7c2
   languageName: node
   linkType: hard
 
