@@ -3318,10 +3318,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20241127.0":
-  version: 4.20241127.0
-  resolution: "@cloudflare/workers-types@npm:4.20241127.0"
-  checksum: 10c0/4a87b5fadce857f3393b81e38da946229282420c89dbbbfc6bbebb95fa127eb489a2c963feb5359c9f3ae17f35f95eb30abf2cc8a81e3c07bee8e1f63a493e07
+"@cloudflare/workers-types@npm:4.20241202.0":
+  version: 4.20241202.0
+  resolution: "@cloudflare/workers-types@npm:4.20241202.0"
+  checksum: 10c0/ef3de4d02ed9e3fce2bbec162bc41a07f519f68e79e90b1bf0d6cb727bc1a7f9c87e4184ebba615de74c34eecd64b146b2485764083da9df233f52c8b35ded97
   languageName: node
   linkType: hard
 
@@ -4822,7 +4822,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.98.5"
     "@graphql-mesh/grpc": "npm:0.106.5"
     "@graphql-mesh/transform-naming-convention": "npm:0.103.5"
-    "@grpc/grpc-js": "npm:1.12.2"
+    "@grpc/grpc-js": "npm:1.12.3"
     "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:9.1.0"
     google-protobuf: "npm:3.21.4"
@@ -4841,7 +4841,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.98.5"
     "@graphql-mesh/grpc": "npm:0.106.5"
     "@graphql-mesh/transform-naming-convention": "npm:0.103.5"
-    "@grpc/grpc-js": "npm:1.12.2"
+    "@grpc/grpc-js": "npm:1.12.3"
     "@grpc/proto-loader": "npm:0.7.13"
     concurrently: "npm:9.1.0"
     google-protobuf: "npm:3.21.4"
@@ -6008,7 +6008,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20241127.0"
+    "@cloudflare/workers-types": "npm:4.20241202.0"
   peerDependencies:
     "@graphql-mesh/types": ^0.103.5
     "@graphql-mesh/utils": ^0.103.5
@@ -8402,13 +8402,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.12.2, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.12.2, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
-  version: 1.12.2
-  resolution: "@grpc/grpc-js@npm:1.12.2"
+"@grpc/grpc-js@npm:1.12.3, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.12.2, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
+  version: 1.12.3
+  resolution: "@grpc/grpc-js@npm:1.12.3"
   dependencies:
     "@grpc/proto-loader": "npm:^0.7.13"
     "@js-sdsl/ordered-map": "npm:^4.4.2"
-  checksum: 10c0/0370bdec80a5d73f0929c4b7a882af3b0ca85ed1fda361ce3986b705eb2aa9be59bba39a18b99cc05080d5c0819b319a56796dfde248375971ba64efd55fc9d6
+  checksum: 10c0/86fa7119a59622c4e0bdb71a02fc0735d13b4a8481db022becd0d704655a6849c3cc892c94bff0f022795fd22777c471080b2566a7d9a13a24382bafe07d5dc3
   languageName: node
   linkType: hard
 
@@ -18838,9 +18838,9 @@ __metadata:
   linkType: hard
 
 "dotenv@npm:^16.0.0, dotenv@npm:^16.0.3, dotenv@npm:^16.3.1, dotenv@npm:^16.4.5":
-  version: 16.4.5
-  resolution: "dotenv@npm:16.4.5"
-  checksum: 10c0/48d92870076832af0418b13acd6e5a5a3e83bb00df690d9812e94b24aff62b88ade955ac99a05501305b8dc8f1b0ee7638b18493deb6fe93d680e5220936292f
+  version: 16.4.6
+  resolution: "dotenv@npm:16.4.6"
+  checksum: 10c0/6c0c0c82eaa0ca6cc7193b2550920ec6d2eabfe32498bf454c0a1187c0680c79daa199ba873d33692f055755e5068f862689aca03bc8ff57e7d70302f3152012
   languageName: node
   linkType: hard
 
@@ -28383,9 +28383,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:10.2.0":
-  version: 10.2.0
-  resolution: "node-gyp@npm:10.2.0"
+"node-gyp@npm:10.3.1":
+  version: 10.3.1
+  resolution: "node-gyp@npm:10.3.1"
   dependencies:
     env-paths: "npm:^2.2.0"
     exponential-backoff: "npm:^3.1.1"
@@ -28399,7 +28399,7 @@ __metadata:
     which: "npm:^4.0.0"
   bin:
     node-gyp: bin/node-gyp.js
-  checksum: 10c0/00630d67dbd09a45aee0a5d55c05e3916ca9e6d427ee4f7bc392d2d3dc5fad7449b21fc098dd38260a53d9dcc9c879b36704a1994235d4707e7271af7e9a835b
+  checksum: 10c0/87c3b50e1f6f5256b5d2879a8c064eefa53ed444bad2a20870be43bc189db7cbffe22c30af056046c6d904181d73881b1726fd391d2f6f79f89b991019f195ea
   languageName: node
   linkType: hard
 
