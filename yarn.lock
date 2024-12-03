@@ -31518,11 +31518,11 @@ __metadata:
   linkType: hard
 
 "react-icons@npm:^5.0.0":
-  version: 5.3.0
-  resolution: "react-icons@npm:5.3.0"
+  version: 5.4.0
+  resolution: "react-icons@npm:5.4.0"
   peerDependencies:
     react: "*"
-  checksum: 10c0/a53af0de558f0e2bacfbafc973aa8ca1e6a429006a2f83d70becad5be431726a691e096336c95949bb0d967587b145264c5046d2bc1518969dbae731855d0712
+  checksum: 10c0/698b0c4616870152d86de2585fb709bf3eeb9292d971d689965dade5f0ee71cdc92d2125b728ab220cc39a4c6d6bad1ed526b9b934ab39a7b6001bc23b73ee16
   languageName: node
   linkType: hard
 
