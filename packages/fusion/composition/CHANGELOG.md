@@ -1,5 +1,13 @@
 # @graphql-mesh/fusion-composition
 
+## 0.7.11
+
+### Patch Changes
+
+- [`5883d66`](https://github.com/ardatan/graphql-mesh/commit/5883d6664730031b410b53c7c763fde981c1ae47)
+  Thanks [@ardatan](https://github.com/ardatan)! - Respect existing federation directives when
+  federation transform is used
+
 ## 0.7.10
 
 ### Patch Changes
