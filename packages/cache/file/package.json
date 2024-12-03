@@ -39,7 +39,7 @@
     "tslib": "^2.4.0"
   },
   "dependencies": {
-    "dataloader": "2.2.2"
+    "dataloader": "2.2.3"
   },
   "publishConfig": {
     "access": "public",
