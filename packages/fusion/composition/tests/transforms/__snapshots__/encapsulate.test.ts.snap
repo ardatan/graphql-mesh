@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`encapsulate works with federation transform 1`] = `
+"schema {
+  query: Query
+}
+
+type Query {
+  TEST: TESTQuery!
+}
+
+scalar ResolveToSourceArgs
+
+type Book {
+  id: ID!
+  name: String!
+}
+
+type TESTQuery {
+  getBookHere(id: ID!): Book
+}"
+`;

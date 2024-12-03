@@ -202,6 +202,21 @@ interface MergeDirectiveConfig {
   argsExpr?: string;
 }
 
+const federationDirectiveNames = [
+  'key',
+  'interfaceObject',
+  'extends',
+  'shareable',
+  'inaccessible',
+  'override',
+  'authenticated',
+  'requiresScopes',
+  'policy',
+  'external',
+  'provides',
+  'requires',
+];
+
 export function createFederationTransform(config: FederationTransformConfig): SubgraphTransform {
   return function (subgraphSchema, subgraphConfig) {
     const configurationByType = new Map<string, FederationCoordinateConfig>();
@@ -288,6 +303,15 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               usedFederationDirectives.add(`@${directiveName}`);
             }
           }
+          for (const directiveName of federationDirectiveNames) {
+            if (
+              directiveExtensions[directiveName]?.length &&
+              federationDirectiveNames.includes(directiveName)
+            ) {
+              usedFederationDirectives.add(`@${directiveName}`);
+            }
+          }
+          // Existing directives
           return new (Object.getPrototypeOf(type).constructor)({
             ...type.toConfig(),
             astNode: undefined,
@@ -351,6 +375,14 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           });
           mergeDirectiveUsed = true;
         }
+        for (const directiveName of federationDirectiveNames) {
+          if (
+            fieldDirectives[directiveName]?.length &&
+            federationDirectiveNames.includes(directiveName)
+          ) {
+            usedFederationDirectives.add(`@${directiveName}`);
+          }
+        }
         if (fieldTransformConfig || mergeDirectiveConfig) {
           return {
             ...fieldConfig,
@@ -374,6 +406,14 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 directiveConfig = {};
               }
               specificDirectiveExtensions.push(directiveConfig);
+              usedFederationDirectives.add(`@${directiveName}`);
+            }
+          }
+          for (const directiveName of federationDirectiveNames) {
+            if (
+              fieldDirectives[directiveName]?.length &&
+              federationDirectiveNames.includes(directiveName)
+            ) {
               usedFederationDirectives.add(`@${directiveName}`);
             }
           }

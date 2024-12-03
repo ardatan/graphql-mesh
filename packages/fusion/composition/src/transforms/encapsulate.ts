@@ -42,7 +42,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     for (const opTypeString in applyToMap) {
       const operationType = opTypeString as OperationTypeNode;
       const originalType = schema.getRootType(operationType);
-      if (applyToMap[operationType]) {
+      if (originalType && applyToMap[operationType]) {
         const originalTypeConfig = originalType.toConfig();
         const wrappedTypeName = `${groupName}${OPERATION_TYPE_SUFFIX_MAP[operationType]}`;
         const originalFieldMapWithHidden: GraphQLFieldConfigMap<any, any> = {};
