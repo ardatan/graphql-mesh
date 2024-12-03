@@ -42,7 +42,7 @@
   "dependencies": {
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/schema": "^10.0.5",
-    "@graphql-tools/stitch": "^9.2.17"
+    "@graphql-tools/stitch": "^9.4.6"
   },
   "publishConfig": {
     "access": "public",

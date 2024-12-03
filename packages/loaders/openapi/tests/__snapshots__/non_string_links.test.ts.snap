@@ -9,11 +9,11 @@ directive @httpOperation(subgraph: String, path: String, operationSpecificHeader
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
-
 directive @linkResolver(subgraph: String, linkResolverMap: ObjMap) on FIELD_DEFINITION
 
-directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
+directive @oas_link(subgraph: String, defaultRootType: String, defaultField: String) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
 type Query {
   test: test_200_response @httpOperation(subgraph: "toto", path: "/test", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @linkResolver(subgraph: "toto", linkResolverMap: "{\\"testLink\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"testLink\\"}}")
@@ -22,7 +22,7 @@ type Query {
 
 type test_200_response {
   String: String @resolveRoot(subgraph: "toto")
-  testLink: testLink_200_response @link(subgraph: "toto", defaultRootType: "Query", defaultField: "test")
+  testLink: testLink_200_response @oas_link(subgraph: "toto", defaultRootType: "Query", defaultField: "test")
 }
 
 type testLink_200_response {

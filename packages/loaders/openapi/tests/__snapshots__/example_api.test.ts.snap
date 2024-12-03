@@ -14,7 +14,7 @@ directive @httpOperation(subgraph: String, path: String, operationSpecificHeader
 
 directive @linkResolver(subgraph: String, linkResolverMap: ObjMap) on FIELD_DEFINITION
 
-directive @link(defaultRootType: String, defaultField: String) on FIELD_DEFINITION
+directive @oas_link(subgraph: String, defaultRootType: String, defaultField: String) on FIELD_DEFINITION
 
 directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
@@ -114,9 +114,9 @@ type user {
   status: query_getUsers_items_status
   nomenclature: query_getUsers_items_nomenclature
   """Allows to fetch the user's employer company."""
-  employerCompany: company @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getUserByUsername")
+  employerCompany: company @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getUserByUsername")
   """Allows to fetch the user's friends."""
-  friends: [user] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getUserByUsername")
+  friends: [user] @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getUserByUsername")
 }
 
 """The legal address of a user"""
@@ -159,7 +159,7 @@ type company {
   """The offices of a company"""
   offices: [address]
   """Allows to fetch the company's CEO user."""
-  ceoUser: user @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCompanyById")
+  ceoUser: user @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCompanyById")
 }
 
 """
@@ -227,13 +227,13 @@ type coordinates {
 type getCopier_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
+  basicLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
+  constantLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
+  variableLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
+  everythingLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getCopier")
 }
 
 """Represents empty values"""
@@ -248,9 +248,9 @@ type office {
   """The identifier of the company a user works for"""
   employerId: String
   """Allows to fetch the user who invented a product."""
-  owner: user @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getOffice")
+  owner: user @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getOffice")
   """Allows to fetch the user's employer company."""
-  company: company @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getOffice")
+  company: company @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getOffice")
 }
 
 input queryInput_returnAllOffices_parameters_Input {
@@ -274,10 +274,8 @@ type product_with_id {
   product_id: String @resolveRootField(subgraph: "example_api", field: "product-id")
   """A tag associated with the product"""
   product_tag: String @resolveRootField(subgraph: "example_api", field: "product-tag")
-  """Obtain reviews for a product."""
-  reviews: [query_getProductReviews_items] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
-  """Obtain reviews for a product."""
-  reviewsWithOperationRef: [query_getProductReviews_items] @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
+  reviews: [query_getProductReviews_items] @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
+  reviewsWithOperationRef: [query_getProductReviews_items] @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_product_with_id")
 }
 
 type query_getProductReviews_items {
@@ -298,7 +296,7 @@ type patent_with_id {
   inventor_id: String @resolveRootField(subgraph: "example_api", field: "inventor-id")
   patent_name: JSON! @resolveRootField(subgraph: "example_api", field: "patent-name")
   """Allows to fetch the user who invented a product."""
-  inventor: user @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_patent_with_id")
+  inventor: user @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_patent_with_id")
 }
 
 """A project"""
@@ -312,23 +310,23 @@ type project_with_id {
   """The patent associated with a project if applicable"""
   patentId: String
   """Allows to fetch the user leading a project."""
-  ProjectLead: user @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "post_project_with_id")
+  ProjectLead: user @oas_link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "post_project_with_id")
   """Allows to fetch the user leading a project."""
-  projectLead: user @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_project_with_id")
+  projectLead: user @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_project_with_id")
   """Allows to fetch a patent."""
-  patent: patent_with_id @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_project_with_id")
+  patent: patent_with_id @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "get_project_with_id")
 }
 
 type getScanner_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
+  basicLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
+  constantLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
+  variableLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
+  everythingLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "getScanner")
 }
 
 enum queryInput_getSnack_snack_type {
@@ -436,15 +434,15 @@ input project_with_id_Input {
 type postScanner_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
+  basicLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
+  constantLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
+  variableLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
+  everythingLink: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
   """Used to test link parameters with variables"""
-  everythingLink2: getCopier_200_response @link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
+  everythingLink2: getCopier_200_response @oas_link(subgraph: "example_api", defaultRootType: "Mutation", defaultField: "postScanner")
 }
 
 input post_status_request_Input {

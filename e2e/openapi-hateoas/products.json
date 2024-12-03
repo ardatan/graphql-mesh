@@ -1,0 +1,133 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Products API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/products/{id}": {
+      "get": {
+        "operationId": "getProductById",
+        "summary": "Get a product by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The product ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "discriminator": {
+          "propertyName": "_type",
+          "mapping": {
+            "ELECTRONICS": "#/components/schemas/Electronics",
+            "CLOTHING": "#/components/schemas/Clothing"
+          }
+        },
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/ProductLinks"
+          },
+          "_type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "supplierId": {
+            "type": "integer"
+          }
+        }
+      },
+      "Electronics": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Product"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "warranty": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "Clothing": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Product"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "material": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "ProductLinks": {
+        "type": "object",
+        "required": ["self", "supplier"],
+        "properties": {
+          "self": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "supplier": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "x-links": [
+          {
+            "rel": "self",
+            "href": "/products/{id}"
+          },
+          {
+            "rel": "supplier",
+            "href": "/suppliers/{supplierId}"
+          }
+        ]
+      },
+      "Link": {
+        "type": "object",
+        "required": ["href"],
+        "properties": {
+          "href": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

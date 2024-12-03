@@ -7,8 +7,8 @@
     "start": "npx hive-gateway"
   },
   "dependencies": {
-    "@graphql-hive/gateway": "^1.5.6",
-    "@graphql-mesh/compose-cli": "^1.2.11",
+    "@graphql-hive/gateway": "^1.5.8",
+    "@graphql-mesh/compose-cli": "workspace:^",
     "@omnigraph/openapi": "^0.108.5",
     "graphql": "^16.9.0"
   }

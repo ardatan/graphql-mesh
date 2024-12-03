@@ -7,6 +7,7 @@ import {
   isInterfaceType,
 } from 'graphql';
 import type {
+  InterfaceTypeComposer,
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfig,
   SchemaComposer,
@@ -18,8 +19,8 @@ import type { Logger } from '@graphql-mesh/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   HTTPOperationDirective,
-  LinkDirective,
   LinkResolverDirective,
+  OasLinkDirective,
   PubSubOperationDirective,
   ResolveRootDirective,
   ResponseMetadataDirective,
@@ -129,71 +130,86 @@ ${operationConfig.description || ''}
 
       const handleLinkMap = (
         linkMap: Record<string, JSONSchemaLinkConfig>,
-        typeTC: ObjectTypeComposer,
+        typeTC: ObjectTypeComposer | InterfaceTypeComposer,
       ) => {
         for (const linkName in linkMap) {
-          typeTC.addFields({
-            [linkName]: () => {
-              const linkObj = linkMap[linkName];
-              field.directives = field.directives || [];
-              let linkResolverMapDirective = field.directives.find(d => d.name === 'linkResolver');
-              if (!linkResolverMapDirective) {
-                schemaComposer.addDirective(LinkResolverDirective);
-                linkResolverMapDirective = {
-                  name: 'linkResolver',
+          const linkObj = linkMap[linkName];
+          field.directives = field.directives || [];
+          let linkResolverMapDirective = field.directives.find(d => d.name === 'linkResolver');
+          if (!linkResolverMapDirective) {
+            schemaComposer.addDirective(LinkResolverDirective);
+            linkResolverMapDirective = {
+              name: 'linkResolver',
+              args: {
+                subgraph: subgraphName,
+                linkResolverMap: {},
+              },
+            };
+            field.directives.push(linkResolverMapDirective);
+          }
+          const linkResolverFieldMap = linkResolverMapDirective.args.linkResolverMap;
+          let targetField: ObjectTypeComposerFieldConfig<any, any> | undefined;
+          let fieldTypeName: string;
+          try {
+            targetField = schemaComposer.Query.getField(linkObj.fieldName);
+            fieldTypeName = 'Query';
+          } catch {
+            try {
+              targetField = schemaComposer.Mutation.getField(linkObj.fieldName);
+              fieldTypeName = 'Mutation';
+            } catch {}
+          }
+          if (!targetField) {
+            logger.debug(
+              `Field ${linkObj.fieldName} not found in ${subgraphName} for link ${linkName}`,
+            );
+          }
+          linkResolverFieldMap[linkName] = {
+            linkObjArgs: linkObj.args,
+            targetTypeName: fieldTypeName,
+            targetFieldName: linkObj.fieldName,
+          };
+          schemaComposer.addDirective(OasLinkDirective);
+          const fields = {
+            [linkName]: {
+              ...targetField,
+              directives: [
+                {
+                  name: 'oas_link',
                   args: {
                     subgraph: subgraphName,
-                    linkResolverMap: {},
+                    defaultRootType: rootTypeName,
+                    defaultField: operationConfig.field,
                   },
-                };
-                field.directives.push(linkResolverMapDirective);
-              }
-              const linkResolverFieldMap = linkResolverMapDirective.args.linkResolverMap;
-              let targetField: ObjectTypeComposerFieldConfig<any, any> | undefined;
-              let fieldTypeName: string;
-              try {
-                targetField = schemaComposer.Query.getField(linkObj.fieldName);
-                fieldTypeName = 'Query';
-              } catch {
-                try {
-                  targetField = schemaComposer.Mutation.getField(linkObj.fieldName);
-                  fieldTypeName = 'Mutation';
-                } catch {}
-              }
-              if (!targetField) {
-                logger.debug(
-                  `Field ${linkObj.fieldName} not found in ${subgraphName} for link ${linkName}`,
-                );
-              }
-              linkResolverFieldMap[linkName] = {
-                linkObjArgs: linkObj.args,
-                targetTypeName: fieldTypeName,
-                targetFieldName: linkObj.fieldName,
-              };
-              schemaComposer.addDirective(LinkDirective);
-              return {
-                ...targetField,
-                directives: [
-                  {
-                    name: 'link',
-                    args: {
-                      subgraph: subgraphName,
-                      defaultRootType: rootTypeName,
-                      defaultField: operationConfig.field,
-                    },
-                  },
-                ],
-                args: linkObj.args ? {} : targetField.args,
-                description: linkObj.description || targetField.description,
-              };
+                },
+              ],
+              get args() {
+                return linkObj.args ? {} : targetField?.args;
+              },
+              get description() {
+                return linkObj.description || targetField?.description;
+              },
             },
-          });
+          };
+          typeTC.addFields(fields);
+          if (schemaComposer.isInterfaceType(typeTC)) {
+            const iFaceTC = typeTC as InterfaceTypeComposer;
+            for (const subTC of schemaComposer.types.values()) {
+              if ('getInterfaces' in subTC) {
+                if (
+                  subTC.getInterfaces().some(iFace => iFace.getTypeName() === iFaceTC.getTypeName())
+                ) {
+                  subTC.addFields(fields);
+                }
+              }
+            }
+          }
         }
       };
 
       if ('links' in operationConfig) {
-        const typeTC = schemaComposer.getOTC(field.type.getTypeName());
-        handleLinkMap(operationConfig.links, typeTC);
+        const typeTC = schemaComposer.getAnyTC(field.type.getTypeName());
+        handleLinkMap(operationConfig.links, typeTC as ObjectTypeComposer);
       }
 
       if ('exposeResponseMetadata' in operationConfig && operationConfig.exposeResponseMetadata) {
