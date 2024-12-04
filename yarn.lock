@@ -5276,7 +5276,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.5"
     "@graphql-mesh/openapi": "npm:0.108.5"
-    "@sinclair/typebox": "npm:0.34.9"
+    "@sinclair/typebox": "npm:0.34.10"
     concurrently: "npm:9.1.0"
     fets: "npm:0.8.4"
     graphql: "npm:16.9.0"
@@ -9740,8 +9740,8 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^6.0.0":
-  version: 6.2.0
-  resolution: "@neo4j/graphql@npm:6.2.0"
+  version: 6.2.1
+  resolution: "@neo4j/graphql@npm:6.2.1"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
@@ -9762,7 +9762,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/612ba748aa1df420bfa734d2b8bff6bef1fb050030a72cf24e190f9bec5f778879e8e010e4ab8237803fd8901a7b6db8406fd76e49c0415fe10eaee15cc11a4f
+  checksum: 10c0/a9ed768d0b9295c45647f66d82620f58c8cccbf590407e0c2695ae98b4c925876f84a782089a22dae00802423ae45cbf9d1721441482ff32494cc78935674e70
   languageName: node
   linkType: hard
 
@@ -11305,10 +11305,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.34.9, @sinclair/typebox@npm:^0.34.0":
-  version: 0.34.9
-  resolution: "@sinclair/typebox@npm:0.34.9"
-  checksum: 10c0/07c16654f4ad0d9b2ce80d4758f56c62d7dc94e958f16508dd2dd881e17f33ca34b716d2090bf76cd5d751fd50d990e68e8bf14c4943035713b3a1c8615e9969
+"@sinclair/typebox@npm:0.34.10":
+  version: 0.34.10
+  resolution: "@sinclair/typebox@npm:0.34.10"
+  checksum: 10c0/20336c0185af033805d0bddc232353f6dc149cbf4b1c86e3a1fcfe21d449c8c4244d72b9dc9e97aee563d3fa0bab1d21cece5481c820afe2c8261269d51c5834
   languageName: node
   linkType: hard
 
@@ -11323,6 +11323,13 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
+  languageName: node
+  linkType: hard
+
+"@sinclair/typebox@npm:^0.34.0":
+  version: 0.34.9
+  resolution: "@sinclair/typebox@npm:0.34.9"
+  checksum: 10c0/07c16654f4ad0d9b2ce80d4758f56c62d7dc94e958f16508dd2dd881e17f33ca34b716d2090bf76cd5d751fd50d990e68e8bf14c4943035713b3a1c8615e9969
   languageName: node
   linkType: hard
 
