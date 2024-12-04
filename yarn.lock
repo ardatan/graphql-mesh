@@ -4786,7 +4786,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.14"
     "@types/node": "npm:22.10.1"
-    "@types/react": "npm:18.3.12"
+    "@types/react": "npm:18.3.13"
     "@types/react-dom": "npm:18.3.1"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.9.0"
@@ -5052,7 +5052,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.106.5"
     "@graphql-mesh/openapi": "npm:0.108.5"
     "@graphql-mesh/runtime": "npm:0.105.5"
-    "@types/react": "npm:18.3.12"
+    "@types/react": "npm:18.3.13"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.9.0"
     next: "npm:15.0.3"
@@ -5070,7 +5070,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.106.5"
     "@graphql-mesh/openapi": "npm:0.108.5"
     "@graphql-mesh/runtime": "npm:0.105.5"
-    "@types/react": "npm:18.3.12"
+    "@types/react": "npm:18.3.13"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.9.0"
     next: "npm:15.0.3"
@@ -5167,7 +5167,7 @@ __metadata:
   resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.5"
-    "@types/react": "npm:18.3.12"
+    "@types/react": "npm:18.3.13"
     "@types/react-dom": "npm:18.3.1"
     "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.9.0"
@@ -13621,13 +13621,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.3.12":
+"@types/react@npm:*":
   version: 18.3.12
   resolution: "@types/react@npm:18.3.12"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/8bae8d9a41619804561574792e29112b413044eb0d53746dde2b9720c1f9a59f71c895bbd7987cd8ce9500b00786e53bc032dced38cddf42910458e145675290
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:18.3.13":
+  version: 18.3.13
+  resolution: "@types/react@npm:18.3.13"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/91815e00157deb179fa670aa2dfc491952698b7743ffddca0e3e0f16e7a18454f3f5ef72321a07386c49e721563b9d280dbbdfae039face764e2fdd8ad949d4b
   languageName: node
   linkType: hard
 
@@ -36965,7 +36975,7 @@ __metadata:
     "@theguild/components": "npm:^7.0.0"
     "@theguild/tailwind-config": "npm:0.5.0"
     "@types/node": "npm:22.10.1"
-    "@types/react": "npm:18.3.12"
+    "@types/react": "npm:18.3.13"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:15.0.3"
     next: "npm:^15.0.0"
