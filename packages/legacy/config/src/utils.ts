@@ -195,6 +195,7 @@ export async function resolvePubSub(
   additionalPackagePrefixes: string[],
 ): Promise<{
   code: string;
+  importCode: string;
   pubsub: MeshPubSub;
 }> {
   if (pubsubYamlConfig) {
@@ -222,16 +223,17 @@ export async function resolvePubSub(
 
     return {
       code,
+      importCode: '',
       pubsub,
     };
   } else {
     const pubsub = new PubSub();
 
-    const code = `const PubSub = await import('@graphql-mesh/utils').then(m => m?.default?.PubSub || m?.PubSub);
-    const pubsub = new PubSub();`;
+    const code = `const pubsub = new PubSub();`;
 
     return {
       code,
+      importCode: `import { PubSub } from '@graphql-mesh/utils';`,
       pubsub,
     };
   }
@@ -277,8 +279,8 @@ export async function resolveLogger(
 
     return {
       logger,
-      importCode: `import logger from ${JSON.stringify(processedModuleName)};`,
-      code: '',
+      importCode: ``,
+      code: `const logger = await import(${JSON.stringify(processedModuleName)}).then(m => m.default || m);`,
     };
   }
   const logger = new DefaultLogger(initialLoggerPrefix);

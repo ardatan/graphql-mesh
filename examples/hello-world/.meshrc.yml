@@ -17,3 +17,6 @@ documents:
     query HelloWorld {
       greeting
     }
+
+serve:
+  playground: true
