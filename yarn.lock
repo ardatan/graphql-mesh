@@ -117,7 +117,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:^3.8.0, @apollo/client@npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0":
+"@apollo/client@npm:^3.8.0":
   version: 3.11.10
   resolution: "@apollo/client@npm:3.11.10"
   dependencies:
@@ -7672,6 +7672,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-tools/executor-http@npm:^1.1.13":
+  version: 1.1.13
+  resolution: "@graphql-tools/executor-http@npm:1.1.13"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.6.2"
+    "@repeaterjs/repeater": "npm:^3.0.4"
+    "@whatwg-node/disposablestack": "npm:^0.0.5"
+    "@whatwg-node/fetch": "npm:^0.10.1"
+    extract-files: "npm:^11.0.0"
+    meros: "npm:^1.2.1"
+    tslib: "npm:^2.4.0"
+    value-or-promise: "npm:^1.0.12"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/72593a112c8afa8606ddc092355f61317efb8ef452904c06bc1ce58d39639cbe37cc6a7fbdba94c1d522cfdc645ade4d5e66f47835bd2045e7ac257584ba173b
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/executor-http@npm:^1.1.9":
   version: 1.1.11
   resolution: "@graphql-tools/executor-http@npm:1.1.11"
@@ -7721,12 +7739,11 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/federation@npm:^2.2.34, @graphql-tools/federation@npm:^2.2.38":
-  version: 2.2.38
-  resolution: "@graphql-tools/federation@npm:2.2.38"
+  version: 2.2.39
+  resolution: "@graphql-tools/federation@npm:2.2.39"
   dependencies:
-    "@apollo/client": "npm:~3.2.5 || ~3.3.0 || ~3.4.0 || ~3.5.0 || ~3.6.0 || ~3.7.0 || ~3.8.0 || ~3.9.0 || ~3.10.0 || ~3.11.0"
     "@graphql-tools/delegate": "npm:^10.2.6"
-    "@graphql-tools/executor-http": "npm:^1.1.12"
+    "@graphql-tools/executor-http": "npm:^1.1.13"
     "@graphql-tools/merge": "npm:^9.0.12"
     "@graphql-tools/schema": "npm:^10.0.11"
     "@graphql-tools/stitch": "npm:^9.4.8"
@@ -7736,10 +7753,7 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  dependenciesMeta:
-    "@apollo/client":
-      optional: true
-  checksum: 10c0/699bb67a2a6c68bbd70ae99512d3859ebc151bbaef9f7f35a457abd007acecc57f72b0bf9729cb56209e7bdedefc1bac74608d358bec91e235da77638c0207a4
+  checksum: 10c0/50a0d840c9acb8bf58be5ae9fb23efd2f389b0313c118ad4a0cdd94fa8a64d4d61b10e06008090e0d978601688187439215ede8c2828aa8b2b2e409bfd7bf292
   languageName: node
   linkType: hard
 
