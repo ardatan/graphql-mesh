@@ -1,20 +1,11 @@
 import { writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join, relative } from 'path';
-import type { Logger } from '@graphql-mesh/types';
 import { fetch } from '@whatwg-node/fetch';
-import { DefaultLogger } from '../src/logger.js';
+import { dummyLogger as logger } from '../../../testing/dummyLogger';
 import { readFile } from '../src/read-file-or-url.js';
 
 describe('readFile', () => {
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
   it('should convert relative paths to absolute paths correctly', async () => {
     const tmpFileAbsolutePath = join(tmpdir(), './tmpfile.json');
     const tmpFileContent = {

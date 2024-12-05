@@ -5,18 +5,11 @@ import {
   introspectionFromSchema,
   printSchema,
 } from 'graphql';
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { fakePromise } from '@graphql-tools/utils';
+import { dummyLogger as logger } from '../../testing/dummyLogger';
 import { loadGraphQLHTTPSubgraph } from '../src/loadGraphQLHTTPSubgraph';
 
-const logger: Logger = {
-  log: jest.fn(),
-  debug: jest.fn(),
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-  child: () => logger,
-};
 describe('loadGraphQLHTTPSubgraph', () => {
   it('respects schemaHeaders in introspection query', async () => {
     const fetchFn = jest.fn<Promise<Response>, Parameters<MeshFetch>>(() =>

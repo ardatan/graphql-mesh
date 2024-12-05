@@ -1,20 +1,12 @@
 /* eslint-disable no-new */
 import Redis from 'ioredis';
-import type { Logger } from '@graphql-mesh/types';
+import { dummyLogger as logger } from '../../../testing/dummyLogger';
 import RedisCache from '../src/index.js';
 
 jest.mock('ioredis');
 
 describe('redis', () => {
   beforeEach(() => jest.clearAllMocks());
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
 
   describe('constructor', () => {
     let redisUrlEnv: string;
