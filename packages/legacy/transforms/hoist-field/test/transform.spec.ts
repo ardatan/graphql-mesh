@@ -1,19 +1,12 @@
 import { buildSchema, GraphQLObjectType, printSchema, type GraphQLField } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger';
 import HoistFieldTransform from '../src/index.js';
 
 describe('hoist', () => {
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
   const importFn = defaultImportFn;
   const schema = buildSchema(/* GraphQL */ `
     type Query {

@@ -1,20 +1,12 @@
 import RedisCache from '@graphql-mesh/cache-redis';
-import type { Logger } from '@graphql-mesh/types';
+import { dummyLogger } from '../../../testing/dummyLogger';
 
 describe('Redis', () => {
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
   it('works', async () => {
     using redisCache = new RedisCache<any>({
       host: '{env.REDIS_HOST}',
       port: '{env.REDIS_PORT}',
-      logger,
+      logger: dummyLogger,
     });
     const test = await redisCache.get('test');
     expect(test).toBeUndefined();

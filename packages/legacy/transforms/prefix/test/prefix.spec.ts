@@ -1,20 +1,13 @@
 import { GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import PrefixTransform from '../src/index.js';
 
-const logger: Logger = {
-  log: jest.fn(),
-  debug: jest.fn(),
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-  child: () => logger,
-};
 describeTransformerTests('prefix', ({ mode, transformSchema }) => {
   let schema: GraphQLSchema;
   using cache = new InMemoryLRUCache();

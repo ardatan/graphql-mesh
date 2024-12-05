@@ -2,23 +2,15 @@ import { join } from 'path';
 import { buildSchema, GraphQLSchema, validateSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import type { KeyValueCache, Logger, YamlConfig } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
+import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { fetch as fetchFn } from '@whatwg-node/fetch';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger';
 import GrpcHandler from '../src/index.js';
 
 describe('gRPC Handler', () => {
   let pubsub: PubSub;
   let store: MeshStore;
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
   beforeEach(() => {
     pubsub = new PubSub();
     store = new MeshStore('grpc-test', new InMemoryStoreStorageAdapter(), {

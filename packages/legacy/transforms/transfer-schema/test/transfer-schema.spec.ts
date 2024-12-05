@@ -2,8 +2,9 @@
 import { GraphQLObjectType, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger';
 import TransferFieldTransform from '../src/index.js';
 
 describe('transfer-schema transform', () => {
@@ -23,14 +24,6 @@ describe('transfer-schema transform', () => {
     }
   `;
   let pubsub: MeshPubSub;
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
   const baseDir: string = undefined;
   using cache = new InMemoryLRUCache();
 
