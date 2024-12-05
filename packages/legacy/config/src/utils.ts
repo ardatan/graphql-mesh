@@ -173,8 +173,7 @@ export async function resolveCache(
     logger,
   });
 
-  const code = `
-  const MeshCache = await import(${JSON.stringify(moduleName)}).then(m => m.default || m);
+  const code = `const MeshCache = await import(${JSON.stringify(moduleName)}).then(m => m.default || m);
   const cache = new MeshCache({
       ...${JSON.stringify(config)},
       importFn,
