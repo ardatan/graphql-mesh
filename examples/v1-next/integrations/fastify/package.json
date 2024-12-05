@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@graphql-hive/gateway": "^1.5.6",
-    "@graphql-mesh/compose-cli": "^1.2.11",
+    "@graphql-mesh/compose-cli": "^1.2.12",
     "@omnigraph/openapi": "^0.108.5",
     "fastify": "^5.0.0",
     "graphql": "16.9.0",
