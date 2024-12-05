@@ -4818,13 +4818,13 @@ __metadata:
   dependencies:
     "@apollo/client": "npm:3.12.1"
     "@testing-library/jest-dom": "npm:6.6.3"
-    "@testing-library/react": "npm:16.0.1"
+    "@testing-library/react": "npm:16.1.0"
     "@testing-library/user-event": "npm:14.5.2"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.14"
     "@types/node": "npm:22.10.1"
-    "@types/react": "npm:18.3.13"
-    "@types/react-dom": "npm:18.3.1"
+    "@types/react": "npm:18.3.14"
+    "@types/react-dom": "npm:18.3.2"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.9.0"
     react: "npm:18.3.1"
@@ -5089,7 +5089,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.106.6"
     "@graphql-mesh/openapi": "npm:0.108.5"
     "@graphql-mesh/runtime": "npm:0.105.5"
-    "@types/react": "npm:18.3.13"
+    "@types/react": "npm:18.3.14"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.9.0"
     next: "npm:15.0.3"
@@ -5107,7 +5107,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.106.6"
     "@graphql-mesh/openapi": "npm:0.108.5"
     "@graphql-mesh/runtime": "npm:0.105.5"
-    "@types/react": "npm:18.3.13"
+    "@types/react": "npm:18.3.14"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.9.0"
     next: "npm:15.0.3"
@@ -5204,8 +5204,8 @@ __metadata:
   resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.6"
-    "@types/react": "npm:18.3.13"
-    "@types/react-dom": "npm:18.3.1"
+    "@types/react": "npm:18.3.14"
+    "@types/react-dom": "npm:18.3.2"
     "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.9.0"
     react: "npm:18.3.1"
@@ -12645,23 +12645,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:16.0.1":
-  version: 16.0.1
-  resolution: "@testing-library/react@npm:16.0.1"
+"@testing-library/react@npm:16.1.0":
+  version: 16.1.0
+  resolution: "@testing-library/react@npm:16.1.0"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
   peerDependencies:
     "@testing-library/dom": ^10.0.0
-    "@types/react": ^18.0.0
-    "@types/react-dom": ^18.0.0
-    react: ^18.0.0
-    react-dom: ^18.0.0
+    "@types/react": ^18.0.0 || ^19.0.0
+    "@types/react-dom": ^18.0.0 || ^19.0.0
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@types/react":
       optional: true
     "@types/react-dom":
       optional: true
-  checksum: 10c0/67d05dec5ad5a2e6f92b6a3234af785435c7bb62bdbf12f3bfc89c9bca0c871a189e88c4ba023ed4cea504704c87c6ac7e86e24a3962df6c521ae89b62f48ff7
+  checksum: 10c0/8451dcc76ba0d4f3504af78f2a4aacc13117691f4b7a3c279f3e047d5ea817ff686496ad53e7f65f6183112aef2be3f318af609b1f5d666eed42b1014d1c68d5
   languageName: node
   linkType: hard
 
@@ -13907,32 +13907,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:18.3.1":
-  version: 18.3.1
-  resolution: "@types/react-dom@npm:18.3.1"
+"@types/react-dom@npm:18.3.2":
+  version: 18.3.2
+  resolution: "@types/react-dom@npm:18.3.2"
   dependencies:
-    "@types/react": "npm:*"
-  checksum: 10c0/8b416551c60bb6bd8ec10e198c957910cfb271bc3922463040b0d57cf4739cdcd24b13224f8d68f10318926e1ec3cd69af0af79f0291b599a992f8c80d47f1eb
+    "@types/react": "npm:^18"
+  checksum: 10c0/22510231af67044a9542633b5b52ec16a8d71fa1da177f82428b8120d36619fd874c3b975b2eda6895baa53667f9fe8cba3acea1232a0244dffe8b11f6b32284
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
-  version: 18.3.12
-  resolution: "@types/react@npm:18.3.12"
+"@types/react@npm:18.3.14, @types/react@npm:^18":
+  version: 18.3.14
+  resolution: "@types/react@npm:18.3.14"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/8bae8d9a41619804561574792e29112b413044eb0d53746dde2b9720c1f9a59f71c895bbd7987cd8ce9500b00786e53bc032dced38cddf42910458e145675290
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:18.3.13":
-  version: 18.3.13
-  resolution: "@types/react@npm:18.3.13"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/91815e00157deb179fa670aa2dfc491952698b7743ffddca0e3e0f16e7a18454f3f5ef72321a07386c49e721563b9d280dbbdfae039face764e2fdd8ad949d4b
+  checksum: 10c0/d925fbfcf084238b93d1a0b5406d4cf9aeb37c4a1191559aa4ee107c2e55cc15327989140f03eddda4d471f5b935d4673fd74a86f451860edea18eae48ca44f8
   languageName: node
   linkType: hard
 
@@ -37353,7 +37343,7 @@ __metadata:
     "@theguild/components": "npm:^7.0.0"
     "@theguild/tailwind-config": "npm:0.5.0"
     "@types/node": "npm:22.10.1"
-    "@types/react": "npm:18.3.13"
+    "@types/react": "npm:18.3.14"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:15.0.3"
     next: "npm:^15.0.0"
