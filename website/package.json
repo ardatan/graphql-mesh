@@ -13,14 +13,14 @@
     "@theguild/components": "^7.0.0",
     "next": "^15.0.0",
     "next-sitemap": "^4.2.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-icons": "^5.0.0"
   },
   "devDependencies": {
     "@theguild/tailwind-config": "0.5.0",
     "@types/node": "22.10.1",
-    "@types/react": "18.3.14",
+    "@types/react": "19.0.0",
     "cross-env": "7.0.3",
     "eslint-config-next": "15.0.3",
     "postcss-import": "16.1.0",
