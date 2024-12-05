@@ -1,5 +1,13 @@
 # @graphql-mesh/compose-cli
 
+## 1.2.12
+
+### Patch Changes
+
+- [`8c11020`](https://github.com/ardatan/graphql-mesh/commit/8c11020e3abe249ff2b067002e7f4d97c2921598)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support \`extend\` keyword in SDL with
+  \`loadGraphQLHTTPSubgraph\`
+
 ## 1.2.11
 
 ### Patch Changes
