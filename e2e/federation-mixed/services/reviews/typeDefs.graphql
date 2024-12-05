@@ -5,13 +5,13 @@ type Review @key(fields: "id") {
   product: Product
 }
 
-type User @key(fields: "id") @extends {
+extend type User @key(fields: "id") {
   id: ID! @external
   username: String @external
   reviews: [Review]
 }
 
-type Product @key(fields: "upc") @extends {
+extend type Product @key(fields: "upc") {
   upc: String! @external
   reviews: [Review]
 }

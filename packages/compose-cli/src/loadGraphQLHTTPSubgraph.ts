@@ -1,4 +1,5 @@
 import {
+  buildASTSchema,
   buildClientSchema,
   buildSchema,
   DirectiveLocation,
@@ -11,6 +12,10 @@ import {
   GraphQLSchema,
   GraphQLString,
   isObjectType,
+  Kind,
+  parse,
+  visit,
+  type DocumentNode,
   type IntrospectionQuery,
 } from 'graphql';
 import { isUrl, readFile } from '@graphql-mesh/utils';
@@ -93,6 +98,107 @@ export interface GraphQLSubgraphLoaderHTTPConfiguration {
   transportKind?: 'http';
 }
 
+function fixExtends(node: DocumentNode) {
+  return visit(node, {
+    [Kind.OBJECT_TYPE_EXTENSION](node) {
+      return {
+        ...node,
+        directives: [
+          ...(node.directives || []),
+          {
+            kind: Kind.DIRECTIVE,
+            name: {
+              kind: Kind.NAME,
+              value: 'extends',
+            },
+          },
+        ],
+        kind: Kind.OBJECT_TYPE_DEFINITION,
+      };
+    },
+    [Kind.INTERFACE_TYPE_EXTENSION](node) {
+      return {
+        ...node,
+        directives: [
+          ...(node.directives || []),
+          {
+            kind: Kind.DIRECTIVE,
+            name: {
+              kind: Kind.NAME,
+              value: 'extends',
+            },
+          },
+        ],
+        kind: Kind.INTERFACE_TYPE_DEFINITION,
+      };
+    },
+    [Kind.UNION_TYPE_EXTENSION](node) {
+      return {
+        ...node,
+        directives: [
+          ...(node.directives || []),
+          {
+            kind: Kind.DIRECTIVE,
+            name: {
+              kind: Kind.NAME,
+              value: 'extends',
+            },
+          },
+        ],
+        kind: Kind.UNION_TYPE_DEFINITION,
+      };
+    },
+    [Kind.INPUT_OBJECT_TYPE_EXTENSION](node) {
+      return {
+        ...node,
+        directives: [
+          ...(node.directives || []),
+          {
+            kind: Kind.DIRECTIVE,
+            name: {
+              kind: Kind.NAME,
+              value: 'extends',
+            },
+          },
+        ],
+        kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
+      };
+    },
+    [Kind.ENUM_TYPE_EXTENSION](node) {
+      return {
+        ...node,
+        directives: [
+          ...(node.directives || []),
+          {
+            kind: Kind.DIRECTIVE,
+            name: {
+              kind: Kind.NAME,
+              value: 'extends',
+            },
+          },
+        ],
+        kind: Kind.ENUM_TYPE_DEFINITION,
+      };
+    },
+    [Kind.SCALAR_TYPE_EXTENSION](node) {
+      return {
+        ...node,
+        directives: [
+          ...(node.directives || []),
+          {
+            kind: Kind.DIRECTIVE,
+            name: {
+              kind: Kind.NAME,
+              value: 'extends',
+            },
+          },
+        ],
+        kind: Kind.SCALAR_TYPE_DEFINITION,
+      };
+    },
+  });
+}
+
 export function loadGraphQLHTTPSubgraph(
   subgraphName: string,
   {
@@ -152,10 +258,9 @@ export function loadGraphQLHTTPSubgraph(
         });
       }
       schema$ = mapMaybePromise(source$, sdl =>
-        buildSchema(sdl, {
+        buildASTSchema(fixExtends(parse(sdl, { noLocation: true })), {
           assumeValidSDL: true,
           assumeValid: true,
-          noLocation: true,
         }),
       );
     } else {
@@ -219,11 +324,17 @@ export function loadGraphQLHTTPSubgraph(
                   'Introspection Query Failed',
                 );
               }
-              return buildSchema(result?.data?._service?.sdl, {
-                assumeValidSDL: true,
-                assumeValid: true,
-                noLocation: true,
-              });
+              if (!result.data?._service?.sdl) {
+                throw new Error('Federation subgraph does not provide SDL');
+              }
+              // Replace "extend" keyword with "@extends"
+              return buildASTSchema(
+                fixExtends(parse(result.data._service.sdl, { noLocation: true })),
+                {
+                  assumeValidSDL: true,
+                  assumeValid: true,
+                },
+              );
             });
           },
         );
