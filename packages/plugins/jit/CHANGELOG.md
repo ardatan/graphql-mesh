@@ -1,5 +1,38 @@
 # @graphql-mesh/plugin-jit
 
+## 0.1.6
+
+### Patch Changes
+
+- [#8092](https://github.com/ardatan/graphql-mesh/pull/8092)
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@envelop/core@^5.0.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.2) (to
+    `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/utils@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.103.5)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^10.6.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.0)
+    (to `dependencies`)
+  - Added dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@envelop/core@^5.0.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.2) (from
+    `peerDependencies`)
+  - Removed dependency
+    [`@graphql-mesh/utils@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.103.5)
+    (from `peerDependencies`)
+  - Removed dependency
+    [`@graphql-tools/utils@^10.6.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.0)
+    (from `peerDependencies`)
+  - Removed dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (from
+    `peerDependencies`)
+- Updated dependencies
+  [[`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)]:
+  - @graphql-mesh/utils@0.103.6
+
 ## 0.1.5
 
 ### Patch Changes

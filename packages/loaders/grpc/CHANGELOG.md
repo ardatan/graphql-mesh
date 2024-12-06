@@ -1,5 +1,15 @@
 # @omnigraph/grpc
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9),
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)]:
+  - @graphql-mesh/cross-helpers@0.4.9
+  - @graphql-mesh/string-interpolation@0.5.7
+
 ## 0.1.2
 
 ### Patch Changes
