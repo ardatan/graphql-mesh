@@ -4787,7 +4787,7 @@ __metadata:
     "@types/jest": "npm:29.5.14"
     "@types/node": "npm:22.10.1"
     "@types/react": "npm:19.0.0"
-    "@types/react-dom": "npm:19.0.0"
+    "@types/react-dom": "npm:19.0.1"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.9.0"
     react: "npm:19.0.0"
@@ -5168,7 +5168,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.7"
     "@types/react": "npm:19.0.0"
-    "@types/react-dom": "npm:19.0.0"
+    "@types/react-dom": "npm:19.0.1"
     "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.9.0"
     react: "npm:19.0.0"
@@ -13641,12 +13641,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:19.0.0":
-  version: 19.0.0
-  resolution: "@types/react-dom@npm:19.0.0"
+"@types/react-dom@npm:19.0.1":
+  version: 19.0.1
+  resolution: "@types/react-dom@npm:19.0.1"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10c0/bd480fc4a9c801fc6bbc7d26b37bb815fc382e76b5428511b1bdb2e8048f3dbd2ff9973bafc86b448e0593f9da4c02f7b39d47409e427daeed5a54f045de4596
+  checksum: 10c0/fb40069a7c5c70475155dff91d25ff5a51226c14d45c8ad55894480366876426981c8be63ef322486af879bb220bf48443f2344c1a89cb75a47a1a761acee9d3
   languageName: node
   linkType: hard
 
