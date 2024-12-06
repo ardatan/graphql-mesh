@@ -6,19 +6,12 @@ import { parse } from 'graphql';
 import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
+import { dummyLogger as logger } from '../../../testing/dummyLogger';
 import { createExecutorFromSchemaAST, SOAPLoader } from '../src/index.js';
 
 const { readFile } = promises;
 
 describe('SOAP Loader', () => {
-  const mockLogger: Logger = {
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    log: jest.fn(),
-    child: () => mockLogger,
-  };
   afterEach(() => {
     globalAgent.destroy();
   });
@@ -28,7 +21,7 @@ describe('SOAP Loader', () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,
-      logger: mockLogger,
+      logger,
     });
     await soapLoader.fetchWSDL('https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL');
     const schema = soapLoader.buildSchema();
@@ -50,7 +43,7 @@ describe('SOAP Loader', () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,
-      logger: mockLogger,
+      logger,
     });
     const example1Wsdl = await readFile(join(__dirname, './fixtures/greeting.wsdl'), 'utf8');
     await soapLoader.loadWSDL(example1Wsdl);

@@ -24,16 +24,16 @@ describe('processConfig', () => {
     let meshConfigContent = '';
 
     // Find the custom fetch
-    const importCodesIterator = config.importCodes.values();
-    let importCodesIteratorResult = importCodesIterator.next();
+    const codesIterator = config.codes.values();
+    let codesIteratorResult = codesIterator.next();
     let includesCustomFetch;
-    while (!importCodesIteratorResult.done) {
-      if (importCodesIteratorResult.value.startsWith('import fetchFn from')) {
-        meshConfigContent = meshConfigContent.concat(importCodesIteratorResult.value, '\n');
+    while (!codesIteratorResult.done) {
+      if (codesIteratorResult.value.startsWith('const fetchFn = await import(')) {
+        meshConfigContent = meshConfigContent.concat(codesIteratorResult.value, '\n');
         includesCustomFetch = true;
         break;
       }
-      importCodesIteratorResult = importCodesIterator.next();
+      codesIteratorResult = codesIterator.next();
     }
     expect(includesCustomFetch).toBeTruthy();
 
@@ -41,6 +41,11 @@ describe('processConfig', () => {
 
     // Adding export of fetch function so its resolution is actually attempted
     meshConfigContent = meshConfigContent.concat('export { fetchFn };', '\n');
+
+    meshConfigContent = meshConfigContent.replace('await import', 'fakeImport');
+    meshConfigContent =
+      'const fakeImport = m => require("@graphql-tools/utils").fakePromise(require(m));\n' +
+      meshConfigContent;
 
     // Create a .ts file with the codes and importCodes content
     const meshConfigPath = pathModule.join(__dirname, generatedMeshConfiguration, '/index.ts');

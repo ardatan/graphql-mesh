@@ -5,6 +5,7 @@ import { findAndParseConfig } from '@graphql-mesh/cli';
 import { ProcessedConfig } from '@graphql-mesh/config';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { dummyLogger } from '../../../packages/testing/dummyLogger';
 import { createApp } from '../example-api/app';
 
 describe('Batching Example', () => {
@@ -15,14 +16,7 @@ describe('Batching Example', () => {
       dir: join(__dirname, '..'),
     });
     const app = createApp();
-    config.logger = {
-      info: () => {},
-      error: () => {},
-      warn: () => {},
-      debug: () => {},
-      log: () => {},
-      child: () => config.logger,
-    };
+    config.logger = dummyLogger;
     config.fetchFn = jest.fn(async (url, options) => app.fetch(url, options));
     mesh = await getMesh(config);
   });

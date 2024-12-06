@@ -37,17 +37,10 @@ import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { JSONSchema } from '@json-schema-tools/meta-schema';
 import { fetch } from '@whatwg-node/fetch';
+import { dummyLogger as logger } from '../../../testing/dummyLogger';
 import { getComposerFromJSONSchema } from '../src/getComposerFromJSONSchema.js';
 
 describe('getComposerFromJSONSchema', () => {
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
   const pubsub = new PubSub() as MeshPubSub;
   it('should return JSON scalar if given schema is boolean true', async () => {
     const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema: true, logger });

@@ -12,6 +12,7 @@ import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn as importFn, PubSub } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { createDisposableServer } from '../../../../testing/createDisposableServer.js';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger.js';
 import {
   AUTH_HEADER as AUTHORS_AUTH_HEADER,
   server as authorsServer,
@@ -24,16 +25,6 @@ import {
 describe('Supergraph', () => {
   let baseHandlerConfig;
   let baseGetMeshConfig;
-  const logger = {
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    log: jest.fn(),
-    child() {
-      return logger;
-    },
-  };
   const libcurl = globalThis.libcurl;
   beforeEach(() => {
     globalThis.libcurl = null;
