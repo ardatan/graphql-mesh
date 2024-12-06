@@ -1,5 +1,27 @@
 # @graphql-mesh/migrate-config-cli
 
+## 1.3.13
+
+### Patch Changes
+
+- [#8092](https://github.com/ardatan/graphql-mesh/pull/8092)
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (to
+    `dependencies`)
+  - Removed dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (from
+    `peerDependencies`)
+- Updated dependencies
+  [[`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9),
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9),
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9),
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)]:
+  - @graphql-mesh/compose-cli@1.2.13
+  - @graphql-mesh/config@0.106.7
+  - @graphql-mesh/types@0.103.6
+  - @graphql-mesh/utils@0.103.6
+  - @graphql-mesh/cli@0.98.7
+
 ## 1.3.12
 
 ### Patch Changes

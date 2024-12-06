@@ -1,5 +1,36 @@
 # @graphql-mesh/urql-exchange
 
+## 0.105.6
+
+### Patch Changes
+
+- [#8092](https://github.com/ardatan/graphql-mesh/pull/8092)
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/runtime@^0.105.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/runtime/v/0.105.5)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^10.6.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.0)
+    (to `dependencies`)
+  - Added dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (to
+    `dependencies`)
+  - Added dependency [`wonka@^6.3.1` ↗︎](https://www.npmjs.com/package/wonka/v/6.3.1) (to
+    `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/runtime@^0.105.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/runtime/v/0.105.5)
+    (from `peerDependencies`)
+  - Removed dependency
+    [`@graphql-tools/utils@^10.6.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.0)
+    (from `peerDependencies`)
+  - Removed dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (from
+    `peerDependencies`)
+  - Removed dependency [`wonka@^6.3.1` ↗︎](https://www.npmjs.com/package/wonka/v/6.3.1) (from
+    `peerDependencies`)
+- Updated dependencies
+  [[`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)]:
+  - @graphql-mesh/runtime@0.105.6
+
 ## 0.105.5
 
 ### Patch Changes

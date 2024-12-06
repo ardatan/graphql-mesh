@@ -1,5 +1,20 @@
 # @graphql-mesh/transport-odata
 
+## 0.1.6
+
+### Patch Changes
+
+- [#8092](https://github.com/ardatan/graphql-mesh/pull/8092)
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (to
+    `dependencies`)
+  - Removed dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (from
+    `peerDependencies`)
+- Updated dependencies
+  [[`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)]:
+  - @omnigraph/odata@0.1.6
+
 ## 0.1.5
 
 ### Patch Changes
