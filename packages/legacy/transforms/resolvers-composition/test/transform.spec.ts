@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { parse } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
@@ -18,10 +18,11 @@ describe('transform', () => {
     child: () => logger,
   };
   const baseDir: string = undefined;
+  using cache = new InMemoryLRUCache();
 
   it('should handle composition functions from external modules', async () => {
     const transform = new ResolversCompositionTransform({
-      cache: new InMemoryLRUCache(),
+      cache,
       pubsub: new PubSub(),
       config: [
         {
@@ -64,7 +65,7 @@ describe('transform', () => {
   it('should handle composition functions from functions', async () => {
     const composer: ResolversComposition = next => (root, args, context, info) => 'FOO';
     const transform = new ResolversCompositionTransform({
-      cache: new InMemoryLRUCache(),
+      cache,
       pubsub: new PubSub(),
       config: [
         {

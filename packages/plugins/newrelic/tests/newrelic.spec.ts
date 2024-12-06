@@ -1,10 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
-import LocalforageCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { createMeshHTTPHandler, type MeshHTTPHandler } from '@graphql-mesh/http';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { TestAgent } from '@newrelic/test-utilities';
 import { getTestMesh } from '../../../legacy/testing/getTestMesh.js';
 import useMeshNewRelic from '../src/index.js';
@@ -22,7 +22,7 @@ describe('New Relic', () => {
       error: jest.fn(),
       child: () => logger,
     };
-    const cache = new LocalforageCache();
+    const cache = new InMemoryLRUCache();
     const pubsub = new PubSub();
     const baseDir = __dirname;
     helper = TestAgent.makeInstrumented();

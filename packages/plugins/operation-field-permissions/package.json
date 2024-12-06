@@ -32,13 +32,13 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.8",
-    "@graphql-mesh/types": "^0.103.5",
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
-    "@envelop/operation-field-permissions": "6.0.0"
+    "@envelop/operation-field-permissions": "6.0.0",
+    "@graphql-mesh/cross-helpers": "^0.4.8",
+    "@graphql-mesh/types": "^0.103.5",
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",

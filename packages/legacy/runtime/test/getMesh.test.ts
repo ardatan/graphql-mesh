@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { buildSchema, parse, validateSchema } from 'graphql';
-import LocalforageCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import JsonSchemaHandler from '@graphql-mesh/json-schema';
 import BareMerger from '@graphql-mesh/merger-bare';
@@ -15,13 +15,13 @@ import type { MeshResolvedSource } from '../src/types.js';
 
 describe('getMesh', () => {
   const baseDir = __dirname;
-  let cache: LocalforageCache;
+  let cache: InMemoryLRUCache;
   let pubsub: PubSub;
   let store: MeshStore;
   let logger: Logger;
   let merger: StitchingMerger;
   beforeEach(() => {
-    cache = new LocalforageCache();
+    cache = new InMemoryLRUCache();
     pubsub = new PubSub();
     store = new MeshStore('test', new InMemoryStoreStorageAdapter(), {
       readonly: false,

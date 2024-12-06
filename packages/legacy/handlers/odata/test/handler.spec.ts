@@ -1,6 +1,6 @@
 import { GraphQLInterfaceType, parse, type ExecutionResult } from 'graphql';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { fs, path } from '@graphql-mesh/cross-helpers';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, Logger, MeshPubSub } from '@graphql-mesh/types';
@@ -37,7 +37,6 @@ const importFn = (id: string) => require(id);
 
 describe('odata', () => {
   let pubsub: MeshPubSub;
-  let cache: KeyValueCache;
   let store: MeshStore;
   const logger: Logger = {
     log: jest.fn(),
@@ -49,7 +48,6 @@ describe('odata', () => {
   };
   beforeEach(() => {
     pubsub = new PubSub();
-    cache = new InMemoryLRUCache();
     store = new MeshStore('odata', new InMemoryStoreStorageAdapter(), {
       readonly: false,
       validate: false,
@@ -61,6 +59,7 @@ describe('odata', () => {
       'https://services.odata.org/TripPinRESTierService/$metadata',
       async () => new MockResponse(TripPinMetadata),
     );
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -79,6 +78,7 @@ describe('odata', () => {
     expect(printSchemaWithDirectives(source.schema)).toMatchSnapshot();
   });
   it('should create correct GraphQL schema for functions with entity set paths', async () => {
+    using cache = new InMemoryLRUCache();
     addMock('http://sample.service.com/$metadata', async () => new MockResponse(BasicMetadata));
     const handler = new ODataHandler({
       name: 'SampleService',
@@ -98,6 +98,7 @@ describe('odata', () => {
     expect(printSchemaWithDirectives(source.schema)).toMatchSnapshot();
   });
   it('should create correct GraphQL schema for actions bound to entity set', async () => {
+    using cache = new InMemoryLRUCache();
     addMock(
       'http://sample.service.com/$metadata',
       async () => new MockResponse(BoundActionMetadata),
@@ -124,6 +125,7 @@ describe('odata', () => {
       'https://services.odata.org/TripPinRESTierService/$metadata',
       async () => new MockResponse(TripPinMetadata),
     );
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -161,6 +163,7 @@ describe('odata', () => {
       sentRequest = request;
       return new MockResponse(JSON.stringify({ value: [PersonMockData] }));
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -195,6 +198,7 @@ describe('odata', () => {
     expect(sentRequest!.url).toBe(correctUrl);
   });
   it('should generate correct HTTP request for requesting a single Entity by ID', async () => {
+    using cache = new InMemoryLRUCache();
     addMock(
       'https://services.odata.org/TripPinRESTierService/$metadata',
       async () => new MockResponse(TripPinMetadata),
@@ -260,6 +264,7 @@ describe('odata', () => {
         }),
       );
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -307,6 +312,7 @@ describe('odata', () => {
       sentRequest = request;
       return new MockResponse(JSON.stringify({ value: [PersonMockData] }));
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -352,6 +358,7 @@ describe('odata', () => {
       sentRequest = request;
       return new MockResponse(JSON.stringify(20));
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -415,6 +422,7 @@ describe('odata', () => {
       bodyObj['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(bodyObj));
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -463,6 +471,7 @@ describe('odata', () => {
       sentRequest = request;
       return new MockResponse(JSON.stringify({}));
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -511,6 +520,7 @@ describe('odata', () => {
       returnBody['@odata.type'] = 'Microsoft.OData.Service.Sample.TrippinInMemory.Models.Person';
       return new MockResponse(JSON.stringify(returnBody));
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -566,6 +576,7 @@ describe('odata', () => {
         }),
       );
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -624,6 +635,7 @@ describe('odata', () => {
         }),
       );
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -681,6 +693,7 @@ describe('odata', () => {
         }),
       );
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -729,6 +742,7 @@ describe('odata', () => {
       sentRequest = request;
       return new MockResponse(JSON.stringify(true));
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -778,6 +792,7 @@ describe('odata', () => {
       sentRequest = request;
       return new MockResponse(JSON.stringify(true));
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'TripPin',
       config: {
@@ -830,6 +845,7 @@ describe('odata', () => {
       sentRequest = request;
       return new MockResponse(JSON.stringify(true));
     });
+    using cache = new InMemoryLRUCache();
     const handler = new ODataHandler({
       name: 'Sample.Service',
       config: {

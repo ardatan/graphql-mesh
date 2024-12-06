@@ -32,16 +32,17 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@urql/core": "^2.4.3 || ^4.0.0 || ^5.0.0",
+    "graphql": "^15.2.0 || ^16.0.0"
+  },
+  "dependencies": {
     "@graphql-mesh/runtime": "^0.105.5",
     "@graphql-tools/utils": "^10.6.0",
-    "@urql/core": "^2.4.3 || ^4.0.0 || ^5.0.0",
-    "graphql": "^15.2.0 || ^16.0.0",
     "tslib": "^2.4.0",
     "wonka": "^6.3.1"
   },
   "devDependencies": {
-    "@urql/core": "5.0.8",
-    "wonka": "6.3.4"
+    "@urql/core": "5.0.8"
   },
   "publishConfig": {
     "access": "public",

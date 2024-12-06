@@ -2,14 +2,12 @@
 import { setTimeout } from 'timers/promises';
 import { parse, specifiedRules, validate } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import useMeshRateLimit from '../src/index.js';
 
 describe('Rate Limit Plugin', () => {
-  let cache: InMemoryLRUCache;
-
   const graphQLEnginePlugin = useEngine({
     parse,
     validate,
@@ -18,11 +16,8 @@ describe('Rate Limit Plugin', () => {
     specifiedRules,
   });
 
-  beforeEach(() => {
-    cache = new InMemoryLRUCache();
-  });
-
   it('should throw an error if the rate limit is exceeded', async () => {
+    using cache = new InMemoryLRUCache();
     let numberOfCalls = 0;
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -91,6 +86,7 @@ describe('Rate Limit Plugin', () => {
     expect(firstError.path).toEqual(['foo']);
   });
   it('should reset tokens when the ttl is expired', async () => {
+    using cache = new InMemoryLRUCache();
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {
@@ -152,6 +148,7 @@ describe('Rate Limit Plugin', () => {
     expect(result.data?.foo).toBe('bar');
   });
   it('should provide different tokens for different identifiers', async () => {
+    using cache = new InMemoryLRUCache();
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {
@@ -226,6 +223,7 @@ describe('Rate Limit Plugin', () => {
     expect.assertions(8);
   });
   it('should return other fields even if one of them has fails', async () => {
+    using cache = new InMemoryLRUCache();
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {

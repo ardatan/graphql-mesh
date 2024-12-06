@@ -32,14 +32,14 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
     "@envelop/core": "^5.0.2",
     "@graphql-mesh/utils": "^0.103.5",
     "@graphql-tools/utils": "^10.6.0",
-    "graphql": "*",
+    "graphql-jit": "^0.8.7",
     "tslib": "^2.4.0"
-  },
-  "dependencies": {
-    "graphql-jit": "^0.8.7"
   },
   "devDependencies": {
     "@graphql-hive/gateway-runtime": "^1.3.3"

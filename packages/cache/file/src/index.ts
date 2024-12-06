@@ -44,6 +44,11 @@ export default class FileCache<V = any> implements KeyValueCache<V> {
   async delete(name: string) {
     const json = await this.json$;
     delete json[name];
-    await this.writeDataLoader.load(name);
+    try {
+      await this.writeDataLoader.load(name);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

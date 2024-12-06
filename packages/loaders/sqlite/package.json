@@ -32,13 +32,13 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.8",
     "@graphql-mesh/types": "^0.103.5",
-    "@graphql-tools/delegate": "^10.0.28"
+    "@graphql-tools/delegate": "^10.0.28",
+    "tslib": "^2.4.0"
   },
   "optionalDependencies": {
     "tuql": "^1.7.0"

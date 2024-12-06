@@ -3,7 +3,7 @@ import type { ServerOptions } from 'graphql-ws/lib/server';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import type { YogaServerInstance } from 'graphql-yoga';
 import { WebSocketServer } from 'ws';
-import LocalforageCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import BareMerger from '@graphql-mesh/merger-bare';
 import { getMesh } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
@@ -38,7 +38,7 @@ describe('Supergraph', () => {
   beforeEach(() => {
     globalThis.libcurl = null;
     const baseDir = __dirname;
-    const cache = new LocalforageCache();
+    const cache = new InMemoryLRUCache();
     const store = new MeshStore('test', new InMemoryStoreStorageAdapter(), {
       validate: false,
       readonly: false,

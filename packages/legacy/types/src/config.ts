@@ -1802,6 +1802,7 @@ export interface LocalforageConfig {
 export interface RedisConfig {
   host?: string;
   port?: string;
+  username?: string;
   password?: string;
   db?: number;
   url?: string;

@@ -1,5 +1,5 @@
 import type { Logger, MeshFetch, OnFetchHook, OnFetchHookDone } from '@graphql-mesh/types';
-import { mapMaybePromise, type ExecutionRequest } from '@graphql-tools/utils';
+import { mapMaybePromise, type ExecutionRequest, type MaybePromise } from '@graphql-tools/utils';
 import { iterateAsync } from './iterateAsync.js';
 import { DefaultLogger } from './logger.js';
 
@@ -9,11 +9,12 @@ export const loggerForExecutionRequest = new WeakMap<ExecutionRequest, Logger>()
 export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>[]): MeshFetch {
   return function wrappedFetchFn(url, options, context, info) {
     let fetchFn: MeshFetch;
+    let response$: MaybePromise<Response>;
     const onFetchDoneHooks: OnFetchHookDone[] = [];
     return mapMaybePromise(
       iterateAsync(
         onFetchHooks,
-        onFetch =>
+        (onFetch, endEarly) =>
           onFetch({
             fetchFn,
             setFetchFn(newFetchFn) {
@@ -56,15 +57,22 @@ export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>
               }
               return logger;
             },
+            endResponse(newResponse) {
+              response$ = newResponse;
+              endEarly();
+            },
           }),
         onFetchDoneHooks,
       ),
       function handleIterationResult() {
-        const res$ = fetchFn(url, options, context, info);
-        if (onFetchDoneHooks.length === 0) {
-          return res$;
+        if (response$) {
+          return response$;
         }
-        return mapMaybePromise(res$, function (response: Response) {
+        response$ = fetchFn(url, options, context, info);
+        if (onFetchDoneHooks.length === 0) {
+          return response$;
+        }
+        return mapMaybePromise(response$, function (response: Response) {
           return mapMaybePromise(
             iterateAsync(onFetchDoneHooks, onFetchDone =>
               onFetchDone({

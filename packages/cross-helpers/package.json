@@ -17,10 +17,10 @@
   "types": "index.d.ts",
   "typings": "./index.d.ts",
   "peerDependencies": {
-    "@graphql-tools/utils": "^10.6.0",
     "graphql": "*"
   },
   "dependencies": {
+    "@graphql-tools/utils": "^10.6.0",
     "path-browserify": "1.0.1"
   },
   "publishConfig": {

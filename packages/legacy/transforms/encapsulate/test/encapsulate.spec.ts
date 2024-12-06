@@ -1,6 +1,6 @@
 import { getIntrospectionQuery, parse } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { ImportFn, Logger, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { Subschema } from '@graphql-tools/delegate';
@@ -62,15 +62,14 @@ describe('encapsulate', () => {
       },
     },
   });
-  let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
 
   beforeEach(() => {
-    cache = new InMemoryLRUCache();
     pubsub = new PubSub();
   });
 
   it('should wrap the schema and group Mutation correctly', async () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -92,6 +91,7 @@ describe('encapsulate', () => {
   });
 
   it('should wrap the schema and group Subscription correctly', async () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -115,6 +115,7 @@ describe('encapsulate', () => {
   });
 
   it('should wrap the schema and group Query correctly', async () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -145,6 +146,7 @@ describe('encapsulate', () => {
     }
     expect(resultBefore.data.getSomething).toBe('boop');
 
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -182,6 +184,7 @@ describe('encapsulate', () => {
     }
     expect(resultBefore.data.doSomething).toBe('noop');
 
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -220,6 +223,7 @@ describe('encapsulate', () => {
       },
     });
 
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -280,6 +284,7 @@ describe('encapsulate', () => {
   });
 
   it('should be able to encapsulate schema root types with custom names', async () => {
+    using cache = new InMemoryLRUCache();
     const newCustomSchema = wrapSchema({
       schema: customSchema,
       transforms: [
@@ -324,6 +329,7 @@ describe('encapsulate', () => {
   });
 
   it('should respect the settings in applyTo', async () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -353,6 +359,7 @@ describe('encapsulate', () => {
   });
 
   it('should handle subscriptions', async () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -397,6 +404,7 @@ describe('encapsulate', () => {
   });
 
   it('should handle subscriptions', async () => {
+    using cache = new InMemoryLRUCache();
     const getEnveloped = envelop({
       plugins: [
         useEngine({

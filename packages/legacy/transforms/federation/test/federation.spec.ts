@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { buildSchema } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
@@ -11,7 +11,6 @@ describe('transform-federation', () => {
   const baseDir = __dirname;
   const config = {};
   const importFn = defaultImportFn;
-  const cache = new InMemoryLRUCache();
   const logger: Logger = {
     log: jest.fn(),
     debug: jest.fn(),
@@ -22,6 +21,7 @@ describe('transform-federation', () => {
   };
   const pubsub = new PubSub();
   it('should trim non federation directives', () => {
+    using cache = new InMemoryLRUCache();
     const schema = buildSchema(/* GraphQL */ `
       directive @fooField on FIELD_DEFINITION
       directive @foo on OBJECT | INTERFACE

@@ -1,5 +1,5 @@
 import { GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
@@ -17,7 +17,7 @@ const logger: Logger = {
 };
 describeTransformerTests('prefix', ({ mode, transformSchema }) => {
   let schema: GraphQLSchema;
-  let cache: InMemoryLRUCache;
+  using cache = new InMemoryLRUCache();
   let pubsub: MeshPubSub;
   const baseDir: string = undefined;
 
@@ -59,7 +59,6 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         },
       },
     });
-    cache = new InMemoryLRUCache();
     pubsub = new PubSub();
   });
 

@@ -32,13 +32,14 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.103.5",
-    "@graphql-mesh/utils": "^0.103.5",
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
-    "localforage": "1.10.0"
+    "@graphql-mesh/cache-inmemory-lru": "^0.0.0",
+    "@graphql-mesh/types": "^0.103.5",
+    "@graphql-mesh/utils": "^0.103.5",
+    "localforage": "1.10.0",
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
