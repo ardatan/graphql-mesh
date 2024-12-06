@@ -1,5 +1,13 @@
 # @graphql-mesh/compose-cli
 
+## 1.2.14
+
+### Patch Changes
+
+- [`979530c`](https://github.com/ardatan/graphql-mesh/commit/979530c8ca5b6085ed0228911b9e820a5519b1f9)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support string interpolation on \`endpoint\` and
+  \`source\`
+
 ## 1.2.13
 
 ### Patch Changes
