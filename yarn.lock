@@ -4479,7 +4479,7 @@ __metadata:
   dependencies:
     "@envelop/auth0": "npm:^6.0.0"
     "@graphql-hive/gateway": "npm:^1.5.6"
-    "@graphql-mesh/compose-cli": "npm:^1.2.13"
+    "@graphql-mesh/compose-cli": "npm:^1.2.14"
     "@graphql-mesh/plugin-operation-field-permissions": "npm:^0.103.6"
     "@omnigraph/json-schema": "npm:^0.108.6"
     graphql: "npm:16.9.0"
@@ -4494,7 +4494,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^1.5.6"
     "@graphql-mesh/cache-cfw-kv": "npm:^0.104.6"
     "@graphql-mesh/cache-localforage": "npm:^0.103.6"
-    "@graphql-mesh/compose-cli": "npm:^1.2.13"
+    "@graphql-mesh/compose-cli": "npm:^1.2.14"
     "@graphql-mesh/plugin-response-cache": "npm:^0.103.6"
     "@omnigraph/json-schema": "npm:^0.108.6"
     graphql: "npm:16.9.0"
@@ -4521,7 +4521,7 @@ __metadata:
   resolution: "@examples-v1-next/fastify@workspace:examples/v1-next/integrations/fastify"
   dependencies:
     "@graphql-hive/gateway": "npm:^1.5.6"
-    "@graphql-mesh/compose-cli": "npm:^1.2.13"
+    "@graphql-mesh/compose-cli": "npm:^1.2.14"
     "@omnigraph/openapi": "npm:^0.108.6"
     fastify: "npm:^5.0.0"
     graphql: "npm:16.9.0"
@@ -4537,7 +4537,7 @@ __metadata:
   dependencies:
     "@google-cloud/functions-framework": "npm:^3.3.0"
     "@graphql-hive/gateway": "npm:^1.5.6"
-    "@graphql-mesh/compose-cli": "npm:^1.2.13"
+    "@graphql-mesh/compose-cli": "npm:^1.2.14"
     "@omnigraph/json-schema": "npm:^0.108.6"
     "@types/node": "npm:^22.0.0"
     graphql: "npm:^16.9.0"
@@ -4600,7 +4600,7 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway": "npm:^1.5.6"
     "@graphql-mesh/cache-localforage": "npm:^0.103.6"
-    "@graphql-mesh/compose-cli": "npm:^1.2.13"
+    "@graphql-mesh/compose-cli": "npm:^1.2.14"
     "@omnigraph/openapi": "npm:^0.108.6"
     graphql: "npm:^16.9.0"
   languageName: unknown
@@ -4611,7 +4611,7 @@ __metadata:
   resolution: "@examples-v1-next/openapi-youtrack@workspace:examples/v1-next/openapi-youtrack"
   dependencies:
     "@graphql-hive/gateway": "npm:^1.5.6"
-    "@graphql-mesh/compose-cli": "npm:^1.2.13"
+    "@graphql-mesh/compose-cli": "npm:^1.2.14"
     "@omnigraph/openapi": "npm:^0.108.6"
     graphql: "npm:^16.9.0"
   languageName: unknown
@@ -6178,7 +6178,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/compose-cli@npm:1.2.13, @graphql-mesh/compose-cli@npm:^1.2.13, @graphql-mesh/compose-cli@workspace:*, @graphql-mesh/compose-cli@workspace:packages/compose-cli":
+"@graphql-mesh/compose-cli@npm:1.2.14, @graphql-mesh/compose-cli@npm:^1.2.14, @graphql-mesh/compose-cli@workspace:*, @graphql-mesh/compose-cli@workspace:packages/compose-cli":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
@@ -6453,7 +6453,7 @@ __metadata:
   resolution: "@graphql-mesh/migrate-config-cli@workspace:packages/legacy/migrate-config-cli"
   dependencies:
     "@graphql-mesh/cli": "npm:^0.98.7"
-    "@graphql-mesh/compose-cli": "npm:^1.2.13"
+    "@graphql-mesh/compose-cli": "npm:^1.2.14"
     "@graphql-mesh/config": "npm:^0.106.7"
     "@graphql-mesh/types": "npm:^0.103.6"
     "@graphql-mesh/utils": "npm:^0.103.6"
@@ -20360,7 +20360,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:4.1.2"
     "@graphql-codegen/typescript-resolvers": "npm:4.4.1"
     "@graphql-hive/gateway": "npm:1.6.2"
-    "@graphql-mesh/compose-cli": "npm:1.2.13"
+    "@graphql-mesh/compose-cli": "npm:1.2.14"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.10.4"
     "@types/node": "npm:22.10.1"
     concurrently: "npm:9.1.0"
