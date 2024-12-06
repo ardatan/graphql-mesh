@@ -32,6 +32,16 @@
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch"
+    },
+    {
+      "groupName": "gateway dependencies",
+      "groupSlug": "all-gateway",
+      "matchPackagePatterns": [
+        "@whatwg-node/*",
+        "@graphql-hive/*",
+        "@graphql-mesh/*",
+        "@graphql-tools/*"
+      ]
     }
   ]
 }
