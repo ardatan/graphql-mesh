@@ -1,6 +1,7 @@
 
 * `host` (type: `String`)
 * `port` (type: `String`)
+* `username` (type: `String`)
 * `password` (type: `String`)
 * `db` (type: `Int`)
 * `url` (type: `String`)

@@ -34,12 +34,19 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
 
       redisUrl.searchParams.set('enableAutoPipelining', 'true');
       redisUrl.searchParams.set('enableOfflineQueue', 'true');
-
-      options.logger.debug(`Connecting to Redis at ${redisUrl.toString()}`);
-      this.client = new Redis(redisUrl?.toString());
+      const IPV6_REGEX =
+        /^(?:(?:[a-fA-F\d]{1,4}:){7}(?:[a-fA-F\d]{1,4}|:)|(?:[a-fA-F\d]{1,4}:){6}(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|:[a-fA-F\d]{1,4}|:)|(?:[a-fA-F\d]{1,4}:){5}(?::(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,2}|:)|(?:[a-fA-F\d]{1,4}:){4}(?:(?::[a-fA-F\d]{1,4}){0,1}:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,3}|:)|(?:[a-fA-F\d]{1,4}:){3}(?:(?::[a-fA-F\d]{1,4}){0,2}:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,4}|:)|(?:[a-fA-F\d]{1,4}:){2}(?:(?::[a-fA-F\d]{1,4}){0,3}:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,5}|:)|(?:[a-fA-F\d]{1,4}:){1}(?:(?::[a-fA-F\d]{1,4}){0,4}:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,6}|:)|(?::(?:(?::[a-fA-F\d]{1,4}){0,5}:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,7}|:)))(?:%[0-9a-zA-Z]{1,})?$/gm;
+      if (IPV6_REGEX.test(redisUrl.hostname)) {
+        redisUrl.searchParams.set('family', '6');
+      }
+      const urlStr = redisUrl.toString();
+      options.logger.debug(`Connecting to Redis at ${urlStr}`);
+      this.client = new Redis(urlStr);
     } else {
       const parsedHost = interpolateStrWithEnv(options.host?.toString()) || process.env.REDIS_HOST;
       const parsedPort = interpolateStrWithEnv(options.port?.toString()) || process.env.REDIS_PORT;
+      const parsedUsername =
+        interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
       const parsedPassword =
         interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
       const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
@@ -50,6 +57,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
         this.client = new Redis({
           host: parsedHost,
           port: isNaN(numPort) ? undefined : numPort,
+          username: parsedUsername,
           password: parsedPassword,
           db: isNaN(numDb) ? undefined : numDb,
           ...(lazyConnect ? { lazyConnect: true } : {}),
