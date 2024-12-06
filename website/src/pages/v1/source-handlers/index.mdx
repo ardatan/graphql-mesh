@@ -117,7 +117,8 @@ export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadGraphQLHTTPSubgraph('Users', {
-        endpoint: 'http://localhost:4001/users',
+        // You can also use the environment variables in the endpoint
+        endpoint: 'http://{env.MY_HOST_NAME}:4001/users',
 
         operationHeaders: {
           Authorization: 'Bearer {env.VERY_SECRET_TOKEN}'
