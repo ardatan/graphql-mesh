@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "workspace:^",
+    "@graphql-mesh/cache-inmemory-lru": "^0.0.0",
     "@graphql-mesh/types": "^0.103.5",
     "@graphql-mesh/utils": "^0.103.5",
     "localforage": "1.10.0",

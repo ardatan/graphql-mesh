@@ -6114,7 +6114,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/cache-inmemory-lru@workspace:^, @graphql-mesh/cache-inmemory-lru@workspace:packages/cache/inmemory-lru":
+"@graphql-mesh/cache-inmemory-lru@npm:^0.0.0, @graphql-mesh/cache-inmemory-lru@workspace:packages/cache/inmemory-lru":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-inmemory-lru@workspace:packages/cache/inmemory-lru"
   dependencies:
@@ -6131,7 +6131,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-localforage@workspace:packages/cache/localforage"
   dependencies:
-    "@graphql-mesh/cache-inmemory-lru": "workspace:^"
+    "@graphql-mesh/cache-inmemory-lru": "npm:^0.0.0"
     "@graphql-mesh/types": "npm:^0.103.5"
     "@graphql-mesh/utils": "npm:^0.103.5"
     localforage: "npm:1.10.0"
