@@ -2,7 +2,7 @@ import { mapMaybePromise, type MaybePromise } from '@graphql-tools/utils';
 
 export function iterateAsync<TInput, TOutput>(
   iterable: Iterable<TInput>,
-  callback: (input: TInput) => MaybePromise<TOutput>,
+  callback: (input: TInput, endEarly: VoidFunction) => MaybePromise<TOutput>,
   results?: TOutput[],
 ): MaybePromise<void> {
   const iterator = iterable[Symbol.iterator]();
@@ -11,7 +11,14 @@ export function iterateAsync<TInput, TOutput>(
     if (endOfIterator) {
       return;
     }
-    return mapMaybePromise(callback(value), result => {
+    let endedEarly = false;
+    function endEarly() {
+      endedEarly = true;
+    }
+    return mapMaybePromise(callback(value, endEarly), result => {
+      if (endedEarly) {
+        return;
+      }
       if (result) {
         results?.push(result);
       }

@@ -183,6 +183,7 @@ export interface OnFetchHookPayload<TContext> {
   executionRequest?: ExecutionRequest;
   logger: Logger;
   requestId?: string;
+  endResponse: (response$: MaybePromise<Response>) => void;
 }
 
 export interface OnFetchHookDonePayload {
