@@ -2,7 +2,7 @@
 "@graphql-mesh/cache-localforage": patch
 ---
 dependencies updates:
-  - Added dependency [`@graphql-mesh/cache-inmemory-lru@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cache-inmemory-lru/v/workspace:^) (to `dependencies`)
+  - Added dependency [`@graphql-mesh/cache-inmemory-lru@^0.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cache-inmemory-lru/v/0.0.0) (to `dependencies`)
   - Added dependency [`@graphql-mesh/types@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.103.5) (to `dependencies`)
   - Added dependency [`@graphql-mesh/utils@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.103.5) (to `dependencies`)
   - Added dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (to `dependencies`)
