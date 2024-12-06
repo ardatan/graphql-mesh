@@ -1,14 +1,19 @@
 import LocalForage from 'localforage';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
+import type {
+  KeyValueCache,
+  KeyValueCacheSetOptions,
+  MeshPubSub,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 
 export default class LocalforageCache<V = any> implements KeyValueCache<V> {
   private localforage: LocalForage;
-  constructor(config?: YamlConfig.LocalforageConfig) {
+  constructor(config?: YamlConfig.LocalforageConfig & { pubsub?: MeshPubSub }) {
     const driverNames = config?.driver || ['INDEXEDDB', 'WEBSQL', 'LOCALSTORAGE'];
     if (driverNames.every(driverName => !LocalForage.supports(driverName))) {
-      return new InMemoryLRUCache() as any;
+      return new InMemoryLRUCache({ pubsub: config?.pubsub }) as any;
     }
     this.localforage = LocalForage.createInstance({
       name: config?.name || 'graphql-mesh-cache',

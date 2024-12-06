@@ -2,7 +2,7 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSchema, createYoga, Repeater } from 'graphql-yoga';
-import LocalforageCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { getMesh, type GetMeshOptions } from '@graphql-mesh/runtime';
@@ -38,7 +38,7 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
       },
     }),
   });
-  const cache = new LocalforageCache();
+  const cache = new InMemoryLRUCache();
   const pubsub = new PubSub();
   const logger = new DefaultLogger('Test');
   const store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {

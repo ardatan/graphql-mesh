@@ -6591,6 +6591,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-deduplicate-request@workspace:packages/plugins/deduplicate-request"
   dependencies:
     "@graphql-mesh/types": "npm:^0.103.5"
+    "@graphql-mesh/utils": "npm:^0.103.5"
     "@graphql-tools/utils": "npm:^10.6.0"
     "@whatwg-node/fetch": "npm:0.10.1"
     tslib: "npm:^2.4.0"

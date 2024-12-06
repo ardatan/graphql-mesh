@@ -1,4 +1,5 @@
 import type { MeshPlugin } from '@graphql-mesh/types';
+import { getHeadersObj } from '@graphql-mesh/utils';
 import { mapMaybePromise, type MaybePromise } from '@graphql-tools/utils';
 
 export default function useDeduplicateRequest(): MeshPlugin<any> {
@@ -22,10 +23,11 @@ export default function useDeduplicateRequest(): MeshPlugin<any> {
         if (method === 'GET') {
           const reqResMap = getReqResMapByContext(context);
 
-          const dedupCacheKey = JSON.stringify({
-            url,
-            headers: options.headers || {},
-          });
+          let dedupCacheKey = url;
+          if (options.headers) {
+            const headersObj = getHeadersObj(options.headers);
+            dedupCacheKey += JSON.stringify(headersObj);
+          }
           const dedupRes$ = reqResMap.get(dedupCacheKey);
           if (dedupRes$) {
             endResponse(dedupRes$);

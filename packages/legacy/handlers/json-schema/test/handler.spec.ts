@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { parse } from 'graphql';
-import LocalforageCache from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, getHeadersObj, PubSub } from '@graphql-mesh/utils';
@@ -42,7 +42,7 @@ describe('JSON Schema Handler', () => {
       },
       baseDir: __dirname,
       name: 'Test',
-      cache: new LocalforageCache(),
+      cache: new InMemoryLRUCache(),
       store: new MeshStore('test', new InMemoryStoreStorageAdapter(), {
         readonly: false,
         validate: false,

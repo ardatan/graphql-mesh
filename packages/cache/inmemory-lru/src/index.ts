@@ -27,8 +27,8 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V>, Disp
     this.lru.set(key, value);
     if (options?.ttl) {
       const timeout = setTimeout(() => {
-        this.lru.delete(key);
         this.timeouts.delete(timeout);
+        this.lru.delete(key);
       }, options.ttl * 1000);
       this.timeouts.add(timeout);
     }
