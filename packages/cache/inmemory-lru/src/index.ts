@@ -1,16 +1,22 @@
-import type { KeyValueCache, KeyValueCacheSetOptions } from '@graphql-mesh/types';
+import type { KeyValueCache, KeyValueCacheSetOptions, MeshPubSub } from '@graphql-mesh/types';
 import { createLruCache, type LRUCache } from '@graphql-mesh/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export interface InMemoryLRUCacheOptions {
   max?: number;
   ttl?: number;
+  pubsub?: MeshPubSub;
 }
 
-export class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
+export default class InMemoryLRUCache<V = any> implements KeyValueCache<V>, Disposable {
   private lru: LRUCache;
   private timeouts = new Set<ReturnType<typeof setTimeout>>();
   constructor(options?: InMemoryLRUCacheOptions) {
     this.lru = createLruCache(options?.max, options?.ttl);
+    const subId = options?.pubsub?.subscribe?.('destroy', () => {
+      options?.pubsub?.unsubscribe(subId);
+      this[DisposableSymbols.dispose]();
+    });
   }
 
   get(key: string) {
@@ -20,11 +26,11 @@ export class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
   set(key: string, value: any, options?: KeyValueCacheSetOptions) {
     this.lru.set(key, value);
     if (options?.ttl) {
-      this.timeouts.add(
-        setTimeout(() => {
-          this.lru.delete(key);
-        }, options.ttl * 1000),
-      );
+      const timeout = setTimeout(() => {
+        this.lru.delete(key);
+        this.timeouts.delete(timeout);
+      }, options.ttl * 1000);
+      this.timeouts.add(timeout);
     }
   }
 
@@ -39,5 +45,12 @@ export class InMemoryLRUCache<V = any> implements KeyValueCache<V> {
 
   getKeysByPrefix(prefix: string) {
     return Array.from(this.lru.keys()).filter(key => key.startsWith(prefix));
+  }
+
+  [DisposableSymbols.dispose]() {
+    for (const timeout of this.timeouts) {
+      clearTimeout(timeout);
+      this.timeouts.delete(timeout);
+    }
   }
 }

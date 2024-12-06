@@ -2,7 +2,7 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSchema, createYoga, Repeater } from 'graphql-yoga';
-import LocalforageCache from '@graphql-mesh/cache-localforage';
+import LocalforageCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { getMesh, type GetMeshOptions } from '@graphql-mesh/runtime';

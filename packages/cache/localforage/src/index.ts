@@ -1,5 +1,5 @@
 import LocalForage from 'localforage';
-import { InMemoryLRUCache } from '@graphql-mesh/cache-inmemory-lru';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
 import { mapMaybePromise } from '@graphql-mesh/utils';
 

@@ -2,10 +2,9 @@
 
 /* eslint-disable import/no-nodejs-modules */
 import { promises as fsPromises } from 'fs';
-import { Socket, type AddressInfo } from 'net';
 import { join } from 'path';
 import { buildASTSchema, buildSchema, introspectionFromSchema, parse } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import {
   InMemoryStoreStorageAdapter,
   MeshStore,
@@ -31,6 +30,7 @@ const logger: Logger = {
 
 describe('graphql', () => {
   let store: MeshStore;
+  using cache = new InMemoryLRUCache();
   beforeEach(() => {
     store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
       readonly: false,
@@ -45,7 +45,7 @@ describe('graphql', () => {
         source: sdlFilePath,
       },
       baseDir: __dirname,
-      cache: new InMemoryLRUCache(),
+      cache,
       pubsub: new PubSub(),
       store,
       importFn: defaultImportFn,
@@ -69,7 +69,7 @@ describe('graphql', () => {
         source: schemaFilePath,
       },
       baseDir: __dirname,
-      cache: new InMemoryLRUCache(),
+      cache,
       pubsub: new PubSub(),
       store,
       importFn: defaultImportFn,
@@ -92,7 +92,7 @@ describe('graphql', () => {
         source: schemaFilePath,
       },
       baseDir: __dirname,
-      cache: new InMemoryLRUCache(),
+      cache,
       pubsub: new PubSub(),
       store,
       importFn: defaultImportFn,
@@ -116,7 +116,7 @@ describe('graphql', () => {
         source: schemaFilePath,
       },
       baseDir: __dirname,
-      cache: new InMemoryLRUCache(),
+      cache,
       pubsub: new PubSub(),
       store,
       importFn: defaultImportFn,
@@ -191,7 +191,7 @@ describe('graphql', () => {
         strategy: 'fallback',
       },
       baseDir: __dirname,
-      cache: new InMemoryLRUCache(),
+      cache,
       pubsub: new PubSub(),
       store,
       importFn: defaultImportFn,

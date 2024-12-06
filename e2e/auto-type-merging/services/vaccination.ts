@@ -18,7 +18,7 @@ export const yoga = createYoga({
     `,
     resolvers: {
       Query: {
-        pet_by_id: async (_root, args, _context, _info) => {
+        pet_by_id: (_root, args, _context, _info) => {
           return {
             id: args.id,
             vaccinated: false,

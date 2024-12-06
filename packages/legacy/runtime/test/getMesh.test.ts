@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { buildSchema, parse, validateSchema } from 'graphql';
-import LocalforageCache from '@graphql-mesh/cache-localforage';
+import LocalforageCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import JsonSchemaHandler from '@graphql-mesh/json-schema';
 import BareMerger from '@graphql-mesh/merger-bare';

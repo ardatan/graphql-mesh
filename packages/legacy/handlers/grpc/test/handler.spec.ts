@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { buildSchema, GraphQLSchema, validateSchema } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, Logger, YamlConfig } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
@@ -9,7 +9,6 @@ import { fetch as fetchFn } from '@whatwg-node/fetch';
 import GrpcHandler from '../src/index.js';
 
 describe('gRPC Handler', () => {
-  let cache: KeyValueCache;
   let pubsub: PubSub;
   let store: MeshStore;
   const logger: Logger = {
@@ -21,7 +20,6 @@ describe('gRPC Handler', () => {
     child: () => logger,
   };
   beforeEach(() => {
-    cache = new InMemoryLRUCache();
     pubsub = new PubSub();
     store = new MeshStore('grpc-test', new InMemoryStoreStorageAdapter(), {
       readonly: false,
@@ -56,6 +54,7 @@ describe('gRPC Handler', () => {
           load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
         },
       };
+      using cache = new InMemoryLRUCache();
       const handler = new GrpcHandler({
         name: Date.now().toString(),
         config,
@@ -88,6 +87,7 @@ describe('gRPC Handler', () => {
         },
         prefixQueryMethod: ['get', 'list', 'retrieve'],
       };
+      using cache = new InMemoryLRUCache();
       const handler = new GrpcHandler({
         name: Date.now().toString(),
         config,

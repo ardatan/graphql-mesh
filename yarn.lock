@@ -6120,6 +6120,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/types": "npm:^0.103.5"
     "@graphql-mesh/utils": "npm:^0.103.5"
+    "@whatwg-node/disposablestack": "npm:^0.0.5"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"

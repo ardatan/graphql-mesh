@@ -1,5 +1,5 @@
 import { buildSchema, GraphQLObjectType, printSchema, type GraphQLField } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
@@ -30,16 +30,15 @@ describe('hoist', () => {
       name: String!
     }
   `);
-  let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
   const baseDir: string = undefined;
 
   beforeEach(() => {
-    cache = new InMemoryLRUCache();
     pubsub = new PubSub();
   });
 
   it('should hoist field with string pathConfig array', () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -85,6 +84,7 @@ type User {
   });
 
   it('should hoist field with mixed pathConfig array', () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -136,6 +136,7 @@ type User {
   });
 
   it('should hoist field and filter args with global flag', () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -185,6 +186,7 @@ type User {
   });
 
   it('should hoist field and filter individual args via pathConfig', () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -240,6 +242,7 @@ type User {
   });
 
   it('should hoist field and filter individual args via pathConfig independent of global flag', () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [
@@ -295,6 +298,7 @@ type User {
 `);
   });
   it('should respect the new field name', () => {
+    using cache = new InMemoryLRUCache();
     const newSchema = wrapSchema({
       schema,
       transforms: [

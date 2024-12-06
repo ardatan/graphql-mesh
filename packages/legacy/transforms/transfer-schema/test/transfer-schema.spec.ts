@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { GraphQLObjectType, printSchema } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { Logger, MeshPubSub } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -22,7 +22,6 @@ describe('transfer-schema transform', () => {
       author: String!
     }
   `;
-  let cache: InMemoryLRUCache;
   let pubsub: MeshPubSub;
   const logger: Logger = {
     log: jest.fn(),
@@ -33,13 +32,13 @@ describe('transfer-schema transform', () => {
     child: () => logger,
   };
   const baseDir: string = undefined;
+  using cache = new InMemoryLRUCache();
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    cache = new InMemoryLRUCache();
     pubsub = new PubSub();
   });
 

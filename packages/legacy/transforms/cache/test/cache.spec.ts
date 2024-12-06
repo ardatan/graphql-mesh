@@ -9,11 +9,10 @@ import {
   type FieldNode,
   type OperationDefinitionNode,
 } from 'graphql';
-import LocalforageCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { hashObject } from '@graphql-mesh/string-interpolation';
 import type {
   ImportFn,
-  KeyValueCache,
   Logger,
   MeshPubSub,
   MeshTransformOptions,
@@ -34,6 +33,25 @@ const logger: Logger = {
 };
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 const importFn: ImportFn = m => import(m);
+
+function getSlowCache(cache: InMemoryLRUCache) {
+  return new Proxy(cache, {
+    get(target, prop, receiver) {
+      if (typeof target[prop] === 'function') {
+        return function slowedFn(...args: any[]) {
+          return new Promise(resolve => {
+            const timeout = setTimeout(() => {
+              resolve(target[prop](...args));
+              target['timeouts'].delete(timeout);
+            }, 50);
+            target['timeouts'].add(timeout);
+          });
+        };
+      }
+      return Reflect.get(target, prop, receiver);
+    },
+  });
+}
 
 const MOCK_DATA = [
   {
@@ -124,8 +142,6 @@ const spies = {
 
 describe('cache', () => {
   let schema: GraphQLSchema;
-  let cache: KeyValueCache;
-  let slowCache: KeyValueCache;
   let pubsub: MeshPubSub;
   const baseDir: string = undefined;
 
@@ -167,29 +183,19 @@ describe('cache', () => {
       resolvers: spies,
     });
 
-    cache = new LocalforageCache();
-    slowCache = new Proxy(cache, {
-      get(target, prop, receiver) {
-        if (typeof target[prop] === 'function') {
-          return function slowedFn(...args: any[]) {
-            return new Promise(resolve => {
-              setTimeout(() => {
-                resolve(target[prop](...args));
-              }, 500);
-            });
-          };
-        }
-        return Reflect.get(target, prop, receiver);
-      },
-    });
     pubsub = new PubSub();
 
     spies.Query.user.mockClear();
     spies.Query.users.mockClear();
   });
 
+  afterEach(() => {
+    pubsub.publish('destroy', {} as any);
+  });
+
   describe('Resolvers Composition', () => {
     it('should replace resolvers correctly with a specific type and field', async () => {
+      using cache = new InMemoryLRUCache({ pubsub });
       expect(schema.getQueryType()?.getFields().user.resolve.name).toBe(
         spies.Query.user.bind(null).name,
       );
@@ -218,6 +224,7 @@ describe('cache', () => {
     });
 
     it('should replace resolvers correctly with a wildcard', async () => {
+      using cache = new InMemoryLRUCache({ pubsub });
       expect(schema.getQueryType()?.getFields().user.resolve.name).toBe(
         spies.Query.user.bind(null).name,
       );
@@ -252,6 +259,7 @@ describe('cache', () => {
 
   describe('Cache Wrapper', () => {
     const checkCache = async (
+      cache: InMemoryLRUCache,
       config: YamlConfig.CacheTransformConfig[],
       cacheKeyToCheck?: string,
     ) => {
@@ -334,7 +342,8 @@ describe('cache', () => {
     };
 
     it('Should wrap resolver correctly with caching - without cacheKey', async () => {
-      await checkCache([
+      using cache = new InMemoryLRUCache({ pubsub });
+      await checkCache(cache, [
         {
           field: 'Query.user',
         },
@@ -343,8 +352,9 @@ describe('cache', () => {
 
     it('Should wrap resolver correctly with caching with custom key', async () => {
       const cacheKey = `customUser`;
-
+      using cache = new InMemoryLRUCache({ pubsub });
       await checkCache(
+        cache,
         [
           {
             field: 'Query.user',
@@ -357,8 +367,9 @@ describe('cache', () => {
 
     it('Should wrap resolver correctly with caching with custom key', async () => {
       const cacheKey = `customUser`;
-
+      using cache = new InMemoryLRUCache({ pubsub });
       await checkCache(
+        cache,
         [
           {
             field: 'Query.user',
@@ -371,7 +382,9 @@ describe('cache', () => {
 
     it('Should clear cache correctly when TTL is set', async () => {
       const key = 'user-1';
-      const { cache, executeAgain } = await checkCache(
+      using cache = new InMemoryLRUCache({ pubsub });
+      const { executeAgain } = await checkCache(
+        cache,
         [
           {
             field: 'Query.user',
@@ -392,7 +405,9 @@ describe('cache', () => {
     });
 
     it('Should wrap resolver correctly with caching with custom calculated key - and ensure calling resovler again when key is different', async () => {
-      const { cache, executeDocument } = await checkCache(
+      using cache = new InMemoryLRUCache({ pubsub });
+      const { executeDocument } = await checkCache(
+        cache,
         [
           {
             field: 'Query.user',
@@ -422,8 +437,9 @@ describe('cache', () => {
 
     it('Should work correctly with argsHash', async () => {
       const expectedHash = `query-user-${hashObject({ id: '1' })}`;
-
+      using cache = new InMemoryLRUCache({ pubsub });
       await checkCache(
+        cache,
         [
           {
             field: 'Query.user',
@@ -437,7 +453,9 @@ describe('cache', () => {
     it('Should work correctly with hash helper', async () => {
       const expectedHash = hashObject('1');
 
+      using cache = new InMemoryLRUCache({ pubsub });
       await checkCache(
+        cache,
         [
           {
             field: 'Query.user',
@@ -451,7 +469,9 @@ describe('cache', () => {
     it('Should work correctly with date helper', async () => {
       const expectedHash = `1-${dayjs(new Date()).format(`yyyy-MM-dd`)}`;
 
+      using cache = new InMemoryLRUCache({ pubsub });
       await checkCache(
+        cache,
         [
           {
             field: 'Query.user',
@@ -465,6 +485,7 @@ describe('cache', () => {
 
   describe('Opration-based invalidation', () => {
     it('Should invalidate cache when mutation is done based on key', async () => {
+      using cache = new InMemoryLRUCache({ pubsub });
       const transform = new CacheTransform({
         apiName: 'test',
         importFn,
@@ -542,6 +563,7 @@ describe('cache', () => {
 
     describe('Subfields', () => {
       it('Should cache queries including subfield arguments', async () => {
+        using cache = new InMemoryLRUCache({ pubsub });
         const transform = new CacheTransform({
           apiName: 'test',
           importFn,
@@ -598,6 +620,8 @@ describe('cache', () => {
 
     describe('Race condition', () => {
       it('should wait for local cache transform to finish writing the entry', async () => {
+        using cache = new InMemoryLRUCache({ pubsub });
+        const slowCache = getSlowCache(cache);
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
           importFn,
@@ -646,6 +670,8 @@ describe('cache', () => {
       it('should wait for other cache transform to finish writing the entry when delay >= safe threshold)', async () => {
         let callCount = 0;
 
+        using cache = new InMemoryLRUCache({ pubsub });
+        const slowCache = getSlowCache(cache);
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
           importFn,
@@ -703,6 +729,7 @@ describe('cache', () => {
 
       it('should fail to wait for other cache transform to finish writing the entry when delay < safe threshold', async () => {
         let callCount = 0;
+        using cache = new InMemoryLRUCache({ pubsub });
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
           importFn,

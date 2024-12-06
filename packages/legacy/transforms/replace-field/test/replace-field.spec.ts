@@ -1,8 +1,8 @@
 import { join } from 'path';
 import { GraphQLObjectType, parse, printSchema } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { ImportFn, Logger, MeshPubSub } from '@graphql-mesh/types';
-import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable, pruneSchema } from '@graphql-tools/utils';
@@ -53,7 +53,7 @@ describe('replace-field', () => {
       age: Int!
     }
   `;
-  let cache: InMemoryLRUCache;
+  using cache = new InMemoryLRUCache();
   let pubsub: MeshPubSub;
   const baseDir: string = undefined;
 
@@ -62,7 +62,6 @@ describe('replace-field', () => {
   });
 
   afterEach(() => {
-    cache = new InMemoryLRUCache();
     pubsub = new PubSub();
   });
 

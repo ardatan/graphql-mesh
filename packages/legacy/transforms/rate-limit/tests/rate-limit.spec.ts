@@ -1,6 +1,6 @@
 import { setTimeout } from 'timers/promises';
 import { parse } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-localforage';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
@@ -11,7 +11,6 @@ import RateLimitTransform from '../src/index.js';
 
 describe('Rate Limit Transform', () => {
   let pubsub: PubSub;
-  let cache: InMemoryLRUCache;
   const logger: Logger = {
     log: jest.fn(),
     debug: jest.fn(),
@@ -23,7 +22,6 @@ describe('Rate Limit Transform', () => {
 
   beforeEach(() => {
     pubsub = new PubSub();
-    cache = new InMemoryLRUCache();
   });
 
   afterEach(() => {
@@ -34,6 +32,7 @@ describe('Rate Limit Transform', () => {
   const importFn = defaultImportFn;
   const apiName = 'rate-limit-test';
   it('should throw an error if the rate limit is exceeded', async () => {
+    using cache = new InMemoryLRUCache();
     let numberOfCalls = 0;
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -118,6 +117,7 @@ describe('Rate Limit Transform', () => {
         },
       },
     });
+    using cache = new InMemoryLRUCache();
     const rateLimitTransform = new RateLimitTransform({
       apiName,
       config: [
@@ -183,6 +183,7 @@ describe('Rate Limit Transform', () => {
         },
       },
     });
+    using cache = new InMemoryLRUCache();
     const rateLimitTransform = new RateLimitTransform({
       apiName,
       config: [
@@ -262,6 +263,7 @@ describe('Rate Limit Transform', () => {
       },
     });
 
+    using cache = new InMemoryLRUCache();
     const rateLimitTransform = new RateLimitTransform({
       apiName,
       config: [
