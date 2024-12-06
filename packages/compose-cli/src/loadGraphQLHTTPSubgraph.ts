@@ -18,6 +18,7 @@ import {
   type DocumentNode,
   type IntrospectionQuery,
 } from 'graphql';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { isUrl, readFile } from '@graphql-mesh/utils';
 import {
   createGraphQLError,
@@ -221,6 +222,11 @@ export function loadGraphQLHTTPSubgraph(
 ): MeshComposeCLISourceHandlerDef {
   return (ctx: LoaderContext) => {
     let schema$: MaybePromise<GraphQLSchema>;
+    const interpolationData = {
+      env: process.env,
+    };
+    const interpolatedEndpoint = stringInterpolator.parse(endpoint, interpolationData);
+    const interpolatedSource = stringInterpolator.parse(source, interpolationData);
     function handleFetchedSchema(schema: GraphQLSchema) {
       return addAnnotations(
         {
@@ -239,17 +245,17 @@ export function loadGraphQLHTTPSubgraph(
         schema,
       );
     }
-    if (source) {
+    if (interpolatedSource) {
       let source$: MaybePromise<string>;
-      if (isUrl(source)) {
+      if (isUrl(interpolatedSource)) {
         source$ = mapMaybePromise(
-          ctx.fetch(source, {
+          ctx.fetch(interpolatedSource, {
             headers: schemaHeaders,
           }),
           res => res.text(),
         );
-      } else if (isValidPath(source)) {
-        source$ = readFile(source, {
+      } else if (isValidPath(interpolatedSource)) {
+        source$ = readFile(interpolatedSource, {
           allowUnknownExtensions: true,
           cwd: ctx.cwd,
           fetch: ctx.fetch,
@@ -266,7 +272,7 @@ export function loadGraphQLHTTPSubgraph(
     } else {
       const fetchAsRegular = () =>
         mapMaybePromise(
-          ctx.fetch(endpoint, {
+          ctx.fetch(interpolatedEndpoint, {
             method: method || (useGETForQueries ? 'GET' : 'POST'),
             headers: {
               'Content-Type': 'application/json',
@@ -305,7 +311,7 @@ export function loadGraphQLHTTPSubgraph(
         );
       const fetchAsFederation = () =>
         mapMaybePromise(
-          ctx.fetch(endpoint, {
+          ctx.fetch(interpolatedEndpoint, {
             method: method || (useGETForQueries ? 'GET' : 'POST'),
             headers: {
               'Content-Type': 'application/json',
