@@ -9,6 +9,7 @@ import type {
   MeshPubSub,
   YamlConfig,
 } from '@graphql-mesh/types';
+import { mapMaybePromise } from '@graphql-mesh/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 function interpolateStrWithEnv(str: string): string {
@@ -68,35 +69,35 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   }
 
   [DisposableSymbols.dispose](): void {
-    this.client.disconnect();
+    this.client.disconnect(false);
   }
 
-  async set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {
+  set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<any> {
     const stringifiedValue = JSON.stringify(value);
     if (options?.ttl) {
-      await this.client.set(key, stringifiedValue, 'EX', options.ttl);
+      return this.client.set(key, stringifiedValue, 'EX', options.ttl);
     } else {
-      await this.client.set(key, stringifiedValue);
+      return this.client.set(key, stringifiedValue);
     }
   }
 
-  async get(key: string): Promise<V | undefined> {
-    const reply = await this.client.get(key);
-    if (reply !== null) {
-      const value = JSON.parse(reply);
-      return value;
-    }
-    return undefined;
+  get(key: string): Promise<V | undefined> {
+    return mapMaybePromise(this.client.get(key), value => {
+      return value != null ? JSON.parse(value) : undefined;
+    });
   }
 
-  async getKeysByPrefix(prefix: string): Promise<string[]> {
+  getKeysByPrefix(prefix: string): Promise<string[]> {
     return this.client.keys(`${prefix}*`);
   }
 
-  async delete(key: string): Promise<boolean> {
+  delete(key: string): PromiseLike<boolean> | boolean {
     try {
-      await this.client.del(key);
-      return true;
+      return mapMaybePromise(
+        this.client.del(key),
+        value => value > 0,
+        () => false,
+      );
     } catch (e) {
       return false;
     }

@@ -32,16 +32,15 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.8",
-    "@graphql-mesh/types": "^0.103.5",
-    "@graphql-tools/utils": "^10.6.0",
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
+    "@graphql-mesh/cross-helpers": "^0.4.8",
     "@graphql-mesh/string-interpolation": "^0.5.6",
+    "@graphql-mesh/types": "^0.103.5",
     "@graphql-tools/batch-delegate": "^9.0.16",
     "@graphql-tools/delegate": "^10.0.28",
+    "@graphql-tools/utils": "^10.6.0",
     "@graphql-tools/wrap": "^10.0.18",
     "@whatwg-node/disposablestack": "^0.0.5",
     "@whatwg-node/fetch": "^0.10.0",
@@ -49,7 +48,8 @@
     "js-yaml": "^4.1.0",
     "lodash.get": "^4.4.2",
     "lodash.topath": "^4.5.2",
-    "tiny-lru": "^11.0.0"
+    "tiny-lru": "^11.0.0",
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@apollo/server": "4.11.2",

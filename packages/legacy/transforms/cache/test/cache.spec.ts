@@ -125,6 +125,7 @@ const spies = {
 describe('cache', () => {
   let schema: GraphQLSchema;
   let cache: KeyValueCache;
+  let slowCache: KeyValueCache;
   let pubsub: MeshPubSub;
   const baseDir: string = undefined;
 
@@ -167,6 +168,20 @@ describe('cache', () => {
     });
 
     cache = new LocalforageCache();
+    slowCache = new Proxy(cache, {
+      get(target, prop, receiver) {
+        if (typeof target[prop] === 'function') {
+          return function slowedFn(...args: any[]) {
+            return new Promise(resolve => {
+              setTimeout(() => {
+                resolve(target[prop](...args));
+              }, 500);
+            });
+          };
+        }
+        return Reflect.get(target, prop, receiver);
+      },
+    });
     pubsub = new PubSub();
 
     spies.Query.user.mockClear();
@@ -592,7 +607,7 @@ describe('cache', () => {
               cacheKey: 'random',
             },
           ],
-          cache,
+          cache: slowCache,
           pubsub,
           baseDir,
           logger,
@@ -630,6 +645,7 @@ describe('cache', () => {
 
       it('should wait for other cache transform to finish writing the entry when delay >= safe threshold)', async () => {
         let callCount = 0;
+
         const options: MeshTransformOptions<YamlConfig.CacheTransformConfig[]> = {
           apiName: 'test',
           importFn,
@@ -639,7 +655,7 @@ describe('cache', () => {
               cacheKey: 'random',
             },
           ],
-          cache,
+          cache: slowCache,
           pubsub,
           baseDir,
           logger,

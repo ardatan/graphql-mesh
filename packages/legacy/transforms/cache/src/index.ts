@@ -5,6 +5,7 @@ import { extractResolvers } from '@graphql-mesh/utils';
 import type { ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
 import { composeResolvers } from '@graphql-tools/resolvers-composition';
 import { addResolversToSchema } from '@graphql-tools/schema';
+import type { MaybePromise } from '@graphql-tools/utils';
 import { computeCacheKey } from './compute-cache-key.js';
 
 export default class CacheTransform implements MeshTransform {
@@ -131,7 +132,7 @@ export default class CacheTransform implements MeshTransform {
     shouldWaitCacheKey: string;
     pubsubTopic: string;
     data: { result: unknown } | { error: unknown };
-    setCachePromise?: Promise<void>;
+    setCachePromise?: MaybePromise<void>;
   }) {
     if (setCachePromise) {
       // we need to wait for cache to be filled before removing the shouldWait

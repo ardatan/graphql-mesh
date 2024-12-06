@@ -32,23 +32,23 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-mesh/types": "^0.103.5",
-    "@graphql-mesh/utils": "^0.103.5",
-    "@graphql-tools/utils": "^10.6.0",
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.8",
     "@graphql-mesh/string-interpolation": "^0.5.6",
     "@graphql-mesh/transport-common": "^0.7.13",
+    "@graphql-mesh/types": "^0.103.5",
+    "@graphql-mesh/utils": "^0.103.5",
+    "@graphql-tools/utils": "^10.6.0",
     "@grpc/grpc-js": "^1.1.7",
     "@grpc/proto-loader": "^0.7.8",
     "@whatwg-node/disposablestack": "^0.0.5",
     "graphql-scalars": "^1.22.4",
     "lodash.get": "^4.4.2",
     "long": "4.0.0",
-    "protobufjs": "^7.2.5"
+    "protobufjs": "^7.2.5",
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",

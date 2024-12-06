@@ -3,6 +3,7 @@ import { defaultBuildResponseCacheKey } from '@envelop/response-cache';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
+import { isPromise, mapMaybePromise } from '@graphql-tools/utils';
 import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
 
@@ -58,44 +59,88 @@ function getCacheForResponseCache(meshCache: KeyValueCache): UseResponseCachePar
     },
     set(responseId, data, entities, ttl) {
       const ttlConfig = Number.isFinite(ttl) ? { ttl: ttl / 1000 } : undefined;
-      const jobs: Promise<void>[] = [];
-      jobs.push(meshCache.set(`response-cache:${responseId}`, data, ttlConfig));
+      const jobs: PromiseLike<void>[] = [];
+      const job = meshCache.set(`response-cache:${responseId}`, data, ttlConfig);
+      if (isPromise(job)) {
+        jobs.push(job);
+      }
       for (const { typename, id } of entities) {
         const entryId = `${typename}.${id}`;
-        jobs.push(meshCache.set(`response-cache:${entryId}:${responseId}`, {}, ttlConfig));
-        jobs.push(meshCache.set(`response-cache:${responseId}:${entryId}`, {}, ttlConfig));
+        const job1 = meshCache.set(`response-cache:${entryId}:${responseId}`, {}, ttlConfig);
+        const job2 = meshCache.set(`response-cache:${responseId}:${entryId}`, {}, ttlConfig);
+        if (isPromise(job1)) {
+          jobs.push(job1);
+        }
+        if (isPromise(job2)) {
+          jobs.push(job2);
+        }
       }
-      return Promise.all(jobs) as any;
+      if (jobs.length === 0) {
+        return undefined;
+      }
+      if (jobs.length === 1) {
+        return jobs[0] as Promise<void>;
+      }
+      return Promise.all(jobs).then(() => undefined);
     },
     invalidate(entitiesToRemove) {
       const responseIdsToCheck = new Set<string>();
-      const entitiesToRemoveJobs: Promise<any>[] = [];
+      const entitiesToRemoveJobs: PromiseLike<any>[] = [];
       for (const { typename, id } of entitiesToRemove) {
         const entryId = `${typename}.${id}`;
-        entitiesToRemoveJobs.push(
-          meshCache.getKeysByPrefix(`response-cache:${entryId}:`).then(cacheEntriesToDelete =>
-            Promise.all(
-              cacheEntriesToDelete.map(cacheEntryName => {
-                const [, , responseId] = cacheEntryName.split(':');
-                responseIdsToCheck.add(responseId);
-                return meshCache.delete(entryId);
-              }),
-            ),
-          ),
+        const job = mapMaybePromise(
+          meshCache.getKeysByPrefix(`response-cache:${entryId}:`),
+          cacheEntriesToDelete => {
+            const jobs: PromiseLike<any>[] = [];
+            for (const cacheEntryName of cacheEntriesToDelete) {
+              const [, , responseId] = cacheEntryName.split(':');
+              responseIdsToCheck.add(responseId);
+              const job = meshCache.delete(cacheEntryName);
+              if (isPromise(job)) {
+                jobs.push(job);
+              }
+            }
+            if (jobs.length === 0) {
+              return undefined;
+            }
+            if (jobs.length === 1) {
+              return jobs[0];
+            }
+            return Promise.all(jobs);
+          },
         );
+        if (isPromise(job)) {
+          entitiesToRemoveJobs.push(job);
+        }
       }
-      return Promise.all(entitiesToRemoveJobs).then(() => {
-        const responseIdsToCheckJobs: Promise<any>[] = [];
+      let promiseAllJob: PromiseLike<any> | undefined;
+      if (entitiesToRemoveJobs.length === 1) {
+        promiseAllJob = entitiesToRemoveJobs[0];
+      } else if (entitiesToRemoveJobs.length > 0) {
+        promiseAllJob = Promise.all(entitiesToRemoveJobs);
+      }
+      return mapMaybePromise(promiseAllJob, () => {
+        const responseIdsToCheckJobs: PromiseLike<any>[] = [];
         for (const responseId of responseIdsToCheck) {
-          responseIdsToCheckJobs.push(
-            meshCache.getKeysByPrefix(`response-cache:${responseId}:`).then(cacheEntries => {
+          const job = mapMaybePromise(
+            meshCache.getKeysByPrefix(`response-cache:${responseId}:`),
+            cacheEntries => {
               if (cacheEntries.length !== 0) {
                 return meshCache.delete(`response-cache:${responseId}`);
               }
               return undefined;
-            }),
+            },
           );
+          if (isPromise(job)) {
+            responseIdsToCheckJobs.push(job);
+          }
         }
+        if (responseIdsToCheckJobs.length === 0) {
+          return undefined;
+        } else if (responseIdsToCheckJobs.length === 1) {
+          return responseIdsToCheckJobs[0];
+        }
+        return Promise.all(responseIdsToCheckJobs);
       });
     },
   };

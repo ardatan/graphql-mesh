@@ -35,10 +35,10 @@ export interface KeyValueCacheSetOptions {
   ttl?: number | null;
 }
 export interface KeyValueCache<V = any> {
-  get(key: string): Promise<V | undefined>;
-  set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void>;
-  delete(key: string): Promise<boolean | void>;
-  getKeysByPrefix(prefix: string): Promise<string[]>;
+  get(key: string): MaybePromise<V | undefined>;
+  set(key: string, value: V, options?: KeyValueCacheSetOptions): MaybePromise<void>;
+  delete(key: string): MaybePromise<boolean>;
+  getKeysByPrefix(prefix: string): MaybePromise<string[]>;
 }
 
 export type MeshHandlerOptions<THandlerConfig> = {

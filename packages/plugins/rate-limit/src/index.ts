@@ -16,12 +16,12 @@ class RateLimitMeshStore extends Store {
     );
   }
 
-  setForIdentity(identity: Identity, timestamps: number[], windowMs: number): Promise<void> {
+  setForIdentity(identity: Identity, timestamps: number[], windowMs: number) {
     return this.cache.set(
       `rate-limit:${identity.contextIdentity}:${identity.fieldIdentity}`,
       timestamps,
       { ttl: windowMs / 1000 },
-    );
+    ) as Promise<void>;
   }
 }
 

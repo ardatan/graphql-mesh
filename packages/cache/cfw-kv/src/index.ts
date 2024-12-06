@@ -1,5 +1,6 @@
 /// <reference types="@cloudflare/workers-types" />
 import type { KeyValueCache, Logger } from '@graphql-mesh/types';
+import { mapMaybePromise } from '@graphql-mesh/utils';
 
 export default class CFWorkerKVCache implements KeyValueCache {
   private kvNamespace?: KVNamespace;
@@ -15,29 +16,35 @@ export default class CFWorkerKVCache implements KeyValueCache {
     }
   }
 
-  async get<T>(key: string): Promise<T | undefined> {
+  get<T>(key: string): Promise<T | undefined> {
     return this.kvNamespace?.get(key, 'json');
   }
 
-  async getKeysByPrefix(prefix: string): Promise<string[]> {
-    const result = await this.kvNamespace?.list({
-      prefix,
+  getKeysByPrefix(prefix: string) {
+    return mapMaybePromise(this.kvNamespace?.list({ prefix }), result => {
+      if (!result) {
+        return [];
+      }
+
+      return result.keys.map(keyEntry => keyEntry.name);
     });
-
-    if (!result) {
-      return [];
-    }
-
-    return result.keys.map(keyEntry => keyEntry.name);
   }
 
-  async set(key: string, value: any, options?: { ttl?: number }): Promise<void> {
+  set(key: string, value: any, options?: { ttl?: number }): Promise<void> {
     return this.kvNamespace?.put(key, JSON.stringify(value), {
       expirationTtl: options?.ttl,
     });
   }
 
-  async delete(key: string): Promise<void> {
-    return this.kvNamespace?.delete(key);
+  delete(key: string) {
+    try {
+      return mapMaybePromise(
+        this.kvNamespace?.delete(key),
+        () => true,
+        () => false,
+      );
+    } catch (e) {
+      return false;
+    }
   }
 }

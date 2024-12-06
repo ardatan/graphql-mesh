@@ -31,14 +31,12 @@
     "./package.json": "./package.json"
   },
   "typings": "dist/typings/index.d.ts",
-  "peerDependencies": {
-    "tslib": "^2.4.0"
-  },
   "dependencies": {
     "@json-schema-tools/meta-schema": "1.7.5",
     "cross-inspect": "1.0.1",
     "json-pointer": "0.6.2",
     "to-json-schema": "0.2.5",
+    "tslib": "^2.4.0",
     "url-join": "4.0.1"
   },
   "devDependencies": {

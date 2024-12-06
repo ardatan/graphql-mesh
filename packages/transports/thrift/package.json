@@ -32,8 +32,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*",
-    "tslib": "^2.4.0"
+    "graphql": "*"
   },
   "dependencies": {
     "@creditkarma/thrift-client": "^1.0.4",
@@ -42,7 +41,8 @@
     "@graphql-mesh/transport-common": "^0.7.13",
     "@graphql-mesh/utils": "^0.103.5",
     "@graphql-tools/utils": "^10.6.0",
-    "pascal-case": "^3.1.2"
+    "pascal-case": "^3.1.2",
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public",
