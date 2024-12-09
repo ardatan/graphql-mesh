@@ -341,7 +341,7 @@ check Hive Gateway's docs to consume a supergraph.`,
   }
   console.log(' ');
   console.log(
-    `Then run "npx mesh-compose > supergraph.graphql" to generate the supergraph schema!`,
+    `Then run "npx mesh-compose -o supergraph.graphql" to generate the supergraph schema!`,
   );
   console.log(`Finally, run "npx hive-gateway supergraph" to start the gateway server!`);
 }

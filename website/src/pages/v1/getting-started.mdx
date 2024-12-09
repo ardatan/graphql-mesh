@@ -199,7 +199,7 @@ contains all the annotations for the gateway.
 You can generate the supergraph by running the following command:
 
 ```sh
-npx mesh-compose > supergraph.graphql
+npx mesh-compose -o supergraph.graphql
 ```
 
 <Callout>
@@ -215,7 +215,7 @@ If you want to publish the subgraphs to a schema registry such as
 the subgraphs by running the following command:
 
 ```sh
-npx mesh-compose --subgraph SUBGRAPH_NAME > subgraph.graphql
+npx mesh-compose --subgraph SUBGRAPH_NAME -o subgraph.graphql
 ```
 
 <Callout>
