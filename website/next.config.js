@@ -6,9 +6,6 @@ export default withGuildDocs({
   eslint: {
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    typedRoutes: true,
-  },
   eslint: {
     ignoreDuringBuilds: true,
     turbo: {
