@@ -7,8 +7,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.98.7",
-    "@graphql-mesh/mysql": "0.104.6",
+    "@graphql-mesh/cli": "0.98.8",
+    "@graphql-mesh/mysql": "0.104.7",
     "graphql": "16.9.0"
   },
   "devDependencies": {

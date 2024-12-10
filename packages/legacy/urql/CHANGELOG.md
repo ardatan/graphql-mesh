@@ -1,5 +1,12 @@
 # @graphql-mesh/urql-exchange
 
+## 0.105.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/runtime@0.105.7
+
 ## 0.105.6
 
 ### Patch Changes
