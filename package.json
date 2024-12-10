@@ -127,7 +127,7 @@
     "packages/**/src/**/*.{ts,tsx}": [
       "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --fix"
     ],
-    "**/*.{ts,tsx,graphql,yml,json,md,js,mdx}": [
+    "**/*.{ts,tsx,graphql,yml,json,md,js,mjs,cjs,mdx}": [
       "prettier --write"
     ],
     "yarn.lock": [
