@@ -7,6 +7,7 @@ export interface HiveOuterLayoutProps {
   font: NextFont;
 }
 
+// We'll promote this to Components if the reviewers (probably Dima) like the idea.
 export function HiveOuterLayout({ children, font }: HiveOuterLayoutProps) {
   return (
     <html
