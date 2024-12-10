@@ -1,14 +1,9 @@
----
-title: Examples
-description: Examples of Mesh usage
----
+'use client';
 
-import { useState } from 'react'
-
-<LiveDemo />
+import { useState } from 'react';
 
 export function LiveDemo() {
-  const [exampleRepo, setExampleRepo] = useState('json-schema-example')
+  const [exampleRepo, setExampleRepo] = useState('json-schema-example');
   return (
     <div className="min-h-[calc(100vh-var(--nextra-navbar-height))] flex flex-col">
       <div className="flex items-center justify-center gap-2 py-8">
@@ -16,7 +11,7 @@ export function LiveDemo() {
         <select
           value={exampleRepo}
           onChange={e => {
-            setExampleRepo(e.target.value)
+            setExampleRepo(e.target.value);
           }}
           className="border rounded-md py-1.5"
         >
@@ -40,7 +35,7 @@ export function LiveDemo() {
         sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
       />
     </div>
-  )
+  );
 }
 
 export const EXAMPLES = {
@@ -51,36 +46,36 @@ export const EXAMPLES = {
     Stripe: 'openapi-stripe',
     StackExchange: 'openapi-stackexchange',
     'WeatherBit on React App': 'openapi-react-weatherbit',
-    'NextJS with Apollo': 'nextjs-apollo-example'
+    'NextJS with Apollo': 'nextjs-apollo-example',
   },
   'JSON Schema': {
     'Fake API': 'json-schema-example',
     'Covid-19 Statistics': 'json-schema-covid',
-    'Subscriptions, Webhooks & Live Queries': 'json-schema-subscriptions'
+    'Subscriptions, Webhooks & Live Queries': 'json-schema-subscriptions',
   },
   OData: {
     TripPin: 'odata-trippin',
-    'Microsoft Graph': 'odata-microsoft'
+    'Microsoft Graph': 'odata-microsoft',
   },
   SOAP: {
-    'Country Info': 'soap-country-info'
+    'Country Info': 'soap-country-info',
   },
   MySQL: {
-    Rfam: 'mysql-rfam'
+    Rfam: 'mysql-rfam',
   },
   SQLite: {
-    Chinook: 'sqlite-chinook'
+    Chinook: 'sqlite-chinook',
   },
   'Apollo Federation': {
-    'Apollo Federation Example': 'federation-example'
+    'Apollo Federation Example': 'federation-example',
   },
   'Apache Thrift': {
-    Calculator: 'thrift-calculator'
+    Calculator: 'thrift-calculator',
   },
   gRPC: {
-    'Movies Example': 'grpc-example'
+    'Movies Example': 'grpc-example',
   },
   Neo4J: {
-    'Movies Example': 'neo4j-example'
-  }
-}
+    'Movies Example': 'neo4j-example',
+  },
+};
