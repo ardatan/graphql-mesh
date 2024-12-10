@@ -12429,9 +12429,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/components@npm:8.0.0-alpha-20241206100653-e3101f5b94712d9fed27f767b4190b4167baa82e":
-  version: 8.0.0-alpha-20241206100653-e3101f5b94712d9fed27f767b4190b4167baa82e
-  resolution: "@theguild/components@npm:8.0.0-alpha-20241206100653-e3101f5b94712d9fed27f767b4190b4167baa82e"
+"@theguild/components@npm:8.0.0-alpha-20241210180007-0c38d3328d098a4dbb572c0142b7801d993cee1f":
+  version: 8.0.0-alpha-20241210180007-0c38d3328d098a4dbb572c0142b7801d993cee1f
+  resolution: "@theguild/components@npm:8.0.0-alpha-20241210180007-0c38d3328d098a4dbb572c0142b7801d993cee1f"
   dependencies:
     "@giscus/react": "npm:3.0.0"
     "@next/bundle-analyzer": "npm:15.0.3"
@@ -12449,7 +12449,7 @@ __metadata:
     next: ^13 || ^14 || ^15.0.0
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/c627f32a21a08f8d54d270dacd3c5fcfe97a37f58513cf3d4b97539ce091217a83b7251c01e113a862eb48e731eccd6c150635645e456856f904e2048ee36479
+  checksum: 10c0/3b20b282cd98a97be01c6a2463822d25be95329dfa1299387a990659f505cd7cf1c24468682fe24d5b578783158342249892302996e19f1ce111ce4cead8caff
   languageName: node
   linkType: hard
 
@@ -36726,7 +36726,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "website@workspace:website"
   dependencies:
-    "@theguild/components": "npm:8.0.0-alpha-20241206100653-e3101f5b94712d9fed27f767b4190b4167baa82e"
+    "@theguild/components": "npm:8.0.0-alpha-20241210180007-0c38d3328d098a4dbb572c0142b7801d993cee1f"
     "@theguild/tailwind-config": "npm:0.6.1"
     "@types/node": "npm:22.10.1"
     "@types/react": "npm:19.0.1"
