@@ -3286,13 +3286,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-shared@npm:0.10.0":
-  version: 0.10.0
-  resolution: "@cloudflare/workers-shared@npm:0.10.0"
+"@cloudflare/workers-shared@npm:0.11.0":
+  version: 0.11.0
+  resolution: "@cloudflare/workers-shared@npm:0.11.0"
   dependencies:
     mime: "npm:^3.0.0"
     zod: "npm:^3.22.3"
-  checksum: 10c0/e6d097d57afdd966124411d3e3fc6a2cf0bb6e0a69908e121601ce864fe5af076e090bcc17efc55d80b5fcd1e53c1d03e1696df52026ebe7e8a449973a8924e3
+  checksum: 10c0/800d6340486ddf03c315321473c929d12075377a7110d5f7b35ce878f9d52da934f9935a641bc64bc513a756cb36092a03c758ce6ba0e006ae67e0efba51fc9c
   languageName: node
   linkType: hard
 
@@ -4478,7 +4478,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.103.6"
     "@omnigraph/json-schema": "npm:^0.108.6"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.93.0"
+    wrangler: "npm:3.94.0"
   languageName: unknown
   linkType: soft
 
@@ -4492,7 +4492,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.103.6"
     "@graphql-mesh/plugin-response-cache": "npm:^0.103.6"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.93.0"
+    wrangler: "npm:3.94.0"
   languageName: unknown
   linkType: soft
 
@@ -4630,7 +4630,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.108.6"
     "@graphql-mesh/plugin-response-cache": "npm:0.103.6"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.93.0"
+    wrangler: "npm:3.94.0"
   languageName: unknown
   linkType: soft
 
@@ -4767,7 +4767,7 @@ __metadata:
     "@types/jest": "npm:29.5.14"
     "@types/node": "npm:22.10.1"
     "@types/react": "npm:19.0.1"
-    "@types/react-dom": "npm:19.0.1"
+    "@types/react-dom": "npm:19.0.2"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.9.0"
     react: "npm:19.0.0"
@@ -5148,7 +5148,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.7"
     "@types/react": "npm:19.0.1"
-    "@types/react-dom": "npm:19.0.1"
+    "@types/react-dom": "npm:19.0.2"
     "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.9.0"
     react: "npm:19.0.0"
@@ -5318,7 +5318,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.103.6"
     "@graphql-mesh/plugin-response-cache": "npm:0.103.6"
     graphql: "npm:16.9.0"
-    wrangler: "npm:3.93.0"
+    wrangler: "npm:3.94.0"
   languageName: unknown
   linkType: soft
 
@@ -7410,7 +7410,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/runtime": "npm:^0.105.6"
     "@graphql-tools/utils": "npm:^10.6.0"
-    "@urql/core": "npm:5.0.8"
+    "@urql/core": "npm:5.1.0"
     tslib: "npm:^2.4.0"
     wonka: "npm:^6.3.1"
   peerDependencies:
@@ -13421,16 +13421,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:19.0.1":
-  version: 19.0.1
-  resolution: "@types/react-dom@npm:19.0.1"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10c0/fb40069a7c5c70475155dff91d25ff5a51226c14d45c8ad55894480366876426981c8be63ef322486af879bb220bf48443f2344c1a89cb75a47a1a761acee9d3
+"@types/react-dom@npm:19.0.2":
+  version: 19.0.2
+  resolution: "@types/react-dom@npm:19.0.2"
+  peerDependencies:
+    "@types/react": ^19.0.0
+  checksum: 10c0/3d0c7b78dbe8df64ea769f30af990a5950173a8321c745fe11094d765423f7964c3519dca6e7cd36b4be6521c8efc690bdd3b79b327b229dd1e9d5a8bad677dd
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:19.0.1":
+"@types/react@npm:19.0.1":
   version: 19.0.1
   resolution: "@types/react@npm:19.0.1"
   dependencies:
@@ -14099,13 +14099,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@urql/core@npm:5.0.8":
-  version: 5.0.8
-  resolution: "@urql/core@npm:5.0.8"
+"@urql/core@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@urql/core@npm:5.1.0"
   dependencies:
     "@0no-co/graphql.web": "npm:^1.0.5"
     wonka: "npm:^6.3.2"
-  checksum: 10c0/a17c5ca0e2f02657e57bfc0b567dc6075f27e6604a27baf65d26df9c01007ff6f552b496c33fd9b3eb121485d8b82029a2d860fd82c156dfed52abbb341c78ed
+  checksum: 10c0/9792a5094ced7e7f9d8b38593c386e0b38f9549fff8cfde74d4d851d9538e3dea5f05e4bcf766787a8178e0cc9c0cfd8043f37a3bcf0121342b1391999edbe1d
   languageName: node
   linkType: hard
 
@@ -19761,9 +19761,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:17.14.0":
-  version: 17.14.0
-  resolution: "eslint-plugin-n@npm:17.14.0"
+"eslint-plugin-n@npm:17.15.0":
+  version: 17.15.0
+  resolution: "eslint-plugin-n@npm:17.15.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.1"
     enhanced-resolve: "npm:^5.17.1"
@@ -19775,7 +19775,7 @@ __metadata:
     semver: "npm:^7.6.3"
   peerDependencies:
     eslint: ">=8.23.0"
-  checksum: 10c0/ad46415e0a31431dd9c6996b6497d48dd891bf034b1880d55e292c60434022fa0ac4d74734bb08dc204200fe3947b47fac2d8300d319bd650175c0fffc62c609
+  checksum: 10c0/e874e77e9e463978ae556cefe70d7b90e53cc3286b0257ac81b639d5eaeffe8cb609e3bbf246c9f1c61f35589c22a449e3723d948e27d1bab5a0dfee9d8cea04
   languageName: node
   linkType: hard
 
@@ -21956,7 +21956,7 @@ __metadata:
     eslint-config-prettier: "npm:9.1.0"
     eslint-config-standard: "npm:17.1.0"
     eslint-plugin-import: "npm:2.31.0"
-    eslint-plugin-n: "npm:17.14.0"
+    eslint-plugin-n: "npm:17.15.0"
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-standard: "npm:5.0.0"
     globby: "npm:11.1.0"
@@ -37488,12 +37488,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.93.0":
-  version: 3.93.0
-  resolution: "wrangler@npm:3.93.0"
+"wrangler@npm:3.94.0":
+  version: 3.94.0
+  resolution: "wrangler@npm:3.94.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
-    "@cloudflare/workers-shared": "npm:0.10.0"
+    "@cloudflare/workers-shared": "npm:0.11.0"
     "@esbuild-plugins/node-globals-polyfill": "npm:^0.2.3"
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"
     blake3-wasm: "npm:^2.1.5"
@@ -37522,7 +37522,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/a204dc01d6a9d54a35b59b67d0aaa9b5656f937c48a1f20980d3fbfad7d122b950e96e4c65441dd614a11580c045a1d0f6926620f4807bae402068d56918166a
+  checksum: 10c0/2bab835597804a122a82d7f3a7de8f4e215d5a732088c9caf0f0230733c0fca3e395dc7fb6dc4363f850ccf03b070cfdc0c82dcc95597370dbf522ff27940df4
   languageName: node
   linkType: hard
 
