@@ -1,5 +1,34 @@
 # @graphql-mesh/compose-cli
 
+## 1.3.1
+
+### Patch Changes
+
+- [#8082](https://github.com/ardatan/graphql-mesh/pull/8082)
+  [`93fb364`](https://github.com/ardatan/graphql-mesh/commit/93fb3643d90c52084725d79b586ace8ecd570911)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/fusion-composition@^0.7.13` ↗︎](https://www.npmjs.com/package/@graphql-mesh/fusion-composition/v/0.7.13)
+    (from `workspace:^`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/include@^0.2.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/include/v/0.2.6)
+    (from `workspace:^`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/string-interpolation@^0.5.7` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.7)
+    (from `workspace:^`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/types@^0.103.7` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.103.7)
+    (from `workspace:^`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@^0.103.7` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.103.7)
+    (from `workspace:^`, in `dependencies`)
+- Updated dependencies
+  [[`93fb364`](https://github.com/ardatan/graphql-mesh/commit/93fb3643d90c52084725d79b586ace8ecd570911)]:
+  - @graphql-mesh/include@0.2.7
+  - @graphql-mesh/utils@0.103.8
+  - @graphql-mesh/fusion-composition@0.7.14
+  - @graphql-mesh/types@0.103.8
+
 ## 1.3.0
 
 ### Minor Changes
