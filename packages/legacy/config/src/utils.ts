@@ -120,7 +120,7 @@ export async function resolveCustomFetch({
   if (!fetchConfig) {
     return {
       fetchFn: defaultFetch,
-      code: `const fetchFn = await defaultImportFn('@whatwg-node/fetch');`,
+      code: `const fetchFn = await defaultImportFn('@whatwg-node/fetch').then(m => m?.fetch || m);`,
     };
   }
   const { moduleName, resolved: fetchFn } = await getPackage<MeshFetch>({
@@ -132,7 +132,7 @@ export async function resolveCustomFetch({
   });
 
   const processedModuleName = moduleName.startsWith('.') ? path.join('..', moduleName) : moduleName;
-  const code = `const fetchFn = await defaultImportFn(${JSON.stringify(processedModuleName)});`;
+  const code = `const fetchFn = await defaultImportFn(${JSON.stringify(processedModuleName)}).then(m => m?.fetch || m);`;
 
   return {
     fetchFn,
