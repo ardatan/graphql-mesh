@@ -6257,7 +6257,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.103.6"
     "@graphql-mesh/utils": "npm:^0.103.6"
     "@graphql-tools/delegate": "npm:^10.0.28"
-    "@graphql-tools/federation": "npm:^2.2.36"
+    "@graphql-tools/federation": "npm:^3.0.0"
     "@graphql-tools/url-loader": "npm:^8.0.9"
     "@graphql-tools/utils": "npm:^10.6.0"
     lodash.get: "npm:^4.4.2"
@@ -6885,7 +6885,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "workspace:^"
     "@graphql-mesh/types": "workspace:^"
     "@graphql-mesh/utils": "workspace:^"
-    "@graphql-tools/federation": "npm:^2.2.34"
+    "@graphql-tools/federation": "npm:^3.0.0"
     "@graphql-tools/url-loader": "npm:^8.0.9"
     "@graphql-tools/utils": "npm:^10.6.0"
     lodash.get: "npm:^4.4.2"
@@ -7664,25 +7664,6 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/d97947103a8617bd06a68a6f56e076170eaa71628c5058958ca95e3b5a80a9bcfcb22cbf0f402abdd7c2e5ea79205361f069e960592255864560a348bb551843
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/federation@npm:^2.2.34, @graphql-tools/federation@npm:^2.2.36":
-  version: 2.2.40
-  resolution: "@graphql-tools/federation@npm:2.2.40"
-  dependencies:
-    "@graphql-tools/delegate": "npm:^10.2.7"
-    "@graphql-tools/executor-http": "npm:^1.1.14"
-    "@graphql-tools/merge": "npm:^9.0.12"
-    "@graphql-tools/schema": "npm:^10.0.11"
-    "@graphql-tools/stitch": "npm:^9.4.9"
-    "@graphql-tools/utils": "npm:^10.6.2"
-    "@graphql-tools/wrap": "npm:^10.0.25"
-    "@whatwg-node/fetch": "npm:^0.10.1"
-    tslib: "npm:^2.8.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/bcf6546bd7c0ec3163ac8456e3ce41de4628cc067f2c9dce8ffee752ea7c518526012819c1832a0dfad5e491f58c3fdc7c261231e5880f404711df6e5ea3ad71
   languageName: node
   linkType: hard
 
