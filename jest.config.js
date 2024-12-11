@@ -12,6 +12,21 @@ const tsconfig = JSON5.parse(tsconfigStr);
 
 process.env.LC_ALL = 'en_US';
 
+let displayName = 'Unit Tests';
+
+if (process.env.E2E_TEST) {
+  displayName = 'E2E Tests';
+}
+if (process.env.INTEGRATION_TEST) {
+  displayName = 'Integration Tests';
+}
+if (process.env.LEAK_TEST) {
+  displayName += ' (Leak Detection)';
+}
+if (process.env.E2E_SERVE_RUNNER) {
+  displayName += ` (Runner: ${process.env.E2E_SERVE_RUNNER})`;
+}
+
 let testMatch = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'];
 
 if (process.env.LEAK_TEST) {
@@ -74,6 +89,7 @@ module.exports = {
         maxWorkers: 5, // TODO: running with more than 5 workers breaks docker
       }
     : {}),
+  displayName,
   prettierPath: null, // not supported before Jest v30 https://github.com/jestjs/jest/issues/14305
   testEnvironment: 'node',
   rootDir: ROOT_DIR,
