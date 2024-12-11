@@ -1,5 +1,22 @@
 # @graphql-mesh/merger-stitching
 
+## 0.104.7
+
+### Patch Changes
+
+- [#7961](https://github.com/ardatan/graphql-mesh/pull/7961)
+  [`1a7adbf`](https://github.com/ardatan/graphql-mesh/commit/1a7adbf28f126c0fc8ba834f8a7db886f7fba876)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitch@^9.4.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitch/v/9.4.6)
+    (from `^9.2.17`, in `dependencies`)
+- Updated dependencies
+  [[`c2349ef`](https://github.com/ardatan/graphql-mesh/commit/c2349ef8029b2e555e9dc8afc1b0ee436ba4d85e),
+  [`e82d900`](https://github.com/ardatan/graphql-mesh/commit/e82d900361e539eb39afed2a328339df92551419)]:
+  - @graphql-mesh/store@0.103.7
+  - @graphql-mesh/types@0.103.7
+  - @graphql-mesh/utils@0.103.7
+
 ## 0.104.6
 
 ### Patch Changes

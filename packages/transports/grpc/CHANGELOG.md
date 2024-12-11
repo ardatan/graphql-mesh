@@ -1,5 +1,13 @@
 # @graphql-mesh/transport-grpc
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.103.7
+  - @graphql-mesh/utils@0.103.7
+
 ## 0.1.6
 
 ### Patch Changes

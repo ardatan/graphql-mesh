@@ -1,5 +1,48 @@
 # @graphql-mesh/graphql
 
+## 0.103.8
+
+### Patch Changes
+
+- [#7961](https://github.com/ardatan/graphql-mesh/pull/7961)
+  [`1a7adbf`](https://github.com/ardatan/graphql-mesh/commit/1a7adbf28f126c0fc8ba834f8a7db886f7fba876)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Updated dependency
+    [`@graphql-tools/federation@^2.2.36` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/2.2.36)
+    (from `^2.2.34`, in `dependencies`)
+
+- [#8111](https://github.com/ardatan/graphql-mesh/pull/8111)
+  [`4562c3a`](https://github.com/ardatan/graphql-mesh/commit/4562c3a031fcd05a44751a60749da0d9941e4bc5)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/cross-helpers@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/workspace:^)
+    (from `^0.4.9`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/store@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/workspace:^)
+    (from `^0.103.6`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/string-interpolation@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/workspace:^)
+    (from `^0.5.7`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/types@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/workspace:^)
+    (from `^0.103.6`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/workspace:^)
+    (from `^0.103.6`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^3.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/3.0.0)
+    (from `^2.2.36`, in `dependencies`)
+  - Added dependency
+    [`@graphql-tools/merge@^9.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.0.12)
+    (to `dependencies`)
+- Updated dependencies
+  [[`c2349ef`](https://github.com/ardatan/graphql-mesh/commit/c2349ef8029b2e555e9dc8afc1b0ee436ba4d85e),
+  [`e82d900`](https://github.com/ardatan/graphql-mesh/commit/e82d900361e539eb39afed2a328339df92551419)]:
+  - @graphql-mesh/store@0.103.7
+  - @graphql-mesh/types@0.103.7
+  - @graphql-mesh/utils@0.103.7
+
 ## 0.103.7
 
 ### Patch Changes
