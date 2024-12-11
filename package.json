@@ -48,7 +48,6 @@
     "generate-config-schema": "yarn graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/legacy/types/src/config-schema.json --typings ./packages/legacy/types/src/config.ts --markdown ./website/src/generated-markdown && yarn postgenerate-config-schema",
     "inject-version": "yarn workspaces foreach -A run inject-version",
     "lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --ext .ts \"./packages/**/src/**/*.ts\"",
-    "loadtest:e2e": "cross-env \"JEST=1\" \"E2E_TEST=true\" jest --no-watchman --runInBand --bail --config=jest.config.loadtest.js",
     "package-binary": "yarn workspaces foreach -A run package-binary",
     "postbuild": "yarn inject-version && yarn copy-config-schema && yarn fix-bin && tsx scripts/replace-import-meta-url-in-cjs.ts",
     "postchangeset": "yarn install --no-immutable",

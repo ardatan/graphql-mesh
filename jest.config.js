@@ -23,9 +23,6 @@ if (process.env.INTEGRATION_TEST) {
 if (process.env.LEAK_TEST) {
   displayName += ' (Leak Detection)';
 }
-if (process.env.E2E_SERVE_RUNNER) {
-  displayName += ` (Runner: ${process.env.E2E_SERVE_RUNNER})`;
-}
 
 let testMatch = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'];
 
@@ -84,11 +81,6 @@ if (process.version === 'v22.7.0') {
 
 /** @type {import('jest').Config} */
 module.exports = {
-  ...(process.env.E2E_SERVE_RUNNER === 'docker'
-    ? {
-        maxWorkers: 5, // TODO: running with more than 5 workers breaks docker
-      }
-    : {}),
   displayName,
   prettierPath: null, // not supported before Jest v30 https://github.com/jestjs/jest/issues/14305
   testEnvironment: 'node',
