@@ -39,11 +39,11 @@ import type {
 import {
   isUrl,
   loadFromModuleExportExpression,
+  parseWithCache,
   readFile,
   readFileOrUrl,
   readUrl,
 } from '@graphql-mesh/utils';
-import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from '@graphql-tools/federation';
 import type { SubscriptionProtocol } from '@graphql-tools/url-loader';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import type { ExecutionRequest, Executor } from '@graphql-tools/utils';
@@ -55,6 +55,7 @@ import {
   memoize1,
   parseSelectionSet,
 } from '@graphql-tools/utils';
+import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {
@@ -237,11 +238,11 @@ export default class GraphQLHandler implements MeshHandler {
         });
       }
       const introspection = (await meshIntrospectionExecutor({
-        document: parse(getIntrospectionQuery()),
+        document: parseWithCache(getIntrospectionQuery()),
       })) as ExecutionResult<IntrospectionQuery>;
       if (introspection.data.__schema.types.find(t => t.name === '_Service')) {
         const sdl = (await meshIntrospectionExecutor({
-          document: parse(SubgraphSDLQuery),
+          document: parseWithCache(SubgraphSDLQuery),
         })) as ExecutionResult<{ _service: { sdl: string } }>;
         const schema = buildSchema(
           sdl.data._service.sdl.replace(/extend type (\w+)/g, 'type $1 @extends'),
