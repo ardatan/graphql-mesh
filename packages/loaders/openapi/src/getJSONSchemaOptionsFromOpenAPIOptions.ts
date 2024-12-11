@@ -687,6 +687,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                   }
                   return false;
                 }
+                setTimeout(() => {
+                  logger.warn(
+                    `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
+                  );
+                  futureLinks.delete(findActualOperationAndPath);
+                  deferred.resolve();
+                }, 5000);
                 if (!findActualOperationAndPath(name, oasOrSwagger, methodObjFieldMap)) {
                   futureLinks.add(findActualOperationAndPath);
                 }
