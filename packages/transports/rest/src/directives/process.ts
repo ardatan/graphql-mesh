@@ -228,7 +228,7 @@ export function processDirectives(
             case 'responseMetadata':
               processResponseMetadataAnnotations(field as GraphQLField<any, any>);
               break;
-            case 'link':
+            case 'oas_link':
               processLinkFieldAnnotations(
                 field as GraphQLField<any, any>,
                 directiveAnnotation.args.defaultRootType,

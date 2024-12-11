@@ -1,15 +1,21 @@
 import {
   buildSchema,
+  getNamedType,
+  isInterfaceType,
+  isNamedType,
   Kind,
   parse,
   print,
   visit,
   type DocumentNode,
+  type GraphQLObjectType,
   type GraphQLSchema,
 } from 'graphql';
 import {
   composeSubgraphs,
+  futureAdditions,
   getAnnotatedSubgraphs,
+  type FutureAddition,
   type SubgraphConfig,
 } from '@graphql-mesh/fusion-composition';
 import type { Logger } from '@graphql-mesh/types';
@@ -18,7 +24,7 @@ import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
-import { isDocumentString, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { astFromValueUntyped, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
@@ -54,6 +60,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       };
     }),
   );
+
   let additionalTypeDefs: DocumentNode[] | undefined;
   if (config.additionalTypeDefs != null) {
     let additionalFieldDirectiveUsed = false;
@@ -130,8 +137,53 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
     logger.error(`Unknown error: Supergraph is empty`);
     process.exit(1);
   }
+  let composedSchema: GraphQLSchema;
+  if (futureAdditions.length) {
+    let futureAddition: FutureAddition;
+    while ((futureAddition = futureAdditions.pop())) {
+      additionalTypeDefs ||= [];
+      composedSchema ||= buildSchema(result.supergraphSdl, {
+        noLocation: true,
+        assumeValid: true,
+        assumeValidSDL: true,
+      });
+      const sourceType = composedSchema.getType(futureAddition.sourceTypeName) as GraphQLObjectType;
+      if (!sourceType) {
+        logger.error(`Target type ${futureAddition.sourceTypeName} not found`);
+        process.exit(1);
+      }
+      const sourceField = sourceType.getFields()[futureAddition.sourceFieldName];
+      if (!sourceField) {
+        logger.error(`Target field ${futureAddition.sourceFieldName} not found`);
+        process.exit(1);
+      }
+      const sourceReturnType = getNamedType(sourceField.type);
+      if (!isNamedType(sourceReturnType)) {
+        logger.error(`Target field ${futureAddition.sourceFieldName} has no return type`);
+        process.exit(1);
+      }
+      const interfaceOrType = isInterfaceType(composedSchema.getType(futureAddition.targetTypeName))
+        ? 'interface'
+        : 'type';
+      additionalTypeDefs.push(
+        parse(/* GraphQL */ `
+          extend ${interfaceOrType} ${futureAddition.targetTypeName} {
+            ${futureAddition.targetFieldName}: ${sourceReturnType}
+            @additionalField
+            @resolveTo(
+              sourceTypeName: "${futureAddition.sourceTypeName}",
+              sourceFieldName: "${futureAddition.sourceFieldName}",
+              sourceName: "${futureAddition.sourceName}",
+              sourceArgs: ${print(astFromValueUntyped(futureAddition.sourceArgs))},
+              requiredSelectionSet: "${futureAddition.requiredSelectionSet}"
+            )
+          }
+        `),
+      );
+    }
+  }
   if (additionalTypeDefs?.length /* TODO || config.transforms?.length */) {
-    let composedSchema = buildSchema(result.supergraphSdl, {
+    composedSchema ||= buildSchema(result.supergraphSdl, {
       noLocation: true,
       assumeValid: true,
       assumeValidSDL: true,

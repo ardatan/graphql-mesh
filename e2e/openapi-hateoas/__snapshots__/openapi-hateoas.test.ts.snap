@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OpenAPI HATEOAS should compose 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@discriminator", "@httpOperation", "@linkResolver", "@oas_link", "@transport", "@extraSchemaDefinitionDirective", "@merge"]) {
+  query: Query
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+directive @discriminator(subgraph: String, field: String, mapping: [[String]]) repeatable on INTERFACE | UNION
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) repeatable on FIELD_DEFINITION
+
+directive @linkResolver(subgraph: String, linkResolverMap: ObjMap) repeatable on FIELD_DEFINITION
+
+directive @oas_link(subgraph: String, defaultRootType: String, defaultField: String) repeatable on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
+
+directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
+
+scalar join__FieldSet
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  PRODUCTS @join__graph(name: "Products", url: "http://localhost:<OASService_port>")
+  SUPPLIERS @join__graph(name: "Suppliers", url: "http://localhost:<OASService_port>")
+}
+
+scalar ObjMap @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS)
+
+scalar _DirectiveExtensions @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS)
+
+type Electronics implements Product @join__type(graph: PRODUCTS) @join__implements(graph: PRODUCTS, interface: "Product") {
+  warranty: String
+  _links: ProductLinks
+  _type: String
+  id: Int
+  name: String
+  price: Float
+  supplierId: Int
+  supplier: Supplier
+  """Get a product by ID"""
+  self: Product @oas_link(subgraph: "Products", defaultRootType: "Query", defaultField: "getProductById")
+}
+
+type ProductLinks @join__type(graph: PRODUCTS) {
+  self: Link!
+  supplier: Link!
+}
+
+type Link @join__type(graph: PRODUCTS) {
+  href: String!
+}
+
+type Supplier @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS, key: "id") {
+  id: Int
+  name: String @join__field(graph: SUPPLIERS)
+  address: String @join__field(graph: SUPPLIERS)
+}
+
+type Clothing implements Product @join__type(graph: PRODUCTS) @join__implements(graph: PRODUCTS, interface: "Product") {
+  material: String
+  _links: ProductLinks
+  _type: String
+  id: Int
+  name: String
+  price: Float
+  supplierId: Int
+  supplier: Supplier
+  """Get a product by ID"""
+  self: Product @oas_link(subgraph: "Products", defaultRootType: "Query", defaultField: "getProductById")
+}
+
+type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Products", kind: "rest", location: "http://localhost:<OASService_port>"}]}) @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Suppliers", kind: "rest", location: "http://localhost:<OASService_port>"}]}) @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS) {
+  """Get a product by ID"""
+  getProductById(
+    """The product ID"""
+    id: Int!
+  ): Product @httpOperation(subgraph: "Products", path: "/products/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @linkResolver(subgraph: "Products", linkResolverMap: "{\\"self\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root['id']}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getProductById\\"}}") @join__field(graph: PRODUCTS)
+  """Get a supplier by ID"""
+  getSupplierById(
+    """The supplier ID"""
+    id: Int!
+  ): Supplier @httpOperation(subgraph: "Suppliers", path: "/suppliers/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @merge(subgraph: "Suppliers", keyField: "id", keyArg: "id") @join__field(graph: SUPPLIERS)
+}
+
+interface Product @discriminator(subgraph: "Products", field: "_type", mapping: [["ELECTRONICS", "Electronics"], ["CLOTHING", "Clothing"]]) @join__type(graph: PRODUCTS) {
+  _links: ProductLinks
+  _type: String
+  id: Int
+  name: String
+  price: Float
+  supplierId: Int
+  supplier: Supplier @additionalField @resolveTo(sourceTypeName: "Query", sourceFieldName: "getSupplierById", sourceName: "Suppliers", sourceArgs: {id: "{root['supplierId']}"}, requiredSelectionSet: "{ supplierId }")
+  """Get a product by ID"""
+  self: Product @oas_link(subgraph: "Products", defaultRootType: "Query", defaultField: "getProductById")
+}
+
+enum HTTPMethod @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS) {
+  GET @join__enumValue(graph: PRODUCTS) @join__enumValue(graph: SUPPLIERS)
+  HEAD @join__enumValue(graph: PRODUCTS) @join__enumValue(graph: SUPPLIERS)
+  POST @join__enumValue(graph: PRODUCTS) @join__enumValue(graph: SUPPLIERS)
+  PUT @join__enumValue(graph: PRODUCTS) @join__enumValue(graph: SUPPLIERS)
+  DELETE @join__enumValue(graph: PRODUCTS) @join__enumValue(graph: SUPPLIERS)
+  CONNECT @join__enumValue(graph: PRODUCTS) @join__enumValue(graph: SUPPLIERS)
+  OPTIONS @join__enumValue(graph: PRODUCTS) @join__enumValue(graph: SUPPLIERS)
+  TRACE @join__enumValue(graph: PRODUCTS) @join__enumValue(graph: SUPPLIERS)
+  PATCH @join__enumValue(graph: PRODUCTS) @join__enumValue(graph: SUPPLIERS)
+}"
+`;

@@ -59,6 +59,9 @@ function getLinkResolverMap(schema: GraphQLSchema, field: GraphQLField<any, any>
   if (parentFieldLinkResolverDirectives?.length) {
     const linkResolverMap = parentFieldLinkResolverDirectives[0].linkResolverMap;
     if (linkResolverMap) {
+      if (typeof linkResolverMap === 'string') {
+        return JSON.parse(linkResolverMap);
+      }
       return linkResolverMap;
     }
   }

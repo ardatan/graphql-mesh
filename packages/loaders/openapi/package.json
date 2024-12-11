@@ -35,19 +35,20 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.9",
-    "@graphql-mesh/string-interpolation": "^0.5.7",
-    "@graphql-mesh/types": "^0.103.6",
-    "@graphql-mesh/utils": "^0.103.6",
+    "@graphql-mesh/cross-helpers": "workspace:^",
+    "@graphql-mesh/fusion-composition": "workspace:^",
+    "@graphql-mesh/string-interpolation": "workspace:^",
+    "@graphql-mesh/types": "workspace:^",
+    "@graphql-mesh/utils": "workspace:^",
     "@graphql-tools/delegate": "^10.0.28",
-    "@omnigraph/json-schema": "^0.108.6",
+    "@graphql-tools/utils": "10.6.2",
+    "@omnigraph/json-schema": "workspace:^",
     "change-case": "^4.1.2",
-    "json-machete": "^0.97.5",
+    "json-machete": "workspace:^",
     "openapi-types": "^12.1.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-tools/utils": "10.6.2",
     "@whatwg-node/fetch": "0.10.1",
     "fets": "0.8.4",
     "graphql-yoga": "5.10.4",

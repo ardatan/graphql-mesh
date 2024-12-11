@@ -3,8 +3,10 @@ import type { JSONSchemaObject } from 'json-machete';
 import { dereferenceObject, handleUntitledDefinitions, resolvePath } from 'json-machete';
 import type { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { process } from '@graphql-mesh/cross-helpers';
+import { futureAdditions } from '@graphql-mesh/fusion-composition';
 import {
   getInterpolatedHeadersFactory,
+  getInterpolationKeys,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
 import type { Logger, MeshFetch } from '@graphql-mesh/types';
@@ -14,6 +16,8 @@ import {
   readFileOrUrl,
   sanitizeNameForGraphQL,
 } from '@graphql-mesh/utils';
+import { createDeferred } from '@graphql-tools/delegate';
+import { asArray } from '@graphql-tools/utils';
 import type {
   HTTPMethod,
   JSONSchemaHTTPJSONOperationConfig,
@@ -24,6 +28,32 @@ import type {
 } from '@omnigraph/json-schema';
 import type { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
+
+export interface HATEOASConfig {
+  /**
+   * @default "rel"
+   */
+  linkNameIdentifier: string;
+  /**
+   * @default "href"
+   */
+  linkPathIdentifier: string;
+  /**
+   * @default "_links"
+   */
+  linkObjectIdentifier: string;
+  /**
+   * @default "x-links"
+   */
+  linkObjectExtensionIdentifier: string;
+}
+
+const defaultHateoasConfig: HATEOASConfig = {
+  linkNameIdentifier: 'rel',
+  linkPathIdentifier: 'href',
+  linkObjectIdentifier: '_links',
+  linkObjectExtensionIdentifier: 'x-links',
+};
 
 interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   source: OpenAPIV3.Document | OpenAPIV2.Document | string;
@@ -37,7 +67,23 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
   logger?: Logger;
   jsonApi?: boolean;
+  HATEOAS?: Partial<HATEOASConfig> | boolean;
 }
+
+type FutureLink = (
+  name: string,
+  oasDoc: OpenAPIV3.Document | OpenAPIV2.Document,
+  methodObjFieldMap: MethodObjFieldMap,
+) => boolean;
+
+type MethodObjFieldMap = WeakMap<
+  OpenAPIV2.OperationObject | OpenAPIV3.OperationObject,
+  JSONSchemaHTTPJSONOperationConfig & {
+    responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig>;
+  }
+>;
+
+const futureLinks = new Set<FutureLink>();
 
 export async function getJSONSchemaOptionsFromOpenAPIOptions(
   name: string,
@@ -53,8 +99,18 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     selectQueryOrMutationField = [],
     logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
     jsonApi,
+    HATEOAS,
   }: GetJSONSchemaOptionsFromOpenAPIOptionsParams,
 ) {
+  const hateOasConfig: HATEOASConfig | false =
+    HATEOAS === true
+      ? defaultHateoasConfig
+      : HATEOAS === false
+        ? false
+        : {
+            ...defaultHateoasConfig,
+            ...HATEOAS,
+          };
   if (typeof source === 'string') {
     source = stringInterpolator.parse(source, {
       env: process.env,
@@ -168,6 +224,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     OpenAPIV2.OperationObject | OpenAPIV3.OperationObject,
     OperationConfig
   >();
+
+  for (const futureLink of futureLinks) {
+    if (futureLink(name, oasOrSwagger, methodObjFieldMap)) {
+      break;
+    }
+  }
 
   for (const relativePath in oasOrSwagger.paths) {
     const pathObj = oasOrSwagger.paths[relativePath];
@@ -510,6 +572,135 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             type: 'null',
             description: responseObj.description,
           };
+        }
+
+        if (
+          hateOasConfig &&
+          schemaObj?.properties?.[hateOasConfig.linkObjectIdentifier]?.properties
+        ) {
+          const links = (responseByStatusCode[responseKey].links ||= {});
+          await Promise.all(
+            (
+              Object.keys(
+                schemaObj.properties[hateOasConfig.linkObjectIdentifier].properties,
+              ) as string[]
+            ).map(async linkName => {
+              const xLinkObj = schemaObj.properties?.[hateOasConfig.linkObjectIdentifier]?.[
+                hateOasConfig.linkObjectExtensionIdentifier
+              ]?.find(link => link[hateOasConfig.linkNameIdentifier] === linkName);
+              if (xLinkObj) {
+                const xLinkHref = xLinkObj[hateOasConfig.linkPathIdentifier];
+                const cleanXLinkHref = xLinkHref.replace(/{[^}]+}/g, '');
+                const deferred = createDeferred<void>();
+                function findActualOperationAndPath(
+                  possibleName: string,
+                  possibleOasDoc: typeof oasOrSwagger,
+                  possibleMethodObjFieldMap: typeof methodObjFieldMap,
+                ) {
+                  let actualOperation: OpenAPIV3.OperationObject;
+                  let actualPath: string;
+                  for (const path in possibleOasDoc.paths) {
+                    const cleanPath = path.replace(/{[^}]+}/g, '');
+                    if (cleanPath === cleanXLinkHref) {
+                      actualPath = path;
+                      actualOperation = possibleOasDoc.paths[path][method];
+                      break;
+                    }
+                  }
+                  if (actualOperation) {
+                    const args = {};
+                    const paramsInLink = getInterpolationKeys(xLinkHref);
+                    const paramsInTarget = getInterpolationKeys(actualPath);
+                    for (const paramIndex in paramsInTarget) {
+                      args[paramsInTarget[paramIndex]] = `{root['${paramsInLink[paramIndex]}']}`;
+                    }
+                    if (possibleName === name) {
+                      links[linkName] = {
+                        get fieldName() {
+                          const linkOperationConfig =
+                            possibleMethodObjFieldMap.get(actualOperation);
+                          return linkOperationConfig.field;
+                        },
+                        args,
+                      };
+                    } else {
+                      const succesfulRes = actualOperation.responses[200];
+                      if (succesfulRes && 'content' in succesfulRes) {
+                        const contentKeys = Object.keys(succesfulRes.content);
+                        const contentKey =
+                          contentKeys.find(
+                            contentKey =>
+                              typeof contentKey === 'string' && contentKey.match('json'),
+                          ) || contentKeys[0];
+                        const content = succesfulRes.content[contentKey];
+                        const contentSchema = content.schema;
+                        let objectSchema: any;
+                        if ('$ref' in contentSchema) {
+                          throw new Error('Reference in response is not supported');
+                        } else {
+                          if (contentSchema.type === 'array') {
+                            const items = asArray(contentSchema.items);
+                            for (const item of items) {
+                              if ('$ref' in item) {
+                                throw new Error('Array of references is not supported');
+                              }
+                              if (item.title) {
+                                objectSchema = item;
+                                break;
+                              }
+                            }
+                          } else if (contentSchema.title) {
+                            objectSchema = contentSchema;
+                          }
+                        }
+                        if (objectSchema) {
+                          const properties: Record<string, JSONSchemaObject> = {};
+                          for (const paramName of paramsInTarget) {
+                            const propInTarget = objectSchema.properties[paramName];
+                            if (propInTarget) {
+                              properties[paramName] = propInTarget;
+                            }
+                          }
+                          schemaObj.properties[linkName] = {
+                            ...objectSchema,
+                            properties,
+                          };
+                          futureAdditions.push({
+                            targetTypeName: schemaObj.title,
+                            targetFieldName: linkName,
+                            sourceName: possibleName,
+                            sourceTypeName: 'Query',
+                            requiredSelectionSet: `{ ${paramsInLink.join(' ')} }`,
+                            get sourceFieldName() {
+                              const linkOperationConfig =
+                                possibleMethodObjFieldMap.get(actualOperation);
+                              return linkOperationConfig.field;
+                            },
+                            sourceArgs: args,
+                          });
+                        }
+                      }
+                    }
+                    futureLinks.delete(findActualOperationAndPath);
+                    deferred.resolve();
+                    return true;
+                  }
+                  return false;
+                }
+                setTimeout(() => {
+                  logger.warn(
+                    `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
+                  );
+                  futureLinks.delete(findActualOperationAndPath);
+                  deferred.resolve();
+                }, 5000);
+                if (!findActualOperationAndPath(name, oasOrSwagger, methodObjFieldMap)) {
+                  futureLinks.add(findActualOperationAndPath);
+                }
+                return deferred.promise;
+              }
+            }),
+          );
         }
 
         if ('links' in responseObj) {

@@ -9,6 +9,10 @@ directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
+directive @linkResolver(subgraph: String, linkResolverMap: ObjMap) on FIELD_DEFINITION
+
+directive @oas_link(subgraph: String, defaultRootType: String, defaultField: String) on FIELD_DEFINITION
+
 directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
 
 type Query {
@@ -47,7 +51,7 @@ type Query {
   """anyOf test with allOf, requiring anyOf collapse"""
   anyOf11: anyOf11_200_response @httpOperation(subgraph: "test", path: "/anyOf11", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   testLink: String @httpOperation(subgraph: "test", path: "/testLink", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
-  oneOfWithAllOfsAndLink: OneOfWithAllOfsAndLink @httpOperation(subgraph: "test", path: "/oneOfWithAllOfsAndLink", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  oneOfWithAllOfsAndLink: OneOfWithAllOfsAndLink @httpOperation(subgraph: "test", path: "/oneOfWithAllOfsAndLink", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @linkResolver(subgraph: "test", linkResolverMap: "{\\"testLink\\":{\\"linkObjArgs\\":{\\"someId\\":\\"{root.$request.path.id}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"testLink\\"}}")
 }
 
 union oneOf_200_response = commonAttributeObject | differentAttributeObject
@@ -139,7 +143,7 @@ union OneOfWithAllOfsAndLink = One | Two
 type One {
   commonProp: String
   differentOneProp: String
-  testLink: String @link(subgraph: "test", defaultRootType: "Query", defaultField: "oneOfWithAllOfsAndLink")
+  testLink: String @oas_link(subgraph: "test", defaultRootType: "Query", defaultField: "oneOfWithAllOfsAndLink")
 }
 
 type Two {

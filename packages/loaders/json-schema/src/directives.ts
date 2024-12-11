@@ -167,10 +167,13 @@ export const ResponseMetadataDirective = new GraphQLDirective({
   },
 });
 
-export const LinkDirective = new GraphQLDirective({
-  name: 'link',
+export const OasLinkDirective = new GraphQLDirective({
+  name: 'oas_link',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
+    subgraph: {
+      type: GraphQLString,
+    },
     defaultRootType: {
       type: GraphQLString,
     },
