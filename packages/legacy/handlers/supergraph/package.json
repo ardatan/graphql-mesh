@@ -40,7 +40,7 @@
     "@graphql-mesh/string-interpolation": "workspace:^",
     "@graphql-mesh/types": "workspace:^",
     "@graphql-mesh/utils": "workspace:^",
-    "@graphql-tools/federation": "^2.2.34",
+    "@graphql-tools/federation": "^3.0.0",
     "@graphql-tools/url-loader": "^8.0.9",
     "@graphql-tools/utils": "^10.6.0",
     "lodash.get": "^4.4.2",
