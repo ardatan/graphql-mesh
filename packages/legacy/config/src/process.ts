@@ -104,6 +104,7 @@ export async function processConfig(
   const importCodes = new Set([
     `import type { GetMeshOptions } from '@graphql-mesh/runtime';`,
     `import type { YamlConfig } from '@graphql-mesh/types';`,
+    `import { defaultImportFn } from '@graphql-mesh/utils';`,
   ]);
   const codes = new Set([
     `export const rawServeConfig: YamlConfig.Config['serve'] = ${JSON.stringify(
@@ -209,7 +210,7 @@ export async function processConfig(
             if (options.generateCode) {
               const handlerImportName = pascalCase(handlerName + '_Handler');
               codes.add(
-                `const ${handlerImportName} = await import(${JSON.stringify(moduleName)}).then(m => m?.default || m);`,
+                `const ${handlerImportName} = await defaultImportFn(${JSON.stringify(moduleName)});`,
               );
               codes.add(`const ${handlerVariableName} = new ${handlerImportName}({
               name: ${JSON.stringify(source.name)},
@@ -249,7 +250,7 @@ export async function processConfig(
               if (options.generateCode) {
                 const transformImportName = pascalCase(transformName + '_Transform');
                 codes.add(
-                  `const ${transformImportName} = await import(${JSON.stringify(moduleName)}).then(m => m?.default || m);`,
+                  `const ${transformImportName} = await defaultImportFn(${JSON.stringify(moduleName)});`,
                 );
                 codes.add(`${transformsVariableName}[${transformIndex}] = new ${transformImportName}({
                   apiName: ${JSON.stringify(source.name)},
@@ -336,7 +337,7 @@ export async function processConfig(
           if (options.generateCode) {
             const importProp = `[${JSON.stringify(importName)}]`;
             codes.add(
-              `const ${importName} = await import(${JSON.stringify(moduleName)}).then(m => m?.default?.${importProp} || m?.${importProp});`,
+              `const ${importName} = await defaultImportFn(${JSON.stringify(moduleName)}).then(m => m?.${importProp});`,
             );
             codes.add(
               `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}(${JSON.stringify(
@@ -366,7 +367,7 @@ export async function processConfig(
           if (options.generateCode) {
             const importName = camelCase('use_' + pluginName);
             codes.add(
-              `const ${importName} = await import(${JSON.stringify(moduleName)}).then(m => m?.default || m);`,
+              `const ${importName} = await defaultImportFn(${JSON.stringify(moduleName)});`,
             );
             codes.add(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
@@ -547,9 +548,7 @@ export async function processConfig(
 
   const mergerLoggerPrefix = `${mergerName}Merger`;
   if (options.generateCode) {
-    codes.add(
-      `const Merger = await import(${JSON.stringify(mergerModuleName)}).then(m => m?.default || m);`,
-    );
+    codes.add(`const Merger = await defaultImportFn(${JSON.stringify(mergerModuleName)});`);
     codes.add(`const merger = new Merger({
         cache,
         pubsub,
@@ -567,9 +566,9 @@ export async function processConfig(
 
   if (config.additionalEnvelopPlugins) {
     codes.add(
-      `const importedAdditionalEnvelopPlugins = await import(${JSON.stringify(
+      `const importedAdditionalEnvelopPlugins = await defaultImportFn(${JSON.stringify(
         pathModule.join('..', config.additionalEnvelopPlugins).split('\\').join('/'),
-      )}).then(m => m?.default || m);`,
+      )});`,
     );
     const importedAdditionalEnvelopPlugins = await importFn(
       pathModule.isAbsolute(config.additionalEnvelopPlugins)
@@ -650,7 +649,7 @@ export async function processConfig(
         ${[...documentHashMapCodes].join(',\n')}
       }`);
       codes.add(
-        `const usePersistedOperations = await import('@graphql-yoga/plugin-persisted-operations').then(m => m?.default?.usePersistedOperations || m?.usePersistedOperations);`,
+        `const usePersistedOperations = await defaultImportFn('@graphql-yoga/plugin-persisted-operations').then(m => m?.usePersistedOperations);`,
       );
       codes.add(`additionalEnvelopPlugins.push(usePersistedOperations({
         getPersistedOperation(key) {
