@@ -245,7 +245,7 @@ describe('Supergraph', () => {
       }),
     ).rejects.toThrow();
     expect(logger.error.mock.calls[0][0].toString())
-      .toBe(`Failed to generate the schema for the source "supergraph"
+      .toBe(`Failed to generate the schema for the source
  Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ./fixtures/supergraph-invalid.graphql instead.
  Got result: type Query {
 
@@ -270,7 +270,7 @@ describe('Supergraph', () => {
       }),
     ).rejects.toThrow();
     expect(logger.error.mock.calls[0][0].toString())
-      .toBe(`Failed to generate the schema for the source "supergraph"
+      .toBe(`Failed to generate the schema for the source
  Failed to load supergraph SDL from http://down-sdl-source.com/my-sdl.graphql:
  getaddrinfo ENOTFOUND down-sdl-source.com`);
   });

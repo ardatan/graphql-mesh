@@ -21,7 +21,7 @@ describe('runtime', () => {
       const builtMesh = (await fs.promises.readFile(meshConfigPath)).toString();
 
       // Check that the import of the main Mesh module has replaced the extension
-      expect(builtMesh).toMatch(/defaultImportFn\(".*\/\.meshrc.js"\)/);
+      expect(builtMesh).toMatch(/import\(".*\/\.meshrc.js"\)/);
 
       // Case should stay the same
       expect(builtMesh).toMatch(/case "\.meshrc.ts":/);
@@ -43,7 +43,7 @@ describe('runtime', () => {
       const builtMesh = (await fs.promises.readFile(meshConfigPath)).toString();
 
       // Check that the import of the main Mesh module has kept the file's extension
-      expect(builtMesh).toMatch(/defaultImportFn\(".*\/\.meshrc.js"\)/);
+      expect(builtMesh).toMatch(/import\(".*\/\.meshrc.js"\)/);
 
       // Check that the reference to the relative module in the "importFn" function has kept the file's extension
       expect(builtMesh).toMatch(/case "\.meshrc.js":/);
