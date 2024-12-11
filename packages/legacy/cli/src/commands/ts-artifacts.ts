@@ -362,7 +362,7 @@ const importFn: ImportFn = <T>(moduleId: string) => {
       }
       return `
     case ${JSON.stringify(importPathRelativeToBaseDir)}:
-      return import(${JSON.stringify(importPath)}) as T;
+      return defaultImportFn(${JSON.stringify(importPath)}) as T;
     `;
     })
     .join('')}
