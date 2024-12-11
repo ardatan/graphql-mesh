@@ -344,7 +344,7 @@ ${BASEDIR_ASSIGNMENT_COMMENT}
 const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {${[...importedModulesSet]
-    .map((importedModuleName, importedModuleIndex) => {
+    .map(importedModuleName => {
       const importPathRelativeToBaseDir = pathModule
         .relative(baseDir, importedModuleName)
         .split('\\')
