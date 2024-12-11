@@ -1,9 +1,7 @@
 import { path as pathModule } from '@graphql-mesh/cross-helpers';
-import { mapMaybePromise } from '@graphql-tools/utils';
 
 function defaultImportFn(path: string): Promise<any> {
-  return mapMaybePromise(
-    import(/* @vite-ignore */ path),
+  return import(/* @vite-ignore */ path).then(
     module => {
       let i = 0;
       while (module?.default != null) {

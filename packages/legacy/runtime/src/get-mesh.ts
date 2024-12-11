@@ -205,7 +205,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
         };
       } catch (e: any) {
         sourceLogger.error(
-          `Failed to generate the schema for the source "${apiName}"\n ${e.message}`,
+          `Failed to generate the schema for the source "${apiName}"\n ${e.stack || e.message}`,
         );
         failed = true;
       }
