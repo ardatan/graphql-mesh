@@ -1,5 +1,23 @@
 # @graphql-mesh/cli
 
+## 0.98.9
+
+### Patch Changes
+
+- [#8082](https://github.com/ardatan/graphql-mesh/pull/8082)
+  [`93fb364`](https://github.com/ardatan/graphql-mesh/commit/93fb3643d90c52084725d79b586ace8ecd570911)
+  Thanks [@ardatan](https://github.com/ardatan)! - Import enhancements
+
+- Updated dependencies
+  [[`93fb364`](https://github.com/ardatan/graphql-mesh/commit/93fb3643d90c52084725d79b586ace8ecd570911)]:
+  - @graphql-mesh/config@0.106.9
+  - @graphql-mesh/include@0.2.7
+  - @graphql-mesh/runtime@0.105.8
+  - @graphql-mesh/utils@0.103.8
+  - @graphql-mesh/http@0.105.8
+  - @graphql-mesh/store@0.103.8
+  - @graphql-mesh/types@0.103.8
+
 ## 0.98.8
 
 ### Patch Changes

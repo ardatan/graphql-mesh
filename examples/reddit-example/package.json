@@ -2,7 +2,7 @@
   "name": "@examples/reddit-example",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/cli": "0.98.8",
-    "@graphql-mesh/json-schema": "0.108.7"
+    "@graphql-mesh/cli": "0.98.9",
+    "@graphql-mesh/json-schema": "0.108.8"
   }
 }
