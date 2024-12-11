@@ -4151,22 +4151,22 @@ __metadata:
   linkType: hard
 
 "@envelop/response-cache@npm:^6.1.1, @envelop/response-cache@npm:^6.1.2":
-  version: 6.2.4
-  resolution: "@envelop/response-cache@npm:6.2.4"
+  version: 6.2.5
+  resolution: "@envelop/response-cache@npm:6.2.5"
   dependencies:
     "@graphql-tools/utils": "npm:^10.0.3"
-    "@whatwg-node/fetch": "npm:^0.9.0"
+    "@whatwg-node/fetch": "npm:^0.10.0"
     fast-json-stable-stringify: "npm:^2.1.0"
     lru-cache: "npm:^10.0.0"
     tslib: "npm:^2.5.0"
   peerDependencies:
     "@envelop/core": ^5.0.2
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/1850d9300174a7f4b62ba6721ad5e0ea0837c8e26df44becdaa11022630f9bf5fa628db67961286115b59cad81c424d52dbcf5444033d2a9a95b5404e7bafa6b
+  checksum: 10c0/f5f025a980fd70ffff2a235bd74e36684b053e0b416ce7929450a0e2d23e43ba812c22ebd3b0fd5179aa3568f935c979399d2d0e085f1f7775c05351fe59e244
   languageName: node
   linkType: hard
 
-"@envelop/statsd@npm:^5.0.1":
+"@envelop/statsd@npm:5.0.1":
   version: 5.0.1
   resolution: "@envelop/statsd@npm:5.0.1"
   dependencies:
@@ -6762,7 +6762,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-statsd@workspace:packages/plugins/statsd"
   dependencies:
-    "@envelop/statsd": "npm:^5.0.1"
+    "@envelop/statsd": "npm:5.0.1"
     "@graphql-mesh/types": "npm:^0.103.6"
     "@graphql-mesh/utils": "npm:^0.103.6"
     hot-shots: "npm:^10.2.1"
@@ -13380,11 +13380,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.11.18":
-  version: 18.19.67
-  resolution: "@types/node@npm:18.19.67"
+  version: 18.19.68
+  resolution: "@types/node@npm:18.19.68"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/72b06802ac291c2e710bcf527b040f5490e1f85f26fdedad417e13ce3ed3aeb67e1bf3eef0ba5f581986bf361dcdc5f2d1229a9e284bf3dbd85db5c595e67bc6
+  checksum: 10c0/8c7f01be218c6e3c1e643173662af27e9a2b568f36c0fe83e4295cf7674fe2a0abb4a1c5d7c7abd3345b9114581387dfd3f14b6d0338daebdce9273cd7ba59ab
   languageName: node
   linkType: hard
 
