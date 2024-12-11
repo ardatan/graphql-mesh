@@ -292,10 +292,10 @@ export async function generateTsArtifacts(
             plugin: async () => {
               const importCodes = new Set([
                 ...meshConfigImportCodes,
-                `import { getMesh, ExecuteMeshFn, SubscribeMeshFn, MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
+                `import { getMesh, type ExecuteMeshFn, type SubscribeMeshFn, type MeshContext as BaseMeshContext, type MeshInstance } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
                 `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
-                `import { ImportFn } from '@graphql-mesh/types';`,
+                `import type { ImportFn } from '@graphql-mesh/types';`,
               ]);
               const results = await Promise.all(
                 rawSources.map(async source => {
@@ -344,7 +344,7 @@ ${BASEDIR_ASSIGNMENT_COMMENT}
 const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {${[...importedModulesSet]
-    .map((importedModuleName, importedModuleIndex) => {
+    .map(importedModuleName => {
       const importPathRelativeToBaseDir = pathModule
         .relative(baseDir, importedModuleName)
         .split('\\')
@@ -360,11 +360,9 @@ const importFn: ImportFn = <T>(moduleId: string) => {
           .join('/')}`;
         importPath = replaceTypeScriptExtension(importPath);
       }
-      const importIdentifier = `importedModule$${importedModuleIndex}`;
-      importCodes.add(`import * as ${importIdentifier} from ${JSON.stringify(importPath)};`);
       return `
     case ${JSON.stringify(importPathRelativeToBaseDir)}:
-      return Promise.resolve(${importIdentifier}) as T;
+      return import(${JSON.stringify(importPath)}) as T;
     `;
     })
     .join('')}

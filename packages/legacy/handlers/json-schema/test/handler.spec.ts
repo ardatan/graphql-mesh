@@ -2,21 +2,13 @@
 import { parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, getHeadersObj, PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { Headers, Response } from '@whatwg-node/fetch';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger';
 import JsonSchemaHandler from '../src/index.js';
 
 describe('JSON Schema Handler', () => {
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
   // TODO: Implement this feature later
   it.skip('should accept a code file for operationHeaders', async () => {
     const handler = new JsonSchemaHandler({

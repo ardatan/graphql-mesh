@@ -11,26 +11,13 @@ import {
 } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { hashObject } from '@graphql-mesh/string-interpolation';
-import type {
-  ImportFn,
-  Logger,
-  MeshPubSub,
-  MeshTransformOptions,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { ImportFn, MeshPubSub, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger';
 import { computeCacheKey } from '../src/compute-cache-key.js';
 import CacheTransform from '../src/index.js';
 
-const logger: Logger = {
-  log: jest.fn(),
-  debug: jest.fn(),
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-  child: () => logger,
-};
 const wait = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 const importFn: ImportFn = m => import(m);
 

@@ -40,11 +40,19 @@ describe('Polling Test', () => {
         SUPERGRAPH_SOURCE,
       },
     });
+    if (process.env.DEBUG) {
+      buildCmd.stderr?.on('data', function stderrListener(data: string) {
+        console.error(data);
+      });
+    }
     await new Promise<void>(resolve => {
       buildCmd.stdout?.on('data', function stdoutListener(data: string) {
         if (data.includes('Done!')) {
           buildCmd.stdout?.off('data', stdoutListener);
           resolve();
+        }
+        if (process.env.DEBUG) {
+          console.log(data);
         }
       });
     });
@@ -57,6 +65,11 @@ describe('Polling Test', () => {
         SUPERGRAPH_SOURCE,
       },
     });
+    if (process.env.DEBUG) {
+      serveCmd.stderr?.on('data', function stderrListener(data: string) {
+        console.error(data);
+      });
+    }
     await new Promise<void>(resolve => {
       serveCmd.stdout?.on('data', function stdoutListener(data: string) {
         if (process.env.DEBUG) {
@@ -70,13 +83,14 @@ describe('Polling Test', () => {
     });
     const hostname = await getLocalHostName(port);
     const url = `http://${hostname}:${port}/graphql`;
-    const resp = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `
+    await expect(
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
           {
             __type(name:"Query") {
               fields {
@@ -85,10 +99,9 @@ describe('Polling Test', () => {
             }
           }
         `,
-      }),
-    });
-    const data = await resp.json();
-    expect(data).toEqual({
+        }),
+      }).then(data => data.json()),
+    ).resolves.toEqual({
       data: {
         __type: {
           fields: [
@@ -110,13 +123,14 @@ describe('Polling Test', () => {
     });
     changedSupergraph = true;
     await new Promise(resolve => setTimeout(resolve, 3000));
-    const resp2 = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `
+    await expect(
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
           {
             __type(name:"Query") {
               fields {
@@ -125,10 +139,9 @@ describe('Polling Test', () => {
             }
           }
         `,
-      }),
-    });
-    const data2 = await resp2.json();
-    expect(data2).toEqual({
+        }),
+      }).then(data => data.json()),
+    ).resolves.toEqual({
       data: {
         __type: {
           fields: [

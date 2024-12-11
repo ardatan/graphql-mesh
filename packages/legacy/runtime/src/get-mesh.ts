@@ -204,9 +204,8 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           createProxyingResolver: createProxyingResolverFactory(apiName, rootTypeMap),
         };
       } catch (e: any) {
-        sourceLogger.error(
-          `Failed to generate the schema for the source "${apiName}"\n ${e.message}`,
-        );
+        sourceLogger.debug(e);
+        sourceLogger.error(`Failed to generate the schema for the source\n ${e.message}`);
         failed = true;
       }
     }),

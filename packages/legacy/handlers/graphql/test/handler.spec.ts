@@ -10,23 +10,14 @@ import {
   MeshStore,
   PredefinedProxyOptions,
 } from '@graphql-mesh/store';
-import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as fetchFn } from '@whatwg-node/fetch';
 import { createDisposableServer } from '../../../../testing/createDisposableServer.js';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger.js';
 import GraphQLHandler from '../src/index.js';
 
 const { readFile } = fsPromises;
-
-const logger: Logger = {
-  log: jest.fn(),
-  debug: jest.fn(),
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-  child: () => logger,
-};
 
 describe('graphql', () => {
   let store: MeshStore;

@@ -31,7 +31,7 @@ describe('Persisted Queries', () => {
       });
     });
 
-    afterAll(() => mesh.destroy());
+    afterAll(() => mesh?.destroy());
 
     it('should give correct response for inline persisted operation', async () => {
       const response = await meshHttp.fetch('/graphql', {

@@ -6,10 +6,10 @@ import JsonSchemaHandler from '@graphql-mesh/json-schema';
 import BareMerger from '@graphql-mesh/merger-bare';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import type { Logger } from '@graphql-mesh/types';
 import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { dummyLogger as logger } from '../../../testing/dummyLogger';
 import { getMesh } from '../src/get-mesh.js';
 import type { MeshResolvedSource } from '../src/types.js';
 
@@ -18,7 +18,6 @@ describe('getMesh', () => {
   let cache: InMemoryLRUCache;
   let pubsub: PubSub;
   let store: MeshStore;
-  let logger: Logger;
   let merger: StitchingMerger;
   beforeEach(() => {
     cache = new InMemoryLRUCache();
@@ -27,14 +26,6 @@ describe('getMesh', () => {
       readonly: false,
       validate: false,
     });
-    logger = {
-      debug: jest.fn(),
-      info: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
-      log: jest.fn(),
-      child: () => logger,
-    };
     merger = new StitchingMerger({
       store,
       cache,

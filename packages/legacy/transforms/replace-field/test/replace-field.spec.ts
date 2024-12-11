@@ -6,6 +6,7 @@ import { PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable, pruneSchema } from '@graphql-tools/utils';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger';
 import ReplaceFieldTransform from '../src/index.js';
 
 const importFn: ImportFn = m =>
@@ -15,14 +16,6 @@ const importFn: ImportFn = m =>
   });
 
 describe('replace-field', () => {
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
   const mockQueryBooks = jest
     .fn()
     .mockImplementation(() => ({ books: [{ title: 'abc' }, { title: 'def' }] }));

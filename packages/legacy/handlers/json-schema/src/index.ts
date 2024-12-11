@@ -71,7 +71,7 @@ export default class JsonSchemaHandler implements MeshHandler {
         assumeValid: true,
       });
     }
-    return this.schemaWithAnnotationsProxy.getWithSet(async () => {
+    return this.schemaWithAnnotationsProxy.getWithSet(() => {
       this.logger.info(`Generating GraphQL schema from JSON Schemas`);
       return loadNonExecutableGraphQLSchemaFromJSONSchemas(this.name, {
         ...this.config,

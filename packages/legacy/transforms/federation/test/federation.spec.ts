@@ -1,9 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { buildSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { Logger } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger';
 import FederationTransform from '../src/index.js';
 
 describe('transform-federation', () => {
@@ -11,14 +11,7 @@ describe('transform-federation', () => {
   const baseDir = __dirname;
   const config = {};
   const importFn = defaultImportFn;
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
+  const cache = new InMemoryLRUCache();
   const pubsub = new PubSub();
   it('should trim non federation directives', () => {
     using cache = new InMemoryLRUCache();

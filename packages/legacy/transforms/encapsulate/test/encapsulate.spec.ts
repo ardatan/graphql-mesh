@@ -1,25 +1,17 @@
 import { getIntrospectionQuery, parse } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { ImportFn, Logger, MeshPubSub } from '@graphql-mesh/types';
-import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
-import { Subschema } from '@graphql-tools/delegate';
+import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
+import { PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { Repeater } from '@repeaterjs/repeater';
+import { dummyLogger as logger } from '../../../../testing/dummyLogger';
 import Transform from '../src/index.js';
 
 describe('encapsulate', () => {
-  const logger: Logger = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    child: () => logger,
-  };
   const baseDir: string = undefined;
   const importFn: ImportFn = m => import(m);
   const schema = makeExecutableSchema({

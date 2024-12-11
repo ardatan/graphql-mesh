@@ -115,16 +115,12 @@ export async function resolveCustomFetch({
   cache: KeyValueCache;
 }): Promise<{
   fetchFn: MeshFetch;
-  importCode: string;
   code: string;
 }> {
-  let importCode = '';
   if (!fetchConfig) {
-    importCode += `import { fetch as fetchFn } from '@whatwg-node/fetch';\n`;
     return {
       fetchFn: defaultFetch,
-      importCode,
-      code: ``,
+      code: `const fetchFn = await defaultImportFn('@whatwg-node/fetch').then(m => m?.fetch || m);`,
     };
   }
   const { moduleName, resolved: fetchFn } = await getPackage<MeshFetch>({
@@ -136,12 +132,11 @@ export async function resolveCustomFetch({
   });
 
   const processedModuleName = moduleName.startsWith('.') ? path.join('..', moduleName) : moduleName;
-  importCode += `import fetchFn from ${JSON.stringify(processedModuleName)};\n`;
+  const code = `const fetchFn = await defaultImportFn(${JSON.stringify(processedModuleName)}).then(m => m?.fetch || m);`;
 
   return {
     fetchFn,
-    importCode,
-    code: '',
+    code,
   };
 }
 
@@ -157,7 +152,6 @@ export async function resolveCache(
   additionalPackagePrefixes: string[],
 ): Promise<{
   cache: KeyValueCache;
-  importCode: string;
   code: string;
 }> {
   const cacheName = Object.keys(cacheConfig)[0].toString();
@@ -179,18 +173,17 @@ export async function resolveCache(
     logger,
   });
 
-  const code = `const cache = new (MeshCache as any)({
-      ...(${JSON.stringify(config)} as any),
+  const code = `const MeshCache = await defaultImportFn(${JSON.stringify(moduleName)});
+  const cache = new MeshCache({
+      ...${JSON.stringify(config)},
       importFn,
       store: rootStore.child('cache'),
       pubsub,
       logger,
-    } as any)`;
-  const importCode = `import MeshCache from ${JSON.stringify(moduleName)};`;
+    })`;
 
   return {
     cache,
-    importCode,
     code,
   };
 }
@@ -201,8 +194,8 @@ export async function resolvePubSub(
   cwd: string,
   additionalPackagePrefixes: string[],
 ): Promise<{
-  importCode: string;
   code: string;
+  importCode: string;
   pubsub: MeshPubSub;
 }> {
   if (pubsubYamlConfig) {
@@ -225,23 +218,22 @@ export async function resolvePubSub(
 
     const pubsub = new PubSub(pubsubConfig);
 
-    const importCode = `import PubSub from ${JSON.stringify(moduleName)}`;
-    const code = `const pubsub = new PubSub(${JSON.stringify(pubsubConfig)});`;
+    const code = `const PubSub = await defaultImportFn(${JSON.stringify(moduleName)});
+    const pubsub = new PubSub(${JSON.stringify(pubsubConfig)});`;
 
     return {
-      importCode,
       code,
+      importCode: '',
       pubsub,
     };
   } else {
     const pubsub = new PubSub();
 
-    const importCode = `import { PubSub } from '@graphql-mesh/utils';`;
     const code = `const pubsub = new PubSub();`;
 
     return {
-      importCode,
       code,
+      importCode: `import { PubSub } from '@graphql-mesh/utils';`,
       pubsub,
     };
   }
@@ -287,8 +279,8 @@ export async function resolveLogger(
 
     return {
       logger,
-      importCode: `import logger from ${JSON.stringify(processedModuleName)};`,
-      code: '',
+      importCode: ``,
+      code: `const logger = await defaultImportFn(${JSON.stringify(processedModuleName)});`,
     };
   }
   const logger = new DefaultLogger(initialLoggerPrefix);

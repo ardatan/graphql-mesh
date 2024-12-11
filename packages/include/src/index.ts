@@ -14,6 +14,7 @@ const jiti = createJiti(
   '',
   {
     debug: !!process.env.DEBUG,
+    interopDefault: true,
   },
 );
 

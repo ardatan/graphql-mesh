@@ -35,16 +35,16 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "workspace:^",
-    "@graphql-mesh/fusion-composition": "workspace:^",
-    "@graphql-mesh/string-interpolation": "workspace:^",
-    "@graphql-mesh/types": "workspace:^",
-    "@graphql-mesh/utils": "workspace:^",
+    "@graphql-mesh/cross-helpers": "^0.4.9",
+    "@graphql-mesh/fusion-composition": "^0.7.13",
+    "@graphql-mesh/string-interpolation": "^0.5.7",
+    "@graphql-mesh/types": "^0.103.7",
+    "@graphql-mesh/utils": "^0.103.7",
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/utils": "10.6.2",
-    "@omnigraph/json-schema": "workspace:^",
+    "@omnigraph/json-schema": "^0.108.7",
     "change-case": "^4.1.2",
-    "json-machete": "workspace:^",
+    "json-machete": "^0.97.5",
     "openapi-types": "^12.1.0",
     "tslib": "^2.4.0"
   },
