@@ -28,7 +28,7 @@ describe('processConfig', () => {
     let codesIteratorResult = codesIterator.next();
     let includesCustomFetch;
     while (!codesIteratorResult.done) {
-      if (codesIteratorResult.value.startsWith('const fetchFn = await import(')) {
+      if (codesIteratorResult.value.startsWith('const fetchFn = await defaultImportFn(')) {
         meshConfigContent = meshConfigContent.concat(codesIteratorResult.value, '\n');
         includesCustomFetch = true;
         break;
@@ -42,7 +42,7 @@ describe('processConfig', () => {
     // Adding export of fetch function so its resolution is actually attempted
     meshConfigContent = meshConfigContent.concat('export { fetchFn };', '\n');
 
-    meshConfigContent = meshConfigContent.replace('await import', 'fakeImport');
+    meshConfigContent = meshConfigContent.replace('await defaultImportFn', 'fakeImport');
     meshConfigContent =
       'const fakeImport = m => require("@graphql-tools/utils").fakePromise(require(m));\n' +
       meshConfigContent;
