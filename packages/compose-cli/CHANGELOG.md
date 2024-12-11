@@ -1,5 +1,34 @@
 # @graphql-mesh/compose-cli
 
+## 1.3.0
+
+### Minor Changes
+
+- [#7961](https://github.com/ardatan/graphql-mesh/pull/7961)
+  [`1a7adbf`](https://github.com/ardatan/graphql-mesh/commit/1a7adbf28f126c0fc8ba834f8a7db886f7fba876)
+  Thanks [@ardatan](https://github.com/ardatan)! - HATEOAS Support
+
+### Patch Changes
+
+- [#7961](https://github.com/ardatan/graphql-mesh/pull/7961)
+  [`1a7adbf`](https://github.com/ardatan/graphql-mesh/commit/1a7adbf28f126c0fc8ba834f8a7db886f7fba876)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/fusion-composition@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/fusion-composition/v/workspace:^)
+    (from `^0.7.11`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/include@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/include/v/workspace:^)
+    (from `^0.2.4`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/workspace:^)
+    (from `^0.103.5`, in `dependencies`)
+- Updated dependencies
+  [[`1a7adbf`](https://github.com/ardatan/graphql-mesh/commit/1a7adbf28f126c0fc8ba834f8a7db886f7fba876)]:
+  - @graphql-mesh/fusion-composition@0.7.13
+  - @graphql-mesh/types@0.103.7
+  - @graphql-mesh/utils@0.103.7
+  - @graphql-mesh/include@0.2.6
+
 ## 1.2.14
 
 ### Patch Changes

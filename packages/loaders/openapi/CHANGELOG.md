@@ -1,5 +1,31 @@
 # @omnigraph/openapi
 
+## 0.108.7
+
+### Patch Changes
+
+- [#7961](https://github.com/ardatan/graphql-mesh/pull/7961)
+  [`1a7adbf`](https://github.com/ardatan/graphql-mesh/commit/1a7adbf28f126c0fc8ba834f8a7db886f7fba876)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`@graphql-mesh/fusion-composition@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/fusion-composition/v/workspace:^)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-tools/utils@^10.6.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.1)
+    (to `dependencies`)
+
+- [#7961](https://github.com/ardatan/graphql-mesh/pull/7961)
+  [`1a7adbf`](https://github.com/ardatan/graphql-mesh/commit/1a7adbf28f126c0fc8ba834f8a7db886f7fba876)
+  Thanks [@ardatan](https://github.com/ardatan)! - HATEOAS Support
+
+- Updated dependencies
+  [[`1a7adbf`](https://github.com/ardatan/graphql-mesh/commit/1a7adbf28f126c0fc8ba834f8a7db886f7fba876)]:
+  - @omnigraph/json-schema@0.108.7
+  - @graphql-mesh/fusion-composition@0.7.13
+  - @graphql-mesh/types@0.103.7
+  - @graphql-mesh/utils@0.103.7
+
 ## 0.108.6
 
 ### Patch Changes

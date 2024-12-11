@@ -1,5 +1,16 @@
 # @graphql-mesh/fusion-composition
 
+## 0.7.13
+
+### Patch Changes
+
+- [#7961](https://github.com/ardatan/graphql-mesh/pull/7961)
+  [`1a7adbf`](https://github.com/ardatan/graphql-mesh/commit/1a7adbf28f126c0fc8ba834f8a7db886f7fba876)
+  Thanks [@ardatan](https://github.com/ardatan)! - HATEOAS Support
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.103.7
+
 ## 0.7.12
 
 ### Patch Changes
