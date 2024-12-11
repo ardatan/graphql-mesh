@@ -11,12 +11,7 @@ import {
 } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { hashObject } from '@graphql-mesh/string-interpolation';
-import type {
-  ImportFn,
-  MeshPubSub,
-  MeshTransformOptions,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { ImportFn, MeshPubSub, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import { dummyLogger as logger } from '../../../../testing/dummyLogger';
