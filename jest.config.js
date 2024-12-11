@@ -87,7 +87,7 @@ module.exports = {
   rootDir: ROOT_DIR,
   restoreMocks: true,
   reporters: ['default'],
-  verbose: !!process.env.CI,
+  verbose: !!process.env.DEBUG,
   modulePathIgnorePatterns: ['dist', 'fixtures', '.bob'],
   moduleNameMapper: {
     '@graphql-mesh/cross-helpers': '<rootDir>/packages/cross-helpers/node.js',

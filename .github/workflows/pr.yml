@@ -2,6 +2,9 @@ name: pr
 on:
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   dependencies:
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
