@@ -14,14 +14,6 @@ env:
   REDIS_PORT: 6379
   APOLLO_ELV2_LICENSE: accept
 jobs:
-  lint:
-    uses: the-guild-org/shared-config/.github/workflows/lint.yml@v1
-    with:
-      node-version-file: .node-version
-      script: yarn prettier:check && yarn ci:lint
-    secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
-
   typecheck:
     name: typecheck
     runs-on: ubuntu-latest
@@ -34,8 +26,20 @@ jobs:
           node-version-file: .node-version
       - name: Prepare for build
         run: yarn prebuild
+      - name: Format
+        run: yarn prettier:check
+      - name: Lint
+        run: yarn ci:lint && yarn lint
       - name: typecheck
         run: yarn typecheck
+      - name: Build
+        run: yarn build
+      - name: Node.js integrity check
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: yarn bob check
 
   unit:
     name: unit / node ${{matrix.node-version}}
@@ -48,7 +52,6 @@ jobs:
           - 18
           - 20
           - 22
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -79,43 +82,8 @@ jobs:
           max_attempts: 3
           command: yarn test
 
-  unit-leaks:
-    needs: [unit]
-    name: unit / leak / node ${{matrix.node-version}}
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [18]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Use Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
-
-      - uses: the-guild-org/shared-config/setup@v1
-        name: set up env
-        with:
-          node-version: ${{matrix.node-version}}
-
-      - name: Cache Jest
-        uses: actions/cache@v4
-        with:
-          path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-jest-unit-
-
-      - name: Prepare for build
-        run: yarn prebuild
-
-      - name: Run Tests
+      - name: Run Leak Tests
+        if: matrix.node-version == 18
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
@@ -123,7 +91,6 @@ jobs:
           command: yarn test:leak
 
   integration:
-    needs: [typecheck]
     name: integration / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -203,128 +170,15 @@ jobs:
         run: yarn build-test-artifacts
       - name: Test
         run: yarn test:integration
-
-  integration-leak:
-    needs: [integration]
-    name: integration / leak / node ${{matrix.node-version}}
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [18]
-    # Service containers to run with `runner-job`
-    services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres
-        # Provide the password for postgres
-        env:
-          POSTGRES_PASSWORD: docker
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-        ports:
-          # Maps tcp port 5432 on service container to the host
-          - 5432:5432
-      mysql:
-        image: genschsa/mysql-employees
-        env:
-          MYSQL_ROOT_PASSWORD: passwd
-        ports:
-          - 33306:3306
-        options:
-          --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s
-          --health-retries=3
-      # Label used to access the service container
-      redis:
-        # Docker Hub image
-        image: redis
-        # Set health checks to wait until redis has started
-        options: >-
-          --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
-        ports:
-          # Maps port 6379 on service container to the host
-          - 6379:6379
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Use Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
-
-      - uses: the-guild-org/shared-config/setup@v1
-        name: set up env
-        with:
-          node-version: ${{matrix.node-version}}
-
-      - name: Cache Jest
-        uses: actions/cache@v4
-        with:
-          path: .cache/jest
-          key:
-            ${{ runner.os }}-${{matrix.node-version}}-jest-integration-leak-${{
-            hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-jest-integration-leak-
-
-      - name: Download Postgres Dump
-        run:
-          'curl
-          https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql
-          -o /tmp/backup.sql'
-      - name: Load Postgres Data
-        uses: tj-actions/pg-restore@v6.0
-        with:
-          database_url: 'postgres://postgres:docker@localhost:5432/postgres'
-          backup_file: '/tmp/backup.sql'
-      - name: Build
-        run: yarn build
-      - name: Build Test Artifacts
-        run: yarn build-test-artifacts
-      - name: Run Tests
+      - name: Run Leak Tests
+        if: matrix.node-version == 18
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3
           command: yarn test:integration:leak
 
-  integrity-check:
-    needs: [typecheck]
-    name: integrity-check / node ${{matrix.node-version}}
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version:
-          - 18
-          - 20
-          - 22
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: the-guild-org/shared-config/setup@v1
-        name: set up env
-        with:
-          node-version: ${{matrix.node-version}}
-      - name: Build
-        run: yarn build
-      - name: Node.js integrity check
-        uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: yarn bob check
-
   e2e:
-    needs: [typecheck]
     name: e2e / node v${{matrix.node-version}}
     runs-on: ubuntu-latest
     strategy:
@@ -359,8 +213,8 @@ jobs:
         timeout-minutes: 60
         run: |
           yarn test:e2e --detectOpenHandles --forceExit
+
   apollo-federation-compatibility:
-    needs: [typecheck]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
