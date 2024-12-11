@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.103.8
+
+### Patch Changes
+
+- [#6217](https://github.com/ardatan/graphql-mesh/pull/6217)
+  [`b082565`](https://github.com/ardatan/graphql-mesh/commit/b082565272362412c27226e66365f34df2e6b548)
+  Thanks [@santino](https://github.com/santino)! - Fix bare mode resolvers for Prefix and
+  NamingConvention transforms
+
 ## 0.103.7
 
 ### Patch Changes
