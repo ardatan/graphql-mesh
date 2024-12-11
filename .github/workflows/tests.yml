@@ -18,8 +18,8 @@ env:
   REDIS_PORT: 6379
   APOLLO_ELV2_LICENSE: accept
 jobs:
-  typecheck:
-    name: typecheck
+  check:
+    name: check
     runs-on: ubuntu-latest
     steps:
       - name: checkout
