@@ -7,9 +7,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.98.9",
+    "@graphql-mesh/cli": "0.98.10",
     "@graphql-mesh/json-schema": "0.108.8",
-    "@graphql-mesh/plugin-mock": "0.103.8",
+    "@graphql-mesh/plugin-mock": "0.103.9",
     "@graphql-yoga/plugin-sofa": "3.10.4",
     "graphql": "16.9.0"
   },
