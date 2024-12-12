@@ -44,7 +44,13 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V>, Disp
   }
 
   getKeysByPrefix(prefix: string) {
-    return Array.from(this.lru.keys()).filter(key => key.startsWith(prefix));
+    const keysWithPrefix = [];
+    for (const key of this.lru.keys()) {
+      if (key.startsWith(prefix)) {
+        keysWithPrefix.push(key);
+      }
+    }
+    return keysWithPrefix;
   }
 
   [DisposableSymbols.dispose]() {
