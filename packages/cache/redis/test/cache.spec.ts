@@ -165,4 +165,22 @@ describe('redis', () => {
       });
     });
   });
+
+  describe('methods', () => {
+    it('get/set/delete', async () => {
+      using redis = new RedisCache({ logger });
+      const key = 'key';
+      const value = 'value';
+      await redis.set(key, value);
+      await expect(redis.get(key)).resolves.toBe(value);
+      await redis.delete(key);
+      await expect(redis.get(key)).resolves.toBeUndefined();
+    });
+    it('getKeysByPrefix', async () => {
+      using redis = new RedisCache({ logger });
+      const keys = ['foo1', 'foo2', 'foo3'];
+      await Promise.all(keys.map((key, i) => redis.set(key, `value${i}`)));
+      await expect(redis.getKeysByPrefix('foo')).resolves.toEqual(keys);
+    });
+  });
 });

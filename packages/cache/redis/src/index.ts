@@ -96,7 +96,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   }
 
   getKeysByPrefix(prefix: string): Promise<string[]> {
-    return this.client.keys(`${prefix}*`);
+    return scanPatterns(this.client, `${prefix}*`);
   }
 
   delete(key: string): PromiseLike<boolean> | boolean {
@@ -110,4 +110,17 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
       return false;
     }
   }
+}
+
+function scanPatterns(redis: Redis, pattern: string, cursor: string = '0', keys: string[] = []) {
+  return mapMaybePromise(
+    redis.scan(cursor, 'MATCH', pattern, 'COUNT', '10'),
+    ([nextCursor, nextKeys]) => {
+      keys.push(...nextKeys);
+      if (nextCursor === '0') {
+        return keys;
+      }
+      return scanPatterns(redis, pattern, nextCursor, keys);
+    },
+  );
 }
