@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-redis
 
+## 0.103.9
+
+### Patch Changes
+
+- [`e58b4ac`](https://github.com/ardatan/graphql-mesh/commit/e58b4acc19e0bc53c0c27727c9033ecdbe8b9a36)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `SCAN` instead of `KEYS` to avoid the error
+  `ERR KEYS command is disabled because total number of keys is too large, please use SCAN`
+
 ## 0.103.8
 
 ### Patch Changes

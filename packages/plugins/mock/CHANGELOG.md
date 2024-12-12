@@ -1,5 +1,7 @@
 # @graphql-mesh/plugin-mock
 
+## 0.103.9
+
 ## 0.103.8
 
 ### Patch Changes

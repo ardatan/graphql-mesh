@@ -1,5 +1,12 @@
 # @graphql-mesh/cache-inmemory-lru
 
+## 0.0.4
+
+### Patch Changes
+
+- [`354cdbd`](https://github.com/ardatan/graphql-mesh/commit/354cdbd2cf265a83874d9c1efa88caef568bf1c5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use for-loop instead of `Array.from`
+
 ## 0.0.3
 
 ### Patch Changes
