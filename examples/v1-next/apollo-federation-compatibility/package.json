@@ -15,7 +15,7 @@
     "start": "node bundle.js"
   },
   "dependencies": {
-    "@graphql-hive/gateway": "1.6.8",
+    "@graphql-hive/gateway": "1.7.0",
     "@graphql-yoga/plugin-apollo-inline-trace": "3.10.5",
     "concurrently": "9.1.0",
     "graphql": "16.9.0",
