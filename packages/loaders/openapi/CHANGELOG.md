@@ -1,5 +1,16 @@
 # @omnigraph/openapi
 
+## 0.108.9
+
+### Patch Changes
+
+- [#8136](https://github.com/ardatan/graphql-mesh/pull/8136)
+  [`c6c11ff`](https://github.com/ardatan/graphql-mesh/commit/c6c11ff22ec213db1371e5300d22d4cf2529fc80)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@10.6.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.3)
+    (from `10.6.2`, in `dependencies`)
+
 ## 0.108.8
 
 ### Patch Changes
