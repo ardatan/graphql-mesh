@@ -1,1 +1,6 @@
-export { default } from '@theguild/tailwind-config';
+import guildConfig from '@theguild/tailwind-config';
+
+export default {
+  ...guildConfig,
+  content: [...guildConfig.content, 'theme.config.tsx'],
+};
