@@ -41,7 +41,7 @@
     "@graphql-mesh/types": "^0.103.8",
     "@graphql-mesh/utils": "^0.103.8",
     "@graphql-tools/delegate": "^10.0.28",
-    "@graphql-tools/utils": "10.6.2",
+    "@graphql-tools/utils": "10.6.3",
     "@omnigraph/json-schema": "^0.108.8",
     "change-case": "^4.1.2",
     "json-machete": "^0.97.5",
