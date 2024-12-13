@@ -4808,7 +4808,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/gcp-functions@workspace:examples/gcp-functions"
   dependencies:
-    "@google-cloud/functions-framework": "npm:3.4.2"
+    "@google-cloud/functions-framework": "npm:3.4.3"
     "@graphql-mesh/cli": "npm:0.98.10"
     "@graphql-mesh/json-schema": "npm:0.108.8"
     "@types/node": "npm:22.10.2"
@@ -5533,22 +5533,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google-cloud/functions-framework@npm:3.4.2, @google-cloud/functions-framework@npm:^3.3.0":
-  version: 3.4.2
-  resolution: "@google-cloud/functions-framework@npm:3.4.2"
+"@google-cloud/functions-framework@npm:3.4.3, @google-cloud/functions-framework@npm:^3.3.0":
+  version: 3.4.3
+  resolution: "@google-cloud/functions-framework@npm:3.4.3"
   dependencies:
-    "@types/express": "npm:4.17.21"
+    "@types/express": "npm:^5.0.0"
     body-parser: "npm:^1.18.3"
-    cloudevents: "npm:^8.0.0"
-    express: "npm:^4.16.4"
-    minimist: "npm:^1.2.7"
+    cloudevents: "npm:^8.0.2"
+    express: "npm:^4.21.2"
+    minimist: "npm:^1.2.8"
     on-finished: "npm:^2.3.0"
     read-pkg-up: "npm:^7.0.1"
-    semver: "npm:^7.3.5"
+    semver: "npm:^7.6.3"
   bin:
     functions-framework: build/src/main.js
     functions-framework-nodejs: build/src/main.js
-  checksum: 10c0/09a5a97f24b2f12b8efc01512270a38e3c66dc986530a4532e87fe72d23191bf7f074ec24840c92d8c255c9a6ffac2479a4f499f614d0d515c88fe3349c7abd5
+  checksum: 10c0/c0d744ac6cc1192f90a6171fd26160f8a74e9367870ca3788691556f812bba26ed352ff55043ce7392f440f9f3ef0b6f52e5b4576823af7fb5e829878063dfd7
   languageName: node
   linkType: hard
 
@@ -12960,7 +12960,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:*":
+"@types/express@npm:*, @types/express@npm:^5.0.0":
   version: 5.0.0
   resolution: "@types/express@npm:5.0.0"
   dependencies:
@@ -12972,7 +12972,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:4.17.21, @types/express@npm:^4.17.13, @types/express@npm:^4.17.17":
+"@types/express@npm:^4.17.13, @types/express@npm:^4.17.17":
   version: 4.17.21
   resolution: "@types/express@npm:4.17.21"
   dependencies:
@@ -16744,7 +16744,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cloudevents@npm:^8.0.0":
+"cloudevents@npm:^8.0.2":
   version: 8.0.2
   resolution: "cloudevents@npm:8.0.2"
   dependencies:
@@ -20397,7 +20397,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:4.21.2, express@npm:^4.16.4, express@npm:^4.17.1, express@npm:^4.17.3, express@npm:^4.18.2, express@npm:^4.21.1":
+"express@npm:4.21.2, express@npm:^4.17.1, express@npm:^4.17.3, express@npm:^4.18.2, express@npm:^4.21.1, express@npm:^4.21.2":
   version: 4.21.2
   resolution: "express@npm:4.21.2"
   dependencies:
@@ -27703,7 +27703,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimist@npm:^1.2.0, minimist@npm:^1.2.3, minimist@npm:^1.2.6, minimist@npm:^1.2.7, minimist@npm:^1.2.8":
+"minimist@npm:^1.2.0, minimist@npm:^1.2.3, minimist@npm:^1.2.6, minimist@npm:^1.2.8":
   version: 1.2.8
   resolution: "minimist@npm:1.2.8"
   checksum: 10c0/19d3fcdca050087b84c2029841a093691a91259a47def2f18222f41e7645a0b7c44ef4b40e88a1e58a40c84d2ef0ee6047c55594d298146d0eb3f6b737c20ce6
