@@ -1,5 +1,16 @@
 # @graphql-mesh/merger-bare
 
+## 0.104.11
+
+### Patch Changes
+
+- [#8145](https://github.com/ardatan/graphql-mesh/pull/8145)
+  [`38322fc`](https://github.com/ardatan/graphql-mesh/commit/38322fc6df77a6c1a47e7e4a28dc3f808b452c0d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.13` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.13)
+    (from `10.0.12`, in `dependencies`)
+
 ## 0.104.10
 
 ### Patch Changes
