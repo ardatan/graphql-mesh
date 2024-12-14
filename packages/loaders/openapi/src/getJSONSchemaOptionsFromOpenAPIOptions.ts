@@ -16,8 +16,7 @@ import {
   readFileOrUrl,
   sanitizeNameForGraphQL,
 } from '@graphql-mesh/utils';
-import { createDeferred } from '@graphql-tools/delegate';
-import { asArray } from '@graphql-tools/utils';
+import { asArray, createDeferred } from '@graphql-tools/utils';
 import type {
   HTTPMethod,
   JSONSchemaHTTPJSONOperationConfig,

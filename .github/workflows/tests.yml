@@ -87,7 +87,6 @@ jobs:
           command: yarn test
 
       - name: Run Leak Tests
-        if: matrix.node-version == 18
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
@@ -179,7 +178,6 @@ jobs:
           max_attempts: 3
           command: yarn test:integration
       - name: Run Leak Tests
-        if: matrix.node-version == 18
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
