@@ -609,9 +609,11 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
       },
     ],
     "mutationType": {
+      "kind": "OBJECT",
       "name": "Mutation",
     },
     "queryType": {
+      "kind": "OBJECT",
       "name": "Query",
     },
     "subscriptionType": null,
