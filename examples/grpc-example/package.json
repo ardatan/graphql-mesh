@@ -16,7 +16,7 @@
     "@grpc/grpc-js": "1.12.4",
     "@grpc/proto-loader": "0.7.13",
     "google-protobuf": "3.21.4",
-    "graphql": "16.9.0"
+    "graphql": "16.10.0"
   },
   "devDependencies": {
     "concurrently": "9.1.0",

@@ -111,6 +111,7 @@ exports[`should serve a schema from a url with pathname 1`] = `
       ],
       "mutationType": null,
       "queryType": {
+        "kind": "OBJECT",
         "name": "Query",
       },
       "subscriptionType": null,
@@ -1192,6 +1193,7 @@ exports[`should serve a schema from a url with pathname and extension 1`] = `
       ],
       "mutationType": null,
       "queryType": {
+        "kind": "OBJECT",
         "name": "Query",
       },
       "subscriptionType": null,
@@ -2273,6 +2275,7 @@ exports[`should serve a schema from a url without pathname 1`] = `
       ],
       "mutationType": null,
       "queryType": {
+        "kind": "OBJECT",
         "name": "Query",
       },
       "subscriptionType": null,

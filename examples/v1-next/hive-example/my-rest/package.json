@@ -11,6 +11,6 @@
     "@graphql-mesh/compose-cli": "workspace:*",
     "@omnigraph/openapi": "workspace:*",
     "fets": "0.8.4",
-    "graphql": "16.9.0"
+    "graphql": "16.10.0"
   }
 }
