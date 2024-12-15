@@ -14,7 +14,7 @@
     "@graphql-mesh/compose-cli": "workspace:^",
     "@graphql-mesh/plugin-operation-field-permissions": "^0.103.8",
     "@omnigraph/json-schema": "workspace:^",
-    "graphql": "16.9.0"
+    "graphql": "16.10.0"
   },
   "devDependencies": {
     "jest": "29.7.0"

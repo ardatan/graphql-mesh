@@ -11,7 +11,7 @@
     "@graphql-mesh/openapi": "0.108.10",
     "@sinclair/typebox": "0.34.11",
     "fets": "0.8.4",
-    "graphql": "16.9.0"
+    "graphql": "16.10.0"
   },
   "devDependencies": {
     "concurrently": "9.1.0",

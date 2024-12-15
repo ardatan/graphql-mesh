@@ -4,6 +4,6 @@
   "dependencies": {
     "@graphql-hive/gateway": "^1.5.8",
     "fets": "^0.8.0",
-    "graphql": "16.9.0"
+    "graphql": "16.10.0"
   }
 }
