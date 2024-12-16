@@ -48,9 +48,9 @@ export async function HiveInnerLayout({
 }) {
   const [meta, ...pageMap] = await getPageMap();
 
-  const productsPage = pageMap.find(p => 'name' in p && p.name === 'products')!;
-  // @ts-expect-error -- this should be fixed in Nextra, without route, the collapsible doesn't work
-  productsPage.route = '#';
+  // const productsPage = pageMap.find(p => 'name' in p && p.name === 'products')!;
+  // // @ts-expect-error -- this should be fixed in Nextra, without route, the collapsible doesn't work
+  // productsPage.route = '#';
 
   return (
     <NextraLayout
