@@ -36,4 +36,26 @@ function defaultImportFn(path: string): Promise<any> {
   );
 }
 
-export { defaultImportFn };
+function handleImport<T>(module: T): T {
+  let i = 0;
+  while ((module as any)?.default != null) {
+    if (i > 10 || module === (module as any).default) {
+      break;
+    }
+    module = (module as any).default;
+    i++;
+  }
+  if (typeof module === 'object' && module != null) {
+    const prototypeOfObject = Object.getPrototypeOf(module);
+    if (prototypeOfObject == null || prototypeOfObject === Object.prototype) {
+      const normalizedVal: Record<string, any> = {};
+      for (const key in module) {
+        normalizedVal[key] = module[key];
+      }
+      return normalizedVal as T;
+    }
+  }
+  return module;
+}
+
+export { defaultImportFn, handleImport };

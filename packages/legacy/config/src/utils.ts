@@ -120,7 +120,7 @@ export async function resolveCustomFetch({
   if (!fetchConfig) {
     return {
       fetchFn: defaultFetch,
-      code: `const fetchFn = await defaultImportFn('@whatwg-node/fetch').then(m => m?.fetch || m);`,
+      code: `const fetchFn = await import('@whatwg-node/fetch').then(m => m?.fetch || m);`,
     };
   }
   const { moduleName, resolved: fetchFn } = await getPackage<MeshFetch>({
@@ -132,7 +132,7 @@ export async function resolveCustomFetch({
   });
 
   const processedModuleName = moduleName.startsWith('.') ? path.join('..', moduleName) : moduleName;
-  const code = `const fetchFn = await defaultImportFn(${JSON.stringify(processedModuleName)}).then(m => m?.fetch || m);`;
+  const code = `const fetchFn = await import(${JSON.stringify(processedModuleName)}).then(m => m?.fetch || m);`;
 
   return {
     fetchFn,
@@ -173,7 +173,7 @@ export async function resolveCache(
     logger,
   });
 
-  const code = `const MeshCache = await defaultImportFn(${JSON.stringify(moduleName)});
+  const code = `const MeshCache = await import(${JSON.stringify(moduleName)}).then(handleImport);
   const cache = new MeshCache({
       ...${JSON.stringify(config)},
       importFn,
@@ -218,7 +218,7 @@ export async function resolvePubSub(
 
     const pubsub = new PubSub(pubsubConfig);
 
-    const code = `const PubSub = await defaultImportFn(${JSON.stringify(moduleName)});
+    const code = `const PubSub = await import(${JSON.stringify(moduleName)}).then(handleImport);
     const pubsub = new PubSub(${JSON.stringify(pubsubConfig)});`;
 
     return {
@@ -280,7 +280,7 @@ export async function resolveLogger(
     return {
       logger,
       importCode: ``,
-      code: `const logger = await defaultImportFn(${JSON.stringify(processedModuleName)});`,
+      code: `const logger = await import(${JSON.stringify(processedModuleName)}).then(handleImport);`,
     };
   }
   const logger = new DefaultLogger(initialLoggerPrefix);
