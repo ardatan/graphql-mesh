@@ -11,7 +11,7 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.98.13",
+    "@graphql-mesh/cli": "0.98.14",
     "@graphql-mesh/graphql": "0.103.10",
     "esbuild": "^0.24.0",
     "graphql": "16.10.0",

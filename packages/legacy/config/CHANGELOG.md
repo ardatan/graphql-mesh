@@ -1,5 +1,12 @@
 # @graphql-mesh/config
 
+## 0.106.14
+
+### Patch Changes
+
+- [`6991fe3`](https://github.com/ardatan/graphql-mesh/commit/6991fe321181dba401e081d26d268e1d2d346ed6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix transform variable name
+
 ## 0.106.13
 
 ### Patch Changes
