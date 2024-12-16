@@ -124,7 +124,7 @@ export async function processConfig(
   if (config.require) {
     await Promise.all(config.require.map(mod => importFn(mod)));
     for (const mod of config.require) {
-      importCodes.add(`import '${mod}';`);
+      codes.add(`await import('${mod}');`);
     }
   }
 
@@ -208,11 +208,10 @@ export async function processConfig(
             additionalPrefixes: additionalPackagePrefixes,
           }).then(({ resolved: HandlerCtor, moduleName }) => {
             if (options.generateCode) {
-              const handlerImportName = pascalCase(handlerName + '_Handler');
+              const handlerImportName = pascalCase(handlerVariableName);
               codes.add(
-                `const ${handlerImportName} = await import(${JSON.stringify(moduleName)}).then(handleImport);`,
-              );
-              codes.add(`const ${handlerVariableName} = new ${handlerImportName}({
+                `const ${handlerImportName} = await import(${JSON.stringify(moduleName)}).then(handleImport);\n` +
+                  `const ${handlerVariableName} = new ${handlerImportName}({
               name: ${JSON.stringify(source.name)},
               config: ${JSON.stringify(handlerConfig)},
               baseDir,
@@ -221,7 +220,8 @@ export async function processConfig(
               store: sourcesStore.child(${JSON.stringify(source.name)}),
               logger: logger.child(${JSON.stringify(source.name)}),
               importFn,
-            });`);
+            });`,
+              );
             }
             return new HandlerCtor({
               name: source.name,
@@ -248,11 +248,10 @@ export async function processConfig(
                 });
 
               if (options.generateCode) {
-                const transformImportName = pascalCase(transformName + '_Transform');
+                const transformImportName = pascalCase(transformsVariableName);
                 codes.add(
-                  `const ${transformImportName} = await import(${JSON.stringify(moduleName)}).then(handleImport);`,
-                );
-                codes.add(`${transformsVariableName}[${transformIndex}] = new ${transformImportName}({
+                  `const ${transformImportName} = await import(${JSON.stringify(moduleName)}).then(handleImport);\n` +
+                    `${transformsVariableName}[${transformIndex}] = new ${transformImportName}({
                   apiName: ${JSON.stringify(source.name)},
                   config: ${JSON.stringify(transformConfig)},
                   baseDir,
@@ -260,7 +259,8 @@ export async function processConfig(
                   pubsub,
                   importFn,
                   logger,
-                });`);
+                });`,
+                );
               }
 
               return new TransformCtor({
@@ -304,10 +304,10 @@ export async function processConfig(
         });
 
         if (options.generateCode) {
-          const transformImportName = pascalCase(transformName + '_Transform');
-          importCodes.add(`import ${transformImportName} from ${JSON.stringify(moduleName)};`);
-
-          codes.add(`transforms[${transformIndex}] = new (${transformImportName} as any)({
+          const transformImportName = pascalCase('Root_Transform_' + transformIndex);
+          codes.add(
+            `const ${transformImportName} = await import(${JSON.stringify(moduleName)}).then(handleImport);\n` +
+              `transforms[${transformIndex}] = new ${transformImportName}({
             apiName: '',
             config: ${JSON.stringify(transformConfig)},
             baseDir,
@@ -315,7 +315,8 @@ export async function processConfig(
             pubsub,
             importFn,
             logger,
-          })`);
+          })`,
+          );
         }
         return new TransformLibrary({
           apiName: '',

@@ -36,13 +36,13 @@ function defaultImportFn(path: string): Promise<any> {
   );
 }
 
-function handleImport(module: any): any {
+function handleImport<T>(module: T): T {
   let i = 0;
-  while (module?.default != null) {
-    if (i > 10 || module === module.default) {
+  while ((module as any)?.default != null) {
+    if (i > 10 || module === (module as any).default) {
       break;
     }
-    module = module.default;
+    module = (module as any).default;
     i++;
   }
   if (typeof module === 'object' && module != null) {
@@ -52,7 +52,7 @@ function handleImport(module: any): any {
       for (const key in module) {
         normalizedVal[key] = module[key];
       }
-      return normalizedVal;
+      return normalizedVal as T;
     }
   }
   return module;
