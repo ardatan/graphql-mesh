@@ -9763,8 +9763,8 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^6.0.0":
-  version: 6.2.1
-  resolution: "@neo4j/graphql@npm:6.2.1"
+  version: 6.2.2
+  resolution: "@neo4j/graphql@npm:6.2.2"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
@@ -9785,7 +9785,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/a9ed768d0b9295c45647f66d82620f58c8cccbf590407e0c2695ae98b4c925876f84a782089a22dae00802423ae45cbf9d1721441482ff32494cc78935674e70
+  checksum: 10c0/f5e0f33f3daca382271714a7555617bd9388e1481287afb224a328dba0bd055f619ec4281a5a96b3a852456c11409b7cc6c5edded407e246019c157b375fcede
   languageName: node
   linkType: hard
 
