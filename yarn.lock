@@ -6823,7 +6823,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.7"
     "@graphql-mesh/types": "npm:^0.103.9"
     "@graphql-mesh/utils": "npm:^0.103.9"
-    "@graphql-tools/batch-delegate": "npm:^9.0.9"
+    "@graphql-tools/batch-delegate": "npm:9.0.24"
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/executor": "npm:^1.3.2"
     "@graphql-tools/schema": "npm:10.0.13"
@@ -7493,7 +7493,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/batch-delegate@npm:^9.0.10, @graphql-tools/batch-delegate@npm:^9.0.16, @graphql-tools/batch-delegate@npm:^9.0.9":
+"@graphql-tools/batch-delegate@npm:9.0.24, @graphql-tools/batch-delegate@npm:^9.0.24":
+  version: 9.0.24
+  resolution: "@graphql-tools/batch-delegate@npm:9.0.24"
+  dependencies:
+    "@graphql-tools/delegate": "npm:^10.2.8"
+    "@graphql-tools/utils": "npm:^10.6.2"
+    dataloader: "npm:^2.2.3"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/a0263284a689a8ee7f296049cbd841a8118012dbd8bcad56f969e8a26687db90994e15eeadb785ea22514de59a99c5daaab1b45665fffb567cfd8e84f39f2609
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/batch-delegate@npm:^9.0.10, @graphql-tools/batch-delegate@npm:^9.0.16":
   version: 9.0.16
   resolution: "@graphql-tools/batch-delegate@npm:9.0.16"
   dependencies:
@@ -7519,20 +7533,6 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/c9f3f27b3f15dd1e962bb1165ee9e3ad48364440d1f91287e800d7caa680cc211718abaac02c9a8b5adaf949335a247f9fbdacc4981ccf2ef1f53fe08e02232f
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/batch-delegate@npm:^9.0.24":
-  version: 9.0.24
-  resolution: "@graphql-tools/batch-delegate@npm:9.0.24"
-  dependencies:
-    "@graphql-tools/delegate": "npm:^10.2.8"
-    "@graphql-tools/utils": "npm:^10.6.2"
-    dataloader: "npm:^2.2.3"
-    tslib: "npm:^2.8.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/a0263284a689a8ee7f296049cbd841a8118012dbd8bcad56f969e8a26687db90994e15eeadb785ea22514de59a99c5daaab1b45665fffb567cfd8e84f39f2609
   languageName: node
   linkType: hard
 
