@@ -1,5 +1,16 @@
 # @graphql-mesh/utils
 
+## 0.103.9
+
+### Patch Changes
+
+- [#8150](https://github.com/ardatan/graphql-mesh/pull/8150)
+  [`10ba2c4`](https://github.com/ardatan/graphql-mesh/commit/10ba2c42549dacff9c4e6be87ee50b608be62ddc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix support for bundling environments like
+  Next.js Regression introduced in [#8082](https://github.com/ardatan/graphql-mesh/pull/8082)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.103.9
+
 ## 0.103.8
 
 ### Patch Changes

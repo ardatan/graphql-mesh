@@ -1,5 +1,23 @@
 # @graphql-mesh/config
 
+## 0.106.13
+
+### Patch Changes
+
+- [#8150](https://github.com/ardatan/graphql-mesh/pull/8150)
+  [`10ba2c4`](https://github.com/ardatan/graphql-mesh/commit/10ba2c42549dacff9c4e6be87ee50b608be62ddc)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix support for bundling environments like
+  Next.js Regression introduced in [#8082](https://github.com/ardatan/graphql-mesh/pull/8082)
+- Updated dependencies
+  [[`10ba2c4`](https://github.com/ardatan/graphql-mesh/commit/10ba2c42549dacff9c4e6be87ee50b608be62ddc)]:
+  - @graphql-mesh/utils@0.103.9
+  - @graphql-mesh/cache-localforage@0.103.10
+  - @graphql-mesh/merger-bare@0.104.12
+  - @graphql-mesh/merger-stitching@0.104.9
+  - @graphql-mesh/runtime@0.105.9
+  - @graphql-mesh/store@0.103.9
+  - @graphql-mesh/types@0.103.9
+
 ## 0.106.12
 
 ### Patch Changes
