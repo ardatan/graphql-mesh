@@ -1,5 +1,4 @@
-import { ReactNode } from 'react';
-import { cn, MeshIcon } from '@theguild/components';
+import { cn } from '@theguild/components';
 
 // TODO: Move these to `@theguild/components` and remove from here, Codegen and Hive.
 
