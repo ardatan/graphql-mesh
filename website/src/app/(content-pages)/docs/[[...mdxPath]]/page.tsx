@@ -3,6 +3,7 @@ import { generateStaticParamsFor, importPage } from 'nextra/pages';
 import { NextPageProps } from '@theguild/components';
 import { useMDXComponents } from '../../../../../mdx-components.js';
 import { ConfiguredGiscus } from '../../../../components/configured-giscus';
+import { LegacyDocsBanner } from './legacy-docs-banner';
 
 /**
  * You might have an urge to try to refactor this to a separate file and reuse between product-updates and docs.
@@ -33,6 +34,7 @@ export default async function Page(props: NextPageProps<'...mdxPath'>) {
 
   return (
     <Wrapper toc={toc} metadata={metadata}>
+      <LegacyDocsBanner />
       <MDXContent params={params} />
       <ConfiguredGiscus />
     </Wrapper>

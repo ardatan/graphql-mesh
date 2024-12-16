@@ -14,6 +14,7 @@ export const Link: typeof Anchor = ({ className, ...props }) => {
     />
   );
 };
+
 export const docsMDXComponents = {
   a: Link,
 };
