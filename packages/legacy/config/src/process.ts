@@ -248,7 +248,9 @@ export async function processConfig(
                 });
 
               if (options.generateCode) {
-                const transformImportName = pascalCase(transformsVariableName);
+                const transformImportName = pascalCase(
+                  transformsVariableName + '_' + transformIndex,
+                );
                 codes.add(
                   `const ${transformImportName} = await import(${JSON.stringify(moduleName)}).then(handleImport);\n` +
                     `${transformsVariableName}[${transformIndex}] = new ${transformImportName}({
