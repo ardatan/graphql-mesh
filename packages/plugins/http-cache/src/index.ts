@@ -1,5 +1,5 @@
 import CachePolicy from 'http-cache-semantics';
-import type { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import type { KeyValueCache, MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { Response, URLPattern } from '@whatwg-node/fetch';
 
@@ -12,11 +12,18 @@ interface CacheEntry {
   body: string;
 }
 
-export default function useHTTPCache({
+export interface HTTPCachePluginOptions extends YamlConfig.HTTPCachePlugin {
+  cache?: KeyValueCache;
+}
+
+export default function useHTTPCache<TContext>({
   cache,
   matches,
   ignores,
-}: MeshPluginOptions<YamlConfig.HTTPCachePlugin>): MeshPlugin<{}> {
+}: HTTPCachePluginOptions): MeshPlugin<TContext> {
+  if (!cache) {
+    throw new Error('HTTP Cache plugin requires a cache instance');
+  }
   let matchesPatterns: URLPattern[] | undefined;
   if (matches) {
     matchesPatterns = matches.map(match => new URLPattern(match));
