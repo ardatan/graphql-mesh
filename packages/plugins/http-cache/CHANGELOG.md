@@ -1,5 +1,30 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.103.10
+
+### Patch Changes
+
+- [#8162](https://github.com/ardatan/graphql-mesh/pull/8162)
+  [`a278925`](https://github.com/ardatan/graphql-mesh/commit/a278925dbb4b98bb8e86877d168207c883e1a680)
+  Thanks [@ardatan](https://github.com/ardatan)! - Relax the typings so the plugin can be used as
+  `GatewayPlugin`.
+
+  The pointed line was previously failing because `ctx` is `GatewayConfigContext` which has `config`
+  etc as optional, but the old type of the plugin options was `MeshPluginOptions` which expects
+  `cache`, `pubsub` etc and more things that are not available in `GatewayConfigContext`.
+
+  ```ts
+  import { defineConfig, useHttpCache } from '@graphql-hive/gateway'
+
+  export const gatewayConfig = defineConfig({
+    plugins: ctx => [
+      useHttpCache({
+        ...ctx // This was failing
+      })
+    ]
+  })
+  ```
+
 ## 0.103.9
 
 ### Patch Changes
