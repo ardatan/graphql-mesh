@@ -3286,10 +3286,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20241216.0":
-  version: 4.20241216.0
-  resolution: "@cloudflare/workers-types@npm:4.20241216.0"
-  checksum: 10c0/711c825367e56641007bdc2cb2d99bc1712d5b3bc854376b909f816bbbf59b67308d9813a6dc4d8fd62abf724a59b0bbf7428060ec34eb2e356e83d24f379ee8
+"@cloudflare/workers-types@npm:4.20241218.0":
+  version: 4.20241218.0
+  resolution: "@cloudflare/workers-types@npm:4.20241218.0"
+  checksum: 10c0/c5ffc4330e49d0e6e9a6da88b51a9229c495f6d63324ab318cef30c41a18a770f4ddb07f38816ebdb6d52f5e5528418529364ba929f625f4255aec2d7c8502e3
   languageName: node
   linkType: hard
 
@@ -5257,7 +5257,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.14"
     "@graphql-mesh/openapi": "npm:0.108.11"
-    "@sinclair/typebox": "npm:0.34.11"
+    "@sinclair/typebox": "npm:0.34.12"
     concurrently: "npm:9.1.0"
     fets: "npm:0.8.4"
     graphql: "npm:16.10.0"
@@ -6000,7 +6000,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20241216.0"
+    "@cloudflare/workers-types": "npm:4.20241218.0"
     "@graphql-mesh/types": "npm:^0.103.9"
     "@graphql-mesh/utils": "npm:^0.103.9"
     tslib: "npm:^2.4.0"
@@ -11333,10 +11333,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.34.11, @sinclair/typebox@npm:^0.34.0":
-  version: 0.34.11
-  resolution: "@sinclair/typebox@npm:0.34.11"
-  checksum: 10c0/b4a0706d44e94eedfc1b048b47aa52f3cabed9eec57f294032ab0bcf8fc4c1d213f31c14a9b520236f7132175fe9b4719a741703b5d00a07773d7a88975670b6
+"@sinclair/typebox@npm:0.34.12":
+  version: 0.34.12
+  resolution: "@sinclair/typebox@npm:0.34.12"
+  checksum: 10c0/fcd630b3eb349bbff2ae060b3a3c66044db69b824d89eb997ce49db83487a1b606ff6fd614057a1c5313b1cf5ef0e6c82a34575c065e5235e874b6b29a7e0c84
   languageName: node
   linkType: hard
 
@@ -11351,6 +11351,13 @@ __metadata:
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
   checksum: 10c0/ef6351ae073c45c2ac89494dbb3e1f87cc60a93ce4cde797b782812b6f97da0d620ae81973f104b43c9b7eaa789ad20ba4f6a1359f1cc62f63729a55a7d22d4e
+  languageName: node
+  linkType: hard
+
+"@sinclair/typebox@npm:^0.34.0":
+  version: 0.34.11
+  resolution: "@sinclair/typebox@npm:0.34.11"
+  checksum: 10c0/b4a0706d44e94eedfc1b048b47aa52f3cabed9eec57f294032ab0bcf8fc4c1d213f31c14a9b520236f7132175fe9b4719a741703b5d00a07773d7a88975670b6
   languageName: node
   linkType: hard
 
