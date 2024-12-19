@@ -6,6 +6,7 @@ import meshDiagram from '@/public/assets/mesh-diagram.svg';
 import meshExampleLogo from '@/public/assets/mesh-example.png';
 import openSourceLogo from '@/public/assets/open-source.svg';
 import { Anchor } from '@theguild/components';
+import { RunAnywhereSection } from './run-anywhere-section';
 
 const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>) => {
   return (
@@ -209,6 +210,7 @@ export function IndexPage(): ReactElement {
       <div className={FeatureWrapperClass}>
         <Hero />
       </div>
+      <RunAnywhereSection className="mx-4 my-6 md:mx-6" />
       <Feature
         title="Query anything, run anywhere."
         description={
