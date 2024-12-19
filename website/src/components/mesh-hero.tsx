@@ -2,18 +2,19 @@ import Image from 'next/image';
 import {
   CallToAction,
   CheckIcon,
+  cn,
   DecorationIsolation,
   GitHubIcon,
   Heading,
   MeshIcon,
 } from '@theguild/components';
-import { HeroContainer, HeroFeatures, HeroLinks } from './hero';
+import { HeroContainer, HeroContainerProps, HeroFeatures, HeroLinks } from './hero';
 import { InstallButton } from './install-button';
 import meshHeroBadge from './mesh-hero-badge.svg';
 
-export function MeshHero() {
+export function MeshHero(props: HeroContainerProps) {
   return (
-    <HeroContainer className="mx-4 max-sm:mt-2 md:mx-6">
+    <HeroContainer {...props} className={cn('mx-4 max-sm:mt-2 md:mx-6', props.className)}>
       <MeshDecorations />
       <Image priority src={meshHeroBadge} alt="" width="96" height="96" />
       <Heading as="h1" size="xl" className="mx-auto max-w-3xl text-balance text-center">
