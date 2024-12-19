@@ -173,7 +173,7 @@ const datasources: Array<string> = [
 export function IndexPage(): ReactElement {
   return (
     <div className="flex flex-col">
-      <MeshHero />
+      <MeshHero className="mx-4 max-sm:mt-2 md:mx-6" />
 
       <Feature
         title="Query anything, run anywhere."
