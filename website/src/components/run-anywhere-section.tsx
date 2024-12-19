@@ -19,7 +19,7 @@ export function RunAnywhereSection({ className, ...props }: RunAnywhereSectionPr
         compatibility.
       </p>
 
-      <ul className="flex mt-8 lg:mt-16 flex-wrap gap-4 max-sm:flex-col justify-center items-center max-w-[1200px] mx-auto">
+      <ul className="flex mt-4 sm:mt-8 lg:mt-16 flex-wrap gap-2 sm:gap-4 max-sm:grid max-sm:grid-cols-3 justify-center items-center max-w-[1200px] mx-auto">
         <ListItemAnchor href="https://the-guild.dev/graphql/hive/docs/gateway/deployment/runtimes/nodejs">
           Node.js
         </ListItemAnchor>
@@ -73,11 +73,11 @@ function ListItemAnchor({ children, href }: { children: React.ReactNode; href: s
   return (
     <li>
       <Anchor
-        className="hive-focus flex items-center gap-4 bg-blue-200 hover:bg-blue-100 rounded-2xl px-6 md:px-8 h-[102px]"
+        className="hive-focus flex items-center gap-4 bg-blue-200 hover:bg-blue-100 rounded-2xl px-4 sm:px-6 md:px-8 h-[102px]"
         href={href}
       >
         {children}
-        <ArrowIcon className="w-6 h-6" />
+        <ArrowIcon className="w-6 h-6 max-sm:hidden" />
       </Anchor>
     </li>
   );
