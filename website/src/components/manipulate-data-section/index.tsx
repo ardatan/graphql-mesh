@@ -6,7 +6,7 @@ export function ManipulateDataSection({ className }: { className?: string }) {
   return (
     <section
       className={cn(
-        'relative rounded-3xl bg-green-1000 p-4 pt-6 sm:py-24 md:px-6 lg:px-12 2xl:px-24 md:py-[120px]',
+        'relative rounded-3xl bg-green-1000 p-4 pt-6 sm:py-24 md:px-6 lg:px-12 2xl:px-24 md:pt-24 lg:py-[120px]',
         className,
       )}
     >
@@ -24,7 +24,7 @@ export function ManipulateDataSection({ className }: { className?: string }) {
         Transform and tailor your schema within Mesh to meet specific business requirements
         efficiently.
       </p>
-      <dl className="grid grid-cols-[repeat(auto-fit,minmax(252px,1fr))] gap-4 lg:gap-8 mt-8 lg:mt-16 lg:[&>*:not(:first-child)]:pl-8 max-lg:[&>*:not(:first-child)]:pt-4 max-lg:divide-y lg:divide-x divide-green-700">
+      <dl className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-8 mt-8 lg:mt-16 xl:[&>*:not(:first-child)]:pl-8 max-sm:[&>*:not(:first-child)]:pt-4 max-sm:divide-y xl:divide-x divide-green-700">
         <ListItem
           title="Naming conventions"
           description="Customize field names within your GraphQL schema using Mesh's flexible naming conventions."
