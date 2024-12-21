@@ -3930,6 +3930,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/type-merging-with-transforms@workspace:e2e/type-merging-with-transforms":
+  version: 0.0.0-use.local
+  resolution: "@e2e/type-merging-with-transforms@workspace:e2e/type-merging-with-transforms"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^1.5.8"
+    graphql: "npm:^16.9.0"
+    graphql-yoga: "npm:^5.7.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/utils@workspace:e2e/utils":
   version: 0.0.0-use.local
   resolution: "@e2e/utils@workspace:e2e/utils"
