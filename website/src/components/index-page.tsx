@@ -6,7 +6,6 @@ import meshDiagram from '@/public/assets/mesh-diagram.svg';
 import meshExampleLogo from '@/public/assets/mesh-example.png';
 import openSourceLogo from '@/public/assets/open-source.svg';
 import { Anchor } from '@theguild/components';
-import { CapabilitiesSection } from './capabilities-section';
 
 const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>) => {
   return (
