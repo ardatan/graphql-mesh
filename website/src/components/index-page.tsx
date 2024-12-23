@@ -209,7 +209,6 @@ export function IndexPage(): ReactElement {
       <div className={FeatureWrapperClass}>
         <Hero />
       </div>
-      <InfoCardsSection />
       <Feature
         title="Query anything, run anywhere."
         description={
