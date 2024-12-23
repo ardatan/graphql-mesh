@@ -1,12 +1,10 @@
 import { cn } from '@theguild/components';
 
-export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
-  layout?: 'fixed' | 'auto';
-}
-export function Table({ children, className, layout = 'auto', ...rest }: TableProps) {
+export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {}
+export function Table({ children, className, ...rest }: TableProps) {
   return (
-    <div className={cn('border border-green-200 rounded-3xl overflow-hidden', className)}>
-      <table className={cn('w-full', layout === 'fixed' && 'table-fixed')} {...rest}>
+    <div className={cn('border border-green-200 rounded-3xl overflow-hidden w-fit', className)}>
+      <table className="w-fit sm:w-full" {...rest}>
         {children}
       </table>
     </div>
@@ -37,7 +35,7 @@ const cellStyle =
 export interface TableHeaderProps extends React.HTMLAttributes<HTMLTableCellElement> {}
 export function TableHeader({ children, className, ...rest }: TableHeaderProps) {
   return (
-    <th className={cn(cellStyle, 'font-medium text-base', className)} {...rest}>
+    <th className={cn(cellStyle, 'font-medium', className)} {...rest}>
       {children}
     </th>
   );
