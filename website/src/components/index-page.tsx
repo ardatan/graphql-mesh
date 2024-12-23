@@ -24,7 +24,7 @@ function Hero() {
   return (
     <div className="w-full">
       <div className="py-20 sm:py-24 lg:py-32 my-6">
-        <h1 className="max-w-screen-md mx-auto font-extrabold text-5xl sm:text-5xl lg:text-6xl text-center bg-gradient-to-r from-cyan-400 to-sky-500 dark:from-cyan-400 dark:to-sky-600 bg-clip-text text-transparent">
+        <h1 className="max-w-screen-md mx-auto font-extrabold text-5xl sm:text-5xl lg:text-6xl text-center bg-gradient-to-r from-cyan-400 to-sky-500 dark:from-cyan-400 dark:to-sky-600 bg-clip-text text-transparent leading-normal">
           GraphQL Mesh
         </h1>
         <p className="max-w-screen-sm mx-auto mt-6 text-2xl text-gray-600 text-center dark:text-gray-400">
