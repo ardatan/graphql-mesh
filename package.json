@@ -112,7 +112,7 @@
     "@commander-js/extra-typings@npm:^12.1.0": "patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch",
     "@whatwg-node/fetch": "0.10.1",
     "@whatwg-node/node-fetch": "0.7.5",
-    "@whatwg-node/server": "0.9.64",
+    "@whatwg-node/server": "0.9.65",
     "es5-ext": "0.10.64",
     "esbuild": "^0.24.0",
     "graphql": "16.10.0",
