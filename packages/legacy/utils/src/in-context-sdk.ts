@@ -27,7 +27,7 @@ import type {
   StitchingInfo,
   SubschemaConfig,
 } from '@graphql-tools/delegate';
-import { delegateToSchema } from '@graphql-tools/delegate';
+import { applySchemaTransforms, delegateToSchema } from '@graphql-tools/delegate';
 import {
   buildOperationNodeForField,
   isDocumentNode,
@@ -67,7 +67,8 @@ export function getInContextSDK(
       }
     }
     // If there is a single source, there is no unifiedSchema
-    const transformedSchema = sourceMap?.get(rawSource) || rawSource.schema;
+    const transformedSchema =
+      sourceMap?.get(rawSource) || applySchemaTransforms(rawSource.schema, rawSource);
     const rootTypes: Record<OperationTypeNode, GraphQLObjectType> = {
       query: transformedSchema.getQueryType(),
       mutation: transformedSchema.getMutationType(),

@@ -1,0 +1,186 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should compose the appropriate schema 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@source"]) {
+  query: Query
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
+
+directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+directive @additionalField on FIELD_DEFINITION
+
+scalar join__FieldSet
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  AUTHORS @join__graph(name: "authors", url: "http://localhost:<authors_port>/graphql")
+  BOOKS @join__graph(name: "books", url: "http://localhost:<books_port>/graphql")
+}
+
+scalar TransportOptions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
+
+type Query @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
+  author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books")
+  writers(ids: [ID]): [Author] @source(name: "authors", type: "[Author]", subgraph: "authors") @join__field(graph: AUTHORS)
+  book(id: ID!): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @join__field(graph: BOOKS)
+  books(ids: [ID]): [Book!]! @merge(subgraph: "books", keyField: "id", keyArg: "ids") @join__field(graph: BOOKS)
+}
+
+type Author @source(name: "AuthorWithBooks", subgraph: "books") @join__type(graph: AUTHORS, key: "id") @join__type(graph: BOOKS, key: "id") {
+  id: ID!
+  name: String! @join__field(graph: AUTHORS)
+  books: [Book!]! @join__field(graph: BOOKS)
+}
+
+type Book @join__type(graph: BOOKS, key: "id") {
+  id: ID!
+  title: String!
+  authorId: ID!
+  author: Author @resolveTo(sourceName: "authors", sourceTypeName: "Query", sourceFieldName: "writers", keyField: "authorId", keysArg: "ids") @additionalField
+}
+"
+`;
+
+exports[`should execute Author 1`] = `
+{
+  "data": {
+    "author": {
+      "books": [
+        {
+          "author": {
+            "id": "1",
+            "name": "Jane Doe",
+          },
+          "id": "0",
+          "title": "Lorem Ipsum",
+        },
+      ],
+      "id": "1",
+      "name": "Jane Doe",
+    },
+  },
+}
+`;
+
+exports[`should execute Authors 1`] = `
+{
+  "data": {
+    "writers": [
+      {
+        "books": [
+          {
+            "author": {
+              "id": "0",
+              "name": "John Doe",
+            },
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      {
+        "books": [
+          {
+            "author": {
+              "id": "1",
+              "name": "Jane Doe",
+            },
+            "id": "0",
+            "title": "Lorem Ipsum",
+          },
+        ],
+        "id": "1",
+        "name": "Jane Doe",
+      },
+    ],
+  },
+}
+`;
+
+exports[`should execute Book 1`] = `
+{
+  "data": {
+    "book": {
+      "author": {
+        "books": [
+          {
+            "id": "1",
+            "title": "Dolor Sit Amet",
+          },
+        ],
+        "id": "0",
+        "name": "John Doe",
+      },
+      "id": "1",
+      "title": "Dolor Sit Amet",
+    },
+  },
+}
+`;
+
+exports[`should execute Books 1`] = `
+{
+  "data": {
+    "books": [
+      {
+        "author": {
+          "books": [
+            {
+              "id": "0",
+              "title": "Lorem Ipsum",
+            },
+          ],
+          "id": "1",
+          "name": "Jane Doe",
+        },
+        "id": "0",
+        "title": "Lorem Ipsum",
+      },
+      {
+        "author": {
+          "books": [
+            {
+              "id": "1",
+              "title": "Dolor Sit Amet",
+            },
+          ],
+          "id": "0",
+          "name": "John Doe",
+        },
+        "id": "1",
+        "title": "Dolor Sit Amet",
+      },
+    ],
+  },
+}
+`;
