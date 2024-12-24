@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.103.10
+
+### Patch Changes
+
+- [#8176](https://github.com/ardatan/graphql-mesh/pull/8176)
+  [`b750a41`](https://github.com/ardatan/graphql-mesh/commit/b750a410c082d64a04f21023790f2ff2c46f5eb9)
+  Thanks [@iamchanii](https://github.com/iamchanii)! - Fix to invoke `applySchemaTransforms` when
+  creating `inContextSDK`
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.103.10
+
 ## 0.103.9
 
 ### Patch Changes
