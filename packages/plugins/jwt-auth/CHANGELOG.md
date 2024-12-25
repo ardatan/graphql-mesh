@@ -1,5 +1,39 @@
 # @graphql-mesh/plugin-jwt-auth
 
+## 1.4.0
+
+### Minor Changes
+
+- [#8189](https://github.com/ardatan/graphql-mesh/pull/8189)
+  [`83a73ab`](https://github.com/ardatan/graphql-mesh/commit/83a73abef2c156c56d406b266d37fd78c6f4a3e9)
+  Thanks [@jjangga0214](https://github.com/jjangga0214)! -
+  [#3590](https://github.com/dotansimha/graphql-yoga/pull/3590) Do not throw when \`request\` is not
+  available in the context, it can be a WebSockets connection
+
+  - Export helper `extractFromConnectionParams` to get the token from WebSocket `connectionParams`
+    when GraphQL WS is used like
+    [here](https://the-guild.dev/graphql/yoga-server/docs/features/subscriptions#graphql-over-websocket-protocol-via-graphql-ws)
+
+  ```ts
+  import {
+    defineConfig,
+    extractFromConnectionParams,
+    extractFromHeader,
+    useJWT
+  } from '@graphql-hive/gateway'
+
+  export const gatewayConfig = defineConfig({
+    jwt: {
+      // So it will look for the token in the connectionParams.my-token field in case of a WebSockets connection
+      // It will check WS params and headers, and get the available one
+      lookupLocations: [
+        extractFromConnectionParams({ name: 'my-token' }),
+        extractFromHeader({ name: 'authorization', prefix: 'Bearer ' })
+      ]
+    }
+  })
+  ```
+
 ## 1.3.10
 
 ### Patch Changes
