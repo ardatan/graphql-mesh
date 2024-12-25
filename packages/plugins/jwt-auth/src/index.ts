@@ -9,6 +9,7 @@ import {
 export {
   createInlineSigningKeyProvider,
   createRemoteJwksSigningKeyProvider,
+  extractFromConnectionParams,
   extractFromCookie,
   extractFromHeader,
   type GetSigningKeyFunction,
