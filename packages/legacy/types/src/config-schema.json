@@ -3004,9 +3004,30 @@
           "type": "object",
           "properties": {},
           "description": "JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime"
+        },
+        "soapHeaders": {
+          "$ref": "#/definitions/SOAPHeaders",
+          "description": "SOAP Headers to be added to the request"
         }
       },
       "required": ["source"]
+    },
+    "SOAPHeaders": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "SOAPHeaders",
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "description": "The namespace of the SOAP Header\nFor example: `http://www.example.com/namespace`"
+        },
+        "content": {
+          "type": "object",
+          "properties": {},
+          "description": "The content of the SOAP Header\nFor example: { \"key\": \"value\" } then the content will be `<key>value</key>`"
+        }
+      },
+      "required": ["namespace", "content"]
     },
     "SupergraphHandler": {
       "additionalProperties": false,

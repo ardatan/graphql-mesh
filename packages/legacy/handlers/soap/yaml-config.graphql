@@ -19,4 +19,21 @@ type SoapHandler @md {
   JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
   """
   operationHeaders: JSON
+  """
+  SOAP Headers to be added to the request
+  """
+  soapHeaders: SOAPHeaders
+}
+
+type SOAPHeaders {
+  """
+  The namespace of the SOAP Header
+  For example: `http://www.example.com/namespace`
+  """
+  namespace: String!
+  """
+  The content of the SOAP Header
+  For example: { "key": "value" } then the content will be `<key>value</key>`
+  """
+  content: JSON!
 }

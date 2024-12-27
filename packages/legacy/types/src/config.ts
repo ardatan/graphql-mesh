@@ -1015,6 +1015,24 @@ export interface SoapHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+  soapHeaders?: SOAPHeaders;
+}
+/**
+ * SOAP Headers to be added to the request
+ */
+export interface SOAPHeaders {
+  /**
+   * The namespace of the SOAP Header
+   * For example: `http://www.example.com/namespace`
+   */
+  namespace: string;
+  /**
+   * The content of the SOAP Header
+   * For example: { "key": "value" } then the content will be `<key>value</key>`
+   */
+  content: {
+    [k: string]: any;
+  };
 }
 export interface SupergraphHandler {
   /**

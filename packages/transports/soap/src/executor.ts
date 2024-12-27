@@ -86,6 +86,8 @@ interface SoapAnnotations {
   endpoint: string;
   bindingNamespace: string;
   elementName: string;
+  headerNamespace?: string;
+  headers?: Record<string, string>;
 }
 
 interface CreateRootValueMethodOpts {
@@ -117,6 +119,24 @@ function createRootValueMethod({
         },
       },
     };
+    if (soapAnnotations.headerNamespace) {
+      requestJson['soap:Envelope'].attributes[`xmlns:header`] = soapAnnotations.headerNamespace;
+      function prefixHeaderProp(headerObj: any) {
+        if (typeof headerObj === 'object' && headerObj !== null) {
+          const prefixedHeaderObj: Record<string, any> = {};
+          for (const key in headerObj) {
+            prefixedHeaderObj[`header:${key}`] = prefixHeaderProp(headerObj[key]);
+          }
+          return prefixedHeaderObj;
+        }
+        return headerObj;
+      }
+      const headersObj =
+        typeof soapAnnotations.headers === 'string'
+          ? JSON.parse(soapAnnotations.headers)
+          : soapAnnotations.headers;
+      requestJson['soap:Envelope']['soap:Header'] = prefixHeaderProp(headersObj);
+    }
     const requestXML = jsonToXMLConverter.build(requestJson);
     const currentFetchFn = context?.fetch || fetchFn;
     const response = await currentFetchFn(

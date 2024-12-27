@@ -39,6 +39,7 @@ import {
 import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import {
   defaultImportFn,
@@ -71,8 +72,14 @@ export interface SOAPLoaderOptions {
   logger?: Logger;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
+  soapHeaders?: SOAPHeaders;
   endpoint?: string;
   cwd?: string;
+}
+
+export interface SOAPHeaders {
+  namespace: string;
+  content: unknown;
 }
 
 const soapDirective = new GraphQLDirective({
@@ -89,6 +96,12 @@ const soapDirective = new GraphQLDirective({
       type: GraphQLString,
     },
     subgraph: {
+      type: GraphQLString,
+    },
+    headers: {
+      type: ObjMapScalar,
+    },
+    headerNamespace: {
       type: GraphQLString,
     },
   },
@@ -143,6 +156,7 @@ export class SOAPLoader {
   private logger: Logger;
   private endpoint?: string;
   private cwd: string;
+  private soapHeaders: SOAPHeaders;
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
@@ -153,6 +167,7 @@ export class SOAPLoader {
     this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
     this.endpoint = options.endpoint;
     this.cwd = options.cwd;
+    this.soapHeaders = options.soapHeaders;
   }
 
   loadXMLSchemaNamespace() {
@@ -452,6 +467,10 @@ export class SOAPLoader {
               endpoint: this.endpoint || portObj.address[0].attributes.location,
               subgraph: this.subgraphName,
             };
+            if (this.soapHeaders.content) {
+              soapAnnotations.headerNamespace = this.soapHeaders.namespace;
+              soapAnnotations.headers = this.soapHeaders.content;
+            }
             rootTC.addFields({
               [operationFieldName]: {
                 type,
