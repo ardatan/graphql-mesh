@@ -467,7 +467,7 @@ export class SOAPLoader {
               endpoint: this.endpoint || portObj.address[0].attributes.location,
               subgraph: this.subgraphName,
             };
-            if (this.soapHeaders.content) {
+            if (this.soapHeaders?.content) {
               soapAnnotations.headerNamespace = this.soapHeaders.namespace;
               soapAnnotations.headers = this.soapHeaders.content;
             }

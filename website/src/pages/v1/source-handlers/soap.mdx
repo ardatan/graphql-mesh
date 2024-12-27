@@ -69,6 +69,8 @@ export const composeConfig = defineConfig({
             MyHeader: {
               UserName: 'user',
               Password: 'password'
+              // You can also use environment variables, so it will get the value on runtime
+              Password: '{env.SOAP_PASSWORD}'
             }
           }
         }
