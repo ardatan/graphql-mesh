@@ -1,22 +1,13 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { parse } from 'graphql';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
-import { fetch } from '@whatwg-node/fetch';
+import { fetch, Response } from '@whatwg-node/fetch';
 import { dummyLogger as logger } from '../../../testing/dummyLogger';
 
 describe('SOAP Headers', () => {
-  let existingUserName: string;
-  let existingPassword: string;
-  beforeAll(() => {
-    existingUserName = process.env.USER_NAME;
-    existingPassword = process.env.PASSWORD;
-    process.env.USER_NAME = 'user';
-    process.env.PASSWORD = 'password';
-  });
-  afterAll(() => {
-    process.env.USER_NAME = existingUserName;
-    process.env.PASSWORD = existingPassword;
-  });
   it('should pass headers to the executor', async () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
@@ -26,25 +17,31 @@ describe('SOAP Headers', () => {
         namespace: 'guild',
         content: {
           MyHeader: {
-            UserName: '{env.USER_NAME}',
-            Password: '{env.PASSWORD}',
+            UserName: '{context.USER_NAME}',
+            Password: '{context.PASSWORD}',
           },
         },
       },
     });
-    await soapLoader.fetchWSDL('https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL');
+    await soapLoader.loadWSDL(
+      readFileSync(join(__dirname, './fixtures/globalweather.wsdl'), 'utf-8'),
+    );
     const schema = soapLoader.buildSchema();
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot('soap-with-headers');
-    const fetchSpy = jest.fn(fetch);
+    const fetchSpy = jest.fn((_url: string, _init: ResponseInit) => Response.error());
     const executor = createExecutorFromSchemaAST(schema, fetchSpy);
     await executor({
       document: parse(/* GraphQL */ `
-        mutation AddInteger {
-          s0_SOAPDemo_SOAPDemoSoap_AddInteger(AddInteger: { Arg1: 2, Arg2: 3 }) {
-            AddIntegerResult
+        {
+          tns_GlobalWeather_GlobalWeatherSoap_GetWeather {
+            GetWeatherResult
           }
         }
       `),
+      context: {
+        USER_NAME: 'user',
+        PASSWORD: 'password',
+      },
     });
     expect(fetchSpy.mock.calls[0][1]).toMatchObject({
       body: expect.stringContaining(
