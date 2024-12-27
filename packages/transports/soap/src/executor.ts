@@ -8,7 +8,10 @@ import type {
 import { isListType, isNonNullType } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
-import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import {
+  getInterpolatedHeadersFactory,
+  stringInterpolator,
+} from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import {
@@ -128,6 +131,14 @@ function createRootValueMethod({
             prefixedHeaderObj[`header:${key}`] = prefixHeaderProp(headerObj[key]);
           }
           return prefixedHeaderObj;
+        }
+        if (typeof headerObj === 'string') {
+          return stringInterpolator.parse(headerObj, {
+            args,
+            context,
+            info,
+            env: process.env,
+          });
         }
         return headerObj;
       }

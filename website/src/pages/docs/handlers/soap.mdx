@@ -27,6 +27,36 @@ sources:
         source: http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL
 ```
 
+## Headers
+
+If you want to add SOAP headers to the request body like below;
+
+```xml
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:header="http://foo.com/">
+   <soap:Header>
+      <header:MyHeader>
+         <header:UserName>user</header:UserName>
+         <header:Password>password</header:Password>
+      </header:MyHeader>
+   </soap:Header>
+```
+
+You can add the headers to the configuration like below;
+
+```yaml
+sources:
+  - name: CountryInfo
+    handler:
+      soap:
+        source: ...
+        soapHeaders:
+          namespace: http://foo.com
+          content:
+            MyHeader:
+              UserName: user
+              Password: password
+```
+
 ## CodeSandBox Example
 
 You can check out our example that uses SOAP Handler.
