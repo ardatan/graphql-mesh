@@ -5,7 +5,7 @@ export function DatasourcesIllustration({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'flex bg-green-1000 gap-8 xl:gap-[72px] py-6 px-4 lg:p-8 lg:py-16 xl:p-[72px] rounded-3xl',
+        'flex text-white bg-green-1000 gap-8 xl:gap-[72px] py-6 px-4 lg:p-8 lg:py-16 xl:p-[72px] rounded-3xl',
         className,
       )}
     >
