@@ -149,10 +149,12 @@ function Dot({ filled, className }: { filled: number; className?: string }) {
       height="17"
       viewBox="0 0 16 17"
       className={cn('text-green-800', className)}
+      // right half of the circle
       fill={filled === 2 ? 'currentColor' : 'none'}
     >
       <g clipPath="url(#table-dot-clip-path)">
-        <rect y="0.920898" width="8" height="16" fill="currentColor" />
+        {/* left half of the circle */}
+        <rect y="0.920898" width="8" height="16" fill={filled === 1 ? 'currentColor' : 'none'} />
       </g>
       <rect x="0.5" y="1.4209" width="15" height="15" rx="7.5" stroke="currentColor" />
       <defs>
