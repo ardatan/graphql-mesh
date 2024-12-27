@@ -1,11 +1,3 @@
-// "title": "Consider switching from other tools?",
-// "subtitle": "Learn the differences between Mesh, Apollo Federation, Hasura and GraphQL Tools",
-// "columns": [
-//     "Productivity / Maintainability",
-//     "Unified Schema design",
-//     "Sub-services support"
-// ],
-
 import { cn, Heading } from '@theguild/components';
 import { Table, TableCell, TableHeader, TableRow } from './table';
 
