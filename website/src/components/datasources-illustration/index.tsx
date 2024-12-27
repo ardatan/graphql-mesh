@@ -29,7 +29,7 @@ export function DatasourcesIllustration({ className }: { className?: string }) {
             },
             {
               icon: <ScanLine />,
-              text: 'Optimize your GraphQL schema with Mesh by mocking, caching, and transforming data seamlessly.',
+              text: 'Extend the capabilities of your schema with Mesh by mocking, caching, and transforming data seamlessly.',
             },
           ].map(({ icon, text }) => (
             <li key={text} className="flex items-start gap-4">
