@@ -46,6 +46,8 @@ type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
 const QUERY_METHOD_PREFIXES = ['get', 'list', 'search'];
 
+let rootId = 0;
+
 export class GrpcLoaderHelper implements AsyncDisposable {
   private schemaComposer = new SchemaComposer();
   private asyncDisposableStack = new AsyncDisposableStack();
@@ -261,9 +263,9 @@ export class GrpcLoaderHelper implements AsyncDisposable {
     }
 
     return Promise.all(
-      rootPromises.map(async (root$, i) => {
+      rootPromises.map(async root$ => {
         const root = await root$;
-        const rootName = root.name || `Root${i}`;
+        const rootName = root.name || `Root${rootId++}`;
         const rootLogger = this.logger.child(rootName);
         rootLogger.debug(`Resolving entire the root tree`);
         root.resolveAll();
