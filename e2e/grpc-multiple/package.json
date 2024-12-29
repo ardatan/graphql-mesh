@@ -1,0 +1,14 @@
+{
+  "name": "@e2e/grpc-multiple",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@graphql-hive/gateway": "^1.5.8",
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@grpc/grpc-js": "^1.12.2",
+    "@grpc/proto-loader": "^0.7.13",
+    "@grpc/reflection": "^1.0.4",
+    "@omnigraph/grpc": "workspace:*",
+    "graphql": "16.10.0"
+  }
+}

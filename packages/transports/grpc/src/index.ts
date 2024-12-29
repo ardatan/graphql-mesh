@@ -64,6 +64,7 @@ interface LoadOptions {
 
 export class GrpcTransportHelper extends DisposableStack {
   constructor(
+    private subgraphName: string,
     private baseDir: string,
     private logger: Logger,
     private endpoint: string,
@@ -208,13 +209,22 @@ export class GrpcTransportHelper extends DisposableStack {
     if ('ObjMap' in schemaTypeMap) {
       addExecutionLogicToScalar(schemaTypeMap.ObjMap as GraphQLScalarType, ObjMapScalar);
     }
-    const queryType = schema.getQueryType();
-    const rootJsonAnnotations = getDirective(schema, queryType, 'grpcRootJson');
-    const rootJsonMap = new Map<string, protobufjs.INamespace>();
+    let roots: { name: string; rootJson: any; loadOptions: LoadOptions }[];
+    const transportDirective = getDirective(schema, schema, 'transport');
+    if (transportDirective) {
+      for (const directive of transportDirective) {
+        if (directive?.options?.roots) {
+          roots = directive.options.roots;
+          break;
+        }
+      }
+    }
+    if (!roots?.length) {
+      throw new Error(`No roots found for subgraph '${this.subgraphName}'`);
+    }
     const grpcObjectByRootJsonName = new Map<string, ReturnType<typeof loadPackageDefinition>>();
-    for (let { name, rootJson, loadOptions } of rootJsonAnnotations) {
+    for (let { name, rootJson, loadOptions } of roots) {
       rootJson = typeof rootJson === 'string' ? JSON.parse(rootJson) : rootJson;
-      rootJsonMap.set(name, rootJson);
       const rootLogger = this.logger.child(name);
       grpcObjectByRootJsonName.set(name, this.getGrpcObject({ rootJson, loadOptions, rootLogger }));
     }
@@ -230,6 +240,11 @@ export class GrpcTransportHelper extends DisposableStack {
               case 'grpcMethod': {
                 const { rootJsonName, objPath, methodName, responseStream } = directiveObj.args;
                 const grpcObject = grpcObjectByRootJsonName.get(rootJsonName);
+                if (!grpcObject) {
+                  throw new Error(
+                    `Root JSON '${rootJsonName}' not found for subgraph '${this.subgraphName}'`,
+                  );
+                }
                 const client = this.getServiceClient({
                   grpcObject,
                   objPath,
@@ -256,6 +271,11 @@ export class GrpcTransportHelper extends DisposableStack {
               case 'grpcConnectivityState': {
                 const { rootJsonName, objPath } = directiveObj.args;
                 const grpcObject = grpcObjectByRootJsonName.get(rootJsonName);
+                if (!grpcObject) {
+                  throw new Error(
+                    `Root JSON '${rootJsonName}' not found for subgraph '${this.subgraphName}'`,
+                  );
+                }
                 const client = this.getServiceClient({
                   grpcObject,
                   objPath,
@@ -302,6 +322,7 @@ export class GrpcTransportHelper extends DisposableStack {
 export default {
   getSubgraphExecutor({ transportEntry, subgraph, cwd, logger }) {
     const transport = new GrpcTransportHelper(
+      transportEntry.subgraph,
       cwd,
       logger,
       transportEntry.location,

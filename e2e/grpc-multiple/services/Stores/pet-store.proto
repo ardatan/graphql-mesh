@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package petstore;
+
+// Message for pet store information
+message PetStore {
+  int32 id = 1;
+  string name = 2;
+  int32 location = 3;
+  repeated int32 petsForSale = 4;
+}
+
+// Request to get all pet stores
+message Empty {}
+
+// Response with a list of pet stores
+message PetStoreList {
+  repeated PetStore petStores = 1;
+}
+
+// Service definition for pet store
+service PetStoreService {
+  rpc GetAllPetStores (Empty) returns (PetStoreList);
+  rpc GetPetStorePets (PetStore) returns (PetStore);
+}
