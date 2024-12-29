@@ -91,7 +91,7 @@ export class GrpcLoaderHelper implements AsyncDisposable {
     const directives: Directive[] = [];
     const roots: {
       name: string;
-      rootJson: AnyNestedObject;
+      rootJson: string;
     }[] = [];
     for (const { name: rootJsonName, rootJson } of descriptorSets) {
       const rootLogger = this.logger.child(rootJsonName);
@@ -105,7 +105,7 @@ export class GrpcLoaderHelper implements AsyncDisposable {
         rootJson,
         rootLogger,
       });
-      roots.push({ name: rootJsonName, rootJson });
+      roots.push({ name: rootJsonName, rootJson: JSON.stringify(rootJson) });
     }
     this.schemaComposer.Query.setDirectives(directives);
 
