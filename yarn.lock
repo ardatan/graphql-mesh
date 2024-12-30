@@ -12309,7 +12309,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/components@npm:^7.0.0":
+"@theguild/components@npm:^7.4.0":
   version: 7.4.0
   resolution: "@theguild/components@npm:7.4.0"
   dependencies:
@@ -36794,7 +36794,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "website@workspace:website"
   dependencies:
-    "@theguild/components": "npm:^7.0.0"
+    "@theguild/components": "npm:^7.4.0"
     "@theguild/tailwind-config": "npm:0.6.2"
     "@types/node": "npm:22.10.2"
     "@types/react": "npm:19.0.2"
