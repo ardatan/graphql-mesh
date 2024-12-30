@@ -15,7 +15,11 @@ export function ExamplesSection(props: ExamplesSectionProps) {
       <Heading as="h3" size="md">
         See live examples in action
       </Heading>
-      <ExamplesSandbox className="mt-4" provider="StackBlitz" />
+      <ExamplesSandbox
+        className="mt-4"
+        // TODO: Try StackBlitz
+        provider="CodeSandbox"
+      />
     </div>
   );
 }

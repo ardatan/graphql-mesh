@@ -75,13 +75,16 @@ export function DatasourcesListSection(props: React.HTMLAttributes<HTMLDivElemen
         Deploy Mesh across any JavaScript environment, powered by its versatile Fetch API
         compatibility.
       </p>
-      <ul className="flex flex-wrap gap-x-6 gap-y-3 items-center justify-center mt-16 z-10 relative">
+      <ul className="flex flex-wrap gap-x-6 gap-y-3 items-center justify-center mt-8 lg:mt-16 z-10 relative">
         {datasources.map((datasource, i) => (
           <Fragment key={datasource.name}>
             {i === Math.floor(datasources.length / 2) + 1 && (
-              <li /* balancer */ className="w-full" />
+              <li /* balancer */ className="w-full max-xl:hidden" />
             )}
-            <li className="rounded-full px-6 py-4 bg-beige-200" key={datasource.name}>
+            <li
+              className="rounded-full px-4 lg:px-6 lg:py-4 py-3 bg-beige-200"
+              key={datasource.name}
+            >
               {datasource.name}
             </li>
           </Fragment>

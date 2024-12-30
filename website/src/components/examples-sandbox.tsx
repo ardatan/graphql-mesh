@@ -66,12 +66,12 @@ export interface ExamplesSandboxProps extends React.HTMLAttributes<HTMLElement> 
 export function ExamplesSandbox({ provider, ...rest }: ExamplesSandboxProps) {
   const [exampleDir, setExampleDir] = useState('json-schema-example');
 
-  const repo = 'github/ardatan/graphql-mesh';
+  const repo = 'ardatan/graphql-mesh';
 
   const src =
     provider === 'CodeSandbox'
-      ? `https://codesandbox.io/embed/${repo}/tree/master/examples/${exampleDir}?${new URLSearchParams(CODESANDBOX_OPTIONS).toString()}`
-      : `https://stackblitz.com/${repo}?embed=1&hidedevtools=1&hideNavigation=1&file=examples%2F${exampleDir}%2F.meshrc.yml`;
+      ? `https://codesandbox.io/embed/github/${repo}/tree/master/examples/${exampleDir}?${new URLSearchParams(CODESANDBOX_OPTIONS).toString()}`
+      : `https://stackblitz.com/github/${repo}?embed=1&hidedevtools=1&hideNavigation=1&file=examples%2F${exampleDir}%2F.meshrc.yml`;
 
   return (
     <div {...rest} className={cn('w-full', rest.className)}>
@@ -82,7 +82,7 @@ export function ExamplesSandbox({ provider, ...rest }: ExamplesSandboxProps) {
           onChange={e => {
             setExampleDir(e.target.value);
           }}
-          className="border rounded-md py-1.5"
+          className="bg-inherit hive-focus"
         >
           {Object.entries(EXAMPLES).map(([groupName, group]) => (
             <optgroup key={groupName} label={groupName}>
