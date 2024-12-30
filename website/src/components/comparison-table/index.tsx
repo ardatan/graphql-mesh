@@ -90,7 +90,10 @@ const headers = Object.keys(data[0]);
 export interface ComparisonTableProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function ComparisonTable({ children, className, ...rest }: ComparisonTableProps) {
   return (
-    <section className={cn('py-6 sm:py-12 md:px-6 xl:px-[120px]', className)} {...rest}>
+    <section
+      className={cn('py-6 sm:py-12 md:px-6 xl:px-[120px] lg:py-[120px]', className)}
+      {...rest}
+    >
       <header className="text-center text-balance">
         <Heading as="h3" size="md">
           Consider switching from other tools?
