@@ -6,6 +6,7 @@ import { DatasourcesIllustration } from './datasources-illustration';
 import { DatasourcesListSection } from './datasources-list-section';
 import { ExamplesSection } from './examples-section';
 import { InfoCardsSection } from './info-cards-section';
+import { LandingPageContainer } from './landing-page-container';
 import { ManipulateDataSection } from './manipulate-data-section';
 import { MeshHero } from './mesh-hero';
 import { RunAnywhereSection } from './run-anywhere-section';
@@ -25,31 +26,5 @@ export function IndexPage(): ReactElement {
       <ToolsAndLibrariesCards className="mx-4 md:mx-6" />
       {/* TODO: Frequently Asked Questions requires a version bump of @theguild/components */}
     </LandingPageContainer>
-  );
-}
-
-function LandingPageContainer(props: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <>
-      <style global jsx>
-        {`
-          html {
-            scroll-behavior: smooth;
-          }
-          body {
-            background: #fff;
-            --nextra-primary-hue: 191deg;
-            --nextra-primary-saturation: 40%;
-            --nextra-bg: 255, 255, 255;
-          }
-          .nextra-sidebar-footer {
-            display: none;
-          }
-        `}
-      </style>
-      <div className="flex h-full flex-col text-green-1000 light mx-auto max-w-[90rem] overflow-hidden">
-        {props.children}
-      </div>
-    </>
   );
 }
