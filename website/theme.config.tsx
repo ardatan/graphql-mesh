@@ -64,7 +64,6 @@ export default defineConfig({
         <HiveNavigation
           className={route === '/' ? 'light max-w-[1392px]' : 'max-w-[90rem]'}
           productName={PRODUCTS.MESH.name}
-          navLinks={[{ href: '/plugins', children: 'Plugins' }]}
           developerMenu={[
             {
               href: '/docs',
