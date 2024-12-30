@@ -57,8 +57,6 @@ const CODESANDBOX_OPTIONS = {
   module: '%2F.meshrc.yml',
 };
 
-const HEIGHT = 720;
-
 export interface ExamplesSandboxProps extends React.HTMLAttributes<HTMLElement> {
   provider: 'CodeSandbox' | 'StackBlitz';
 }
@@ -82,7 +80,7 @@ export function ExamplesSandbox({ provider, ...rest }: ExamplesSandboxProps) {
           onChange={e => {
             setExampleDir(e.target.value);
           }}
-          className="bg-inherit hive-focus"
+          className="bg-inherit hive-focus w-[200px]"
         >
           {Object.entries(EXAMPLES).map(([groupName, group]) => (
             <optgroup key={groupName} label={groupName}>
@@ -98,8 +96,7 @@ export function ExamplesSandbox({ provider, ...rest }: ExamplesSandboxProps) {
       <iframe
         loading="lazy"
         src={src}
-        className="w-full mt-8"
-        height={HEIGHT}
+        className="w-full mt-8 h-[520px] sm:h-[720px]"
         title={exampleDir}
         allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
         sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
