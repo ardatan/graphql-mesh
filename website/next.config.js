@@ -6,6 +6,11 @@ export default withGuildDocs({
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    turbo: {
+      treeShaking: true,
+    },
+  },
   redirects: () =>
     Object.entries({
       '/api': '/docs',

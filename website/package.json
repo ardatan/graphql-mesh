@@ -6,13 +6,15 @@
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
     "build": "next build && next-sitemap",
-    "dev": "next",
+    "dev": "next --turbopack",
+    "postbuild": "pagefind --site .next/server/app --output-path out/_pagefind",
     "start": "next start"
   },
   "dependencies": {
     "@theguild/components": "^8.0.0",
     "next": "^15.0.0",
     "next-sitemap": "^4.2.3",
+    "pagefind": "^1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.0.0"
