@@ -6,6 +6,7 @@ import meshDiagram from '@/public/assets/mesh-diagram.svg';
 import meshExampleLogo from '@/public/assets/mesh-example.png';
 import openSourceLogo from '@/public/assets/open-source.svg';
 import { Anchor } from '@theguild/components';
+import { DatasourcesIllustration } from './datasources-illustration';
 import { MeshHero } from './mesh-hero';
 
 const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>) => {
@@ -174,7 +175,7 @@ export function IndexPage(): ReactElement {
   return (
     <div className="flex flex-col">
       <MeshHero className="mx-4 max-sm:mt-2 md:mx-6" />
-
+      <DatasourcesIllustration className="mx-4" />
       <Feature
         title="Query anything, run anywhere."
         description={
