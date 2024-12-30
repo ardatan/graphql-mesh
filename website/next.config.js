@@ -6,8 +6,7 @@ export default withGuildDocs({
   eslint: {
     ignoreDuringBuilds: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
+  experimental: {
     turbo: {
       treeShaking: true,
     },
