@@ -1,7 +1,7 @@
-diff --git a/node_modules/jest-leak-detector/build/index.js b/node_modules/jest-leak-detector/build/index.js
+diff --git a/build/index.js b/build/index.js
 index a8ccb1e..70699fd 100644
---- a/node_modules/jest-leak-detector/build/index.js
-+++ b/node_modules/jest-leak-detector/build/index.js
+--- a/build/index.js
++++ b/build/index.js
 @@ -74,26 +74,14 @@ class LeakDetector {
      value = null;
    }
