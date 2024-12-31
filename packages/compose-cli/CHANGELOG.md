@@ -1,5 +1,23 @@
 # @graphql-mesh/compose-cli
 
+## 1.3.4
+
+### Patch Changes
+
+- [#8206](https://github.com/ardatan/graphql-mesh/pull/8206)
+  [`36dc08b`](https://github.com/ardatan/graphql-mesh/commit/36dc08b0fd06a65301d3b10b3403cd90e40f5ee1)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency [`commander@^13.0.0` ↗︎](https://www.npmjs.com/package/commander/v/13.0.0)
+    (from `^12.0.0`, in `dependencies`)
+
+- [#8211](https://github.com/ardatan/graphql-mesh/pull/8211)
+  [`bbb68a5`](https://github.com/ardatan/graphql-mesh/commit/bbb68a508bde65b3ccd59bfd19aa4aa6d8e0a6e6)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@commander-js/extra-typings@^13.0.0` ↗︎](https://www.npmjs.com/package/@commander-js/extra-typings/v/13.0.0)
+    (from `^12.1.0`, in `dependencies`)
+
 ## 1.3.3
 
 ### Patch Changes
