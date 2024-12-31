@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { ValueOrPromise } from 'value-or-promise';
 import type { Source } from 'wonka';
 import { filter, make, merge, mergeMap, pipe, share, takeUntil } from 'wonka';
@@ -55,8 +56,7 @@ const makeExecuteSource = (
         observer.next(makeErrorResult(operation, error as Error));
         observer.complete();
       })
-      .resolve()
-      .catch(() => {});
+      .resolve();
 
     return () => {
       ended = true;
