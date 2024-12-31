@@ -213,6 +213,13 @@ jobs:
         uses: the-guild-org/shared-config/setup@v1
         with:
           node-version: ${{matrix.node-version}}
+      - name: Cache Jest
+        uses: actions/cache@v4
+        with:
+          path: .cache/jest
+          key: ${{ runner.os }}-${{matrix.node-version}}-jest-e2e-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{runner.os}}-${{matrix.node-version}}-jest-e2e-
       - name: build
         run: yarn build
       - name: relink
