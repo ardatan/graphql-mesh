@@ -17,6 +17,7 @@ env:
   REDIS_HOST: localhost
   REDIS_PORT: 6379
   APOLLO_ELV2_LICENSE: accept
+  NODE_NO_WARNINGS: 1
 jobs:
   check:
     name: check
