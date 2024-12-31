@@ -17,7 +17,7 @@ describe('JSON Schema Example', () => {
   });
   it('should give correct response', async () => {
     const query = await fsPromises.readFile(join(__dirname, '../example-query.graphql'), 'utf8');
-    const result = await mesh.execute(query, {});
+    const result = await mesh.execute(query);
     expect(result?.data?.me?.firstName).toBeDefined();
     expect(result?.data?.me?.jobTitle).toBeDefined();
     expect(result?.data?.me?.lastName).toBeDefined();

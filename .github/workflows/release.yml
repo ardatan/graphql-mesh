@@ -9,6 +9,9 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
+env:
+  YARN_ENABLE_HARDENED_MODE: 0
+
 jobs:
   stable:
     permissions:

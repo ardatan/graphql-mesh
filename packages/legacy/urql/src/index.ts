@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
+import { ValueOrPromise } from 'value-or-promise';
 import type { Source } from 'wonka';
 import { filter, make, merge, mergeMap, pipe, share, takeUntil } from 'wonka';
 import type { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
@@ -10,10 +12,13 @@ const makeExecuteSource = (
   operation: Operation,
   options: MeshExchangeOptions,
 ): Source<OperationResult> => {
-  const operationFn = operation.kind === 'subscription' ? options.subscribe : options.execute;
+  const operationFn =
+    options.subscribe && operation.kind === 'subscription' ? options.subscribe : options.execute;
   return make<OperationResult>(observer => {
     let ended = false;
-    operationFn(operation.query, operation.variables, operation.context, ROOT_VALUE)
+    new ValueOrPromise(() =>
+      operationFn(operation.query, operation.variables, operation.context, ROOT_VALUE),
+    )
       .then((result: ExecutionResult | AsyncIterable<ExecutionResult>): any => {
         if (ended || !result) {
           return;
@@ -48,9 +53,10 @@ const makeExecuteSource = (
         observer.complete();
       })
       .catch(error => {
-        observer.next(makeErrorResult(operation, error));
+        observer.next(makeErrorResult(operation, error as Error));
         observer.complete();
-      });
+      })
+      .resolve();
 
     return () => {
       ended = true;

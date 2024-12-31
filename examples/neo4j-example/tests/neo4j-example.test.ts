@@ -30,7 +30,7 @@ describe('Neo4j', () => {
   });
   it('should give correct response for example queries', async () => {
     for (const source of config.documents) {
-      const result = await mesh.execute(source.document!, {});
+      const result = await mesh.execute(source.document!);
       expect(result).toMatchSnapshot(basename(source.location!) + '-query-result');
     }
   });

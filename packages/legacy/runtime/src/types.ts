@@ -12,7 +12,7 @@ import type {
   YamlConfig,
 } from '@graphql-mesh/types';
 import type { TerminateHandler } from '@graphql-mesh/utils';
-import type { IResolvers, Source } from '@graphql-tools/utils';
+import type { IResolvers, MaybeAsyncIterable, MaybePromise, Source } from '@graphql-tools/utils';
 import type { MESH_CONTEXT_SYMBOL } from './constants.js';
 import type { MeshInstance } from './get-mesh.js';
 
@@ -38,11 +38,11 @@ export type MeshResolvedSource = {
 
 export type ExecuteMeshFn<TData = any, TVariables = any, TContext = any, TRootValue = any> = (
   document: GraphQLOperation<TData, TVariables>,
-  variables: TVariables,
+  variables?: TVariables,
   context?: TContext,
   rootValue?: TRootValue,
   operationName?: string,
-) => Promise<ExecutionResult<TData>>;
+) => MaybePromise<ExecutionResult<TData>>;
 
 export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, TData = any> = (
   document: GraphQLOperation<TData, TVariables>,
@@ -50,7 +50,7 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
   context?: TContext,
   rootValue?: TRootValue,
   operationName?: string,
-) => Promise<ExecutionResult<TData> | AsyncIterable<ExecutionResult<TData>>>;
+) => MaybePromise<MaybeAsyncIterable<ExecutionResult<TData>>>;
 
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;

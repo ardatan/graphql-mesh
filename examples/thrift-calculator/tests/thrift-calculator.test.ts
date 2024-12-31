@@ -32,7 +32,7 @@ describe('Thrift Calculator', () => {
       if (!source.document || !source.location) {
         throw new Error(`Invalid source: ${source.location}`);
       }
-      const result = await mesh.execute(source.document, {});
+      const result = await mesh.execute(source.document);
       expect(result.errors).toBeFalsy();
       expect(result).toMatchSnapshot(basename(source.location) + '-thrift-calculator-result');
     }

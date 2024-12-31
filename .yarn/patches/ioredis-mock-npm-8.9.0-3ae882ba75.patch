@@ -1,7 +1,7 @@
-diff --git a/node_modules/ioredis-mock/lib/index.js b/node_modules/ioredis-mock/lib/index.js
+diff --git a/lib/index.js b/lib/index.js
 index a82c297..88f1e58 100644
---- a/node_modules/ioredis-mock/lib/index.js
-+++ b/node_modules/ioredis-mock/lib/index.js
+--- a/lib/index.js
++++ b/lib/index.js
 @@ -6274,7 +6274,8 @@ var defaultOptions = {
  RedisMock.Command = Command;
  RedisMock.Cluster = class extends RedisMock {

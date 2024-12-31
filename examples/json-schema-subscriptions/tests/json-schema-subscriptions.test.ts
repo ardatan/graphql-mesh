@@ -82,7 +82,7 @@ describe('JSON Schema Subscriptions', () => {
       }
     `;
 
-    const queryResult = await mesh.execute(query, {});
+    const queryResult = await mesh.execute(query);
     expect(queryResult).toMatchObject({
       data: {
         todos: [

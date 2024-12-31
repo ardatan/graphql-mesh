@@ -3300,7 +3300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commander-js/extra-typings@npm:12.1.0":
+"@commander-js/extra-typings@npm:^12.1.0":
   version: 12.1.0
   resolution: "@commander-js/extra-typings@npm:12.1.0"
   peerDependencies:
@@ -3315,15 +3315,6 @@ __metadata:
   peerDependencies:
     commander: ~13.0.0
   checksum: 10c0/7d1f75624ef5026462600b9ef9f7dbb701cefa3a17204bf57a9946aece44ccff343407d910620645c1daa9416439f5be6597adf75a0b8b4cfd08d59b345d0fcc
-  languageName: node
-  linkType: hard
-
-"@commander-js/extra-typings@patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch":
-  version: 12.1.0
-  resolution: "@commander-js/extra-typings@patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch::version=12.1.0&hash=952fa3"
-  peerDependencies:
-    commander: ~12.1.0
-  checksum: 10c0/d5939ca9177be6ed0c6b56adccb789168a734d51a14411b26f9e0466f4415ce00ac5127cbf79353384309ebb33e93f21b9fbe9750ee202d141375b013a8f6079
   languageName: node
   linkType: hard
 
@@ -5400,6 +5391,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fastify/busboy@npm:^2.0.0":
+  version: 2.1.1
+  resolution: "@fastify/busboy@npm:2.1.1"
+  checksum: 10c0/6f8027a8cba7f8f7b736718b013f5a38c0476eea67034c94a0d3c375e2b114366ad4419e6a6fa7ffc2ef9c6d3e0435d76dd584a7a1cbac23962fda7650b579e3
+  languageName: node
+  linkType: hard
+
 "@fastify/error@npm:^4.0.0":
   version: 4.0.0
   resolution: "@fastify/error@npm:4.0.0"
@@ -6163,7 +6161,7 @@ __metadata:
     "@graphql-tools/schema": "npm:^10.0.5"
     "@graphql-tools/utils": "npm:^10.6.0"
     "@whatwg-node/fetch": "npm:^0.10.0"
-    commander: "npm:^12.0.0"
+    commander: "npm:^13.0.0"
     dotenv: "npm:^16.3.1"
   peerDependencies:
     graphql: "*"
@@ -7455,6 +7453,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.6.0"
     "@urql/core": "npm:5.1.0"
     tslib: "npm:^2.4.0"
+    value-or-promise: "npm:^1.0.12"
     wonka: "npm:^6.3.1"
   peerDependencies:
     "@urql/core": ^2.4.3 || ^4.0.0 || ^5.0.0
@@ -14463,13 +14462,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/lockfile@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@yarnpkg/lockfile@npm:1.1.0"
-  checksum: 10c0/0bfa50a3d756623d1f3409bc23f225a1d069424dbc77c6fd2f14fb377390cd57ec703dc70286e081c564be9051ead9ba85d81d66a3e68eeb6eb506d4e0c0fbda
-  languageName: node
-  linkType: hard
-
 "abab@npm:^2.0.3, abab@npm:^2.0.5":
   version: 2.0.6
   resolution: "abab@npm:2.0.6"
@@ -16913,6 +16905,13 @@ __metadata:
   version: 12.1.0
   resolution: "commander@npm:12.1.0"
   checksum: 10c0/6e1996680c083b3b897bfc1cfe1c58dfbcd9842fd43e1aaf8a795fbc237f65efcc860a3ef457b318e73f29a4f4a28f6403c3d653d021d960e4632dd45bde54a9
+  languageName: node
+  linkType: hard
+
+"commander@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "commander@npm:13.0.0"
+  checksum: 10c0/8ba1e2b83bfdbcefd967aa505f5f5dc58202aa5f8e10437f61f6980dd8a69f868dba439a261f9fb72fc543c5f6fe58140e37b001a4c70b92ae22527abe94dfe1
   languageName: node
   linkType: hard
 
@@ -20910,15 +20909,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-yarn-workspace-root@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "find-yarn-workspace-root@npm:2.0.0"
-  dependencies:
-    micromatch: "npm:^4.0.2"
-  checksum: 10c0/b0d3843013fbdaf4e57140e0165889d09fa61745c9e85da2af86e54974f4cc9f1967e40f0d8fc36a79d53091f0829c651d06607d552582e53976f3cd8f4e5689
-  languageName: node
-  linkType: hard
-
 "flat-cache@npm:^3.0.4":
   version: 3.2.0
   resolution: "flat-cache@npm:3.2.0"
@@ -21679,7 +21669,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.5, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.11, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
+"graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.5, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.11, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
   checksum: 10c0/386d011a553e02bc594ac2ca0bd6d9e4c22d7fa8cfbfc448a6d148c59ea881b092db9dbe3547ae4b88e55f1b01f7c4a2ecc53b310c042793e63aa44cf6c257f2
@@ -21837,7 +21827,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-jit@npm:0.8.7, graphql-jit@npm:^0.8.7":
+"graphql-jit@npm:0.8.7":
   version: 0.8.7
   resolution: "graphql-jit@npm:0.8.7"
   dependencies:
@@ -21850,6 +21840,22 @@ __metadata:
   peerDependencies:
     graphql: ">=15"
   checksum: 10c0/b261c259ec5db6c1291d002fba87a3b99faf4104b5c7dd90d35904eedaa2fe7e6b1a56c20e46a05211a7029f92304105f68af739d341637fdb9234e12466a611
+  languageName: node
+  linkType: hard
+
+"graphql-jit@patch:graphql-jit@npm%3A0.8.7#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch":
+  version: 0.8.7
+  resolution: "graphql-jit@patch:graphql-jit@npm%3A0.8.7#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch::version=0.8.7&hash=90c32e"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.2.0"
+    fast-json-stringify: "npm:^5.16.1"
+    generate-function: "npm:^2.3.1"
+    lodash.memoize: "npm:^4.1.2"
+    lodash.merge: "npm:4.6.2"
+    lodash.mergewith: "npm:4.6.2"
+  peerDependencies:
+    graphql: ">=15"
+  checksum: 10c0/6c87905c9139e0421db59dc0a25006c0fb4598d15cf324719492a43f3d7bb01032e5290567a8f6484cc2d8d41c57cba90985306bf28a11c85f03fe124c4ee6ab
   languageName: node
   linkType: hard
 
@@ -21892,7 +21898,6 @@ __metadata:
     lint-staged: "npm:15.3.0"
     minimatch: "npm:10.0.1"
     node-gyp: "npm:^11.0.0"
-    patch-package: "npm:8.0.0"
     prettier: "npm:3.4.2"
     threads: "npm:^1.7.0"
     ts-jest: "npm:29.2.5"
@@ -23136,7 +23141,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis-mock@npm:^8.8.3":
+"ioredis-mock@npm:8.9.0":
   version: 8.9.0
   resolution: "ioredis-mock@npm:8.9.0"
   dependencies:
@@ -23149,6 +23154,22 @@ __metadata:
     "@types/ioredis-mock": ^8
     ioredis: ^5
   checksum: 10c0/d5d3fddf6cdd8880d7ed7693505e48c2fa345c0d04ac6c7dc00101ba3da042ec58d4063e2350dbaf52b821b7f2e974175f1aaa89eda5d154d2a647266aea4157
+  languageName: node
+  linkType: hard
+
+"ioredis-mock@patch:ioredis-mock@npm%3A8.9.0#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch":
+  version: 8.9.0
+  resolution: "ioredis-mock@patch:ioredis-mock@npm%3A8.9.0#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch::version=8.9.0&hash=a5b625"
+  dependencies:
+    "@ioredis/as-callback": "npm:^3.0.0"
+    "@ioredis/commands": "npm:^1.2.0"
+    fengari: "npm:^0.1.4"
+    fengari-interop: "npm:^0.1.3"
+    semver: "npm:^7.5.4"
+  peerDependencies:
+    "@types/ioredis-mock": ^8
+    ioredis: ^5
+  checksum: 10c0/d050eae6502b0ba2ae462eac3494c9352e97b6668e236d1435fb97b36fd7c879ddeca187974f4802594c572d500831779e5809647fd289b08356ee06793a71d8
   languageName: node
   linkType: hard
 
@@ -24423,23 +24444,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-leak-detector@npm:^27.5.1":
-  version: 27.5.1
-  resolution: "jest-leak-detector@npm:27.5.1"
-  dependencies:
-    jest-get-type: "npm:^27.5.1"
-    pretty-format: "npm:^27.5.1"
-  checksum: 10c0/33ec88ab7d76931ae0a03b18186234114e42a4e9fae748f8a197f7f85b884c2e92ea692c06704b8a469ac26b9c6411a7a1bbc8d34580ed56672a7f6be2681aee
-  languageName: node
-  linkType: hard
-
-"jest-leak-detector@npm:^29.7.0":
+"jest-leak-detector@npm:29.7.0":
   version: 29.7.0
   resolution: "jest-leak-detector@npm:29.7.0"
   dependencies:
     jest-get-type: "npm:^29.6.3"
     pretty-format: "npm:^29.7.0"
   checksum: 10c0/71bb9f77fc489acb842a5c7be030f2b9acb18574dc9fb98b3100fc57d422b1abc55f08040884bd6e6dbf455047a62f7eaff12aa4058f7cbdc11558718ca6a395
+  languageName: node
+  linkType: hard
+
+"jest-leak-detector@patch:jest-leak-detector@npm%3A29.7.0#~/.yarn/patches/jest-leak-detector-npm-29.7.0-3ae882ba75.patch":
+  version: 29.7.0
+  resolution: "jest-leak-detector@patch:jest-leak-detector@npm%3A29.7.0#~/.yarn/patches/jest-leak-detector-npm-29.7.0-3ae882ba75.patch::version=29.7.0&hash=bbbac3"
+  dependencies:
+    jest-get-type: "npm:^29.6.3"
+    pretty-format: "npm:^29.7.0"
+  checksum: 10c0/c950374dc4ee6b9b3ba5b4c937f5edca67cee44f68330d7ff7317054ddf3cd8ad70fcb50948f45cef0b9eeef56c3eae537b4658b77f65d6886b5f14ecc54aa22
   languageName: node
   linkType: hard
 
@@ -25330,7 +25351,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-stable-stringify@npm:^1.0.2, json-stable-stringify@npm:^1.1.1":
+"json-stable-stringify@npm:^1.1.1":
   version: 1.2.1
   resolution: "json-stable-stringify@npm:1.2.1"
   dependencies:
@@ -25547,15 +25568,6 @@ __metadata:
   version: 6.0.3
   resolution: "kind-of@npm:6.0.3"
   checksum: 10c0/61cdff9623dabf3568b6445e93e31376bee1cdb93f8ba7033d86022c2a9b1791a1d9510e026e6465ebd701a6dd2f7b0808483ad8838341ac52f003f512e0b4c4
-  languageName: node
-  linkType: hard
-
-"klaw-sync@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "klaw-sync@npm:6.0.0"
-  dependencies:
-    graceful-fs: "npm:^4.1.11"
-  checksum: 10c0/00d8e4c48d0d699b743b3b028e807295ea0b225caf6179f51029e19783a93ad8bb9bccde617d169659fbe99559d73fb35f796214de031d0023c26b906cecd70a
   languageName: node
   linkType: hard
 
@@ -29347,31 +29359,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"patch-package@npm:8.0.0":
-  version: 8.0.0
-  resolution: "patch-package@npm:8.0.0"
-  dependencies:
-    "@yarnpkg/lockfile": "npm:^1.1.0"
-    chalk: "npm:^4.1.2"
-    ci-info: "npm:^3.7.0"
-    cross-spawn: "npm:^7.0.3"
-    find-yarn-workspace-root: "npm:^2.0.0"
-    fs-extra: "npm:^9.0.0"
-    json-stable-stringify: "npm:^1.0.2"
-    klaw-sync: "npm:^6.0.0"
-    minimist: "npm:^1.2.6"
-    open: "npm:^7.4.2"
-    rimraf: "npm:^2.6.3"
-    semver: "npm:^7.5.3"
-    slash: "npm:^2.0.0"
-    tmp: "npm:^0.0.33"
-    yaml: "npm:^2.2.2"
-  bin:
-    patch-package: index.js
-  checksum: 10c0/690eab0537e953a3fd7d32bb23f0e82f97cd448f8244c3227ed55933611a126f9476397325c06ad2c11d881a19b427a02bd1881bee78d89f1731373fc4fe0fee
-  languageName: node
-  linkType: hard
-
 "path-browserify@npm:1.0.1":
   version: 1.0.1
   resolution: "path-browserify@npm:1.0.1"
@@ -32493,7 +32480,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^2.6.1, rimraf@npm:^2.6.3":
+"rimraf@npm:^2.6.1":
   version: 2.7.1
   resolution: "rimraf@npm:2.7.1"
   dependencies:
@@ -33404,13 +33391,6 @@ __metadata:
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
   checksum: 10c0/230ac975cca485b7f6fe2b96a711aa62a6a26ead3e6fb8ba17c5a00d61b8bed0d7adc21f5626b70d7c33c62ff4e63933017a6462942c719d1980bb0b1207ad46
-  languageName: node
-  linkType: hard
-
-"slash@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "slash@npm:2.0.0"
-  checksum: 10c0/f83dbd3cb62c41bb8fcbbc6bf5473f3234b97fa1d008f571710a9d3757a28c7169e1811cad1554ccb1cc531460b3d221c9a7b37f549398d9a30707f0a5af9193
   languageName: node
   linkType: hard
 
@@ -35718,10 +35698,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:7.2.0":
-  version: 7.2.0
-  resolution: "undici@npm:7.2.0"
-  checksum: 10c0/97b8452bae99304b697f79e9b8c094a2c28e6b805f720187af3a01cae2d297788d7ab6fe883577ba94e48fc20f1fbf04ab4fb050c23527bf32f8ada79a26dcb2
+"undici@npm:^5.28.4":
+  version: 5.28.4
+  resolution: "undici@npm:5.28.4"
+  dependencies:
+    "@fastify/busboy": "npm:^2.0.0"
+  checksum: 10c0/08d0f2596553aa0a54ca6e8e9c7f45aef7d042c60918564e3a142d449eda165a80196f6ef19ea2ef2e6446959e293095d8e40af1236f0d67223b06afac5ecad7
   languageName: node
   linkType: hard
 
@@ -37602,7 +37584,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.2.2, yaml@npm:^2.3.1, yaml@npm:^2.3.2, yaml@npm:^2.3.4, yaml@npm:~2.6.1":
+"yaml@npm:^2.3.1, yaml@npm:^2.3.2, yaml@npm:^2.3.4, yaml@npm:~2.6.1":
   version: 2.6.1
   resolution: "yaml@npm:2.6.1"
   bin:

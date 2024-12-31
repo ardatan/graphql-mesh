@@ -17,6 +17,9 @@ env:
   REDIS_HOST: localhost
   REDIS_PORT: 6379
   APOLLO_ELV2_LICENSE: accept
+  NODE_NO_WARNINGS: 1
+  YARN_ENABLE_HARDENED_MODE: 0
+
 jobs:
   check:
     name: check
@@ -28,6 +31,8 @@ jobs:
         name: set up env
         with:
           node-version-file: .node-version
+        env:
+          YARN_ENABLE_HARDENED_MODE: 1
       - name: Prepare for build
         run: yarn prebuild
       - name: Format
@@ -69,9 +74,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
+          key: jest-unit-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-jest-unit-
+            jest-unit-${{runner.os}}-${{matrix.node-version}}-
+            jest-unit-${{runner.os}}-
+            jest-unit-
+            jest-
 
       - name: Generate config schema
         run: yarn generate-config-schema
@@ -153,9 +161,12 @@ jobs:
         with:
           path: .cache/jest
           key:
-            ${{ runner.os }}-${{matrix.node-version}}-jest-integration-${{ hashFiles('yarn.lock') }}
+            jest-integration-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-jest-integration-
+            jest-integration-${{runner.os}}-${{matrix.node-version}}-
+            jest-integration-${{runner.os}}-
+            jest-integration-
+            jest-
 
       - name: Download Postgres Dump
         run:
@@ -212,10 +223,21 @@ jobs:
         uses: the-guild-org/shared-config/setup@v1
         with:
           node-version: ${{matrix.node-version}}
+      - name: Cache Jest
+        uses: actions/cache@v4
+        with:
+          path: .cache/jest
+          key: jest-e2e-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            jest-e2e-${{runner.os}}-${{matrix.node-version}}-
+            jest-e2e-${{runner.os}}-
+            jest-e2e-
+            jest-
+
       - name: build
         run: yarn build
       - name: relink
-        run: yarn
+        run: yarn install
       - name: Run E2E Tests
         uses: nick-fields/retry@v3
         with:
