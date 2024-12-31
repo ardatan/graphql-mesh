@@ -131,7 +131,7 @@
       "prettier --write"
     ],
     "yarn.lock": [
-      "yarn dedupe"
+      "yarn dedupe && git add yarn.lock"
     ]
   }
 }
