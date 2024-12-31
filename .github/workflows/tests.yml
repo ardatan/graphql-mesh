@@ -18,6 +18,7 @@ env:
   REDIS_PORT: 6379
   APOLLO_ELV2_LICENSE: accept
   NODE_NO_WARNINGS: 1
+  YARN_ENABLE_HARDENED_MODE: 0
 jobs:
   check:
     name: check
@@ -29,6 +30,8 @@ jobs:
         name: set up env
         with:
           node-version-file: .node-version
+        env:
+          YARN_ENABLE_HARDENED_MODE: 1
       - name: Prepare for build
         run: yarn prebuild
       - name: Format
@@ -234,8 +237,6 @@ jobs:
         run: yarn build
       - name: relink
         run: yarn install
-        env:
-          YARN_ENABLE_HARDENED_MODE: 0
       - name: Run E2E Tests
         uses: nick-fields/retry@v3
         with:
