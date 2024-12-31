@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/http",
-  "version": "0.105.10",
+  "version": "0.105.11",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.9",
-    "@graphql-mesh/runtime": "^0.105.10",
+    "@graphql-mesh/runtime": "^0.105.11",
     "@graphql-mesh/types": "^0.103.10",
     "@graphql-mesh/utils": "^0.103.10",
     "@graphql-tools/utils": "^10.6.0",
