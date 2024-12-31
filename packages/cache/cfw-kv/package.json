@@ -40,7 +40,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20241224.0"
+    "@cloudflare/workers-types": "4.20241230.0"
   },
   "publishConfig": {
     "access": "public",
