@@ -70,9 +70,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node-version}}-jest-unit-${{ hashFiles('yarn.lock') }}
+          key: jest-unit-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-jest-unit-
+            jest-unit-${{runner.os}}-${{matrix.node-version}}-
+            jest-unit-${{runner.os}}-
+            jest-unit-
+            jest-
 
       - name: Generate config schema
         run: yarn generate-config-schema
@@ -154,9 +157,12 @@ jobs:
         with:
           path: .cache/jest
           key:
-            ${{ runner.os }}-${{matrix.node-version}}-jest-integration-${{ hashFiles('yarn.lock') }}
+            jest-integration-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-jest-integration-
+            jest-integration-${{runner.os}}-${{matrix.node-version}}-
+            jest-integration-${{runner.os}}-
+            jest-integration-
+            jest-
 
       - name: Download Postgres Dump
         run:
@@ -217,9 +223,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node-version}}-jest-e2e-${{ hashFiles('yarn.lock') }}
+          key: jest-e2e-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{runner.os}}-${{matrix.node-version}}-jest-e2e-
+            jest-e2e-${{runner.os}}-${{matrix.node-version}}-
+            jest-e2e-${{runner.os}}-
+            jest-e2e-
+            jest-
+
       - name: build
         run: yarn build
       - name: relink
