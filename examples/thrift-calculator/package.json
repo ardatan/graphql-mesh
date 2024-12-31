@@ -22,6 +22,6 @@
     "typescript": "^5.4.2"
   },
   "devDependencies": {
-    "concurrently": "9.1.1"
+    "concurrently": "9.1.2"
   }
 }
