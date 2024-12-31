@@ -6,6 +6,9 @@ on:
       - master
   pull_request:
 
+env:
+  YARN_ENABLE_HARDENED_MODE: 0
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 

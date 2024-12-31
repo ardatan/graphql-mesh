@@ -19,6 +19,7 @@ env:
   APOLLO_ELV2_LICENSE: accept
   NODE_NO_WARNINGS: 1
   YARN_ENABLE_HARDENED_MODE: 0
+
 jobs:
   check:
     name: check
