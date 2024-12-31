@@ -30,8 +30,6 @@ if (process.env.LEAK_TEST) {
   testMatch.push('!**/examples/grpc-*/**');
   testMatch.push('!**/examples/sqlite-*/**');
   testMatch.push('!**/examples/mysql-*/**');
-  testMatch.push('!**/examples/v1-next/grpc-*/**');
-  testMatch.push('!**/examples/v1-next/sqlite-*/**');
   testMatch.push('!**/examples/v1-next/mysql-*/**');
   testMatch.push('!**/examples/federation-example/tests/polling.test.ts');
 }
@@ -71,12 +69,6 @@ if (process.env.E2E_TEST && process.env.CI && !isLinux) {
     testMatch.push('!**/e2e/tsconfig-paths/**');
     testMatch.push('!**/e2e/cjs-project/**');
   }
-}
-
-// Disable grpc-reflection tests for Node.js v22.7.0
-// See https://github.com/nodejs/node/issues/54518
-if (process.version === 'v22.7.0') {
-  testMatch.push('!**/examples/grpc-reflection*/**');
 }
 
 /** @type {import('jest').Config} */
