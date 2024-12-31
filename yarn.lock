@@ -3309,6 +3309,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@commander-js/extra-typings@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "@commander-js/extra-typings@npm:13.0.0"
+  peerDependencies:
+    commander: ~13.0.0
+  checksum: 10c0/7d1f75624ef5026462600b9ef9f7dbb701cefa3a17204bf57a9946aece44ccff343407d910620645c1daa9416439f5be6597adf75a0b8b4cfd08d59b345d0fcc
+  languageName: node
+  linkType: hard
+
 "@commander-js/extra-typings@patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch":
   version: 12.1.0
   resolution: "@commander-js/extra-typings@patch:@commander-js/extra-typings@npm%3A12.1.0#~/.yarn/patches/@commander-js-extra-typings-npm-12.1.0-65a781f8c6.patch::version=12.1.0&hash=952fa3"
@@ -6142,7 +6151,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
-    "@commander-js/extra-typings": "npm:^12.1.0"
+    "@commander-js/extra-typings": "npm:^13.0.0"
     "@graphql-mesh/fusion-composition": "npm:^0.7.16"
     "@graphql-mesh/include": "npm:^0.2.9"
     "@graphql-mesh/string-interpolation": "npm:^0.5.7"

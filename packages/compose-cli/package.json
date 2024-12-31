@@ -38,7 +38,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@commander-js/extra-typings": "^12.1.0",
+    "@commander-js/extra-typings": "^13.0.0",
     "@graphql-mesh/fusion-composition": "^0.7.16",
     "@graphql-mesh/include": "^0.2.9",
     "@graphql-mesh/string-interpolation": "^0.5.7",
