@@ -39,6 +39,7 @@
     "@graphql-mesh/runtime": "^0.105.10",
     "@graphql-tools/utils": "^10.6.0",
     "tslib": "^2.4.0",
+    "value-or-promise": "^1.0.12",
     "wonka": "^6.3.1"
   },
   "devDependencies": {

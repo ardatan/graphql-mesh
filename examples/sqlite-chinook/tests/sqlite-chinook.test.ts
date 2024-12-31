@@ -23,7 +23,7 @@ describe('SQLite Chinook', () => {
       if (!source.document || !source.location) {
         throw new Error(`Invalid source: ${source.location}`);
       }
-      const result = await mesh.execute(source.document, undefined);
+      const result = await mesh.execute(source.document);
       expect(result).toMatchSnapshot(basename(source.location) + '-sqlite-chinook-result');
     }
   });

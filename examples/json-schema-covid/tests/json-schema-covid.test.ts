@@ -24,7 +24,7 @@ describe('JSON Schema Covid', () => {
       join(__dirname, '../example-queries/getData_step1.graphql'),
       'utf8',
     );
-    const result = await mesh.execute(getDataStep1Query, undefined);
+    const result = await mesh.execute(getDataStep1Query);
     expect(result.errors).toBeFalsy();
     // Check exposed response metadata
     expect(result.data?.population?._response).toBeTruthy();
@@ -45,7 +45,7 @@ describe('JSON Schema Covid', () => {
       join(__dirname, '../example-queries/getData_step1.graphql'),
       'utf8',
     );
-    const result = await mesh.execute(getDataStep1Query, undefined);
+    const result = await mesh.execute(getDataStep1Query);
     expect(result.errors?.length).toBeFalsy();
     expect(typeof result?.data?.case?.confirmed).toBe('number');
     expect(result?.data?.case?.countryRegion).toBe('France');
@@ -60,7 +60,7 @@ describe('JSON Schema Covid', () => {
       join(__dirname, '../example-queries/getData_step2.graphql'),
       'utf8',
     );
-    const result = await mesh.execute(getDataStep2Query, undefined);
+    const result = await mesh.execute(getDataStep2Query);
     expect(result.errors).toBeFalsy();
     expect(typeof result?.data?.case?.confirmed).toBe('number');
     expect(typeof result?.data?.case?.deaths).toBe('number');
@@ -73,7 +73,7 @@ describe('JSON Schema Covid', () => {
       join(__dirname, '../example-queries/getData_step3_1.graphql'),
       'utf8',
     );
-    const result = await mesh.execute(getDataStep3_1Query, undefined);
+    const result = await mesh.execute(getDataStep3_1Query);
     expect(result.errors).toBeFalsy();
     expect(typeof result?.data?.fr?.deathRatio).toBe('number');
 
@@ -84,7 +84,7 @@ describe('JSON Schema Covid', () => {
       join(__dirname, '../example-queries/getData_step3_2.graphql'),
       'utf8',
     );
-    const result = await mesh.execute(getDataStep3_2Query, undefined);
+    const result = await mesh.execute(getDataStep3_2Query);
     expect(result.errors).toBeFalsy();
     expect(typeof result?.data?.fr?.deathRatio).toBe('number');
     expect(typeof result?.data?.fr?.case?.deaths).toBe('number');

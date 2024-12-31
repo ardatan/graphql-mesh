@@ -21,7 +21,7 @@ describe('MySQL Employees', () => {
   it('should give correct response for example queries', () =>
     Promise.all(
       config.documents.map(async operation => {
-        const result = await mesh.execute(operation.document!, {});
+        const result = await mesh.execute(operation.document!);
         expect(result).toMatchSnapshot(
           basename(operation.location || 'anonymous') + '-query-result',
         );

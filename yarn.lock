@@ -7455,6 +7455,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.6.0"
     "@urql/core": "npm:5.1.0"
     tslib: "npm:^2.4.0"
+    value-or-promise: "npm:^1.0.12"
     wonka: "npm:^6.3.1"
   peerDependencies:
     "@urql/core": ^2.4.3 || ^4.0.0 || ^5.0.0

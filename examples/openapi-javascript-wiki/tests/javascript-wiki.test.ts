@@ -24,7 +24,7 @@ describe('JavaScript Wiki', () => {
       join(__dirname, '../example-queries/views-in-past-month.graphql'),
       'utf8',
     );
-    const result = await mesh.execute(viewsInPastMonthQuery, {});
+    const result = await mesh.execute(viewsInPastMonthQuery);
     expect(result.errors).toBeFalsy();
     expect(result?.data?.viewsInPastMonth).toBeGreaterThan(0);
   });
@@ -33,7 +33,7 @@ describe('JavaScript Wiki', () => {
       join(__dirname, '../example-queries/wikipedia-metrics.graphql'),
       'utf8',
     );
-    const result = await mesh.execute(wikipediaMetricsQuery, {});
+    const result = await mesh.execute(wikipediaMetricsQuery);
     expect(result).toMatchSnapshot('wikipedia-metrics-result');
   });
   afterAll(() => mesh?.destroy());
