@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { cn } from '@theguild/components';
+import { ArrowIcon, CaretSlimIcon, cn } from '@theguild/components';
 
 export const EXAMPLES = {
   OpenAPI: {
@@ -59,14 +59,16 @@ const CODESANDBOX_OPTIONS = {
 
 export interface ExamplesSandboxProps extends React.HTMLAttributes<HTMLElement> {
   preventStealingFocusWithUnpleasantDelay?: boolean;
+  lazy?: boolean;
 }
 
 export function ExamplesSandbox({
   preventStealingFocusWithUnpleasantDelay,
+  lazy = false,
   ...rest
 }: ExamplesSandboxProps) {
   const [exampleDir, setExampleDir] = useState('json-schema-example');
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(lazy ? false : true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -105,7 +107,7 @@ export function ExamplesSandbox({
           onChange={e => {
             setExampleDir(e.target.value);
           }}
-          className="bg-inherit hive-focus w-[200px]"
+          className="bg-inherit hive-focus w-[200px] cursor-pointer px-3 pr-8 p-2 border-beige-400 dark:border-neutral-800 border rounded-lg hover:bg-beige-100 dark:hover:bg-neutral-900 appearance-none"
         >
           {Object.entries(EXAMPLES).map(([groupName, group]) => (
             <optgroup key={groupName} label={groupName}>
@@ -117,17 +119,23 @@ export function ExamplesSandbox({
             </optgroup>
           ))}
         </select>
+        <div className="w-0">
+          <CaretSlimIcon className="size-4 relative pointer-events-none -left-9" />
+        </div>
       </div>
-      <div ref={containerRef} className="w-full mt-8 h-[520px] sm:h-[720px] bg-beige-100">
+      <div
+        ref={containerRef}
+        className="w-full mt-8 h-[520px] sm:h-[720px] bg-beige-100 dark:bg-[#0D0D0D]"
+      >
         {isVisible && (
           <iframe
-            loading="eager"
+            loading={lazy ? 'eager' : 'lazy'}
             src={src}
             className="w-full h-full"
             title={exampleDir}
             allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
             sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-            style={{ display: 'none' }}
+            style={{ display: preventStealingFocusWithUnpleasantDelay ? 'none' : 'block' }}
             // This is such a hack. I hate it.
             // The worst part it's that it's dependent on the internet speed to 2s may be too little
             // and we'll allow CodeSandbox to steal the focus and scroll to the iframe
@@ -138,7 +146,7 @@ export function ExamplesSandbox({
                     const iframe = e.currentTarget;
                     setTimeout(() => {
                       iframe.style.display = 'block';
-                    }, 2000);
+                    }, 2500);
                   }
                 : undefined
             }
