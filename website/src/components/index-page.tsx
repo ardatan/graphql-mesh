@@ -6,6 +6,7 @@ import meshDiagram from '@/public/assets/mesh-diagram.svg';
 import meshExampleLogo from '@/public/assets/mesh-example.png';
 import openSourceLogo from '@/public/assets/open-source.svg';
 import { Anchor } from '@theguild/components';
+import { MeshHero } from './mesh-hero';
 
 const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>) => {
   return (
@@ -19,40 +20,6 @@ const ButtonLink = ({ children, ...props }: React.ComponentProps<typeof Anchor>)
     </Anchor>
   );
 };
-
-function Hero() {
-  return (
-    <div className="w-full">
-      <div className="py-20 sm:py-24 lg:py-32 my-6">
-        <h1 className="max-w-screen-md mx-auto font-extrabold text-5xl sm:text-5xl lg:text-6xl text-center bg-gradient-to-r from-cyan-400 to-sky-500 dark:from-cyan-400 dark:to-sky-600 bg-clip-text text-transparent">
-          GraphQL Mesh
-        </h1>
-        <p className="max-w-screen-sm mx-auto mt-6 text-2xl text-gray-600 text-center dark:text-gray-400">
-          The Graph of Everything
-        </p>
-        <p className="max-w-screen-sm mx-auto text-2xl text-gray-600 text-center dark:text-gray-400">
-          Federated architecture for any API service
-        </p>
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <ButtonLink href="/v1">Documentation</ButtonLink>
-          {/* <ButtonLink className="hidden lg:block" href="/examples">
-            Examples
-          </ButtonLink> */}
-          <ButtonLink
-            className="flex flex-row gap-2 items-center"
-            href="https://github.com/ardatan/graphql-mesh"
-          >
-            <FiGithub /> GitHub
-          </ButtonLink>
-          {/* TODO: this button causes hydration error */}
-          {/* <ButtonLink href="https://www.npmjs.com/package/@graphql-mesh/cli">
-            <NPMBadge name="@graphql-mesh/cli" />
-          </ButtonLink> */}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 const FeatureWrapperClass = `
   w-full py-24
@@ -206,9 +173,8 @@ const datasources: Array<string> = [
 export function IndexPage(): ReactElement {
   return (
     <div className="flex flex-col">
-      <div className={FeatureWrapperClass}>
-        <Hero />
-      </div>
+      <MeshHero className="mx-4 max-sm:mt-2 md:mx-6" />
+
       <Feature
         title="Query anything, run anywhere."
         description={
