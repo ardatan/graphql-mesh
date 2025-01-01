@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@theguild/components';
 
 export const EXAMPLES = {
@@ -58,18 +58,43 @@ const CODESANDBOX_OPTIONS = {
 };
 
 export interface ExamplesSandboxProps extends React.HTMLAttributes<HTMLElement> {
-  provider: 'CodeSandbox' | 'StackBlitz';
+  preventStealingFocusWithUnpleasantDelay?: boolean;
 }
 
-export function ExamplesSandbox({ provider, ...rest }: ExamplesSandboxProps) {
+export function ExamplesSandbox({
+  preventStealingFocusWithUnpleasantDelay,
+  ...rest
+}: ExamplesSandboxProps) {
   const [exampleDir, setExampleDir] = useState('json-schema-example');
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        rootMargin: '100px',
+        threshold: 0.1,
+      },
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const repo = 'ardatan/graphql-mesh';
 
-  const src =
-    provider === 'CodeSandbox'
-      ? `https://codesandbox.io/embed/github/${repo}/tree/master/examples/${exampleDir}?${new URLSearchParams(CODESANDBOX_OPTIONS).toString()}`
-      : `https://stackblitz.com/github/${repo}?embed=1&hidedevtools=1&hideNavigation=1&file=examples%2F${exampleDir}%2F.meshrc.yml`;
+  const src = `https://codesandbox.io/embed/github/${repo}/tree/master/examples/${exampleDir}?${new URLSearchParams(CODESANDBOX_OPTIONS).toString()}`;
 
   return (
     <div {...rest} className={cn('w-full', rest.className)}>
@@ -93,17 +118,33 @@ export function ExamplesSandbox({ provider, ...rest }: ExamplesSandboxProps) {
           ))}
         </select>
       </div>
-      <iframe
-        loading="lazy"
-        src={src}
-        className="w-full mt-8 h-[520px] sm:h-[720px]"
-        title={exampleDir}
-        allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
-        sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-        onFocus={e => {
-          console.log(document.activeElement);
-        }}
-      />
+      <div ref={containerRef} className="w-full mt-8 h-[520px] sm:h-[720px] bg-beige-100">
+        {isVisible && (
+          <iframe
+            loading="eager"
+            src={src}
+            className="w-full h-full"
+            title={exampleDir}
+            allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+            sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+            style={{ display: 'none' }}
+            // This is such a hack. I hate it.
+            // The worst part it's that it's dependent on the internet speed to 2s may be too little
+            // and we'll allow CodeSandbox to steal the focus and scroll to the iframe
+            // or needlessly too long, and we'll have an empty content, what obviously looks very professional.
+            onLoad={
+              preventStealingFocusWithUnpleasantDelay
+                ? e => {
+                    const iframe = e.currentTarget;
+                    setTimeout(() => {
+                      iframe.style.display = 'block';
+                    }, 2000);
+                  }
+                : undefined
+            }
+          />
+        )}
+      </div>
     </div>
   );
 }
