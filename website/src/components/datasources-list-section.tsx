@@ -61,17 +61,17 @@ export function DatasourcesListSection(props: React.HTMLAttributes<HTMLDivElemen
         props.className,
       )}
     >
-      <DecorationIsolation className="absolute z-10">
+      <DecorationIsolation className="absolute">
         <MeshIcon
           width={871}
           height={865}
           className="[&>g]:fill-none stroke-beige-300 [&>g]:stroke-[0.1px] [&>g]:[clip-path:none] right-0 bottom-0 absolute translate-x-1/2 translate-y-1/2"
         />
       </DecorationIsolation>
-      <Heading as="h3" size="md" className="text-center">
+      <Heading as="h3" size="md" className="text-center relative">
         Query anything
       </Heading>
-      <p className="mt-4 text-center text-balance text-green-800">
+      <p className="mt-4 text-center text-balance text-green-800 relative">
         Deploy Mesh across any JavaScript environment, powered by its versatile Fetch API
         compatibility.
       </p>
