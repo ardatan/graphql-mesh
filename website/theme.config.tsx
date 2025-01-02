@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import {
   Anchor,
   cn,
-  CodegenIcon,
   defineConfig,
   Giscus,
   GitHubIcon,
@@ -15,6 +14,7 @@ import {
   PRODUCTS,
   useTheme,
 } from '@theguild/components';
+import favicon from './public/favicon.svg';
 
 export default defineConfig({
   websiteName: 'GraphQL Mesh',
@@ -123,6 +123,13 @@ export default defineConfig({
         />
       );
     },
+  },
+  head: () => {
+    return (
+      <>
+        <link rel="icon" href={favicon.src} />
+      </>
+    );
   },
 });
 
