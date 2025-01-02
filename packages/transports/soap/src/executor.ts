@@ -143,10 +143,6 @@ function createRootValueMethod({
     const envelopeAttributes: Record<string, string> = {
       'xmlns:soap': 'http://www.w3.org/2003/05/soap-envelope',
     };
-    const headerPrefix = soapAnnotations.soapHeaders?.alias || 'header';
-    if (soapAnnotations.soapHeaders?.namespace) {
-      envelopeAttributes[`xmlns:${headerPrefix}`] = soapAnnotations.soapHeaders.namespace;
-    }
     const envelope: Record<string, any> = {
       attributes: envelopeAttributes,
     };
@@ -156,6 +152,12 @@ function createRootValueMethod({
       info,
       env: process.env,
     };
+
+    const bodyPrefix = soapAnnotations.bodyAlias || 'body';
+    envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
+
+    const headerPrefix =
+      soapAnnotations.soapHeaders?.alias || soapAnnotations.bodyAlias || 'header';
     if (soapAnnotations.soapHeaders?.headers) {
       envelope['soap:Header'] = prefixWithAlias({
         alias: headerPrefix,
@@ -166,15 +168,18 @@ function createRootValueMethod({
         ),
         resolverData,
       });
+      if (soapAnnotations.soapHeaders?.namespace) {
+        envelopeAttributes[`xmlns:${headerPrefix}`] = soapAnnotations.soapHeaders.namespace;
+      }
     }
-    const bodyPrefix = soapAnnotations.bodyAlias || 'body';
-    envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
+
     const body = prefixWithAlias({
       alias: bodyPrefix,
       obj: normalizeArgsForConverter(args),
       resolverData,
     });
     envelope['soap:Body'] = body;
+
     const requestJson = {
       'soap:Envelope': envelope,
     };
