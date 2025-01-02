@@ -3005,6 +3005,10 @@
           "properties": {},
           "description": "JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime"
         },
+        "bodyAlias": {
+          "type": "string",
+          "description": "The name of the lias to be used in the envelope for body components\n\ndefault: `body`"
+        },
         "soapHeaders": {
           "$ref": "#/definitions/SOAPHeaders",
           "description": "SOAP Headers to be added to the request"
@@ -3017,17 +3021,21 @@
       "type": "object",
       "title": "SOAPHeaders",
       "properties": {
+        "alias": {
+          "type": "string",
+          "description": "The name of the alias to be used in the envelope\n\ndefault: `header`"
+        },
         "namespace": {
           "type": "string",
           "description": "The namespace of the SOAP Header\nFor example: `http://www.example.com/namespace`"
         },
-        "content": {
+        "headers": {
           "type": "object",
           "properties": {},
           "description": "The content of the SOAP Header\nFor example: { \"key\": \"value\" } then the content will be `<key>value</key>`"
         }
       },
-      "required": ["namespace", "content"]
+      "required": ["namespace", "headers"]
     },
     "SupergraphHandler": {
       "additionalProperties": false,

@@ -80,8 +80,25 @@ export interface SOAPLoaderOptions {
 }
 
 export interface SOAPHeaders {
+  /**
+   * The namespace of the SOAP Header
+   *
+   * @example http://www.example.com/namespace
+   */
   namespace: string;
+  /**
+   * The name of the alias to be used in the envelope
+   *
+   * @default header
+   */
   alias?: string;
+  /**
+   * The content of the SOAP Header
+   *
+   * @example { "key": "value" }
+   *
+   * then the content will be `<key>value</key>` in XML
+   */
   headers: unknown;
 }
 

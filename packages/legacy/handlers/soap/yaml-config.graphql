@@ -20,12 +20,24 @@ type SoapHandler @md {
   """
   operationHeaders: JSON
   """
+  The name of the alias to be used in the envelope for body components
+
+  default: `body`
+  """
+  bodyAlias: String
+  """
   SOAP Headers to be added to the request
   """
   soapHeaders: SOAPHeaders
 }
 
 type SOAPHeaders {
+  """
+  The name of the alias to be used in the envelope
+
+  default: `header`
+  """
+  alias: String
   """
   The namespace of the SOAP Header
   For example: `http://www.example.com/namespace`
@@ -35,5 +47,5 @@ type SOAPHeaders {
   The content of the SOAP Header
   For example: { "key": "value" } then the content will be `<key>value</key>`
   """
-  content: JSON!
+  headers: JSON!
 }
