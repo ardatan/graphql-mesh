@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowIcon, CaretSlimIcon, cn } from '@theguild/components';
+import { useRouter } from 'next/router';
+import { CaretSlimIcon, cn } from '@theguild/components';
 
 export const EXAMPLES = {
   OpenAPI: {
@@ -58,20 +59,18 @@ const CODESANDBOX_OPTIONS = {
 };
 
 export interface ExamplesSandboxProps extends React.HTMLAttributes<HTMLElement> {
-  preventStealingFocusWithUnpleasantDelay?: boolean;
   lazy?: boolean;
+  border?: boolean;
 }
 
-export function ExamplesSandbox({
-  preventStealingFocusWithUnpleasantDelay,
-  lazy = false,
-  ...rest
-}: ExamplesSandboxProps) {
+export function ExamplesSandbox({ lazy = false, border = false, ...rest }: ExamplesSandboxProps) {
   const [exampleDir, setExampleDir] = useState('json-schema-example');
-  const [isVisible, setIsVisible] = useState(lazy ? false : true);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(!lazy);
+  const containerRef = useRef<HTMLDivElement>(null!);
 
   useEffect(() => {
+    if (isVisible) return;
+
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
@@ -87,16 +86,14 @@ export function ExamplesSandbox({
       },
     );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
+    observer.observe(containerRef.current);
 
     return () => observer.disconnect();
   }, []);
 
-  const repo = 'ardatan/graphql-mesh';
+  const { basePath } = useRouter();
 
-  const src = `https://codesandbox.io/embed/github/${repo}/tree/master/examples/${exampleDir}?${new URLSearchParams(CODESANDBOX_OPTIONS).toString()}`;
+  const iframeSrc = `${basePath}/codesandbox-iframe.html?example=${exampleDir}`;
 
   return (
     <div {...rest} className={cn('w-full', rest.className)}>
@@ -125,31 +122,20 @@ export function ExamplesSandbox({
       </div>
       <div
         ref={containerRef}
-        className="w-full mt-8 h-[520px] sm:h-[720px] bg-beige-100 dark:bg-[#0D0D0D]"
+        // #0D0D0D is CodeSandbox's background color
+        className={cn(
+          'w-full mt-8 h-[520px] sm:h-[720px] bg-[#0D0D0D] overflow-hidden',
+          border && 'rounded-lg border border-beige-400 dark:border-neutral-800',
+        )}
       >
         {isVisible && (
           <iframe
             loading={lazy ? 'eager' : 'lazy'}
-            src={src}
-            className="w-full h-full"
+            src={iframeSrc}
+            className="size-full"
             title={exampleDir}
             allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
             sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
-            style={{ display: preventStealingFocusWithUnpleasantDelay ? 'none' : 'block' }}
-            // This is such a hack. I hate it.
-            // The worst part it's that it's dependent on the internet speed to 2s may be too little
-            // and we'll allow CodeSandbox to steal the focus and scroll to the iframe
-            // or needlessly too long, and we'll have an empty content, what obviously looks very professional.
-            onLoad={
-              preventStealingFocusWithUnpleasantDelay
-                ? e => {
-                    const iframe = e.currentTarget;
-                    setTimeout(() => {
-                      iframe.style.display = 'block';
-                    }, 2500);
-                  }
-                : undefined
-            }
           />
         )}
       </div>

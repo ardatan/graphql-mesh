@@ -22,7 +22,7 @@ export function IndexPage(): ReactElement {
       <ManipulateDataSection className="mx-4 mt-6 md:mx-6" />
       <ComparisonTable className="mx-4 md:mx-6" />
       <RunAnywhereSection className="mx-4 mt-6 md:mx-6" />
-      <CapabilitiesSection className="mx-4 md:mx-6" />
+      <CapabilitiesSection className="mx-4 mt-6 md:mx-6" />
       <ToolsAndLibrariesCards className="mx-4 md:mx-6" />
       {/* TODO: Frequently Asked Questions requires a version bump of @theguild/components */}
     </LandingPageContainer>
