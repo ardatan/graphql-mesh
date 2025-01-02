@@ -64,8 +64,9 @@ export const composeConfig = defineConfig({
         source:
           'http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL',
         soapHeaders: {
+          alias: 'header',
           namespace: 'http://foo.com',
-          content: {
+          headers: {
             MyHeader: {
               UserName: 'user',
               Password: 'password'
