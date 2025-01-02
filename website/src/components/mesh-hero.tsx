@@ -43,7 +43,11 @@ export function MeshHero(props: HeroContainerProps) {
           Get started
         </CallToAction>
         <InstallButton />
-        <CallToAction variant="tertiary" href="https://github.com/ardatan/graphql-mesh">
+        <CallToAction
+          variant="tertiary"
+          target="_blank"
+          href="https://github.com/ardatan/graphql-mesh"
+        >
           <GitHubIcon className="size-6" />
           GitHub
         </CallToAction>
