@@ -58,8 +58,8 @@ function Illustration({ className }: { className?: string }) {
       <Diagonal variant="middle" className="col-start-5 row-start-2" />
       <Diagonal variant="right" className="-col-end-2 row-start-2 col-span-2 justify-self-end" />
       <div className="col-start-3 col-span-4 row-start-3 flex justify-center">
-        <div className="relative z-10 items-center justify-center gap-4 rounded-2xl p-4 xl:gap-4 xl:py-[22px] bg-gradient-to-br from-[#4F6C6A] to-[#004540] transition-colors duration-500 [&>svg]:shrink-0 lg:px-12 xl:px-16 py-6 backdrop-blur-sm flex flex-col text-center">
-          <PRODUCTS.MESH.logo className="size-16 lg:size-20 [&>g]:fill-[url(#logo-gradient)]" />
+        <div className="relative z-10 items-center justify-center gap-4 rounded-2xl p-4 xl:gap-4 xl:py-[22px] bg-gradient-to-br from-[#4F6C6A] to-[#004540] transition-colors duration-500 lg:px-12 xl:px-16 py-6 backdrop-blur-sm flex flex-col text-center">
+          <PRODUCTS.MESH.logo className="size-16 lg:size-20 [&>g]:fill-[url(#logo-gradient)] shrink-0" />
           <div className="font-medium text-white">GraphQL Mesh</div>
         </div>
         <svg className="absolute">
