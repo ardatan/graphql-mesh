@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Examples should generate schema for axis: axis 1`] = `
-"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, headers: ObjMap, headerNamespace: String) on FIELD_DEFINITION
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -118,11 +118,17 @@ input impl_weekDays_Input {
   option: [impl_weekday]
 }
 
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
 scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for example1: example1 1`] = `
-"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, headers: ObjMap, headerNamespace: String) on FIELD_DEFINITION
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
 
 type Query {
   TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos: JSON = ""): TodoService_GetTodosResponse
@@ -248,11 +254,17 @@ type TodoService_FailGetTodoResponse {
   FailGetTodoResult: String
 }
 
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
 scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for example2: example2 1`] = `
-"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, headers: ObjMap, headerNamespace: String) on FIELD_DEFINITION
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
 
 type Query {
   AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetServiceHealth(GetServiceHealth: JSON = ""): tns_GetServiceHealthResponse
@@ -476,11 +488,17 @@ input AdminServiceType_DeleteEntityClass_Input {
   entityclassIntID: BigInt
 }
 
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
 scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for greeting: greeting 1`] = `
-"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, headers: ObjMap, headerNamespace: String) on FIELD_DEFINITION
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -515,11 +533,17 @@ input NumberConversion_NumberToDollars_Input {
   dNum: Float
 }
 
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
 scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for tempconvert: tempconvert 1`] = `
-"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, headers: ObjMap, headerNamespace: String) on FIELD_DEFINITION
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -551,6 +575,12 @@ type tns_CelsiusToFahrenheitResponse {
 
 input tns_CelsiusToFahrenheit_Input {
   Celsius: String
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
 }
 
 scalar ObjMap"

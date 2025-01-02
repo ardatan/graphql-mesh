@@ -13,9 +13,11 @@ describe('SOAP Headers', () => {
       subgraphName: 'Test',
       fetch,
       logger,
+      bodyAlias: 'guild',
       soapHeaders: {
-        namespace: 'guild',
-        content: {
+        alias: 'guild',
+        namespace: 'https://the-guild.dev',
+        headers: {
           MyHeader: {
             UserName: '{context.USER_NAME}',
             Password: '{context.PASSWORD}',
@@ -28,12 +30,14 @@ describe('SOAP Headers', () => {
     );
     const schema = soapLoader.buildSchema();
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot('soap-with-headers');
-    const fetchSpy = jest.fn((_url: string, _init: ResponseInit) => Response.error());
+    const fetchSpy = jest.fn((_url: string, _init: RequestInit) => Response.error());
     const executor = createExecutorFromSchemaAST(schema, fetchSpy);
     await executor({
       document: parse(/* GraphQL */ `
         {
-          tns_GlobalWeather_GlobalWeatherSoap_GetWeather {
+          tns_GlobalWeather_GlobalWeatherSoap_GetWeather(
+            GetWeather: { CityName: "Rome", CountryName: "Italy" }
+          ) {
             GetWeatherResult
           }
         }
@@ -43,10 +47,31 @@ describe('SOAP Headers', () => {
         PASSWORD: 'password',
       },
     });
-    expect(fetchSpy.mock.calls[0][1]).toMatchObject({
-      body: expect.stringContaining(
-        '<soap:Header><header:MyHeader><header:UserName>user</header:UserName><header:Password>password</header:Password></header:MyHeader></soap:Header>',
-      ),
-    });
+    expect(fetchSpy.mock.calls[0][1].body).toBe(
+      `
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:guild="http://www.webserviceX.NET">${`<soap:Header>
+    <guild:MyHeader>
+      <guild:UserName>
+        user
+      </guild:UserName>
+      <guild:Password>
+        password
+      </guild:Password>
+    </guild:MyHeader>
+  </soap:Header>
+  <soap:Body>
+    <guild:GetWeather>
+      <guild:CityName>
+        Rome
+      </guild:CityName>
+      <guild:CountryName>
+        Italy
+      </guild:CountryName>
+    </guild:GetWeather>
+  </soap:Body>`
+        .trim()
+        .replace(/\n\s+/g, '')}</soap:Envelope>
+    `.trim(),
+    );
   });
 });
