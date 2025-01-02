@@ -49,7 +49,7 @@ describe('SOAP Headers', () => {
     });
     expect(fetchSpy.mock.calls[0][1].body).toBe(
       `
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:guild="http://www.webserviceX.NET">${`<soap:Header>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:guild="https://the-guild.dev">${`<soap:Header>
     <guild:MyHeader>
       <guild:UserName>
         user
