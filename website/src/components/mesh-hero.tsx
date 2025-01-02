@@ -45,7 +45,7 @@ export function MeshHero(props: HeroContainerProps) {
         <InstallButton />
         <CallToAction
           variant="tertiary"
-          href="https://github.com/dotansimha/graphql-code-generator"
+          href="https://github.com/ardatan/graphql-mesh"
         >
           <GitHubIcon className="size-6" />
           GitHub
