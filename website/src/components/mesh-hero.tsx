@@ -9,7 +9,6 @@ import {
   MeshIcon,
 } from '@theguild/components';
 import { HeroContainer, HeroContainerProps, HeroFeatures, HeroLinks } from './hero';
-import { InstallButton } from './install-button';
 import meshHeroBadge from './mesh-hero-badge.svg';
 
 export function MeshHero(props: HeroContainerProps) {
@@ -42,9 +41,8 @@ export function MeshHero(props: HeroContainerProps) {
         <CallToAction variant="primary-inverted" href="/v1/getting-started">
           Get started
         </CallToAction>
-        <InstallButton />
         <CallToAction
-          variant="tertiary"
+          variant="secondary"
           target="_blank"
           href="https://github.com/ardatan/graphql-mesh"
         >
