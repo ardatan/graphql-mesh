@@ -1016,7 +1016,7 @@ export interface SoapHandler {
     [k: string]: any;
   };
   /**
-   * The name of the lias to be used in the envelope for body components
+   * The name of the alias to be used in the envelope for body components
    *
    * default: `body`
    */

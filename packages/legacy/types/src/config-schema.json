@@ -3007,7 +3007,7 @@
         },
         "bodyAlias": {
           "type": "string",
-          "description": "The name of the lias to be used in the envelope for body components\n\ndefault: `body`"
+          "description": "The name of the alias to be used in the envelope for body components\n\ndefault: `body`"
         },
         "soapHeaders": {
           "$ref": "#/definitions/SOAPHeaders",

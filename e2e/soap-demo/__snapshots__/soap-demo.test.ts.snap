@@ -89,8 +89,8 @@ directive @soap(
   bindingNamespace: String
   endpoint: String
   subgraph: String
-  headers: ObjMap
-  headerNamespace: String
+  bodyAlias: String
+  soapHeaders: SOAPHeaders
 ) repeatable on FIELD_DEFINITION
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
@@ -297,6 +297,12 @@ input s0_DivideInteger_Input @join__type(graph: SOAP_DEMO)  {
 
 input s0_LookupCity_Input @join__type(graph: SOAP_DEMO)  {
   zip: String
+}
+
+input SOAPHeaders @join__type(graph: SOAP_DEMO)  {
+  namespace: String
+  alias: String
+  headers: ObjMap
 }
     
 "

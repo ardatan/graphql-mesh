@@ -168,9 +168,7 @@ function createRootValueMethod({
       });
     }
     const bodyPrefix = soapAnnotations.bodyAlias || 'body';
-    if (soapAnnotations.bodyAlias) {
-      envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
-    }
+    envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
     const body = prefixWithAlias({
       alias: bodyPrefix,
       obj: normalizeArgsForConverter(args),
@@ -204,6 +202,7 @@ function createRootValueMethod({
     if (!response.ok) {
       return createGraphQLError(`Upstream HTTP Error: ${response.status}`, {
         extensions: {
+          code: 'DOWNSTREAM_SERVICE_ERROR',
           subgraph: soapAnnotations.subgraph,
           request: {
             url: soapAnnotations.endpoint,
