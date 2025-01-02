@@ -4562,7 +4562,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/hive-example-my-graphql@workspace:examples/v1-next/hive-example/my-graphql"
   dependencies:
-    "@graphql-hive/cli": "npm:0.44.4"
+    "@graphql-hive/cli": "npm:0.44.5"
     graphql: "npm:16.10.0"
     graphql-yoga: "npm:5.10.8"
   languageName: unknown
@@ -4572,7 +4572,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/hive-example-my-rest@workspace:examples/v1-next/hive-example/my-rest"
   dependencies:
-    "@graphql-hive/cli": "npm:0.44.4"
+    "@graphql-hive/cli": "npm:0.44.5"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
     fets: "npm:0.8.4"
@@ -4908,7 +4908,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-sources-authors@workspace:examples/hive-example/sources/authors"
   dependencies:
-    "@graphql-hive/cli": "npm:0.44.4"
+    "@graphql-hive/cli": "npm:0.44.5"
     "@graphql-mesh/cli": "npm:0.98.16"
     "@graphql-mesh/openapi": "npm:0.108.12"
     fets: "npm:^0.8.0"
@@ -4922,7 +4922,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-sources-books@workspace:examples/hive-example/sources/books"
   dependencies:
-    "@graphql-hive/cli": "npm:0.44.4"
+    "@graphql-hive/cli": "npm:0.44.5"
     "@graphql-mesh/cli": "npm:0.98.16"
     "@graphql-mesh/openapi": "npm:0.108.12"
     fets: "npm:^0.8.0"
@@ -5824,9 +5824,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/cli@npm:0.44.4":
-  version: 0.44.4
-  resolution: "@graphql-hive/cli@npm:0.44.4"
+"@graphql-hive/cli@npm:0.44.5":
+  version: 0.44.5
+  resolution: "@graphql-hive/cli@npm:0.44.5"
   dependencies:
     "@graphql-hive/core": "npm:0.8.2"
     "@graphql-inspector/core": "npm:5.1.0-alpha-20231208113249-34700c8a"
@@ -5840,17 +5840,17 @@ __metadata:
     "@oclif/core": "npm:^3.26.6"
     "@oclif/plugin-help": "npm:6.0.22"
     "@oclif/plugin-update": "npm:4.2.13"
-    "@theguild/federation-composition": "npm:0.14.1"
+    "@theguild/federation-composition": "npm:0.14.2"
     colors: "npm:1.4.0"
     env-ci: "npm:7.3.0"
     graphql: "npm:^16.8.1"
     graphql-tag: "npm:2.12.6"
     mkdirp: "npm:3.0.1"
     tslib: "npm:2.8.1"
-    zod: "npm:3.23.8"
+    zod: "npm:3.24.1"
   bin:
     hive: bin/run
-  checksum: 10c0/c3ac052a2273eef6ca43d819ae03abb9bff3bcf5e7b15ce728b3f8bdfa5a07d867ec86f2210475773e0c4147ed2769cf32c7110653471f3392147ae1476df70c
+  checksum: 10c0/22937fb3c1c7f7928a6a1adf6e59b43a3f33278964940db459901f893692e08511935170bf754fc884550c7819e974abac79d979836438aaed9734aa210c3a37
   languageName: node
   linkType: hard
 
@@ -12332,21 +12332,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/federation-composition@npm:0.14.1":
-  version: 0.14.1
-  resolution: "@theguild/federation-composition@npm:0.14.1"
-  dependencies:
-    constant-case: "npm:^3.0.0"
-    debug: "npm:4.3.4"
-    json5: "npm:^2.2.0"
-    lodash.sortby: "npm:^4.7.0"
-  peerDependencies:
-    graphql: ^16.0.0
-  checksum: 10c0/0e45d371d39695245192c6d9d613a775160658e3f0f6f8d1d04dd308ba0d53112caa728865a01c85918758833310c85791d7527f92c40dc2e11369b6c2663feb
-  languageName: node
-  linkType: hard
-
-"@theguild/federation-composition@npm:^0.14.0":
+"@theguild/federation-composition@npm:0.14.2, @theguild/federation-composition@npm:^0.14.0":
   version: 0.14.2
   resolution: "@theguild/federation-composition@npm:0.14.2"
   dependencies:
@@ -37904,14 +37890,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:3.23.8":
-  version: 3.23.8
-  resolution: "zod@npm:3.23.8"
-  checksum: 10c0/8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
-  languageName: node
-  linkType: hard
-
-"zod@npm:^3.20.2, zod@npm:^3.22.3":
+"zod@npm:3.24.1, zod@npm:^3.20.2, zod@npm:^3.22.3":
   version: 3.24.1
   resolution: "zod@npm:3.24.1"
   checksum: 10c0/0223d21dbaa15d8928fe0da3b54696391d8e3e1e2d0283a1a070b5980a1dbba945ce631c2d1eccc088fdbad0f2dfa40155590bf83732d3ac4fcca2cc9237591b
