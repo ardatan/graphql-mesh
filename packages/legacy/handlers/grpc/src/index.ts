@@ -24,8 +24,10 @@ export default class GrpcHandler implements MeshHandler {
   private pubsub: MeshPubSub;
   private fetchFn: MeshFetch;
   private importFn: ImportFn;
+  private sourceName: string;
 
   constructor({
+    name,
     config,
     baseDir,
     store,
@@ -42,6 +44,7 @@ export default class GrpcHandler implements MeshHandler {
     );
     this.pubsub = pubsub;
     this.importFn = importFn;
+    this.sourceName = name;
   }
 
   private getCachedNonExecutableSchema() {
@@ -65,6 +68,7 @@ export default class GrpcHandler implements MeshHandler {
 
   getMeshSource() {
     const transport = new GrpcTransportHelper(
+      this.sourceName,
       this.baseDir,
       this.logger,
       this.config.endpoint,

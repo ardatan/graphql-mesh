@@ -60,26 +60,6 @@ export const EnumDirective = new GraphQLDirective({
   },
 });
 
-export const grpcRootJsonDirective = new GraphQLDirective({
-  name: 'grpcRootJson',
-  locations: [DirectiveLocation.OBJECT],
-  args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-    name: {
-      type: GraphQLString,
-    },
-    rootJson: {
-      type: ObjMapScalar,
-    },
-    loadOptions: {
-      type: ObjMapScalar,
-    },
-  },
-  isRepeatable: true,
-});
-
 export const transportDirective = new GraphQLDirective({
   name: 'transport',
   args: {

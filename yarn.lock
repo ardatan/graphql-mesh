@@ -3671,6 +3671,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/grpc-multiple@workspace:e2e/grpc-multiple":
+  version: 0.0.0-use.local
+  resolution: "@e2e/grpc-multiple@workspace:e2e/grpc-multiple"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^1.5.8"
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@grpc/grpc-js": "npm:^1.12.2"
+    "@grpc/proto-loader": "npm:^0.7.13"
+    "@grpc/reflection": "npm:^1.0.4"
+    "@omnigraph/grpc": "workspace:*"
+    graphql: "npm:16.10.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/grpc@workspace:e2e/grpc-example":
   version: 0.0.0-use.local
   resolution: "@e2e/grpc@workspace:e2e/grpc-example"
@@ -8485,6 +8499,18 @@ __metadata:
   bin:
     proto-loader-gen-types: build/bin/proto-loader-gen-types.js
   checksum: 10c0/8c7d25ddff9587ad8963b7823fc57c253e83e76a4f4f663afb5c90a49f7d58512e8f6f65c0551577545025da1e92172913d61815dfa87eaf2de492d1bfe0e1d1
+  languageName: node
+  linkType: hard
+
+"@grpc/reflection@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@grpc/reflection@npm:1.0.4"
+  dependencies:
+    "@grpc/proto-loader": "npm:^0.7.13"
+    protobufjs: "npm:^7.2.5"
+  peerDependencies:
+    "@grpc/grpc-js": ^1.8.21
+  checksum: 10c0/6e9eff27161d9a2988446d4bef354b038b4be2e638c36d24e1a87390eec3185da69a0cb7d36431f6212f5b9a61076322918f5a8d2082ec6469fd037fcf40157f
   languageName: node
   linkType: hard
 

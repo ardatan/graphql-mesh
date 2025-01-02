@@ -1,0 +1,267 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`gRPC Multiple composes 1`] = `
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@grpcMethod", "@grpcConnectivityState", "@transport", "@extraSchemaDefinitionDirective"]
+)
+{
+  query: Query
+  
+  
+}
+
+
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  PETS @join__graph(name: "Pets", url: "localhost:<Pets_port>") 
+  STORES @join__graph(name: "Stores", url: "localhost:<Stores_port>") 
+}
+
+directive @grpcMethod(
+  subgraph: String
+  rootJsonName: String
+  objPath: String
+  methodName: String
+  responseStream: Boolean
+) repeatable on FIELD_DEFINITION
+
+directive @grpcConnectivityState(subgraph: String, rootJsonName: String, objPath: String)  repeatable on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions)  repeatable on SCHEMA
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+
+"""
+Request to get all pet stores
+"""
+scalar pets__Empty_Input @join__type(graph: PETS)  @specifiedBy(
+  url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf"
+)
+
+scalar TransportOptions @join__type(graph: PETS)  @join__type(graph: STORES) 
+
+scalar _DirectiveExtensions @join__type(graph: PETS)  @join__type(graph: STORES) 
+
+"""
+Request to get all pet stores
+"""
+scalar petstore__Empty_Input @join__type(graph: STORES)  @specifiedBy(
+  url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf"
+)
+
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{subgraph: "Pets", kind: "grpc", location: "localhost:<Pets_port>", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"pets\\":{\\"nested\\":{\\"Pet\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"int32\\",\\"id\\":1,\\"comment\\":null},\\"name\\":{\\"type\\":\\"string\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":\\"Message for pet store information\\"},\\"Empty\\":{\\"fields\\":{},\\"comment\\":\\"Request to get all pet stores\\"},\\"Pets\\":{\\"fields\\":{\\"pets\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Pet\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":\\"Response with a list of pet stores\\"},\\"PetService\\":{\\"methods\\":{\\"GetAllPets\\":{\\"requestType\\":\\"Empty\\",\\"responseType\\":\\"Pets\\",\\"comment\\":null}},\\"comment\\":\\"Service definition for pet store\\"}}}}}"}]}}]}
+) @extraSchemaDefinitionDirective(
+  directives: {transport: [{subgraph: "Stores", kind: "grpc", location: "localhost:<Stores_port>", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"petstore\\":{\\"nested\\":{\\"PetStore\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"int32\\",\\"id\\":1,\\"comment\\":null},\\"name\\":{\\"type\\":\\"string\\",\\"id\\":2,\\"comment\\":null},\\"location\\":{\\"type\\":\\"int32\\",\\"id\\":3,\\"comment\\":null},\\"petsForSale\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"int32\\",\\"id\\":4,\\"comment\\":null}},\\"comment\\":\\"Message for pet store information\\"},\\"Empty\\":{\\"fields\\":{},\\"comment\\":\\"Request to get all pet stores\\"},\\"PetStoreList\\":{\\"fields\\":{\\"petStores\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"PetStore\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":\\"Response with a list of pet stores\\"},\\"PetStoreService\\":{\\"methods\\":{\\"GetAllPetStores\\":{\\"requestType\\":\\"Empty\\",\\"responseType\\":\\"PetStoreList\\",\\"comment\\":null},\\"GetPetStorePets\\":{\\"requestType\\":\\"PetStore\\",\\"responseType\\":\\"PetStore\\",\\"comment\\":null}},\\"comment\\":\\"Service definition for pet store\\"}}}}}"}]}}]}
+) @join__type(graph: PETS)  @join__type(graph: STORES)  {
+  pets_PetService_GetAllPets(input: pets__Empty_Input) : pets__Pets @grpcMethod(
+    subgraph: "Pets"
+    rootJsonName: "Root0"
+    objPath: "pets.PetService"
+    methodName: "GetAllPets"
+    responseStream: false
+  ) @join__field(graph: PETS) 
+  pets_PetService_connectivityState(tryToConnect: Boolean) : ConnectivityState @grpcConnectivityState(subgraph: "Pets", rootJsonName: "Root0", objPath: "pets.PetService")  @join__field(graph: PETS) 
+  petstore_PetStoreService_GetAllPetStores(input: petstore__Empty_Input) : petstore__PetStoreList @grpcMethod(
+    subgraph: "Stores"
+    rootJsonName: "Root0"
+    objPath: "petstore.PetStoreService"
+    methodName: "GetAllPetStores"
+    responseStream: false
+  ) @join__field(graph: STORES) 
+  petstore_PetStoreService_GetPetStorePets(input: petstore__PetStore_Input) : petstore__PetStore @grpcMethod(
+    subgraph: "Stores"
+    rootJsonName: "Root0"
+    objPath: "petstore.PetStoreService"
+    methodName: "GetPetStorePets"
+    responseStream: false
+  ) @join__field(graph: STORES) 
+  petstore_PetStoreService_connectivityState(tryToConnect: Boolean) : ConnectivityState @grpcConnectivityState(
+    subgraph: "Stores"
+    rootJsonName: "Root0"
+    objPath: "petstore.PetStoreService"
+  ) @join__field(graph: STORES) 
+}
+
+"""
+Response with a list of pet stores
+"""
+type pets__Pets @join__type(graph: PETS)  {
+  pets: [pets__Pet]
+}
+
+"""
+Message for pet store information
+"""
+type pets__Pet @join__type(graph: PETS)  {
+  id: Int
+  name: String
+}
+
+"""
+Response with a list of pet stores
+"""
+type petstore__PetStoreList @join__type(graph: STORES)  {
+  petStores: [petstore__PetStore]
+}
+
+"""
+Message for pet store information
+"""
+type petstore__PetStore @join__type(graph: STORES)  {
+  id: Int
+  name: String
+  location: Int
+  petsForSale: [Int]
+}
+
+enum ConnectivityState @join__type(graph: PETS)  @join__type(graph: STORES)  {
+  IDLE @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES) 
+  CONNECTING @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES) 
+  READY @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES) 
+  TRANSIENT_FAILURE @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES) 
+  SHUTDOWN @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES) 
+}
+
+"""
+Message for pet store information
+"""
+input petstore__PetStore_Input @join__type(graph: STORES)  {
+  id: Int
+  name: String
+  location: Int
+  petsForSale: [Int]
+}
+    
+"
+`;
+
+exports[`gRPC Multiple works: GetAllPetStores 1`] = `
+{
+  "data": {
+    "petstore_PetStoreService_GetAllPetStores": {
+      "petStores": [
+        {
+          "id": 1,
+          "name": "Happy Paws Pet Store",
+        },
+        {
+          "id": 2,
+          "name": "Pet Paradise",
+        },
+        {
+          "id": 3,
+          "name": "Furry Friends",
+        },
+        {
+          "id": 4,
+          "name": "Paws and Claws",
+        },
+        {
+          "id": 5,
+          "name": "The Pet Shop",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`gRPC Multiple works: GetAllPets 1`] = `
+{
+  "data": {
+    "pets_PetService_GetAllPets": {
+      "pets": [
+        {
+          "id": 1,
+          "name": "Pet1",
+        },
+        {
+          "id": 2,
+          "name": "Pet2",
+        },
+        {
+          "id": 3,
+          "name": "Pet3",
+        },
+        {
+          "id": 4,
+          "name": "Pet4",
+        },
+        {
+          "id": 5,
+          "name": "Pet5",
+        },
+      ],
+    },
+  },
+}
+`;
