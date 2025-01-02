@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { cn, DecorationIsolation, Heading, MeshIcon } from '@theguild/components';
+import { Anchor, cn, DecorationIsolation, Heading, MeshIcon } from '@theguild/components';
 
 const datasources = [
   {
@@ -81,11 +81,14 @@ export function DatasourcesListSection(props: React.HTMLAttributes<HTMLDivElemen
             {i === Math.floor(datasources.length / 2) + 1 && (
               <li /* balancer */ className="w-full max-xl:hidden" />
             )}
-            <li
-              className="rounded-full px-4 lg:px-6 lg:py-4 py-3 bg-beige-200"
-              key={datasource.name}
-            >
-              {datasource.name}
+            <li key={datasource.name}>
+              <Anchor
+                className="rounded-full block px-4 lg:px-6 lg:py-4 py-3 bg-beige-200 hover:bg-beige-300"
+                href={datasource.href}
+                target="_blank"
+              >
+                {datasource.name}
+              </Anchor>
             </li>
           </Fragment>
         ))}
