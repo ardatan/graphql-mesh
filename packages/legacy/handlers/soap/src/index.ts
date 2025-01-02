@@ -65,6 +65,7 @@ export default class SoapHandler implements MeshHandler {
           schemaHeaders: this.config.schemaHeaders,
           operationHeaders: this.config.operationHeaders,
           soapHeaders: this.config.soapHeaders,
+          bodyAlias: this.config.bodyAlias,
         });
         const wsdlLocation = this.config.source;
         const wsdl = await readFileOrUrl<string>(wsdlLocation, {
