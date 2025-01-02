@@ -64,6 +64,7 @@ export const composeConfig = defineConfig({
         source:
           'http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL',
         soapHeaders: {
+          // The name of the alias to be used in the envelope for header components
           alias: 'header',
           namespace: 'http://foo.com',
           headers: {
@@ -85,3 +86,36 @@ export const composeConfig = defineConfig({
   [You can find a working example here](
   https://github.com/ardatan/graphql-mesh/tree/main/examples/v1-next/soap-demo )
 </Callout>
+
+## Custom Body Alias
+
+You can now choose the name of the alias you want to use for SOAP body;
+
+```ts filename="mesh.config.ts" {4}
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadSOAPSubgraph } from '@omnigraph/soap'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSOAPSubgraph('CountryInfo', {
+        source:
+          'http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL',
+        bodyAlias: 'my-body'
+      })
+    }
+  ]
+})
+```
+
+Then it will generate a body like below by using the alias;
+
+```xml
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:my-body="http://foo.com/">
+   <soap:Body>
+      <my-body:Foo>
+          <my-body:Bar>baz</my-body:Bar>
+      </my-body:Foo>
+   </soap:Body>
+</soap:Envelope>
+```

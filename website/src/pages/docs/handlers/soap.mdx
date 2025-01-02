@@ -57,6 +57,31 @@ sources:
               Password: password
 ```
 
+## Body Alias
+
+You can now choose the name of the alias you want to use for SOAP body;
+
+```yaml filename=".meshrc.yaml" {4}
+sources:
+  - name: CountryInfo
+    handler:
+      soap:
+        source: ...
+        bodyAlias: my-body
+```
+
+Then it will generate a body like below by using the alias;
+
+```xml
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:my-body="http://foo.com/">
+   <soap:Body>
+      <my-body:Foo>
+          <my-body:Bar>baz</my-body:Bar>
+      </my-body:Foo>
+   </soap:Body>
+</soap:Envelope>
+```
+
 ## CodeSandBox Example
 
 You can check out our example that uses SOAP Handler.
