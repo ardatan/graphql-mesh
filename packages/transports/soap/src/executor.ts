@@ -7,7 +7,7 @@ import type {
 } from 'graphql';
 import { isListType, isNonNullType } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
-import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
+import type { ResolverData, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import {
   getInterpolatedHeadersFactory,
   stringInterpolator,
@@ -89,8 +89,12 @@ interface SoapAnnotations {
   endpoint: string;
   bindingNamespace: string;
   elementName: string;
-  headerNamespace?: string;
-  headers?: Record<string, string>;
+  bodyAlias?: string;
+  soapHeaders?: {
+    alias?: string;
+    namespace: string;
+    headers: Record<string, string>;
+  };
 }
 
 interface CreateRootValueMethodOpts {
@@ -101,6 +105,33 @@ interface CreateRootValueMethodOpts {
   operationHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
 }
 
+function prefixWithAlias({
+  alias,
+  obj,
+  resolverData,
+}: {
+  alias: string;
+  obj: unknown;
+  resolverData?: ResolverData;
+}): Record<string, any> {
+  if (typeof obj === 'object' && obj !== null) {
+    const prefixedHeaderObj: Record<string, any> = {};
+    for (const key in obj) {
+      const aliasedKey = key === 'innerText' ? key : `${alias}:${key}`;
+      prefixedHeaderObj[aliasedKey] = prefixWithAlias({
+        alias,
+        obj: obj[key],
+        resolverData,
+      });
+    }
+    return prefixedHeaderObj;
+  }
+  if (typeof obj === 'string' && resolverData) {
+    return stringInterpolator.parse(obj, resolverData);
+  }
+  return obj;
+}
+
 function createRootValueMethod({
   soapAnnotations,
   fetchFn,
@@ -109,45 +140,46 @@ function createRootValueMethod({
   operationHeadersFactory,
 }: CreateRootValueMethodOpts): RootValueMethod {
   return async function rootValueMethod(args: any, context: any, info: GraphQLResolveInfo) {
-    const requestJson = {
-      'soap:Envelope': {
-        attributes: {
-          'xmlns:soap': 'http://www.w3.org/2003/05/soap-envelope',
-        },
-        'soap:Body': {
-          attributes: {
-            xmlns: soapAnnotations.bindingNamespace,
-          },
-          ...normalizeArgsForConverter(args),
-        },
-      },
+    const envelopeAttributes: Record<string, string> = {
+      'xmlns:soap': 'http://www.w3.org/2003/05/soap-envelope',
     };
-    if (soapAnnotations.headerNamespace) {
-      requestJson['soap:Envelope'].attributes[`xmlns:header`] = soapAnnotations.headerNamespace;
-      function prefixHeaderProp(headerObj: any) {
-        if (typeof headerObj === 'object' && headerObj !== null) {
-          const prefixedHeaderObj: Record<string, any> = {};
-          for (const key in headerObj) {
-            prefixedHeaderObj[`header:${key}`] = prefixHeaderProp(headerObj[key]);
-          }
-          return prefixedHeaderObj;
-        }
-        if (typeof headerObj === 'string') {
-          return stringInterpolator.parse(headerObj, {
-            args,
-            context,
-            info,
-            env: process.env,
-          });
-        }
-        return headerObj;
-      }
-      const headersObj =
-        typeof soapAnnotations.headers === 'string'
-          ? JSON.parse(soapAnnotations.headers)
-          : soapAnnotations.headers;
-      requestJson['soap:Envelope']['soap:Header'] = prefixHeaderProp(headersObj);
+    const headerPrefix = soapAnnotations.soapHeaders?.alias || 'header';
+    if (soapAnnotations.soapHeaders?.namespace) {
+      envelopeAttributes[`xmlns:${headerPrefix}`] = soapAnnotations.soapHeaders.namespace;
     }
+    const envelope: Record<string, any> = {
+      attributes: envelopeAttributes,
+    };
+    const resolverData: ResolverData = {
+      args,
+      context,
+      info,
+      env: process.env,
+    };
+    if (soapAnnotations.soapHeaders?.headers) {
+      envelope['soap:Header'] = prefixWithAlias({
+        alias: headerPrefix,
+        obj: normalizeArgsForConverter(
+          typeof soapAnnotations.soapHeaders.headers === 'string'
+            ? JSON.parse(soapAnnotations.soapHeaders.headers)
+            : soapAnnotations.soapHeaders.headers,
+        ),
+        resolverData,
+      });
+    }
+    const bodyPrefix = soapAnnotations.bodyAlias || 'body';
+    if (soapAnnotations.bodyAlias) {
+      envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
+    }
+    const body = prefixWithAlias({
+      alias: bodyPrefix,
+      obj: normalizeArgsForConverter(args),
+      resolverData,
+    });
+    envelope['soap:Body'] = body;
+    const requestJson = {
+      'soap:Envelope': envelope,
+    };
     const requestXML = jsonToXMLConverter.build(requestJson);
     const currentFetchFn = context?.fetch || fetchFn;
     const response = await currentFetchFn(

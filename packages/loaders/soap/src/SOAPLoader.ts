@@ -5,6 +5,7 @@ import {
   GraphQLBoolean,
   GraphQLDirective,
   GraphQLFloat,
+  GraphQLInputObjectType,
   GraphQLInt,
   GraphQLString,
 } from 'graphql';
@@ -75,12 +76,29 @@ export interface SOAPLoaderOptions {
   soapHeaders?: SOAPHeaders;
   endpoint?: string;
   cwd?: string;
+  bodyAlias?: string;
 }
 
 export interface SOAPHeaders {
   namespace: string;
-  content: unknown;
+  alias?: string;
+  headers: unknown;
 }
+
+const SOAPHeadersInput = new GraphQLInputObjectType({
+  name: 'SOAPHeaders',
+  fields: {
+    namespace: {
+      type: GraphQLString,
+    },
+    alias: {
+      type: GraphQLString,
+    },
+    headers: {
+      type: ObjMapScalar,
+    },
+  },
+});
 
 const soapDirective = new GraphQLDirective({
   name: 'soap',
@@ -98,11 +116,11 @@ const soapDirective = new GraphQLDirective({
     subgraph: {
       type: GraphQLString,
     },
-    headers: {
-      type: ObjMapScalar,
-    },
-    headerNamespace: {
+    bodyAlias: {
       type: GraphQLString,
+    },
+    soapHeaders: {
+      type: SOAPHeadersInput,
     },
   },
 });
@@ -157,6 +175,7 @@ export class SOAPLoader {
   private endpoint?: string;
   private cwd: string;
   private soapHeaders: SOAPHeaders;
+  private bodyAlias?: string;
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
@@ -168,6 +187,7 @@ export class SOAPLoader {
     this.endpoint = options.endpoint;
     this.cwd = options.cwd;
     this.soapHeaders = options.soapHeaders;
+    this.bodyAlias = options.bodyAlias;
   }
 
   loadXMLSchemaNamespace() {
@@ -467,9 +487,11 @@ export class SOAPLoader {
               endpoint: this.endpoint || portObj.address[0].attributes.location,
               subgraph: this.subgraphName,
             };
-            if (this.soapHeaders?.content) {
-              soapAnnotations.headerNamespace = this.soapHeaders.namespace;
-              soapAnnotations.headers = this.soapHeaders.content;
+            if (this.bodyAlias) {
+              soapAnnotations.bodyAlias = this.bodyAlias;
+            }
+            if (this.soapHeaders) {
+              soapAnnotations.soapHeaders = this.soapHeaders;
             }
             rootTC.addFields({
               [operationFieldName]: {
