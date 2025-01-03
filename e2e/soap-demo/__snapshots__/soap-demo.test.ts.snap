@@ -89,6 +89,8 @@ directive @soap(
   bindingNamespace: String
   endpoint: String
   subgraph: String
+  bodyAlias: String
+  soapHeaders: SOAPHeaders
 ) repeatable on FIELD_DEFINITION
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
@@ -107,6 +109,8 @@ scalar BigInt @join__type(graph: SOAP_DEMO)
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON @join__type(graph: SOAP_DEMO) 
+
+scalar ObjMap @join__type(graph: SOAP_DEMO) 
 
 scalar _DirectiveExtensions @join__type(graph: SOAP_DEMO) 
 
@@ -293,6 +297,12 @@ input s0_DivideInteger_Input @join__type(graph: SOAP_DEMO)  {
 
 input s0_LookupCity_Input @join__type(graph: SOAP_DEMO)  {
   zip: String
+}
+
+input SOAPHeaders @join__type(graph: SOAP_DEMO)  {
+  namespace: String
+  alias: String
+  headers: ObjMap
 }
     
 "

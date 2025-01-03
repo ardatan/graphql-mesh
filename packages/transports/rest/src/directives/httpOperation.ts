@@ -346,6 +346,7 @@ export function addHTTPRootFieldResolver(
           `Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
             extensions: {
+              code: 'DOWNSTREAM_SERVICE_ERROR',
               subgraph: sourceName,
               request: {
                 url: fullPath,
@@ -371,6 +372,7 @@ export function addHTTPRootFieldResolver(
           `Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
             extensions: {
+              code: 'DOWNSTREAM_SERVICE_ERROR',
               subgraph: sourceName,
               request: {
                 url: fullPath,

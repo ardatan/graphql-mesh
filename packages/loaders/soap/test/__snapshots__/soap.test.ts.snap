@@ -6,7 +6,7 @@ exports[`SOAP Loader should create executor for a service with mutations and que
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String) on FIELD_DEFINITION
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -39,5 +39,13 @@ type NumberConversion_NumberToDollarsResponse {
 
 input NumberConversion_NumberToDollars_Input {
   dNum: Float
-}"
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
+scalar ObjMap"
 `;

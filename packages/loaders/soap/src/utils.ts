@@ -5,6 +5,12 @@ export interface SoapAnnotations {
   elementName: string;
   bindingNamespace: string;
   endpoint: string;
+  bodyAlias?: string;
+  soapHeaders?: {
+    alias?: string;
+    namespace: string;
+    headers: unknown;
+  };
 }
 
 export const PARSE_XML_OPTIONS: Partial<X2jOptions> = {

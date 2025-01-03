@@ -27,6 +27,61 @@ sources:
         source: http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL
 ```
 
+## Headers
+
+If you want to add SOAP headers to the request body like below;
+
+```xml
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:header="http://foo.com/">
+   <soap:Header>
+      <header:MyHeader>
+         <header:UserName>user</header:UserName>
+         <header:Password>password</header:Password>
+      </header:MyHeader>
+   </soap:Header>
+```
+
+You can add the headers to the configuration like below;
+
+```yaml
+sources:
+  - name: CountryInfo
+    handler:
+      soap:
+        source: ...
+        soapHeaders:
+          namespace: http://foo.com
+          headers:
+            MyHeader:
+              UserName: user
+              Password: password
+```
+
+## Body Alias
+
+You can now choose the name of the alias you want to use for SOAP body;
+
+```yaml filename=".meshrc.yaml" {4}
+sources:
+  - name: CountryInfo
+    handler:
+      soap:
+        source: ...
+        bodyAlias: my-body
+```
+
+Then it will generate a body like below by using the alias;
+
+```xml
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:my-body="http://foo.com/">
+   <soap:Body>
+      <my-body:Foo>
+          <my-body:Bar>baz</my-body:Bar>
+      </my-body:Foo>
+   </soap:Body>
+</soap:Envelope>
+```
+
 ## CodeSandBox Example
 
 You can check out our example that uses SOAP Handler.

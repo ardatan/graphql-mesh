@@ -5,6 +5,7 @@ import {
   GraphQLBoolean,
   GraphQLDirective,
   GraphQLFloat,
+  GraphQLInputObjectType,
   GraphQLInt,
   GraphQLString,
 } from 'graphql';
@@ -39,6 +40,7 @@ import {
 import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import {
   defaultImportFn,
@@ -71,9 +73,49 @@ export interface SOAPLoaderOptions {
   logger?: Logger;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
+  soapHeaders?: SOAPHeaders;
   endpoint?: string;
   cwd?: string;
+  bodyAlias?: string;
 }
+
+export interface SOAPHeaders {
+  /**
+   * The namespace of the SOAP Header
+   *
+   * @example http://www.example.com/namespace
+   */
+  namespace: string;
+  /**
+   * The name of the alias to be used in the envelope
+   *
+   * @default header
+   */
+  alias?: string;
+  /**
+   * The content of the SOAP Header
+   *
+   * @example { "key": "value" }
+   *
+   * then the content will be `<key>value</key>` in XML
+   */
+  headers: unknown;
+}
+
+const SOAPHeadersInput = new GraphQLInputObjectType({
+  name: 'SOAPHeaders',
+  fields: {
+    namespace: {
+      type: GraphQLString,
+    },
+    alias: {
+      type: GraphQLString,
+    },
+    headers: {
+      type: ObjMapScalar,
+    },
+  },
+});
 
 const soapDirective = new GraphQLDirective({
   name: 'soap',
@@ -90,6 +132,12 @@ const soapDirective = new GraphQLDirective({
     },
     subgraph: {
       type: GraphQLString,
+    },
+    bodyAlias: {
+      type: GraphQLString,
+    },
+    soapHeaders: {
+      type: SOAPHeadersInput,
     },
   },
 });
@@ -143,6 +191,8 @@ export class SOAPLoader {
   private logger: Logger;
   private endpoint?: string;
   private cwd: string;
+  private soapHeaders: SOAPHeaders;
+  private bodyAlias?: string;
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
@@ -153,6 +203,8 @@ export class SOAPLoader {
     this.schemaHeadersFactory = getInterpolatedHeadersFactory(options.schemaHeaders || {});
     this.endpoint = options.endpoint;
     this.cwd = options.cwd;
+    this.soapHeaders = options.soapHeaders;
+    this.bodyAlias = options.bodyAlias;
   }
 
   loadXMLSchemaNamespace() {
@@ -452,6 +504,12 @@ export class SOAPLoader {
               endpoint: this.endpoint || portObj.address[0].attributes.location,
               subgraph: this.subgraphName,
             };
+            if (this.bodyAlias) {
+              soapAnnotations.bodyAlias = this.bodyAlias;
+            }
+            if (this.soapHeaders) {
+              soapAnnotations.soapHeaders = this.soapHeaders;
+            }
             rootTC.addFields({
               [operationFieldName]: {
                 type,
