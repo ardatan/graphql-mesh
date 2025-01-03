@@ -2,7 +2,7 @@ import { Heading, InfoCard } from '@theguild/components';
 
 export function InfoCardsSection() {
   return (
-    <section className="px-4 py-6 sm:py-12 md:px-6 xl:px-[120px]">
+    <section className="px-4 py-6 sm:py-12 md:px-6 xl:px-[120px] lg:py-24">
       <Heading as="h2" size="md" className="text-balance text-center">
         Query anything, run anywhere
       </Heading>

@@ -1,0 +1,22 @@
+<svg width="52" height="53" viewBox="0 0 52 53" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#mesh-icon)" fill="currentColor">
+    <path
+      d="M52 15.386 44.915 8.3l-.69-.691L37.138.525H14.86L7.774 7.61l-.69.69L0 15.387v22.28l7.085 7.085.69.69 7.086 7.086h22.28l7.085-7.085.69-.69 7.086-7.086v-22.28H52ZM40.173 44.749H11.827a4.05 4.05 0 0 1-4.051-4.05V12.351a4.05 4.05 0 0 1 4.05-4.051h28.347a4.05 4.05 0 0 1 4.051 4.05v28.347a4.05 4.05 0 0 1-4.05 4.051Z"
+    />
+    <path
+      d="M14.782 19.317v14.416a4.05 4.05 0 0 0 4.05 4.05h14.335a4.05 4.05 0 0 0 4.051-4.05V19.317a4.05 4.05 0 0 0-4.05-4.05H18.832a4.05 4.05 0 0 0-4.051 4.05Zm14.66 3.725v6.966h-6.884v-6.966h6.884Z"
+    />
+  </g>
+  <defs>
+    <clipPath id="mesh-icon">
+      <path fill="#fff" transform="translate(0 .525)" d="M0 0h52v52H0z" />
+    </clipPath>
+  </defs>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      svg {
+        color: #fff;
+      }
+    }
+  </style>
+</svg>

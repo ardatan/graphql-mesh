@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GraphQL Mesh Example</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #0d0d0d;
+      }
+      iframe {
+        position: fixed;
+        border: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .error {
+        padding: 1rem;
+        font-family: system-ui, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>JavaScript is required to load the example.</noscript>
+    <iframe
+      src="about:blank"
+      loading="eager"
+      title="Example"
+      allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+      tabindex="-1"
+      onload="window.scrollTo(0,0)"
+    ></iframe>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const example = params.get('example');
+      if (!example) {
+        document.body.innerHTML = '<div class="error">Error: No source URL provided</div>';
+      } else {
+        const iframe = document.querySelector('iframe');
+        iframe.src = `https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/${example}`;
+      }
+    </script>
+  </body>
+</html>

@@ -52,6 +52,7 @@ export function RunAnywhereSection({ className, ...props }: RunAnywhereSectionPr
         <ListItemAnchor href="https://the-guild.dev/graphql/hive/docs/gateway/deployment/node-frameworks/fastify">
           Fastify
         </ListItemAnchor>
+        <br className="max-xl:hidden" />
         <ListItemAnchor href="https://the-guild.dev/graphql/hive/docs/gateway/deployment/node-frameworks/koa">
           Koa
         </ListItemAnchor>
@@ -69,9 +70,17 @@ export function RunAnywhereSection({ className, ...props }: RunAnywhereSectionPr
   );
 }
 
-function ListItemAnchor({ children, href }: { children: React.ReactNode; href: string }) {
+function ListItemAnchor({
+  children,
+  href,
+  className,
+}: {
+  children: React.ReactNode;
+  href: string;
+  className?: string;
+}) {
   return (
-    <li>
+    <li className={className}>
       <Anchor
         className="hive-focus flex items-center gap-4 bg-blue-200 hover:bg-blue-100 rounded-2xl px-4 sm:px-6 md:px-8 h-[102px]"
         href={href}
