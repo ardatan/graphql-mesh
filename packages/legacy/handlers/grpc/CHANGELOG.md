@@ -1,5 +1,28 @@
 # @graphql-mesh/grpc
 
+## 0.107.0
+
+### Minor Changes
+
+- [#8203](https://github.com/ardatan/graphql-mesh/pull/8203)
+  [`c541164`](https://github.com/ardatan/graphql-mesh/commit/c541164f9d02fcc70389ee768610921ff0e622e6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle multiple gRPC services correctly in a
+  supergraph
+
+  Previously multiple directives on Query type conflicting, which needs to be fixed on Gateway
+  runtime later, but for now, it should be already in the transport directive. And this change fixes
+  the issue before the gateway runtime fix.
+
+  Generated schema will be different so this can be considered a breaking change but it will be no
+  functional change for the existing users.
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c541164`](https://github.com/ardatan/graphql-mesh/commit/c541164f9d02fcc70389ee768610921ff0e622e6)]:
+  - @graphql-mesh/transport-grpc@0.2.0
+  - @omnigraph/grpc@0.2.0
+
 ## 0.106.10
 
 ### Patch Changes
