@@ -8513,7 +8513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.12.5, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.12.2, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
+"@grpc/grpc-js@npm:1.12.5, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.11.1, @grpc/grpc-js@npm:^1.12.2, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
   version: 1.12.5
   resolution: "@grpc/grpc-js@npm:1.12.5"
   dependencies:
@@ -18671,26 +18671,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docker-modem@npm:^5.0.3":
-  version: 5.0.3
-  resolution: "docker-modem@npm:5.0.3"
+"docker-modem@npm:^5.0.5":
+  version: 5.0.5
+  resolution: "docker-modem@npm:5.0.5"
   dependencies:
     debug: "npm:^4.1.1"
     readable-stream: "npm:^3.5.0"
     split-ca: "npm:^1.0.1"
     ssh2: "npm:^1.15.0"
-  checksum: 10c0/86d18b1b1e92954f4f5632b82453588670c11265a60d982c57bfcd737fe0362f4aa68176edae6d3c3f92c17a59bcfe8840fc741c06baea55e2003a78d7d16045
+  checksum: 10c0/9d6ef310f9babac81bb680b3093b845070c3ed12ddcf76b74307c65086edea25dfe9517a7d4877fdd68686b2a371ae1c600e00c12056857f52344c12b108477b
   languageName: node
   linkType: hard
 
 "dockerode@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "dockerode@npm:4.0.2"
+  version: 4.0.3
+  resolution: "dockerode@npm:4.0.3"
   dependencies:
     "@balena/dockerignore": "npm:^1.0.2"
-    docker-modem: "npm:^5.0.3"
+    "@grpc/grpc-js": "npm:^1.11.1"
+    "@grpc/proto-loader": "npm:^0.7.13"
+    docker-modem: "npm:^5.0.5"
+    protobufjs: "npm:^7.3.2"
     tar-fs: "npm:~2.0.1"
-  checksum: 10c0/69ece79408aca8523726fcec9d9c168b9a987b60b7143502583cc0b731dd2abf8b69b9d7d71c20d2bddcc508ebb477d82849d0bd368df260fedd8d62de5c5937
+    uuid: "npm:^10.0.0"
+  checksum: 10c0/7315450e22756a3faeacc36c88d86d32959cbf49dfbc8c8adbbc67d41c70a1c1c82dba19c166f0439b4da134ad4e6966bfdd10b546c39e5c8d10a221742a5427
   languageName: node
   linkType: hard
 
@@ -31116,7 +31120,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protobufjs@npm:^7.2.5, protobufjs@npm:^7.3.0":
+"protobufjs@npm:^7.2.5, protobufjs@npm:^7.3.0, protobufjs@npm:^7.3.2":
   version: 7.4.0
   resolution: "protobufjs@npm:7.4.0"
   dependencies:
