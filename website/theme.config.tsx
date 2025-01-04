@@ -63,7 +63,9 @@ export default defineConfig({
 
       return (
         <HiveNavigation
-          className={route === '/' ? 'light max-w-[1392px]' : 'max-w-[90rem]'}
+          // we don't need that bg-green-200 doesn't occur on previous nor newer versions of Nextra,
+          // so I'm just leaving it as is. we'll clean it up after we migrate
+          className={route === '/' ? 'light max-w-[1392px] [&_kbd]:!bg-green-200' : 'max-w-[90rem]'}
           productName={PRODUCTS.MESH.name}
           developerMenu={[
             {
