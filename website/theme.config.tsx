@@ -13,6 +13,7 @@ import {
   PencilIcon,
   PRODUCTS,
   useTheme,
+  VersionDropdown,
 } from '@theguild/components';
 import favicon from './public/favicon.svg';
 
@@ -87,7 +88,16 @@ export default defineConfig({
               <span className="text-2xl font-medium tracking-[-0.16px]">{PRODUCTS.MESH.name}</span>
             </Anchor>
           }
-        />
+        >
+          <VersionDropdown
+            chevronPosition="left"
+            currentVersion={route.includes('/docs') ? '0.x' : '1.x'}
+            versions={[
+              { label: 'Mesh 0.x docs', href: '/docs', value: '0.x' },
+              { label: 'Mesh 1.x docs', href: '/v1', value: '1.x' },
+            ]}
+          />
+        </HiveNavigation>
       );
     },
   },
