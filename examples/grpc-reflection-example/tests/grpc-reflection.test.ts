@@ -24,7 +24,7 @@ describe('gRPC Reflection Example', () => {
       join(__dirname, '../example-queries/GetGreeting.query.graphql'),
       'utf8',
     );
-    const result = await mesh.execute(GreetingQuery, undefined);
+    const result = await mesh.execute(GreetingQuery);
     expect(result).toMatchSnapshot('greeting-result');
   });
   afterAll(() => {

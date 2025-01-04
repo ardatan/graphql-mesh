@@ -66,7 +66,8 @@ export async function run({
 
   program = program.name(binName).description(productDescription);
   if (version) program = program.version(version);
-  if (process.env.NODE_ENV === 'test') program = program.allowUnknownOption();
+  if (process.env.NODE_ENV === 'test')
+    program = program.allowUnknownOption().allowExcessArguments();
   const opts = program.parse().opts();
 
   const log = rootLog.child(` ${productName}`);

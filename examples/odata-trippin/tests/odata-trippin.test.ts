@@ -4,8 +4,6 @@ import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 import { ProcessedConfig } from '../../../packages/legacy/config/dist/typings/process';
 
-jest.setTimeout(15000);
-
 describe('OData TripPin', () => {
   let config: ProcessedConfig;
   let mesh: MeshInstance;
@@ -27,7 +25,7 @@ describe('OData TripPin', () => {
       if (!source.document || !source.location) {
         continue;
       }
-      const result = await mesh.execute(source.document, {});
+      const result = await mesh.execute(source.document);
       expect(result).toMatchSnapshot(basename(source.location) + '-query-result');
     }
   });

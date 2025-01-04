@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/urql-exchange",
-  "version": "0.105.10",
+  "version": "0.105.11",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,9 +36,10 @@
     "graphql": "^15.2.0 || ^16.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/runtime": "^0.105.10",
+    "@graphql-mesh/runtime": "^0.105.11",
     "@graphql-tools/utils": "^10.6.0",
     "tslib": "^2.4.0",
+    "value-or-promise": "^1.0.12",
     "wonka": "^6.3.1"
   },
   "devDependencies": {

@@ -348,7 +348,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           operationName,
         }),
       );
-    } as MeshExecutor;
+    };
   }
 
   function sdkRequesterFactory(globalContext: any): SdkRequester {

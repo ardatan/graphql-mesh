@@ -15,12 +15,12 @@
     "react-dom": "19.0.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.98.15",
+    "@graphql-mesh/cli": "0.98.16",
     "@types/react": "19.0.2",
     "@types/react-dom": "19.0.2",
     "@vitejs/plugin-react": "4.3.4",
     "typescript": "^5.4.2",
-    "vite": "6.0.6"
+    "vite": "6.0.7"
   },
   "browserslist": {
     "production": [

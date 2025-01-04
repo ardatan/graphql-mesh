@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.105.10",
+  "version": "0.105.11",
   "type": "module",
   "repository": {
     "type": "git",
@@ -52,7 +52,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "10.0.14"
+    "@graphql-tools/schema": "10.0.15"
   },
   "publishConfig": {
     "access": "public",

@@ -25,7 +25,7 @@ describe('Type Merging and Batching Example', () => {
       if (!source.document || !source.location) {
         throw new Error(`Invalid source: ${inspect(source)}`);
       }
-      const result = await mesh.execute(source.document, {});
+      const result = await mesh.execute(source.document);
       expect(result).toMatchSnapshot(basename(source.location) + '-query-result');
     }
   });

@@ -31,7 +31,6 @@ import {
   EnumDirective,
   grpcConnectivityStateDirective,
   grpcMethodDirective,
-  grpcRootJsonDirective,
   transportDirective,
 } from './directives.js';
 import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils.js';
@@ -90,6 +89,10 @@ export class GrpcLoaderHelper implements AsyncDisposable {
     const descriptorSets = await this.getDescriptorSets(creds);
 
     const directives: Directive[] = [];
+    const roots: {
+      name: string;
+      rootJson: string;
+    }[] = [];
     for (const { name: rootJsonName, rootJson } of descriptorSets) {
       const rootLogger = this.logger.child(rootJsonName);
 
@@ -102,16 +105,7 @@ export class GrpcLoaderHelper implements AsyncDisposable {
         rootJson,
         rootLogger,
       });
-
-      this.schemaComposer.addDirective(grpcRootJsonDirective);
-      directives.push({
-        name: 'grpcRootJson',
-        args: {
-          subgraph: this.subgraphName,
-          name: rootJsonName,
-          rootJson,
-        },
-      });
+      roots.push({ name: rootJsonName, rootJson: JSON.stringify(rootJson) });
     }
     this.schemaComposer.Query.setDirectives(directives);
 
@@ -136,6 +130,7 @@ export class GrpcLoaderHelper implements AsyncDisposable {
         credentialsSsl: this.config.credentialsSsl,
         useHTTPS: this.config.useHTTPS,
         metaData: this.config.metaData,
+        roots,
       },
     };
     return schema;

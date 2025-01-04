@@ -497,7 +497,7 @@ describe('Federation Example', () => {
       mesh = await getMesh(config);
     });
     it('should give correct response for example queries', async () => {
-      const result = await mesh.execute(exampleQuery, undefined);
+      const result = await mesh.execute(exampleQuery);
       expect(result?.data).toMatchObject(expectedResult);
     });
     afterAll(() => {
@@ -513,7 +513,7 @@ describe('Federation Example', () => {
       mesh = await getMesh(config);
     });
     it('should give correct response for example queries', async () => {
-      const result = await mesh.execute(exampleQuery, undefined);
+      const result = await mesh.execute(exampleQuery);
       expect(result?.errors).toBeFalsy();
       expect(result?.data).toMatchObject(expectedResult);
     });

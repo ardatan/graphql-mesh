@@ -23,7 +23,7 @@ describe.skip('Stack Exchange', () => {
       join(__dirname, '..', 'list-questions.query.graphql'),
       'utf-8',
     );
-    const result = await mesh.execute(listQuestionsQuery, {});
+    const result = await mesh.execute(listQuestionsQuery);
     expect(result).toMatchObject({
       data: {
         listUnansweredQuestions: {

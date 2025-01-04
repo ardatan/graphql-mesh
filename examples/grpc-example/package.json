@@ -10,8 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.98.15",
-    "@graphql-mesh/grpc": "0.106.10",
+    "@graphql-mesh/cli": "0.98.16",
+    "@graphql-mesh/grpc": "0.107.0",
     "@graphql-mesh/transform-naming-convention": "0.103.12",
     "@grpc/grpc-js": "1.12.5",
     "@grpc/proto-loader": "0.7.13",
@@ -19,7 +19,7 @@
     "graphql": "16.10.0"
   },
   "devDependencies": {
-    "concurrently": "9.1.1",
+    "concurrently": "9.1.2",
     "jest": "29.7.0",
     "ts-jest": "29.2.5",
     "ts-node": "^10.9.2",
