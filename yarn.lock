@@ -9999,12 +9999,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/bundle-analyzer@npm:15.0.4":
-  version: 15.0.4
-  resolution: "@next/bundle-analyzer@npm:15.0.4"
+"@next/bundle-analyzer@npm:15.1.0":
+  version: 15.1.0
+  resolution: "@next/bundle-analyzer@npm:15.1.0"
   dependencies:
     webpack-bundle-analyzer: "npm:4.10.1"
-  checksum: 10c0/cbeddac527697faee19de87a84ff2b2a3a9986562ef4986b255c219d51eb78277350a63219472eaf6754183c2c9e8208139cbb2949d9c5aed7a37b07893554a2
+  checksum: 10c0/6a71ecbc295b86b431d8be860645d590740095207e7240d37db7585b8bb638406e58d3409a55efb5132723eec2a0ba6bd6011186058a54a10e3f559e05d1be1d
   languageName: node
   linkType: hard
 
@@ -12317,11 +12317,11 @@ __metadata:
   linkType: hard
 
 "@theguild/components@npm:^7.0.0":
-  version: 7.4.0
-  resolution: "@theguild/components@npm:7.4.0"
+  version: 7.5.0
+  resolution: "@theguild/components@npm:7.5.0"
   dependencies:
     "@giscus/react": "npm:3.0.0"
-    "@next/bundle-analyzer": "npm:15.0.4"
+    "@next/bundle-analyzer": "npm:15.1.0"
     "@radix-ui/react-navigation-menu": "npm:^1.2.0"
     clsx: "npm:2.1.1"
     fuzzy: "npm:0.1.3"
@@ -12334,11 +12334,11 @@ __metadata:
     semver: "npm:^7.3.8"
     tailwind-merge: "npm:^2.5.2"
   peerDependencies:
-    "@theguild/tailwind-config": 0.6.1
+    "@theguild/tailwind-config": 0.6.2
     next: ^13 || ^14 || ^15.0.0
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/2a31064918369bc7a46b03bddee9e4d235e3df4300f676ebc4e5c914aeacfe6ba2a90575474dbc85e8a9901b55834fae0ca398c597dc618aaff5c43f952900c3
+  checksum: 10c0/ac1b6bc55e8b6e444caa608ff68eba1a13afd1d1bfe4bd26be8bfc077a49f4ff57cc8ec2a644d419439a7cc2c61098c02547b96b02c779a3dfd301572781e9ce
   languageName: node
   linkType: hard
 
