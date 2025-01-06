@@ -60,9 +60,9 @@ export function addMetaDataToCall(
     );
     if (isResponseStream) {
       let isCancelled = false;
-      const responseStreamWithCancel = withCancel(call, () => {
+      const responseStreamWithCancel = withCancel(call, reason => {
         if (!isCancelled) {
-          call.call?.cancelWithStatus(0, 'Cancelled by GraphQL Mesh');
+          call.call?.cancelWithStatus(0, reason?.toString() || 'aborted');
           isCancelled = true;
         }
       });
