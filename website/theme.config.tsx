@@ -92,11 +92,11 @@ export default defineConfig({
           }
         >
           <VersionDropdown
-            chevronPosition="left"
-            currentVersion={route.includes('/docs') ? '0.x' : '1.x'}
+            chevronPosition="right"
+            currentVersion={route.includes('/docs') ? 'v0' : 'v1'}
             versions={[
-              { label: 'Mesh 0.x docs', href: '/docs', value: '0.x' },
-              { label: 'Mesh 1.x docs', href: '/v1', value: '1.x' },
+              { label: 'Mesh v1 docs', href: '/v1', value: 'v1' },
+              { label: 'Mesh v0 docs', href: '/docs', value: 'v0' },
             ]}
           />
         </HiveNavigation>
