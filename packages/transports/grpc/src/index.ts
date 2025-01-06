@@ -215,7 +215,6 @@ export class GrpcTransportHelper extends DisposableStack {
     if (transportDirective) {
       for (const directive of transportDirective) {
         if (
-          transportDirective.length > 1 &&
           directive?.subgraph != null &&
           this.subgraphName != null &&
           directive.subgraph !== this.subgraphName
