@@ -7201,7 +7201,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-common@npm:^0.7.13, @graphql-mesh/transport-common@npm:^0.7.26":
+"@graphql-mesh/transport-common@npm:^0.7.13, @graphql-mesh/transport-common@npm:^0.7.25, @graphql-mesh/transport-common@npm:^0.7.26":
   version: 0.7.26
   resolution: "@graphql-mesh/transport-common@npm:0.7.26"
   dependencies:
