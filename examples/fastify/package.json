@@ -8,7 +8,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.98.16",
     "@graphql-mesh/graphql": "0.103.11",
-    "fastify": "5.2.0",
+    "fastify": "5.2.1",
     "graphql": "16.10.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "2.0.0",
