@@ -27,7 +27,7 @@ if (process.env.LEAK_TEST) {
 let testMatch = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'];
 
 if (process.env.LEAK_TEST) {
-  testMatch.push('!**/examples/grpc-*/**');
+  testMatch.push('!**/examples/grpc-reflection-example/**');
   testMatch.push('!**/examples/sqlite-*/**');
   testMatch.push('!**/examples/mysql-*/**');
   testMatch.push('!**/examples/v1-next/mysql-*/**');
