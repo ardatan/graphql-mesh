@@ -7,8 +7,11 @@ import type {
 } from 'graphql';
 import { isListType, isNonNullType } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
-import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
-import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import type { ResolverData, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
+import {
+  getInterpolatedHeadersFactory,
+  stringInterpolator,
+} from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import {
@@ -86,6 +89,12 @@ interface SoapAnnotations {
   endpoint: string;
   bindingNamespace: string;
   elementName: string;
+  bodyAlias?: string;
+  soapHeaders?: {
+    alias?: string;
+    namespace: string;
+    headers: Record<string, string>;
+  };
 }
 
 interface CreateRootValueMethodOpts {
@@ -96,6 +105,33 @@ interface CreateRootValueMethodOpts {
   operationHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
 }
 
+function prefixWithAlias({
+  alias,
+  obj,
+  resolverData,
+}: {
+  alias: string;
+  obj: unknown;
+  resolverData?: ResolverData;
+}): Record<string, any> {
+  if (typeof obj === 'object' && obj !== null) {
+    const prefixedHeaderObj: Record<string, any> = {};
+    for (const key in obj) {
+      const aliasedKey = key === 'innerText' ? key : `${alias}:${key}`;
+      prefixedHeaderObj[aliasedKey] = prefixWithAlias({
+        alias,
+        obj: obj[key],
+        resolverData,
+      });
+    }
+    return prefixedHeaderObj;
+  }
+  if (typeof obj === 'string' && resolverData) {
+    return stringInterpolator.parse(obj, resolverData);
+  }
+  return obj;
+}
+
 function createRootValueMethod({
   soapAnnotations,
   fetchFn,
@@ -104,18 +140,48 @@ function createRootValueMethod({
   operationHeadersFactory,
 }: CreateRootValueMethodOpts): RootValueMethod {
   return async function rootValueMethod(args: any, context: any, info: GraphQLResolveInfo) {
+    const envelopeAttributes: Record<string, string> = {
+      'xmlns:soap': 'http://www.w3.org/2003/05/soap-envelope',
+    };
+    const envelope: Record<string, any> = {
+      attributes: envelopeAttributes,
+    };
+    const resolverData: ResolverData = {
+      args,
+      context,
+      info,
+      env: process.env,
+    };
+
+    const bodyPrefix = soapAnnotations.bodyAlias || 'body';
+    envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
+
+    const headerPrefix =
+      soapAnnotations.soapHeaders?.alias || soapAnnotations.bodyAlias || 'header';
+    if (soapAnnotations.soapHeaders?.headers) {
+      envelope['soap:Header'] = prefixWithAlias({
+        alias: headerPrefix,
+        obj: normalizeArgsForConverter(
+          typeof soapAnnotations.soapHeaders.headers === 'string'
+            ? JSON.parse(soapAnnotations.soapHeaders.headers)
+            : soapAnnotations.soapHeaders.headers,
+        ),
+        resolverData,
+      });
+      if (soapAnnotations.soapHeaders?.namespace) {
+        envelopeAttributes[`xmlns:${headerPrefix}`] = soapAnnotations.soapHeaders.namespace;
+      }
+    }
+
+    const body = prefixWithAlias({
+      alias: bodyPrefix,
+      obj: normalizeArgsForConverter(args),
+      resolverData,
+    });
+    envelope['soap:Body'] = body;
+
     const requestJson = {
-      'soap:Envelope': {
-        attributes: {
-          'xmlns:soap': 'http://www.w3.org/2003/05/soap-envelope',
-        },
-        'soap:Body': {
-          attributes: {
-            xmlns: soapAnnotations.bindingNamespace,
-          },
-          ...normalizeArgsForConverter(args),
-        },
-      },
+      'soap:Envelope': envelope,
     };
     const requestXML = jsonToXMLConverter.build(requestJson);
     const currentFetchFn = context?.fetch || fetchFn;
@@ -141,6 +207,7 @@ function createRootValueMethod({
     if (!response.ok) {
       return createGraphQLError(`Upstream HTTP Error: ${response.status}`, {
         extensions: {
+          code: 'DOWNSTREAM_SERVICE_ERROR',
           subgraph: soapAnnotations.subgraph,
           request: {
             url: soapAnnotations.endpoint,

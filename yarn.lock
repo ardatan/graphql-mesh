@@ -7218,7 +7218,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-common@npm:^0.7.13, @graphql-mesh/transport-common@npm:^0.7.26":
+"@graphql-mesh/transport-common@npm:^0.7.13, @graphql-mesh/transport-common@npm:^0.7.25, @graphql-mesh/transport-common@npm:^0.7.26":
   version: 0.7.26
   resolution: "@graphql-mesh/transport-common@npm:0.7.26"
   dependencies:
@@ -10387,6 +10387,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.9"
     "@graphql-mesh/string-interpolation": "npm:^0.5.7"
+    "@graphql-mesh/transport-common": "npm:^0.7.25"
     "@graphql-mesh/transport-soap": "npm:^0.8.10"
     "@graphql-mesh/types": "npm:^0.103.10"
     "@graphql-mesh/utils": "npm:^0.103.10"
