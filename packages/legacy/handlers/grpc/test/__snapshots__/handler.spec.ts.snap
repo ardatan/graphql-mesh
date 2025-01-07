@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`gRPC Handler Interpreting Protos should load the Comments proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"foo\\":{\\"nested\\":{\\"SampleService\\":{\\"methods\\":{\\"CreateSample\\":{\\"requestType\\":\\"CreateSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 1: This is a comment with two slashes\\"},\\"GetSample\\":{\\"requestType\\":\\"GetSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 2: This is a comment with initial slash star and final star slash (all on one line)\\"},\\"UpdateSample\\":{\\"requestType\\":\\"UpdateSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 3: This is a comment with initial slash star star and final star slash (all on one line\\"},\\"DeleteSample\\":{\\"requestType\\":\\"DeleteSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 4: This is a comment on multiple lines, initial slash star star\\\\nat beginning of the line.\\"}},\\"comment\\":null},\\"SampleResponse\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":\\"Comment 5: This is a comment on one line, delimiters slash star star at beginning of the line. Trailing comment delimiter at beginning of next line after comment.\\"},\\"CreateSampleRequest\\":{\\"fields\\":{\\"description\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 6: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is at the beginning of the line. Trailing comment delimiter on same line as text.\\"},\\"type\\":{\\"type\\":\\"string\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null},\\"GetSampleRequest\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 8: This is a comment with slash star delimiter on the same line as a field definition.\\"}},\\"comment\\":\\"Comment 7: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is not at the beginning of the line.\\"},\\"UpdateSampleRequest\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 10: This is a comment with slash star star delimiter on the same line as a field definition.\\"}},\\"comment\\":null},\\"DeleteSampleRequest\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 12: This is a two-slash comment on the same line as a field definition.\\"}},\\"comment\\":null}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819300", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"foo\\":{\\"nested\\":{\\"SampleService\\":{\\"methods\\":{\\"CreateSample\\":{\\"requestType\\":\\"CreateSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 1: This is a comment with two slashes\\"},\\"GetSample\\":{\\"requestType\\":\\"GetSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 2: This is a comment with initial slash star and final star slash (all on one line)\\"},\\"UpdateSample\\":{\\"requestType\\":\\"UpdateSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 3: This is a comment with initial slash star star and final star slash (all on one line\\"},\\"DeleteSample\\":{\\"requestType\\":\\"DeleteSampleRequest\\",\\"responseType\\":\\"SampleResponse\\",\\"comment\\":\\"Comment 4: This is a comment on multiple lines, initial slash star star\\\\nat beginning of the line.\\"}},\\"comment\\":null},\\"SampleResponse\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":\\"Comment 5: This is a comment on one line, delimiters slash star star at beginning of the line. Trailing comment delimiter at beginning of next line after comment.\\"},\\"CreateSampleRequest\\":{\\"fields\\":{\\"description\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 6: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is at the beginning of the line. Trailing comment delimiter on same line as text.\\"},\\"type\\":{\\"type\\":\\"string\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null},\\"GetSampleRequest\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 8: This is a comment with slash star delimiter on the same line as a field definition.\\"}},\\"comment\\":\\"Comment 7: This is a comment with slash followed by two stars at the beginning. The first comment delimiter is not at the beginning of the line.\\"},\\"UpdateSampleRequest\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 10: This is a comment with slash star star delimiter on the same line as a field definition.\\"}},\\"comment\\":null},\\"DeleteSampleRequest\\":{\\"fields\\":{\\"sample_id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":\\"Comment 12: This is a two-slash comment on the same line as a field definition.\\"}},\\"comment\\":null}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
   mutation: Mutation
 }
@@ -28,8 +28,8 @@ type Query {
   """
   Comment 2: This is a comment with initial slash star and final star slash (all on one line)
   """
-  foo_SampleService_GetSample(input: foo__GetSampleRequest_Input): foo__SampleResponse @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "GetSample", responseStream: false)
-  foo_SampleService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "foo.SampleService")
+  foo_SampleService_GetSample(input: foo__GetSampleRequest_Input): foo__SampleResponse @grpcMethod(subgraph: "1736263819300", rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "GetSample", responseStream: false)
+  foo_SampleService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819300", rootJsonName: "Root0", objPath: "foo.SampleService")
 }
 
 """
@@ -59,16 +59,16 @@ enum ConnectivityState {
 
 type Mutation {
   """Comment 1: This is a comment with two slashes"""
-  foo_SampleService_CreateSample(input: foo__CreateSampleRequest_Input): foo__SampleResponse @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "CreateSample", responseStream: false)
+  foo_SampleService_CreateSample(input: foo__CreateSampleRequest_Input): foo__SampleResponse @grpcMethod(subgraph: "1736263819300", rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "CreateSample", responseStream: false)
   """
   Comment 3: This is a comment with initial slash star star and final star slash (all on one line
   """
-  foo_SampleService_UpdateSample(input: foo__UpdateSampleRequest_Input): foo__SampleResponse @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "UpdateSample", responseStream: false)
+  foo_SampleService_UpdateSample(input: foo__UpdateSampleRequest_Input): foo__SampleResponse @grpcMethod(subgraph: "1736263819300", rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "UpdateSample", responseStream: false)
   """
   Comment 4: This is a comment on multiple lines, initial slash star star
   at beginning of the line.
   """
-  foo_SampleService_DeleteSample(input: foo__DeleteSampleRequest_Input): foo__SampleResponse @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "DeleteSample", responseStream: false)
+  foo_SampleService_DeleteSample(input: foo__DeleteSampleRequest_Input): foo__SampleResponse @grpcMethod(subgraph: "1736263819300", rootJsonName: "Root0", objPath: "foo.SampleService", methodName: "DeleteSample", responseStream: false)
 }
 
 input foo__CreateSampleRequest_Input {
@@ -97,7 +97,7 @@ scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Custom Message proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"foos\\":{\\"nested\\":{\\"BamService\\":{\\"methods\\":{\\"GetW\\":{\\"requestType\\":\\"GetBamRequest\\",\\"responseType\\":\\"GetFoosResponse\\",\\"comment\\":null}},\\"comment\\":null},\\"GetBamRequest\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"int32\\",\\"id\\":1,\\"comment\\":null},\\"abcd\\":{\\"type\\":\\"Bam\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null},\\"Bam\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"int64\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"GetFoosResponse\\":{\\"fields\\":{\\"abcd\\":{\\"type\\":\\"Bam\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819275", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"foos\\":{\\"nested\\":{\\"BamService\\":{\\"methods\\":{\\"GetW\\":{\\"requestType\\":\\"GetBamRequest\\",\\"responseType\\":\\"GetFoosResponse\\",\\"comment\\":null}},\\"comment\\":null},\\"GetBamRequest\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"int32\\",\\"id\\":1,\\"comment\\":null},\\"abcd\\":{\\"type\\":\\"Bam\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null},\\"Bam\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"int64\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"GetFoosResponse\\":{\\"fields\\":{\\"abcd\\":{\\"type\\":\\"Bam\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null}}}}}"}]}) {
   query: Query
 }
 
@@ -120,8 +120,8 @@ directive @stream(
 directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 type Query {
-  foos_BamService_GetW(input: foos__GetBamRequest_Input): foos__GetFoosResponse @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "foos.BamService", methodName: "GetW", responseStream: false)
-  foos_BamService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "foos.BamService")
+  foos_BamService_GetW(input: foos__GetBamRequest_Input): foos__GetFoosResponse @grpcMethod(subgraph: "1736263819275", rootJsonName: "Root0", objPath: "foos.BamService", methodName: "GetW", responseStream: false)
+  foos_BamService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819275", rootJsonName: "Root0", objPath: "foos.BamService")
 }
 
 type foos__GetFoosResponse {
@@ -158,7 +158,7 @@ scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Custom Message2 proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"foo\\":{\\"nested\\":{\\"BamService\\":{\\"methods\\":{\\"GetFOOs\\":{\\"requestType\\":\\"GetFOOsRequest\\",\\"responseType\\":\\"GetFOOsResponse\\",\\"comment\\":null}},\\"comment\\":null},\\"GetFOOsRequest\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"int32\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"FOO\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"int64\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"GetFOOsResponse\\":{\\"fields\\":{\\"foos\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"FOO\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819289", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"foo\\":{\\"nested\\":{\\"BamService\\":{\\"methods\\":{\\"GetFOOs\\":{\\"requestType\\":\\"GetFOOsRequest\\",\\"responseType\\":\\"GetFOOsResponse\\",\\"comment\\":null}},\\"comment\\":null},\\"GetFOOsRequest\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"int32\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"FOO\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"int64\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"GetFOOsResponse\\":{\\"fields\\":{\\"foos\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"FOO\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null}}}}}"}]}) {
   query: Query
 }
 
@@ -181,8 +181,8 @@ directive @stream(
 directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 type Query {
-  foo_BamService_GetFOOs(input: foo__GetFOOsRequest_Input): foo__GetFOOsResponse @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "foo.BamService", methodName: "GetFOOs", responseStream: false)
-  foo_BamService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "foo.BamService")
+  foo_BamService_GetFOOs(input: foo__GetFOOsRequest_Input): foo__GetFOOsResponse @grpcMethod(subgraph: "1736263819289", rootJsonName: "Root0", objPath: "foo.BamService", methodName: "GetFOOs", responseStream: false)
+  foo_BamService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819289", rootJsonName: "Root0", objPath: "foo.BamService")
 }
 
 type foo__GetFOOsResponse {
@@ -214,7 +214,7 @@ scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Empty proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"GetEmpty\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"EmptyRequest\\",\\"comment\\":null},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819146", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"GetEmpty\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"EmptyRequest\\",\\"comment\\":null},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
   subscription: Subscription
 }
@@ -241,16 +241,16 @@ directive @transport(subgraph: String, kind: String, location: String, options: 
 
 type Query {
   """get all movies"""
-  io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
-  io_xtech_Example_GetEmpty(input: io__xtech__MovieRequest_Input): io__xtech__EmptyRequest @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetEmpty", responseStream: false)
+  io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819146", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
+  io_xtech_Example_GetEmpty(input: io__xtech__MovieRequest_Input): io__xtech__EmptyRequest @grpcMethod(subgraph: "1736263819146", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetEmpty", responseStream: false)
   """search movies by the name of the cast"""
-  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example")
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "1736263819146", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819146", rootJsonName: "Root0", objPath: "io.xtech.Example")
   """get all movies"""
-  io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819146", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
   """search movies by the name of the cast"""
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
-  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "1736263819146", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819146", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
 }
 
 """movie result message, contains list of movies"""
@@ -281,9 +281,9 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 scalar BigInt
 
 enum io__xtech__Genre {
-  UNSPECIFIED @enum(subgraph: "grpc", value: "0")
-  ACTION @enum(subgraph: "grpc", value: "1")
-  DRAMA @enum(subgraph: "grpc", value: "2")
+  UNSPECIFIED @enum(subgraph: "1736263819146", value: "0")
+  ACTION @enum(subgraph: "1736263819146", value: "1")
+  DRAMA @enum(subgraph: "1736263819146", value: "2")
 }
 
 input io__xtech__MovieRequest_Input {
@@ -322,16 +322,16 @@ enum ConnectivityState {
 
 type Subscription {
   """search movies by the name of the cast"""
-  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "1736263819146", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   """search movies by the name of the cast"""
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "1736263819146", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Enums proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"OrganizationStateProto\\":{\\"values\\":{\\"UNKNOWN\\":0,\\"ACTIVE\\":1,\\"PENDING_PAYMENT\\":2,\\"SUSPENDED\\":3},\\"comment\\":null,\\"comments\\":{\\"UNKNOWN\\":null,\\"ACTIVE\\":null,\\"PENDING_PAYMENT\\":null,\\"SUSPENDED\\":null}},\\"OrganizationProto\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"owner\\":{\\"type\\":\\"string\\",\\"id\\":2,\\"comment\\":null},\\"name\\":{\\"type\\":\\"string\\",\\"id\\":3,\\"comment\\":null},\\"description\\":{\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":null},\\"image_url\\":{\\"type\\":\\"string\\",\\"id\\":5,\\"comment\\":null},\\"state\\":{\\"type\\":\\"OrganizationStateProto\\",\\"id\\":6,\\"comment\\":null},\\"default_org\\":{\\"type\\":\\"bool\\",\\"id\\":7,\\"comment\\":null}},\\"comment\\":null},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"OrganizationService\\":{\\"methods\\":{\\"GetOrganization\\":{\\"requestType\\":\\"EmptyRequest\\",\\"responseType\\":\\"OrganizationProto\\",\\"comment\\":null}},\\"comment\\":null}}}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819326", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"OrganizationStateProto\\":{\\"values\\":{\\"UNKNOWN\\":0,\\"ACTIVE\\":1,\\"PENDING_PAYMENT\\":2,\\"SUSPENDED\\":3},\\"comment\\":null,\\"comments\\":{\\"UNKNOWN\\":null,\\"ACTIVE\\":null,\\"PENDING_PAYMENT\\":null,\\"SUSPENDED\\":null}},\\"OrganizationProto\\":{\\"fields\\":{\\"id\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"owner\\":{\\"type\\":\\"string\\",\\"id\\":2,\\"comment\\":null},\\"name\\":{\\"type\\":\\"string\\",\\"id\\":3,\\"comment\\":null},\\"description\\":{\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":null},\\"image_url\\":{\\"type\\":\\"string\\",\\"id\\":5,\\"comment\\":null},\\"state\\":{\\"type\\":\\"OrganizationStateProto\\",\\"id\\":6,\\"comment\\":null},\\"default_org\\":{\\"type\\":\\"bool\\",\\"id\\":7,\\"comment\\":null}},\\"comment\\":null},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"OrganizationService\\":{\\"methods\\":{\\"GetOrganization\\":{\\"requestType\\":\\"EmptyRequest\\",\\"responseType\\":\\"OrganizationProto\\",\\"comment\\":null}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
 }
 
@@ -356,8 +356,8 @@ directive @stream(
 directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 type Query {
-  io_xtech_OrganizationService_GetOrganization(input: io__xtech__EmptyRequest_Input): io__xtech__OrganizationProto @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.OrganizationService", methodName: "GetOrganization", responseStream: false)
-  io_xtech_OrganizationService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.OrganizationService")
+  io_xtech_OrganizationService_GetOrganization(input: io__xtech__EmptyRequest_Input): io__xtech__OrganizationProto @grpcMethod(subgraph: "1736263819326", rootJsonName: "Root0", objPath: "io.xtech.OrganizationService", methodName: "GetOrganization", responseStream: false)
+  io_xtech_OrganizationService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819326", rootJsonName: "Root0", objPath: "io.xtech.OrganizationService")
 }
 
 type io__xtech__OrganizationProto {
@@ -371,10 +371,10 @@ type io__xtech__OrganizationProto {
 }
 
 enum io__xtech__OrganizationStateProto {
-  UNKNOWN @enum(subgraph: "grpc", value: "0")
-  ACTIVE @enum(subgraph: "grpc", value: "1")
-  PENDING_PAYMENT @enum(subgraph: "grpc", value: "2")
-  SUSPENDED @enum(subgraph: "grpc", value: "3")
+  UNKNOWN @enum(subgraph: "1736263819326", value: "0")
+  ACTIVE @enum(subgraph: "1736263819326", value: "1")
+  PENDING_PAYMENT @enum(subgraph: "1736263819326", value: "2")
+  SUSPENDED @enum(subgraph: "1736263819326", value: "3")
 }
 
 scalar io__xtech__EmptyRequest_Input @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
@@ -391,7 +391,7 @@ scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Import Nested proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"outer\\":{\\"nested\\":{\\"Example\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"io.xtech.TopLevel.Nested\\",\\"responseType\\":\\"io.xtech.Result\\",\\"comment\\":null}},\\"comment\\":null}}},\\"Item\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"TopLevel\\":{\\"fields\\":{\\"value\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"nested_usage\\":{\\"type\\":\\"Nested\\",\\"id\\":3,\\"comment\\":null}},\\"nested\\":{\\"Nested\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Item\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null}},\\"comment\\":null},\\"Result\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Item\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"TopLevel.Nested\\",\\"responseType\\":\\"Result\\",\\"comment\\":null}},\\"comment\\":null}}}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819190", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"outer\\":{\\"nested\\":{\\"Example\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"io.xtech.TopLevel.Nested\\",\\"responseType\\":\\"io.xtech.Result\\",\\"comment\\":null}},\\"comment\\":null}}},\\"Item\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"TopLevel\\":{\\"fields\\":{\\"value\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"nested_usage\\":{\\"type\\":\\"Nested\\",\\"id\\":3,\\"comment\\":null}},\\"nested\\":{\\"Nested\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Item\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null}},\\"comment\\":null},\\"Result\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Item\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"TopLevel.Nested\\",\\"responseType\\":\\"Result\\",\\"comment\\":null}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
 }
 
@@ -414,10 +414,10 @@ directive @stream(
 directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 type Query {
-  io_xtech_outer_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.outer.Example", methodName: "Get", responseStream: false)
-  io_xtech_outer_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.outer.Example")
-  io_xtech_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "Get", responseStream: false)
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example")
+  io_xtech_outer_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @grpcMethod(subgraph: "1736263819190", rootJsonName: "Root0", objPath: "io.xtech.outer.Example", methodName: "Get", responseStream: false)
+  io_xtech_outer_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819190", rootJsonName: "Root0", objPath: "io.xtech.outer.Example")
+  io_xtech_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @grpcMethod(subgraph: "1736263819190", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "Get", responseStream: false)
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819190", rootJsonName: "Root0", objPath: "io.xtech.Example")
 }
 
 type io__xtech__Result {
@@ -448,7 +448,7 @@ scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Input bug 5880 proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"TestMessage\\":{\\"fields\\":{\\"input\\":{\\"type\\":\\"Input\\",\\"id\\":1,\\"comment\\":null}},\\"nested\\":{\\"Input\\":{\\"fields\\":{},\\"comment\\":null}},\\"comment\\":null},\\"TestService\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"TestMessage\\",\\"responseType\\":\\"TestMessage\\",\\"comment\\":null}},\\"comment\\":null}}}"}]}) {
+"schema @transport(subgraph: "1736263819337", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"TestMessage\\":{\\"fields\\":{\\"input\\":{\\"type\\":\\"Input\\",\\"id\\":1,\\"comment\\":null}},\\"nested\\":{\\"Input\\":{\\"fields\\":{},\\"comment\\":null}},\\"comment\\":null},\\"TestService\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"TestMessage\\",\\"responseType\\":\\"TestMessage\\",\\"comment\\":null}},\\"comment\\":null}}}"}]}) {
   query: Query
 }
 
@@ -471,8 +471,8 @@ directive @stream(
 directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 type Query {
-  TestService_Get(input: TestMessage_Input): TestMessage @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "TestService", methodName: "Get", responseStream: false)
-  TestService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "TestService")
+  TestService_Get(input: TestMessage_Input): TestMessage @grpcMethod(subgraph: "1736263819337", rootJsonName: "Root0", objPath: "TestService", methodName: "Get", responseStream: false)
+  TestService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819337", rootJsonName: "Root0", objPath: "TestService")
 }
 
 type TestMessage {
@@ -499,7 +499,7 @@ scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Map proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"MapRequest\\":{\\"fields\\":{\\"map\\":{\\"keyType\\":\\"string\\",\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MapResponse\\":{\\"fields\\":{\\"map\\":{\\"keyType\\":\\"string\\",\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MapService\\":{\\"methods\\":{\\"GetMap\\":{\\"requestType\\":\\"MapRequest\\",\\"responseType\\":\\"MapResponse\\",\\"comment\\":null}},\\"comment\\":null}}}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819315", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"MapRequest\\":{\\"fields\\":{\\"map\\":{\\"keyType\\":\\"string\\",\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MapResponse\\":{\\"fields\\":{\\"map\\":{\\"keyType\\":\\"string\\",\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MapService\\":{\\"methods\\":{\\"GetMap\\":{\\"requestType\\":\\"MapRequest\\",\\"responseType\\":\\"MapResponse\\",\\"comment\\":null}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
 }
 
@@ -522,8 +522,8 @@ directive @stream(
 directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 type Query {
-  io_xtech_MapService_GetMap(input: io__xtech__MapRequest_Input): io__xtech__MapResponse @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.MapService", methodName: "GetMap", responseStream: false)
-  io_xtech_MapService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.MapService")
+  io_xtech_MapService_GetMap(input: io__xtech__MapRequest_Input): io__xtech__MapResponse @grpcMethod(subgraph: "1736263819315", rootJsonName: "Root0", objPath: "io.xtech.MapService", methodName: "GetMap", responseStream: false)
+  io_xtech_MapService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819315", rootJsonName: "Root0", objPath: "io.xtech.MapService")
 }
 
 type io__xtech__MapResponse {
@@ -551,7 +551,7 @@ scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Movie proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819014", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
   subscription: Subscription
 }
@@ -578,15 +578,15 @@ directive @transport(subgraph: String, kind: String, location: String, options: 
 
 type Query {
   """get all movies"""
-  io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
+  io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819014", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
   """search movies by the name of the cast"""
-  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example")
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "1736263819014", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819014", rootJsonName: "Root0", objPath: "io.xtech.Example")
   """get all movies"""
-  io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819014", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
   """search movies by the name of the cast"""
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
-  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "1736263819014", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819014", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
 }
 
 """movie result message, contains list of movies"""
@@ -617,9 +617,9 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 scalar BigInt
 
 enum io__xtech__Genre {
-  UNSPECIFIED @enum(subgraph: "grpc", value: "0")
-  ACTION @enum(subgraph: "grpc", value: "1")
-  DRAMA @enum(subgraph: "grpc", value: "2")
+  UNSPECIFIED @enum(subgraph: "1736263819014", value: "0")
+  ACTION @enum(subgraph: "1736263819014", value: "1")
+  DRAMA @enum(subgraph: "1736263819014", value: "2")
 }
 
 input io__xtech__MovieRequest_Input {
@@ -656,16 +656,16 @@ enum ConnectivityState {
 
 type Subscription {
   """search movies by the name of the cast"""
-  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "1736263819014", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   """search movies by the name of the cast"""
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "1736263819014", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Nested proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Item\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"TopLevel\\":{\\"fields\\":{\\"value\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"nested_usage\\":{\\"type\\":\\"Nested\\",\\"id\\":3,\\"comment\\":null}},\\"nested\\":{\\"Nested\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Item\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null}},\\"comment\\":null},\\"Result\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Item\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"TopLevel.Nested\\",\\"responseType\\":\\"Result\\",\\"comment\\":null}},\\"comment\\":null}}}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819176", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Item\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"TopLevel\\":{\\"fields\\":{\\"value\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"nested_usage\\":{\\"type\\":\\"Nested\\",\\"id\\":3,\\"comment\\":null}},\\"nested\\":{\\"Nested\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Item\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null}},\\"comment\\":null},\\"Result\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Item\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"TopLevel.Nested\\",\\"responseType\\":\\"Result\\",\\"comment\\":null}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
 }
 
@@ -688,8 +688,8 @@ directive @stream(
 directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 type Query {
-  io_xtech_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "Get", responseStream: false)
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example")
+  io_xtech_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @grpcMethod(subgraph: "1736263819176", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "Get", responseStream: false)
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819176", rootJsonName: "Root0", objPath: "io.xtech.Example")
 }
 
 type io__xtech__Result {
@@ -720,7 +720,7 @@ scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the No Package Nested proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"Item\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"TopLevel\\":{\\"fields\\":{\\"value\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"nested_usage\\":{\\"type\\":\\"Nested\\",\\"id\\":3,\\"comment\\":null}},\\"nested\\":{\\"Nested\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Item\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null}},\\"comment\\":null},\\"Result\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Item\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"TopLevel.Nested\\",\\"responseType\\":\\"Result\\",\\"comment\\":null}},\\"comment\\":null}}}"}]}) {
+"schema @transport(subgraph: "1736263819219", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"Item\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"TopLevel\\":{\\"fields\\":{\\"value\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"nested_usage\\":{\\"type\\":\\"Nested\\",\\"id\\":3,\\"comment\\":null}},\\"nested\\":{\\"Nested\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Item\\",\\"id\\":2,\\"comment\\":null}},\\"comment\\":null}},\\"comment\\":null},\\"Result\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Item\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"TopLevel.Nested\\",\\"responseType\\":\\"Result\\",\\"comment\\":null}},\\"comment\\":null}}}"}]}) {
   query: Query
 }
 
@@ -743,8 +743,8 @@ directive @stream(
 directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 type Query {
-  Example_Get(input: TopLevel__Nested_Input): Result @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "Example", methodName: "Get", responseStream: false)
-  Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "Example")
+  Example_Get(input: TopLevel__Nested_Input): Result @grpcMethod(subgraph: "1736263819219", rootJsonName: "Root0", objPath: "Example", methodName: "Get", responseStream: false)
+  Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819219", rootJsonName: "Root0", objPath: "Example")
 }
 
 type Result {
@@ -775,7 +775,7 @@ scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the Outside proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"outside\\":{\\"nested\\":{\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"io.xtech.Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"io.xtech.Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":null}},\\"comment\\":null}}},\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819251", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"outside\\":{\\"nested\\":{\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"io.xtech.Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"io.xtech.Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":null}},\\"comment\\":null}}},\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
   subscription: Subscription
 }
@@ -801,18 +801,18 @@ directive @stream(
 directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 type Query {
-  io_outside_Example_GetMovies(input: io__outside__MovieRequest_Input): io__outside__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.outside.Example", methodName: "GetMovies", responseStream: false)
-  io_outside_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.outside.Example")
+  io_outside_Example_GetMovies(input: io__outside__MovieRequest_Input): io__outside__MoviesResult @grpcMethod(subgraph: "1736263819251", rootJsonName: "Root0", objPath: "io.outside.Example", methodName: "GetMovies", responseStream: false)
+  io_outside_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819251", rootJsonName: "Root0", objPath: "io.outside.Example")
   """get all movies"""
-  io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
+  io_xtech_Example_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819251", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
   """search movies by the name of the cast"""
-  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example")
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "1736263819251", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819251", rootJsonName: "Root0", objPath: "io.xtech.Example")
   """get all movies"""
-  io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__MovieRequest_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819251", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
   """search movies by the name of the cast"""
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
-  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "1736263819251", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819251", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
 }
 
 type io__outside__MoviesResult {
@@ -841,9 +841,9 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 scalar BigInt
 
 enum io__xtech__Genre {
-  UNSPECIFIED @enum(subgraph: "grpc", value: "0")
-  ACTION @enum(subgraph: "grpc", value: "1")
-  DRAMA @enum(subgraph: "grpc", value: "2")
+  UNSPECIFIED @enum(subgraph: "1736263819251", value: "0")
+  ACTION @enum(subgraph: "1736263819251", value: "1")
+  DRAMA @enum(subgraph: "1736263819251", value: "2")
 }
 
 input io__outside__MovieRequest_Input {
@@ -890,16 +890,16 @@ input io__xtech__SearchByCastRequest_Input {
 
 type Subscription {
   """search movies by the name of the cast"""
-  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "1736263819251", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   """search movies by the name of the cast"""
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "1736263819251", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the With All Values proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"Item\\":{\\"fields\\":{\\"boolean\\":{\\"type\\":\\"bool\\",\\"id\\":1,\\"comment\\":null},\\"bytesType\\":{\\"type\\":\\"bytes\\",\\"id\\":2,\\"comment\\":null},\\"doubleNum\\":{\\"type\\":\\"double\\",\\"id\\":3,\\"comment\\":null},\\"fixedint32\\":{\\"type\\":\\"fixed32\\",\\"id\\":4,\\"comment\\":null},\\"fixedint64\\":{\\"type\\":\\"fixed64\\",\\"id\\":5,\\"comment\\":null},\\"floatNum\\":{\\"type\\":\\"float\\",\\"id\\":6,\\"comment\\":null},\\"integer32\\":{\\"type\\":\\"int32\\",\\"id\\":7,\\"comment\\":null},\\"integer64\\":{\\"type\\":\\"int64\\",\\"id\\":8,\\"comment\\":null},\\"sfixedint32\\":{\\"type\\":\\"sfixed32\\",\\"id\\":9,\\"comment\\":null},\\"sfixedint64\\":{\\"type\\":\\"sfixed64\\",\\"id\\":10,\\"comment\\":null},\\"sinteger32\\":{\\"type\\":\\"sint32\\",\\"id\\":11,\\"comment\\":null},\\"sinteger64\\":{\\"type\\":\\"sint64\\",\\"id\\":12,\\"comment\\":null},\\"str\\":{\\"type\\":\\"string\\",\\"id\\":13,\\"comment\\":null},\\"uinteger32\\":{\\"type\\":\\"uint32\\",\\"id\\":14,\\"comment\\":null},\\"uinteger64\\":{\\"type\\":\\"uint64\\",\\"id\\":15,\\"comment\\":null}},\\"comment\\":null},\\"Result\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Item\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"Item\\",\\"responseType\\":\\"Result\\",\\"comment\\":null}},\\"comment\\":null}}}"}]}) {
+"schema @transport(subgraph: "1736263819204", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"Item\\":{\\"fields\\":{\\"boolean\\":{\\"type\\":\\"bool\\",\\"id\\":1,\\"comment\\":null},\\"bytesType\\":{\\"type\\":\\"bytes\\",\\"id\\":2,\\"comment\\":null},\\"doubleNum\\":{\\"type\\":\\"double\\",\\"id\\":3,\\"comment\\":null},\\"fixedint32\\":{\\"type\\":\\"fixed32\\",\\"id\\":4,\\"comment\\":null},\\"fixedint64\\":{\\"type\\":\\"fixed64\\",\\"id\\":5,\\"comment\\":null},\\"floatNum\\":{\\"type\\":\\"float\\",\\"id\\":6,\\"comment\\":null},\\"integer32\\":{\\"type\\":\\"int32\\",\\"id\\":7,\\"comment\\":null},\\"integer64\\":{\\"type\\":\\"int64\\",\\"id\\":8,\\"comment\\":null},\\"sfixedint32\\":{\\"type\\":\\"sfixed32\\",\\"id\\":9,\\"comment\\":null},\\"sfixedint64\\":{\\"type\\":\\"sfixed64\\",\\"id\\":10,\\"comment\\":null},\\"sinteger32\\":{\\"type\\":\\"sint32\\",\\"id\\":11,\\"comment\\":null},\\"sinteger64\\":{\\"type\\":\\"sint64\\",\\"id\\":12,\\"comment\\":null},\\"str\\":{\\"type\\":\\"string\\",\\"id\\":13,\\"comment\\":null},\\"uinteger32\\":{\\"type\\":\\"uint32\\",\\"id\\":14,\\"comment\\":null},\\"uinteger64\\":{\\"type\\":\\"uint64\\",\\"id\\":15,\\"comment\\":null}},\\"comment\\":null},\\"Result\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Item\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"Example\\":{\\"methods\\":{\\"Get\\":{\\"requestType\\":\\"Item\\",\\"responseType\\":\\"Result\\",\\"comment\\":null}},\\"comment\\":null}}}"}]}) {
   query: Query
 }
 
@@ -922,8 +922,8 @@ directive @stream(
 directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 type Query {
-  Example_Get(input: Item_Input): Result @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "Example", methodName: "Get", responseStream: false)
-  Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "Example")
+  Example_Get(input: Item_Input): Result @grpcMethod(subgraph: "1736263819204", rootJsonName: "Root0", objPath: "Example", methodName: "Get", responseStream: false)
+  Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819204", rootJsonName: "Root0", objPath: "Example")
 }
 
 type Result {
@@ -989,7 +989,7 @@ scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Interpreting Protos should load the With Underscores proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"movie_request\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819230", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"movie_request\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
   subscription: Subscription
 }
@@ -1016,15 +1016,15 @@ directive @transport(subgraph: String, kind: String, location: String, options: 
 
 type Query {
   """get all movies"""
-  io_xtech_Example_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
+  io_xtech_Example_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819230", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
   """search movies by the name of the cast"""
-  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example")
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "1736263819230", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819230", rootJsonName: "Root0", objPath: "io.xtech.Example")
   """get all movies"""
-  io_xtech_AnotherExample_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819230", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
   """search movies by the name of the cast"""
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
-  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "1736263819230", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819230", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
 }
 
 """movie result message, contains list of movies"""
@@ -1055,9 +1055,9 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 scalar BigInt
 
 enum io__xtech__Genre {
-  UNSPECIFIED @enum(subgraph: "grpc", value: "0")
-  ACTION @enum(subgraph: "grpc", value: "1")
-  DRAMA @enum(subgraph: "grpc", value: "2")
+  UNSPECIFIED @enum(subgraph: "1736263819230", value: "0")
+  ACTION @enum(subgraph: "1736263819230", value: "1")
+  DRAMA @enum(subgraph: "1736263819230", value: "2")
 }
 
 input io__xtech__movie_request_Input {
@@ -1094,16 +1094,16 @@ enum ConnectivityState {
 
 type Subscription {
   """search movies by the name of the cast"""
-  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "1736263819230", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   """search movies by the name of the cast"""
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "1736263819230", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar TransportOptions"
 `;
 
 exports[`gRPC Handler Load proto with prefixQueryMethod should load the retrieve-movie.proto 1`] = `
-"schema @transport(subgraph: "grpc", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"movie_request\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"movie_request_by_ids\\":{\\"fields\\":{\\"movieIds\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"RetrieveMovies\\":{\\"requestType\\":\\"movie_request_by_ids\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"RetrieveMovies\\":{\\"requestType\\":\\"movie_request_by_ids\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
+"schema @transport(subgraph: "1736263819346", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"movie_request\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"movie_request_by_ids\\":{\\"fields\\":{\\"movieIds\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"RetrieveMovies\\":{\\"requestType\\":\\"movie_request_by_ids\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"RetrieveMovies\\":{\\"requestType\\":\\"movie_request_by_ids\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
   mutation: Mutation
   subscription: Subscription
@@ -1131,15 +1131,15 @@ directive @transport(subgraph: String, kind: String, location: String, options: 
 
 type Query {
   """get all movies"""
-  io_xtech_Example_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
+  io_xtech_Example_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819346", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
   """get movies"""
-  io_xtech_Example_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "RetrieveMovies", responseStream: false)
-  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example")
+  io_xtech_Example_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819346", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "RetrieveMovies", responseStream: false)
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819346", rootJsonName: "Root0", objPath: "io.xtech.Example")
   """get all movies"""
-  io_xtech_AnotherExample_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819346", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
   """get movies"""
-  io_xtech_AnotherExample_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "RetrieveMovies", responseStream: false)
-  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
+  io_xtech_AnotherExample_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "1736263819346", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "RetrieveMovies", responseStream: false)
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "1736263819346", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
 }
 
 """movie result message, contains list of movies"""
@@ -1170,9 +1170,9 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 scalar BigInt
 
 enum io__xtech__Genre {
-  UNSPECIFIED @enum(subgraph: "grpc", value: "0")
-  ACTION @enum(subgraph: "grpc", value: "1")
-  DRAMA @enum(subgraph: "grpc", value: "2")
+  UNSPECIFIED @enum(subgraph: "1736263819346", value: "0")
+  ACTION @enum(subgraph: "1736263819346", value: "1")
+  DRAMA @enum(subgraph: "1736263819346", value: "2")
 }
 
 input io__xtech__movie_request_Input {
@@ -1209,9 +1209,9 @@ enum ConnectivityState {
 
 type Mutation {
   """search movies by the name of the cast"""
-  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "1736263819346", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   """search movies by the name of the cast"""
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "1736263819346", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 input io__xtech__SearchByCastRequest_Input {
@@ -1220,9 +1220,9 @@ input io__xtech__SearchByCastRequest_Input {
 
 type Subscription {
   """search movies by the name of the cast"""
-  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "1736263819346", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   """search movies by the name of the cast"""
-  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "grpc", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "1736263819346", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar TransportOptions"
