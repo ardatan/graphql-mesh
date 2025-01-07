@@ -41,6 +41,24 @@ export const AnySchema = {
   ],
 };
 
+// Remove the unused properties of each scalar to create shorter and more readable property names.
+function removeUnnecessaryProperties(obj, seen = []) {
+  if (seen.includes(obj)) {
+    return;
+  }
+  seen.push(obj);
+  delete obj.pattern;
+  delete obj.maxLength;
+  delete obj.minLength;
+  delete obj.maxItems;
+  delete obj.minimum;
+  for (let key in obj) {
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      removeUnnecessaryProperties(obj[key], seen);
+    }
+  }
+}
+
 export async function healJSONSchema(
   schema: JSONSchema,
   debugLogFn?: (message?: any) => void,
@@ -52,6 +70,7 @@ export async function healJSONSchema(
     {
       enter: async function healSubschema(subSchema, { path }) {
         if (typeof subSchema === 'object') {
+          removeUnnecessaryProperties(subSchema);
           if (
             subSchema.title === 'Any' ||
             (subSchema.oneOf && inspect(subSchema.oneOf) === anySchemaOneOfInspect)
