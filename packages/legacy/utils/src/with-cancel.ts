@@ -1,6 +1,6 @@
 export function withCancel<T, TAsyncIterable extends AsyncIterable<T>>(
   asyncIterable: TAsyncIterable,
-  onCancel: () => void,
+  onCancel: (value?: any) => void,
 ): AsyncIterable<T | undefined> {
   return new Proxy(asyncIterable, {
     get(asyncIterable, prop) {
@@ -9,10 +9,10 @@ export function withCancel<T, TAsyncIterable extends AsyncIterable<T>>(
           const asyncIterator = asyncIterable[Symbol.asyncIterator]();
           return {
             next: asyncIterator.next ? (...args) => asyncIterator.next(...args) : undefined,
-            return: async (...args) => {
-              onCancel();
+            return: async value => {
+              onCancel(value);
               if (asyncIterator.return) {
-                return asyncIterator.return(...args);
+                return asyncIterator.return(value);
               }
               return {
                 value: undefined,

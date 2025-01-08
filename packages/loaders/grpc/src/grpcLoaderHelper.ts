@@ -26,7 +26,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { Logger, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLStreamDirective, type MaybePromise } from '@graphql-tools/utils';
 import { credentials, type ChannelCredentials } from '@grpc/grpc-js';
-import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
+import { DisposableStack } from '@whatwg-node/disposablestack';
 import {
   EnumDirective,
   grpcConnectivityStateDirective,
@@ -45,18 +45,15 @@ type DecodedDescriptorSet = Message<IFileDescriptorSet> & IFileDescriptorSet;
 
 const QUERY_METHOD_PREFIXES = ['get', 'list', 'search'];
 
-export class GrpcLoaderHelper implements AsyncDisposable {
+export class GrpcLoaderHelper extends DisposableStack {
   private schemaComposer = new SchemaComposer();
-  private asyncDisposableStack = new AsyncDisposableStack();
   constructor(
     private subgraphName: string,
     private baseDir: string,
     private logger: Logger,
     private config: YamlConfig.GrpcHandler,
-  ) {}
-
-  [Symbol.asyncDispose]() {
-    return this.asyncDisposableStack.disposeAsync();
+  ) {
+    super();
   }
 
   async buildSchema() {
@@ -84,6 +81,7 @@ export class GrpcLoaderHelper implements AsyncDisposable {
 
     this.logger.debug(`Getting channel credentials`);
     const creds = await this.getCredentials();
+    this.defer(() => creds._unref());
 
     this.logger.debug(`Getting stored root and decoded descriptor set objects`);
     const descriptorSets = await this.getDescriptorSets(creds);
@@ -141,7 +139,7 @@ export class GrpcLoaderHelper implements AsyncDisposable {
     const reflectionEndpoint = stringInterpolator.parse(this.config.endpoint, { env: process.env });
     this.logger.debug(`Creating gRPC Reflection Client`);
     const reflectionClient = new Client(reflectionEndpoint, creds);
-    this.asyncDisposableStack.defer(() => reflectionClient.grpcClient.close());
+    this.defer(() => reflectionClient.grpcClient.close());
     return reflectionClient.listServices().then(services =>
       (services.filter(service => service && !service?.startsWith('grpc.')) as string[]).map(
         service => {

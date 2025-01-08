@@ -5,7 +5,7 @@ describe('gRPC Multiple', () => {
   const queries = {
     GetAllPets: /* GraphQL */ `
       query GetAllPets {
-        pets_PetService_GetAllPets {
+        GetAllPets {
           pets {
             id
             name
@@ -15,7 +15,7 @@ describe('gRPC Multiple', () => {
     `,
     GetAllPetStores: /* GraphQL */ `
       query GetAllPetStores {
-        petstore_PetStoreService_GetAllPetStores {
+        GetAllPetStores {
           petStores {
             id
             name

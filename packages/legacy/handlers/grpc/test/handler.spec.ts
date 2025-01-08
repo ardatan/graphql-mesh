@@ -48,7 +48,7 @@ describe('gRPC Handler', () => {
       };
       using cache = new InMemoryLRUCache();
       const handler = new GrpcHandler({
-        name: Date.now().toString(),
+        name,
         config,
         cache,
         pubsub,
@@ -81,7 +81,7 @@ describe('gRPC Handler', () => {
       };
       using cache = new InMemoryLRUCache();
       const handler = new GrpcHandler({
-        name: Date.now().toString(),
+        name: 'prefixQueryMethod',
         config,
         cache,
         pubsub,
