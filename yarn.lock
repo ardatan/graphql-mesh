@@ -4789,7 +4789,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.14"
     "@types/node": "npm:22.10.5"
-    "@types/react": "npm:19.0.3"
+    "@types/react": "npm:19.0.4"
     "@types/react-dom": "npm:19.0.2"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.10.0"
@@ -5055,7 +5055,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.106.17"
     "@graphql-mesh/openapi": "npm:0.108.13"
     "@graphql-mesh/runtime": "npm:0.105.12"
-    "@types/react": "npm:19.0.3"
+    "@types/react": "npm:19.0.4"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.10.0"
     next: "npm:15.1.4"
@@ -5073,7 +5073,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.106.17"
     "@graphql-mesh/openapi": "npm:0.108.13"
     "@graphql-mesh/runtime": "npm:0.105.12"
-    "@types/react": "npm:19.0.3"
+    "@types/react": "npm:19.0.4"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.10.0"
     next: "npm:15.1.4"
@@ -5170,7 +5170,7 @@ __metadata:
   resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.17"
-    "@types/react": "npm:19.0.3"
+    "@types/react": "npm:19.0.4"
     "@types/react-dom": "npm:19.0.2"
     "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.10.0"
@@ -13561,12 +13561,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.0.3":
-  version: 19.0.3
-  resolution: "@types/react@npm:19.0.3"
+"@types/react@npm:19.0.4":
+  version: 19.0.4
+  resolution: "@types/react@npm:19.0.4"
   dependencies:
     csstype: "npm:^3.0.2"
-  checksum: 10c0/90129c45f2f09154d9409964964d0ccbac7f04d5f7fcf73fc146d33887931fbfdfd1e2947514298f94f986cc264aff8ba3201e9a4ea207d3308f20a06d47c805
+  checksum: 10c0/96ecd1a73af57fd7b7facf5b36ec069b131c7608a98a0f1098183023bfb21c60a26a0dc09004fbe0ac70c436ef887bbec5690882cfb77c6e0c679f7e45987722
   languageName: node
   linkType: hard
 
@@ -22160,11 +22160,11 @@ __metadata:
   linkType: hard
 
 "graphql-ws@npm:^5.12.1, graphql-ws@npm:^5.14.0, graphql-ws@npm:^5.16.0, graphql-ws@npm:^5.6.2":
-  version: 5.16.0
-  resolution: "graphql-ws@npm:5.16.0"
+  version: 5.16.1
+  resolution: "graphql-ws@npm:5.16.1"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 10c0/5e538c3460ca997a1634bd0f64236d8d7aa6ac75c58aba549b49953faf0dd2497f4fa43eedb0bc82cfff50426c7ce47682a670d2571fd7f3af5dcf00911c9e1b
+  checksum: 10c0/317ed1df0d1e9288c2333dbd35e7f59f086fac645d202e3d65946c175788aa616d06bf0b5b13bbd8bb7d1c4a7cbbb5a32b25de82101c2bb31a9c1887162a763e
   languageName: node
   linkType: hard
 
@@ -36832,7 +36832,7 @@ __metadata:
     "@theguild/components": "npm:^7.0.0"
     "@theguild/tailwind-config": "npm:0.6.2"
     "@types/node": "npm:22.10.5"
-    "@types/react": "npm:19.0.3"
+    "@types/react": "npm:19.0.4"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:15.1.4"
     next: "npm:^15.0.0"
