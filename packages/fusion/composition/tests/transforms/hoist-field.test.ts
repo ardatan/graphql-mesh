@@ -63,13 +63,21 @@ describe('Hoist Field', () => {
     expect(fields.users).toBeDefined();
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
+"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+
+directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+type Query {
   users(limit: Int!, page: Int): [User!]!
 }
 
 type User {
   id: ID!
   name: String!
+}
+
+input _HoistConfig {
+  _fake: String
 }"
 `);
   });
@@ -103,13 +111,21 @@ type User {
     expect(fields.users).toBeDefined();
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
+"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+
+directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+type Query {
   users(limit: Int!, page: Int): [User!]!
 }
 
 type User {
   id: ID!
   name: String!
+}
+
+input _HoistConfig {
+  _fake: String
 }"
 `);
   });
@@ -141,13 +157,21 @@ type User {
     expect(args.length).toEqual(0);
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
+"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+
+directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+type Query {
   users: [User!]!
 }
 
 type User {
   id: ID!
   name: String!
+}
+
+input _HoistConfig {
+  _fake: String
 }"
 `);
   });
@@ -185,13 +209,21 @@ type User {
     expect(args[0].name).toEqual('page');
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
+"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+
+directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+type Query {
   users(page: Int): [User!]!
 }
 
 type User {
   id: ID!
   name: String!
+}
+
+input _HoistConfig {
+  _fake: String
 }"
 `);
   });
@@ -232,13 +264,21 @@ type User {
     expect(args[0].name).toEqual('page');
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
+"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+
+directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+type Query {
   users(page: Int): [User!]!
 }
 
 type User {
   id: ID!
   name: String!
+}
+
+input _HoistConfig {
+  _fake: String
 }"
 `);
   });
@@ -307,7 +347,11 @@ type User {
     expect(fields.users).toBeDefined();
 
     expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"type Query {
+"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+
+directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+type Query {
   users(limit: Int!, page: Int): UserSearchResult
   usersResults(limit: Int!, page: Int): [User!]!
 }
@@ -319,6 +363,10 @@ type UserSearchResult {
 type User {
   id: ID!
   name: String!
+}
+
+input _HoistConfig {
+  _fake: String
 }"
 `);
   });

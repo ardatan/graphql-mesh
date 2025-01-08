@@ -3,16 +3,24 @@ import {
   buildSchema,
   getIntrospectionQuery,
   GraphQLSchema,
+  Kind,
   lexicographicSortSchema,
   parse,
+  print,
   printSchema,
   validate,
+  visit,
 } from 'graphql';
 import { getUnifiedGraphGracefully, type SubgraphConfig } from '@graphql-mesh/fusion-composition';
 import { UnifiedGraphManager } from '@graphql-mesh/fusion-runtime';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
-import { isAsyncIterable, mapMaybePromise } from '@graphql-tools/utils';
+import {
+  getDocumentNodeFromSchema,
+  isAsyncIterable,
+  mapMaybePromise,
+  printSchemaWithDirectives,
+} from '@graphql-tools/utils';
 
 export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
   const executor = composeAndGetExecutor(subgraphs);
@@ -84,7 +92,13 @@ export function expectTheSchemaSDLToBe(schema: GraphQLSchema, sdl: string) {
     assumeValid: true,
     assumeValidSDL: true,
   });
-  const sortedSchemaFromSdl = printSchema(lexicographicSortSchema(schemaFromSdl));
-  const sortedGivenSchema = printSchema(lexicographicSortSchema(schema));
+  const sortedSchemaFromSdl = printSchemaWithDirectives(lexicographicSortSchema(schemaFromSdl));
+  let astFromGivenSchema = getDocumentNodeFromSchema(lexicographicSortSchema(schema));
+  astFromGivenSchema = visit(astFromGivenSchema, {
+    [Kind.DIRECTIVE_DEFINITION]() {
+      return null;
+    },
+  });
+  const sortedGivenSchema = print(astFromGivenSchema);
   expect(sortedGivenSchema).toBe(sortedSchemaFromSdl);
 }
