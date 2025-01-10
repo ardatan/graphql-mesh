@@ -23187,11 +23187,11 @@ __metadata:
   linkType: hard
 
 "graphql-sse@npm:^2.5.3":
-  version: 2.5.3
-  resolution: "graphql-sse@npm:2.5.3"
+  version: 2.5.4
+  resolution: "graphql-sse@npm:2.5.4"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 10c0/b556564aaddd8dfcc4e7fd25da37cfe95dbf5e100fca287b1b15ab6874a772fda96088b66e7d02739076fb769d60279c17afe54d5ab196eeca67972247c6c73e
+  checksum: 10c0/b2635a4098b86492ecb04e7aab7efb715847ad11b785591cf90cf1f342ba78a03db0c6cf903975a7ad9e2c278dee55cd9e2e9d7edb560f334528bb8ee926ed95
   languageName: node
   linkType: hard
 
@@ -23226,11 +23226,11 @@ __metadata:
   linkType: hard
 
 "graphql-ws@npm:^5.12.1, graphql-ws@npm:^5.14.0, graphql-ws@npm:^5.16.0, graphql-ws@npm:^5.6.2":
-  version: 5.16.1
-  resolution: "graphql-ws@npm:5.16.1"
+  version: 5.16.2
+  resolution: "graphql-ws@npm:5.16.2"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 10c0/317ed1df0d1e9288c2333dbd35e7f59f086fac645d202e3d65946c175788aa616d06bf0b5b13bbd8bb7d1c4a7cbbb5a32b25de82101c2bb31a9c1887162a763e
+  checksum: 10c0/ba373df11ea8c6349c9f67335a0dfb09050a09ecc6b724b64730d242675c41d9f4b4a114b190b8711d014f8491c2bb8249e0df8308d51c4b27c921f87c4f6c58
   languageName: node
   linkType: hard
 
