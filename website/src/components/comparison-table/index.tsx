@@ -102,7 +102,7 @@ export function ComparisonTable({ children, className, ...rest }: ComparisonTabl
           Learn the differences between Mesh, Apollo Federation, Hasura and GraphQL Tools
         </p>
       </header>
-      <div className="overflow-x-scroll max-sm:p-4 max-sm:-my-4 max-sm:-mx-8">
+      <div className="overflow-x-auto nextra-scrollbar [scrollbar-width:auto] max-sm:p-4 max-sm:-my-4 max-sm:-mx-8">
         <Table className="max-sm:text-sm sm:table-fixed max-sm:rounded-none">
           <thead>
             <TableRow>
