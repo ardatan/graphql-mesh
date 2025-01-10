@@ -29,6 +29,7 @@ import { fromJSON } from '@grpc/proto-loader';
 import { DisposableStack } from '@whatwg-node/disposablestack';
 import { addExecutionLogicToScalar, addMetaDataToCall } from './utils.js';
 import './patchLongJs.js';
+import { makeDisposable } from '@graphql-mesh/utils';
 
 /**
  * SSL Credentials
@@ -213,6 +214,13 @@ export class GrpcTransportHelper extends DisposableStack {
     const transportDirective = getDirective(schema, schema, 'transport');
     if (transportDirective) {
       for (const directive of transportDirective) {
+        if (
+          directive?.subgraph != null &&
+          this.subgraphName != null &&
+          directive.subgraph !== this.subgraphName
+        ) {
+          continue;
+        }
         if (directive?.options?.roots) {
           roots = directive.options.roots;
           break;
@@ -236,6 +244,13 @@ export class GrpcTransportHelper extends DisposableStack {
         const directives = getDirectives(schema, field);
         if (directives?.length) {
           for (const directiveObj of directives) {
+            if (
+              this.subgraphName &&
+              directiveObj.args?.subgraph &&
+              directiveObj.args.subgraph !== this.subgraphName
+            ) {
+              continue;
+            }
             switch (directiveObj.name) {
               case 'grpcMethod': {
                 const { rootJsonName, objPath, methodName, responseStream } = directiveObj.args;
@@ -256,9 +271,7 @@ export class GrpcTransportHelper extends DisposableStack {
                     methodName,
                     isResponseStream: responseStream,
                   });
-                  field.resolve = function identityFn(root) {
-                    return root;
-                  };
+                  field.resolve = identityFn;
                 } else {
                   field.resolve = this.getFieldResolver({
                     client,
@@ -330,7 +343,11 @@ export default {
     );
     return mapMaybePromise(transport.getCredentials(), creds => {
       transport.processDirectives({ schema: subgraph, creds });
-      return createDefaultExecutor(subgraph);
+      return makeDisposable(createDefaultExecutor(subgraph), () => transport.dispose());
     });
   },
 } satisfies Transport<gRPCTransportOptions>;
+
+function identityFn<T>(obj: T): T {
+  return obj;
+}

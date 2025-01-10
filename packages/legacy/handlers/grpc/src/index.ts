@@ -62,7 +62,8 @@ export default class GrpcHandler implements MeshHandler {
     }
     return this.schemaWithAnnotationsProxy.getWithSet(
       () =>
-        loadGrpcSubgraph('grpc', this.config)({ cwd: this.baseDir, logger: this.logger }).schema$,
+        loadGrpcSubgraph(this.sourceName, this.config)({ cwd: this.baseDir, logger: this.logger })
+          .schema$,
     );
   }
 

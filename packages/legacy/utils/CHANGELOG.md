@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.103.11
+
+### Patch Changes
+
+- [#8226](https://github.com/ardatan/graphql-mesh/pull/8226)
+  [`4011203`](https://github.com/ardatan/graphql-mesh/commit/40112034a2e248eda94883a39a3f8682189f4288)
+  Thanks [@iamchanii](https://github.com/iamchanii)! - Handle transformed gRPC sources correctly
+
+- Updated dependencies
+  [[`3fc1f3e`](https://github.com/ardatan/graphql-mesh/commit/3fc1f3e046c02107d7fecf367756c7196fbe6ce1)]:
+  - @graphql-mesh/types@0.103.11
+
 ## 0.103.10
 
 ### Patch Changes

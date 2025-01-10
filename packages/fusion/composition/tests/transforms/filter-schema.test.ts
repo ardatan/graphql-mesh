@@ -365,13 +365,14 @@ type Query {
         transforms: [filterTransform, createPruneTransform()],
       },
     ]);
-    expect(printSchema(schema).trim()).toBe(
+    expectTheSchemaSDLToBe(
+      schema,
       /* GraphQL */ `
-type Query {
-  foo: String
-  bar: String
-}
-`.trim(),
+        type Query {
+          foo: String
+          bar: String
+        }
+      `,
     );
   });
 

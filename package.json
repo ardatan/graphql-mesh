@@ -79,8 +79,8 @@
     "@tsconfig/recommended": "^1.0.5",
     "@types/jest": "29.5.14",
     "@types/node": "22.10.5",
-    "@typescript-eslint/eslint-plugin": "8.19.0",
-    "@typescript-eslint/parser": "8.19.0",
+    "@typescript-eslint/eslint-plugin": "8.19.1",
+    "@typescript-eslint/parser": "8.19.1",
     "babel-jest": "29.7.0",
     "bob-the-bundler": "7.0.1",
     "cp-cli": "^2.0.0",
@@ -107,8 +107,8 @@
   },
   "resolutions": {
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
-    "@whatwg-node/fetch": "0.10.1",
-    "@whatwg-node/node-fetch": "0.7.5",
+    "@whatwg-node/fetch": "0.10.3",
+    "@whatwg-node/node-fetch": "0.7.7",
     "@whatwg-node/server": "0.9.65",
     "es5-ext": "0.10.64",
     "esbuild": "^0.24.0",
@@ -120,7 +120,7 @@
     "node-gyp": "^11.0.0",
     "sqlite3": "^5.1.7",
     "tslib": "2.8.1",
-    "uuid": "11.0.4"
+    "uuid": "11.0.5"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [

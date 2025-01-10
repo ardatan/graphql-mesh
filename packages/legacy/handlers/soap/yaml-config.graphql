@@ -19,4 +19,33 @@ type SoapHandler @md {
   JSON object representing the Headers to add to the runtime of the API calls only for operation during runtime
   """
   operationHeaders: JSON
+  """
+  The name of the alias to be used in the envelope for body components
+
+  default: `body`
+  """
+  bodyAlias: String
+  """
+  SOAP Headers to be added to the request
+  """
+  soapHeaders: SOAPHeaders
+}
+
+type SOAPHeaders {
+  """
+  The name of the alias to be used in the envelope
+
+  default: `header`
+  """
+  alias: String
+  """
+  The namespace of the SOAP Header
+  For example: `http://www.example.com/namespace`
+  """
+  namespace: String!
+  """
+  The content of the SOAP Header
+  For example: { "key": "value" } then the content will be `<key>value</key>`
+  """
+  headers: JSON!
 }

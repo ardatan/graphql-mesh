@@ -1,5 +1,20 @@
 # @graphql-mesh/transform-hive
 
+## 0.103.13
+
+### Patch Changes
+
+- [`cfefa10`](https://github.com/ardatan/graphql-mesh/commit/cfefa10ee967e1063576543ef14cb90be5d8b988)
+  Thanks [@renovate[bot]](https://github.com/renovate%5Bbot%5D)! - Bump Hive Console dependencies
+
+## 0.103.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3fc1f3e`](https://github.com/ardatan/graphql-mesh/commit/3fc1f3e046c02107d7fecf367756c7196fbe6ce1)]:
+  - @graphql-mesh/types@0.103.11
+
 ## 0.103.11
 
 ### Patch Changes

@@ -7,8 +7,12 @@ interface LoaderContext {
 }
 
 export function loadGrpcSubgraph(name: string, options: YamlConfig.GrpcHandler) {
-  return (ctx: LoaderContext) => ({
-    name,
-    schema$: new GrpcLoaderHelper(name, ctx.cwd, ctx.logger, options).buildSchema(),
-  });
+  return (ctx: LoaderContext) => {
+    const helper = new GrpcLoaderHelper(name, ctx.cwd, ctx.logger, options);
+    const schema$ = helper.buildSchema().finally(() => helper.dispose());
+    return {
+      name,
+      schema$,
+    };
+  };
 }

@@ -1015,6 +1015,36 @@ export interface SoapHandler {
   operationHeaders?: {
     [k: string]: any;
   };
+  /**
+   * The name of the alias to be used in the envelope for body components
+   *
+   * default: `body`
+   */
+  bodyAlias?: string;
+  soapHeaders?: SOAPHeaders;
+}
+/**
+ * SOAP Headers to be added to the request
+ */
+export interface SOAPHeaders {
+  /**
+   * The name of the alias to be used in the envelope
+   *
+   * default: `header`
+   */
+  alias?: string;
+  /**
+   * The namespace of the SOAP Header
+   * For example: `http://www.example.com/namespace`
+   */
+  namespace: string;
+  /**
+   * The content of the SOAP Header
+   * For example: { "key": "value" } then the content will be `<key>value</key>`
+   */
+  headers: {
+    [k: string]: any;
+  };
 }
 export interface SupergraphHandler {
   /**

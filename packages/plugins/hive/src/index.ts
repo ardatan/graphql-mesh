@@ -1,14 +1,12 @@
 import type { HivePluginOptions } from '@graphql-hive/core';
-import { createHive, useHive } from '@graphql-hive/yoga';
+import { useHive } from '@graphql-hive/yoga';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
-import { makeAsyncDisposable } from '@graphql-mesh/utils';
+import type { Logger, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 
 export default function useMeshHive<TContext>(
   pluginOptions: YamlConfig.HivePlugin & {
     logger?: Logger;
-    pubsub?: MeshPubSub;
   },
 ): MeshPlugin<TContext> {
   const enabled =
@@ -106,7 +104,7 @@ export default function useMeshHive<TContext>(
       }),
     };
   }
-  const hiveClient = createHive({
+  const yogaPluginOpts: HivePluginOptions = {
     enabled:
       // eslint-disable-next-line no-unneeded-ternary -- for brevity
       persistedDocuments && !token
@@ -118,24 +116,8 @@ export default function useMeshHive<TContext>(
     usage,
     reporting,
     selfHosting,
-    // Mesh already disposes the client below on Mesh's `destroy` event
-    autoDispose: false,
     experimental__persistedDocuments: persistedDocuments,
-  });
-  // TODO: Remove later after v0
-  // Pubsub.destroy will no longer
-  function onTerminate() {
-    return hiveClient
-      .dispose()
-      .catch(e => pluginOptions.logger?.error(`Hive client failed to dispose`, e));
-  }
-  const id: number = pluginOptions.pubsub?.subscribe('destroy', () =>
-    onTerminate().finally(() => pluginOptions.pubsub.unsubscribe(id)),
-  );
-
-  return makeAsyncDisposable<MeshPlugin<TContext>>(
-    // @ts-expect-error - Typings are wrong
-    useHive(hiveClient),
-    onTerminate,
-  );
+  };
+  // @ts-expect-error - Typings are incorrect
+  return useHive(yogaPluginOpts);
 }
