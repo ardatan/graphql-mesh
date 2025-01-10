@@ -67,6 +67,11 @@ export default defineConfig({
           // so I'm just leaving it as is. we'll clean it up after we migrate
           className={route === '/' ? 'light max-w-[1392px] [&_kbd]:!bg-green-200' : 'max-w-[90rem]'}
           productName={PRODUCTS.MESH.name}
+          navLinks={
+            [
+              // TODO: Saihaj mentioned Tutorials/Education
+            ]
+          }
           developerMenu={[
             {
               href: '/docs',
