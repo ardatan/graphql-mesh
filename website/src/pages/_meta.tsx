@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import { Callout } from '@theguild/components';
 import { PRODUCTS_MENU_LIST } from '@theguild/components/products';
+import { MDXLink } from '../components/mdx-components';
 
 const meta = {
   index: {
@@ -79,12 +79,7 @@ function LegacyDocsBanner() {
       to the latest GraphQL Mesh version v1.
       <br />
       <br />
-      <Link
-        href={`/v1/migration-from-v0`}
-        className="_text-primary-600 _underline _decoration-from-font [text-underline-position:from-font]"
-      >
-        Migrate to GraphQL Mesh v1
-      </Link>
+      <MDXLink href="/v1/migration-from-v0">Migrate to GraphQL Mesh v1</MDXLink>
     </Callout>
   );
 }

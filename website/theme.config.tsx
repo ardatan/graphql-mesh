@@ -15,6 +15,7 @@ import {
   useTheme,
   VersionDropdown,
 } from '@theguild/components';
+import { MDXLink } from './src/components/mdx-components';
 import favicon from './public/favicon.svg';
 
 export default defineConfig({
@@ -74,7 +75,7 @@ export default defineConfig({
           }
           developerMenu={[
             {
-              href: '/docs',
+              href: '/v1',
               icon: PaperIcon,
               children: 'Documentation',
             },
@@ -148,6 +149,9 @@ export default defineConfig({
       </>
     );
   },
+  components: {
+    a: MDXLink,
+  },
 });
 
 const landingLikePages = [
@@ -158,4 +162,4 @@ const landingLikePages = [
   '/ecosystem',
   '/partners',
 ];
-export const isLandingPage = (route: string) => landingLikePages.includes(route);
+const isLandingPage = (route: string) => landingLikePages.includes(route);
