@@ -1,6 +1,5 @@
-import { isSchema, Kind, visit, type ExecutionResult, type GraphQLSchema } from 'graphql';
-import type { HiveClient, HivePluginOptions } from '@graphql-hive/core';
-import { createHive } from '@graphql-hive/yoga';
+import { Kind, visit, type ExecutionResult, type GraphQLSchema } from 'graphql';
+import { createHive, type HiveClient, type HivePluginOptions } from '@graphql-hive/core';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
@@ -16,7 +15,7 @@ export default class HiveTransform implements MeshTransform {
   private hiveClient: HiveClient;
   private logger: MeshTransformOptions<YamlConfig.HivePlugin>['logger'];
   private schema: GraphQLSchema;
-  constructor({ config, pubsub, logger }: MeshTransformOptions<YamlConfig.HivePlugin>) {
+  constructor({ config, logger }: MeshTransformOptions<YamlConfig.HivePlugin>) {
     this.logger = logger;
     const enabled =
       // eslint-disable-next-line no-new-func
@@ -77,25 +76,7 @@ export default class HiveTransform implements MeshTransform {
       agent,
       usage,
       reporting,
-      autoDispose: false,
       selfHosting: config.selfHosting,
-    });
-    const id = pubsub.subscribe('destroy', () => {
-      try {
-        mapMaybePromise(
-          this.hiveClient.dispose(),
-          () => {
-            pubsub.unsubscribe(id);
-          },
-          e => {
-            logger.error(`Hive client failed to dispose`, e);
-            pubsub.unsubscribe(id);
-          },
-        );
-      } catch (e) {
-        logger.error(`Failed to dispose hive client`, e);
-        pubsub.unsubscribe(id);
-      }
     });
   }
 
