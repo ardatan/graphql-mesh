@@ -6,6 +6,9 @@ export default withGuildDocs({
   eslint: {
     ignoreDuringBuilds: true,
   },
+  nextraConfig: {
+    autoImportThemeStyle: false,
+  },
   redirects: () =>
     Object.entries({
       '/api': '/docs',
