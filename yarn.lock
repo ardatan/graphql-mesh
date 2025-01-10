@@ -6550,6 +6550,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-hive/core@npm:0.8.3, @graphql-hive/core@npm:^0.8.3":
+  version: 0.8.3
+  resolution: "@graphql-hive/core@npm:0.8.3"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.0.0"
+    "@whatwg-node/fetch": "npm:0.10.1"
+    async-retry: "npm:1.3.3"
+    lodash.sortby: "npm:4.7.0"
+    tiny-lru: "npm:8.0.2"
+  peerDependencies:
+    graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/66a26df49c0ade6f3623b9ecc2e24bb4aafc6748392a3abdb38c7b842425e637863554b2d2592c10ad16aa11184eaf0960ce494e8be192175717153063cf3d4d
+  languageName: node
+  linkType: hard
+
 "@graphql-hive/gateway-abort-signal-any@npm:^0.0.3":
   version: 0.0.3
   resolution: "@graphql-hive/gateway-abort-signal-any@npm:0.0.3"
@@ -6666,6 +6681,19 @@ __metadata:
     graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     graphql-yoga: ^5.9.0
   checksum: 10c0/f197aa0f0069247c393b0d298817a9f513026e73bee8a8dca2fd61e93b71c43ebf3b66c35cceea5056e89a1f7dc3ecd1f313765dab8ce16f20809211fb4af1f7
+  languageName: node
+  linkType: hard
+
+"@graphql-hive/yoga@npm:^0.39.2":
+  version: 0.39.2
+  resolution: "@graphql-hive/yoga@npm:0.39.2"
+  dependencies:
+    "@graphql-hive/core": "npm:0.8.3"
+    "@graphql-yoga/plugin-persisted-operations": "npm:^3.9.0"
+  peerDependencies:
+    graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    graphql-yoga: ^5.10.8
+  checksum: 10c0/b6baefef4d1fe2deff3f7eb0415dd22711cfdec7ba1b10d0290c285b6e4db3384c6fb6f59222d6c71e5cabfbedf0e0ab91ca6fa2e8c761899282f42a11610109
   languageName: node
   linkType: hard
 
@@ -7198,8 +7226,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
-    "@graphql-hive/core": "npm:^0.8.1"
-    "@graphql-hive/yoga": "npm:^0.39.0"
+    "@graphql-hive/core": "npm:^0.8.3"
+    "@graphql-hive/yoga": "npm:^0.39.2"
     "@graphql-mesh/cross-helpers": "npm:^0.4.9"
     "@graphql-mesh/string-interpolation": "npm:0.5.7"
     "@graphql-mesh/types": "npm:^0.103.11"
