@@ -1,5 +1,12 @@
 import { Fragment } from 'react';
-import { Anchor, cn, DecorationIsolation, Heading, MeshIcon } from '@theguild/components';
+import {
+  Anchor,
+  ArrowIcon,
+  cn,
+  DecorationIsolation,
+  Heading,
+  MeshIcon,
+} from '@theguild/components';
 
 const datasources = [
   {
@@ -83,11 +90,17 @@ export function DatasourcesListSection(props: React.HTMLAttributes<HTMLDivElemen
             )}
             <li key={datasource.name}>
               <Anchor
-                className="rounded-full block px-4 lg:px-6 lg:py-4 py-3 bg-beige-200 hover:bg-beige-300"
+                className="rounded-full block px-4 lg:px-6 lg:py-4 py-3 bg-beige-200 hover:bg-beige-300 group/item transition"
                 href={datasource.href}
                 target="_blank"
               >
                 {datasource.name}
+                <ArrowIcon
+                  viewBox="0 0 24 24"
+                  width={16}
+                  height={16}
+                  className="-rotate-45 inline align-top -mr-1 group-hover/item:opacity-100 opacity-65 group-hover/item:translate-x-px group-hover/item:-translate-y-px transition"
+                />
               </Anchor>
             </li>
           </Fragment>
