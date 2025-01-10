@@ -107,8 +107,8 @@
   },
   "resolutions": {
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
-    "@whatwg-node/fetch": "0.10.1",
-    "@whatwg-node/node-fetch": "0.7.5",
+    "@whatwg-node/fetch": "0.10.3",
+    "@whatwg-node/node-fetch": "0.7.7",
     "@whatwg-node/server": "0.9.65",
     "es5-ext": "0.10.64",
     "esbuild": "^0.24.0",
