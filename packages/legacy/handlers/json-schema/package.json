@@ -42,7 +42,7 @@
     "@graphql-mesh/utils": "^0.103.11",
     "@json-schema-tools/meta-schema": "1.7.5",
     "@omnigraph/json-schema": "0.108.11",
-    "graphql-compose": "9.0.11",
+    "graphql-compose": "9.1.0",
     "json-machete": "0.97.5",
     "tslib": "^2.4.0"
   },

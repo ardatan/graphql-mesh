@@ -7008,7 +7008,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.103.11"
     "@json-schema-tools/meta-schema": "npm:1.7.5"
     "@omnigraph/json-schema": "npm:0.108.11"
-    graphql-compose: "npm:9.0.11"
+    graphql-compose: "npm:9.1.0"
     json-machete: "npm:0.97.5"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -22922,12 +22922,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-compose@npm:9.0.11, graphql-compose@npm:^9.0.11, graphql-compose@npm:^9.0.8":
-  version: 9.0.11
-  resolution: "graphql-compose@npm:9.0.11"
+"graphql-compose@npm:9.1.0, graphql-compose@npm:^9.0.11, graphql-compose@npm:^9.0.8":
+  version: 9.1.0
+  resolution: "graphql-compose@npm:9.1.0"
   dependencies:
     graphql-type-json: "npm:0.3.2"
-  checksum: 10c0/318ec98a8b149f4e27feca1b805069a2c241393e6c1dd95957222c6cdff5d804ccdc6dd450ec040f35c8992a87e282cfb6780259e070c1cb8a8bef54de50c220
+  peerDependencies:
+    graphql: ^14.2.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/3323e08a8739cce90607ba0688a93813f62293eaed19ad39b0b017f31c44fd57b0d39e6c4b7e4d7999bbcfbd4e76ed8c92c6f242eac6104f6738ddbff67e62c6
   languageName: node
   linkType: hard
 
