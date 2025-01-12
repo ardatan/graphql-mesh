@@ -1,5 +1,16 @@
 # @graphql-mesh/json-schema
 
+## 0.108.12
+
+### Patch Changes
+
+- [#8251](https://github.com/ardatan/graphql-mesh/pull/8251)
+  [`7f223d5`](https://github.com/ardatan/graphql-mesh/commit/7f223d5ccf86fc43016350220506b7e9e50a8909)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`graphql-compose@9.1.0` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.1.0) (from
+    `9.0.11`, in `dependencies`)
+
 ## 0.108.11
 
 ### Patch Changes
