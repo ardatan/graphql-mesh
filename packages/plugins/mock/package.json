@@ -47,7 +47,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@envelop/core": "5.0.2",
+    "@envelop/core": "5.0.3",
     "@graphql-mesh/cache-localforage": "0.103.12",
     "@types/faker": "5.5.9"
   },
