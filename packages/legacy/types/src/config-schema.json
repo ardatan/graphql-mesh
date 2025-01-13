@@ -15,7 +15,15 @@
           "$ref": "#/definitions/LocalforageConfig"
         },
         "redis": {
-          "$ref": "#/definitions/RedisConfig"
+          "description": "Any of: RedisConfigSentinel, RedisConfigSingle",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RedisConfigSentinel"
+            },
+            {
+              "$ref": "#/definitions/RedisConfigSingle"
+            }
+          ]
         }
       }
     },
@@ -73,10 +81,63 @@
         }
       }
     },
-    "RedisConfig": {
+    "RedisConfigSentinel": {
       "additionalProperties": false,
       "type": "object",
-      "title": "RedisConfig",
+      "title": "RedisConfigSentinel",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "identifies a group of Redis instances composed of a master and one or more slaves"
+        },
+        "sentinelPassword": {
+          "type": "string",
+          "description": "(optional) password for Sentinel instances."
+        },
+        "sentinels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RedisSentinelConfig"
+          },
+          "additionalItems": false,
+          "description": "A list of sentinels to connect to. The list does not need to enumerate all your sentinel instances, but a few so that if one is down the client will try the next one."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["master", "slave"],
+          "description": "(optional) with a value of slave will return a random slave from the Sentinel group. (Allowed values: master, slave)"
+        },
+        "enableTLSForSentinelMode": {
+          "type": "boolean",
+          "description": "(optional) set to true if connecting to sentinel instances that are encrypted"
+        },
+        "lazyConnect": {
+          "type": "boolean",
+          "description": "Flag to indicate lazyConnect value for Redis client.\n\n@default: true"
+        }
+      },
+      "required": ["name", "sentinels"]
+    },
+    "RedisSentinelConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RedisSentinelConfig",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        },
+        "family": {
+          "type": "string"
+        }
+      }
+    },
+    "RedisConfigSingle": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RedisConfigSingle",
       "properties": {
         "host": {
           "type": "string"
@@ -94,6 +155,9 @@
           "type": "integer"
         },
         "url": {
+          "type": "string"
+        },
+        "family": {
           "type": "string"
         },
         "lazyConnect": {

@@ -1801,7 +1801,10 @@ export interface Cache {
   cfwKv?: CFWorkersKVCacheConfig;
   file?: FileCacheConfig;
   localforage?: LocalforageConfig;
-  redis?: RedisConfig;
+  /**
+   * Any of: RedisConfigSentinel, RedisConfigSingle
+   */
+  redis?: RedisConfigSentinel | RedisConfigSingle;
   [k: string]: any;
 }
 export interface CFWorkersKVCacheConfig {
@@ -1826,13 +1829,47 @@ export interface LocalforageConfig {
   storeName?: string;
   description?: string;
 }
-export interface RedisConfig {
+export interface RedisConfigSentinel {
+  /**
+   * identifies a group of Redis instances composed of a master and one or more slaves
+   */
+  name: string;
+  /**
+   * (optional) password for Sentinel instances.
+   */
+  sentinelPassword?: string;
+  /**
+   * A list of sentinels to connect to. The list does not need to enumerate all your sentinel instances, but a few so that if one is down the client will try the next one.
+   */
+  sentinels: RedisSentinelConfig[];
+  /**
+   * (optional) with a value of slave will return a random slave from the Sentinel group. (Allowed values: master, slave)
+   */
+  role?: 'master' | 'slave';
+  /**
+   * (optional) set to true if connecting to sentinel instances that are encrypted
+   */
+  enableTLSForSentinelMode?: boolean;
+  /**
+   * Flag to indicate lazyConnect value for Redis client.
+   *
+   * @default: true
+   */
+  lazyConnect?: boolean;
+}
+export interface RedisSentinelConfig {
+  host?: string;
+  port?: string;
+  family?: string;
+}
+export interface RedisConfigSingle {
   host?: string;
   port?: string;
   username?: string;
   password?: string;
   db?: number;
   url?: string;
+  family?: string;
   /**
    * Flag to indicate lazyConnect value for Redis client.
    *
