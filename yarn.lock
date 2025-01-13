@@ -4187,13 +4187,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/core@npm:5.0.2, @envelop/core@npm:^5.0.0, @envelop/core@npm:^5.0.1, @envelop/core@npm:^5.0.2":
-  version: 5.0.2
-  resolution: "@envelop/core@npm:5.0.2"
+"@envelop/core@npm:5.0.3, @envelop/core@npm:^5.0.0, @envelop/core@npm:^5.0.1, @envelop/core@npm:^5.0.2":
+  version: 5.0.3
+  resolution: "@envelop/core@npm:5.0.3"
   dependencies:
     "@envelop/types": "npm:5.0.0"
     tslib: "npm:^2.5.0"
-  checksum: 10c0/ef671cf79b40c4ca387b80012f01e54896de7c933bbdd6b905ce09058ff52554116c54da98d1a1226f67a3bc169a0b115c895c01b7daa9d73f2777a692b9f41f
+  checksum: 10c0/86f181137a4062554357151c717f068c89897364de0fd989b9abb408b03b4e8fc5946f8cdd76f2ff3ba5ab2e74140acf82210b18c32bb86875f2f18079bc19e2
   languageName: node
   linkType: hard
 
@@ -6771,7 +6771,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-http-details-extensions@workspace:packages/plugins/http-details-extensions"
   dependencies:
-    "@envelop/core": "npm:5.0.2"
+    "@envelop/core": "npm:5.0.3"
     "@graphql-mesh/types": "npm:^0.103.11"
     "@graphql-mesh/utils": "npm:^0.103.11"
     "@whatwg-node/fetch": "npm:^0.10.0"
@@ -6834,7 +6834,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-mock@workspace:packages/plugins/mock"
   dependencies:
-    "@envelop/core": "npm:5.0.2"
+    "@envelop/core": "npm:5.0.3"
     "@graphql-mesh/cache-localforage": "npm:0.103.12"
     "@graphql-mesh/cross-helpers": "npm:^0.4.9"
     "@graphql-mesh/string-interpolation": "npm:^0.5.7"
@@ -6952,7 +6952,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit"
   dependencies:
-    "@envelop/core": "npm:5.0.2"
+    "@envelop/core": "npm:5.0.3"
     "@envelop/rate-limiter": "npm:^6.2.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.9"
     "@graphql-mesh/string-interpolation": "npm:0.5.7"
