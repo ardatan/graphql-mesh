@@ -4997,7 +4997,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.14"
     "@types/node": "npm:22.10.6"
-    "@types/react": "npm:19.0.6"
+    "@types/react": "npm:19.0.7"
     "@types/react-dom": "npm:19.0.3"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.10.0"
@@ -5263,7 +5263,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.106.17"
     "@graphql-mesh/openapi": "npm:0.108.13"
     "@graphql-mesh/runtime": "npm:0.105.12"
-    "@types/react": "npm:19.0.6"
+    "@types/react": "npm:19.0.7"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.10.0"
     next: "npm:15.1.4"
@@ -5281,7 +5281,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.106.17"
     "@graphql-mesh/openapi": "npm:0.108.13"
     "@graphql-mesh/runtime": "npm:0.105.12"
-    "@types/react": "npm:19.0.6"
+    "@types/react": "npm:19.0.7"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.10.0"
     next: "npm:15.1.4"
@@ -5378,7 +5378,7 @@ __metadata:
   resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.17"
-    "@types/react": "npm:19.0.6"
+    "@types/react": "npm:19.0.7"
     "@types/react-dom": "npm:19.0.3"
     "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.10.0"
@@ -13772,12 +13772,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.0.6":
-  version: 19.0.6
-  resolution: "@types/react@npm:19.0.6"
+"@types/react@npm:19.0.7":
+  version: 19.0.7
+  resolution: "@types/react@npm:19.0.7"
   dependencies:
     csstype: "npm:^3.0.2"
-  checksum: 10c0/4ddb0ad2a92940c0323996c2efbae9712e562e1d60d1015ba5088ca8e8db32f1804516a2971e6fa7a95bda9aa9c1896c86c32739213ef12527924c021b0145bf
+  checksum: 10c0/818e546fa03a2a65ac2652fc472891ac96684211e8967bc25e1da6a8a09e2301ad972b1b038d128f8b4cbbd7691f6f57fee274db568169e9b6b01556abbb5bee
   languageName: node
   linkType: hard
 
@@ -37110,7 +37110,7 @@ __metadata:
     "@theguild/components": "npm:^7.0.0"
     "@theguild/tailwind-config": "npm:0.6.2"
     "@types/node": "npm:22.10.6"
-    "@types/react": "npm:19.0.6"
+    "@types/react": "npm:19.0.7"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:15.1.4"
     next: "npm:^15.0.0"
