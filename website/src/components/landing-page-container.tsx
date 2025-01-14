@@ -30,6 +30,9 @@ export function LandingPageContainer(props: React.HTMLAttributes<HTMLDivElement>
           .nextra-sidebar-footer {
             display: none;
           }
+          #crisp-chatbox {
+            z-index: 40 !important;
+          }
         `}
       </style>
       <div className="flex h-full flex-col text-green-1000 light mx-auto max-w-[90rem] overflow-hidden">
