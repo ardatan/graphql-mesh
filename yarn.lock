@@ -5219,7 +5219,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.103.11"
     graphql: "npm:16.10.0"
     jest: "npm:29.7.0"
-    mongoose: "npm:8.9.4"
+    mongoose: "npm:8.9.5"
   languageName: unknown
   linkType: soft
 
@@ -6659,7 +6659,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.9.4"
+    mongoose: "npm:8.9.5"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -10398,7 +10398,7 @@ __metadata:
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/utils": "npm:^10.6.0"
     "@json-schema-tools/meta-schema": "npm:1.7.5"
-    "@types/qs": "npm:6.9.17"
+    "@types/qs": "npm:6.9.18"
     "@types/to-json-schema": "npm:0.2.4"
     "@types/url-join": "npm:4.0.3"
     "@whatwg-node/fetch": "npm:^0.10.0"
@@ -13742,10 +13742,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:*, @types/qs@npm:6.9.17, @types/qs@npm:^6.2.31":
+"@types/qs@npm:*, @types/qs@npm:^6.2.31":
   version: 6.9.17
   resolution: "@types/qs@npm:6.9.17"
   checksum: 10c0/a183fa0b3464267f8f421e2d66d960815080e8aab12b9aadab60479ba84183b1cdba8f4eff3c06f76675a8e42fe6a3b1313ea76c74f2885c3e25d32499c17d1b
+  languageName: node
+  linkType: hard
+
+"@types/qs@npm:6.9.18":
+  version: 6.9.18
+  resolution: "@types/qs@npm:6.9.18"
+  checksum: 10c0/790b9091348e06dde2c8e4118b5771ab386a8c22a952139a2eb0675360a2070d0b155663bf6f75b23f258fd0a1f7ffc0ba0f059d99a719332c03c40d9e9cd63b
   languageName: node
   linkType: hard
 
@@ -28164,9 +28171,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:8.9.4":
-  version: 8.9.4
-  resolution: "mongoose@npm:8.9.4"
+"mongoose@npm:8.9.5":
+  version: 8.9.5
+  resolution: "mongoose@npm:8.9.5"
   dependencies:
     bson: "npm:^6.10.1"
     kareem: "npm:2.6.3"
@@ -28175,7 +28182,7 @@ __metadata:
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/7b7294644c8e3a80e1bdbfbd7bfcef1d427fc21e9b48dfc295cdf4bf75c358d0724545e407c38a1dcf89f63e515add90500c3927078aa767fff3fdb8323bbc5a
+  checksum: 10c0/9d4741fdd8a047ca56a6b375f54cdb6e5f7b00baddf7675369dddd28e89abcb644fd15c65794d8321adc39a8baa53a987a02c4aac619fea712660003de135a88
   languageName: node
   linkType: hard
 
