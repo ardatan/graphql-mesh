@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/core": "5.0.3",
+    "@envelop/core": "^5.0.3",
     "@graphql-mesh/types": "^0.103.11",
     "@graphql-mesh/utils": "^0.103.11",
     "@whatwg-node/fetch": "^0.10.0",
