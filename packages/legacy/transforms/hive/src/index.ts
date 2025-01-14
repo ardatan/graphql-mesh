@@ -1,9 +1,9 @@
-import { Kind, visit, type ExecutionResult, type GraphQLSchema } from 'graphql';
+import { Kind, visit, visitWithTypeInfo, type ExecutionResult, type GraphQLSchema } from 'graphql';
 import { createHive, type HiveClient, type HivePluginOptions } from '@graphql-hive/core';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import type { DelegationContext } from '@graphql-tools/delegate';
+import { getTypeInfo, type DelegationContext } from '@graphql-tools/delegate';
 import { mapMaybePromise, type ExecutionRequest } from '@graphql-tools/utils';
 
 interface TransformationContext {
@@ -88,7 +88,7 @@ export default class HiveTransform implements MeshTransform {
 
   transformRequest(
     request: ExecutionRequest,
-    delegationContext: DelegationContext,
+    _delegationContext: DelegationContext,
     transformationContext: TransformationContext,
   ) {
     try {
@@ -102,25 +102,26 @@ export default class HiveTransform implements MeshTransform {
 
   transformResult(
     result: ExecutionResult,
-    delegationContext: DelegationContext,
+    _delegationContext: DelegationContext,
     transformationContext: TransformationContext,
   ) {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises -- we dont really care about usage reporting result
     try {
+      const typeInfo = getTypeInfo(this.schema);
       transformationContext
         .collectUsageCallback?.(
           {
             schema: this.schema,
-            document: visit(transformationContext.request.document, {
-              [Kind.FIELD](node) {
-                if (!node.arguments) {
-                  return {
-                    ...node,
-                    arguments: [],
-                  };
-                }
-              },
-            }),
+            document: visit(
+              transformationContext.request.document,
+              visitWithTypeInfo(typeInfo, {
+                Argument: () => {
+                  if (!typeInfo.getArgument()) {
+                    return null;
+                  }
+                },
+              }),
+            ),
             rootValue: transformationContext.request.rootValue,
             contextValue: transformationContext.request.context,
             variableValues: transformationContext.request.variables,
