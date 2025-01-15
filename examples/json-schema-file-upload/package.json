@@ -9,12 +9,12 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.98.17",
-    "@graphql-mesh/json-schema": "0.108.11",
+    "@graphql-mesh/json-schema": "0.108.13",
     "fets": "0.8.4",
     "graphql": "16.10.0"
   },
   "devDependencies": {
-    "@types/node": "22.10.5",
+    "@types/node": "22.10.6",
     "concurrently": "9.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"

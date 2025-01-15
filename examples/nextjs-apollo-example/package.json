@@ -12,7 +12,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.98.17",
     "@graphql-mesh/config": "0.106.17",
-    "@graphql-mesh/openapi": "0.108.13",
+    "@graphql-mesh/openapi": "0.108.14",
     "@graphql-mesh/runtime": "0.105.12",
     "apollo-server-micro": "3.13.0",
     "graphql": "16.10.0",
@@ -21,7 +21,7 @@
     "react-dom": "19.0.0"
   },
   "devDependencies": {
-    "@types/react": "19.0.4",
+    "@types/react": "19.0.7",
     "typescript": "^5.4.2"
   }
 }

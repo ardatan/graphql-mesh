@@ -1,6 +1,6 @@
 {
   "name": "json-machete",
-  "version": "0.97.5",
+  "version": "0.97.6",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,12 +32,12 @@
   },
   "typings": "dist/typings/index.d.ts",
   "dependencies": {
-    "@json-schema-tools/meta-schema": "1.7.5",
-    "cross-inspect": "1.0.1",
-    "json-pointer": "0.6.2",
-    "to-json-schema": "0.2.5",
+    "@json-schema-tools/meta-schema": "^1.7.5",
+    "cross-inspect": "^1.0.1",
+    "json-pointer": "^0.6.2",
+    "to-json-schema": "^0.2.5",
     "tslib": "^2.4.0",
-    "url-join": "4.0.1"
+    "url-join": "^4.0.1"
   },
   "devDependencies": {
     "@types/json-pointer": "1.0.34"
