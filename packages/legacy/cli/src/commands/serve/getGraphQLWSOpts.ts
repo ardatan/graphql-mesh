@@ -1,5 +1,4 @@
 import type { execute, ExecutionArgs, subscribe } from 'graphql';
-import type { useServer } from 'graphql-ws/use/ws';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 
 export function getGraphQLWSOptions(getBuiltMesh: () => Promise<MeshInstance>) {
@@ -39,5 +38,5 @@ export function getGraphQLWSOptions(getBuiltMesh: () => Promise<MeshInstance>) {
       if (errors.length) return errors;
       return args;
     },
-  } as Parameters<typeof useServer>[0];
+  } as any;
 }
