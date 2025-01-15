@@ -1,6 +1,5 @@
-import { Callout } from '@theguild/components';
+import { Callout, MDXLink } from '@theguild/components';
 import { PRODUCTS_MENU_LIST } from '@theguild/components/products';
-import { MDXLink } from '../components/mdx-components';
 
 const meta = {
   index: {

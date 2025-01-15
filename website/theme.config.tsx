@@ -15,7 +15,6 @@ import {
   useTheme,
   VersionDropdown,
 } from '@theguild/components';
-import { MDXLink } from './src/components/mdx-components';
 import favicon from './public/favicon.svg';
 
 export default defineConfig({
@@ -23,6 +22,9 @@ export default defineConfig({
   description: 'GraphQL Gateway Framework and anything-to-GraphQL',
   docsRepositoryBase: 'https://github.com/ardatan/graphql-mesh/tree/master/website',
   logo: PRODUCTS.MESH.logo,
+
+  themeVersion: 'hive-rebranding',
+
   main: function Main({ children }) {
     const { resolvedTheme } = useTheme();
     const { route } = useRouter();
@@ -47,7 +49,6 @@ export default defineConfig({
       </>
     );
   },
-
   color: {
     hue: {
       dark: 67.1,
@@ -148,9 +149,6 @@ export default defineConfig({
         <link rel="icon" href={favicon.src} />
       </>
     );
-  },
-  components: {
-    a: MDXLink,
   },
 });
 
