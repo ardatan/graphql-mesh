@@ -38,7 +38,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.7",
     "@graphql-mesh/types": "^0.103.11",
     "@graphql-mesh/utils": "^0.103.11",
-    "graphql-compose": "^9.0.11",
+    "graphql-compose": "^9.1.0",
     "graphql-compose-connection": "^8.2.1",
     "graphql-compose-mongoose": "^10.0.0",
     "graphql-compose-pagination": "^8.3.0",
