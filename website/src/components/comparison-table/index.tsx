@@ -90,17 +90,21 @@ const headers = Object.keys(data[0]);
 export interface ComparisonTableProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function ComparisonTable({ children, className, ...rest }: ComparisonTableProps) {
   return (
-    <section className={cn('py-6 sm:py-12 md:px-6 xl:px-[120px]', className)} {...rest}>
-      <header className="text-center text-balance">
+    <section
+      className={cn('py-6 sm:py-12 md:px-6 xl:px-[120px] lg:py-[120px]', className)}
+      {...rest}
+    >
+      <header className="sm:text-center sm:text-balance">
         <Heading as="h3" size="md">
           Consider switching from other tools?
         </Heading>
-        <p className="mt-4 mb-8 sm:mb-16 text-green-800 text-balance">
+        <p className="mt-4 mb-8 sm:mb-16 text-green-800">
           Learn the differences between Mesh, Apollo Federation, Hasura and GraphQL Tools
         </p>
       </header>
-      <div className="overflow-x-scroll max-sm:p-4 max-sm:-my-4">
-        <Table className="max-sm:text-sm sm:table-fixed">
+      {/* this is focusable (by default) because a keyboard user will scroll through the overflowing table with arrows */}
+      <div className="hive-focus overflow-x-auto nextra-scrollbar [scrollbar-width:auto] max-sm:p-4 max-sm:-my-4 max-sm:-mx-8">
+        <Table className="max-sm:text-sm sm:table-fixed max-sm:rounded-none">
           <thead>
             <TableRow>
               {headers.map(header => (
