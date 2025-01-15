@@ -45,8 +45,8 @@
     "@omnigraph/json-schema": "0.108.11",
     "@whatwg-node/fetch": "^0.10.0",
     "change-case": "4.1.2",
-    "json-machete": "0.97.5",
-    "to-json-schema": "0.2.5",
+    "json-machete": "^0.97.5",
+    "to-json-schema": "^0.2.5",
     "tslib": "^2.4.0"
   },
   "publishConfig": {
