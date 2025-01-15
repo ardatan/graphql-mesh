@@ -78,7 +78,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
           username: parsedUsername,
           password: parsedPassword,
           db: isNaN(numDb) ? undefined : numDb,
-          family: parsedFamily === '6' ? 6 : 4,
+          family: parsedFamily === '6' ? 6 : undefined,
           ...(lazyConnect ? { lazyConnect: true } : {}),
           enableAutoPipelining: true,
           enableOfflineQueue: true,
