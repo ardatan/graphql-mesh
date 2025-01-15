@@ -1,5 +1,34 @@
 # @graphql-mesh/json-schema
 
+## 0.108.13
+
+### Patch Changes
+
+- [#8270](https://github.com/ardatan/graphql-mesh/pull/8270)
+  [`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/string-interpolation@^0.5.7` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.7)
+    (from `0.5.7`, in `dependencies`)
+  - Updated dependency
+    [`@json-schema-tools/meta-schema@^1.7.5` ↗︎](https://www.npmjs.com/package/@json-schema-tools/meta-schema/v/1.7.5)
+    (from `1.7.5`, in `dependencies`)
+  - Updated dependency
+    [`@omnigraph/json-schema@^0.108.11` ↗︎](https://www.npmjs.com/package/@omnigraph/json-schema/v/0.108.11)
+    (from `0.108.11`, in `dependencies`)
+  - Updated dependency
+    [`graphql-compose@^9.1.0` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.1.0) (from
+    `9.1.0`, in `dependencies`)
+  - Updated dependency
+    [`json-machete@^0.97.5` ↗︎](https://www.npmjs.com/package/json-machete/v/0.97.5) (from
+    `0.97.5`, in `dependencies`)
+- Updated dependencies
+  [[`2ff45ed`](https://github.com/ardatan/graphql-mesh/commit/2ff45ed06c9d0eb717b619e761a8918c97c1a434),
+  [`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab),
+  [`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab)]:
+  - @omnigraph/json-schema@0.108.12
+  - json-machete@0.97.6
+
 ## 0.108.12
 
 ### Patch Changes

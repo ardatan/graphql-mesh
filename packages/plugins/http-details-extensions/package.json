@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-http-details-extensions",
-  "version": "0.103.11",
+  "version": "0.103.12",
   "type": "module",
   "repository": {
     "type": "git",

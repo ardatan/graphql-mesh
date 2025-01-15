@@ -1,5 +1,13 @@
 # @graphql-mesh/raml
 
+## 0.108.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab)]:
+  - @omnigraph/raml@0.108.12
+
 ## 0.108.11
 
 ### Patch Changes

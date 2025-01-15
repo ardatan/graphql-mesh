@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-hive
 
+## 0.103.14
+
+### Patch Changes
+
+- [#8256](https://github.com/ardatan/graphql-mesh/pull/8256)
+  [`75d4227`](https://github.com/ardatan/graphql-mesh/commit/75d422717393848cfce42ecad7d4fdf6f7da1bb2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Remove non-existing delegated argument from the
+  document while reporting to Hive
+
 ## 0.103.13
 
 ### Patch Changes
