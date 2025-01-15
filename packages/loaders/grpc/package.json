@@ -43,7 +43,7 @@
     "@grpc/grpc-js": "^1.1.7",
     "@whatwg-node/disposablestack": "^0.0.5",
     "globby": "^11.1.0",
-    "graphql-compose": "^9.0.11",
+    "graphql-compose": "^9.1.0",
     "graphql-scalars": "^1.23.0",
     "lodash.has": "^4.5.2",
     "protobufjs": "^7.2.5"
