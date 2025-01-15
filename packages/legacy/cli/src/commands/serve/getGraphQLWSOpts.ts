@@ -1,5 +1,5 @@
 import type { execute, ExecutionArgs, subscribe } from 'graphql';
-import type { useServer } from 'graphql-ws/lib/use/ws';
+import type { useServer } from 'graphql-ws/use/ws';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 
 export function getGraphQLWSOptions(getBuiltMesh: () => Promise<MeshInstance>) {
@@ -14,15 +14,20 @@ export function getGraphQLWSOptions(getBuiltMesh: () => Promise<MeshInstance>) {
   return {
     execute: (args: EnvelopedExecutionArgs) => args.rootValue.execute(args),
     subscribe: (args: EnvelopedExecutionArgs) => args.rootValue.subscribe(args),
-    onSubscribe: async (ctx, msg) => {
+    onSubscribe: async (ctx, _id, params) => {
       const { getEnveloped } = await getBuiltMesh();
-      const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped(ctx);
+      const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped({
+        ...ctx,
+        req: ctx.extra.request,
+        socket: ctx.extra.socket,
+        params,
+      });
 
       const args: EnvelopedExecutionArgs = {
         schema,
-        operationName: msg.payload.operationName,
-        document: parse(msg.payload.query),
-        variableValues: msg.payload.variables,
+        operationName: params.operationName,
+        document: parse(params.query),
+        variableValues: params.variables,
         contextValue: await contextFactory(),
         rootValue: {
           execute,

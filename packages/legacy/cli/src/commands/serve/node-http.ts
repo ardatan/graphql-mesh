@@ -2,7 +2,7 @@
 import { promises as fsPromises } from 'fs';
 import type { Server as HttpServer } from 'http';
 import type { Server as HttpsServer } from 'https';
-import { useServer } from 'graphql-ws/lib/use/ws';
+import { useServer } from 'graphql-ws/use/ws';
 import { getGraphQLWSOptions } from './getGraphQLWSOpts.js';
 import type { ServerStartOptions, ServerStartResult } from './types.js';
 
