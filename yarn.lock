@@ -8517,8 +8517,8 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-jwt@npm:^3.4.9":
-  version: 3.4.9
-  resolution: "@graphql-yoga/plugin-jwt@npm:3.4.9"
+  version: 3.4.10
+  resolution: "@graphql-yoga/plugin-jwt@npm:3.4.10"
   dependencies:
     "@whatwg-node/server-plugin-cookies": "npm:^1.0.3"
     jsonwebtoken: "npm:^9.0.0"
@@ -8526,18 +8526,18 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.10.8
-  checksum: 10c0/25cd30d0650a7cc8f221d2de54444959262667cdcf09a454e476e338c5d0b6076b05e75139e125e4f31e03a68e0ee7d09fdfe37331e02176816d91afde59fbdc
+    graphql-yoga: ^5.10.9
+  checksum: 10c0/60a32994183203aa77e1387e1546947b37d264e58c2ceb0fa8897911abedd199e66b423405a6b06a5eda755618f76c70c5c04bc606c9bff09254d7828239c1bc
   languageName: node
   linkType: hard
 
 "@graphql-yoga/plugin-persisted-operations@npm:^3.0.0, @graphql-yoga/plugin-persisted-operations@npm:^3.10.6, @graphql-yoga/plugin-persisted-operations@npm:^3.9.0":
-  version: 3.10.8
-  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.10.8"
+  version: 3.10.9
+  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.10.9"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.10.8
-  checksum: 10c0/5a315c10a4be6d43c6c3ef9c398422b07d2b6e61a17905a6058623b44e24ed805dab4feff08c109acf3cc5638d4077491b322e7f3a5bd874bcd3a9b726a4f314
+    graphql-yoga: ^5.10.9
+  checksum: 10c0/6f8805464b153b77bf259f07b2d7c1bfc8f46d434406373ec44ed2ca3a8252d97325c0f98d2e0381229416bbd032b624b7ad845d625d3ec5738c8f9ebbcd5b9d
   languageName: node
   linkType: hard
 
@@ -8555,15 +8555,15 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-response-cache@npm:^3.1.1":
-  version: 3.12.8
-  resolution: "@graphql-yoga/plugin-response-cache@npm:3.12.8"
+  version: 3.12.9
+  resolution: "@graphql-yoga/plugin-response-cache@npm:3.12.9"
   dependencies:
     "@envelop/core": "npm:^5.0.2"
     "@envelop/response-cache": "npm:^6.1.2"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.10.8
-  checksum: 10c0/a55e235b93fdf0f07cd4e52d66f3087988569947aa06f815d83e5de93a35a3c21385484cd4df2460b29d090c7772cdf510dbee0567dcda880c7b854252452f41
+    graphql-yoga: ^5.10.9
+  checksum: 10c0/8dcc017092e916f08b92b01467fa6c1b8661f39023449f8862f85e44eb040268eb59bf706806e26d33c535aeaa0ed3d5408376d27c1c4e8a2ab8bf34bf9c4b57
   languageName: node
   linkType: hard
 
@@ -8602,7 +8602,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.12.5, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.12.2, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
+"@grpc/grpc-js@npm:1.12.5, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.11.1, @grpc/grpc-js@npm:^1.12.2, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
   version: 1.12.5
   resolution: "@grpc/grpc-js@npm:1.12.5"
   dependencies:
@@ -12987,13 +12987,13 @@ __metadata:
   linkType: hard
 
 "@types/dockerode@npm:^3.3.28":
-  version: 3.3.32
-  resolution: "@types/dockerode@npm:3.3.32"
+  version: 3.3.34
+  resolution: "@types/dockerode@npm:3.3.34"
   dependencies:
     "@types/docker-modem": "npm:*"
     "@types/node": "npm:*"
     "@types/ssh2": "npm:*"
-  checksum: 10c0/89b45da46ffd0eee36b469a6e61ddcbf101835ee2212ac26b84ee01556c5a99155469e5e345eadb677fd3dd80e7f238d3f265c15b3f99f94f4c53cad9b35023c
+  checksum: 10c0/029ee5734c4d28b779c055ef8c4ca91b393e1408c507bcff378bbbaa331211ef4a5eea0f527b20e541e14dd1ac8c042910a93b203296a667272c33df0c7f455b
   languageName: node
   linkType: hard
 
@@ -18766,26 +18766,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docker-modem@npm:^5.0.3":
-  version: 5.0.3
-  resolution: "docker-modem@npm:5.0.3"
+"docker-modem@npm:^5.0.5":
+  version: 5.0.5
+  resolution: "docker-modem@npm:5.0.5"
   dependencies:
     debug: "npm:^4.1.1"
     readable-stream: "npm:^3.5.0"
     split-ca: "npm:^1.0.1"
     ssh2: "npm:^1.15.0"
-  checksum: 10c0/86d18b1b1e92954f4f5632b82453588670c11265a60d982c57bfcd737fe0362f4aa68176edae6d3c3f92c17a59bcfe8840fc741c06baea55e2003a78d7d16045
+  checksum: 10c0/9d6ef310f9babac81bb680b3093b845070c3ed12ddcf76b74307c65086edea25dfe9517a7d4877fdd68686b2a371ae1c600e00c12056857f52344c12b108477b
   languageName: node
   linkType: hard
 
 "dockerode@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "dockerode@npm:4.0.2"
+  version: 4.0.3
+  resolution: "dockerode@npm:4.0.3"
   dependencies:
     "@balena/dockerignore": "npm:^1.0.2"
-    docker-modem: "npm:^5.0.3"
+    "@grpc/grpc-js": "npm:^1.11.1"
+    "@grpc/proto-loader": "npm:^0.7.13"
+    docker-modem: "npm:^5.0.5"
+    protobufjs: "npm:^7.3.2"
     tar-fs: "npm:~2.0.1"
-  checksum: 10c0/69ece79408aca8523726fcec9d9c168b9a987b60b7143502583cc0b731dd2abf8b69b9d7d71c20d2bddcc508ebb477d82849d0bd368df260fedd8d62de5c5937
+    uuid: "npm:^10.0.0"
+  checksum: 10c0/7315450e22756a3faeacc36c88d86d32959cbf49dfbc8c8adbbc67d41c70a1c1c82dba19c166f0439b4da134ad4e6966bfdd10b546c39e5c8d10a221742a5427
   languageName: node
   linkType: hard
 
@@ -21657,8 +21661,8 @@ __metadata:
   linkType: hard
 
 "glob@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "glob@npm:11.0.0"
+  version: 11.0.1
+  resolution: "glob@npm:11.0.1"
   dependencies:
     foreground-child: "npm:^3.1.0"
     jackspeak: "npm:^4.0.1"
@@ -21668,7 +21672,7 @@ __metadata:
     path-scurry: "npm:^2.0.0"
   bin:
     glob: dist/esm/bin.mjs
-  checksum: 10c0/419866015d8795258a8ac51de5b9d1a99c72634fc3ead93338e4da388e89773ab21681e494eac0fbc4250b003451ca3110bb4f1c9393d15d14466270094fdb4e
+  checksum: 10c0/2b32588be52e9e90f914c7d8dec32f3144b81b84054b0f70e9adfebf37cd7014570489f2a79d21f7801b9a4bd4cca94f426966bfd00fb64a5b705cfe10da3a03
   languageName: node
   linkType: hard
 
@@ -22204,11 +22208,11 @@ __metadata:
   linkType: hard
 
 "graphql-sse@npm:^2.5.3":
-  version: 2.5.3
-  resolution: "graphql-sse@npm:2.5.3"
+  version: 2.5.4
+  resolution: "graphql-sse@npm:2.5.4"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 10c0/b556564aaddd8dfcc4e7fd25da37cfe95dbf5e100fca287b1b15ab6874a772fda96088b66e7d02739076fb769d60279c17afe54d5ab196eeca67972247c6c73e
+  checksum: 10c0/b2635a4098b86492ecb04e7aab7efb715847ad11b785591cf90cf1f342ba78a03db0c6cf903975a7ad9e2c278dee55cd9e2e9d7edb560f334528bb8ee926ed95
   languageName: node
   linkType: hard
 
@@ -22243,11 +22247,11 @@ __metadata:
   linkType: hard
 
 "graphql-ws@npm:^5.12.1, graphql-ws@npm:^5.14.0, graphql-ws@npm:^5.16.0, graphql-ws@npm:^5.6.2":
-  version: 5.16.0
-  resolution: "graphql-ws@npm:5.16.0"
+  version: 5.16.2
+  resolution: "graphql-ws@npm:5.16.2"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 10c0/5e538c3460ca997a1634bd0f64236d8d7aa6ac75c58aba549b49953faf0dd2497f4fa43eedb0bc82cfff50426c7ce47682a670d2571fd7f3af5dcf00911c9e1b
+  checksum: 10c0/ba373df11ea8c6349c9f67335a0dfb09050a09ecc6b724b64730d242675c41d9f4b4a114b190b8711d014f8491c2bb8249e0df8308d51c4b27c921f87c4f6c58
   languageName: node
   linkType: hard
 
@@ -31226,7 +31230,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protobufjs@npm:^7.2.5, protobufjs@npm:^7.3.0":
+"protobufjs@npm:^7.2.5, protobufjs@npm:^7.3.0, protobufjs@npm:^7.3.2":
   version: 7.4.0
   resolution: "protobufjs@npm:7.4.0"
   dependencies:
