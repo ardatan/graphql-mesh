@@ -61,7 +61,7 @@
     "cosmiconfig": "^9.0.0",
     "dotenv": "^16.0.3",
     "graphql-import-node": "^0.0.5",
-    "graphql-ws": "^5.12.1",
+    "graphql-ws": "^6.0.0",
     "json-bigint-patch": "^0.0.8",
     "json5": "^2.2.3",
     "mkdirp": "^3.0.0",
