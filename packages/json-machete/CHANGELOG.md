@@ -1,5 +1,27 @@
 # json-machete
 
+## 0.97.6
+
+### Patch Changes
+
+- [#8270](https://github.com/ardatan/graphql-mesh/pull/8270)
+  [`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@json-schema-tools/meta-schema@^1.7.5` ↗︎](https://www.npmjs.com/package/@json-schema-tools/meta-schema/v/1.7.5)
+    (from `1.7.5`, in `dependencies`)
+  - Updated dependency
+    [`cross-inspect@^1.0.1` ↗︎](https://www.npmjs.com/package/cross-inspect/v/1.0.1) (from `1.0.1`,
+    in `dependencies`)
+  - Updated dependency
+    [`json-pointer@^0.6.2` ↗︎](https://www.npmjs.com/package/json-pointer/v/0.6.2) (from `0.6.2`,
+    in `dependencies`)
+  - Updated dependency
+    [`to-json-schema@^0.2.5` ↗︎](https://www.npmjs.com/package/to-json-schema/v/0.2.5) (from
+    `0.2.5`, in `dependencies`)
+  - Updated dependency [`url-join@^4.0.1` ↗︎](https://www.npmjs.com/package/url-join/v/4.0.1) (from
+    `4.0.1`, in `dependencies`)
+
 ## 0.97.5
 
 ### Patch Changes

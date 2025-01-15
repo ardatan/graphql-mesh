@@ -1,5 +1,16 @@
 # @graphql-mesh/mongoose
 
+## 0.103.12
+
+### Patch Changes
+
+- [#8270](https://github.com/ardatan/graphql-mesh/pull/8270)
+  [`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`graphql-compose@^9.1.0` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.1.0) (from
+    `^9.0.11`, in `dependencies`)
+
 ## 0.103.11
 
 ### Patch Changes
