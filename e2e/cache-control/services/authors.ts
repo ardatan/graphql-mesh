@@ -54,6 +54,15 @@ startStandaloneServer(
         },
       },
     }),
+    plugins: [
+      {
+        async requestDidStart({ request }) {
+          if (request.operationName) {
+            console.count(request.operationName);
+          }
+        },
+      },
+    ],
   }),
   { listen: { port } },
 );

@@ -52,7 +52,7 @@ startStandaloneServer(
       `),
       resolvers: {
         Query: {
-          authors: () => books,
+          books: () => books,
           book: (_, { id }) => books.find(book => book.id === id),
         },
         Book: {
@@ -63,6 +63,15 @@ startStandaloneServer(
         },
       },
     }),
+    plugins: [
+      {
+        async requestDidStart({ request }) {
+          if (request.operationName) {
+            console.count(request.operationName);
+          }
+        },
+      },
+    ],
   }),
   { listen: { port } },
 );

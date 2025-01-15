@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Cache Control composes with Apollo: apollo 1`] = `
+exports[`Cache Control Composition With apollo composed correctly: apollo 1`] = `
 "schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
@@ -84,7 +84,7 @@ type Query
 }"
 `;
 
-exports[`Cache Control composes with Mesh: mesh 1`] = `
+exports[`Cache Control Composition With mesh composed correctly: mesh 1`] = `
 "
 schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
@@ -196,6 +196,5 @@ enum CacheControlScope @join__type(graph: AUTHORS)  @join__type(graph: BOOKS)  {
   PUBLIC @join__enumValue(graph: AUTHORS)  @join__enumValue(graph: BOOKS) 
   PRIVATE @join__enumValue(graph: AUTHORS)  @join__enumValue(graph: BOOKS) 
 }
-    
-"
+    "
 `;

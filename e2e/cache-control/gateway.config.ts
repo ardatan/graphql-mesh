@@ -1,11 +1,19 @@
 import { defineConfig, useHttpCache } from '@graphql-hive/gateway';
 
-export const gatewayConfig = defineConfig({
+const config: ReturnType<typeof defineConfig> = {
   cache: {
     type: 'localforage',
   },
-  responseCaching: {
+};
+
+if (process.env.HTTP_CACHE) {
+  config.plugins = ctx => [useHttpCache(ctx)];
+}
+
+if (process.env.RESPONSE_CACHE) {
+  config.responseCaching = {
     session: () => null,
-  },
-  plugins: ctx => [useHttpCache(ctx)],
-});
+  };
+}
+
+export const gatewayConfig = defineConfig(config);
