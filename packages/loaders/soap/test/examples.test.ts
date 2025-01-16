@@ -1,7 +1,7 @@
 /* eslint-disable import/no-nodejs-modules */
 import { promises } from 'fs';
 import { join } from 'path';
-import { printSchema } from 'graphql';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { dummyLogger as logger } from '../../../testing/dummyLogger';
 import { SOAPLoader } from '../src/index.js';
@@ -24,7 +24,7 @@ describe('Examples', () => {
       );
       await soapLoader.loadWSDL(example1Wsdl);
       const schema = soapLoader.buildSchema();
-      expect(printSchema(schema)).toMatchSnapshot(example);
+      expect(printSchemaWithDirectives(schema)).toMatchSnapshot(example);
     });
   });
 });

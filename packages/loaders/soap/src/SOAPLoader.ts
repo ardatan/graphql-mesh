@@ -504,24 +504,38 @@ export class SOAPLoader {
             const bindingOperationObject = bindingObj.operation.find(
               operation => operation.attributes.name === operationName,
             );
-            let soapAction: string | undefined;
-            const bindingOperationObjectAttributes =
-              bindingOperationObject?.operation?.[0].attributes;
-            if (bindingOperationObjectAttributes) {
-              for (const attributeName in bindingOperationObjectAttributes) {
-                if (attributeName.toLowerCase().endsWith('action')) {
-                  soapAction = bindingOperationObjectAttributes[attributeName];
-                  break;
-                }
-              }
-            }
             const soapAnnotations: SoapAnnotations = {
               elementName,
               bindingNamespace,
-              endpoint: this.endpoint || portObj.address[0].attributes.location,
+              endpoint: this.endpoint,
               subgraph: this.subgraphName,
-              soapAction,
             };
+            if (!soapAnnotations.endpoint && portObj.address) {
+              for (const address of portObj.address) {
+                if (address.attributes) {
+                  for (const attributeName in address.attributes) {
+                    const value = address.attributes[attributeName];
+                    if (value && attributeName.toLowerCase().endsWith('location')) {
+                      soapAnnotations.endpoint = value;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+            if (bindingOperationObject?.operation) {
+              for (const bindingOperationObjectElem of bindingOperationObject.operation) {
+                if (bindingOperationObjectElem.attributes) {
+                  for (const attributeName in bindingOperationObjectElem.attributes) {
+                    const value = bindingOperationObjectElem.attributes[attributeName];
+                    if (value && attributeName.toLowerCase().endsWith('action')) {
+                      soapAnnotations.soapAction = value;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
             if (this.bodyAlias) {
               soapAnnotations.bodyAlias = this.bodyAlias;
             }
