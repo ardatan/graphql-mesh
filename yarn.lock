@@ -15963,9 +15963,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bob-the-bundler@npm:8.0.0-alpha-20250116195544-7d68b1cc984c25eab3fd7bfffa255c8f6a3acc8e":
-  version: 8.0.0-alpha-20250116195544-7d68b1cc984c25eab3fd7bfffa255c8f6a3acc8e
-  resolution: "bob-the-bundler@npm:8.0.0-alpha-20250116195544-7d68b1cc984c25eab3fd7bfffa255c8f6a3acc8e"
+"bob-the-bundler@npm:8.0.0-alpha-20250116201822-1c6814b11c3fec160bbf4b301ed13402ff664183":
+  version: 8.0.0-alpha-20250116201822-1c6814b11c3fec160bbf4b301ed13402ff664183
+  resolution: "bob-the-bundler@npm:8.0.0-alpha-20250116201822-1c6814b11c3fec160bbf4b301ed13402ff664183"
   dependencies:
     consola: "npm:^3.0.0"
     execa: "npm:^9.0.0"
@@ -15983,7 +15983,7 @@ __metadata:
     typescript: ^5.0.0
   bin:
     bob: dist/index.js
-  checksum: 10c0/e027357b53f076589bd2da2f74853698859e14d7f60d441cac9b15b83bf9cd4112153c5bf9e29ae26c051d300d35beded560d1f2efe334df7ac38f8311b14e4f
+  checksum: 10c0/5702d0eba16808c72bd39f867d263cda6e783e920c1abba1cc68128043ce03772f4fdcf19eddebbd7ea375b7ac1865adf107158f8a12367e45d432e1af511397
   languageName: node
   linkType: hard
 
@@ -22132,7 +22132,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:8.20.0"
     "@typescript-eslint/parser": "npm:8.20.0"
     babel-jest: "npm:29.7.0"
-    bob-the-bundler: "npm:8.0.0-alpha-20250116195544-7d68b1cc984c25eab3fd7bfffa255c8f6a3acc8e"
+    bob-the-bundler: "npm:8.0.0-alpha-20250116201822-1c6814b11c3fec160bbf4b301ed13402ff664183"
     cp-cli: "npm:^2.0.0"
     cross-env: "npm:^7.0.3"
     eslint: "npm:9.18.0"

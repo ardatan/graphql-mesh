@@ -82,7 +82,7 @@
     "@typescript-eslint/eslint-plugin": "8.20.0",
     "@typescript-eslint/parser": "8.20.0",
     "babel-jest": "29.7.0",
-    "bob-the-bundler": "8.0.0-alpha-20250116195544-7d68b1cc984c25eab3fd7bfffa255c8f6a3acc8e",
+    "bob-the-bundler": "8.0.0-alpha-20250116201822-1c6814b11c3fec160bbf4b301ed13402ff664183",
     "cp-cli": "^2.0.0",
     "cross-env": "^7.0.3",
     "eslint": "9.18.0",
