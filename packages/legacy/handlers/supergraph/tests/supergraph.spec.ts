@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import type { ServerOptions } from 'graphql-ws/lib/server';
-import { useServer } from 'graphql-ws/lib/use/ws';
+import { useServer } from 'graphql-ws/use/ws';
 import type { YogaServerInstance } from 'graphql-yoga';
 import { WebSocketServer } from 'ws';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
@@ -366,25 +365,23 @@ describe('Supergraph', () => {
   });
 });
 
-function getGraphQLWSOptionsForYoga(
-  yogaApp: YogaServerInstance<any, any>,
-): ServerOptions<any, any> {
+function getGraphQLWSOptionsForYoga(yogaApp: YogaServerInstance<any, any>) {
   return {
     execute: (args: any) => args.rootValue.execute(args),
     subscribe: (args: any) => args.rootValue.subscribe(args),
-    onSubscribe: async (ctx, msg) => {
+    onSubscribe: async (ctx, _id, params) => {
       const { schema, execute, subscribe, contextFactory, parse, validate } = yogaApp.getEnveloped({
         ...ctx,
         req: ctx.extra.request,
         socket: ctx.extra.socket,
-        params: msg.payload,
+        params,
       });
 
       const args = {
         schema,
-        operationName: msg.payload.operationName,
-        document: parse(msg.payload.query),
-        variableValues: msg.payload.variables,
+        operationName: params.operationName,
+        document: parse(params.query),
+        variableValues: params.variables,
         contextValue: await contextFactory(),
         rootValue: {
           execute,

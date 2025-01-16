@@ -17,7 +17,7 @@
 
     "target": "es2021", // TODO: remove once bob supports building cjs from node16 modules
     "module": "esnext", // TODO: remove once bob supports building cjs from node16 modules
-    "moduleResolution": "node", // TODO: remove once bob supports building cjs from node16 modules
+    "moduleResolution": "bundler", // TODO: remove once bob supports building cjs from node16 modules
 
     "noImplicitAny": false, // TODO: fix
     "useUnknownInCatchVariables": false, // TODO: fix
