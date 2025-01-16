@@ -18,7 +18,7 @@ import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
-import { include, registerTsconfigPaths } from './include';
+import { include, registerTsconfigPaths } from './include.js';
 
 export { findConfig } from './config.js';
 
