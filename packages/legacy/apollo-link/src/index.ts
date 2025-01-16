@@ -1,4 +1,5 @@
 import { getOperationAST } from 'graphql';
+// @ts-ignore
 import * as apolloClient from '@apollo/client';
 import type { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
 import { isAsyncIterable, mapMaybePromise } from '@graphql-tools/utils';

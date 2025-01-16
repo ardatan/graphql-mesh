@@ -7,6 +7,7 @@ import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import {
   defaultResourceIdentifierNormalizer,
   InMemoryLiveQueryStore,
+  // @ts-ignore
 } from '@n1ru4l/in-memory-live-query-store';
 import { useInvalidateByResult } from './useInvalidateByResult.js';
 
