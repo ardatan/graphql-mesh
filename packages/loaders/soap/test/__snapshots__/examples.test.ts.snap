@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Examples should generate schema for axis: axis 1`] = `
-"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -128,7 +128,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for example1: example1 1`] = `
-"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String) on FIELD_DEFINITION
 
 type Query {
   TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos: JSON = ""): TodoService_GetTodosResponse
@@ -264,7 +264,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for example2: example2 1`] = `
-"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String) on FIELD_DEFINITION
 
 type Query {
   AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetServiceHealth(GetServiceHealth: JSON = ""): tns_GetServiceHealthResponse
@@ -498,7 +498,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for greeting: greeting 1`] = `
-"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -543,7 +543,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for tempconvert: tempconvert 1`] = `
-"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders) on FIELD_DEFINITION
+"directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
