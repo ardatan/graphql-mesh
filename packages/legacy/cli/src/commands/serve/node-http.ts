@@ -2,7 +2,6 @@
 import { promises as fsPromises } from 'fs';
 import type { Server as HttpServer } from 'http';
 import type { Server as HttpsServer } from 'https';
-import { useServer } from 'graphql-ws/use/ws';
 import { getGraphQLWSOptions } from './getGraphQLWSOpts.js';
 import type { ServerStartOptions, ServerStartResult } from './types.js';
 
@@ -37,6 +36,9 @@ export async function startNodeHttpServer({
     path: graphqlPath,
     server,
   });
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore - GraphQL WS has some issues with Bob
+  const { useServer } = await import('graphql-ws/use/ws');
   useServer(getGraphQLWSOptions(getBuiltMesh), wsServer);
   return new Promise((resolve, reject) => {
     server.once('error', err => reject(err));
