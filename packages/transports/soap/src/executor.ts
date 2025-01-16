@@ -95,6 +95,7 @@ interface SoapAnnotations {
     namespace: string;
     headers: Record<string, string>;
   };
+  soapAction?: string;
 }
 
 interface CreateRootValueMethodOpts {
@@ -191,7 +192,8 @@ function createRootValueMethod({
         method: 'POST',
         body: requestXML,
         headers: {
-          'Content-Type': 'application/soap+xml; charset=utf-8',
+          'Content-Type': 'text/xml; charset=utf-8',
+          SOAPAction: soapAnnotations.soapAction,
           ...operationHeadersFactory({
             args,
             context,

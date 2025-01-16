@@ -6,6 +6,7 @@ export interface SoapAnnotations {
   bindingNamespace: string;
   endpoint: string;
   bodyAlias?: string;
+  soapAction?: string;
   soapHeaders?: {
     alias?: string;
     namespace: string;

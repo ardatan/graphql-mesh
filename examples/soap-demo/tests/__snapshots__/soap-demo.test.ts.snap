@@ -1,0 +1,250 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SOAP Demo should generate correct schema: soap-demo-schema 1`] = `
+"schema @transport(kind: "soap", subgraph: "SOAPDemo") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @soap(bindingNamespace: String, bodyAlias: String, elementName: String, endpoint: String, soapAction: String, soapHeaders: SOAPHeaders, subgraph: String) on FIELD_DEFINITION
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+type ByNameDataSet_ByName {
+  DOB: Date
+  ID: BigInt
+  Name: String
+  SSN: String
+}
+
+"""
+A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Mutation {
+  s0_SOAPDemo_SOAPDemoSoap_AddInteger(AddInteger: s0_AddInteger_Input = {}): s0_AddIntegerResponse @soap(elementName: "AddIntegerResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "SOAPDemo", soapAction: "http://tempuri.org/SOAP.Demo.AddInteger")
+  s0_SOAPDemo_SOAPDemoSoap_DivideInteger(DivideInteger: s0_DivideInteger_Input = {}): s0_DivideIntegerResponse @soap(elementName: "DivideIntegerResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "SOAPDemo", soapAction: "http://tempuri.org/SOAP.Demo.DivideInteger")
+  s0_SOAPDemo_SOAPDemoSoap_LookupCity(LookupCity: s0_LookupCity_Input = {}): s0_LookupCityResponse @soap(elementName: "LookupCityResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "SOAPDemo", soapAction: "http://tempuri.org/SOAP.Demo.LookupCity")
+  s0_SOAPDemo_SOAPDemoSoap_Mission(Mission: JSON = ""): s0_MissionResponse @soap(elementName: "MissionResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "SOAPDemo", soapAction: "http://tempuri.org/SOAP.Demo.Mission")
+}
+
+scalar ObjMap
+
+type Query {
+  s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: s0_FindPerson_Input = {}): s0_FindPersonResponse @soap(elementName: "FindPersonResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "SOAPDemo", soapAction: "http://tempuri.org/SOAP.Demo.FindPerson")
+  s0_SOAPDemo_SOAPDemoSoap_GetByName(GetByName: s0_GetByName_Input = {}): s0_GetByNameResponse @soap(elementName: "GetByNameResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "SOAPDemo", soapAction: "http://tempuri.org/SOAP.Demo.GetByName")
+  s0_SOAPDemo_SOAPDemoSoap_GetDataSetByName(GetDataSetByName: s0_GetDataSetByName_Input = {}): s0_GetDataSetByNameResponse @soap(elementName: "GetDataSetByNameResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "SOAPDemo", soapAction: "http://tempuri.org/SOAP.Demo.GetDataSetByName")
+  s0_SOAPDemo_SOAPDemoSoap_GetListByName(GetListByName: s0_GetListByName_Input = {}): s0_GetListByNameResponse @soap(elementName: "GetListByNameResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "SOAPDemo", soapAction: "http://tempuri.org/SOAP.Demo.GetListByName")
+  s0_SOAPDemo_SOAPDemoSoap_QueryByName(QueryByName: s0_QueryByName_Input = {}): s0_QueryByNameResponse @soap(elementName: "QueryByNameResponse", bindingNamespace: "http://tempuri.org", endpoint: "https://www.crcind.com:443/csp/samples/SOAP.Demo.cls", subgraph: "SOAPDemo", soapAction: "http://tempuri.org/SOAP.Demo.QueryByName")
+}
+
+type QueryByName_DataSet_QueryByName {
+  DOB: Date
+  ID: BigInt
+  Name: String
+  SSN: String
+}
+
+input SOAPHeaders {
+  alias: String
+  headers: ObjMap
+  namespace: String
+}
+
+type s0_AddIntegerResponse {
+  AddIntegerResult: BigInt
+}
+
+input s0_AddInteger_Input {
+  Arg1: BigInt
+  Arg2: BigInt
+}
+
+type s0_Address {
+  City: String
+  State: String
+  Street: String
+  Zip: String
+}
+
+type s0_ArrayOfFavoriteColorsItemString {
+  FavoriteColorsItem: [String]
+}
+
+type s0_ArrayOfPersonIdentificationPersonIdentification {
+  PersonIdentification: [s0_PersonIdentification]
+}
+
+type s0_ByNameDataSet {
+  ByName: [ByNameDataSet_ByName]
+}
+
+type s0_DivideIntegerResponse {
+  DivideIntegerResult: BigInt
+}
+
+input s0_DivideInteger_Input {
+  Arg1: BigInt
+  Arg2: BigInt
+}
+
+type s0_FindPersonResponse {
+  FindPersonResult: s0_Person
+}
+
+input s0_FindPerson_Input {
+  id: String
+}
+
+type s0_GetByNameResponse {
+  GetByNameResult: JSON
+}
+
+input s0_GetByName_Input {
+  name: String
+}
+
+type s0_GetDataSetByNameResponse {
+  GetDataSetByNameResult: s0_ByNameDataSet
+}
+
+input s0_GetDataSetByName_Input {
+  name: String
+}
+
+type s0_GetListByNameResponse {
+  GetListByNameResult: s0_ArrayOfPersonIdentificationPersonIdentification
+}
+
+input s0_GetListByName_Input {
+  name: String
+}
+
+type s0_LookupCityResponse {
+  LookupCityResult: s0_Address
+}
+
+input s0_LookupCity_Input {
+  zip: String
+}
+
+type s0_MissionResponse {
+  MissionResult: String
+}
+
+type s0_Person {
+  Age: BigInt
+  DOB: Date
+  FavoriteColors: s0_ArrayOfFavoriteColorsItemString
+  Home: s0_Address
+  Name: String
+  Office: s0_Address
+  SSN: String
+  Spouse: s0_Person
+}
+
+type s0_PersonIdentification {
+  DOB: Date
+  ID: String
+  Name: String
+  SSN: String
+}
+
+type s0_QueryByNameResponse {
+  QueryByNameResult: s0_QueryByName_DataSet
+}
+
+type s0_QueryByName_DataSet {
+  QueryByName: [QueryByName_DataSet_QueryByName]
+}
+
+input s0_QueryByName_Input {
+  name: String
+}"
+`;
+
+exports[`SOAP Demo should give correct response for example queries: AddInteger.graphql-soap-demo-result 1`] = `
+{
+  "data": {
+    "s0_SOAPDemo_SOAPDemoSoap_AddInteger": {
+      "AddIntegerResult": 5,
+    },
+  },
+}
+`;
+
+exports[`SOAP Demo should give correct response for example queries: DivideInteger.graphql-soap-demo-result 1`] = `
+{
+  "data": {
+    "s0_SOAPDemo_SOAPDemoSoap_DivideInteger": {
+      "DivideIntegerResult": 5,
+    },
+  },
+}
+`;
+
+exports[`SOAP Demo should give correct response for example queries: FindPerson.graphql-soap-demo-result 1`] = `
+{
+  "data": {
+    "s0_SOAPDemo_SOAPDemoSoap_FindPerson": {
+      "FindPersonResult": {
+        "Age": 24,
+        "DOB": "2000-03-20",
+        "FavoriteColors": {
+          "FavoriteColorsItem": [
+            "Red",
+          ],
+        },
+        "Home": {
+          "City": "Pueblo",
+          "State": "AK",
+          "Street": "6977 First Street",
+          "Zip": "63163",
+        },
+        "Name": "Newton,Dave R.",
+        "Office": {
+          "City": "Washington",
+          "State": "MN",
+          "Street": "9984 Second Blvd",
+          "Zip": "42829",
+        },
+        "SSN": "384-10-6538",
+      },
+    },
+  },
+}
+`;
+
+exports[`SOAP Demo should give correct response for example queries: GetListByName.graphql-soap-demo-result 1`] = `
+{
+  "data": {
+    "s0_SOAPDemo_SOAPDemoSoap_GetListByName": {
+      "GetListByNameResult": {
+        "PersonIdentification": [
+          {
+            "DOB": "2000-03-20",
+            "ID": "1",
+            "Name": "Newton,Dave R.",
+            "SSN": "384-10-6538",
+          },
+          {
+            "DOB": "2004-11-17",
+            "ID": "29",
+            "Name": "Newton,Mario B.",
+            "SSN": "538-68-5047",
+          },
+        ],
+      },
+    },
+  },
+}
+`;
