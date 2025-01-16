@@ -28,8 +28,6 @@
 
     "paths": {
       "@graphql-mesh/migrate-config-cli": ["packages/legacy/migrate-config-cli/src/index.ts"],
-      "@graphql-mesh/include": ["packages/include/src/index.ts"],
-      "@graphql-mesh/include/*": ["packages/include/src/*"],
       "@graphql-mesh/cli": ["packages/legacy/cli/src/index.ts"],
       "@graphql-mesh/runtime": ["packages/legacy/runtime/src/index.ts"],
       "@graphql-mesh/config": ["packages/legacy/config/src/index.ts"],

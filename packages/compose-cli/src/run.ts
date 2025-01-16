@@ -58,7 +58,7 @@ export async function run({
   version,
 }: RunOptions): Promise<void | never> {
   module.register(
-    '@graphql-mesh/include/hooks',
+    '@graphql-hive/importer/hooks',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore bob will complain when bundling for cjs
     import.meta.url,
