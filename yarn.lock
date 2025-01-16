@@ -3339,6 +3339,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cloudflare/unenv-preset@npm:1.x":
+  version: 1.0.0
+  resolution: "@cloudflare/unenv-preset@npm:1.0.0"
+  peerDependencies:
+    unenv: "*"
+    workerd: ^1.20241230.0
+  peerDependenciesMeta:
+    workerd:
+      optional: true
+  checksum: 10c0/766e6b25948b7aecd960d935ba59114ecbef19cb55e05a06044a0bcf4b916fac9419be168e24ae3b14d1cbf75d146b0fdc98fe7f5458a48b9fbac212485b4f03
+  languageName: node
+  linkType: hard
+
 "@cloudflare/workerd-darwin-64@npm:1.20241230.0":
   version: 1.20241230.0
   resolution: "@cloudflare/workerd-darwin-64@npm:1.20241230.0"
@@ -4590,7 +4603,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.103.11"
     "@omnigraph/json-schema": "workspace:^"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.102.0"
+    wrangler: "npm:3.103.0"
   languageName: unknown
   linkType: soft
 
@@ -4604,7 +4617,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.103.11"
     "@graphql-mesh/plugin-response-cache": "npm:^0.103.11"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.102.0"
+    wrangler: "npm:3.103.0"
   languageName: unknown
   linkType: soft
 
@@ -4742,7 +4755,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.108.13"
     "@graphql-mesh/plugin-response-cache": "npm:0.103.11"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.102.0"
+    wrangler: "npm:3.103.0"
   languageName: unknown
   linkType: soft
 
@@ -5430,7 +5443,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.103.11"
     "@graphql-mesh/plugin-response-cache": "npm:0.103.11"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.102.0"
+    wrangler: "npm:3.103.0"
   languageName: unknown
   linkType: soft
 
@@ -22254,17 +22267,17 @@ __metadata:
   linkType: hard
 
 "graphql-ws@npm:^5.14.0, graphql-ws@npm:^5.16.0, graphql-ws@npm:^5.6.2":
-  version: 5.16.0
-  resolution: "graphql-ws@npm:5.16.0"
+  version: 5.16.2
+  resolution: "graphql-ws@npm:5.16.2"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 10c0/5e538c3460ca997a1634bd0f64236d8d7aa6ac75c58aba549b49953faf0dd2497f4fa43eedb0bc82cfff50426c7ce47682a670d2571fd7f3af5dcf00911c9e1b
+  checksum: 10c0/ba373df11ea8c6349c9f67335a0dfb09050a09ecc6b724b64730d242675c41d9f4b4a114b190b8711d014f8491c2bb8249e0df8308d51c4b27c921f87c4f6c58
   languageName: node
   linkType: hard
 
 "graphql-ws@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "graphql-ws@npm:6.0.0"
+  version: 6.0.1
+  resolution: "graphql-ws@npm:6.0.1"
   peerDependencies:
     "@fastify/websocket": ^10 || ^11
     graphql: ^15.10.1 || ^16
@@ -22277,7 +22290,7 @@ __metadata:
       optional: true
     ws:
       optional: true
-  checksum: 10c0/58900a9dcf263f902e17e1ca457d9da2bfab77f206751958dfaa704c8405dcf99a1156700700a8d5c7c1eb7d6e311c57afa677ce8b53de8ce10de6ec29b557f9
+  checksum: 10c0/b7be6516532aa0a4b5604a53b8e1f3392b7335f77ebedb20dfa15371124742a4a5cf9347e06f7c220647e46c8ea330a222476b2b1425560de5bc387ab9eced59
   languageName: node
   linkType: hard
 
@@ -35946,16 +35959,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unenv@npm:unenv-nightly@2.0.0-20241218-183400-5d6aec3":
-  version: 2.0.0-20241218-183400-5d6aec3
-  resolution: "unenv-nightly@npm:2.0.0-20241218-183400-5d6aec3"
+"unenv@npm:unenv-nightly@2.0.0-20250109-100802-88ad671":
+  version: 2.0.0-20250109-100802-88ad671
+  resolution: "unenv-nightly@npm:2.0.0-20250109-100802-88ad671"
   dependencies:
     defu: "npm:^6.1.4"
     mlly: "npm:^1.7.3"
     ohash: "npm:^1.1.4"
     pathe: "npm:^1.1.2"
     ufo: "npm:^1.5.4"
-  checksum: 10c0/139b3c55ffc921b8e8c6055339d17a71b9ef1c4b8411a19d4882dcb78d39791a9a0ec969792230aca339d57551dd6ba6a3cec1aa553800b51b63aeea452aaad5
+  checksum: 10c0/5be53a823cc27902fc774176d1899013c9748b6c715f8ba3bc78f7cea122700c06e1861d1face2735aaf8f3b9e66f983254e3d3da007333ca910036a638ac967
   languageName: node
   linkType: hard
 
@@ -37492,11 +37505,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.102.0":
-  version: 3.102.0
-  resolution: "wrangler@npm:3.102.0"
+"wrangler@npm:3.103.0":
+  version: 3.103.0
+  resolution: "wrangler@npm:3.103.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
+    "@cloudflare/unenv-preset": "npm:1.x"
     "@esbuild-plugins/node-globals-polyfill": "npm:0.2.3"
     "@esbuild-plugins/node-modules-polyfill": "npm:0.2.2"
     blake3-wasm: "npm:2.1.5"
@@ -37504,7 +37518,7 @@ __metadata:
     fsevents: "npm:~2.3.2"
     miniflare: "npm:3.20241230.2"
     path-to-regexp: "npm:6.3.0"
-    unenv: "npm:unenv-nightly@2.0.0-20241218-183400-5d6aec3"
+    unenv: "npm:unenv-nightly@2.0.0-20250109-100802-88ad671"
     workerd: "npm:1.20241230.0"
   peerDependencies:
     "@cloudflare/workers-types": ^4.20241230.0
@@ -37517,7 +37531,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/4ab327ad8e7f8657728324352706b76df46cbef9dad5a251c30a10cfeb504ffb8e3285947f60f596b000cbb9924e1728033531dfe91b7abe17c9da5412b5bb4c
+  checksum: 10c0/8476f29c056e812f3d9b861013d9775bbd15f62e02e0839bc97a996d983a6917e0d39c9b3b081051f3df5015772f65c13842f7056be68e622fdbc2cccf9b81d8
   languageName: node
   linkType: hard
 
