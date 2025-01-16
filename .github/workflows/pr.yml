@@ -4,6 +4,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   YARN_ENABLE_HARDENED_MODE: 0
