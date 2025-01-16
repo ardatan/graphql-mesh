@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type EventEmitter from 'node:events';
-import type { DirectiveArgsMap } from './directives';
+import type { DirectiveArgsMap } from './directives.js';
 
 export interface EntityTypeExtensions {
   directives: DirectiveArgsMap;

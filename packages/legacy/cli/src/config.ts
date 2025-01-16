@@ -1,4 +1,4 @@
-import Ajv from 'ajv';
+import { Ajv } from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import type { ConfigProcessOptions } from '@graphql-mesh/config';
 import { processConfig } from '@graphql-mesh/config';

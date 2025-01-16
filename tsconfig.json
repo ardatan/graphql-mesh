@@ -15,16 +15,14 @@
     "baseUrl": ".",
     "allowJs": true,
 
-    "target": "es2021", // TODO: remove once bob supports building cjs from node16 modules
-    "module": "esnext", // TODO: remove once bob supports building cjs from node16 modules
-    "moduleResolution": "bundler", // TODO: remove once bob supports building cjs from node16 modules
+    "target": "es2021",
+    "module": "es2022",
+    "moduleResolution": "bundler",
 
     "noImplicitAny": false, // TODO: fix
     "useUnknownInCatchVariables": false, // TODO: fix
     "strictNullChecks": false, // TODO: fix
     "strictPropertyInitialization": false, // TODO: fix (goes together with strictNullChecks)
-
-    "verbatimModuleSyntax": true,
 
     "paths": {
       "@graphql-mesh/migrate-config-cli": ["packages/legacy/migrate-config-cli/src/index.ts"],
