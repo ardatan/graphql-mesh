@@ -106,6 +106,7 @@
     "typescript": "^5.4.2"
   },
   "resolutions": {
+    "@apollo/client": "patch:@apollo/client@npm%3A3.12.6#~/.yarn/patches/@apollo-client-npm-3.12.6-4588fed38f.patch",
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
     "@n1ru4l/in-memory-live-query-store@npm:^0.10.0": "patch:@n1ru4l/in-memory-live-query-store@npm%3A0.10.0#~/.yarn/patches/@n1ru4l-in-memory-live-query-store-npm-0.10.0-47d8485a71.patch",
     "@whatwg-node/fetch": "0.10.3",
