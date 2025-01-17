@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index c250aea90686de78a29cc3363964b054da6eeb34..12e0acdce85a0959f21d278bc418e49b55615cbc 100644
+--- a/package.json
++++ b/package.json
+@@ -24,7 +24,6 @@
+     "import": "./dist/tiny-lru.js",
+     "require": "./dist/tiny-lru.cjs"
+   },
+-  "type": "module",
+   "types": "lru.d.ts",
+   "engines": {
+     "node": ">=12"

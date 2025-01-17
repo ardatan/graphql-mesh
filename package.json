@@ -120,6 +120,7 @@
     "jest-leak-detector": "patch:jest-leak-detector@npm%3A29.7.0#~/.yarn/patches/jest-leak-detector-npm-29.7.0-3ae882ba75.patch",
     "node-gyp": "^11.0.0",
     "sqlite3": "^5.1.7",
+    "tiny-lru": "patch:tiny-lru@npm%3A11.2.11#~/.yarn/patches/tiny-lru-npm-11.2.11-8fcecc1d9e.patch",
     "tslib": "2.8.1",
     "uuid": "11.0.5"
   },

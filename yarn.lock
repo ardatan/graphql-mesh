@@ -35254,17 +35254,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tiny-lru@npm:8.0.2":
-  version: 8.0.2
-  resolution: "tiny-lru@npm:8.0.2"
-  checksum: 10c0/32dc73db748ae50bf43498f81150ed23922c924d7a3665ea240c7041abbbd5e8667c05328fd520ca923b4d10b89e69a4ba671365eaac221c6f7eb8b898530506
-  languageName: node
-  linkType: hard
-
-"tiny-lru@npm:^11.0.0":
+"tiny-lru@npm:11.2.11":
   version: 11.2.11
   resolution: "tiny-lru@npm:11.2.11"
   checksum: 10c0/6fe45e477e198f204752cb83bb02c963e9cdcabfb0083a723b498e6a7661143641be36a3d7170df6e4a0b5d5ac6a06533b8cccc98cbdfddacec826016a5dab97
+  languageName: node
+  linkType: hard
+
+"tiny-lru@patch:tiny-lru@npm%3A11.2.11#~/.yarn/patches/tiny-lru-npm-11.2.11-8fcecc1d9e.patch":
+  version: 11.2.11
+  resolution: "tiny-lru@patch:tiny-lru@npm%3A11.2.11#~/.yarn/patches/tiny-lru-npm-11.2.11-8fcecc1d9e.patch::version=11.2.11&hash=2042d6"
+  checksum: 10c0/98b9092217b76f0aaa2b4136ccc02723a094a675ccc834f8717f74b9f15e5c890f70dc58a98289b268938686c4c1a43b3d77d4bbfdaf5ad2eeb47258447c2789
   languageName: node
   linkType: hard
 
