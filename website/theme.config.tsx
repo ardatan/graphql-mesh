@@ -16,6 +16,7 @@ import {
   VersionDropdown,
 } from '@theguild/components';
 import favicon from './public/favicon.svg';
+import { addBasePath } from 'next/dist/client/add-base-path'
 
 export default defineConfig({
   websiteName: 'GraphQL Mesh',
@@ -102,8 +103,8 @@ export default defineConfig({
             chevronPosition="right"
             currentVersion={route.includes('/docs') ? 'v0' : 'v1'}
             versions={[
-              { label: 'Mesh v1 docs', href: '/v1', value: 'v1' },
-              { label: 'Mesh v0 docs', href: '/docs', value: 'v0' },
+              { label: 'Mesh v1 docs', href: addBasePath('/v1'), value: 'v1' },
+              { label: 'Mesh v0 docs', href: addBasePath('/docs'), value: 'v0' },
             ]}
           />
         </HiveNavigation>
