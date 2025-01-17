@@ -86,7 +86,7 @@ export default defineConfig({
               children: 'Blog',
             },
             {
-              href: 'https://github.com/dotansimha/graphql-code-generator',
+              href: 'https://github.com/ardatan/graphql-mesh',
               icon: GitHubIcon,
               children: 'GitHub',
             },
