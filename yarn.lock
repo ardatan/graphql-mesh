@@ -6717,7 +6717,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:0.5.7"
     "@graphql-mesh/types": "npm:^0.103.11"
     "@graphql-mesh/utils": "npm:^0.103.11"
-    "@n1ru4l/in-memory-live-query-store": "npm:0.10.0"
+    "@n1ru4l/in-memory-live-query-store": "npm:^0.10.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -9808,7 +9808,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@n1ru4l/in-memory-live-query-store@npm:0.10.0, @n1ru4l/in-memory-live-query-store@npm:^0.10.0":
+"@n1ru4l/in-memory-live-query-store@npm:0.10.0":
   version: 0.10.0
   resolution: "@n1ru4l/in-memory-live-query-store@npm:0.10.0"
   dependencies:
@@ -9818,6 +9818,19 @@ __metadata:
   peerDependencies:
     graphql: ^15.4.0 || ^16.0.0
   checksum: 10c0/c2b4c1c09fa68ac7bd776166a86d361ac6e2659028391e7c3cca25943e966d1d035271141e28d0a519d50409cc07728df163d01ee26cacf403f59a6dcf2d4243
+  languageName: node
+  linkType: hard
+
+"@n1ru4l/in-memory-live-query-store@patch:@n1ru4l/in-memory-live-query-store@npm%3A0.10.0#~/.yarn/patches/@n1ru4l-in-memory-live-query-store-npm-0.10.0-47d8485a71.patch":
+  version: 0.10.0
+  resolution: "@n1ru4l/in-memory-live-query-store@patch:@n1ru4l/in-memory-live-query-store@npm%3A0.10.0#~/.yarn/patches/@n1ru4l-in-memory-live-query-store-npm-0.10.0-47d8485a71.patch::version=0.10.0&hash=9f57af"
+  dependencies:
+    "@graphql-tools/utils": "npm:^8.5.2"
+    "@n1ru4l/graphql-live-query": "npm:0.10.0"
+    "@repeaterjs/repeater": "npm:^3.0.4"
+  peerDependencies:
+    graphql: ^15.4.0 || ^16.0.0
+  checksum: 10c0/58da6963a37070430f56059be818d245e37b9060a71c1f00fd75e7e8aa3a88321c5e36736496a0ddd6a94689c0127cd42d34cba95bdeb059090515238dec2491
   languageName: node
   linkType: hard
 

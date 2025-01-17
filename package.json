@@ -107,6 +107,7 @@
   },
   "resolutions": {
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
+    "@n1ru4l/in-memory-live-query-store@npm:^0.10.0": "patch:@n1ru4l/in-memory-live-query-store@npm%3A0.10.0#~/.yarn/patches/@n1ru4l-in-memory-live-query-store-npm-0.10.0-47d8485a71.patch",
     "@whatwg-node/fetch": "0.10.3",
     "@whatwg-node/node-fetch": "0.7.7",
     "@whatwg-node/server": "0.9.65",

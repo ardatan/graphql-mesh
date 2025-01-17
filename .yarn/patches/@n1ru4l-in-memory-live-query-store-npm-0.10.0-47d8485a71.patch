@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 9c06e612f5b1c9b0b822927dc403c78d19ed9828..cc3f2eff8175005570c9439e093d3b94ba8ada3c 100644
+--- a/package.json
++++ b/package.json
+@@ -29,7 +29,6 @@
+   "typescript": {
+     "definition": "typings/index.d.ts"
+   },
+-  "type": "module",
+   "exports": {
+     ".": {
+       "require": {
