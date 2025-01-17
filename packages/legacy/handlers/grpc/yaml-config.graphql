@@ -37,7 +37,10 @@ type GrpcHandler @md {
   prefix to collect Query method default: list, get
   """
   prefixQueryMethod: [String]
-
+  """
+  Allows to explicitly override the default operation (Query or Mutation) for any gRPC operation
+  """
+  selectQueryOrMutationField: [SelectQueryOrMutationFieldConfig]
   schemaHeaders: JSON
 }
 

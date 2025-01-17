@@ -46,6 +46,7 @@
     "graphql-compose": "^9.1.0",
     "graphql-scalars": "^1.23.0",
     "lodash.has": "^4.5.2",
+    "micromatch": "^4.0.8",
     "protobufjs": "^7.2.5"
   },
   "publishConfig": {

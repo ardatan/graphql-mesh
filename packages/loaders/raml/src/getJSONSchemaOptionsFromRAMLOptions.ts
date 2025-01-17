@@ -14,7 +14,7 @@ import type {
   JSONSchemaOperationResponseConfig,
 } from '@omnigraph/json-schema';
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
-import type { RAMLLoaderOptions, RAMLLoaderSelectQueryOrMutationFieldConfig } from './types.js';
+import type { RAMLLoaderOptions, SelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
 
 function resolveTraitsByIs(base: { is: () => api10.TraitRef[] }) {
@@ -48,7 +48,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
   endpoint: string;
   fetch?: MeshFetch;
 }> {
-  const fieldTypeMap: Record<string, RAMLLoaderSelectQueryOrMutationFieldConfig['fieldName']> = {};
+  const fieldTypeMap: Record<string, SelectQueryOrMutationFieldConfig['fieldName']> = {};
   for (const { fieldName, type } of selectQueryOrMutationField) {
     fieldTypeMap[fieldName] = type;
   }

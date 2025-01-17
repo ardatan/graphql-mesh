@@ -10329,6 +10329,7 @@ __metadata:
     graphql-compose: "npm:^9.1.0"
     graphql-scalars: "npm:^1.23.0"
     lodash.has: "npm:^4.5.2"
+    micromatch: "npm:^4.0.8"
     protobufjs: "npm:^7.2.5"
   peerDependencies:
     graphql: "*"

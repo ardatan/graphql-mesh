@@ -68,8 +68,8 @@ describe('gRPC Handler', () => {
     });
   });
 
-  describe('Load proto with prefixQueryMethod', () => {
-    test(`should load the retrieve-movie.proto`, async () => {
+  describe('Load proto with prefixQueryMethod and selectQueryOrMutationField', () => {
+    test(`should load the retrieve-movie.proto with prefixQueryMethod`, async () => {
       const file = 'retrieve-movie.proto';
       const config: YamlConfig.GrpcHandler = {
         endpoint: 'localhost',
@@ -82,6 +82,40 @@ describe('gRPC Handler', () => {
       using cache = new InMemoryLRUCache();
       const handler = new GrpcHandler({
         name: 'prefixQueryMethod',
+        config,
+        cache,
+        pubsub,
+        store,
+        logger,
+        importFn: defaultImportFn,
+        baseDir: __dirname,
+      });
+
+      const { schema } = await handler.getMeshSource();
+
+      expect(schema).toBeInstanceOf(GraphQLSchema);
+      expect(validateSchema(schema)).toHaveLength(0);
+      expect(printSchemaWithDirectives(schema)).toContain('AnotherExample_RetrieveMovies');
+      expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
+    });
+    test(`should load the retrieve-movie.proto with selectQueryOrMutationField`, async () => {
+      const file = 'retrieve-movie.proto';
+      const config: YamlConfig.GrpcHandler = {
+        endpoint: 'localhost',
+        source: {
+          file: join(__dirname, './fixtures/proto-tests', file),
+          load: { includeDirs: [join(__dirname, './fixtures/proto-tests')] },
+        },
+        selectQueryOrMutationField: [
+          {
+            fieldName: '*RetrieveMovies',
+            type: 'Query',
+          },
+        ],
+      };
+      using cache = new InMemoryLRUCache();
+      const handler = new GrpcHandler({
+        name: 'selectQueryOrMutationField',
         config,
         cache,
         pubsub,

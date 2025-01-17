@@ -58,6 +58,23 @@ export const composeConfig = defineConfig({
         // Prefix to collect Query method default: list, get
         prefixQueryMethod: ['list', 'get'],
 
+        // Select certain fields as Query or Mutation
+        // This overrides `prefixQueryMethod`
+        selectQueryOrMutationField: [
+          {
+            // You can use a pattern matching with *
+            fieldName: '*RetrieveMovies',
+            type: 'Query',
+          },
+          // Or you can use a specific field name
+          // This will make the field GetMovie available as a Mutation
+          // Because it would be Query because of `prefixQueryMethod`
+          {
+            fieldName: 'GetMovie',
+            type: 'Mutation'
+          }
+        ]
+
         // Headers for the protobuf if URL is provided
         schemaHeaders: {
           'x-api-key': 'my-api-key'
