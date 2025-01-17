@@ -1,4 +1,5 @@
 /* eslint sort-keys: error */
+import { addBasePath } from 'next/dist/client/add-base-path';
 import { useRouter } from 'next/router';
 import {
   Anchor,
@@ -16,7 +17,6 @@ import {
   VersionDropdown,
 } from '@theguild/components';
 import favicon from './public/favicon.svg';
-import { addBasePath } from 'next/dist/client/add-base-path'
 
 export default defineConfig({
   websiteName: 'GraphQL Mesh',
