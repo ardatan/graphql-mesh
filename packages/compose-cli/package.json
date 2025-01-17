@@ -1,10 +1,10 @@
 {
-  "name": "@graphql-mesh/compose-cli",
-  "version": "1.3.2",
+  "name": "@bouygues-telecom/graphql-compose-cli",
+  "version": "0.0.1",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "ardatan/graphql-mesh",
+    "url": "BouyguesTelecom/graphql-mesh",
     "directory": "packages/compose-cli"
   },
   "license": "MIT",
