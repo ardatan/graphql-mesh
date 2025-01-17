@@ -4,7 +4,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "ardatan/graphql-mesh",
+    "url": "BouyguesTelecom/graphql-mesh",
     "directory": "packages/loaders/openapi"
   },
   "license": "MIT",

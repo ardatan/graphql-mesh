@@ -1,11 +1,11 @@
 {
-  "name": "@graphql-mesh/fusion-composition",
+  "name": "@bouygues-telecom/graphql-fusion-composition",
   "version": "0.7.15",
   "type": "module",
   "description": "Basic composition utility for Fusion spec",
   "repository": {
     "type": "git",
-    "url": "ardatan/graphql-mesh",
+    "url": "BouyguesTelecom/graphql-mesh",
     "directory": "packages/fusion/composition"
   },
   "license": "MIT",
