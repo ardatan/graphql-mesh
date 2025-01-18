@@ -3,16 +3,17 @@
   "compilerOptions": {
     "importHelpers": true,
     "declaration": true,
-    "verbatimModuleSyntax": false,
-    "moduleResolution": "node"
+    "module": "node16",
+    "moduleResolution": "node16"
   },
   "exclude": [
     "**/node_modules",
     "**/dist",
     "**/bundle",
     "**/scripts",
-    "**/test/*.ts",
-    "**/tests/*.ts",
+    "**/test/**/*",
+    "**/tests/**/*",
+    "**/__integration_tests__/**/*",
     "*.spec.ts",
     "*.test.ts",
     "examples/**/*",

@@ -36,8 +36,6 @@ export async function startNodeHttpServer({
     path: graphqlPath,
     server,
   });
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore - GraphQL WS has some issues with Bob
   const { useServer } = await import('graphql-ws/use/ws');
   useServer(getGraphQLWSOptions(getBuiltMesh), wsServer);
   return new Promise((resolve, reject) => {

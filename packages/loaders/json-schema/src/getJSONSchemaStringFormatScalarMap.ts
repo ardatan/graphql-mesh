@@ -1,4 +1,4 @@
-import Ajv from 'ajv';
+import { Ajv } from 'ajv';
 import addFormats from 'ajv-formats';
 import { GraphQLScalarType, Kind } from 'graphql';
 import { pascalCase } from 'pascal-case';

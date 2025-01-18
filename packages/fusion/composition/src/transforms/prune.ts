@@ -1,7 +1,7 @@
 import type { GraphQLSchema } from 'graphql';
 import type { PruneSchemaOptions } from '@graphql-tools/utils';
 import { pruneSchema } from '@graphql-tools/utils';
-import type { SubgraphTransform } from '../compose';
+import type { SubgraphTransform } from '../compose.js';
 
 export type PruneTransformOptions = {
   skipPruning: PruneSchemaOptions['skipPruning'] | string[];

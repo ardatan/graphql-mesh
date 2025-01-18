@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 69ca6b2c0a314e643e5c941226969b30270c053a..c49881be8897f0f723f5270bd73b3de62eb4e97a 100644
+--- a/package.json
++++ b/package.json
+@@ -173,6 +173,5 @@
+   "overrides": {
+     "pretty-format": "^29.7.0",
+     "@testing-library/dom": "$@testing-library/dom"
+-  },
+-  "type": "module"
++  }
+ }

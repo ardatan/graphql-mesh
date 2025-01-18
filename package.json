@@ -82,7 +82,7 @@
     "@typescript-eslint/eslint-plugin": "8.20.0",
     "@typescript-eslint/parser": "8.20.0",
     "babel-jest": "29.7.0",
-    "bob-the-bundler": "7.0.1",
+    "bob-the-bundler": "8.0.0-alpha-20250116201822-1c6814b11c3fec160bbf4b301ed13402ff664183",
     "cp-cli": "^2.0.0",
     "cross-env": "^7.0.3",
     "eslint": "9.18.0",
@@ -106,7 +106,9 @@
     "typescript": "^5.4.2"
   },
   "resolutions": {
+    "@apollo/client": "patch:@apollo/client@npm%3A3.12.6#~/.yarn/patches/@apollo-client-npm-3.12.6-4588fed38f.patch",
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
+    "@n1ru4l/in-memory-live-query-store": "patch:@n1ru4l/in-memory-live-query-store@npm%3A0.10.0#~/.yarn/patches/@n1ru4l-in-memory-live-query-store-npm-0.10.0-47d8485a71.patch",
     "@whatwg-node/fetch": "0.10.3",
     "@whatwg-node/node-fetch": "0.7.7",
     "@whatwg-node/server": "0.9.65",
@@ -119,6 +121,7 @@
     "jest-leak-detector": "patch:jest-leak-detector@npm%3A29.7.0#~/.yarn/patches/jest-leak-detector-npm-29.7.0-3ae882ba75.patch",
     "node-gyp": "^11.0.0",
     "sqlite3": "^5.1.7",
+    "tiny-lru": "patch:tiny-lru@npm%3A11.2.11#~/.yarn/patches/tiny-lru-npm-11.2.11-8fcecc1d9e.patch",
     "tslib": "2.8.1",
     "uuid": "11.0.5"
   },
