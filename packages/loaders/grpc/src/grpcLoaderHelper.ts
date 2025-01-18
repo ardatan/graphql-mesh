@@ -1,10 +1,10 @@
 import globby from 'globby';
 import { specifiedDirectives } from 'graphql';
 import {
-  type ObjectTypeComposer,
   SchemaComposer,
   type Directive,
   type EnumTypeComposerValueConfigDefinition,
+  type ObjectTypeComposer,
   type ObjectTypeComposerFieldConfigAsObjectDefinition,
 } from 'graphql-compose';
 import {
