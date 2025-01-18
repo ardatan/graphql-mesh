@@ -3,10 +3,10 @@ import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import type { ConfigProcessOptions } from '@graphql-mesh/config';
 import { processConfig } from '@graphql-mesh/config';
 import { path, process } from '@graphql-mesh/cross-helpers';
-import { include } from '@graphql-mesh/include';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { jsonSchema } from '@graphql-mesh/types';
 import { DefaultLogger, loadYaml } from '@graphql-mesh/utils';
+import { include } from './include.js';
 
 export function validateConfig(
   config: any,

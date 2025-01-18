@@ -6080,6 +6080,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-hive/importer@npm:1.0.0-alpha-b9f05248109748ed53b5a1ae7465317fc9fcd3ec":
+  version: 1.0.0-alpha-b9f05248109748ed53b5a1ae7465317fc9fcd3ec
+  resolution: "@graphql-hive/importer@npm:1.0.0-alpha-b9f05248109748ed53b5a1ae7465317fc9fcd3ec"
+  checksum: 10c0/42d21c73e493be8aabea81b565b060aaaac27b7191b24fd61e6c22d7aa7b7856a7012a5e39ee3454dd7fb9681cce4499c287ff43954b90d67b1c24ed993002d0
+  languageName: node
+  linkType: hard
+
 "@graphql-hive/yoga@npm:^0.39.2":
   version: 0.39.2
   resolution: "@graphql-hive/yoga@npm:0.39.2"
@@ -6218,7 +6225,6 @@ __metadata:
     "@graphql-mesh/config": "npm:^0.106.17"
     "@graphql-mesh/cross-helpers": "npm:^0.4.9"
     "@graphql-mesh/http": "npm:^0.105.12"
-    "@graphql-mesh/include": "npm:^0.2.10"
     "@graphql-mesh/runtime": "npm:^0.105.12"
     "@graphql-mesh/store": "npm:^0.103.11"
     "@graphql-mesh/types": "npm:^0.103.11"
@@ -6233,8 +6239,10 @@ __metadata:
     change-case: "npm:^4.1.2"
     cosmiconfig: "npm:^9.0.0"
     dotenv: "npm:^16.0.3"
+    get-tsconfig: "npm:^4.7.6"
     graphql-import-node: "npm:^0.0.5"
     graphql-ws: "npm:^6.0.0"
+    jiti: "npm:^2.0.0"
     json-bigint-patch: "npm:^0.0.8"
     json5: "npm:^2.2.3"
     mkdirp: "npm:^3.0.0"
@@ -6260,8 +6268,8 @@ __metadata:
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
     "@commander-js/extra-typings": "npm:^13.0.0"
+    "@graphql-hive/importer": "npm:1.0.0-alpha-b9f05248109748ed53b5a1ae7465317fc9fcd3ec"
     "@graphql-mesh/fusion-composition": "npm:^0.7.17"
-    "@graphql-mesh/include": "npm:^0.2.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.7"
     "@graphql-mesh/types": "npm:^0.103.11"
     "@graphql-mesh/utils": "npm:^0.103.11"
@@ -6445,18 +6453,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/include@npm:^0.2.10, @graphql-mesh/include@npm:^0.2.3, @graphql-mesh/include@workspace:packages/include":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/include@workspace:packages/include"
+"@graphql-mesh/include@npm:^0.2.3":
+  version: 0.2.10
+  resolution: "@graphql-mesh/include@npm:0.2.10"
   dependencies:
     "@graphql-mesh/utils": "npm:^0.103.11"
     dotenv: "npm:^16.3.1"
     get-tsconfig: "npm:^4.7.6"
-    glob: "npm:^11.0.0"
     jiti: "npm:^2.0.0"
     sucrase: "npm:^3.35.0"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/bfe909b3722d2f26db42e54dab26288d12dafff79fbc249b94ebe7685933ee1cd90243952d1a6adfa7e84554737a00696e6106e470c7677752dbf6cecd66ae2d
+  languageName: node
+  linkType: hard
 
 "@graphql-mesh/json-schema@npm:0.108.13, @graphql-mesh/json-schema@npm:^0.108.13, @graphql-mesh/json-schema@workspace:packages/legacy/handlers/json-schema":
   version: 0.0.0-use.local

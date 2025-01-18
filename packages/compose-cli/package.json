@@ -39,8 +39,8 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "^13.0.0",
+    "@graphql-hive/importer": "1.0.0-alpha-b9f05248109748ed53b5a1ae7465317fc9fcd3ec",
     "@graphql-mesh/fusion-composition": "^0.7.17",
-    "@graphql-mesh/include": "^0.2.10",
     "@graphql-mesh/string-interpolation": "^0.5.7",
     "@graphql-mesh/types": "^0.103.11",
     "@graphql-mesh/utils": "^0.103.11",
