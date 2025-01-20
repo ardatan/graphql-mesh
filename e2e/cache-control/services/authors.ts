@@ -1,15 +1,16 @@
+import { createServer } from 'http';
 import { parse } from 'graphql';
-import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
+import { createYoga } from 'graphql-yoga';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { Opts } from '@e2e/opts';
+import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
 import { authors } from './data';
 
 const opts = Opts(process.argv);
 const port = opts.getServicePort('authors');
 
-startStandaloneServer(
-  new ApolloServer({
+createServer(
+  createYoga({
     schema: buildSubgraphSchema({
       typeDefs: parse(/* GraphQL */ `
         extend schema
@@ -55,14 +56,16 @@ startStandaloneServer(
       },
     }),
     plugins: [
+      useResponseCache({
+        session: () => null,
+      }),
       {
-        async requestDidStart({ request }) {
-          if (request.operationName) {
-            console.count(request.operationName);
+        onParams({ params }) {
+          if (params.operationName) {
+            console.count(params.operationName);
           }
         },
       },
     ],
   }),
-  { listen: { port } },
-);
+).listen(port);

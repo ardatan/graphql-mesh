@@ -3613,7 +3613,9 @@ __metadata:
     "@apollo/subgraph": "npm:^2.9.3"
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/compose-cli": "npm:^1.2.13"
+    "@graphql-yoga/plugin-response-cache": "npm:^3.12.10"
     graphql: "npm:^16.9.0"
+    graphql-yoga: "npm:^5.10.10"
     tslib: "npm:^2.8.1"
   languageName: unknown
   linkType: soft
@@ -8456,7 +8458,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-response-cache@npm:^3.1.1":
+"@graphql-yoga/plugin-response-cache@npm:^3.1.1, @graphql-yoga/plugin-response-cache@npm:^3.12.10":
   version: 3.12.10
   resolution: "@graphql-yoga/plugin-response-cache@npm:3.12.10"
   dependencies:
@@ -22176,7 +22178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-yoga@npm:5.10.10, graphql-yoga@npm:^5.10.6, graphql-yoga@npm:^5.7.0":
+"graphql-yoga@npm:5.10.10, graphql-yoga@npm:^5.10.10, graphql-yoga@npm:^5.10.6, graphql-yoga@npm:^5.7.0":
   version: 5.10.10
   resolution: "graphql-yoga@npm:5.10.10"
   dependencies:

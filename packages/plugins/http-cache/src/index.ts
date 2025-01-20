@@ -89,17 +89,17 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
         ResponseCtor = yoga.fetchAPI.Response;
       }
     },
-    onFetch({ url, options, context, endResponse }) {
-      if (shouldSkip(url)) {
+    onFetch({ url, options, setOptions, context, endResponse }) {
+      if (shouldSkip(url) || typeof options.body === 'object') {
         pluginLogger?.debug(`Skipping cache for ${url}`);
         return;
       }
+      const cacheKey = `http-cache-${url}-${options.method}-${options.body}`;
       const policyRequest: CachePolicy.Request = {
         url,
-        method: options.method,
         headers: getHeadersObj(options.headers),
       };
-      const cacheEntry$ = cache.get(url);
+      const cacheEntry$ = cache.get(cacheKey);
       return mapMaybePromise(cacheEntry$, function handleCacheEntry(cacheEntry: CacheEntry) {
         let policy: CachePolicy;
         function returnCachedResponse(endResponse: (response: Response) => void) {
@@ -118,9 +118,12 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
             pluginLogger?.debug(`Cache hit is fresh for ${url}`);
             return returnCachedResponse(endResponse);
           } else if (policy?.revalidationHeaders) {
-            pluginLogger?.debug(`Cache hit is stale for ${url}`);
-            // @ts-expect-error - Headers type mismatch
-            options.headers = policy.revalidationHeaders(policyRequest);
+            pluginLogger?.debug(`Cache will be revalidated for ${url}`);
+            setOptions({
+              ...options,
+              // @ts-expect-error - Headers type mismatch
+              headers: policy.revalidationHeaders(policyRequest),
+            });
           }
         }
         return function handleResponse({ response, setResponse }) {
@@ -132,32 +135,36 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
           function updateCacheEntry() {
             const store$ = mapMaybePromise(body$, body => {
               const ttl = policy.timeToLive();
-              pluginLogger?.debug(`TTL: ${ttl}ms`);
+              if (ttl) {
+                pluginLogger?.debug(`TTL: ${ttl}ms`);
+              }
               return cache.set(
-                url,
+                cacheKey,
                 {
                   policy: policy.toObject(),
                   response: policyResponse,
                   body,
                 },
-                {
-                  ttl: ttl / 1000,
-                },
+                ttl
+                  ? {
+                      ttl: ttl / 1000,
+                    }
+                  : undefined,
               );
             });
             // @ts-expect-error - Promise type mismatch
             context?.waitUntil(store$);
           }
           if (policy) {
-            pluginLogger?.debug(`Updating the cache entry cache for ${url}`);
             const revalidationPolicy = policy.revalidatedPolicy(policyRequest, policyResponse);
             policy = revalidationPolicy.policy;
-            if (!revalidationPolicy.modified) {
+            if (revalidationPolicy.matches) {
               pluginLogger?.debug(`Response not modified for ${url}`);
               body$ = cacheEntry.body;
               updateCacheEntry();
               return returnCachedResponse(setResponse);
             }
+            pluginLogger?.debug(`Updating the cache entry cache for ${url}`);
           } else {
             pluginLogger?.debug(`Creating the cache entry for ${url}`);
             policy = new CachePolicy(policyRequest, policyResponse);
@@ -166,7 +173,15 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
             pluginLogger?.debug(`Storing the cache entry for ${url}`);
             body$ = response.text();
             updateCacheEntry();
-            return body$.then(body => setResponse(new ResponseCtor(body, response)));
+            return body$.then(body =>
+              setResponse(
+                new ResponseCtor(body, {
+                  ...response,
+                  // @ts-expect-error - Headers type mismatch
+                  headers: policy.responseHeaders(),
+                }),
+              ),
+            );
           }
         };
       });
