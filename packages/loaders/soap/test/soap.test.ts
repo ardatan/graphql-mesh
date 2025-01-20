@@ -3,7 +3,7 @@ import { promises } from 'fs';
 import { globalAgent } from 'https';
 import { join } from 'path';
 import { parse } from 'graphql';
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { dummyLogger as logger } from '../../../testing/dummyLogger';
@@ -17,7 +17,7 @@ describe('SOAP Loader', () => {
   });
   // TODO: Implement this locally later
   // Now E2E tests have it covered
-  it.skip('should execute SOAP calls correctly', async () => {
+  it('should execute SOAP calls correctly', async () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,

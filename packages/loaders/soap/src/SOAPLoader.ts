@@ -139,6 +139,9 @@ const soapDirective = new GraphQLDirective({
     soapHeaders: {
       type: SOAPHeadersInput,
     },
+    soapAction: {
+      type: GraphQLString,
+    },
   },
 });
 
@@ -498,12 +501,41 @@ export class SOAPLoader {
             const { type, elementName } = this.getOutputTypeForMessage(
               this.getNamespaceMessageMap(messageNamespace).get(messageName),
             );
+            const bindingOperationObject = bindingObj.operation.find(
+              operation => operation.attributes.name === operationName,
+            );
             const soapAnnotations: SoapAnnotations = {
               elementName,
               bindingNamespace,
-              endpoint: this.endpoint || portObj.address[0].attributes.location,
+              endpoint: this.endpoint,
               subgraph: this.subgraphName,
             };
+            if (!soapAnnotations.endpoint && portObj.address) {
+              for (const address of portObj.address) {
+                if (address.attributes) {
+                  for (const attributeName in address.attributes) {
+                    const value = address.attributes[attributeName];
+                    if (value && attributeName.toLowerCase().endsWith('location')) {
+                      soapAnnotations.endpoint = value;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+            if (bindingOperationObject?.operation) {
+              for (const bindingOperationObjectElem of bindingOperationObject.operation) {
+                if (bindingOperationObjectElem.attributes) {
+                  for (const attributeName in bindingOperationObjectElem.attributes) {
+                    const value = bindingOperationObjectElem.attributes[attributeName];
+                    if (value && attributeName.toLowerCase().endsWith('action')) {
+                      soapAnnotations.soapAction = value;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
             if (this.bodyAlias) {
               soapAnnotations.bodyAlias = this.bodyAlias;
             }
