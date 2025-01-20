@@ -102,18 +102,21 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
       const cacheEntry$ = cache.get(url);
       return mapMaybePromise(cacheEntry$, function handleCacheEntry(cacheEntry: CacheEntry) {
         let policy: CachePolicy;
+        function returnCachedResponse(endResponse: (response: Response) => void) {
+          return endResponse(
+            new ResponseCtor(cacheEntry.body, {
+              status: cacheEntry.response.status,
+              // @ts-expect-error - Headers type mismatch
+              headers: policy.responseHeaders(),
+            }),
+          );
+        }
         if (cacheEntry?.policy) {
           pluginLogger?.debug(`Cache hit for ${url}`);
           policy = CachePolicy.fromObject(cacheEntry.policy);
           if (policy?.satisfiesWithoutRevalidation(policyRequest)) {
             pluginLogger?.debug(`Cache hit is fresh for ${url}`);
-            return endResponse(
-              new ResponseCtor(cacheEntry.body, {
-                status: cacheEntry.response.status,
-                // @ts-expect-error - Headers type mismatch
-                headers: policy.responseHeaders(),
-              }),
-            );
+            return returnCachedResponse(endResponse);
           } else if (policy?.revalidationHeaders) {
             pluginLogger?.debug(`Cache hit is stale for ${url}`);
             // @ts-expect-error - Headers type mismatch
@@ -153,13 +156,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
               pluginLogger?.debug(`Response not modified for ${url}`);
               body = cacheEntry.body;
               updateCacheEntry();
-              return setResponse(
-                new ResponseCtor(cacheEntry.body, {
-                  status: cacheEntry.response.status,
-                  // @ts-expect-error - Headers type mismatch
-                  headers: policy.responseHeaders(),
-                }),
-              );
+              return returnCachedResponse(setResponse);
             }
           } else {
             pluginLogger?.debug(`Creating the cache entry for ${url}`);
