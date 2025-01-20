@@ -13,6 +13,9 @@ if (process.env.HTTP_CACHE) {
 if (process.env.RESPONSE_CACHE) {
   config.responseCaching = {
     session: () => null,
+    ttlPerType: {
+      Comment: 5_000,
+    },
   };
 }
 

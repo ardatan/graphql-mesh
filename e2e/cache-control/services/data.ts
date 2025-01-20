@@ -21,3 +21,15 @@ export const authors = [
   { id: '8', name: 'Emily Bronte' },
   { id: '9', name: 'Charlotte Bronte' },
 ];
+
+export const comments = [
+  { id: '1', bookId: '1', content: 'This book is great!' },
+  { id: '2', bookId: '1', content: 'I love this book!' },
+  { id: '3', bookId: '1', content: 'This book is my favorite!' },
+  { id: '4', bookId: '2', content: 'This book is great!' },
+  { id: '5', bookId: '2', content: 'I love this book!' },
+  { id: '6', bookId: '2', content: 'This book is my favorite!' },
+  { id: '7', bookId: '3', content: 'This book is great!' },
+  { id: '8', bookId: '3', content: 'I love this book!' },
+  { id: '9', bookId: '3', content: 'This book is my favorite!' },
+];

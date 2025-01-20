@@ -28,7 +28,7 @@ directive @link(url: String, as: String, for: link__Purpose, import: [link__Impo
 type Author
   @join__type(graph: AUTHORS, key: "id")
   @join__type(graph: BOOKS, key: "id", extension: true)
-  @cacheControl(maxAge: 60)
+  @cacheControl(maxAge: 10)
 {
   id: ID!
   name: String! @join__field(graph: AUTHORS)
@@ -37,11 +37,13 @@ type Author
 
 type Book
   @join__type(graph: BOOKS, key: "id")
-  @cacheControl(maxAge: 60)
+  @join__type(graph: COMMENTS, key: "id", extension: true)
+  @cacheControl(maxAge: 10)
 {
   id: ID!
-  title: String!
-  author: Author!
+  title: String! @join__field(graph: BOOKS)
+  author: Author! @join__field(graph: BOOKS)
+  comments: [Comment] @join__field(graph: COMMENTS)
 }
 
 enum CacheControlScope
@@ -52,11 +54,20 @@ enum CacheControlScope
   PRIVATE @join__enumValue(graph: AUTHORS) @join__enumValue(graph: BOOKS)
 }
 
+type Comment
+  @join__type(graph: COMMENTS, key: "id")
+{
+  id: ID!
+  content: String!
+  book: Book!
+}
+
 scalar join__FieldSet
 
 enum join__Graph {
   AUTHORS @join__graph(name: "authors", url: "http://localhost:<authors_port>/graphql")
   BOOKS @join__graph(name: "books", url: "http://localhost:<books_port>/graphql")
+  COMMENTS @join__graph(name: "comments", url: "http://localhost:<comments_port>/graphql")
 }
 
 scalar link__Import
@@ -76,11 +87,13 @@ enum link__Purpose {
 type Query
   @join__type(graph: AUTHORS)
   @join__type(graph: BOOKS)
+  @join__type(graph: COMMENTS)
 {
   authors: [Author] @join__field(graph: AUTHORS)
   author(id: ID!): Author @join__field(graph: AUTHORS)
   books: [Book] @join__field(graph: BOOKS)
   book(id: ID!): Book @join__field(graph: BOOKS)
+  comments: [Comment] @join__field(graph: COMMENTS)
 }"
 `;
 
@@ -167,29 +180,38 @@ schema
 enum join__Graph {
   AUTHORS @join__graph(name: "authors", url: "http://localhost:<authors_port>/graphql") 
   BOOKS @join__graph(name: "books", url: "http://localhost:<books_port>/graphql") 
+  COMMENTS @join__graph(name: "comments", url: "http://localhost:<comments_port>/graphql") 
 }
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope, inheritMaxAge: Boolean)  on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
 
-scalar TransportOptions @join__type(graph: AUTHORS)  @join__type(graph: BOOKS) 
+scalar TransportOptions @join__type(graph: AUTHORS)  @join__type(graph: BOOKS)  @join__type(graph: COMMENTS) 
 
-type Author @cacheControl(maxAge: 60)  @join__type(graph: AUTHORS, key: "id")  @join__type(graph: BOOKS, key: "id", extension: true)  {
+type Author @cacheControl(maxAge: 10)  @join__type(graph: AUTHORS, key: "id")  @join__type(graph: BOOKS, key: "id", extension: true)  {
   id: ID!
   name: String! @join__field(graph: AUTHORS) 
   books: [Book] @join__field(graph: BOOKS) 
 }
 
-type Query @join__type(graph: AUTHORS)  @join__type(graph: BOOKS)  {
+type Query @join__type(graph: AUTHORS)  @join__type(graph: BOOKS)  @join__type(graph: COMMENTS)  {
   authors: [Author] @join__field(graph: AUTHORS) 
   author(id: ID!) : Author @join__field(graph: AUTHORS) 
   books: [Book] @join__field(graph: BOOKS) 
   book(id: ID!) : Book @join__field(graph: BOOKS) 
+  comments: [Comment] @join__field(graph: COMMENTS) 
 }
 
-type Book @cacheControl(maxAge: 60)  @join__type(graph: BOOKS, key: "id")  {
+type Book @cacheControl(maxAge: 10)  @join__type(graph: BOOKS, key: "id")  @join__type(graph: COMMENTS, key: "id", extension: true)  {
   id: ID!
-  title: String!
-  author: Author!
+  title: String! @join__field(graph: BOOKS) 
+  author: Author! @join__field(graph: BOOKS) 
+  comments: [Comment] @join__field(graph: COMMENTS) 
+}
+
+type Comment @join__type(graph: COMMENTS, key: "id")  {
+  id: ID!
+  content: String!
+  book: Book!
 }
 
 enum CacheControlScope @join__type(graph: AUTHORS)  @join__type(graph: BOOKS)  {

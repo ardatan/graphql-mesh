@@ -34,7 +34,7 @@ startStandaloneServer(
           inheritMaxAge: Boolean
         ) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
 
-        type Author @key(fields: "id") @cacheControl(maxAge: 60) {
+        type Author @key(fields: "id") @cacheControl(maxAge: 10) {
           id: ID!
           name: String!
         }

@@ -1,174 +1,156 @@
 import CachePolicy from 'http-cache-semantics';
-import type { KeyValueCache, MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
-import { getHeadersObj } from '@graphql-mesh/utils';
-import { Response, URLPattern } from '@whatwg-node/fetch';
+import type { GatewayConfigContext, GatewayPlugin } from '@graphql-hive/gateway';
+import { getHeadersObj, mapMaybePromise } from '@graphql-mesh/utils';
+import {
+  Response as DefaultResponseCtor,
+  URLPattern as DefaultURLPatternCtor,
+} from '@whatwg-node/fetch';
 
 interface CacheEntry {
   policy: CachePolicy.CachePolicyObject;
-  response: {
-    status: number;
-    headers: Record<string, string>;
-  };
+  response: CachePolicy.Response;
   body: string;
 }
 
-export interface HTTPCachePluginOptions extends YamlConfig.HTTPCachePlugin {
-  cache?: KeyValueCache;
+export interface HTTPCachePluginOptions extends GatewayConfigContext {
+  /**
+   * If the following patterns match the request URL, the response will be cached. (Any of: String, URLPatternObj)
+   */
+  matches?: (string | URLPatternObj)[];
+  /**
+   * If the following patterns match the request URL, the response will not be cached. (Any of: String, URLPatternObj)
+   */
+  ignores?: (string | URLPatternObj)[];
+
+  policyOptions?:
+    | CachePolicy.Options
+    | ((request: CachePolicy.Request, response: CachePolicy.Response) => CachePolicy.Options);
 }
 
-export default function useHTTPCache<TContext>({
+export interface URLPatternObj {
+  protocol?: string;
+  username?: string;
+  password?: string;
+  hostname?: string;
+  port?: string;
+  pathname?: string;
+  search?: string;
+  hash?: string;
+  baseURL?: string;
+}
+
+export default function useHTTPCache<TContext extends Record<string, any>>({
   cache,
   matches,
   ignores,
-}: HTTPCachePluginOptions): MeshPlugin<TContext> {
+  logger,
+}: HTTPCachePluginOptions): GatewayPlugin<TContext> {
   if (!cache) {
     throw new Error('HTTP Cache plugin requires a cache instance');
   }
-  let matchesPatterns: URLPattern[] | undefined;
-  if (matches) {
-    matchesPatterns = matches.map(match => new URLPattern(match));
+  let matchesPatterns: URLPattern[];
+  let ignoresPatterns: URLPattern[];
+  let URLPatternCtor: typeof URLPattern = DefaultURLPatternCtor;
+  let ResponseCtor: typeof Response = DefaultResponseCtor;
+  function shouldSkip(url: string) {
+    ignoresPatterns ||= ignores?.map(match => new URLPatternCtor(match)) || [];
+    if (ignoresPatterns?.length) {
+      for (const pattern of ignoresPatterns) {
+        if (pattern.test(url)) {
+          logger?.debug(`Ignore pattern ${pattern} matched for ${url}`);
+          return true;
+        }
+      }
+    }
+    matchesPatterns ||= matches?.map(match => new URLPatternCtor(match)) || [];
+    if (matchesPatterns?.length) {
+      for (const pattern of matchesPatterns) {
+        if (pattern.test(url)) {
+          logger?.debug(`Match pattern ${pattern} matched for ${url}`);
+          return false;
+        }
+      }
+      logger?.debug(`No match pattern matched for ${url}`);
+      return true;
+    }
+    return false;
   }
-  let ignoresPatterns: URLPattern[] | undefined;
-  if (ignores) {
-    ignoresPatterns = ignores.map(match => new URLPattern(match));
-  }
+  const pluginLogger = logger?.child('HTTP Cache');
   return {
-    async onFetch({ url, options, fetchFn, setFetchFn }) {
-      if (matchesPatterns && !matchesPatterns.some(pattern => pattern.test(url))) {
-        return () => {};
+    onYogaInit({ yoga }) {
+      if (yoga.fetchAPI.URLPattern) {
+        URLPatternCtor = yoga.fetchAPI.URLPattern;
       }
-      if (ignoresPatterns && ignoresPatterns.some(pattern => pattern.test(url))) {
-        return () => {};
+      if (yoga.fetchAPI.Response) {
+        ResponseCtor = yoga.fetchAPI.Response;
       }
-      if (options.cache === 'no-cache') {
-        return () => {};
+    },
+    onFetch({ url, options, context, endResponse }) {
+      if (shouldSkip(url)) {
+        pluginLogger?.debug(`Skipping cache for ${url}`);
+        return;
       }
-      const reqHeaders: Record<string, string> = getHeadersObj(options.headers as any);
       const policyRequest: CachePolicy.Request = {
         url,
         method: options.method,
-        headers: reqHeaders,
+        headers: options.headers,
       };
-
-      const cacheEntry = (await cache.get(url)) as CacheEntry;
-      if (cacheEntry) {
-        const policy = CachePolicy.fromObject(cacheEntry.policy);
-        setFetchFn(async (url, options, context, info) => {
-          if (options.cache !== 'reload' && policy?.satisfiesWithoutRevalidation(policyRequest)) {
-            const resHeaders: Record<string, string> = {};
-            const policyHeaders = policy.responseHeaders();
-            for (const key in policyHeaders) {
-              const value = policyHeaders[key];
-              if (Array.isArray(value)) {
-                resHeaders[key] = value.join(', ');
-              } else {
-                resHeaders[key] = value;
-              }
-            }
-            const response = new Response(cacheEntry.body, {
-              status: cacheEntry.response.status,
-              headers: resHeaders,
-            });
-            return response;
+      const cacheEntry$ = cache.get(url);
+      return mapMaybePromise(cacheEntry$, function handleCacheEntry(cacheEntry: CacheEntry) {
+        let policy: CachePolicy;
+        if (cacheEntry?.policy) {
+          pluginLogger?.debug(`Cache hit for ${url}`);
+          policy = CachePolicy.fromObject(cacheEntry.policy);
+          if (policy?.satisfiesWithoutRevalidation(policyRequest)) {
+            pluginLogger?.debug(`Cache hit is fresh for ${url}`);
+            return endResponse(
+              new ResponseCtor(cacheEntry.body, {
+                status: cacheEntry.response.status,
+                // @ts-expect-error - Headers type mismatch
+                headers: policy.responseHeaders(),
+              }),
+            );
+          } else if (policy?.revalidationHeaders) {
+            pluginLogger?.debug(`Cache hit is stale for ${url}`);
+            // @ts-expect-error - Headers type mismatch
+            options.headers = policy.revalidationHeaders(policyRequest);
           }
-          const policyHeaders = policy.revalidationHeaders(policyRequest);
-          const reqHeaders: Record<string, string> = {};
-          for (const key in policyHeaders) {
-            const value = policyHeaders[key];
-            if (Array.isArray(value)) {
-              reqHeaders[key] = value.join(', ');
-            } else {
-              reqHeaders[key] = value;
-            }
-          }
-          const revalidationRequest = {
-            url,
-            method: options.method,
-            headers: reqHeaders,
-          };
-          const revalidationResponse = await fetchFn(
-            url,
-            {
-              ...options,
-              method: revalidationRequest.method,
-              headers: {
-                ...options.headers,
-                ...revalidationRequest.headers,
-              },
-            },
-            context,
-            info,
-          );
-
-          const { policy: revalidatedPolicy, modified } = policy.revalidatedPolicy(
-            revalidationRequest,
-            {
-              status: revalidationResponse.status,
-              headers: getHeadersObj(revalidationResponse.headers as any),
-            },
-          );
-
-          const newBody = await revalidationResponse.text();
-
-          const resHeaders: Record<string, string> = {};
-
-          const resPolicyHeaders = revalidatedPolicy.responseHeaders();
-
-          for (const key in resPolicyHeaders) {
-            const value = resPolicyHeaders[key];
-            if (Array.isArray(value)) {
-              resHeaders[key] = value.join(', ');
-            } else {
-              resHeaders[key] = value;
-            }
-          }
-          return new Response(modified ? newBody : cacheEntry.body, {
-            status: revalidationResponse.status,
-            headers: resHeaders,
-          });
-        });
-      }
-      if (options.cache === 'no-store') {
-        return () => {};
-      }
-      return async ({ response, setResponse }) => {
-        const resHeaders = getHeadersObj(response.headers);
-        const policyResponse = {
-          status: response.status,
-          headers: resHeaders,
-        };
-        const policy = new CachePolicy(policyRequest, policyResponse);
-        if (policy.storable()) {
-          const resText = await response.text();
-          const cacheEntry: CacheEntry = {
-            policy: policy.toObject(),
-            response: policyResponse,
-            body: resText,
-          };
-
-          let ttl = Math.round(policy.timeToLive() / 1000);
-          if (ttl > 0) {
-            // If a response can be revalidated, we don't want to remove it from the cache right after it expires.
-            // We may be able to use better heuristics here, but for now we'll take the max-age times 2.
-            if (canBeRevalidated(response)) {
-              ttl *= 2;
-            }
-
-            await cache.set(url, cacheEntry, { ttl });
-          }
-
-          setResponse(
-            new Response(resText, {
-              status: response.status,
-              headers: resHeaders,
-            }),
-          );
         }
-      };
+        return function handleResponse({ response, setResponse }) {
+          const policyResponse: CachePolicy.Response = {
+            status: response.status,
+            headers: getHeadersObj(response.headers),
+          };
+          if (policy) {
+            pluginLogger?.debug(`Updating the cache entry cache for ${url}`);
+            policy.revalidatedPolicy(policyRequest, policyResponse);
+          } else {
+            pluginLogger?.debug(`Creating the cache entry for ${url}`);
+            policy = new CachePolicy(policyRequest, policyResponse);
+          }
+          if (policy.storable()) {
+            pluginLogger?.debug(`Storing the cache entry for ${url}`);
+            const text$ = response.text();
+            const store$ = text$.then(body => {
+              const ttl = policy.timeToLive();
+              pluginLogger?.debug(`TTL: ${ttl}ms`);
+              return cache.set(
+                url,
+                {
+                  policy: policy.toObject(),
+                  response: policyResponse,
+                  body,
+                },
+                {
+                  ttl: ttl / 1000,
+                },
+              );
+            });
+            context?.waitUntil(store$);
+            return text$.then(body => setResponse(new ResponseCtor(body, response)));
+          }
+        };
+      });
     },
   };
-}
-
-function canBeRevalidated(response: Response): boolean {
-  return response.headers.has('ETag');
 }

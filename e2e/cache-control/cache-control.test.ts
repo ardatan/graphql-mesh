@@ -1,23 +1,27 @@
+import { setTimeout } from 'node:timers/promises';
 import { createTenv, type Service } from '@e2e/tenv';
-import { authors, books } from './services/data';
+import { authors, books, comments } from './services/data';
 
 describe('Cache Control', () => {
   const env = createTenv(__dirname);
   let services: Service[];
-  beforeEach(async () => {
-    const books = await env.service('books');
-    const authors = await env.service('authors');
-    services = [authors, books];
-  });
   const composition = {
-    mesh(maskServicePorts: boolean) {
+    async mesh(maskServicePorts: boolean) {
+      const books = await env.service('books');
+      const authors = await env.service('authors');
+      const comments = await env.service('comments');
+      services = [authors, books, comments];
       return env.compose({
         services,
         maskServicePorts,
         output: 'graphql',
       });
     },
-    apollo(maskServicePorts: boolean) {
+    async apollo(maskServicePorts: boolean) {
+      const books = await env.service('books');
+      const authors = await env.service('authors');
+      const comments = await env.service('comments');
+      services = [authors, books, comments];
       return env.composeWithApollo({
         services,
         maskServicePorts,
@@ -40,34 +44,77 @@ describe('Cache Control', () => {
               [method]: 'true',
             },
           });
-          async function makeQuery() {
-            const res = await gw.execute({
-              query: /* GraphQL */ `
-                query TestQuery {
-                  authors {
-                    id
-                    name
+          async function makeQueries() {
+            const queries = {
+              authors: {
+                query: /* GraphQL */ `
+                  query TestQuery {
+                    authors {
+                      id
+                      name
+                    }
                   }
-                  books {
-                    id
-                    title
-                  }
-                }
-              `,
-            });
-            expect(res).toEqual({
-              data: {
-                authors: authors.map(({ id, name }) => ({ id, name })),
-                books: books.map(({ id, title }) => ({ id, title })),
+                `,
+                expected: {
+                  authors: authors.map(({ id, name }) => ({ id, name })),
+                },
               },
-            });
+              books: {
+                query: /* GraphQL */ `
+                  query TestQuery {
+                    books {
+                      id
+                      title
+                    }
+                  }
+                `,
+                expected: {
+                  books: books.map(({ id, title }) => ({ id, title })),
+                },
+              },
+              comments: {
+                query: /* GraphQL */ `
+                  query TestQuery {
+                    comments {
+                      id
+                      content
+                    }
+                  }
+                `,
+                expected: {
+                  comments: comments.map(({ id, content }) => ({ id, content })),
+                },
+              },
+            };
+            for (const name in queries) {
+              const { query, expected } = queries[name];
+              const { data } = await gw.execute({ query });
+              expect(data).toEqual(expected);
+            }
           }
-          await makeQuery();
-          expect(services[0].getStd('both')).toContain('TestQuery: 1');
-          expect(services[1].getStd('both')).toContain('TestQuery: 1');
-          await makeQuery();
-          expect(services[0].getStd('both')).not.toContain('TestQuery: 2');
-          expect(services[1].getStd('both')).not.toContain('TestQuery: 2');
+          const [authorsService, booksService, commentsService] = services;
+          // Store the results to the cache that will take 30s
+          await makeQueries();
+          expect(authorsService.getStd('both')).toContain('TestQuery: 1');
+          expect(booksService.getStd('both')).toContain('TestQuery: 1');
+          expect(commentsService.getStd('both')).toContain('TestQuery: 1');
+          await makeQueries();
+          // Results did not expire yet
+          expect(authorsService.getStd('both')).not.toContain('TestQuery: 2');
+          expect(booksService.getStd('both')).not.toContain('TestQuery: 2');
+          expect(commentsService.getStd('both')).not.toContain('TestQuery: 2');
+          // Comment has been expired
+          await setTimeout(5_000);
+          await makeQueries();
+          expect(authorsService.getStd('both')).not.toContain('TestQuery: 2');
+          expect(booksService.getStd('both')).not.toContain('TestQuery: 2');
+          expect(commentsService.getStd('both')).toContain('TestQuery: 2');
+          // All results have been expired
+          await setTimeout(5_000);
+          await makeQueries();
+          expect(authorsService.getStd('both')).toContain('TestQuery: 2');
+          expect(booksService.getStd('both')).toContain('TestQuery: 2');
+          expect(commentsService.getStd('both')).toContain('TestQuery: 3');
         });
       }
     });
