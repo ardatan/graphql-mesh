@@ -121,21 +121,13 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
           }
         }
         return function handleResponse({ response, setResponse }) {
+          let body: Promise<string> | string;
           const policyResponse: CachePolicy.Response = {
             status: response.status,
             headers: getHeadersObj(response.headers),
           };
-          if (policy) {
-            pluginLogger?.debug(`Updating the cache entry cache for ${url}`);
-            policy.revalidatedPolicy(policyRequest, policyResponse);
-          } else {
-            pluginLogger?.debug(`Creating the cache entry for ${url}`);
-            policy = new CachePolicy(policyRequest, policyResponse);
-          }
-          if (policy.storable()) {
-            pluginLogger?.debug(`Storing the cache entry for ${url}`);
-            const text$ = response.text();
-            const store$ = text$.then(body => {
+          function updateCacheEntry() {
+            const store$ = mapMaybePromise(body, body => {
               const ttl = policy.timeToLive();
               pluginLogger?.debug(`TTL: ${ttl}ms`);
               return cache.set(
@@ -150,8 +142,34 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
                 },
               );
             });
+            // @ts-expect-error - Promise type mismatch
             context?.waitUntil(store$);
-            return text$.then(body => setResponse(new ResponseCtor(body, response)));
+          }
+          if (policy) {
+            pluginLogger?.debug(`Updating the cache entry cache for ${url}`);
+            const revalidationPolicy = policy.revalidatedPolicy(policyRequest, policyResponse);
+            policy = revalidationPolicy.policy;
+            if (!revalidationPolicy.modified) {
+              pluginLogger?.debug(`Response not modified for ${url}`);
+              body = cacheEntry.body;
+              updateCacheEntry();
+              return setResponse(
+                new ResponseCtor(cacheEntry.body, {
+                  status: cacheEntry.response.status,
+                  // @ts-expect-error - Headers type mismatch
+                  headers: policy.responseHeaders(),
+                }),
+              );
+            }
+          } else {
+            pluginLogger?.debug(`Creating the cache entry for ${url}`);
+            policy = new CachePolicy(policyRequest, policyResponse);
+          }
+          if (policy.storable()) {
+            pluginLogger?.debug(`Storing the cache entry for ${url}`);
+            body = response.text();
+            updateCacheEntry();
+            return body.then(body => setResponse(new ResponseCtor(body, response)));
           }
         };
       });
