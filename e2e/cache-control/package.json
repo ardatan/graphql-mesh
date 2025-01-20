@@ -4,7 +4,7 @@
   "devDependencies": {
     "@apollo/server": "^4.11.3",
     "@apollo/subgraph": "^2.9.3",
-    "@graphql-hive/gateway": "^1.7.8",
+    "@graphql-hive/gateway": "^1.8.0",
     "@graphql-mesh/compose-cli": "^1.2.13",
     "graphql": "^16.9.0",
     "tslib": "^2.8.1"
