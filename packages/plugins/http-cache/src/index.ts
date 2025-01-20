@@ -124,13 +124,13 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
           }
         }
         return function handleResponse({ response, setResponse }) {
-          let body: Promise<string> | string;
+          let body$: Promise<string> | string;
           const policyResponse: CachePolicy.Response = {
             status: response.status,
             headers: getHeadersObj(response.headers),
           };
           function updateCacheEntry() {
-            const store$ = mapMaybePromise(body, body => {
+            const store$ = mapMaybePromise(body$, body => {
               const ttl = policy.timeToLive();
               pluginLogger?.debug(`TTL: ${ttl}ms`);
               return cache.set(
@@ -154,7 +154,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
             policy = revalidationPolicy.policy;
             if (!revalidationPolicy.modified) {
               pluginLogger?.debug(`Response not modified for ${url}`);
-              body = cacheEntry.body;
+              body$ = cacheEntry.body;
               updateCacheEntry();
               return returnCachedResponse(setResponse);
             }
@@ -164,9 +164,9 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
           }
           if (policy.storable()) {
             pluginLogger?.debug(`Storing the cache entry for ${url}`);
-            body = response.text();
+            body$ = response.text();
             updateCacheEntry();
-            return body.then(body => setResponse(new ResponseCtor(body, response)));
+            return body$.then(body => setResponse(new ResponseCtor(body, response)));
           }
         };
       });
