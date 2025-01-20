@@ -36,7 +36,7 @@ type OpenapiHandler @md {
   """
   Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
   """
-  selectQueryOrMutationField: [OASSelectQueryOrMutationFieldConfig]
+  selectQueryOrMutationField: [SelectQueryOrMutationFieldConfig]
   """
   JSON object representing the query search parameters to add to the API calls
   """
@@ -62,7 +62,7 @@ enum QueryOrMutation {
   Mutation
 }
 
-type OASSelectQueryOrMutationFieldConfig {
+type SelectQueryOrMutationFieldConfig {
   type: QueryOrMutation!
   fieldName: String!
 }

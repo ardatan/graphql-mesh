@@ -1102,7 +1102,7 @@ type Subscription {
 scalar TransportOptions"
 `;
 
-exports[`gRPC Handler Load proto with prefixQueryMethod should load the retrieve-movie.proto 1`] = `
+exports[`gRPC Handler Load proto with prefixQueryMethod and selectQueryOrMutationField should load the retrieve-movie.proto with prefixQueryMethod 1`] = `
 "schema @transport(subgraph: "prefixQueryMethod", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"movie_request\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"movie_request_by_ids\\":{\\"fields\\":{\\"movieIds\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"RetrieveMovies\\":{\\"requestType\\":\\"movie_request_by_ids\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"RetrieveMovies\\":{\\"requestType\\":\\"movie_request_by_ids\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
   query: Query
   mutation: Mutation
@@ -1223,6 +1223,128 @@ type Subscription {
   io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "prefixQueryMethod", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
   """search movies by the name of the cast"""
   io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "prefixQueryMethod", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Handler Load proto with prefixQueryMethod and selectQueryOrMutationField should load the retrieve-movie.proto with selectQueryOrMutationField 1`] = `
+"schema @transport(subgraph: "selectQueryOrMutationField", kind: "grpc", location: "localhost", options: {requestTimeout: 200000, roots: [{name: "Root0", rootJson: "{\\"options\\":{\\"syntax\\":\\"proto3\\"},\\"nested\\":{\\"io\\":{\\"nested\\":{\\"xtech\\":{\\"nested\\":{\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int32\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"movie_request\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"movie_request_by_ids\\":{\\"fields\\":{\\"movieIds\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"RetrieveMovies\\":{\\"requestType\\":\\"movie_request_by_ids\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"movie_request\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"RetrieveMovies\\":{\\"requestType\\":\\"movie_request_by_ids\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null}}}}},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
+  query: Query
+  subscription: Subscription
+}
+
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
+
+directive @grpcMethod(subgraph: String, rootJsonName: String, objPath: String, methodName: String, responseStream: Boolean) on FIELD_DEFINITION
+
+directive @grpcConnectivityState(subgraph: String, rootJsonName: String, objPath: String) on FIELD_DEFINITION
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  """get all movies"""
+  io_xtech_Example_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "selectQueryOrMutationField", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "GetMovies", responseStream: false)
+  """get movies"""
+  io_xtech_Example_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "selectQueryOrMutationField", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "RetrieveMovies", responseStream: false)
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "selectQueryOrMutationField", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_Example_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "selectQueryOrMutationField", rootJsonName: "Root0", objPath: "io.xtech.Example")
+  """get all movies"""
+  io_xtech_AnotherExample_GetMovies(input: io__xtech__movie_request_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "selectQueryOrMutationField", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "GetMovies", responseStream: false)
+  """get movies"""
+  io_xtech_AnotherExample_RetrieveMovies(input: io__xtech__movie_request_by_ids_Input): io__xtech__MoviesResult @grpcMethod(subgraph: "selectQueryOrMutationField", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "RetrieveMovies", responseStream: false)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): [io__xtech__Movie] @grpcMethod(subgraph: "selectQueryOrMutationField", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  io_xtech_AnotherExample_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "selectQueryOrMutationField", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample")
+}
+
+"""movie result message, contains list of movies"""
+type io__xtech__MoviesResult {
+  """list of movies"""
+  result: [io__xtech__Movie]
+}
+
+"""movie message payload"""
+type io__xtech__Movie {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp
+  genre: io__xtech__Genre
+}
+
+type google__protobuf__Timestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+enum io__xtech__Genre {
+  UNSPECIFIED @enum(subgraph: "selectQueryOrMutationField", value: "0")
+  ACTION @enum(subgraph: "selectQueryOrMutationField", value: "1")
+  DRAMA @enum(subgraph: "selectQueryOrMutationField", value: "2")
+}
+
+input io__xtech__movie_request_Input {
+  movie: io__xtech__Movie_Input
+}
+
+"""movie message payload"""
+input io__xtech__Movie_Input {
+  name: String
+  year: Int
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp_Input
+  genre: io__xtech__Genre
+}
+
+input google__protobuf__Timestamp_Input {
+  seconds: BigInt
+  nanos: Int
+}
+
+input io__xtech__movie_request_by_ids_Input {
+  movieIds: [String]
+}
+
+input io__xtech__SearchByCastRequest_Input {
+  castName: String
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Subscription {
+  """search movies by the name of the cast"""
+  io_xtech_Example_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "selectQueryOrMutationField", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "SearchMoviesByCast", responseStream: true)
+  """search movies by the name of the cast"""
+  io_xtech_AnotherExample_SearchMoviesByCast(input: io__xtech__SearchByCastRequest_Input): io__xtech__Movie @grpcMethod(subgraph: "selectQueryOrMutationField", rootJsonName: "Root0", objPath: "io.xtech.AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
 }
 
 scalar TransportOptions"

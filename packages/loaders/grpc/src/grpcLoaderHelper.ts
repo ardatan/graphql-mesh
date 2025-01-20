@@ -4,6 +4,7 @@ import {
   SchemaComposer,
   type Directive,
   type EnumTypeComposerValueConfigDefinition,
+  type ObjectTypeComposer,
   type ObjectTypeComposerFieldConfigAsObjectDefinition,
 } from 'graphql-compose';
 import {
@@ -13,6 +14,7 @@ import {
   GraphQLUnsignedInt,
   GraphQLVoid,
 } from 'graphql-scalars';
+import micromatch from 'micromatch';
 import protobufjs, {
   type AnyNestedObject,
   type IParseOptions,
@@ -482,11 +484,33 @@ export class GrpcLoaderHelper extends DisposableStack {
         fieldConfig.args = fieldConfigArgs;
         const methodNameLowerCased = methodName.toLowerCase();
         const prefixQueryMethod = this.config.prefixQueryMethod || QUERY_METHOD_PREFIXES;
-        const rootTypeComposer = prefixQueryMethod.some(prefix =>
-          methodNameLowerCased.startsWith(prefix),
-        )
-          ? this.schemaComposer.Query
-          : this.schemaComposer.Mutation;
+        let rootTypeComposer: ObjectTypeComposer;
+        if (this.config.selectQueryOrMutationField) {
+          const selection = this.config.selectQueryOrMutationField.find(
+            selection => micromatch([rootFieldName], selection.fieldName).length > 0,
+          );
+          const rootTypeName = selection?.type?.toLowerCase();
+          if (rootTypeName) {
+            if (rootTypeName === 'query') {
+              rootTypeComposer = this.schemaComposer.Query;
+            } else if (rootTypeName === 'mutation') {
+              rootTypeComposer = this.schemaComposer.Mutation;
+            } else if (rootTypeName === 'subscription') {
+              rootTypeComposer = this.schemaComposer.Subscription;
+            } else {
+              throw new Error(
+                `Unknown type provided ${selection.type} for ${rootFieldName}; available options are Query, Mutation and Subscription`,
+              );
+            }
+          }
+        }
+        if (rootTypeComposer == null) {
+          rootTypeComposer = prefixQueryMethod.some(prefix =>
+            methodNameLowerCased.startsWith(prefix),
+          )
+            ? this.schemaComposer.Query
+            : this.schemaComposer.Mutation;
+        }
         this.schemaComposer.addDirective(grpcMethodDirective);
         rootTypeComposer.addFields({
           [rootFieldName]: {

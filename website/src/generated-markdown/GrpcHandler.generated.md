@@ -18,4 +18,7 @@ Default: 200000
 * `useHTTPS` (type: `Boolean`) - Use https instead of http for gRPC connection
 * `metaData` (type: `JSON`) - MetaData
 * `prefixQueryMethod` (type: `Array of String`) - prefix to collect Query method default: list, get
+* `selectQueryOrMutationField` (type: `Array of Object`) - Allows to explicitly override the default operation (Query or Mutation) for any gRPC operation: 
+  * `type` (type: `String (query | mutation | Query | Mutation)`, required)
+  * `fieldName` (type: `String`, required)
 * `schemaHeaders` (type: `JSON`)

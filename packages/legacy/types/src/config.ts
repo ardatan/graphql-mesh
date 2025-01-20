@@ -334,6 +334,10 @@ export interface GrpcHandler {
    * prefix to collect Query method default: list, get
    */
   prefixQueryMethod?: string[];
+  /**
+   * Allows to explicitly override the default operation (Query or Mutation) for any gRPC operation
+   */
+  selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
   schemaHeaders?: {
     [k: string]: any;
   };
@@ -353,6 +357,13 @@ export interface GrpcCredentialsSsl {
   rootCA?: string;
   certChain?: string;
   privateKey?: string;
+}
+export interface SelectQueryOrMutationFieldConfig {
+  /**
+   * Allowed values: query, mutation, Query, Mutation
+   */
+  type: 'query' | 'mutation' | 'Query' | 'Mutation';
+  fieldName: string;
 }
 /**
  * Handler for JSON Schema specification.
@@ -908,7 +919,7 @@ export interface OpenapiHandler {
   /**
    * Allows to explicitly override the default operation (Query or Mutation) for any OAS operation
    */
-  selectQueryOrMutationField?: OASSelectQueryOrMutationFieldConfig[];
+  selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
   /**
    * JSON object representing the query search parameters to add to the API calls
    */
@@ -919,13 +930,6 @@ export interface OpenapiHandler {
    * Timeout for the HTTP request in milliseconds
    */
   timeout?: number;
-}
-export interface OASSelectQueryOrMutationFieldConfig {
-  /**
-   * Allowed values: query, mutation, Query, Mutation
-   */
-  type: 'query' | 'mutation' | 'Query' | 'Mutation';
-  fieldName: string;
 }
 /**
  * Handler for Postgres database, based on `postgraphile`
@@ -982,19 +986,12 @@ export interface RAMLHandler {
     [k: string]: any;
   };
   ignoreErrorResponses?: boolean;
-  selectQueryOrMutationField?: RAMLSelectQueryOrMutationFieldConfig[];
+  selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
   queryParams?: any;
   /**
    * Timeout for the HTTP request in milliseconds
    */
   timeout?: number;
-}
-export interface RAMLSelectQueryOrMutationFieldConfig {
-  /**
-   * Allowed values: query, mutation, Query, Mutation
-   */
-  type: 'query' | 'mutation' | 'Query' | 'Mutation';
-  fieldName: string;
 }
 /**
  * Handler for SOAP

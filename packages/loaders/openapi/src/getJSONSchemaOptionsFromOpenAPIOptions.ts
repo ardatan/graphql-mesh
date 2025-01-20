@@ -25,7 +25,7 @@ import type {
   JSONSchemaPubSubOperationConfig,
   OperationHeadersConfiguration,
 } from '@omnigraph/json-schema';
-import type { OpenAPILoaderSelectQueryOrMutationFieldConfig } from './types.js';
+import type { SelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
 
 export interface HATEOASConfig {
@@ -63,7 +63,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   schemaHeaders?: Record<string, string>;
   operationHeaders?: OperationHeadersConfiguration;
   queryParams?: Record<string, any>;
-  selectQueryOrMutationField?: OpenAPILoaderSelectQueryOrMutationFieldConfig[];
+  selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
   logger?: Logger;
   jsonApi?: boolean;
   HATEOAS?: Partial<HATEOASConfig> | boolean;
@@ -115,8 +115,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       env: process.env,
     });
   }
-  const fieldTypeMap: Record<string, OpenAPILoaderSelectQueryOrMutationFieldConfig['fieldName']> =
-    {};
+  const fieldTypeMap: Record<string, SelectQueryOrMutationFieldConfig['fieldName']> = {};
   for (const { fieldName, type } of selectQueryOrMutationField) {
     fieldTypeMap[fieldName] = type;
   }

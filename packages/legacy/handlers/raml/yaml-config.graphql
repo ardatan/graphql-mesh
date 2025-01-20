@@ -8,7 +8,7 @@ type RAMLHandler {
   schemaHeaders: JSON
   operationHeaders: JSON
   ignoreErrorResponses: Boolean
-  selectQueryOrMutationField: [RAMLSelectQueryOrMutationFieldConfig]
+  selectQueryOrMutationField: [SelectQueryOrMutationFieldConfig]
   queryParams: Any
 
   """
@@ -24,7 +24,7 @@ enum QueryOrMutation {
   Mutation
 }
 
-type RAMLSelectQueryOrMutationFieldConfig {
+type SelectQueryOrMutationFieldConfig {
   type: QueryOrMutation!
   fieldName: String!
 }
