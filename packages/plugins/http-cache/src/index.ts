@@ -97,7 +97,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
       const policyRequest: CachePolicy.Request = {
         url,
         method: options.method,
-        headers: options.headers,
+        headers: getHeadersObj(options.headers),
       };
       const cacheEntry$ = cache.get(url);
       return mapMaybePromise(cacheEntry$, function handleCacheEntry(cacheEntry: CacheEntry) {
