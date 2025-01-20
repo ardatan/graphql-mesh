@@ -38,6 +38,7 @@ createServer(
         type Author @key(fields: "id") @cacheControl(maxAge: 10) {
           id: ID!
           name: String!
+          age: Int
         }
 
         type Query {

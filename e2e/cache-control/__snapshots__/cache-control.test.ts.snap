@@ -32,6 +32,7 @@ type Author
 {
   id: ID!
   name: String! @join__field(graph: AUTHORS)
+  age: Int @join__field(graph: AUTHORS)
   books: [Book] @join__field(graph: BOOKS)
 }
 
@@ -190,6 +191,7 @@ scalar TransportOptions @join__type(graph: AUTHORS)  @join__type(graph: BOOKS)  
 type Author @cacheControl(maxAge: 10)  @join__type(graph: AUTHORS, key: "id")  @join__type(graph: BOOKS, key: "id", extension: true)  {
   id: ID!
   name: String! @join__field(graph: AUTHORS) 
+  age: Int @join__field(graph: AUTHORS) 
   books: [Book] @join__field(graph: BOOKS) 
 }
 

@@ -11,15 +11,15 @@ export const books = [
 ];
 
 export const authors = [
-  { id: '1', name: 'F. Scott Fitzgerald' },
-  { id: '2', name: 'Harper Lee' },
-  { id: '3', name: 'J.D. Salinger' },
-  { id: '4', name: 'George Orwell' },
-  { id: '5', name: 'Aldous Huxley' },
-  { id: '6', name: 'Ray Bradbury' },
-  { id: '7', name: 'Jane Austen' },
-  { id: '8', name: 'Emily Bronte' },
-  { id: '9', name: 'Charlotte Bronte' },
+  { id: '1', name: 'F. Scott Fitzgerald', age: 44 },
+  { id: '2', name: 'Harper Lee', age: 89 },
+  { id: '3', name: 'J.D. Salinger', age: 91 },
+  { id: '4', name: 'George Orwell', age: 46 },
+  { id: '5', name: 'Aldous Huxley', age: 69 },
+  { id: '6', name: 'Ray Bradbury', age: 91 },
+  { id: '7', name: 'Jane Austen', age: 41 },
+  { id: '8', name: 'Emily Bronte', age: 30 },
+  { id: '9', name: 'Charlotte Bronte', age: 38 },
 ];
 
 export const comments = [

@@ -46,9 +46,9 @@ describe('Cache Control', () => {
           });
           async function makeQueries() {
             const queries = {
-              authors: {
+              AUTHORS_TEST_1: {
                 query: /* GraphQL */ `
-                  query TestQuery {
+                  query AUTHORS_TEST_1 {
                     authors {
                       id
                       name
@@ -59,9 +59,25 @@ describe('Cache Control', () => {
                   authors: authors.map(({ id, name }) => ({ id, name })),
                 },
               },
-              books: {
+              // We make 2 queries to the same field to ensure that the cache is working
+              // seperately for each query
+              AUTHORS_TEST_2: {
                 query: /* GraphQL */ `
-                  query TestQuery {
+                  query AUTHORS_TEST_2 {
+                    authors {
+                      id
+                      name
+                      age
+                    }
+                  }
+                `,
+                expected: {
+                  authors: authors.map(({ id, name, age }) => ({ id, name, age })),
+                },
+              },
+              BOOKS_TEST_1: {
+                query: /* GraphQL */ `
+                  query BOOKS_TEST_1 {
                     books {
                       id
                       title
@@ -72,9 +88,9 @@ describe('Cache Control', () => {
                   books: books.map(({ id, title }) => ({ id, title })),
                 },
               },
-              comments: {
+              COMMENTS_TEST_1: {
                 query: /* GraphQL */ `
-                  query TestQuery {
+                  query COMMENTS_TEST_1 {
                     comments {
                       id
                       content
@@ -95,26 +111,30 @@ describe('Cache Control', () => {
           const [authorsService, booksService, commentsService] = services;
           // Store the results to the cache that will take 30s
           await makeQueries();
-          expect(authorsService.getStd('both')).toContain('TestQuery: 1');
-          expect(booksService.getStd('both')).toContain('TestQuery: 1');
-          expect(commentsService.getStd('both')).toContain('TestQuery: 1');
+          expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_1: 1');
+          expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_2: 1');
+          expect(booksService.getStd('both')).toContain('BOOKS_TEST_1: 1');
+          expect(commentsService.getStd('both')).toContain('COMMENTS_TEST_1: 1');
           await makeQueries();
           // Results did not expire yet
-          expect(authorsService.getStd('both')).not.toContain('TestQuery: 2');
-          expect(booksService.getStd('both')).not.toContain('TestQuery: 2');
-          expect(commentsService.getStd('both')).not.toContain('TestQuery: 2');
+          expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_1: 2');
+          expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_2: 2');
+          expect(booksService.getStd('both')).not.toContain('BOOKS_TEST_1: 2');
+          expect(commentsService.getStd('both')).not.toContain('COMMENTS_TEST_1: 2');
           // Comment has been expired
           await setTimeout(5_000);
           await makeQueries();
-          expect(authorsService.getStd('both')).not.toContain('TestQuery: 2');
-          expect(booksService.getStd('both')).not.toContain('TestQuery: 2');
-          expect(commentsService.getStd('both')).toContain('TestQuery: 2');
+          expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_1: 2');
+          expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_2: 2');
+          expect(booksService.getStd('both')).not.toContain('BOOKS_TEST_1: 2');
+          expect(commentsService.getStd('both')).toContain('COMMENTS_TEST_1: 2');
           // All results have been expired
           await setTimeout(5_000);
           await makeQueries();
-          expect(authorsService.getStd('both')).toContain('TestQuery: 2');
-          expect(booksService.getStd('both')).toContain('TestQuery: 2');
-          expect(commentsService.getStd('both')).toContain('TestQuery: 3');
+          expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_1: 2');
+          expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_2: 2');
+          expect(booksService.getStd('both')).toContain('BOOKS_TEST_1: 2');
+          expect(commentsService.getStd('both')).toContain('COMMENTS_TEST_1: 3');
         });
       }
     });
