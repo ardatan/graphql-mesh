@@ -1,5 +1,5 @@
 import CachePolicy from 'http-cache-semantics';
-import type { GatewayConfigContext, GatewayPlugin } from '@graphql-hive/gateway';
+import type { GatewayPlugin } from '@graphql-hive/gateway';
 import type { KeyValueCache, Logger } from '@graphql-mesh/types';
 import { getHeadersObj, mapMaybePromise } from '@graphql-mesh/utils';
 import {
