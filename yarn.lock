@@ -8517,8 +8517,8 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-jwt@npm:^3.4.9":
-  version: 3.4.11
-  resolution: "@graphql-yoga/plugin-jwt@npm:3.4.11"
+  version: 3.4.12
+  resolution: "@graphql-yoga/plugin-jwt@npm:3.4.12"
   dependencies:
     "@whatwg-node/server-plugin-cookies": "npm:^1.0.3"
     jsonwebtoken: "npm:^9.0.0"
@@ -8527,7 +8527,7 @@ __metadata:
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
     graphql-yoga: ^5.10.10
-  checksum: 10c0/750783c798df551f2014685ca0080d4a9aa6b9eebceb0c758be03caf42491afa0dd082aeaafef9bf9164e485375c7433cb860065bfe0500ff294e3939018a7a5
+  checksum: 10c0/83ea212772359d9a116558d6e2b4aa883ccef911b544c3e0a46d9dfa584cef5c6f368d2bbe120264be969a5e3536194deef8daab2936c4e5a4408323a9abac24
   languageName: node
   linkType: hard
 
