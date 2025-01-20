@@ -1,5 +1,6 @@
 import CachePolicy from 'http-cache-semantics';
 import type { GatewayConfigContext, GatewayPlugin } from '@graphql-hive/gateway';
+import type { KeyValueCache, Logger } from '@graphql-mesh/types';
 import { getHeadersObj, mapMaybePromise } from '@graphql-mesh/utils';
 import {
   Response as DefaultResponseCtor,
@@ -12,7 +13,7 @@ interface CacheEntry {
   body: string;
 }
 
-export interface HTTPCachePluginOptions extends GatewayConfigContext {
+export interface HTTPCachePluginOptions {
   /**
    * If the following patterns match the request URL, the response will be cached. (Any of: String, URLPatternObj)
    */
@@ -25,6 +26,9 @@ export interface HTTPCachePluginOptions extends GatewayConfigContext {
   policyOptions?:
     | CachePolicy.Options
     | ((request: CachePolicy.Request, response: CachePolicy.Response) => CachePolicy.Options);
+
+  logger?: Logger;
+  cache?: KeyValueCache<CacheEntry>;
 }
 
 export interface URLPatternObj {

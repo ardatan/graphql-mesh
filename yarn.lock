@@ -6581,6 +6581,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-http-cache@workspace:packages/plugins/http-cache"
   dependencies:
     "@graphql-hive/gateway": "npm:^1.7.9"
+    "@graphql-mesh/types": "npm:^0.103.11"
     "@graphql-mesh/utils": "npm:^0.103.11"
     "@types/http-cache-semantics": "npm:4.0.4"
     "@whatwg-node/fetch": "npm:^0.10.0"
