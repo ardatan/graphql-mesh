@@ -17,9 +17,9 @@ function handleSuppressedError(e: any) {
 }
 
 if (typeof afterAll === 'function') {
-  afterAll(() => {
+  afterAll(async () => {
     try {
-      leftoverStack.disposeAsync().catch(e => handleSuppressedError(e));
+      await leftoverStack.disposeAsync();
     } catch (e) {
       handleSuppressedError(e);
     } finally {

@@ -5,6 +5,7 @@ import type { AddressInfo } from 'net';
 import os from 'os';
 import path, { isAbsolute } from 'path';
 import type { Readable } from 'stream';
+import { inspect } from 'util';
 import Dockerode from 'dockerode';
 import type { ExecutionResult } from 'graphql';
 import {
@@ -449,7 +450,7 @@ export function createTenv(cwd: string): Tenv {
             (err, res) => (err ? reject(err) : resolve(res)),
             pipeLogs
               ? e => {
-                  process.stderr.write(JSON.stringify(e) + '\n\n');
+                  process.stderr.write(inspect(e) + '\n\n');
                 }
               : undefined,
           );

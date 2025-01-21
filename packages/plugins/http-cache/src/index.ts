@@ -88,6 +88,8 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
       if (yoga.fetchAPI.Response) {
         ResponseCtor = yoga.fetchAPI.Response;
       }
+      // @ts-expect-error - Logger type mismatch
+      logger ||= yoga.logger;
     },
     onFetch({ url, options, setOptions, context, endResponse }) {
       if (shouldSkip(url) || typeof options.body === 'object') {
@@ -182,6 +184,13 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
                 }),
               ),
             );
+          } else {
+            if (cacheEntry) {
+              pluginLogger?.debug(`Deleting the cache entry for ${url}`);
+              const delete$ = cache.delete(cacheKey);
+              // @ts-expect-error - Promise type mismatch
+              context?.waitUntil(delete$);
+            }
           }
         };
       });

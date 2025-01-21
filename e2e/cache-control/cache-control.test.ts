@@ -1,140 +1,204 @@
 import { setTimeout } from 'node:timers/promises';
-import { createTenv, type Service } from '@e2e/tenv';
+import { DisposableSymbols } from 'graphql-yoga';
+import { createTenv, type Container, type Service } from '@e2e/tenv';
 import { authors, books, comments } from './services/data';
 
 describe('Cache Control', () => {
   const env = createTenv(__dirname);
   let services: Service[];
+  async function createServices(): Promise<AsyncDisposable> {
+    services = await Promise.all([
+      // Authors -> Yoga Server w/ Response Caching plugin enabled
+      // This checks ETag
+      env.service('authors'),
+      // Books -> Apollo Server w/ Response Caching plugin enabled
+      env.service('books'),
+      // Comments -> Apollo Server w/ HTTP Caching plugin enabled
+      // w/o @cacheControl directive but default TTL set
+      env.service('comments'),
+    ]);
+    return {
+      async [DisposableSymbols.asyncDispose]() {
+        await Promise.all(services.map(service => service[DisposableSymbols.asyncDispose]()));
+      },
+    };
+  }
   const composition = {
-    async mesh(maskServicePorts: boolean) {
-      const books = await env.service('books');
-      const authors = await env.service('authors');
-      const comments = await env.service('comments');
-      services = [authors, books, comments];
-      return env.compose({
+    async ['Mesh Compose'](maskServicePorts: boolean) {
+      const servicesCreation = await createServices();
+      const composition = await env.compose({
         services,
         maskServicePorts,
         output: 'graphql',
       });
+      return {
+        supergraphPath: composition.output,
+        supergraphSdl: composition.result,
+        async [DisposableSymbols.asyncDispose]() {
+          await Promise.all([
+            servicesCreation[DisposableSymbols.asyncDispose](),
+            composition[DisposableSymbols.asyncDispose](),
+          ]);
+        },
+      };
     },
-    async apollo(maskServicePorts: boolean) {
-      const books = await env.service('books');
-      const authors = await env.service('authors');
-      const comments = await env.service('comments');
-      services = [authors, books, comments];
-      return env.composeWithApollo({
+    async ['Apollo Rover'](maskServicePorts: boolean) {
+      const servicesCreation = await createServices();
+      const composition = await env.composeWithApollo({
         services,
         maskServicePorts,
       });
+      return {
+        supergraphPath: composition.output,
+        supergraphSdl: composition.result,
+        async [DisposableSymbols.asyncDispose]() {
+          await servicesCreation[DisposableSymbols.asyncDispose]();
+        },
+      };
     },
   };
   for (const [name, compose] of Object.entries(composition)) {
-    describe(`Composition With ${name}`, () => {
+    describe(name, () => {
       it('composed correctly', async () => {
-        const { result } = await compose(true);
-        expect(result).toMatchSnapshot(name);
+        await using composition = await compose(true);
+        expect(composition.supergraphSdl).toMatchSnapshot();
       });
-      const cacheMethod = ['HTTP_CACHE', 'RESPONSE_CACHE'];
-      for (const method of cacheMethod) {
-        it('caches correctly with ' + method, async () => {
-          const { output } = await compose(false);
-          const gw = await env.serve({
-            supergraph: output,
-            env: {
-              [method]: 'true',
-            },
+      const cachePlugins = ['HTTP Caching', 'Response Caching'];
+      const cacheStorages: Record<string, () => Promise<AsyncDisposable>> = {
+        async redis() {
+          const redis = await env.container({
+            name: 'redis',
+            image: 'redis/redis-stack',
+            containerPort: 6379,
+            healthcheck: ['CMD', 'redis-cli', '--raw', 'incr', 'ping'],
           });
-          async function makeQueries() {
-            const queries = {
-              AUTHORS_TEST_1: {
-                query: /* GraphQL */ `
-                  query AUTHORS_TEST_1 {
-                    authors {
-                      id
-                      name
-                    }
-                  }
-                `,
-                expected: {
-                  authors: authors.map(({ id, name }) => ({ id, name })),
+          return {
+            env: {
+              CACHE_STORAGE: 'redis',
+              REDIS_PORT: redis.port,
+            },
+            async [DisposableSymbols.asyncDispose]() {
+              await redis[DisposableSymbols.asyncDispose]();
+            },
+          };
+        },
+        async ['inmemory-lru']() {
+          return {
+            env: {
+              CACHE_STORAGE: 'inmemory-lru',
+            },
+            async [DisposableSymbols.asyncDispose]() {
+              // Do nothing
+            },
+          };
+        },
+      };
+      for (const CACHE_PLUGIN of cachePlugins) {
+        describe(CACHE_PLUGIN, () => {
+          for (const CACHE_STORAGE in cacheStorages) {
+            it(CACHE_STORAGE, async () => {
+              await using cacheStorage = await cacheStorages[CACHE_STORAGE]();
+              await using composition = await compose(false);
+              await using gw = await env.serve({
+                supergraph: composition.supergraphPath,
+                env: {
+                  CACHE_PLUGIN,
+                  ...cacheStorage,
                 },
-              },
-              // We make 2 queries to the same field to ensure that the cache is working
-              // seperately for each query
-              AUTHORS_TEST_2: {
-                query: /* GraphQL */ `
-                  query AUTHORS_TEST_2 {
-                    authors {
-                      id
-                      name
-                      age
-                    }
-                  }
-                `,
-                expected: {
-                  authors: authors.map(({ id, name, age }) => ({ id, name, age })),
-                },
-              },
-              BOOKS_TEST_1: {
-                query: /* GraphQL */ `
-                  query BOOKS_TEST_1 {
-                    books {
-                      id
-                      title
-                    }
-                  }
-                `,
-                expected: {
-                  books: books.map(({ id, title }) => ({ id, title })),
-                },
-              },
-              COMMENTS_TEST_1: {
-                query: /* GraphQL */ `
-                  query COMMENTS_TEST_1 {
-                    comments {
-                      id
-                      content
-                    }
-                  }
-                `,
-                expected: {
-                  comments: comments.map(({ id, content }) => ({ id, content })),
-                },
-              },
-            };
-            for (const name in queries) {
-              const { query, expected } = queries[name];
-              const { data } = await gw.execute({ query });
-              expect(data).toEqual(expected);
-            }
+              });
+              async function makeQueries() {
+                const queries = {
+                  AUTHORS_TEST_1: {
+                    query: /* GraphQL */ `
+                      query AUTHORS_TEST_1 {
+                        authors {
+                          id
+                          name
+                        }
+                      }
+                    `,
+                    expected: {
+                      authors: authors.map(({ id, name }) => ({ id, name })),
+                    },
+                  },
+                  // We make 2 queries to the same field to ensure that the cache is working
+                  // seperately for each query
+                  AUTHORS_TEST_2: {
+                    query: /* GraphQL */ `
+                      query AUTHORS_TEST_2 {
+                        authors {
+                          id
+                          name
+                          age
+                        }
+                      }
+                    `,
+                    expected: {
+                      authors: authors.map(({ id, name, age }) => ({ id, name, age })),
+                    },
+                  },
+                  BOOKS_TEST_1: {
+                    query: /* GraphQL */ `
+                      query BOOKS_TEST_1 {
+                        books {
+                          id
+                          title
+                        }
+                      }
+                    `,
+                    expected: {
+                      books: books.map(({ id, title }) => ({ id, title })),
+                    },
+                  },
+                  COMMENTS_TEST_1: {
+                    query: /* GraphQL */ `
+                      query COMMENTS_TEST_1 {
+                        comments {
+                          id
+                          content
+                        }
+                      }
+                    `,
+                    expected: {
+                      comments: comments.map(({ id, content }) => ({ id, content })),
+                    },
+                  },
+                };
+                for (const name in queries) {
+                  const { query, expected } = queries[name];
+                  const { data } = await gw.execute({ query });
+                  expect(data).toEqual(expected);
+                }
+              }
+              const [authorsService, booksService, commentsService] = services;
+              // Store the results to the cache that will take 30s
+              await makeQueries();
+              expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_1: 1');
+              expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_2: 1');
+              expect(booksService.getStd('both')).toContain('BOOKS_TEST_1: 1');
+              expect(commentsService.getStd('both')).toContain('COMMENTS_TEST_1: 1');
+              await makeQueries();
+              // Results did not expire yet
+              expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_1: 2');
+              expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_2: 2');
+              expect(booksService.getStd('both')).not.toContain('BOOKS_TEST_1: 2');
+              expect(commentsService.getStd('both')).not.toContain('COMMENTS_TEST_1: 2');
+              // Comment has been expired
+              await setTimeout(5_000);
+              await makeQueries();
+              expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_1: 2');
+              expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_2: 2');
+              expect(booksService.getStd('both')).not.toContain('BOOKS_TEST_1: 2');
+              expect(commentsService.getStd('both')).toContain('COMMENTS_TEST_1: 2');
+              // All results have been expired
+              await setTimeout(5_000);
+              await makeQueries();
+              expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_1: 2');
+              expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_2: 2');
+              expect(booksService.getStd('both')).toContain('BOOKS_TEST_1: 2');
+              expect(commentsService.getStd('both')).toContain('COMMENTS_TEST_1: 3');
+            });
           }
-          const [authorsService, booksService, commentsService] = services;
-          // Store the results to the cache that will take 30s
-          await makeQueries();
-          expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_1: 1');
-          expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_2: 1');
-          expect(booksService.getStd('both')).toContain('BOOKS_TEST_1: 1');
-          expect(commentsService.getStd('both')).toContain('COMMENTS_TEST_1: 1');
-          await makeQueries();
-          // Results did not expire yet
-          expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_1: 2');
-          expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_2: 2');
-          expect(booksService.getStd('both')).not.toContain('BOOKS_TEST_1: 2');
-          expect(commentsService.getStd('both')).not.toContain('COMMENTS_TEST_1: 2');
-          // Comment has been expired
-          await setTimeout(5_000);
-          await makeQueries();
-          expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_1: 2');
-          expect(authorsService.getStd('both')).not.toContain('AUTHORS_TEST_2: 2');
-          expect(booksService.getStd('both')).not.toContain('BOOKS_TEST_1: 2');
-          expect(commentsService.getStd('both')).toContain('COMMENTS_TEST_1: 2');
-          // All results have been expired
-          await setTimeout(5_000);
-          await makeQueries();
-          expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_1: 2');
-          expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_2: 2');
-          expect(booksService.getStd('both')).toContain('BOOKS_TEST_1: 2');
-          expect(commentsService.getStd('both')).toContain('COMMENTS_TEST_1: 3');
         });
       }
     });

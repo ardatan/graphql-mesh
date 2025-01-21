@@ -82,8 +82,8 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
 
   set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<any> {
     const stringifiedValue = JSON.stringify(value);
-    if (options?.ttl) {
-      return this.client.set(key, stringifiedValue, 'EX', options.ttl);
+    if (options?.ttl && options.ttl > 0) {
+      return this.client.set(key, stringifiedValue, 'PX', options.ttl * 1000);
     } else {
       return this.client.set(key, stringifiedValue);
     }
