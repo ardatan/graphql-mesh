@@ -173,7 +173,7 @@ export class Interpolator {
         str,
       );
     } catch (e) {
-      console.error(`An error occurred while applying modifiers to ${str}`, modifiers, e);
+      console.error(`An error occurred while applying modifiers`, e);
       return str;
     }
   }
