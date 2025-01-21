@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Cache Control Apollo Rover composed correctly 1`] = `
+exports[`Cache Control Apollo Rover composes 1`] = `
 "schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
   @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
@@ -98,7 +98,7 @@ type Query
 }"
 `;
 
-exports[`Cache Control Mesh Compose composed correctly 1`] = `
+exports[`Cache Control Mesh Compose composes 1`] = `
 "
 schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
