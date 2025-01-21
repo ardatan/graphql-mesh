@@ -112,7 +112,7 @@
     "@whatwg-node/server": "0.9.65",
     "axios": "^1.0.0",
     "cross-fetch": "^3.1.5",
-    "date-and-time": "^0.14.2",
+    "date-and-time": "^3.0.0",
     "es5-ext": "0.10.64",
     "esbuild": "^0.24.0",
     "graphql": "16.10.0",

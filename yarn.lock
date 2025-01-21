@@ -18046,10 +18046,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-and-time@npm:^0.14.2":
-  version: 0.14.2
-  resolution: "date-and-time@npm:0.14.2"
-  checksum: 10c0/c63e25e60108d696017f278cf3f4c05d4732bc58611d3bd841fb45bd916379dfd7ed0e637edd0768379212dd2ae6424550e3816fc63cf234cc0840255da43c6c
+"date-and-time@npm:^3.0.0":
+  version: 3.6.0
+  resolution: "date-and-time@npm:3.6.0"
+  checksum: 10c0/f2691740fdcf5ab893e3798fa98a3838e58f287c10b5ea0265f23ce136c65ad9c2591c5682ee5c736db3b0c447d1ab4ec105717cd0e9a13790fa83a287da9f5e
   languageName: node
   linkType: hard
 
