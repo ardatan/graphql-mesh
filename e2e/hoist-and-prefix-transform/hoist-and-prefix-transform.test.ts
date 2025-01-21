@@ -1,6 +1,6 @@
 import { createTenv, type Service } from '@e2e/tenv';
 
-const { compose, serve, service, fs } = createTenv(__dirname);
+const { compose, gateway, service, fs } = createTenv(__dirname);
 
 let weather: Service;
 
@@ -8,23 +8,23 @@ beforeAll(async () => {
   weather = await service('weather');
 });
 
-it('should compose the appropriate schema', async () => {
-  const { result } = await compose({
+it.concurrent('should compose the appropriate schema', async () => {
+  const { supergraphSdl: result } = await compose({
     services: [weather],
     maskServicePorts: true,
   });
   expect(result).toMatchSnapshot();
 });
 
-it('should compose and execute', async () => {
-  const { output } = await compose({ output: 'graphql', services: [weather] });
+it.concurrent('should compose and execute', async () => {
+  const { supergraphPath } = await compose({ output: 'graphql', services: [weather] });
 
   // hoisted
-  const supergraph = await fs.read(output);
+  const supergraph = await fs.read(supergraphPath);
   expect(supergraph).toContain('Test_Weather');
   expect(supergraph).toContain('chanceOfRain');
 
-  const { execute } = await serve({ supergraph: output });
+  const { execute } = await gateway({ supergraph: supergraphPath });
   await expect(
     execute({
       query: /* GraphQL */ `

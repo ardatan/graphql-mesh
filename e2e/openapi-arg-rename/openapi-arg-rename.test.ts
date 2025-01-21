@@ -1,9 +1,9 @@
 import { createTenv } from '@e2e/tenv';
 
 describe('OpenAPI Arg Rename', () => {
-  const { compose, serve, service } = createTenv(__dirname);
-  it('composes the schema', async () => {
-    const { result } = await compose({
+  const { compose, gateway, service } = createTenv(__dirname);
+  it.concurrent('composes the schema', async () => {
+    const { supergraphSdl: result } = await compose({
       output: 'graphql',
       services: [await service('Wiki')],
       maskServicePorts: true,
@@ -11,13 +11,13 @@ describe('OpenAPI Arg Rename', () => {
 
     expect(result).toMatchSnapshot();
   });
-  it('should work with untouched schema', async () => {
-    const { output } = await compose({
+  it.concurrent('should work with untouched schema', async () => {
+    const { supergraphPath } = await compose({
       output: 'graphql',
       services: [await service('Wiki')],
     });
 
-    const { execute } = await serve({ supergraph: output });
+    const { execute } = await gateway({ supergraph: supergraphPath });
     const queryResult = await execute({
       query: /* GraphQL */ `
         mutation Good {
@@ -37,13 +37,13 @@ describe('OpenAPI Arg Rename', () => {
     });
   });
 
-  it('should work with renamed argument', async () => {
-    const { output } = await compose({
+  it.concurrent('should work with renamed argument', async () => {
+    const { supergraphPath } = await compose({
       output: 'graphql',
       services: [await service('Wiki')],
     });
 
-    const { execute } = await serve({ supergraph: output });
+    const { execute } = await gateway({ supergraph: supergraphPath });
     const queryResult = await execute({
       query: /* GraphQL */ `
         mutation Bad {

@@ -1,7 +1,7 @@
 import { createTenv, type Serve } from '@e2e/tenv';
 
 describe('gRPC Multiple', () => {
-  it('composes', async () => {
+  it.concurrent('composes', async () => {
     await using tenv = createTenv(__dirname);
     await using Pets = await tenv.service('Pets');
     await using Stores = await tenv.service('Stores');

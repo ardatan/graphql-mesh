@@ -1,23 +1,23 @@
 import { createTenv } from '@e2e/tenv';
 
-const { compose, serve, service } = createTenv(__dirname);
+const { compose, gateway, service } = createTenv(__dirname);
 
 describe('OpenAPI w/ Prune Transform', () => {
-  it('composes', async () => {
-    const { result } = await compose({
+  it.concurrent('composes', async () => {
+    const { supergraphSdl: result } = await compose({
       output: 'graphql',
       services: [await service('Wiki')],
       maskServicePorts: true,
     });
     expect(result).toMatchSnapshot();
   });
-  it('should work when pruned', async () => {
-    const { output } = await compose({
+  it.concurrent('should work when pruned', async () => {
+    const { supergraphPath } = await compose({
       output: 'graphql',
       services: [await service('Wiki')],
     });
 
-    const { execute } = await serve({ supergraph: output });
+    const { execute } = await gateway({ supergraph: supergraphPath });
     const queryResult = await execute({
       query: /* GraphQL */ `
         mutation Main {

@@ -1,6 +1,6 @@
 import { createTenv, type Container } from '@e2e/tenv';
 
-const { compose, container, serve, spawn } = createTenv(__dirname);
+const { compose, container, gateway, spawn } = createTenv(__dirname);
 
 let neo4j: Container;
 beforeAll(async () => {
@@ -31,8 +31,8 @@ beforeAll(async () => {
   await waitForLoad;
 });
 
-it('should compose the appropriate schema', async () => {
-  const { result } = await compose({
+it.concurrent('should compose the appropriate schema', async () => {
+  const { supergraphSdl: result } = await compose({
     services: [neo4j],
     maskServicePorts: true,
   });
@@ -56,10 +56,10 @@ it.concurrent.each([
     `,
   },
 ])('should execute $name', async ({ query }) => {
-  const { output } = await compose({
+  const { supergraphPath } = await compose({
     services: [neo4j],
     output: 'graphql',
   });
-  const { execute } = await serve({ supergraph: output });
+  const { execute } = await gateway({ supergraph: supergraphPath });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });

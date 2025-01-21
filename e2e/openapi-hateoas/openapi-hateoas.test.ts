@@ -1,33 +1,29 @@
-import { createTenv, type Service } from '@e2e/tenv';
+import { createTenv } from '@e2e/tenv';
 
 describe('OpenAPI HATEOAS', () => {
-  const { compose, serve, service } = createTenv(__dirname);
-
-  let oasService: Service;
-
-  beforeAll(async () => {
-    oasService = await service('OASService');
-  });
-
-  it('should compose', async () => {
-    const { result } = await compose({
+  it.concurrent('should compose', async () => {
+    await using tenv = createTenv(__dirname);
+    await using OASService = await tenv.service('OASService');
+    await using composition = await tenv.compose({
       output: 'graphql',
-      services: [oasService],
+      services: [OASService],
       maskServicePorts: true,
     });
-    expect(result).toMatchSnapshot();
+    expect(composition.supergraphSdl).toMatchSnapshot();
   });
 
-  it('should execute and follow HATEOAS links', async () => {
-    const { output } = await compose({
+  it.concurrent('should execute and follow HATEOAS links', async () => {
+    await using tenv = createTenv(__dirname);
+    await using OASService = await tenv.service('OASService');
+    await using composition = await tenv.compose({
       output: 'graphql',
-      services: [oasService],
+      services: [OASService],
     });
 
-    const { execute } = await serve({
-      supergraph: output,
+    const gw = await tenv.gateway({
+      supergraph: composition.supergraphPath,
     });
-    const queryResult = await execute({
+    const queryResult = await gw.execute({
       query: /* GraphQL */ `
         query GetProductsById {
           getProductById(id: 1) {

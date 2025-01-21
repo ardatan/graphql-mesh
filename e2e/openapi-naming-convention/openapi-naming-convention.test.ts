@@ -1,16 +1,16 @@
 import { createTenv } from '@e2e/tenv';
 
-const { compose, serve } = createTenv(__dirname);
+const { compose, gateway } = createTenv(__dirname);
 
-it('should compose', async () => {
-  const { result } = await compose({ output: 'graphql' });
+it.concurrent('should compose', async () => {
+  const { supergraphSdl: result } = await compose({ output: 'graphql' });
   expect(result).toMatchSnapshot();
 });
 
-it('should execute Metrics with banana', async () => {
-  const { output } = await compose({ output: 'graphql' });
+it.concurrent('should execute Metrics with banana', async () => {
+  const { supergraphPath } = await compose({ output: 'graphql' });
 
-  const { execute } = await serve({ supergraph: output });
+  const { execute } = await gateway({ supergraph: supergraphPath });
   const queryResult = await execute({
     query: /* GraphQL */ `
       query Categories {
