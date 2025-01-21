@@ -1,15 +1,16 @@
 import { createTenv } from '@e2e/tenv';
 
-const { serve, compose, service } = createTenv(__dirname);
-
-it('works', async () => {
-  const { output } = await compose({
-    services: [await service('foo'), await service('bar')],
+it.concurrent('works', async () => {
+  await using tenv = createTenv(__dirname);
+  await using foo = await tenv.service('foo');
+  await using bar = await tenv.service('bar');
+  await using composition = await tenv.compose({
+    services: [foo, bar],
     output: 'graphql',
   });
-  const { execute } = await serve({ supergraph: output });
+  await using gw = await tenv.gateway({ supergraph: composition.supergraphPath });
   await expect(
-    execute({
+    gw.execute({
       query: /* GraphQL */ `
         query FooBarFoo {
           foo {

@@ -12,10 +12,9 @@ import {
   RemoteGraphQLDataSource,
   type ServiceEndpointDefinition,
 } from '@apollo/gateway';
-import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import { AsyncDisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
-import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';
 
@@ -125,8 +124,8 @@ export interface Compose extends Proc {
    * The path to the composed file.
    * If output was not specified in the options, an empty string will be provided.
    */
-  output: string;
-  result: string;
+  supergraphPath: string;
+  supergraphSdl: string;
 }
 
 export interface ContainerOptions extends ProcOptions {
@@ -182,7 +181,7 @@ export interface Container extends Service {
   additionalPorts: Record<number, number>;
 }
 
-export interface Tenv {
+export interface Tenv extends AsyncDisposable {
   fs: {
     read(path: string): Promise<string>;
     delete(path: string): Promise<void>;
@@ -193,7 +192,7 @@ export interface Tenv {
     command: string | (string | number)[],
     opts?: ProcOptions,
   ): Promise<[proc: Proc, waitForExit: Promise<void>]>;
-  serve(opts?: ServeOptions): Promise<Serve>;
+  gateway(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
    * Starts a service by name. Services are services that serve data, not necessarily GraphQL.
@@ -206,7 +205,9 @@ export interface Tenv {
 }
 
 export function createTenv(cwd: string): Tenv {
+  const leftoverStack = new AsyncDisposableStack();
   const tenv: Tenv = {
+    [DisposableSymbols.asyncDispose]: () => leftoverStack.disposeAsync(),
     fs: {
       read(filePath) {
         return fs.readFile(isAbsolute(filePath) ? filePath : path.join(cwd, filePath), 'utf8');
@@ -227,9 +228,9 @@ export function createTenv(cwd: string): Tenv {
     },
     spawn(command, { args: extraArgs = [], ...opts } = {}) {
       const [cmd, ...args] = Array.isArray(command) ? command : command.split(' ');
-      return spawn({ ...opts, cwd }, String(cmd), ...args, ...extraArgs);
+      return spawn(leftoverStack, { ...opts, cwd }, String(cmd), ...args, ...extraArgs);
     },
-    async serve(opts) {
+    async gateway(opts) {
       let {
         port = await getAvailablePort(),
         supergraph,
@@ -239,6 +240,7 @@ export function createTenv(cwd: string): Tenv {
       } = opts || {};
 
       const [proc, waitForExit] = await spawn(
+        leftoverStack,
         { env, cwd, pipeLogs },
         'node', // TODO: using yarn does not work on Windows in the CI
         path.join(__project, 'node_modules', '@graphql-hive', 'gateway', 'dist', 'bin.js'),
@@ -308,6 +310,7 @@ export function createTenv(cwd: string): Tenv {
         output = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.output}`);
       }
       const [proc, waitForExit] = await spawn(
+        leftoverStack,
         { cwd, pipeLogs, env },
         'node',
         '--import',
@@ -348,12 +351,13 @@ export function createTenv(cwd: string): Tenv {
         }
       }
 
-      return { ...proc, output, result };
+      return { ...proc, supergraphPath: output, supergraphSdl: result };
     },
     async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG'), args = [] } = {}) {
       port ||= await getAvailablePort();
       const ctrl = new AbortController();
       const [proc, waitForExit] = await spawn(
+        leftoverStack,
         { cwd, pipeLogs, signal: ctrl.signal },
         'node',
         '--import',
@@ -628,6 +632,7 @@ interface SpawnOptions extends ProcOptions {
 }
 
 function spawn(
+  leftoverStack: AsyncDisposableStack,
   { cwd, pipeLogs = boolEnv('DEBUG'), env = {}, shell, signal }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
@@ -671,6 +676,7 @@ function spawn(
     },
     async getStats() {
       const [proc, waitForExit] = await spawn(
+        leftoverStack,
         { cwd, pipeLogs: false },
         'ps',
         '-o',
