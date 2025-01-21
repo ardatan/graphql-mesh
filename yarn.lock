@@ -5188,7 +5188,7 @@ __metadata:
     react: "npm:19.0.0"
     react-dom: "npm:19.0.0"
     typescript: "npm:^5.4.2"
-    vite: "npm:6.0.10"
+    vite: "npm:6.0.11"
   languageName: unknown
   linkType: soft
 
@@ -21329,11 +21329,11 @@ __metadata:
   linkType: hard
 
 "get-tsconfig@npm:^4.7.5, get-tsconfig@npm:^4.7.6, get-tsconfig@npm:^4.8.1":
-  version: 4.9.0
-  resolution: "get-tsconfig@npm:4.9.0"
+  version: 4.10.0
+  resolution: "get-tsconfig@npm:4.10.0"
   dependencies:
     resolve-pkg-maps: "npm:^1.0.0"
-  checksum: 10c0/b1b83a2f65aa589cd99036c21de928bea7424be6575a2736cb4de5fb5760c874d64ac69809f4691c1262a4e3c72c646fd2cb758e406acbff7f37ee86301943ee
+  checksum: 10c0/c9b5572c5118923c491c04285c73bd55b19e214992af957c502a3be0fc0043bb421386ffd45ca3433c0a7fba81221ca300479e8393960acf15d0ed4563f38a86
   languageName: node
   linkType: hard
 
@@ -21997,8 +21997,8 @@ __metadata:
   linkType: hard
 
 "graphql-ws@npm:^6.0.0":
-  version: 6.0.1
-  resolution: "graphql-ws@npm:6.0.1"
+  version: 6.0.2
+  resolution: "graphql-ws@npm:6.0.2"
   peerDependencies:
     "@fastify/websocket": ^10 || ^11
     graphql: ^15.10.1 || ^16
@@ -22011,7 +22011,7 @@ __metadata:
       optional: true
     ws:
       optional: true
-  checksum: 10c0/b7be6516532aa0a4b5604a53b8e1f3392b7335f77ebedb20dfa15371124742a4a5cf9347e06f7c220647e46c8ea330a222476b2b1425560de5bc387ab9eced59
+  checksum: 10c0/61ef598d32d60661b5919ae855fe7046f9a3f22b1d3756eae5d1853705948a92386b10490e392b4ae3227beba95ffffb3dc8070046d880b23376fbc94a1eaf34
   languageName: node
   linkType: hard
 
@@ -36242,9 +36242,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:6.0.10":
-  version: 6.0.10
-  resolution: "vite@npm:6.0.10"
+"vite@npm:6.0.11":
+  version: 6.0.11
+  resolution: "vite@npm:6.0.11"
   dependencies:
     esbuild: "npm:^0.24.2"
     fsevents: "npm:~2.3.3"
@@ -36290,7 +36290,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/fa929a2778f8a701b9a7012ea0d956fda32665bbfe63d401336a2a46d2eae252776b63599602179404283ecab4c47b82781ea91e307381bcc5002a766977c7fe
+  checksum: 10c0/a0537f9bf8d6ded740646a4aa44b8dbf442d3005e75f7b27e981ef6011f22d4759f5eb643a393c0ffb8d21e2f50fb5f774d3a53108fb96a10b0f83697e8efe84
   languageName: node
   linkType: hard
 
