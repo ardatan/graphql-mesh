@@ -63,6 +63,10 @@ export interface ExamplesSandboxProps extends React.HTMLAttributes<HTMLElement> 
   border?: boolean;
 }
 
+function isValidExampleDir(value: string): boolean {
+  return Object.values(EXAMPLES).some(group => Object.values(group).includes(value));
+}
+
 export function ExamplesSandbox({ lazy = false, border = false, ...rest }: ExamplesSandboxProps) {
   const [exampleDir, setExampleDir] = useState('json-schema-example');
   const [isVisible, setIsVisible] = useState(!lazy);
@@ -102,7 +106,10 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
         <select
           value={exampleDir}
           onChange={e => {
-            setExampleDir(e.target.value);
+            const value = e.target.value;
+            if (isValidExampleDir(value)) {
+              setExampleDir(value);
+            }
           }}
           className="bg-inherit hive-focus w-[200px] cursor-pointer px-3 pr-8 p-2 border-beige-400 dark:border-neutral-800 border rounded-lg hover:bg-beige-100 dark:hover:bg-neutral-900 appearance-none"
         >
