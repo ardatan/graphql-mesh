@@ -110,6 +110,9 @@
     "@whatwg-node/fetch": "0.10.3",
     "@whatwg-node/node-fetch": "0.7.7",
     "@whatwg-node/server": "0.9.65",
+    "axios": "^0.28.0",
+    "cross-fetch": "^3.1.5",
+    "date-and-time": "^0.14.2",
     "es5-ext": "0.10.64",
     "esbuild": "^0.24.0",
     "graphql": "16.10.0",
@@ -117,10 +120,17 @@
     "graphql-rate-limit": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
     "ioredis-mock": "patch:ioredis-mock@npm%3A8.9.0#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch",
     "jest-leak-detector": "patch:jest-leak-detector@npm%3A29.7.0#~/.yarn/patches/jest-leak-detector-npm-29.7.0-3ae882ba75.patch",
+    "node-fetch": "^2.6.7",
     "node-gyp": "^11.0.0",
+    "nth-check": "^2.0.1",
+    "postcss": "^8.4.31",
+    "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7",
     "tslib": "2.8.1",
-    "uuid": "11.0.5"
+    "underscore": "^1.12.1",
+    "uuid": "11.0.5",
+    "validator": "^13.7.0",
+    "xml2js": "^0.5.0"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
