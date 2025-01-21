@@ -110,7 +110,7 @@
     "@whatwg-node/fetch": "0.10.3",
     "@whatwg-node/node-fetch": "0.7.7",
     "@whatwg-node/server": "0.9.65",
-    "axios": "^0.28.0",
+    "axios": "^1.0.0",
     "cross-fetch": "^3.1.5",
     "date-and-time": "^0.14.2",
     "es5-ext": "0.10.64",
