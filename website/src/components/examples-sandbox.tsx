@@ -97,7 +97,7 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
 
   const { basePath } = useRouter();
 
-  const iframeSrc = `${basePath}/codesandbox-iframe.html?example=${exampleDir}`;
+  const iframeSrc = `${basePath}/codesandbox-iframe.html?example=${encodeURIComponent(exampleDir)}`;
 
   return (
     <div {...rest} className={cn('w-full', rest.className)}>
