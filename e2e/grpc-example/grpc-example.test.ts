@@ -6,18 +6,17 @@ import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { isAsyncIterable } from '@graphql-tools/utils';
 
 describe('gRPC Example', () => {
-  const { compose, serve, service } = createTenv(__dirname);
-  let movies: Service;
-  beforeAll(async () => {
-    movies = await service('movies');
+  it.concurrent('generates the correct schema', async () => {
+    await using tenv = createTenv(__dirname);
+    await using movies = await tenv.service('movies');
+    await using composition = await tenv.compose({ services: [movies], maskServicePorts: true });
+    expect(composition.supergraphSdl).toMatchSnapshot();
   });
-  it('generates the correct schema', async () => {
-    const { result } = await compose({ services: [movies], maskServicePorts: true });
-    expect(result).toMatchSnapshot();
-  });
-  it('gets movies correctly', async () => {
-    const { output } = await compose({ services: [movies], output: 'graphql' });
-    const { execute } = await serve({ supergraph: output });
+  it.concurrent('gets movies correctly', async () => {
+    await using tenv = createTenv(__dirname);
+    await using movies = await tenv.service('movies');
+    await using composition = await tenv.compose({ services: [movies], output: 'graphql' });
+    await using gw = await tenv.gateway({ supergraph: composition.supergraphPath });
     const query = /* GraphQL */ `
       query GetMovies {
         exampleGetMovies(input: { movie: { genre: DRAMA, year: 2015 } }) {
@@ -33,13 +32,15 @@ describe('gRPC Example', () => {
         }
       }
     `;
-    await expect(execute({ query })).resolves.toMatchSnapshot('get-movies-grpc-example-result');
+    await expect(gw.execute({ query })).resolves.toMatchSnapshot('get-movies-grpc-example-result');
   });
-  it('streams movies by cast correctly', async () => {
-    const { output } = await compose({ services: [movies], output: 'graphql' });
-    const { hostname, port } = await serve({ supergraph: output });
-    const executor = buildHTTPExecutor({
-      endpoint: `http://${hostname}:${port}/graphql`,
+  it.concurrent('streams movies by cast correctly', async () => {
+    await using tenv = createTenv(__dirname);
+    await using movies = await tenv.service('movies');
+    await using composition = await tenv.compose({ services: [movies], output: 'graphql' });
+    await using gw = await tenv.gateway({ supergraph: composition.supergraphPath });
+    await using executor = buildHTTPExecutor({
+      endpoint: `http://${gw.hostname}:${gw.port}/graphql`,
     });
     const document = parse(/* GraphQL */ `
       query SearchMoviesByCast {
@@ -63,11 +64,13 @@ describe('gRPC Example', () => {
       i++;
     }
   });
-  it('fetches movies by cast as a subscription correctly', async () => {
-    const { output } = await compose({ services: [movies], output: 'graphql' });
-    const { hostname, port } = await serve({ supergraph: output });
-    const executor = buildHTTPExecutor({
-      endpoint: `http://${hostname}:${port}/graphql`,
+  it.concurrent('fetches movies by cast as a subscription correctly', async () => {
+    await using tenv = createTenv(__dirname);
+    await using movies = await tenv.service('movies');
+    await using composition = await tenv.compose({ services: [movies], output: 'graphql' });
+    await using gw = await tenv.gateway({ supergraph: composition.supergraphPath });
+    await using executor = buildHTTPExecutor({
+      endpoint: `http://${gw.hostname}:${gw.port}/graphql`,
     });
     const document = parse(/* GraphQL */ `
       subscription SearchMoviesByCast {

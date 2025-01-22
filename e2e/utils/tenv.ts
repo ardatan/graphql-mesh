@@ -12,10 +12,10 @@ import {
   RemoteGraphQLDataSource,
   type ServiceEndpointDefinition,
 } from '@apollo/gateway';
-import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import { registerTerminateHandler } from '@graphql-mesh/utils';
+import { AsyncDisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
-import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';
 
@@ -125,8 +125,8 @@ export interface Compose extends Proc {
    * The path to the composed file.
    * If output was not specified in the options, an empty string will be provided.
    */
-  output: string;
-  result: string;
+  supergraphPath: string;
+  supergraphSdl: string;
 }
 
 export interface ContainerOptions extends ProcOptions {
@@ -182,7 +182,7 @@ export interface Container extends Service {
   additionalPorts: Record<number, number>;
 }
 
-export interface Tenv {
+export interface Tenv extends AsyncDisposable {
   fs: {
     read(path: string): Promise<string>;
     delete(path: string): Promise<void>;
@@ -193,7 +193,7 @@ export interface Tenv {
     command: string | (string | number)[],
     opts?: ProcOptions,
   ): Promise<[proc: Proc, waitForExit: Promise<void>]>;
-  serve(opts?: ServeOptions): Promise<Serve>;
+  gateway(opts?: ServeOptions): Promise<Serve>;
   compose(opts?: ComposeOptions): Promise<Compose>;
   /**
    * Starts a service by name. Services are services that serve data, not necessarily GraphQL.
@@ -205,8 +205,23 @@ export interface Tenv {
   composeWithApollo(services: Service[]): Promise<string>;
 }
 
+const tenvs = new Set<Tenv>();
+
+function disposeTenvs() {
+  return Promise.all([...tenvs].map(tenv => tenv[DisposableSymbols.asyncDispose]()));
+}
+
+registerTerminateHandler(disposeTenvs);
+
+afterAll(disposeTenvs);
+
 export function createTenv(cwd: string): Tenv {
+  const leftoverStack = new AsyncDisposableStack();
   const tenv: Tenv = {
+    [DisposableSymbols.asyncDispose]() {
+      tenvs.delete(tenv);
+      return leftoverStack.disposeAsync();
+    },
     fs: {
       read(filePath) {
         return fs.readFile(isAbsolute(filePath) ? filePath : path.join(cwd, filePath), 'utf8');
@@ -227,9 +242,9 @@ export function createTenv(cwd: string): Tenv {
     },
     spawn(command, { args: extraArgs = [], ...opts } = {}) {
       const [cmd, ...args] = Array.isArray(command) ? command : command.split(' ');
-      return spawn({ ...opts, cwd }, String(cmd), ...args, ...extraArgs);
+      return spawn(leftoverStack, { ...opts, cwd }, String(cmd), ...args, ...extraArgs);
     },
-    async serve(opts) {
+    async gateway(opts) {
       let {
         port = await getAvailablePort(),
         supergraph,
@@ -239,6 +254,7 @@ export function createTenv(cwd: string): Tenv {
       } = opts || {};
 
       const [proc, waitForExit] = await spawn(
+        leftoverStack,
         { env, cwd, pipeLogs },
         'node', // TODO: using yarn does not work on Windows in the CI
         path.join(__project, 'node_modules', '@graphql-hive', 'gateway', 'dist', 'bin.js'),
@@ -301,59 +317,67 @@ export function createTenv(cwd: string): Tenv {
         env,
         args = [],
       } = opts || {};
-      let output = '';
+      let supergraphPath = '';
       if (opts?.output) {
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
         leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
-        output = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.output}`);
+        supergraphPath = path.join(
+          tempDir,
+          `${Math.random().toString(32).slice(2)}.${opts.output}`,
+        );
       }
       const [proc, waitForExit] = await spawn(
+        leftoverStack,
         { cwd, pipeLogs, env },
         'node',
         '--import',
         'tsx',
         path.resolve(__project, 'packages', 'compose-cli', 'src', 'bin.ts'),
-        output && createOpt('output', output),
+        supergraphPath && createOpt('output', supergraphPath),
         ...services.map(({ name, port }) => createServicePortOpt(name, port)),
         ...args,
       );
       await waitForExit;
-      let result = '';
-      if (output) {
+      let supergraphSdl = '';
+      if (supergraphPath) {
         try {
-          result = await fs.readFile(output, 'utf-8');
+          supergraphSdl = await fs.readFile(supergraphPath, 'utf-8');
         } catch (err) {
           if ('code' in err && err.code === 'ENOENT') {
             throw new Error(
-              `Compose command has "output" argument but file was not created at ${output}`,
+              `Compose command has "output" argument but file was not created at ${supergraphPath}`,
             );
           }
           throw err;
         }
       } else {
-        result = proc.getStd('out');
+        supergraphSdl = proc.getStd('out');
       }
 
       if (trimHostPaths || maskServicePorts) {
         if (trimHostPaths) {
-          result = result.replaceAll(__project, '');
+          supergraphSdl = supergraphSdl.replaceAll(__project, '');
         }
         for (const subgraph of services) {
           if (maskServicePorts) {
-            result = result.replaceAll(subgraph.port.toString(), `<${subgraph.name}_port>`);
+            supergraphSdl = supergraphSdl.replaceAll(
+              subgraph.port.toString(),
+              `<${subgraph.name}_port>`,
+            );
           }
         }
-        if (output) {
-          await fs.writeFile(output, result, 'utf8');
+        if (supergraphPath) {
+          await fs.writeFile(supergraphPath, supergraphSdl, 'utf8');
         }
       }
 
-      return { ...proc, output, result };
+      return { ...proc, supergraphPath, supergraphSdl };
     },
     async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG'), args = [] } = {}) {
       port ||= await getAvailablePort();
       const ctrl = new AbortController();
       const [proc, waitForExit] = await spawn(
+        leftoverStack,
         { cwd, pipeLogs, signal: ctrl.signal },
         'node',
         '--import',
@@ -628,6 +652,7 @@ interface SpawnOptions extends ProcOptions {
 }
 
 function spawn(
+  leftoverStack: AsyncDisposableStack,
   { cwd, pipeLogs = boolEnv('DEBUG'), env = {}, shell, signal }: SpawnOptions,
   cmd: string,
   ...args: (string | number | boolean)[]
@@ -671,6 +696,7 @@ function spawn(
     },
     async getStats() {
       const [proc, waitForExit] = await spawn(
+        leftoverStack,
         { cwd, pipeLogs: false },
         'ps',
         '-o',

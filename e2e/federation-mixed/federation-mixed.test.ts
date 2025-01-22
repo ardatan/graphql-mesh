@@ -1,18 +1,16 @@
 import { createTenv } from '@e2e/tenv';
 
-const { service, serve, compose } = createTenv(__dirname);
-
-it('should compose the appropriate schema', async () => {
-  const { result } = await compose({
-    services: [
-      await service('accounts'),
-      await service('inventory'),
-      await service('products'),
-      await service('reviews'),
-    ],
+it.concurrent('should compose the appropriate schema', async () => {
+  await using tenv = createTenv(__dirname);
+  await using accounts = await tenv.service('accounts');
+  await using inventory = await tenv.service('inventory');
+  await using products = await tenv.service('products');
+  await using reviews = await tenv.service('reviews');
+  await using composition = await tenv.compose({
+    services: [accounts, inventory, products, reviews],
     maskServicePorts: true,
   });
-  expect(result).toMatchSnapshot();
+  expect(composition.supergraphSdl).toMatchSnapshot();
 });
 
 it.concurrent.each([
@@ -80,15 +78,15 @@ it.concurrent.each([
     `,
   },
 ])('should execute $name', async ({ query }) => {
-  const { output } = await compose({
+  await using tenv = createTenv(__dirname);
+  await using accounts = await tenv.service('accounts');
+  await using inventory = await tenv.service('inventory');
+  await using products = await tenv.service('products');
+  await using reviews = await tenv.service('reviews');
+  await using composition = await tenv.compose({
     output: 'graphql',
-    services: [
-      await service('accounts'),
-      await service('inventory'),
-      await service('products'),
-      await service('reviews'),
-    ],
+    services: [accounts, inventory, products, reviews],
   });
-  const { execute } = await serve({ supergraph: output });
-  await expect(execute({ query })).resolves.toMatchSnapshot();
+  await using gw = await tenv.gateway({ supergraph: composition.supergraphPath });
+  await expect(gw.execute({ query })).resolves.toMatchSnapshot();
 });

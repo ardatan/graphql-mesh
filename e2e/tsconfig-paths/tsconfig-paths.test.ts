@@ -2,11 +2,12 @@ import { createTenv } from '@e2e/tenv';
 
 const { compose } = createTenv(__dirname);
 
-it('should compose', async () => {
-  const proc = await compose({
+it.concurrent('should compose', async () => {
+  await using tenv = createTenv(__dirname);
+  await using composition = await tenv.compose({
     env: {
       MESH_INCLUDE_TSCONFIG_SEARCH_PATH: 'tsconfig-paths.tsconfig.json',
     },
   });
-  expect(proc.result).toMatchSnapshot();
+  expect(composition.supergraphSdl).toMatchSnapshot();
 });

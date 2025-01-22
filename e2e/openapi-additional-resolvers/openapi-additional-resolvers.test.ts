@@ -1,10 +1,10 @@
 import { createTenv } from '@e2e/tenv';
 
-const { compose, serve } = createTenv(__dirname);
+const { compose, gateway } = createTenv(__dirname);
 
-it('should execute Metrics with banana', async () => {
-  const { output } = await compose({ output: 'graphql' });
-  const { execute } = await serve({ supergraph: output });
+it.concurrent('should execute Metrics with banana', async () => {
+  const { supergraphPath } = await compose({ output: 'graphql' });
+  const { execute } = await gateway({ supergraph: supergraphPath });
   const result = await execute({
     query: /* GraphQL */ `
       query Metrics {
@@ -36,9 +36,9 @@ it('should execute Metrics with banana', async () => {
   ).toEqual('🍌');
 });
 
-it('should execute Metrics with apple', async () => {
-  const { output } = await compose({ output: 'graphql' });
-  const { execute } = await serve({ supergraph: output });
+it.concurrent('should execute Metrics with apple', async () => {
+  const { supergraphPath } = await compose({ output: 'graphql' });
+  const { execute } = await gateway({ supergraph: supergraphPath });
   const result = await execute({
     query: /* GraphQL */ `
       query Metrics {

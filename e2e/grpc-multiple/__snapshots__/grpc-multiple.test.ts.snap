@@ -1,5 +1,67 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`gRPC Multiple GetAllPetStores 1`] = `
+{
+  "data": {
+    "GetAllPetStores": {
+      "petStores": [
+        {
+          "id": 1,
+          "name": "Happy Paws Pet Store",
+        },
+        {
+          "id": 2,
+          "name": "Pet Paradise",
+        },
+        {
+          "id": 3,
+          "name": "Furry Friends",
+        },
+        {
+          "id": 4,
+          "name": "Paws and Claws",
+        },
+        {
+          "id": 5,
+          "name": "The Pet Shop",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`gRPC Multiple GetAllPets 1`] = `
+{
+  "data": {
+    "GetAllPets": {
+      "pets": [
+        {
+          "id": 1,
+          "name": "Pet1",
+        },
+        {
+          "id": 2,
+          "name": "Pet2",
+        },
+        {
+          "id": 3,
+          "name": "Pet3",
+        },
+        {
+          "id": 4,
+          "name": "Pet4",
+        },
+        {
+          "id": 5,
+          "name": "Pet5",
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`gRPC Multiple composes 1`] = `
 "
 schema
@@ -219,66 +281,4 @@ input petstore__PetStore_Input @join__type(graph: STORES)  {
 }
     
 "
-`;
-
-exports[`gRPC Multiple works: GetAllPetStores 1`] = `
-{
-  "data": {
-    "GetAllPetStores": {
-      "petStores": [
-        {
-          "id": 1,
-          "name": "Happy Paws Pet Store",
-        },
-        {
-          "id": 2,
-          "name": "Pet Paradise",
-        },
-        {
-          "id": 3,
-          "name": "Furry Friends",
-        },
-        {
-          "id": 4,
-          "name": "Paws and Claws",
-        },
-        {
-          "id": 5,
-          "name": "The Pet Shop",
-        },
-      ],
-    },
-  },
-}
-`;
-
-exports[`gRPC Multiple works: GetAllPets 1`] = `
-{
-  "data": {
-    "GetAllPets": {
-      "pets": [
-        {
-          "id": 1,
-          "name": "Pet1",
-        },
-        {
-          "id": 2,
-          "name": "Pet2",
-        },
-        {
-          "id": 3,
-          "name": "Pet3",
-        },
-        {
-          "id": 4,
-          "name": "Pet4",
-        },
-        {
-          "id": 5,
-          "name": "Pet5",
-        },
-      ],
-    },
-  },
-}
 `;

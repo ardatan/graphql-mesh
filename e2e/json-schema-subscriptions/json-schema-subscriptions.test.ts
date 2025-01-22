@@ -3,21 +3,24 @@ import { createTenv } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 import { getAvailablePort } from '../../packages/testing/getAvailablePort';
 
-const { compose, serve, service } = createTenv(__dirname);
+const { compose, gateway, service } = createTenv(__dirname);
 
-it('should compose the appropriate schema', async () => {
+it.concurrent('should compose the appropriate schema', async () => {
   const api = await service('api');
-  const { result } = await compose({ services: [api], maskServicePorts: true });
+  const { supergraphSdl: result } = await compose({ services: [api], maskServicePorts: true });
   expect(result).toMatchSnapshot();
 });
 
 ['todoAddedFromSource', 'todoAddedFromExtensions'].forEach(subscriptionField => {
   describe(`Listen to ${subscriptionField}`, () => {
-    it('should query, mutate and subscribe', async () => {
+    it.concurrent('should query, mutate and subscribe', async () => {
       const servePort = await getAvailablePort();
       const api = await service('api', { servePort });
-      const { output } = await compose({ output: 'graphql', services: [api] });
-      const { hostname, port, execute } = await serve({ supergraph: output, port: servePort });
+      const { supergraphPath } = await compose({ output: 'graphql', services: [api] });
+      const { hostname, port, execute } = await gateway({
+        supergraph: supergraphPath,
+        port: servePort,
+      });
 
       await expect(
         execute({

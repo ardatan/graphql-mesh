@@ -1,6 +1,6 @@
 import { createTenv, type Container } from '@e2e/tenv';
 
-const { compose, serve, container } = createTenv(__dirname);
+const { compose, gateway, container } = createTenv(__dirname);
 
 let soapDemo: Container;
 
@@ -19,8 +19,8 @@ beforeAll(async () => {
   });
 });
 
-it('should compose the appropriate schema', async () => {
-  const { result } = await compose({
+it.concurrent('should compose the appropriate schema', async () => {
+  const { supergraphSdl: result } = await compose({
     services: [soapDemo],
     maskServicePorts: true,
   });
@@ -153,7 +153,7 @@ it.concurrent.each([
     },
   },
 ])('should execute $name', async ({ query, expected }) => {
-  const { output } = await compose({ output: 'graphql', services: [soapDemo] });
-  const { execute } = await serve({ supergraph: output });
+  const { supergraphPath } = await compose({ output: 'graphql', services: [soapDemo] });
+  const { execute } = await gateway({ supergraph: supergraphPath });
   await expect(execute({ query })).resolves.toEqual(expected);
 });

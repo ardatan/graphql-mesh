@@ -1,17 +1,17 @@
 import { createTenv } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 
-const { serve, compose, fs } = createTenv(__dirname);
-
-it('should serve', async () => {
-  const proc = await serve({
-    supergraph: await fs.tempfile('supergraph.graphql', 'type Query { hello: String }'),
+it.concurrent('should serve', async () => {
+  await using tenv = createTenv(__dirname);
+  await using proc = await tenv.gateway({
+    supergraph: await tenv.fs.tempfile('supergraph.graphql', 'type Query { hello: String }'),
   });
   const res = await fetch(`http://${proc.hostname}:${proc.port}/healthcheck`);
   expect(res.ok).toBeTruthy();
 });
 
-it('should compose', async () => {
-  const proc = await compose();
-  expect(proc.result).toMatchSnapshot();
+it.concurrent('should compose', async () => {
+  await using tenv = createTenv(__dirname);
+  await using proc = await tenv.compose();
+  expect(proc.supergraphSdl).toMatchSnapshot();
 });
