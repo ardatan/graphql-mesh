@@ -28,9 +28,11 @@ it('should compose the appropriate schema', async () => {
   expect(composition.result).toMatchSnapshot();
 });
 
-it.concurrent.each([
-  {
-    name: 'GetSomeEmployees',
+it('should execute GetSomeEmployees', async () => {
+  await using mysql = await prepareMysql();
+  await using composition = await compose({ output: 'graphql', services: [mysql] });
+  await using gw = await serve({ supergraph: composition.output });
+  const res = await gw.execute({
     query: /* GraphQL */ `
       query GetSomeEmployees {
         employees(limit: 5, orderBy: { emp_no: asc }) {
@@ -57,10 +59,6 @@ it.concurrent.each([
         }
       }
     `,
-  },
-])('should execute $name', async ({ query }) => {
-  await using mysql = await prepareMysql();
-  await using composition = await compose({ output: 'graphql', services: [mysql] });
-  await using gw = await serve({ supergraph: composition.output });
-  await expect(gw.execute({ query })).resolves.toMatchSnapshot();
+  });
+  expect(res).toMatchSnapshot();
 });

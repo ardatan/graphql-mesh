@@ -1,6 +1,6 @@
 import { setTimeout } from 'node:timers/promises';
-import { DisposableSymbols } from 'graphql-yoga';
 import { createTenv } from '@e2e/tenv';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { authors, books, comments } from './services/data';
 
 describe('Cache Control', () => {
@@ -60,7 +60,7 @@ describe('Cache Control', () => {
     },
   };
   for (const [name, compose] of Object.entries(composition)) {
-    it(`${name} composes`, async () => {
+    it.concurrent(`${name} composes`, async () => {
       await using composition = await compose(true);
       expect(composition.supergraphSdl).toMatchSnapshot();
     });

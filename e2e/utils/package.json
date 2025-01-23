@@ -6,6 +6,7 @@
     "@apollo/gateway": "^2.8.3",
     "@graphql-hive/gateway": "^1.8.0",
     "@types/dockerode": "^3.3.28",
+    "@whatwg-node/disposablestack": "^0.0.5",
     "dockerode": "^4.0.2",
     "glob": "^11.0.0",
     "tsx": "^4.16.5"

@@ -31,7 +31,7 @@ async function prepareNeo4j() {
   return neo4j;
 }
 
-it('should compose the appropriate schema', async () => {
+it.concurrent('should compose the appropriate schema', async () => {
   await using neo4j = await prepareNeo4j();
   await using composition = await compose({
     services: [neo4j],
@@ -40,9 +40,14 @@ it('should compose the appropriate schema', async () => {
   expect(composition.result).toMatchSnapshot();
 });
 
-it.concurrent.each([
-  {
-    name: 'MovieWithActedIn',
+it.concurrent('should execute MovieWithActedIn', async () => {
+  await using neo4j = await prepareNeo4j();
+  await using composition = await compose({
+    services: [neo4j],
+    output: 'graphql',
+  });
+  await using gw = await serve({ supergraph: composition.output });
+  const result = await gw.execute({
     query: /* GraphQL */ `
       query MovieWithActedIn {
         movies(options: { limit: 2 }) {
@@ -55,13 +60,6 @@ it.concurrent.each([
         }
       }
     `,
-  },
-])('should execute $name', async ({ query }) => {
-  await using neo4j = await prepareNeo4j();
-  await using composition = await compose({
-    services: [neo4j],
-    output: 'graphql',
   });
-  await using gw = await serve({ supergraph: composition.output });
-  await expect(gw.execute({ query })).resolves.toMatchSnapshot();
+  expect(result).toMatchSnapshot();
 });
