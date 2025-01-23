@@ -173,7 +173,7 @@ describe('Cache Control', () => {
               }
             }
             const [authorsService, booksService, commentsService] = composition.services;
-            // Store the results to the cache that will take 30s
+            // Store the results to the cache that will take 10s
             await makeQueries();
             expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_1: 1');
             expect(authorsService.getStd('both')).toContain('AUTHORS_TEST_2: 1');
