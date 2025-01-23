@@ -538,6 +538,7 @@ export function getAnnotatedSubgraphs(
         parse([...importedDirectivesAST].join('\n'), { noLocation: true }),
       ]);
     }
+
     annotatedSubgraphs.push({
       name: subgraphName,
       typeDefs: subgraphAST,
