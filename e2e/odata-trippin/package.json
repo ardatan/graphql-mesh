@@ -3,7 +3,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^1.5.8",
+    "@graphql-hive/gateway": "^1.8.0",
     "graphql": "^16.9.0"
   }
 }
