@@ -31,7 +31,7 @@ async function prepareNeo4j() {
   return neo4j;
 }
 
-it.concurrent('should compose the appropriate schema', async () => {
+it('should compose the appropriate schema', async () => {
   await using neo4j = await prepareNeo4j();
   await using composition = await compose({
     services: [neo4j],
@@ -40,7 +40,7 @@ it.concurrent('should compose the appropriate schema', async () => {
   expect(composition.result).toMatchSnapshot();
 });
 
-it.concurrent('should execute MovieWithActedIn', async () => {
+it('should execute MovieWithActedIn', async () => {
   await using neo4j = await prepareNeo4j();
   await using composition = await compose({
     services: [neo4j],

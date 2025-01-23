@@ -60,7 +60,7 @@ describe('Cache Control', () => {
     },
   };
   for (const [name, compose] of Object.entries(composition)) {
-    it.concurrent(`${name} composes`, async () => {
+    it(`${name} composes`, async () => {
       await using composition = await compose(true);
       expect(composition.supergraphSdl).toMatchSnapshot();
     });
