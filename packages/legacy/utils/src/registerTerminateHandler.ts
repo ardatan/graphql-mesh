@@ -1,6 +1,6 @@
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 
-const terminateEvents = ['SIGINT', 'SIGTERM', 'SIGKILL'] as const;
+const terminateEvents = ['SIGINT', 'SIGTERM'] as const;
 
 export type TerminateEvents = (typeof terminateEvents)[number];
 export type TerminateHandler = (eventName: TerminateEvents) => void;
@@ -11,7 +11,6 @@ const terminateHandlers = new Set<TerminateHandler>();
 
 function registerEventListener() {
   for (const eventName of terminateEvents) {
-    console.log(`Registering terminate handler for ${eventName}`);
     globalThis.process?.once(eventName, () => {
       for (const handler of terminateHandlers) {
         handler(eventName);
