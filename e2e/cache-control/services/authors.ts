@@ -61,9 +61,9 @@ createServer(
         session: () => null,
       }),
       {
-        onParams({ params }) {
-          if (params.operationName) {
-            console.count(params.operationName);
+        onExecute({ args }) {
+          if (args.operationName) {
+            console.count(args.operationName);
           }
         },
       },

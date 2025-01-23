@@ -60,7 +60,7 @@ describe('Cache Control', () => {
     },
   };
   for (const [name, compose] of Object.entries(composition)) {
-    it.concurrent(`${name} composes`, async () => {
+    it(`${name} composes`, async () => {
       await using composition = await compose(true);
       expect(composition.supergraphSdl).toMatchSnapshot();
     });
@@ -166,9 +166,9 @@ describe('Cache Control', () => {
                   },
                 },
               };
-              for (const name in queries) {
-                const { query, expected } = queries[name];
-                const { data } = await gw.execute({ query });
+              for (const operationName in queries) {
+                const { query, expected } = queries[operationName];
+                const { data } = await gw.execute({ query, operationName });
                 expect(data).toEqual(expected);
               }
             }
