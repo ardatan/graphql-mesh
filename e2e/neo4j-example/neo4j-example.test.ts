@@ -1,8 +1,8 @@
-import { createTenv, type Container } from '@e2e/tenv';
+import { createTenv } from '@e2e/tenv';
 
 const { compose, container, serve, spawn } = createTenv(__dirname);
 
-async function prepareNeo4j() {
+const neo4jContainer = async () => {
   const neo4j = await container({
     name: 'neo4j',
     image: 'neo4j:5.22.0',
@@ -29,10 +29,10 @@ async function prepareNeo4j() {
   ]);
   await waitForLoad;
   return neo4j;
-}
+};
 
 it('should compose the appropriate schema', async () => {
-  await using neo4j = await prepareNeo4j();
+  await using neo4j = await neo4jContainer();
   await using composition = await compose({
     services: [neo4j],
     maskServicePorts: true,
@@ -41,7 +41,7 @@ it('should compose the appropriate schema', async () => {
 });
 
 it('should execute MovieWithActedIn', async () => {
-  await using neo4j = await prepareNeo4j();
+  await using neo4j = await neo4jContainer();
   await using composition = await compose({
     services: [neo4j],
     output: 'graphql',

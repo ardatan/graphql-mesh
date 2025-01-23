@@ -3977,6 +3977,7 @@ __metadata:
     "@apollo/gateway": "npm:^2.8.3"
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@types/dockerode": "npm:^3.3.28"
+    "@whatwg-node/disposablestack": "npm:^0.0.5"
     dockerode: "npm:^4.0.2"
     glob: "npm:^11.0.0"
     tsx: "npm:^4.16.5"

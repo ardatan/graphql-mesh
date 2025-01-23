@@ -2,8 +2,8 @@ import { createTenv } from '@e2e/tenv';
 
 const { compose, serve, container } = createTenv(__dirname);
 
-function prepareMysql() {
-  return container({
+const mysqlContainer = () =>
+  container({
     name: 'employees',
     image: 'genschsa/mysql-employees',
     containerPort: 3306,
@@ -17,10 +17,9 @@ function prepareMysql() {
       MYSQL_ROOT_PASSWORD: 'passwd', // used in mesh.config.ts
     },
   });
-}
 
 it('should compose the appropriate schema', async () => {
-  await using mysql = await prepareMysql();
+  await using mysql = await mysqlContainer();
   await using composition = await compose({
     services: [mysql],
     maskServicePorts: true,
@@ -29,7 +28,7 @@ it('should compose the appropriate schema', async () => {
 });
 
 it('should execute GetSomeEmployees', async () => {
-  await using mysql = await prepareMysql();
+  await using mysql = await mysqlContainer();
   await using composition = await compose({ output: 'graphql', services: [mysql] });
   await using gw = await serve({ supergraph: composition.output });
   const res = await gw.execute({
