@@ -1,10 +1,9 @@
-import { createTenv, type Container } from '@e2e/tenv';
+import { createTenv } from '@e2e/tenv';
 
 const { compose, serve, container } = createTenv(__dirname);
 
-let mysql!: Container;
-beforeAll(async () => {
-  mysql = await container({
+const mysqlContainer = () =>
+  container({
     name: 'employees',
     image: 'genschsa/mysql-employees',
     containerPort: 3306,
@@ -18,19 +17,21 @@ beforeAll(async () => {
       MYSQL_ROOT_PASSWORD: 'passwd', // used in mesh.config.ts
     },
   });
-});
 
 it('should compose the appropriate schema', async () => {
-  const { result } = await compose({
+  await using mysql = await mysqlContainer();
+  await using composition = await compose({
     services: [mysql],
     maskServicePorts: true,
   });
-  expect(result).toMatchSnapshot();
+  expect(composition.result).toMatchSnapshot();
 });
 
-it.concurrent.each([
-  {
-    name: 'GetSomeEmployees',
+it('should execute GetSomeEmployees', async () => {
+  await using mysql = await mysqlContainer();
+  await using composition = await compose({ output: 'graphql', services: [mysql] });
+  await using gw = await serve({ supergraph: composition.output });
+  const res = await gw.execute({
     query: /* GraphQL */ `
       query GetSomeEmployees {
         employees(limit: 5, orderBy: { emp_no: asc }) {
@@ -57,9 +58,6 @@ it.concurrent.each([
         }
       }
     `,
-  },
-])('should execute $name', async ({ query }) => {
-  const { output } = await compose({ output: 'graphql', services: [mysql] });
-  const { execute } = await serve({ supergraph: output });
-  await expect(execute({ query })).resolves.toMatchSnapshot();
+  });
+  expect(res).toMatchSnapshot();
 });

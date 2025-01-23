@@ -1,10 +1,9 @@
-import { createTenv, type Container } from '@e2e/tenv';
+import { createTenv } from '@e2e/tenv';
 
 const { compose, container, serve, spawn } = createTenv(__dirname);
 
-let neo4j: Container;
-beforeAll(async () => {
-  neo4j = await container({
+const neo4jContainer = async () => {
+  const neo4j = await container({
     name: 'neo4j',
     image: 'neo4j:5.22.0',
     containerPort: 7687,
@@ -29,19 +28,26 @@ beforeAll(async () => {
     'cypher-shell -u neo4j -p password -f /backups/movies.cypher',
   ]);
   await waitForLoad;
-});
+  return neo4j;
+};
 
 it('should compose the appropriate schema', async () => {
-  const { result } = await compose({
+  await using neo4j = await neo4jContainer();
+  await using composition = await compose({
     services: [neo4j],
     maskServicePorts: true,
   });
-  expect(result).toMatchSnapshot();
+  expect(composition.result).toMatchSnapshot();
 });
 
-it.concurrent.each([
-  {
-    name: 'MovieWithActedIn',
+it('should execute MovieWithActedIn', async () => {
+  await using neo4j = await neo4jContainer();
+  await using composition = await compose({
+    services: [neo4j],
+    output: 'graphql',
+  });
+  await using gw = await serve({ supergraph: composition.output });
+  const result = await gw.execute({
     query: /* GraphQL */ `
       query MovieWithActedIn {
         movies(options: { limit: 2 }) {
@@ -54,12 +60,6 @@ it.concurrent.each([
         }
       }
     `,
-  },
-])('should execute $name', async ({ query }) => {
-  const { output } = await compose({
-    services: [neo4j],
-    output: 'graphql',
   });
-  const { execute } = await serve({ supergraph: output });
-  await expect(execute({ query })).resolves.toMatchSnapshot();
+  expect(result).toMatchSnapshot();
 });
