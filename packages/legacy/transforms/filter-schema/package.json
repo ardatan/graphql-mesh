@@ -39,7 +39,7 @@
     "@graphql-mesh/utils": "^0.103.11",
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/utils": "^10.6.0",
-    "@graphql-tools/wrap": "^10.0.12",
+    "@graphql-tools/wrap": "^10.0.28",
     "minimatch": "^10.0.0",
     "tslib": "^2.4.0"
   },

@@ -2,7 +2,7 @@
   "name": "@e2e/openapi-javascript-wiki",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^1.5.8",
+    "@graphql-hive/gateway": "^1.8.0",
     "graphql": "16.10.0",
     "moment": "2.30.1"
   }
