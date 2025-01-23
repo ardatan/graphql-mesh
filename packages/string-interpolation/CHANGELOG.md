@@ -1,5 +1,20 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.8
+
+### Patch Changes
+
+- [#8301](https://github.com/ardatan/graphql-mesh/pull/8301)
+  [`78c202e`](https://github.com/ardatan/graphql-mesh/commit/78c202ef8824607e27de1dcc5076c82a02ef86cd)
+  Thanks [@ardatan](https://github.com/ardatan)! - Avoid logging sensitive data directly. Instead,
+  log a generic error message without including the potentially sensitive str variable. This way, it
+  still notifies of errors without risking the exposure of sensitive information.
+
+  - Replace the logging statement on line 176 in `packages/string-interpolation/src/interpolator.js`
+    to avoid logging the `str` variable.
+  - Ensure that the new logging statement provides enough information to debug the issue without
+    exposing sensitive data.
+
 ## 0.5.7
 
 ### Patch Changes

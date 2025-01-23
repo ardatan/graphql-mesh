@@ -1,5 +1,58 @@
 # @omnigraph/raml
 
+## 0.108.13
+
+### Patch Changes
+
+- [#8289](https://github.com/ardatan/graphql-mesh/pull/8289)
+  [`c54e361`](https://github.com/ardatan/graphql-mesh/commit/c54e36110256541e03380b0d537085848169116b)
+  Thanks [@ardatan](https://github.com/ardatan)! - New option `selectQueryOrMutationField` to decide
+  which field belongs to which root type explicitly.
+
+  ```ts filename="mesh.config.ts"
+  import { defineConfig } from '@graphql-mesh/compose-cli'
+  import loadGrpcSubgraph from '@omnigraph/grpc'
+
+  export const composeConfig = defineConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
+          /** .. **/
+
+          // Prefix to collect Query method default: list, get
+          prefixQueryMethod: ['list', 'get'],
+
+          // Select certain fields as Query or Mutation
+          // This overrides `prefixQueryMethod`
+          selectQueryOrMutationField: [
+            {
+              // You can use a pattern matching with *
+              fieldName: '*RetrieveMovies',
+              type: 'Query'
+            },
+            // Or you can use a specific field name
+            // This will make the field GetMovie available as a Mutation
+            // Because it would be Query because of `prefixQueryMethod`
+            {
+              fieldName: 'GetMovie',
+              type: 'Mutation'
+            }
+          ]
+        })
+      }
+    ]
+  })
+  ```
+
+- Updated dependencies
+  [[`5180b06`](https://github.com/ardatan/graphql-mesh/commit/5180b068568042e764558a19194b8bae69354fe2),
+  [`c54e361`](https://github.com/ardatan/graphql-mesh/commit/c54e36110256541e03380b0d537085848169116b),
+  [`78c202e`](https://github.com/ardatan/graphql-mesh/commit/78c202ef8824607e27de1dcc5076c82a02ef86cd)]:
+  - @graphql-mesh/utils@0.103.12
+  - @graphql-mesh/types@0.103.12
+  - @graphql-mesh/string-interpolation@0.5.8
+  - @omnigraph/json-schema@0.108.13
+
 ## 0.108.12
 
 ### Patch Changes

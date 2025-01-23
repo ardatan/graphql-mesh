@@ -1,5 +1,18 @@
 # @graphql-mesh/fusion-composition
 
+## 0.7.18
+
+### Patch Changes
+
+- [#8268](https://github.com/ardatan/graphql-mesh/pull/8268)
+  [`f1b5e8e`](https://github.com/ardatan/graphql-mesh/commit/f1b5e8ee2f2da7599532b6f2a2e6399c46575789)
+  Thanks [@ardatan](https://github.com/ardatan)! - Respect other `@composeDirective` definitions
+  other than Mesh
+
+- Updated dependencies
+  [[`5180b06`](https://github.com/ardatan/graphql-mesh/commit/5180b068568042e764558a19194b8bae69354fe2)]:
+  - @graphql-mesh/utils@0.103.12
+
 ## 0.7.17
 
 ### Patch Changes
