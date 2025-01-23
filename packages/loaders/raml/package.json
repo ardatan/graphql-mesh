@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/raml",
-  "version": "0.108.12",
+  "version": "0.108.13",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,12 +37,12 @@
   "dependencies": {
     "@ardatan/raml-1-parser": "1.1.69",
     "@graphql-mesh/cross-helpers": "^0.4.9",
-    "@graphql-mesh/string-interpolation": "0.5.7",
-    "@graphql-mesh/types": "^0.103.11",
-    "@graphql-mesh/utils": "^0.103.11",
+    "@graphql-mesh/string-interpolation": "0.5.8",
+    "@graphql-mesh/types": "^0.103.12",
+    "@graphql-mesh/utils": "^0.103.12",
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/utils": "^10.6.0",
-    "@omnigraph/json-schema": "0.108.12",
+    "@omnigraph/json-schema": "0.108.13",
     "@whatwg-node/fetch": "^0.10.0",
     "change-case": "4.1.2",
     "json-machete": "^0.97.6",

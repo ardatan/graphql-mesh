@@ -1,5 +1,17 @@
 # @graphql-mesh/transform-federation
 
+## 0.103.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5180b06`](https://github.com/ardatan/graphql-mesh/commit/5180b068568042e764558a19194b8bae69354fe2),
+  [`c54e361`](https://github.com/ardatan/graphql-mesh/commit/c54e36110256541e03380b0d537085848169116b),
+  [`78c202e`](https://github.com/ardatan/graphql-mesh/commit/78c202ef8824607e27de1dcc5076c82a02ef86cd)]:
+  - @graphql-mesh/utils@0.103.12
+  - @graphql-mesh/types@0.103.12
+  - @graphql-mesh/string-interpolation@0.5.8
+
 ## 0.103.11
 
 ### Patch Changes

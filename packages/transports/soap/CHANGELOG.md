@@ -1,5 +1,23 @@
 # @graphql-mesh/transport-soap
 
+## 0.8.12
+
+### Patch Changes
+
+- [#8282](https://github.com/ardatan/graphql-mesh/pull/8282)
+  [`40274c3`](https://github.com/ardatan/graphql-mesh/commit/40274c3d50218686512de3ccf7c5d2cf3c23783c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Some SOAP API endpoints need `SOAPAction` HTTP
+  header that points to the action path defined in the WSDL. This fixes that issue for those
+  endpoints.
+  [Learn more about SOAPAction header](https://www.ibm.com/docs/en/baw/22.x?topic=binding-protocol-headers)
+- Updated dependencies
+  [[`5180b06`](https://github.com/ardatan/graphql-mesh/commit/5180b068568042e764558a19194b8bae69354fe2),
+  [`c54e361`](https://github.com/ardatan/graphql-mesh/commit/c54e36110256541e03380b0d537085848169116b),
+  [`78c202e`](https://github.com/ardatan/graphql-mesh/commit/78c202ef8824607e27de1dcc5076c82a02ef86cd)]:
+  - @graphql-mesh/utils@0.103.12
+  - @graphql-mesh/types@0.103.12
+  - @graphql-mesh/string-interpolation@0.5.8
+
 ## 0.8.11
 
 ### Patch Changes

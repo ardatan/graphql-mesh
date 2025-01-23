@@ -1,5 +1,52 @@
 # @graphql-mesh/types
 
+## 0.103.12
+
+### Patch Changes
+
+- [#8289](https://github.com/ardatan/graphql-mesh/pull/8289)
+  [`c54e361`](https://github.com/ardatan/graphql-mesh/commit/c54e36110256541e03380b0d537085848169116b)
+  Thanks [@ardatan](https://github.com/ardatan)! - New option `selectQueryOrMutationField` to decide
+  which field belongs to which root type explicitly.
+
+  ```ts filename="mesh.config.ts"
+  import { defineConfig } from '@graphql-mesh/compose-cli'
+  import loadGrpcSubgraph from '@omnigraph/grpc'
+
+  export const composeConfig = defineConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
+          /** .. **/
+
+          // Prefix to collect Query method default: list, get
+          prefixQueryMethod: ['list', 'get'],
+
+          // Select certain fields as Query or Mutation
+          // This overrides `prefixQueryMethod`
+          selectQueryOrMutationField: [
+            {
+              // You can use a pattern matching with *
+              fieldName: '*RetrieveMovies',
+              type: 'Query'
+            },
+            // Or you can use a specific field name
+            // This will make the field GetMovie available as a Mutation
+            // Because it would be Query because of `prefixQueryMethod`
+            {
+              fieldName: 'GetMovie',
+              type: 'Mutation'
+            }
+          ]
+        })
+      }
+    ]
+  })
+  ```
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.103.12
+
 ## 0.103.11
 
 ### Patch Changes

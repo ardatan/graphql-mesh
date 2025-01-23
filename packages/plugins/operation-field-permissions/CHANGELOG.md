@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-operation-field-permissions
 
+## 0.103.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c54e361`](https://github.com/ardatan/graphql-mesh/commit/c54e36110256541e03380b0d537085848169116b)]:
+  - @graphql-mesh/types@0.103.12
+
 ## 0.103.11
 
 ### Patch Changes

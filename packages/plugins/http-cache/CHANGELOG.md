@@ -1,5 +1,30 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.104.0
+
+### Minor Changes
+
+- [#8268](https://github.com/ardatan/graphql-mesh/pull/8268)
+  [`f1b5e8e`](https://github.com/ardatan/graphql-mesh/commit/f1b5e8ee2f2da7599532b6f2a2e6399c46575789)
+  Thanks [@ardatan](https://github.com/ardatan)! - - Refactor the plugin, and add `policyOptions` to
+  configure HTTP caching mechanism
+  - Support [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) and
+    [Last-Modified](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified) headers
+
+### Patch Changes
+
+- [#8268](https://github.com/ardatan/graphql-mesh/pull/8268)
+  [`f1b5e8e`](https://github.com/ardatan/graphql-mesh/commit/f1b5e8ee2f2da7599532b6f2a2e6399c46575789)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`http-cache-semantics@^4.1.1` ↗︎](https://www.npmjs.com/package/http-cache-semantics/v/4.1.1)
+    (from `4.1.1`, in `dependencies`)
+- Updated dependencies
+  [[`5180b06`](https://github.com/ardatan/graphql-mesh/commit/5180b068568042e764558a19194b8bae69354fe2),
+  [`c54e361`](https://github.com/ardatan/graphql-mesh/commit/c54e36110256541e03380b0d537085848169116b)]:
+  - @graphql-mesh/utils@0.103.12
+  - @graphql-mesh/types@0.103.12
+
 ## 0.103.12
 
 ### Patch Changes

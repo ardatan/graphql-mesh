@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/grpc",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
   "dependencies": {
     "@ardatan/grpc-reflection-js": "^0.0.2",
     "@graphql-mesh/cross-helpers": "^0.4.9",
-    "@graphql-mesh/string-interpolation": "^0.5.7",
+    "@graphql-mesh/string-interpolation": "^0.5.8",
     "@graphql-mesh/transport-common": "^0.7.13",
     "@graphql-tools/utils": "^10.6.0",
     "@grpc/grpc-js": "^1.1.7",
