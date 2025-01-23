@@ -5,6 +5,7 @@ import type { AddressInfo } from 'net';
 import os from 'os';
 import path, { isAbsolute } from 'path';
 import type { Readable } from 'stream';
+import { inspect } from 'util';
 import Dockerode from 'dockerode';
 import type { ExecutionResult } from 'graphql';
 import {
@@ -202,7 +203,14 @@ export interface Tenv {
    */
   service(name: string, opts?: ServiceOptions): Promise<Service>;
   container(opts: ContainerOptions): Promise<Container>;
-  composeWithApollo(services: Service[]): Promise<string>;
+  composeWithApollo(opts: {
+    services: Service[];
+    trimHostPaths?: boolean;
+    maskServicePorts?: boolean;
+  }): Promise<{
+    output: string;
+    result: string;
+  }>;
 }
 
 export function createTenv(cwd: string): Tenv {
@@ -442,7 +450,7 @@ export function createTenv(cwd: string): Tenv {
             (err, res) => (err ? reject(err) : resolve(res)),
             pipeLogs
               ? e => {
-                  process.stderr.write(JSON.stringify(e) + '\n\n');
+                  process.stderr.write(inspect(e) + '\n\n');
                 }
               : undefined,
           );
@@ -593,7 +601,15 @@ export function createTenv(cwd: string): Tenv {
       }
       return container;
     },
-    async composeWithApollo(services) {
+    async composeWithApollo({
+      services,
+      trimHostPaths,
+      maskServicePorts,
+    }: {
+      services: Service[];
+      trimHostPaths?: boolean;
+      maskServicePorts?: boolean;
+    }) {
       const subgraphs: ServiceEndpointDefinition[] = [];
       for (const service of services) {
         const hostname = await getLocalHostName(service.port);
@@ -613,9 +629,25 @@ export function createTenv(cwd: string): Tenv {
         async healthCheck() {},
       });
 
-      const supergraphFile = await tenv.fs.tempfile('supergraph.graphql');
-      await tenv.fs.write(supergraphFile, supergraphSdl);
-      return supergraphFile;
+      let result = supergraphSdl;
+
+      if (trimHostPaths || maskServicePorts) {
+        if (trimHostPaths) {
+          result = result.replaceAll(__project, '');
+        }
+        for (const subgraph of services) {
+          if (maskServicePorts) {
+            result = result.replaceAll(subgraph.port.toString(), `<${subgraph.name}_port>`);
+          }
+        }
+      }
+
+      const output = await tenv.fs.tempfile('supergraph.graphql');
+      await tenv.fs.write(output, result);
+      return {
+        output,
+        result,
+      };
     },
   };
   return tenv;

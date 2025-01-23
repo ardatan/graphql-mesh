@@ -1,0 +1,224 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Cache Control Apollo Rover composes 1`] = `
+"schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  @link(url: "https://www.apollographql.com/docs/federation/v1/performance/caching/v1.0", import: ["@cacheControl"])
+{
+  query: Query
+}
+
+directive @cacheControl(maxAge: Int, scope: CacheControlScope, inheritMaxAge: Boolean) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+type Author
+  @join__type(graph: AUTHORS, key: "id")
+  @join__type(graph: BOOKS, key: "id", extension: true)
+  @cacheControl(maxAge: 10)
+{
+  id: ID!
+  name: String! @join__field(graph: AUTHORS)
+  age: Int @join__field(graph: AUTHORS)
+  books: [Book] @join__field(graph: BOOKS)
+}
+
+type Book
+  @join__type(graph: BOOKS, key: "id")
+  @join__type(graph: COMMENTS, key: "id", extension: true)
+  @cacheControl(maxAge: 10)
+{
+  id: ID!
+  title: String! @join__field(graph: BOOKS)
+  author: Author! @join__field(graph: BOOKS)
+  comments: [Comment] @join__field(graph: COMMENTS)
+}
+
+enum CacheControlScope
+  @join__type(graph: AUTHORS)
+  @join__type(graph: BOOKS)
+{
+  PUBLIC @join__enumValue(graph: AUTHORS) @join__enumValue(graph: BOOKS)
+  PRIVATE @join__enumValue(graph: AUTHORS) @join__enumValue(graph: BOOKS)
+}
+
+type Comment
+  @join__type(graph: COMMENTS, key: "id")
+{
+  id: ID!
+  content: String!
+  book: Book!
+}
+
+scalar join__FieldSet
+
+enum join__Graph {
+  AUTHORS @join__graph(name: "authors", url: "http://localhost:<authors_port>/graphql")
+  BOOKS @join__graph(name: "books", url: "http://localhost:<books_port>/graphql")
+  COMMENTS @join__graph(name: "comments", url: "http://localhost:<comments_port>/graphql")
+}
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+type Query
+  @join__type(graph: AUTHORS)
+  @join__type(graph: BOOKS)
+  @join__type(graph: COMMENTS)
+{
+  authors: [Author] @join__field(graph: AUTHORS)
+  author(id: ID!): Author @join__field(graph: AUTHORS)
+  books: [Book] @join__field(graph: BOOKS)
+  book(id: ID!): Book @join__field(graph: BOOKS)
+  comments: [Comment] @join__field(graph: COMMENTS)
+}"
+`;
+
+exports[`Cache Control Mesh Compose composes 1`] = `
+"
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+  
+  
+  
+  
+  
+  @link(
+  url: "https://www.apollographql.com/docs/federation/v1/performance/caching/v1.0"
+  import: ["@cacheControl"]
+)
+{
+  query: Query
+  
+  
+}
+
+
+  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+  directive @join__field(
+    graph: join__Graph
+    requires: join__FieldSet
+    provides: join__FieldSet
+    type: String
+    external: Boolean
+    override: String
+    usedOverridden: Boolean
+  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+  directive @join__implements(
+    graph: join__Graph!
+    interface: String!
+  ) repeatable on OBJECT | INTERFACE
+
+  directive @join__type(
+    graph: join__Graph!
+    key: join__FieldSet
+    extension: Boolean! = false
+    resolvable: Boolean! = true
+    isInterfaceObject: Boolean! = false
+  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+  scalar join__FieldSet
+
+
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+
+
+
+
+
+
+enum join__Graph {
+  AUTHORS @join__graph(name: "authors", url: "http://localhost:<authors_port>/graphql") 
+  BOOKS @join__graph(name: "books", url: "http://localhost:<books_port>/graphql") 
+  COMMENTS @join__graph(name: "comments", url: "http://localhost:<comments_port>/graphql") 
+}
+
+directive @cacheControl(maxAge: Int, scope: CacheControlScope, inheritMaxAge: Boolean)  on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+
+scalar TransportOptions @join__type(graph: AUTHORS)  @join__type(graph: BOOKS)  @join__type(graph: COMMENTS) 
+
+type Author @cacheControl(maxAge: 10)  @join__type(graph: AUTHORS, key: "id")  @join__type(graph: BOOKS, key: "id", extension: true)  {
+  id: ID!
+  name: String! @join__field(graph: AUTHORS) 
+  age: Int @join__field(graph: AUTHORS) 
+  books: [Book] @join__field(graph: BOOKS) 
+}
+
+type Query @join__type(graph: AUTHORS)  @join__type(graph: BOOKS)  @join__type(graph: COMMENTS)  {
+  authors: [Author] @join__field(graph: AUTHORS) 
+  author(id: ID!) : Author @join__field(graph: AUTHORS) 
+  books: [Book] @join__field(graph: BOOKS) 
+  book(id: ID!) : Book @join__field(graph: BOOKS) 
+  comments: [Comment] @join__field(graph: COMMENTS) 
+}
+
+type Book @cacheControl(maxAge: 10)  @join__type(graph: BOOKS, key: "id")  @join__type(graph: COMMENTS, key: "id", extension: true)  {
+  id: ID!
+  title: String! @join__field(graph: BOOKS) 
+  author: Author! @join__field(graph: BOOKS) 
+  comments: [Comment] @join__field(graph: COMMENTS) 
+}
+
+type Comment @join__type(graph: COMMENTS, key: "id")  {
+  id: ID!
+  content: String!
+  book: Book!
+}
+
+enum CacheControlScope @join__type(graph: AUTHORS)  @join__type(graph: BOOKS)  {
+  PUBLIC @join__enumValue(graph: AUTHORS)  @join__enumValue(graph: BOOKS) 
+  PRIVATE @join__enumValue(graph: AUTHORS)  @join__enumValue(graph: BOOKS) 
+}
+    "
+`;

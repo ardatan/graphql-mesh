@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createPathsMatcher, getTsconfig } from 'get-tsconfig';
 import { transform, type Transform } from 'sucrase';
 
-const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(process.env.DEBUG));
+const isDebug = ['HOOKS', 'hooks'].includes(String(process.env.DEBUG));
 
 function debug(msg: string) {
   if (isDebug) {

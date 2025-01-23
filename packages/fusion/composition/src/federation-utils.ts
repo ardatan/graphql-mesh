@@ -94,6 +94,21 @@ const FEDERATION_V1_DIRECTIVES = [
 
 export function detectAndAddMeshDirectives(subgraph: GraphQLSchema) {
   const meshDirectives: string[] = [];
+  const existingAdditionalDirectives: string[] = [];
+  const existingDirectiveExtensionsOnSchema = getDirectiveExtensions(subgraph);
+  if (existingDirectiveExtensionsOnSchema?.link) {
+    const linkDirectives = existingDirectiveExtensionsOnSchema.link;
+    for (const linkDirective of linkDirectives) {
+      if (
+        linkDirective.url != null &&
+        !linkDirective.url.startsWith('https://the-guild.dev/graphql/mesh/spec/')
+      ) {
+        if (linkDirective.import) {
+          existingAdditionalDirectives.push(...linkDirective.import);
+        }
+      }
+    }
+  }
   subgraph = mapSchema(subgraph, {
     [MapperKind.DIRECTIVE]: directive => {
       const directiveName = `@${directive.name}`;
@@ -102,7 +117,8 @@ export function detectAndAddMeshDirectives(subgraph: GraphQLSchema) {
         !FEDERATION_V1_DIRECTIVES.includes(directiveName) &&
         !directiveName.startsWith('@federation__') &&
         directiveName !== '@stream' &&
-        directiveName !== '@link'
+        directiveName !== '@link' &&
+        !existingAdditionalDirectives.includes(directiveName)
       ) {
         meshDirectives.push(directiveName);
         if (!directive.isRepeatable && directive.args.some(arg => arg.name === 'subgraph')) {

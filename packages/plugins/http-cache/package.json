@@ -38,10 +38,11 @@
     "@graphql-mesh/types": "^0.103.11",
     "@graphql-mesh/utils": "^0.103.11",
     "@whatwg-node/fetch": "^0.10.0",
-    "http-cache-semantics": "4.1.1",
+    "http-cache-semantics": "^4.1.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
+    "@graphql-hive/gateway": "^1.8.0",
     "@types/http-cache-semantics": "4.0.4"
   },
   "publishConfig": {
