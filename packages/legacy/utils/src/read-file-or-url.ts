@@ -3,8 +3,8 @@ import type { Schema } from 'js-yaml';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Type } from 'js-yaml';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { ImportFn, Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
-import { isValidPath, mapMaybePromise } from '@graphql-tools/utils';
-import { fetch, URL } from '@whatwg-node/fetch';
+import { isUrl, isValidPath, mapMaybePromise } from '@graphql-tools/utils';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 
 export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
@@ -16,18 +16,7 @@ export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
   logger: Logger;
 }
 
-export function isUrl(str: string): boolean {
-  if (URL.canParse) {
-    return URL.canParse(str);
-  }
-  try {
-    // eslint-disable-next-line no-new
-    new URL(str);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
+export { isUrl };
 
 export async function readFileOrUrl<T>(
   filePathOrUrl: string,
@@ -103,7 +92,14 @@ function isAbsolute(path: string): boolean {
 
 export function readFile<T>(
   fileExpression: string,
-  { allowUnknownExtensions, cwd, fallbackFormat, importFn, logger, fetch }: ReadFileOrUrlOptions,
+  {
+    allowUnknownExtensions,
+    cwd,
+    fallbackFormat,
+    importFn,
+    logger,
+    fetch = defaultFetch,
+  }: ReadFileOrUrlOptions,
 ): Promise<T> {
   const [filePath] = fileExpression.split('#');
   if (/js$/.test(filePath) || /ts$/.test(filePath) || /json$/.test(filePath)) {
@@ -160,7 +156,7 @@ export function readFile<T>(
 export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, fallbackFormat } = config || {};
   config.headers ||= {};
-  config.fetch ||= fetch;
+  config.fetch ||= defaultFetch;
   const response = await config.fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
