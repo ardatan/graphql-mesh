@@ -1,5 +1,6 @@
 import { createRouter, Response } from 'fets';
 import { execute, parse } from 'graphql';
+import { fetch } from '@whatwg-node/fetch';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Query Params with POST', () => {
@@ -15,7 +16,12 @@ describe('Query Params with POST', () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/multi-content-types.yml',
       endpoint: 'http://localhost:3000',
-      fetch: server.fetch as any,
+      fetch(url, opts) {
+        if (url.startsWith('file:')) {
+          return fetch(url, opts);
+        }
+        return server.fetch(url, opts);
+      },
       cwd: __dirname,
     });
     const query = /* GraphQL */ `

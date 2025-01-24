@@ -1,6 +1,6 @@
 import { GraphQLSchema, parse } from 'graphql';
 import { normalizedExecutor } from '@graphql-tools/executor';
-import { Response } from '@whatwg-node/fetch';
+import { fetch, Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('additional properties in union type', () => {
@@ -10,7 +10,10 @@ describe('additional properties in union type', () => {
       source: './fixtures/one-of-no-discriminator.yml',
       cwd: __dirname,
       ignoreErrorResponses: true,
-      async fetch(url, options, context) {
+      fetch(url, options, context) {
+        if (url.startsWith('file:')) {
+          return fetch(url, options);
+        }
         return Response.json({
           type: 'TestType', // this breaks
           B: 'Value',

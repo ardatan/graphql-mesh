@@ -1,5 +1,7 @@
 import { graphql } from 'graphql';
+import type { MeshFetchRequestInit } from '@graphql-mesh/types';
 import { fakePromise, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fetch as defaultFetch, Headers } from '@whatwg-node/fetch';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Calendly', () => {
@@ -7,6 +9,7 @@ describe('Calendly', () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('calendly', {
       source: './fixtures/calendly.yml',
       cwd: __dirname,
+      fetch: defaultFetch,
     });
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
   });
@@ -19,18 +22,23 @@ describe('Calendly', () => {
         }
       }
     `;
-    const fetch = jest.fn(() =>
+    const fetch = jest.fn((_url: string, _opts: MeshFetchRequestInit) =>
       fakePromise({
         json: () => fakePromise({}),
         text: () => fakePromise(''),
-
+        headers: new Headers(),
         ok: true,
       } as Response),
     );
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('calendly', {
       source: './fixtures/calendly.yml',
       cwd: __dirname,
-      fetch,
+      fetch(url, opts) {
+        if (url.startsWith('file:')) {
+          return defaultFetch(url, opts);
+        }
+        return fetch(url, opts);
+      },
     });
     return graphql({ schema: createdSchema, source: query }).then((result: any) => {
       expect((fetch.mock.calls[0] as string[])[0]).toEqual(
@@ -47,7 +55,7 @@ describe('Calendly', () => {
         }
       }
     `;
-    const fetch = jest.fn(() =>
+    const fetch = jest.fn((_url: string, _opts: MeshFetchRequestInit) =>
       fakePromise({
         json: () => fakePromise({}),
         text: () => fakePromise(''),
@@ -58,7 +66,12 @@ describe('Calendly', () => {
     const createdSchema = await loadGraphQLSchemaFromOpenAPI('calendly', {
       source: './fixtures/calendly.yml',
       cwd: __dirname,
-      fetch,
+      fetch(url, opts) {
+        if (url.startsWith('file:')) {
+          return defaultFetch(url, opts);
+        }
+        return fetch(url, opts);
+      },
     });
 
     return graphql({ schema: createdSchema, source: query }).then((result: any) => {

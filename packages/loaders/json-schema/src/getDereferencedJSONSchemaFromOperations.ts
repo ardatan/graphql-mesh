@@ -51,6 +51,7 @@ export async function getDereferencedJSONSchemaFromOperations({
     });
   const fullyDeferencedSchema = await dereferenceObject(referencedJSONSchema, {
     cwd,
+    fetch: fetchFn,
     debugLogFn: dereferenceObjectLogger.debug.bind(dereferenceObjectLogger),
     readFileOrUrl: readFileOrUrlForJsonMachete,
   });

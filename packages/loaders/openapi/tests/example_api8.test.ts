@@ -12,7 +12,7 @@ let createdSchema: GraphQLSchema;
 describe('OpenAPI loader: Empty upstream 404 response', () => {
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      fetch: exampleApi8.fetch as any,
+      fetch: exampleApi8.fetch,
       endpoint: 'http://localhost:{context.port}/api',
       source: './fixtures/example_oas8.json',
       cwd: __dirname,

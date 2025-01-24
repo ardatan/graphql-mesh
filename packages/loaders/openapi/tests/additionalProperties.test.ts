@@ -33,7 +33,7 @@ describe('additionalProperties', () => {
       source: './fixtures/additionalProperties.json',
       endpoint: 'http://localhost:3000',
       cwd: __dirname,
-      fetch: router.fetch as any,
+      fetch: router.fetch,
     });
   });
   it('should generate the schema correctly', async () => {

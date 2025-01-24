@@ -11,7 +11,7 @@ describe('OpanAPI: nested objects', () => {
   beforeAll(async () => {
     // Update PORT for this test case:
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
-      fetch: nestedObjectsApi.fetch as any,
+      fetch: nestedObjectsApi.fetch,
       endpoint: `http://localhost:3000`,
       source: './fixtures/nested_object.json',
       cwd: __dirname,

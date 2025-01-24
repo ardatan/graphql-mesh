@@ -12,7 +12,7 @@ describe('OpenAPI Loader: Testing the naming convention', () => {
   beforeAll(async () => {
     // Update PORT for this test case:
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
-      fetch: exampleApi5.fetch as any,
+      fetch: exampleApi5.fetch,
       endpoint: 'http://localhost:3000/api',
       source: './fixtures/example_oas5.json',
       cwd: __dirname,

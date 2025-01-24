@@ -1,6 +1,6 @@
 import { execute, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { Headers } from '@whatwg-node/fetch';
+import { fetch, Headers } from '@whatwg-node/fetch';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Basket', () => {
@@ -8,6 +8,7 @@ describe('Basket', () => {
     const schema = await loadGraphQLSchemaFromOpenAPI('basket', {
       source: './fixtures/basket.json',
       cwd: __dirname,
+      fetch,
     });
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
   });

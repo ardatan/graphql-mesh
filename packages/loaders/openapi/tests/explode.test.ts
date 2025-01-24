@@ -1,5 +1,5 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
-import { Response } from '@whatwg-node/fetch';
+import { fetch, Response } from '@whatwg-node/fetch';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Explode parameter', () => {
@@ -8,17 +8,13 @@ describe('Explode parameter', () => {
     schema = await loadGraphQLSchemaFromOpenAPI('explode', {
       source: './fixtures/explode.yml',
       cwd: __dirname,
-      async fetch(url) {
-        return new Response(
-          JSON.stringify({
-            url,
-          }),
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        );
+      fetch(url) {
+        if (url.startsWith('file:')) {
+          return fetch(url);
+        }
+        return Response.json({
+          url,
+        });
       },
     });
   });

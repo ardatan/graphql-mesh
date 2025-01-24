@@ -46,7 +46,7 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
     validate: false,
   });
   return getMesh({
-    fetchFn: yoga.fetch as any,
+    fetchFn: yoga.fetch,
     sources: [
       {
         name: 'Yoga',

@@ -12,7 +12,7 @@ describe('OpenAPI loader: Query Arguments', () => {
   beforeAll(async () => {
     const endpoint = `http://localhost:3000/`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      fetch: queryArgumentsApi.fetch as any,
+      fetch: queryArgumentsApi.fetch,
       endpoint,
       source: './fixtures/query_arguments.json',
       cwd: __dirname,

@@ -1,5 +1,5 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
-import { Request, Response } from '@whatwg-node/fetch';
+import { fetch, Request, Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 let createdSchema: GraphQLSchema;
@@ -11,11 +11,16 @@ describe('OpenAPI loader: Int64 input', () => {
   beforeAll(async () => {
     const endpoint = `http://localhost:3000/`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      async fetch(input, init) {
+      fetch(input, init) {
+        if (input.startsWith('file:')) {
+          return fetch(input, init);
+        }
         const req = new Request(input, init);
-        const json = await req.json<{ id: string; name: string }>();
-
-        return Response.json({ name: json.name });
+        return req.json<{ id: string; name: string }>().then(json =>
+          Response.json({
+            name: json.name,
+          }),
+        );
       },
       endpoint,
       source: './fixtures/int64-input.yml',

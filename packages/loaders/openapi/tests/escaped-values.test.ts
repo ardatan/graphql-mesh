@@ -21,7 +21,7 @@ describe('Escaped Values', () => {
       source: './fixtures/escaped-values.json',
       cwd: __dirname,
       endpoint: 'http://localhost:3000/api',
-      fetch: router.fetch as any,
+      fetch: router.fetch,
     });
   });
   it('should generate the correct schema', () => {

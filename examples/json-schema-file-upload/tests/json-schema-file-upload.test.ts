@@ -12,7 +12,7 @@ describe('JSON Schema File Uploads', () => {
     });
     mesh = await getMesh({
       ...config,
-      fetchFn: router.fetch as any,
+      fetchFn: router.fetch,
     });
   });
   afterAll(() => {

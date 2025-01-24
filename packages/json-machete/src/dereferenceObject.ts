@@ -1,5 +1,6 @@
 import JsonPointer from 'json-pointer';
 import urlJoin from 'url-join';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { handleUntitledDefinitions } from './healUntitledDefinitions.js';
 
 export const resolvePath = (path: string, root: any): any => {
@@ -61,6 +62,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
   {
     cwd = globalThis?.process.cwd(),
+    fetch,
     externalFileCache = new Map<string, any>(),
     refMap = new Map<string, any>(),
     root = obj as any,
@@ -69,11 +71,12 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     resolvedObjects = new WeakSet(),
   }: {
     cwd?: string;
+    fetch: MeshFetch;
     externalFileCache?: Map<string, any>;
     refMap?: Map<string, any>;
     root?: TRoot;
     debugLogFn?(message?: any): void;
-    readFileOrUrl(path: string, opts: { cwd: string }): Promise<any> | any;
+    readFileOrUrl(path: string, opts: { cwd: string; fetch: MeshFetch }): Promise<any> | any;
     resolvedObjects?: WeakSet<any>;
   },
 ): Promise<T> {
@@ -91,7 +94,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           let externalFile = externalFileCache.get(externalFilePath);
           if (!externalFile) {
             try {
-              externalFile = await readFileOrUrl(externalFilePath, { cwd });
+              externalFile = await readFileOrUrl(externalFilePath, { cwd, fetch });
             } catch (e) {
               console.error(e);
               throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
@@ -137,6 +140,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               readFileOrUrl,
               root: externalFile,
               resolvedObjects,
+              fetch,
             },
           );
           refMap.set($ref, result);
@@ -161,6 +165,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           */
           const result = await dereferenceObject(resolvedObj, {
             cwd,
+            fetch,
             externalFileCache,
             refMap,
             root,
@@ -193,6 +198,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               debugLogFn,
               readFileOrUrl,
               resolvedObjects,
+              fetch,
             });
           }
         }

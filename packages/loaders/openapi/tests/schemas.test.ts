@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { join } from 'path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fetch } from '@whatwg-node/fetch';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 const schemas: Record<string, string> = {
@@ -39,6 +40,7 @@ describe('Schemas', () => {
         loadGraphQLSchemaFromOpenAPI(schemaName, {
           source: schemaPath,
           cwd: join(__dirname, 'fixtures'),
+          fetch,
         }).then(printSchemaWithDirectives),
       ).resolves.toMatchSnapshot();
     });

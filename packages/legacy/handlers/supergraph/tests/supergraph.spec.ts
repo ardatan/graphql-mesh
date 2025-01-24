@@ -246,8 +246,6 @@ describe('Supergraph', () => {
     expect(logger.error.mock.calls[0][0].toString())
       .toBe(`Failed to generate the schema for the source
  Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ./fixtures/supergraph-invalid.graphql instead.
- Got result: type Query {
-
  Got error: Syntax Error: Expected Name, found <EOF>.`);
   });
   it('throws a helpful error when the source is down', async () => {
@@ -270,8 +268,8 @@ describe('Supergraph', () => {
     ).rejects.toThrow();
     expect(logger.error.mock.calls[0][0].toString())
       .toBe(`Failed to generate the schema for the source
- Failed to load supergraph SDL from http://down-sdl-source.com/my-sdl.graphql:
- getaddrinfo ENOTFOUND down-sdl-source.com`);
+ Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from http://down-sdl-source.com/my-sdl.graphql instead.
+ Got error: getaddrinfo ENOTFOUND down-sdl-source.com`);
   });
   it('configures WebSockets for subscriptions correctly', async () => {
     await using authorsHttpServer = await createDisposableServer(authorsServer);
