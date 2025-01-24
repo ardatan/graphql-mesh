@@ -65,11 +65,11 @@
   },
   "devDependencies": {
     "@ardatan/graphql-to-config-schema": "0.1.25",
-    "@babel/core": "7.26.0",
+    "@babel/core": "7.26.7",
     "@babel/plugin-proposal-class-properties": "7.18.6",
     "@babel/plugin-proposal-explicit-resource-management": "7.25.9",
     "@babel/plugin-syntax-top-level-await": "7.14.5",
-    "@babel/preset-env": "7.26.0",
+    "@babel/preset-env": "7.26.7",
     "@babel/preset-typescript": "7.26.0",
     "@changesets/changelog-github": "0.5.0",
     "@changesets/cli": "2.27.12",
