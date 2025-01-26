@@ -3512,11 +3512,11 @@ __metadata:
   linkType: hard
 
 "@commander-js/extra-typings@npm:^13.0.0":
-  version: 13.0.0
-  resolution: "@commander-js/extra-typings@npm:13.0.0"
+  version: 13.1.0
+  resolution: "@commander-js/extra-typings@npm:13.1.0"
   peerDependencies:
-    commander: ~13.0.0
-  checksum: 10c0/7d1f75624ef5026462600b9ef9f7dbb701cefa3a17204bf57a9946aece44ccff343407d910620645c1daa9416439f5be6597adf75a0b8b4cfd08d59b345d0fcc
+    commander: ~13.1.0
+  checksum: 10c0/ff799f0641f68855aa73c976912a607c25d564df34fd8e262927a80b19f6cccd882fe7ce098a0e072a497fd0020cbd19fd1e4d5cc98a461cd6623abf8ed5f4e7
   languageName: node
   linkType: hard
 
@@ -22069,7 +22069,7 @@ __metadata:
     graphql: "npm:16.10.0"
     husky: "npm:9.1.7"
     jest: "npm:29.7.0"
-    lint-staged: "npm:15.4.2"
+    lint-staged: "npm:15.4.3"
     lru-cache: "npm:11.0.2"
     minimatch: "npm:10.0.1"
     node-gyp: "npm:^11.0.0"
@@ -26028,9 +26028,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:15.4.2":
-  version: 15.4.2
-  resolution: "lint-staged@npm:15.4.2"
+"lint-staged@npm:15.4.3":
+  version: 15.4.3
+  resolution: "lint-staged@npm:15.4.3"
   dependencies:
     chalk: "npm:^5.4.1"
     commander: "npm:^13.1.0"
@@ -26044,7 +26044,7 @@ __metadata:
     yaml: "npm:^2.7.0"
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 10c0/08dd28149241788f7ca628a64c9c1817a9dfbe19517ba0317fdf96a1109f6d624948864edfeaf2936561bb49c65aeb32d5ddc75fb15afa2b6527024ef01a546b
+  checksum: 10c0/c1f71f2273bcbd992af929620f5acc6b9f6899da4b395e780e0b3ab33a0d725c239eb961873067c8c842e057c585c71dd4d44c0dc8b25539d3c2e97a3bdd6f30
   languageName: node
   linkType: hard
 
