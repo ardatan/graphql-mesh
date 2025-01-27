@@ -251,12 +251,12 @@ export default function useMeshResponseCache(
         const cacheControlHeader = response.headers.get('cache-control');
         if (cacheControlHeader != null) {
           const parsedCacheControl = CacheControlParser.parse(cacheControlHeader);
-          if (parsedCacheControl['max-age']) {
+          if (parsedCacheControl['max-age'] != null) {
             const maxAgeInSeconds = parsedCacheControl['max-age'];
             const maxAgeInMs = maxAgeInSeconds * 1000;
             checkTtl(context, maxAgeInMs);
           }
-          if (parsedCacheControl['s-maxage']) {
+          if (parsedCacheControl['s-maxage'] != null) {
             const sMaxAgeInSeconds = parsedCacheControl['s-maxage'];
             const sMaxAgeInMs = sMaxAgeInSeconds * 1000;
             checkTtl(context, sMaxAgeInMs);
