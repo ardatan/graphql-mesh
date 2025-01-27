@@ -197,6 +197,8 @@ export default function useMeshResponseCache(
     }
   }
 
+  // Stored TTL by the context
+  // To be compared with the calculated one later in `onTtl`
   const ttlByContext = new WeakMap<any, number>();
 
   // @ts-expect-error - GatewayPlugin types
@@ -219,6 +221,9 @@ export default function useMeshResponseCache(
     cache: getCacheForResponseCache(options.cache),
     ttlPerType,
     ttlPerSchemaCoordinate,
+    // Checks the TTL stored in the context
+    // Compares it to the calculated one
+    // Then it takes the lowest value
     onTtl({ ttl, context }) {
       const ttlForThisContext = ttlByContext.get(context);
       if (ttlForThisContext != null && ttlForThisContext < ttl) {
@@ -227,6 +232,8 @@ export default function useMeshResponseCache(
       return ttl;
     },
   });
+  // Checks the TTL stored in the context
+  // Takes the lowest value
   function checkTtl(context: GatewayContext, ttl: number) {
     const ttlForThisContext = ttlByContext.get(context);
     if (ttlForThisContext == null || ttl < ttlForThisContext) {
@@ -234,7 +241,7 @@ export default function useMeshResponseCache(
     }
   }
   plugin.onFetch = function ({ executionRequest, context }) {
-    // If it is a subgraph request
+    // Only if it is a subgraph request
     if (executionRequest && context) {
       return function onFetchDone({ response }) {
         const cacheControlHeader = response.headers.get('cache-control');
