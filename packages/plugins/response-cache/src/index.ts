@@ -1,6 +1,6 @@
 import CacheControlParser from 'cache-control-parser';
 import { defaultBuildResponseCacheKey } from '@envelop/response-cache';
-import type { GatewayPlugin } from '@graphql-hive/gateway-runtime';
+import type { GatewayContext, GatewayPlugin } from '@graphql-hive/gateway-runtime';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
@@ -185,18 +185,30 @@ export default function useMeshResponseCache(
         cache: KeyValueCache;
       }),
 ): GatewayPlugin {
-  const ttlPerType: Record<string, number> = { ...(options as ResponseCacheConfig).ttlPerType };
-  const ttlPerSchemaCoordinate: Record<string, number> = {
-    ...(options as ResponseCacheConfig).ttlPerSchemaCoordinate,
-  };
+  const ttlPerType: Record<string, number> = {};
+  if ('ttlPerType' in options && options.ttlPerType) {
+    for (const type in options.ttlPerType) {
+      const ttl = options.ttlPerType[type];
+      ttlPerType[type] = ttl;
+    }
+  }
 
-  const { ttlPerCoordinate } = options as YamlConfig.ResponseCacheConfig;
-  const ttlByContext = new WeakMap<any, number>();
-  if (ttlPerCoordinate) {
-    for (const ttlConfig of ttlPerCoordinate) {
+  const ttlPerSchemaCoordinate: Record<string, number> = {};
+
+  if ('ttlPerSchemaCoordinate' in options && options.ttlPerSchemaCoordinate) {
+    for (const coordinate in options.ttlPerSchemaCoordinate) {
+      const ttl = options.ttlPerSchemaCoordinate[coordinate];
+      ttlPerSchemaCoordinate[coordinate] = ttl;
+    }
+  }
+
+  if ('ttlPerCoordinate' in options && options.ttlPerCoordinate?.length) {
+    for (const ttlConfig of options.ttlPerCoordinate) {
       ttlPerSchemaCoordinate[ttlConfig.coordinate] = ttlConfig.ttl;
     }
   }
+
+  const ttlByContext = new WeakMap<any, number>();
 
   // @ts-expect-error - GatewayPlugin types
   const plugin: GatewayPlugin = useResponseCache({
@@ -226,24 +238,28 @@ export default function useMeshResponseCache(
       return ttl;
     },
   });
+  function checkTtl(context: GatewayContext, ttl: number) {
+    const ttlForThisContext = ttlByContext.get(context);
+    if (ttlForThisContext == null || ttl < ttlForThisContext) {
+      ttlByContext.set(context, ttl);
+    }
+  }
   plugin.onFetch = function ({ executionRequest, context }) {
     // If it is a subgraph request
     if (executionRequest && context) {
       return function onFetchDone({ response }) {
-        function checkTtl(ttl: number) {
-          const ttlForThisContext = ttlByContext.get(context);
-          if (ttlForThisContext == null || ttl < ttlForThisContext) {
-            ttlByContext.set(context, ttl);
-          }
-        }
         const cacheControlHeader = response.headers.get('cache-control');
         if (cacheControlHeader != null) {
           const parsedCacheControl = CacheControlParser.parse(cacheControlHeader);
           if (parsedCacheControl['max-age']) {
-            checkTtl(parsedCacheControl['max-age'] * 1000);
+            const maxAgeInSeconds = parsedCacheControl['max-age'];
+            const maxAgeInMs = maxAgeInSeconds * 1000;
+            checkTtl(context, maxAgeInMs);
           }
           if (parsedCacheControl['s-maxage']) {
-            checkTtl(parsedCacheControl['s-maxage'] * 1000);
+            const sMaxAgeInSeconds = parsedCacheControl['s-maxage'];
+            const sMaxAgeInMs = sMaxAgeInSeconds * 1000;
+            checkTtl(context, sMaxAgeInMs);
           }
         }
       };
