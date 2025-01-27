@@ -185,25 +185,14 @@ export default function useMeshResponseCache(
         cache: KeyValueCache;
       }),
 ): GatewayPlugin {
-  const ttlPerType: Record<string, number> = {};
-  if ('ttlPerType' in options && options.ttlPerType) {
-    for (const type in options.ttlPerType) {
-      const ttl = options.ttlPerType[type];
-      ttlPerType[type] = ttl;
-    }
-  }
+  const ttlPerType: Record<string, number> = { ...(options as ResponseCacheConfig).ttlPerType };
+  const ttlPerSchemaCoordinate: Record<string, number> = {
+    ...(options as ResponseCacheConfig).ttlPerSchemaCoordinate,
+  };
 
-  const ttlPerSchemaCoordinate: Record<string, number> = {};
-
-  if ('ttlPerSchemaCoordinate' in options && options.ttlPerSchemaCoordinate) {
-    for (const coordinate in options.ttlPerSchemaCoordinate) {
-      const ttl = options.ttlPerSchemaCoordinate[coordinate];
-      ttlPerSchemaCoordinate[coordinate] = ttl;
-    }
-  }
-
-  if ('ttlPerCoordinate' in options && options.ttlPerCoordinate?.length) {
-    for (const ttlConfig of options.ttlPerCoordinate) {
+  const { ttlPerCoordinate } = options as YamlConfig.ResponseCacheConfig;
+  if (ttlPerCoordinate) {
+    for (const ttlConfig of ttlPerCoordinate) {
       ttlPerSchemaCoordinate[ttlConfig.coordinate] = ttlConfig.ttl;
     }
   }
