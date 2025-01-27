@@ -1,5 +1,6 @@
-import type { Plugin } from 'graphql-yoga';
+import CacheControlParser from 'cache-control-parser';
 import { defaultBuildResponseCacheKey } from '@envelop/response-cache';
+import type { GatewayPlugin } from '@graphql-hive/gateway-runtime';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
@@ -166,7 +167,7 @@ export type ResponseCacheConfig = Omit<UseResponseCacheParameter, 'cache'> & {
  * Response cache plugin for GraphQL Mesh
  * @param options
  */
-export default function useMeshResponseCache(options: ResponseCacheConfig): Plugin;
+export default function useMeshResponseCache(options: ResponseCacheConfig): GatewayPlugin;
 /**
  * @deprecated Use new configuration format `ResponseCacheConfig`
  * @param options
@@ -175,7 +176,7 @@ export default function useMeshResponseCache(
   options: YamlConfig.ResponseCacheConfig & {
     cache: KeyValueCache;
   },
-): Plugin;
+): GatewayPlugin;
 export default function useMeshResponseCache(
   options:
     | ResponseCacheConfig
@@ -183,20 +184,22 @@ export default function useMeshResponseCache(
     | (YamlConfig.ResponseCacheConfig & {
         cache: KeyValueCache;
       }),
-): Plugin {
+): GatewayPlugin {
   const ttlPerType: Record<string, number> = { ...(options as ResponseCacheConfig).ttlPerType };
   const ttlPerSchemaCoordinate: Record<string, number> = {
     ...(options as ResponseCacheConfig).ttlPerSchemaCoordinate,
   };
 
   const { ttlPerCoordinate } = options as YamlConfig.ResponseCacheConfig;
+  const ttlByContext = new WeakMap<any, number>();
   if (ttlPerCoordinate) {
     for (const ttlConfig of ttlPerCoordinate) {
       ttlPerSchemaCoordinate[ttlConfig.coordinate] = ttlConfig.ttl;
     }
   }
 
-  return useResponseCache({
+  // @ts-expect-error - GatewayPlugin types
+  const plugin: GatewayPlugin = useResponseCache({
     includeExtensionMetadata:
       options.includeExtensionMetadata != null
         ? options.includeExtensionMetadata
@@ -215,5 +218,36 @@ export default function useMeshResponseCache(
     cache: getCacheForResponseCache(options.cache),
     ttlPerType,
     ttlPerSchemaCoordinate,
+    onTtl({ ttl, context }) {
+      const ttlForThisContext = ttlByContext.get(context);
+      if (ttlForThisContext != null && ttlForThisContext < ttl) {
+        return ttlForThisContext;
+      }
+      return ttl;
+    },
   });
+  plugin.onFetch = function ({ executionRequest, context }) {
+    // If it is a subgraph request
+    if (executionRequest && context) {
+      return function onFetchDone({ response }) {
+        function checkTtl(ttl: number) {
+          const ttlForThisContext = ttlByContext.get(context);
+          if (ttlForThisContext == null || ttl < ttlForThisContext) {
+            ttlByContext.set(context, ttl);
+          }
+        }
+        const cacheControlHeader = response.headers.get('cache-control');
+        if (cacheControlHeader != null) {
+          const parsedCacheControl = CacheControlParser.parse(cacheControlHeader);
+          if (parsedCacheControl['max-age']) {
+            checkTtl(parsedCacheControl['max-age'] * 1000);
+          }
+          if (parsedCacheControl['s-maxage']) {
+            checkTtl(parsedCacheControl['s-maxage'] * 1000);
+          }
+        }
+      };
+    }
+  };
+  return plugin;
 }
