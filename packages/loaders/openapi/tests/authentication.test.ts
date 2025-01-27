@@ -30,7 +30,7 @@ describe('OpenAPI Loader: Authentication', () => {
       operationHeaders: {
         authorization: 'Basic {args.usernameAndPassword|base64}',
       },
-      fetch: exampleApi.fetch as any,
+      fetch: exampleApi.fetch,
     });
 
     const result = await normalizedExecutor({
@@ -63,7 +63,7 @@ describe('OpenAPI Loader: Authentication', () => {
       operationHeaders: {
         access_token: '{args.apiKey}',
       },
-      fetch: exampleApi.fetch as any,
+      fetch: exampleApi.fetch,
     });
 
     const result = await normalizedExecutor({
@@ -96,7 +96,7 @@ describe('OpenAPI Loader: Authentication', () => {
       operationHeaders: {
         cookie: 'access_token={args.apiKey}',
       },
-      fetch: exampleApi.fetch as any,
+      fetch: exampleApi.fetch,
     });
 
     const result = await normalizedExecutor({
@@ -129,7 +129,7 @@ describe('OpenAPI Loader: Authentication', () => {
       queryParams: {
         access_token: '{args.apiKey}',
       },
-      fetch: exampleApi.fetch as any,
+      fetch: exampleApi.fetch,
     });
 
     const result = await normalizedExecutor({

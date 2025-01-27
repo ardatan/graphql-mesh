@@ -90,7 +90,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     source,
     fallbackFormat,
     cwd,
-    fetch: fetchFn,
+    fetch,
     endpoint,
     schemaHeaders,
     operationHeaders,
@@ -125,7 +125,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
   const readFileOrUrlForJsonMachete = (path: string, opts: { cwd: string }) =>
     readFileOrUrl(path, {
       cwd: opts.cwd,
-      fetch: fetchFn,
+      fetch,
       headers: schemaHeadersFactory({ env: process.env }),
       importFn: defaultImportFn,
       logger,
@@ -138,6 +138,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       },
       {
         cwd,
+        fetch,
         readFileOrUrl: readFileOrUrlForJsonMachete,
         debugLogFn: logger.debug.bind(logger),
       },
@@ -147,6 +148,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       cwd,
       readFileOrUrl: readFileOrUrlForJsonMachete,
       debugLogFn: logger.debug.bind(logger),
+      fetch,
     });
   }
 
@@ -710,6 +712,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               cwd,
               root: oasOrSwagger,
               readFileOrUrl: readFileOrUrlForJsonMachete,
+              fetch,
             },
           );
           responseByStatusCode[responseKey].links = responseByStatusCode[responseKey].links || {};
@@ -842,7 +845,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     operations,
     endpoint,
     cwd,
-    fetch: fetchFn,
+    fetch,
     schemaHeaders,
     operationHeaders,
   };

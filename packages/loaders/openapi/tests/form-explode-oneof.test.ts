@@ -1,5 +1,5 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
-import { Response } from '@whatwg-node/fetch';
+import { fetch, Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 let createdSchema: GraphQLSchema;
@@ -11,7 +11,10 @@ describe('OpenAPI loader: form explode with oneof query parameters', () => {
   beforeAll(async () => {
     const endpoint = `http://localhost:3000/`;
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      async fetch(input, init) {
+      fetch(input, init) {
+        if (input.startsWith('file:')) {
+          return fetch(input, init);
+        }
         return Response.json({
           url: input,
         });

@@ -11,7 +11,7 @@ beforeAll(async () => {
   createdSchema = await loadGraphQLSchemaFromOpenAPI('file_upload', {
     source: './fixtures/file_upload.json',
     cwd: __dirname,
-    fetch: fileUploadApi.fetch as any,
+    fetch: fileUploadApi.fetch,
   });
   createdSchemaYoga = createYoga({
     schema: createdSchema,

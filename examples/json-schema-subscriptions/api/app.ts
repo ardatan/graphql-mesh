@@ -1,7 +1,8 @@
 import { createRouter, Response } from 'fets';
+import { MeshFetch } from '@graphql-mesh/types';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 
-export function createApi(fetch = defaultFetch) {
+export function createApi(fetch: MeshFetch = defaultFetch) {
   let todos = [];
 
   const app = createRouter()
@@ -20,13 +21,18 @@ export function createApi(fetch = defaultFetch) {
           ...reqBody,
         };
         todos.push(todo);
-        await fetch('http://127.0.0.1:4000/webhooks/todo_added', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(todo),
-        }).catch(console.log);
+        try {
+          const res = await fetch('http://127.0.0.1:4000/webhooks/todo_added', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(todo),
+          });
+          console.log('Webhook response', await res.text());
+        } catch (e) {
+          console.error('Failed to send webhook', e);
+        }
         return Response.json(todo);
       },
     });

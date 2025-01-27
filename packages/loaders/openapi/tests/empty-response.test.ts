@@ -1,5 +1,5 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
-import { Response } from '@whatwg-node/fetch';
+import { fetch, Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 let createdSchema: GraphQLSchema;
@@ -10,7 +10,10 @@ describe('Empty JSON response', () => {
    */
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      async fetch(input, init) {
+      fetch(input, _init) {
+        if (input.startsWith('file:')) {
+          return fetch(input);
+        }
         return new Response(undefined, {
           headers: {
             'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { GraphQLSchema, parse, validate } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fetch } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Cloudfunction', () => {
@@ -8,6 +9,7 @@ describe('Cloudfunction', () => {
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: join(__dirname, './fixtures/cloudfunction_expanded.json'),
+      fetch,
       operationHeaders: {
         Authorization: 'Basic {args.usernamePassword|base64}',
       },

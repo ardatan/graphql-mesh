@@ -1,6 +1,6 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { Response } from '@whatwg-node/fetch';
+import { fetch, Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Discriminator Mapping', () => {
@@ -10,7 +10,10 @@ describe('Discriminator Mapping', () => {
       source: './fixtures/discriminator-mapping.yml',
       cwd: __dirname,
       ignoreErrorResponses: true,
-      async fetch(url) {
+      fetch(url) {
+        if (url.startsWith('file:')) {
+          return fetch(url);
+        }
         if (url === 'pets/1') {
           return Response.json({
             petType: 'Dog',

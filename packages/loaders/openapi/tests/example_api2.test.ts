@@ -16,7 +16,7 @@ describe('OpenAPI loader: Naming convention', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
-      fetch: exampleApi2.fetch as any,
+      fetch: exampleApi2.fetch,
       endpoint: 'http://localhost:{context.port}/api',
       source: './fixtures/example_oas2.json',
       cwd: __dirname,

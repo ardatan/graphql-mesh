@@ -24,7 +24,7 @@ describe('JSON Schema Subscriptions', () => {
       baseDir,
       getBuiltMesh: () => fakePromise(mesh),
     });
-    const api = createApi(meshHttp.fetch as any);
+    const api = createApi(meshHttp.fetch);
   });
   afterEach(() => {
     resetTodos();

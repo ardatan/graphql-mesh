@@ -1,6 +1,6 @@
 import { execute, GraphQLSchema, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { Response } from '@whatwg-node/fetch';
+import { fetch, Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Spotify', () => {
@@ -11,16 +11,20 @@ describe('Spotify', () => {
       source: './fixtures/spotify.yml',
       cwd: __dirname,
       ignoreErrorResponses: true,
-      fetch: async url =>
-        Response.json({
-          albums: {
-            items: [
-              {
-                name: url,
-              },
-            ],
-          },
-        }),
+      fetch: (url, opts) => {
+        if (url.startsWith('https://api.spotify.com')) {
+          return Response.json({
+            albums: {
+              items: [
+                {
+                  name: url,
+                },
+              ],
+            },
+          });
+        }
+        return fetch(url, opts);
+      },
     });
   });
 

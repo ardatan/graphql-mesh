@@ -1,6 +1,7 @@
 import { createRouter, Response } from 'fets';
 import { execute, GraphQLSchema, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fetch } from '@whatwg-node/fetch';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Pet', () => {
@@ -29,7 +30,12 @@ describe('Pet', () => {
       endpoint: 'http://example.com',
       source: `./fixtures/pet-union.yml`,
       cwd: __dirname,
-      fetch: async (url, init) => router.fetch(url, init),
+      fetch(url, opts) {
+        if (url.startsWith('file:')) {
+          return fetch(url, opts);
+        }
+        return router.fetch(url, opts);
+      },
     });
   });
   it('should generate the correct schema', async () => {

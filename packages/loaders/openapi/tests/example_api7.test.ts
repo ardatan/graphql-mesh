@@ -14,7 +14,7 @@ describe('OpenAPI Loader: example_api7', () => {
   // Set up the schema first and run example API servers
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api7', {
-      fetch: exampleApi7.fetch as any,
+      fetch: exampleApi7.fetch,
       endpoint: `http://127.0.0.1:3000/api`,
       source: './fixtures/example_oas7.json',
       cwd: __dirname,

@@ -263,14 +263,14 @@ export default class GraphQLHandler implements MeshHandler {
     source: schemaConfig,
   }: YamlConfig.GraphQLHandlerCodeFirstConfiguration): Promise<MeshSource> {
     if (schemaConfig.endsWith('.graphql')) {
-      const rawSDL = await readFileOrUrl<string>(schemaConfig, {
+      const rawAst = await readFileOrUrl<DocumentNode>(schemaConfig, {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
         fetch: this.fetchFn,
         logger: this.logger,
       });
-      const schema = buildSchema(rawSDL, {
+      const schema = buildASTSchema(rawAst, {
         assumeValid: true,
         assumeValidSDL: true,
       });

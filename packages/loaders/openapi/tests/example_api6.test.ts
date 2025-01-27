@@ -12,7 +12,7 @@ describe('example_api6', () => {
   const endpoint = 'http://localhost:3000/api';
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api6', {
-      fetch: exampleApi6.fetch as any,
+      fetch: exampleApi6.fetch,
       endpoint,
       source: './fixtures/example_oas6.json',
       cwd: __dirname,
@@ -57,7 +57,7 @@ describe('example_api6', () => {
       endpoint,
       source: './fixtures/example_oas6.json',
       cwd: __dirname,
-      fetch: exampleApi6.fetch as any,
+      fetch: exampleApi6.fetch,
       operationHeaders: {
         specialheader: 'requestOptions',
       },

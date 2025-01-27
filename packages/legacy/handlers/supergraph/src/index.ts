@@ -66,7 +66,9 @@ export default class SupergraphHandler implements MeshHandler {
         fetch: this.fetchFn,
         logger: this.logger,
       }).catch(e => {
-        throw new Error(`Failed to load supergraph SDL from ${interpolatedSource}:\n ${e.message}`);
+        throw new Error(
+          `Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ${interpolatedSource} instead.\n Got error: ${e.message}`,
+        );
       });
       return handleSupergraphResponse(res, interpolatedSource);
     }
@@ -81,7 +83,9 @@ export default class SupergraphHandler implements MeshHandler {
         fetch: this.fetchFn,
         logger: this.logger,
       }).catch(e => {
-        throw new Error(`Failed to load supergraph SDL from ${interpolatedSource}:\n ${e.message}`);
+        throw new Error(
+          `Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ${interpolatedSource} instead.\n Got error: ${e.message}`,
+        );
       });
       return handleSupergraphResponse(sdlOrIntrospection, interpolatedSource);
     });

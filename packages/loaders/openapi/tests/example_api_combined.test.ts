@@ -11,7 +11,7 @@ describe('Example API Combined', () => {
       source: './fixtures/example_oas_combined.json',
       cwd: __dirname,
       endpoint: 'http://localhost:3000/api',
-      fetch: exampleApi.fetch as any,
+      fetch: exampleApi.fetch,
     });
   });
 

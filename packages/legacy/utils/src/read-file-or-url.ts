@@ -1,22 +1,22 @@
+import { parse, Source } from 'graphql';
 import type { Schema } from 'js-yaml';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Type } from 'js-yaml';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { ImportFn, Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
-import { fetch } from '@whatwg-node/fetch';
+import { isUrl, isValidPath, mapMaybePromise } from '@graphql-tools/utils';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 
 export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
   allowUnknownExtensions?: boolean;
-  fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
+  fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts' | 'graphql';
   cwd: string;
   fetch: MeshFetch;
   importFn: ImportFn;
   logger: Logger;
 }
 
-export function isUrl(str: string): boolean {
-  return /^https?:\/\//.test(str);
-}
+export { isUrl };
 
 export async function readFileOrUrl<T>(
   filePathOrUrl: string,
@@ -25,11 +25,17 @@ export async function readFileOrUrl<T>(
   if (isUrl(filePathOrUrl)) {
     config.logger.debug(`Fetching ${filePathOrUrl} via HTTP`);
     return readUrl(filePathOrUrl, config);
-  } else if (filePathOrUrl.startsWith('{') || filePathOrUrl.startsWith('[')) {
+  } else if (
+    filePathOrUrl.startsWith('{') ||
+    filePathOrUrl.startsWith('[') ||
+    filePathOrUrl.startsWith('"')
+  ) {
     return JSON.parse(filePathOrUrl);
-  } else {
+  } else if (isValidPath(filePathOrUrl)) {
     config.logger.debug(`Reading ${filePathOrUrl} from the file system`);
     return readFile(filePathOrUrl, config);
+  } else {
+    return filePathOrUrl as T;
   }
 }
 
@@ -80,48 +86,77 @@ export function loadYaml(filepath: string, content: string, logger: Logger): any
   });
 }
 
-export async function readFile<T>(
+function isAbsolute(path: string): boolean {
+  return path.startsWith('/') || /^[A-Z]:\\/i.test(path);
+}
+
+export function readFile<T>(
   fileExpression: string,
-  { allowUnknownExtensions, cwd, fallbackFormat, importFn, logger }: ReadFileOrUrlOptions,
+  {
+    allowUnknownExtensions,
+    cwd,
+    fallbackFormat,
+    importFn,
+    logger,
+    fetch = defaultFetch,
+  }: ReadFileOrUrlOptions,
 ): Promise<T> {
   const [filePath] = fileExpression.split('#');
-  if (/js$/.test(filePath) || /ts$/.test(filePath)) {
-    return loadFromModuleExportExpression<T>(fileExpression, {
-      cwd,
-      importFn,
-      defaultExportName: 'default',
-    });
-  }
-  const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.join(cwd, filePath);
-  const rawResult = await fs.promises.readFile(actualPath, 'utf-8');
-  if (/json$/.test(actualPath)) {
-    return JSON.parse(rawResult);
-  }
-  if (/yaml$/.test(actualPath) || /yml$/.test(actualPath)) {
-    return loadYaml(actualPath, rawResult, logger);
-  } else if (fallbackFormat) {
-    switch (fallbackFormat) {
-      case 'json':
-        return JSON.parse(rawResult);
-      case 'yaml':
-        return loadYaml(actualPath, rawResult, logger);
-      case 'ts':
-      case 'js':
-        return importFn(actualPath);
-    }
-  } else if (!allowUnknownExtensions) {
-    throw new Error(
-      `Failed to parse JSON/YAML. Ensure file '${filePath}' has ` +
-        `the correct extension (i.e. '.json', '.yaml', or '.yml).`,
+  if (/js$/.test(filePath) || /ts$/.test(filePath) || /json$/.test(filePath)) {
+    return mapMaybePromise(
+      loadFromModuleExportExpression<T>(fileExpression, {
+        cwd,
+        importFn,
+        defaultExportName: 'default',
+      }),
+      res => JSON.parse(JSON.stringify(res)),
     );
   }
-  return rawResult as unknown as T;
+  const actualPath = isAbsolute(filePath) ? filePath : `${cwd}/${filePath}`;
+  const url = `file://${actualPath}`;
+  return mapMaybePromise(fetch(url), res => {
+    if (/json$/.test(actualPath) || res.headers.get('content-type')?.includes('json')) {
+      return res.json();
+    }
+    return mapMaybePromise(res.text(), rawResult => {
+      if (/yaml$/.test(actualPath) || /yml$/.test(actualPath)) {
+        return loadYaml(actualPath, rawResult, logger);
+      } else if (
+        /graphql$/.test(actualPath) ||
+        /graphqls$/.test(actualPath) ||
+        /gql$/.test(actualPath) ||
+        /gqls$/.test(actualPath) ||
+        res.headers.get('content-type')?.includes('graphql')
+      ) {
+        const source = new Source(rawResult, actualPath);
+        return parse(source);
+      } else if (fallbackFormat) {
+        switch (fallbackFormat) {
+          case 'json':
+            return JSON.parse(rawResult);
+          case 'yaml':
+            return loadYaml(actualPath, rawResult, logger);
+          case 'ts':
+          case 'js':
+            return importFn(actualPath);
+          case 'graphql':
+            return parse(new Source(rawResult, actualPath));
+        }
+      } else if (!allowUnknownExtensions) {
+        throw new Error(
+          `Failed to parse JSON/YAML. Ensure file '${filePath}' has ` +
+            `the correct extension (i.e. '.json', '.yaml', or '.yml).`,
+        );
+      }
+      return rawResult as unknown as T;
+    });
+  });
 }
 
 export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Promise<T> {
   const { allowUnknownExtensions, fallbackFormat } = config || {};
   config.headers ||= {};
-  config.fetch ||= fetch;
+  config.fetch ||= defaultFetch;
   const response = await config.fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();

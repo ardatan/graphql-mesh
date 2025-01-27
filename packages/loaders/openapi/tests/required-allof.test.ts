@@ -1,5 +1,6 @@
 import { GraphQLSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fetch } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Merge required attributes correctly in allOfs', () => {
@@ -9,6 +10,7 @@ describe('Merge required attributes correctly in allOfs', () => {
       source: './fixtures/required-allof.yml',
       cwd: __dirname,
       ignoreErrorResponses: true,
+      fetch,
       // It is not possible to provide a union type with File scalar
     });
   });

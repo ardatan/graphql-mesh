@@ -10,6 +10,7 @@ import {
 } from 'graphql';
 import 'json-bigint-patch';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fetch } from '@whatwg-node/fetch';
 import type { OpenAPILoaderOptions } from '../src/index.js';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import { exampleApi } from './example_api_server.js';
@@ -20,7 +21,7 @@ describe('example_api', () => {
 
   beforeAll(async () => {
     createdSchema = await loadGraphQLSchemaFromOpenAPI('example_api', {
-      fetch: exampleApi.fetch as any,
+      fetch: exampleApi.fetch,
       endpoint,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
@@ -1256,7 +1257,7 @@ describe('example_api', () => {
       endpoint,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
-      fetch: exampleApi.fetch as any,
+      fetch: exampleApi.fetch,
       operationHeaders: {
         exampleHeader: 'some-value',
       },
@@ -1851,7 +1852,7 @@ describe('example_api', () => {
       endpoint,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
-      fetch: exampleApi.fetch as any,
+      fetch: exampleApi.fetch,
       selectQueryOrMutationField: [
         {
           fieldName: 'getUserByUsername',
@@ -1922,7 +1923,7 @@ describe('example_api', () => {
       endpoint,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
-      fetch: exampleApi.fetch as any,
+      fetch: exampleApi.fetch,
       queryParams: {
         limit: '10',
       },
@@ -2041,7 +2042,12 @@ describe('example_api', () => {
         endpoint,
         source: './fixtures/example_oas.json',
         cwd: __dirname,
-        fetch: exampleApi.fetch as any,
+        fetch(url, opts) {
+          if (url.startsWith('file:')) {
+            return fetch(url, opts);
+          }
+          return exampleApi.fetch(url, opts);
+        },
         queryParams: {
           limit: '1',
         },
@@ -2077,7 +2083,12 @@ describe('example_api', () => {
         endpoint,
         source: './fixtures/example_oas.json',
         cwd: __dirname,
-        fetch: exampleApi.fetch as any,
+        fetch(url, opts) {
+          if (url.startsWith('file:')) {
+            return fetch(url, opts);
+          }
+          return exampleApi.fetch(url, opts);
+        },
         queryParams: {
           limit: 1,
         },
@@ -2116,7 +2127,12 @@ describe('example_api', () => {
         endpoint,
         source: './fixtures/example_oas.json',
         cwd: __dirname,
-        fetch: exampleApi.fetch as any,
+        fetch(url, opts) {
+          if (url.startsWith('file:')) {
+            return fetch(url, opts);
+          }
+          return exampleApi.fetch(url, opts);
+        },
         operationHeaders: {
           snack_type: 'chips',
           snack_size: '{context.snack_size}',
@@ -2149,7 +2165,12 @@ describe('example_api', () => {
         endpoint,
         source: './fixtures/example_oas.json',
         cwd: __dirname,
-        fetch: exampleApi.fetch as any,
+        fetch(url, opts) {
+          if (url.startsWith('file:')) {
+            return fetch(url, opts);
+          }
+          return exampleApi.fetch(url, opts);
+        },
         operationHeaders: {
           snack_type: 'chips',
           snack_size: 'large',
@@ -2180,7 +2201,7 @@ describe('example_api', () => {
       endpoint,
       source: './fixtures/example_oas.json',
       cwd: __dirname,
-      fetch: exampleApi.fetch as any,
+      fetch: exampleApi.fetch,
     };
 
     const schema = await loadGraphQLSchemaFromOpenAPI('example_api', options);

@@ -1,6 +1,7 @@
 import { createRouter, Response } from 'fets';
 import { execute, GraphQLSchema, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fetch } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Discriminator with invalid key in the mapping', () => {
@@ -76,8 +77,12 @@ describe('Discriminator with invalid key in the mapping', () => {
       endpoint: 'http://localhost',
       cwd: __dirname,
       ignoreErrorResponses: true,
-      // @ts-ignore
-      fetch: router.fetch,
+      fetch(url, opts) {
+        if (url.startsWith('file:')) {
+          return fetch(url, opts);
+        }
+        return router.fetch(url, opts);
+      },
     });
   });
   it('should generate correct schema', () => {
