@@ -16,11 +16,6 @@ if (process.env.CACHE_PLUGIN === 'HTTP Caching') {
 } else if (process.env.CACHE_PLUGIN === 'Response Caching') {
   config.responseCaching = {
     session: () => null,
-    ttlPerType: {
-      // Just like a default TTL set in Apollo Server,
-      // We do the same thing in response caching plugin to replicate the behavior
-      Comment: 5_000,
-    },
   };
 } else {
   throw new Error(`Unknown caching plugin: ${process.env.CACHE_PLUGIN}`);
