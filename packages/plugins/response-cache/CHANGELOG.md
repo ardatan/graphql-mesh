@@ -1,5 +1,23 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.103.13
+
+### Patch Changes
+
+- [#8334](https://github.com/ardatan/graphql-mesh/pull/8334)
+  [`fafb1c9`](https://github.com/ardatan/graphql-mesh/commit/fafb1c9e56b64dffed27b31f366c22ce629ac2e7)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+
+  - Added dependency
+    [`cache-control-parser@^2.0.6` ↗︎](https://www.npmjs.com/package/cache-control-parser/v/2.0.6)
+    (to `dependencies`)
+
+- [#8334](https://github.com/ardatan/graphql-mesh/pull/8334)
+  [`fafb1c9`](https://github.com/ardatan/graphql-mesh/commit/fafb1c9e56b64dffed27b31f366c22ce629ac2e7)
+  Thanks [@ardatan](https://github.com/ardatan)! - When a subgraph returns cache control headers
+  with a certain TTL, respect that during the calculation of overall TTL in the response cache
+  plugin
+
 ## 0.103.12
 
 ### Patch Changes

@@ -4473,7 +4473,7 @@ __metadata:
     "@graphql-mesh/cache-cfw-kv": "workspace:^"
     "@graphql-mesh/cache-localforage": "workspace:^"
     "@graphql-mesh/compose-cli": "workspace:^"
-    "@graphql-mesh/plugin-response-cache": "npm:^0.103.12"
+    "@graphql-mesh/plugin-response-cache": "npm:^0.103.13"
     "@omnigraph/json-schema": "workspace:^"
     graphql: "npm:16.10.0"
     wrangler: "npm:3.106.0"
@@ -4488,7 +4488,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/cache-cfw-kv": "workspace:^"
     "@graphql-mesh/plugin-rate-limit": "npm:^0.103.12"
-    "@graphql-mesh/plugin-response-cache": "npm:^0.103.12"
+    "@graphql-mesh/plugin-response-cache": "npm:^0.103.13"
     graphql: "npm:16.10.0"
     wrangler: "npm:3.106.0"
   languageName: unknown
@@ -4626,7 +4626,7 @@ __metadata:
     "@graphql-mesh/cache-cfw-kv": "npm:0.104.12"
     "@graphql-mesh/cli": "npm:0.98.18"
     "@graphql-mesh/json-schema": "npm:0.108.14"
-    "@graphql-mesh/plugin-response-cache": "npm:0.103.12"
+    "@graphql-mesh/plugin-response-cache": "npm:0.103.13"
     graphql: "npm:16.10.0"
     wrangler: "npm:3.106.0"
   languageName: unknown
@@ -5122,7 +5122,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.18"
     "@graphql-mesh/openapi": "npm:0.108.15"
-    "@graphql-mesh/plugin-response-cache": "npm:0.103.12"
+    "@graphql-mesh/plugin-response-cache": "npm:0.103.13"
     "@graphql-mesh/runtime": "npm:0.105.13"
     "@graphql-mesh/transform-cache": "npm:0.103.13"
     "@graphql-mesh/transform-rename": "npm:0.103.13"
@@ -5314,7 +5314,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.98.18"
     "@graphql-mesh/graphql": "npm:0.103.13"
     "@graphql-mesh/plugin-rate-limit": "npm:0.103.12"
-    "@graphql-mesh/plugin-response-cache": "npm:0.103.12"
+    "@graphql-mesh/plugin-response-cache": "npm:0.103.13"
     graphql: "npm:16.10.0"
     wrangler: "npm:3.106.0"
   languageName: unknown
@@ -6780,7 +6780,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-response-cache@npm:0.103.12, @graphql-mesh/plugin-response-cache@npm:^0.103.0, @graphql-mesh/plugin-response-cache@npm:^0.103.12, @graphql-mesh/plugin-response-cache@workspace:packages/plugins/response-cache":
+"@graphql-mesh/plugin-response-cache@npm:0.103.13, @graphql-mesh/plugin-response-cache@npm:^0.103.0, @graphql-mesh/plugin-response-cache@npm:^0.103.13, @graphql-mesh/plugin-response-cache@workspace:packages/plugins/response-cache":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-response-cache@workspace:packages/plugins/response-cache"
   dependencies:
