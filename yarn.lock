@@ -3244,10 +3244,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20250124.3":
-  version: 4.20250124.3
-  resolution: "@cloudflare/workers-types@npm:4.20250124.3"
-  checksum: 10c0/ec05f75aadf1def3c8f066e8d70ec66b64b43f27917e552d28c4f7510e1397e9777587c5c5b9e3d2ecfead4f47ff384a061332350f8ff0122a14bb8bccef0a73
+"@cloudflare/workers-types@npm:4.20250129.0":
+  version: 4.20250129.0
+  resolution: "@cloudflare/workers-types@npm:4.20250129.0"
+  checksum: 10c0/03cf0e679e9f91f517e75211daefd0d40bdc1bbb848b187fd9c30c9845bd912ca690bbbff92f38c77a33f623ad9b65ec591c9179200053f8012d20f8f351f8d9
   languageName: node
   linkType: hard
 
@@ -6055,7 +6055,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20250124.3"
+    "@cloudflare/workers-types": "npm:4.20250129.0"
     "@graphql-mesh/types": "npm:^0.103.12"
     "@graphql-mesh/utils": "npm:^0.103.12"
     tslib: "npm:^2.4.0"
@@ -21938,13 +21938,13 @@ __metadata:
   linkType: hard
 
 "graphql-scalars@npm:^1.22.4, graphql-scalars@npm:^1.23.0":
-  version: 1.24.0
-  resolution: "graphql-scalars@npm:1.24.0"
+  version: 1.24.1
+  resolution: "graphql-scalars@npm:1.24.1"
   dependencies:
     tslib: "npm:^2.5.0"
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/c4a3b8d3e65aad77bd27f21bf2619edec664f4e399c94bae412dc89f7687c4494ac84409224c8acf1f0431459c6ec76a49a193b1cc1f285878609fc0b4bb903e
+  checksum: 10c0/08f9d4f3e87e15b32a279f55d6550d2f095c9d133387f1224d6c213d88ace508f8f4c0ae7862982e35eb80fba15e94dfc3cd67501f6948aef96942d3128f01f9
   languageName: node
   linkType: hard
 
