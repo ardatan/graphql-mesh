@@ -1,0 +1,48 @@
+import { process } from '@graphql-mesh/cross-helpers';
+import type { KeyValueCache } from '@graphql-mesh/types';
+import type { MaybePromise } from '@graphql-tools/utils';
+import { Redis, type RedisConfigNodejs } from '@upstash/redis';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
+
+export default class UpstashRedisCache implements KeyValueCache {
+  private redis: Redis;
+  private abortCtrl: AbortController;
+  constructor(config?: Partial<RedisConfigNodejs>) {
+    this.abortCtrl = new AbortController();
+    this.redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+      enableAutoPipelining: true,
+      signal: this.abortCtrl.signal,
+      latencyLogging: !!process.env.DEBUG,
+      ...config,
+    });
+  }
+
+  get<T>(key: string) {
+    return this.redis.get<T>(key);
+  }
+
+  async set<T>(key: string, value: T, options?: { ttl?: number }) {
+    if (options?.ttl) {
+      await this.redis.set(key, value, {
+        px: options.ttl * 1000,
+      });
+    } else {
+      await this.redis.set(key, value);
+    }
+  }
+
+  async delete(key: string) {
+    const num = await this.redis.del(key);
+    return num > 0;
+  }
+
+  getKeysByPrefix(prefix: string): MaybePromise<string[]> {
+    return this.redis.keys(prefix + '*');
+  }
+
+  [DisposableSymbols.dispose]() {
+    return this.abortCtrl.abort();
+  }
+}

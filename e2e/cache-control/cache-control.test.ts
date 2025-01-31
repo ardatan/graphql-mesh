@@ -83,6 +83,36 @@ describe('Cache Control', () => {
           },
         };
       },
+      async ['upstash-redis']() {
+        const redis = await env.container({
+          name: 'redis',
+          image: 'redis/redis-stack',
+          containerPort: 6379,
+          healthcheck: ['CMD', 'redis-cli', '--raw', 'incr', 'ping'],
+        });
+        const srh = await env.container({
+          name: 'srh',
+          image: 'hiett/serverless-redis-http',
+          containerPort: 80,
+          env: {
+            SRH_CONNECTION_STRING: `redis://localhost:${redis.port}`,
+            SRH_TOKEN: 'example_token',
+            SRH_MODE: 'env',
+          },
+          healthcheck: ['CMD', 'curl', '-f', 'http://localhost'],
+        });
+        return {
+          env: {
+            CACHE_STORAGE: 'upstash-redis',
+            UPSTASH_REDIS_REST_URL: `http://localhost:${srh.port}`,
+            UPSTASH_REDIS_REST_TOKEN: 'example_token',
+          },
+          async [DisposableSymbols.asyncDispose]() {
+            await redis[DisposableSymbols.asyncDispose]();
+            await srh[DisposableSymbols.asyncDispose]();
+          },
+        };
+      },
       async ['inmemory-lru']() {
         return {
           env: {

@@ -1,13 +1,17 @@
 import { defineConfig } from '@graphql-hive/gateway';
+import UpstashRedisCache from '@graphql-mesh/cache-upstash-redis';
 import useHTTPCache from '@graphql-mesh/plugin-http-cache';
 
-const config: ReturnType<typeof defineConfig> = {
-  cache: {
-    // @ts-expect-error - CacheStorage type mismatch
-    type: process.env.CACHE_STORAGE,
-  },
-};
+const config: ReturnType<typeof defineConfig> = {};
 
+if (process.env.CACHE_STORAGE === 'upstash-redis') {
+  config.cache = new UpstashRedisCache();
+} else {
+  config.cache = {
+    // @ts-expect-error - We know it
+    type: process.env.CACHE_STORAGE,
+  };
+}
 console.log(`Using cache storage: ${process.env.CACHE_STORAGE}`);
 
 console.log(`Using cache plugin: ${process.env.CACHE_PLUGIN}`);
