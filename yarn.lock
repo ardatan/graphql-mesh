@@ -4476,7 +4476,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.103.13"
     "@omnigraph/json-schema": "workspace:^"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.106.0"
+    wrangler: "npm:3.107.0"
   languageName: unknown
   linkType: soft
 
@@ -4490,7 +4490,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.103.12"
     "@graphql-mesh/plugin-response-cache": "npm:^0.103.13"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.106.0"
+    wrangler: "npm:3.107.0"
   languageName: unknown
   linkType: soft
 
@@ -4628,7 +4628,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.108.14"
     "@graphql-mesh/plugin-response-cache": "npm:0.103.13"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.106.0"
+    wrangler: "npm:3.107.0"
   languageName: unknown
   linkType: soft
 
@@ -5316,7 +5316,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.103.12"
     "@graphql-mesh/plugin-response-cache": "npm:0.103.13"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.106.0"
+    wrangler: "npm:3.107.0"
   languageName: unknown
   linkType: soft
 
@@ -16162,16 +16162,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"capnp-ts@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "capnp-ts@npm:0.7.0"
-  dependencies:
-    debug: "npm:^4.3.1"
-    tslib: "npm:^2.2.0"
-  checksum: 10c0/83d559c3d59126ee39295973bf2e9228cd4b559c81bfc938268c63deba4020f0df6ce2f2d1e2b7d7e4421de21f4854424b774ab9ac4d9a66d1c57d2fef7da870
-  languageName: node
-  linkType: hard
-
 "cardinal@npm:^2.1.1":
   version: 2.1.1
   resolution: "cardinal@npm:2.1.1"
@@ -22034,8 +22024,8 @@ __metadata:
   linkType: hard
 
 "graphql-ws@npm:^6.0.0":
-  version: 6.0.2
-  resolution: "graphql-ws@npm:6.0.2"
+  version: 6.0.3
+  resolution: "graphql-ws@npm:6.0.3"
   peerDependencies:
     "@fastify/websocket": ^10 || ^11
     graphql: ^15.10.1 || ^16
@@ -22048,7 +22038,7 @@ __metadata:
       optional: true
     ws:
       optional: true
-  checksum: 10c0/61ef598d32d60661b5919ae855fe7046f9a3f22b1d3756eae5d1853705948a92386b10490e392b4ae3227beba95ffffb3dc8070046d880b23376fbc94a1eaf34
+  checksum: 10c0/d2ab30bc6d773e79901ef3b9b52fdfacebca89933cd54778ffb81fe88cb11391f6c610b32562cf276a67659e24626007b41e0094a215d286385ed379d89c2d02
   languageName: node
   linkType: hard
 
@@ -27594,14 +27584,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:3.20250124.0":
-  version: 3.20250124.0
-  resolution: "miniflare@npm:3.20250124.0"
+"miniflare@npm:3.20250124.1":
+  version: 3.20250124.1
+  resolution: "miniflare@npm:3.20250124.1"
   dependencies:
     "@cspotcode/source-map-support": "npm:0.8.1"
     acorn: "npm:^8.8.0"
     acorn-walk: "npm:^8.2.0"
-    capnp-ts: "npm:^0.7.0"
     exit-hook: "npm:^2.2.1"
     glob-to-regexp: "npm:^0.4.1"
     stoppable: "npm:^1.1.0"
@@ -27612,7 +27601,7 @@ __metadata:
     zod: "npm:^3.22.3"
   bin:
     miniflare: bootstrap.js
-  checksum: 10c0/102d8c024d53b8a3160c605488cb354776af549348817ecd3572073f69c442b3a3c5c90bf8ed956a8cda67fc6be786ee08fed7516abc9f63d9bf24c1161cba1a
+  checksum: 10c0/fefa4230969929ccac33881e8697c35229eaae749658268ac16e86bc07eae5635445dad724340c73d6d5dd1fa5b5ce856c59c38de5f3e39967bc27f95142abb0
   languageName: node
   linkType: hard
 
@@ -37191,9 +37180,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.106.0":
-  version: 3.106.0
-  resolution: "wrangler@npm:3.106.0"
+"wrangler@npm:3.107.0":
+  version: 3.107.0
+  resolution: "wrangler@npm:3.107.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@esbuild-plugins/node-globals-polyfill": "npm:0.2.3"
@@ -37201,8 +37190,9 @@ __metadata:
     blake3-wasm: "npm:2.1.5"
     esbuild: "npm:0.17.19"
     fsevents: "npm:~2.3.2"
-    miniflare: "npm:3.20250124.0"
+    miniflare: "npm:3.20250124.1"
     path-to-regexp: "npm:6.3.0"
+    sharp: "npm:^0.33.5"
     unenv: "npm:2.0.0-rc.1"
     workerd: "npm:1.20250124.0"
   peerDependencies:
@@ -37216,7 +37206,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/def17d37a579378e6bc397538273504ac197f547535ed36fb9b2ad501bc3b9374f34f49185c4115f4a5922b93ab482a5aaa03662fe4f6dd9d4e495f50ceb16d4
+  checksum: 10c0/16f5256c4a1c8f60aed33a696a058ba2a68d06c4a14bb75e7155bc1cf59d3181f80251c73d3a8bf48aef05c052c499cf18544cef75356d8809c1be1027b19442
   languageName: node
   linkType: hard
 
