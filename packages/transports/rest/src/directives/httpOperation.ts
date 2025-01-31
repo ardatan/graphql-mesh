@@ -9,7 +9,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj } from '@graphql-mesh/utils';
 import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
-import { Blob, File, FormData, URLSearchParams } from '@whatwg-node/fetch';
+import { Blob, fetch as defaultFetch, File, FormData, URLSearchParams } from '@whatwg-node/fetch';
 import { isFileUpload } from './isFileUpload.js';
 import { getJsonApiFieldsQuery } from './jsonApiFields.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
@@ -296,10 +296,7 @@ export function addHTTPRootFieldResolver(
     }
 
     operationLogger.debug(`=> Fetching `, fullPath, `=>`, requestInit);
-    const fetch: typeof globalFetch = context?.fetch || globalFetch;
-    if (!fetch) {
-      return new TypeError(`You should have fetch defined in either the config or the context!`);
-    }
+    const fetch: typeof globalFetch = context?.fetch || globalFetch || defaultFetch;
     // Trick to pass `sourceName` to the `fetch` function for tracing
     const response = await fetch(fullPath, requestInit, context, {
       ...info,
