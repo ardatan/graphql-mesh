@@ -99,7 +99,7 @@ describe('Cache Control', () => {
             SRH_TOKEN: 'example_token',
             SRH_MODE: 'env',
           },
-          healthcheck: ['CMD-SHELL', 'wget --spider http://localhost:80'],
+          healthcheck: ['CMD-SHELL', 'wget --spider http://0.0.0.0'],
         });
         return {
           env: {
