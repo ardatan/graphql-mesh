@@ -1,5 +1,14 @@
 # @graphql-mesh/transport-rest
 
+## 0.8.14
+
+### Patch Changes
+
+- [#8351](https://github.com/ardatan/graphql-mesh/pull/8351)
+  [`0b6ee9c`](https://github.com/ardatan/graphql-mesh/commit/0b6ee9c8c7ba985269ff58d3a667278ce662c46e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `@whatwg-node/fetch` when the transport
+  context doesn't have one
+
 ## 0.8.13
 
 ### Patch Changes

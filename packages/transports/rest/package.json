@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-rest",
-  "version": "0.8.13",
+  "version": "0.8.14",
   "type": "module",
   "repository": {
     "type": "git",
