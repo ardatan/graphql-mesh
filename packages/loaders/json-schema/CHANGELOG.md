@@ -1,5 +1,13 @@
 # @omnigraph/json-schema
 
+## 0.108.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0b6ee9c`](https://github.com/ardatan/graphql-mesh/commit/0b6ee9c8c7ba985269ff58d3a667278ce662c46e)]:
+  - @graphql-mesh/transport-rest@0.8.14
+
 ## 0.108.13
 
 ### Patch Changes

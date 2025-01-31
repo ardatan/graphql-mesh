@@ -13,7 +13,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.98.18",
     "@graphql-mesh/graphql": "0.103.13",
-    "@graphql-mesh/json-schema": "0.108.14",
+    "@graphql-mesh/json-schema": "0.108.15",
     "graphql": "16.10.0"
   },
   "devDependencies": {
