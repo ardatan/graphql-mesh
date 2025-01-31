@@ -38,8 +38,18 @@ export default class UpstashRedisCache implements KeyValueCache {
     return num > 0;
   }
 
-  getKeysByPrefix(prefix: string): MaybePromise<string[]> {
-    return this.redis.keys(prefix + '*');
+  async getKeysByPrefix(prefix: string): Promise<string[]> {
+    const keys: string[] = [];
+    let cursor = 0;
+    do {
+      const result = await this.redis.scan(cursor, {
+        match: prefix + '*',
+        count: 100,
+      });
+      cursor = result[0];
+      keys.push(...result[1]);
+    } while (cursor !== 0);
+    return keys;
   }
 
   [DisposableSymbols.dispose]() {
