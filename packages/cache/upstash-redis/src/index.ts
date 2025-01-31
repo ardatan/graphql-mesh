@@ -40,7 +40,7 @@ export default class UpstashRedisCache implements KeyValueCache {
 
   async getKeysByPrefix(prefix: string): Promise<string[]> {
     const keys: string[] = [];
-    let cursor = 0;
+    let cursor = '0';
     do {
       const result = await this.redis.scan(cursor, {
         match: prefix + '*',
@@ -48,7 +48,7 @@ export default class UpstashRedisCache implements KeyValueCache {
       });
       cursor = result[0];
       keys.push(...result[1]);
-    } while (cursor !== 0);
+    } while (cursor !== '0');
     return keys;
   }
 
