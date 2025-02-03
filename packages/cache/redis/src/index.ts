@@ -18,8 +18,10 @@ function interpolateStrWithEnv(str: string): string {
 
 export default class RedisCache<V = string> implements KeyValueCache<V>, Disposable {
   private client: Redis;
+  private logger: Logger;
 
   constructor(options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub; logger: Logger }) {
+    this.logger = options.logger;
     const lazyConnect = options.lazyConnect !== false;
     if (options.url) {
       const redisUrl = new URL(interpolateStrWithEnv(options.url));
@@ -40,7 +42,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
         redisUrl.searchParams.set('family', '6');
       }
       const urlStr = redisUrl.toString();
-      options.logger.debug(`Connecting to Redis at ${urlStr}`);
+      this.logger.debug(`Connecting to Redis at ${urlStr}`);
       this.client = new Redis(urlStr);
     } else {
       const parsedHost = interpolateStrWithEnv(options.host?.toString()) || process.env.REDIS_HOST;
@@ -53,7 +55,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
       const numPort = parseInt(parsedPort);
       const numDb = parseInt(parsedDb);
       if (parsedHost) {
-        options.logger.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
+        this.logger.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
         this.client = new Redis({
           host: parsedHost,
           port: isNaN(numPort) ? undefined : numPort,
@@ -65,7 +67,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
           enableOfflineQueue: true,
         });
       } else {
-        options.logger.debug(`Connecting to Redis mock`);
+        this.logger.debug(`Connecting to Redis mock`);
         this.client = new RedisMock();
       }
     }
@@ -83,15 +85,27 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<any> {
     const stringifiedValue = JSON.stringify(value);
     if (options?.ttl && options.ttl > 0) {
+      this.logger.debug(
+        `Caching using key "${key}" with ${options.ttl * 1000}s TTL`,
+        stringifiedValue,
+      );
       return this.client.set(key, stringifiedValue, 'PX', options.ttl * 1000);
     } else {
+      this.logger.debug(`Caching using key "${key}"`, stringifiedValue);
       return this.client.set(key, stringifiedValue);
     }
   }
 
   get(key: string): Promise<V | undefined> {
+    this.logger.debug(`Getting "${key}" from cache`);
     return mapMaybePromise(this.client.get(key), value => {
-      return value != null ? JSON.parse(value) : undefined;
+      const val = value != null ? JSON.parse(value) : undefined;
+      if (val) {
+        this.logger.debug(`Cache hit using "${key}"`, val);
+      } else {
+        this.logger.debug(`Cache miss using "${key}"`);
+      }
+      return val;
     });
   }
 
@@ -101,12 +115,17 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
 
   delete(key: string): PromiseLike<boolean> | boolean {
     try {
+      this.logger.debug(`Deleting "${key}" from cache`);
       return mapMaybePromise(
         this.client.del(key),
         value => value > 0,
-        () => false,
+        e => {
+          this.logger.error(`Error deleting "${key}" from cache`, e);
+          return false;
+        },
       );
     } catch (e) {
+      this.logger.error(`Error trying to delete "${key}" from cache`, e);
       return false;
     }
   }
