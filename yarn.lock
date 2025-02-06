@@ -5022,7 +5022,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.103.13"
     graphql: "npm:16.10.0"
     jest: "npm:29.7.0"
-    mongoose: "npm:8.9.7"
+    mongoose: "npm:8.10.0"
   languageName: unknown
   linkType: soft
 
@@ -6494,7 +6494,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.9.7"
+    mongoose: "npm:8.10.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -27955,9 +27955,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb@npm:~6.12.0":
-  version: 6.12.0
-  resolution: "mongodb@npm:6.12.0"
+"mongodb@npm:~6.13.0":
+  version: 6.13.0
+  resolution: "mongodb@npm:6.13.0"
   dependencies:
     "@mongodb-js/saslprep": "npm:^1.1.9"
     bson: "npm:^6.10.1"
@@ -27985,22 +27985,22 @@ __metadata:
       optional: true
     socks:
       optional: true
-  checksum: 10c0/627d28e1ac6380b81e90880cf88f1bacac9109e18301dd6506d67b0ef58fcc1d15acd3e2527820dfedd81860be737a115f4bd48d6d4a689531c5a1d58587606e
+  checksum: 10c0/8fe03ef208113a47842a0ae3676abe287d6e1cff81d47414abf501c7b78257c7fecb80cafc5ba16b3e42821fffcd3652c62650302c8f4f58464c802a17910478
   languageName: node
   linkType: hard
 
-"mongoose@npm:8.9.7":
-  version: 8.9.7
-  resolution: "mongoose@npm:8.9.7"
+"mongoose@npm:8.10.0":
+  version: 8.10.0
+  resolution: "mongoose@npm:8.10.0"
   dependencies:
     bson: "npm:^6.10.1"
     kareem: "npm:2.6.3"
-    mongodb: "npm:~6.12.0"
+    mongodb: "npm:~6.13.0"
     mpath: "npm:0.9.0"
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/ce18f16f28a4866b81b4b2cfa07827a423ed54839ddf8e04c2c544846c3f34924e65e6d3305e98a6927b9a679d43ed7a8edcc28f174f1e33bb59ace8c8fdad66
+  checksum: 10c0/e1883d5730417eda9a2442352fb93fc438e36c619c6c98d3ff80e740503b2795163449960d97ce9d375eda2c605cf56881e6a149fc248063b4fddd79acc53abe
   languageName: node
   linkType: hard
 
