@@ -11,7 +11,7 @@ export * from './group-transforms.js';
 export * from './iterateAsync.js';
 export * from './load-from-module-export-expression.js';
 export * from './logger.js';
-export { mapMaybePromise } from '@graphql-tools/utils';
+export { mapMaybePromise, type MaybePromise } from '@graphql-tools/utils';
 export * from './parseAndPrintWithCache.js';
 export * from './projectResultBySelectionSet.js';
 export * from './pubsub.js';
