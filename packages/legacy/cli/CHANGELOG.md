@@ -1,5 +1,32 @@
 # @graphql-mesh/cli
 
+## 0.98.19
+
+### Patch Changes
+
+- [#8362](https://github.com/ardatan/graphql-mesh/pull/8362)
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.8.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.8.0)
+    (from `^10.6.0`, in `dependencies`)
+- Updated dependencies
+  [[`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a)]:
+  - @graphql-mesh/config@0.106.19
+  - @graphql-mesh/cross-helpers@0.4.10
+  - @graphql-mesh/http@0.105.14
+  - @graphql-mesh/runtime@0.105.14
+  - @graphql-mesh/store@0.103.13
+  - @graphql-mesh/types@0.103.13
+  - @graphql-mesh/utils@0.103.13
+  - @graphql-mesh/include@0.2.12
+
 ## 0.98.18
 
 ### Patch Changes

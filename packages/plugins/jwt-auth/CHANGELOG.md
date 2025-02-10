@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-jwt-auth
 
+## 1.4.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a)]:
+  - @graphql-mesh/types@0.103.13
+  - @graphql-mesh/utils@0.103.13
+
 ## 1.4.2
 
 ### Patch Changes

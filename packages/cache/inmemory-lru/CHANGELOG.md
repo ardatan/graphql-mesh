@@ -1,5 +1,15 @@
 # @graphql-mesh/cache-inmemory-lru
 
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a)]:
+  - @graphql-mesh/types@0.103.13
+  - @graphql-mesh/utils@0.103.13
+
 ## 0.0.8
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/store",
-  "version": "0.103.12",
+  "version": "0.103.13",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,9 +36,9 @@
   },
   "dependencies": {
     "@graphql-inspector/core": "6.2.1",
-    "@graphql-mesh/cross-helpers": "^0.4.9",
-    "@graphql-mesh/types": "^0.103.12",
-    "@graphql-mesh/utils": "^0.103.12",
+    "@graphql-mesh/cross-helpers": "^0.4.10",
+    "@graphql-mesh/types": "^0.103.13",
+    "@graphql-mesh/utils": "^0.103.13",
     "@graphql-tools/utils": "^10.8.0",
     "tslib": "^2.4.0"
   },
