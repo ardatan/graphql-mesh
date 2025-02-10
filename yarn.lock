@@ -8428,8 +8428,8 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-jwt@npm:^3.4.9":
-  version: 3.4.13
-  resolution: "@graphql-yoga/plugin-jwt@npm:3.4.13"
+  version: 3.5.0
+  resolution: "@graphql-yoga/plugin-jwt@npm:3.5.0"
   dependencies:
     "@whatwg-node/server-plugin-cookies": "npm:^1.0.3"
     jsonwebtoken: "npm:^9.0.0"
@@ -8437,18 +8437,18 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.10.11
-  checksum: 10c0/55b04de2b41a24089bd7da988acff3977bbe669d982de8a7258b0f1073cfe21495e5f562a37e5e98be0d541f77460030d3802e090ae2e36cef2d43245e3bb051
+    graphql-yoga: ^5.11.0
+  checksum: 10c0/acf65a0e1162c738ff0402f62d2c3d6c0cf9f7ce494213e8581b345a4efd206de8b6dd8eb5337a600841e69d850348b399f9846fa37dee61a35081554c3cdea5
   languageName: node
   linkType: hard
 
 "@graphql-yoga/plugin-persisted-operations@npm:^3.0.0, @graphql-yoga/plugin-persisted-operations@npm:^3.10.6, @graphql-yoga/plugin-persisted-operations@npm:^3.9.0":
-  version: 3.10.11
-  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.10.11"
+  version: 3.11.0
+  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.11.0"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.10.11
-  checksum: 10c0/620219f8a505422cf5249a89292cc37d0e4dac799f4661f52375ab0dd9937c3f4919e501bcbc407fa07ea9b10ecf5ead402252ce2e6d05fb608a271043dd7559
+    graphql-yoga: ^5.11.0
+  checksum: 10c0/95abfbb8be5465c5856580dd7ef46250a61cba6e2d8c5e9867c06b7cbf228cfc3f4f96b30de34efd07a8f0bf48b99468de2291f7a8fa5da1a0c6ac6d33b38da1
   languageName: node
   linkType: hard
 
@@ -8466,15 +8466,15 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-response-cache@npm:^3.1.1, @graphql-yoga/plugin-response-cache@npm:^3.12.10":
-  version: 3.12.11
-  resolution: "@graphql-yoga/plugin-response-cache@npm:3.12.11"
+  version: 3.13.0
+  resolution: "@graphql-yoga/plugin-response-cache@npm:3.13.0"
   dependencies:
     "@envelop/core": "npm:^5.0.2"
     "@envelop/response-cache": "npm:^6.1.2"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.10.11
-  checksum: 10c0/aef1c6b5e8c7d15b75a552d91cae0ec6a9bc8b85b6accc66141a0d11a31199b8d53b51c2b0971d547dcfaf0d05261b842f1d1d32f54c19a44505289e9f7fa657
+    graphql-yoga: ^5.11.0
+  checksum: 10c0/3035c73df415a25c9c83ede0a9d6c4bb9183fbfef7fa13644d9f3eb10c471b08b43142e5aebf6649acf64ed4a943002b74d2c32d22f3fae5f463ba7aaf6fd843
   languageName: node
   linkType: hard
 
@@ -22116,7 +22116,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-yoga@npm:5.10.11, graphql-yoga@npm:^5.10.10, graphql-yoga@npm:^5.10.11, graphql-yoga@npm:^5.7.0":
+"graphql-yoga@npm:5.10.11":
   version: 5.10.11
   resolution: "graphql-yoga@npm:5.10.11"
   dependencies:
@@ -22134,6 +22134,27 @@ __metadata:
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
   checksum: 10c0/74b3ad3ff77656c680b36044c2655e8e95624fa51f4cb189c7d7d23a17ce14538fd13a552eea78fd1eddd3cc2e1c2f98bb529ad66a83a2869d9306f648f15368
+  languageName: node
+  linkType: hard
+
+"graphql-yoga@npm:^5.10.10, graphql-yoga@npm:^5.10.11, graphql-yoga@npm:^5.7.0":
+  version: 5.11.0
+  resolution: "graphql-yoga@npm:5.11.0"
+  dependencies:
+    "@envelop/core": "npm:^5.0.2"
+    "@graphql-tools/executor": "npm:^1.3.7"
+    "@graphql-tools/schema": "npm:^10.0.11"
+    "@graphql-tools/utils": "npm:^10.6.2"
+    "@graphql-yoga/logger": "npm:^2.0.1"
+    "@graphql-yoga/subscription": "npm:^5.0.3"
+    "@whatwg-node/fetch": "npm:^0.10.1"
+    "@whatwg-node/server": "npm:^0.9.64"
+    dset: "npm:^3.1.4"
+    lru-cache: "npm:^10.0.0"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    graphql: ^15.2.0 || ^16.0.0
+  checksum: 10c0/4cfe3fcf4cc6a771f8b5b50669bd640b53e04d82615a0985703adafb33386d6ea6af7bdb2f0ee882eeb378134d3447146b9bdfbbb36792253ec532e49f98ad9e
   languageName: node
   linkType: hard
 
@@ -23204,8 +23225,8 @@ __metadata:
   linkType: hard
 
 "ioredis@npm:>=5, ioredis@npm:^5.3.2":
-  version: 5.4.2
-  resolution: "ioredis@npm:5.4.2"
+  version: 5.5.0
+  resolution: "ioredis@npm:5.5.0"
   dependencies:
     "@ioredis/commands": "npm:^1.1.1"
     cluster-key-slot: "npm:^1.1.0"
@@ -23216,7 +23237,7 @@ __metadata:
     redis-errors: "npm:^1.2.0"
     redis-parser: "npm:^3.0.0"
     standard-as-callback: "npm:^2.1.0"
-  checksum: 10c0/e59d2cceb43ed74b487d7b50fa91b93246e734e5d4835c7e62f64e44da072f12ab43b044248012e6f8b76c61a7c091a2388caad50e8ad69a8ce5515a730b23b8
+  checksum: 10c0/ba64502fc92d9e05465793fafcd0568cb668af6e2350462b61daadfd499e3a48239d9a723d3ce08b08c93f3f745d05dda91136cdc597d4d485604e6730305305
   languageName: node
   linkType: hard
 
@@ -28529,8 +28550,8 @@ __metadata:
   linkType: hard
 
 "node-gyp@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "node-gyp@npm:11.0.0"
+  version: 11.1.0
+  resolution: "node-gyp@npm:11.1.0"
   dependencies:
     env-paths: "npm:^2.2.0"
     exponential-backoff: "npm:^3.1.1"
@@ -28544,7 +28565,7 @@ __metadata:
     which: "npm:^5.0.0"
   bin:
     node-gyp: bin/node-gyp.js
-  checksum: 10c0/a3b885bbee2d271f1def32ba2e30ffcf4562a3db33af06b8b365e053153e2dd2051b9945783c3c8e852d26a0f20f65b251c7e83361623383a99635c0280ee573
+  checksum: 10c0/c38977ce502f1ea41ba2b8721bd5b49bc3d5b3f813eabfac8414082faf0620ccb5211e15c4daecc23ed9f5e3e9cc4da00e575a0bcfc2a95a069294f2afa1e0cd
   languageName: node
   linkType: hard
 
@@ -30824,7 +30845,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.4.2, prettier@npm:^3.3.3":
+"prettier@npm:3.4.2":
   version: 3.4.2
   resolution: "prettier@npm:3.4.2"
   bin:
@@ -30848,6 +30869,15 @@ __metadata:
   bin:
     prettier: bin-prettier.js
   checksum: 10c0/463ea8f9a0946cd5b828d8cf27bd8b567345cf02f56562d5ecde198b91f47a76b7ac9eae0facd247ace70e927143af6135e8cf411986b8cb8478784a4d6d724a
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^3.3.3":
+  version: 3.5.0
+  resolution: "prettier@npm:3.5.0"
+  bin:
+    prettier: bin/prettier.cjs
+  checksum: 10c0/6c355d74c377f5622953229d92477e8b9779162e848db90fd7e06c431deb73585d31fafc4516cf5868917825b97b9ec7c87c8d8b8e03ccd9fc9c0b7699d1a650
   languageName: node
   linkType: hard
 
