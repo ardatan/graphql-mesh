@@ -121,6 +121,7 @@
     "graphql-rate-limit": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
     "ioredis-mock": "patch:ioredis-mock@npm%3A8.9.0#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch",
     "jest-leak-detector": "patch:jest-leak-detector@npm%3A29.7.0#~/.yarn/patches/jest-leak-detector-npm-29.7.0-3ae882ba75.patch",
+    "lru-cache": "patch:lru-cache@npm%3A11.0.2#~/.yarn/patches/lru-cache-npm-11.0.2-72e1eedbe6.patch",
     "node-fetch": "^2.6.7",
     "node-gyp": "^11.0.0",
     "nth-check": "^2.0.1",

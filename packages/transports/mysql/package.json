@@ -41,7 +41,7 @@
     "@graphql-mesh/types": "^0.103.12",
     "@graphql-mesh/utils": "^0.103.12",
     "@graphql-tools/delegate": "^10.0.28",
-    "@graphql-tools/utils": "^10.6.0",
+    "@graphql-tools/utils": "^10.8.0",
     "@whatwg-node/fetch": "^0.10.0",
     "graphql-fields": "^2.0.3",
     "mysql": "^2.18.1",

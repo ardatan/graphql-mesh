@@ -40,7 +40,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.8",
     "@graphql-mesh/types": "^0.103.12",
     "@graphql-tools/delegate": "^10.0.28",
-    "@graphql-tools/utils": "^10.6.0",
+    "@graphql-tools/utils": "^10.8.0",
     "tslib": "^2.4.0"
   },
   "publishConfig": {

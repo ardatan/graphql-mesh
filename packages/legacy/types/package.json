@@ -38,7 +38,7 @@
     "@graphql-mesh/store": "^0.103.12",
     "@graphql-tools/batch-delegate": "^9.0.10",
     "@graphql-tools/delegate": "^10.0.28",
-    "@graphql-tools/utils": "^10.6.0",
+    "@graphql-tools/utils": "^10.8.0",
     "@graphql-typed-document-node/core": "^3.2.0",
     "tslib": "^2.4.0"
   },

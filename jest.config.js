@@ -101,6 +101,7 @@ module.exports = {
     '@graphql-mesh/prometheus': '<rootDir>/node_modules/@graphql-mesh/prometheus/dist/index.cjs',
 
     '^graphql$': '<rootDir>/node_modules/graphql/index.js',
+    '^lru-cache$': '<rootDir>/node_modules/lru-cache/dist/commonjs/index.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
       prefix: `${ROOT_DIR}/`,
       useESM: true,
