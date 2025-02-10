@@ -623,7 +623,10 @@ export function createTenv(cwd: string): Tenv {
         subgraphs,
       }).initialize({
         getDataSource(opts) {
-          return new RemoteGraphQLDataSource(opts);
+          return new RemoteGraphQLDataSource({
+            ...opts,
+            fetcher: fetch,
+          });
         },
         update() {},
         async healthCheck() {},
