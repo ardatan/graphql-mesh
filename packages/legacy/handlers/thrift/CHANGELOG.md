@@ -1,5 +1,26 @@
 # @graphql-mesh/thrift
 
+## 0.105.13
+
+### Patch Changes
+
+- [#8362](https://github.com/ardatan/graphql-mesh/pull/8362)
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^10.8.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.8.0)
+    (from `^10.6.0`, in `dependencies`)
+- Updated dependencies
+  [[`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a)]:
+  - @graphql-mesh/cross-helpers@0.4.10
+  - @graphql-mesh/store@0.103.13
+  - @graphql-mesh/types@0.103.13
+  - @graphql-mesh/utils@0.103.13
+  - @omnigraph/thrift@0.8.13
+
 ## 0.105.12
 
 ### Patch Changes
