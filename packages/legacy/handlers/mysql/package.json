@@ -38,7 +38,7 @@
     "@graphql-mesh/store": "^0.103.12",
     "@graphql-mesh/types": "^0.103.12",
     "@graphql-mesh/utils": "^0.103.12",
-    "@graphql-tools/utils": "^10.6.0",
+    "@graphql-tools/utils": "^10.8.0",
     "@omnigraph/mysql": "^0.8.12",
     "tslib": "^2.4.0"
   },

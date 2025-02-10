@@ -45,7 +45,7 @@
     "@graphql-tools/batch-delegate": "^9.0.9",
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/executor": "^1.3.2",
-    "@graphql-tools/utils": "^10.6.0",
+    "@graphql-tools/utils": "^10.8.0",
     "@graphql-tools/wrap": "^10.0.28",
     "@whatwg-node/fetch": "^0.10.0",
     "graphql-jit": "^0.8.7",

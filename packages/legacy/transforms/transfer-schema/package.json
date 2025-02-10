@@ -37,7 +37,7 @@
   "dependencies": {
     "@graphql-mesh/types": "^0.103.12",
     "@graphql-mesh/utils": "^0.103.12",
-    "@graphql-tools/utils": "^10.6.0",
+    "@graphql-tools/utils": "^10.8.0",
     "micromatch": "4.0.8"
   },
   "devDependencies": {

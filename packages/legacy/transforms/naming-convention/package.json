@@ -38,7 +38,7 @@
     "@graphql-mesh/types": "^0.103.12",
     "@graphql-mesh/utils": "^0.103.12",
     "@graphql-tools/delegate": "^10.0.28",
-    "@graphql-tools/utils": "^10.6.0",
+    "@graphql-tools/utils": "^10.8.0",
     "@graphql-tools/wrap": "^10.0.28",
     "change-case": "^4.1.2",
     "graphql-scalars": "^1.22.4",
