@@ -41,7 +41,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@apollo/client": "3.12.9"
+    "@apollo/client": "3.12.11"
   },
   "publishConfig": {
     "access": "public",
