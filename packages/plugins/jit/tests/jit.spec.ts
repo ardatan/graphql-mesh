@@ -20,7 +20,7 @@ describe('JIT', () => {
         },
       },
     });
-    const upstreamServer = createYoga({
+    await using upstreamServer = createYoga({
       schema: upstreamSchema,
     });
     await using gw = createGatewayRuntime({
