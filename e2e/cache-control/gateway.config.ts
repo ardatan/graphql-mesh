@@ -6,10 +6,10 @@ const config: ReturnType<typeof defineConfig> = {};
 
 if (process.env.CACHE_STORAGE === 'upstash-redis') {
   config.cache = new UpstashRedisCache();
+  // Other methods are already known by the gateway
 } else {
   config.cache = {
-    // @ts-expect-error - We know it
-    type: process.env.CACHE_STORAGE,
+    type: process.env.CACHE_STORAGE as 'redis',
   };
 }
 console.log(`Using cache storage: ${process.env.CACHE_STORAGE}`);
