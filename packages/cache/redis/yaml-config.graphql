@@ -39,8 +39,8 @@ enum RedisSentinelRole {
 }
 
 type RedisSentinelConfig @md {
-  host: String
-  port: String
+  host: String!
+  port: String!
   family: String
 }
 
