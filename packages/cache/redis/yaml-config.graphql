@@ -2,13 +2,56 @@ type Cache {
   redis: RedisConfig
 }
 
-type RedisConfig @md {
+union RedisConfig = RedisConfigSentinel | RedisConfigSingle
+
+type RedisConfigSentinel @md {
+  """
+  identifies a group of Redis instances composed of a master and one or more slaves
+  """
+  name: String!
+  """
+  (optional) password for Sentinel instances.
+  """
+  sentinelPassword: String
+  """
+  A list of sentinels to connect to. The list does not need to enumerate all your sentinel instances, but a few so that if one is down the client will try the next one.
+  """
+  sentinels: [RedisSentinelConfig!]!
+  """
+  (optional) with a value of slave will return a random slave from the Sentinel group.
+  """
+  role: RedisSentinelRole
+  """
+  (optional) set to true if connecting to sentinel instances that are encrypted
+  """
+  enableTLSForSentinelMode: Boolean
+  """
+  Flag to indicate lazyConnect value for Redis client.
+
+  @default: true
+  """
+  lazyConnect: Boolean
+}
+
+enum RedisSentinelRole {
+  master
+  slave
+}
+
+type RedisSentinelConfig @md {
+  host: String!
+  port: String!
+  family: String
+}
+
+type RedisConfigSingle @md {
   host: String
   port: String
   username: String
   password: String
   db: Int
   url: String
+  family: String
   """
   Flag to indicate lazyConnect value for Redis client.
 

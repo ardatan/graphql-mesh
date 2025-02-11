@@ -21,7 +21,23 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
 
   constructor(options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub; logger: Logger }) {
     const lazyConnect = options.lazyConnect !== false;
-    if (options.url) {
+    if ('sentinels' in options) {
+      this.client = new Redis({
+        name: options.name,
+        sentinelPassword:
+          options.sentinelPassword && interpolateStrWithEnv(options.sentinelPassword),
+        sentinels: options.sentinels.map(s => ({
+          host: s.host && interpolateStrWithEnv(s.host),
+          port: s.port && parseInt(interpolateStrWithEnv(s.port)),
+          family: s.family && parseInt(interpolateStrWithEnv(s.family)),
+        })),
+        role: options.role,
+        enableTLSForSentinelMode: options.enableTLSForSentinelMode,
+        enableAutoPipelining: true,
+        enableOfflineQueue: true,
+        lazyConnect,
+      });
+    } else if (options.url) {
       const redisUrl = new URL(interpolateStrWithEnv(options.url));
 
       if (!['redis:', 'rediss:'].includes(redisUrl.protocol)) {
@@ -50,6 +66,8 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
       const parsedPassword =
         interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
       const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+      const parsedFamily =
+        interpolateStrWithEnv(options.family?.toString()) || process.env.REDIS_FAMILY;
       const numPort = parseInt(parsedPort);
       const numDb = parseInt(parsedDb);
       if (parsedHost) {
@@ -60,6 +78,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
           username: parsedUsername,
           password: parsedPassword,
           db: isNaN(numDb) ? undefined : numDb,
+          family: parsedFamily === '6' ? 6 : undefined,
           ...(lazyConnect ? { lazyConnect: true } : {}),
           enableAutoPipelining: true,
           enableOfflineQueue: true,
