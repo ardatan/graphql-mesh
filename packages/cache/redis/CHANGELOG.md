@@ -1,5 +1,34 @@
 # @graphql-mesh/cache-redis
 
+## 0.103.15
+
+### Patch Changes
+
+- [#8260](https://github.com/ardatan/graphql-mesh/pull/8260)
+  [`fc44a1e`](https://github.com/ardatan/graphql-mesh/commit/fc44a1e66c8bc8f27dc7e5e642031d17d75c0db8)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support REDIS_FAMILY to set family of the IP
+  address (IPv4 or IPv6).
+
+  This enhancement allows you to explicitly specify the IP address family when connecting to Redis
+  instances:
+
+  - 4: Force IPv4
+  - 6: Force IPv6
+  - 0: Automatic (default)
+
+  This is particularly useful in network environments where specific IP protocols are required or
+  when troubleshooting connection issues.
+
+- [#8260](https://github.com/ardatan/graphql-mesh/pull/8260)
+  [`fc44a1e`](https://github.com/ardatan/graphql-mesh/commit/fc44a1e66c8bc8f27dc7e5e642031d17d75c0db8)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support Redis Sentinels -
+  [See more](https://github.com/redis/ioredis?tab=readme-ov-file#sentinel)
+
+- Updated dependencies
+  [[`fc44a1e`](https://github.com/ardatan/graphql-mesh/commit/fc44a1e66c8bc8f27dc7e5e642031d17d75c0db8)]:
+  - @graphql-mesh/types@0.103.14
+  - @graphql-mesh/utils@0.103.14
+
 ## 0.103.14
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @graphql-mesh/types
 
+## 0.103.14
+
+### Patch Changes
+
+- [#8260](https://github.com/ardatan/graphql-mesh/pull/8260)
+  [`fc44a1e`](https://github.com/ardatan/graphql-mesh/commit/fc44a1e66c8bc8f27dc7e5e642031d17d75c0db8)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support Redis Sentinels -
+  [See more](https://github.com/redis/ioredis?tab=readme-ov-file#sentinel)
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.103.14
+
 ## 0.103.13
 
 ### Patch Changes
