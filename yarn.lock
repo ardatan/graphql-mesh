@@ -6241,6 +6241,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.9"
     "@graphql-mesh/types": "npm:^0.103.12"
+    "@graphql-mesh/utils": "npm:^0.103.13"
     "@upstash/redis": "npm:^1.34.3"
     "@whatwg-node/disposablestack": "npm:^0.0.5"
     tslib: "npm:^2.4.0"

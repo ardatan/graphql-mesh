@@ -1,14 +1,13 @@
 import { process } from '@graphql-mesh/cross-helpers';
 import type { KeyValueCache } from '@graphql-mesh/types';
-import type { MaybePromise } from '@graphql-tools/utils';
+import { mapMaybePromise } from '@graphql-mesh/utils';
 import { Redis, type RedisConfigNodejs } from '@upstash/redis';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export default class UpstashRedisCache implements KeyValueCache {
   private redis: Redis;
-  private abortCtrl: AbortController;
+  private abortCtrl = new AbortController();
   constructor(config?: Partial<RedisConfigNodejs>) {
-    this.abortCtrl = new AbortController();
     this.redis = new Redis({
       url: process.env.UPSTASH_REDIS_REST_URL,
       token: process.env.UPSTASH_REDIS_REST_TOKEN,
@@ -23,19 +22,18 @@ export default class UpstashRedisCache implements KeyValueCache {
     return this.redis.get<T>(key);
   }
 
-  async set<T>(key: string, value: T, options?: { ttl?: number }) {
+  set<T>(key: string, value: T, options?: { ttl?: number }) {
     if (options?.ttl) {
-      await this.redis.set(key, value, {
+      return this.redis.set(key, value, {
         px: options.ttl * 1000,
       });
     } else {
-      await this.redis.set(key, value);
+      return this.redis.set(key, value);
     }
   }
 
-  async delete(key: string) {
-    const num = await this.redis.del(key);
-    return num > 0;
+  delete(key: string) {
+    return mapMaybePromise(this.redis.del(key), num => num > 0);
   }
 
   async getKeysByPrefix(prefix: string): Promise<string[]> {
