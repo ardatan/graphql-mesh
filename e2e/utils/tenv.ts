@@ -346,10 +346,8 @@ export function createTenv(cwd: string): Tenv {
         if (trimHostPaths) {
           result = result.replaceAll(__project, '');
         }
-        for (const subgraph of services) {
-          if (maskServicePorts) {
-            result = result.replaceAll(subgraph.port.toString(), `<${subgraph.name}_port>`);
-          }
+        if (maskServicePorts) {
+          result = applyMaskServicePorts(result, opts.services);
         }
         if (output) {
           await fs.writeFile(output, result, 'utf8');
@@ -819,4 +817,11 @@ class DockerError extends Error {
 
 export function boolEnv(name: string): boolean {
   return ['1', 't', 'true', 'y', 'yes'].includes(process.env[name]);
+}
+
+export function applyMaskServicePorts(result: string, subgraphs: Service[]) {
+  for (const subgraph of subgraphs) {
+    result = result.replaceAll(subgraph.port.toString(), `<${subgraph.name}_port>`);
+  }
+  return result;
 }
