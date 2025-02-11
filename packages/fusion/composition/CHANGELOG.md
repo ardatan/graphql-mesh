@@ -1,5 +1,12 @@
 # @graphql-mesh/fusion-composition
 
+## 0.7.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.103.15
+
 ## 0.7.20
 
 ### Patch Changes
