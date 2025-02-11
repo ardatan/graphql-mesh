@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.103.15
+
+### Patch Changes
+
+- [`b5c05c4`](https://github.com/ardatan/graphql-mesh/commit/b5c05c4c5862525c76d69e8c166e71378f69bda0)
+  Thanks [@ardatan](https://github.com/ardatan)! - Export again accidentially removed RedisConfig
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.103.15
+
 ## 0.103.14
 
 ### Patch Changes

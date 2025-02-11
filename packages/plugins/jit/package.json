@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-jit",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@envelop/core": "^5.0.2",
-    "@graphql-mesh/utils": "^0.103.14",
+    "@graphql-mesh/utils": "^0.103.15",
     "@graphql-tools/utils": "^10.8.0",
     "graphql-jit": "^0.8.7",
     "tslib": "^2.4.0"
