@@ -1,0 +1,21 @@
+diff --git a/build/index.js b/build/index.js
+index d1cff260e9c9c17b57efde19268d563c35542682..a5c8543f3aa21f5a031f204e9f4c4a6d264cdabc 100644
+--- a/build/index.js
++++ b/build/index.js
+@@ -339,9 +339,13 @@ const getTopFrame = lines => {
+     const parsedFrame = stackUtils.parseLine(line.trim());
+     if (parsedFrame && parsedFrame.file) {
+       if (parsedFrame.file.startsWith('file://')) {
+-        parsedFrame.file = (0, _slash.default)(
+-          (0, _url.fileURLToPath)(parsedFrame.file)
+-        );
++        try {
++          parsedFrame.file = (0, _slash.default)(
++            (0, _url.fileURLToPath)(parsedFrame.file)
++          );
++        } catch(e) {
++          console.error(e);
++        }
+       }
+       return parsedFrame;
+     }
