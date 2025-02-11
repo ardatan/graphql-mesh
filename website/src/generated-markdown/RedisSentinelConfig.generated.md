@@ -1,4 +1,4 @@
 
-* `host` (type: `String`)
-* `port` (type: `String`)
+* `host` (type: `String`, required)
+* `port` (type: `String`, required)
 * `family` (type: `String`)

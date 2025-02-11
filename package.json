@@ -64,7 +64,7 @@
     "typecheck": "yarn generate-config-schema && tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@ardatan/graphql-to-config-schema": "0.1.25",
+    "@ardatan/graphql-to-config-schema": "patch:@ardatan/graphql-to-config-schema@npm%3A0.1.25#~/.yarn/patches/@ardatan-graphql-to-config-schema-npm-0.1.25-f8c48d384e.patch",
     "@babel/core": "7.26.8",
     "@babel/plugin-proposal-class-properties": "7.18.6",
     "@babel/plugin-proposal-explicit-resource-management": "7.25.9",

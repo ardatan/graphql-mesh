@@ -2,7 +2,7 @@ type Cache {
   redis: RedisConfig
 }
 
-union RedisConfig = RedisConfigSentinel | RedisConfigSingle
+union RedisConfig @md = RedisConfigSentinel | RedisConfigSingle
 
 type RedisConfigSentinel @md {
   """

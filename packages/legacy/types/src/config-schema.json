@@ -132,7 +132,8 @@
         "family": {
           "type": "string"
         }
-      }
+      },
+      "required": ["host", "port"]
     },
     "RedisConfigSingle": {
       "additionalProperties": false,

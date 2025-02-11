@@ -1858,8 +1858,8 @@ export interface RedisConfigSentinel {
   lazyConnect?: boolean;
 }
 export interface RedisSentinelConfig {
-  host?: string;
-  port?: string;
+  host: string;
+  port: string;
   family?: string;
 }
 export interface RedisConfigSingle {
