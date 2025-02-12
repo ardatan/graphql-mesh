@@ -222,8 +222,8 @@ export type Logger = {
   info: (...args: any[]) => void;
   error: (...args: any[]) => void;
   debug: (...lazyArgs: LazyLoggerMessage[]) => void;
-  child: (name: string) => Logger;
-  addPrefix?: (prefix: string) => Logger;
+  child: (name: string | Record<string, string | number>) => Logger;
+  addPrefix?: (prefix: string | Record<string, string | number>) => Logger;
 };
 
 export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;

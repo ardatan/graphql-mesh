@@ -18,7 +18,7 @@ export function processPubSubOperationAnnotations({
 }: ProcessPubSubOperationAnnotationsOpts) {
   field.subscribe = function pubSubSubscribeFn(root, args, context, info) {
     const logger = context?.logger || globalLogger;
-    const operationLogger = logger.child(`${info.parentType.name}.${field.name}`);
+    const operationLogger = logger.child({ operation: `${info.parentType.name}.${field.name}` });
     const pubsub = context?.pubsub || globalPubsub;
     if (!pubsub) {
       return new TypeError(`You should have PubSub defined in either the config or the context!`);
@@ -37,8 +37,8 @@ export function processPubSubOperationAnnotations({
   };
   field.resolve = function pubSubResolver(root, args, context, info) {
     const logger = context?.logger || globalLogger;
-    const operationLogger = logger.child(`${info.parentType.name}.${field.name}`);
-    operationLogger.debug('Received ', root, ' from ', pubsubTopic);
+    const operationLogger = logger.child({ operation: `${info.parentType.name}.${field.name}` });
+    operationLogger.debug('received', { root, pubsubTopic });
     return root;
   };
 }

@@ -13,6 +13,7 @@ export function validateConfig(
   filepath: string,
   initialLoggerPrefix: string,
   throwOnInvalidConfig = false,
+  logger = new DefaultLogger(initialLoggerPrefix).child('config'),
 ): asserts config is YamlConfig.Config {
   if (jsonSchema) {
     const ajv = new Ajv({
@@ -32,7 +33,7 @@ export function validateConfig(
         );
         throw aggregateError;
       }
-      const logger = new DefaultLogger(initialLoggerPrefix).child('config');
+      logger = logger.child('config');
       logger.warn('Configuration file is not valid!');
       logger.warn("This is just a warning! It doesn't have any effects on runtime.");
       ajv.errors.forEach(error => {
@@ -59,7 +60,7 @@ export async function findConfig(options?: {
   const {
     configName = 'mesh',
     dir: configDir = '',
-    initialLoggerPrefix = '🕸️  Mesh',
+    initialLoggerPrefix = '',
     importFn,
   } = options || {};
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
@@ -98,8 +99,9 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
   const {
     configName = 'mesh',
     dir: configDir = '',
-    initialLoggerPrefix = '🕸️  Mesh',
+    initialLoggerPrefix = '',
     importFn,
+    logger = new DefaultLogger(initialLoggerPrefix),
     ...restOptions
   } = options || {};
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
@@ -132,15 +134,17 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
   }
 
   const config = results.config;
-  validateConfig(config, results.filepath, initialLoggerPrefix, restOptions.throwOnInvalidConfig);
-  return processConfig(config, { dir, initialLoggerPrefix, importFn, ...restOptions });
+  validateConfig(
+    config,
+    results.filepath,
+    initialLoggerPrefix,
+    restOptions.throwOnInvalidConfig,
+    logger,
+  );
+  return processConfig(config, { dir, initialLoggerPrefix, importFn, logger, ...restOptions });
 }
 
-function customLoader(
-  ext: 'json' | 'yaml' | 'js',
-  importFn = include,
-  initialLoggerPrefix = '🕸️  Mesh',
-) {
+function customLoader(ext: 'json' | 'yaml' | 'js', importFn = include, initialLoggerPrefix = '') {
   const logger = new DefaultLogger(initialLoggerPrefix).child('config');
   function loader(filepath: string, content: string) {
     if (process.env) {

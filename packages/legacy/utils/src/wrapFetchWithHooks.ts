@@ -49,7 +49,7 @@ export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>
               if (context?.request) {
                 const requestId = requestIdByRequest.get(context.request);
                 if (requestId) {
-                  logger = logger.child(requestId);
+                  logger = logger.child({ requestId });
                 }
               }
               if (info?.executionRequest) {

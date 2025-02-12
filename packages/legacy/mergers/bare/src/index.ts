@@ -22,7 +22,7 @@ export default class BareMerger implements MeshMerger {
     this.options.logger.debug(
       `Switching to Stitching merger due to the transforms and additional resolvers`,
     );
-    this.options.logger = this.options.logger.child('Stitching Proxy');
+    this.options.logger = this.options.logger.child({ proxy: 'stitching' });
     this.stitchingMerger = this.stitchingMerger || new StitchingMerger(this.options);
     return this.stitchingMerger.getUnifiedSchema(mergerCtx);
   }

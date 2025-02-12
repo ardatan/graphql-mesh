@@ -39,7 +39,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
   const subgraphConfigsForComposition: SubgraphConfig[] = await Promise.all(
     config.subgraphs.map(async subgraphCLIConfig => {
       const { name: subgraphName, schema$ } = subgraphCLIConfig.sourceHandler(ctx);
-      const log = logger.child(`[${subgraphName}]`);
+      const log = logger.child({ subgraph: subgraphName });
       log.debug(`Loading subgraph`);
       let subgraphSchema: GraphQLSchema;
       try {

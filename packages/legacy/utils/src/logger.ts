@@ -75,7 +75,7 @@ export class DefaultLogger implements Logger {
       return noop;
     }
     this.console.log(
-      `[${getTimestamp()}] ${this.prefix}`.trim() /* trim in case prefix is empty */,
+      `[timestamp=${getTimestamp()}] ${this.prefix}`.trim() /* trim in case prefix is empty */,
       ...args,
     );
   }
@@ -85,7 +85,7 @@ export class DefaultLogger implements Logger {
       return noop;
     }
     this.console.warn(
-      `[${getTimestamp()}] WARN  ${this.prefix}${ANSI_CODES.orange}`,
+      `[timestamp=${getTimestamp()}] [level=WARN]  ${this.prefix}${ANSI_CODES.orange}`,
       ...args,
       ANSI_CODES.reset,
     );
@@ -96,7 +96,7 @@ export class DefaultLogger implements Logger {
       return noop;
     }
     this.console.info(
-      `[${getTimestamp()}] INFO  ${this.prefix}${ANSI_CODES.cyan}`,
+      `[timestamp=${getTimestamp()}] [level=INFO]  ${this.prefix}${ANSI_CODES.cyan}`,
       ...args,
       ANSI_CODES.reset,
     );
@@ -107,7 +107,7 @@ export class DefaultLogger implements Logger {
       return noop;
     }
     this.console.error(
-      `[${getTimestamp()}] ERROR ${this.prefix}${ANSI_CODES.red}`,
+      `[timestamp=${getTimestamp()}] [level=ERROR] ${this.prefix}${ANSI_CODES.red}`,
       ...args,
       ANSI_CODES.reset,
     );
@@ -119,27 +119,29 @@ export class DefaultLogger implements Logger {
     }
     const flattenedArgs = handleLazyMessage(lazyArgs);
     this.console.debug(
-      `[${getTimestamp()}] DEBUG ${this.prefix}${ANSI_CODES.magenta}`,
+      `[timestamp=${getTimestamp()}] [level=DEBUG] ${this.prefix}${ANSI_CODES.magenta}`,
       ...flattenedArgs,
       ANSI_CODES.reset,
     );
   }
 
-  child(name: string): Logger {
+  child(name: string | Record<string, string | number>): Logger {
+    name = stringifyName(name);
     if (this.name?.includes(name)) {
       return this;
     }
     return new DefaultLogger(
-      this.name ? `${this.name} - ${name}` : name,
+      this.name ? `${this.name} ${name}` : name,
       this.logLevel,
       undefined,
       this.console,
     );
   }
 
-  addPrefix(prefix: string): Logger {
+  addPrefix(prefix: string | Record<string, string | number>): Logger {
+    prefix = stringifyName(prefix);
     if (!this.name?.includes(prefix)) {
-      this.name = this.name ? `${this.name} - ${prefix}` : prefix;
+      this.name = this.name ? `${this.name} ${prefix}` : prefix;
     }
     return this;
   }
@@ -147,4 +149,15 @@ export class DefaultLogger implements Logger {
   toJSON() {
     return undefined;
   }
+}
+
+function stringifyName(name: string | Record<string, string | number>) {
+  if (typeof name === 'string' || typeof name === 'number') {
+    return `[${name}]`;
+  }
+  const names: string[] = [];
+  for (const [key, value] of Object.entries(name)) {
+    names.push(`${key}=${value}`);
+  }
+  return `[${names.join(', ')}]`;
 }

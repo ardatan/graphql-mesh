@@ -8,6 +8,7 @@ import type { GetMeshOptions, MeshResolvedSource } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type {
   ImportFn,
+  Logger,
   MeshHandlerLibrary,
   MeshMergerLibrary,
   MeshPlugin,
@@ -61,6 +62,7 @@ export type ConfigProcessOptions = {
   generateCode?: boolean;
   initialLoggerPrefix?: string;
   throwOnInvalidConfig?: boolean;
+  logger?: Logger;
 };
 
 export type ProcessedConfig = GetMeshOptions & {
@@ -218,7 +220,7 @@ export async function processConfig(
               cache,
               pubsub,
               store: sourcesStore.child(${JSON.stringify(source.name)}),
-              logger: logger.child(${JSON.stringify(source.name)}),
+              logger: logger.child({ source: ${JSON.stringify(source.name)} ),
               importFn,
             });`,
               );
@@ -230,7 +232,7 @@ export async function processConfig(
               cache,
               pubsub,
               store: sourcesStore.child(source.name),
-              logger: logger.child(source.name),
+              logger: logger.child({ source: source.name }),
               importFn,
             });
           }),
@@ -374,7 +376,7 @@ export async function processConfig(
             );
             codes.add(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
-          logger: logger.child(${JSON.stringify(pluginName)}),
+          logger: logger.child({ plugin: ${JSON.stringify(pluginName)} }),
           cache,
           pubsub,
           baseDir,
@@ -398,7 +400,7 @@ export async function processConfig(
               codes.add(
                 `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
-          logger: logger.child(${JSON.stringify(pluginName)}),
+          logger: logger.child({ plugin: ${JSON.stringify(pluginName)} }),
           cache,
           pubsub,
           baseDir,
@@ -410,7 +412,7 @@ export async function processConfig(
         }
         return pluginFactory({
           ...pluginConfig,
-          logger: logger.child(pluginName),
+          logger: logger.child({ plugin: pluginName }),
           cache,
           pubsub,
           baseDir: dir,
@@ -549,7 +551,6 @@ export async function processConfig(
     additionalPrefixes: additionalPackagePrefixes,
   });
 
-  const mergerLoggerPrefix = `${mergerName}Merger`;
   if (options.generateCode) {
     codes.add(
       `const Merger = await import(${JSON.stringify(mergerModuleName)}).then(handleImport);`,
@@ -557,16 +558,16 @@ export async function processConfig(
     codes.add(`const merger = new Merger({
         cache,
         pubsub,
-        logger: logger.child(${JSON.stringify(mergerLoggerPrefix)}),
-        store: rootStore.child(${JSON.stringify(mergerLoggerPrefix)})
+        logger: logger.child({ merger: ${JSON.stringify(mergerName)} }),
+        store: rootStore.child(${JSON.stringify(mergerName)})
       })`);
   }
 
   const merger = new Merger({
     cache,
     pubsub,
-    logger: logger.child(mergerLoggerPrefix),
-    store: rootStore.child(mergerLoggerPrefix),
+    logger: logger.child({ merger: mergerName }),
+    store: rootStore.child(mergerName),
   });
 
   if (config.additionalEnvelopPlugins) {

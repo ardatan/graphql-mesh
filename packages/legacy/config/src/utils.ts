@@ -258,7 +258,7 @@ export async function resolveLogger(
   importFn: ImportFn,
   cwd: string,
   additionalPackagePrefixes: string[],
-  initialLoggerPrefix = '🕸️  Mesh',
+  initialLoggerPrefix = '',
 ): Promise<{
   importCode: string;
   code: string;

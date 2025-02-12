@@ -104,7 +104,7 @@ export async function serveMesh(
     let diedWorkers = 0;
     cluster.on('exit', (worker, code, signal) => {
       if (!mainProcessKilled) {
-        logger.child(`Worker ${worker.id}`).error(`died with ${signal || code}. Restarting...`);
+        logger.child({ worker: worker.id }).error(`died with ${signal || code}. Restarting...`);
         diedWorkers++;
         if (diedWorkers === forkNum) {
           logger.error('All workers died. Exiting...');
@@ -119,13 +119,15 @@ export async function serveMesh(
     });
   } else {
     if (cluster.isWorker) {
-      logger.addPrefix?.(`Worker ${cluster.worker?.id}`);
+      logger.addPrefix?.({
+        worker: cluster.worker.id,
+      });
     }
     logger.info(`Starting GraphQL Mesh...`);
 
     logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
     registerTerminateHandler(eventName => {
-      const eventLogger = logger.child(`${eventName}  💀`);
+      const eventLogger = logger.child({ terminateEvent: eventName });
       eventLogger.info(`Destroying GraphQL Mesh...`);
       getBuiltMesh()
         .then(mesh => mesh.destroy())
@@ -149,7 +151,7 @@ export async function serveMesh(
     });
 
     registerTerminateHandler(eventName => {
-      const eventLogger = logger.child(`${eventName}  💀`);
+      const eventLogger = logger.child({ terminateEvent: eventName });
       eventLogger.debug(`Stopping HTTP Server`);
       mapMaybePromise(stop(), () => {
         eventLogger.debug(`HTTP Server has been stopped`);
