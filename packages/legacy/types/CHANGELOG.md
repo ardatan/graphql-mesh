@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.103.16
+
+### Patch Changes
+
+- [#8375](https://github.com/ardatan/graphql-mesh/pull/8375)
+  [`b44f8b7`](https://github.com/ardatan/graphql-mesh/commit/b44f8b7a413c8adb213b22fb8a243ca6aa06d2bd)
+  Thanks [@ardatan](https://github.com/ardatan)! - More clear key-value pairs in the logs
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.103.16
+
 ## 0.103.15
 
 ### Patch Changes

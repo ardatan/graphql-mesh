@@ -1,5 +1,18 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.104.4
+
+### Patch Changes
+
+- [#8375](https://github.com/ardatan/graphql-mesh/pull/8375)
+  [`b44f8b7`](https://github.com/ardatan/graphql-mesh/commit/b44f8b7a413c8adb213b22fb8a243ca6aa06d2bd)
+  Thanks [@ardatan](https://github.com/ardatan)! - More clear key-value pairs in the logs
+
+- Updated dependencies
+  [[`b44f8b7`](https://github.com/ardatan/graphql-mesh/commit/b44f8b7a413c8adb213b22fb8a243ca6aa06d2bd)]:
+  - @graphql-mesh/types@0.103.16
+  - @graphql-mesh/utils@0.103.16
+
 ## 0.104.3
 
 ### Patch Changes
