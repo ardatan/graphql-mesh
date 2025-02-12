@@ -138,7 +138,7 @@ export class DefaultLogger implements Logger {
     );
   }
 
-  addPrefix(prefix: string | Record<string, string>): Logger {
+  addPrefix(prefix: string | Record<string, string | number>): Logger {
     prefix = stringifyName(prefix);
     if (!this.name?.includes(prefix)) {
       this.name = this.name ? `${this.name} ${prefix}` : prefix;
@@ -152,7 +152,7 @@ export class DefaultLogger implements Logger {
 }
 
 function stringifyName(name: string | Record<string, string | number>) {
-  if (typeof name === 'string') {
+  if (typeof name === 'string' || typeof name === 'number') {
     return `[${name}]`;
   }
   const names: string[] = [];

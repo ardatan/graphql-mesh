@@ -119,7 +119,9 @@ export async function serveMesh(
     });
   } else {
     if (cluster.isWorker) {
-      logger.addPrefix?.(`Worker ${cluster.worker?.id}`);
+      logger.addPrefix?.({
+        worker: cluster.worker.id,
+      });
     }
     logger.info(`Starting GraphQL Mesh...`);
 
