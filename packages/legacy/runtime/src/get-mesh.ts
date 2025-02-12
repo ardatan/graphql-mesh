@@ -103,7 +103,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const {
     pubsub = new PubSub(),
     cache,
-    logger = new DefaultLogger('🕸️  Mesh'),
+    logger = new DefaultLogger(''),
     additionalEnvelopPlugins = [],
     sources,
     merger,
@@ -163,7 +163,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   await Promise.allSettled(
     sources.map(async (apiSource, index) => {
       const apiName = apiSource.name;
-      const sourceLogger = logger.child(apiName);
+      const sourceLogger = logger.child({ source: apiName });
       sourceLogger.debug(`Generating the schema`);
       try {
         const source = await apiSource.handler.getMeshSource({

@@ -100,8 +100,10 @@ export function addHTTPRootFieldResolver(
       args.fields = undefined;
     }
     const logger = context?.logger || globalLogger;
-    const operationLogger = logger.child(`${info.parentType.name}.${info.fieldName}`);
-    operationLogger.debug(`=> Resolving`);
+    const operationLogger = logger.child({
+      operation: `${info.parentType.name}.${info.fieldName}`,
+    });
+    operationLogger.debug(`Resolving`);
     const interpolationData = { root, args, context, env: process.env };
     const interpolatedBaseUrl = stringInterpolator.parse(endpoint, interpolationData);
     const interpolatedPath = stringInterpolator.parse(path, interpolationData);

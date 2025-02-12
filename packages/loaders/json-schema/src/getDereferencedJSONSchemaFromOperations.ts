@@ -31,6 +31,7 @@ export async function getDereferencedJSONSchemaFromOperations({
   const referencedJSONSchema = await getReferencedJSONSchemaFromOperations({
     operations,
     cwd,
+    logger,
     schemaHeaders,
     ignoreErrorResponses,
     fetchFn,

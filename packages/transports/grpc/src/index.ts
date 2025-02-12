@@ -233,7 +233,7 @@ export class GrpcTransportHelper extends DisposableStack {
     const grpcObjectByRootJsonName = new Map<string, ReturnType<typeof loadPackageDefinition>>();
     for (let { name, rootJson, loadOptions } of roots) {
       rootJson = typeof rootJson === 'string' ? JSON.parse(rootJson) : rootJson;
-      const rootLogger = this.logger.child(name);
+      const rootLogger = this.logger.child({ root: name });
       grpcObjectByRootJsonName.set(name, this.getGrpcObject({ rootJson, loadOptions, rootLogger }));
     }
     const rootTypes = getRootTypes(schema);

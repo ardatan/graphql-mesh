@@ -222,7 +222,7 @@ export type Logger = {
   info: (...args: any[]) => void;
   error: (...args: any[]) => void;
   debug: (...lazyArgs: LazyLoggerMessage[]) => void;
-  child: (name: string) => Logger;
+  child: (name: string | Record<string, string | number>) => Logger;
   addPrefix?: (prefix: string) => Logger;
 };
 

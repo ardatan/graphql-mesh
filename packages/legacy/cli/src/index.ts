@@ -43,7 +43,7 @@ export interface GraphQLMeshCLIParams {
 
 export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   commandName: 'mesh',
-  initialLoggerPrefix: '🕸️  Mesh',
+  initialLoggerPrefix: '',
   configName: 'mesh',
   artifactsDir: process.env.MESH_ARTIFACTS_DIRNAME || '.mesh',
   serveMessage: 'Serving GraphQL Mesh',
@@ -303,6 +303,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             configName: cliParams.configName,
             additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
             initialLoggerPrefix: cliParams.initialLoggerPrefix,
+            logger,
           });
           logger = meshConfig.logger;
 
@@ -387,6 +388,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             generateCode: true,
             initialLoggerPrefix: cliParams.initialLoggerPrefix,
             throwOnInvalidConfig: args.throwOnInvalidConfig,
+            logger,
           });
           logger = meshConfig.logger;
 
@@ -455,6 +457,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           configName: cliParams.configName,
           additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
           initialLoggerPrefix: cliParams.initialLoggerPrefix,
+          logger,
         });
         logger = meshConfig.logger;
         const sourceIndex = meshConfig.sources.findIndex(

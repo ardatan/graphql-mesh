@@ -49,7 +49,7 @@ export function getInContextSDK(
   const inContextSDK: Record<string, any> = {};
   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
   for (const rawSource of rawSources) {
-    const rawSourceLogger = logger?.child(`${rawSource.name}`);
+    const rawSourceLogger = logger?.child({ source: rawSource.name });
 
     const rawSourceContext: any = {
       rawSource,
@@ -83,9 +83,9 @@ export function getInContextSDK(
         const rootTypeFieldMap = rootType.getFields();
         for (const fieldName in rootTypeFieldMap) {
           const rootTypeField = rootTypeFieldMap[fieldName];
-          const inContextSdkLogger = rawSourceLogger?.child(
-            `InContextSDK.${rootType.name}.${fieldName}`,
-          );
+          const inContextSdkLogger = rawSourceLogger?.child({
+            inContextSdk: `${rootType.name}.${fieldName}`,
+          });
           const namedReturnType = getNamedType(rootTypeField.type);
           const shouldHaveSelectionSet = !isLeafType(namedReturnType);
           rawSourceContext[rootType.name][fieldName] = ({

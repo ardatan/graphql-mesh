@@ -79,7 +79,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
     }
     return false;
   }
-  const pluginLogger = logger?.child('HTTP Cache');
+  const pluginLogger = logger?.child({ plugin: 'HTTP Cache' });
   return {
     onYogaInit({ yoga }) {
       if (yoga.fetchAPI.URLPattern) {

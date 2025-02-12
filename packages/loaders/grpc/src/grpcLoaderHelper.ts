@@ -94,7 +94,7 @@ export class GrpcLoaderHelper extends DisposableStack {
       rootJson: string;
     }[] = [];
     for (const { name: rootJsonName, rootJson } of descriptorSets) {
-      const rootLogger = this.logger.child(rootJsonName);
+      const rootLogger = this.logger.child({ root: rootJsonName });
 
       this.logger.debug(`Building the schema structure based on the root object`);
       this.visit({
@@ -259,7 +259,7 @@ export class GrpcLoaderHelper extends DisposableStack {
       rootPromises.map(async (root$, i) => {
         const root = await root$;
         const rootName = root.name || `Root${i}`;
-        const rootLogger = this.logger.child(rootName);
+        const rootLogger = this.logger.child({ root: rootName });
         rootLogger.debug(`Resolving entire the root tree`);
         root.resolveAll();
         rootLogger.debug(`Creating artifacts from descriptor set and root`);

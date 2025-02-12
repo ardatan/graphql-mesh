@@ -70,7 +70,7 @@ export async function run({
     program = program.allowUnknownOption().allowExcessArguments();
   const opts = program.parse().opts();
 
-  const log = rootLog.child(` ${productName}`);
+  const log = rootLog.child(productName);
 
   let importedConfig: MeshComposeCLIConfig;
   if (!opts.configPath) {
