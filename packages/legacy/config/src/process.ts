@@ -220,7 +220,7 @@ export async function processConfig(
               cache,
               pubsub,
               store: sourcesStore.child(${JSON.stringify(source.name)}),
-              logger: logger.child({ source: ${JSON.stringify(source.name)} ),
+              logger: logger.child({ source: ${JSON.stringify(source.name)} }),
               importFn,
             });`,
               );
