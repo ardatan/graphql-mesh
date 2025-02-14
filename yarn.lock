@@ -5345,7 +5345,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.22"
     "@graphql-mesh/openapi": "npm:0.108.20"
-    "@sinclair/typebox": "npm:0.34.21"
+    "@sinclair/typebox": "npm:0.34.22"
     concurrently: "npm:9.1.2"
     fets: "npm:0.8.4"
     graphql: "npm:16.10.0"
@@ -10714,7 +10714,7 @@ __metadata:
     fast-xml-parser: "npm:^4.5.0"
     graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
-    soap: "npm:1.1.7"
+    soap: "npm:1.1.8"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -11739,10 +11739,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.34.21":
-  version: 0.34.21
-  resolution: "@sinclair/typebox@npm:0.34.21"
-  checksum: 10c0/728750867eb7988b1093f0ce38b2c63dd9b4d49aa1521206a8a00575247fc5d42a23d4c326f20314b12fabfdb213f90b06a6c2997a3ae0e6dc9885d2ec0aca87
+"@sinclair/typebox@npm:0.34.22":
+  version: 0.34.22
+  resolution: "@sinclair/typebox@npm:0.34.22"
+  checksum: 10c0/a9e450af95ce89b8b572b189c57d315639fc89d5cc43daa0151145d50b68c5507293a232ccb37ca20dab6026ca5b2d997f023456dcfb836230ef8656af4ee599
   languageName: node
   linkType: hard
 
@@ -33801,9 +33801,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"soap@npm:1.1.7":
-  version: 1.1.7
-  resolution: "soap@npm:1.1.7"
+"soap@npm:1.1.8":
+  version: 1.1.8
+  resolution: "soap@npm:1.1.8"
   dependencies:
     axios: "npm:^1.7.9"
     axios-ntlm: "npm:^1.4.2"
@@ -33815,7 +33815,7 @@ __metadata:
     strip-bom: "npm:^3.0.0"
     whatwg-mimetype: "npm:4.0.0"
     xml-crypto: "npm:^6.0.0"
-  checksum: 10c0/1a881d9309b6ab68c77a0d500049940da00817aa0f8718d00248ec86dac72d1d3bb52f0470cf8b3e502effd601d9fdf7ef37d4bbd5bd50570048eaf36a497e62
+  checksum: 10c0/bfbba2817f9a2d4b7737f5c70cefa60e66d137a1c939549c969e5a4c051178b9e8b07b30edfedf190fac40df5e8c482c808d462973f7ef37abbbd6cbeed05791
   languageName: node
   linkType: hard
 
