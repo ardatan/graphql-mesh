@@ -3643,7 +3643,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/cache-upstash-redis": "npm:^0.0.4"
     "@graphql-mesh/compose-cli": "npm:^1.3.11"
-    "@graphql-yoga/plugin-response-cache": "npm:^3.12.10"
+    "@graphql-yoga/plugin-response-cache": "npm:^3.13.1"
     graphql: "npm:^16.9.0"
     graphql-yoga: "npm:^5.10.10"
     tslib: "npm:^2.8.1"
@@ -6952,7 +6952,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.103.17"
     "@graphql-mesh/utils": "npm:^0.103.17"
     "@graphql-tools/utils": "npm:^10.6.2"
-    "@graphql-yoga/plugin-response-cache": "npm:^3.1.1"
+    "@graphql-yoga/plugin-response-cache": "npm:^3.13.1"
     cache-control-parser: "npm:^2.0.6"
     graphql-yoga: "npm:^5.7.0"
     tslib: "npm:^2.4.0"
@@ -8780,16 +8780,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-response-cache@npm:^3.1.1, @graphql-yoga/plugin-response-cache@npm:^3.12.10":
-  version: 3.13.0
-  resolution: "@graphql-yoga/plugin-response-cache@npm:3.13.0"
+"@graphql-yoga/plugin-response-cache@npm:^3.13.1":
+  version: 3.13.1
+  resolution: "@graphql-yoga/plugin-response-cache@npm:3.13.1"
   dependencies:
     "@envelop/core": "npm:^5.0.2"
     "@envelop/response-cache": "npm:^6.1.2"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
     graphql-yoga: ^5.11.0
-  checksum: 10c0/3035c73df415a25c9c83ede0a9d6c4bb9183fbfef7fa13644d9f3eb10c471b08b43142e5aebf6649acf64ed4a943002b74d2c32d22f3fae5f463ba7aaf6fd843
+  checksum: 10c0/0f5658087484d87f6dcac12881f907180c7ed8f69e5b5537cd954ca42457999c96f23eed385e781ff9770a35cfb1f6056ab216aacadc37e4aed48af2f0558b77
   languageName: node
   linkType: hard
 
