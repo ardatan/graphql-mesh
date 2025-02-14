@@ -80,9 +80,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.13.0":
-  version: 3.13.0
-  resolution: "@apollo/client@npm:3.13.0"
+"@apollo/client@npm:3.13.1":
+  version: 3.13.1
+  resolution: "@apollo/client@npm:3.13.1"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     "@wry/caches": "npm:^1.0.0"
@@ -112,7 +112,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: 10c0/a15fb7d61100041b8165e4397464996fee3aa033eb972e3d044d152cbfd4a9a22b32510d2737e16704d65facbb7c75091d41f17fca3f070a6047b7ea9e5cd466
+  checksum: 10c0/50e65f9b12e82159d50feb6ad356bbc9dc871f04d930954b3fa299d63d0d578f1be95377d2961572907e56aeaa2b7e36c1c8a6d1287ce1a85cf454ee528f1d00
   languageName: node
   linkType: hard
 
@@ -5032,7 +5032,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/graphql-file-upload-example-frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
-    "@apollo/client": "npm:3.13.0"
+    "@apollo/client": "npm:3.13.1"
     "@testing-library/jest-dom": "npm:6.6.3"
     "@testing-library/react": "npm:16.2.0"
     "@testing-library/user-event": "npm:14.6.1"
@@ -6359,7 +6359,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link"
   dependencies:
-    "@apollo/client": "npm:3.13.0"
+    "@apollo/client": "npm:3.13.1"
     "@graphql-mesh/runtime": "npm:^0.105.18"
     "@graphql-tools/utils": "npm:^10.8.0"
     tslib: "npm:^2.4.0"
