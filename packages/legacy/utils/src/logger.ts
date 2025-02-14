@@ -65,7 +65,7 @@ export class DefaultLogger implements Logger {
 
   private get prefix() {
     return this.name
-      ? `${titleBold(this.name.trim())} ` /* trailing space because prefix is directly used in logged message */
+      ? `${titleBold(this.name.toString().trim())} ` /* trailing space because prefix is directly used in logged message */
       : ``;
   }
 
