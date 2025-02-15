@@ -3509,10 +3509,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20250204.0":
-  version: 4.20250204.0
-  resolution: "@cloudflare/workers-types@npm:4.20250204.0"
-  checksum: 10c0/9c5340ff0ce87a603109f1f06041dfd114fe518577e798e7c30e20228207c4a9074be12e5df5eb3692d6a67e14ca02708f2bc3188cad542c43c4213c73775619
+"@cloudflare/workers-types@npm:4.20250214.0":
+  version: 4.20250214.0
+  resolution: "@cloudflare/workers-types@npm:4.20250214.0"
+  checksum: 10c0/43b01ec926c2fd945dd84ba7df9634cd8a0860cc1c3df6fd3dff3f399d852074edd081ada45430b3b4b9c9a7ec87c42ff9e4ef686769ad1ae17003ea9da86214
   languageName: node
   linkType: hard
 
@@ -5529,7 +5529,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.23"
     "@graphql-mesh/openapi": "npm:0.108.21"
-    "@sinclair/typebox": "npm:0.34.22"
+    "@sinclair/typebox": "npm:0.34.24"
     concurrently: "npm:9.1.2"
     fets: "npm:0.8.4"
     graphql: "npm:16.10.0"
@@ -6373,7 +6373,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20250204.0"
+    "@cloudflare/workers-types": "npm:4.20250214.0"
     "@graphql-mesh/types": "npm:^0.103.17"
     "@graphql-mesh/utils": "npm:^0.103.17"
     tslib: "npm:^2.4.0"
@@ -11923,10 +11923,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.34.22":
-  version: 0.34.22
-  resolution: "@sinclair/typebox@npm:0.34.22"
-  checksum: 10c0/a9e450af95ce89b8b572b189c57d315639fc89d5cc43daa0151145d50b68c5507293a232ccb37ca20dab6026ca5b2d997f023456dcfb836230ef8656af4ee599
+"@sinclair/typebox@npm:0.34.24":
+  version: 0.34.24
+  resolution: "@sinclair/typebox@npm:0.34.24"
+  checksum: 10c0/a7cdf4ae89f414570118968cc170f2fa7c34d5266e49d970c5588dbbbb3d0b83e6c3629231b3d8d8d35af46932febe31dc2424d50b4bd9534688758f1b1a6198
   languageName: node
   linkType: hard
 
