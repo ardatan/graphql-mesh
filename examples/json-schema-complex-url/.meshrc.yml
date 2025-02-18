@@ -1,0 +1,15 @@
+sources:
+  - name: upstream
+    handler:
+      jsonSchema:
+        endpoint: 'http://username:password@localhost:8515'
+        operations:
+          - type: Query
+            field: getData
+            path: '?request=GetData&some_arg={args.some_arg}&some_val=0'
+            method: GET
+            responseSample: ./assets/getData.json
+            responseTypeName: GetDataResponse
+            argTypeMap:
+              some_arg:
+                type: string

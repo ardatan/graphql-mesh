@@ -1,0 +1,4 @@
+{
+  "authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
+  "url": "/?request=GetData&some_arg=some_arg_value&some_val=0"
+}
