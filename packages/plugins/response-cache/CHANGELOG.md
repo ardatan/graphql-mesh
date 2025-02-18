@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.103.19
+
+### Patch Changes
+
+- [`fdc731c`](https://github.com/ardatan/graphql-mesh/commit/fdc731ccd23f0bd9c5725b1181356588e4878e65)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Provide cache key per oparation in a batched
+
+  Instead of per request, which would give out the same cache key for every operation in a batched
+  request.
+
 ## 0.103.18
 
 ### Patch Changes
