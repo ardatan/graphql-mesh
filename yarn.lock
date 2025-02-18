@@ -5039,8 +5039,8 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.14"
     "@types/node": "npm:22.13.4"
-    "@types/react": "npm:19.0.9"
-    "@types/react-dom": "npm:19.0.3"
+    "@types/react": "npm:19.0.10"
+    "@types/react-dom": "npm:19.0.4"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.10.0"
     react: "npm:19.0.0"
@@ -5305,7 +5305,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.106.23"
     "@graphql-mesh/openapi": "npm:0.108.21"
     "@graphql-mesh/runtime": "npm:0.105.18"
-    "@types/react": "npm:19.0.9"
+    "@types/react": "npm:19.0.10"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.10.0"
     next: "npm:15.1.7"
@@ -5323,7 +5323,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.106.23"
     "@graphql-mesh/openapi": "npm:0.108.21"
     "@graphql-mesh/runtime": "npm:0.105.18"
-    "@types/react": "npm:19.0.9"
+    "@types/react": "npm:19.0.10"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.10.0"
     next: "npm:15.1.7"
@@ -5420,8 +5420,8 @@ __metadata:
   resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.23"
-    "@types/react": "npm:19.0.9"
-    "@types/react-dom": "npm:19.0.3"
+    "@types/react": "npm:19.0.10"
+    "@types/react-dom": "npm:19.0.4"
     "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.10.0"
     react: "npm:19.0.0"
@@ -10357,23 +10357,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neo4j/cypher-builder@npm:2.2.1":
-  version: 2.2.1
-  resolution: "@neo4j/cypher-builder@npm:2.2.1"
-  checksum: 10c0/5d3af9a6b9bc7db5dc36ca7cfe6e0ec2d104a65538afca20aa47245cfb87681275e26d99e802f9ac80f2597b3535133c3be97cd3b5db35ba1495e6ef4f230dfb
+"@neo4j/cypher-builder@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@neo4j/cypher-builder@npm:2.3.0"
+  checksum: 10c0/bd7d98b8c3a84e9562ff88b9f2ad10a9258aabc2204dba247d4aa83944bce6f5100a3e14199a688dea62de2313910b90e03da7a9b1a423d0a279b022e5909fc3
   languageName: node
   linkType: hard
 
 "@neo4j/graphql@npm:^6.0.0":
-  version: 6.3.0
-  resolution: "@neo4j/graphql@npm:6.3.0"
+  version: 6.3.1
+  resolution: "@neo4j/graphql@npm:6.3.1"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
     "@graphql-tools/resolvers-composition": "npm:^7.0.0"
     "@graphql-tools/schema": "npm:^10.0.0"
     "@graphql-tools/utils": "npm:10.6.1"
-    "@neo4j/cypher-builder": "npm:2.2.1"
+    "@neo4j/cypher-builder": "npm:2.3.0"
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
     dot-prop: "npm:^6.0.1"
@@ -10387,7 +10387,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/b608f6933425c464fe3a049fe9a51f1866688014578823d866357fc9ae8e397dbf97d99af350bf7bb036d8dd17f0064c71ae1ff432767681ff4a338270bd68eb
+  checksum: 10c0/1949a6dfe92394ba296837319e3e234af456c039b1ddbfdc53dc66d41b752b52a90fafd4403e0880ee98dc6f4194e63436aa1abce3d32680ce77ad4f2a2cb45d
   languageName: node
   linkType: hard
 
@@ -14041,21 +14041,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:19.0.3":
-  version: 19.0.3
-  resolution: "@types/react-dom@npm:19.0.3"
+"@types/react-dom@npm:19.0.4":
+  version: 19.0.4
+  resolution: "@types/react-dom@npm:19.0.4"
   peerDependencies:
     "@types/react": ^19.0.0
-  checksum: 10c0/3867427b333cbe8cbba496d7cc20ec9676d32c25ae44f4d1263a4129d42e57cf4adf0039ad263432f1215b88075c27d326e7eb4ed646128235d01a76e661d48f
+  checksum: 10c0/4e71853919b94df9e746a4bd73f8180e9ae13016333ce9c543dcba9f4f4c8fe6e28b038ca6ee61c24e291af8e03ca3bc5ded17c46dee938fcb32d71186fda7a3
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.0.9":
-  version: 19.0.9
-  resolution: "@types/react@npm:19.0.9"
+"@types/react@npm:19.0.10":
+  version: 19.0.10
+  resolution: "@types/react@npm:19.0.10"
   dependencies:
     csstype: "npm:^3.0.2"
-  checksum: 10c0/a0324890a7d9f3bae018b8735c8978cebea35bc00e7e5cdfcead110683a3b95aab550606abb2fe3189215d60dfcf7059335d206a5f20f41868c56daef60f62c1
+  checksum: 10c0/41884cca21850c8b2d6578b172ca0ca4fff6021251a68532b19f2031ac23dc5a9222470208065f8d9985d367376047df2f49ece8d927f7d04cdc94922b1eb34b
   languageName: node
   linkType: hard
 
@@ -21162,13 +21162,13 @@ __metadata:
   linkType: hard
 
 "fast-xml-parser@npm:^4.5.0":
-  version: 4.5.1
-  resolution: "fast-xml-parser@npm:4.5.1"
+  version: 4.5.2
+  resolution: "fast-xml-parser@npm:4.5.2"
   dependencies:
     strnum: "npm:^1.0.5"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10c0/70c6c675770d57d4b73716a1cdccff3780a5f818cffdab9c7560003e1724209001af32fbe7bb27a01107389b1998191c62e20104788ba17e218dfe063aa15b57
+  checksum: 10c0/972cc5a54f76676485a776952b1e68d765ddca3c0053d34db613152a93e2ee74dfd3b630672b33a978bf3a257ae24d4c017ae92f5c2100e6a5312e679fb591a5
   languageName: node
   linkType: hard
 
@@ -37230,7 +37230,7 @@ __metadata:
     "@theguild/components": "npm:^7.6.0"
     "@theguild/tailwind-config": "npm:0.6.2"
     "@types/node": "npm:22.13.4"
-    "@types/react": "npm:19.0.9"
+    "@types/react": "npm:19.0.10"
     cross-env: "npm:7.0.3"
     eslint-config-next: "npm:15.1.7"
     next: "npm:^15.0.0"
