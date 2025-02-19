@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@envelop/auth0": "^6.0.0",
+    "@envelop/auth0": "^7.0.0",
     "@graphql-hive/gateway": "^1.8.0",
     "@graphql-mesh/compose-cli": "workspace:^",
     "@graphql-mesh/plugin-operation-field-permissions": "^0.103.17",

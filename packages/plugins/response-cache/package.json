@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@envelop/core": "^5.0.0",
-    "@envelop/response-cache": "^6.1.1",
+    "@envelop/response-cache": "^7.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "0.5.8",
     "@graphql-mesh/types": "^0.103.17",
