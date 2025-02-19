@@ -4207,16 +4207,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/auth0@npm:6.0.0, @envelop/auth0@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@envelop/auth0@npm:6.0.0"
+"@envelop/auth0@npm:7.0.0, @envelop/auth0@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@envelop/auth0@npm:7.0.0"
   dependencies:
     jsonwebtoken: "npm:^9.0.0"
     jwks-rsa: "npm:^3.0.1"
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.0.0
-  checksum: 10c0/e483167ea080156a3e29e13f4e158bd3df8050e5f3e248eae3c6ebd3bcaf63392fbb994fe1f8c7fa8ac60e49b40b69a6bef37e045eba16e02098860b6e738ed5
+    "@envelop/core": ^5.1.0
+  checksum: 10c0/e317933ba16368edd46b86c623ee900ee0413eda5b272df3b579601f4cb0547e46c467d9cb8f19b2636bc96b2a38e0044cd1ad98705ea14433be8298b8406e88
   languageName: node
   linkType: hard
 
@@ -4230,16 +4230,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/depth-limit@npm:4.0.0, @envelop/depth-limit@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@envelop/depth-limit@npm:4.0.0"
+"@envelop/depth-limit@npm:5.0.0, @envelop/depth-limit@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@envelop/depth-limit@npm:5.0.0"
   dependencies:
     graphql-depth-limit: "npm:^1.1.0"
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.0.0
+    "@envelop/core": ^5.1.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/5a08a2a666632399ca5ced484a8eaddfc41f8c81e5e793c4401d17861acb8a67ae5e41fc0595012a8fecc43111287f89b4fef529d7bb00d4b58273e0f955cbc5
+  checksum: 10c0/f173c66f2d58cf10e11c90dc7adc950bc60cdc967b1e5292f45a6d23ecfa78b560b9271d455c9aa158899ece2a2949545090e01abab460df2181d660460ba4c2
   languageName: node
   linkType: hard
 
@@ -4255,7 +4255,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/extended-validation@npm:^4.0.0, @envelop/extended-validation@npm:^4.1.0":
+"@envelop/extended-validation@npm:^4.1.0":
   version: 4.1.0
   resolution: "@envelop/extended-validation@npm:4.1.0"
   dependencies:
@@ -4268,7 +4268,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/generic-auth@npm:8.0.1, @envelop/generic-auth@npm:^8.0.0":
+"@envelop/extended-validation@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@envelop/extended-validation@npm:5.0.0"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.0.0"
+    tslib: "npm:^2.5.0"
+  peerDependencies:
+    "@envelop/core": ^5.1.0
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/0abf6226cbe39d736c7d2bb1373a1f4415695db8c7b203e2205db270100929d4356050227b58e105103a0d7e6e270643fe0bd956448bb86e6d6920b924e742bc
+  languageName: node
+  linkType: hard
+
+"@envelop/generic-auth@npm:9.0.0":
+  version: 9.0.0
+  resolution: "@envelop/generic-auth@npm:9.0.0"
+  dependencies:
+    "@envelop/extended-validation": "npm:^5.0.0"
+    "@graphql-tools/executor": "npm:^1.3.6"
+    "@graphql-tools/utils": "npm:^10.5.1"
+    tslib: "npm:^2.5.0"
+  peerDependencies:
+    "@envelop/core": ^5.1.0
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/f14b072421ba8d7c9de1de2da6e675f66acb54779e449d6b99ef83a4ac925bb56c60ad9610bff63b39f9cec9dbef6f9b50219630ece2888253e37aecafda7da4
+  languageName: node
+  linkType: hard
+
+"@envelop/generic-auth@npm:^8.0.0":
   version: 8.0.1
   resolution: "@envelop/generic-auth@npm:8.0.1"
   dependencies:
@@ -4283,23 +4311,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/graphql-jit@npm:^8.0.0":
-  version: 8.0.4
-  resolution: "@envelop/graphql-jit@npm:8.0.4"
+"@envelop/graphql-jit@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@envelop/graphql-jit@npm:9.0.0"
   dependencies:
     graphql-jit: "npm:0.8.7"
     tslib: "npm:^2.5.0"
     value-or-promise: "npm:^1.0.12"
   peerDependencies:
-    "@envelop/core": ^5.0.2
+    "@envelop/core": ^5.1.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/2d82ab6da7a5f5a1d1c67deda7cd0a127745f0df043ab666179f1fce2555d4e354415c64e439738f5b34d8f8c6d0ddac948eeede4ccc72e11724fa61344d0544
+  checksum: 10c0/d11fe8c6c04bafda5dbcdfb60c8f8c3b07366b3aa4486ecbcc7c75650ff8a17d904d9263aa326c9af5beb7cd104e55f160b568adc0d4b7da74722e89a7d35689
   languageName: node
   linkType: hard
 
-"@envelop/live-query@npm:7.0.0":
-  version: 7.0.0
-  resolution: "@envelop/live-query@npm:7.0.0"
+"@envelop/live-query@npm:8.0.0":
+  version: 8.0.0
+  resolution: "@envelop/live-query@npm:8.0.0"
   dependencies:
     "@graphql-tools/utils": "npm:^10.0.0"
     "@n1ru4l/graphql-live-query": "npm:^0.10.0"
@@ -4307,23 +4335,23 @@ __metadata:
     "@n1ru4l/in-memory-live-query-store": "npm:^0.10.0"
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.0.0
+    "@envelop/core": ^5.1.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/b158af86ffd56fd54306aac39ad541de115f346bbf32ee9ec51e1feb383e45b4bdfd5a91ab3eca8a1fae05ed1d75cad6ceeeb6945e4f72b1bc5ac14a8fdc20c9
+  checksum: 10c0/35a7b93eaa40e977f814f46337de3c62b3ef5fad2525198ba1347eaa94d709de1bc21e01ceb5827a3476fc9411baf469aacf017ae3d441df193e5eab1043a82f
   languageName: node
   linkType: hard
 
-"@envelop/newrelic@npm:^7.0.0":
-  version: 7.1.0
-  resolution: "@envelop/newrelic@npm:7.1.0"
+"@envelop/newrelic@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "@envelop/newrelic@npm:8.0.0"
   dependencies:
-    "@envelop/on-resolve": "npm:^4.1.0"
+    "@envelop/on-resolve": "npm:^5.0.0"
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.0.0
+    "@envelop/core": ^5.1.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
     newrelic: ">=7 <12"
-  checksum: 10c0/df90e3bb0f63adad81aa6ae505519ad432ae147967306380b4be84b40e3a1b52ee0ce0f416308bdf9c2ebd5afdc7281a72e58ee8b0fbea68ff06857b118df7fc
+  checksum: 10c0/8e1b2ad636fa0720b717821278899d48b8eda65194e53a9bd619177aead1f653c19175c076047d4dad2f5228c3191c5fa18b5fd7fcab8ea989cc46f4b4413a85
   languageName: node
   linkType: hard
 
@@ -4337,16 +4365,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/operation-field-permissions@npm:6.0.0":
-  version: 6.0.0
-  resolution: "@envelop/operation-field-permissions@npm:6.0.0"
+"@envelop/on-resolve@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@envelop/on-resolve@npm:5.0.0"
+  peerDependencies:
+    "@envelop/core": ^5.1.0
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/a6d8c50887942131d4e16bbd0bffc6dffd5fb98de2460967a006858295f1954099656801706dec01d303c2b9873743d65d1dd5ee9bb3e6c3221af5f5b4d82518
+  languageName: node
+  linkType: hard
+
+"@envelop/operation-field-permissions@npm:7.0.0":
+  version: 7.0.0
+  resolution: "@envelop/operation-field-permissions@npm:7.0.0"
   dependencies:
-    "@envelop/extended-validation": "npm:^4.0.0"
+    "@envelop/extended-validation": "npm:^5.0.0"
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.0.0
+    "@envelop/core": ^5.1.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/1504191235fa13421399048df231fa1721a71a5d25c5a72ede3f50bd3ca4ca37eb79c77a2bed3277078ddaf729dee56f13152079a0dc328edc377de90c3bed2d
+  checksum: 10c0/41307dd9d0bab90cdd5dd4cbb9cdbacc39d24d2320511eb5b1ba8e57db4ac4494a5324d4d0a279a42bd11fb838dbb5022822030598aafac2952433bb1428acb6
   languageName: node
   linkType: hard
 
@@ -4364,24 +4402,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/rate-limiter@npm:^6.2.1":
-  version: 6.2.1
-  resolution: "@envelop/rate-limiter@npm:6.2.1"
+"@envelop/rate-limiter@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@envelop/rate-limiter@npm:7.0.0"
   dependencies:
-    "@envelop/on-resolve": "npm:^4.1.0"
+    "@envelop/on-resolve": "npm:^5.0.0"
     "@graphql-tools/utils": "npm:^10.5.4"
     graphql-middleware: "npm:^6.1.35"
     graphql-rate-limit: "npm:^3.3.0"
     minimatch: "npm:^10.0.1"
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.0.2
+    "@envelop/core": ^5.1.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/55786066d1af0987c0247e8154970629fa673b4a0c0c5122967be0d27002c8d0e5f4ca21da6f9e6aa546a252ba40493c78bf2eda51154af75c5c323bd2e18315
+  checksum: 10c0/1265c32ebf4cf93d7d9abefb09f89ce554e788287cb81c1c04ff18c26c6e2908fa0ae27153f1cef2cbe4de0f4213dff1a63165c04a259f986e00a94713b5b13a
   languageName: node
   linkType: hard
 
-"@envelop/response-cache@npm:^6.1.1, @envelop/response-cache@npm:^6.1.2":
+"@envelop/response-cache@npm:^6.1.2":
   version: 6.3.0
   resolution: "@envelop/response-cache@npm:6.3.0"
   dependencies:
@@ -4397,15 +4435,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/statsd@npm:5.0.1":
-  version: 5.0.1
-  resolution: "@envelop/statsd@npm:5.0.1"
+"@envelop/response-cache@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@envelop/response-cache@npm:7.0.0"
+  dependencies:
+    "@graphql-tools/utils": "npm:^10.0.3"
+    "@whatwg-node/fetch": "npm:^0.10.0"
+    fast-json-stable-stringify: "npm:^2.1.0"
+    lru-cache: "npm:^10.0.0"
+    tslib: "npm:^2.5.0"
+  peerDependencies:
+    "@envelop/core": ^5.1.0
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/80ee6eeaabf680338d11a15f3168396fd135e699ef84d4008021aa0e761d6bca2d4c2bd9a4ad927ed310696b9841581c71500258bf7a21534b205563d2af783e
+  languageName: node
+  linkType: hard
+
+"@envelop/statsd@npm:6.0.0":
+  version: 6.0.0
+  resolution: "@envelop/statsd@npm:6.0.0"
   dependencies:
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.0.2
+    "@envelop/core": ^5.1.0
     hot-shots: ^10.0.0
-  checksum: 10c0/97fe051c55ab136f55098029199a3eeed162ff1e5dd99e9c5dbe906434e03ae3718d2db009eaf6fe889acbde3245d31ae75afb3e7700d3b7ca1680f56a95fbd8
+  checksum: 10c0/27922579cf576090fe8eb4e08f9a7f136c1106cb83636e4b4525f6997cbb8fd8f52f1baf432a9d2a16ade48dd419131f373c0e1ce62e3af83fde00919ef9dbcc
   languageName: node
   linkType: hard
 
@@ -4730,7 +4784,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/auth0@workspace:examples/v1-next/auth0"
   dependencies:
-    "@envelop/auth0": "npm:^6.0.0"
+    "@envelop/auth0": "npm:^7.0.0"
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/compose-cli": "workspace:^"
     "@graphql-mesh/plugin-operation-field-permissions": "npm:^0.103.17"
@@ -4759,7 +4813,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/cfw-spacex@workspace:examples/v1-next/integrations/cfw-spacex"
   dependencies:
-    "@envelop/depth-limit": "npm:^4.0.0"
+    "@envelop/depth-limit": "npm:^5.0.0"
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/cache-cfw-kv": "workspace:^"
     "@graphql-mesh/plugin-rate-limit": "npm:^0.103.17"
@@ -4885,7 +4939,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/auth0@workspace:examples/auth0"
   dependencies:
-    "@envelop/auth0": "npm:6.0.0"
+    "@envelop/auth0": "npm:7.0.0"
     "@graphql-mesh/cli": "npm:0.98.23"
     "@graphql-mesh/json-schema": "npm:0.108.20"
     "@graphql-mesh/plugin-operation-field-permissions": "npm:0.103.17"
@@ -5584,7 +5638,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/spacex-cfw@workspace:examples/spacex-cfw"
   dependencies:
-    "@envelop/depth-limit": "npm:4.0.0"
+    "@envelop/depth-limit": "npm:5.0.0"
     "@graphql-mesh/cache-cfw-kv": "npm:0.104.17"
     "@graphql-mesh/cli": "npm:0.98.23"
     "@graphql-mesh/graphql": "npm:0.103.18"
@@ -6960,7 +7014,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-jwt-auth@workspace:packages/plugins/jwt-auth"
   dependencies:
-    "@envelop/generic-auth": "npm:8.0.1"
+    "@envelop/generic-auth": "npm:9.0.0"
     "@graphql-hive/gateway-runtime": "npm:^1.3.5"
     "@graphql-mesh/types": "npm:^0.103.17"
     "@graphql-mesh/utils": "npm:^0.103.17"
@@ -6978,7 +7032,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-live-query@workspace:packages/plugins/live-query"
   dependencies:
     "@envelop/core": "npm:^5.0.0"
-    "@envelop/live-query": "npm:7.0.0"
+    "@envelop/live-query": "npm:8.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:0.5.8"
     "@graphql-mesh/types": "npm:^0.103.17"
@@ -7017,7 +7071,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-newrelic@workspace:packages/plugins/newrelic"
   dependencies:
     "@envelop/core": "npm:^5.0.0"
-    "@envelop/newrelic": "npm:^7.0.0"
+    "@envelop/newrelic": "npm:^8.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.8"
     "@graphql-mesh/types": "npm:^0.103.17"
@@ -7065,7 +7119,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-operation-field-permissions@workspace:packages/plugins/operation-field-permissions"
   dependencies:
-    "@envelop/operation-field-permissions": "npm:6.0.0"
+    "@envelop/operation-field-permissions": "npm:7.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/types": "npm:^0.103.17"
     tslib: "npm:^2.4.0"
@@ -7113,7 +7167,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit"
   dependencies:
     "@envelop/core": "npm:5.0.3"
-    "@envelop/rate-limiter": "npm:^6.2.1"
+    "@envelop/rate-limiter": "npm:^7.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:0.5.8"
     "@graphql-mesh/types": "npm:^0.103.17"
@@ -7130,7 +7184,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-response-cache@workspace:packages/plugins/response-cache"
   dependencies:
     "@envelop/core": "npm:^5.0.0"
-    "@envelop/response-cache": "npm:^6.1.1"
+    "@envelop/response-cache": "npm:^7.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:0.5.8"
     "@graphql-mesh/types": "npm:^0.103.17"
@@ -7165,7 +7219,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-statsd@workspace:packages/plugins/statsd"
   dependencies:
-    "@envelop/statsd": "npm:5.0.1"
+    "@envelop/statsd": "npm:6.0.0"
     "@graphql-mesh/types": "npm:^0.103.17"
     "@graphql-mesh/utils": "npm:^0.103.17"
     hot-shots: "npm:^10.2.1"
@@ -7213,8 +7267,8 @@ __metadata:
   resolution: "@graphql-mesh/runtime@workspace:packages/legacy/runtime"
   dependencies:
     "@envelop/core": "npm:^5.0.0"
-    "@envelop/extended-validation": "npm:^4.0.0"
-    "@envelop/graphql-jit": "npm:^8.0.0"
+    "@envelop/extended-validation": "npm:^5.0.0"
+    "@envelop/graphql-jit": "npm:^9.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.8"
     "@graphql-mesh/types": "npm:^0.103.17"

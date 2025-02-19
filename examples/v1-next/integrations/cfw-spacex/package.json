@@ -5,7 +5,7 @@
     "start": "wrangler dev"
   },
   "dependencies": {
-    "@envelop/depth-limit": "^4.0.0",
+    "@envelop/depth-limit": "^5.0.0",
     "@graphql-hive/gateway": "^1.8.0",
     "@graphql-mesh/cache-cfw-kv": "workspace:^",
     "@graphql-mesh/plugin-rate-limit": "^0.103.17",
