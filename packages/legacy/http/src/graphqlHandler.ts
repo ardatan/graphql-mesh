@@ -46,6 +46,7 @@ export const graphqlHandler = ({
       landingPage: false,
       batching: batchingLimit ? { limit: batchingLimit } : false,
       healthCheckEndpoint,
+      disposeOnProcessTerminate: true,
     });
   });
   return (request: Request, ctx: any) =>
