@@ -19,8 +19,8 @@ const mysqlContainer = () =>
   });
 
 it('should compose the appropriate schema', async () => {
-  await using mysql = await mysqlContainer();
-  await using composition = await compose({
+  const mysql = await mysqlContainer();
+  const composition = await compose({
     services: [mysql],
     maskServicePorts: true,
   });
@@ -28,9 +28,9 @@ it('should compose the appropriate schema', async () => {
 });
 
 it('should execute GetSomeEmployees', async () => {
-  await using mysql = await mysqlContainer();
-  await using composition = await compose({ output: 'graphql', services: [mysql] });
-  await using gw = await serve({ supergraph: composition.output });
+  const mysql = await mysqlContainer();
+  const composition = await compose({ output: 'graphql', services: [mysql] });
+  const gw = await serve({ supergraph: composition.output });
   const res = await gw.execute({
     query: /* GraphQL */ `
       query GetSomeEmployees {

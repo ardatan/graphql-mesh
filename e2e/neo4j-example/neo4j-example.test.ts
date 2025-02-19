@@ -32,8 +32,8 @@ const neo4jContainer = async () => {
 };
 
 it('should compose the appropriate schema', async () => {
-  await using neo4j = await neo4jContainer();
-  await using composition = await compose({
+  const neo4j = await neo4jContainer();
+  const composition = await compose({
     services: [neo4j],
     maskServicePorts: true,
   });
@@ -41,12 +41,12 @@ it('should compose the appropriate schema', async () => {
 });
 
 it('should execute MovieWithActedIn', async () => {
-  await using neo4j = await neo4jContainer();
-  await using composition = await compose({
+  const neo4j = await neo4jContainer();
+  const composition = await compose({
     services: [neo4j],
     output: 'graphql',
   });
-  await using gw = await serve({ supergraph: composition.output });
+  const gw = await serve({ supergraph: composition.output });
   const result = await gw.execute({
     query: /* GraphQL */ `
       query MovieWithActedIn {
