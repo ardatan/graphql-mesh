@@ -11,7 +11,7 @@ export function disposableExec(...params: Parameters<typeof exec>) {
       return cmd.stdout;
     },
     [DisposableSymbols.dispose]() {
-      cmd.kill();
+      cmd.kill('SIGKILL');
     },
   };
 }

@@ -11,7 +11,7 @@
     "@graphql-mesh/cli": "0.98.23",
     "@graphql-mesh/json-schema": "0.108.20",
     "@graphql-mesh/plugin-mock": "0.103.18",
-    "@graphql-yoga/plugin-sofa": "3.11.0",
+    "@graphql-yoga/plugin-sofa": "3.12.0",
     "graphql": "16.10.0"
   },
   "devDependencies": {

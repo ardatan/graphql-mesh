@@ -56,7 +56,7 @@
     "prettier": "prettier --write --list-different .",
     "prettier:check": "prettier --check .",
     "release": "yarn build && changeset publish",
-    "test": "cross-env \"JEST=1\" jest  --forceExit --no-watchman",
+    "test": "cross-env \"JEST=1\" jest --forceExit --no-watchman",
     "test:e2e": "cross-env \"JEST=1\" \"E2E_TEST=true\" jest --no-watchman --forceExit",
     "test:integration": "cross-env \"JEST=1\" \"INTEGRATION_TEST=true\" jest --forceExit --no-watchman",
     "test:integration:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" \"INTEGRATION_TEST=true\" jest --detectOpenHandles --detectLeaks --no-watchman",

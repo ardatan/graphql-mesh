@@ -718,7 +718,7 @@ function spawn(
         mem: parseFloat(mem) * 0.001, // KB to MB
       };
     },
-    [DisposableSymbols.asyncDispose]: () => (child.kill(), waitForExit),
+    [DisposableSymbols.asyncDispose]: () => (child.kill('SIGKILL'), waitForExit),
   };
   leftoverStack.use(proc);
 
