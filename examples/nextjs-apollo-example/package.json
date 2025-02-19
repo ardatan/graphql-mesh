@@ -10,10 +10,10 @@
     "start:prod": "next start"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.98.23",
-    "@graphql-mesh/config": "0.106.23",
+    "@graphql-mesh/cli": "0.98.24",
+    "@graphql-mesh/config": "0.106.24",
     "@graphql-mesh/openapi": "0.108.21",
-    "@graphql-mesh/runtime": "0.105.18",
+    "@graphql-mesh/runtime": "0.105.19",
     "apollo-server-micro": "3.13.0",
     "graphql": "16.10.0",
     "next": "15.1.7",

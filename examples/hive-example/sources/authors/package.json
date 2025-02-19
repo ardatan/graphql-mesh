@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@graphql-hive/cli": "0.45.0",
-    "@graphql-mesh/cli": "0.98.23",
+    "@graphql-mesh/cli": "0.98.24",
     "@graphql-mesh/openapi": "0.108.21",
     "graphql": "16.10.0"
   }
