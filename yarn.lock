@@ -5478,7 +5478,7 @@ __metadata:
     react: "npm:19.0.0"
     react-dom: "npm:19.0.0"
     typescript: "npm:^5.4.2"
-    vite: "npm:6.1.0"
+    vite: "npm:6.1.1"
   languageName: unknown
   linkType: soft
 
@@ -5580,7 +5580,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.24"
     "@graphql-mesh/openapi": "npm:0.108.21"
-    "@sinclair/typebox": "npm:0.34.25"
+    "@sinclair/typebox": "npm:0.34.26"
     concurrently: "npm:9.1.2"
     fets: "npm:0.8.4"
     graphql: "npm:16.10.0"
@@ -12006,10 +12006,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.34.25":
-  version: 0.34.25
-  resolution: "@sinclair/typebox@npm:0.34.25"
-  checksum: 10c0/a717cce11c9a7ce54caeccfcc344086df5ccb568b89f427dfd60fe472fdf408618892977be9fd0d95972d5235b9b8eaf6b2bf5ef0b4a4cff0adc81c899797c8b
+"@sinclair/typebox@npm:0.34.26":
+  version: 0.34.26
+  resolution: "@sinclair/typebox@npm:0.34.26"
+  checksum: 10c0/404329508ca54110c88904565f64a1f89769bffa4358290af813cd6eaa001e25be2ed9aed081abe63cd1ff08bac8a784b1beae4f68cbe3cc97f12a18e7923bec
   languageName: node
   linkType: hard
 
@@ -31248,13 +31248,13 @@ __metadata:
   linkType: hard
 
 "postcss@npm:^8.4.31":
-  version: 8.5.2
-  resolution: "postcss@npm:8.5.2"
+  version: 8.5.3
+  resolution: "postcss@npm:8.5.3"
   dependencies:
     nanoid: "npm:^3.3.8"
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.1"
-  checksum: 10c0/3044d49bc725029ab62292e8bf9849741251b95f3b754e191bf8b4025414d40ec3b4ac05c5a563d4b50060b5c8e96683eb4d783d8d8fa3867eb7b763cbe66127
+  checksum: 10c0/b75510d7b28c3ab728c8733dd01538314a18c52af426f199a3c9177e63eb08602a3938bfb66b62dc01350b9aed62087eabbf229af97a1659eb8d3513cec823b3
   languageName: node
   linkType: hard
 
@@ -36941,13 +36941,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:6.1.0":
-  version: 6.1.0
-  resolution: "vite@npm:6.1.0"
+"vite@npm:6.1.1":
+  version: 6.1.1
+  resolution: "vite@npm:6.1.1"
   dependencies:
     esbuild: "npm:^0.24.2"
     fsevents: "npm:~2.3.3"
-    postcss: "npm:^8.5.1"
+    postcss: "npm:^8.5.2"
     rollup: "npm:^4.30.1"
   peerDependencies:
     "@types/node": ^18.0.0 || ^20.0.0 || >=22.0.0
@@ -36989,7 +36989,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/e1cad1cfbd29923a37d2dbd60f7387901ed8356758073a0226cbe844fd032425ba3bf41651332cab4965d5c54d0b51d208889ff32ce81bd282d230c0c9f0f8f1
+  checksum: 10c0/4ec5ddc9436951a68b213cd59c2a157663ef423658c387400774582ea33da40dcae18e55f3adb3b629173e2183b10d49db8370bc51a0aa89797e4ca5a34702a0
   languageName: node
   linkType: hard
 
