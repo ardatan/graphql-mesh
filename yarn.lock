@@ -5220,6 +5220,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@examples/json-schema-complex-url@workspace:examples/json-schema-complex-url":
+  version: 0.0.0-use.local
+  resolution: "@examples/json-schema-complex-url@workspace:examples/json-schema-complex-url"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.98.23"
+    "@graphql-mesh/json-schema": "npm:0.108.20"
+    "@types/node": "npm:22.13.4"
+    concurrently: "npm:9.1.2"
+    graphql: "npm:16.10.0"
+    tsx: "npm:4.19.2"
+  languageName: unknown
+  linkType: soft
+
 "@examples/json-schema-covid@workspace:examples/json-schema-covid":
   version: 0.0.0-use.local
   resolution: "@examples/json-schema-covid@workspace:examples/json-schema-covid"
@@ -8177,7 +8190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/executor@npm:^1.3.10, @graphql-tools/executor@npm:^1.3.2, @graphql-tools/executor@npm:^1.3.6":
+"@graphql-tools/executor@npm:^1.3.10, @graphql-tools/executor@npm:^1.3.2, @graphql-tools/executor@npm:^1.3.6, @graphql-tools/executor@npm:^1.3.7":
   version: 1.3.14
   resolution: "@graphql-tools/executor@npm:1.3.14"
   dependencies:
@@ -22741,7 +22754,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-yoga@npm:5.12.0, graphql-yoga@npm:^5.10.10, graphql-yoga@npm:^5.10.11, graphql-yoga@npm:^5.10.6, graphql-yoga@npm:^5.7.0":
+"graphql-yoga@npm:5.12.0, graphql-yoga@npm:^5.10.10, graphql-yoga@npm:^5.10.11, graphql-yoga@npm:^5.7.0":
   version: 5.12.0
   resolution: "graphql-yoga@npm:5.12.0"
   dependencies:
@@ -22759,6 +22772,27 @@ __metadata:
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
   checksum: 10c0/e6fd4e79e17428e7e28904761bcf5d0730d1197623631f2550914ba15254be89af633b8040636503302a4170d29ff3b9c75c674a02425be2131b26731d3578ab
+  languageName: node
+  linkType: hard
+
+"graphql-yoga@npm:^5.10.6":
+  version: 5.10.11
+  resolution: "graphql-yoga@npm:5.10.11"
+  dependencies:
+    "@envelop/core": "npm:^5.0.2"
+    "@graphql-tools/executor": "npm:^1.3.7"
+    "@graphql-tools/schema": "npm:^10.0.11"
+    "@graphql-tools/utils": "npm:^10.6.2"
+    "@graphql-yoga/logger": "npm:^2.0.1"
+    "@graphql-yoga/subscription": "npm:^5.0.3"
+    "@whatwg-node/fetch": "npm:^0.10.1"
+    "@whatwg-node/server": "npm:^0.9.64"
+    dset: "npm:^3.1.4"
+    lru-cache: "npm:^10.0.0"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    graphql: ^15.2.0 || ^16.0.0
+  checksum: 10c0/74b3ad3ff77656c680b36044c2655e8e95624fa51f4cb189c7d7d23a17ce14538fd13a552eea78fd1eddd3cc2e1c2f98bb529ad66a83a2869d9306f648f15368
   languageName: node
   linkType: hard
 
@@ -35909,6 +35943,22 @@ __metadata:
   peerDependencies:
     typescript: ">=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta"
   checksum: 10c0/02f19e458ec78ead8fffbf711f834ad8ecd2cc6ade4ec0320790713dccc0a412b99e7fd907c4cda2a1dc602c75db6f12e0108e87a5afad4b2f9e90a24cabd5a2
+  languageName: node
+  linkType: hard
+
+"tsx@npm:4.19.2":
+  version: 4.19.2
+  resolution: "tsx@npm:4.19.2"
+  dependencies:
+    esbuild: "npm:~0.23.0"
+    fsevents: "npm:~2.3.3"
+    get-tsconfig: "npm:^4.7.5"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    tsx: dist/cli.mjs
+  checksum: 10c0/63164b889b1d170403e4d8753a6755dec371f220f5ce29a8e88f1f4d6085a784a12d8dc2ee669116611f2c72757ac9beaa3eea5c452796f541bdd2dc11753721
   languageName: node
   linkType: hard
 
