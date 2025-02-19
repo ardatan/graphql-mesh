@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/config",
-  "version": "0.106.23",
+  "version": "0.106.24",
   "type": "module",
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/merger-bare": "^0.104.20",
     "@graphql-mesh/merger-stitching": "^0.104.17",
-    "@graphql-mesh/runtime": "^0.105.18",
+    "@graphql-mesh/runtime": "^0.105.19",
     "@graphql-mesh/store": "^0.103.17",
     "@graphql-mesh/types": "^0.103.17",
     "@graphql-mesh/utils": "^0.103.17",
