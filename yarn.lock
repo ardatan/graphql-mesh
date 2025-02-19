@@ -4220,13 +4220,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/core@npm:5.0.3, @envelop/core@npm:^5.0.0, @envelop/core@npm:^5.0.2, @envelop/core@npm:^5.0.3":
-  version: 5.0.3
-  resolution: "@envelop/core@npm:5.0.3"
+"@envelop/core@npm:5.1.0, @envelop/core@npm:^5.0.0, @envelop/core@npm:^5.0.2, @envelop/core@npm:^5.0.3":
+  version: 5.1.0
+  resolution: "@envelop/core@npm:5.1.0"
   dependencies:
-    "@envelop/types": "npm:5.0.0"
+    "@envelop/types": "npm:^5.1.0"
     tslib: "npm:^2.5.0"
-  checksum: 10c0/86f181137a4062554357151c717f068c89897364de0fd989b9abb408b03b4e8fc5946f8cdd76f2ff3ba5ab2e74140acf82210b18c32bb86875f2f18079bc19e2
+  checksum: 10c0/b3aa8b3c58d85daa99629f2d379a9a47f14585d36429f929db67f97e4954df96d1fa4a518723392811be4f79b111dc2f4c79a43eb8c6c2d532970055ec76c5aa
   languageName: node
   linkType: hard
 
@@ -4463,12 +4463,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/types@npm:5.0.0":
-  version: 5.0.0
-  resolution: "@envelop/types@npm:5.0.0"
+"@envelop/types@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@envelop/types@npm:5.1.0"
   dependencies:
     tslib: "npm:^2.5.0"
-  checksum: 10c0/0cbaa68218cb6121b58c6d354b0a17913ded042673df7bfcf385cac6c3b42713b82719875f553b31e8f059727ff5478ed11b33b4febf8deeaf902f1a92b212a8
+  checksum: 10c0/db9f33756b6c7299dfd33fc02023f45a686e0d43b37977fd92073d69edffeb0619627dde818fc8061c9aaa2a17fab46092eb1eff1998ec897bc20a2355f78e34
   languageName: node
   linkType: hard
 
@@ -7048,7 +7048,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-mock@workspace:packages/plugins/mock"
   dependencies:
-    "@envelop/core": "npm:5.0.3"
+    "@envelop/core": "npm:5.1.0"
     "@graphql-mesh/cache-localforage": "npm:0.103.18"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.8"
@@ -7166,7 +7166,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit"
   dependencies:
-    "@envelop/core": "npm:5.0.3"
+    "@envelop/core": "npm:5.1.0"
     "@envelop/rate-limiter": "npm:^7.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:0.5.8"
@@ -35918,10 +35918,10 @@ __metadata:
   linkType: hard
 
 "tsx@npm:^4.16.5, tsx@npm:^4.19.0":
-  version: 4.19.2
-  resolution: "tsx@npm:4.19.2"
+  version: 4.19.3
+  resolution: "tsx@npm:4.19.3"
   dependencies:
-    esbuild: "npm:~0.23.0"
+    esbuild: "npm:~0.25.0"
     fsevents: "npm:~2.3.3"
     get-tsconfig: "npm:^4.7.5"
   dependenciesMeta:
@@ -35929,7 +35929,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/63164b889b1d170403e4d8753a6755dec371f220f5ce29a8e88f1f4d6085a784a12d8dc2ee669116611f2c72757ac9beaa3eea5c452796f541bdd2dc11753721
+  checksum: 10c0/cacfb4cf1392ae10e8e4fe032ad26ccb07cd8a3b32e5a0da270d9c48d06ee74f743e4a84686cbc9d89b48032d59bbc56cd911e076f53cebe61dc24fa525ff790
   languageName: node
   linkType: hard
 
