@@ -41,6 +41,9 @@
     "@omnigraph/raml": "0.108.19",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "graphql": "16.10.0"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
@@ -53,8 +56,5 @@
   },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "devDependencies": {
-    "graphql": "16.10.0"
   }
 }

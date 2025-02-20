@@ -49,6 +49,9 @@
     "tslib": "^2.4.0",
     "url-join": "4.0.1"
   },
+  "devDependencies": {
+    "graphql": "16.10.0"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
@@ -56,8 +59,5 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
-  },
-  "devDependencies": {
-    "graphql": "16.10.0"
   }
 }
