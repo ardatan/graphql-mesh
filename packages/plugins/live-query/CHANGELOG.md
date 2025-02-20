@@ -1,5 +1,26 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.103.19
+
+### Patch Changes
+
+- [#8409](https://github.com/ardatan/graphql-mesh/pull/8409)
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/live-query@^8.0.0` ↗︎](https://www.npmjs.com/package/@envelop/live-query/v/8.0.0)
+    (from `8.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/string-interpolation@^0.5.8` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.8)
+    (from `0.5.8`, in `dependencies`)
+  - Updated dependency
+    [`@n1ru4l/in-memory-live-query-store@^0.10.0` ↗︎](https://www.npmjs.com/package/@n1ru4l/in-memory-live-query-store/v/0.10.0)
+    (from `0.10.0`, in `dependencies`)
+- Updated dependencies
+  [[`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
+  - @graphql-mesh/utils@0.103.18
+  - @graphql-mesh/types@0.103.18
+
 ## 0.103.18
 
 ### Patch Changes

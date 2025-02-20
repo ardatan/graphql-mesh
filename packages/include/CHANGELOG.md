@@ -1,5 +1,18 @@
 # @graphql-mesh/include
 
+## 0.2.17
+
+### Patch Changes
+
+- [#8409](https://github.com/ardatan/graphql-mesh/pull/8409)
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency [`graphql@*` ↗︎](https://www.npmjs.com/package/graphql/v/*) (to
+    `peerDependencies`)
+- Updated dependencies
+  [[`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
+  - @graphql-mesh/utils@0.103.18
+
 ## 0.2.16
 
 ### Patch Changes

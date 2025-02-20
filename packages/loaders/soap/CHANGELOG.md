@@ -1,5 +1,31 @@
 # @omnigraph/soap
 
+## 0.105.18
+
+### Patch Changes
+
+- [#8405](https://github.com/ardatan/graphql-mesh/pull/8405)
+  [`5aaf455`](https://github.com/ardatan/graphql-mesh/commit/5aaf4559ac3dc3d08db4011a4351b96b8b25d1a3)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+
+  - Updated dependency
+    [`fast-xml-parser@^5.0.0` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.0.0) (from
+    `^4.5.0`, in `dependencies`)
+
+- [#8409](https://github.com/ardatan/graphql-mesh/pull/8409)
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/fetch@^0.10.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.4)
+    (from `^0.10.0`, in `dependencies`)
+- Updated dependencies
+  [[`5aaf455`](https://github.com/ardatan/graphql-mesh/commit/5aaf4559ac3dc3d08db4011a4351b96b8b25d1a3),
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2),
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
+  - @graphql-mesh/transport-soap@0.8.18
+  - @graphql-mesh/utils@0.103.18
+  - @graphql-mesh/types@0.103.18
+
 ## 0.105.17
 
 ### Patch Changes

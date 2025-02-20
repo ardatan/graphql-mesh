@@ -1,5 +1,21 @@
 # @graphql-mesh/plugin-hive
 
+## 0.103.19
+
+### Patch Changes
+
+- [#8409](https://github.com/ardatan/graphql-mesh/pull/8409)
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/string-interpolation@^0.5.8` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.8)
+    (from `0.5.8`, in `dependencies`)
+  - Added dependency
+    [`graphql-yoga@^5.12.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.12.0) (to
+    `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.103.18
+
 ## 0.103.18
 
 ### Patch Changes
