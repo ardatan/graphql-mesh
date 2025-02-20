@@ -5580,7 +5580,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.24"
     "@graphql-mesh/openapi": "npm:0.108.21"
-    "@sinclair/typebox": "npm:0.34.26"
+    "@sinclair/typebox": "npm:0.34.27"
     concurrently: "npm:9.1.2"
     fets: "npm:0.8.4"
     graphql: "npm:16.10.0"
@@ -6036,17 +6036,17 @@ __metadata:
   linkType: hard
 
 "@graphql-codegen/typed-document-node@npm:^5.0.0, @graphql-codegen/typed-document-node@npm:^5.0.13":
-  version: 5.0.13
-  resolution: "@graphql-codegen/typed-document-node@npm:5.0.13"
+  version: 5.0.14
+  resolution: "@graphql-codegen/typed-document-node@npm:5.0.14"
   dependencies:
     "@graphql-codegen/plugin-helpers": "npm:^5.1.0"
-    "@graphql-codegen/visitor-plugin-common": "npm:5.6.1"
+    "@graphql-codegen/visitor-plugin-common": "npm:5.7.0"
     auto-bind: "npm:~4.0.0"
     change-case-all: "npm:1.0.15"
     tslib: "npm:~2.6.0"
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/edece90282735efee8bcbbdf2daf92997bbc23bd430b3fd948acbd8cf9cdaa7e49d3a5a37115ebaa63ea6b3dabdc736870336e2170eec26e465438787135c2fb
+  checksum: 10c0/f2e4661eb6a7220a68eabf928b4f12c2d192dbebb7e8004eca22d301509270558184edafb306f3988e020e8b89c5b57b52e4b2bcbc250134a6776591d19da1ac
   languageName: node
   linkType: hard
 
@@ -12026,10 +12026,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.34.26":
-  version: 0.34.26
-  resolution: "@sinclair/typebox@npm:0.34.26"
-  checksum: 10c0/404329508ca54110c88904565f64a1f89769bffa4358290af813cd6eaa001e25be2ed9aed081abe63cd1ff08bac8a784b1beae4f68cbe3cc97f12a18e7923bec
+"@sinclair/typebox@npm:0.34.27":
+  version: 0.34.27
+  resolution: "@sinclair/typebox@npm:0.34.27"
+  checksum: 10c0/c40f53c9e34b746aab1fe9d5c9c87e36f1efe4e534282e5b0164e0126b7eed59cee30df4da7fbec178c40dc8a837365b29d460e7ec4fd08bed07ed32ef546e48
   languageName: node
   linkType: hard
 
@@ -36826,12 +36826,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:11.0.5":
-  version: 11.0.5
-  resolution: "uuid@npm:11.0.5"
+"uuid@npm:11.1.0":
+  version: 11.1.0
+  resolution: "uuid@npm:11.1.0"
   bin:
     uuid: dist/esm/bin/uuid
-  checksum: 10c0/6f59f0c605e02c14515401084ca124b9cb462b4dcac866916a49862bcf831874508a308588c23a7718269226ad11a92da29b39d761ad2b86e736623e3a33b6e7
+  checksum: 10c0/34aa51b9874ae398c2b799c88a127701408cd581ee89ec3baa53509dd8728cbb25826f2a038f9465f8b7be446f0fbf11558862965b18d21c993684297628d4d3
   languageName: node
   linkType: hard
 
