@@ -112,6 +112,7 @@
     "@whatwg-node/node-fetch": "0.7.10",
     "@whatwg-node/server": "0.9.68",
     "axios": "^1.0.0",
+    "cookie": "1.0.2",
     "cross-fetch": "^4.0.0",
     "date-and-time": "^3.0.0",
     "es5-ext": "0.10.64",
