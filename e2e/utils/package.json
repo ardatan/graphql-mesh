@@ -9,6 +9,7 @@
     "@whatwg-node/disposablestack": "^0.0.5",
     "dockerode": "^4.0.2",
     "glob": "^11.0.0",
+    "graphql": "^16.10.0",
     "tsx": "^4.16.5"
   }
 }

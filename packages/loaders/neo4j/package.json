@@ -43,6 +43,9 @@
     "neo4j-driver": "^5.9.2",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "graphql": "16.10.0"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"

@@ -44,7 +44,8 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@types/minimatch": "5.1.2"
+    "@types/minimatch": "5.1.2",
+    "graphql": "16.10.0"
   },
   "publishConfig": {
     "access": "public",

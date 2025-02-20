@@ -46,6 +46,9 @@
     "postgraphile-core": "^4.13.0",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "graphql": "16.10.0"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"

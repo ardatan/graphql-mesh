@@ -49,6 +49,9 @@
     "micromatch": "^4.0.8",
     "protobufjs": "^7.2.5"
   },
+  "devDependencies": {
+    "graphql": "16.10.0"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"

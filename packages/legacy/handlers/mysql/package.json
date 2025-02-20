@@ -42,6 +42,9 @@
     "@omnigraph/mysql": "^0.8.17",
     "tslib": "^2.4.0"
   },
+  "devDependencies": {
+    "graphql": "16.10.0"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"

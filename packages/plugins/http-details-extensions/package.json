@@ -35,11 +35,14 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/core": "^5.0.3",
+    "@envelop/core": "^5.1.0",
     "@graphql-mesh/types": "^0.103.17",
     "@graphql-mesh/utils": "^0.103.17",
-    "@whatwg-node/fetch": "^0.10.0",
+    "@whatwg-node/fetch": "^0.10.4",
     "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "graphql": "16.10.0"
   },
   "publishConfig": {
     "access": "public",

@@ -43,7 +43,7 @@
     "@graphql-tools/utils": "^10.8.0",
     "@graphql-tools/wrap": "^10.0.28",
     "@whatwg-node/disposablestack": "^0.0.5",
-    "@whatwg-node/fetch": "^0.10.0",
+    "@whatwg-node/fetch": "^0.10.4",
     "dset": "^3.1.2",
     "js-yaml": "^4.1.0",
     "lodash.get": "^4.4.2",
@@ -55,7 +55,8 @@
     "@apollo/server": "4.11.3",
     "@types/js-yaml": "4.0.9",
     "@types/lodash.topath": "4.5.9",
-    "@types/object-hash": "3.0.6"
+    "@types/object-hash": "3.0.6",
+    "graphql": "16.10.0"
   },
   "publishConfig": {
     "access": "public",

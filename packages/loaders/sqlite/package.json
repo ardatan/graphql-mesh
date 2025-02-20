@@ -43,6 +43,9 @@
   "optionalDependencies": {
     "tuql": "^1.7.0"
   },
+  "devDependencies": {
+    "graphql": "16.10.0"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"

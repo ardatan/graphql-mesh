@@ -35,10 +35,14 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/operation-field-permissions": "7.0.0",
+    "@envelop/core": "^5.1.0",
+    "@envelop/operation-field-permissions": "^7.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/types": "^0.103.17",
     "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "graphql": "16.10.0"
   },
   "publishConfig": {
     "access": "public",
