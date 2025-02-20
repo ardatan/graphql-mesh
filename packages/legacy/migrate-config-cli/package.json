@@ -48,7 +48,8 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@types/lodash.kebabcase": "^4.1.9"
+    "@types/lodash.kebabcase": "^4.1.9",
+    "graphql": "16.10.0"
   },
   "publishConfig": {
     "access": "public",

@@ -15,6 +15,8 @@
     "@creditkarma/thrift-typescript": "3.7.6",
     "@graphql-mesh/cli": "0.98.24",
     "@graphql-mesh/thrift": "0.105.17",
+    "@types/express": "5.0.0",
+    "@types/node": "22.13.4",
     "express": "4.21.2",
     "graphql": "16.10.0",
     "thrift": "0.21.0",

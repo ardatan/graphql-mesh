@@ -55,7 +55,8 @@
     "@apollo/server": "4.11.3",
     "@types/js-yaml": "4.0.9",
     "@types/lodash.topath": "4.5.9",
-    "@types/object-hash": "3.0.6"
+    "@types/object-hash": "3.0.6",
+    "graphql": "16.10.0"
   },
   "publishConfig": {
     "access": "public",

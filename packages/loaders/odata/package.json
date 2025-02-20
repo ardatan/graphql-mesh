@@ -55,7 +55,8 @@
   },
   "devDependencies": {
     "@types/http-string-parser": "0.0.33",
-    "@types/url-join": "4.0.3"
+    "@types/url-join": "4.0.3",
+    "graphql": "16.10.0"
   },
   "publishConfig": {
     "access": "public",

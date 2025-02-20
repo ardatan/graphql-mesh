@@ -51,5 +51,8 @@
   "sideEffects": false,
   "typescript": {
     "definition": "dist/typings/index.d.ts"
+  },
+  "devDependencies": {
+    "graphql": "16.10.0"
   }
 }

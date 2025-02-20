@@ -53,6 +53,9 @@
     "commander": "^13.0.0",
     "dotenv": "^16.3.1"
   },
+  "devDependencies": {
+    "graphql": "16.10.0"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "dist"

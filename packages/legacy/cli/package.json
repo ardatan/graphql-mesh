@@ -61,6 +61,7 @@
     "cosmiconfig": "^9.0.0",
     "dotenv": "^16.0.3",
     "graphql-import-node": "^0.0.5",
+    "graphql-tag": "^2.12.6",
     "graphql-ws": "^6.0.0",
     "json-bigint-patch": "^0.0.8",
     "json5": "^2.2.3",
@@ -78,7 +79,8 @@
     "@types/mkdirp": "2.0.0",
     "@types/rimraf": "4.0.5",
     "@types/ws": "8.5.14",
-    "@types/yargs": "17.0.33"
+    "@types/yargs": "17.0.33",
+    "graphql": "16.10.0"
   },
   "publishConfig": {
     "access": "public",

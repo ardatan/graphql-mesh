@@ -41,7 +41,8 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@apollo/client": "3.13.1"
+    "@apollo/client": "3.13.1",
+    "graphql": "16.10.0"
   },
   "publishConfig": {
     "access": "public",
