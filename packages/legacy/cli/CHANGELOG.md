@@ -1,5 +1,28 @@
 # @graphql-mesh/cli
 
+## 0.98.25
+
+### Patch Changes
+
+- [#8409](https://github.com/ardatan/graphql-mesh/pull/8409)
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency [`graphql-tag@^2.12.6` ↗︎](https://www.npmjs.com/package/graphql-tag/v/2.12.6)
+    (to `dependencies`)
+- Updated dependencies
+  [[`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2),
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2),
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2),
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2),
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
+  - @graphql-mesh/config@0.106.25
+  - @graphql-mesh/http@0.105.20
+  - @graphql-mesh/include@0.2.17
+  - @graphql-mesh/runtime@0.105.20
+  - @graphql-mesh/utils@0.103.18
+  - @graphql-mesh/store@0.103.18
+  - @graphql-mesh/types@0.103.18
+
 ## 0.98.24
 
 ### Patch Changes

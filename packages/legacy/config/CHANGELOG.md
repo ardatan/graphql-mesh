@@ -1,5 +1,32 @@
 # @graphql-mesh/config
 
+## 0.106.25
+
+### Patch Changes
+
+- [#8409](https://github.com/ardatan/graphql-mesh/pull/8409)
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/core@^5.1.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.1.0) (from
+    `^5.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@whatwg-node/fetch@^0.10.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.4)
+    (from `^0.10.0`, in `dependencies`)
+  - Added dependency
+    [`graphql-yoga@^5.12.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.12.0) (to
+    `dependencies`)
+- Updated dependencies
+  [[`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2),
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
+  - @graphql-mesh/runtime@0.105.20
+  - @graphql-mesh/utils@0.103.18
+  - @graphql-mesh/cache-localforage@0.103.19
+  - @graphql-mesh/merger-bare@0.104.21
+  - @graphql-mesh/merger-stitching@0.104.18
+  - @graphql-mesh/store@0.103.18
+  - @graphql-mesh/types@0.103.18
+
 ## 0.106.24
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # @graphql-mesh/transport-rest
 
+## 0.8.20
+
+### Patch Changes
+
+- [#8409](https://github.com/ardatan/graphql-mesh/pull/8409)
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/fetch@^0.10.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.4)
+    (from `^0.9.15 || ^0.10.0`, in `dependencies`)
+- Updated dependencies
+  [[`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
+  - @graphql-mesh/utils@0.103.18
+  - @graphql-mesh/types@0.103.18
+
 ## 0.8.19
 
 ### Patch Changes

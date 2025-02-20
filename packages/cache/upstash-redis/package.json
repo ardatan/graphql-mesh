@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-upstash-redis",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,8 +36,8 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.9",
-    "@graphql-mesh/types": "^0.103.17",
-    "@graphql-mesh/utils": "^0.103.17",
+    "@graphql-mesh/types": "^0.103.18",
+    "@graphql-mesh/utils": "^0.103.18",
     "@upstash/redis": "^1.34.3",
     "@whatwg-node/disposablestack": "^0.0.5",
     "tslib": "^2.4.0"
