@@ -42,13 +42,13 @@
     "@graphql-mesh/string-interpolation": "^0.5.8",
     "@graphql-mesh/types": "^0.103.17",
     "@graphql-mesh/utils": "^0.103.17",
-    "graphql-yoga": "^5.10.4",
+    "graphql-yoga": "^5.12.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@newrelic/test-utilities": "6.5.5",
     "@types/newrelic": "9.14.7",
-    "graphql-yoga": "5.12.0",
+    "graphql-yoga": "^5.12.0",
     "newrelic": "10.6.2"
   },
   "publishConfig": {

@@ -39,7 +39,7 @@
     "@graphql-mesh/string-interpolation": "0.5.8",
     "@graphql-mesh/types": "^0.103.17",
     "@graphql-mesh/utils": "^0.103.17",
-    "@whatwg-node/fetch": "^0.10.0",
+    "@whatwg-node/fetch": "^0.10.4",
     "minimatch": "10.0.1",
     "tslib": "^2.4.0"
   },

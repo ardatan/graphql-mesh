@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/statsd": "6.0.0",
+    "@envelop/statsd": "^6.0.0",
     "@graphql-mesh/types": "^0.103.17",
     "@graphql-mesh/utils": "^0.103.17",
     "hot-shots": "^10.2.1",
