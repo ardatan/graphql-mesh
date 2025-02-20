@@ -7939,7 +7939,7 @@ __metadata:
     "@graphql-tools/executor": "npm:^1.3.2"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@whatwg-node/fetch": "npm:^0.10.4"
-    fast-xml-parser: "npm:^4.5.0"
+    fast-xml-parser: "npm:^5.0.0"
     graphql: "npm:16.10.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -10996,7 +10996,7 @@ __metadata:
     "@types/url-join": "npm:4.0.3"
     "@whatwg-node/fetch": "npm:^0.10.4"
     dataloader: "npm:^2.2.2"
-    fast-xml-parser: "npm:^4.5.0"
+    fast-xml-parser: "npm:^5.0.0"
     graphql: "npm:16.10.0"
     graphql-compose: "npm:^9.0.11"
     graphql-parse-resolve-info: "npm:^4.13.0"
@@ -11070,7 +11070,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.103.17"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@whatwg-node/fetch": "npm:^0.10.4"
-    fast-xml-parser: "npm:^4.5.0"
+    fast-xml-parser: "npm:^5.0.0"
     graphql: "npm:16.10.0"
     graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
@@ -21385,14 +21385,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:^4.5.0":
-  version: 4.5.2
-  resolution: "fast-xml-parser@npm:4.5.2"
+"fast-xml-parser@npm:^5.0.0":
+  version: 5.0.6
+  resolution: "fast-xml-parser@npm:5.0.6"
   dependencies:
-    strnum: "npm:^1.0.5"
+    strnum: "npm:^2.0.4"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10c0/972cc5a54f76676485a776952b1e68d765ddca3c0053d34db613152a93e2ee74dfd3b630672b33a978bf3a257ae24d4c017ae92f5c2100e6a5312e679fb591a5
+  checksum: 10c0/71e8eeb158dbf54221e511c54a101999a5023ce32327eeda2d706fe542ee15cf15942bc84d1ab50f19bd9d1496feaf97fbb4f3afac118808b85148b9bbd45f42
   languageName: node
   linkType: hard
 
@@ -35006,6 +35006,13 @@ __metadata:
   version: 1.0.5
   resolution: "strnum@npm:1.0.5"
   checksum: 10c0/64fb8cc2effbd585a6821faa73ad97d4b553c8927e49086a162ffd2cc818787643390b89d567460a8e74300148d11ac052e21c921ef2049f2987f4b1b89a7ff1
+  languageName: node
+  linkType: hard
+
+"strnum@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "strnum@npm:2.0.4"
+  checksum: 10c0/b803e27e7941e9cf5141c68912f7db9d626b9fecab2963447809a458335125f6c774eee63518085acb453e3589346f57d07e7cc9f18e27ad4248091ce1861f8c
   languageName: node
   linkType: hard
 
