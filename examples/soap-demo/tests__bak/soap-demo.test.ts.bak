@@ -1,37 +1,40 @@
 import { basename, join } from 'path';
 import { lexicographicSortSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
-import { getMesh } from '@graphql-mesh/runtime';
+import { ProcessedConfig } from '@graphql-mesh/config';
+import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-
-const store = new MeshStore('soap', new InMemoryStoreStorageAdapter(), {
-  readonly: false,
-  validate: false,
-});
-
-const config$ = findAndParseConfig({
-  dir: join(__dirname, '..'),
-  store,
-});
-const mesh$ = config$.then(config => getMesh(config));
-jest.setTimeout(30000);
+import { inspect } from 'util';
 
 describe('SOAP Demo', () => {
+  let mesh: MeshInstance;
+  let config: ProcessedConfig;
+  beforeAll(async () => {
+    const store = new MeshStore('soap', new InMemoryStoreStorageAdapter(), {
+      readonly: false,
+      validate: false,
+    });
+    config = await findAndParseConfig({
+      dir: join(__dirname, '..'),
+      store,
+    });
+    mesh = await getMesh(config);
+  });
   it('should generate correct schema', async () => {
-    const { schema } = await mesh$;
-    expect(printSchemaWithDirectives(lexicographicSortSchema(schema))).toMatchSnapshot(
+    expect(printSchemaWithDirectives(lexicographicSortSchema(mesh.schema))).toMatchSnapshot(
       'soap-demo-schema',
     );
   });
   it('should give correct response for example queries', async () => {
-    const { documents } = await config$;
-    const { execute } = await mesh$;
-    for (const source of documents) {
-      const result = await execute(source.document);
+    for (const source of config.documents) {
+      if (!source.document || !source.location) {
+        throw new Error(`Invalid document config: ${inspect(source)}`);
+      }
+      const result = await mesh.execute(source.document);
       expect(result.errors).toBeUndefined();
       expect(result).toMatchSnapshot(basename(source.location) + '-soap-demo-result');
     }
   });
-  afterAll(() => mesh$.then(mesh => mesh.destroy()));
+  afterAll(() => mesh?.destroy?.());
 });

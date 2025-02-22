@@ -82,6 +82,25 @@ Then it will generate a body like below by using the alias;
 </soap:Envelope>
 ```
 
+## Custom SOAP namespace
+
+By default, Mesh detects the namespace from the WSDL file. If you want to use a custom namespace
+based on SOAP version.
+
+For SOAP 1.1, it is set to `http://schemas.xmlsoap.org/soap/envelope/` and for SOAP 1.2, it is set
+to `http://www.w3.org/2003/05/soap-envelope`.
+
+If you want to use a custom namespace, you can set it like below;
+
+```yaml
+sources:
+  - name: CountryInfo
+    handler:
+      soap:
+        source: ...
+        soapNamespace: http://foo.com/schemas/soap/envelope
+```
+
 ## CodeSandBox Example
 
 You can check out our example that uses SOAP Handler.

@@ -77,6 +77,7 @@ export interface SOAPLoaderOptions {
   endpoint?: string;
   cwd?: string;
   bodyAlias?: string;
+  soapNamespace?: string;
 }
 
 export interface SOAPHeaders {
@@ -142,6 +143,9 @@ const soapDirective = new GraphQLDirective({
     soapAction: {
       type: GraphQLString,
     },
+    soapNamespace: {
+      type: GraphQLString,
+    },
   },
 });
 
@@ -196,6 +200,7 @@ export class SOAPLoader {
   private cwd: string;
   private soapHeaders: SOAPHeaders;
   private bodyAlias?: string;
+  private soapNamespace: string;
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
@@ -208,6 +213,7 @@ export class SOAPLoader {
     this.cwd = options.cwd;
     this.soapHeaders = options.soapHeaders;
     this.bodyAlias = options.bodyAlias;
+    this.soapNamespace = 'http://schemas.xmlsoap.org/soap/envelope/';
   }
 
   loadXMLSchemaNamespace() {
@@ -400,6 +406,9 @@ export class SOAPLoader {
 
   async loadDefinition(definition: WSDLDefinition) {
     this.getNamespaceDefinitions(definition.attributes.targetNamespace).push(definition);
+    if (definition.attributes.soap12) {
+      this.soapNamespace = 'http://www.w3.org/2003/05/soap-envelope';
+    }
     const definitionAliasMap = this.getAliasMapFromAttributes(definition.attributes);
     const definitionNamespace = definition.attributes.targetNamespace;
     const typePrefix =
@@ -509,6 +518,7 @@ export class SOAPLoader {
               bindingNamespace,
               endpoint: this.endpoint,
               subgraph: this.subgraphName,
+              soapNamespace: this.soapNamespace,
             };
             if (!soapAnnotations.endpoint && portObj.address) {
               for (const address of portObj.address) {

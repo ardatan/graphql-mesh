@@ -89,6 +89,7 @@ interface SoapAnnotations {
   endpoint: string;
   bindingNamespace: string;
   elementName: string;
+  soapNamespace: string;
   bodyAlias?: string;
   soapHeaders?: {
     alias?: string;
@@ -142,7 +143,7 @@ function createRootValueMethod({
 }: CreateRootValueMethodOpts): RootValueMethod {
   return async function rootValueMethod(args: any, context: any, info: GraphQLResolveInfo) {
     const envelopeAttributes: Record<string, string> = {
-      'xmlns:soap': 'http://www.w3.org/2003/05/soap-envelope',
+      'xmlns:soap': soapAnnotations.soapNamespace,
     };
     const envelope: Record<string, any> = {
       attributes: envelopeAttributes,
