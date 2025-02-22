@@ -144,7 +144,7 @@ function createRootValueMethod({
   operationHeadersFactory,
   logger,
 }: CreateRootValueMethodOpts): RootValueMethod {
-  if (soapAnnotations.soapNamespace) {
+  if (!soapAnnotations.soapNamespace) {
     logger.warn(`The expected 'soapNamespace' attribute is missing in SOAP directive definition.
 Update the SOAP source handler, and re-generate the schema.
 Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
