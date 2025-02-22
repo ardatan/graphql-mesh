@@ -17,7 +17,7 @@ describe('SOAP Loader', () => {
   });
   // TODO: Implement this locally later
   // Now E2E tests have it covered
-  it('should execute SOAP calls correctly', async () => {
+  it.skip('should execute SOAP calls correctly', async () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,
