@@ -1,5 +1,5 @@
 /* eslint-disable import/no-nodejs-modules */
-import { promises } from 'fs';
+import { promises as fsPromises } from 'fs';
 import { globalAgent } from 'https';
 import { join } from 'path';
 import { parse } from 'graphql';
@@ -9,15 +9,13 @@ import { fetch } from '@whatwg-node/fetch';
 import { dummyLogger as logger } from '../../../testing/dummyLogger';
 import { createExecutorFromSchemaAST, SOAPLoader } from '../src/index.js';
 
-const { readFile } = promises;
-
 describe('SOAP Loader', () => {
   afterEach(() => {
     globalAgent.destroy();
   });
   // TODO: Implement this locally later
   // Now E2E tests have it covered
-  it('should execute SOAP calls correctly', async () => {
+  it.skip('should execute SOAP calls correctly', async () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,
@@ -45,7 +43,10 @@ describe('SOAP Loader', () => {
       fetch,
       logger,
     });
-    const example1Wsdl = await readFile(join(__dirname, './fixtures/greeting.wsdl'), 'utf8');
+    const example1Wsdl = await fsPromises.readFile(
+      join(__dirname, './fixtures/greeting.wsdl'),
+      'utf8',
+    );
     await soapLoader.loadWSDL(example1Wsdl);
     const schema = soapLoader.buildSchema();
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
