@@ -385,18 +385,15 @@ type Distance_Response {
   errors: [CitiesError]
 }
 
-type EnergyObs {
+type EnergyForecastSeries {
   """Cooling degree days"""
   cdd: Float
-
-  """City name (closest)"""
-  city_name: String
 
   """Average cloud cover (%)"""
   clouds: Int
 
-  """Country abbreviation"""
-  country_code: String
+  """Date"""
+  date: Date
 
   """Average dew point temperature - Default (C)"""
   dewpt: Float
@@ -404,11 +401,17 @@ type EnergyObs {
   """Heating degree days"""
   hdd: Float
 
-  """Latitude"""
-  lat: Float
+  """Average max wind direction (Degrees)"""
+  max_wind_dir: Int
 
-  """Longitude"""
-  lon: Float
+  """Average max wind direction at 100M height (Degrees)"""
+  max_wind_dir_100m: Int
+
+  """Max wind speed - Default (m/s)"""
+  max_wind_spd: Float
+
+  """Max wind speed at 100M height - Default (m/s)"""
+  max_wind_spd_100m: Float
 
   """Total precipitation in period - Default (mm)"""
   precip: Float
@@ -419,8 +422,70 @@ type EnergyObs {
   """Total snowfall in period - Default (mm)"""
   snow: Float
 
+  """
+  Average number of daily sun hours - # hours where Solar GHI > 1000 W/m^2
+  """
+  sun_hours: Float
+
+  """Total clear sky diffuse horizontal solar irradiance (W/m^2)"""
+  t_dhi: Float
+
+  """Total clear sky direct normal solar irradiance (W/m^2)"""
+  t_dni: Float
+
+  """Total clear sky global horizontal solar irradiance (W/m^2)"""
+  t_ghi: Float
+
+  """Total actual solar radiation (W/m^2)"""
+  t_solar_rad: Float
+
+  """Average temperature - Default (C)"""
+  temp: Float
+
+  """Average wetbulb temperature - Default (C)"""
+  temp_wetbulb: Float
+
+  """Timestamp in local time"""
+  timestamp_local: String
+
+  """Timestamp UTC"""
+  timestamp_utc: String
+
+  """Average wind direction (Degrees)"""
+  wind_dir: Int
+
+  """Average wind speed at 100M height - Default (m/s)"""
+  wind_spd: Float
+}
+
+type EnergyObsGroup {
+  """City ID (closest)"""
+  city_id: Float
+
+  """City name (closest)"""
+  city_name: String
+
+  """Count of found observations"""
+  count: Int
+
+  """Country abbreviation"""
+  country_code: String
+  data: [EnergyObsSeries]
+
+  """End Date"""
+  end_date: Date
+
+  """Latitude"""
+  lat: Float
+
+  """Longitude"""
+  lon: Float
+
   """List of data sources used in response"""
   sources: [String]
+
+  """Start Date"""
+  start_date: Date
 
   """State abbreviation"""
   state_code: String
@@ -428,43 +493,14 @@ type EnergyObs {
   """Nearest Station ID [DEPRECATED]"""
   station_id: String
 
-  """
-  Average number of daily sun hours - # hours where Solar GHI > 1000 W/m^2
-  """
-  sun_hours: Float
+  """Degree day threshold units"""
+  threshold_units: String
 
-  """Total diffuse horizontal solar irradiance (W/m^2)"""
-  t_dhi: Float
-
-  """Total direct normal solar irradiance (W/m^2)"""
-  t_dni: Float
-
-  """Total global horizontal solar irradiance (W/m^2)"""
-  t_ghi: Float
-
-  """Average temperature - Default (C)"""
-  temp: Float
+  """Degree day threshold"""
+  threshold_value: String
 
   """Local IANA time zone"""
   timezone: String
-
-  """Average wind direction (Degrees)"""
-  wind_dir: Int
-
-  """Average wind speed - Default (m/s)"""
-  wind_spd: Float
-}
-
-type EnergyObsGroup {
-  """Count of found observations"""
-  count: Int
-  data: [EnergyObs]
-
-  """End Date"""
-  end_date: Int
-
-  """Start Date"""
-  start_date: Int
 }
 
 type EnergyObsGroupForecast {
@@ -473,7 +509,7 @@ type EnergyObsGroupForecast {
 
   """Country abbreviation"""
   country_code: String
-  data: [EnergyObsSeries]
+  data: [EnergyForecastSeries]
 
   """Latitude"""
   lat: Float
@@ -510,8 +546,17 @@ type EnergyObsSeries {
   """Heating degree days"""
   hdd: Float
 
+  """Average max wind direction (Degrees)"""
+  max_wind_dir: Int
+
+  """Max wind speed - Default (m/s)"""
+  max_wind_spd: Float
+
   """Total precipitation in period - Default (mm)"""
   precip: Float
+
+  """Data revision status (interim or final)"""
+  revision_status: String
 
   """Average Relative humidity (%)"""
   rh: Int
@@ -524,17 +569,29 @@ type EnergyObsSeries {
   """
   sun_hours: Float
 
-  """Total diffuse horizontal solar irradiance (W/m^2)"""
+  """Total clear sky diffuse horizontal solar irradiance (W/m^2)"""
   t_dhi: Float
 
-  """Total direct normal solar irradiance (W/m^2)"""
+  """Total clear sky direct normal solar irradiance (W/m^2)"""
   t_dni: Float
 
-  """Total global horizontal solar irradiance (W/m^2)"""
+  """Total clear sky global horizontal solar irradiance (W/m^2)"""
   t_ghi: Float
+
+  """Total actual solar radiation (W/m^2)"""
+  t_solar_rad: Float
 
   """Average temperature - Default (C)"""
   temp: Float
+
+  """Average wetbulb temperature - Default (C)"""
+  temp_wetbulb: Float
+
+  """Timestamp in local time"""
+  timestamp_local: String
+
+  """Timestamp UTC"""
+  timestamp_utc: String
 
   """Average wind direction (Degrees)"""
   wind_dir: Int
