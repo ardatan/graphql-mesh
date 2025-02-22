@@ -1,6 +1,8 @@
 ---
 '@graphql-mesh/transport-soap': minor
 '@omnigraph/soap': minor
+'@graphql-mesh/soap': minor
+'@graphql-mesh/types': patch
 ---
 
 Auto detection of SOAP version to decide SOAP namespace;
