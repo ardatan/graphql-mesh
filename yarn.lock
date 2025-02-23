@@ -5100,7 +5100,7 @@ __metadata:
     graphql-yoga: "npm:^5.12.0"
     jest: "npm:29.7.0"
     sharp: "npm:0.33.5"
-    ts-jest: "npm:29.2.5"
+    ts-jest: "npm:29.2.6"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -5120,7 +5120,7 @@ __metadata:
     google-protobuf: "npm:3.21.4"
     graphql: "npm:16.10.0"
     jest: "npm:29.7.0"
-    ts-jest: "npm:29.2.5"
+    ts-jest: "npm:29.2.6"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -5593,7 +5593,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.98.25"
     "@graphql-mesh/openapi": "npm:0.108.22"
-    "@sinclair/typebox": "npm:0.34.27"
+    "@sinclair/typebox": "npm:0.34.28"
     "@types/node": "npm:22.13.5"
     concurrently: "npm:9.1.2"
     fets: "npm:0.8.4"
@@ -12092,10 +12092,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:0.34.27":
-  version: 0.34.27
-  resolution: "@sinclair/typebox@npm:0.34.27"
-  checksum: 10c0/c40f53c9e34b746aab1fe9d5c9c87e36f1efe4e534282e5b0164e0126b7eed59cee30df4da7fbec178c40dc8a837365b29d460e7ec4fd08bed07ed32ef546e48
+"@sinclair/typebox@npm:0.34.28":
+  version: 0.34.28
+  resolution: "@sinclair/typebox@npm:0.34.28"
+  checksum: 10c0/bc83e8ba45314c0a30393cd12b206abefb3b40121bf5c4e864f71b6f67bc2ff82d565ce0b0bb6ec098055a2c443443ec2896195f02acf0329d4d4fd81bcd7462
   languageName: node
   linkType: hard
 
@@ -22674,7 +22674,7 @@ __metadata:
     node-gyp: "npm:^11.0.0"
     prettier: "npm:3.5.2"
     threads: "npm:^1.7.0"
-    ts-jest: "npm:29.2.5"
+    ts-jest: "npm:29.2.6"
     tsx: "npm:^4.19.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -33595,7 +33595,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.2, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.0, semver@npm:^7.6.3":
+"semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.2, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.0, semver@npm:^7.6.3, semver@npm:^7.7.1":
   version: 7.7.1
   resolution: "semver@npm:7.7.1"
   bin:
@@ -35872,9 +35872,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.2.5":
-  version: 29.2.5
-  resolution: "ts-jest@npm:29.2.5"
+"ts-jest@npm:29.2.6":
+  version: 29.2.6
+  resolution: "ts-jest@npm:29.2.6"
   dependencies:
     bs-logger: "npm:^0.2.6"
     ejs: "npm:^3.1.10"
@@ -35883,7 +35883,7 @@ __metadata:
     json5: "npm:^2.2.3"
     lodash.memoize: "npm:^4.1.2"
     make-error: "npm:^1.3.6"
-    semver: "npm:^7.6.3"
+    semver: "npm:^7.7.1"
     yargs-parser: "npm:^21.1.1"
   peerDependencies:
     "@babel/core": ">=7.0.0-beta.0 <8"
@@ -35905,7 +35905,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/acb62d168faec073e64b20873b583974ba8acecdb94681164eb346cef82ade8fb481c5b979363e01a97ce4dd1e793baf64d9efd90720bc941ad7fc1c3d6f3f68
+  checksum: 10c0/2a79bdb2631bbd004cd6ec171d62dc3681b86e7d1c20eece7f56e7c3df11a0f5a14f4831960b1ba8d1836787395c8f9dcbd084fd7f59246bbee8048feb93f892
   languageName: node
   linkType: hard
 
