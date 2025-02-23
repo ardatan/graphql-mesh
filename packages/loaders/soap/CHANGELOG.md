@@ -1,5 +1,42 @@
 # @omnigraph/soap
 
+## 0.106.0
+
+### Minor Changes
+
+- [#8414](https://github.com/ardatan/graphql-mesh/pull/8414)
+  [`d9cf1d3`](https://github.com/ardatan/graphql-mesh/commit/d9cf1d389c6d685a9d6cc50ff4be03380fd085f1)
+  Thanks [@ardatan](https://github.com/ardatan)! - Auto detection of SOAP version to decide SOAP
+  namespace; For SOAP 1.1, it is set to `http://schemas.xmlsoap.org/soap/envelope/` and for SOAP
+  1.2, it is set to `http://www.w3.org/2003/05/soap-envelope`.
+
+  If you want to use a custom namespace, you can set it like below;
+
+  ```ts
+  import { defineConfig } from '@graphql-mesh/compose-cli'
+  import { loadSOAPSubgraph } from '@omnigraph/soap'
+
+  export const composeConfig = defineConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadSOAPSubgraph('CountryInfo', {
+          source:
+            'http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL',
+          soapNamespace: 'http://foo.com/schemas/soap/envelope'
+        })
+      }
+    ]
+  })
+  ```
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d9cf1d3`](https://github.com/ardatan/graphql-mesh/commit/d9cf1d389c6d685a9d6cc50ff4be03380fd085f1)]:
+  - @graphql-mesh/transport-soap@0.9.0
+  - @graphql-mesh/types@0.103.19
+  - @graphql-mesh/utils@0.103.19
+
 ## 0.105.18
 
 ### Patch Changes
