@@ -120,6 +120,7 @@
     "graphql": "16.10.0",
     "graphql-jit": "patch:graphql-jit@npm%3A0.8.7#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch",
     "graphql-rate-limit": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
+    "http-cache-semantics": "4.1.1",
     "ioredis-mock": "patch:ioredis-mock@npm%3A8.9.0#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch",
     "jest-leak-detector": "patch:jest-leak-detector@npm%3A29.7.0#~/.yarn/patches/jest-leak-detector-npm-29.7.0-3ae882ba75.patch",
     "jest-message-util": "patch:jest-message-util@npm%3A29.7.0#~/.yarn/patches/jest-message-util-npm-29.7.0-7f88b6e8d1.patch",
