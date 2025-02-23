@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-mock",
-  "version": "0.103.20",
+  "version": "0.103.21",
   "type": "module",
   "repository": {
     "type": "git",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@envelop/core": "5.1.0",
-    "@graphql-mesh/cache-localforage": "0.103.20",
+    "@graphql-mesh/cache-localforage": "0.103.21",
     "@types/faker": "5.5.9",
     "graphql": "16.10.0"
   },
