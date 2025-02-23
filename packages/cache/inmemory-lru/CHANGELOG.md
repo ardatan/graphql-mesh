@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-inmemory-lru
 
+## 0.7.0
+
+### Minor Changes
+
+- [`e89e3f1`](https://github.com/ardatan/graphql-mesh/commit/e89e3f1706f15fe04831e8731ee4812ceb785fd2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump the versions to prevent the conflict between
+  older versions
+
 ## 0.0.16
 
 ### Patch Changes
