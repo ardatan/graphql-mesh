@@ -7,7 +7,7 @@
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.98.27",
+    "@graphql-mesh/cli": "0.99.0",
     "@graphql-mesh/openapi": "0.108.23",
     "@sinclair/typebox": "0.34.28",
     "fets": "0.8.4",
