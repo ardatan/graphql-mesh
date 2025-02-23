@@ -3069,6 +3069,10 @@
         "soapHeaders": {
           "$ref": "#/definitions/SOAPHeaders",
           "description": "SOAP Headers to be added to the request"
+        },
+        "soapNamespace": {
+          "type": "string",
+          "description": "The namespace of the SOAP envelope\nBy default, SOAP handler detects the SOAP version and if SOAP version is 1.1,\nit uses `http://schemas.xmlsoap.org/soap/envelope/` namespace\nIf SOAP version is 1.2, it uses `http://www.w3.org/2003/05/soap-envelope` namespace"
         }
       },
       "required": ["source"]

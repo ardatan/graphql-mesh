@@ -1,6 +1,7 @@
 export interface WSDLDefinitionAttributes {
   name: string;
   targetNamespace: string;
+  soap12?: string;
 }
 
 export interface WSDLDefinition {

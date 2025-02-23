@@ -1019,6 +1019,13 @@ export interface SoapHandler {
    */
   bodyAlias?: string;
   soapHeaders?: SOAPHeaders;
+  /**
+   * The namespace of the SOAP envelope
+   * By default, SOAP handler detects the SOAP version and if SOAP version is 1.1,
+   * it uses `http://schemas.xmlsoap.org/soap/envelope/` namespace
+   * If SOAP version is 1.2, it uses `http://www.w3.org/2003/05/soap-envelope` namespace
+   */
+  soapNamespace?: string;
 }
 /**
  * SOAP Headers to be added to the request

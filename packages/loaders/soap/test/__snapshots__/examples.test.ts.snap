@@ -6,7 +6,7 @@ exports[`Examples should generate schema for axis: axis 1`] = `
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String) on FIELD_DEFINITION
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -16,7 +16,7 @@ type Query {
 scalar Void
 
 type Mutation {
-  impl_TestService_TestService_createTest(createTestRequest: impl_createTestRequestType_Input): impl_createTestResponseType @soap(elementName: "createTestResponse", bindingNamespace: "urn:com.guild:operations/test", endpoint: "http://the-guild.dev/graphql/mesh/soap/TestService", subgraph: "axis")
+  impl_TestService_TestService_createTest(createTestRequest: impl_createTestRequestType_Input): impl_createTestResponseType @soap(elementName: "createTestResponse", bindingNamespace: "urn:com.guild:operations/test", endpoint: "http://the-guild.dev/graphql/mesh/soap/TestService", subgraph: "axis", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/")
 }
 
 type impl_createTestResponseType {
@@ -138,10 +138,10 @@ exports[`Examples should generate schema for example1: example1 1`] = `
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String) on FIELD_DEFINITION
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
 
 type Query {
-  TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos: JSON = ""): TodoService_GetTodosResponse @soap(elementName: "GetTodosResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapAction: "http://tempuri.org/ITodoService/GetTodos")
+  TodoService_TodoService_BasicHttpBinding_ITodoService_GetTodos(GetTodos: JSON = ""): TodoService_GetTodosResponse @soap(elementName: "GetTodosResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://tempuri.org/ITodoService/GetTodos")
 }
 
 type TodoService_GetTodosResponse {
@@ -169,11 +169,11 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 scalar JSON
 
 type Mutation {
-  TodoService_TodoService_BasicHttpBinding_ITodoService_UpdateFileClass(UpdateFileClass: TodoService_UpdateFileClass_Input): JSON @soap(elementName: "UpdateFileClassResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapAction: "http://tempuri.org/ITodoService/UpdateFileClass")
-  TodoService_TodoService_BasicHttpBinding_ITodoService_AddUpdateClass(AddUpdateClass: TodoService_AddUpdateClass_Input): TodoService_AddUpdateClassResponse @soap(elementName: "AddUpdateClassResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapAction: "http://tempuri.org/ITodoService/AddUpdateClass")
-  TodoService_TodoService_BasicHttpBinding_ITodoService_AddTodo(AddTodo: TodoService_AddTodo_Input): TodoService_AddTodoResponse @soap(elementName: "AddTodoResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapAction: "http://tempuri.org/ITodoService/AddTodo")
-  TodoService_TodoService_BasicHttpBinding_ITodoService_FaultAddTodo(FaultAddTodo: TodoService_FaultAddTodo_Input): TodoService_FaultAddTodoResponse @soap(elementName: "FaultAddTodoResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapAction: "http://tempuri.org/ITodoService/FaultAddTodo")
-  TodoService_TodoService_BasicHttpBinding_ITodoService_FailGetTodo(FailGetTodo: JSON = ""): TodoService_FailGetTodoResponse @soap(elementName: "FailGetTodoResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapAction: "http://tempuri.org/ITodoService/FailGetTodo")
+  TodoService_TodoService_BasicHttpBinding_ITodoService_UpdateFileClass(UpdateFileClass: TodoService_UpdateFileClass_Input): JSON @soap(elementName: "UpdateFileClassResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://tempuri.org/ITodoService/UpdateFileClass")
+  TodoService_TodoService_BasicHttpBinding_ITodoService_AddUpdateClass(AddUpdateClass: TodoService_AddUpdateClass_Input): TodoService_AddUpdateClassResponse @soap(elementName: "AddUpdateClassResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://tempuri.org/ITodoService/AddUpdateClass")
+  TodoService_TodoService_BasicHttpBinding_ITodoService_AddTodo(AddTodo: TodoService_AddTodo_Input): TodoService_AddTodoResponse @soap(elementName: "AddTodoResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://tempuri.org/ITodoService/AddTodo")
+  TodoService_TodoService_BasicHttpBinding_ITodoService_FaultAddTodo(FaultAddTodo: TodoService_FaultAddTodo_Input): TodoService_FaultAddTodoResponse @soap(elementName: "FaultAddTodoResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://tempuri.org/ITodoService/FaultAddTodo")
+  TodoService_TodoService_BasicHttpBinding_ITodoService_FailGetTodo(FailGetTodo: JSON = ""): TodoService_FailGetTodoResponse @soap(elementName: "FailGetTodoResponse", bindingNamespace: "http://tempuri.org/", endpoint: "http://localhost:8088/TodoService/basichttp", subgraph: "example1", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://tempuri.org/ITodoService/FailGetTodo")
 }
 
 input TodoService_UpdateFileClass_Input {
@@ -279,12 +279,12 @@ exports[`Examples should generate schema for example2: example2 1`] = `
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String) on FIELD_DEFINITION
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
 
 type Query {
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetServiceHealth(GetServiceHealth: JSON = ""): tns_GetServiceHealthResponse @soap(elementName: "GetServiceHealthResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapAction: "http://tempuri.org/IPfxServiceHealth/GetServiceHealth")
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetFileClassByClassID(GetFileClassByClassID: AdminServiceType_GetFileClassByClassID_Input): AdminServiceType_GetFileClassByClassIDResponse @soap(elementName: "GetFileClassByClassIDResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassID")
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetFileClassByClassIntIDCaasToMonolith(GetFileClassByClassIntIDCaasToMonolith: AdminServiceType_GetFileClassByClassIntIDCaasToMonolith_Input): AdminServiceType_GetFileClassByClassIntIDCaasToMonolithResponse @soap(elementName: "GetFileClassByClassIntIDCaasToMonolithResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIntIDCaasToMonolith")
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetServiceHealth(GetServiceHealth: JSON = ""): tns_GetServiceHealthResponse @soap(elementName: "GetServiceHealthResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://tempuri.org/IPfxServiceHealth/GetServiceHealth")
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetFileClassByClassID(GetFileClassByClassID: AdminServiceType_GetFileClassByClassID_Input): AdminServiceType_GetFileClassByClassIDResponse @soap(elementName: "GetFileClassByClassIDResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassID")
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_GetFileClassByClassIntIDCaasToMonolith(GetFileClassByClassIntIDCaasToMonolith: AdminServiceType_GetFileClassByClassIntIDCaasToMonolith_Input): AdminServiceType_GetFileClassByClassIntIDCaasToMonolithResponse @soap(elementName: "GetFileClassByClassIntIDCaasToMonolithResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/GetFileClassByClassIntIDCaasToMonolith")
 }
 
 type tns_GetServiceHealthResponse {
@@ -421,10 +421,10 @@ input AdminServiceType_GetFileClassByClassIntIDCaasToMonolith_Input {
 }
 
 type Mutation {
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_CreateFileClass(CreateFileClass: AdminServiceType_CreateFileClass_Input): AdminServiceType_CreateFileClassResponse @soap(elementName: "CreateFileClassResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/CreateFileClass")
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_UpdateFileClass(UpdateFileClass: AdminServiceType_UpdateFileClass_Input): JSON @soap(elementName: "UpdateFileClassResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/UpdateFileClass")
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_DeleteFileClass(DeleteFileClass: AdminServiceType_DeleteFileClass_Input): JSON @soap(elementName: "DeleteFileClassResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/DeleteFileClass")
-  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_DeleteEntityClass(DeleteEntityClass: AdminServiceType_DeleteEntityClass_Input): JSON @soap(elementName: "DeleteEntityClassResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/DeleteEntityClass")
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_CreateFileClass(CreateFileClass: AdminServiceType_CreateFileClass_Input): AdminServiceType_CreateFileClassResponse @soap(elementName: "CreateFileClassResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/CreateFileClass")
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_UpdateFileClass(UpdateFileClass: AdminServiceType_UpdateFileClass_Input): JSON @soap(elementName: "UpdateFileClassResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/UpdateFileClass")
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_DeleteFileClass(DeleteFileClass: AdminServiceType_DeleteFileClass_Input): JSON @soap(elementName: "DeleteFileClassResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/DeleteFileClass")
+  AdminServiceType_AdminServiceType_BasicHttpBinding_IAdminService_DeleteEntityClass(DeleteEntityClass: AdminServiceType_DeleteEntityClass_Input): JSON @soap(elementName: "DeleteEntityClassResponse", bindingNamespace: "http://Pfx.Net/Document/IAdminService", endpoint: "http://[::]/AdminServiceType", subgraph: "example2", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "http://Pfx.Net/Document/IAdminService/IAdminService/DeleteEntityClass")
 }
 
 type AdminServiceType_CreateFileClassResponse {
@@ -518,7 +518,7 @@ exports[`Examples should generate schema for greeting: greeting 1`] = `
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String) on FIELD_DEFINITION
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -528,8 +528,8 @@ type Query {
 scalar Void
 
 type Mutation {
-  NumberConversion_NumberConversion_NumberConversionSoap_NumberToWords(NumberToWords: NumberConversion_NumberToWords_Input): NumberConversion_NumberToWordsResponse @soap(elementName: "NumberToWordsResponse", bindingNamespace: "http://www.dataaccess.com/webservicesserver/", endpoint: "https://www.dataaccess.com/webservicesserver/NumberConversion.wso", subgraph: "greeting")
-  NumberConversion_NumberConversion_NumberConversionSoap_NumberToDollars(NumberToDollars: NumberConversion_NumberToDollars_Input): NumberConversion_NumberToDollarsResponse @soap(elementName: "NumberToDollarsResponse", bindingNamespace: "http://www.dataaccess.com/webservicesserver/", endpoint: "https://www.dataaccess.com/webservicesserver/NumberConversion.wso", subgraph: "greeting")
+  NumberConversion_NumberConversion_NumberConversionSoap_NumberToWords(NumberToWords: NumberConversion_NumberToWords_Input): NumberConversion_NumberToWordsResponse @soap(elementName: "NumberToWordsResponse", bindingNamespace: "http://www.dataaccess.com/webservicesserver/", endpoint: "https://www.dataaccess.com/webservicesserver/NumberConversion.wso", subgraph: "greeting", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/")
+  NumberConversion_NumberConversion_NumberConversionSoap_NumberToDollars(NumberToDollars: NumberConversion_NumberToDollars_Input): NumberConversion_NumberToDollarsResponse @soap(elementName: "NumberToDollarsResponse", bindingNamespace: "http://www.dataaccess.com/webservicesserver/", endpoint: "https://www.dataaccess.com/webservicesserver/NumberConversion.wso", subgraph: "greeting", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/")
 }
 
 type NumberConversion_NumberToWordsResponse {
@@ -568,7 +568,7 @@ exports[`Examples should generate schema for tempconvert: tempconvert 1`] = `
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String) on FIELD_DEFINITION
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -578,12 +578,12 @@ type Query {
 scalar Void
 
 type Mutation {
-  tns_TempConvert_TempConvertSoap_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse @soap(elementName: "FahrenheitToCelsiusResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert", soapAction: "https://www.w3schools.com/xml/FahrenheitToCelsius")
-  tns_TempConvert_TempConvertSoap_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse @soap(elementName: "CelsiusToFahrenheitResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert", soapAction: "https://www.w3schools.com/xml/CelsiusToFahrenheit")
-  tns_TempConvert_TempConvertSoap12_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse @soap(elementName: "FahrenheitToCelsiusResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert", soapAction: "https://www.w3schools.com/xml/FahrenheitToCelsius")
-  tns_TempConvert_TempConvertSoap12_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse @soap(elementName: "CelsiusToFahrenheitResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert", soapAction: "https://www.w3schools.com/xml/CelsiusToFahrenheit")
-  tns_TempConvert_TempConvertHttpPost_FahrenheitToCelsius(Fahrenheit: String = ""): String @soap(elementName: "string", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert")
-  tns_TempConvert_TempConvertHttpPost_CelsiusToFahrenheit(Celsius: String = ""): String @soap(elementName: "string", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert")
+  tns_TempConvert_TempConvertSoap_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse @soap(elementName: "FahrenheitToCelsiusResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "https://www.w3schools.com/xml/FahrenheitToCelsius")
+  tns_TempConvert_TempConvertSoap_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse @soap(elementName: "CelsiusToFahrenheitResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "https://www.w3schools.com/xml/CelsiusToFahrenheit")
+  tns_TempConvert_TempConvertSoap12_FahrenheitToCelsius(FahrenheitToCelsius: tns_FahrenheitToCelsius_Input): tns_FahrenheitToCelsiusResponse @soap(elementName: "FahrenheitToCelsiusResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "https://www.w3schools.com/xml/FahrenheitToCelsius")
+  tns_TempConvert_TempConvertSoap12_CelsiusToFahrenheit(CelsiusToFahrenheit: tns_CelsiusToFahrenheit_Input): tns_CelsiusToFahrenheitResponse @soap(elementName: "CelsiusToFahrenheitResponse", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert", soapNamespace: "http://www.w3.org/2003/05/soap-envelope", soapAction: "https://www.w3schools.com/xml/CelsiusToFahrenheit")
+  tns_TempConvert_TempConvertHttpPost_FahrenheitToCelsius(Fahrenheit: String = ""): String @soap(elementName: "string", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert", soapNamespace: "http://www.w3.org/2003/05/soap-envelope")
+  tns_TempConvert_TempConvertHttpPost_CelsiusToFahrenheit(Celsius: String = ""): String @soap(elementName: "string", bindingNamespace: "https://www.w3schools.com/xml/", endpoint: "http://www.w3schools.com/xml/tempconvert.asmx", subgraph: "tempconvert", soapNamespace: "http://www.w3.org/2003/05/soap-envelope")
 }
 
 type tns_FahrenheitToCelsiusResponse {

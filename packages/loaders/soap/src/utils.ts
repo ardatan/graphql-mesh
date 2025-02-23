@@ -5,6 +5,7 @@ export interface SoapAnnotations {
   elementName: string;
   bindingNamespace: string;
   endpoint: string;
+  soapNamespace: string;
   bodyAlias?: string;
   soapAction?: string;
   soapHeaders?: {

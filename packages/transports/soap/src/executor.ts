@@ -12,7 +12,8 @@ import {
   getInterpolatedHeadersFactory,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import type { MeshFetch } from '@graphql-mesh/types';
+import type { Logger, MeshFetch } from '@graphql-mesh/types';
+import { DefaultLogger } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import {
   createGraphQLError,
@@ -89,6 +90,7 @@ interface SoapAnnotations {
   endpoint: string;
   bindingNamespace: string;
   elementName: string;
+  soapNamespace: string;
   bodyAlias?: string;
   soapHeaders?: {
     alias?: string;
@@ -104,6 +106,7 @@ interface CreateRootValueMethodOpts {
   jsonToXMLConverter: JSONToXMLConverter;
   xmlToJSONConverter: XMLParser;
   operationHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
+  logger: Logger;
 }
 
 function prefixWithAlias({
@@ -139,10 +142,17 @@ function createRootValueMethod({
   jsonToXMLConverter,
   xmlToJSONConverter,
   operationHeadersFactory,
+  logger,
 }: CreateRootValueMethodOpts): RootValueMethod {
+  if (!soapAnnotations.soapNamespace) {
+    logger.warn(`The expected 'soapNamespace' attribute is missing in SOAP directive definition.
+Update the SOAP source handler, and re-generate the schema.
+Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
+    soapAnnotations.soapNamespace = 'http://www.w3.org/2003/05/soap-envelope';
+  }
   return async function rootValueMethod(args: any, context: any, info: GraphQLResolveInfo) {
     const envelopeAttributes: Record<string, string> = {
-      'xmlns:soap': 'http://www.w3.org/2003/05/soap-envelope',
+      'xmlns:soap': soapAnnotations.soapNamespace,
     };
     const envelope: Record<string, any> = {
       attributes: envelopeAttributes,
@@ -257,6 +267,7 @@ function createRootValue(
   schema: GraphQLSchema,
   fetchFn: MeshFetch,
   operationHeaders: Record<string, string>,
+  logger: Logger,
 ) {
   const rootValue: Record<string, RootValueMethod> = {};
   const rootTypes = getRootTypes(schema);
@@ -288,6 +299,7 @@ function createRootValue(
           jsonToXMLConverter,
           xmlToJSONConverter,
           operationHeadersFactory,
+          logger,
         });
       }
     }
@@ -299,11 +311,12 @@ export function createExecutorFromSchemaAST(
   schema: GraphQLSchema,
   fetchFn: MeshFetch = defaultFetchFn,
   operationHeaders: Record<string, string> = {},
+  logger: Logger = new DefaultLogger(),
 ): Executor {
   let rootValue: Record<string, RootValueMethod>;
   return function soapExecutor({ document, variables, context }) {
     if (!rootValue) {
-      rootValue = createRootValue(schema, fetchFn, operationHeaders);
+      rootValue = createRootValue(schema, fetchFn, operationHeaders, logger);
     }
     return normalizedExecutor({
       schema,
