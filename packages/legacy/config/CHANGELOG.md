@@ -1,5 +1,13 @@
 # @graphql-mesh/config
 
+## 0.106.27
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7261e48`](https://github.com/ardatan/graphql-mesh/commit/7261e4811897eba87c9d599e6e51e00b3b7fdf21)]:
+  - @graphql-mesh/cache-localforage@0.103.21
+
 ## 0.106.26
 
 ### Patch Changes
