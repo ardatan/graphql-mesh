@@ -40,7 +40,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20250214.0",
+    "@cloudflare/workers-types": "4.20250224.0",
     "graphql": "16.10.0"
   },
   "publishConfig": {
