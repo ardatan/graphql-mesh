@@ -4493,7 +4493,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.103.22"
     "@omnigraph/json-schema": "workspace:^"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.109.2"
+    wrangler: "npm:3.109.3"
   languageName: unknown
   linkType: soft
 
@@ -4508,7 +4508,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.103.20"
     "@graphql-mesh/plugin-response-cache": "npm:^0.103.22"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.109.2"
+    wrangler: "npm:3.109.3"
   languageName: unknown
   linkType: soft
 
@@ -4648,7 +4648,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.108.22"
     "@graphql-mesh/plugin-response-cache": "npm:0.103.22"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.109.2"
+    wrangler: "npm:3.109.3"
   languageName: unknown
   linkType: soft
 
@@ -4894,9 +4894,9 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.99.0"
     "@graphql-mesh/json-schema": "npm:0.108.22"
     "@graphql-mesh/plugin-mock": "npm:0.104.0"
-    "@graphql-yoga/plugin-sofa": "npm:3.12.0"
+    "@graphql-yoga/plugin-sofa": "npm:3.12.1"
     graphql: "npm:16.10.0"
-    graphql-yoga: "npm:5.12.0"
+    graphql-yoga: "npm:5.12.1"
     jest: "npm:29.7.0"
   languageName: unknown
   linkType: soft
@@ -5278,9 +5278,9 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.99.0"
     "@graphql-mesh/json-schema": "npm:0.108.22"
     "@graphql-mesh/plugin-mock": "npm:0.104.0"
-    "@graphql-yoga/plugin-sofa": "npm:3.12.0"
+    "@graphql-yoga/plugin-sofa": "npm:3.12.1"
     graphql: "npm:16.10.0"
-    graphql-yoga: "npm:5.12.0"
+    graphql-yoga: "npm:5.12.1"
     jest: "npm:29.7.0"
   languageName: unknown
   linkType: soft
@@ -5376,7 +5376,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.103.20"
     "@graphql-mesh/plugin-response-cache": "npm:0.103.22"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.109.2"
+    wrangler: "npm:3.109.3"
   languageName: unknown
   linkType: soft
 
@@ -8449,7 +8449,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-apollo-inline-trace@npm:3.12.1, @graphql-yoga/plugin-apollo-inline-trace@npm:^3.12.1":
+"@graphql-yoga/plugin-apollo-inline-trace@npm:3.12.2":
+  version: 3.12.2
+  resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.12.2"
+  dependencies:
+    "@apollo/usage-reporting-protobuf": "npm:^4.1.1"
+    "@envelop/on-resolve": "npm:^5.0.0"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    graphql: ^15.2.0 || ^16.0.0
+    graphql-yoga: ^5.12.1
+  checksum: 10c0/12b77cb221750575c77e9c992c876ba3ae576523387af6cc83abd1fccdfc6f0763fe4e5fad0cb8587e8415d19da050c606f38879da4b9a94ad170af4c681d55b
+  languageName: node
+  linkType: hard
+
+"@graphql-yoga/plugin-apollo-inline-trace@npm:^3.12.1":
   version: 3.12.1
   resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.12.1"
   dependencies:
@@ -8499,8 +8513,8 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-jwt@npm:^3.4.9":
-  version: 3.6.0
-  resolution: "@graphql-yoga/plugin-jwt@npm:3.6.0"
+  version: 3.6.1
+  resolution: "@graphql-yoga/plugin-jwt@npm:3.6.1"
   dependencies:
     "@whatwg-node/server-plugin-cookies": "npm:^1.0.3"
     jsonwebtoken: "npm:^9.0.0"
@@ -8508,18 +8522,18 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.12.0
-  checksum: 10c0/80c59fc64ae9e50b8d164ab04297d74594015c710362bd6567590f9752fd29b25530bf27273a33ff7eff04d1b5dfd70b22949ef44c2d9ad227f643ea81960fa7
+    graphql-yoga: ^5.12.1
+  checksum: 10c0/6cc3fa0195eb6568c643fd7b78b14625cb77e36cc0d2c9911129e589470be4412dc99f20c94121a4e48809f5dd8143dc197ffd7231aa05c26132918d3925dd3c
   languageName: node
   linkType: hard
 
 "@graphql-yoga/plugin-persisted-operations@npm:^3.0.0, @graphql-yoga/plugin-persisted-operations@npm:^3.12.0, @graphql-yoga/plugin-persisted-operations@npm:^3.9.0":
-  version: 3.12.0
-  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.12.0"
+  version: 3.12.1
+  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.12.1"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.12.0
-  checksum: 10c0/fed3bae73717f4bf605c92c83d576c808db3903f3a522a25c351b426b4ac3f98e41ca4c01aad8a9b3281ae15a268c776808b094853eda479ed793577b67775e8
+    graphql-yoga: ^5.12.1
+  checksum: 10c0/8435d92b8464a878dcef72166ada42c311faca25c11eaaa16085dc4904bf6526d5de3bef13df157fcc8ed24c129ca3fa4855ed801c84aa2990d525bfb8312906
   languageName: node
   linkType: hard
 
@@ -8537,28 +8551,28 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-response-cache@npm:^3.13.1":
-  version: 3.14.0
-  resolution: "@graphql-yoga/plugin-response-cache@npm:3.14.0"
+  version: 3.14.1
+  resolution: "@graphql-yoga/plugin-response-cache@npm:3.14.1"
   dependencies:
     "@envelop/core": "npm:^5.0.2"
     "@envelop/response-cache": "npm:^7.0.0"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.12.0
-  checksum: 10c0/320fcc95c86914faea71b3ff213258b4b00e90409686277c43cce9f121dfc84dc62ed6bff6ed9ab9442fe423ab08b7a81e7d745d2420fb393302fac8c7554f92
+    graphql-yoga: ^5.12.1
+  checksum: 10c0/07a5ed8d530ff800b880749169f431d4850b15c883b0c0862cae18fdebcfd355671427a59cb127c188ddbe0742a39fa7fe396889e51df90952c9f8412568dfb0
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-sofa@npm:3.12.0":
-  version: 3.12.0
-  resolution: "@graphql-yoga/plugin-sofa@npm:3.12.0"
+"@graphql-yoga/plugin-sofa@npm:3.12.1":
+  version: 3.12.1
+  resolution: "@graphql-yoga/plugin-sofa@npm:3.12.1"
   dependencies:
     "@graphql-tools/utils": "npm:^10.3.2"
     sofa-api: "npm:^0.18.8"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.12.0
-  checksum: 10c0/6e868bf5021c9aa0e3c8a58c226ace5832f679d8ce33b955931d18180beae7e5d29a3ee85be8320876198266555e3789b492575f74ecfe7c0426ff0c3e0f1105
+    graphql-yoga: ^5.12.1
+  checksum: 10c0/41282fb27a2da841cbaf6457e4a97b647b1c6d58d0222050988e9fe539ab8d57b421ead4bceb1dd73d049a03474d1b9735f8ff3b6a7bd2508bb1c85f98740f55
   languageName: node
   linkType: hard
 
@@ -20236,7 +20250,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": "npm:4.4.4"
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/compose-cli": "npm:1.3.13"
-    "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.12.1"
+    "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.12.2"
     "@types/node": "npm:22.13.5"
     concurrently: "npm:9.1.2"
     esbuild: "npm:^0.25.0"
@@ -22095,9 +22109,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-yoga@npm:5.12.0, graphql-yoga@npm:^5.12.0":
-  version: 5.12.0
-  resolution: "graphql-yoga@npm:5.12.0"
+"graphql-yoga@npm:5.12.1, graphql-yoga@npm:^5.12.0":
+  version: 5.12.1
+  resolution: "graphql-yoga@npm:5.12.1"
   dependencies:
     "@envelop/core": "npm:^5.0.2"
     "@graphql-tools/executor": "npm:^1.4.0"
@@ -22105,14 +22119,14 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.6.2"
     "@graphql-yoga/logger": "npm:^2.0.1"
     "@graphql-yoga/subscription": "npm:^5.0.3"
-    "@whatwg-node/fetch": "npm:^0.10.1"
-    "@whatwg-node/server": "npm:^0.9.64"
+    "@whatwg-node/fetch": "npm:^0.10.5"
+    "@whatwg-node/server": "npm:^0.9.69"
     dset: "npm:^3.1.4"
     lru-cache: "npm:^10.0.0"
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-  checksum: 10c0/e6fd4e79e17428e7e28904761bcf5d0730d1197623631f2550914ba15254be89af633b8040636503302a4170d29ff3b9c75c674a02425be2131b26731d3578ab
+  checksum: 10c0/facd3ec16ab7c4635b58e2a8a94b23d892511ca025aaecaddca09e0a83cb6041cd552fbf52faa018dd2fe4ca3a49c4c19af2b6ced9d0392a2369ff72ffa9a993
   languageName: node
   linkType: hard
 
@@ -37223,9 +37237,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.109.2":
-  version: 3.109.2
-  resolution: "wrangler@npm:3.109.2"
+"wrangler@npm:3.109.3":
+  version: 3.109.3
+  resolution: "wrangler@npm:3.109.3"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@esbuild-plugins/node-globals-polyfill": "npm:0.2.3"
@@ -37251,7 +37265,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/dbaaf1ec11ac53b0456785680d753f9934ec83572d934dcda3d051f6eb9688d583c86dcd3df37143c9aeb9da6edc91079d4371493c2f0a2c7ba10c270c722f11
+  checksum: 10c0/41440cd7c11c19628e9e865fb0eac5611b2ee75aa3f7d20b91e161555f54af1a96c143ea17945646c7c8e774206552a3d302a9f1904d6af653e55421c3de4d99
   languageName: node
   linkType: hard
 
