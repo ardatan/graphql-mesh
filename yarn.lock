@@ -4907,8 +4907,8 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.99.0"
     "@graphql-mesh/openapi": "npm:0.108.23"
-    "@graphql-mesh/plugin-hive": "npm:0.103.20"
-    "@graphql-mesh/transform-hive": "npm:0.103.22"
+    "@graphql-mesh/plugin-hive": "npm:0.103.21"
+    "@graphql-mesh/transform-hive": "npm:0.103.23"
     graphql: "npm:16.10.0"
   languageName: unknown
   linkType: soft
@@ -6679,7 +6679,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-hive@npm:0.103.20, @graphql-mesh/plugin-hive@npm:^0.103.19, @graphql-mesh/plugin-hive@workspace:packages/plugins/hive":
+"@graphql-mesh/plugin-hive@npm:0.103.21, @graphql-mesh/plugin-hive@npm:^0.103.19, @graphql-mesh/plugin-hive@workspace:packages/plugins/hive":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
@@ -7216,7 +7216,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transform-hive@npm:0.103.22, @graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive":
+"@graphql-mesh/transform-hive@npm:0.103.23, @graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive"
   dependencies:
