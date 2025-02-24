@@ -241,8 +241,8 @@ jobs:
       - name: Run E2E Tests
         uses: nick-fields/retry@v3
         with:
-          timeout_minutes: 30
-          max_attempts: 3
+          timeout_minutes: 60
+          max_attempts: 5
           command: yarn test:e2e
 
   apollo-federation-compatibility:

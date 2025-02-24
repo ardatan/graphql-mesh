@@ -1,9 +1,11 @@
-import { createTenv } from '@e2e/tenv';
+import { createTenv, type Container } from '@e2e/tenv';
 
 const { compose, container, serve, spawn } = createTenv(__dirname);
 
-const neo4jContainer = async () => {
-  const neo4j = await container({
+let neo4j: Container;
+
+beforeAll(async () => {
+  neo4j = await container({
     name: 'neo4j',
     image: 'neo4j:5.22.0',
     containerPort: 7687,
@@ -28,11 +30,9 @@ const neo4jContainer = async () => {
     'cypher-shell -u neo4j -p password -f /backups/movies.cypher',
   ]);
   await waitForLoad;
-  return neo4j;
-};
+});
 
 it('should compose the appropriate schema', async () => {
-  const neo4j = await neo4jContainer();
   const composition = await compose({
     services: [neo4j],
     maskServicePorts: true,
@@ -41,7 +41,6 @@ it('should compose the appropriate schema', async () => {
 });
 
 it('should execute MovieWithActedIn', async () => {
-  const neo4j = await neo4jContainer();
   const composition = await compose({
     services: [neo4j],
     output: 'graphql',
