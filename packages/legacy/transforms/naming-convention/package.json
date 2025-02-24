@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "^0.104.0",
-    "@graphql-tools/schema": "10.0.16",
+    "@graphql-tools/schema": "10.0.19",
     "graphql": "16.10.0"
   },
   "publishConfig": {
