@@ -30,8 +30,7 @@ import type {
 import { applySchemaTransforms, delegateToSchema } from '@graphql-tools/delegate';
 import { buildOperationNodeForField, isDocumentNode, memoize1 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { iterateAsync } from './iterateAsync.js';
+import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
 import { parseWithCache } from './parseAndPrintWithCache.js';
 
 export const MESH_API_CONTEXT_SYMBOL = Symbol('isMeshAPIContext');

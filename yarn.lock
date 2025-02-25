@@ -7705,7 +7705,7 @@ __metadata:
     "@types/object-hash": "npm:3.0.6"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     "@whatwg-node/fetch": "npm:^0.10.4"
-    "@whatwg-node/promise-helpers": "npm:^1.0.0"
+    "@whatwg-node/promise-helpers": "npm:^1.2.0"
     dset: "npm:^3.1.2"
     graphql: "npm:16.10.0"
     js-yaml: "npm:^4.1.0"
@@ -14632,6 +14632,15 @@ __metadata:
   dependencies:
     tslib: "npm:^2.6.3"
   checksum: 10c0/44601db8a132a02aa05726a592282f361c8830f9bcd9852c4ae23cc47ee9b1a8ec190611e5a66c55cf2df137ddd51e9704a22c69304a1dfc6036be1db374809d
+  languageName: node
+  linkType: hard
+
+"@whatwg-node/promise-helpers@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@whatwg-node/promise-helpers@npm:1.2.0"
+  dependencies:
+    tslib: "npm:^2.6.3"
+  checksum: 10c0/5ec8ab18cd61126a288b11bc360eb151c71c65681bd6fd2ab263c80bf4c52f2b4e6712ed5f7ac80218e28e127b21af8229d6c0c55bd00b1e6cb9c0dce7c5b70f
   languageName: node
   linkType: hard
 
