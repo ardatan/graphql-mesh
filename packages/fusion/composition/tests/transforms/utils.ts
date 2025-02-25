@@ -7,7 +7,6 @@ import {
   lexicographicSortSchema,
   parse,
   print,
-  printSchema,
   validate,
   visit,
 } from 'graphql';
@@ -18,14 +17,15 @@ import { normalizedExecutor } from '@graphql-tools/executor';
 import {
   getDocumentNodeFromSchema,
   isAsyncIterable,
-  mapMaybePromise,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
   const executor = composeAndGetExecutor(subgraphs);
-  return mapMaybePromise(executor({ query: getIntrospectionQuery() }), result =>
-    buildClientSchema(result),
+  return handleMaybePromise(
+    () => executor({ query: getIntrospectionQuery() }),
+    result => buildClientSchema(result),
   );
 }
 
@@ -52,37 +52,43 @@ export function composeAndGetExecutor(subgraphs: SubgraphConfig[]) {
     variables?: Record<string, any>;
   }) {
     const document = parse(query);
-    return mapMaybePromise(manager.getUnifiedGraph(), schema => {
-      const validationErrors = validate(schema, document);
-      if (validationErrors.length === 1) {
-        throw validationErrors[0];
-      }
-      if (validationErrors.length > 1) {
-        throw new AggregateError(validationErrors);
-      }
-      return mapMaybePromise(manager.getContext(), contextValue =>
-        mapMaybePromise(
-          normalizedExecutor({
-            schema,
-            document,
-            contextValue,
-            variableValues,
-          }),
-          res => {
-            if (isAsyncIterable(res)) {
-              throw new Error('AsyncIterable is not supported');
-            }
-            if (res.errors?.length === 1) {
-              throw res.errors[0];
-            }
-            if (res.errors?.length > 1) {
-              throw new AggregateError(res.errors);
-            }
-            return res.data;
-          },
-        ),
-      );
-    });
+    return handleMaybePromise(
+      () => manager.getUnifiedGraph(),
+      schema => {
+        const validationErrors = validate(schema, document);
+        if (validationErrors.length === 1) {
+          throw validationErrors[0];
+        }
+        if (validationErrors.length > 1) {
+          throw new AggregateError(validationErrors);
+        }
+        return handleMaybePromise(
+          () => manager.getContext(),
+          contextValue =>
+            handleMaybePromise(
+              () =>
+                normalizedExecutor({
+                  schema,
+                  document,
+                  contextValue,
+                  variableValues,
+                }),
+              res => {
+                if (isAsyncIterable(res)) {
+                  throw new Error('AsyncIterable is not supported');
+                }
+                if (res.errors?.length === 1) {
+                  throw res.errors[0];
+                }
+                if (res.errors?.length > 1) {
+                  throw new AggregateError(res.errors);
+                }
+                return res.data;
+              },
+            ),
+        );
+      },
+    );
   };
 }
 

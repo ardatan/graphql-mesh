@@ -8,7 +8,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
-import { mapMaybePromise } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { GraphQLMeshCLIParams } from '../../index.js';
 import { getMaxConcurrency } from './getMaxConcurency.js';
 import { startNodeHttpServer } from './node-http.js';
@@ -153,9 +153,16 @@ export async function serveMesh(
     registerTerminateHandler(eventName => {
       const eventLogger = logger.child({ terminateEvent: eventName });
       eventLogger.debug(`Stopping HTTP Server`);
-      mapMaybePromise(stop(), () => {
-        eventLogger.debug(`HTTP Server has been stopped`);
-      });
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      handleMaybePromise(
+        stop,
+        () => {
+          eventLogger.debug(`HTTP Server has been stopped`);
+        },
+        () => {
+          eventLogger.error(`Failed to stop HTTP Server`);
+        },
+      );
     });
     if (browser) {
       open(

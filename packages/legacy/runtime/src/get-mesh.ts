@@ -23,13 +23,11 @@ import {
   getInContextSDK,
   groupTransforms,
   makeDisposable,
-  mapMaybePromise,
   parseWithCache,
   PubSub,
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import type { CreateProxyingResolverFn, SubschemaConfig } from '@graphql-tools/delegate';
-import { Subschema } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import type { ExecutionResult } from '@graphql-tools/utils';
 import {
@@ -41,6 +39,7 @@ import {
 } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import type { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { getOriginalError } from './utils.js';
@@ -338,15 +337,17 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       }
       const isSubscription = operationAST.operation === 'subscription';
       const executeFn = isSubscription ? subscribe : execute;
-      return mapMaybePromise(contextFactory(contextValue), contextValue =>
-        executeFn({
-          schema,
-          document,
-          contextValue,
-          rootValue,
-          variableValues,
-          operationName,
-        }),
+      return handleMaybePromise(
+        () => contextFactory(contextValue),
+        contextValue =>
+          executeFn({
+            schema,
+            document,
+            contextValue,
+            rootValue,
+            variableValues,
+            operationName,
+          }),
       );
     };
   }
@@ -354,12 +355,15 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   function sdkRequesterFactory(globalContext: any): SdkRequester {
     const executor = createExecutor(globalContext);
     return function sdkRequester(...args) {
-      return mapMaybePromise(executor(...args), function handleExecutorResultForSdk(result) {
-        if (isAsyncIterable(result)) {
-          return mapAsyncIterator(result, extractDataOrThrowErrors);
-        }
-        return extractDataOrThrowErrors(result);
-      });
+      return handleMaybePromise(
+        () => executor(...args),
+        function handleExecutorResultForSdk(result) {
+          if (isAsyncIterable(result)) {
+            return mapAsyncIterator(result, extractDataOrThrowErrors);
+          }
+          return extractDataOrThrowErrors(result);
+        },
+      );
     };
   }
 

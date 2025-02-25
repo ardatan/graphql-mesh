@@ -1,6 +1,5 @@
 import { process } from '@graphql-mesh/cross-helpers';
 import type { KeyValueCache } from '@graphql-mesh/types';
-import { mapMaybePromise } from '@graphql-mesh/utils';
 import { Redis, type RedisConfigNodejs } from '@upstash/redis';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
@@ -33,7 +32,7 @@ export default class UpstashRedisCache implements KeyValueCache {
   }
 
   delete(key: string) {
-    return mapMaybePromise(this.redis.del(key), num => num > 0);
+    return this.redis.del(key).then(num => num > 0);
   }
 
   async getKeysByPrefix(prefix: string): Promise<string[]> {

@@ -4,7 +4,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { getTypeInfo, type DelegationContext } from '@graphql-tools/delegate';
-import { mapMaybePromise, type ExecutionRequest } from '@graphql-tools/utils';
+import { type ExecutionRequest } from '@graphql-tools/utils';
 
 interface TransformationContext {
   collectUsageCallback?: ReturnType<HiveClient['collectUsage']>;

@@ -50,6 +50,7 @@
     "@graphql-tools/schema": "^10.0.5",
     "@graphql-tools/utils": "^10.8.0",
     "@whatwg-node/fetch": "^0.10.4",
+    "@whatwg-node/promise-helpers": "^1.0.0",
     "commander": "^13.0.0",
     "dotenv": "^16.3.1"
   },

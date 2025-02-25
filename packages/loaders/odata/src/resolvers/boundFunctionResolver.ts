@@ -1,8 +1,8 @@
 import type { GraphQLFieldResolver } from 'graphql';
 import { parseResolveInfo, type ResolveTree } from 'graphql-parse-resolve-info';
 import urljoin from 'url-join';
-import { mapMaybePromise } from '@graphql-tools/utils';
 import { Request } from '@whatwg-node/fetch';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { DataloaderFactory } from '../getDataloaderFactory.js';
 import { getUrlString } from '../utils/getUrlString.js';
 import { handleResponseText } from '../utils/handleResponseText.js';
@@ -57,10 +57,13 @@ export function createBoundFunctionResolver({
         method,
       ),
     });
-    return mapMaybePromise(dataloaderFactory(context).load(request), response =>
-      mapMaybePromise(response.text(), responseText =>
-        handleResponseText(responseText, urlString, info),
-      ),
+    return handleMaybePromise(
+      () => dataloaderFactory(context).load(request),
+      response =>
+        handleMaybePromise(
+          () => response.text(),
+          responseText => handleResponseText(responseText, urlString, info),
+        ),
     );
   };
 }

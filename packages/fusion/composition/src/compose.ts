@@ -3,14 +3,11 @@ import type {
   GraphQLArgumentConfig,
   GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
-  GraphQLNamedType,
 } from 'graphql';
 import {
   concatAST,
   getNamedType,
-  GraphQLEnumType,
   GraphQLSchema,
-  GraphQLUnionType,
   isNonNullType,
   isObjectType,
   isSpecifiedScalarType,

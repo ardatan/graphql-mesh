@@ -1,7 +1,8 @@
 import { getOperationAST } from 'graphql';
 import * as apolloClient from '@apollo/client';
 import type { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
-import { isAsyncIterable, mapMaybePromise } from '@graphql-tools/utils';
+import { fakePromise, isAsyncIterable } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export interface MeshApolloRequestHandlerOptions {
   execute: ExecuteMeshFn;
@@ -22,28 +23,30 @@ function createMeshApolloRequestHandler(
     const operationFn =
       operationAst.operation === 'subscription' ? options.subscribe : options.execute;
     return new apolloClient.Observable(observer => {
-      mapMaybePromise(
-        operationFn(
-          operation.query,
-          operation.variables,
-          operation.getContext(),
-          ROOT_VALUE,
-          operation.operationName,
-        ),
-        async results => {
+      handleMaybePromise(
+        () =>
+          operationFn(
+            operation.query,
+            operation.variables,
+            operation.getContext(),
+            ROOT_VALUE,
+            operation.operationName,
+          ),
+        results => {
           if (isAsyncIterable(results)) {
-            for await (const result of results) {
-              if (observer.closed) {
-                return;
+            return fakePromise().then(async () => {
+              for await (const result of results) {
+                if (observer.closed) {
+                  return;
+                }
+                observer.next(result);
               }
-              observer.next(result);
-            }
-            observer.complete();
-          } else {
-            if (!observer.closed) {
-              observer.next(results);
               observer.complete();
-            }
+            });
+          }
+          if (!observer.closed) {
+            observer.next(results);
+            observer.complete();
           }
         },
         error => {

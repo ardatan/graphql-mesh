@@ -3,8 +3,8 @@ import {
   type Executor,
   type Transport,
 } from '@graphql-mesh/transport-common';
-import { mapMaybePromise } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromOptions, type GraphQLSQLiteLoaderOpts } from '@omnigraph/sqlite';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export interface SQLiteTransportOptions {
   type: 'infile' | 'db';
@@ -18,8 +18,9 @@ export default {
     } else {
       loaderOpts.db = transportEntry.location;
     }
-    return mapMaybePromise(loadGraphQLSchemaFromOptions(loaderOpts), schema =>
-      createDefaultExecutor(schema),
+    return handleMaybePromise(
+      () => loadGraphQLSchemaFromOptions(loaderOpts),
+      schema => createDefaultExecutor(schema),
     );
   },
 } satisfies Transport<SQLiteTransportOptions>;

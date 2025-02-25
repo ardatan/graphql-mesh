@@ -9,7 +9,6 @@ import type {
   MeshPubSub,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { mapMaybePromise } from '@graphql-mesh/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 function interpolateStrWithEnv(str: string): string {
@@ -109,9 +108,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   }
 
   get(key: string): Promise<V | undefined> {
-    return mapMaybePromise(this.client.get(key), value => {
-      return value != null ? JSON.parse(value) : undefined;
-    });
+    return this.client.get(key).then(value => (value != null ? JSON.parse(value) : undefined));
   }
 
   getKeysByPrefix(prefix: string): Promise<string[]> {
@@ -119,27 +116,19 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   }
 
   delete(key: string): PromiseLike<boolean> | boolean {
-    try {
-      return mapMaybePromise(
-        this.client.del(key),
-        value => value > 0,
-        () => false,
-      );
-    } catch (e) {
-      return false;
-    }
+    return this.client.del(key).then(
+      value => value > 0,
+      () => false,
+    );
   }
 }
 
 function scanPatterns(redis: Redis, pattern: string, cursor: string = '0', keys: string[] = []) {
-  return mapMaybePromise(
-    redis.scan(cursor, 'MATCH', pattern, 'COUNT', '10'),
-    ([nextCursor, nextKeys]) => {
-      keys.push(...nextKeys);
-      if (nextCursor === '0') {
-        return keys;
-      }
-      return scanPatterns(redis, pattern, nextCursor, keys);
-    },
-  );
+  return redis.scan(cursor, 'MATCH', pattern, 'COUNT', '10').then(([nextCursor, nextKeys]) => {
+    keys.push(...nextKeys);
+    if (nextCursor === '0') {
+      return keys;
+    }
+    return scanPatterns(redis, pattern, nextCursor, keys);
+  });
 }

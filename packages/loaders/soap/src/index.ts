@@ -1,5 +1,6 @@
 import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, mapMaybePromise, readFileOrUrl } from '@graphql-mesh/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { SOAPLoader, type SOAPHeaders } from './SOAPLoader.js';
 
 export * from './SOAPLoader.js';
@@ -59,19 +60,23 @@ export function loadSOAPSubgraph(subgraphName: string, options: SOAPSubgraphLoad
     });
     return {
       name: subgraphName,
-      schema$: mapMaybePromise(
-        readFileOrUrl<string>(options.source, {
-          allowUnknownExtensions: true,
-          cwd,
-          fetch,
-          importFn: defaultImportFn,
-          logger,
-        }),
-        wsdl =>
-          mapMaybePromise(soapLoader.loadWSDL(wsdl), object => {
-            soapLoader.loadedLocations.set(options.source, object);
-            return soapLoader.buildSchema();
+      schema$: handleMaybePromise(
+        () =>
+          readFileOrUrl<string>(options.source, {
+            allowUnknownExtensions: true,
+            cwd,
+            fetch,
+            importFn: defaultImportFn,
+            logger,
           }),
+        wsdl =>
+          handleMaybePromise(
+            () => soapLoader.loadWSDL(wsdl),
+            object => {
+              soapLoader.loadedLocations.set(options.source, object);
+              return soapLoader.buildSchema();
+            },
+          ),
       ),
     };
   };
