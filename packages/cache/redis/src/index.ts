@@ -115,7 +115,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
     return scanPatterns(this.client, `${prefix}*`);
   }
 
-  delete(key: string): PromiseLike<boolean> | boolean {
+  delete(key: string): Promise<boolean> {
     return this.client.del(key).then(
       value => value > 0,
       () => false,

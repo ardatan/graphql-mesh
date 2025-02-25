@@ -4,14 +4,14 @@ import {
   type Transport,
 } from '@graphql-mesh/transport-common';
 import { loadGraphQLSchemaFromOptions, type GraphQLSQLiteLoaderOpts } from '@omnigraph/sqlite';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 
 export interface SQLiteTransportOptions {
   type: 'infile' | 'db';
 }
 
 export default {
-  getSubgraphExecutor({ cwd, transportEntry }): Executor | PromiseLike<Executor> {
+  getSubgraphExecutor({ cwd, transportEntry }): MaybePromise<Executor> {
     const loaderOpts: GraphQLSQLiteLoaderOpts = { cwd };
     if (transportEntry.options.type === 'infile') {
       loaderOpts.infile = transportEntry.location;

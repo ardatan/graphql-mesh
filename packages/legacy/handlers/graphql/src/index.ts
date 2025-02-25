@@ -133,7 +133,6 @@ export default class GraphQLHandler implements MeshHandler {
       ...httpSourceConfig,
       subscriptionsEndpoint,
       subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
-      // @ts-expect-error - this is a bug in the types
       customFetch: this.fetchFn,
     });
 
@@ -222,7 +221,6 @@ export default class GraphQLHandler implements MeshHandler {
       const endpointFactory = getInterpolatedStringFactory(httpSourceConfig.endpoint);
       const executor = this.urlLoader.getExecutorAsync(httpSourceConfig.endpoint, {
         ...httpSourceConfig,
-        // @ts-expect-error - this is a bug in the types
         customFetch: this.fetchFn,
         subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
       });

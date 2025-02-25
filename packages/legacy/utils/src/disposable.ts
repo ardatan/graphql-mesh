@@ -1,5 +1,5 @@
-import type { MaybePromise } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
 export function isDisposable(obj: any): obj is Disposable | AsyncDisposable {
   return obj?.[DisposableSymbols.dispose] || obj?.[DisposableSymbols.asyncDispose];
@@ -13,7 +13,7 @@ export function dispose<T extends AsyncDisposable | Disposable>(disposable: T): 
     return disposable[DisposableSymbols.dispose]();
   }
   if (DisposableSymbols.asyncDispose in disposable) {
-    return disposable[DisposableSymbols.asyncDispose]();
+    return disposable[DisposableSymbols.asyncDispose]() as Promise<void>;
   }
 }
 
