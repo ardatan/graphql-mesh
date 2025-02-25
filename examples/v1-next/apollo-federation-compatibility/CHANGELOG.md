@@ -1,5 +1,7 @@
 # example-apollo-federation-compatibility
 
+## 1.6.15
+
 ## 1.6.14
 
 ## 1.6.13
