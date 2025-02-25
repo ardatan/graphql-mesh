@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-http-details-extensions",
-  "version": "0.103.20",
+  "version": "0.103.21",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,8 +36,8 @@
   },
   "dependencies": {
     "@envelop/core": "^5.1.0",
-    "@graphql-mesh/types": "^0.103.19",
-    "@graphql-mesh/utils": "^0.103.19",
+    "@graphql-mesh/types": "^0.103.20",
+    "@graphql-mesh/utils": "^0.103.20",
     "@whatwg-node/fetch": "^0.10.4",
     "tslib": "^2.4.0"
   },
