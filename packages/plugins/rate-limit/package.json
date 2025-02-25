@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-rate-limit",
-  "version": "0.103.21",
+  "version": "0.103.22",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,8 +38,8 @@
     "@envelop/rate-limiter": "^7.0.1",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "0.5.8",
-    "@graphql-mesh/types": "^0.103.20",
-    "@graphql-mesh/utils": "^0.103.20",
+    "@graphql-mesh/types": "^0.103.21",
+    "@graphql-mesh/utils": "^0.103.21",
     "@graphql-tools/utils": "^10.8.0",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "tslib": "^2.4.0"

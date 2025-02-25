@@ -1,5 +1,16 @@
 # @graphql-mesh/compose-cli
 
+## 1.3.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`903124f`](https://github.com/ardatan/graphql-mesh/commit/903124f8245a518aac50ef8d0eff2fef01a206f2)]:
+  - @graphql-mesh/utils@0.103.21
+  - @graphql-mesh/fusion-composition@0.7.27
+  - @graphql-mesh/include@0.2.20
+  - @graphql-mesh/types@0.103.21
+
 ## 1.3.14
 
 ### Patch Changes

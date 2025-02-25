@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-hive
 
+## 0.103.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.103.21
+
 ## 0.103.22
 
 ### Patch Changes

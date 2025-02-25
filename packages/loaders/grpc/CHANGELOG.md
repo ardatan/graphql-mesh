@@ -1,5 +1,16 @@
 # @omnigraph/grpc
 
+## 0.2.5
+
+### Patch Changes
+
+- [#8433](https://github.com/ardatan/graphql-mesh/pull/8433)
+  [`903124f`](https://github.com/ardatan/graphql-mesh/commit/903124f8245a518aac50ef8d0eff2fef01a206f2)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/disposablestack@^0.0.6` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.6)
+    (from `^0.0.5`, in `dependencies`)
+
 ## 0.2.4
 
 ### Patch Changes
