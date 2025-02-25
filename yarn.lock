@@ -14627,11 +14627,11 @@ __metadata:
   linkType: hard
 
 "@whatwg-node/promise-helpers@npm:^1.0.0, @whatwg-node/promise-helpers@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@whatwg-node/promise-helpers@npm:1.2.0"
+  version: 1.2.1
+  resolution: "@whatwg-node/promise-helpers@npm:1.2.1"
   dependencies:
     tslib: "npm:^2.6.3"
-  checksum: 10c0/5ec8ab18cd61126a288b11bc360eb151c71c65681bd6fd2ab263c80bf4c52f2b4e6712ed5f7ac80218e28e127b21af8229d6c0c55bd00b1e6cb9c0dce7c5b70f
+  checksum: 10c0/fe0e14fc8dd987bbb3b90db9191887783140e0753dc322cfb245070da378b295bd12d3b45bddfe26f537022dbb43026051090a42fe4e15e523c9b9e785b177b4
   languageName: node
   linkType: hard
 
