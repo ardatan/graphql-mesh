@@ -23,6 +23,7 @@ function createMeshApolloRequestHandler(
     const operationFn =
       operationAst.operation === 'subscription' ? options.subscribe : options.execute;
     return new apolloClient.Observable(observer => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handleMaybePromise(
         () =>
           operationFn(
