@@ -38,7 +38,7 @@
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "0.5.8",
     "@graphql-mesh/types": "^0.103.20",
-    "@whatwg-node/disposablestack": "^0.0.5",
+    "@whatwg-node/disposablestack": "^0.0.6",
     "ioredis": "^5.3.2",
     "ioredis-mock": "^8.8.3",
     "tslib": "^2.4.0"

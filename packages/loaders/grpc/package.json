@@ -41,7 +41,7 @@
     "@graphql-mesh/transport-common": "^0.7.13",
     "@graphql-tools/utils": "^10.8.0",
     "@grpc/grpc-js": "^1.1.7",
-    "@whatwg-node/disposablestack": "^0.0.5",
+    "@whatwg-node/disposablestack": "^0.0.6",
     "globby": "^11.1.0",
     "graphql-compose": "^9.1.0",
     "graphql-scalars": "^1.23.0",
