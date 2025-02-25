@@ -5206,7 +5206,7 @@ __metadata:
     react: "npm:19.0.0"
     react-dom: "npm:19.0.0"
     typescript: "npm:^5.4.2"
-    vite: "npm:6.1.1"
+    vite: "npm:6.2.0"
   languageName: unknown
   linkType: soft
 
@@ -20762,13 +20762,13 @@ __metadata:
   linkType: hard
 
 "fast-xml-parser@npm:^5.0.0":
-  version: 5.0.6
-  resolution: "fast-xml-parser@npm:5.0.6"
+  version: 5.0.7
+  resolution: "fast-xml-parser@npm:5.0.7"
   dependencies:
     strnum: "npm:^2.0.4"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10c0/71e8eeb158dbf54221e511c54a101999a5023ce32327eeda2d706fe542ee15cf15942bc84d1ab50f19bd9d1496feaf97fbb4f3afac118808b85148b9bbd45f42
+  checksum: 10c0/32aa3d1fe350ae23616fefa553a01bd3370dd03b5090503adc53b1c0f8aa53682681bfb58e2d208c494381dbae4d600b57116466df6e0e8bb73e8d85d45dd4eb
   languageName: node
   linkType: hard
 
@@ -36451,13 +36451,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:6.1.1":
-  version: 6.1.1
-  resolution: "vite@npm:6.1.1"
+"vite@npm:6.2.0":
+  version: 6.2.0
+  resolution: "vite@npm:6.2.0"
   dependencies:
-    esbuild: "npm:^0.24.2"
+    esbuild: "npm:^0.25.0"
     fsevents: "npm:~2.3.3"
-    postcss: "npm:^8.5.2"
+    postcss: "npm:^8.5.3"
     rollup: "npm:^4.30.1"
   peerDependencies:
     "@types/node": ^18.0.0 || ^20.0.0 || >=22.0.0
@@ -36499,7 +36499,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/4ec5ddc9436951a68b213cd59c2a157663ef423658c387400774582ea33da40dcae18e55f3adb3b629173e2183b10d49db8370bc51a0aa89797e4ca5a34702a0
+  checksum: 10c0/db62c93d4a823e805c6f8429de035528b3c35cc7f6de4948b41e0528f94ed2ac55047d90f8534f626ef3a04e682883b570fe5ec9ee92f51bf0c3c210dbec5ac1
   languageName: node
   linkType: hard
 
