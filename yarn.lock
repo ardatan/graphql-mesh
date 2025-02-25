@@ -14626,16 +14626,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/promise-helpers@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@whatwg-node/promise-helpers@npm:1.0.0"
-  dependencies:
-    tslib: "npm:^2.6.3"
-  checksum: 10c0/44601db8a132a02aa05726a592282f361c8830f9bcd9852c4ae23cc47ee9b1a8ec190611e5a66c55cf2df137ddd51e9704a22c69304a1dfc6036be1db374809d
-  languageName: node
-  linkType: hard
-
-"@whatwg-node/promise-helpers@npm:^1.2.0":
+"@whatwg-node/promise-helpers@npm:^1.0.0, @whatwg-node/promise-helpers@npm:^1.2.0":
   version: 1.2.0
   resolution: "@whatwg-node/promise-helpers@npm:1.2.0"
   dependencies:
