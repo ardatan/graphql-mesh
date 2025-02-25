@@ -1,5 +1,20 @@
 # @graphql-mesh/config
 
+## 0.107.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3f5e0a1`](https://github.com/ardatan/graphql-mesh/commit/3f5e0a13c8a07bd68ec19e4da94f34030cc7d3dc),
+  [`3f5e0a1`](https://github.com/ardatan/graphql-mesh/commit/3f5e0a13c8a07bd68ec19e4da94f34030cc7d3dc)]:
+  - @graphql-mesh/runtime@0.105.22
+  - @graphql-mesh/utils@0.103.20
+  - @graphql-mesh/cache-localforage@0.104.1
+  - @graphql-mesh/merger-bare@0.104.23
+  - @graphql-mesh/merger-stitching@0.104.20
+  - @graphql-mesh/store@0.103.20
+  - @graphql-mesh/types@0.103.20
+
 ## 0.107.0
 
 ### Patch Changes

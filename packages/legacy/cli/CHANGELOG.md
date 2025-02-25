@@ -1,5 +1,26 @@
 # @graphql-mesh/cli
 
+## 0.99.1
+
+### Patch Changes
+
+- [#8431](https://github.com/ardatan/graphql-mesh/pull/8431)
+  [`3f5e0a1`](https://github.com/ardatan/graphql-mesh/commit/3f5e0a13c8a07bd68ec19e4da94f34030cc7d3dc)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@whatwg-node/promise-helpers@^1.0.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.0.0)
+    (to `dependencies`)
+- Updated dependencies
+  [[`3f5e0a1`](https://github.com/ardatan/graphql-mesh/commit/3f5e0a13c8a07bd68ec19e4da94f34030cc7d3dc),
+  [`3f5e0a1`](https://github.com/ardatan/graphql-mesh/commit/3f5e0a13c8a07bd68ec19e4da94f34030cc7d3dc)]:
+  - @graphql-mesh/runtime@0.105.22
+  - @graphql-mesh/utils@0.103.20
+  - @graphql-mesh/config@0.107.1
+  - @graphql-mesh/http@0.105.22
+  - @graphql-mesh/include@0.2.19
+  - @graphql-mesh/store@0.103.20
+  - @graphql-mesh/types@0.103.20
+
 ## 0.99.0
 
 ### Patch Changes
