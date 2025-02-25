@@ -2,6 +2,7 @@
 import { path } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
 import { fakePromise, mapMaybePromise } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { defaultImportFn } from './defaultImportFn.js';
 
 type LoadFromModuleExportExpressionOptions = {
@@ -20,15 +21,15 @@ export function loadFromModuleExportExpression<T>(
 
   const { defaultExportName, cwd, importFn = defaultImportFn } = options || {};
   const [modulePath, exportName = defaultExportName] = expression.split('#');
-  return mapMaybePromise(
-    tryImport(modulePath, cwd, importFn),
+  return handleMaybePromise(
+    () => tryImport(modulePath, cwd, importFn),
     mod => mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod,
   );
 }
 
 function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
-  return mapMaybePromise(
-    importFn(modulePath),
+  return handleMaybePromise(
+    () => importFn(modulePath),
     m => m,
     () => {
       if (!path.isAbsolute(modulePath)) {

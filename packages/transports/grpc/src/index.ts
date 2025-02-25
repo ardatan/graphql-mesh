@@ -30,6 +30,7 @@ import { DisposableStack } from '@whatwg-node/disposablestack';
 import { addExecutionLogicToScalar, addMetaDataToCall } from './utils.js';
 import './patchLongJs.js';
 import { makeDisposable } from '@graphql-mesh/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 /**
  * SSL Credentials
@@ -341,10 +342,13 @@ export default {
       transportEntry.location,
       transportEntry.options,
     );
-    return mapMaybePromise(transport.getCredentials(), creds => {
-      transport.processDirectives({ schema: subgraph, creds });
-      return makeDisposable(createDefaultExecutor(subgraph), () => transport.dispose());
-    });
+    return handleMaybePromise(
+      () => transport.getCredentials(),
+      creds => {
+        transport.processDirectives({ schema: subgraph, creds });
+        return makeDisposable(createDefaultExecutor(subgraph), () => transport.dispose());
+      },
+    );
   },
 } satisfies Transport<gRPCTransportOptions>;
 

@@ -1,6 +1,7 @@
 import type { GatewayContext, GatewayPlugin } from '@graphql-hive/gateway-runtime';
 import type { MeshFetchRequestInit } from '@graphql-mesh/types';
-import { getHeadersObj, mapMaybePromise } from '@graphql-mesh/utils';
+import { getHeadersObj } from '@graphql-mesh/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export interface OperationHeadersFactoryPayload {
   context: GatewayContext;
@@ -15,21 +16,22 @@ export type OperationHeadersFactory = (
 export function useOperationHeaders(factoryFn: OperationHeadersFactory): GatewayPlugin {
   return {
     onFetch({ url, options, context, setOptions }) {
-      const existingHeaders = getHeadersObj(options.headers || {});
-      const newHeaders$ = factoryFn({
-        url,
-        options,
-        context,
-      });
-      return mapMaybePromise(newHeaders$, newHeaders => {
-        setOptions({
-          ...options,
-          headers: {
-            ...existingHeaders,
-            ...newHeaders,
-          },
-        });
-      });
+      return handleMaybePromise(
+        () =>
+          factoryFn({
+            url,
+            options,
+            context,
+          }),
+        newHeaders =>
+          setOptions({
+            ...options,
+            headers: {
+              ...getHeadersObj(options.headers || {}),
+              ...newHeaders,
+            },
+          }),
+      );
     },
   };
 }

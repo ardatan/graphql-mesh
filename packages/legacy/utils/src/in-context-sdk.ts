@@ -28,13 +28,9 @@ import type {
   SubschemaConfig,
 } from '@graphql-tools/delegate';
 import { applySchemaTransforms, delegateToSchema } from '@graphql-tools/delegate';
-import {
-  buildOperationNodeForField,
-  isDocumentNode,
-  mapMaybePromise,
-  memoize1,
-} from '@graphql-tools/utils';
+import { buildOperationNodeForField, isDocumentNode, memoize1 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { iterateAsync } from './iterateAsync.js';
 import { parseWithCache } from './parseAndPrintWithCache.js';
 
@@ -217,18 +213,20 @@ export function getInContextSDK(
                 typeName: rootType.name,
                 fieldName,
               };
-              const onDelegateResult$ = iterateAsync(
-                onDelegateHooks,
-                onDelegateHook => onDelegateHook(onDelegatePayload),
-                onDelegateHookDones,
-              );
               fixInfo(batchDelegationOptions.info, operationType as OperationTypeNode);
-              return mapMaybePromise(onDelegateResult$, () =>
-                handleIterationResult(
-                  batchDelegateToSchema,
-                  batchDelegationOptions,
-                  onDelegateHookDones,
-                ),
+              return handleMaybePromise(
+                () =>
+                  iterateAsync(
+                    onDelegateHooks,
+                    onDelegateHook => onDelegateHook(onDelegatePayload),
+                    onDelegateHookDones,
+                  ),
+                () =>
+                  handleIterationResult(
+                    batchDelegateToSchema,
+                    batchDelegationOptions,
+                    onDelegateHookDones,
+                  ),
               );
             } else {
               const regularDelegateOptions: IDelegateToSchemaOptions = {
@@ -252,18 +250,20 @@ export function getInContextSDK(
                 typeName: rootType.name,
                 fieldName,
               };
-              const onDelegateResult$ = iterateAsync(
-                onDelegateHooks,
-                onDelegateHook => onDelegateHook(onDelegatePayload),
-                onDelegateHookDones,
-              );
               fixInfo(regularDelegateOptions.info, operationType as OperationTypeNode);
-              return mapMaybePromise(onDelegateResult$, () =>
-                handleIterationResult(
-                  delegateToSchema,
-                  regularDelegateOptions,
-                  onDelegateHookDones,
-                ),
+              return handleMaybePromise(
+                () =>
+                  iterateAsync(
+                    onDelegateHooks,
+                    onDelegateHook => onDelegateHook(onDelegatePayload),
+                    onDelegateHookDones,
+                  ),
+                () =>
+                  handleIterationResult(
+                    delegateToSchema,
+                    regularDelegateOptions,
+                    onDelegateHookDones,
+                  ),
               );
             }
           };
@@ -324,19 +324,22 @@ function handleIterationResult<TDelegateFn extends (...args: any) => any>(
   delegateOptions: Parameters<TDelegateFn>[0],
   onDelegateHookDones: OnDelegateHookDone[],
 ) {
-  const delegationResult$ = delegateFn(delegateOptions);
-  return mapMaybePromise(delegationResult$, function handleOnDelegateDone(delegationResult) {
-    function setResult(newResult: any) {
-      delegationResult = newResult;
-    }
-    const onDelegateDoneResult$ = iterateAsync(onDelegateHookDones, onDelegateHookDone =>
-      onDelegateHookDone({
-        result: delegationResult,
-        setResult,
-      }),
-    );
-    return mapMaybePromise(onDelegateDoneResult$, () => delegationResult);
-  });
+  return handleMaybePromise(
+    () => delegateFn(delegateOptions),
+    delegationResult =>
+      handleMaybePromise(
+        () =>
+          iterateAsync(onDelegateHookDones, onDelegateHookDone =>
+            onDelegateHookDone({
+              result: delegationResult,
+              setResult(newResult: any) {
+                delegationResult = newResult;
+              },
+            }),
+          ),
+        () => delegationResult,
+      ),
+  );
 }
 
 function fixInfo(info: GraphQLResolveInfo, operationType: OperationTypeNode) {

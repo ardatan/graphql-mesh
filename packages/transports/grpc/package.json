@@ -44,6 +44,7 @@
     "@grpc/grpc-js": "^1.1.7",
     "@grpc/proto-loader": "^0.7.8",
     "@whatwg-node/disposablestack": "^0.0.5",
+    "@whatwg-node/promise-helpers": "^1.0.0",
     "graphql-scalars": "^1.22.4",
     "lodash.get": "^4.4.2",
     "long": "4.0.0",

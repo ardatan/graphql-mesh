@@ -1,6 +1,6 @@
 /// <reference types="@cloudflare/workers-types" />
 import type { KeyValueCache, Logger } from '@graphql-mesh/types';
-import { mapMaybePromise } from '@graphql-mesh/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export default class CFWorkerKVCache implements KeyValueCache {
   private kvNamespace?: KVNamespace;
@@ -21,13 +21,16 @@ export default class CFWorkerKVCache implements KeyValueCache {
   }
 
   getKeysByPrefix(prefix: string) {
-    return mapMaybePromise(this.kvNamespace?.list({ prefix }), result => {
-      if (!result) {
-        return [];
-      }
+    return handleMaybePromise(
+      () => this.kvNamespace?.list({ prefix }),
+      result => {
+        if (!result) {
+          return [];
+        }
 
-      return result.keys.map(keyEntry => keyEntry.name);
-    });
+        return result.keys.map(keyEntry => keyEntry.name);
+      },
+    );
   }
 
   set(key: string, value: any, options?: { ttl?: number }): Promise<void> {
@@ -37,14 +40,10 @@ export default class CFWorkerKVCache implements KeyValueCache {
   }
 
   delete(key: string) {
-    try {
-      return mapMaybePromise(
-        this.kvNamespace?.delete(key),
-        () => true,
-        () => false,
-      );
-    } catch (e) {
-      return false;
-    }
+    return handleMaybePromise(
+      () => this.kvNamespace?.delete(key),
+      () => true,
+      () => false,
+    );
   }
 }

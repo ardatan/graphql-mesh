@@ -2,7 +2,7 @@ import { Store, useRateLimiter, type Identity } from '@envelop/rate-limiter';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
-import { mapMaybePromise } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 class RateLimitMeshStore extends Store {
   constructor(private cache: KeyValueCache) {
@@ -10,8 +10,8 @@ class RateLimitMeshStore extends Store {
   }
 
   getForIdentity(identity: Identity): Promise<number[]> | number[] {
-    return mapMaybePromise(
-      this.cache.get(`rate-limit:${identity.contextIdentity}:${identity.fieldIdentity}`),
+    return handleMaybePromise(
+      () => this.cache.get(`rate-limit:${identity.contextIdentity}:${identity.fieldIdentity}`),
       value => value || [],
     );
   }

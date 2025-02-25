@@ -6,7 +6,6 @@ import type {
   MeshPubSub,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { mapMaybePromise } from '@graphql-mesh/utils';
 
 export default class LocalforageCache<V = any> implements KeyValueCache<V> {
   private localforage: LocalForage;
@@ -26,21 +25,17 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
   }
 
   get(key: string) {
-    const getItem = () => {
-      return this.localforage.getItem<V>(key.toString());
-    };
-    return mapMaybePromise(this.localforage.getItem<number>(`${key}.expiresAt`), expiresAt => {
+    const getItem = () => this.localforage.getItem<V>(key.toString());
+    return this.localforage.getItem<number>(`${key}.expiresAt`).then(expiresAt => {
       if (expiresAt && Date.now() > expiresAt) {
-        return mapMaybePromise(this.localforage.removeItem(key), getItem);
+        return this.localforage.removeItem(key).then(() => getItem());
       }
       return getItem();
     });
   }
 
   getKeysByPrefix(prefix: string) {
-    return mapMaybePromise(this.localforage.keys(), keys =>
-      keys.filter(key => key.startsWith(prefix)),
-    );
+    return this.localforage.keys().then(keys => keys.filter(key => key.startsWith(prefix)));
   }
 
   set(key: string, value: V, options?: KeyValueCacheSetOptions) {
@@ -52,8 +47,7 @@ export default class LocalforageCache<V = any> implements KeyValueCache<V> {
   }
 
   delete(key: string) {
-    return mapMaybePromise(
-      this.localforage.removeItem(key),
+    return this.localforage.removeItem(key).then(
       () => true,
       () => false,
     );

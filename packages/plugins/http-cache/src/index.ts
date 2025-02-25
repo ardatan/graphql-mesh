@@ -6,6 +6,7 @@ import {
   Response as DefaultResponseCtor,
   URLPattern as DefaultURLPatternCtor,
 } from '@whatwg-node/fetch';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 interface CacheEntry {
   policy: CachePolicy.CachePolicyObject;
@@ -101,99 +102,104 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
         url,
         headers: getHeadersObj(options.headers),
       };
-      const cacheEntry$ = cache.get(cacheKey);
-      return mapMaybePromise(cacheEntry$, function handleCacheEntry(cacheEntry: CacheEntry) {
-        let policy: CachePolicy;
-        function returnCachedResponse(endResponse: (response: Response) => void) {
-          return endResponse(
-            new ResponseCtor(cacheEntry.body, {
-              status: cacheEntry.response.status,
-              // @ts-expect-error - Headers type mismatch
-              headers: policy.responseHeaders(),
-            }),
-          );
-        }
-        if (cacheEntry?.policy) {
-          pluginLogger?.debug(`Cache hit for ${url}`);
-          policy = CachePolicy.fromObject(cacheEntry.policy);
-          if (policy?.satisfiesWithoutRevalidation(policyRequest)) {
-            pluginLogger?.debug(`Cache hit is fresh for ${url}`);
-            return returnCachedResponse(endResponse);
-          } else if (policy?.revalidationHeaders) {
-            pluginLogger?.debug(`Cache will be revalidated for ${url}`);
-            setOptions({
-              ...options,
-              // @ts-expect-error - Headers type mismatch
-              headers: policy.revalidationHeaders(policyRequest),
-            });
-          }
-        }
-        return function handleResponse({ response, setResponse }) {
-          let body$: Promise<string> | string;
-          const policyResponse: CachePolicy.Response = {
-            status: response.status,
-            headers: getHeadersObj(response.headers),
-          };
-          function updateCacheEntry() {
-            const store$ = mapMaybePromise(body$, body => {
-              const ttl = policy.timeToLive();
-              if (ttl) {
-                pluginLogger?.debug(`TTL: ${ttl}ms`);
-              }
-              return cache.set(
-                cacheKey,
-                {
-                  policy: policy.toObject(),
-                  response: policyResponse,
-                  body,
-                },
-                ttl
-                  ? {
-                      ttl: ttl / 1000,
-                    }
-                  : undefined,
-              );
-            });
-            // @ts-expect-error - Promise type mismatch
-            context?.waitUntil(store$);
-          }
-          if (policy) {
-            const revalidationPolicy = policy.revalidatedPolicy(policyRequest, policyResponse);
-            policy = revalidationPolicy.policy;
-            if (revalidationPolicy.matches) {
-              pluginLogger?.debug(`Response not modified for ${url}`);
-              body$ = cacheEntry.body;
-              updateCacheEntry();
-              return returnCachedResponse(setResponse);
-            }
-            pluginLogger?.debug(`Updating the cache entry cache for ${url}`);
-          } else {
-            pluginLogger?.debug(`Creating the cache entry for ${url}`);
-            policy = new CachePolicy(policyRequest, policyResponse);
-          }
-          if (policy.storable()) {
-            pluginLogger?.debug(`Storing the cache entry for ${url}`);
-            body$ = response.text();
-            updateCacheEntry();
-            return body$.then(body =>
-              setResponse(
-                new ResponseCtor(body, {
-                  ...response,
-                  // @ts-expect-error - Headers type mismatch
-                  headers: policy.responseHeaders(),
-                }),
-              ),
+      return handleMaybePromise(
+        () => cache.get(cacheKey),
+        function handleCacheEntry(cacheEntry: CacheEntry) {
+          let policy: CachePolicy;
+          function returnCachedResponse(endResponse: (response: Response) => void) {
+            return endResponse(
+              new ResponseCtor(cacheEntry.body, {
+                status: cacheEntry.response.status,
+                // @ts-expect-error - Headers type mismatch
+                headers: policy.responseHeaders(),
+              }),
             );
-          } else {
-            if (cacheEntry) {
-              pluginLogger?.debug(`Deleting the cache entry for ${url}`);
-              const delete$ = cache.delete(cacheKey);
-              // @ts-expect-error - Promise type mismatch
-              context?.waitUntil(delete$);
+          }
+          if (cacheEntry?.policy) {
+            pluginLogger?.debug(`Cache hit for ${url}`);
+            policy = CachePolicy.fromObject(cacheEntry.policy);
+            if (policy?.satisfiesWithoutRevalidation(policyRequest)) {
+              pluginLogger?.debug(`Cache hit is fresh for ${url}`);
+              return returnCachedResponse(endResponse);
+            } else if (policy?.revalidationHeaders) {
+              pluginLogger?.debug(`Cache will be revalidated for ${url}`);
+              setOptions({
+                ...options,
+                // @ts-expect-error - Headers type mismatch
+                headers: policy.revalidationHeaders(policyRequest),
+              });
             }
           }
-        };
-      });
+          return function handleResponse({ response, setResponse }) {
+            let body$: Promise<string> | string;
+            const policyResponse: CachePolicy.Response = {
+              status: response.status,
+              headers: getHeadersObj(response.headers),
+            };
+            function updateCacheEntry() {
+              const store$ = handleMaybePromise(
+                () => body$,
+                body => {
+                  const ttl = policy.timeToLive();
+                  if (ttl) {
+                    pluginLogger?.debug(`TTL: ${ttl}ms`);
+                  }
+                  return cache.set(
+                    cacheKey,
+                    {
+                      policy: policy.toObject(),
+                      response: policyResponse,
+                      body,
+                    },
+                    ttl
+                      ? {
+                          ttl: ttl / 1000,
+                        }
+                      : undefined,
+                  );
+                },
+              );
+              // @ts-expect-error - Promise type mismatch
+              context?.waitUntil(store$);
+            }
+            if (policy) {
+              const revalidationPolicy = policy.revalidatedPolicy(policyRequest, policyResponse);
+              policy = revalidationPolicy.policy;
+              if (revalidationPolicy.matches) {
+                pluginLogger?.debug(`Response not modified for ${url}`);
+                body$ = cacheEntry.body;
+                updateCacheEntry();
+                return returnCachedResponse(setResponse);
+              }
+              pluginLogger?.debug(`Updating the cache entry cache for ${url}`);
+            } else {
+              pluginLogger?.debug(`Creating the cache entry for ${url}`);
+              policy = new CachePolicy(policyRequest, policyResponse);
+            }
+            if (policy.storable()) {
+              pluginLogger?.debug(`Storing the cache entry for ${url}`);
+              body$ = response.text();
+              updateCacheEntry();
+              return body$.then(body =>
+                setResponse(
+                  new ResponseCtor(body, {
+                    ...response,
+                    // @ts-expect-error - Headers type mismatch
+                    headers: policy.responseHeaders(),
+                  }),
+                ),
+              );
+            } else {
+              if (cacheEntry) {
+                pluginLogger?.debug(`Deleting the cache entry for ${url}`);
+                const delete$ = cache.delete(cacheKey);
+                // @ts-expect-error - Promise type mismatch
+                context?.waitUntil(delete$);
+              }
+            }
+          };
+        },
+      );
     },
   };
 }

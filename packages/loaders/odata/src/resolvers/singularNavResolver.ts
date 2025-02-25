@@ -1,8 +1,9 @@
 import type { GraphQLFieldResolver, GraphQLObjectType } from 'graphql';
 import { parseResolveInfo, type ResolveTree } from 'graphql-parse-resolve-info';
 import urljoin from 'url-join';
-import { getDirectiveExtensions, mapMaybePromise } from '@graphql-tools/utils';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { Request } from '@whatwg-node/fetch';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { DirectiveArgsMap } from '../directives.js';
 import type { DataloaderFactory } from '../getDataloaderFactory.js';
 import { addIdentifierToUrl } from '../utils/addIdentifierToUrl.js';
@@ -63,10 +64,13 @@ export function createSingularNavResolver({
         method,
       ),
     });
-    return mapMaybePromise(dataloaderFactory(context).load(request), response =>
-      mapMaybePromise(response.text(), responseText =>
-        handleResponseText(responseText, urlString, info),
-      ),
+    return handleMaybePromise(
+      () => dataloaderFactory(context).load(request),
+      response =>
+        handleMaybePromise(
+          () => response.text(),
+          responseText => handleResponseText(responseText, urlString, info),
+        ),
     );
   };
 }
