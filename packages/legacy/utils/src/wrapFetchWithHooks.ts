@@ -1,7 +1,6 @@
 import type { Logger, MeshFetch, OnFetchHook, OnFetchHookDone } from '@graphql-mesh/types';
-import { mapMaybePromise, type ExecutionRequest, type MaybePromise } from '@graphql-tools/utils';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { iterateAsync } from './iterateAsync.js';
+import { type ExecutionRequest, type MaybePromise } from '@graphql-tools/utils';
+import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
 import { DefaultLogger } from './logger.js';
 
 export const requestIdByRequest = new WeakMap<Request, string>();
