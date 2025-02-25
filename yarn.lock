@@ -5066,7 +5066,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.103.21"
     graphql: "npm:16.10.0"
     jest: "npm:29.7.0"
-    mongoose: "npm:8.10.1"
+    mongoose: "npm:8.10.2"
   languageName: unknown
   linkType: soft
 
@@ -6594,7 +6594,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.10.1"
+    mongoose: "npm:8.10.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -28142,9 +28142,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:8.10.1":
-  version: 8.10.1
-  resolution: "mongoose@npm:8.10.1"
+"mongoose@npm:8.10.2":
+  version: 8.10.2
+  resolution: "mongoose@npm:8.10.2"
   dependencies:
     bson: "npm:^6.10.1"
     kareem: "npm:2.6.3"
@@ -28153,7 +28153,7 @@ __metadata:
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/7d3251a2897d8e51fbfbe7c4a1c0be025047cb24ec307d78093a59b8fdec4bd478dc434ab80086524fca1e655d0930f3b8f75f18336a56d3ee258db38a03911e
+  checksum: 10c0/6a0810aa008d95a53c92133a593df9de6e394b99718dc1923bbb9108f10194fef349ec7d69f13abed96a2cc0412bf60def3609b6fad2950bdc0f3ccc991549f2
   languageName: node
   linkType: hard
 
