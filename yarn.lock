@@ -4663,7 +4663,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/graphql": "npm:0.103.22"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     fastify: "npm:5.2.1"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
@@ -4780,7 +4780,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.4.5"
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/json-schema": "npm:0.108.24"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     graphql: "npm:16.10.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -4797,7 +4797,7 @@ __metadata:
     "@testing-library/user-event": "npm:14.6.1"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     "@types/react": "npm:19.0.10"
     "@types/react-dom": "npm:19.0.4"
     apollo-upload-client: "npm:18.0.1"
@@ -4816,7 +4816,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/graphql": "npm:0.103.22"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     concurrently: "npm:9.1.2"
     graphql: "npm:16.10.0"
     graphql-yoga: "npm:^5.12.0"
@@ -4837,7 +4837,7 @@ __metadata:
     "@graphql-mesh/transform-naming-convention": "npm:0.104.2"
     "@grpc/grpc-js": "npm:1.12.6"
     "@grpc/proto-loader": "npm:0.7.13"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     concurrently: "npm:9.1.2"
     google-protobuf: "npm:3.21.4"
     graphql: "npm:16.10.0"
@@ -4857,7 +4857,7 @@ __metadata:
     "@graphql-mesh/transform-naming-convention": "npm:0.104.2"
     "@grpc/grpc-js": "npm:1.12.6"
     "@grpc/proto-loader": "npm:0.7.13"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     concurrently: "npm:9.1.2"
     google-protobuf: "npm:3.21.4"
     graphql: "npm:16.10.0"
@@ -4884,7 +4884,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/json-schema": "npm:0.108.24"
     "@graphql-mesh/plugin-mock": "npm:0.104.2"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     graphql: "npm:16.10.0"
     jest: "npm:29.7.0"
     ts-node: "npm:^10.9.2"
@@ -4925,7 +4925,7 @@ __metadata:
     "@graphql-hive/cli": "npm:0.48.3"
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/openapi": "npm:0.108.25"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     fets: "npm:^0.8.0"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
@@ -4940,7 +4940,7 @@ __metadata:
     "@graphql-hive/cli": "npm:0.48.3"
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/openapi": "npm:0.108.25"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     fets: "npm:^0.8.0"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
@@ -4954,7 +4954,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/json-schema": "npm:0.108.24"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     concurrently: "npm:9.1.2"
     graphql: "npm:16.10.0"
     tsx: "npm:4.19.3"
@@ -4992,7 +4992,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/json-schema": "npm:0.108.24"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     "@types/unzip-stream": "npm:0.3.4"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
@@ -5007,7 +5007,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/json-schema": "npm:0.108.24"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     concurrently: "npm:9.1.2"
     fets: "npm:0.8.4"
     graphql: "npm:16.10.0"
@@ -5041,7 +5041,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.103.22"
     graphql: "npm:16.10.0"
     jest: "npm:29.7.0"
-    mongoose: "npm:8.11.0"
+    mongoose: "npm:8.12.0"
   languageName: unknown
   linkType: soft
 
@@ -5134,7 +5134,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.107.2"
     "@graphql-mesh/odata": "npm:0.105.21"
     "@graphql-mesh/runtime": "npm:0.105.23"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:5.8.2"
@@ -5241,7 +5241,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/openapi": "npm:0.108.25"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     "@whatwg-node/fetch": "npm:^0.10.4"
     concurrently: "npm:9.1.2"
     fets: "npm:^0.8.0"
@@ -5301,7 +5301,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.103.21"
     "@graphql-mesh/runtime": "npm:0.105.23"
     "@graphql-mesh/transform-prefix": "npm:0.104.2"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
@@ -5316,7 +5316,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/openapi": "npm:0.108.25"
     "@sinclair/typebox": "npm:0.34.28"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     concurrently: "npm:9.1.2"
     fets: "npm:0.8.4"
     graphql: "npm:16.10.0"
@@ -5405,7 +5405,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/thrift": "npm:0.105.21"
     "@types/express": "npm:5.0.0"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     concurrently: "npm:9.1.2"
     express: "npm:4.21.2"
     graphql: "npm:16.10.0"
@@ -6569,7 +6569,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.11.0"
+    mongoose: "npm:8.12.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -13559,12 +13559,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:22.13.8, @types/node@npm:>=13.7.0, @types/node@npm:^22.0.0, @types/node@npm:^22.13.4, @types/node@npm:^22.5.5, @types/node@npm:^22.7.5":
-  version: 22.13.8
-  resolution: "@types/node@npm:22.13.8"
+"@types/node@npm:*, @types/node@npm:22.13.9, @types/node@npm:>=13.7.0, @types/node@npm:^22.0.0, @types/node@npm:^22.13.4, @types/node@npm:^22.5.5, @types/node@npm:^22.7.5":
+  version: 22.13.9
+  resolution: "@types/node@npm:22.13.9"
   dependencies:
     undici-types: "npm:~6.20.0"
-  checksum: 10c0/bfc92b734a9dce6ac5daee0a52feccdf5dcb3804d895e4bc5384e2f4644612b8801725cd03c8c3c0888fb5eeb16b875877ac44b77641e0196dc1a837b1c2a366
+  checksum: 10c0/eb6acd04169a076631dcaab712128d492cd17a1b3f10daae4a377f3d439c860c3cd3e32f4ef221671f56183b976ac7c4089f4193457314a88675ead4663438a4
   languageName: node
   linkType: hard
 
@@ -13583,11 +13583,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.11.18":
-  version: 18.19.78
-  resolution: "@types/node@npm:18.19.78"
+  version: 18.19.79
+  resolution: "@types/node@npm:18.19.79"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/d7d06ed52afec05705f5a05528d1885065de75de52785288005dff48b502d526f4f49f0aede421308a309cc0abddf516a871452a45a7267c991687143abdb422
+  checksum: 10c0/3db88d80ebaaeb5a72a3f23e1ff655ff6c7c30ed71c2cd2f708eda41d4cb1d3124b20bd565ac25b41abf1e9324b92896637db76eea310364711bcbe07820312d
   languageName: node
   linkType: hard
 
@@ -20314,7 +20314,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/compose-cli": "npm:1.3.15"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.12.3"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     concurrently: "npm:9.1.2"
     esbuild: "npm:^0.25.0"
     graphql: "npm:16.10.0"
@@ -22015,7 +22015,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     "@typescript-eslint/eslint-plugin": "npm:8.25.0"
     "@typescript-eslint/parser": "npm:8.25.0"
     babel-jest: "npm:29.7.0"
@@ -27990,15 +27990,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb@npm:~6.13.0":
-  version: 6.13.1
-  resolution: "mongodb@npm:6.13.1"
+"mongodb@npm:~6.14.0":
+  version: 6.14.1
+  resolution: "mongodb@npm:6.14.1"
   dependencies:
     "@mongodb-js/saslprep": "npm:^1.1.9"
     bson: "npm:^6.10.3"
     mongodb-connection-string-url: "npm:^3.0.0"
   peerDependencies:
-    "@aws-sdk/credential-providers": ^3.632.0
+    "@aws-sdk/credential-providers": ^3.188.0
     "@mongodb-js/zstd": ^1.1.0 || ^2.0.0
     gcp-metadata: ^5.2.0
     kerberos: ^2.0.1
@@ -28020,22 +28020,22 @@ __metadata:
       optional: true
     socks:
       optional: true
-  checksum: 10c0/319a8f76ebee3f79d8af0218dca46e79ad7fbd2e6e11d80b902f3efd8d2bf9ee1c85f445bad45d7a2b40aff98ac7e2f3f899b9408c773579b6e91df6e283783f
+  checksum: 10c0/3d9ae068396e32dbf6b780d44b22d6b40cf78811f6f4408600859ac0bbb6c62b222222d2f7c2f6105dd6a78289dbafe2fb375b06cf9120bd2ec0f7f833dd2ec6
   languageName: node
   linkType: hard
 
-"mongoose@npm:8.11.0":
-  version: 8.11.0
-  resolution: "mongoose@npm:8.11.0"
+"mongoose@npm:8.12.0":
+  version: 8.12.0
+  resolution: "mongoose@npm:8.12.0"
   dependencies:
     bson: "npm:^6.10.1"
     kareem: "npm:2.6.3"
-    mongodb: "npm:~6.13.0"
+    mongodb: "npm:~6.14.0"
     mpath: "npm:0.9.0"
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/779f5e450ac878c97a4689d623599b9efff2d92683acb8c395f7cb22f8965f11080033d7c8c1ae1a536f5ad80f1a065f2cb06b159136c9f5007aea20af0910c2
+  checksum: 10c0/8fd08d123c51800df10c98c67acfbed358bc742a935a768d557a766195dc4bd0c59683c81eebaa950802ac73caf4436f02c15b7ddff8f6249950e251868cb73a
   languageName: node
   linkType: hard
 
@@ -36794,7 +36794,7 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^7.6.0"
     "@theguild/tailwind-config": "npm:0.6.2"
-    "@types/node": "npm:22.13.8"
+    "@types/node": "npm:22.13.9"
     "@types/react": "npm:19.0.10"
     cross-env: "npm:7.0.3"
     eslint: "npm:9.21.0"
