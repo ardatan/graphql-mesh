@@ -14460,12 +14460,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/promise-helpers@npm:^1.0.0, @whatwg-node/promise-helpers@npm:^1.2.0":
-  version: 1.2.1
-  resolution: "@whatwg-node/promise-helpers@npm:1.2.1"
+"@whatwg-node/promise-helpers@npm:^1.0.0, @whatwg-node/promise-helpers@npm:^1.2.0, @whatwg-node/promise-helpers@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "@whatwg-node/promise-helpers@npm:1.2.2"
   dependencies:
     tslib: "npm:^2.6.3"
-  checksum: 10c0/fe0e14fc8dd987bbb3b90db9191887783140e0753dc322cfb245070da378b295bd12d3b45bddfe26f537022dbb43026051090a42fe4e15e523c9b9e785b177b4
+  checksum: 10c0/fc06f34a91bbb3bc4200acbf4bbdfc49b4e2f5546c12454650e424ba94a1c06d8436fc5cd9d56e7c529fdca9422d824a8409de4099c2acdb2723046688d4c6a7
   languageName: node
   linkType: hard
 
@@ -14480,15 +14480,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/server@npm:0.9.70":
-  version: 0.9.70
-  resolution: "@whatwg-node/server@npm:0.9.70"
+"@whatwg-node/server@npm:0.9.71":
+  version: 0.9.71
+  resolution: "@whatwg-node/server@npm:0.9.71"
   dependencies:
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     "@whatwg-node/fetch": "npm:^0.10.5"
-    "@whatwg-node/promise-helpers": "npm:^1.0.0"
+    "@whatwg-node/promise-helpers": "npm:^1.2.2"
     tslib: "npm:^2.6.3"
-  checksum: 10c0/44f0db7d07ac8f1b435bc30520f800d31de8b5ec6ff32af169332575fdec6cad5aeeb2adf12682f989660ff43eebfc41156955359a859f38365c3c1c55237169
+  checksum: 10c0/b5af4d596abf4baa94c84b7eb809fda975fdce649f67bcb1b208e54354a6e3582c6709b5d52122552b2b66cacfad54aa31307fa3b621411080b5f5e48aa0727f
   languageName: node
   linkType: hard
 
