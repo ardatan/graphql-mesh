@@ -7652,7 +7652,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/runtime": "npm:^0.105.23"
     "@graphql-tools/utils": "npm:^10.8.0"
-    "@urql/core": "npm:5.1.0"
+    "@urql/core": "npm:5.1.1"
     graphql: "npm:16.10.0"
     tslib: "npm:^2.4.0"
     value-or-promise: "npm:^1.0.12"
@@ -14350,13 +14350,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@urql/core@npm:5.1.0":
-  version: 5.1.0
-  resolution: "@urql/core@npm:5.1.0"
+"@urql/core@npm:5.1.1":
+  version: 5.1.1
+  resolution: "@urql/core@npm:5.1.1"
   dependencies:
     "@0no-co/graphql.web": "npm:^1.0.5"
     wonka: "npm:^6.3.2"
-  checksum: 10c0/9792a5094ced7e7f9d8b38593c386e0b38f9549fff8cfde74d4d851d9538e3dea5f05e4bcf766787a8178e0cc9c0cfd8043f37a3bcf0121342b1391999edbe1d
+  checksum: 10c0/2a66f58452bbf153c251dd6d127fc0bc0473b4cde47171ca360960059eb08fc019202aee16911168a800814a3b9748300bb88b87817b5d05cf92c16f5772447b
   languageName: node
   linkType: hard
 
@@ -37172,9 +37172,9 @@ __metadata:
   linkType: hard
 
 "wonka@npm:^6.3.1, wonka@npm:^6.3.2":
-  version: 6.3.4
-  resolution: "wonka@npm:6.3.4"
-  checksum: 10c0/77329eea673da07717476e1b8f1a22f1e1a4f261bb9a58fa446c03d3da13dbd5b254664f8aded5928d953f33ee5b399a17a4f70336e8b236e478209c0e78cda4
+  version: 6.3.5
+  resolution: "wonka@npm:6.3.5"
+  checksum: 10c0/044fe5ae26c0a32b0a1603cc0ed71ede8c9febe5bb3adab4fad5e088ceee600a84a08d0deb95a72189bbaf0d510282d183b6fb7b6e9837e7a1c9b209f788dd07
   languageName: node
   linkType: hard
 

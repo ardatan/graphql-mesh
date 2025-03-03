@@ -43,7 +43,7 @@
     "wonka": "^6.3.1"
   },
   "devDependencies": {
-    "@urql/core": "5.1.0",
+    "@urql/core": "5.1.1",
     "graphql": "16.10.0"
   },
   "publishConfig": {
