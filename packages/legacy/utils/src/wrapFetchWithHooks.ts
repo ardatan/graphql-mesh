@@ -16,7 +16,7 @@ export type FetchInstruments = {
 
 export function wrapFetchWithHooks<TContext>(
   onFetchHooks: OnFetchHook<TContext>[],
-  instruments?: FetchInstruments,
+  instruments?: () => FetchInstruments | undefined,
 ): MeshFetch {
   let wrappedFetchFn = function wrappedFetchFn(url, options, context, info) {
     let fetchFn: MeshFetch;
@@ -103,21 +103,19 @@ export function wrapFetchWithHooks<TContext>(
     );
   } as MeshFetch;
 
-  if (instruments?.fetch) {
+  if (instruments) {
     const originalWrappedFetch = wrappedFetchFn;
     wrappedFetchFn = function wrappedFetchFn(url, options, context, info) {
-      const instrumented = getInstrumented({
-        get executionRequest() {
-          return info?.executionRequest;
-        },
-      });
+      const fetchInstrument = instruments()?.fetch;
+      const instrumentedFetch = fetchInstrument
+        ? getInstrumented({
+            get executionRequest() {
+              return info?.executionRequest;
+            },
+          }).asyncFn(fetchInstrument, originalWrappedFetch)
+        : originalWrappedFetch;
 
-      return instrumented.asyncFn(instruments.fetch, originalWrappedFetch)(
-        url,
-        options,
-        context,
-        info,
-      );
+      return instrumentedFetch(url, options, context, info);
     };
   }
 
