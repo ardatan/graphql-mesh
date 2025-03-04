@@ -11,7 +11,7 @@
     "start": "functions-framework --target=mesh"
   },
   "dependencies": {
-    "@google-cloud/functions-framework": "3.4.5",
+    "@google-cloud/functions-framework": "3.4.6",
     "@graphql-mesh/cli": "0.99.2",
     "@graphql-mesh/json-schema": "0.108.24",
     "@types/node": "22.13.9",

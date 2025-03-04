@@ -4815,7 +4815,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/gcp-functions@workspace:examples/gcp-functions"
   dependencies:
-    "@google-cloud/functions-framework": "npm:3.4.5"
+    "@google-cloud/functions-framework": "npm:3.4.6"
     "@graphql-mesh/cli": "npm:0.99.2"
     "@graphql-mesh/json-schema": "npm:0.108.24"
     "@types/node": "npm:22.13.9"
@@ -5607,9 +5607,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google-cloud/functions-framework@npm:3.4.5, @google-cloud/functions-framework@npm:^3.3.0":
-  version: 3.4.5
-  resolution: "@google-cloud/functions-framework@npm:3.4.5"
+"@google-cloud/functions-framework@npm:3.4.6, @google-cloud/functions-framework@npm:^3.3.0":
+  version: 3.4.6
+  resolution: "@google-cloud/functions-framework@npm:3.4.6"
   dependencies:
     "@types/express": "npm:^5.0.0"
     body-parser: "npm:^1.18.3"
@@ -5622,7 +5622,7 @@ __metadata:
   bin:
     functions-framework: build/src/main.js
     functions-framework-nodejs: build/src/main.js
-  checksum: 10c0/033ec2ee1fb0e97a90e6375fab31646790b4b9b041702e7885e46ab19f9963c4768e594f2c1afb8754f54dfbe1bc4260ae39a4ee910a81c2f28ed6dfbc118d3e
+  checksum: 10c0/dbef84a77a1303b9c5d1ad77e3edadeda1213f3d5e2f9ae535d8a454a12cd95ac6d357cee8d77dd38d4489e5ac01f23177ac6fd6768c85c5df062fa10a1d44e3
   languageName: node
   linkType: hard
 
@@ -6272,7 +6272,7 @@ __metadata:
     "@types/lodash.get": "npm:4.4.9"
     "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:4.0.5"
-    "@types/ws": "npm:8.5.14"
+    "@types/ws": "npm:8.18.0"
     "@types/yargs": "npm:17.0.33"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     ajv: "npm:^8.12.0"
@@ -6493,7 +6493,7 @@ __metadata:
     "@types/lodash.get": "npm:4.4.9"
     "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:4.0.5"
-    "@types/ws": "npm:8.5.14"
+    "@types/ws": "npm:8.18.0"
     "@types/yargs": "npm:17.0.33"
     "@whatwg-node/server": "npm:^0.9.68"
     graphql: "npm:16.10.0"
@@ -13972,12 +13972,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:8.5.14, @types/ws@npm:^8.0.0, @types/ws@npm:^8.5.5":
-  version: 8.5.14
-  resolution: "@types/ws@npm:8.5.14"
+"@types/ws@npm:8.18.0":
+  version: 8.18.0
+  resolution: "@types/ws@npm:8.18.0"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/be88a0b6252f939cb83340bd1b4d450287f752c19271195cd97564fd94047259a9bb8c31c585a61b69d8a1b069a99df9dd804db0132d3359c54d3890c501416a
+  checksum: 10c0/a56d2e0d1da7411a1f3548ce02b51a50cbe9e23f025677d03df48f87e4a3c72e1342fbf1d12e487d7eafa8dc670c605152b61bbf9165891ec0e9694b0d3ea8d4
   languageName: node
   linkType: hard
 
@@ -13987,6 +13987,15 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/f1f53febd8623a85cef2652949acd19d83967e350ea15a851593e3033501750a1e04f418552e487db90a3d48611a1cff3ffcf139b94190c10f2fd1e1dc95ff10
+  languageName: node
+  linkType: hard
+
+"@types/ws@npm:^8.0.0, @types/ws@npm:^8.5.5":
+  version: 8.5.14
+  resolution: "@types/ws@npm:8.5.14"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/be88a0b6252f939cb83340bd1b4d450287f752c19271195cd97564fd94047259a9bb8c31c585a61b69d8a1b069a99df9dd804db0132d3359c54d3890c501416a
   languageName: node
   linkType: hard
 
