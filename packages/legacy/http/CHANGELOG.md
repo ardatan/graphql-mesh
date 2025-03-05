@@ -1,5 +1,22 @@
 # @graphql-mesh/http
 
+## 0.106.0
+
+### Patch Changes
+
+- [#8472](https://github.com/ardatan/graphql-mesh/pull/8472)
+  [`15555aa`](https://github.com/ardatan/graphql-mesh/commit/15555aaa6e2704dd27428ac7a80d5075181d6f30)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@whatwg-node/server@^0.10.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.10.0)
+    (from `^0.9.68`, in `dependencies`)
+- Updated dependencies
+  [[`4528794`](https://github.com/ardatan/graphql-mesh/commit/45287948dbfbe07c3f60f9c36253099c549207d9),
+  [`4528794`](https://github.com/ardatan/graphql-mesh/commit/45287948dbfbe07c3f60f9c36253099c549207d9)]:
+  - @graphql-mesh/utils@0.104.0
+  - @graphql-mesh/runtime@0.106.0
+  - @graphql-mesh/types@0.104.0
+
 ## 0.105.23
 
 ### Patch Changes
