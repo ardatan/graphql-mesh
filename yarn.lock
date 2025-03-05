@@ -4051,16 +4051,16 @@ __metadata:
   linkType: hard
 
 "@envelop/graphql-jit@npm:^9.0.0":
-  version: 9.1.0
-  resolution: "@envelop/graphql-jit@npm:9.1.0"
+  version: 9.1.1
+  resolution: "@envelop/graphql-jit@npm:9.1.1"
   dependencies:
+    "@whatwg-node/promise-helpers": "npm:^1.2.3"
     graphql-jit: "npm:0.8.7"
     tslib: "npm:^2.5.0"
-    value-or-promise: "npm:^1.0.12"
   peerDependencies:
-    "@envelop/core": ^5.2.0
+    "@envelop/core": ^5.2.1
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/33db8210af63c25b5cfc7a99143d0e98d243e1caca0b596f241e7e20f81246c0fae6247291fdaa62994aecb5e66c950c6360ce3519dad62e70f1e668c97fe146
+  checksum: 10c0/d9cb2d359114952f68eaf29769999b96fad64ee3b6794868cab78e44a6ebabd1489dcfe83568a6d4429465891cb5971d980de23f75db28194e0c48a6cc46f290
   languageName: node
   linkType: hard
 
@@ -14656,6 +14656,15 @@ __metadata:
   dependencies:
     tslib: "npm:^2.6.3"
   checksum: 10c0/fc06f34a91bbb3bc4200acbf4bbdfc49b4e2f5546c12454650e424ba94a1c06d8436fc5cd9d56e7c529fdca9422d824a8409de4099c2acdb2723046688d4c6a7
+  languageName: node
+  linkType: hard
+
+"@whatwg-node/promise-helpers@npm:^1.2.3":
+  version: 1.2.4
+  resolution: "@whatwg-node/promise-helpers@npm:1.2.4"
+  dependencies:
+    tslib: "npm:^2.6.3"
+  checksum: 10c0/df62da1c9871506736942d704422436c56d77b0b0110203b8fffffd5750930a8d199eb5d93218a61aeb1f09bf6b315276e7257e19bcebb6f639b4d3a52171870
   languageName: node
   linkType: hard
 
