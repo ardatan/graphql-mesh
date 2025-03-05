@@ -32,6 +32,7 @@ import { buildOperationNodeForField, isDocumentNode, memoize1 } from '@graphql-t
 import { WrapQuery } from '@graphql-tools/wrap';
 import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
 import { parseWithCache } from './parseAndPrintWithCache.js';
+import type DataLoader from 'dataloader';
 
 export const MESH_API_CONTEXT_SYMBOL = Symbol('isMeshAPIContext');
 
@@ -115,6 +116,7 @@ export function getInContextSDK(
             argsFromKeys,
             valuesFromResults,
             autoSelectionSetWithDepth,
+            dataLoaderOptions,
           }: {
             root: any;
             args: any;
@@ -125,6 +127,7 @@ export function getInContextSDK(
             argsFromKeys?: (keys: string[]) => any;
             valuesFromResults?: (result: any, keys?: string[]) => any;
             autoSelectionSetWithDepth?: number;
+            dataLoaderOptions?: DataLoader.Options<any, any, any>;
           }) => {
             inContextSdkLogger?.debug(`Called with`, {
               args,
@@ -198,6 +201,7 @@ export function getInContextSDK(
                 key,
                 argsFromKeys,
                 valuesFromResults,
+                dataLoaderOptions
               } as unknown as BatchDelegateOptions;
               if (selectionSet) {
                 const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
