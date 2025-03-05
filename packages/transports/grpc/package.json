@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-grpc",
-  "version": "0.2.11",
+  "version": "0.3.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,8 +38,8 @@
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "^0.5.8",
     "@graphql-mesh/transport-common": "^0.7.13",
-    "@graphql-mesh/types": "^0.103.21",
-    "@graphql-mesh/utils": "^0.103.21",
+    "@graphql-mesh/types": "^0.104.0",
+    "@graphql-mesh/utils": "^0.104.0",
     "@graphql-tools/utils": "^10.8.0",
     "@grpc/grpc-js": "^1.1.7",
     "@grpc/proto-loader": "^0.7.8",
