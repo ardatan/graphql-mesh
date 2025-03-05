@@ -8129,8 +8129,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/executor@npm:^1.3.10, @graphql-tools/executor@npm:^1.3.2, @graphql-tools/executor@npm:^1.3.6, @graphql-tools/executor@npm:^1.4.0":
-  version: 1.4.3
-  resolution: "@graphql-tools/executor@npm:1.4.3"
+  version: 1.4.4
+  resolution: "@graphql-tools/executor@npm:1.4.4"
   dependencies:
     "@graphql-tools/utils": "npm:^10.8.4"
     "@graphql-typed-document-node/core": "npm:^3.2.0"
@@ -8140,7 +8140,7 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/05329663d15a46950949ff60e5c7d80d73b7a5b37837e5cde0cbf250ef87e85d91098332c601473676a282dbababe7d576043d06cfb6e1246abe48074676627f
+  checksum: 10c0/57a5f84e4055987c4e2f0dc0dd8d4ab732f25bd08089982e5bd51bf83f545baf09ddb6705e4481310b8bc7613a58b03b6ece18c2c2fe106688f61e4201328b43
   languageName: node
   linkType: hard
 
