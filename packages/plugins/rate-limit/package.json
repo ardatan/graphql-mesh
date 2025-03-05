@@ -45,7 +45,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@envelop/core": "5.2.0",
+    "@envelop/core": "5.2.1",
     "graphql": "16.10.0"
   },
   "publishConfig": {
