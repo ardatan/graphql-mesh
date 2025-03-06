@@ -4067,16 +4067,16 @@ __metadata:
   linkType: hard
 
 "@envelop/graphql-jit@npm:^9.0.0":
-  version: 9.1.2
-  resolution: "@envelop/graphql-jit@npm:9.1.2"
+  version: 9.1.3
+  resolution: "@envelop/graphql-jit@npm:9.1.3"
   dependencies:
     "@whatwg-node/promise-helpers": "npm:^1.2.3"
     graphql-jit: "npm:0.8.7"
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.2.2
+    "@envelop/core": ^5.2.3
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/f9c411f9fae0256f9ebcaa64db3b0262b91d6991c3bc42db967c040b781a7b2a8a73f039ed0cb5ba32fc1f4c94f1ecaca643544b9df06ab895a61c9eb6cd44a7
+  checksum: 10c0/dd22ddc4f6ac26a9a339f5b95abc31d650742dd0126ad58cae599cb5c44777dca750504e2fd29a0e84ba726c20e9882766885895988849d8b9c6e512facbf49a
   languageName: node
   linkType: hard
 
