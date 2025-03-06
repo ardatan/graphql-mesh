@@ -1,5 +1,21 @@
 # @graphql-mesh/utils
 
+## 0.104.1
+
+### Patch Changes
+
+- [#8475](https://github.com/ardatan/graphql-mesh/pull/8475)
+  [`b6c083c`](https://github.com/ardatan/graphql-mesh/commit/b6c083ce9e9305874cf847246fefda3fe068e8b4)
+  Thanks [@PlayAnyData](https://github.com/PlayAnyData)! - Added data loader options, allowing to
+  specify batching behaviour in additionalResolvers. Description available
+  [here](https://the-guild.dev/graphql/mesh/docs/guides/extending-unified-schema)
+
+- [`f416982`](https://github.com/ardatan/graphql-mesh/commit/f4169823bce2abf093bd53249d1d1208ea459a5d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Rename instruments to instrumentation
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.104.1
+
 ## 0.104.0
 
 ### Minor Changes

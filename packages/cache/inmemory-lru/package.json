@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-inmemory-lru",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,8 +35,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "^0.104.0",
-    "@graphql-mesh/utils": "^0.104.0",
+    "@graphql-mesh/types": "^0.104.1",
+    "@graphql-mesh/utils": "^0.104.1",
     "@whatwg-node/disposablestack": "^0.0.6",
     "tslib": "^2.4.0"
   },
