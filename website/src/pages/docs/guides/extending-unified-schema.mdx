@@ -161,7 +161,7 @@ Any SDK method take the following arguments:
 - `dataLoaderOptions`: allows you to define the batching behaviour as defined by
   [dataloader](https://github.com/graphql/dataloader/tree/main?tab=readme-ov-file#api). This allows
   e.g. to define that retrievals from the subgraph should be done in batches of n ids, which might
-  help in load balancing queries consuming a lot of resources.
+  help in load balancing resource-intensive queries.
 
 <Callout>
   Note: `valuesFromResults`, compared to `selectionSet` helps to "flatten"/"un-nest" data from
