@@ -1,5 +1,12 @@
 # @graphql-mesh/cache-upstash-redis
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.104.1
+
 ## 0.1.0
 
 ### Patch Changes
