@@ -1,12 +1,12 @@
 import type { GraphQLResolveInfo } from 'graphql';
 import { createServerAdapter, Response } from '@whatwg-node/server';
-import { wrapFetchWithHooks, type FetchInstruments } from '../src/wrapFetchWithHooks';
+import { wrapFetchWithHooks, type FetchInstrumentation } from '../src/wrapFetchWithHooks';
 
-describe('Fetch instruments', () => {
-  it('should wrap fetch instruments', async () => {
+describe('Fetch instrumentation', () => {
+  it('should wrap fetch instrumentation', async () => {
     await using adapter = createServerAdapter(() => Response.json({ hello: 'world' }));
     let receivedExecutionRequest;
-    const fetchInstruments: FetchInstruments = {
+    const fetchInstrumentation: FetchInstrumentation = {
       fetch: async ({ executionRequest }, wrapped) => {
         receivedExecutionRequest = executionRequest;
         await wrapped();
@@ -18,7 +18,7 @@ describe('Fetch instruments', () => {
           setFetchFn(adapter.fetch);
         },
       ],
-      () => fetchInstruments,
+      () => fetchInstrumentation,
     );
     const executionRequest = {};
     const res = await wrappedFetch('http://localhost:4000', {}, {}, {

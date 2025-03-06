@@ -4080,6 +4080,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@envelop/instrumentation@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@envelop/instrumentation@npm:1.0.0"
+  dependencies:
+    "@whatwg-node/promise-helpers": "npm:^1.2.1"
+    tslib: "npm:^2.5.0"
+  checksum: 10c0/134df1ac481fb392aafc4522a22bcdc6ef0701f2d15d51b16207f3c9a4c7d3760adfa5f5bcc84f0c0ec7b011d84bcd40fff671eb471bed54bd928c165994b4e3
+  languageName: node
+  linkType: hard
+
 "@envelop/instruments@npm:1.0.0, @envelop/instruments@npm:^1.0.0":
   version: 1.0.0
   resolution: "@envelop/instruments@npm:1.0.0"
@@ -7982,7 +7992,7 @@ __metadata:
   resolution: "@graphql-mesh/utils@workspace:packages/legacy/utils"
   dependencies:
     "@apollo/server": "npm:4.11.3"
-    "@envelop/instruments": "npm:^1.0.0"
+    "@envelop/instrumentation": "npm:^1.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.8"
     "@graphql-mesh/types": "npm:^0.104.0"

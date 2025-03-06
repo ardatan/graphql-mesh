@@ -1,4 +1,4 @@
-import { getInstrumented } from '@envelop/instruments';
+import { getInstrumented } from '@envelop/instrumentation';
 import type { Logger, MeshFetch, OnFetchHook, OnFetchHookDone } from '@graphql-mesh/types';
 import { type ExecutionRequest, type MaybePromise } from '@graphql-tools/utils';
 import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
@@ -7,7 +7,7 @@ import { DefaultLogger } from './logger.js';
 export const requestIdByRequest = new WeakMap<Request, string>();
 export const loggerForExecutionRequest = new WeakMap<ExecutionRequest, Logger>();
 
-export type FetchInstruments = {
+export type FetchInstrumentation = {
   fetch?: (
     payload: { executionRequest: ExecutionRequest },
     wrapped: () => MaybePromise<void>,
@@ -16,7 +16,7 @@ export type FetchInstruments = {
 
 export function wrapFetchWithHooks<TContext>(
   onFetchHooks: OnFetchHook<TContext>[],
-  instruments?: () => FetchInstruments | undefined,
+  instrumentation?: () => FetchInstrumentation | undefined,
 ): MeshFetch {
   let wrappedFetchFn = function wrappedFetchFn(url, options, context, info) {
     let fetchFn: MeshFetch;
@@ -103,10 +103,10 @@ export function wrapFetchWithHooks<TContext>(
     );
   } as MeshFetch;
 
-  if (instruments) {
+  if (instrumentation) {
     const originalWrappedFetch = wrappedFetchFn;
     wrappedFetchFn = function wrappedFetchFn(url, options, context, info) {
-      const fetchInstrument = instruments()?.fetch;
+      const fetchInstrument = instrumentation()?.fetch;
       const instrumentedFetch = fetchInstrument
         ? getInstrumented({
             get executionRequest() {

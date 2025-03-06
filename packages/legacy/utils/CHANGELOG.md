@@ -7,8 +7,8 @@
 - [#8456](https://github.com/ardatan/graphql-mesh/pull/8456)
   [`4528794`](https://github.com/ardatan/graphql-mesh/commit/45287948dbfbe07c3f60f9c36253099c549207d9)
   Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Add compatibility with new
-  `Instruments` API of Hive Gateway. See
-  [Hive Gateway documentation](https://the-guild.dev/graphql/hive/docs/gateway/other-features/custom-plugins#instruments)
+  `instrumentation` API of Hive Gateway. See
+  [Hive Gateway documentation](https://the-guild.dev/graphql/hive/docs/gateway/other-features/custom-plugins#instrumentation)
   for more details.
 
 ### Patch Changes
@@ -17,7 +17,7 @@
   [`4528794`](https://github.com/ardatan/graphql-mesh/commit/45287948dbfbe07c3f60f9c36253099c549207d9)
   Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
   - Added dependency
-    [`@envelop/instruments@^1.0.0` ↗︎](https://www.npmjs.com/package/@envelop/instruments/v/1.0.0)
+    [`@envelop/instrumentation@^1.0.0` ↗︎](https://www.npmjs.com/package/@envelop/instrumentation/v/1.0.0)
     (to `dependencies`)
 - Updated dependencies []:
   - @graphql-mesh/types@0.104.0
