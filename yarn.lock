@@ -14531,11 +14531,11 @@ __metadata:
   linkType: hard
 
 "@upstash/redis@npm:^1.34.3":
-  version: 1.34.4
-  resolution: "@upstash/redis@npm:1.34.4"
+  version: 1.34.5
+  resolution: "@upstash/redis@npm:1.34.5"
   dependencies:
     crypto-js: "npm:^4.2.0"
-  checksum: 10c0/5253ad1646959ed284d0bf1f6fb9299111202f58eedce6cedb06b11022f484cba981df1a7e86359dfc3e047c20e5fc0a74ff17853260eee1cc738684dbcecd8a
+  checksum: 10c0/e22d78fe23d522b35e486bd72fdb2cc1722bd49468a6d0a863554754e802638983091cec1134c6f8bb516d92971847f0d845f453a8ec899909a9b1cc2436785f
   languageName: node
   linkType: hard
 
