@@ -1,3 +1,4 @@
+import type DataLoader from 'dataloader';
 import type {
   ArgumentNode,
   DocumentNode,
@@ -32,7 +33,6 @@ import { buildOperationNodeForField, isDocumentNode, memoize1 } from '@graphql-t
 import { WrapQuery } from '@graphql-tools/wrap';
 import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
 import { parseWithCache } from './parseAndPrintWithCache.js';
-import type DataLoader from 'dataloader';
 
 export const MESH_API_CONTEXT_SYMBOL = Symbol('isMeshAPIContext');
 
@@ -201,7 +201,7 @@ export function getInContextSDK(
                 key,
                 argsFromKeys,
                 valuesFromResults,
-                dataLoaderOptions
+                dataLoaderOptions,
               } as unknown as BatchDelegateOptions;
               if (selectionSet) {
                 const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
