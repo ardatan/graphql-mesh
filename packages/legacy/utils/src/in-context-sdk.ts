@@ -1,3 +1,4 @@
+import type DataLoader from 'dataloader';
 import type {
   ArgumentNode,
   DocumentNode,
@@ -115,6 +116,7 @@ export function getInContextSDK(
             argsFromKeys,
             valuesFromResults,
             autoSelectionSetWithDepth,
+            dataLoaderOptions,
           }: {
             root: any;
             args: any;
@@ -125,6 +127,7 @@ export function getInContextSDK(
             argsFromKeys?: (keys: string[]) => any;
             valuesFromResults?: (result: any, keys?: string[]) => any;
             autoSelectionSetWithDepth?: number;
+            dataLoaderOptions?: DataLoader.Options<any, any, any>;
           }) => {
             inContextSdkLogger?.debug(`Called with`, {
               args,
@@ -198,6 +201,7 @@ export function getInContextSDK(
                 key,
                 argsFromKeys,
                 valuesFromResults,
+                dataLoaderOptions,
               } as unknown as BatchDelegateOptions;
               if (selectionSet) {
                 const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);

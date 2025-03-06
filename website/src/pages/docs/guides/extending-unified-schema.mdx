@@ -158,6 +158,10 @@ Any SDK method take the following arguments:
   `{ id name }`
 - `valuesFromResults`: allows to provide a function to transform the results (if the result is an
   array, the function will be mapped to each element)
+- `dataLoaderOptions`: allows you to define the batching behaviour as defined by
+  [dataloader](https://github.com/graphql/dataloader/tree/main?tab=readme-ov-file#api). This allows
+  e.g. to define that retrievals from the subgraph should be done in batches of n ids, which might
+  help in load balancing resource-intensive queries.
 
 <Callout>
   Note: `valuesFromResults`, compared to `selectionSet` helps to "flatten"/"un-nest" data from
