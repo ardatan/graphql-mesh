@@ -1,5 +1,12 @@
 # @omnigraph/sqlite
 
+## 0.8.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.104.0
+
 ## 0.7.21
 
 ### Patch Changes

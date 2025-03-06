@@ -9,11 +9,11 @@
     "@envelop/depth-limit": "^5.0.0",
     "@graphql-hive/gateway": "^1.8.0",
     "@graphql-mesh/cache-cfw-kv": "workspace:^",
-    "@graphql-mesh/plugin-rate-limit": "^0.103.22",
-    "@graphql-mesh/plugin-response-cache": "^0.103.24",
+    "@graphql-mesh/plugin-rate-limit": "^0.104.0",
+    "@graphql-mesh/plugin-response-cache": "^0.104.0",
     "graphql": "16.10.0"
   },
   "devDependencies": {
-    "wrangler": "3.112.0"
+    "wrangler": "3.113.0"
   }
 }

@@ -1,3 +1,4 @@
+import { getInstrumented } from '@envelop/instruments';
 import type { Logger, MeshFetch, OnFetchHook, OnFetchHookDone } from '@graphql-mesh/types';
 import { type ExecutionRequest, type MaybePromise } from '@graphql-tools/utils';
 import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
@@ -6,8 +7,18 @@ import { DefaultLogger } from './logger.js';
 export const requestIdByRequest = new WeakMap<Request, string>();
 export const loggerForExecutionRequest = new WeakMap<ExecutionRequest, Logger>();
 
-export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>[]): MeshFetch {
-  return function wrappedFetchFn(url, options, context, info) {
+export type FetchInstruments = {
+  fetch?: (
+    payload: { executionRequest: ExecutionRequest },
+    wrapped: () => MaybePromise<void>,
+  ) => MaybePromise<void>;
+};
+
+export function wrapFetchWithHooks<TContext>(
+  onFetchHooks: OnFetchHook<TContext>[],
+  instruments?: () => FetchInstruments | undefined,
+): MeshFetch {
+  let wrappedFetchFn = function wrappedFetchFn(url, options, context, info) {
     let fetchFn: MeshFetch;
     let response$: MaybePromise<Response>;
     const onFetchDoneHooks: OnFetchHookDone[] = [];
@@ -91,4 +102,22 @@ export function wrapFetchWithHooks<TContext>(onFetchHooks: OnFetchHook<TContext>
       },
     );
   } as MeshFetch;
+
+  if (instruments) {
+    const originalWrappedFetch = wrappedFetchFn;
+    wrappedFetchFn = function wrappedFetchFn(url, options, context, info) {
+      const fetchInstrument = instruments()?.fetch;
+      const instrumentedFetch = fetchInstrument
+        ? getInstrumented({
+            get executionRequest() {
+              return info?.executionRequest;
+            },
+          }).asyncFn(fetchInstrument, originalWrappedFetch)
+        : originalWrappedFetch;
+
+      return instrumentedFetch(url, options, context, info);
+    };
+  }
+
+  return wrappedFetchFn;
 }
