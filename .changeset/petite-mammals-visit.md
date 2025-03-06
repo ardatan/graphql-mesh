@@ -1,5 +1,5 @@
 ---
-'@graphql-mesh/utils': minor
+'@graphql-mesh/utils': patch
 ---
 
 Added data loader options, allowing to specify batching behaviour in additionalResolvers.
