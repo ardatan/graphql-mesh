@@ -80,7 +80,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.13.1, @apollo/client@npm:^3.8.0":
+"@apollo/client@npm:3.13.2":
+  version: 3.13.2
+  resolution: "@apollo/client@npm:3.13.2"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@wry/caches": "npm:^1.0.0"
+    "@wry/equality": "npm:^0.5.6"
+    "@wry/trie": "npm:^0.5.0"
+    graphql-tag: "npm:^2.12.6"
+    hoist-non-react-statics: "npm:^3.3.2"
+    optimism: "npm:^0.18.0"
+    prop-types: "npm:^15.7.2"
+    rehackt: "npm:^0.1.0"
+    symbol-observable: "npm:^4.0.0"
+    ts-invariant: "npm:^0.10.3"
+    tslib: "npm:^2.3.0"
+    zen-observable-ts: "npm:^1.2.5"
+  peerDependencies:
+    graphql: ^15.0.0 || ^16.0.0
+    graphql-ws: ^5.5.5 || ^6.0.3
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
+  peerDependenciesMeta:
+    graphql-ws:
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    subscriptions-transport-ws:
+      optional: true
+  checksum: 10c0/ad668d29a9fa47a8b053469f54fc3a43edb77059be40255e0b93389d8865d0ddfa2d99baec2854b520ad99ef61eaaed3f7a2789b8a7c43642ea7d38685e03d64
+  languageName: node
+  linkType: hard
+
+"@apollo/client@npm:^3.8.0":
   version: 3.13.1
   resolution: "@apollo/client@npm:3.13.1"
   dependencies:
@@ -3984,7 +4020,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/core@npm:5.2.3, @envelop/core@npm:^5.0.0, @envelop/core@npm:^5.1.0, @envelop/core@npm:^5.2.1, @envelop/core@npm:^5.2.3":
+"@envelop/core@npm:5.2.3, @envelop/core@npm:^5.0.0, @envelop/core@npm:^5.1.0, @envelop/core@npm:^5.2.3":
   version: 5.2.3
   resolution: "@envelop/core@npm:5.2.3"
   dependencies:
@@ -4120,7 +4156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/on-resolve@npm:^5.0.0, @envelop/on-resolve@npm:^5.0.1, @envelop/on-resolve@npm:^5.1.1":
+"@envelop/on-resolve@npm:^5.0.0, @envelop/on-resolve@npm:^5.0.1":
   version: 5.1.1
   resolution: "@envelop/on-resolve@npm:5.1.1"
   dependencies:
@@ -4190,7 +4226,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/response-cache@npm:^7.0.0, @envelop/response-cache@npm:^7.1.1":
+"@envelop/response-cache@npm:^7.0.0, @envelop/response-cache@npm:^7.1.3":
   version: 7.1.3
   resolution: "@envelop/response-cache@npm:7.1.3"
   dependencies:
@@ -4554,7 +4590,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.1"
     "@omnigraph/json-schema": "workspace:^"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.113.0"
+    wrangler: "npm:3.114.0"
   languageName: unknown
   linkType: soft
 
@@ -4569,7 +4605,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.104.1"
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.1"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.113.0"
+    wrangler: "npm:3.114.0"
   languageName: unknown
   linkType: soft
 
@@ -4709,7 +4745,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.109.1"
     "@graphql-mesh/plugin-response-cache": "npm:0.104.1"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.113.0"
+    wrangler: "npm:3.114.0"
   languageName: unknown
   linkType: soft
 
@@ -4846,7 +4882,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/graphql-file-upload-example-frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
-    "@apollo/client": "npm:3.13.1"
+    "@apollo/client": "npm:3.13.2"
     "@testing-library/dom": "npm:10.4.0"
     "@testing-library/jest-dom": "npm:6.6.3"
     "@testing-library/react": "npm:16.2.0"
@@ -5437,7 +5473,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.104.1"
     "@graphql-mesh/plugin-response-cache": "npm:0.104.1"
     graphql: "npm:16.10.0"
-    wrangler: "npm:3.113.0"
+    wrangler: "npm:3.114.0"
   languageName: unknown
   linkType: soft
 
@@ -6148,7 +6184,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link"
   dependencies:
-    "@apollo/client": "npm:3.13.1"
+    "@apollo/client": "npm:3.13.2"
     "@graphql-mesh/runtime": "npm:^0.106.1"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -8818,17 +8854,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-apollo-inline-trace@npm:3.13.0":
-  version: 3.13.0
-  resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.13.0"
+"@graphql-yoga/plugin-apollo-inline-trace@npm:3.13.1":
+  version: 3.13.1
+  resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.13.1"
   dependencies:
     "@apollo/usage-reporting-protobuf": "npm:^4.1.1"
-    "@envelop/on-resolve": "npm:^5.1.1"
+    "@envelop/on-resolve": "npm:^5.1.3"
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.13.0
-  checksum: 10c0/5b81ca090e1da5e39fdf1692deed00b50ce2f02365f391289acf96e855c37f2666b434b8274ba7a8c7c808382a5f1d024dcc384cd01eaa3473b6a8efabeef302
+    graphql-yoga: ^5.13.1
+  checksum: 10c0/fdc4ef0d447301773538bb63bbf05a4cc4982fda73d2bea9fe2baf705c5443676fadb8a680bd9e9f0a432b16537983476f660b58ec50fd4898d1d9757a1b4456
   languageName: node
   linkType: hard
 
@@ -8898,14 +8934,14 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-persisted-operations@npm:^3.0.0, @graphql-yoga/plugin-persisted-operations@npm:^3.12.0, @graphql-yoga/plugin-persisted-operations@npm:^3.9.0":
-  version: 3.13.1
-  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.13.1"
+  version: 3.13.2
+  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.13.2"
   dependencies:
     "@whatwg-node/promise-helpers": "npm:^1.2.4"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.13.0
-  checksum: 10c0/48e7e6800f62260181e876f4d4731e61af36b6d702f28b297b9210e130fd3e90835008c0edb319db83eef4547853d89a3b309445adcd29b2d8787d25009507c9
+    graphql-yoga: ^5.13.1
+  checksum: 10c0/3bf44f2cefe3a7768f0798377c5d0988a16a577df41ca3006a7d5ab572edf46f95bd716cbdba05df94e81c05918befbd531a6d4d63248511d5d436acb3f33385
   languageName: node
   linkType: hard
 
@@ -8923,16 +8959,16 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-response-cache@npm:^3.13.1":
-  version: 3.15.1
-  resolution: "@graphql-yoga/plugin-response-cache@npm:3.15.1"
+  version: 3.15.2
+  resolution: "@graphql-yoga/plugin-response-cache@npm:3.15.2"
   dependencies:
-    "@envelop/core": "npm:^5.2.1"
-    "@envelop/response-cache": "npm:^7.1.1"
+    "@envelop/core": "npm:^5.2.3"
+    "@envelop/response-cache": "npm:^7.1.3"
     "@whatwg-node/promise-helpers": "npm:^1.2.4"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.13.0
-  checksum: 10c0/a92e12c1edf33c264793416eb78ce9e06635494f59e4ec9efe81529af1c723fda36e7dcdd295bc792d6e93ccff0387a3adf3e38d8505eee1088321d7ad15d455
+    graphql-yoga: ^5.13.1
+  checksum: 10c0/9f8e610879bf7fb95cc1301cd1e471f5dd76b11e6cc2ff1abef1bd53fa041b192d7323d96b02458e01695d2923d97ae07ebe2b4b48be670bc647f0585cbcf2c8
   languageName: node
   linkType: hard
 
@@ -20649,7 +20685,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": "npm:4.4.4"
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/compose-cli": "npm:1.4.1"
-    "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.13.0"
+    "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.13.1"
     "@types/node": "npm:22.13.9"
     concurrently: "npm:9.1.2"
     esbuild: "npm:^0.25.0"
@@ -37648,9 +37684,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.113.0":
-  version: 3.113.0
-  resolution: "wrangler@npm:3.113.0"
+"wrangler@npm:3.114.0":
+  version: 3.114.0
+  resolution: "wrangler@npm:3.114.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.3.4"
     "@cloudflare/unenv-preset": "npm:2.0.0"
@@ -37677,7 +37713,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/31d8371d7c841352c14c62508558a364c4a415dc514808ca5d89f638bc21601eb1aafaab02ee1754efeedbf1399bf60e9584eaf572fb5aa0e0a83ca631037248
+  checksum: 10c0/fd1145febc3d7a804e3f91e43648bae12f87c0586637c58dca7026a6c416ff6d77bbc6e67b03dcc304b0e06207dddf49cffa3906d18032462dd00a1f1f488fc9
   languageName: node
   linkType: hard
 
