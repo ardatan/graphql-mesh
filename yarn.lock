@@ -15816,13 +15816,13 @@ __metadata:
   linkType: hard
 
 "axios@npm:^1.0.0":
-  version: 1.8.1
-  resolution: "axios@npm:1.8.1"
+  version: 1.8.2
+  resolution: "axios@npm:1.8.2"
   dependencies:
     follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/b2e1d5a61264502deee4b50f0a6df0aa3b174c546ccf68c0dff714a2b8863232e0bd8cb5b84f853303e97f242a98260f9bb9beabeafe451ad5af538e9eb7ac22
+  checksum: 10c0/d8c2969e4642dc6d39555ac58effe06c051ba7aac2bd40cad7a9011c019fb2f16ee011c5a6906cb25b8a4f87258c359314eb981f852e60ad445ecaeb793c7aa2
   languageName: node
   linkType: hard
 
@@ -19973,14 +19973,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:10.0.2":
-  version: 10.0.2
-  resolution: "eslint-config-prettier@npm:10.0.2"
+"eslint-config-prettier@npm:10.1.1":
+  version: 10.1.1
+  resolution: "eslint-config-prettier@npm:10.1.1"
   peerDependencies:
     eslint: ">=7.0.0"
   bin:
-    eslint-config-prettier: build/bin/cli.js
-  checksum: 10c0/e0ef3c442661a26fc6e82acec5bb9a418c4a8f65ec8adf0983d3aaba7716d2ed448358b063cce6e3c272c847d14cb856ddf30031770c6571e2b2c3e2a439afd4
+    eslint-config-prettier: bin/cli.js
+  checksum: 10c0/3dbfdf6495dd62e2e1644ea9e8e978100dabcd8740fd264df1222d130001a1e8de05d6ed6c67d3a60727386a07507f067d1ca79af6d546910414beab19e7966e
   languageName: node
   linkType: hard
 
@@ -22402,7 +22402,7 @@ __metadata:
     cp-cli: "npm:^2.0.0"
     cross-env: "npm:^7.0.3"
     eslint: "npm:9.21.0"
-    eslint-config-prettier: "npm:10.0.2"
+    eslint-config-prettier: "npm:10.1.1"
     eslint-config-standard: "npm:17.1.0"
     eslint-plugin-import: "npm:2.31.0"
     eslint-plugin-n: "npm:17.16.2"
