@@ -121,6 +121,7 @@ export function processDirectives(
         discriminatorField,
         discriminatorMapping,
         statusCodeTypeNameMap: statusCodeTypeNameIndexMap,
+        serviceName: currDirective?.subgraph,
       });
     }
     if (isEnumType(type)) {

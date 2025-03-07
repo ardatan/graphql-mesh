@@ -346,7 +346,7 @@ export function addHTTPRootFieldResolver(
           {
             extensions: {
               code: 'DOWNSTREAM_SERVICE_ERROR',
-              subgraph: sourceName,
+              serviceName: sourceName,
               request: {
                 url: fullPath,
                 method: httpMethod,
@@ -372,7 +372,7 @@ export function addHTTPRootFieldResolver(
           {
             extensions: {
               code: 'DOWNSTREAM_SERVICE_ERROR',
-              subgraph: sourceName,
+              serviceName: sourceName,
               request: {
                 url: fullPath,
                 method: httpMethod,

@@ -11,11 +11,13 @@ export function getTypeResolverForAbstractType({
   discriminatorField,
   discriminatorMapping,
   statusCodeTypeNameMap,
+  serviceName,
 }: {
   possibleTypes: readonly GraphQLObjectType[];
   discriminatorField?: string;
   discriminatorMapping?: [string, string][];
   statusCodeTypeNameMap?: Record<string, string>;
+  serviceName?: string;
 }): GraphQLTypeResolver<any, any> {
   const discriminatorMappingObj = Array.isArray(discriminatorMapping)
     ? Object.fromEntries(discriminatorMapping)
@@ -108,6 +110,7 @@ export function getTypeResolverForAbstractType({
       const error = createGraphQLError(`Upstream HTTP Error: ${data.$statusCode}`, {
         extensions: {
           code: 'DOWNSTREAM_SERVICE_ERROR',
+          serviceName,
           request: {
             url: data.$url,
             method: data.$method,

@@ -220,7 +220,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       return createGraphQLError(`Upstream HTTP Error: ${response.status}`, {
         extensions: {
           code: 'DOWNSTREAM_SERVICE_ERROR',
-          subgraph: soapAnnotations.subgraph,
+          serviceName: soapAnnotations.subgraph,
           request: {
             url: soapAnnotations.endpoint,
             method: 'POST',
