@@ -80,9 +80,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.13.2":
-  version: 3.13.2
-  resolution: "@apollo/client@npm:3.13.2"
+"@apollo/client@npm:3.13.3":
+  version: 3.13.3
+  resolution: "@apollo/client@npm:3.13.3"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     "@wry/caches": "npm:^1.0.0"
@@ -112,7 +112,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: 10c0/ad668d29a9fa47a8b053469f54fc3a43edb77059be40255e0b93389d8865d0ddfa2d99baec2854b520ad99ef61eaaed3f7a2789b8a7c43642ea7d38685e03d64
+  checksum: 10c0/f249b4e8b52d9a84b1de700f5177dd4f0e37dcc3b91fd092f1dc7a175171c6cac8b7d2bc0213301b9493bc162c2317915160be19f054dc23037c4678e1d4fcbe
   languageName: node
   linkType: hard
 
@@ -4882,7 +4882,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/graphql-file-upload-example-frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
-    "@apollo/client": "npm:3.13.2"
+    "@apollo/client": "npm:3.13.3"
     "@testing-library/dom": "npm:10.4.0"
     "@testing-library/jest-dom": "npm:6.6.3"
     "@testing-library/react": "npm:16.2.0"
@@ -6184,7 +6184,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link"
   dependencies:
-    "@apollo/client": "npm:3.13.2"
+    "@apollo/client": "npm:3.13.3"
     "@graphql-mesh/runtime": "npm:^0.106.1"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -8717,20 +8717,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.6.1":
-  version: 10.6.1
-  resolution: "@graphql-tools/utils@npm:10.6.1"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    cross-inspect: "npm:1.0.1"
-    dset: "npm:^3.1.2"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/00cd131e34e0adf85c4b879fc301fcf0b51709d8b802efe0349d0207dbc64990b018f3588d8bc122de805c0759f96e145ec1f80083a2f95a37f4ea83ce0329ed
-  languageName: node
-  linkType: hard
-
 "@graphql-tools/utils@npm:10.7.2":
   version: 10.7.2
   resolution: "@graphql-tools/utils@npm:10.7.2"
@@ -10353,23 +10339,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neo4j/cypher-builder@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@neo4j/cypher-builder@npm:2.3.0"
-  checksum: 10c0/bd7d98b8c3a84e9562ff88b9f2ad10a9258aabc2204dba247d4aa83944bce6f5100a3e14199a688dea62de2313910b90e03da7a9b1a423d0a279b022e5909fc3
+"@neo4j/cypher-builder@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@neo4j/cypher-builder@npm:2.4.0"
+  checksum: 10c0/c1745ee165596b7bd38db87bb3f4c9786e2ce8670f40e4ac8f10dd3ffe8d7a0c4eb4c76cf55a5695ed1e60744d5fdd74763506c6061f53419d966e0155ba5971
   languageName: node
   linkType: hard
 
 "@neo4j/graphql@npm:^6.0.0":
-  version: 6.3.1
-  resolution: "@neo4j/graphql@npm:6.3.1"
+  version: 6.4.0
+  resolution: "@neo4j/graphql@npm:6.4.0"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
     "@graphql-tools/resolvers-composition": "npm:^7.0.0"
     "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-tools/utils": "npm:10.6.1"
-    "@neo4j/cypher-builder": "npm:2.3.0"
+    "@graphql-tools/utils": "npm:10.8.4"
+    "@neo4j/cypher-builder": "npm:^2.4.0"
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
     dot-prop: "npm:^6.0.1"
@@ -10383,7 +10369,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/1949a6dfe92394ba296837319e3e234af456c039b1ddbfdc53dc66d41b752b52a90fafd4403e0880ee98dc6f4194e63436aa1abce3d32680ce77ad4f2a2cb45d
+  checksum: 10c0/754a3df57ff1b150c84e5a58cfd6f01ac1d1a922d8799979bacd44a81e146888c0e47e3ca37a17401ead10f82b56296a945115923a8dc2a312fc29a5c274f633
   languageName: node
   linkType: hard
 
