@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/json-schema",
-  "version": "0.109.1",
+  "version": "0.109.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -41,7 +41,7 @@
     "@graphql-mesh/types": "^0.104.1",
     "@graphql-mesh/utils": "^0.104.1",
     "@json-schema-tools/meta-schema": "^1.7.5",
-    "@omnigraph/json-schema": "^0.109.1",
+    "@omnigraph/json-schema": "^0.109.2",
     "graphql-compose": "^9.1.0",
     "json-machete": "^0.97.6",
     "tslib": "^2.4.0"

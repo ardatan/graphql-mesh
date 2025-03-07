@@ -1,5 +1,13 @@
 # @graphql-mesh/transport-soap
 
+## 0.10.2
+
+### Patch Changes
+
+- [`1577309`](https://github.com/ardatan/graphql-mesh/commit/15773097b19948d8634df98031700ef8866be533)
+  Thanks [@ardatan](https://github.com/ardatan)! - Align upstream error extensions to show subgraph
+  correctly in the upstream error extensions
+
 ## 0.10.1
 
 ### Patch Changes

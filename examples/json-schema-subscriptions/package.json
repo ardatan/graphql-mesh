@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.100.1",
-    "@graphql-mesh/json-schema": "0.109.1",
+    "@graphql-mesh/json-schema": "0.109.2",
     "@graphql-mesh/plugin-live-query": "0.104.1",
     "@whatwg-node/fetch": "^0.10.4",
     "fets": "0.8.5",
