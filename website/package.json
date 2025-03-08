@@ -22,7 +22,7 @@
     "@types/node": "22.13.9",
     "@types/react": "19.0.10",
     "cross-env": "7.0.3",
-    "eslint": "9.21.0",
+    "eslint": "9.22.0",
     "eslint-config-next": "15.2.1",
     "postcss": "8.5.3",
     "postcss-import": "16.1.0",
