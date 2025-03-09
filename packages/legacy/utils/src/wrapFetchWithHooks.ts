@@ -9,7 +9,7 @@ export const loggerForExecutionRequest = new WeakMap<ExecutionRequest, Logger>()
 
 export type FetchInstrumentation = {
   fetch?: (
-    payload: { executionRequest: ExecutionRequest },
+    payload: { executionRequest?: ExecutionRequest },
     wrapped: () => MaybePromise<void>,
   ) => MaybePromise<void>;
 };
