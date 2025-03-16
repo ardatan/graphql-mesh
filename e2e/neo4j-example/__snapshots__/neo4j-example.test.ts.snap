@@ -108,6 +108,7 @@ scalar _DirectiveExtensions @join__type(graph: MOVIES)
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{kind: "neo4j", subgraph: "Movies", location: "neo4j://localhost:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}]}
 ) @join__type(graph: MOVIES)  {
+  moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort!]) : MoviesConnection!
   movies(
     where: MovieWhere
     limit: Int
@@ -117,8 +118,10 @@ type Query @extraSchemaDefinitionDirective(
       reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."
     )
   ): [Movie!]!
-  moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort!]) : MoviesConnection!
-  moviesAggregate(where: MovieWhere) : MovieAggregateSelection!
+  moviesAggregate(where: MovieWhere) : MovieAggregateSelection! @deprecated(
+    reason: "Please use the explicit field \\"aggregate\\" inside \\"moviesConnection\\" instead"
+  )
+  peopleConnection(first: Int, after: String, where: PersonWhere, sort: [PersonSort!]) : PeopleConnection!
   people(
     where: PersonWhere
     limit: Int
@@ -128,8 +131,9 @@ type Query @extraSchemaDefinitionDirective(
       reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."
     )
   ): [Person!]!
-  peopleConnection(first: Int, after: String, where: PersonWhere, sort: [PersonSort!]) : PeopleConnection!
-  peopleAggregate(where: PersonWhere) : PersonAggregateSelection!
+  peopleAggregate(where: PersonWhere) : PersonAggregateSelection! @deprecated(
+    reason: "Please use the explicit field \\"aggregate\\" inside \\"peopleConnection\\" instead"
+  )
 }
 
 type Mutation @join__type(graph: MOVIES)  {
@@ -155,6 +159,15 @@ type BigIntAggregateSelection @join__type(graph: MOVIES)  {
   min: BigInt
   average: BigInt
   sum: BigInt
+}
+
+type Count @join__type(graph: MOVIES)  {
+  nodes: Int!
+}
+
+type CountConnection @join__type(graph: MOVIES)  {
+  nodes: Int!
+  edges: Int!
 }
 
 """
@@ -192,7 +205,9 @@ type Movie @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): MoviePersonPeopleActedInAggregationSelection
+  ): MoviePersonPeopleActedInAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"peopleActedInConnection\\" instead"
+  )
   peopleActedIn(
     where: PersonWhere
     limit: Int
@@ -219,7 +234,9 @@ type Movie @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): MoviePersonPeopleDirectedAggregationSelection
+  ): MoviePersonPeopleDirectedAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"peopleDirectedConnection\\" instead"
+  )
   peopleDirected(
     where: PersonWhere
     limit: Int
@@ -246,7 +263,9 @@ type Movie @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): MoviePersonPeopleProducedAggregationSelection
+  ): MoviePersonPeopleProducedAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"peopleProducedConnection\\" instead"
+  )
   peopleProduced(
     where: PersonWhere
     limit: Int
@@ -273,7 +292,9 @@ type Movie @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): MoviePersonPeopleReviewedAggregationSelection
+  ): MoviePersonPeopleReviewedAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"peopleReviewedConnection\\" instead"
+  )
   peopleReviewed(
     where: PersonWhere
     limit: Int
@@ -300,7 +321,9 @@ type Movie @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): MoviePersonPeopleWroteAggregationSelection
+  ): MoviePersonPeopleWroteAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"peopleWroteConnection\\" instead"
+  )
   peopleWrote(
     where: PersonWhere
     limit: Int
@@ -324,6 +347,17 @@ type Movie @introspection @node @join__type(graph: MOVIES)  {
   ): MoviePeopleWroteConnection!
 }
 
+type MovieAggregate @join__type(graph: MOVIES)  {
+  count: Count!
+  node: MovieAggregateNode!
+}
+
+type MovieAggregateNode @join__type(graph: MOVIES)  {
+  released: BigIntAggregateSelection!
+  tagline: StringAggregateSelection!
+  title: StringAggregateSelection!
+}
+
 type MovieAggregateSelection @join__type(graph: MOVIES)  {
   count: Int!
   released: BigIntAggregateSelection!
@@ -340,6 +374,7 @@ type MoviePeopleActedInConnection @join__type(graph: MOVIES)  {
   edges: [MoviePeopleActedInRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: MoviePersonPeopleActedInAggregateSelection!
 }
 
 type MoviePeopleActedInRelationship @join__type(graph: MOVIES)  {
@@ -352,6 +387,7 @@ type MoviePeopleDirectedConnection @join__type(graph: MOVIES)  {
   edges: [MoviePeopleDirectedRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: MoviePersonPeopleDirectedAggregateSelection!
 }
 
 type MoviePeopleDirectedRelationship @join__type(graph: MOVIES)  {
@@ -363,6 +399,7 @@ type MoviePeopleProducedConnection @join__type(graph: MOVIES)  {
   edges: [MoviePeopleProducedRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: MoviePersonPeopleProducedAggregateSelection!
 }
 
 type MoviePeopleProducedRelationship @join__type(graph: MOVIES)  {
@@ -374,6 +411,7 @@ type MoviePeopleReviewedConnection @join__type(graph: MOVIES)  {
   edges: [MoviePeopleReviewedRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: MoviePersonPeopleReviewedAggregateSelection!
 }
 
 type MoviePeopleReviewedRelationship @join__type(graph: MOVIES)  {
@@ -386,11 +424,17 @@ type MoviePeopleWroteConnection @join__type(graph: MOVIES)  {
   edges: [MoviePeopleWroteRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: MoviePersonPeopleWroteAggregateSelection!
 }
 
 type MoviePeopleWroteRelationship @join__type(graph: MOVIES)  {
   cursor: String!
   node: Person!
+}
+
+type MoviePersonPeopleActedInAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: MoviePersonPeopleActedInNodeAggregateSelection
 }
 
 type MoviePersonPeopleActedInAggregationSelection @join__type(graph: MOVIES)  {
@@ -403,6 +447,11 @@ type MoviePersonPeopleActedInNodeAggregateSelection @join__type(graph: MOVIES)  
   name: StringAggregateSelection!
 }
 
+type MoviePersonPeopleDirectedAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: MoviePersonPeopleDirectedNodeAggregateSelection
+}
+
 type MoviePersonPeopleDirectedAggregationSelection @join__type(graph: MOVIES)  {
   count: Int!
   node: MoviePersonPeopleDirectedNodeAggregateSelection
@@ -413,6 +462,11 @@ type MoviePersonPeopleDirectedNodeAggregateSelection @join__type(graph: MOVIES) 
   name: StringAggregateSelection!
 }
 
+type MoviePersonPeopleProducedAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: MoviePersonPeopleProducedNodeAggregateSelection
+}
+
 type MoviePersonPeopleProducedAggregationSelection @join__type(graph: MOVIES)  {
   count: Int!
   node: MoviePersonPeopleProducedNodeAggregateSelection
@@ -421,6 +475,12 @@ type MoviePersonPeopleProducedAggregationSelection @join__type(graph: MOVIES)  {
 type MoviePersonPeopleProducedNodeAggregateSelection @join__type(graph: MOVIES)  {
   born: BigIntAggregateSelection!
   name: StringAggregateSelection!
+}
+
+type MoviePersonPeopleReviewedAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: MoviePersonPeopleReviewedNodeAggregateSelection
+  edge: MoviePersonPeopleReviewedEdgeAggregateSelection
 }
 
 type MoviePersonPeopleReviewedAggregationSelection @join__type(graph: MOVIES)  {
@@ -439,6 +499,11 @@ type MoviePersonPeopleReviewedNodeAggregateSelection @join__type(graph: MOVIES) 
   name: StringAggregateSelection!
 }
 
+type MoviePersonPeopleWroteAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: MoviePersonPeopleWroteNodeAggregateSelection
+}
+
 type MoviePersonPeopleWroteAggregationSelection @join__type(graph: MOVIES)  {
   count: Int!
   node: MoviePersonPeopleWroteNodeAggregateSelection
@@ -450,9 +515,10 @@ type MoviePersonPeopleWroteNodeAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type MoviesConnection @join__type(graph: MOVIES)  {
+  edges: [MovieEdge!]!
   totalCount: Int!
   pageInfo: PageInfo!
-  edges: [MovieEdge!]!
+  aggregate: MovieAggregate!
 }
 
 """
@@ -466,9 +532,10 @@ type PageInfo @join__type(graph: MOVIES)  {
 }
 
 type PeopleConnection @join__type(graph: MOVIES)  {
+  edges: [PersonEdge!]!
   totalCount: Int!
   pageInfo: PageInfo!
-  edges: [PersonEdge!]!
+  aggregate: PersonAggregate!
 }
 
 type Person @introspection @node @join__type(graph: MOVIES)  {
@@ -479,7 +546,9 @@ type Person @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): PersonMovieActedInMoviesAggregationSelection
+  ): PersonMovieActedInMoviesAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"actedInMoviesConnection\\" instead"
+  )
   actedInMovies(
     where: MovieWhere
     limit: Int
@@ -506,7 +575,9 @@ type Person @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): PersonMovieDirectedMoviesAggregationSelection
+  ): PersonMovieDirectedMoviesAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"directedMoviesConnection\\" instead"
+  )
   directedMovies(
     where: MovieWhere
     limit: Int
@@ -533,7 +604,9 @@ type Person @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): PersonPersonFollowsPeopleAggregationSelection
+  ): PersonPersonFollowsPeopleAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"followsPeopleConnection\\" instead"
+  )
   followsPeople(
     where: PersonWhere
     limit: Int
@@ -560,7 +633,9 @@ type Person @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): PersonPersonPeopleFollowsAggregationSelection
+  ): PersonPersonPeopleFollowsAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"peopleFollowsConnection\\" instead"
+  )
   peopleFollows(
     where: PersonWhere
     limit: Int
@@ -587,7 +662,9 @@ type Person @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): PersonMovieProducedMoviesAggregationSelection
+  ): PersonMovieProducedMoviesAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"producedMoviesConnection\\" instead"
+  )
   producedMovies(
     where: MovieWhere
     limit: Int
@@ -614,7 +691,9 @@ type Person @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): PersonMovieReviewedMoviesAggregationSelection
+  ): PersonMovieReviewedMoviesAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"reviewedMoviesConnection\\" instead"
+  )
   reviewedMovies(
     where: MovieWhere
     limit: Int
@@ -641,7 +720,9 @@ type Person @introspection @node @join__type(graph: MOVIES)  {
     directed: Boolean = true @deprecated(
       reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"
     )
-  ): PersonMovieWroteMoviesAggregationSelection
+  ): PersonMovieWroteMoviesAggregationSelection @deprecated(
+    reason: "Please use field \\"aggregate\\" inside \\"wroteMoviesConnection\\" instead"
+  )
   wroteMovies(
     where: MovieWhere
     limit: Int
@@ -669,12 +750,23 @@ type PersonActedInMoviesConnection @join__type(graph: MOVIES)  {
   edges: [PersonActedInMoviesRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: PersonMovieActedInMoviesAggregateSelection!
 }
 
 type PersonActedInMoviesRelationship @join__type(graph: MOVIES)  {
   cursor: String!
   node: Movie!
   properties: ActedInProperties!
+}
+
+type PersonAggregate @join__type(graph: MOVIES)  {
+  count: Count!
+  node: PersonAggregateNode!
+}
+
+type PersonAggregateNode @join__type(graph: MOVIES)  {
+  born: BigIntAggregateSelection!
+  name: StringAggregateSelection!
 }
 
 type PersonAggregateSelection @join__type(graph: MOVIES)  {
@@ -687,6 +779,7 @@ type PersonDirectedMoviesConnection @join__type(graph: MOVIES)  {
   edges: [PersonDirectedMoviesRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: PersonMovieDirectedMoviesAggregateSelection!
 }
 
 type PersonDirectedMoviesRelationship @join__type(graph: MOVIES)  {
@@ -703,11 +796,17 @@ type PersonFollowsPeopleConnection @join__type(graph: MOVIES)  {
   edges: [PersonFollowsPeopleRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: PersonPersonFollowsPeopleAggregateSelection!
 }
 
 type PersonFollowsPeopleRelationship @join__type(graph: MOVIES)  {
   cursor: String!
   node: Person!
+}
+
+type PersonMovieActedInMoviesAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: PersonMovieActedInMoviesNodeAggregateSelection
 }
 
 type PersonMovieActedInMoviesAggregationSelection @join__type(graph: MOVIES)  {
@@ -721,6 +820,11 @@ type PersonMovieActedInMoviesNodeAggregateSelection @join__type(graph: MOVIES)  
   title: StringAggregateSelection!
 }
 
+type PersonMovieDirectedMoviesAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: PersonMovieDirectedMoviesNodeAggregateSelection
+}
+
 type PersonMovieDirectedMoviesAggregationSelection @join__type(graph: MOVIES)  {
   count: Int!
   node: PersonMovieDirectedMoviesNodeAggregateSelection
@@ -732,6 +836,11 @@ type PersonMovieDirectedMoviesNodeAggregateSelection @join__type(graph: MOVIES) 
   title: StringAggregateSelection!
 }
 
+type PersonMovieProducedMoviesAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: PersonMovieProducedMoviesNodeAggregateSelection
+}
+
 type PersonMovieProducedMoviesAggregationSelection @join__type(graph: MOVIES)  {
   count: Int!
   node: PersonMovieProducedMoviesNodeAggregateSelection
@@ -741,6 +850,12 @@ type PersonMovieProducedMoviesNodeAggregateSelection @join__type(graph: MOVIES) 
   released: BigIntAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
+}
+
+type PersonMovieReviewedMoviesAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: PersonMovieReviewedMoviesNodeAggregateSelection
+  edge: PersonMovieReviewedMoviesEdgeAggregateSelection
 }
 
 type PersonMovieReviewedMoviesAggregationSelection @join__type(graph: MOVIES)  {
@@ -760,6 +875,11 @@ type PersonMovieReviewedMoviesNodeAggregateSelection @join__type(graph: MOVIES) 
   title: StringAggregateSelection!
 }
 
+type PersonMovieWroteMoviesAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: PersonMovieWroteMoviesNodeAggregateSelection
+}
+
 type PersonMovieWroteMoviesAggregationSelection @join__type(graph: MOVIES)  {
   count: Int!
   node: PersonMovieWroteMoviesNodeAggregateSelection
@@ -775,11 +895,17 @@ type PersonPeopleFollowsConnection @join__type(graph: MOVIES)  {
   edges: [PersonPeopleFollowsRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: PersonPersonPeopleFollowsAggregateSelection!
 }
 
 type PersonPeopleFollowsRelationship @join__type(graph: MOVIES)  {
   cursor: String!
   node: Person!
+}
+
+type PersonPersonFollowsPeopleAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: PersonPersonFollowsPeopleNodeAggregateSelection
 }
 
 type PersonPersonFollowsPeopleAggregationSelection @join__type(graph: MOVIES)  {
@@ -790,6 +916,11 @@ type PersonPersonFollowsPeopleAggregationSelection @join__type(graph: MOVIES)  {
 type PersonPersonFollowsPeopleNodeAggregateSelection @join__type(graph: MOVIES)  {
   born: BigIntAggregateSelection!
   name: StringAggregateSelection!
+}
+
+type PersonPersonPeopleFollowsAggregateSelection @join__type(graph: MOVIES)  {
+  count: CountConnection!
+  node: PersonPersonPeopleFollowsNodeAggregateSelection
 }
 
 type PersonPersonPeopleFollowsAggregationSelection @join__type(graph: MOVIES)  {
@@ -806,6 +937,7 @@ type PersonProducedMoviesConnection @join__type(graph: MOVIES)  {
   edges: [PersonProducedMoviesRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: PersonMovieProducedMoviesAggregateSelection!
 }
 
 type PersonProducedMoviesRelationship @join__type(graph: MOVIES)  {
@@ -817,6 +949,7 @@ type PersonReviewedMoviesConnection @join__type(graph: MOVIES)  {
   edges: [PersonReviewedMoviesRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: PersonMovieReviewedMoviesAggregateSelection!
 }
 
 type PersonReviewedMoviesRelationship @join__type(graph: MOVIES)  {
@@ -829,6 +962,7 @@ type PersonWroteMoviesConnection @join__type(graph: MOVIES)  {
   edges: [PersonWroteMoviesRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  aggregate: PersonMovieWroteMoviesAggregateSelection!
 }
 
 type PersonWroteMoviesRelationship @join__type(graph: MOVIES)  {

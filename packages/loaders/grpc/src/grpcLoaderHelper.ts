@@ -83,7 +83,7 @@ export class GrpcLoaderHelper extends DisposableStack {
 
     this.logger.debug(`Getting channel credentials`);
     const creds = await this.getCredentials();
-    this.defer(() => creds._unref());
+    this.defer(() => (creds as any)?._unref?.());
 
     this.logger.debug(`Getting stored root and decoded descriptor set objects`);
     const descriptorSets = await this.getDescriptorSets(creds);

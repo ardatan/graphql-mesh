@@ -62,6 +62,15 @@ type BigIntAggregateSelection {
   sum: BigInt
 }
 
+type Count {
+  nodes: Int!
+}
+
+type CountConnection {
+  edges: Int!
+  nodes: Int!
+}
+
 """
 Information about the number of nodes and relationships created during a create mutation
 """
@@ -98,24 +107,36 @@ enum EventType {
 
 type Movie @introspection @node {
   peopleActedIn(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: PersonOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [PersonSort!], where: PersonWhere): [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
-  peopleActedInAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleActedInAggregationSelection
+  peopleActedInAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleActedInAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"peopleActedInConnection\\" instead")
   peopleActedInConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [MoviePeopleActedInConnectionSort!], where: MoviePeopleActedInConnectionWhere): MoviePeopleActedInConnection!
   peopleDirected(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: PersonOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [PersonSort!], where: PersonWhere): [Person!]! @introspection @relationship(type: "DIRECTED", direction: IN)
-  peopleDirectedAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleDirectedAggregationSelection
+  peopleDirectedAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleDirectedAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"peopleDirectedConnection\\" instead")
   peopleDirectedConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [MoviePeopleDirectedConnectionSort!], where: MoviePeopleDirectedConnectionWhere): MoviePeopleDirectedConnection!
   peopleProduced(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: PersonOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [PersonSort!], where: PersonWhere): [Person!]! @introspection @relationship(type: "PRODUCED", direction: IN)
-  peopleProducedAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleProducedAggregationSelection
+  peopleProducedAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleProducedAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"peopleProducedConnection\\" instead")
   peopleProducedConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [MoviePeopleProducedConnectionSort!], where: MoviePeopleProducedConnectionWhere): MoviePeopleProducedConnection!
   peopleReviewed(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: PersonOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [PersonSort!], where: PersonWhere): [Person!]! @introspection @relationship(type: "REVIEWED", direction: IN, properties: "ReviewedProperties")
-  peopleReviewedAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleReviewedAggregationSelection
+  peopleReviewedAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleReviewedAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"peopleReviewedConnection\\" instead")
   peopleReviewedConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [MoviePeopleReviewedConnectionSort!], where: MoviePeopleReviewedConnectionWhere): MoviePeopleReviewedConnection!
   peopleWrote(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: PersonOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [PersonSort!], where: PersonWhere): [Person!]! @introspection @relationship(type: "WROTE", direction: IN)
-  peopleWroteAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleWroteAggregationSelection
+  peopleWroteAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): MoviePersonPeopleWroteAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"peopleWroteConnection\\" instead")
   peopleWroteConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [MoviePeopleWroteConnectionSort!], where: MoviePeopleWroteConnectionWhere): MoviePeopleWroteConnection!
   released: BigInt! @introspection
   tagline: String @introspection
   title: String! @introspection
   votes: BigInt! @introspection
+}
+
+type MovieAggregate {
+  count: Count!
+  node: MovieAggregateNode!
+}
+
+type MovieAggregateNode {
+  released: BigIntAggregateSelection!
+  tagline: StringAggregateSelection!
+  title: StringAggregateSelection!
+  votes: BigIntAggregateSelection!
 }
 
 type MovieAggregateSelection {
@@ -223,6 +244,7 @@ input MoviePeopleActedInConnectFieldInput {
 }
 
 type MoviePeopleActedInConnection {
+  aggregate: MoviePersonPeopleActedInAggregateSelection!
   edges: [MoviePeopleActedInRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -345,6 +367,7 @@ input MoviePeopleDirectedConnectFieldInput {
 }
 
 type MoviePeopleDirectedConnection {
+  aggregate: MoviePersonPeopleDirectedAggregateSelection!
   edges: [MoviePeopleDirectedRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -462,6 +485,7 @@ input MoviePeopleProducedConnectFieldInput {
 }
 
 type MoviePeopleProducedConnection {
+  aggregate: MoviePersonPeopleProducedAggregateSelection!
   edges: [MoviePeopleProducedRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -581,6 +605,7 @@ input MoviePeopleReviewedConnectFieldInput {
 }
 
 type MoviePeopleReviewedConnection {
+  aggregate: MoviePersonPeopleReviewedAggregateSelection!
   edges: [MoviePeopleReviewedRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -703,6 +728,7 @@ input MoviePeopleWroteConnectFieldInput {
 }
 
 type MoviePeopleWroteConnection {
+  aggregate: MoviePersonPeopleWroteAggregateSelection!
   edges: [MoviePeopleWroteRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -797,6 +823,11 @@ input MoviePeopleWroteUpdateFieldInput {
   where: MoviePeopleWroteConnectionWhere
 }
 
+type MoviePersonPeopleActedInAggregateSelection {
+  count: CountConnection!
+  node: MoviePersonPeopleActedInNodeAggregateSelection
+}
+
 type MoviePersonPeopleActedInAggregationSelection {
   count: Int!
   node: MoviePersonPeopleActedInNodeAggregateSelection
@@ -805,6 +836,11 @@ type MoviePersonPeopleActedInAggregationSelection {
 type MoviePersonPeopleActedInNodeAggregateSelection {
   born: BigIntAggregateSelection!
   name: StringAggregateSelection!
+}
+
+type MoviePersonPeopleDirectedAggregateSelection {
+  count: CountConnection!
+  node: MoviePersonPeopleDirectedNodeAggregateSelection
 }
 
 type MoviePersonPeopleDirectedAggregationSelection {
@@ -817,6 +853,11 @@ type MoviePersonPeopleDirectedNodeAggregateSelection {
   name: StringAggregateSelection!
 }
 
+type MoviePersonPeopleProducedAggregateSelection {
+  count: CountConnection!
+  node: MoviePersonPeopleProducedNodeAggregateSelection
+}
+
 type MoviePersonPeopleProducedAggregationSelection {
   count: Int!
   node: MoviePersonPeopleProducedNodeAggregateSelection
@@ -825,6 +866,12 @@ type MoviePersonPeopleProducedAggregationSelection {
 type MoviePersonPeopleProducedNodeAggregateSelection {
   born: BigIntAggregateSelection!
   name: StringAggregateSelection!
+}
+
+type MoviePersonPeopleReviewedAggregateSelection {
+  count: CountConnection!
+  edge: MoviePersonPeopleReviewedEdgeAggregateSelection
+  node: MoviePersonPeopleReviewedNodeAggregateSelection
 }
 
 type MoviePersonPeopleReviewedAggregationSelection {
@@ -841,6 +888,11 @@ type MoviePersonPeopleReviewedEdgeAggregateSelection {
 type MoviePersonPeopleReviewedNodeAggregateSelection {
   born: BigIntAggregateSelection!
   name: StringAggregateSelection!
+}
+
+type MoviePersonPeopleWroteAggregateSelection {
+  count: CountConnection!
+  node: MoviePersonPeopleWroteNodeAggregateSelection
 }
 
 type MoviePersonPeopleWroteAggregationSelection {
@@ -1080,6 +1132,7 @@ input MovieWhere {
 }
 
 type MoviesConnection {
+  aggregate: MovieAggregate!
   edges: [MovieEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -1103,6 +1156,7 @@ type PageInfo {
 }
 
 type PeopleConnection {
+  aggregate: PersonAggregate!
   edges: [PersonEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -1110,27 +1164,27 @@ type PeopleConnection {
 
 type Person @introspection @node {
   actedInMovies(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: MovieOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
-  actedInMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieActedInMoviesAggregationSelection
+  actedInMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieActedInMoviesAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"actedInMoviesConnection\\" instead")
   actedInMoviesConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [PersonActedInMoviesConnectionSort!], where: PersonActedInMoviesConnectionWhere): PersonActedInMoviesConnection!
   born: BigInt @introspection
   directedMovies(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: MovieOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT)
-  directedMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieDirectedMoviesAggregationSelection
+  directedMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieDirectedMoviesAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"directedMoviesConnection\\" instead")
   directedMoviesConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [PersonDirectedMoviesConnectionSort!], where: PersonDirectedMoviesConnectionWhere): PersonDirectedMoviesConnection!
   followsPeople(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: PersonOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [PersonSort!], where: PersonWhere): [Person!]! @introspection @relationship(type: "FOLLOWS", direction: OUT)
-  followsPeopleAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): PersonPersonFollowsPeopleAggregationSelection
+  followsPeopleAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): PersonPersonFollowsPeopleAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"followsPeopleConnection\\" instead")
   followsPeopleConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [PersonFollowsPeopleConnectionSort!], where: PersonFollowsPeopleConnectionWhere): PersonFollowsPeopleConnection!
   name: String! @introspection
   peopleFollows(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: PersonOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [PersonSort!], where: PersonWhere): [Person!]! @introspection @relationship(type: "FOLLOWS", direction: IN)
-  peopleFollowsAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): PersonPersonPeopleFollowsAggregationSelection
+  peopleFollowsAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: PersonWhere): PersonPersonPeopleFollowsAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"peopleFollowsConnection\\" instead")
   peopleFollowsConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [PersonPeopleFollowsConnectionSort!], where: PersonPeopleFollowsConnectionWhere): PersonPeopleFollowsConnection!
   producedMovies(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: MovieOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "PRODUCED", direction: OUT)
-  producedMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieProducedMoviesAggregationSelection
+  producedMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieProducedMoviesAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"producedMoviesConnection\\" instead")
   producedMoviesConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [PersonProducedMoviesConnectionSort!], where: PersonProducedMoviesConnectionWhere): PersonProducedMoviesConnection!
   reviewedMovies(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: MovieOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "REVIEWED", direction: OUT, properties: "ReviewedProperties")
-  reviewedMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieReviewedMoviesAggregationSelection
+  reviewedMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieReviewedMoviesAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"reviewedMoviesConnection\\" instead")
   reviewedMoviesConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [PersonReviewedMoviesConnectionSort!], where: PersonReviewedMoviesConnectionWhere): PersonReviewedMoviesConnection!
   wroteMovies(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), limit: Int, offset: Int, options: MovieOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [MovieSort!], where: MovieWhere): [Movie!]! @introspection @relationship(type: "WROTE", direction: OUT)
-  wroteMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieWroteMoviesAggregationSelection
+  wroteMoviesAggregate(directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), where: MovieWhere): PersonMovieWroteMoviesAggregationSelection @deprecated(reason: "Please use field \\"aggregate\\" inside \\"wroteMoviesConnection\\" instead")
   wroteMoviesConnection(after: String, directed: Boolean = true @deprecated(reason: "The directed argument is deprecated, and the direction of the field will be configured in the GraphQL server"), first: Int, sort: [PersonWroteMoviesConnectionSort!], where: PersonWroteMoviesConnectionWhere): PersonWroteMoviesConnection!
 }
 
@@ -1158,6 +1212,7 @@ input PersonActedInMoviesConnectFieldInput {
 }
 
 type PersonActedInMoviesConnection {
+  aggregate: PersonMovieActedInMoviesAggregateSelection!
   edges: [PersonActedInMoviesRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -1292,6 +1347,16 @@ input PersonActedInMoviesUpdateFieldInput {
   where: PersonActedInMoviesConnectionWhere
 }
 
+type PersonAggregate {
+  count: Count!
+  node: PersonAggregateNode!
+}
+
+type PersonAggregateNode {
+  born: BigIntAggregateSelection!
+  name: StringAggregateSelection!
+}
+
 type PersonAggregateSelection {
   born: BigIntAggregateSelection!
   count: Int!
@@ -1369,6 +1434,7 @@ input PersonDirectedMoviesConnectFieldInput {
 }
 
 type PersonDirectedMoviesConnection {
+  aggregate: PersonMovieDirectedMoviesAggregateSelection!
   edges: [PersonDirectedMoviesRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -1541,6 +1607,7 @@ input PersonFollowsPeopleConnectFieldInput {
 }
 
 type PersonFollowsPeopleConnection {
+  aggregate: PersonPersonFollowsPeopleAggregateSelection!
   edges: [PersonFollowsPeopleRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -1635,6 +1702,11 @@ input PersonFollowsPeopleUpdateFieldInput {
   where: PersonFollowsPeopleConnectionWhere
 }
 
+type PersonMovieActedInMoviesAggregateSelection {
+  count: CountConnection!
+  node: PersonMovieActedInMoviesNodeAggregateSelection
+}
+
 type PersonMovieActedInMoviesAggregationSelection {
   count: Int!
   node: PersonMovieActedInMoviesNodeAggregateSelection
@@ -1645,6 +1717,11 @@ type PersonMovieActedInMoviesNodeAggregateSelection {
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
   votes: BigIntAggregateSelection!
+}
+
+type PersonMovieDirectedMoviesAggregateSelection {
+  count: CountConnection!
+  node: PersonMovieDirectedMoviesNodeAggregateSelection
 }
 
 type PersonMovieDirectedMoviesAggregationSelection {
@@ -1659,6 +1736,11 @@ type PersonMovieDirectedMoviesNodeAggregateSelection {
   votes: BigIntAggregateSelection!
 }
 
+type PersonMovieProducedMoviesAggregateSelection {
+  count: CountConnection!
+  node: PersonMovieProducedMoviesNodeAggregateSelection
+}
+
 type PersonMovieProducedMoviesAggregationSelection {
   count: Int!
   node: PersonMovieProducedMoviesNodeAggregateSelection
@@ -1669,6 +1751,12 @@ type PersonMovieProducedMoviesNodeAggregateSelection {
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
   votes: BigIntAggregateSelection!
+}
+
+type PersonMovieReviewedMoviesAggregateSelection {
+  count: CountConnection!
+  edge: PersonMovieReviewedMoviesEdgeAggregateSelection
+  node: PersonMovieReviewedMoviesNodeAggregateSelection
 }
 
 type PersonMovieReviewedMoviesAggregationSelection {
@@ -1687,6 +1775,11 @@ type PersonMovieReviewedMoviesNodeAggregateSelection {
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
   votes: BigIntAggregateSelection!
+}
+
+type PersonMovieWroteMoviesAggregateSelection {
+  count: CountConnection!
+  node: PersonMovieWroteMoviesNodeAggregateSelection
 }
 
 type PersonMovieWroteMoviesAggregationSelection {
@@ -1733,6 +1826,7 @@ input PersonPeopleFollowsConnectFieldInput {
 }
 
 type PersonPeopleFollowsConnection {
+  aggregate: PersonPersonPeopleFollowsAggregateSelection!
   edges: [PersonPeopleFollowsRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -1827,6 +1921,11 @@ input PersonPeopleFollowsUpdateFieldInput {
   where: PersonPeopleFollowsConnectionWhere
 }
 
+type PersonPersonFollowsPeopleAggregateSelection {
+  count: CountConnection!
+  node: PersonPersonFollowsPeopleNodeAggregateSelection
+}
+
 type PersonPersonFollowsPeopleAggregationSelection {
   count: Int!
   node: PersonPersonFollowsPeopleNodeAggregateSelection
@@ -1835,6 +1934,11 @@ type PersonPersonFollowsPeopleAggregationSelection {
 type PersonPersonFollowsPeopleNodeAggregateSelection {
   born: BigIntAggregateSelection!
   name: StringAggregateSelection!
+}
+
+type PersonPersonPeopleFollowsAggregateSelection {
+  count: CountConnection!
+  node: PersonPersonPeopleFollowsNodeAggregateSelection
 }
 
 type PersonPersonPeopleFollowsAggregationSelection {
@@ -1870,6 +1974,7 @@ input PersonProducedMoviesConnectFieldInput {
 }
 
 type PersonProducedMoviesConnection {
+  aggregate: PersonMovieProducedMoviesAggregateSelection!
   edges: [PersonProducedMoviesRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -2024,6 +2129,7 @@ input PersonReviewedMoviesConnectFieldInput {
 }
 
 type PersonReviewedMoviesConnection {
+  aggregate: PersonMovieReviewedMoviesAggregateSelection!
   edges: [PersonReviewedMoviesRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -2425,6 +2531,7 @@ input PersonWroteMoviesConnectFieldInput {
 }
 
 type PersonWroteMoviesConnection {
+  aggregate: PersonMovieWroteMoviesAggregateSelection!
   edges: [PersonWroteMoviesRelationship!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -2556,10 +2663,10 @@ input PersonWroteMoviesUpdateFieldInput {
 
 type Query {
   movies(limit: Int, offset: Int, options: MovieOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [MovieSort!], where: MovieWhere): [Movie!]!
-  moviesAggregate(where: MovieWhere): MovieAggregateSelection!
+  moviesAggregate(where: MovieWhere): MovieAggregateSelection! @deprecated(reason: "Please use the explicit field \\"aggregate\\" inside \\"moviesConnection\\" instead")
   moviesConnection(after: String, first: Int, sort: [MovieSort!], where: MovieWhere): MoviesConnection!
   people(limit: Int, offset: Int, options: PersonOptions @deprecated(reason: "Query options argument is deprecated, please use pagination arguments like limit, offset and sort instead."), sort: [PersonSort!], where: PersonWhere): [Person!]!
-  peopleAggregate(where: PersonWhere): PersonAggregateSelection!
+  peopleAggregate(where: PersonWhere): PersonAggregateSelection! @deprecated(reason: "Please use the explicit field \\"aggregate\\" inside \\"peopleConnection\\" instead")
   peopleConnection(after: String, first: Int, sort: [PersonSort!], where: PersonWhere): PeopleConnection!
 }
 
