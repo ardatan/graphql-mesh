@@ -4894,7 +4894,7 @@ __metadata:
   resolution: "@examples/grpc-example@workspace:examples/grpc-example"
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.1"
-    "@graphql-mesh/grpc": "npm:0.108.1"
+    "@graphql-mesh/grpc": "npm:0.108.2"
     "@graphql-mesh/transform-naming-convention": "npm:0.105.1"
     "@grpc/grpc-js": "npm:1.13.0"
     "@grpc/proto-loader": "npm:0.7.13"
@@ -4914,7 +4914,7 @@ __metadata:
   resolution: "@examples/grpc-reflection-example@workspace:examples/grpc-reflection-example"
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.1"
-    "@graphql-mesh/grpc": "npm:0.108.1"
+    "@graphql-mesh/grpc": "npm:0.108.2"
     "@graphql-mesh/transform-naming-convention": "npm:0.105.1"
     "@grpc/grpc-js": "npm:1.13.0"
     "@grpc/proto-loader": "npm:0.7.13"
@@ -4973,8 +4973,8 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.1"
     "@graphql-mesh/openapi": "npm:0.109.2"
-    "@graphql-mesh/plugin-hive": "npm:0.104.1"
-    "@graphql-mesh/transform-hive": "npm:0.104.1"
+    "@graphql-mesh/plugin-hive": "npm:0.104.2"
+    "@graphql-mesh/transform-hive": "npm:0.104.2"
     graphql: "npm:16.10.0"
   languageName: unknown
   linkType: soft
@@ -6473,7 +6473,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/grpc@npm:0.108.1, @graphql-mesh/grpc@workspace:packages/legacy/handlers/grpc":
+"@graphql-mesh/grpc@npm:0.108.2, @graphql-mesh/grpc@workspace:packages/legacy/handlers/grpc":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/grpc@workspace:packages/legacy/handlers/grpc"
   dependencies:
@@ -6481,7 +6481,7 @@ __metadata:
     "@graphql-mesh/transport-grpc": "npm:^0.3.1"
     "@graphql-mesh/types": "npm:^0.104.1"
     "@graphql-mesh/utils": "npm:^0.104.1"
-    "@omnigraph/grpc": "npm:^0.2.5"
+    "@omnigraph/grpc": "npm:^0.2.6"
     graphql: "npm:16.10.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -6717,7 +6717,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-hive@npm:0.104.1, @graphql-mesh/plugin-hive@workspace:packages/plugins/hive":
+"@graphql-mesh/plugin-hive@npm:0.104.2, @graphql-mesh/plugin-hive@workspace:packages/plugins/hive":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
@@ -7259,7 +7259,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transform-hive@npm:0.104.1, @graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive":
+"@graphql-mesh/transform-hive@npm:0.104.2, @graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive"
   dependencies:
@@ -10401,7 +10401,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@omnigraph/grpc@npm:^0.2.5, @omnigraph/grpc@workspace:*, @omnigraph/grpc@workspace:packages/loaders/grpc":
+"@omnigraph/grpc@npm:^0.2.6, @omnigraph/grpc@workspace:*, @omnigraph/grpc@workspace:packages/loaders/grpc":
   version: 0.0.0-use.local
   resolution: "@omnigraph/grpc@workspace:packages/loaders/grpc"
   dependencies:

@@ -1,5 +1,12 @@
 # @omnigraph/grpc
 
+## 0.2.6
+
+### Patch Changes
+
+- [`84d2038`](https://github.com/ardatan/graphql-mesh/commit/84d2038b18d4a82b46a2ebdfbb06cfa791835631)
+  Thanks [@ardatan](https://github.com/ardatan)! - Improve gRPC compat
+
 ## 0.2.5
 
 ### Patch Changes
