@@ -6059,8 +6059,8 @@ __metadata:
   linkType: hard
 
 "@graphql-hive/gateway@npm:^1.8.0":
-  version: 1.12.1
-  resolution: "@graphql-hive/gateway@npm:1.12.1"
+  version: 1.12.2
+  resolution: "@graphql-hive/gateway@npm:1.12.2"
   dependencies:
     "@commander-js/extra-typings": "npm:^13.1.0"
     "@envelop/core": "npm:^5.2.3"
@@ -6105,7 +6105,7 @@ __metadata:
       optional: true
   bin:
     hive-gateway: ./dist/bin.js
-  checksum: 10c0/095c40965c334fbf472348c569f99d61330434be3f15e1aa51a9dc733d09a01c0e7836a8ea9a9f24679043a8de0dea807592fb62a7e435c7e23fe298c7472a10
+  checksum: 10c0/52b11f695403e9d056c8f0c5500e9498060c290001228823337ff1e884de1cff2f64d1ef737daf97e8015ea921fbb54be10a9d8e633ff0d3a60093e6a46238ee
   languageName: node
   linkType: hard
 
