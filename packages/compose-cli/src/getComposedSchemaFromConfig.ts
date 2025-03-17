@@ -12,6 +12,7 @@ import {
   type DocumentNode,
   type GraphQLObjectType,
   type GraphQLSchema,
+  type ObjectTypeDefinitionNode,
 } from 'graphql';
 import {
   composeSubgraphs,
@@ -195,6 +196,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       assumeValidSDL: true,
     });
     if (additionalTypeDefs?.length) {
+      const originalComposedSchema = composedSchema;
       composedSchema = mergeSchemas({
         schemas: [composedSchema],
         typeDefs: additionalTypeDefs,
@@ -204,40 +206,47 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       // Fix extra additionalField annotations
       if (composedSchema.getDirective('additionalField')) {
         let composedSchemaAST = getDocumentNodeFromSchema(composedSchema);
-        const typeInfo = new TypeInfo(composedSchema);
-        composedSchemaAST = visit(
-          composedSchemaAST,
-          visitWithTypeInfo(typeInfo, {
-            [Kind.FIELD_DEFINITION](node) {
-              const directiveNames = node.directives?.map(directive => directive.name.value);
-              if (directiveNames.includes('additionalField')) {
-                if (directiveNames.includes('join__field') || directiveNames.includes('source')) {
-                  return {
-                    ...node,
-                    directives: node.directives?.filter(
-                      directive => directive.name.value !== 'additionalField',
-                    ),
-                  };
-                }
-                const type = typeInfo.getParentType();
-                if (type) {
-                  const typeInOriginalSchema = composedSchema.getType(type.name);
-                  if (typeInOriginalSchema && 'getFields' in typeInOriginalSchema) {
-                    const field = typeInOriginalSchema.getFields()[node.name.value];
-                    if (field) {
-                      return {
-                        ...node,
-                        directives: node.directives?.filter(
-                          directive => directive.name.value !== 'additionalField',
-                        ),
-                      };
-                    }
+        composedSchemaAST = visit(composedSchemaAST, {
+          [Kind.FIELD_DEFINITION](node, __key, __parent, __path, ancestors) {
+            const directiveNames = node.directives?.map(directive => directive.name.value);
+            if (directiveNames.includes('additionalField')) {
+              if (directiveNames.includes('join__field') || directiveNames.includes('source')) {
+                return {
+                  ...node,
+                  directives: node.directives?.filter(
+                    directive => directive.name.value !== 'additionalField',
+                  ),
+                };
+              }
+              const typeInAncestor = ancestors
+                .toReversed()
+                .find(
+                  ancestor =>
+                    !Array.isArray(ancestor) &&
+                    ancestor != null &&
+                    typeof ancestor === 'object' &&
+                    'kind' in ancestor,
+                ) as ObjectTypeDefinitionNode;
+              if (typeInAncestor) {
+                const typeInOriginalSchema = originalComposedSchema.getType(
+                  typeInAncestor.name.value,
+                );
+                if (typeInOriginalSchema && 'getFields' in typeInOriginalSchema) {
+                  const field = typeInOriginalSchema.getFields()[node.name.value];
+                  if (field) {
+                    return {
+                      ...node,
+                      directives: node.directives?.filter(
+                        directive => directive.name.value !== 'additionalField',
+                      ),
+                    };
                   }
                 }
               }
-            },
-          }),
-        );
+            }
+          },
+        });
+        return print(composedSchemaAST);
       }
     }
     /* TODO

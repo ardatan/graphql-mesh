@@ -16,6 +16,7 @@ export const composeConfig = defineComposeConfig({
   additionalTypeDefs: /* GraphQL */ `
     extend type Query {
       viewsInPastMonth(project: String!): Int!
+      feed_availability: availability!
     }
   `,
 });

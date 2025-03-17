@@ -74,7 +74,7 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "
   
   Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
   """
-  feed_availability: availability @httpOperation(subgraph: "Wiki", path: "/feed/availability", operationSpecificHeaders: [["Accept", "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"]], httpMethod: GET)
+  feed_availability: availability! @httpOperation(subgraph: "Wiki", path: "/feed/availability", operationSpecificHeaders: [["Accept", "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"]], httpMethod: GET)
   """
   Returns the previously-stored formula via \`/media/math/check/{type}\` for
   the given hash.
