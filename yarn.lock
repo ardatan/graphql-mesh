@@ -3315,10 +3315,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20250313.0":
-  version: 4.20250313.0
-  resolution: "@cloudflare/workers-types@npm:4.20250313.0"
-  checksum: 10c0/f5cb0a640b6174288fdf672cea0cacdf3f5ff1719f90b57aa9c462a17c19b04dc89edaec7c4ad5d41e28c050b9ac70f2a1db169efad5fde3ef7700ba0953b7a1
+"@cloudflare/workers-types@npm:4.20250317.0":
+  version: 4.20250317.0
+  resolution: "@cloudflare/workers-types@npm:4.20250317.0"
+  checksum: 10c0/c985fe8899547d2b015539b956bfd4fede2e953d5163de876a9f3b1f61cfab975b573848e6d2f87a2cc1b9f3ce7b516870a5aaeb168724cf4bb1eb60e3ccabb7
   languageName: node
   linkType: hard
 
@@ -4878,7 +4878,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.14"
     "@types/node": "npm:22.13.10"
-    "@types/react": "npm:19.0.10"
+    "@types/react": "npm:19.0.11"
     "@types/react-dom": "npm:19.0.4"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.10.0"
@@ -4979,9 +4979,9 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.100.1"
     "@graphql-mesh/json-schema": "npm:0.109.2"
     "@graphql-mesh/plugin-mock": "npm:0.105.1"
-    "@graphql-yoga/plugin-sofa": "npm:3.13.2"
+    "@graphql-yoga/plugin-sofa": "npm:3.13.3"
     graphql: "npm:16.10.0"
-    graphql-yoga: "npm:5.13.1"
+    graphql-yoga: "npm:5.13.2"
     jest: "npm:29.7.0"
   languageName: unknown
   linkType: soft
@@ -5165,7 +5165,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.108.1"
     "@graphql-mesh/openapi": "npm:0.109.2"
     "@graphql-mesh/runtime": "npm:0.106.1"
-    "@types/react": "npm:19.0.10"
+    "@types/react": "npm:19.0.11"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.10.0"
     micro: "npm:10.0.1"
@@ -5184,7 +5184,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.108.1"
     "@graphql-mesh/openapi": "npm:0.109.2"
     "@graphql-mesh/runtime": "npm:0.106.1"
-    "@types/react": "npm:19.0.10"
+    "@types/react": "npm:19.0.11"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.10.0"
     micro: "npm:10.0.1"
@@ -5284,7 +5284,7 @@ __metadata:
   resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.1"
-    "@types/react": "npm:19.0.10"
+    "@types/react": "npm:19.0.11"
     "@types/react-dom": "npm:19.0.4"
     "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.10.0"
@@ -5363,9 +5363,9 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.100.1"
     "@graphql-mesh/json-schema": "npm:0.109.2"
     "@graphql-mesh/plugin-mock": "npm:0.105.1"
-    "@graphql-yoga/plugin-sofa": "npm:3.13.2"
+    "@graphql-yoga/plugin-sofa": "npm:3.13.3"
     graphql: "npm:16.10.0"
-    graphql-yoga: "npm:5.13.1"
+    graphql-yoga: "npm:5.13.2"
     jest: "npm:29.7.0"
   languageName: unknown
   linkType: soft
@@ -6205,7 +6205,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20250313.0"
+    "@cloudflare/workers-types": "npm:4.20250317.0"
     "@graphql-mesh/types": "npm:^0.104.1"
     "@graphql-mesh/utils": "npm:^0.104.1"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -8577,7 +8577,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-apollo-inline-trace@npm:3.13.1, @graphql-yoga/plugin-apollo-inline-trace@npm:^3.13.1":
+"@graphql-yoga/plugin-apollo-inline-trace@npm:3.13.2":
+  version: 3.13.2
+  resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.13.2"
+  dependencies:
+    "@apollo/usage-reporting-protobuf": "npm:^4.1.1"
+    "@envelop/on-resolve": "npm:^5.1.3"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    graphql: ^15.2.0 || ^16.0.0
+    graphql-yoga: ^5.13.2
+  checksum: 10c0/a69c67158a5bd4061ffb8247b0eaa37deb542711f29553c1f00a54c9a408ca318bc3b310794e49a255744cc70162e9d83c1ccc1f16e374a2b641a05b1e2f5972
+  languageName: node
+  linkType: hard
+
+"@graphql-yoga/plugin-apollo-inline-trace@npm:^3.13.1":
   version: 3.13.1
   resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.13.1"
   dependencies:
@@ -8628,8 +8642,8 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-jwt@npm:^3.4.9":
-  version: 3.7.2
-  resolution: "@graphql-yoga/plugin-jwt@npm:3.7.2"
+  version: 3.7.3
+  resolution: "@graphql-yoga/plugin-jwt@npm:3.7.3"
   dependencies:
     "@whatwg-node/promise-helpers": "npm:^1.2.4"
     "@whatwg-node/server-plugin-cookies": "npm:^1.0.3"
@@ -8638,20 +8652,20 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.13.1
-  checksum: 10c0/98e5d638afb98bb1d1088b822ccb8069da6ad9dba78bc7fea9a497502a66fed7306ee46d41dcc88c095ebed6864c0dd9aa326ba25d354ceea0a704a77d77192c
+    graphql-yoga: ^5.13.2
+  checksum: 10c0/87ceeb0590fd49880274e51de0ab016613575ba8fcc7706dd843006566e5e181532f816065f78f1c11318301bfe7ae7aa0e2aaf013d3712f2fb5f4b29fda1115
   languageName: node
   linkType: hard
 
 "@graphql-yoga/plugin-persisted-operations@npm:^3.0.0, @graphql-yoga/plugin-persisted-operations@npm:^3.12.0, @graphql-yoga/plugin-persisted-operations@npm:^3.9.0":
-  version: 3.13.2
-  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.13.2"
+  version: 3.13.3
+  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.13.3"
   dependencies:
     "@whatwg-node/promise-helpers": "npm:^1.2.4"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.13.1
-  checksum: 10c0/3bf44f2cefe3a7768f0798377c5d0988a16a577df41ca3006a7d5ab572edf46f95bd716cbdba05df94e81c05918befbd531a6d4d63248511d5d436acb3f33385
+    graphql-yoga: ^5.13.2
+  checksum: 10c0/155ae446f63840d86dfe415504297b7acde8a7a83802b8f5edc94aefa9bfd26ac13edb23dd8fc8f4c48e6e42bba52a4c6703ace7e2e8799161b18009763b9935
   languageName: node
   linkType: hard
 
@@ -8669,30 +8683,30 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-response-cache@npm:^3.13.1":
-  version: 3.15.2
-  resolution: "@graphql-yoga/plugin-response-cache@npm:3.15.2"
+  version: 3.15.3
+  resolution: "@graphql-yoga/plugin-response-cache@npm:3.15.3"
   dependencies:
     "@envelop/core": "npm:^5.2.3"
     "@envelop/response-cache": "npm:^7.1.3"
     "@whatwg-node/promise-helpers": "npm:^1.2.4"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.13.1
-  checksum: 10c0/9f8e610879bf7fb95cc1301cd1e471f5dd76b11e6cc2ff1abef1bd53fa041b192d7323d96b02458e01695d2923d97ae07ebe2b4b48be670bc647f0585cbcf2c8
+    graphql-yoga: ^5.13.2
+  checksum: 10c0/1e6ae8411ade8d72c2d5b619174c8fc9420d9f3f66552e12da891e4ca9b238f07e655dbd125dfd7d761dd8d45ac0a66180f9198d421e141648e421e61096a8bd
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-sofa@npm:3.13.2":
-  version: 3.13.2
-  resolution: "@graphql-yoga/plugin-sofa@npm:3.13.2"
+"@graphql-yoga/plugin-sofa@npm:3.13.3":
+  version: 3.13.3
+  resolution: "@graphql-yoga/plugin-sofa@npm:3.13.3"
   dependencies:
     "@graphql-tools/utils": "npm:^10.3.2"
     "@whatwg-node/promise-helpers": "npm:^1.2.4"
     sofa-api: "npm:^0.18.8"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.13.1
-  checksum: 10c0/ab863c10de9a90f2b3c1fb082aa3f6919f2ee28b4dd89dd6bd493e521e61c8995b7cceec392b3e41ae4f89f47121755c95508ddd03ea61bedb5d953a3240f718
+    graphql-yoga: ^5.13.2
+  checksum: 10c0/f29d4a2f42ec6df6936bdfcfb9b2877608598a025d65768e0cc3cdb566328e60a49ffd09ad19cbb7e6c21454794103fcef22b36adfae955ede60ea6d3d306a9b
   languageName: node
   linkType: hard
 
@@ -13795,12 +13809,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.0.10":
-  version: 19.0.10
-  resolution: "@types/react@npm:19.0.10"
+"@types/react@npm:19.0.11":
+  version: 19.0.11
+  resolution: "@types/react@npm:19.0.11"
   dependencies:
     csstype: "npm:^3.0.2"
-  checksum: 10c0/41884cca21850c8b2d6578b172ca0ca4fff6021251a68532b19f2031ac23dc5a9222470208065f8d9985d367376047df2f49ece8d927f7d04cdc94922b1eb34b
+  checksum: 10c0/386cdde579b60e22160d6894a985655742703346bdc71fed9809f8f90ca87e2dd0252e86b81f92621a2c1de8d0fbf35e3963996db8c451cc670570061ed62f29
   languageName: node
   linkType: hard
 
@@ -20494,7 +20508,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": "npm:4.4.4"
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/compose-cli": "npm:1.4.1"
-    "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.13.1"
+    "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.13.2"
     "@types/node": "npm:22.13.10"
     concurrently: "npm:9.1.2"
     esbuild: "npm:^0.25.0"
@@ -22353,9 +22367,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-yoga@npm:5.13.1, graphql-yoga@npm:^5.12.0, graphql-yoga@npm:^5.13.1":
-  version: 5.13.1
-  resolution: "graphql-yoga@npm:5.13.1"
+"graphql-yoga@npm:5.13.2, graphql-yoga@npm:^5.12.0, graphql-yoga@npm:^5.13.1":
+  version: 5.13.2
+  resolution: "graphql-yoga@npm:5.13.2"
   dependencies:
     "@envelop/core": "npm:^5.2.3"
     "@envelop/instrumentation": "npm:^1.0.0"
@@ -22372,7 +22386,7 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-  checksum: 10c0/424a18602caeeb9781f1c97d14373ed96162ab17928d4d9df1ba01a8bf343c1b5eccfcc017782c0fd442de64752a259439506a29bc5d9167e006347e02d20402
+  checksum: 10c0/c89823f36e661fb5b45e0ba038e85f3feece658bf29a947a550454491f442270684160490756656d11380202a25d26818c9fe48b9d09b4e73cc16a838196d376
   languageName: node
   linkType: hard
 
@@ -29812,8 +29826,8 @@ __metadata:
   linkType: hard
 
 "pg@npm:>=6.1.0 <9, pg@npm:^8.6.0":
-  version: 8.14.0
-  resolution: "pg@npm:8.14.0"
+  version: 8.14.1
+  resolution: "pg@npm:8.14.1"
   dependencies:
     pg-cloudflare: "npm:^1.1.1"
     pg-connection-string: "npm:^2.7.0"
@@ -29829,7 +29843,7 @@ __metadata:
   peerDependenciesMeta:
     pg-native:
       optional: true
-  checksum: 10c0/14d9fe726189107b028d5603b299776d039e36ed657c99057bcc1c125f889cb46536e0c48c6d98952231733c788f98c631bf74d5f8c9cbf85c4ac7c0a119b8b4
+  checksum: 10c0/221741cfcea4ab32c8b57bd60703bc36cfb5622dcac56c19e45f504ef8669f2f2e0429af8850f58079cfc89055da35b5a5e12de19e0505e3f61a4b4349388dcb
   languageName: node
   linkType: hard
 
@@ -36994,7 +37008,7 @@ __metadata:
     "@theguild/components": "npm:^7.6.0"
     "@theguild/tailwind-config": "npm:0.6.3"
     "@types/node": "npm:22.13.10"
-    "@types/react": "npm:19.0.10"
+    "@types/react": "npm:19.0.11"
     cross-env: "npm:7.0.3"
     eslint: "npm:9.22.0"
     eslint-config-next: "npm:15.2.2"
