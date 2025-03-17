@@ -10625,7 +10625,7 @@ __metadata:
     graphql: "npm:16.10.0"
     graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
-    soap: "npm:1.1.9"
+    soap: "npm:1.1.10"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -15632,7 +15632,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios-ntlm@npm:^1.4.2":
+"axios-ntlm@npm:^1.4.3":
   version: 1.4.3
   resolution: "axios-ntlm@npm:1.4.3"
   dependencies:
@@ -33725,12 +33725,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"soap@npm:1.1.9":
-  version: 1.1.9
-  resolution: "soap@npm:1.1.9"
+"soap@npm:1.1.10":
+  version: 1.1.10
+  resolution: "soap@npm:1.1.10"
   dependencies:
-    axios: "npm:^1.7.9"
-    axios-ntlm: "npm:^1.4.2"
+    axios: "npm:^1.8.3"
+    axios-ntlm: "npm:^1.4.3"
     debug: "npm:^4.4.0"
     formidable: "npm:^3.5.2"
     get-stream: "npm:^6.0.1"
@@ -33738,8 +33738,8 @@ __metadata:
     sax: "npm:^1.4.1"
     strip-bom: "npm:^3.0.0"
     whatwg-mimetype: "npm:4.0.0"
-    xml-crypto: "npm:^6.0.0"
-  checksum: 10c0/63de1f1a068f6395da1bb4aacb2c21ed456849d64edec782718b6eecb2ebabb6972eae1ca7354c19d281081686781ddd6a51cf341a5c96474115439d608bf2a4
+    xml-crypto: "npm:^6.0.1"
+  checksum: 10c0/f1120ff3fe675bed2e4b334b7af2eacee692665736cc4e45eaba5931fef5ab326909e65b30c8f44aa39d03d2a01a8f35583193395814c4975813f537f7c77197
   languageName: node
   linkType: hard
 
@@ -37696,7 +37696,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml-crypto@npm:^6.0.0":
+"xml-crypto@npm:^6.0.1":
   version: 6.0.1
   resolution: "xml-crypto@npm:6.0.1"
   dependencies:
