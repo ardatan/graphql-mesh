@@ -6,7 +6,9 @@ import {
   Kind,
   parse,
   print,
+  TypeInfo,
   visit,
+  visitWithTypeInfo,
   type DocumentNode,
   type GraphQLObjectType,
   type GraphQLSchema,
@@ -24,7 +26,11 @@ import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
-import { astFromValueUntyped, printSchemaWithDirectives } from '@graphql-tools/utils';
+import {
+  astFromValueUntyped,
+  getDocumentNodeFromSchema,
+  printSchemaWithDirectives,
+} from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
@@ -195,6 +201,44 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
         assumeValid: true,
         assumeValidSDL: true,
       });
+      // Fix extra additionalField annotations
+      if (composedSchema.getDirective('additionalField')) {
+        let composedSchemaAST = getDocumentNodeFromSchema(composedSchema);
+        const typeInfo = new TypeInfo(composedSchema);
+        composedSchemaAST = visit(
+          composedSchemaAST,
+          visitWithTypeInfo(typeInfo, {
+            [Kind.FIELD_DEFINITION](node) {
+              const directiveNames = node.directives?.map(directive => directive.name.value);
+              if (directiveNames.includes('additionalField')) {
+                if (directiveNames.includes('join__field') || directiveNames.includes('source')) {
+                  return {
+                    ...node,
+                    directives: node.directives?.filter(
+                      directive => directive.name.value !== 'additionalField',
+                    ),
+                  };
+                }
+                const type = typeInfo.getParentType();
+                if (type) {
+                  const typeInOriginalSchema = composedSchema.getType(type.name);
+                  if (typeInOriginalSchema && 'getFields' in typeInOriginalSchema) {
+                    const field = typeInOriginalSchema.getFields()[node.name.value];
+                    if (field) {
+                      return {
+                        ...node,
+                        directives: node.directives?.filter(
+                          directive => directive.name.value !== 'additionalField',
+                        ),
+                      };
+                    }
+                  }
+                }
+              }
+            },
+          }),
+        );
+      }
     }
     /* TODO
     if (config.transforms?.length) {
