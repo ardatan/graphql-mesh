@@ -218,8 +218,8 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
                   ),
                 };
               }
-              const typeInAncestor = ancestors
-                .toReversed()
+              const typeInAncestor = [...ancestors]
+                .reverse()
                 .find(
                   ancestor =>
                     !Array.isArray(ancestor) &&
