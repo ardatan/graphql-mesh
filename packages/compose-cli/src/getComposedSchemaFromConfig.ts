@@ -6,10 +6,13 @@ import {
   Kind,
   parse,
   print,
+  TypeInfo,
   visit,
+  visitWithTypeInfo,
   type DocumentNode,
   type GraphQLObjectType,
   type GraphQLSchema,
+  type ObjectTypeDefinitionNode,
 } from 'graphql';
 import {
   composeSubgraphs,
@@ -24,7 +27,11 @@ import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
-import { astFromValueUntyped, printSchemaWithDirectives } from '@graphql-tools/utils';
+import {
+  astFromValueUntyped,
+  getDocumentNodeFromSchema,
+  printSchemaWithDirectives,
+} from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
@@ -189,12 +196,58 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       assumeValidSDL: true,
     });
     if (additionalTypeDefs?.length) {
+      const originalComposedSchema = composedSchema;
       composedSchema = mergeSchemas({
         schemas: [composedSchema],
         typeDefs: additionalTypeDefs,
         assumeValid: true,
         assumeValidSDL: true,
       });
+      // Fix extra additionalField annotations
+      if (composedSchema.getDirective('additionalField')) {
+        let composedSchemaAST = getDocumentNodeFromSchema(composedSchema);
+        composedSchemaAST = visit(composedSchemaAST, {
+          [Kind.FIELD_DEFINITION](node, __key, __parent, __path, ancestors) {
+            const directiveNames = node.directives?.map(directive => directive.name.value);
+            if (directiveNames.includes('additionalField')) {
+              if (directiveNames.includes('join__field') || directiveNames.includes('source')) {
+                return {
+                  ...node,
+                  directives: node.directives?.filter(
+                    directive => directive.name.value !== 'additionalField',
+                  ),
+                };
+              }
+              const typeInAncestor = [...ancestors]
+                .reverse()
+                .find(
+                  ancestor =>
+                    !Array.isArray(ancestor) &&
+                    ancestor != null &&
+                    typeof ancestor === 'object' &&
+                    'kind' in ancestor,
+                ) as ObjectTypeDefinitionNode;
+              if (typeInAncestor) {
+                const typeInOriginalSchema = originalComposedSchema.getType(
+                  typeInAncestor.name.value,
+                );
+                if (typeInOriginalSchema && 'getFields' in typeInOriginalSchema) {
+                  const field = typeInOriginalSchema.getFields()[node.name.value];
+                  if (field) {
+                    return {
+                      ...node,
+                      directives: node.directives?.filter(
+                        directive => directive.name.value !== 'additionalField',
+                      ),
+                    };
+                  }
+                }
+              }
+            }
+          },
+        });
+        return print(composedSchemaAST);
+      }
     }
     /* TODO
     if (config.transforms?.length) {
