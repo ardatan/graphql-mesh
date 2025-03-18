@@ -8880,9 +8880,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ianvs/prettier-plugin-sort-imports@npm:4.4.0":
-  version: 4.4.0
-  resolution: "@ianvs/prettier-plugin-sort-imports@npm:4.4.0"
+"@ianvs/prettier-plugin-sort-imports@npm:4.4.1":
+  version: 4.4.1
+  resolution: "@ianvs/prettier-plugin-sort-imports@npm:4.4.1"
   dependencies:
     "@babel/generator": "npm:^7.26.2"
     "@babel/parser": "npm:^7.26.2"
@@ -8895,7 +8895,7 @@ __metadata:
   peerDependenciesMeta:
     "@vue/compiler-sfc":
       optional: true
-  checksum: 10c0/8578ae3de4c965e59196388c2ce5d06cb16cbb445c3ba9ce301cf167facfdf9049cfcc343cacc3e383e2bda051b73c1620c8d18812decf1a3a17acacc1dee61b
+  checksum: 10c0/bdf2f658f495d0899318c6d4542b10007bc7343d53c5436cc6eb82cc29e57be97e19fb74004c282c4a44da2e015c5ddaa2c3c451fbc7fec64b1a96ff0e4d0f6d
   languageName: node
   linkType: hard
 
@@ -12597,16 +12597,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/prettier-config@npm:3.0.0":
-  version: 3.0.0
-  resolution: "@theguild/prettier-config@npm:3.0.0"
+"@theguild/prettier-config@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@theguild/prettier-config@npm:3.0.1"
   dependencies:
-    "@ianvs/prettier-plugin-sort-imports": "npm:4.4.0"
+    "@ianvs/prettier-plugin-sort-imports": "npm:4.4.1"
     prettier-plugin-pkg: "npm:^0.18.0"
-    prettier-plugin-sh: "npm:^0.14.0"
+    prettier-plugin-sh: "npm:^0.15.0"
   peerDependencies:
     prettier: ^3
-  checksum: 10c0/12e14cfd8870e0d68563f8a2be892d18b18b27d1286a7129d36ddbbd2e7ff5f2824dd7dcddbf60de5af91a7c89f4171f58bbc473c8fb9d23ad324e9274135fed
+  checksum: 10c0/9156e275cfb587ee152ae25c6611ee7db45cec8483de29960f53aaccf2d2000610be181c72bbd77d68b310d8890c35ffa586bf2170275c3bf681af0e357136f8
   languageName: node
   linkType: hard
 
@@ -22206,7 +22206,7 @@ __metadata:
     "@changesets/changelog-github": "npm:0.5.1"
     "@changesets/cli": "npm:2.28.1"
     "@repeaterjs/repeater": "npm:^3.0.5"
-    "@theguild/prettier-config": "npm:3.0.0"
+    "@theguild/prettier-config": "npm:3.0.1"
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.14"
@@ -31051,15 +31051,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-sh@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "prettier-plugin-sh@npm:0.14.0"
+"prettier-plugin-sh@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "prettier-plugin-sh@npm:0.15.0"
   dependencies:
     mvdan-sh: "npm:^0.10.1"
-    sh-syntax: "npm:^0.4.1"
+    sh-syntax: "npm:^0.4.2"
   peerDependencies:
     prettier: ^3.0.3
-  checksum: 10c0/9df1a5f3a7d18b562064724809ce8be0efed6a5e03ef6eb41f1015ffca3471cd62ce83a01de5fe5e6bb13a3affb0c4c653ba4ab6b662e1e06742c65b5b646c5e
+  checksum: 10c0/256599d89deb83bd9fd85041936b852841fa198735ae2327ea4889f375b8c5a02e39139dd63a77911f49ef2fe7d44c36d01350ca4f93967d807bbadf2513a9bd
   languageName: node
   linkType: hard
 
@@ -33386,7 +33386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sh-syntax@npm:^0.4.1":
+"sh-syntax@npm:^0.4.2":
   version: 0.4.2
   resolution: "sh-syntax@npm:0.4.2"
   dependencies:
