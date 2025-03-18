@@ -1,5 +1,14 @@
 # @graphql-mesh/compose-cli
 
+## 1.4.2
+
+### Patch Changes
+
+- [#8511](https://github.com/ardatan/graphql-mesh/pull/8511)
+  [`c4ff7ee`](https://github.com/ardatan/graphql-mesh/commit/c4ff7eea336178bc78a10b706cae911083c5370d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not overwrite existing fields with
+  `@additionalField` directive
+
 ## 1.4.1
 
 ### Patch Changes
