@@ -16,7 +16,7 @@ env:
 jobs:
   stable:
     permissions:
-      contents: read
+      contents: write
       id-token: write
       pull-requests: write
     if: github.ref == 'refs/heads/master'
@@ -26,5 +26,5 @@ jobs:
       versionScript: 'changeset-version'
       node-version-file: .node-version
     secrets:
-      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
