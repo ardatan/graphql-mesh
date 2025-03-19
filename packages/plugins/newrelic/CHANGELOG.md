@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.104.2
+
+### Patch Changes
+
+- [`aa5529d`](https://github.com/ardatan/graphql-mesh/commit/aa5529d1c5df289be2317686a09f3ad15bdb8ba7)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not throw when currentTransaction and
+  currentSegment is not available
+
 ## 0.104.1
 
 ### Patch Changes
