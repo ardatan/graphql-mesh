@@ -52,20 +52,22 @@ export default function useMeshNewrelic(
     currentSegment = instrumentationApi.getSegment(),
     currentTransaction = instrumentationApi.agent.tracer.getTransaction(),
   ) {
-    currentSegment.addAttribute('http.statusCode', res.status);
-    currentTransaction.trace.attributes.addAttribute(
-      DESTS.TRANS_COMMON,
-      'http.statusCode',
-      res.status,
-    );
-    currentTransaction.statusCode = res.status;
+    if (currentSegment && currentTransaction) {
+      currentSegment.addAttribute('http.statusCode', res.status);
+      currentTransaction.trace.attributes.addAttribute(
+        DESTS.TRANS_COMMON,
+        'http.statusCode',
+        res.status,
+      );
+      currentTransaction.statusCode = res.status;
 
-    currentSegment.addAttribute('http.statusText', res.statusText);
-    currentTransaction.trace.attributes.addAttribute(
-      DESTS.TRANS_COMMON,
-      'http.statusText',
-      res.statusText,
-    );
+      currentSegment.addAttribute('http.statusText', res.statusText);
+      currentTransaction.trace.attributes.addAttribute(
+        DESTS.TRANS_COMMON,
+        'http.statusText',
+        res.statusText,
+      );
+    }
   }
 
   return {
@@ -90,37 +92,40 @@ export default function useMeshNewrelic(
         setRequestHandler((...args) =>
           agentApi.startWebTransaction(url.pathname, () => {
             const currentSegment = instrumentationApi.getSegment();
+            if (currentSegment) {
+            }
             segmentByRequestContext.set(request, currentSegment);
 
             const currentTransaction = instrumentationApi.agent.tracer.getTransaction();
+            if (currentTransaction) {
+              currentTransaction.trace.attributes.addAttribute(
+                DESTS.TRANS_COMMON,
+                'request.uri',
+                url.pathname,
+              );
+              currentSegment.addAttribute('request.uri', url.pathname);
+              currentTransaction.parsedUrl = url;
 
-            currentTransaction.trace.attributes.addAttribute(
-              DESTS.TRANS_COMMON,
-              'request.uri',
-              url.pathname,
-            );
-            currentSegment.addAttribute('request.uri', url.pathname);
-            currentTransaction.parsedUrl = url;
+              currentTransaction.verb = request.method;
+              currentTransaction.trace.attributes.addAttribute(
+                DESTS.TRANS_COMMON,
+                'request.method',
+                request.method,
+              );
+              currentTransaction.nameState.setVerb(request.method);
+              currentSegment.addAttribute('request.method', request.method);
 
-            currentTransaction.verb = request.method;
-            currentTransaction.trace.attributes.addAttribute(
-              DESTS.TRANS_COMMON,
-              'request.method',
-              request.method,
-            );
-            currentTransaction.nameState.setVerb(request.method);
-            currentSegment.addAttribute('request.method', request.method);
-
-            for (const headerName in headersToTrack) {
-              const headerValue = request.headers.get(headerName);
-              if (headerValue) {
-                const key = `request.headers.${headersToTrack[headerName]}`;
-                currentTransaction.trace.attributes.addAttribute(
-                  DESTS.TRANS_COMMON,
-                  key,
-                  headerValue,
-                );
-                currentSegment.addAttribute(key, headerValue);
+              for (const headerName in headersToTrack) {
+                const headerValue = request.headers.get(headerName);
+                if (headerValue) {
+                  const key = `request.headers.${headersToTrack[headerName]}`;
+                  currentTransaction.trace.attributes.addAttribute(
+                    DESTS.TRANS_COMMON,
+                    key,
+                    headerValue,
+                  );
+                  currentSegment.addAttribute(key, headerValue);
+                }
               }
             }
             return handleMaybePromise(
