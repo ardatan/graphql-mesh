@@ -22285,13 +22285,13 @@ __metadata:
   linkType: hard
 
 "graphql-scalars@npm:^1.22.4, graphql-scalars@npm:^1.23.0":
-  version: 1.24.1
-  resolution: "graphql-scalars@npm:1.24.1"
+  version: 1.24.2
+  resolution: "graphql-scalars@npm:1.24.2"
   dependencies:
     tslib: "npm:^2.5.0"
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/08f9d4f3e87e15b32a279f55d6550d2f095c9d133387f1224d6c213d88ace508f8f4c0ae7862982e35eb80fba15e94dfc3cd67501f6948aef96942d3128f01f9
+  checksum: 10c0/1d207da58ce0ad29de70cd579372c112de4eeff051eba7ba90efc031c05d4967dfcba89760545a9621f4d4eb74b0355e49ac946ef491d7816874eeaf88fc6472
   languageName: node
   linkType: hard
 
