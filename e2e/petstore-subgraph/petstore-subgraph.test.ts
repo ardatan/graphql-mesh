@@ -60,7 +60,7 @@ it('should be composable with Hive composition and serve correctly', async () =>
   expect(executionResult).toEqual({
     data: {
       getPetById: {
-        id: '1',
+        id: 1,
       },
     },
   });
