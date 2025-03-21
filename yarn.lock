@@ -14931,16 +14931,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/server@npm:0.10.1":
-  version: 0.10.1
-  resolution: "@whatwg-node/server@npm:0.10.1"
+"@whatwg-node/server@npm:0.10.2":
+  version: 0.10.2
+  resolution: "@whatwg-node/server@npm:0.10.2"
   dependencies:
     "@envelop/instrumentation": "npm:^1.0.0"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     "@whatwg-node/fetch": "npm:^0.10.5"
     "@whatwg-node/promise-helpers": "npm:^1.2.3"
     tslib: "npm:^2.6.3"
-  checksum: 10c0/265930c1977f2b246c03c478fc67b8e4f120190da3a5d5953ee3ca9766d1f3d2bee5bde70d510e0f51da1a8d20045c165274c1699ba3880d2a9ca8b1e8a1e8aa
+  checksum: 10c0/e9187a5a252922537b7a504cbb17c4bf57b46c177b9faad52711322b157e50043d9f5060df60cfae5af05a18915993ff39771d7704b0ae73a28cfdd530a8c8c8
   languageName: node
   linkType: hard
 

@@ -110,7 +110,7 @@
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
     "@whatwg-node/fetch": "0.10.5",
     "@whatwg-node/node-fetch": "0.7.14",
-    "@whatwg-node/server": "0.10.1",
+    "@whatwg-node/server": "0.10.2",
     "axios": "^1.0.0",
     "cookie": "1.0.2",
     "cross-fetch": "^4.0.0",
