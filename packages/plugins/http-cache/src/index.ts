@@ -159,7 +159,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
                   );
                 },
               );
-              context?.waitUntil(store$);
+              context?.waitUntil?.(store$);
             }
             if (policy) {
               const revalidationPolicy = policy.revalidatedPolicy(policyRequest, policyResponse);
@@ -193,7 +193,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
                 pluginLogger?.debug(`Deleting the cache entry for ${url}`);
                 const delete$ = cache.delete(cacheKey);
                 // @ts-expect-error - Promise type mismatch
-                context?.waitUntil(delete$);
+                context?.waitUntil?.(delete$);
               }
             }
           };
