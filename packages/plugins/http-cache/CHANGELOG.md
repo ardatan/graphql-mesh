@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.105.2
+
+### Patch Changes
+
+- [`e2a9eb4`](https://github.com/ardatan/graphql-mesh/commit/e2a9eb4d12ef67fc67cf7acfec0ca444cf62263b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix `waitUntil` optional call for non HTTP
+  servers
+
 ## 0.105.1
 
 ### Patch Changes
