@@ -17,6 +17,7 @@ export type FetchInstrumentation = {
 export function wrapFetchWithHooks<TContext>(
   onFetchHooks: OnFetchHook<TContext>[],
   instrumentation?: () => FetchInstrumentation | undefined,
+  defaultLogger?: Logger,
 ): MeshFetch {
   let wrappedFetchFn = function wrappedFetchFn(url, options, context, info) {
     let fetchFn: MeshFetch;
@@ -56,7 +57,7 @@ export function wrapFetchWithHooks<TContext>(
                   logger = loggerForExecutionRequest.get(info.executionRequest);
                 }
                 if (!logger) {
-                  logger = new DefaultLogger('fetch');
+                  logger = defaultLogger?.child('fetch') || new DefaultLogger('fetch');
                 }
                 if (context?.request) {
                   const requestId = requestIdByRequest.get(context.request);
