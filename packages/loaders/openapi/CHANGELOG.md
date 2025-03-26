@@ -1,5 +1,16 @@
 # @omnigraph/openapi
 
+## 0.109.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1b5d072`](https://github.com/ardatan/graphql-mesh/commit/1b5d07211e2e67bc939f1def3d19c45a7a4eb28b)]:
+  - @graphql-mesh/utils@0.104.2
+  - @graphql-mesh/fusion-composition@0.8.2
+  - @omnigraph/json-schema@0.109.3
+  - @graphql-mesh/types@0.104.2
+
 ## 0.109.2
 
 ### Patch Changes
@@ -3274,11 +3285,11 @@
 
   ```ts filename="myOperationHeaders.ts"
   export default function myOperationHeaders({ context }: ResolverData) {
-    const someToken = context.request.headers.get("some-token");
-    const anotherToken = await someLogicThatReturnsAnotherToken(someToken);
+    const someToken = context.request.headers.get('some-token')
+    const anotherToken = await someLogicThatReturnsAnotherToken(someToken)
     return {
-      "x-bar-token": anotherToken,
-    };
+      'x-bar-token': anotherToken
+    }
   }
   ```
 
