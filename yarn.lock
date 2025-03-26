@@ -3410,16 +3410,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/unenv-preset@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@cloudflare/unenv-preset@npm:2.3.0"
+"@cloudflare/unenv-preset@npm:2.3.1":
+  version: 2.3.1
+  resolution: "@cloudflare/unenv-preset@npm:2.3.1"
   peerDependencies:
     unenv: 2.0.0-rc.15
-    workerd: ^1.20250311.0
+    workerd: ^1.20250320.0
   peerDependenciesMeta:
     workerd:
       optional: true
-  checksum: 10c0/2f463048ceeaeeab86a5992f28984b5ae82d17b47cad3bc33475a995e23987480f2185af28120c4a139d28fbd4cded55419e1aa81e4389e2303b19f1e8114aa9
+  checksum: 10c0/cd8c44609f1a88989b28943710dfeb6b29d3f840e29e312a13e821eb7e92593bd26dd3d314770511b0263309fd1bf7b1d5516c43aedad1e4ebf6e3a3ffcf057d
   languageName: node
   linkType: hard
 
@@ -4775,7 +4775,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.2"
     "@omnigraph/json-schema": "workspace:^"
     graphql: "npm:16.10.0"
-    wrangler: "npm:4.4.1"
+    wrangler: "npm:4.5.0"
   languageName: unknown
   linkType: soft
 
@@ -4790,7 +4790,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.104.2"
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.2"
     graphql: "npm:16.10.0"
-    wrangler: "npm:4.4.1"
+    wrangler: "npm:4.5.0"
   languageName: unknown
   linkType: soft
 
@@ -4930,7 +4930,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.109.3"
     "@graphql-mesh/plugin-response-cache": "npm:0.104.2"
     graphql: "npm:16.10.0"
-    wrangler: "npm:4.4.1"
+    wrangler: "npm:4.5.0"
   languageName: unknown
   linkType: soft
 
@@ -5658,7 +5658,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.104.2"
     "@graphql-mesh/plugin-response-cache": "npm:0.104.2"
     graphql: "npm:16.10.0"
-    wrangler: "npm:4.4.1"
+    wrangler: "npm:4.5.0"
   languageName: unknown
   linkType: soft
 
@@ -8699,21 +8699,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.8.4":
-  version: 10.8.4
-  resolution: "@graphql-tools/utils@npm:10.8.4"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    "@whatwg-node/promise-helpers": "npm:^1.0.0"
-    cross-inspect: "npm:1.0.1"
-    dset: "npm:^3.1.4"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/c9bd473b79a6029194934965284df0c752cd44d607c65ebcfc20a2cacb9351859e97bab759faac1282db72e31ea6a7a87b0007671064bf3cbc89d907510e503a
-  languageName: node
-  linkType: hard
-
 "@graphql-tools/utils@npm:10.8.6, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.3.2, @graphql-tools/utils@npm:^10.5.1, @graphql-tools/utils@npm:^10.5.4, @graphql-tools/utils@npm:^10.5.6, @graphql-tools/utils@npm:^10.6.1, @graphql-tools/utils@npm:^10.6.2, @graphql-tools/utils@npm:^10.6.4, @graphql-tools/utils@npm:^10.8.0, @graphql-tools/utils@npm:^10.8.1, @graphql-tools/utils@npm:^10.8.6":
   version: 10.8.6
   resolution: "@graphql-tools/utils@npm:10.8.6"
@@ -10343,14 +10328,14 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^6.0.0":
-  version: 6.5.2
-  resolution: "@neo4j/graphql@npm:6.5.2"
+  version: 6.5.3
+  resolution: "@neo4j/graphql@npm:6.5.3"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
     "@graphql-tools/resolvers-composition": "npm:^7.0.0"
     "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-tools/utils": "npm:10.8.4"
+    "@graphql-tools/utils": "npm:10.8.6"
     "@neo4j/cypher-builder": "npm:^2.4.0"
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
@@ -10365,7 +10350,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/e6cedfe285c3a54e3365492b09dca212cf4d0f507e5971677ae46595cdd18403ef78885bdbb24037835f54365080da2eedfc8421dfe260d96423ea9fde67837c
+  checksum: 10c0/3ee1563ac720b966d2cf410cbc0793ad52a81916f3d4b00ac1987bf7c8b75e7873dfd4b6ebac6b1578ff242f287a171a2f8a4435030631b3ffbc56addca5aa1e
   languageName: node
   linkType: hard
 
@@ -37917,12 +37902,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:4.4.1":
-  version: 4.4.1
-  resolution: "wrangler@npm:4.4.1"
+"wrangler@npm:4.5.0":
+  version: 4.5.0
+  resolution: "wrangler@npm:4.5.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.4.0"
-    "@cloudflare/unenv-preset": "npm:2.3.0"
+    "@cloudflare/unenv-preset": "npm:2.3.1"
     blake3-wasm: "npm:2.1.5"
     esbuild: "npm:0.24.2"
     fsevents: "npm:~2.3.2"
@@ -37944,7 +37929,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/b6d75023fe1639d28a99cfe234bbc927804b2400c74aab809f53ce10771463da2a86569e2e8e0afab7903b22df45f58e2509bb85b12f5dea6326cba1dc1c8c3b
+  checksum: 10c0/d4b8cb3f09683e6773a85259daacb3a4ef81485e2bf3d55e07393807a86faa2331bbc81e673ae9ecc2307d9de7f34bbea32e7111a7604929816bcc2e2cd8868a
   languageName: node
   linkType: hard
 
