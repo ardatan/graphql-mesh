@@ -1,5 +1,15 @@
 # @graphql-mesh/utils
 
+## 0.104.2
+
+### Patch Changes
+
+- [`1b5d072`](https://github.com/ardatan/graphql-mesh/commit/1b5d07211e2e67bc939f1def3d19c45a7a4eb28b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Accept default logger for `wrapFetchWithHooks`
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.104.2
+
 ## 0.104.1
 
 ### Patch Changes
