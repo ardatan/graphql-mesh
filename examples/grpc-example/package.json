@@ -13,13 +13,13 @@
     "@graphql-mesh/cli": "0.100.2",
     "@graphql-mesh/grpc": "0.108.3",
     "@graphql-mesh/transform-naming-convention": "0.105.2",
-    "@grpc/grpc-js": "1.13.1",
+    "@grpc/grpc-js": "1.13.2",
     "@grpc/proto-loader": "0.7.13",
     "google-protobuf": "3.21.4",
     "graphql": "16.10.0"
   },
   "devDependencies": {
-    "@types/node": "22.13.13",
+    "@types/node": "22.13.14",
     "concurrently": "9.1.2",
     "jest": "29.7.0",
     "ts-jest": "29.3.0",
