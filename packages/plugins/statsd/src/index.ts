@@ -14,8 +14,15 @@ const metricNames = {
   fetchLatency: 'fetch.latency',
 };
 
+export type StatsDPluginOptions = Omit<YamlConfig.StatsdPlugin, 'client'> & {
+  client?: StatsD | YamlConfig.StatsdClientConfiguration;
+};
+
 export default function useMeshStatsd(pluginOptions: YamlConfig.StatsdPlugin): MeshPlugin<any> {
-  const client: StatsD = new StatsD(pluginOptions.client);
+  const client =
+    pluginOptions.client && 'close' in pluginOptions.client
+      ? (pluginOptions.client as StatsD)
+      : new StatsD(pluginOptions.client);
   const prefix = pluginOptions.prefix || 'graphql';
   return {
     onPluginInit({ addPlugin }) {
