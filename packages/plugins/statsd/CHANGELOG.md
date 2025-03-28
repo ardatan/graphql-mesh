@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-statsd
 
+## 0.104.3
+
+### Patch Changes
+
+- [`3d4dc41`](https://github.com/ardatan/graphql-mesh/commit/3d4dc41b9bb0c43b66ccb680f721e1584cd27b33)
+  Thanks [@ardatan](https://github.com/ardatan)! - Relax typings for Hive Gateway
+
 ## 0.104.2
 
 ### Patch Changes
