@@ -1,8 +1,9 @@
 import type { Tags } from 'hot-shots';
 import { StatsD } from 'hot-shots';
 import { useStatsD } from '@envelop/statsd';
-import type { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
+import type { MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 const metricNames = {
   delegationCount: 'delegations.count',
@@ -13,10 +14,8 @@ const metricNames = {
   fetchLatency: 'fetch.latency',
 };
 
-export default function useMeshStatsd(
-  pluginOptions: MeshPluginOptions<YamlConfig.StatsdPlugin>,
-): MeshPlugin<any> {
-  const client = new StatsD(pluginOptions.client);
+export default function useMeshStatsd(pluginOptions: YamlConfig.StatsdPlugin): MeshPlugin<any> {
+  const client: StatsD = new StatsD(pluginOptions.client);
   const prefix = pluginOptions.prefix || 'graphql';
   return {
     onPluginInit({ addPlugin }) {
@@ -65,6 +64,17 @@ export default function useMeshStatsd(
         const end = Date.now();
         client.histogram(`${prefix}.${metricNames.delegationLatency}`, end - start, tags);
       };
+    },
+    [DisposableSymbols.asyncDispose]() {
+      return new Promise<void>((resolve, reject) => {
+        client.close(err => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
     },
   };
 }
