@@ -42,7 +42,7 @@ const meta = {
   blog: {
     title: 'Blog',
     type: 'page',
-    href: 'https://the-guild.dev/blog',
+    href: 'https://the-guild.dev/graphql/hive/blog',
   },
   github: {
     title: 'GitHub',
