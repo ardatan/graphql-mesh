@@ -35,58 +35,64 @@ exports[`gRPC Example fetches movies by cast as a subscription correctly: 1 1`] 
 `;
 
 exports[`gRPC Example generates the correct schema 1`] = `
-"
-schema
-  @link(url: "https://specs.apollo.dev/link/v1.0")
-  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-  
-  
-  
-  
-  
-  @link(
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@grpcMethod", "@grpcConnectivityState", "@enum", "@transport", "@source", "@extraSchemaDefinitionDirective"]
 )
-{
-  query: Query
+  {
+    query: Query
+    
+    subscription: Subscription
+  }
+
   
-  subscription: Subscription
-}
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
 
-  directive @join__field(
-    graph: join__Graph
-    requires: join__FieldSet
-    provides: join__FieldSet
-    type: String
-    external: Boolean
-    override: String
-    usedOverridden: Boolean
-  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
 
-  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-  directive @join__implements(
-    graph: join__Graph!
-    interface: String!
-  ) repeatable on OBJECT | INTERFACE
+    directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-  directive @join__type(
-    graph: join__Graph!
-    key: join__FieldSet
-    extension: Boolean! = false
-    resolvable: Boolean! = true
-    isInterfaceObject: Boolean! = false
-  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
-  scalar join__FieldSet
-
-
+    scalar join__FieldSet
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -108,12 +114,13 @@ schema
     EXECUTION
   }
 
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
   MOVIES @join__graph(name: "movies", url: "localhost:<movies_port>") 
 }
@@ -298,7 +305,6 @@ input google__protobuf__Timestamp_Input @join__type(graph: MOVIES)  {
 input SearchByCastRequest_Input @join__type(graph: MOVIES)  {
   castName: String
 }
-    
 "
 `;
 

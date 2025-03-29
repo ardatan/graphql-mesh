@@ -1,58 +1,64 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"
-schema
-  @link(url: "https://specs.apollo.dev/link/v1.0")
-  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-  
-  
-  
-  
-  
-  @link(
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@transport", "@mysqlSelect", "@mysqlInsert", "@mysqlUpdate", "@mysqlDelete", "@mysqlTableForeign", "@mysqlCount", "@extraSchemaDefinitionDirective"]
 )
-{
-  query: Query
-  mutation: Mutation
+  {
+    query: Query
+    mutation: Mutation
+    
+  }
+
   
-}
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
 
-  directive @join__field(
-    graph: join__Graph
-    requires: join__FieldSet
-    provides: join__FieldSet
-    type: String
-    external: Boolean
-    override: String
-    usedOverridden: Boolean
-  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
 
-  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-  directive @join__implements(
-    graph: join__Graph!
-    interface: String!
-  ) repeatable on OBJECT | INTERFACE
+    directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-  directive @join__type(
-    graph: join__Graph!
-    key: join__FieldSet
-    extension: Boolean! = false
-    resolvable: Boolean! = true
-    isInterfaceObject: Boolean! = false
-  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
-  scalar join__FieldSet
-
-
+    scalar join__FieldSet
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -74,12 +80,13 @@ schema
     EXECUTION
   }
 
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
   RFAM @join__graph(name: "Rfam", url: "mysql://rfamro@mysql-rfam-public.ebi.ac.uk:4497/Rfam") 
 }
@@ -5140,7 +5147,6 @@ input wikitext_UpdateInput @join__type(graph: RFAM)  {
   auto_wiki: Int
   title: String
 }
-    
 "
 `;
 

@@ -575,6 +575,7 @@ export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[
   const composedSupergraphSdl = composeServices(annotatedSubgraphs);
   return {
     ...composedSupergraphSdl,
+    supergraphSdl: composedSupergraphSdl.supergraphSdl?.trim(),
     annotatedSubgraphs,
   };
 }
