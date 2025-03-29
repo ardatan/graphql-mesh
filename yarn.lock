@@ -4632,7 +4632,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.2"
     "@omnigraph/json-schema": "workspace:^"
     graphql: "npm:16.10.0"
-    wrangler: "npm:4.5.1"
+    wrangler: "npm:4.6.0"
   languageName: unknown
   linkType: soft
 
@@ -4647,7 +4647,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.104.2"
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.2"
     graphql: "npm:16.10.0"
-    wrangler: "npm:4.5.1"
+    wrangler: "npm:4.6.0"
   languageName: unknown
   linkType: soft
 
@@ -4787,7 +4787,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.109.3"
     "@graphql-mesh/plugin-response-cache": "npm:0.104.2"
     graphql: "npm:16.10.0"
-    wrangler: "npm:4.5.1"
+    wrangler: "npm:4.6.0"
   languageName: unknown
   linkType: soft
 
@@ -4936,8 +4936,8 @@ __metadata:
     "@types/react-dom": "npm:19.0.4"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.10.0"
-    react: "npm:19.0.0"
-    react-dom: "npm:19.0.0"
+    react: "npm:19.1.0"
+    react-dom: "npm:19.1.0"
     react-scripts: "npm:5.0.1"
     typescript: "npm:^5.4.2"
     web-vitals: "npm:4.2.4"
@@ -5175,7 +5175,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.104.2"
     graphql: "npm:16.10.0"
     jest: "npm:29.7.0"
-    mongoose: "npm:8.13.0"
+    mongoose: "npm:8.13.1"
   languageName: unknown
   linkType: soft
 
@@ -5224,8 +5224,8 @@ __metadata:
     graphql: "npm:16.10.0"
     micro: "npm:10.0.1"
     next: "npm:15.2.4"
-    react: "npm:19.0.0"
-    react-dom: "npm:19.0.0"
+    react: "npm:19.1.0"
+    react-dom: "npm:19.1.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
@@ -5243,8 +5243,8 @@ __metadata:
     graphql: "npm:16.10.0"
     micro: "npm:10.0.1"
     next: "npm:15.2.4"
-    react: "npm:19.0.0"
-    react-dom: "npm:19.0.0"
+    react: "npm:19.1.0"
+    react-dom: "npm:19.1.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
@@ -5342,8 +5342,8 @@ __metadata:
     "@types/react-dom": "npm:19.0.4"
     "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.10.0"
-    react: "npm:19.0.0"
-    react-dom: "npm:19.0.0"
+    react: "npm:19.1.0"
+    react-dom: "npm:19.1.0"
     typescript: "npm:^5.4.2"
     vite: "npm:6.2.3"
   languageName: unknown
@@ -5515,7 +5515,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.104.2"
     "@graphql-mesh/plugin-response-cache": "npm:0.104.2"
     graphql: "npm:16.10.0"
-    wrangler: "npm:4.5.1"
+    wrangler: "npm:4.6.0"
   languageName: unknown
   linkType: soft
 
@@ -6751,7 +6751,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.13.0"
+    mongoose: "npm:8.13.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -13241,13 +13241,13 @@ __metadata:
   linkType: hard
 
 "@types/dockerode@npm:^3.3.28":
-  version: 3.3.35
-  resolution: "@types/dockerode@npm:3.3.35"
+  version: 3.3.36
+  resolution: "@types/dockerode@npm:3.3.36"
   dependencies:
     "@types/docker-modem": "npm:*"
     "@types/node": "npm:*"
     "@types/ssh2": "npm:*"
-  checksum: 10c0/339c60eb0b81f91aeefde8a291b6eebe74163c4798c824857e273ae3b47bbec632b3e422794f30f3e75a915d593548db8845d3abfd0bcea3836f763128a60d10
+  checksum: 10c0/fc5172f5f343c41ce8b538bc927a07d941f97f780418719f21acf114c9fbf521d5bf3f59ecdc95f4e8452416d0e07485cb9b48c514fd74deecadcd54767e48b0
   languageName: node
   linkType: hard
 
@@ -28309,9 +28309,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:8.13.0":
-  version: 8.13.0
-  resolution: "mongoose@npm:8.13.0"
+"mongoose@npm:8.13.1":
+  version: 8.13.1
+  resolution: "mongoose@npm:8.13.1"
   dependencies:
     bson: "npm:^6.10.3"
     kareem: "npm:2.6.3"
@@ -28320,7 +28320,7 @@ __metadata:
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/c3e98e99c046616f5e09515ffec8e060a659077af7d3d81bed65c171fb778788e8f01a06e81f4b7d5996fdee8b906aacfa25320674e133a21fe400ce34409e3a
+  checksum: 10c0/dcc18603eccde3898e8f48d8361787d0f8272efef60f5cbc790227471517f9f5f21ad7c644a659b8c9701f5ce00eb523e5c584ed3c7ced90b866af5da1a50a60
   languageName: node
   linkType: hard
 
@@ -31649,14 +31649,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.0.0, react-dom@npm:^19.0.0":
-  version: 19.0.0
-  resolution: "react-dom@npm:19.0.0"
+"react-dom@npm:19.1.0, react-dom@npm:^19.0.0":
+  version: 19.1.0
+  resolution: "react-dom@npm:19.1.0"
   dependencies:
-    scheduler: "npm:^0.25.0"
+    scheduler: "npm:^0.26.0"
   peerDependencies:
-    react: ^19.0.0
-  checksum: 10c0/a36ce7ab507b237ae2759c984cdaad4af4096d8199fb65b3815c16825e5cfeb7293da790a3fc2184b52bfba7ba3ff31c058c01947aff6fd1a3701632aabaa6a9
+    react: ^19.1.0
+  checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
   languageName: node
   linkType: hard
 
@@ -31811,10 +31811,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.0.0, react@npm:^19.0.0":
-  version: 19.0.0
-  resolution: "react@npm:19.0.0"
-  checksum: 10c0/9cad8f103e8e3a16d15cb18a0d8115d8bd9f9e1ce3420310aea381eb42aa0a4f812cf047bb5441349257a05fba8a291515691e3cb51267279b2d2c3253f38471
+"react@npm:19.1.0, react@npm:^19.0.0":
+  version: 19.1.0
+  resolution: "react@npm:19.1.0"
+  checksum: 10c0/530fb9a62237d54137a13d2cfb67a7db6a2156faed43eecc423f4713d9b20c6f2728b026b45e28fcd72e8eadb9e9ed4b089e99f5e295d2f0ad3134251bdd3698
   languageName: node
   linkType: hard
 
@@ -33139,10 +33139,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.25.0":
-  version: 0.25.0
-  resolution: "scheduler@npm:0.25.0"
-  checksum: 10c0/a4bb1da406b613ce72c1299db43759526058fdcc413999c3c3e0db8956df7633acf395cb20eb2303b6a65d658d66b6585d344460abaee8080b4aa931f10eaafe
+"scheduler@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "scheduler@npm:0.26.0"
+  checksum: 10c0/5b8d5bfddaae3513410eda54f2268e98a376a429931921a81b5c3a2873aab7ca4d775a8caac5498f8cbc7d0daeab947cf923dbd8e215d61671f9f4e392d34356
   languageName: node
   linkType: hard
 
@@ -37631,9 +37631,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:4.5.1":
-  version: 4.5.1
-  resolution: "wrangler@npm:4.5.1"
+"wrangler@npm:4.6.0":
+  version: 4.6.0
+  resolution: "wrangler@npm:4.6.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.4.0"
     "@cloudflare/unenv-preset": "npm:2.3.1"
@@ -37658,7 +37658,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/3cf8d856275dd2601d6cb84eacdbb79440c1cd3118a8f52a4ee79ae6d7aabd047a2181fe5a8f997f6582f427edffbfeb8439cdcf371e13e14c80bac0f8238af6
+  checksum: 10c0/9ff894e50ed4a20982322e0011895cd26d3c3da322281bb3890d2ec76eb4107719eb2773ecd39437ca17f92ded604841c1bdc32806da8e3ee1f3c08a63f73a0d
   languageName: node
   linkType: hard
 

@@ -15,8 +15,8 @@
     "@testing-library/user-event": "14.6.1",
     "apollo-upload-client": "18.0.1",
     "graphql": "16.10.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-scripts": "5.0.1",
     "web-vitals": "4.2.4"
   },
