@@ -185,55 +185,61 @@ describe('Composition', () => {
       throw errors[0];
     }
     expect(supergraphSdl).toMatchInlineSnapshot(`
-"
-schema
-  @link(url: "https://specs.apollo.dev/link/v1.0")
-  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
+  {
+    query: Query
+    
+    
+  }
+
+  
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
+
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
+
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+    directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+    scalar join__FieldSet
+    
   
   
-  
-  
-  
-  @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
-{
-  query: Query
-  
-  
-}
-
-
-  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-  directive @join__field(
-    graph: join__Graph
-    requires: join__FieldSet
-    provides: join__FieldSet
-    type: String
-    external: Boolean
-    override: String
-    usedOverridden: Boolean
-  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-  directive @join__implements(
-    graph: join__Graph!
-    interface: String!
-  ) repeatable on OBJECT | INTERFACE
-
-  directive @join__type(
-    graph: join__Graph!
-    key: join__FieldSet
-    extension: Boolean! = false
-    resolvable: Boolean! = true
-    isInterfaceObject: Boolean! = false
-  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
-  scalar join__FieldSet
-
-
   directive @link(
     url: String
     as: String
@@ -255,12 +261,13 @@ schema
     EXECUTION
   }
 
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
   BAR @join__graph(name: "Bar", url: "") 
   BAZ @join__graph(name: "Baz", url: "") 
@@ -289,8 +296,7 @@ type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: BAZ, key: "id") 
 
 type Bar @join__type(graph: BAR, key: "id")  {
   id: ID!
-}
-    "
+}"
 `);
   });
 });

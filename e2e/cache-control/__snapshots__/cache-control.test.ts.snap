@@ -99,58 +99,64 @@ type Query
 `;
 
 exports[`Cache Control Composition via Mesh Compose composes 1`] = `
-"
-schema
-  @link(url: "https://specs.apollo.dev/link/v1.0")
-  @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-  
-  
-  
-  
-  
-  @link(
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(
   url: "https://www.apollographql.com/docs/federation/v1/performance/caching/v1.0"
   import: ["@cacheControl"]
 )
-{
-  query: Query
+  {
+    query: Query
+    
+    
+  }
+
+  
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
+
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
+
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+    directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+    scalar join__FieldSet
+    
   
   
-}
-
-
-  directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-  directive @join__field(
-    graph: join__Graph
-    requires: join__FieldSet
-    provides: join__FieldSet
-    type: String
-    external: Boolean
-    override: String
-    usedOverridden: Boolean
-  ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-  directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-  directive @join__implements(
-    graph: join__Graph!
-    interface: String!
-  ) repeatable on OBJECT | INTERFACE
-
-  directive @join__type(
-    graph: join__Graph!
-    key: join__FieldSet
-    extension: Boolean! = false
-    resolvable: Boolean! = true
-    isInterfaceObject: Boolean! = false
-  ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-  directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
-  scalar join__FieldSet
-
-
   directive @link(
     url: String
     as: String
@@ -172,12 +178,13 @@ schema
     EXECUTION
   }
 
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
   AUTHORS @join__graph(name: "authors", url: "http://localhost:<authors_port>/graphql") 
   BOOKS @join__graph(name: "books", url: "http://localhost:<books_port>/graphql") 
@@ -219,6 +226,5 @@ type Comment @join__type(graph: COMMENTS, key: "id")  {
 enum CacheControlScope @join__type(graph: AUTHORS)  @join__type(graph: BOOKS)  {
   PUBLIC @join__enumValue(graph: AUTHORS)  @join__enumValue(graph: BOOKS) 
   PRIVATE @join__enumValue(graph: AUTHORS)  @join__enumValue(graph: BOOKS) 
-}
-    "
+}"
 `;
