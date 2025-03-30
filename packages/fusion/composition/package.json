@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/fusion-composition",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "type": "module",
   "description": "Basic composition utility for Fusion spec",
   "repository": {
