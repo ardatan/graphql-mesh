@@ -1,16 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should be composable with Hive composition and serve correctly 1`] = `
-{
-  "data": {
-    "getPetById": {
-      "id": 1,
-      "name": "Cat 1",
-    },
-  },
-}
-`;
-
 exports[`should generate the subgraph schema correctly 1`] = `
 "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@provides", "@requires", "@external", "@inaccessible", "@shareable", "@extends", "@tag", "@composeDirective"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@enum", "@httpOperation", "@transport", "@merge", "@extraSchemaDefinitionDirective"]) @composeDirective(name: "@enum") @composeDirective(name: "@httpOperation") @composeDirective(name: "@transport") @composeDirective(name: "@merge") @composeDirective(name: "@extraSchemaDefinitionDirective") {
   query: Query
