@@ -1,0 +1,272 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should be composable with Hive composition and serve correctly 1`] = `
+{
+  "data": {
+    "getPetById": {
+      "id": 1,
+      "name": "Cat 1",
+    },
+  },
+}
+`;
+
+exports[`should generate the subgraph schema correctly 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@provides", "@requires", "@external", "@inaccessible", "@shareable", "@extends", "@tag", "@composeDirective"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@enum", "@httpOperation", "@transport", "@merge", "@extraSchemaDefinitionDirective"]) @composeDirective(name: "@enum") @composeDirective(name: "@httpOperation") @composeDirective(name: "@transport") @composeDirective(name: "@merge") @composeDirective(name: "@extraSchemaDefinitionDirective") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) repeatable on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+
+type Query @shareable @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3"}]}) {
+  """Multiple status values can be provided with comma separated strings"""
+  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @httpOperation(subgraph: "petstore", path: "/pet/findByStatus", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"status\\":\\"status\\"}", queryStringOptionsByParam: "{\\"status\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
+  """
+  Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+  """
+  findPetsByTags(
+    """Tags to filter by"""
+    tags: [String]
+  ): [Pet] @httpOperation(subgraph: "petstore", path: "/pet/findByTags", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"tags\\":\\"tags\\"}", queryStringOptionsByParam: "{\\"tags\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
+  """Returns a single pet"""
+  getPetById(
+    """ID of pet to return"""
+    petId: BigInt!
+  ): Pet @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")
+  """Returns a map of status codes to quantities"""
+  getInventory: JSON @httpOperation(subgraph: "petstore", path: "/store/inventory", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  """
+  For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
+  """
+  getOrderById(
+    """ID of order that needs to be fetched"""
+    orderId: BigInt!
+  ): Order @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")
+  """Logs user into the system"""
+  loginUser(
+    """The user name for login"""
+    username: String
+    """The password for login in clear text"""
+    password: String
+  ): String @httpOperation(subgraph: "petstore", path: "/user/login", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"username\\":\\"username\\",\\"password\\":\\"password\\"}")
+  """Logs out current logged in user session"""
+  logoutUser: JSON @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET)
+  """Get user by user name"""
+  getUserByName(
+    """The name that needs to be fetched. Use user1 for testing."""
+    username: String!
+  ): User @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+}
+
+"""Pet object that needs to be added to the store"""
+type Pet @key(fields: "id") @shareable {
+  id: BigInt
+  name: String!
+  category: Category
+  photoUrls: [String]!
+  tags: [Tag]
+  status: mutation_updatePet_status
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+type Category @shareable {
+  id: BigInt
+  name: String
+}
+
+type Tag @shareable {
+  id: BigInt
+  name: String
+}
+
+"""pet status in the store"""
+enum mutation_updatePet_status {
+  available
+  pending
+  sold
+}
+
+"""Status values that need to be considered for filter"""
+enum queryInput_findPetsByStatus_status {
+  available
+  pending
+  sold
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type Order @key(fields: "id") @shareable {
+  id: BigInt
+  petId: BigInt
+  quantity: Int
+  shipDate: DateTime
+  status: mutation_placeOrder_status
+  complete: Boolean
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+"""Order Status"""
+enum mutation_placeOrder_status {
+  placed
+  approved
+  delivered
+}
+
+type User @shareable {
+  id: BigInt
+  username: String
+  firstName: String
+  lastName: String
+  email: EmailAddress
+  password: String
+  phone: String
+  """User Status"""
+  userStatus: Int
+}
+
+"""
+A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
+"""
+scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
+
+type Mutation @shareable {
+  """Update an existing pet by Id"""
+  updatePet(input: Pet_Input): Pet @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: PUT)
+  """Add a new pet to the store"""
+  addPet(input: Pet_Input): Pet @httpOperation(subgraph: "petstore", path: "/pet", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  """Updates a pet in the store with form data"""
+  updatePetWithForm(
+    """ID of pet that needs to be updated"""
+    petId: BigInt!
+    """Name of pet that needs to be updated"""
+    name: String
+    """Status of pet that needs to be updated"""
+    status: String
+  ): JSON @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", httpMethod: POST, queryParamArgMap: "{\\"name\\":\\"name\\",\\"status\\":\\"status\\"}")
+  """Deletes a pet"""
+  deletePet(
+    api_key: String
+    """Pet id to delete"""
+    petId: BigInt!
+  ): JSON @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}", operationSpecificHeaders: [["api_key", "{args.api_key}"]], httpMethod: DELETE)
+  """uploads an image"""
+  uploadFile(
+    """ID of pet to update"""
+    petId: BigInt!
+    """Additional Metadata"""
+    additionalMetadata: String
+    input: File
+  ): ApiResponse @httpOperation(subgraph: "petstore", path: "/pet/{args.petId}/uploadImage", operationSpecificHeaders: [["Content-Type", "application/octet-stream"], ["accept", "application/json"]], httpMethod: POST, queryParamArgMap: "{\\"additionalMetadata\\":\\"additionalMetadata\\"}")
+  """Place a new order in the store"""
+  placeOrder(input: Order_Input): Order @httpOperation(subgraph: "petstore", path: "/store/order", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  """
+  For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
+  """
+  deleteOrder(
+    """ID of the order that needs to be deleted"""
+    orderId: BigInt!
+  ): JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE)
+  """This can only be done by the logged in user."""
+  createUser(input: User_Input): User @httpOperation(subgraph: "petstore", path: "/user", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  """Creates list of users with given input array"""
+  createUsersWithListInput(input: [User_Input]): User @httpOperation(subgraph: "petstore", path: "/user/createWithList", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  """This can only be done by the logged in user."""
+  updateUser(
+    """name that need to be deleted"""
+    username: String!
+    input: User_Input
+  ): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", operationSpecificHeaders: [["Content-Type", "application/json"]], httpMethod: PUT)
+  """This can only be done by the logged in user."""
+  deleteUser(
+    """The name that needs to be deleted"""
+    username: String!
+  ): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE)
+}
+
+"""Pet object that needs to be added to the store"""
+input Pet_Input {
+  id: BigInt
+  name: String!
+  category: Category_Input
+  photoUrls: [String]!
+  tags: [Tag_Input]
+  status: mutation_updatePet_status
+}
+
+input Category_Input {
+  id: BigInt
+  name: String
+}
+
+input Tag_Input {
+  id: BigInt
+  name: String
+}
+
+type ApiResponse @shareable {
+  code: Int
+  type: String
+  message: String
+}
+
+"""The \`File\` scalar type represents a file upload."""
+scalar File
+
+input Order_Input {
+  id: BigInt
+  petId: BigInt
+  quantity: Int
+  shipDate: DateTime
+  status: mutation_placeOrder_status
+  complete: Boolean
+}
+
+input User_Input {
+  id: BigInt
+  username: String
+  firstName: String
+  lastName: String
+  email: EmailAddress
+  password: String
+  phone: String
+  """User Status"""
+  userStatus: Int
+}
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}
+
+scalar ObjMap
+
+directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
+
+scalar _DirectiveExtensions
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
+"
+`;
