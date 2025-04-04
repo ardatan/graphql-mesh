@@ -234,7 +234,10 @@ describe('Composition', () => {
       isInterfaceObject: Boolean! = false
     ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-    directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+    directive @join__unionMember(
+      graph: join__Graph!
+      member: String!
+    ) repeatable on UNION
 
     scalar join__FieldSet
     
