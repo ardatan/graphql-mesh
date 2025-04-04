@@ -1205,11 +1205,14 @@ input MoviePeopleActedInNodeAggregationWhereInput @join__type(graph: MOVIES)  {
 
 input MoviePeopleActedInUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: PersonUpdateInput
+  where: MoviePeopleActedInConnectionWhere
   edge: ActedInPropertiesUpdateInput
 }
 
 input MoviePeopleActedInUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: MoviePeopleActedInConnectionWhere
+  where: MoviePeopleActedInConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"MoviePeopleActedInUpdateConnectionInput\\" instead"
+  )
   connect: [MoviePeopleActedInConnectFieldInput!]
   disconnect: [MoviePeopleActedInDisconnectFieldInput!]
   create: [MoviePeopleActedInCreateFieldInput!]
@@ -1312,10 +1315,13 @@ input MoviePeopleDirectedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
 
 input MoviePeopleDirectedUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: PersonUpdateInput
+  where: MoviePeopleDirectedConnectionWhere
 }
 
 input MoviePeopleDirectedUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: MoviePeopleDirectedConnectionWhere
+  where: MoviePeopleDirectedConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"MoviePeopleDirectedUpdateConnectionInput\\" instead"
+  )
   connect: [MoviePeopleDirectedConnectFieldInput!]
   disconnect: [MoviePeopleDirectedDisconnectFieldInput!]
   create: [MoviePeopleDirectedCreateFieldInput!]
@@ -1418,10 +1424,13 @@ input MoviePeopleProducedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
 
 input MoviePeopleProducedUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: PersonUpdateInput
+  where: MoviePeopleProducedConnectionWhere
 }
 
 input MoviePeopleProducedUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: MoviePeopleProducedConnectionWhere
+  where: MoviePeopleProducedConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"MoviePeopleProducedUpdateConnectionInput\\" instead"
+  )
   connect: [MoviePeopleProducedConnectFieldInput!]
   disconnect: [MoviePeopleProducedDisconnectFieldInput!]
   create: [MoviePeopleProducedCreateFieldInput!]
@@ -1529,11 +1538,14 @@ input MoviePeopleReviewedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
 
 input MoviePeopleReviewedUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: PersonUpdateInput
+  where: MoviePeopleReviewedConnectionWhere
   edge: ReviewedPropertiesUpdateInput
 }
 
 input MoviePeopleReviewedUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: MoviePeopleReviewedConnectionWhere
+  where: MoviePeopleReviewedConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"MoviePeopleReviewedUpdateConnectionInput\\" instead"
+  )
   connect: [MoviePeopleReviewedConnectFieldInput!]
   disconnect: [MoviePeopleReviewedDisconnectFieldInput!]
   create: [MoviePeopleReviewedCreateFieldInput!]
@@ -1636,10 +1648,13 @@ input MoviePeopleWroteNodeAggregationWhereInput @join__type(graph: MOVIES)  {
 
 input MoviePeopleWroteUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: PersonUpdateInput
+  where: MoviePeopleWroteConnectionWhere
 }
 
 input MoviePeopleWroteUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: MoviePeopleWroteConnectionWhere
+  where: MoviePeopleWroteConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"MoviePeopleWroteUpdateConnectionInput\\" instead"
+  )
   connect: [MoviePeopleWroteConnectFieldInput!]
   disconnect: [MoviePeopleWroteDisconnectFieldInput!]
   create: [MoviePeopleWroteCreateFieldInput!]
@@ -1976,11 +1991,14 @@ input PersonActedInMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
 
 input PersonActedInMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: MovieUpdateInput
+  where: PersonActedInMoviesConnectionWhere
   edge: ActedInPropertiesUpdateInput
 }
 
 input PersonActedInMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: PersonActedInMoviesConnectionWhere
+  where: PersonActedInMoviesConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"PersonActedInMoviesUpdateConnectionInput\\" instead"
+  )
   connect: [PersonActedInMoviesConnectFieldInput!]
   disconnect: [PersonActedInMoviesDisconnectFieldInput!]
   create: [PersonActedInMoviesCreateFieldInput!]
@@ -2134,10 +2152,13 @@ input PersonDirectedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
 
 input PersonDirectedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: MovieUpdateInput
+  where: PersonDirectedMoviesConnectionWhere
 }
 
 input PersonDirectedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: PersonDirectedMoviesConnectionWhere
+  where: PersonDirectedMoviesConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"PersonDirectedMoviesUpdateConnectionInput\\" instead"
+  )
   connect: [PersonDirectedMoviesConnectFieldInput!]
   disconnect: [PersonDirectedMoviesDisconnectFieldInput!]
   create: [PersonDirectedMoviesCreateFieldInput!]
@@ -2250,10 +2271,13 @@ input PersonFollowsPeopleNodeAggregationWhereInput @join__type(graph: MOVIES)  {
 
 input PersonFollowsPeopleUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: PersonUpdateInput
+  where: PersonFollowsPeopleConnectionWhere
 }
 
 input PersonFollowsPeopleUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: PersonFollowsPeopleConnectionWhere
+  where: PersonFollowsPeopleConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"PersonFollowsPeopleUpdateConnectionInput\\" instead"
+  )
   connect: [PersonFollowsPeopleConnectFieldInput!]
   disconnect: [PersonFollowsPeopleDisconnectFieldInput!]
   create: [PersonFollowsPeopleCreateFieldInput!]
@@ -2365,10 +2389,13 @@ input PersonPeopleFollowsNodeAggregationWhereInput @join__type(graph: MOVIES)  {
 
 input PersonPeopleFollowsUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: PersonUpdateInput
+  where: PersonPeopleFollowsConnectionWhere
 }
 
 input PersonPeopleFollowsUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: PersonPeopleFollowsConnectionWhere
+  where: PersonPeopleFollowsConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"PersonPeopleFollowsUpdateConnectionInput\\" instead"
+  )
   connect: [PersonPeopleFollowsConnectFieldInput!]
   disconnect: [PersonPeopleFollowsDisconnectFieldInput!]
   create: [PersonPeopleFollowsCreateFieldInput!]
@@ -2486,10 +2513,13 @@ input PersonProducedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
 
 input PersonProducedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: MovieUpdateInput
+  where: PersonProducedMoviesConnectionWhere
 }
 
 input PersonProducedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: PersonProducedMoviesConnectionWhere
+  where: PersonProducedMoviesConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"PersonProducedMoviesUpdateConnectionInput\\" instead"
+  )
   connect: [PersonProducedMoviesConnectFieldInput!]
   disconnect: [PersonProducedMoviesDisconnectFieldInput!]
   create: [PersonProducedMoviesCreateFieldInput!]
@@ -2612,11 +2642,14 @@ input PersonReviewedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
 
 input PersonReviewedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: MovieUpdateInput
+  where: PersonReviewedMoviesConnectionWhere
   edge: ReviewedPropertiesUpdateInput
 }
 
 input PersonReviewedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: PersonReviewedMoviesConnectionWhere
+  where: PersonReviewedMoviesConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"PersonReviewedMoviesUpdateConnectionInput\\" instead"
+  )
   connect: [PersonReviewedMoviesConnectFieldInput!]
   disconnect: [PersonReviewedMoviesDisconnectFieldInput!]
   create: [PersonReviewedMoviesCreateFieldInput!]
@@ -3008,10 +3041,13 @@ input PersonWroteMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
 
 input PersonWroteMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
   node: MovieUpdateInput
+  where: PersonWroteMoviesConnectionWhere
 }
 
 input PersonWroteMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
-  where: PersonWroteMoviesConnectionWhere
+  where: PersonWroteMoviesConnectionWhere @deprecated(
+    reason: "Please use field \\"where\\" inside \\"PersonWroteMoviesUpdateConnectionInput\\" instead"
+  )
   connect: [PersonWroteMoviesConnectFieldInput!]
   disconnect: [PersonWroteMoviesDisconnectFieldInput!]
   create: [PersonWroteMoviesCreateFieldInput!]

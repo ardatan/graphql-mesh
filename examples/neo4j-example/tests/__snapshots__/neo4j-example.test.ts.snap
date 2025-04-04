@@ -333,6 +333,7 @@ type MoviePeopleActedInRelationship {
 input MoviePeopleActedInUpdateConnectionInput {
   edge: ActedInPropertiesUpdateInput
   node: PersonUpdateInput
+  where: MoviePeopleActedInConnectionWhere
 }
 
 input MoviePeopleActedInUpdateFieldInput {
@@ -341,7 +342,7 @@ input MoviePeopleActedInUpdateFieldInput {
   delete: [MoviePeopleActedInDeleteFieldInput!]
   disconnect: [MoviePeopleActedInDisconnectFieldInput!]
   update: MoviePeopleActedInUpdateConnectionInput
-  where: MoviePeopleActedInConnectionWhere
+  where: MoviePeopleActedInConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"MoviePeopleActedInUpdateConnectionInput\\" instead")
 }
 
 input MoviePeopleDirectedAggregateInput {
@@ -451,6 +452,7 @@ type MoviePeopleDirectedRelationship {
 
 input MoviePeopleDirectedUpdateConnectionInput {
   node: PersonUpdateInput
+  where: MoviePeopleDirectedConnectionWhere
 }
 
 input MoviePeopleDirectedUpdateFieldInput {
@@ -459,7 +461,7 @@ input MoviePeopleDirectedUpdateFieldInput {
   delete: [MoviePeopleDirectedDeleteFieldInput!]
   disconnect: [MoviePeopleDirectedDisconnectFieldInput!]
   update: MoviePeopleDirectedUpdateConnectionInput
-  where: MoviePeopleDirectedConnectionWhere
+  where: MoviePeopleDirectedConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"MoviePeopleDirectedUpdateConnectionInput\\" instead")
 }
 
 input MoviePeopleProducedAggregateInput {
@@ -569,6 +571,7 @@ type MoviePeopleProducedRelationship {
 
 input MoviePeopleProducedUpdateConnectionInput {
   node: PersonUpdateInput
+  where: MoviePeopleProducedConnectionWhere
 }
 
 input MoviePeopleProducedUpdateFieldInput {
@@ -577,7 +580,7 @@ input MoviePeopleProducedUpdateFieldInput {
   delete: [MoviePeopleProducedDeleteFieldInput!]
   disconnect: [MoviePeopleProducedDisconnectFieldInput!]
   update: MoviePeopleProducedUpdateConnectionInput
-  where: MoviePeopleProducedConnectionWhere
+  where: MoviePeopleProducedConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"MoviePeopleProducedUpdateConnectionInput\\" instead")
 }
 
 input MoviePeopleReviewedAggregateInput {
@@ -694,6 +697,7 @@ type MoviePeopleReviewedRelationship {
 input MoviePeopleReviewedUpdateConnectionInput {
   edge: ReviewedPropertiesUpdateInput
   node: PersonUpdateInput
+  where: MoviePeopleReviewedConnectionWhere
 }
 
 input MoviePeopleReviewedUpdateFieldInput {
@@ -702,7 +706,7 @@ input MoviePeopleReviewedUpdateFieldInput {
   delete: [MoviePeopleReviewedDeleteFieldInput!]
   disconnect: [MoviePeopleReviewedDisconnectFieldInput!]
   update: MoviePeopleReviewedUpdateConnectionInput
-  where: MoviePeopleReviewedConnectionWhere
+  where: MoviePeopleReviewedConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"MoviePeopleReviewedUpdateConnectionInput\\" instead")
 }
 
 input MoviePeopleWroteAggregateInput {
@@ -812,6 +816,7 @@ type MoviePeopleWroteRelationship {
 
 input MoviePeopleWroteUpdateConnectionInput {
   node: PersonUpdateInput
+  where: MoviePeopleWroteConnectionWhere
 }
 
 input MoviePeopleWroteUpdateFieldInput {
@@ -820,7 +825,7 @@ input MoviePeopleWroteUpdateFieldInput {
   delete: [MoviePeopleWroteDeleteFieldInput!]
   disconnect: [MoviePeopleWroteDisconnectFieldInput!]
   update: MoviePeopleWroteUpdateConnectionInput
-  where: MoviePeopleWroteConnectionWhere
+  where: MoviePeopleWroteConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"MoviePeopleWroteUpdateConnectionInput\\" instead")
 }
 
 type MoviePersonPeopleActedInAggregateSelection {
@@ -1336,6 +1341,7 @@ type PersonActedInMoviesRelationship {
 input PersonActedInMoviesUpdateConnectionInput {
   edge: ActedInPropertiesUpdateInput
   node: MovieUpdateInput
+  where: PersonActedInMoviesConnectionWhere
 }
 
 input PersonActedInMoviesUpdateFieldInput {
@@ -1344,7 +1350,7 @@ input PersonActedInMoviesUpdateFieldInput {
   delete: [PersonActedInMoviesDeleteFieldInput!]
   disconnect: [PersonActedInMoviesDisconnectFieldInput!]
   update: PersonActedInMoviesUpdateConnectionInput
-  where: PersonActedInMoviesConnectionWhere
+  where: PersonActedInMoviesConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"PersonActedInMoviesUpdateConnectionInput\\" instead")
 }
 
 type PersonAggregate {
@@ -1553,6 +1559,7 @@ type PersonDirectedMoviesRelationship {
 
 input PersonDirectedMoviesUpdateConnectionInput {
   node: MovieUpdateInput
+  where: PersonDirectedMoviesConnectionWhere
 }
 
 input PersonDirectedMoviesUpdateFieldInput {
@@ -1561,7 +1568,7 @@ input PersonDirectedMoviesUpdateFieldInput {
   delete: [PersonDirectedMoviesDeleteFieldInput!]
   disconnect: [PersonDirectedMoviesDisconnectFieldInput!]
   update: PersonDirectedMoviesUpdateConnectionInput
-  where: PersonDirectedMoviesConnectionWhere
+  where: PersonDirectedMoviesConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"PersonDirectedMoviesUpdateConnectionInput\\" instead")
 }
 
 input PersonDisconnectInput {
@@ -1691,6 +1698,7 @@ type PersonFollowsPeopleRelationship {
 
 input PersonFollowsPeopleUpdateConnectionInput {
   node: PersonUpdateInput
+  where: PersonFollowsPeopleConnectionWhere
 }
 
 input PersonFollowsPeopleUpdateFieldInput {
@@ -1699,7 +1707,7 @@ input PersonFollowsPeopleUpdateFieldInput {
   delete: [PersonFollowsPeopleDeleteFieldInput!]
   disconnect: [PersonFollowsPeopleDisconnectFieldInput!]
   update: PersonFollowsPeopleUpdateConnectionInput
-  where: PersonFollowsPeopleConnectionWhere
+  where: PersonFollowsPeopleConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"PersonFollowsPeopleUpdateConnectionInput\\" instead")
 }
 
 type PersonMovieActedInMoviesAggregateSelection {
@@ -1910,6 +1918,7 @@ type PersonPeopleFollowsRelationship {
 
 input PersonPeopleFollowsUpdateConnectionInput {
   node: PersonUpdateInput
+  where: PersonPeopleFollowsConnectionWhere
 }
 
 input PersonPeopleFollowsUpdateFieldInput {
@@ -1918,7 +1927,7 @@ input PersonPeopleFollowsUpdateFieldInput {
   delete: [PersonPeopleFollowsDeleteFieldInput!]
   disconnect: [PersonPeopleFollowsDisconnectFieldInput!]
   update: PersonPeopleFollowsUpdateConnectionInput
-  where: PersonPeopleFollowsConnectionWhere
+  where: PersonPeopleFollowsConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"PersonPeopleFollowsUpdateConnectionInput\\" instead")
 }
 
 type PersonPersonFollowsPeopleAggregateSelection {
@@ -2093,6 +2102,7 @@ type PersonProducedMoviesRelationship {
 
 input PersonProducedMoviesUpdateConnectionInput {
   node: MovieUpdateInput
+  where: PersonProducedMoviesConnectionWhere
 }
 
 input PersonProducedMoviesUpdateFieldInput {
@@ -2101,7 +2111,7 @@ input PersonProducedMoviesUpdateFieldInput {
   delete: [PersonProducedMoviesDeleteFieldInput!]
   disconnect: [PersonProducedMoviesDisconnectFieldInput!]
   update: PersonProducedMoviesUpdateConnectionInput
-  where: PersonProducedMoviesConnectionWhere
+  where: PersonProducedMoviesConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"PersonProducedMoviesUpdateConnectionInput\\" instead")
 }
 
 input PersonReviewedMoviesAggregateInput {
@@ -2253,6 +2263,7 @@ type PersonReviewedMoviesRelationship {
 input PersonReviewedMoviesUpdateConnectionInput {
   edge: ReviewedPropertiesUpdateInput
   node: MovieUpdateInput
+  where: PersonReviewedMoviesConnectionWhere
 }
 
 input PersonReviewedMoviesUpdateFieldInput {
@@ -2261,7 +2272,7 @@ input PersonReviewedMoviesUpdateFieldInput {
   delete: [PersonReviewedMoviesDeleteFieldInput!]
   disconnect: [PersonReviewedMoviesDisconnectFieldInput!]
   update: PersonReviewedMoviesUpdateConnectionInput
-  where: PersonReviewedMoviesConnectionWhere
+  where: PersonReviewedMoviesConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"PersonReviewedMoviesUpdateConnectionInput\\" instead")
 }
 
 """
@@ -2650,6 +2661,7 @@ type PersonWroteMoviesRelationship {
 
 input PersonWroteMoviesUpdateConnectionInput {
   node: MovieUpdateInput
+  where: PersonWroteMoviesConnectionWhere
 }
 
 input PersonWroteMoviesUpdateFieldInput {
@@ -2658,7 +2670,7 @@ input PersonWroteMoviesUpdateFieldInput {
   delete: [PersonWroteMoviesDeleteFieldInput!]
   disconnect: [PersonWroteMoviesDisconnectFieldInput!]
   update: PersonWroteMoviesUpdateConnectionInput
-  where: PersonWroteMoviesConnectionWhere
+  where: PersonWroteMoviesConnectionWhere @deprecated(reason: "Please use field \\"where\\" inside \\"PersonWroteMoviesUpdateConnectionInput\\" instead")
 }
 
 type Query {
