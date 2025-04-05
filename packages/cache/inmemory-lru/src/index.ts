@@ -32,6 +32,7 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V>, Disp
       }, options.ttl * 1000);
       const existingTimeout = this.timeouts.get(key);
       if (existingTimeout) {
+        // we debounce the timeout because we dont want to "pull the rug" from a "parallel" get
         clearTimeout(existingTimeout);
       }
       this.timeouts.set(key, timeout);
