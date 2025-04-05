@@ -29,9 +29,9 @@ function getSlowCache(cache: InMemoryLRUCache) {
           return new Promise(resolve => {
             const timeout = setTimeout(() => {
               resolve(target[prop](...args));
-              target['timeouts'].delete(timeout);
+              target['timeouts'].delete(args[0]);
             }, 50);
-            target['timeouts'].add(timeout);
+            target['timeouts'].set(args[0], timeout);
           });
         };
       }
