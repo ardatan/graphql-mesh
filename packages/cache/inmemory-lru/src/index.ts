@@ -10,7 +10,7 @@ export interface InMemoryLRUCacheOptions {
 
 export default class InMemoryLRUCache<V = any> implements KeyValueCache<V>, Disposable {
   private lru: LRUCache;
-  private timeouts = new Set<ReturnType<typeof setTimeout>>();
+  private timeouts = new Map<string, ReturnType<typeof setTimeout>>();
   constructor(options?: InMemoryLRUCacheOptions) {
     this.lru = createLruCache(options?.max, options?.ttl);
     const subId = options?.pubsub?.subscribe?.('destroy', () => {
@@ -27,10 +27,15 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V>, Disp
     this.lru.set(key, value);
     if (options?.ttl && options.ttl > 0) {
       const timeout = setTimeout(() => {
-        this.timeouts.delete(timeout);
+        this.timeouts.delete(key);
         this.lru.delete(key);
       }, options.ttl * 1000);
-      this.timeouts.add(timeout);
+      const existingTimeout = this.timeouts.get(key);
+      if (existingTimeout) {
+        // we debounce the timeout because we dont want to "pull the rug" from a "parallel" get
+        clearTimeout(existingTimeout);
+      }
+      this.timeouts.set(key, timeout);
     }
   }
 
@@ -54,9 +59,10 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V>, Disp
   }
 
   [DisposableSymbols.dispose]() {
-    for (const timeout of this.timeouts) {
+    // clear all timeouts and then empty the map
+    for (const timeout of this.timeouts.values()) {
       clearTimeout(timeout);
-      this.timeouts.delete(timeout);
     }
+    this.timeouts.clear();
   }
 }
