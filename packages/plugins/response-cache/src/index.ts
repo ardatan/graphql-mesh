@@ -54,7 +54,12 @@ function getShouldCacheResult(
   };
 }
 
-function getCacheForResponseCache(meshCache: KeyValueCache): UseResponseCacheParameter['cache'] {
+function getCacheForResponseCache(meshCache?: KeyValueCache): UseResponseCacheParameter['cache'] {
+  if (!meshCache) {
+    throw new Error(
+      'Response Cache is enabled, but no cache is configured. Please provide a cache instance through the `cache` option.',
+    );
+  }
   return {
     get(responseId) {
       return meshCache.get(`response-cache:${responseId}`);
@@ -178,7 +183,7 @@ export default function useMeshResponseCache(options: ResponseCacheConfig): Gate
  */
 export default function useMeshResponseCache(
   options: YamlConfig.ResponseCacheConfig & {
-    cache: KeyValueCache;
+    cache?: KeyValueCache;
   },
 ): GatewayPlugin;
 export default function useMeshResponseCache(
@@ -186,7 +191,7 @@ export default function useMeshResponseCache(
     | ResponseCacheConfig
     // TODO: This is for v0 compatibility, remove once v1 is released
     | (YamlConfig.ResponseCacheConfig & {
-        cache: KeyValueCache;
+        cache?: KeyValueCache;
       }),
 ): GatewayPlugin {
   const ttlPerType: Record<string, number> = { ...(options as ResponseCacheConfig).ttlPerType };
