@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/config",
-  "version": "0.108.2",
+  "version": "0.108.3",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@envelop/core": "^5.1.0",
-    "@graphql-mesh/cache-localforage": "^0.105.2",
+    "@graphql-mesh/cache-localforage": "^0.105.3",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/merger-bare": "^0.105.2",
     "@graphql-mesh/merger-stitching": "^0.105.2",

@@ -1,5 +1,14 @@
 # @graphql-mesh/cache-inmemory-lru
 
+## 0.8.3
+
+### Patch Changes
+
+- [#8586](https://github.com/ardatan/graphql-mesh/pull/8586)
+  [`86a7a2d`](https://github.com/ardatan/graphql-mesh/commit/86a7a2d7c6dd81b05c627a97b6e9b634f5ef04ed)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Fix race condition when getting keys while
+  having multiple sets with a TTL
+
 ## 0.8.2
 
 ### Patch Changes
