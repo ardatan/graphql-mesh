@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.104.3
+
+### Patch Changes
+
+- [#8589](https://github.com/ardatan/graphql-mesh/pull/8589)
+  [`a22dd03`](https://github.com/ardatan/graphql-mesh/commit/a22dd036fe97ea19353033f05dac156d620765e0)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Throw an error at gateway
+  initialization time when no cache is configured, but the response-cache plugin is enabled.
+
 ## 0.104.2
 
 ### Patch Changes

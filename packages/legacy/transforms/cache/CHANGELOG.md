@@ -1,5 +1,7 @@
 # @graphql-mesh/transform-cache
 
+## 0.105.3
+
 ## 0.105.2
 
 ### Patch Changes
