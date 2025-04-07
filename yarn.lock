@@ -10343,8 +10343,8 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^6.0.0":
-  version: 6.6.0
-  resolution: "@neo4j/graphql@npm:6.6.0"
+  version: 6.6.1
+  resolution: "@neo4j/graphql@npm:6.6.1"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
@@ -10365,7 +10365,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/f3ba1826b3b8eff438dbeb124ab0dcf733e31e842c32e7edd17ed30c6b28f4ad9cec35c0937a1fa67b26c8ce743b22db94c8c470499eb54496ea1eb56f103fe3
+  checksum: 10c0/da53f21afa803e5b12640eb72d86f6a0217a1b093d31343f3562ff22ea44313c248f4fb0a5d8b225afbb0a600662893f415c822e71dd48b98e559b12d8117cfd
   languageName: node
   linkType: hard
 
@@ -14723,11 +14723,11 @@ __metadata:
   linkType: hard
 
 "@upstash/redis@npm:^1.34.3":
-  version: 1.34.6
-  resolution: "@upstash/redis@npm:1.34.6"
+  version: 1.34.7
+  resolution: "@upstash/redis@npm:1.34.7"
   dependencies:
     crypto-js: "npm:^4.2.0"
-  checksum: 10c0/3356cb01beb351cb66afe41e3992082f31692a58af39f0876051b99dce40d20534a7bf57aa5c158a1de739bf2a6bd912266eb361889116a29444a1af15c884f0
+  checksum: 10c0/ecc7aeb52b268ba58dd638bebe59ca72124de379c11580ccd6808d6be107b06bcf1b9793e4a7e450478324202b3192f5731d18d0eff6b590bdff2dbfbffb027c
   languageName: node
   linkType: hard
 
