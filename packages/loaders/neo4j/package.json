@@ -39,7 +39,7 @@
     "@graphql-mesh/types": "^0.104.2",
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/schema": "^10.0.5",
-    "@neo4j/introspector": "^4.0.0",
+    "@neo4j/introspector": "^5.0.0",
     "neo4j-driver": "^5.9.2",
     "tslib": "^2.4.0"
   },
