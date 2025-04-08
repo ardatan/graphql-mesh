@@ -7676,7 +7676,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.104.2"
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/utils": "npm:^10.8.0"
-    "@neo4j/graphql": "npm:^6.0.0"
+    "@neo4j/graphql": "npm:^7.0.0"
     graphql: "npm:16.10.0"
     graphql-scalars: "npm:^1.22.4"
     neo4j-driver: "npm:^5.17.0"
@@ -10363,9 +10363,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neo4j/graphql@npm:^6.0.0":
-  version: 6.6.1
-  resolution: "@neo4j/graphql@npm:6.6.1"
+"@neo4j/graphql@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@neo4j/graphql@npm:7.0.0"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
@@ -10378,6 +10378,7 @@ __metadata:
     dot-prop: "npm:^6.0.1"
     graphql-compose: "npm:^9.0.8"
     graphql-parse-resolve-info: "npm:^4.12.3"
+    graphql-query-complexity: "npm:^1.0.0"
     graphql-relay: "npm:^0.10.0"
     jose: "npm:^5.0.0"
     pluralize: "npm:^8.0.0"
@@ -10386,7 +10387,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/da53f21afa803e5b12640eb72d86f6a0217a1b093d31343f3562ff22ea44313c248f4fb0a5d8b225afbb0a600662893f415c822e71dd48b98e559b12d8117cfd
+  checksum: 10c0/170bff4114ddc63de17127712fc2e5d12a1ba264bd2fc6273c2b8da2034adabfaa049f724bd5b0152bf8f0e2c4c14b21bccf86ec083c40958910b37a31fa6acd
   languageName: node
   linkType: hard
 
@@ -22823,6 +22824,17 @@ __metadata:
   peerDependencies:
     graphql: ">=0.9 <0.14 || ^14.0.2 || ^15.4.0 || ^16.3.0"
   checksum: 10c0/b8295bcd020740d04bc6c3743836808f3554574f19fa40e7ea2c91d6d43dbbbba0373d9d42669936f74ca9ecc7e208d99504a55a036ffe1369f8e45b65d0070a
+  languageName: node
+  linkType: hard
+
+"graphql-query-complexity@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "graphql-query-complexity@npm:1.1.0"
+  dependencies:
+    lodash.get: "npm:^4.4.2"
+  peerDependencies:
+    graphql: ^15.0.0 || ^16.0.0
+  checksum: 10c0/f6679fe9878002362e3a9db9030270757a57e12626a8d4c22335148c7dff09f6340815b5bb568dfd986dfb767f742476198d6948270a47f911bb0cb93f9a9ca8
   languageName: node
   linkType: hard
 
