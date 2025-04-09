@@ -10,9 +10,9 @@
     "@graphql-mesh/cli": "0.100.3",
     "@graphql-mesh/json-schema": "0.109.3",
     "@graphql-mesh/plugin-mock": "0.105.3",
-    "@graphql-yoga/plugin-sofa": "3.13.3",
+    "@graphql-yoga/plugin-sofa": "3.13.4",
     "graphql": "16.10.0",
-    "graphql-yoga": "5.13.2"
+    "graphql-yoga": "5.13.3"
   },
   "devDependencies": {
     "jest": "29.7.0"
