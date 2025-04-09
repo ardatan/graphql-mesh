@@ -5215,7 +5215,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cache-file": "npm:0.104.2"
     "@graphql-mesh/cli": "npm:0.100.3"
-    "@graphql-mesh/neo4j": "npm:0.106.2"
+    "@graphql-mesh/neo4j": "npm:0.107.0"
     graphql: "npm:16.10.0"
   languageName: unknown
   linkType: soft
@@ -6764,14 +6764,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/neo4j@npm:0.106.2, @graphql-mesh/neo4j@workspace:packages/legacy/handlers/neo4j":
+"@graphql-mesh/neo4j@npm:0.107.0, @graphql-mesh/neo4j@workspace:packages/legacy/handlers/neo4j":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/neo4j@workspace:packages/legacy/handlers/neo4j"
   dependencies:
     "@graphql-mesh/store": "npm:^0.104.2"
     "@graphql-mesh/types": "npm:^0.104.2"
     "@graphql-mesh/utils": "npm:^0.104.2"
-    "@omnigraph/neo4j": "npm:^0.10.2"
+    "@omnigraph/neo4j": "npm:^0.11.0"
     graphql: "npm:16.10.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -7666,7 +7666,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-neo4j@npm:^0.9.2, @graphql-mesh/transport-neo4j@workspace:packages/transports/neo4j":
+"@graphql-mesh/transport-neo4j@npm:^0.10.0, @graphql-mesh/transport-neo4j@workspace:packages/transports/neo4j":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-neo4j@workspace:packages/transports/neo4j"
   dependencies:
@@ -10777,11 +10777,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/neo4j@npm:^0.10.2, @omnigraph/neo4j@workspace:packages/loaders/neo4j":
+"@omnigraph/neo4j@npm:^0.11.0, @omnigraph/neo4j@workspace:packages/loaders/neo4j":
   version: 0.0.0-use.local
   resolution: "@omnigraph/neo4j@workspace:packages/loaders/neo4j"
   dependencies:
-    "@graphql-mesh/transport-neo4j": "npm:^0.9.2"
+    "@graphql-mesh/transport-neo4j": "npm:^0.10.0"
     "@graphql-mesh/types": "npm:^0.104.2"
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/schema": "npm:^10.0.5"
