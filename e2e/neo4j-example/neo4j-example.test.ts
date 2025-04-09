@@ -49,11 +49,11 @@ it('should execute MovieWithActedIn', async () => {
   const result = await gw.execute({
     query: /* GraphQL */ `
       query MovieWithActedIn {
-        movies(options: { limit: 2 }) {
+        movies(limit: 2) {
           title
           released
           tagline
-          peopleActedIn(options: { limit: 2 }) {
+          peopleActedIn(limit: 2) {
             name
           }
         }
