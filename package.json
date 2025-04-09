@@ -33,7 +33,7 @@
       "e2e/*"
     ]
   },
-  "packageManager": "yarn@4.8.1",
+  "packageManager": "yarn@4.9.0",
   "scripts": {
     "build": "yarn prebuild && bob build && yarn postbuild",
     "build-test-artifacts": "yarn workspace @examples/json-schema-example build && yarn workspace @examples-v1-next/fastify compose && yarn workspace @examples/fastify build && yarn workspace @examples/persisted-operations build && yarn workspace example-response-cache build && yarn workspace @examples/json-schema-complex-url build",
