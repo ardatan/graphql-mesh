@@ -8229,7 +8229,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/load@npm:^8.0.0, @graphql-tools/load@npm:^8.0.1, @graphql-tools/load@npm:^8.0.14, @graphql-tools/load@npm:^8.0.2, @graphql-tools/load@npm:~8.0.0":
+"@graphql-tools/load@npm:^8.0.0, @graphql-tools/load@npm:^8.0.1, @graphql-tools/load@npm:^8.0.14, @graphql-tools/load@npm:^8.0.2":
+  version: 8.1.0
+  resolution: "@graphql-tools/load@npm:8.1.0"
+  dependencies:
+    "@graphql-tools/schema": "npm:^10.0.23"
+    "@graphql-tools/utils": "npm:^10.8.6"
+    p-limit: "npm:3.1.0"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/4653e50ba45cc940400853fcff7bb77f63b133018f114ebc355e4f3033d28c788579277d9be45223de89fe8a25509fe9f99bfcc74508439065577be65fa34eac
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/load@npm:~8.0.0":
   version: 8.0.19
   resolution: "@graphql-tools/load@npm:8.0.19"
   dependencies:
