@@ -3315,10 +3315,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20250409.0":
-  version: 4.20250409.0
-  resolution: "@cloudflare/workers-types@npm:4.20250409.0"
-  checksum: 10c0/e3a71518f4cd5e245be9f7615c97ad1a3e8ac22445f5c668857f549449e170512f94db0e255bb1cb1a06e5ba7d330c3233bb5ba795593de90b9384d4f680ab55
+"@cloudflare/workers-types@npm:4.20250410.0":
+  version: 4.20250410.0
+  resolution: "@cloudflare/workers-types@npm:4.20250410.0"
+  checksum: 10c0/ee30f0c095e968d1da989f9d5a7e771fe899a2c79247a88bc83e653bc437b4f0d9c47ea5eefc648b891740a6119abb027e03777c7ba121060327863ba62e1a5a
   languageName: node
   linkType: hard
 
@@ -6294,7 +6294,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20250409.0"
+    "@cloudflare/workers-types": "npm:4.20250410.0"
     "@graphql-mesh/types": "npm:^0.104.2"
     "@graphql-mesh/utils": "npm:^0.104.2"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
