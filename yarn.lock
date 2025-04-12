@@ -3351,10 +3351,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20250410.0":
-  version: 4.20250410.0
-  resolution: "@cloudflare/workers-types@npm:4.20250410.0"
-  checksum: 10c0/ee30f0c095e968d1da989f9d5a7e771fe899a2c79247a88bc83e653bc437b4f0d9c47ea5eefc648b891740a6119abb027e03777c7ba121060327863ba62e1a5a
+"@cloudflare/workers-types@npm:4.20250412.0":
+  version: 4.20250412.0
+  resolution: "@cloudflare/workers-types@npm:4.20250412.0"
+  checksum: 10c0/1c2cd0ad87bbf43bcc785ec37d7cb3b0d379b30f81abb6dec78d3fe986ca7b42af9e03b81ab3959ef1cc78788240635b8ce325199173a7b4e28d83dc345c2c2e
   languageName: node
   linkType: hard
 
@@ -4842,7 +4842,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/graphql": "npm:0.104.2"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     fastify: "npm:5.2.2"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
@@ -4959,7 +4959,7 @@ __metadata:
     "@google-cloud/functions-framework": "npm:3.5.1"
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/json-schema": "npm:0.109.3"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     graphql: "npm:16.10.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -4976,8 +4976,8 @@ __metadata:
     "@testing-library/user-event": "npm:14.6.1"
     "@types/apollo-upload-client": "npm:18.0.0"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:22.14.0"
-    "@types/react": "npm:19.1.0"
+    "@types/node": "npm:22.14.1"
+    "@types/react": "npm:19.1.1"
     "@types/react-dom": "npm:19.1.2"
     apollo-upload-client: "npm:18.0.1"
     graphql: "npm:16.10.0"
@@ -4995,7 +4995,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/graphql": "npm:0.104.2"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     concurrently: "npm:9.1.2"
     graphql: "npm:16.10.0"
     graphql-yoga: "npm:^5.12.0"
@@ -5016,7 +5016,7 @@ __metadata:
     "@graphql-mesh/transform-naming-convention": "npm:0.105.3"
     "@grpc/grpc-js": "npm:1.13.3"
     "@grpc/proto-loader": "npm:0.7.13"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     concurrently: "npm:9.1.2"
     google-protobuf: "npm:3.21.4"
     graphql: "npm:16.10.0"
@@ -5036,7 +5036,7 @@ __metadata:
     "@graphql-mesh/transform-naming-convention": "npm:0.105.3"
     "@grpc/grpc-js": "npm:1.13.3"
     "@grpc/proto-loader": "npm:0.7.13"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     concurrently: "npm:9.1.2"
     google-protobuf: "npm:3.21.4"
     graphql: "npm:16.10.0"
@@ -5063,7 +5063,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/json-schema": "npm:0.109.3"
     "@graphql-mesh/plugin-mock": "npm:0.105.3"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     graphql: "npm:16.10.0"
     jest: "npm:29.7.0"
     ts-node: "npm:^10.9.2"
@@ -5104,7 +5104,7 @@ __metadata:
     "@graphql-hive/cli": "npm:0.49.1"
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/openapi": "npm:0.109.6"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     fets: "npm:^0.8.0"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
@@ -5119,7 +5119,7 @@ __metadata:
     "@graphql-hive/cli": "npm:0.49.1"
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/openapi": "npm:0.109.6"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     fets: "npm:^0.8.0"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
@@ -5133,7 +5133,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/json-schema": "npm:0.109.3"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     concurrently: "npm:9.1.2"
     graphql: "npm:16.10.0"
     tsx: "npm:4.19.3"
@@ -5171,7 +5171,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/json-schema": "npm:0.109.3"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     "@types/unzip-stream": "npm:0.3.4"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
@@ -5186,7 +5186,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/json-schema": "npm:0.109.3"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     concurrently: "npm:9.1.2"
     fets: "npm:0.8.5"
     graphql: "npm:16.10.0"
@@ -5264,7 +5264,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.108.3"
     "@graphql-mesh/openapi": "npm:0.109.6"
     "@graphql-mesh/runtime": "npm:0.106.2"
-    "@types/react": "npm:19.1.0"
+    "@types/react": "npm:19.1.1"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.10.0"
     micro: "npm:10.0.1"
@@ -5283,7 +5283,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.108.3"
     "@graphql-mesh/openapi": "npm:0.109.6"
     "@graphql-mesh/runtime": "npm:0.106.2"
-    "@types/react": "npm:19.1.0"
+    "@types/react": "npm:19.1.1"
     apollo-server-micro: "npm:3.13.0"
     graphql: "npm:16.10.0"
     micro: "npm:10.0.1"
@@ -5313,7 +5313,7 @@ __metadata:
     "@graphql-mesh/config": "npm:0.108.3"
     "@graphql-mesh/odata": "npm:0.106.2"
     "@graphql-mesh/runtime": "npm:0.106.2"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:5.8.3"
@@ -5383,7 +5383,7 @@ __metadata:
   resolution: "@examples/openapi-react-weatherbit@workspace:examples/openapi-react-weatherbit"
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.3"
-    "@types/react": "npm:19.1.0"
+    "@types/react": "npm:19.1.1"
     "@types/react-dom": "npm:19.1.2"
     "@vitejs/plugin-react": "npm:4.3.4"
     graphql: "npm:16.10.0"
@@ -5420,7 +5420,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/openapi": "npm:0.109.6"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     "@whatwg-node/fetch": "npm:^0.10.4"
     concurrently: "npm:9.1.2"
     fets: "npm:^0.8.0"
@@ -5480,7 +5480,7 @@ __metadata:
     "@graphql-mesh/postgraphile": "npm:0.104.2"
     "@graphql-mesh/runtime": "npm:0.106.2"
     "@graphql-mesh/transform-prefix": "npm:0.105.3"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     cross-env: "npm:7.0.3"
     graphql: "npm:16.10.0"
     ts-node: "npm:^10.9.2"
@@ -5495,7 +5495,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/openapi": "npm:0.109.6"
     "@sinclair/typebox": "npm:0.34.33"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     concurrently: "npm:9.1.2"
     fets: "npm:0.8.5"
     graphql: "npm:16.10.0"
@@ -5584,7 +5584,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.100.3"
     "@graphql-mesh/thrift": "npm:0.106.2"
     "@types/express": "npm:5.0.1"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     concurrently: "npm:9.1.2"
     express: "npm:5.1.0"
     graphql: "npm:16.10.0"
@@ -6330,7 +6330,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20250410.0"
+    "@cloudflare/workers-types": "npm:4.20250412.0"
     "@graphql-mesh/types": "npm:^0.104.2"
     "@graphql-mesh/utils": "npm:^0.104.2"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -14012,12 +14012,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:22.14.0, @types/node@npm:>=13.7.0, @types/node@npm:^22.0.0, @types/node@npm:^22.13.4, @types/node@npm:^22.5.5, @types/node@npm:^22.7.5":
-  version: 22.14.0
-  resolution: "@types/node@npm:22.14.0"
+"@types/node@npm:*, @types/node@npm:22.14.1, @types/node@npm:>=13.7.0, @types/node@npm:^22.0.0, @types/node@npm:^22.13.4, @types/node@npm:^22.5.5, @types/node@npm:^22.7.5":
+  version: 22.14.1
+  resolution: "@types/node@npm:22.14.1"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/9d79f3fa1af9c2c869514f419c4a4905b34c10e12915582fd1784868ac4e74c6d306cf5eb47ef889b6750ab85a31be96618227b86739c4a3e0b1c15063f384c6
+  checksum: 10c0/d49c4d00403b1c2348cf0701b505fd636d80aabe18102105998dc62fdd36dcaf911e73c7a868c48c21c1022b825c67b475b65b1222d84b704d8244d152bb7f86
   languageName: node
   linkType: hard
 
@@ -14134,12 +14134,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.1.0":
-  version: 19.1.0
-  resolution: "@types/react@npm:19.1.0"
+"@types/react@npm:19.1.1":
+  version: 19.1.1
+  resolution: "@types/react@npm:19.1.1"
   dependencies:
     csstype: "npm:^3.0.2"
-  checksum: 10c0/632fd20ee176e55801a61c5f854141b043571a3e363ef106b047b766a813a12735cbb37abb3d61d126346979f530f2ed269a60c8ef3cdee54e5e9fe4174e5dad
+  checksum: 10c0/d22417857460ade4250806135a3d1e2558737a7ae76f120f88afbc6419ab04312977a5208a70d4f85059b9493c0f1f16c9ba1483aa8ea1dad581da666c95773e
   languageName: node
   linkType: hard
 
@@ -20961,7 +20961,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/compose-cli": "npm:1.4.6"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.13.3"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     concurrently: "npm:9.1.2"
     esbuild: "npm:^0.25.0"
     graphql: "npm:16.10.0"
@@ -22718,7 +22718,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:29.5.14"
-    "@types/node": "npm:22.14.0"
+    "@types/node": "npm:22.14.1"
     "@typescript-eslint/eslint-plugin": "npm:8.29.1"
     "@typescript-eslint/parser": "npm:8.29.1"
     babel-jest: "npm:29.7.0"
@@ -22736,7 +22736,7 @@ __metadata:
     graphql: "npm:16.10.0"
     husky: "npm:9.1.7"
     jest: "npm:29.7.0"
-    lint-staged: "npm:15.5.0"
+    lint-staged: "npm:15.5.1"
     lru-cache: "npm:11.1.0"
     minimatch: "npm:10.0.1"
     node-gyp: "npm:^11.0.0"
@@ -26650,9 +26650,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:15.5.0":
-  version: 15.5.0
-  resolution: "lint-staged@npm:15.5.0"
+"lint-staged@npm:15.5.1":
+  version: 15.5.1
+  resolution: "lint-staged@npm:15.5.1"
   dependencies:
     chalk: "npm:^5.4.1"
     commander: "npm:^13.1.0"
@@ -26666,7 +26666,7 @@ __metadata:
     yaml: "npm:^2.7.0"
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 10c0/393b24d85d705a36e6556dc9d9b710594163be60f7789a2ca71bbf8f31debc10f7fde9cd0e868466ac2b7c154661983602decd7abbb6c685b21007bc70dbbdd6
+  checksum: 10c0/86deddb08bf10428f2eb96c02326a9ee403360729225f0b12afb0c0f13c287a75daa01e179d86f64e3432576446d8643d204a47417296f9ef0aa56f1340ff2af
   languageName: node
   linkType: hard
 
@@ -37711,8 +37711,8 @@ __metadata:
   dependencies:
     "@theguild/components": "npm:^7.6.0"
     "@theguild/tailwind-config": "npm:0.6.3"
-    "@types/node": "npm:22.14.0"
-    "@types/react": "npm:19.1.0"
+    "@types/node": "npm:22.14.1"
+    "@types/react": "npm:19.1.1"
     cross-env: "npm:7.0.3"
     eslint: "npm:9.24.0"
     eslint-config-next: "npm:15.3.0"
