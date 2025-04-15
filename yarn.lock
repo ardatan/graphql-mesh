@@ -3810,16 +3810,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/manual-transport-def@workspace:e2e/manual-transport-def":
-  version: 0.0.0-use.local
-  resolution: "@e2e/manual-transport-def@workspace:e2e/manual-transport-def"
-  dependencies:
-    "@graphql-hive/gateway": "npm:^1.8.0"
-    fets: "npm:0.8.5"
-    graphql: "npm:16.10.0"
-  languageName: unknown
-  linkType: soft
-
 "@e2e/mysql-employees@workspace:e2e/mysql-employees":
   version: 0.0.0-use.local
   resolution: "@e2e/mysql-employees@workspace:e2e/mysql-employees"
@@ -7742,9 +7732,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-rest@npm:^0.9.4, @graphql-mesh/transport-rest@workspace:packages/transports/rest":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/transport-rest@workspace:packages/transports/rest"
+"@graphql-mesh/transport-rest@npm:^0.9.4":
+  version: 0.9.4
+  resolution: "@graphql-mesh/transport-rest@npm:0.9.4"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.8"
@@ -7754,7 +7744,6 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.8.0"
     "@whatwg-node/fetch": "npm:^0.10.6"
     dset: "npm:^3.1.3"
-    graphql: "npm:16.10.0"
     graphql-fields: "npm:^2.0.3"
     graphql-scalars: "npm:^1.22.4"
     qs: "npm:^6.14.0"
@@ -7762,8 +7751,9 @@ __metadata:
     url-join: "npm:4.0.1"
   peerDependencies:
     graphql: "*"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/b3272c6e4d1ad0352817cfdfef3c02d95ec83f3b1c4921c74d8144bfc386994825d8cbf1bf09b72f4480bdc302bdbc8449ad54e9e0130a9f37017553d76eec53
+  languageName: node
+  linkType: hard
 
 "@graphql-mesh/transport-soap@npm:^0.10.4":
   version: 0.10.4
