@@ -1,5 +1,21 @@
 # @graphql-mesh/plugin-jwt-auth
 
+## 1.5.3
+
+### Patch Changes
+
+- [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
+  [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Update graphql-yoga and whatwg-node packages
+
+  In light of https://github.com/ardatan/whatwg-node/pull/2305. Please upgrade as soon as possible!
+
+- Updated dependencies
+  [[`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c),
+  [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)]:
+  - @graphql-mesh/utils@0.104.3
+  - @graphql-mesh/types@0.104.3
+
 ## 1.5.2
 
 ### Patch Changes
