@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/neo4j",
-  "version": "0.107.0",
+  "version": "0.107.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,10 +35,10 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "^0.104.2",
-    "@graphql-mesh/types": "^0.104.2",
-    "@graphql-mesh/utils": "^0.104.2",
-    "@omnigraph/neo4j": "^0.11.0",
+    "@graphql-mesh/store": "^0.104.3",
+    "@graphql-mesh/types": "^0.104.3",
+    "@graphql-mesh/utils": "^0.104.3",
+    "@omnigraph/neo4j": "^0.11.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

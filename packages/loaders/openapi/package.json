@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/openapi",
-  "version": "0.109.6",
+  "version": "0.109.7",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,12 +36,12 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.10",
-    "@graphql-mesh/fusion-composition": "^0.8.5",
+    "@graphql-mesh/fusion-composition": "^0.8.6",
     "@graphql-mesh/string-interpolation": "^0.5.8",
-    "@graphql-mesh/types": "^0.104.2",
-    "@graphql-mesh/utils": "^0.104.2",
+    "@graphql-mesh/types": "^0.104.3",
+    "@graphql-mesh/utils": "^0.104.3",
     "@graphql-tools/utils": "^10.6.4",
-    "@omnigraph/json-schema": "^0.109.3",
+    "@omnigraph/json-schema": "^0.109.4",
     "change-case": "^4.1.2",
     "json-machete": "^0.97.6",
     "openapi-types": "^12.1.0",
