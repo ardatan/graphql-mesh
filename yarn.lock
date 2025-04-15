@@ -7699,9 +7699,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-mesh/transport-neo4j@npm:^0.10.1, @graphql-mesh/transport-neo4j@workspace:packages/transports/neo4j":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/transport-neo4j@workspace:packages/transports/neo4j"
+"@graphql-mesh/transport-neo4j@npm:^0.10.1":
+  version: 0.10.1
+  resolution: "@graphql-mesh/transport-neo4j@npm:0.10.1"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/transport-common": "npm:^0.7.13"
@@ -7710,14 +7710,14 @@ __metadata:
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@neo4j/graphql": "npm:^7.0.0"
-    graphql: "npm:16.10.0"
     graphql-scalars: "npm:^1.22.4"
     neo4j-driver: "npm:^5.17.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/39821240c3d7910f648959a1dcf560029d8b5949bcb7152d3a186f6b112502e32e6bcc352f6a3ea3ae4a194e6cea825fe926c39606bee237ea1903a7e55f1eff
+  languageName: node
+  linkType: hard
 
 "@graphql-mesh/transport-odata@workspace:packages/transports/odata":
   version: 0.0.0-use.local
