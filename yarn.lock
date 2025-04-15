@@ -7765,9 +7765,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-soap@npm:^0.10.4, @graphql-mesh/transport-soap@workspace:packages/transports/soap":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/transport-soap@workspace:packages/transports/soap"
+"@graphql-mesh/transport-soap@npm:^0.10.4":
+  version: 0.10.4
+  resolution: "@graphql-mesh/transport-soap@npm:0.10.4"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.8"
@@ -7778,12 +7778,12 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.8.0"
     "@whatwg-node/fetch": "npm:^0.10.6"
     fast-xml-parser: "npm:^5.0.0"
-    graphql: "npm:16.10.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/b96c477b759822e13f6f9cdfdce095cf14be029f42c2582d29294cc836a045a1f1d1c593451feeacaa181e688a055d649166c635fac8088c855ccb925cfffb07
+  languageName: node
+  linkType: hard
 
 "@graphql-mesh/transport-sqlite@workspace:packages/transports/sqlite":
   version: 0.0.0-use.local
