@@ -7719,19 +7719,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-mesh/transport-odata@workspace:packages/transports/odata":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/transport-odata@workspace:packages/transports/odata"
-  dependencies:
-    "@graphql-mesh/transport-common": "npm:^0.7.13"
-    "@omnigraph/odata": "npm:^0.2.3"
-    graphql: "npm:16.10.0"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: "*"
-  languageName: unknown
-  linkType: soft
-
 "@graphql-mesh/transport-rest@npm:^0.9.4":
   version: 0.9.4
   resolution: "@graphql-mesh/transport-rest@npm:0.9.4"
