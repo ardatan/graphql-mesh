@@ -7620,9 +7620,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-mesh/transport-grpc@npm:^0.3.3, @graphql-mesh/transport-grpc@workspace:packages/transports/grpc":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/transport-grpc@workspace:packages/transports/grpc"
+"@graphql-mesh/transport-grpc@npm:^0.3.3":
+  version: 0.3.3
+  resolution: "@graphql-mesh/transport-grpc@npm:0.3.3"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.8"
@@ -7634,7 +7634,6 @@ __metadata:
     "@grpc/proto-loader": "npm:^0.7.8"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
-    graphql: "npm:16.10.0"
     graphql-scalars: "npm:^1.22.4"
     lodash.get: "npm:^4.4.2"
     long: "npm:4.0.0"
@@ -7642,8 +7641,9 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/0030b630e49fa250ff11ebda88867223bd0782e01b5a99db77f1700175b1c3bf4319271ca82f032c2cc31b414986feab7f1df50bce305644b8e68ba474bea90d
+  languageName: node
+  linkType: hard
 
 "@graphql-mesh/transport-http-callback@npm:^0.5.26":
   version: 0.5.26
@@ -7687,9 +7687,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-mesh/transport-mysql@npm:^0.9.3, @graphql-mesh/transport-mysql@workspace:packages/transports/mysql":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/transport-mysql@workspace:packages/transports/mysql"
+"@graphql-mesh/transport-mysql@npm:^0.9.3":
+  version: 0.9.3
+  resolution: "@graphql-mesh/transport-mysql@npm:0.9.3"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.8"
@@ -7699,15 +7699,15 @@ __metadata:
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@whatwg-node/fetch": "npm:^0.10.6"
-    graphql: "npm:16.10.0"
     graphql-fields: "npm:^2.0.3"
     mysql: "npm:^2.18.1"
     mysql-utilities: "npm:^1.1.4"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/0f8d73bf9b8a784ed6e876a80289eb9141db0d74b367a5df28de075a4c7a77a03bf6c05e3036f591ed4dc35c18826ad720c8e59ebd849305129f44b52ce13ec4
+  languageName: node
+  linkType: hard
 
 "@graphql-mesh/transport-neo4j@npm:^0.10.1, @graphql-mesh/transport-neo4j@workspace:packages/transports/neo4j":
   version: 0.0.0-use.local
