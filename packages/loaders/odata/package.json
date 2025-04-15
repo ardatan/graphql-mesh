@@ -42,7 +42,7 @@
     "@graphql-mesh/utils": "^0.104.2",
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/utils": "^10.8.0",
-    "@whatwg-node/fetch": "^0.10.4",
+    "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "dataloader": "^2.2.2",
     "fast-xml-parser": "^5.0.0",

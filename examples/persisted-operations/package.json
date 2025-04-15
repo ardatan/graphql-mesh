@@ -13,7 +13,7 @@
     "@graphql-mesh/plugin-mock": "0.105.3",
     "@graphql-yoga/plugin-sofa": "3.13.4",
     "graphql": "16.10.0",
-    "graphql-yoga": "5.13.3"
+    "graphql-yoga": "^5.13.4"
   },
   "devDependencies": {
     "jest": "29.7.0"
