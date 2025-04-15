@@ -7762,21 +7762,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-mesh/transport-sqlite@workspace:packages/transports/sqlite":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/transport-sqlite@workspace:packages/transports/sqlite"
-  dependencies:
-    "@graphql-mesh/transport-common": "npm:^0.7.13"
-    "@graphql-tools/utils": "npm:^10.8.0"
-    "@omnigraph/sqlite": "npm:^0.8.3"
-    "@whatwg-node/promise-helpers": "npm:^1.0.0"
-    graphql: "npm:16.10.0"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: "*"
-  languageName: unknown
-  linkType: soft
-
 "@graphql-mesh/transport-thrift@npm:^0.9.3, @graphql-mesh/transport-thrift@workspace:packages/transports/thrift":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-thrift@workspace:packages/transports/thrift"
