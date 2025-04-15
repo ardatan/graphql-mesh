@@ -45,7 +45,6 @@
       "@graphql-mesh/string-interpolation": ["packages/string-interpolation/src/index.ts"],
       "@graphql-mesh/fusion-composition": ["packages/fusion/composition/src/index.ts"],
       "@graphql-mesh/compose-cli": ["packages/compose-cli/src/index.ts"],
-      "@graphql-mesh/transport-*": ["packages/transports/*/src/index.ts"],
       "@graphql-mesh/*": ["packages/legacy/handlers/*/src/index.ts"],
       "json-machete": ["packages/json-machete/src/index.ts"],
       "@omnigraph/*": ["packages/loaders/*/src/index.ts"],

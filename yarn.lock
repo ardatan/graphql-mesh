@@ -7762,9 +7762,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-mesh/transport-thrift@npm:^0.9.3, @graphql-mesh/transport-thrift@workspace:packages/transports/thrift":
-  version: 0.0.0-use.local
-  resolution: "@graphql-mesh/transport-thrift@workspace:packages/transports/thrift"
+"@graphql-mesh/transport-thrift@npm:^0.9.3":
+  version: 0.9.3
+  resolution: "@graphql-mesh/transport-thrift@npm:0.9.3"
   dependencies:
     "@creditkarma/thrift-client": "npm:^1.0.4"
     "@creditkarma/thrift-server-core": "npm:^1.0.4"
@@ -7772,13 +7772,13 @@ __metadata:
     "@graphql-mesh/transport-common": "npm:^0.7.13"
     "@graphql-mesh/utils": "npm:^0.104.3"
     "@graphql-tools/utils": "npm:^10.8.0"
-    graphql: "npm:16.10.0"
     pascal-case: "npm:^3.1.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/36cf978198f1a0f6b60d666845f76496259c21f5390da69726572f3c9bed3bb3e6899f92009526a389ddf6846a2bda122396c9846f686078ae93eae3c0301e92
+  languageName: node
+  linkType: hard
 
 "@graphql-mesh/transport-ws@npm:^1.0.9":
   version: 1.0.9

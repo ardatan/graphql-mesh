@@ -21,7 +21,6 @@
       "examples/hive-example/gateway",
       "examples/hive-example/sources/*",
       "packages/loaders/*",
-      "packages/transports/*",
       "examples/v1-next/*",
       "examples/v1-next/integrations/*",
       "examples/v1-next/federation-example/*",
