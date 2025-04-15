@@ -41,7 +41,7 @@
     "@graphql-mesh/transport-thrift": "^0.9.2",
     "@graphql-mesh/types": "^0.104.2",
     "@graphql-mesh/utils": "^0.104.2",
-    "@whatwg-node/fetch": "^0.10.4",
+    "@whatwg-node/fetch": "^0.10.6",
     "graphql-scalars": "^1.22.4",
     "thrift": "^0.21.0"
   },

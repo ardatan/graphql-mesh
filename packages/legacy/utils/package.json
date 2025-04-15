@@ -44,7 +44,7 @@
     "@graphql-tools/utils": "^10.8.0",
     "@graphql-tools/wrap": "^10.0.28",
     "@whatwg-node/disposablestack": "^0.0.6",
-    "@whatwg-node/fetch": "^0.10.4",
+    "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.2.0",
     "dset": "^3.1.2",
     "js-yaml": "^4.1.0",

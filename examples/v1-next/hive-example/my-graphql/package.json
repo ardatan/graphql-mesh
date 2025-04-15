@@ -8,6 +8,6 @@
   "dependencies": {
     "@graphql-hive/cli": "0.49.1",
     "graphql": "16.10.0",
-    "graphql-yoga": "^5.12.0"
+    "graphql-yoga": "^5.13.4"
   }
 }

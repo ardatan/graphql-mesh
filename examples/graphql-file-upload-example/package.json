@@ -12,7 +12,7 @@
     "@graphql-mesh/graphql": "0.104.2",
     "concurrently": "9.1.2",
     "graphql": "16.10.0",
-    "graphql-yoga": "^5.12.0",
+    "graphql-yoga": "^5.13.4",
     "sharp": "0.34.1"
   },
   "devDependencies": {

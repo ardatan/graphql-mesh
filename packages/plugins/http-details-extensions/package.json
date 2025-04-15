@@ -38,7 +38,7 @@
     "@envelop/core": "^5.1.0",
     "@graphql-mesh/types": "^0.104.2",
     "@graphql-mesh/utils": "^0.104.2",
-    "@whatwg-node/fetch": "^0.10.4",
+    "@whatwg-node/fetch": "^0.10.6",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

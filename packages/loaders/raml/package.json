@@ -43,7 +43,7 @@
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/utils": "^10.8.0",
     "@omnigraph/json-schema": "0.109.3",
-    "@whatwg-node/fetch": "^0.10.4",
+    "@whatwg-node/fetch": "^0.10.6",
     "change-case": "4.1.2",
     "json-machete": "^0.97.6",
     "to-json-schema": "^0.2.5",
