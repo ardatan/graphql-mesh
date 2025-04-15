@@ -2988,9 +2988,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@changesets/cli@npm:2.28.1":
-  version: 2.28.1
-  resolution: "@changesets/cli@npm:2.28.1"
+"@changesets/cli@npm:2.29.0":
+  version: 2.29.0
+  resolution: "@changesets/cli@npm:2.29.0"
   dependencies:
     "@changesets/apply-release-plan": "npm:^7.0.10"
     "@changesets/assemble-release-plan": "npm:^6.0.6"
@@ -3022,7 +3022,7 @@ __metadata:
     term-size: "npm:^2.1.0"
   bin:
     changeset: bin.js
-  checksum: 10c0/f965b56fa533f91b5de0f5fd5b09fac46662f023dafbe474d3fc7ceb71629dce4783a37429a927d50292a7ea95c0694e5a8f0c143d9cbba95d28a4d11ab8106b
+  checksum: 10c0/2e70b6300788d5a413def95cfcc3c3914da1f094211c5c302a5150f84eb05e316631f43335602aedb435230f1a4480c17f57d0350dc5e92053811d42136c05e9
   languageName: node
   linkType: hard
 
@@ -22740,7 +22740,7 @@ __metadata:
     "@babel/preset-env": "npm:7.26.9"
     "@babel/preset-typescript": "npm:7.27.0"
     "@changesets/changelog-github": "npm:0.5.1"
-    "@changesets/cli": "npm:2.28.1"
+    "@changesets/cli": "npm:2.29.0"
     "@repeaterjs/repeater": "npm:^3.0.5"
     "@theguild/prettier-config": "npm:3.0.1"
     "@tsconfig/node16": "npm:^16.1.3"
