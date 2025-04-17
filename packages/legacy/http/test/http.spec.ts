@@ -199,7 +199,12 @@ describe('http', () => {
     expect(res.statusCode).toBe(200);
     expect(res.headers['content-encoding']).toBe('gzip');
     const finalRes = Buffer.concat(chunks);
-    expect(finalRes.length.toString()).toBe(res.headers['content-length']);
+    // content-length cannot exist with transfer-encoding chunked
+    if (res.headers['transfer-encoding']) {
+      expect(res.headers['transfer-encoding']).toBe('chunked');
+    } else {
+      expect(finalRes.length.toString()).toBe(res.headers['content-length']);
+    }
     const result: ExecutionResult = JSON.parse(gunzipSync(finalRes).toString());
     expect(result.data.__typename).toBe('Query');
   });
