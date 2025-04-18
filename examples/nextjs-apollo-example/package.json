@@ -22,7 +22,7 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "@types/react": "19.1.1",
+    "@types/react": "19.1.2",
     "typescript": "^5.4.2"
   }
 }
