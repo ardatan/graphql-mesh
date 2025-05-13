@@ -1,0 +1,494 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Reproductions GW-164 1`] = `
+{
+  "annotatedSubgraphs": [
+    {
+      "name": "A",
+      "typeDefs": {
+        "definitions": [
+          {
+            "directives": [
+              {
+                "arguments": [
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "url",
+                    },
+                    "value": {
+                      "kind": "StringValue",
+                      "value": "https://specs.apollo.dev/link/v1.0",
+                    },
+                  },
+                ],
+                "kind": "Directive",
+                "name": {
+                  "kind": "Name",
+                  "value": "link",
+                },
+              },
+              {
+                "arguments": [
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "url",
+                    },
+                    "value": {
+                      "kind": "StringValue",
+                      "value": "https://specs.apollo.dev/federation/v2.3",
+                    },
+                  },
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "import",
+                    },
+                    "value": {
+                      "kind": "ListValue",
+                      "values": [
+                        {
+                          "kind": "StringValue",
+                          "value": "@key",
+                        },
+                        {
+                          "kind": "StringValue",
+                          "value": "@provides",
+                        },
+                        {
+                          "kind": "StringValue",
+                          "value": "@requires",
+                        },
+                        {
+                          "kind": "StringValue",
+                          "value": "@external",
+                        },
+                        {
+                          "kind": "StringValue",
+                          "value": "@inaccessible",
+                        },
+                        {
+                          "kind": "StringValue",
+                          "value": "@shareable",
+                        },
+                        {
+                          "kind": "StringValue",
+                          "value": "@extends",
+                        },
+                        {
+                          "kind": "StringValue",
+                          "value": "@tag",
+                        },
+                        {
+                          "kind": "StringValue",
+                          "value": "@composeDirective",
+                        },
+                      ],
+                    },
+                  },
+                ],
+                "kind": "Directive",
+                "name": {
+                  "kind": "Name",
+                  "value": "link",
+                },
+              },
+              {
+                "arguments": [
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "url",
+                    },
+                    "value": {
+                      "kind": "StringValue",
+                      "value": "https://the-guild.dev/graphql/mesh/spec/v1.0",
+                    },
+                  },
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "import",
+                    },
+                    "value": {
+                      "kind": "ListValue",
+                      "values": [
+                        {
+                          "kind": "StringValue",
+                          "value": "@myDirective",
+                        },
+                      ],
+                    },
+                  },
+                ],
+                "kind": "Directive",
+                "name": {
+                  "kind": "Name",
+                  "value": "link",
+                },
+              },
+              {
+                "arguments": [
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "name",
+                    },
+                    "value": {
+                      "kind": "StringValue",
+                      "value": "@myDirective",
+                    },
+                  },
+                ],
+                "kind": "Directive",
+                "name": {
+                  "kind": "Name",
+                  "value": "composeDirective",
+                },
+              },
+            ],
+            "kind": "SchemaDefinition",
+            "operationTypes": [
+              {
+                "kind": "OperationTypeDefinition",
+                "operation": "query",
+                "type": {
+                  "kind": "NamedType",
+                  "name": {
+                    "kind": "Name",
+                    "value": "Query",
+                  },
+                },
+              },
+            ],
+          },
+          {
+            "arguments": [
+              {
+                "defaultValue": undefined,
+                "description": undefined,
+                "directives": [],
+                "kind": "InputValueDefinition",
+                "name": {
+                  "kind": "Name",
+                  "value": "myarg",
+                },
+                "type": {
+                  "kind": "NonNullType",
+                  "type": {
+                    "kind": "ListType",
+                    "type": {
+                      "kind": "NonNullType",
+                      "type": {
+                        "kind": "NamedType",
+                        "name": {
+                          "kind": "Name",
+                          "value": "MyEnum",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+            "description": undefined,
+            "kind": "DirectiveDefinition",
+            "locations": [
+              {
+                "kind": "Name",
+                "value": "OBJECT",
+              },
+            ],
+            "name": {
+              "kind": "Name",
+              "value": "myDirective",
+            },
+            "repeatable": false,
+          },
+          {
+            "description": undefined,
+            "directives": [],
+            "kind": "EnumTypeDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "MyEnum",
+            },
+            "values": [
+              {
+                "description": undefined,
+                "directives": [],
+                "kind": "EnumValueDefinition",
+                "name": {
+                  "kind": "Name",
+                  "value": "MY_ENUM_VALUE",
+                },
+              },
+            ],
+          },
+          {
+            "description": undefined,
+            "directives": [
+              {
+                "arguments": [],
+                "kind": "Directive",
+                "name": {
+                  "kind": "Name",
+                  "value": "shareable",
+                },
+              },
+            ],
+            "fields": [
+              {
+                "arguments": [],
+                "description": undefined,
+                "directives": [],
+                "kind": "FieldDefinition",
+                "name": {
+                  "kind": "Name",
+                  "value": "myRootField",
+                },
+                "type": {
+                  "kind": "NamedType",
+                  "name": {
+                    "kind": "Name",
+                    "value": "MyObject",
+                  },
+                },
+              },
+            ],
+            "interfaces": [],
+            "kind": "ObjectTypeDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "Query",
+            },
+          },
+          {
+            "description": undefined,
+            "directives": [
+              {
+                "arguments": [],
+                "kind": "Directive",
+                "name": {
+                  "kind": "Name",
+                  "value": "shareable",
+                },
+              },
+              {
+                "arguments": [
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "myarg",
+                    },
+                    "value": {
+                      "kind": "ListValue",
+                      "values": [],
+                    },
+                  },
+                ],
+                "kind": "Directive",
+                "name": {
+                  "kind": "Name",
+                  "value": "myDirective",
+                },
+              },
+            ],
+            "fields": [
+              {
+                "arguments": [],
+                "description": undefined,
+                "directives": [],
+                "kind": "FieldDefinition",
+                "name": {
+                  "kind": "Name",
+                  "value": "myField",
+                },
+                "type": {
+                  "kind": "NamedType",
+                  "name": {
+                    "kind": "Name",
+                    "value": "String",
+                  },
+                },
+              },
+            ],
+            "interfaces": [],
+            "kind": "ObjectTypeDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "MyObject",
+            },
+          },
+        ],
+        "kind": "Document",
+      },
+      "url": undefined,
+    },
+  ],
+  "publicSdl": "directive @myDirective(myarg: [MyEnum!]!)  on OBJECT
+
+type Query {
+  myRootField: MyObject
+}
+
+type MyObject @myDirective(myarg: [])  {
+  myField: String
+}
+
+enum MyEnum {
+  MY_ENUM_VALUE
+}",
+  "subgraphs": [
+    {
+      "name": "A",
+      "schema": GraphQLSchema {
+        "__validationErrors": undefined,
+        "_directives": [
+          "@myDirective",
+          "@include",
+          "@skip",
+          "@deprecated",
+          "@specifiedBy",
+          "@oneOf",
+        ],
+        "_implementationsMap": {},
+        "_mutationType": undefined,
+        "_queryType": "Query",
+        "_subTypeMap": {},
+        "_subscriptionType": undefined,
+        "_typeMap": {
+          "Boolean": "Boolean",
+          "MyEnum": "MyEnum",
+          "MyObject": "MyObject",
+          "Query": "Query",
+          "String": "String",
+          "__Directive": "__Directive",
+          "__DirectiveLocation": "__DirectiveLocation",
+          "__EnumValue": "__EnumValue",
+          "__Field": "__Field",
+          "__InputValue": "__InputValue",
+          "__Schema": "__Schema",
+          "__Type": "__Type",
+          "__TypeKind": "__TypeKind",
+        },
+        "astNode": undefined,
+        "description": undefined,
+        "extensionASTNodes": [],
+        "extensions": {},
+      },
+    },
+  ],
+  "supergraphSdl": "schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@myDirective"]) 
+  {
+    query: Query
+    
+    
+  }
+
+  
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
+
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
+
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+    directive @join__unionMember(
+      graph: join__Graph!
+      member: String!
+    ) repeatable on UNION
+
+    scalar join__FieldSet
+    
+  
+  
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+  
+  
+  
+  
+  
+  
+  
+enum join__Graph {
+  A @join__graph(name: "A", url: "") 
+}
+
+directive @myDirective(myarg: [MyEnum!]!)  on OBJECT
+
+type Query @join__type(graph: A)  {
+  myRootField: MyObject
+}
+
+type MyObject @myDirective(myarg: [])  @join__type(graph: A)  {
+  myField: String
+}
+
+enum MyEnum @join__type(graph: A)  {
+  MY_ENUM_VALUE @join__enumValue(graph: A) 
+}",
+}
+`;

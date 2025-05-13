@@ -54,7 +54,7 @@
     "@graphql-tools/schema": "^10.0.5",
     "@graphql-tools/stitching-directives": "^3.1.9",
     "@graphql-tools/utils": "^10.8.0",
-    "@theguild/federation-composition": "^0.18.0",
+    "@theguild/federation-composition": "^0.18.2",
     "change-case": "^4.1.2",
     "graphql-scalars": "^1.23.0",
     "minimatch": "^10.0.0",
