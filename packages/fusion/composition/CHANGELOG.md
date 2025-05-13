@@ -1,5 +1,13 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.7
+
+### Patch Changes
+
+- [`74672d0`](https://github.com/ardatan/graphql-mesh/commit/74672d0f8906f31d6563eee240ffeea04328bd7d)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump Federation Composition package to get the
+  fix -> https://github.com/graphql-hive/federation-composition/pull/141
+
 ## 0.8.6
 
 ### Patch Changes
