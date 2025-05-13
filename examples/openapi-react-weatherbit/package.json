@@ -20,7 +20,7 @@
     "@types/react-dom": "19.1.2",
     "@vitejs/plugin-react": "4.4.0",
     "typescript": "^5.4.2",
-    "vite": "6.3.2"
+    "vite": "6.3.4"
   },
   "browserslist": {
     "production": [
