@@ -1,0 +1,27 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "My operation",
+    "version": "1.0.0",
+    "description": " ",
+    "contact": {}
+  },
+  "tags": [{ "name": "tag" }],
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/myoperation": {
+      "put": {
+        "operationId": "myOperation",
+        "description": " ",
+        "tags": ["tag"],
+        "responses": {
+          "204": { "description": "", "content": {} }
+        }
+      }
+    }
+  }
+}
