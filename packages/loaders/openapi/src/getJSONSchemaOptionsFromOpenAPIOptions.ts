@@ -466,7 +466,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
         /**
          * In some specifications, 204 responses have content keys with empty values ({}),
-         * but the OAS rule is that 204 reponses should not have content keys.
+         * but the OAS rule is that 204 responses should not have content keys.
          *
          * Reference: https://swagger.io/docs/specification/v3_0/describing-responses/#empty-response-body
          */
