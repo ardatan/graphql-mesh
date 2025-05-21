@@ -14,7 +14,7 @@
     "@testing-library/react": "16.3.0",
     "@testing-library/user-event": "14.6.1",
     "apollo-upload-client": "18.0.1",
-    "graphql": "16.10.0",
+    "graphql": "16.11.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-scripts": "5.0.1",
@@ -23,9 +23,9 @@
   "devDependencies": {
     "@types/apollo-upload-client": "18.0.0",
     "@types/jest": "29.5.14",
-    "@types/node": "22.14.1",
-    "@types/react": "19.1.2",
-    "@types/react-dom": "19.1.2",
+    "@types/node": "22.15.21",
+    "@types/react": "19.1.5",
+    "@types/react-dom": "19.1.5",
     "typescript": "^5.4.2"
   },
   "browserslist": {
