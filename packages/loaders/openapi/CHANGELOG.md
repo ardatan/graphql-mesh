@@ -1,5 +1,20 @@
 # @omnigraph/openapi
 
+## 0.109.9
+
+### Patch Changes
+
+- [#8641](https://github.com/ardatan/graphql-mesh/pull/8641)
+  [`17e3c35`](https://github.com/ardatan/graphql-mesh/commit/17e3c35c0de0dcac6c395a1be63b01fe97bb49b0)
+  Thanks [@arnaud](https://github.com/arnaud)! - When there are two operations in the OAS;
+  `/products/` and `/products/{id}` Due to the bug in the logic, they conflict and the HATEOAS
+  linking can choose the first one without any argument.
+
+- [#8640](https://github.com/ardatan/graphql-mesh/pull/8640)
+  [`e254ba8`](https://github.com/ardatan/graphql-mesh/commit/e254ba839f72214e4796ee3515c93c6b0c7f8c2f)
+  Thanks [@arnaud](https://github.com/arnaud)! - fix(openapi): support 204 responses which have
+  content keys with empty values
+
 ## 0.109.8
 
 ### Patch Changes

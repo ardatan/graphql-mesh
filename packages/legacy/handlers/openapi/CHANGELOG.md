@@ -1,5 +1,14 @@
 # @graphql-mesh/openapi
 
+## 0.109.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`17e3c35`](https://github.com/ardatan/graphql-mesh/commit/17e3c35c0de0dcac6c395a1be63b01fe97bb49b0),
+  [`e254ba8`](https://github.com/ardatan/graphql-mesh/commit/e254ba839f72214e4796ee3515c93c6b0c7f8c2f)]:
+  - @omnigraph/openapi@0.109.9
+
 ## 0.109.8
 
 ### Patch Changes
