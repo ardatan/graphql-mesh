@@ -595,7 +595,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               ]?.find(link => link[hateOasConfig.linkNameIdentifier] === linkName);
               if (xLinkObj) {
                 const xLinkHref = xLinkObj[hateOasConfig.linkPathIdentifier];
-                const cleanXLinkHref = xLinkHref.replace(/{[^}]+}/g, '');
+                const cleanXLinkHref = xLinkHref.replace(/{[^}]+}/g, '{}');
                 const deferred = createDeferred<void>();
                 function findActualOperationAndPath(
                   possibleName: string,
@@ -605,7 +605,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                   let actualOperation: OpenAPIV3.OperationObject;
                   let actualPath: string;
                   for (const path in possibleOasDoc.paths) {
-                    const cleanPath = path.replace(/{[^}]+}/g, '');
+                    const cleanPath = path.replace(/{[^}]+}/g, '{}');
                     if (cleanPath === cleanXLinkHref) {
                       actualPath = path;
                       actualOperation = possibleOasDoc.paths[path][method];

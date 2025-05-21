@@ -99,16 +99,22 @@ type Clothing implements Product @join__type(graph: PRODUCTS) @join__implements(
 }
 
 type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Products", kind: "rest", location: "http://localhost:<OASService_port>"}]}) @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Suppliers", kind: "rest", location: "http://localhost:<OASService_port>"}]}) @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS) {
+  """Get all the products"""
+  getProducts: ProductList @httpOperation(subgraph: "Products", path: "/products/", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @join__field(graph: PRODUCTS)
   """Get a product by ID"""
   getProductById(
     """The product ID"""
     id: Int!
-  ): Product @httpOperation(subgraph: "Products", path: "/products/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @linkResolver(subgraph: "Products", linkResolverMap: "{\\"self\\":{\\"linkObjArgs\\":{\\"id\\":\\"{root['id']}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getProductById\\"}}") @join__field(graph: PRODUCTS)
+  ): Product @httpOperation(subgraph: "Products", path: "/products/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @linkResolver(subgraph: "Products", linkResolverMap: "{\\\"self\\\":{\\\"linkObjArgs\\\":{\\\"id\\\":\\\"{root['id']}\\\"},\\\"targetTypeName\\\":\\\"Query\\\",\\\"targetFieldName\\\":\\\"getProductById\\\"}}") @join__field(graph: PRODUCTS)
   """Get a supplier by ID"""
   getSupplierById(
     """The supplier ID"""
     id: Int!
   ): Supplier @httpOperation(subgraph: "Suppliers", path: "/suppliers/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @merge(subgraph: "Suppliers", keyField: "id", keyArg: "id") @join__field(graph: SUPPLIERS)
+}
+
+type ProductList @join__type(graph: PRODUCTS) {
+  items: [Product]
 }
 
 interface Product @discriminator(subgraph: "Products", field: "_type", mapping: [["ELECTRONICS", "Electronics"], ["CLOTHING", "Clothing"]]) @join__type(graph: PRODUCTS) {
