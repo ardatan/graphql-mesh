@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`204 response with empty content should generate the schema correctly 1`] = `
+"schema @transport(subgraph: "test", kind: "rest", location: "/") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+
+type Query {
+  dummy: String
+}
+
+type Mutation {
+  """ """
+  myOperation: Void @httpOperation(subgraph: "test", path: "/myoperation", httpMethod: PUT)
+}
+
+"""Represents empty values"""
+scalar Void
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}
+
+scalar ObjMap"
+`;
