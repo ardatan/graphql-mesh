@@ -45,7 +45,7 @@
   "devDependencies": {
     "@graphql-hive/gateway": "^1.8.0",
     "@types/http-cache-semantics": "4.0.4",
-    "graphql": "16.10.0"
+    "graphql": "16.11.0"
   },
   "publishConfig": {
     "access": "public",

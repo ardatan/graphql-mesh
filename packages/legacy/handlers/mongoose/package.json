@@ -46,8 +46,8 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "graphql": "16.10.0",
-    "mongoose": "8.13.2"
+    "graphql": "16.11.0",
+    "mongoose": "8.15.0"
   },
   "publishConfig": {
     "access": "public",

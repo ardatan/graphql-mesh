@@ -13,10 +13,10 @@
     "@graphql-mesh/cli": "0.100.4",
     "@graphql-mesh/json-schema": "0.109.4",
     "@graphql-mesh/plugin-mock": "0.105.4",
-    "graphql": "16.10.0"
+    "graphql": "16.11.0"
   },
   "devDependencies": {
-    "@types/node": "22.14.1",
+    "@types/node": "22.15.21",
     "jest": "29.7.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"

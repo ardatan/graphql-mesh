@@ -13,7 +13,7 @@
     "@graphql-mesh/json-schema": "0.109.4",
     "@graphql-mesh/plugin-mock": "0.105.4",
     "@graphql-mesh/transform-naming-convention": "0.105.4",
-    "graphql": "16.10.0"
+    "graphql": "16.11.0"
   },
   "devDependencies": {
     "jest": "29.7.0"
