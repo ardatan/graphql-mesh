@@ -464,7 +464,14 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           operationConfig.headers.Accept = methodObj.produces.join(', ');
         }
 
-        if ('content' in responseObj) {
+        /**
+         * The OAS rule is that 204 responses should not specify a content key.
+         * But in the real world, it happens that some specifications present 204 responses with an
+         * empty content key.
+         *
+         * @see https://swagger.io/docs/specification/v3_0/describing-responses/#empty-response-body
+         */
+        if ('content' in responseObj && Object.keys(responseObj.content).length !== 0) {
           const responseObjForStatusCode: {
             oneOf: JSONSchemaObject[];
           } = {
