@@ -49,8 +49,8 @@
     "graphql-scalars": "^1.22.4"
   },
   "devDependencies": {
-    "graphql": "16.10.0",
-    "soap": "1.1.10"
+    "graphql": "16.11.0",
+    "soap": "1.1.11"
   },
   "publishConfig": {
     "access": "public",

@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@graphql-hive/gateway-runtime": "^1.3.5",
-    "graphql": "16.10.0"
+    "graphql": "16.11.0"
   },
   "publishConfig": {
     "access": "public",
