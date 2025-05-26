@@ -55,7 +55,7 @@
     "dotenv": "^16.3.1"
   },
   "devDependencies": {
-    "graphql": "16.10.0"
+    "graphql": "16.11.0"
   },
   "publishConfig": {
     "access": "public",

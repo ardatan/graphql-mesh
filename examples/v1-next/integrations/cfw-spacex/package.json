@@ -11,9 +11,9 @@
     "@graphql-mesh/cache-cfw-kv": "workspace:^",
     "@graphql-mesh/plugin-rate-limit": "^0.104.3",
     "@graphql-mesh/plugin-response-cache": "^0.104.4",
-    "graphql": "16.10.0"
+    "graphql": "16.11.0"
   },
   "devDependencies": {
-    "wrangler": "4.12.0"
+    "wrangler": "4.16.1"
   }
 }

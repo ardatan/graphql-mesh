@@ -11,11 +11,11 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.100.4",
     "@graphql-mesh/json-schema": "0.109.4",
-    "graphql": "16.10.0",
+    "graphql": "16.11.0",
     "unzip-stream": "0.3.4"
   },
   "devDependencies": {
-    "@types/node": "22.14.1",
+    "@types/node": "22.15.21",
     "@types/unzip-stream": "0.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"

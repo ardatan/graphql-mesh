@@ -9,6 +9,6 @@
     "@graphql-hive/gateway": "^1.8.0",
     "@graphql-mesh/compose-cli": "workspace:*",
     "@omnigraph/json-schema": "workspace:*",
-    "graphql": "16.10.0"
+    "graphql": "16.11.0"
   }
 }

@@ -68,7 +68,7 @@
     "@types/minimatch": "5.1.2",
     "@types/pluralize": "^0.0.33",
     "@whatwg-node/promise-helpers": "^1.0.0",
-    "graphql": "16.10.0"
+    "graphql": "16.11.0"
   },
   "publishConfig": {
     "directory": "dist",
