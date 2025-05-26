@@ -9,7 +9,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.100.4",
     "@graphql-mesh/mysql": "0.105.3",
-    "graphql": "16.10.0"
+    "graphql": "16.11.0"
   },
   "devDependencies": {
     "jest": "29.7.0"

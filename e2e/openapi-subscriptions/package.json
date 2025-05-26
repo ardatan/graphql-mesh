@@ -4,7 +4,7 @@
   "dependencies": {
     "@graphql-hive/gateway": "^1.8.0",
     "fets": "^0.8.0",
-    "graphql": "16.10.0",
+    "graphql": "16.11.0",
     "graphql-sse": "^2.5.3",
     "url-join": "^5.0.0"
   }

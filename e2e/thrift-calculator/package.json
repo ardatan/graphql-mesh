@@ -14,6 +14,6 @@
     "@types/express": "^5.0.0",
     "express": "^5.0.0",
     "graphql": "^16.9.0",
-    "thrift": "^0.21.0"
+    "thrift": "^0.22.0"
   }
 }

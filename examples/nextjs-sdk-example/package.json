@@ -16,14 +16,14 @@
     "@graphql-mesh/openapi": "0.109.9",
     "@graphql-mesh/runtime": "0.106.3",
     "apollo-server-micro": "3.13.0",
-    "graphql": "16.10.0",
+    "graphql": "16.11.0",
     "micro": "10.0.1",
     "next": "15.3.2",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "@types/react": "19.1.2",
+    "@types/react": "19.1.5",
     "typescript": "^5.4.2"
   }
 }
