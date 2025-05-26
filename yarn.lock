@@ -13218,8 +13218,8 @@ __metadata:
   linkType: hard
 
 "@theguild/federation-composition@npm:^0.18.2":
-  version: 0.18.2
-  resolution: "@theguild/federation-composition@npm:0.18.2"
+  version: 0.18.3
+  resolution: "@theguild/federation-composition@npm:0.18.3"
   dependencies:
     constant-case: "npm:^3.0.4"
     debug: "npm:4.4.0"
@@ -13227,7 +13227,7 @@ __metadata:
     lodash.sortby: "npm:^4.7.0"
   peerDependencies:
     graphql: ^16.0.0
-  checksum: 10c0/9e0c1ece347d2d0f2cf1c71b284aff48fa70a1c6d44434ad81e01d0626d314a97425f7ade1f6f07a84fd10d091928d604b7242a997c9b70c91142da9f040d498
+  checksum: 10c0/2c8b055f87513bd4d3f1e2757c05ddd70f5699c1e65028ffe2421ec3b1aee599e2b804d4887aaf84b8cb4131a66f7331deb56ebe8a776e215033b88c9f30b8ad
   languageName: node
   linkType: hard
 
