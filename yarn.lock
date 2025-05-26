@@ -3956,7 +3956,7 @@ __metadata:
     "@creditkarma/thrift-server-express": "npm:^1.0.4"
     "@creditkarma/thrift-typescript": "npm:^3.7.6"
     "@graphql-hive/gateway": "npm:^1.8.0"
-    "@omnigraph/thrift": "npm:^0.9.3"
+    "@omnigraph/thrift": "npm:^0.9.4"
     "@types/express": "npm:^5.0.0"
     express: "npm:^5.0.0"
     graphql: "npm:^16.9.0"
@@ -5046,8 +5046,8 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.4"
     "@graphql-mesh/openapi": "npm:0.109.9"
-    "@graphql-mesh/plugin-hive": "npm:0.104.4"
-    "@graphql-mesh/transform-hive": "npm:0.104.4"
+    "@graphql-mesh/plugin-hive": "npm:0.104.5"
+    "@graphql-mesh/transform-hive": "npm:0.104.5"
     graphql: "npm:16.11.0"
   languageName: unknown
   linkType: soft
@@ -5537,7 +5537,7 @@ __metadata:
     "@creditkarma/thrift-server-express": "npm:1.0.4"
     "@creditkarma/thrift-typescript": "npm:3.7.6"
     "@graphql-mesh/cli": "npm:0.100.4"
-    "@graphql-mesh/thrift": "npm:0.106.3"
+    "@graphql-mesh/thrift": "npm:0.106.4"
     "@types/express": "npm:5.0.2"
     "@types/node": "npm:22.15.21"
     concurrently: "npm:9.1.2"
@@ -6856,7 +6856,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-hive@npm:0.104.4, @graphql-mesh/plugin-hive@workspace:packages/plugins/hive":
+"@graphql-mesh/plugin-hive@npm:0.104.5, @graphql-mesh/plugin-hive@workspace:packages/plugins/hive":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
@@ -7283,7 +7283,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/thrift@npm:0.106.3, @graphql-mesh/thrift@workspace:packages/legacy/handlers/thrift":
+"@graphql-mesh/thrift@npm:0.106.4, @graphql-mesh/thrift@workspace:packages/legacy/handlers/thrift":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/thrift@workspace:packages/legacy/handlers/thrift"
   dependencies:
@@ -7292,7 +7292,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.104.3"
     "@graphql-mesh/utils": "npm:^0.104.3"
     "@graphql-tools/utils": "npm:^10.8.0"
-    "@omnigraph/thrift": "npm:^0.9.3"
+    "@omnigraph/thrift": "npm:^0.9.4"
     "@types/thrift": "npm:0.10.17"
     "@types/url-join": "npm:4.0.3"
     graphql: "npm:16.11.0"
@@ -7395,7 +7395,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transform-hive@npm:0.104.4, @graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive":
+"@graphql-mesh/transform-hive@npm:0.104.5, @graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-hive@workspace:packages/legacy/transforms/hive"
   dependencies:
@@ -10972,7 +10972,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/thrift@npm:^0.9.3, @omnigraph/thrift@workspace:packages/loaders/thrift":
+"@omnigraph/thrift@npm:^0.9.4, @omnigraph/thrift@workspace:packages/loaders/thrift":
   version: 0.0.0-use.local
   resolution: "@omnigraph/thrift@workspace:packages/loaders/thrift"
   dependencies:
