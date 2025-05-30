@@ -1,5 +1,5 @@
 ---
-'@graphql-mesh/cache-redis': minor
+'@graphql-mesh/cache-redis': patch
 '@graphql-mesh/types': patch
 ---
 
