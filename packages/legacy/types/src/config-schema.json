@@ -15,13 +15,16 @@
           "$ref": "#/definitions/LocalforageConfig"
         },
         "redis": {
-          "description": "Any of: RedisConfigSentinel, RedisConfigSingle",
+          "description": "Any of: RedisConfigSentinel, RedisConfigSingle, RedisConfigCluster",
           "anyOf": [
             {
               "$ref": "#/definitions/RedisConfigSentinel"
             },
             {
               "$ref": "#/definitions/RedisConfigSingle"
+            },
+            {
+              "$ref": "#/definitions/RedisConfigCluster"
             }
           ]
         }
@@ -80,6 +83,40 @@
           "type": "string"
         }
       }
+    },
+    "RedisConfigCluster": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RedisConfigCluster",
+      "properties": {
+        "startupNodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RedisSentinelConfig"
+          },
+          "additionalItems": false
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "db": {
+          "type": "integer"
+        },
+        "lazyConnect": {
+          "type": "boolean",
+          "description": "Flag to indicate lazyConnect value for Redis client.\n\n@default: true"
+        },
+        "dnsLookupAsIs": {
+          "type": "boolean"
+        },
+        "tls": {
+          "type": "boolean"
+        }
+      },
+      "required": ["startupNodes"]
     },
     "RedisConfigSentinel": {
       "additionalProperties": false,
