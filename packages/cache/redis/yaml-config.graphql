@@ -2,7 +2,28 @@ type Cache {
   redis: RedisConfig
 }
 
-union RedisConfig @md = RedisConfigSentinel | RedisConfigSingle
+union RedisConfig @md = RedisConfigSentinel | RedisConfigSingle | RedisConfigCluster
+
+type RedisConfigCluster @md {
+  startupNodes: [RedisSentinelConfig!]!
+  username: String
+  password: String
+  db: Int
+  """
+  Flag to indicate lazyConnect value for Redis client.
+
+  @default: true
+  """
+  lazyConnect: Boolean
+  """
+  Needed for TLS connections to Redis Cluster (especially when using AWS Elasticache Clusters with TLS).
+  """
+  dnsLookupAsIs: Boolean
+  """
+  Enable TLS for Redis Cluster connections.
+  """
+  tls: Boolean
+}
 
 type RedisConfigSentinel @md {
   """

@@ -1809,9 +1809,9 @@ export interface Cache {
   file?: FileCacheConfig;
   localforage?: LocalforageConfig;
   /**
-   * Any of: RedisConfigSentinel, RedisConfigSingle
+   * Any of: RedisConfigSentinel, RedisConfigSingle, RedisConfigCluster
    */
-  redis?: RedisConfigSentinel | RedisConfigSingle;
+  redis?: RedisConfigSentinel | RedisConfigSingle | RedisConfigCluster;
   [k: string]: any;
 }
 export interface CFWorkersKVCacheConfig {
@@ -1883,6 +1883,20 @@ export interface RedisConfigSingle {
    * @default: true
    */
   lazyConnect?: boolean;
+}
+export interface RedisConfigCluster {
+  startupNodes: RedisSentinelConfig[];
+  username?: string;
+  password?: string;
+  db?: number;
+  /**
+   * Flag to indicate lazyConnect value for Redis client.
+   *
+   * @default: true
+   */
+  lazyConnect?: boolean;
+  dnsLookupAsIs?: boolean;
+  tls?: boolean;
 }
 export interface PubSubConfig {
   name: string;
