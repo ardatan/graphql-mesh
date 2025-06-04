@@ -1,5 +1,16 @@
 # @graphql-mesh/types
 
+## 0.104.4
+
+### Patch Changes
+
+- [#8651](https://github.com/ardatan/graphql-mesh/pull/8651)
+  [`6b4c546`](https://github.com/ardatan/graphql-mesh/commit/6b4c5467285d502940316eb430c292e52fb928f2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Redis Cluster support
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.104.4
+
 ## 0.104.3
 
 ### Patch Changes
