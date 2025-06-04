@@ -638,7 +638,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                       actualPath = path;
                       // Find the operation by looking for GET method or first available method
                       const pathObj = possibleOasDoc.paths[path];
-                      actualOperation = pathObj['get'] || (pathObj[Object.keys(pathObj)[0]] as any);
+                      actualOperation = pathObj.get || (pathObj[Object.keys(pathObj)[0]] as any);
                       break;
                     }
                   }
