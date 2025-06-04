@@ -82,7 +82,19 @@ type MethodObjFieldMap = WeakMap<
   }
 >;
 
-const futureLinks = new Set<FutureLink>();
+export interface HATEOASContext {
+  futureLinks: Set<FutureLink>;
+  loadedSchemas: Map<
+    string,
+    {
+      oasDoc: OpenAPIV3.Document | OpenAPIV2.Document;
+      methodObjFieldMap: MethodObjFieldMap;
+    }
+  >;
+}
+
+// Global fallback for backward compatibility - exported for testing
+export const futureLinks = new Set<FutureLink>();
 
 export async function getJSONSchemaOptionsFromOpenAPIOptions(
   name: string,
@@ -100,7 +112,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     jsonApi,
     HATEOAS,
   }: GetJSONSchemaOptionsFromOpenAPIOptionsParams,
+  hateoasContext?: HATEOASContext,
 ) {
+  // Use provided context or create/use global fallback
+  const contextFutureLinks = hateoasContext?.futureLinks || futureLinks;
+  const loadedSchemas = hateoasContext?.loadedSchemas || new Map();
+
   const hateOasConfig: HATEOASConfig | false =
     HATEOAS === true
       ? defaultHateoasConfig
@@ -223,9 +240,19 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     OperationConfig
   >();
 
-  for (const futureLink of futureLinks) {
+  // Try to resolve any pending future links with currently loaded schemas
+  for (const [schemaName, schemaData] of loadedSchemas) {
+    for (const futureLink of Array.from(contextFutureLinks)) {
+      if (futureLink(schemaName, schemaData.oasDoc, schemaData.methodObjFieldMap)) {
+        contextFutureLinks.delete(futureLink);
+      }
+    }
+  }
+
+  // Try to resolve future links with current schema
+  for (const futureLink of Array.from(contextFutureLinks)) {
     if (futureLink(name, oasOrSwagger, methodObjFieldMap)) {
-      break;
+      contextFutureLinks.delete(futureLink);
     }
   }
 
@@ -595,7 +622,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               ]?.find(link => link[hateOasConfig.linkNameIdentifier] === linkName);
               if (xLinkObj) {
                 const xLinkHref = xLinkObj[hateOasConfig.linkPathIdentifier];
-                const cleanXLinkHref = xLinkHref.replace(/{[^}]+}/g, '{}');
+                // Remove query parameters and path parameters for comparison
+                const cleanXLinkHref = xLinkHref.split('?')[0].replace(/{[^}]+}/g, '{}');
                 const deferred = createDeferred<void>();
                 function findActualOperationAndPath(
                   possibleName: string,
@@ -605,10 +633,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                   let actualOperation: OpenAPIV3.OperationObject;
                   let actualPath: string;
                   for (const path in possibleOasDoc.paths) {
-                    const cleanPath = path.replace(/{[^}]+}/g, '{}');
+                    const cleanPath = path.split('?')[0].replace(/{[^}]+}/g, '{}');
                     if (cleanPath === cleanXLinkHref) {
                       actualPath = path;
-                      actualOperation = possibleOasDoc.paths[path][method];
+                      // Find the operation by looking for GET method or first available method
+                      const pathObj = possibleOasDoc.paths[path];
+                      actualOperation = pathObj['get'] || (pathObj[Object.keys(pathObj)[0]] as any);
                       break;
                     }
                   }
@@ -686,22 +716,31 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                         }
                       }
                     }
-                    futureLinks.delete(findActualOperationAndPath);
+                    contextFutureLinks.delete(findActualOperationAndPath);
                     deferred.resolve();
                     return true;
                   }
                   return false;
                 }
-                setTimeout(() => {
-                  logger.warn(
-                    `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
-                  );
-                  futureLinks.delete(findActualOperationAndPath);
-                  deferred.resolve();
-                }, 5000);
-                if (!findActualOperationAndPath(name, oasOrSwagger, methodObjFieldMap)) {
-                  futureLinks.add(findActualOperationAndPath);
+                // Only set timeout if we're not in batch mode (no context provided)
+                if (!hateoasContext) {
+                  setTimeout(() => {
+                    logger.warn(
+                      `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
+                    );
+                    contextFutureLinks.delete(findActualOperationAndPath);
+                    deferred.resolve();
+                  }, 5000);
                 }
+                if (!findActualOperationAndPath(name, oasOrSwagger, methodObjFieldMap)) {
+                  contextFutureLinks.add(findActualOperationAndPath);
+                }
+
+                // In batch mode, resolve immediately since we'll handle resolution later
+                if (hateoasContext) {
+                  deferred.resolve();
+                }
+
                 return deferred.promise;
               }
             }),
@@ -845,6 +884,14 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     }
   }
 
+  // Register this schema in the context for future cross-references
+  if (hateoasContext) {
+    loadedSchemas.set(name, {
+      oasDoc: oasOrSwagger,
+      methodObjFieldMap,
+    });
+  }
+
   return {
     operations,
     endpoint,
@@ -853,4 +900,70 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     schemaHeaders,
     operationHeaders,
   };
+}
+
+/**
+ * Loads multiple OpenAPI schemas with proper HATEOAS cross-reference resolution.
+ * This function ensures that schemas referencing operations from other schemas
+ * are resolved correctly regardless of loading order.
+ */
+export async function getJSONSchemaOptionsFromMultipleOpenAPIOptions(
+  schemas: Array<{
+    name: string;
+    options: GetJSONSchemaOptionsFromOpenAPIOptionsParams;
+  }>,
+): Promise<
+  Array<{
+    name: string;
+    result: Awaited<ReturnType<typeof getJSONSchemaOptionsFromOpenAPIOptions>>;
+  }>
+> {
+  // Create shared context for cross-schema HATEOAS resolution
+  const hateoasContext: HATEOASContext = {
+    futureLinks: new Set(),
+    loadedSchemas: new Map(),
+  };
+
+  const results: Array<{
+    name: string;
+    result: Awaited<ReturnType<typeof getJSONSchemaOptionsFromOpenAPIOptions>>;
+  }> = [];
+
+  // First pass: Load all schemas
+  for (const { name, options } of schemas) {
+    const result = await getJSONSchemaOptionsFromOpenAPIOptions(name, options, hateoasContext);
+    results.push({ name, result });
+  }
+
+  // Second pass: Attempt to resolve any remaining future links
+  let maxAttempts = schemas.length * 2; // Prevent infinite loops
+
+  while (hateoasContext.futureLinks.size > 0 && maxAttempts > 0) {
+    const initialSize = hateoasContext.futureLinks.size;
+
+    for (const [schemaName, schemaData] of hateoasContext.loadedSchemas) {
+      for (const futureLink of Array.from(hateoasContext.futureLinks)) {
+        if (futureLink(schemaName, schemaData.oasDoc, schemaData.methodObjFieldMap)) {
+          hateoasContext.futureLinks.delete(futureLink);
+        }
+      }
+    }
+
+    // If no progress was made, break to avoid infinite loop
+    if (hateoasContext.futureLinks.size === initialSize) {
+      break;
+    }
+
+    maxAttempts--;
+  }
+
+  // Log remaining unresolved links
+  if (hateoasContext.futureLinks.size > 0) {
+    const logger = new DefaultLogger('getJSONSchemaOptionsFromMultipleOpenAPIOptions');
+    logger.warn(
+      `${hateoasContext.futureLinks.size} HATEOAS links could not be resolved after loading all schemas. This may indicate missing operations or circular dependencies.`,
+    );
+  }
+
+  return results;
 }
