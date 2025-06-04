@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+import Redis, { type Cluster } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
@@ -16,11 +16,41 @@ function interpolateStrWithEnv(str: string): string {
 }
 
 export default class RedisCache<V = string> implements KeyValueCache<V>, Disposable {
-  private client: Redis;
+  private client: Redis | Cluster;
 
   constructor(options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub; logger: Logger }) {
     const lazyConnect = options.lazyConnect !== false;
-    if ('sentinels' in options) {
+    if ('startupNodes' in options) {
+      const parsedUsername =
+        interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
+      const parsedPassword =
+        interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
+      const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+      const numDb = parseInt(parsedDb);
+      this.client = new Redis.Cluster(
+        options.startupNodes.map(s => ({
+          host: s.host && interpolateStrWithEnv(s.host),
+          port: s.port && parseInt(interpolateStrWithEnv(s.port)),
+          family: s.family && parseInt(interpolateStrWithEnv(s.family)),
+        })),
+        {
+          dnsLookup: options.dnsLookupAsIs
+            ? (address, callback) => callback(null, address)
+            : undefined,
+          redisOptions: {
+            username: parsedUsername,
+            password: parsedPassword,
+            db: isNaN(numDb) ? undefined : numDb,
+            enableAutoPipelining: true,
+            ...(lazyConnect ? { lazyConnect: true } : {}),
+            tls: options.tls ? {} : undefined,
+          },
+          enableAutoPipelining: true,
+          enableOfflineQueue: true,
+          ...(lazyConnect ? { lazyConnect: true } : {}),
+        },
+      );
+    } else if ('sentinels' in options) {
       this.client = new Redis({
         name: options.name,
         sentinelPassword:
@@ -123,7 +153,12 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   }
 }
 
-function scanPatterns(redis: Redis, pattern: string, cursor: string = '0', keys: string[] = []) {
+function scanPatterns(
+  redis: Redis | Cluster,
+  pattern: string,
+  cursor: string = '0',
+  keys: string[] = [],
+) {
   return redis.scan(cursor, 'MATCH', pattern, 'COUNT', '10').then(([nextCursor, nextKeys]) => {
     keys.push(...nextKeys);
     if (nextCursor === '0') {
