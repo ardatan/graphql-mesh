@@ -30,3 +30,4 @@ newrelic_agent.log
 !.yarn/versions
 .mise.toml
 docker/supergraph.graphql
+eslint_report.json
