@@ -1,5 +1,15 @@
 # @omnigraph/openapi
 
+## 0.109.11
+
+### Patch Changes
+
+- [#8655](https://github.com/ardatan/graphql-mesh/pull/8655)
+  [`41757dd`](https://github.com/ardatan/graphql-mesh/commit/41757dd63f8d3abde0a6c65130697939185bf468)
+  Thanks [@arnaud](https://github.com/arnaud)! - The fix ensures that there is no correct or
+  incorrect order of swaggers - whatever their order, schema loading and HATEOAS cross-referencing
+  works reliably through coordinated batch processing with proper dependency resolution.
+
 ## 0.109.10
 
 ### Patch Changes
