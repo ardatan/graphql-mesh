@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/openapi",
-  "version": "0.109.10",
+  "version": "0.109.11",
   "type": "module",
   "repository": {
     "type": "git",
