@@ -79,7 +79,7 @@ export function wrapFetchWithHooks<TContext>(
         ),
       function handleIterationResult() {
         return handleMaybePromise(
-          () => (response$ ? response$ : fetchFn(url, options, context, info)),
+          () => response$ || fetchFn(url, options, context, info),
           function (response: Response) {
             return handleMaybePromise(
               () =>
