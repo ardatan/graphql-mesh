@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-localforage",
-  "version": "0.105.5",
+  "version": "0.105.6",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,9 +35,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cache-inmemory-lru": "^0.8.5",
-    "@graphql-mesh/types": "^0.104.4",
-    "@graphql-mesh/utils": "^0.104.4",
+    "@graphql-mesh/cache-inmemory-lru": "^0.8.6",
+    "@graphql-mesh/types": "^0.104.5",
+    "@graphql-mesh/utils": "^0.104.5",
     "localforage": "1.10.0",
     "tslib": "^2.4.0"
   },
