@@ -27,4 +27,16 @@ describe('Fetch instrumentation', () => {
     expect(await res.json()).toEqual({ hello: 'world' });
     expect(receivedExecutionRequest).toBe(executionRequest);
   });
+  it('should call onFetchDone when onFetch ends with response early', async () => {
+    const onFetchDoneFn = jest.fn();
+    const early = new Response('Early response');
+    const wrappedFetch = wrapFetchWithHooks([
+      ({ endResponse }) => {
+        endResponse(early);
+        return onFetchDoneFn;
+      },
+    ]);
+    await wrappedFetch('http://localhost:4000');
+    expect(onFetchDoneFn).toHaveBeenCalledWith(expect.objectContaining({ response: early }));
+  });
 });
