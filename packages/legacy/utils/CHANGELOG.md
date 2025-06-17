@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.104.5
+
+### Patch Changes
+
+- [#8658](https://github.com/ardatan/graphql-mesh/pull/8658)
+  [`9d61d75`](https://github.com/ardatan/graphql-mesh/commit/9d61d75c462a577b5fa4fe3285370abb6ea064c8)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Run onFetchDone hooks even if onFetch has
+  ended early with a response
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.104.5
+
 ## 0.104.4
 
 ### Patch Changes
