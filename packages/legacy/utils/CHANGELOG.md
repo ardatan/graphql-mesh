@@ -1,5 +1,16 @@
 # @graphql-mesh/utils
 
+## 0.104.6
+
+### Patch Changes
+
+- [`e2666bc`](https://github.com/ardatan/graphql-mesh/commit/e2666bc151e63f319fe65d2f3e18bdfe1e305b2a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add `asyncDispose` symbol property as writable
+  while using `makeAsyncDisposable`
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.104.6
+
 ## 0.104.5
 
 ### Patch Changes

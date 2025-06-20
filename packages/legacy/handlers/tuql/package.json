@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/tuql",
-  "version": "0.105.5",
+  "version": "0.105.6",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,8 +35,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "^0.104.5",
-    "@omnigraph/sqlite": "^0.8.5",
+    "@graphql-mesh/types": "^0.104.6",
+    "@omnigraph/sqlite": "^0.8.6",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
