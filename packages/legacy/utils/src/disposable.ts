@@ -33,6 +33,7 @@ export function makeDisposable<T>(obj: T, disposeFn: () => void): T & Disposable
   Object.defineProperty(obj, DisposableSymbols.dispose, {
     value: disposeFn,
     configurable: true,
+    writable: true,
   });
   return obj as T & Disposable;
 }
@@ -44,6 +45,7 @@ export function makeAsyncDisposable<T>(
   Object.defineProperty(obj, DisposableSymbols.asyncDispose, {
     value: disposeFn,
     configurable: true,
+    writable: true,
   });
   return obj as T & AsyncDisposable;
 }
