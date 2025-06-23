@@ -6,9 +6,10 @@ import { Callout } from '@theguild/components'
 
 # Federation Transform
 
-If the original subgraph is not a [federated](https://the-guild.dev/graphql/hive/federation]
-subgraph that includes annotations and directives that conform to the Federation specification. You
-can use this transform to provide them and convert the subgraph to a federated subgraph.
+If the [GraphQL source](/v1/source-handlers/graphql) is not a
+[Federated Subgraph](https://the-guild.dev/graphql/hive/federation), you may use this Federation
+Transform to provide necessary annotations and directive to convert the GraphQL source to a
+Federated Subgraph conforming to the Federation specification.
 
 <Callout>
   If you want to add `@key` directive in your subgraph, you need to be aware of [Type
@@ -35,7 +36,7 @@ And you want to add `@key` directive to the `Product` type. Then you can add the
 configuration to your `mesh.config.ts` file. But you need `resolveReference` to be able to resolve
 the reference, which is equivalent of `__resolveReference` resolver in regular Federation.
 
-```ts filename="mesh.config.ts" {13-17}
+```ts filename="mesh.config.ts"
 import {
   createFederationTransform,
   defineConfig,
@@ -73,7 +74,7 @@ export const composeConfig = defineConfig({
 })
 ```
 
-<Callout>
+<Callout type="info">
   [Learn more](https://www.apollographql.com/docs/federation/federated-types/federated-directives/)
   about other directives in [Federation](https://the-guild.dev/graphql/hive/federation)
 </Callout>
