@@ -64,6 +64,8 @@ export default class MySQLHandler implements MeshHandler {
       }
       return loadGraphQLSchemaFromMySQL(this.name, {
         endpoint: endpointUrl.toString(),
+        tables: this.config.tables,
+        tableFields: this.config.tableFields,
         ssl: {
           rejectUnauthorized: this.config.ssl?.rejectUnauthorized,
           caPath: this.config.ssl?.ca,

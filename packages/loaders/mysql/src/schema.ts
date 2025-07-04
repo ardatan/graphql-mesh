@@ -36,6 +36,7 @@ export interface LoadGraphQLSchemaFromMySQLOpts {
   endpoint: string;
   ssl?: MySQLSSLOptions;
   tables?: string[];
+  tableFields?: TableFieldConfig[];
 }
 
 export async function loadGraphQLSchemaFromMySQL(
@@ -97,6 +98,7 @@ export async function loadGraphQLSchemaFromMySQL(
         subgraphName,
         tableName,
         tables,
+        tableFieldsConfig: opts.tableFields,
         schemaComposer,
         introspectionConnection,
         autoIncrementedColumns,
