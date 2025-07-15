@@ -1,0 +1,944 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when the tableFields option is provided in order to filter some fields out 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+  posts(limit: Int, offset: Int, where: posts_WhereInput, orderBy: posts_OrderByInput): [posts] @mysqlSelect(subgraph: "test", table: "posts")
+  count_posts(where: posts_WhereInput): Int @mysqlCount(subgraph: "test", table: "posts")
+}
+
+"""User table"""
+type users {
+  user_id: Int!
+  username: String!
+}
+
+"""User table"""
+input users_WhereInput {
+  user_id: String
+  username: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  user_id: OrderBy
+  username: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+"""Post table"""
+type posts {
+  post_id: Int!
+}
+
+"""Post table"""
+input posts_WhereInput {
+  post_id: String
+}
+
+"""Post table"""
+input posts_OrderByInput {
+  post_id: OrderBy
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+  insert_posts(posts: posts_InsertInput!): posts @mysqlInsert(subgraph: "test", table: "posts", primaryKeys: [])
+  update_posts(posts: posts_UpdateInput!, where: posts_WhereInput): posts @mysqlUpdate(subgraph: "test", table: "posts")
+  delete_posts(where: posts_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "posts")
+}
+
+"""User table"""
+input users_InsertInput {
+  user_id: Int!
+  username: String!
+}
+
+"""User table"""
+input users_UpdateInput {
+  user_id: Int
+  username: String
+}
+
+"""Post table"""
+input posts_InsertInput {
+  post_id: Int!
+}
+
+"""Post table"""
+input posts_UpdateInput {
+  post_id: Int
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when the tables option is provided in order to filter some tables out 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+  posts(limit: Int, offset: Int, where: posts_WhereInput, orderBy: posts_OrderByInput): [posts] @mysqlSelect(subgraph: "test", table: "posts")
+  count_posts(where: posts_WhereInput): Int @mysqlCount(subgraph: "test", table: "posts")
+}
+
+"""User table"""
+type users {
+  user_id: Int!
+  username: String!
+}
+
+"""User table"""
+input users_WhereInput {
+  user_id: String
+  username: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  user_id: OrderBy
+  username: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+"""Post table"""
+type posts {
+  post_id: Int!
+  by_user_id: Int!
+}
+
+"""Post table"""
+input posts_WhereInput {
+  post_id: String
+  by_user_id: String
+}
+
+"""Post table"""
+input posts_OrderByInput {
+  post_id: OrderBy
+  by_user_id: OrderBy
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+  insert_posts(posts: posts_InsertInput!): posts @mysqlInsert(subgraph: "test", table: "posts", primaryKeys: ["post_id"])
+  update_posts(posts: posts_UpdateInput!, where: posts_WhereInput): posts @mysqlUpdate(subgraph: "test", table: "posts")
+  delete_posts(where: posts_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "posts")
+}
+
+"""User table"""
+input users_InsertInput {
+  user_id: Int!
+  username: String!
+}
+
+"""User table"""
+input users_UpdateInput {
+  user_id: Int
+  username: String
+}
+
+"""Post table"""
+input posts_InsertInput {
+  post_id: Int!
+  by_user_id: Int!
+}
+
+"""Post table"""
+input posts_UpdateInput {
+  post_id: Int
+  by_user_id: Int
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there are ENUM fields in the mysql definition 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+}
+
+"""User table"""
+type users {
+  user_id: Int!
+  status: users_status!
+}
+
+enum users_status {
+  active
+  inactive
+  pending
+}
+
+"""User table"""
+input users_WhereInput {
+  user_id: String
+  status: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  user_id: OrderBy
+  status: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+}
+
+"""User table"""
+input users_InsertInput {
+  user_id: Int!
+  status: users_status
+}
+
+"""User table"""
+input users_UpdateInput {
+  user_id: Int
+  status: users_status
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there are SET fields in the mysql definition 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+}
+
+"""User table"""
+type users {
+  """Primary key"""
+  user_id: Int!
+  """User tags"""
+  tags: users_tags
+}
+
+enum users_tags {
+  tag1
+  tag2
+  tag3
+}
+
+"""User table"""
+input users_WhereInput {
+  """Primary key"""
+  user_id: String
+  """User tags"""
+  tags: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  """Primary key"""
+  user_id: OrderBy
+  """User tags"""
+  tags: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+}
+
+"""User table"""
+input users_InsertInput {
+  """Primary key"""
+  user_id: Int
+  """User tags"""
+  tags: users_tags
+}
+
+"""User table"""
+input users_UpdateInput {
+  """Primary key"""
+  user_id: Int
+  """User tags"""
+  tags: users_tags
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there are json fields in the mysql definition 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+}
+
+"""User table"""
+type users {
+  """Primary key"""
+  user_id: Int!
+  """JSON data field"""
+  data_table_field: JSON
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+"""User table"""
+input users_WhereInput {
+  """Primary key"""
+  user_id: String
+  """JSON data field"""
+  data_table_field: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  """Primary key"""
+  user_id: OrderBy
+  """JSON data field"""
+  data_table_field: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+}
+
+"""User table"""
+input users_InsertInput {
+  """Primary key"""
+  user_id: Int
+  """JSON data field"""
+  data_table_field: JSON
+}
+
+"""User table"""
+input users_UpdateInput {
+  """Primary key"""
+  user_id: Int
+  """JSON data field"""
+  data_table_field: JSON
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there are multiple tables and a foreign key relationship 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+  posts(limit: Int, offset: Int, where: posts_WhereInput, orderBy: posts_OrderByInput): [posts] @mysqlSelect(subgraph: "test", table: "posts")
+  count_posts(where: posts_WhereInput): Int @mysqlCount(subgraph: "test", table: "posts")
+}
+
+"""User table"""
+type users {
+  user_id: Int!
+  username: String!
+  posts(limit: Int, offset: Int, where: posts_WhereInput, orderBy: posts_OrderByInput): [posts] @mysqlSelect(subgraph: "test", table: "posts", columnMap: [["by_user_id", "user_id"]])
+}
+
+"""Post table"""
+type posts {
+  post_id: Int!
+  by_user_id: Int!
+  users(where: users_WhereInput, orderBy: users_OrderByInput, limit: Int, offset: Int): [users] @mysqlSelect(subgraph: "test", table: "users", columnMap: [["user_id", "by_user_id"]]) @mysqlTableForeign(subgraph: "test", columnName: "by_user_id")
+}
+
+"""User table"""
+input users_WhereInput {
+  user_id: String
+  username: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  user_id: OrderBy
+  username: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+"""Post table"""
+input posts_WhereInput {
+  post_id: String
+  by_user_id: String
+}
+
+"""Post table"""
+input posts_OrderByInput {
+  post_id: OrderBy
+  by_user_id: OrderBy
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+  insert_posts(posts: posts_InsertInput!): posts @mysqlInsert(subgraph: "test", table: "posts", primaryKeys: ["post_id"])
+  update_posts(posts: posts_UpdateInput!, where: posts_WhereInput): posts @mysqlUpdate(subgraph: "test", table: "posts")
+  delete_posts(where: posts_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "posts")
+}
+
+"""User table"""
+input users_InsertInput {
+  user_id: Int!
+  username: String!
+}
+
+"""User table"""
+input users_UpdateInput {
+  user_id: Int
+  username: String
+}
+
+"""Post table"""
+input posts_InsertInput {
+  post_id: Int!
+  by_user_id: Int!
+}
+
+"""Post table"""
+input posts_UpdateInput {
+  post_id: Int
+  by_user_id: Int
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is a field with a comment 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+}
+
+"""User table"""
+type users {
+  """A specific comment for user_id"""
+  user_id: Int!
+  user_name: String!
+}
+
+"""User table"""
+input users_WhereInput {
+  """A specific comment for user_id"""
+  user_id: String
+  user_name: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  """A specific comment for user_id"""
+  user_id: OrderBy
+  user_name: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+}
+
+"""User table"""
+input users_InsertInput {
+  """A specific comment for user_id"""
+  user_id: Int!
+  user_name: String
+}
+
+"""User table"""
+input users_UpdateInput {
+  """A specific comment for user_id"""
+  user_id: Int
+  user_name: String
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is a field with a non-nullable value and a default value 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+}
+
+"""User table"""
+type users {
+  user_id: Int!
+  user_name: String!
+}
+
+"""User table"""
+input users_WhereInput {
+  user_id: String
+  user_name: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  user_id: OrderBy
+  user_name: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+}
+
+"""User table"""
+input users_InsertInput {
+  user_id: Int!
+  user_name: String
+}
+
+"""User table"""
+input users_UpdateInput {
+  user_id: Int
+  user_name: String
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is a field with a nullable value and a default value 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+}
+
+"""User table"""
+type users {
+  user_id: Int!
+  user_name: String
+}
+
+"""User table"""
+input users_WhereInput {
+  user_id: String
+  user_name: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  user_id: OrderBy
+  user_name: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+}
+
+"""User table"""
+input users_InsertInput {
+  user_id: Int!
+  user_name: String
+}
+
+"""User table"""
+input users_UpdateInput {
+  user_id: Int
+  user_name: String
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is a field with a nullable value and no default value 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+}
+
+"""User table"""
+type users {
+  user_id: Int!
+  user_name: String
+}
+
+"""User table"""
+input users_WhereInput {
+  user_id: String
+  user_name: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  user_id: OrderBy
+  user_name: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+}
+
+"""User table"""
+input users_InsertInput {
+  user_id: Int!
+  user_name: String
+}
+
+"""User table"""
+input users_UpdateInput {
+  user_id: Int
+  user_name: String
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is a single basic mysql table 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+}
+
+"""User table"""
+type users {
+  user_id: Int!
+}
+
+"""User table"""
+input users_WhereInput {
+  user_id: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  user_id: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+}
+
+"""User table"""
+input users_InsertInput {
+  user_id: Int!
+}
+
+"""User table"""
+input users_UpdateInput {
+  user_id: Int
+}"
+`;
+
+exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is an auto increment field in the mysql definition 1`] = `
+"schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlInsert(subgraph: String, table: String, primaryKeys: [String]) on FIELD_DEFINITION
+
+directive @mysqlUpdate(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
+
+directive @mysqlDelete(subgraph: String, table: String) on FIELD_DEFINITION
+
+directive @mysqlTableForeign(subgraph: String, columnName: String) on FIELD_DEFINITION
+
+directive @mysqlCount(subgraph: String, table: String) on FIELD_DEFINITION
+
+type Query {
+  users(limit: Int, offset: Int, where: users_WhereInput, orderBy: users_OrderByInput): [users] @mysqlSelect(subgraph: "test", table: "users")
+  count_users(where: users_WhereInput): Int @mysqlCount(subgraph: "test", table: "users")
+}
+
+"""User table"""
+type users {
+  user_id: Int!
+  user_sequence_id: Int!
+}
+
+"""User table"""
+input users_WhereInput {
+  user_id: String
+  user_sequence_id: String
+}
+
+"""User table"""
+input users_OrderByInput {
+  user_id: OrderBy
+  user_sequence_id: OrderBy
+}
+
+enum OrderBy {
+  asc
+  desc
+}
+
+type Mutation {
+  insert_users(users: users_InsertInput!): users @mysqlInsert(subgraph: "test", table: "users", primaryKeys: ["user_id"])
+  update_users(users: users_UpdateInput!, where: users_WhereInput): users @mysqlUpdate(subgraph: "test", table: "users")
+  delete_users(where: users_WhereInput): Boolean @mysqlDelete(subgraph: "test", table: "users")
+}
+
+"""User table"""
+input users_InsertInput {
+  user_id: Int!
+  user_sequence_id: Int
+}
+
+"""User table"""
+input users_UpdateInput {
+  user_id: Int
+  user_sequence_id: Int
+}"
+`;
