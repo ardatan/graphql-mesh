@@ -1,5 +1,14 @@
 # @omnigraph/mysql
 
+## 0.9.7
+
+### Patch Changes
+
+- [#8665](https://github.com/ardatan/graphql-mesh/pull/8665)
+  [`e2887f2`](https://github.com/ardatan/graphql-mesh/commit/e2887f2cf88044c3d4b6911ed2444c09ad71f819)
+  Thanks [@angelsvirkov](https://github.com/angelsvirkov)! - Fix tables and tableFields config
+  options inside mysql handler and schema loader
+
 ## 0.9.6
 
 ### Patch Changes
