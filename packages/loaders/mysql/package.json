@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/mysql",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "type": "module",
   "repository": {
     "type": "git",

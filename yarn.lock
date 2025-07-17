@@ -5184,7 +5184,7 @@ __metadata:
   resolution: "@examples/mysql-employees@workspace:examples/mysql-employees"
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.7"
-    "@graphql-mesh/mysql": "npm:0.105.6"
+    "@graphql-mesh/mysql": "npm:0.105.7"
     graphql: "npm:16.11.0"
   languageName: unknown
   linkType: soft
@@ -5194,7 +5194,7 @@ __metadata:
   resolution: "@examples/mysql-rfam@workspace:examples/mysql-rfam"
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.7"
-    "@graphql-mesh/mysql": "npm:0.105.6"
+    "@graphql-mesh/mysql": "npm:0.105.7"
     graphql: "npm:16.11.0"
     jest: "npm:29.7.0"
   languageName: unknown
@@ -6779,7 +6779,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/mysql@npm:0.105.6, @graphql-mesh/mysql@workspace:packages/legacy/handlers/mysql":
+"@graphql-mesh/mysql@npm:0.105.7, @graphql-mesh/mysql@workspace:packages/legacy/handlers/mysql":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/mysql@workspace:packages/legacy/handlers/mysql"
   dependencies:
@@ -6787,7 +6787,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.104.6"
     "@graphql-mesh/utils": "npm:^0.104.6"
     "@graphql-tools/utils": "npm:^10.8.0"
-    "@omnigraph/mysql": "npm:^0.9.6"
+    "@omnigraph/mysql": "npm:^0.9.7"
     graphql: "npm:16.11.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -10812,7 +10812,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/mysql@npm:^0.9.6, @omnigraph/mysql@workspace:packages/loaders/mysql":
+"@omnigraph/mysql@npm:^0.9.7, @omnigraph/mysql@workspace:packages/loaders/mysql":
   version: 0.0.0-use.local
   resolution: "@omnigraph/mysql@workspace:packages/loaders/mysql"
   dependencies:
