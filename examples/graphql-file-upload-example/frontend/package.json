@@ -18,7 +18,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "4.2.4"
+    "web-vitals": "5.0.3"
   },
   "devDependencies": {
     "@types/apollo-upload-client": "18.0.0",
