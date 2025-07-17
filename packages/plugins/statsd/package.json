@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@envelop/core": "^5.1.0",
-    "@envelop/statsd": "^6.0.0",
+    "@envelop/statsd": "^7.0.0",
     "@graphql-mesh/types": "^0.104.6",
     "@graphql-mesh/utils": "^0.104.6",
     "@whatwg-node/disposablestack": "^0.0.6",

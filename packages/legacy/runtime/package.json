@@ -36,8 +36,8 @@
   },
   "dependencies": {
     "@envelop/core": "^5.1.0",
-    "@envelop/extended-validation": "^5.0.0",
-    "@envelop/graphql-jit": "^9.0.0",
+    "@envelop/extended-validation": "^6.0.0",
+    "@envelop/graphql-jit": "^10.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "^0.5.8",
     "@graphql-mesh/types": "^0.104.6",

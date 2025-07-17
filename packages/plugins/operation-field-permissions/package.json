@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@envelop/core": "^5.1.0",
-    "@envelop/operation-field-permissions": "^7.0.0",
+    "@envelop/operation-field-permissions": "^8.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/types": "^0.104.6",
     "tslib": "^2.4.0"
