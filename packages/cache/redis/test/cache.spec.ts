@@ -121,7 +121,7 @@ describe('redis', () => {
       protocol => {
         expect(() => {
           using redis = new RedisCache({ url: `${protocol}localhost:6379`, logger });
-        }).toThrowError('Redis URL must use either redis:// or rediss://');
+        }).toThrow('Redis URL must use either redis:// or rediss://');
       },
     );
   });
