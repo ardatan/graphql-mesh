@@ -4746,7 +4746,7 @@ __metadata:
   resolution: "@examples-v1-next/hive-example-gateway@workspace:examples/v1-next/hive-example/gateway"
   dependencies:
     "@graphql-hive/gateway": "npm:^1.8.0"
-    dotenv: "npm:^16.4.5"
+    dotenv: "npm:^17.0.0"
     graphql: "npm:16.11.0"
   languageName: unknown
   linkType: soft
@@ -6501,7 +6501,7 @@ __metadata:
     ajv: "npm:^8.12.0"
     change-case: "npm:^4.1.2"
     cosmiconfig: "npm:^9.0.0"
-    dotenv: "npm:^16.0.3"
+    dotenv: "npm:^17.0.0"
     graphql: "npm:16.11.0"
     graphql-import-node: "npm:^0.0.5"
     graphql-tag: "npm:^2.12.6"
@@ -6544,7 +6544,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.10.6"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     commander: "npm:^14.0.0"
-    dotenv: "npm:^16.3.1"
+    dotenv: "npm:^17.0.0"
     graphql: "npm:16.11.0"
   peerDependencies:
     graphql: "*"
@@ -6734,7 +6734,7 @@ __metadata:
   resolution: "@graphql-mesh/include@workspace:packages/include"
   dependencies:
     "@graphql-mesh/utils": "npm:^0.104.6"
-    dotenv: "npm:^16.3.1"
+    dotenv: "npm:^17.0.0"
     get-tsconfig: "npm:^4.7.6"
     glob: "npm:^11.0.0"
     graphql: "npm:16.11.0"
@@ -19973,10 +19973,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0, dotenv@npm:^16.0.3, dotenv@npm:^16.3.1, dotenv@npm:^16.4.5, dotenv@npm:^16.4.7":
+"dotenv@npm:^16.0.0, dotenv@npm:^16.4.7":
   version: 16.5.0
   resolution: "dotenv@npm:16.5.0"
   checksum: 10c0/5bc94c919fbd955bf0ba44d33922a1e93d1078e64a1db5c30faeded1d996e7a83c55332cb8ea4fae5a9ca4d0be44cbceb95c5811e70f9f095298df09d1997dd9
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^17.0.0":
+  version: 17.2.0
+  resolution: "dotenv@npm:17.2.0"
+  checksum: 10c0/d4cb5c2a09c288c921ef47a78f51c765a763266e23e84465cde6a87b28b9f7fc5a9d1fe349ed3c880b4c7297f82dd736dba5b08fe95ce53833ce4a7258d0fc43
   languageName: node
   linkType: hard
 
