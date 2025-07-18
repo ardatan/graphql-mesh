@@ -28,7 +28,7 @@
     "concurrently": "9.1.2",
     "delay-cli": "2.0.0",
     "graphql": "^16.10.0",
-    "jest": "29.7.0",
+    "jest": "30.0.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   }
