@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.106.6",
+  "version": "0.106.7",
   "type": "module",
   "repository": {
     "type": "git",
