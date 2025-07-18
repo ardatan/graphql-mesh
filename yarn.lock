@@ -7206,7 +7206,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.104.6"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     graphql: "npm:16.11.0"
-    hot-shots: "npm:^10.2.1"
+    hot-shots: "npm:^11.0.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -23819,15 +23819,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hot-shots@npm:^10.2.1":
-  version: 10.2.1
-  resolution: "hot-shots@npm:10.2.1"
+"hot-shots@npm:^11.0.0":
+  version: 11.1.0
+  resolution: "hot-shots@npm:11.1.0"
   dependencies:
     unix-dgram: "npm:2.x"
   dependenciesMeta:
     unix-dgram:
       optional: true
-  checksum: 10c0/ee6bfec08427df6a22c705e31e6e9cfd6a74033cf246f33d91aa19b991a6dcea4f981e008c8f0e79c54c5f390f5ea19b2c53325ccbc5a686ca27593ff3419813
+  checksum: 10c0/378b460269ed11d701319854c99ae79ac2db0d950d06bc7e96dccb6e62d10ceb203e61e46449c82bc99abaa05d3654211b8006f1b7698855d4d5dec05ccb760d
   languageName: node
   linkType: hard
 
