@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-statsd
 
+## 0.104.8
+
+### Patch Changes
+
+- [#8668](https://github.com/ardatan/graphql-mesh/pull/8668)
+  [`f76c07f`](https://github.com/ardatan/graphql-mesh/commit/f76c07f2bdd47f8a2593eb74b77a9e1a518afeb0)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@^7.0.0` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/7.0.0) (from
+    `^6.0.0`, in `dependencies`)
+
 ## 0.104.7
 
 ### Patch Changes

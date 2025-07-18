@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.104.7
+
+### Patch Changes
+
+- [#8668](https://github.com/ardatan/graphql-mesh/pull/8668)
+  [`f76c07f`](https://github.com/ardatan/graphql-mesh/commit/f76c07f2bdd47f8a2593eb74b77a9e1a518afeb0)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/live-query@^9.0.0` ↗︎](https://www.npmjs.com/package/@envelop/live-query/v/9.0.0)
+    (from `^8.0.0`, in `dependencies`)
+
 ## 0.104.6
 
 ### Patch Changes
