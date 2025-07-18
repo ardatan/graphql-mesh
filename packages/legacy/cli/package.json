@@ -73,7 +73,7 @@
     "tslib": "^2.4.0",
     "typescript": "^5.4.2",
     "ws": "^8.17.1",
-    "yargs": "^17.7.1"
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@types/lodash.get": "4.4.9",
