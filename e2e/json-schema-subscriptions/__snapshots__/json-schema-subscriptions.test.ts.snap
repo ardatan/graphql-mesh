@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0") {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@example", "@httpOperation", "@pubsubOperation", "@transport", "@extraSchemaDefinitionDirective"]) {
   query: Query
   mutation: Mutation
   subscription: Subscription
