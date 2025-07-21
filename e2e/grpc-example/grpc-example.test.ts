@@ -43,7 +43,7 @@ describe('gRPC Example', () => {
     });
     const document = parse(/* GraphQL */ `
       query SearchMoviesByCast {
-        exampleSearchMoviesByCast(input: { castName: "Tom Cruise" }) @stream {
+        exampleSearchMoviesByCast(input: { castName: "Tom Cruise" }) @stream(if: true) {
           name
           year
           rating

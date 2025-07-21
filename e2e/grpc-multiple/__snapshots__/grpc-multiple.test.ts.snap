@@ -111,6 +111,8 @@ directive @source(name: String!, type: String, subgraph: String!)  repeatable on
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
+directive @stream(if: Boolean!, label: String, initialCount: Int)  on FIELD
+
 """
 Request to get all pet stores
 """
