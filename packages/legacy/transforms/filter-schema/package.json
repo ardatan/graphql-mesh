@@ -40,7 +40,7 @@
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/utils": "^10.8.0",
     "@graphql-tools/wrap": "^10.0.28",
-    "minimatch": "^10.0.0",
+    "minimatch": "^10.0.3",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
