@@ -1,0 +1,63 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: 'docker' # See documentation for possible values
+    directory: '/' # Location of package manifests
+    schedule:
+      interval: 'daily'
+    groups:
+      docker-deps:
+        patterns:
+          - '*'
+  - package-ecosystem: 'github-actions' # See documentation for possible values
+    directory: '/' # Location of package manifests
+    schedule:
+      interval: 'daily'
+    groups:
+      actions-deps:
+        patterns:
+          - '*'
+  - package-ecosystem: 'npm' # See documentation for possible values
+    directory: '/' # Location of package manifests
+    schedule:
+      interval: 'daily'
+    groups:
+      all-minor-patch:
+        patterns:
+          - '*'
+        exclude-patterns:
+          - '@changesets/*'
+          - 'typescript'
+          - 'typedoc'
+          - '@theguild/*'
+          - '@graphql-inspector/core'
+          - 'next'
+          - 'tailwindcss'
+          - '@whatwg-node/*'
+          - 'graphql-jit'
+          - 'husky'
+          - '@opentelemetry/*'
+          - '@graphql-mesh/*'
+          - 'bun'
+          - 'vitest'
+          - 'tsx'
+          - 'rollup'
+          - '@commanderjs/*'
+          - 'commander'
+        update-types:
+          - 'minor'
+          - 'patch'
+      gateway:
+        patterns:
+          - '@whatwg-node/*'
+          - '@graphql-hive/*'
+          - '@graphql-mesh/*'
+          - '@graphql-tools/*'
+        update-types:
+          - 'major'
+          - 'minor'
+          - 'patch'
