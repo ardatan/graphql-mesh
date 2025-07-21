@@ -118,6 +118,7 @@
     "date-and-time": "^3.0.0",
     "es5-ext": "0.10.64",
     "esbuild": "^0.25.0",
+    "estree-util-value-to-estree": "3.3.3",
     "graphql": "16.11.0",
     "graphql-jit": "patch:graphql-jit@npm%3A0.8.7#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch",
     "graphql-rate-limit": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
@@ -129,6 +130,7 @@
     "node-fetch": "^2.6.7",
     "node-gyp": "^11.0.0",
     "nth-check": "^2.0.1",
+    "on-headers": "1.1.0",
     "postcss": "^8.4.31",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7",
@@ -137,6 +139,7 @@
     "underscore": "^1.12.1",
     "uuid": "11.1.0",
     "validator": "^13.7.0",
+    "webpack-dev-server": "5.2.1",
     "xml2js": "^0.6.0"
   },
   "lint-staged": {
