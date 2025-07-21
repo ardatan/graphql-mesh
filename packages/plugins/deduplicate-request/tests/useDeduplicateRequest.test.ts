@@ -1,7 +1,11 @@
 import { wrapFetchWithPlugins } from '../../../legacy/runtime/src/get-mesh.js';
 import useDeduplicateRequest from '../src/index.js';
 
-const modules = ['node-fetch', 'undici', '@whatwg-node/fetch'];
+const modules = ['node-fetch', '@whatwg-node/fetch'];
+
+if (!process.version.startsWith('v18')) {
+  modules.push('undici');
+}
 
 describe('useDeduplicateRequest', () => {
   modules.forEach(fetchImplName => {

@@ -13,7 +13,9 @@ export default function Home(props: { petsData: ListPetsQuery }) {
       <main className={styles.main}>
         <h1 className={styles.title}>Pets</h1>
         <ul className={styles.list}>
-          {props.petsData?.findPetsByStatus?.map((pet, i) => <li key={`pet_${i}`}>{pet.name}</li>)}
+          {props.petsData?.findPetsByStatus?.map((pet, i) => (
+            <li key={`pet_${i}`}>{pet.name}</li>
+          ))}
         </ul>
       </main>
     </div>
