@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-hive
 
+## 0.104.9
+
+### Patch Changes
+
+- [#8681](https://github.com/ardatan/graphql-mesh/pull/8681)
+  [`272cd04`](https://github.com/ardatan/graphql-mesh/commit/272cd04b37a623eb5519359de023ef1b0c879b39)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/core@^0.13.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.13.0)
+    (from `^0.12.0`, in `dependencies`)
+
 ## 0.104.8
 
 ### Patch Changes
@@ -43,7 +54,6 @@
 - [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`graphql-yoga@^5.13.4` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.13.4) (from
     `^5.12.0`, in `dependencies`)
@@ -550,7 +560,6 @@
 - [#7540](https://github.com/ardatan/graphql-mesh/pull/7540)
   [`86acf63`](https://github.com/ardatan/graphql-mesh/commit/86acf6382b15e00fde87b718e84bb86e682621a8)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-hive/core@^0.8.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.8.0)
     (from `^0.7.0`, in `dependencies`)
@@ -577,7 +586,6 @@
 - [#7498](https://github.com/ardatan/graphql-mesh/pull/7498)
   [`1a9746f`](https://github.com/ardatan/graphql-mesh/commit/1a9746f6ca9b517230a0337d5a852bf05707303a)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-hive/core@^0.7.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.7.0)
     (from `^0.6.0`, in `dependencies`)
@@ -588,7 +596,6 @@
 - [#7500](https://github.com/ardatan/graphql-mesh/pull/7500)
   [`1d24997`](https://github.com/ardatan/graphql-mesh/commit/1d249977bbc1180f15ea0e11eece6cce1e8f2de1)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-hive/core@^0.7.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.7.0)
     (from `^0.6.0`, in `dependencies`)
@@ -599,7 +606,6 @@
 - [#7502](https://github.com/ardatan/graphql-mesh/pull/7502)
   [`ace0a65`](https://github.com/ardatan/graphql-mesh/commit/ace0a650f9543ad977182414e16f581d59a2f3ef)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-hive/yoga@^0.36.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/yoga/v/0.36.0)
     (from `^0.35.0`, in `dependencies`)
@@ -712,7 +718,6 @@
 - [#7300](https://github.com/ardatan/graphql-mesh/pull/7300)
   [`db05fc3`](https://github.com/ardatan/graphql-mesh/commit/db05fc3d3205ac8e2730099cf453a7a113a5d770)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Added dependency
     [`@graphql-hive/core@^0.5.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.5.0) (to
     `dependencies`)
@@ -878,7 +883,6 @@
 - [#6845](https://github.com/ardatan/graphql-mesh/pull/6845)
   [`d793807`](https://github.com/ardatan/graphql-mesh/commit/d793807f43ece9bf797f1b9fc9252ab959753492)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-hive/client@^0.31.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.31.0)
     (from `^0.30.0`, in `dependencies`)
@@ -924,7 +928,6 @@
 - [#6675](https://github.com/ardatan/graphql-mesh/pull/6675)
   [`800a7fc`](https://github.com/ardatan/graphql-mesh/commit/800a7fc788435b57aa1cf3bb619cd8cb7366f394)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-hive/client@^0.29.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.29.0)
     (from `^0.28.0`, in `dependencies`)
@@ -1052,7 +1055,6 @@
 - [#6239](https://github.com/ardatan/graphql-mesh/pull/6239)
   [`95c340bed`](https://github.com/ardatan/graphql-mesh/commit/95c340bed250f397a919e1db9cbce2a04575eb69)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-hive/client@^0.25.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.25.0)
     (from `^0.24.3`, in `dependencies`)
@@ -1403,7 +1405,6 @@
 - [#5091](https://github.com/Urigo/graphql-mesh/pull/5091)
   [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-hive/client@0.23.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/client/v/0.23.0)
     (from `0.22.0`, in `dependencies`)

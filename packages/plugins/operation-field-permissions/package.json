@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-operation-field-permissions",
-  "version": "0.104.6",
+  "version": "0.104.7",
   "type": "module",
   "repository": {
     "type": "git",

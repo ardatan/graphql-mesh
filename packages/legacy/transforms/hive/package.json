@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-hive",
-  "version": "0.104.8",
+  "version": "0.104.9",
   "type": "module",
   "repository": {
     "type": "git",

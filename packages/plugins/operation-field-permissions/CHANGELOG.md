@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-operation-field-permissions
 
+## 0.104.7
+
+### Patch Changes
+
+- [#8668](https://github.com/ardatan/graphql-mesh/pull/8668)
+  [`f76c07f`](https://github.com/ardatan/graphql-mesh/commit/f76c07f2bdd47f8a2593eb74b77a9e1a518afeb0)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/operation-field-permissions@^8.0.0` ↗︎](https://www.npmjs.com/package/@envelop/operation-field-permissions/v/8.0.0)
+    (from `^7.0.0`, in `dependencies`)
+
 ## 0.104.6
 
 ### Patch Changes
@@ -801,7 +812,6 @@
 - [#5421](https://github.com/Urigo/graphql-mesh/pull/5421)
   [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@envelop/operation-field-permissions@5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/operation-field-permissions/v/5.0.0)
     (from `4.0.6`, in `dependencies`)
@@ -901,7 +911,6 @@
 - [#5160](https://github.com/Urigo/graphql-mesh/pull/5160)
   [`7def5adae`](https://github.com/Urigo/graphql-mesh/commit/7def5adae9e1cab3597320731ca6767bde5c04a1)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@envelop/operation-field-permissions@4.0.5` ↗︎](https://www.npmjs.com/package/@envelop/operation-field-permissions/v/4.0.5)
     (from `4.0.4`, in `dependencies`)
@@ -1175,7 +1184,6 @@
 - [#4686](https://github.com/Urigo/graphql-mesh/pull/4686)
   [`de8c7de91`](https://github.com/Urigo/graphql-mesh/commit/de8c7de913f8975a4e07ab652ab346b2a8ae6017)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@envelop/operation-field-permissions@4.0.1` ↗︎](https://www.npmjs.com/package/@envelop/operation-field-permissions/v/4.0.1)
     (from `3.6.0`, in `dependencies`)
