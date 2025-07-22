@@ -6,7 +6,7 @@
     "@graphql-hive/gateway": "^1.8.0",
     "@graphql-mesh/compose-cli": "workspace:*",
     "@grpc/grpc-js": "^1.12.2",
-    "@grpc/proto-loader": "^0.7.13",
+    "@grpc/proto-loader": "^0.8.0",
     "@grpc/reflection": "^1.0.4",
     "@omnigraph/grpc": "workspace:*",
     "graphql": "16.11.0"
