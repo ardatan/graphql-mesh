@@ -8074,7 +8074,7 @@ __metadata:
     graphql: "npm:16.11.0"
     graphql-scalars: "npm:^1.22.4"
     lodash.get: "npm:^4.4.2"
-    long: "npm:4.0.0"
+    long: "npm:5.3.2"
     protobufjs: "npm:^7.2.5"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -27833,7 +27833,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"long@npm:4.0.0, long@npm:^4.0.0":
+"long@npm:5.3.2":
+  version: 5.3.2
+  resolution: "long@npm:5.3.2"
+  checksum: 10c0/7130fe1cbce2dca06734b35b70d380ca3f70271c7f8852c922a7c62c86c4e35f0c39290565eca7133c625908d40e126ac57c02b1b1a4636b9457d77e1e60b981
+  languageName: node
+  linkType: hard
+
+"long@npm:^4.0.0":
   version: 4.0.0
   resolution: "long@npm:4.0.0"
   checksum: 10c0/50a6417d15b06104dbe4e3d4a667c39b137f130a9108ea8752b352a4cfae047531a3ac351c181792f3f8768fe17cca6b0f406674a541a86fb638aaac560d83ed
