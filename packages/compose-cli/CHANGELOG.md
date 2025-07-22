@@ -1,5 +1,25 @@
 # @graphql-mesh/compose-cli
 
+## 1.4.12
+
+### Patch Changes
+
+- [#8669](https://github.com/ardatan/graphql-mesh/pull/8669)
+  [`7476c9a`](https://github.com/ardatan/graphql-mesh/commit/7476c9afe897ed070dd1424f1b17919cd581670a)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@commander-js/extra-typings@^14.0.0` ↗︎](https://www.npmjs.com/package/@commander-js/extra-typings/v/14.0.0)
+    (from `^13.0.0`, in `dependencies`)
+
+- [#8671](https://github.com/ardatan/graphql-mesh/pull/8671)
+  [`9b94301`](https://github.com/ardatan/graphql-mesh/commit/9b94301af8596f97d5524a843769074db5c9d45d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`commander@^14.0.0` ↗︎](https://www.npmjs.com/package/commander/v/14.0.0)
+    (from `^13.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`00dd66a`](https://github.com/ardatan/graphql-mesh/commit/00dd66af22c98aa1e153149e3df68bca7de83778)]:
+  - @graphql-mesh/fusion-composition@0.8.11
+
 ## 1.4.11
 
 ### Patch Changes
@@ -48,7 +68,6 @@
 - [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.10.6` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.6)
     (from `^0.10.4`, in `dependencies`)
@@ -294,7 +313,6 @@
 - [#8206](https://github.com/ardatan/graphql-mesh/pull/8206)
   [`36dc08b`](https://github.com/ardatan/graphql-mesh/commit/36dc08b0fd06a65301d3b10b3403cd90e40f5ee1)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`commander@^13.0.0` ↗︎](https://www.npmjs.com/package/commander/v/13.0.0)
     (from `^12.0.0`, in `dependencies`)
 
@@ -525,7 +543,6 @@
 - [#7978](https://github.com/ardatan/graphql-mesh/pull/7978)
   [`92d3ce1`](https://github.com/ardatan/graphql-mesh/commit/92d3ce10bcfdb1bbf63165f77bdb5acd713c88ac)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@^10.6.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.6.0)
     (from `^10.5.5`, in `dependencies`)
@@ -656,7 +673,6 @@
 - [#7773](https://github.com/ardatan/graphql-mesh/pull/7773)
   [`0c789f3`](https://github.com/ardatan/graphql-mesh/commit/0c789f3e9764c9b1ca8418e33dfa0c11ade35efb)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/graphql-file-loader@8.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.0.2)
     (from `8.0.1`, in `dependencies`)
@@ -857,7 +873,6 @@
 - [#7469](https://github.com/ardatan/graphql-mesh/pull/7469)
   [`e509a25`](https://github.com/ardatan/graphql-mesh/commit/e509a259d3080db1300c9f38ae149f648fc9159f)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`@commander-js/extra-typings@^12.1.0` ↗︎](https://www.npmjs.com/package/@commander-js/extra-typings/v/12.1.0)
     (from `^12.0.1`, in `dependencies`)
@@ -865,7 +880,6 @@
 - [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
   [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/schema@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.5)
     (from `^10.0.4`, in `dependencies`)
@@ -945,7 +959,6 @@
 - [#7427](https://github.com/ardatan/graphql-mesh/pull/7427)
   [`8be81d2`](https://github.com/ardatan/graphql-mesh/commit/8be81d25aac222f37ba7bc44592c39b0f53ace95)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Added dependency
     [`@graphql-mesh/include@^0.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/include/v/0.0.0)
     (to `dependencies`)
@@ -1149,7 +1162,6 @@
 - [#7145](https://github.com/ardatan/graphql-mesh/pull/7145)
   [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Added dependency
     [`@graphql-tools/schema@^10.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.4)
     (to `dependencies`)
@@ -1161,7 +1173,6 @@
   changelog)
 
   Now Mesh Compose produces a superset of Federated Supergraph.
-
   - Drop any options and implementation related to the old `fusiongraph`
   - - The output is a valid supergraph that can be consumed by any Federation router. But if it is
       not Mesh Serve, the subgraph should still be served via Mesh Serve then consumed by that
@@ -1186,7 +1197,6 @@
 
   Basically Mesh Compose uses Federation spec for composition, validation and runtime BUT the output
   is a superset with these additional directives imported via `@composeDirective`;
-
   - `@merge` (Taken from Stitching Directives) If a custom entity resolver is defined for a root
     field like below, the gateway will pick it up as an entity resolver;
 
@@ -1428,7 +1438,6 @@
 - [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
   [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Added dependency [`tsx@^4.7.1` ↗︎](https://www.npmjs.com/package/tsx/v/4.7.1) (to
     `dependencies`)
   - Removed dependency [`ts-node@^10.9.2` ↗︎](https://www.npmjs.com/package/ts-node/v/10.9.2) (from
@@ -1437,7 +1446,6 @@
 - [#6862](https://github.com/ardatan/graphql-mesh/pull/6862)
   [`31828ad`](https://github.com/ardatan/graphql-mesh/commit/31828ad87a0c4d616f1217282bd1e7e74324fd9c)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Added dependency
     [`@commander-js/extra-typings@^12.0.1` ↗︎](https://www.npmjs.com/package/@commander-js/extra-typings/v/12.0.1)
     (to `dependencies`)
@@ -1525,7 +1533,6 @@
 - [#6592](https://github.com/ardatan/graphql-mesh/pull/6592)
   [`ef370cf`](https://github.com/ardatan/graphql-mesh/commit/ef370cf676ab812a89627b5320c8d9ad383894a8)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/graphql-file-loader@8.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.0.1)
     (from `8.0.0`, in `dependencies`)

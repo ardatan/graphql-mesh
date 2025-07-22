@@ -1,5 +1,13 @@
 # @omnigraph/openapi
 
+## 0.109.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`00dd66a`](https://github.com/ardatan/graphql-mesh/commit/00dd66af22c98aa1e153149e3df68bca7de83778)]:
+  - @graphql-mesh/fusion-composition@0.8.11
+
 ## 0.109.13
 
 ### Patch Changes
@@ -431,7 +439,6 @@
 - [#7961](https://github.com/ardatan/graphql-mesh/pull/7961)
   [`1a7adbf`](https://github.com/ardatan/graphql-mesh/commit/1a7adbf28f126c0fc8ba834f8a7db886f7fba876)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Added dependency
     [`@graphql-mesh/fusion-composition@workspace:^` ↗︎](https://www.npmjs.com/package/@graphql-mesh/fusion-composition/v/workspace:^)
     (to `dependencies`)
@@ -1133,7 +1140,6 @@
   changelog)
 
   Now Mesh Compose produces a superset of Federated Supergraph.
-
   - Drop any options and implementation related to the old `fusiongraph`
   - - The output is a valid supergraph that can be consumed by any Federation router. But if it is
       not Mesh Serve, the subgraph should still be served via Mesh Serve then consumed by that
@@ -1158,7 +1164,6 @@
 
   Basically Mesh Compose uses Federation spec for composition, validation and runtime BUT the output
   is a superset with these additional directives imported via `@composeDirective`;
-
   - `@merge` (Taken from Stitching Directives) If a custom entity resolver is defined for a root
     field like below, the gateway will pick it up as an entity resolver;
 
@@ -1892,7 +1897,6 @@
 - [#5421](https://github.com/Urigo/graphql-mesh/pull/5421)
   [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@omnigraph/json-schema@^0.93.2` ↗︎](https://www.npmjs.com/package/@omnigraph/json-schema/v/0.93.2)
     (from `^0.93.1`, in `dependencies`)
@@ -2830,7 +2834,6 @@
 - [#4439](https://github.com/Urigo/graphql-mesh/pull/4439)
   [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-mesh/cross-helpers@0.2.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.2.5)
     (from `0.2.3`, in `dependencies`)
@@ -2967,7 +2970,6 @@
 - [#4418](https://github.com/Urigo/graphql-mesh/pull/4418)
   [`59dbb1985`](https://github.com/Urigo/graphql-mesh/commit/59dbb1985b07a250f0113d70e0f55e467dc17812)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`openapi-types@12.0.2` ↗︎](https://www.npmjs.com/package/openapi-types/v/12.0.2) (from
     `12.0.0`, in `dependencies`)
@@ -3239,7 +3241,6 @@
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - - Support
   "$request.query" and "$request.path" usages in
   [OpenAPI runtime expressions](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#runtimeExpression)
-
   - Fix `Field not found` error when an OpenAPI link refers to an operation which is not `Mutation`
   - Do not use AJV and check field names in the received object to resolve the type name for a union
     field
@@ -3256,7 +3257,6 @@
     defined in the bundle
 
   **BREAKING CHANGES:**
-
   - If a JSON Schema type cannot be represented in GraphQL (object without properties etc.), it will
     no longer use `Any` type but `JSON` type instead which is a scalar from `graphql-scalars`.
 
@@ -3602,7 +3602,6 @@
 ### Minor Changes
 
 - a0950ac6f: Breaking Change:
-
   - Now you can set a global `customFetch` instead of setting `customFetch` individually for each
     handler. `customFetch` configuration field for each handler will no longer work. And also
     `customFetch` needs to be the path of the code file that exports the function as `default`.

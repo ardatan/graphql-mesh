@@ -1,5 +1,16 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.11
+
+### Patch Changes
+
+- [#8683](https://github.com/ardatan/graphql-mesh/pull/8683)
+  [`00dd66a`](https://github.com/ardatan/graphql-mesh/commit/00dd66af22c98aa1e153149e3df68bca7de83778)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@theguild/federation-composition@^0.19.0` ↗︎](https://www.npmjs.com/package/@theguild/federation-composition/v/0.19.0)
+    (from `^0.18.2`, in `dependencies`)
+
 ## 0.8.10
 
 ### Patch Changes
@@ -58,7 +69,6 @@
 - [#8564](https://github.com/ardatan/graphql-mesh/pull/8564)
   [`3d33f2c`](https://github.com/ardatan/graphql-mesh/commit/3d33f2c366c61f49d8e7658d4191f14ec1066c92)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@theguild/federation-composition@^0.16.0` ↗︎](https://www.npmjs.com/package/@theguild/federation-composition/v/0.16.0)
     (from `^0.15.0`, in `dependencies`)
@@ -432,7 +442,6 @@
 - [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
   [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/stitching-directives@^3.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.4)
     (from `^3.1.2`, in `dependencies`)
@@ -625,7 +634,6 @@
 - [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
   [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/schema@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.5)
     (from `^10.0.4`, in `dependencies`)
@@ -685,7 +693,6 @@
 - [#7192](https://github.com/ardatan/graphql-mesh/pull/7192)
   [`1905f53`](https://github.com/ardatan/graphql-mesh/commit/1905f53a65e6c73d1d305770dcfc4cba34798a09)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/stitching-directives@^3.1.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.1.2)
     (from `^3.0.2`, in `dependencies`)
@@ -759,7 +766,6 @@
 - [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
   [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
   Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
-
   - Updated dependency
     [`@theguild/federation-composition@^0.12.0` ↗︎](https://www.npmjs.com/package/@theguild/federation-composition/v/0.12.0)
     (from `^0.11.2`, in `dependencies`)
@@ -796,7 +802,6 @@
 - [#7145](https://github.com/ardatan/graphql-mesh/pull/7145)
   [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Added dependency
     [`@graphql-tools/stitching-directives@^3.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/3.0.2)
     (to `dependencies`)
@@ -811,7 +816,6 @@
   changelog)
 
   Now Mesh Compose produces a superset of Federated Supergraph.
-
   - Drop any options and implementation related to the old `fusiongraph`
   - - The output is a valid supergraph that can be consumed by any Federation router. But if it is
       not Mesh Serve, the subgraph should still be served via Mesh Serve then consumed by that
@@ -836,7 +840,6 @@
 
   Basically Mesh Compose uses Federation spec for composition, validation and runtime BUT the output
   is a superset with these additional directives imported via `@composeDirective`;
-
   - `@merge` (Taken from Stitching Directives) If a custom entity resolver is defined for a root
     field like below, the gateway will pick it up as an entity resolver;
 
@@ -924,7 +927,6 @@
 - [#7009](https://github.com/ardatan/graphql-mesh/pull/7009)
   [`b5bf97c`](https://github.com/ardatan/graphql-mesh/commit/b5bf97c6fd92dbfa9ed88e03003910a1247149a0)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Added dependency
     [`@graphql-mesh/utils@^0.98.6` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.98.6)
     (to `dependencies`)
@@ -1007,7 +1009,6 @@
 - [#6602](https://github.com/ardatan/graphql-mesh/pull/6602)
   [`915b8f8`](https://github.com/ardatan/graphql-mesh/commit/915b8f8e56edc22515ca99e396f1c9d3b4e904b9)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Added dependency [`pluralize@^8.0.0` ↗︎](https://www.npmjs.com/package/pluralize/v/8.0.0) (to
     `dependencies`)
 

@@ -1,6 +1,6 @@
 {
   "name": "example-response-cache",
-  "version": "0.6.8",
+  "version": "0.6.9",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "mesh build && jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "^0.100.7",
+    "@graphql-mesh/cli": "^0.100.8",
     "@graphql-mesh/json-schema": "^0.109.7",
     "@graphql-mesh/plugin-mock": "^0.105.7",
     "graphql": "16.11.0"
