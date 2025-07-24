@@ -50,7 +50,7 @@
     "js-yaml": "^4.1.0",
     "lodash.get": "^4.4.2",
     "lodash.topath": "^4.5.2",
-    "tiny-lru": "^11.0.0",
+    "tiny-lru": "^11.3.4",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

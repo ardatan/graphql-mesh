@@ -63,7 +63,7 @@
     "dotenv": "^16.0.3",
     "graphql-import-node": "^0.0.5",
     "graphql-tag": "^2.12.6",
-    "graphql-ws": "^6.0.0",
+    "graphql-ws": "^6.0.6",
     "json-bigint-patch": "^0.0.8",
     "json5": "^2.2.3",
     "mkdirp": "^3.0.0",
@@ -72,7 +72,7 @@
     "rimraf": "^6.0.0",
     "tslib": "^2.4.0",
     "typescript": "^5.4.2",
-    "ws": "^8.17.1",
+    "ws": "^8.18.3",
     "yargs": "^17.7.1"
   },
   "devDependencies": {

@@ -29,7 +29,7 @@
     "@graphql-codegen/typescript-resolvers": "4.5.1",
     "@graphql-mesh/compose-cli": "1.4.11",
     "@types/node": "22.16.4",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.25.8",
     "lru-cache": "11.1.0"
   }
 }
