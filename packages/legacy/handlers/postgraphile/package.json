@@ -41,8 +41,8 @@
     "@graphql-mesh/types": "^0.104.6",
     "@graphql-mesh/utils": "^0.104.6",
     "@graphql-tools/delegate": "^10.0.28",
-    "pg": "^8.6.0",
-    "postgraphile": "^4.13.0",
+    "pg": "^8.16.3",
+    "postgraphile": "^4.14.1",
     "postgraphile-core": "^4.13.0",
     "tslib": "^2.4.0"
   },
