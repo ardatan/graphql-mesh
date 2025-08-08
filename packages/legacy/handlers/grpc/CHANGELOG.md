@@ -1,5 +1,16 @@
 # @graphql-mesh/grpc
 
+## 0.108.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+  - @graphql-mesh/store@0.104.7
+  - @graphql-mesh/transport-grpc@0.3.7
+
 ## 0.108.7
 
 ### Patch Changes
@@ -729,7 +740,6 @@
 - [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
   [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@^10.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.2)
     (from `^10.3.4`, in `peerDependencies`)
@@ -1305,7 +1315,6 @@
 - [#5853](https://github.com/Urigo/graphql-mesh/pull/5853)
   [`41804091c`](https://github.com/Urigo/graphql-mesh/commit/41804091c17cbac48da38cb433cbd2a1ec15bb5d)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`protobufjs@7.2.5` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.2.5)
     (from `7.2.4`, in `dependencies`)
 
@@ -2008,7 +2017,6 @@
 - [#4732](https://github.com/Urigo/graphql-mesh/pull/4732)
   [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-mesh/types@0.85.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.85.2)
     (from `0.85.1`, in `dependencies`)
@@ -2146,14 +2154,12 @@
 - [#4571](https://github.com/Urigo/graphql-mesh/pull/4571)
   [`1a8e80870`](https://github.com/Urigo/graphql-mesh/commit/1a8e8087039646b7ccf02d76cbed134854271516)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency [`protobufjs@7.1.2` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.1.2)
     (from `7.1.1`, in `dependencies`)
 
 - [#4573](https://github.com/Urigo/graphql-mesh/pull/4573)
   [`6df0993b7`](https://github.com/Urigo/graphql-mesh/commit/6df0993b777e1fe7ed0f4bb500e48aa2672ca0ea)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`protobufjs@7.1.2` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.1.2)
     (from `7.1.1`, in `dependencies`)
 
@@ -2170,7 +2176,6 @@
 - [#4563](https://github.com/Urigo/graphql-mesh/pull/4563)
   [`186e37bcd`](https://github.com/Urigo/graphql-mesh/commit/186e37bcd94c6eae16b30abd2f4c8b04d2ef422e)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@grpc/proto-loader@0.7.3` ↗︎](https://www.npmjs.com/package/@grpc/proto-loader/v/0.7.3) (from
     `0.7.2`, in `dependencies`)
@@ -2239,7 +2244,6 @@
 - [#4439](https://github.com/Urigo/graphql-mesh/pull/4439)
   [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-mesh/cross-helpers@0.2.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.2.5)
     (from `0.2.3`, in `dependencies`)
@@ -2275,7 +2279,6 @@
 - [#4471](https://github.com/Urigo/graphql-mesh/pull/4471)
   [`633fc3630`](https://github.com/Urigo/graphql-mesh/commit/633fc36302bb6df21f5f1581b36db55e83c2098a)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`protobufjs@7.1.1` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.1.1)
     (from `7.1.0`, in `dependencies`)
 
@@ -2346,7 +2349,6 @@
 - [#4440](https://github.com/Urigo/graphql-mesh/pull/4440)
   [`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`graphql-compose@9.0.9` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.9) (from
     `9.0.8`, in `dependencies`)
@@ -2405,14 +2407,12 @@
 - [#4380](https://github.com/Urigo/graphql-mesh/pull/4380)
   [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency [`protobufjs@7.1.0` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.1.0)
     (from `7.0.0`, in `dependencies`)
 
 - [#4389](https://github.com/Urigo/graphql-mesh/pull/4389)
   [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`protobufjs@7.1.0` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.1.0)
     (from `7.0.0`, in `dependencies`)
 
@@ -2474,7 +2474,6 @@
 - [#4324](https://github.com/Urigo/graphql-mesh/pull/4324)
   [`5f4cb8dc7`](https://github.com/Urigo/graphql-mesh/commit/5f4cb8dc747510f6578f6c79b04104d87d4d5944)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@grpc/proto-loader@0.7.2` ↗︎](https://www.npmjs.com/package/@grpc/proto-loader/v/0.7.2) (from
     `0.7.0`, in `dependencies`)
@@ -2498,7 +2497,6 @@
 - [#4275](https://github.com/Urigo/graphql-mesh/pull/4275)
   [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`graphql-scalars@1.18.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.18.0) (was
     `1.17.0`, in `dependencies`)
@@ -3842,7 +3840,6 @@
 - 183cfa96: feat(grpc): add reflection and file descriptor set support
 
   This change adds two new features to the gRPC handler.
-
   - Reflection support
   - File descriptor set support
 

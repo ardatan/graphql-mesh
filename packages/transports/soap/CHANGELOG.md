@@ -1,5 +1,14 @@
 # @graphql-mesh/transport-soap
 
+## 0.10.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+
 ## 0.10.7
 
 ### Patch Changes
@@ -34,7 +43,6 @@
 - [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.10.6` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.6)
     (from `^0.10.4`, in `dependencies`)
@@ -149,7 +157,6 @@
 - [#8405](https://github.com/ardatan/graphql-mesh/pull/8405)
   [`5aaf455`](https://github.com/ardatan/graphql-mesh/commit/5aaf4559ac3dc3d08db4011a4351b96b8b25d1a3)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`fast-xml-parser@^5.0.0` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.0.0) (from
     `^4.5.0`, in `dependencies`)
@@ -720,7 +727,6 @@
 - [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
   [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@^10.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.2)
     (from `^10.3.4`, in `peerDependencies`)
@@ -933,7 +939,6 @@
 - [#7145](https://github.com/ardatan/graphql-mesh/pull/7145)
   [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Added dependency
     [`@graphql-mesh/utils@^0.98.8` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.98.8)
     (to `dependencies`)
@@ -945,7 +950,6 @@
   changelog)
 
   Now Mesh Compose produces a superset of Federated Supergraph.
-
   - Drop any options and implementation related to the old `fusiongraph`
   - - The output is a valid supergraph that can be consumed by any Federation router. But if it is
       not Mesh Serve, the subgraph should still be served via Mesh Serve then consumed by that
@@ -970,7 +974,6 @@
 
   Basically Mesh Compose uses Federation spec for composition, validation and runtime BUT the output
   is a superset with these additional directives imported via `@composeDirective`;
-
   - `@merge` (Taken from Stitching Directives) If a custom entity resolver is defined for a root
     field like below, the gateway will pick it up as an entity resolver;
 

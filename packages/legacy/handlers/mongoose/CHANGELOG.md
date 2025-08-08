@@ -1,5 +1,14 @@
 # @graphql-mesh/mongoose
 
+## 0.104.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+
 ## 0.104.6
 
 ### Patch Changes
@@ -749,7 +758,6 @@
 - [#6566](https://github.com/ardatan/graphql-mesh/pull/6566)
   [`89d8dd6`](https://github.com/ardatan/graphql-mesh/commit/89d8dd6dde4b74a9c3edb3438ef23f2498d94276)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`graphql-compose@^9.0.10` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.10) (from
     `9.0.10`, in `dependencies`)
@@ -1342,7 +1350,6 @@
 - [#4732](https://github.com/Urigo/graphql-mesh/pull/4732)
   [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-mesh/types@0.85.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.85.2)
     (from `0.85.1`, in `dependencies`)
@@ -1454,7 +1461,6 @@
 - [#4563](https://github.com/Urigo/graphql-mesh/pull/4563)
   [`186e37bcd`](https://github.com/Urigo/graphql-mesh/commit/186e37bcd94c6eae16b30abd2f4c8b04d2ef422e)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`graphql-compose-mongoose@9.7.2` ↗︎](https://www.npmjs.com/package/graphql-compose-mongoose/v/9.7.2)
     (from `9.7.1`, in `dependencies`)
@@ -1515,7 +1521,6 @@
 - [#4439](https://github.com/Urigo/graphql-mesh/pull/4439)
   [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-mesh/types@0.83.3` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.83.3)
     (from `0.82.1`, in `dependencies`)
@@ -1584,7 +1589,6 @@
 - [#4443](https://github.com/Urigo/graphql-mesh/pull/4443)
   [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/stitching-directives@2.3.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/2.3.8)
     (from `2.3.7`, in `dependencies`)
@@ -1602,7 +1606,6 @@
 - [#4440](https://github.com/Urigo/graphql-mesh/pull/4440)
   [`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`graphql-compose@9.0.9` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.9) (from
     `9.0.8`, in `dependencies`)
@@ -1649,7 +1652,6 @@
 - [#4380](https://github.com/Urigo/graphql-mesh/pull/4380)
   [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/stitching-directives@2.3.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/2.3.7)
     (from `2.3.6`, in `dependencies`)
@@ -1657,7 +1659,6 @@
 - [#4389](https://github.com/Urigo/graphql-mesh/pull/4389)
   [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/stitching-directives@2.3.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/2.3.7)
     (from `2.3.6`, in `dependencies`)
@@ -1720,7 +1721,6 @@
 - [#4275](https://github.com/Urigo/graphql-mesh/pull/4275)
   [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/stitching-directives@2.3.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/2.3.3)
     (was `2.3.2`, in `dependencies`)
@@ -1728,7 +1728,6 @@
 * [#4298](https://github.com/Urigo/graphql-mesh/pull/4298)
   [`991373717`](https://github.com/Urigo/graphql-mesh/commit/99137371708b7fe12b32dfcfe93d535507a7f968)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/stitching-directives@2.3.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/2.3.6)
     (was `2.3.3`, in `dependencies`)
@@ -1748,7 +1747,6 @@
 - [#4263](https://github.com/Urigo/graphql-mesh/pull/4263)
   [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/stitching-directives@2.3.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/2.3.2)
     (was `2.3.1`, in `dependencies`)

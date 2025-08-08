@@ -1,5 +1,15 @@
 # @omnigraph/odata
 
+## 0.2.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+  - @graphql-mesh/store@0.104.7
+
 ## 0.2.6
 
 ### Patch Changes
@@ -37,7 +47,6 @@
 - [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.10.6` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.6)
     (from `^0.10.4`, in `dependencies`)
@@ -130,7 +139,6 @@
 - [#8405](https://github.com/ardatan/graphql-mesh/pull/8405)
   [`5aaf455`](https://github.com/ardatan/graphql-mesh/commit/5aaf4559ac3dc3d08db4011a4351b96b8b25d1a3)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`fast-xml-parser@^5.0.0` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.0.0) (from
     `^4.5.0`, in `dependencies`)

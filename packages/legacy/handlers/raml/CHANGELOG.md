@@ -1,5 +1,16 @@
 # @graphql-mesh/raml
 
+## 0.109.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+  - @graphql-mesh/store@0.104.7
+  - @omnigraph/raml@0.109.8
+
 ## 0.109.7
 
 ### Patch Changes
@@ -1311,7 +1322,6 @@
 - [#5749](https://github.com/Urigo/graphql-mesh/pull/5749)
   [`bb50c4f94`](https://github.com/Urigo/graphql-mesh/commit/bb50c4f941caa59d69186d1415dce5773596e8bc)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Removed dependency
     [`@graphql-tools/utils@^9.2.1 || ^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
     (from `peerDependencies`)
@@ -1429,7 +1439,6 @@
 - [#5421](https://github.com/Urigo/graphql-mesh/pull/5421)
   [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@omnigraph/raml@0.93.2` ↗︎](https://www.npmjs.com/package/@omnigraph/raml/v/0.93.2) (from
     `0.93.1`, in `dependencies`)
@@ -2213,7 +2222,6 @@
 - [#4439](https://github.com/Urigo/graphql-mesh/pull/4439)
   [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-mesh/store@0.8.41` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.8.41)
     (from `0.8.35`, in `dependencies`)
@@ -2386,7 +2394,6 @@
 - [#4356](https://github.com/Urigo/graphql-mesh/pull/4356)
   [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824)
   Thanks [@ardatan](https://github.com/ardatan)! - ## Improvements on outgoing HTTP calls
-
   - Now Mesh's default fetch implementation deduplicates the same GET JSON requests in the same
     execution context
   - You should pass `Accept: application/json` to make this work.
@@ -2470,7 +2477,6 @@
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - - Support
   "$request.query" and "$request.path" usages in
   [OpenAPI runtime expressions](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#runtimeExpression)
-
   - Fix `Field not found` error when an OpenAPI link refers to an operation which is not `Mutation`
   - Do not use AJV and check field names in the received object to resolve the type name for a union
     field
@@ -2487,7 +2493,6 @@
     defined in the bundle
 
   **BREAKING CHANGES:**
-
   - If a JSON Schema type cannot be represented in GraphQL (object without properties etc.), it will
     no longer use `Any` type but `JSON` type instead which is a scalar from `graphql-scalars`.
 
@@ -2710,7 +2715,6 @@
 ### Minor Changes
 
 - a0950ac6f: Breaking Change:
-
   - Now you can set a global `customFetch` instead of setting `customFetch` individually for each
     handler. `customFetch` configuration field for each handler will no longer work. And also
     `customFetch` needs to be the path of the code file that exports the function as `default`.

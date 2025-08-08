@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-snapshot
 
+## 0.104.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+
 ## 0.104.6
 
 ### Patch Changes
@@ -34,7 +43,6 @@
 - [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.10.6` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.6)
     (from `^0.10.4`, in `dependencies`)
@@ -1009,7 +1017,6 @@
 - [#5316](https://github.com/Urigo/graphql-mesh/pull/5316)
   [`5344640c2`](https://github.com/Urigo/graphql-mesh/commit/5344640c2b78989155927c55787804aa791ead32)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`minimatch@9.0.1` ↗︎](https://www.npmjs.com/package/minimatch/v/9.0.1)
     (from `8.0.4`, in `dependencies`)
 
@@ -1086,14 +1093,12 @@
 - [#5146](https://github.com/Urigo/graphql-mesh/pull/5146)
   [`676e3ffc4`](https://github.com/Urigo/graphql-mesh/commit/676e3ffc4fe90550f69a709bbaf725815f1d50bd)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`minimatch@8.0.2` ↗︎](https://www.npmjs.com/package/minimatch/v/8.0.2)
     (from `7.4.3`, in `dependencies`)
 
 - [#5276](https://github.com/Urigo/graphql-mesh/pull/5276)
   [`14f293ff1`](https://github.com/Urigo/graphql-mesh/commit/14f293ff155206c8f3bc83dbfc6845608bd94d92)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`minimatch@8.0.2` ↗︎](https://www.npmjs.com/package/minimatch/v/8.0.2)
     (from `7.4.3`, in `dependencies`)
 
@@ -1134,7 +1139,6 @@
 - [#5192](https://github.com/Urigo/graphql-mesh/pull/5192)
   [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`minimatch@7.4.2` ↗︎](https://www.npmjs.com/package/minimatch/v/7.4.2)
     (from `7.3.0`, in `dependencies`)
 
@@ -1201,7 +1205,6 @@
 - [#5165](https://github.com/Urigo/graphql-mesh/pull/5165)
   [`a0ffbbe26`](https://github.com/Urigo/graphql-mesh/commit/a0ffbbe26569a2a5188827fa841f194609d63d64)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`minimatch@7.0.0` ↗︎](https://www.npmjs.com/package/minimatch/v/7.0.0)
     (from `6.2.0`, in `dependencies`)
 
@@ -1326,7 +1329,6 @@
 - [#4988](https://github.com/Urigo/graphql-mesh/pull/4988)
   [`ad938f485`](https://github.com/Urigo/graphql-mesh/commit/ad938f485a9b881a0379284ac582c6c599aa1117)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@0.6.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.6.1) (from
     `0.5.4`, in `dependencies`)
@@ -1334,7 +1336,6 @@
 - [#5023](https://github.com/Urigo/graphql-mesh/pull/5023)
   [`d17b6d09d`](https://github.com/Urigo/graphql-mesh/commit/d17b6d09d0f7ddfd529736ea4371f66feafe64ac)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@0.6.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.6.2) (from
     `0.6.1`, in `dependencies`)
@@ -1342,7 +1343,6 @@
 - [#5035](https://github.com/Urigo/graphql-mesh/pull/5035)
   [`3d92edb0b`](https://github.com/Urigo/graphql-mesh/commit/3d92edb0b293e584eb16cb3169451e87de8e7054)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`minimatch@5.1.4` ↗︎](https://www.npmjs.com/package/minimatch/v/5.1.4)
     (from `5.1.2`, in `dependencies`)
 
