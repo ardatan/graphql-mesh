@@ -9,5 +9,9 @@
 * `lazyConnect` (type: `Boolean`) - Flag to indicate lazyConnect value for Redis client.
 
 @default: true
-* `dnsLookupAsIs` (type: `Boolean`)
-* `tls` (type: `Boolean`)
+* `dnsLookupAsIs` (type: `Boolean`) - Needed for TLS connections to Redis Cluster (especially when using AWS Elasticache Clusters with TLS).
+
+@see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls
+* `tls` (type: `Boolean`) - Enable TLS for Redis Cluster connections. Required for AWS Elasticache Clusters with TLS.
+
+@see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls

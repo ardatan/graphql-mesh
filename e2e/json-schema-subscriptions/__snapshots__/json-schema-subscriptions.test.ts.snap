@@ -63,25 +63,39 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "
 }
 
 type query_todos_items @join__type(graph: API) {
-  id: Int
+  id: String
   name: String
   content: String
 }
 
 type Mutation @join__type(graph: API) {
-  addTodo(input: mutationInput_addTodo_input_Input): Todo @httpOperation(subgraph: "API", path: "/todo", httpMethod: POST)
+  addTodo(input: mutationInput_addTodo_input_Input): Todo @httpOperation(subgraph: "API", path: "/todo", httpMethod: PUT)
+  updateTodo(input: mutationInput_updateTodo_input_Input): mutation_updateTodo @httpOperation(subgraph: "API", path: "/todo", httpMethod: PATCH)
 }
 
-type Todo @example(subgraph: "API", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
-  id: Int
+type Todo @example(subgraph: "API", value: "{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
+  id: String
+  name: String
+  content: String
+}
+
+type mutation_updateTodo @example(subgraph: "API", value: "{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
+  id: String
   name: String
   content: String
 }
 
 type Subscription @join__type(graph: API) {
   """PubSub Topic: webhook:post:/webhooks/todo_added"""
-  todoAddedFromSource: Todo @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added")
+  todoAddedFromSource: subscription_todoAddedFromSource @pubsubOperation(subgraph: "API", pubsubTopic: "webhook:post:/webhooks/todo_added")
   todoAddedFromExtensions: Todo @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_added") @additionalField
+  todoUpdatedFromExtensions(id: ID!): Todo @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_updated", filterBy: "root.id === args.id") @additionalField
+}
+
+type subscription_todoAddedFromSource @example(subgraph: "API", value: "{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
+  id: String
+  name: String
+  content: String
 }
 
 enum HTTPMethod @join__type(graph: API) {
@@ -97,6 +111,12 @@ enum HTTPMethod @join__type(graph: API) {
 }
 
 input mutationInput_addTodo_input_Input @example(subgraph: "API", value: "{\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
+  name: String
+  content: String
+}
+
+input mutationInput_updateTodo_input_Input @example(subgraph: "API", value: "{\\"id\\":\\"0\\",\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") @join__type(graph: API) {
+  id: String
   name: String
   content: String
 }

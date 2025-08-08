@@ -1895,7 +1895,17 @@ export interface RedisConfigCluster {
    * @default: true
    */
   lazyConnect?: boolean;
+  /**
+   * Needed for TLS connections to Redis Cluster (especially when using AWS Elasticache Clusters with TLS).
+   *
+   * @see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls
+   */
   dnsLookupAsIs?: boolean;
+  /**
+   * Enable TLS for Redis Cluster connections. Required for AWS Elasticache Clusters with TLS.
+   *
+   * @see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls
+   */
   tls?: boolean;
 }
 export interface PubSubConfig {

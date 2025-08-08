@@ -14,7 +14,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 import type { MeshContext } from '@graphql-mesh/runtime';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
-import type { IResolvers } from '@graphql-tools/utils';
+import type { IResolvers, MaybePromise } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { withFilter } from './with-filter.js';
@@ -159,22 +159,39 @@ export function resolveAdditionalResolversWithoutImport(
     baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
   }
   if ('pubsubTopic' in additionalResolver) {
+    const pubsubTopic = additionalResolver.pubsubTopic;
+    let subscribeFn = function subscriber(
+      root: any,
+      args: Record<string, any>,
+      context: MeshContext,
+      info: GraphQLResolveInfo,
+    ): MaybePromise<AsyncIterator<any>> {
+      const resolverData = { root, args, context, info, env: process.env };
+      const topic = stringInterpolator.parse(pubsubTopic, resolverData);
+      return (context.pubsub || pubsub).asyncIterator(topic)[Symbol.asyncIterator]();
+    };
+    if (additionalResolver.filterBy) {
+      let filterFunction: any;
+      try {
+        // eslint-disable-next-line no-new-func
+        filterFunction = new Function(
+          'root',
+          'args',
+          'context',
+          'info',
+          `return ${additionalResolver.filterBy};`,
+        );
+      } catch (e) {
+        throw new Error(
+          `Error while parsing filterBy expression "${additionalResolver.filterBy}" in additional subscription resolver: ${e.message}`,
+        );
+      }
+      subscribeFn = withFilter(subscribeFn, filterFunction);
+    }
     return {
       [additionalResolver.targetTypeName]: {
         [additionalResolver.targetFieldName]: {
-          subscribe: withFilter(
-            (root, args, context: MeshContext, info) => {
-              const resolverData = { root, args, context, info, env: process.env };
-              const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
-              return (pubsub || context.pubsub).asyncIterator(topic)[Symbol.asyncIterator]();
-            },
-            (root, args, context, info) => {
-              return additionalResolver.filterBy
-                ? // eslint-disable-next-line no-new-func
-                  new Function(`return ${additionalResolver.filterBy}`)()
-                : true;
-            },
-          ),
+          subscribe: subscribeFn,
           resolve: (payload: any) => {
             if (baseOptions.valuesFromResults) {
               return baseOptions.valuesFromResults(payload);

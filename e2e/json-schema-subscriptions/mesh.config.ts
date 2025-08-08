@@ -27,7 +27,7 @@ export const composeConfig = defineComposeConfig({
             type: OperationTypeNode.MUTATION,
             field: 'addTodo',
             path: '/todo',
-            method: 'POST',
+            method: 'PUT',
             requestSample: './addTodo.json',
             responseSample: './todo.json',
             responseTypeName: 'Todo',
@@ -36,6 +36,15 @@ export const composeConfig = defineComposeConfig({
             type: OperationTypeNode.SUBSCRIPTION,
             field: 'todoAddedFromSource',
             pubsubTopic: 'webhook:post:/webhooks/todo_added',
+            responseSample: './todo.json',
+            responseTypeName: 'Todo',
+          },
+          {
+            type: OperationTypeNode.MUTATION,
+            field: 'updateTodo',
+            path: '/todo',
+            method: 'PATCH',
+            requestSample: './todo.json',
             responseSample: './todo.json',
             responseTypeName: 'Todo',
           },
@@ -54,6 +63,11 @@ export const composeConfig = defineComposeConfig({
 
     type Subscription {
       todoAddedFromExtensions: Todo @resolveTo(pubsubTopic: "webhook:post:/webhooks/todo_added")
+      todoUpdatedFromExtensions(id: ID!): Todo
+        @resolveTo(
+          pubsubTopic: "webhook:post:/webhooks/todo_updated"
+          filterBy: "root.id === args.id"
+        )
     }
   `,
 });

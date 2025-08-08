@@ -13,10 +13,6 @@ export type ResolverFn<TSource = any, TArgs = any, TContext = any> = (
   info?: any,
 ) => AsyncIterator<any> | Promise<AsyncIterator<any>>;
 
-interface IterallAsyncIterator<T> extends AsyncIterableIterator<T> {
-  [Symbol.asyncIterator](): IterallAsyncIterator<T>;
-}
-
 export type WithFilter<TSource = any, TArgs = any, TContext = any> = (
   asyncIteratorFn: ResolverFn<TSource, TArgs, TContext>,
   filterFn: FilterFn<TSource, TArgs, TContext>,
@@ -31,7 +27,7 @@ export function withFilter<TSource = any, TArgs = any, TContext = any>(
     args: TArgs,
     context: TContext,
     info: any,
-  ): Promise<IterallAsyncIterator<any>> => {
+  ): Promise<AsyncIterableIterator<any>> => {
     const asyncIterator = await asyncIteratorFn(rootValue, args, context, info);
 
     const getNextPromise = () => {

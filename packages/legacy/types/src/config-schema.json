@@ -110,10 +110,12 @@
           "description": "Flag to indicate lazyConnect value for Redis client.\n\n@default: true"
         },
         "dnsLookupAsIs": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Needed for TLS connections to Redis Cluster (especially when using AWS Elasticache Clusters with TLS).\n\n@see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls"
         },
         "tls": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable TLS for Redis Cluster connections. Required for AWS Elasticache Clusters with TLS.\n\n@see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls"
         }
       },
       "required": ["startupNodes"]

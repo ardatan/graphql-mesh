@@ -93,3 +93,78 @@ it('should compose the appropriate schema', async () => {
     });
   });
 });
+
+it('should subscribe to todoUpdatedFromExtensions', async () => {
+  const servePort = await getAvailablePort();
+  const api = await service('api', { servePort });
+  const { output } = await compose({ output: 'graphql', services: [api] });
+  const { hostname, port, execute } = await serve({ supergraph: output, port: servePort });
+
+  // Add a todo to update and get the id
+  const result = await execute({
+    query: /* GraphQL */ `
+      mutation AddTodo {
+        addTodo(input: { name: "Shopping", content: "Buy Milk" }) {
+          id
+          name
+          content
+        }
+      }
+    `,
+  });
+  const todoId = result.data.addTodo.id;
+
+  const sse = createClient({
+    url: `http://${hostname}:${port}/graphql`,
+    retryAttempts: 0,
+    fetchFn: fetch,
+  });
+
+  const sub = sse.iterate({
+    query: /* GraphQL */ `
+      subscription todoUpdatedFromExtensions($id: ID!) {
+        todoUpdatedFromExtensions(id: $id) {
+          name
+          content
+        }
+      }
+    `,
+    variables: { id: todoId },
+  });
+
+  await expect(
+    execute({
+      query: /* GraphQL */ `
+        mutation UpdateTodo {
+          updateTodo(input: { id: "${todoId}", name: "Shopping", content: "Buy Eggs" }) {
+            name
+            content
+          }
+        }
+      `,
+    }),
+  ).resolves.toMatchInlineSnapshot(`
+{
+  "data": {
+    "updateTodo": {
+      "content": "Buy Eggs",
+      "name": "Shopping",
+    },
+  },
+}
+`);
+
+  for await (const msg of sub) {
+    expect(msg).toMatchInlineSnapshot(`
+{
+  "data": {
+    "todoUpdatedFromExtensions": {
+      "content": "Buy Eggs",
+      "name": "Shopping",
+    },
+  },
+}
+`);
+    break;
+  }
+});

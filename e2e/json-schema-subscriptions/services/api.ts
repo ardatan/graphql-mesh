@@ -16,11 +16,11 @@ const app = createRouter<FetchEvent>()
   })
   .route({
     path: '/todo',
-    method: 'POST',
+    method: 'PUT',
     async handler(request, { waitUntil }) {
       const reqBody = await request.json();
       const todo = {
-        id: todos.length,
+        id: todos.length.toString(),
         ...reqBody,
       };
       todos.push(todo);
@@ -28,6 +28,42 @@ const app = createRouter<FetchEvent>()
       waitUntil(
         getLocalHostName(port).then(hostname =>
           fetch(`http://${hostname}:${port}/webhooks/todo_added`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(todo),
+          })
+            .then(res =>
+              res.text().then(resText =>
+                console.log('Webhook payload sent', {
+                  status: res.status,
+                  statusText: res.statusText,
+                  body: resText,
+                  headers: Object.fromEntries(res.headers.entries()),
+                }),
+              ),
+            )
+            .catch(err => console.error('Webhook payload failed', err)),
+        ),
+      );
+      return Response.json(todo);
+    },
+  })
+  .route({
+    path: '/todo',
+    method: 'PATCH',
+    async handler(request, { waitUntil }) {
+      const reqBody = await request.json();
+      const todo = {
+        ...todos[reqBody.id],
+        ...reqBody,
+      };
+      todos[reqBody.id] = todo;
+      const port = opts.getPort(true);
+      waitUntil(
+        getLocalHostName(port).then(hostname =>
+          fetch(`http://${hostname}:${port}/webhooks/todo_updated`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
