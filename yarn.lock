@@ -7748,7 +7748,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.8.0"
     "@omnigraph/thrift": "npm:^0.9.8"
     "@types/thrift": "npm:0.10.17"
-    "@types/url-join": "npm:4.0.3"
+    "@types/url-join": "npm:5.0.0"
     graphql: "npm:16.11.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -8196,7 +8196,7 @@ __metadata:
     graphql-scalars: "npm:^1.22.4"
     qs: "npm:^6.14.0"
     tslib: "npm:^2.4.0"
-    url-join: "npm:4.0.1"
+    url-join: "npm:5.0.0"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -11340,7 +11340,7 @@ __metadata:
     "@json-schema-tools/meta-schema": "npm:^1.7.5"
     "@types/qs": "npm:6.14.0"
     "@types/to-json-schema": "npm:0.2.4"
-    "@types/url-join": "npm:4.0.3"
+    "@types/url-join": "npm:5.0.0"
     "@whatwg-node/fetch": "npm:^0.10.6"
     ajv: "npm:^8.17.1"
     ajv-formats: "npm:^2.1.1"
@@ -11354,7 +11354,7 @@ __metadata:
     qs: "npm:^6.14.0"
     to-json-schema: "npm:^0.2.5"
     tslib: "npm:^2.4.0"
-    url-join: "npm:4.0.1"
+    url-join: "npm:5.0.0"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -11413,7 +11413,7 @@ __metadata:
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@types/http-string-parser": "npm:0.0.33"
-    "@types/url-join": "npm:4.0.3"
+    "@types/url-join": "npm:5.0.0"
     "@whatwg-node/fetch": "npm:^0.10.6"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     dataloader: "npm:^2.2.2"
@@ -11425,7 +11425,7 @@ __metadata:
     http-string-parser: "npm:^0.0.6"
     pascal-case: "npm:^3.1.2"
     tslib: "npm:^2.4.0"
-    url-join: "npm:^4.0.1"
+    url-join: "npm:^5.0.0"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -14931,10 +14931,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/url-join@npm:4.0.3":
-  version: 4.0.3
-  resolution: "@types/url-join@npm:4.0.3"
-  checksum: 10c0/7f0f86693070355ce731ec3861d47c03eaae09ab0ea1a72dde6b38a2a17089941acc59bac9ea2472376b6f96e189478da0a7ed29e2d282d1543382e92408d6ca
+"@types/url-join@npm:5.0.0":
+  version: 5.0.0
+  resolution: "@types/url-join@npm:5.0.0"
+  dependencies:
+    url-join: "npm:*"
+  checksum: 10c0/c71d9178c74890c47a62e0d3d878e4782b6fb7c32b5c378b28b5aa99737dbebcfbad07cbca9bf7e37af14f7fe5818581effa31d978ca89f18d67a24f0ec67925
   languageName: node
   linkType: hard
 
@@ -26728,7 +26730,7 @@ __metadata:
     json-pointer: "npm:^0.6.2"
     to-json-schema: "npm:^0.2.5"
     tslib: "npm:^2.4.0"
-    url-join: "npm:^4.0.1"
+    url-join: "npm:^5.0.0"
   languageName: unknown
   linkType: soft
 
@@ -37915,14 +37917,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"url-join@npm:4.0.1, url-join@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "url-join@npm:4.0.1"
-  checksum: 10c0/ac65e2c7c562d7b49b68edddcf55385d3e922bc1dd5d90419ea40b53b6de1607d1e45ceb71efb9d60da02c681d13c6cb3a1aa8b13fc0c989dfc219df97ee992d
-  languageName: node
-  linkType: hard
-
-"url-join@npm:^5.0.0":
+"url-join@npm:*, url-join@npm:5.0.0, url-join@npm:^5.0.0":
   version: 5.0.0
   resolution: "url-join@npm:5.0.0"
   checksum: 10c0/ed2b166b4b5a98adcf6828a48b6bd6df1dac4c8a464a73cf4d8e2457ed410dd8da6be0d24855b86026cd7f5c5a3657c1b7b2c7a7c5b8870af17635a41387b04c
