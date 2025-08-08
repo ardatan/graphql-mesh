@@ -1,5 +1,16 @@
 # @graphql-mesh/json-schema
 
+## 0.109.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+  - @graphql-mesh/store@0.104.7
+  - @omnigraph/json-schema@0.109.8
+
 ## 0.109.7
 
 ### Patch Changes
@@ -1054,7 +1065,6 @@
 - [#6942](https://github.com/ardatan/graphql-mesh/pull/6942)
   [`234d2f9`](https://github.com/ardatan/graphql-mesh/commit/234d2f9d390bd340b0f7bcdb8f335334ff5f60b9)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@json-schema-tools/meta-schema@1.7.5` ↗︎](https://www.npmjs.com/package/@json-schema-tools/meta-schema/v/1.7.5)
     (from `1.7.4`, in `dependencies`)
@@ -1470,7 +1480,6 @@
 - [#5749](https://github.com/Urigo/graphql-mesh/pull/5749)
   [`bb50c4f94`](https://github.com/Urigo/graphql-mesh/commit/bb50c4f941caa59d69186d1415dce5773596e8bc)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Removed dependency
     [`@graphql-tools/utils@^9.2.1 || ^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
     (from `peerDependencies`)
@@ -1600,7 +1609,6 @@
 - [#5421](https://github.com/Urigo/graphql-mesh/pull/5421)
   [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@omnigraph/json-schema@0.93.2` ↗︎](https://www.npmjs.com/package/@omnigraph/json-schema/v/0.93.2)
     (from `0.93.1`, in `dependencies`)
@@ -2156,7 +2164,6 @@
 - [#4790](https://github.com/Urigo/graphql-mesh/pull/4790)
   [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@9.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.0)
     (from `9.0.1`, in `dependencies`)
@@ -2268,7 +2275,6 @@
 - [#4745](https://github.com/Urigo/graphql-mesh/pull/4745)
   [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.13.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.0)
     (from `8.12.0`, in `dependencies`)
@@ -2299,7 +2305,6 @@
 - [#4732](https://github.com/Urigo/graphql-mesh/pull/4732)
   [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`json-machete@0.15.11` ↗︎](https://www.npmjs.com/package/json-machete/v/0.15.11) (from
     `0.15.10`, in `dependencies`)
@@ -2573,7 +2578,6 @@
 - [#4439](https://github.com/Urigo/graphql-mesh/pull/4439)
   [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`json-machete@0.14.9` ↗︎](https://www.npmjs.com/package/json-machete/v/0.14.9) (from `0.14.3`,
     in `dependencies`)
@@ -2621,7 +2625,6 @@
 - [#4466](https://github.com/Urigo/graphql-mesh/pull/4466)
   [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.12.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.12.0)
     (from `8.11.0`, in `dependencies`)
@@ -2687,7 +2690,6 @@
 - [#4443](https://github.com/Urigo/graphql-mesh/pull/4443)
   [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.11.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.11.0)
     (from `8.10.1`, in `dependencies`)
@@ -2713,7 +2715,6 @@
 - [#4440](https://github.com/Urigo/graphql-mesh/pull/4440)
   [`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`graphql-compose@9.0.9` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.9) (from
     `9.0.8`, in `dependencies`)
@@ -2825,7 +2826,6 @@
 - [#4380](https://github.com/Urigo/graphql-mesh/pull/4380)
   [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1)
     (from `8.10.0`, in `dependencies`)
@@ -2833,7 +2833,6 @@
 - [#4389](https://github.com/Urigo/graphql-mesh/pull/4389)
   [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1)
     (from `8.10.0`, in `dependencies`)
@@ -2888,7 +2887,6 @@
 - [#4356](https://github.com/Urigo/graphql-mesh/pull/4356)
   [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824)
   Thanks [@ardatan](https://github.com/ardatan)! - ## Improvements on outgoing HTTP calls
-
   - Now Mesh's default fetch implementation deduplicates the same GET JSON requests in the same
     execution context
   - You should pass `Accept: application/json` to make this work.
@@ -2990,7 +2988,6 @@
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - - Support
   "$request.query" and "$request.path" usages in
   [OpenAPI runtime expressions](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#runtimeExpression)
-
   - Fix `Field not found` error when an OpenAPI link refers to an operation which is not `Mutation`
   - Do not use AJV and check field names in the received object to resolve the type name for a union
     field
@@ -3007,7 +3004,6 @@
     defined in the bundle
 
   **BREAKING CHANGES:**
-
   - If a JSON Schema type cannot be represented in GraphQL (object without properties etc.), it will
     no longer use `Any` type but `JSON` type instead which is a scalar from `graphql-scalars`.
 
@@ -3095,7 +3091,6 @@
 - [#4275](https://github.com/Urigo/graphql-mesh/pull/4275)
   [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.0)
     (was `8.9.1`, in `dependencies`)
@@ -3125,7 +3120,6 @@
 - [#4263](https://github.com/Urigo/graphql-mesh/pull/4263)
   [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.9.1)
     (was `8.9.0`, in `dependencies`)
@@ -3406,7 +3400,6 @@
 ### Minor Changes
 
 - a0950ac6f: Breaking Change:
-
   - Now you can set a global `customFetch` instead of setting `customFetch` individually for each
     handler. `customFetch` configuration field for each handler will no longer work. And also
     `customFetch` needs to be the path of the code file that exports the function as `default`.

@@ -1,5 +1,15 @@
 # @graphql-mesh/types
 
+## 0.104.7
+
+### Patch Changes
+
+- [`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix `filterBy` expression handling
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.104.7
+
 ## 0.104.6
 
 ### Patch Changes
@@ -592,7 +602,6 @@
 - [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
   [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@^10.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.2)
     (from `^10.3.4`, in `peerDependencies`)
@@ -713,7 +722,6 @@
 - [#7185](https://github.com/ardatan/graphql-mesh/pull/7185)
   [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/delegate@^10.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.12)
     (from `^10.0.11`, in `dependencies`)
@@ -1242,7 +1250,6 @@
 - [#5340](https://github.com/Urigo/graphql-mesh/pull/5340)
   [`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/delegate@9.0.32` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.32)
     (from `9.0.31`, in `dependencies`)
@@ -1261,7 +1268,6 @@
 - [#5328](https://github.com/Urigo/graphql-mesh/pull/5328)
   [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.4.25` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.25)
     (from `8.4.24`, in `dependencies`)
@@ -1280,7 +1286,6 @@
 - [#5291](https://github.com/Urigo/graphql-mesh/pull/5291)
   [`20de686dc`](https://github.com/Urigo/graphql-mesh/commit/20de686dcd414112c841cd2c11b1567b82bee134)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.4.23` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.23)
     (from `8.4.22`, in `dependencies`)
@@ -1305,7 +1310,6 @@
 - [#5266](https://github.com/Urigo/graphql-mesh/pull/5266)
   [`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.4.22` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.22)
     (from `8.4.21`, in `dependencies`)
@@ -1523,7 +1527,6 @@
 - [#5028](https://github.com/Urigo/graphql-mesh/pull/5028)
   [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.4.15` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.15)
     (from `8.4.14`, in `dependencies`)
@@ -1672,7 +1675,6 @@
 - [#4790](https://github.com/Urigo/graphql-mesh/pull/4790)
   [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.4.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.8)
     (from `8.4.7`, in `dependencies`)
@@ -1686,7 +1688,6 @@
 - [#4806](https://github.com/Urigo/graphql-mesh/pull/4806)
   [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.4.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.9)
     (from `8.4.8`, in `dependencies`)
@@ -1697,7 +1698,6 @@
 - [#4809](https://github.com/Urigo/graphql-mesh/pull/4809)
   [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.4.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.10)
     (from `8.4.9`, in `dependencies`)
@@ -1725,7 +1725,6 @@
 - [#4773](https://github.com/Urigo/graphql-mesh/pull/4773)
   [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.4.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.5)
     (from `8.4.3`, in `dependencies`)
@@ -1736,7 +1735,6 @@
 - [#4775](https://github.com/Urigo/graphql-mesh/pull/4775)
   [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.0.1)
     (from `8.13.1`, in `dependencies`)
@@ -1744,7 +1742,6 @@
 - [#4779](https://github.com/Urigo/graphql-mesh/pull/4779)
   [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.4.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.4.7)
     (from `8.4.5`, in `dependencies`)
@@ -1993,7 +1990,6 @@
 - [#4439](https://github.com/Urigo/graphql-mesh/pull/4439)
   [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.3.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.3.9)
     (from `8.3.7`, in `dependencies`)
@@ -2018,7 +2014,6 @@
 - [#4466](https://github.com/Urigo/graphql-mesh/pull/4466)
   [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.3.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.3.9)
     (from `8.3.8`, in `dependencies`)
@@ -2062,7 +2057,6 @@
   Thanks [@ardatan](https://github.com/ardatan)! - Fix TypeScript typings for additional scalars;
 
   For example;
-
   - `BigInt` should be `bigint`
   - `PositiveInt` should be `int`
   - `File` should be `File`
@@ -2082,7 +2076,6 @@
 - [#4443](https://github.com/Urigo/graphql-mesh/pull/4443)
   [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/batch-delegate@8.3.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.3.8)
     (from `8.3.7`, in `dependencies`)
@@ -2167,7 +2160,6 @@
 - [#4380](https://github.com/Urigo/graphql-mesh/pull/4380)
   [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/delegate@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.4)
     (from `9.0.3`, in `dependencies`)
@@ -2178,7 +2170,6 @@
 - [#4389](https://github.com/Urigo/graphql-mesh/pull/4389)
   [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/delegate@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.4)
     (from `9.0.3`, in `dependencies`)
@@ -2189,7 +2180,6 @@
 - [#4409](https://github.com/Urigo/graphql-mesh/pull/4409)
   [`15f315959`](https://github.com/Urigo/graphql-mesh/commit/15f315959f4eb70327e3df4c97fa081b75021f5f)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Added dependency
     [`@graphql-tools/batch-delegate@8.3.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/8.3.7)
     (to `dependencies`)
@@ -2254,7 +2244,6 @@
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - - Support
   "$request.query" and "$request.path" usages in
   [OpenAPI runtime expressions](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#runtimeExpression)
-
   - Fix `Field not found` error when an OpenAPI link refers to an operation which is not `Mutation`
   - Do not use AJV and check field names in the received object to resolve the type name for a union
     field
@@ -2271,7 +2260,6 @@
     defined in the bundle
 
   **BREAKING CHANGES:**
-
   - If a JSON Schema type cannot be represented in GraphQL (object without properties etc.), it will
     no longer use `Any` type but `JSON` type instead which is a scalar from `graphql-scalars`.
 
@@ -2352,7 +2340,6 @@
 - [#4275](https://github.com/Urigo/graphql-mesh/pull/4275)
   [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/delegate@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.1)
     (was `9.0.0`, in `dependencies`)
@@ -2363,7 +2350,6 @@
 * [#4298](https://github.com/Urigo/graphql-mesh/pull/4298)
   [`991373717`](https://github.com/Urigo/graphql-mesh/commit/99137371708b7fe12b32dfcfe93d535507a7f968)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/delegate@9.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.3)
     (was `9.0.1`, in `dependencies`)
@@ -2379,7 +2365,6 @@
 - [#4263](https://github.com/Urigo/graphql-mesh/pull/4263)
   [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/delegate@9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.0)
     (was `8.8.1`, in `dependencies`)
@@ -2428,7 +2413,6 @@
 
   Check out the configuration schema to see the options;
   https://github.com/Urigo/graphql-mesh/blob/master/packages/handlers/json-schema/yaml-config.graphql#L25
-
   - @graphql-mesh/store@0.8.25
 
 ## 0.78.4
@@ -2461,7 +2445,6 @@
 
   Please check our docs to see how you can migrate to the new usage.
   https://www.graphql-mesh.com/docs/guides/subscriptions-webhooks#handle-webhook-http-requests
-
   - @graphql-mesh/store@0.8.22
 
 ## 0.78.1
@@ -2545,7 +2528,6 @@
 ### Minor Changes
 
 - a0950ac6f: Breaking Change:
-
   - Now you can set a global `customFetch` instead of setting `customFetch` individually for each
     handler. `customFetch` configuration field for each handler will no longer work. And also
     `customFetch` needs to be the path of the code file that exports the function as `default`.
@@ -3085,7 +3067,6 @@
 ### Minor Changes
 
 - 4545fe72d: Some improvements on additional resolvers;
-
   - Now you can point to the nested fields in `keyArgs`; e.g. `keysArg: "where.ids"`
   - You don't need `returnType` for abstract types anymore, because it's inferred from the type of
     `targetFieldName`.
@@ -3298,7 +3279,6 @@
 - 183cfa96: feat(grpc): add reflection and file descriptor set support
 
   This change adds two new features to the gRPC handler.
-
   - Reflection support
   - File descriptor set support
 

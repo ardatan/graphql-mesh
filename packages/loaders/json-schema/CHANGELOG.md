@@ -1,5 +1,15 @@
 # @omnigraph/json-schema
 
+## 0.109.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+  - @graphql-mesh/transport-rest@0.9.8
+
 ## 0.109.7
 
 ### Patch Changes
@@ -37,7 +47,6 @@
 - [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.10.6` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.6)
     (from `^0.10.4`, in `dependencies`)
@@ -235,7 +244,6 @@
 - [#8269](https://github.com/ardatan/graphql-mesh/pull/8269)
   [`2ff45ed`](https://github.com/ardatan/graphql-mesh/commit/2ff45ed06c9d0eb717b619e761a8918c97c1a434)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`qs@6.14.0` ↗︎](https://www.npmjs.com/package/qs/v/6.14.0) (from `6.13.1`,
     in `dependencies`)
 
@@ -608,7 +616,6 @@
 - [#7641](https://github.com/ardatan/graphql-mesh/pull/7641)
   [`e0c0a94`](https://github.com/ardatan/graphql-mesh/commit/e0c0a94c4d449f01c245a6bfa47e342b31479e3f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`dset@3.1.4` ↗︎](https://www.npmjs.com/package/dset/v/3.1.4) (from `3.1.3`,
     in `dependencies`)
 
@@ -745,7 +752,6 @@
 - [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
   [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@^10.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.2)
     (from `^10.3.4`, in `peerDependencies`)
@@ -969,7 +975,6 @@
 - [#7284](https://github.com/ardatan/graphql-mesh/pull/7284)
   [`22e4dd0`](https://github.com/ardatan/graphql-mesh/commit/22e4dd038b73d38b4cf9eaa407c4e652bec77455)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`ajv@8.17.1` ↗︎](https://www.npmjs.com/package/ajv/v/8.17.1) (from
     `8.16.0`, in `dependencies`)
 
@@ -995,21 +1000,18 @@
 - [#6772](https://github.com/ardatan/graphql-mesh/pull/6772)
   [`27e3cc9`](https://github.com/ardatan/graphql-mesh/commit/27e3cc97c1218863cf2948902bdca050bd71d18a)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
     in `dependencies`)
 
 - [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
   [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
   Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
-
   - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
     in `dependencies`)
 
 - [#7240](https://github.com/ardatan/graphql-mesh/pull/7240)
   [`3aa1583`](https://github.com/ardatan/graphql-mesh/commit/3aa1583db989ef79a706873e9e5786d1cf61de89)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
     in `dependencies`)
 
@@ -1113,7 +1115,6 @@
 - [#7145](https://github.com/ardatan/graphql-mesh/pull/7145)
   [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`graphql-compose@^9.0.11` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.11) (from
     `9.0.11`, in `dependencies`)
@@ -1125,7 +1126,6 @@
   changelog)
 
   Now Mesh Compose produces a superset of Federated Supergraph.
-
   - Drop any options and implementation related to the old `fusiongraph`
   - - The output is a valid supergraph that can be consumed by any Federation router. But if it is
       not Mesh Serve, the subgraph should still be served via Mesh Serve then consumed by that
@@ -1150,7 +1150,6 @@
 
   Basically Mesh Compose uses Federation spec for composition, validation and runtime BUT the output
   is a superset with these additional directives imported via `@composeDirective`;
-
   - `@merge` (Taken from Stitching Directives) If a custom entity resolver is defined for a root
     field like below, the gateway will pick it up as an entity resolver;
 
@@ -1328,7 +1327,6 @@
 - [#7023](https://github.com/ardatan/graphql-mesh/pull/7023)
   [`3288e30`](https://github.com/ardatan/graphql-mesh/commit/3288e302d3a8ed82a6138e33fa5c47aa95493aec)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`ajv@8.14.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.14.0) (from
     `8.13.0`, in `dependencies`)
 
@@ -1396,7 +1394,6 @@
 - [#6942](https://github.com/ardatan/graphql-mesh/pull/6942)
   [`234d2f9`](https://github.com/ardatan/graphql-mesh/commit/234d2f9d390bd340b0f7bcdb8f335334ff5f60b9)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@json-schema-tools/meta-schema@1.7.5` ↗︎](https://www.npmjs.com/package/@json-schema-tools/meta-schema/v/1.7.5)
     (from `1.7.4`, in `dependencies`)
@@ -1464,7 +1461,6 @@
 - [#6832](https://github.com/ardatan/graphql-mesh/pull/6832)
   [`6521fa0`](https://github.com/ardatan/graphql-mesh/commit/6521fa0ec66fd5af734d8ca03941d78d852d3a0c)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@json-schema-tools/meta-schema@1.7.4` ↗︎](https://www.npmjs.com/package/@json-schema-tools/meta-schema/v/1.7.4)
     (from `1.7.0`, in `dependencies`)
@@ -1472,7 +1468,6 @@
 - [#6845](https://github.com/ardatan/graphql-mesh/pull/6845)
   [`d793807`](https://github.com/ardatan/graphql-mesh/commit/d793807f43ece9bf797f1b9fc9252ab959753492)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`qs@6.12.1` ↗︎](https://www.npmjs.com/package/qs/v/6.12.1) (from `6.12.0`,
     in `dependencies`)
 
@@ -1967,7 +1962,6 @@
 - [#5446](https://github.com/Urigo/graphql-mesh/pull/5446)
   [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@^9.2.1 || ^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
     (from `^9.2.1`, in `peerDependencies`)
@@ -1975,7 +1969,6 @@
 - [#5450](https://github.com/Urigo/graphql-mesh/pull/5450)
   [`bc438f835`](https://github.com/Urigo/graphql-mesh/commit/bc438f83549599a544d956ccbb931cf44fb834f4)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0)
     (from `^0.8.3`, in `dependencies`)
@@ -2009,7 +2002,6 @@
 - [#5416](https://github.com/Urigo/graphql-mesh/pull/5416)
   [`272c3f9b4`](https://github.com/Urigo/graphql-mesh/commit/272c3f9b4c7f68672e81c05cda5da5ef0e571d88)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`qs@6.11.2` ↗︎](https://www.npmjs.com/package/qs/v/6.11.2) (from `6.11.1`,
     in `dependencies`)
 
@@ -2258,7 +2250,6 @@
 - [#5091](https://github.com/Urigo/graphql-mesh/pull/5091)
   [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
     (from `9.1.4`, in `dependencies`)
@@ -2312,7 +2303,6 @@
 - [#4988](https://github.com/Urigo/graphql-mesh/pull/4988)
   [`ad938f485`](https://github.com/Urigo/graphql-mesh/commit/ad938f485a9b881a0379284ac582c6c599aa1117)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.6.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.6.0)
     (from `^0.5.0`, in `dependencies`)
@@ -2320,14 +2310,12 @@
 - [#4991](https://github.com/Urigo/graphql-mesh/pull/4991)
   [`bb5abc15d`](https://github.com/Urigo/graphql-mesh/commit/bb5abc15d8ff9227f5fc9fafe78d1befc7ae0797)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`ajv@8.12.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.12.0) (from
     `8.11.2`, in `dependencies`)
 
 - [#5028](https://github.com/Urigo/graphql-mesh/pull/5028)
   [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@9.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.4)
     (from `9.1.3`, in `dependencies`)
@@ -2511,7 +2499,6 @@
 - [#4790](https://github.com/Urigo/graphql-mesh/pull/4790)
   [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@9.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.0)
     (from `9.0.1`, in `dependencies`)
@@ -2519,7 +2506,6 @@
 - [#4806](https://github.com/Urigo/graphql-mesh/pull/4806)
   [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`graphql-scalars@1.20.1` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.1) (from
     `1.20.0`, in `dependencies`)
@@ -2527,7 +2513,6 @@
 - [#4809](https://github.com/Urigo/graphql-mesh/pull/4809)
   [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@9.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.1)
     (from `9.1.0`, in `dependencies`)
@@ -2647,7 +2632,6 @@
 - [#4732](https://github.com/Urigo/graphql-mesh/pull/4732)
   [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`json-machete@0.15.11` ↗︎](https://www.npmjs.com/package/json-machete/v/0.15.11) (from
     `0.15.10`, in `dependencies`)
@@ -2721,7 +2705,6 @@
 - [#4660](https://github.com/Urigo/graphql-mesh/pull/4660)
   [`9d3b3cdf1`](https://github.com/Urigo/graphql-mesh/commit/9d3b3cdf1f921e1906b4b9be8c837ff0504d4d5d)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`graphql-scalars@1.19.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.19.0) (from
     `1.18.0`, in `dependencies`)
@@ -2939,7 +2922,6 @@
 - [#4439](https://github.com/Urigo/graphql-mesh/pull/4439)
   [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.4.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/null) (from
     `^0.3.0`, in `dependencies`)
@@ -2984,7 +2966,6 @@
 - [#4466](https://github.com/Urigo/graphql-mesh/pull/4466)
   [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.12.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.12.0)
     (from `8.11.0`, in `dependencies`)
@@ -3016,7 +2997,6 @@
 - [#4453](https://github.com/Urigo/graphql-mesh/pull/4453)
   [`2a3753b5a`](https://github.com/Urigo/graphql-mesh/commit/2a3753b5a4bd23c7c89f4f08a3e55093e24902a8)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.4.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/null) (from
     `^0.3.0`, in `dependencies`)
@@ -3047,7 +3027,6 @@
 - [#4443](https://github.com/Urigo/graphql-mesh/pull/4443)
   [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.11.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.11.0)
     (from `8.10.1`, in `dependencies`)
@@ -3069,7 +3048,6 @@
 - [#4440](https://github.com/Urigo/graphql-mesh/pull/4440)
   [`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`graphql-compose@9.0.9` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.0.9) (from
     `9.0.8`, in `dependencies`)
@@ -3198,7 +3176,6 @@
 - [#4380](https://github.com/Urigo/graphql-mesh/pull/4380)
   [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1)
     (from `8.10.0`, in `dependencies`)
@@ -3206,7 +3183,6 @@
 - [#4389](https://github.com/Urigo/graphql-mesh/pull/4389)
   [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1)
     (from `8.10.0`, in `dependencies`)
@@ -3267,7 +3243,6 @@
 - [#4356](https://github.com/Urigo/graphql-mesh/pull/4356)
   [`b5c59ffce`](https://github.com/Urigo/graphql-mesh/commit/b5c59ffceae7091f8d2b98ee548890acdbd57824)
   Thanks [@ardatan](https://github.com/ardatan)! - ## Improvements on outgoing HTTP calls
-
   - Now Mesh's default fetch implementation deduplicates the same GET JSON requests in the same
     execution context
   - You should pass `Accept: application/json` to make this work.
@@ -3334,7 +3309,6 @@
 - [#4348](https://github.com/Urigo/graphql-mesh/pull/4348)
   [`de7081cdb`](https://github.com/Urigo/graphql-mesh/commit/de7081cdbb4c6ddb8ff60ac15089a19f70ee3a3a)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/null) (from
     `^0.2.7`, in `dependencies`)
@@ -3373,7 +3347,6 @@
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - - Support
   "$request.query" and "$request.path" usages in
   [OpenAPI runtime expressions](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#runtimeExpression)
-
   - Fix `Field not found` error when an OpenAPI link refers to an operation which is not `Mutation`
   - Do not use AJV and check field names in the received object to resolve the type name for a union
     field
@@ -3390,7 +3363,6 @@
     defined in the bundle
 
   **BREAKING CHANGES:**
-
   - If a JSON Schema type cannot be represented in GraphQL (object without properties etc.), it will
     no longer use `Any` type but `JSON` type instead which is a scalar from `graphql-scalars`.
 
@@ -3476,7 +3448,6 @@
 - [#4275](https://github.com/Urigo/graphql-mesh/pull/4275)
   [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.0)
     (was `8.9.1`, in `dependencies`)
@@ -3505,7 +3476,6 @@
 - [#4263](https://github.com/Urigo/graphql-mesh/pull/4263)
   [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@8.9.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.9.1)
     (was `8.9.0`, in `dependencies`)
@@ -3902,7 +3872,6 @@
 ### Minor Changes
 
 - a0950ac6f: Breaking Change:
-
   - Now you can set a global `customFetch` instead of setting `customFetch` individually for each
     handler. `customFetch` configuration field for each handler will no longer work. And also
     `customFetch` needs to be the path of the code file that exports the function as `default`.

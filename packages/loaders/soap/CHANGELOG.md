@@ -1,5 +1,15 @@
 # @omnigraph/soap
 
+## 0.107.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+  - @graphql-mesh/transport-soap@0.10.8
+
 ## 0.107.7
 
 ### Patch Changes
@@ -37,7 +47,6 @@
 - [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.10.6` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.6)
     (from `^0.10.4`, in `dependencies`)
@@ -166,7 +175,6 @@
 - [#8405](https://github.com/ardatan/graphql-mesh/pull/8405)
   [`5aaf455`](https://github.com/ardatan/graphql-mesh/commit/5aaf4559ac3dc3d08db4011a4351b96b8b25d1a3)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`fast-xml-parser@^5.0.0` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.0.0) (from
     `^4.5.0`, in `dependencies`)
@@ -272,7 +280,6 @@
 - [#8196](https://github.com/ardatan/graphql-mesh/pull/8196)
   [`3fc1f3e`](https://github.com/ardatan/graphql-mesh/commit/3fc1f3e046c02107d7fecf367756c7196fbe6ce1)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Added dependency
     [`@graphql-mesh/transport-common@^0.7.25` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/0.7.25)
     (to `dependencies`)
@@ -710,7 +717,6 @@
 - [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
   [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@^10.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.2)
     (from `^10.3.4`, in `peerDependencies`)
@@ -1390,7 +1396,6 @@
 - [#5690](https://github.com/Urigo/graphql-mesh/pull/5690)
   [`238a4063f`](https://github.com/Urigo/graphql-mesh/commit/238a4063fba0bcad4ad6e7095272cf31504cbd36)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`fast-xml-parser@4.2.6` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/4.2.6) (from
     `4.2.5`, in `dependencies`)
@@ -1398,7 +1403,6 @@
 - [#5691](https://github.com/Urigo/graphql-mesh/pull/5691)
   [`12a751e8e`](https://github.com/Urigo/graphql-mesh/commit/12a751e8e6b5b4cbd0d8b6018f37a1140a118198)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Added dependency
     [`@graphql-mesh/cross-helpers@^0.4.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.0)
     (to `dependencies`)
@@ -1448,7 +1452,6 @@
 - [#5601](https://github.com/Urigo/graphql-mesh/pull/5601)
   [`cb399b206`](https://github.com/Urigo/graphql-mesh/commit/cb399b20672514f8e47b769e254e9812301d1c69)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`fast-xml-parser@4.2.5` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/4.2.5) (from
     `4.2.4`, in `dependencies`)
@@ -1492,7 +1495,6 @@
 - [#5446](https://github.com/Urigo/graphql-mesh/pull/5446)
   [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@^9.2.1 || ^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
     (from `^9.2.1`, in `peerDependencies`)
@@ -1547,7 +1549,6 @@
 - [#5340](https://github.com/Urigo/graphql-mesh/pull/5340)
   [`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`fast-xml-parser@4.2.1` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/4.2.1) (from
     `4.2.0`, in `dependencies`)
@@ -1789,7 +1790,6 @@
 - [#5028](https://github.com/Urigo/graphql-mesh/pull/5028)
   [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@9.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.4)
     (from `9.1.3`, in `dependencies`)
@@ -1907,7 +1907,6 @@
 - [#4790](https://github.com/Urigo/graphql-mesh/pull/4790)
   [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@9.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.0)
     (from `9.0.1`, in `dependencies`)
@@ -1915,7 +1914,6 @@
 - [#4806](https://github.com/Urigo/graphql-mesh/pull/4806)
   [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`graphql-scalars@1.20.1` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.1) (from
     `1.20.0`, in `dependencies`)

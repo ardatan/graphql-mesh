@@ -1,5 +1,15 @@
 # @omnigraph/thrift
 
+## 0.9.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+  - @graphql-mesh/transport-thrift@0.9.7
+
 ## 0.9.7
 
 ### Patch Changes
@@ -47,7 +57,6 @@
 - [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/fetch@^0.10.6` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.10.6)
     (from `^0.10.4`, in `dependencies`)
@@ -690,7 +699,6 @@
   changelog)
 
   Now Mesh Compose produces a superset of Federated Supergraph.
-
   - Drop any options and implementation related to the old `fusiongraph`
   - - The output is a valid supergraph that can be consumed by any Federation router. But if it is
       not Mesh Serve, the subgraph should still be served via Mesh Serve then consumed by that
@@ -715,7 +723,6 @@
 
   Basically Mesh Compose uses Federation spec for composition, validation and runtime BUT the output
   is a superset with these additional directives imported via `@composeDirective`;
-
   - `@merge` (Taken from Stitching Directives) If a custom entity resolver is defined for a root
     field like below, the gateway will pick it up as an entity resolver;
 
@@ -989,7 +996,6 @@
 - [#6551](https://github.com/ardatan/graphql-mesh/pull/6551)
   [`7c18a3f`](https://github.com/ardatan/graphql-mesh/commit/7c18a3f9163f5156758b8cdf0292b28a3bb6046b)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Added dependency
     [`@graphql-mesh/transport-thrift@^0.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-thrift/v/0.0.0)
     (to `dependencies`)

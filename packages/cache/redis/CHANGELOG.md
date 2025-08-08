@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-redis
 
+## 0.104.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+
 ## 0.104.6
 
 ### Patch Changes
@@ -136,7 +144,6 @@
 
   This enhancement allows you to explicitly specify the IP address family when connecting to Redis
   instances:
-
   - 4: Force IPv4
   - 6: Force IPv6
   - 0: Automatic (default)
@@ -417,7 +424,6 @@
 - [#7595](https://github.com/ardatan/graphql-mesh/pull/7595)
   [`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/disposablestack@^0.0.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.4)
     (from `^0.0.3`, in `dependencies`)
@@ -425,7 +431,6 @@
 - [#7596](https://github.com/ardatan/graphql-mesh/pull/7596)
   [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-
   - Updated dependency
     [`@whatwg-node/disposablestack@^0.0.5` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.5)
     (from `^0.0.4`, in `dependencies`)
@@ -942,7 +947,6 @@
 - [#5838](https://github.com/Urigo/graphql-mesh/pull/5838)
   [`8380e8cb6`](https://github.com/Urigo/graphql-mesh/commit/8380e8cb6e2c7ebb3c5b66da4cc1753e0eadeab9)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency [`ioredis@^5.3.2` ↗︎](https://www.npmjs.com/package/ioredis/v/5.3.2) (from
     `5.3.2`, in `dependencies`)
   - Updated dependency
@@ -1130,7 +1134,6 @@
 - [#5322](https://github.com/Urigo/graphql-mesh/pull/5322)
   [`d54b8cf29`](https://github.com/Urigo/graphql-mesh/commit/d54b8cf29490e86988c0b68a129372557d93e7a2)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`ioredis-mock@8.5.0` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.5.0) (from `8.4.0`, in
     `dependencies`)
@@ -1138,7 +1141,6 @@
 - [#5324](https://github.com/Urigo/graphql-mesh/pull/5324)
   [`3d4d11ac8`](https://github.com/Urigo/graphql-mesh/commit/3d4d11ac82c57549eeb6cec5ed651de102cc9205)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency
     [`ioredis-mock@8.6.0` ↗︎](https://www.npmjs.com/package/ioredis-mock/v/8.6.0) (from `8.5.0`, in
     `dependencies`)
@@ -1367,7 +1369,6 @@
 - [#5034](https://github.com/Urigo/graphql-mesh/pull/5034)
   [`7bba730b0`](https://github.com/Urigo/graphql-mesh/commit/7bba730b0ec024633ed12c040050558e68697824)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`ioredis@5.2.5` ↗︎](https://www.npmjs.com/package/ioredis/v/5.2.5) (from
     `5.2.4`, in `dependencies`)
 
@@ -1711,7 +1712,6 @@
 - [#4439](https://github.com/Urigo/graphql-mesh/pull/4439)
   [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-mesh/types@0.83.3` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.83.3)
     (from `0.82.1`, in `dependencies`)
@@ -1837,7 +1837,6 @@
 
 - [`51cd8f65b`](https://github.com/Urigo/graphql-mesh/commit/51cd8f65b9fcd88ae7e6a70220a84a3306376c86)
   Thanks [@ardatan](https://github.com/ardatan)! - dependency updates:
-
   - Updated dependency [`ioredis@5.2.3` ↗︎](https://www.npmjs.com/package/ioredis/v/5.2.3) (from
     `5.2.2`, in `dependencies`)
 

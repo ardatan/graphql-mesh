@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-transfer-schema
 
+## 0.104.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+
 ## 0.104.6
 
 ### Patch Changes
@@ -453,7 +462,6 @@
 - [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
   [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@^10.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.2)
     (from `^10.3.4`, in `peerDependencies`)
@@ -642,7 +650,6 @@
 - [#6999](https://github.com/ardatan/graphql-mesh/pull/6999)
   [`73d0ae2`](https://github.com/ardatan/graphql-mesh/commit/73d0ae2da47778673942780fe84b01f23bf8fa4b)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`micromatch@4.0.6` ↗︎](https://www.npmjs.com/package/micromatch/v/4.0.6)
     (from `4.0.5`, in `dependencies`)
 

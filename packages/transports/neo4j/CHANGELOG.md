@@ -1,5 +1,14 @@
 # @graphql-mesh/transport-neo4j
 
+## 0.10.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+
 ## 0.10.4
 
 ### Patch Changes
@@ -556,7 +565,6 @@
 - [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
   [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/utils@^10.5.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.5.2)
     (from `^10.3.4`, in `dependencies`)
@@ -589,7 +597,6 @@
 - [#7477](https://github.com/ardatan/graphql-mesh/pull/7477)
   [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-
   - Updated dependency
     [`@graphql-tools/delegate@^10.0.18` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.18)
     (from `^10.0.17`, in `dependencies`)
@@ -759,7 +766,6 @@
   changelog)
 
   Now Mesh Compose produces a superset of Federated Supergraph.
-
   - Drop any options and implementation related to the old `fusiongraph`
   - - The output is a valid supergraph that can be consumed by any Federation router. But if it is
       not Mesh Serve, the subgraph should still be served via Mesh Serve then consumed by that
@@ -784,7 +790,6 @@
 
   Basically Mesh Compose uses Federation spec for composition, validation and runtime BUT the output
   is a superset with these additional directives imported via `@composeDirective`;
-
   - `@merge` (Taken from Stitching Directives) If a custom entity resolver is defined for a root
     field like below, the gateway will pick it up as an entity resolver;
 
