@@ -558,6 +558,9 @@ type EnergyObsSeries {
   """Data revision status (interim or final)"""
   revision_status: String
 
+  """Final data revision version."""
+  revision_version: String
+
   """Average Relative humidity (%)"""
   rh: Int
 
@@ -966,6 +969,9 @@ type HistoryAGObj {
   """Data revision status"""
   revision_status: String
 
+  """Final data revision version."""
+  revision_version: String
+
   """Average Skin Temperature"""
   skin_temp_avg: Float
 
@@ -1106,6 +1112,9 @@ type HistoryDayObj {
   """Data revision status (interim or final)"""
   revision_status: String
 
+  """Final data revision version."""
+  revision_version: String
+
   """Average relative humidity as a percentage (%)"""
   rh: Float
 
@@ -1185,6 +1194,9 @@ type HistoryObj {
 
   """Data revision status (interim or final)"""
   revision_status: String
+
+  """Final data revision version."""
+  revision_version: String
 
   """Relative Humidity as a percentage (%)"""
   rh: Int
