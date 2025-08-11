@@ -43,7 +43,7 @@ export function importFederationDirectives(subgraph: GraphQLSchema, directives: 
   }
   // v2.0 is not supported so bump to v2.6
   const federationVersion = importStatement.url.match(/v(\d+\.\d+)/)?.[1];
-  if (federationVersion && federationVersion.startsWith('2.0')) {
+  if (federationVersion && federationVersion.startsWith('2.')) {
     importStatement.url = 'https://specs.apollo.dev/federation/v2.6';
   }
   importStatement.import = [...new Set([...(importStatement.import || []), ...directives])];
