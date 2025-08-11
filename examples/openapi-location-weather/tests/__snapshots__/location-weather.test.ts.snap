@@ -5,7 +5,11 @@ exports[`Location Weather should generate correct schema: location-weather-schem
 
 directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, jsonApiFields: Boolean, operationSpecificHeaders: [[String]], path: String, queryParamArgMap: ObjMap, queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, subgraph: String) on FIELD_DEFINITION
 
+directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
+
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String) on FIELD_DEFINITION
+
+directive @statusCodeTypeName(statusCode: String, subgraph: String, typeName: String) repeatable on UNION
 
 directive @transport(headers: [[String]], kind: String, location: String, queryParams: [[String]], queryStringOptions: ObjMap, subgraph: String) repeatable on SCHEMA
 
@@ -340,7 +344,7 @@ type CurrentObs {
 
   """Visibility - default (M)"""
   vis: Int
-  weather: query_current_data_items_weather
+  weather: query_current_oneOf_0_data_items_weather
 
   """Cardinal wind direction"""
   wind_cdir: String
@@ -738,7 +742,7 @@ type Forecast {
 
   """Average Visibility default (KM)"""
   vis: Float
-  weather: query_forecast_daily_data_items_weather
+  weather: query_forecast_daily_oneOf_0_data_items_weather
 
   """Cardinal wind direction"""
   wind_cdir: String
@@ -850,7 +854,7 @@ type ForecastHour {
 
   """Visibility - Default (KM)"""
   vis: Float
-  weather: query_forecast_hourly_data_items_weather
+  weather: query_forecast_hourly_oneOf_0_data_items_weather
 
   """Cardinal wind direction"""
   wind_cdir: String
@@ -1227,7 +1231,7 @@ type HistoryObj {
 
   """Visibility (KM)"""
   vis: Float
-  weather: query_history_hourly_data_items_weather
+  weather: query_history_hourly_oneOf_0_data_items_weather
 
   """Wind direction (Degrees)"""
   wind_dir: Int
@@ -1262,11 +1266,6 @@ type HistorySubhourly {
   """Local IANA time zone"""
   timezone: String
 }
-
-"""
-The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 """A language supported by the service"""
 type Language {
@@ -1555,7 +1554,7 @@ type Query {
 
     """Station Call ID."""
     station: String
-  ): WeatherAlert
+  ): alerts_response
 
   """
   Downloads bulk data files - OPTIONS: ( current.csv.gz, forecast_hourly.csv.gz, forecast_daily.csv.gz). Units are Metric (Celcius, m/s, etc).
@@ -1563,7 +1562,7 @@ type Query {
   bulk_files(
     """Your registered API key."""
     key: String
-  ): JSON
+  ): Void
 
   """Returns a Current Observation - given a lat, and a lon."""
   current(
@@ -1606,7 +1605,7 @@ type Query {
     """Comma separated list of Station Call ID's. Example: KRDU,KBFI,KVNY"""
     stations: String
     units: queryInput_current_units
-  ): CurrentObsGroup
+  ): current_response
 
   """Returns current air quality conditions."""
   current_airquality(
@@ -1632,7 +1631,7 @@ type Query {
 
     """Postal Code. Example: 28546"""
     postal_code: String
-  ): AQCurrentGroup
+  ): current_airquality_response
 
   """
   Returns nearest and most recent lightning observations - Given a lat/lon.
@@ -1658,7 +1657,7 @@ type Query {
     """
     search_mins: Int
     sort: queryInput_current_lightning_sort
-  ): LightningObsGroup
+  ): current_lightning_response
 
   "Find administrative divisions, filtering by optional criteria. If no criteria are set, you will get back all\\nknown divisions.\\n"
   findAdminDivisionsUsingGET(
@@ -2293,7 +2292,7 @@ type Query {
     """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
     start_date: String!
     units: queryInput_forecast_agweather_units
-  ): ForecastAG
+  ): forecast_agweather_response
 
   """
   Returns 72 hour (hourly) Air Quality forecast, where each point represents a one hour period.
@@ -2324,7 +2323,7 @@ type Query {
 
     """Postal Code. Example: 28546"""
     postal_code: String
-  ): AQHourly
+  ): forecast_airquality_response
 
   "Returns a daily forecast, where each point represents one day (24hr) period. Every point has a datetime string in the format \\"YYYY-MM-DD\\". One day begins at 00:00 UTC, and ends at 23:59 UTC. \\n"
   forecast_daily(
@@ -2358,7 +2357,7 @@ type Query {
     """Station Call ID."""
     station: String
     units: queryInput_forecast_daily_units
-  ): ForecastDay
+  ): forecast_daily_response
 
   """
   Retrieve an 8 day forecast relevant to te Energy Sector (degree days, solar radiation, precipitation, wind).
@@ -2377,7 +2376,7 @@ type Query {
     threshold: Float
     tp: queryInput_forecast_energy_tp
     units: queryInput_forecast_energy_units
-  ): EnergyObsGroupForecast
+  ): forecast_energy_response
 
   "Returns an hourly forecast, where each point represents a one hour period. Every point has a datetime string in the format \\"YYYY-MM-DD:HH\\". Time is UTC. \\n"
   forecast_hourly(
@@ -2411,7 +2410,7 @@ type Query {
     """Station Call ID."""
     station: String
     units: queryInput_forecast_hourly_units
-  ): ForecastHourly
+  ): forecast_hourly_response
 
   """
   Returns a 60 minute precipitation forecast, where each point represents one minute (1 min) period.
@@ -2443,7 +2442,7 @@ type Query {
     """Station Call ID."""
     station: String
     units: queryInput_forecast_minutely_units
-  ): FCMinutely
+  ): forecast_minutely_response
 
   "Get the details for a specific administrative division, including location coordinates, population, and\\nelevation above sea-level (if available).\\n"
   getAdminDivisionUsingGET(
@@ -2703,7 +2702,7 @@ type Query {
     start_date: String!
     tp: queryInput_history_agweather_tp!
     units: queryInput_history_agweather_units
-  ): HistoryAG
+  ): history_agweather_response
 
   """
   Returns historical air quality conditions. See https://www.weatherbit.io/api for API specific rate limits.
@@ -2731,7 +2730,7 @@ type Query {
 
     """Postal Code. Example: 28546"""
     postal_code: String
-  ): AQCurrentGroup
+  ): history_airquality_response
 
   """
   Returns Historical Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.
@@ -2770,7 +2769,7 @@ type Query {
     """Station Call ID."""
     station: String
     units: queryInput_history_daily_units
-  ): HistoryDay
+  ): history_daily_response
 
   """
   Returns aggregate energy specific historical weather fields, over a specified time period. See https://www.weatherbit.io/api for API specific rate limits.
@@ -2795,7 +2794,7 @@ type Query {
     threshold: Float
     tp: queryInput_history_energy_tp
     units: queryInput_history_energy_units
-  ): EnergyObsGroup
+  ): history_energy_response
 
   """
   Returns Historical Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.
@@ -2835,7 +2834,7 @@ type Query {
     station: String
     tz: queryInput_history_hourly_tz
     units: queryInput_history_hourly_units
-  ): History
+  ): history_hourly_response
 
   """
   Returns Historical Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.
@@ -2875,7 +2874,7 @@ type Query {
     station: String
     tz: queryInput_history_subhourly_tz
     units: queryInput_history_subhourly_units
-  ): HistorySubhourly
+  ): history_subhourly_response
 
   """
   Returns Historical Climate Normals (Averages) - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.
@@ -2900,7 +2899,7 @@ type Query {
     start_day: String!
     tp: queryInput_normals_tp!
     units: queryInput_normals_units
-  ): Normals
+  ): normals_response
 }
 
 scalar ResolveToSourceArgs
@@ -2951,6 +2950,13 @@ A field whose value conforms to the standard URL format as specified in RFC3986:
 """
 scalar URL
 
+"""Represents empty values"""
+scalar Void
+
+type Void_container {
+  Void: Void
+}
+
 type WeatherAlert {
   alerts: [WeatherAlertGroup]
 
@@ -2988,6 +2994,40 @@ type WeatherAlertGroup {
   """URI to weather alert"""
   uri: URL
 }
+
+union alerts_response = Void_container | WeatherAlert
+
+union current_airquality_response = AQCurrentGroup | Void_container
+
+union current_lightning_response = LightningObsGroup | Void_container
+
+union current_response = CurrentObsGroup | Void_container
+
+union forecast_agweather_response = ForecastAG | Void_container
+
+union forecast_airquality_response = AQHourly | Void_container
+
+union forecast_daily_response = ForecastDay | Void_container
+
+union forecast_energy_response = EnergyObsGroupForecast | Void_container
+
+union forecast_hourly_response = ForecastHourly | Void_container
+
+union forecast_minutely_response = FCMinutely | Void_container
+
+union history_agweather_response = HistoryAG | Void_container
+
+union history_airquality_response = AQCurrentGroup | Void_container
+
+union history_daily_response = HistoryDay | Void_container
+
+union history_energy_response = EnergyObsGroup | Void_container
+
+union history_hourly_response = History | Void_container
+
+union history_subhourly_response = HistorySubhourly | Void_container
+
+union normals_response = Normals | Void_container
 
 """
 Include 1 hour - minutely precip forecast in the response, or severe weather alerts
@@ -3373,7 +3413,7 @@ enum queryInput_normals_units {
   S
 }
 
-type query_current_data_items_weather {
+type query_current_oneOf_0_data_items_weather {
   """Weather Condition code"""
   code: Int
 
@@ -3384,7 +3424,7 @@ type query_current_data_items_weather {
   icon: String
 }
 
-type query_forecast_daily_data_items_weather {
+type query_forecast_daily_oneOf_0_data_items_weather {
   """Weather Condition code"""
   code: Int
 
@@ -3395,7 +3435,7 @@ type query_forecast_daily_data_items_weather {
   icon: String
 }
 
-type query_forecast_hourly_data_items_weather {
+type query_forecast_hourly_oneOf_0_data_items_weather {
   """Weather Condition code"""
   code: Int
 
@@ -3594,7 +3634,7 @@ enum query_getLanguagesUsingGET_allOf_1_data_items_code {
   zu
 }
 
-type query_history_hourly_data_items_weather {
+type query_history_hourly_oneOf_0_data_items_weather {
   """Weather Condition code"""
   code: Int
 
