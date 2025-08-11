@@ -19,7 +19,7 @@ export function addFederation2DirectivesToSubgraph(subgraph: GraphQLSchema) {
     )
   ) {
     linkDirectives.push({
-      url: 'https://specs.apollo.dev/federation/v2.3',
+      url: 'https://specs.apollo.dev/federation/v2.6',
       import: [],
     });
   }
@@ -42,7 +42,8 @@ export function importFederationDirectives(subgraph: GraphQLSchema, directives: 
     linkDirectives.push(importStatement);
   }
   // v2.0 is not supported so bump to v2.6
-  if (importStatement.url === 'https://specs.apollo.dev/federation/v2.0') {
+  const federationVersion = importStatement.url.match(/v(\d+\.\d+)/)?.[1];
+  if (federationVersion && federationVersion.startsWith('2.0')) {
     importStatement.url = 'https://specs.apollo.dev/federation/v2.6';
   }
   importStatement.import = [...new Set([...(importStatement.import || []), ...directives])];

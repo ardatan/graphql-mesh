@@ -313,30 +313,6 @@ input SearchByCastRequest_Input @join__type(graph: MOVIES)  {
 "
 `;
 
-exports[`gRPC Example gets movies correctly: get-movies-grpc-example-result 1`] = `
-{
-  "data": {
-    "exampleGetMovies": {
-      "result": [
-        {
-          "cast": [
-            "Leonardo DiCaprio",
-            "Jonah Hill",
-            "Margot Robbie",
-          ],
-          "name": "The Wolf of Wall Street",
-          "rating": 0.7799999713897705,
-          "time": {
-            "seconds": 1608422400000,
-          },
-          "year": 0,
-        },
-      ],
-    },
-  },
-}
-`;
-
 exports[`gRPC Example streams movies by cast correctly: 0 1`] = `
 {
   "data": {
@@ -449,6 +425,30 @@ exports[`gRPC Example streams movies by cast correctly: 4 1`] = `
       },
       null,
     ],
+  },
+}
+`;
+
+exports[`gRPC Example streams movies by cast correctly: get-movies-grpc-example-result 1`] = `
+{
+  "data": {
+    "exampleGetMovies": {
+      "result": [
+        {
+          "cast": [
+            "Leonardo DiCaprio",
+            "Jonah Hill",
+            "Margot Robbie",
+          ],
+          "name": "The Wolf of Wall Street",
+          "rating": 0.7799999713897705,
+          "time": {
+            "seconds": 1608422400000,
+          },
+          "year": 0,
+        },
+      ],
+    },
   },
 }
 `;
