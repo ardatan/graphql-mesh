@@ -22,6 +22,11 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const gatewayConfig = defineGatewayConfig({
+  transportEntries: {
+    '*.rest': {
+      headers: [['user-agent', 'hive-gateway/e2e']],
+    },
+  },
   additionalResolvers: {
     Query: {
       async viewsInPastMonth(root, { project }, context: any, info) {

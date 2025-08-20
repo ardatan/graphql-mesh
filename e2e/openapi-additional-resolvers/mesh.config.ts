@@ -20,6 +20,11 @@ export const composeConfig = defineComposeConfig({
 });
 
 export const gatewayConfig = defineGatewayConfig({
+  transportEntries: {
+    '*.rest': {
+      headers: [['user-agent', 'hive-gateway/e2e']],
+    },
+  },
   additionalResolvers: {
     pageview_project: {
       banana() {
