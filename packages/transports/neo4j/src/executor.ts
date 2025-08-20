@@ -3,7 +3,7 @@ import { extendSchema, parse, visit } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import type { Driver } from 'neo4j-driver';
 import type { DisposableExecutor } from '@graphql-mesh/transport-common';
-import type { Logger, MeshPubSub } from '@graphql-mesh/types';
+import { toMeshPubSub, type HivePubSub, type Logger, type MeshPubSub } from '@graphql-mesh/types';
 import { makeAsyncDisposable } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import {
@@ -23,7 +23,7 @@ type Neo4jFeaturesSettings = any;
 export interface Neo4JExecutorOpts {
   schema: GraphQLSchema;
   driver?: Driver;
-  pubsub?: MeshPubSub;
+  pubsub?: MeshPubSub | HivePubSub;
   logger?: Logger;
 }
 
@@ -120,17 +120,18 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
 
 interface GetExecutableSchemaFromTypeDefs {
   driver: Driver;
-  pubsub?: MeshPubSub;
+  pubsub?: MeshPubSub | HivePubSub;
   typeDefs?: string | DocumentNode;
 }
 
 export function getExecutableSchemaFromTypeDefsAndDriver({
   driver,
-  pubsub,
+  pubsub: meshOrHivePubSub,
   typeDefs,
 }: GetExecutableSchemaFromTypeDefs) {
   let features: Neo4jFeaturesSettings;
-  if (pubsub) {
+  if (meshOrHivePubSub) {
+    const pubsub = toMeshPubSub(meshOrHivePubSub);
     features = {
       subscriptions: {
         events: getEventEmitterFromPubSub(pubsub),

@@ -3,7 +3,7 @@ import type { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import type { JSONSchema, JSONSchemaObject } from 'json-machete';
 import type { IStringifyOptions } from 'qs';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
+import type { HivePubSub, Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
 import type { BaseLoaderOptions } from '@graphql-tools/utils';
 
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
@@ -14,7 +14,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   operations: JSONSchemaOperationConfig[];
   errorMessage?: string;
   logger?: Logger;
-  pubsub?: MeshPubSub;
+  pubsub?: MeshPubSub | HivePubSub;
   fetch?: MeshFetch;
   ignoreErrorResponses?: boolean;
   queryParams?: Record<string, string | number | boolean>;
