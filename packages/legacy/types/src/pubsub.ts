@@ -53,7 +53,12 @@ export class MeshFromHivePubSub implements MeshPubSub {
   }
 
   publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): void {
-    this.#pubsub.publish(triggerName, payload);
+    const publishing = this.#pubsub.publish(triggerName, payload);
+    if (isPromise(publishing)) {
+      publishing.catch(err => {
+        console.error(`Failed to publish to ${triggerName}`, err);
+      });
+    }
   }
 
   subscribe<THook extends HookName>(
@@ -79,17 +84,26 @@ export class MeshFromHivePubSub implements MeshPubSub {
       return;
     }
     this.#subs.delete(subId);
-    if ('then' in unsubscribe) {
-      unsubscribe.then(unsub => {
-        const unsubbed$ = unsub();
-        if (isPromise(unsubbed$)) {
-          unsubbed$.catch(err => {
-            console.error(`Failed to unsubscribe from ${subId}`, err);
-          });
-        }
-      });
+    if (isPromise(unsubscribe)) {
+      unsubscribe
+        .then(unsub => {
+          const unsubbed = unsub();
+          if (isPromise(unsubbed)) {
+            unsubbed.catch(err => {
+              console.error(`Failed to finish unsubscribe from ${subId}`, err);
+            });
+          }
+        })
+        .catch(err => {
+          console.error(`Failed to start unsubscribe from ${subId}`, err);
+        });
     } else {
-      unsubscribe();
+      const unsubbed = unsubscribe();
+      if (isPromise(unsubbed)) {
+        unsubbed.catch(err => {
+          console.error(`Failed to finish unsubscribe from ${subId}`, err);
+        });
+      }
     }
   }
 
