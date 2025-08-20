@@ -2,6 +2,8 @@
 import type { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode } from 'graphql';
 import type { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import type { Plugin } from '@envelop/core';
+import type { PubSub as HivePubSub } from '@graphql-hive/pubsub';
+import { MeshPubSub as HiveMeshPubSub } from '@graphql-hive/pubsub/mesh';
 import type { MeshStore } from '@graphql-mesh/store';
 import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import type {
@@ -82,6 +84,34 @@ export interface MeshPubSub {
   unsubscribe(subId: number): void;
   getEventNames(): Iterable<string>;
   asyncIterator<THook extends HookName>(triggers: THook): AsyncIterable<AllHooks[THook]>;
+}
+
+export type { HivePubSub };
+
+/**
+ * Checks whether the provided {@link pubsub} is a {@link HivePubSub}. It is only
+ * accurate when dealing with `@graphql-hive/pubsub` v2 and above.
+ */
+export function isHivePubSub(pubsub: undefined | MeshPubSub | HivePubSub): pubsub is HivePubSub {
+  // HivePubSub does not have asyncIterator method. this only applies for @graphql-hive/pubsub v2+
+  return !('asyncIterator' in pubsub);
+}
+
+/**
+ * A utility function ensuring the provided {@link pubsub} is always the legacy {@link MeshPubSub}.
+ * It does so by converting a {@link HivePubSub} to a {@link MeshPubSub} if provided, or leaving it
+ * as is if it's already a {@link MeshPubSub}.
+ */
+export function toMeshPubSub(pubsub: undefined): undefined;
+export function toMeshPubSub(pubsub: MeshPubSub): MeshPubSub;
+export function toMeshPubSub(pubsub: HivePubSub): MeshPubSub;
+export function toMeshPubSub(pubsub: HivePubSub | MeshPubSub): MeshPubSub;
+export function toMeshPubSub(pubsub: HivePubSub | MeshPubSub | undefined): MeshPubSub | undefined;
+export function toMeshPubSub(pubsub?: MeshPubSub | HivePubSub | undefined): MeshPubSub | undefined {
+  if (isHivePubSub(pubsub)) {
+    return HiveMeshPubSub.from(pubsub);
+  }
+  return pubsub;
 }
 
 export interface MeshTransformOptions<Config = any> {
