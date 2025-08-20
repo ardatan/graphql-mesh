@@ -2,8 +2,6 @@
 import type { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode } from 'graphql';
 import type { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import type { Plugin } from '@envelop/core';
-import type { PubSub as HivePubSub } from '@graphql-hive/pubsub';
-import { MeshPubSub as HiveMeshPubSub } from '@graphql-hive/pubsub/mesh';
 import type { MeshStore } from '@graphql-mesh/store';
 import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import type {
@@ -16,6 +14,9 @@ import type {
 import type { ExecutionRequest, Executor, IResolvers, MaybePromise } from '@graphql-tools/utils';
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import * as YamlConfig from './config.js';
+import type { MeshPubSub } from './pubsub.js';
+
+export * from './pubsub.js';
 
 export { jsonSchema } from './config-schema.js';
 
@@ -65,64 +66,6 @@ export interface MeshHandler {
 
 export interface MeshHandlerLibrary<TConfig = any> {
   new (options: MeshHandlerOptions<TConfig>): MeshHandler;
-}
-
-// Hooks
-export type AllHooks = {
-  destroy: void;
-  [key: string]: any;
-};
-export type HookName = keyof AllHooks & string;
-
-export interface MeshPubSub {
-  publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): void;
-  subscribe<THook extends HookName>(
-    triggerName: THook,
-    onMessage: (data: AllHooks[THook]) => void,
-    options?: any,
-  ): number;
-  unsubscribe(subId: number): void;
-  getEventNames(): Iterable<string>;
-  asyncIterator<THook extends HookName>(triggers: THook): AsyncIterable<AllHooks[THook]>;
-}
-
-export type { HivePubSub };
-
-/**
- * Checks whether the provided {@link pubsub} is a {@link HivePubSub}. It is only
- * accurate when dealing with `@graphql-hive/pubsub` v2 and above.
- */
-export function isHivePubSub(pubsub: undefined | MeshPubSub | HivePubSub): pubsub is HivePubSub {
-  // HivePubSub does not have asyncIterator method. this only applies for @graphql-hive/pubsub v2+
-  return !('asyncIterator' in pubsub);
-}
-
-const meshForHibePubSub = new WeakMap<HivePubSub, MeshPubSub>();
-
-/**
- * A utility function ensuring the provided {@link pubsub} is always the legacy {@link MeshPubSub}.
- * It does so by converting a {@link HivePubSub} to a {@link MeshPubSub} if provided, or leaving it
- * as is if it's already a {@link MeshPubSub}.
- *
- * Internally uses a WeakMap to cache the conversion for performance and to avoid creating too many
- * unnecessary instances if called multiple times.
- */
-export function toMeshPubSub(pubsub: undefined): undefined;
-export function toMeshPubSub(pubsub: MeshPubSub): MeshPubSub;
-export function toMeshPubSub(pubsub: HivePubSub): MeshPubSub;
-export function toMeshPubSub(pubsub: HivePubSub | MeshPubSub): MeshPubSub;
-export function toMeshPubSub(pubsub: HivePubSub | MeshPubSub | undefined): MeshPubSub | undefined;
-export function toMeshPubSub(pubsub?: MeshPubSub | HivePubSub | undefined): MeshPubSub | undefined {
-  if (isHivePubSub(pubsub)) {
-    let hivePubsub = meshForHibePubSub.get(pubsub);
-    if (hivePubsub) {
-      return hivePubsub;
-    }
-    hivePubsub = HiveMeshPubSub.from(pubsub);
-    meshForHibePubSub.set(pubsub, hivePubsub);
-    return hivePubsub;
-  }
-  return pubsub;
 }
 
 export interface MeshTransformOptions<Config = any> {

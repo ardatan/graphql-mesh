@@ -8309,6 +8309,8 @@ __metadata:
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@graphql-typed-document-node/core": "npm:^3.2.0"
+    "@repeaterjs/repeater": "npm:^3.0.6"
+    "@whatwg-node/disposablestack": "npm:^0.0.6"
     graphql: "npm:16.11.0"
     tslib: "npm:^2.4.0"
   peerDependencies:

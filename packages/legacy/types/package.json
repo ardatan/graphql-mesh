@@ -41,6 +41,8 @@
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/utils": "^10.8.0",
     "@graphql-typed-document-node/core": "^3.2.0",
+    "@repeaterjs/repeater": "^3.0.6",
+    "@whatwg-node/disposablestack": "^0.0.6",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
