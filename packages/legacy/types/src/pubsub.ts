@@ -110,7 +110,7 @@ export class MeshFromHivePubSub implements MeshPubSub {
   getEventNames(): Iterable<string> {
     return new Set(
       // get only distinct trigger names
-      this.#subs.values().map(({ triggerName }) => triggerName),
+      Array.from(this.#subs.values(), ({ triggerName }) => triggerName),
     );
   }
 
