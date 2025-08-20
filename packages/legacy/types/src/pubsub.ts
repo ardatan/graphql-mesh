@@ -123,7 +123,7 @@ export class MeshFromHivePubSub implements MeshPubSub {
  */
 export function isHivePubSub(pubsub: undefined | MeshPubSub | HivePubSub): pubsub is HivePubSub {
   // HivePubSub does not have asyncIterator method. this only applies for @graphql-hive/pubsub v2+
-  return !('asyncIterator' in pubsub);
+  return pubsub != null && !('asyncIterator' in pubsub);
 }
 
 const meshForHibePubSub = new WeakMap<HivePubSub, MeshPubSub>();

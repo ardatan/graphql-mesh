@@ -20,7 +20,7 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V>, Disp
   constructor(options?: InMemoryLRUCacheOptions) {
     this.lru = createLruCache(options?.max, options?.ttl);
     const pubsub = toMeshPubSub(options?.pubsub);
-    const subId = pubsub.subscribe?.('destroy', () => {
+    const subId = pubsub?.subscribe?.('destroy', () => {
       pubsub.unsubscribe(subId);
       this[DisposableSymbols.dispose]();
     });
