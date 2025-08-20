@@ -97,10 +97,15 @@ export function isHivePubSub(pubsub: undefined | MeshPubSub | HivePubSub): pubsu
   return !('asyncIterator' in pubsub);
 }
 
+const meshForHibePubSub = new WeakMap<HivePubSub, MeshPubSub>();
+
 /**
  * A utility function ensuring the provided {@link pubsub} is always the legacy {@link MeshPubSub}.
  * It does so by converting a {@link HivePubSub} to a {@link MeshPubSub} if provided, or leaving it
  * as is if it's already a {@link MeshPubSub}.
+ *
+ * Internally uses a WeakMap to cache the conversion for performance and to avoid creating too many
+ * unnecessary instances if called multiple times.
  */
 export function toMeshPubSub(pubsub: undefined): undefined;
 export function toMeshPubSub(pubsub: MeshPubSub): MeshPubSub;
@@ -109,7 +114,13 @@ export function toMeshPubSub(pubsub: HivePubSub | MeshPubSub): MeshPubSub;
 export function toMeshPubSub(pubsub: HivePubSub | MeshPubSub | undefined): MeshPubSub | undefined;
 export function toMeshPubSub(pubsub?: MeshPubSub | HivePubSub | undefined): MeshPubSub | undefined {
   if (isHivePubSub(pubsub)) {
-    return HiveMeshPubSub.from(pubsub);
+    let hivePubsub = meshForHibePubSub.get(pubsub);
+    if (hivePubsub) {
+      return hivePubsub;
+    }
+    hivePubsub = HiveMeshPubSub.from(pubsub);
+    meshForHibePubSub.set(pubsub, hivePubsub);
+    return hivePubsub;
   }
   return pubsub;
 }
