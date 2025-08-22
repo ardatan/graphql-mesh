@@ -108,6 +108,8 @@ export class MeshFromHivePubSub implements MeshPubSub {
   }
 
   getEventNames(): Iterable<string> {
+    // NOTE that the HivePubSub's subscriberTopics can be asynchronous
+    // but we're not tracking that here because we cant
     return new Set(
       // get only distinct trigger names
       Array.from(this.#subs.values(), ({ triggerName }) => triggerName),
