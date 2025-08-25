@@ -39,7 +39,7 @@ exports[`Reproductions GW-164 1`] = `
                     },
                     "value": {
                       "kind": "StringValue",
-                      "value": "https://specs.apollo.dev/federation/v2.3",
+                      "value": "https://specs.apollo.dev/federation/v2.6",
                     },
                   },
                   {
