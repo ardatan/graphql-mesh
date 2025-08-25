@@ -2,4 +2,4 @@
 '@graphql-mesh/compose-cli': patch
 ---
 
-Fix semantic conventions option
+`ignoreSemanticConventions` option was ignored when you compose subgraphs into a supergraph.
