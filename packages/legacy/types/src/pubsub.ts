@@ -102,15 +102,11 @@ export class MeshFromHivePubSub implements MeshPubSub {
           console.error(`Failed to start unsubscribe from ${subId}`, err);
         });
     } else {
-      try {
-        const unsubbed = unsubscribe();
-        if (isPromise(unsubbed)) {
-          unsubbed.catch(err => {
-            console.error(`Failed to finish unsubscribe from ${subId}`, err);
-          });
-        }
-      } catch (err) {
-        console.error(`Failed to finish unsubscribe from ${subId}`, err);
+      const unsubbed = unsubscribe();
+      if (isPromise(unsubbed)) {
+        unsubbed.catch(err => {
+          console.error(`Failed to finish unsubscribe from ${subId}`, err);
+        });
       }
     }
   }
