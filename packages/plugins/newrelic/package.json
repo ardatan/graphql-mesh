@@ -33,7 +33,7 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*",
-    "newrelic": "^7 || ^8.0.0 || ^10.0.0"
+    "newrelic": "^7 || ^8.0.0 || ^10.0.0 || ^13.0.0"
   },
   "dependencies": {
     "@envelop/core": "^5.0.0",
@@ -51,7 +51,7 @@
     "@types/newrelic": "9.14.8",
     "graphql": "16.11.0",
     "graphql-yoga": "^5.13.4",
-    "newrelic": "10.6.2"
+    "newrelic": "13.2.1"
   },
   "publishConfig": {
     "access": "public",
