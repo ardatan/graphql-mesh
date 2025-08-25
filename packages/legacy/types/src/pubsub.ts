@@ -28,7 +28,7 @@ export interface MeshPubSub {
  * Please avoid using this class directly because it will be completely removed in
  * the future, instead migrate your project to use the {@link PubSub new interface}.
  *
- * @deprecated This class is deprecated and will be removed in the future. Implement and use the new {@link PubSub Hive PubSub interface} instead.
+ * @deprecated This class is deprecated and will be removed in the future. Implement and use the new {@link HivePubSub Hive PubSub interface} instead.
  */
 export class MeshFromHivePubSub implements MeshPubSub {
   #pubsub: HivePubSub;
