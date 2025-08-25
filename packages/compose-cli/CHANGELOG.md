@@ -1,5 +1,18 @@
 # @graphql-mesh/compose-cli
 
+## 1.4.13
+
+### Patch Changes
+
+- [#8720](https://github.com/ardatan/graphql-mesh/pull/8720)
+  [`f63a9d7`](https://github.com/ardatan/graphql-mesh/commit/f63a9d72f17afaa6a6c7ffb9e9351b8a8cfc11ca)
+  Thanks [@cheub](https://github.com/cheub)! - `ignoreSemanticConventions` option was ignored when
+  you compose subgraphs into a supergraph.
+
+- Updated dependencies
+  [[`76df3d1`](https://github.com/ardatan/graphql-mesh/commit/76df3d166aea0f579192f68366ae1e9309070d8f)]:
+  - @graphql-mesh/fusion-composition@0.8.12
+
 ## 1.4.12
 
 ### Patch Changes
