@@ -116,11 +116,12 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       );
     }
   }
+  const options = {
+    ignoreSemanticConventions: config.ignoreSemanticConventions,
+    alwaysAddTransportDirective: true,
+  };
   if (config.subgraph) {
-    const annotatedSubgraphs = getAnnotatedSubgraphs(subgraphConfigsForComposition, {
-      ignoreSemanticConventions: config.ignoreSemanticConventions,
-      alwaysAddTransportDirective: true,
-    });
+    const annotatedSubgraphs = getAnnotatedSubgraphs(subgraphConfigsForComposition, options);
     const subgraph = annotatedSubgraphs.find(sg => sg.name === config.subgraph);
     if (!subgraph) {
       logger.error(`Subgraph ${config.subgraph} not found`);
@@ -128,7 +129,7 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
     }
     return print(subgraph.typeDefs);
   }
-  const result = composeSubgraphs(subgraphConfigsForComposition);
+  const result = composeSubgraphs(subgraphConfigsForComposition, options);
   if (result.errors?.length) {
     logger.error(`Failed to compose subgraphs`);
     for (const error of result.errors) {
