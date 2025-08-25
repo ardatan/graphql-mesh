@@ -6698,9 +6698,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/pubsub@npm:2.0.0-alpha-86d532fca168f7b6e57de46d3cff2439cc6242b7":
-  version: 2.0.0-alpha-86d532fca168f7b6e57de46d3cff2439cc6242b7
-  resolution: "@graphql-hive/pubsub@npm:2.0.0-alpha-86d532fca168f7b6e57de46d3cff2439cc6242b7"
+"@graphql-hive/pubsub@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@graphql-hive/pubsub@npm:1.0.0"
+  dependencies:
+    "@repeaterjs/repeater": "npm:^3.0.6"
+    "@whatwg-node/disposablestack": "npm:^0.0.6"
+  checksum: 10c0/2ec6d1883b05dabbcf7df271acd6183d356078de27a424a164efa6748270455a1fe562d3d59e598f55f434b4a12fa092865429917a274fb05a07f9695e745c0a
+  languageName: node
+  linkType: hard
+
+"@graphql-hive/pubsub@npm:next":
+  version: 2.0.0-next-4830ed6f34eb399e328ddb4d05f88aaff04fab46
+  resolution: "@graphql-hive/pubsub@npm:2.0.0-next-4830ed6f34eb399e328ddb4d05f88aaff04fab46"
   dependencies:
     "@repeaterjs/repeater": "npm:^3.0.6"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
@@ -6710,17 +6720,7 @@ __metadata:
   peerDependenciesMeta:
     ioredis:
       optional: true
-  checksum: 10c0/5d3588f71928bedef0069ec8ba291e9ba8e0d2f206ad4e769193b7f44b7c21dfb91598797a5c094c00a3c462e244bd22280807848df1a7778e0b50c9278b991e
-  languageName: node
-  linkType: hard
-
-"@graphql-hive/pubsub@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@graphql-hive/pubsub@npm:1.0.0"
-  dependencies:
-    "@repeaterjs/repeater": "npm:^3.0.6"
-    "@whatwg-node/disposablestack": "npm:^0.0.6"
-  checksum: 10c0/2ec6d1883b05dabbcf7df271acd6183d356078de27a424a164efa6748270455a1fe562d3d59e598f55f434b4a12fa092865429917a274fb05a07f9695e745c0a
+  checksum: 10c0/0478579aeabb3579aa96c4b746c34aaca07876df5af94521f786f64ac45e1f714825049f5b4850d07714daec1d5cd28cd07098bbf325fc657f9d03e6d6668a9a
   languageName: node
   linkType: hard
 
@@ -8303,7 +8303,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/types@workspace:packages/legacy/types"
   dependencies:
-    "@graphql-hive/pubsub": "npm:2.0.0-alpha-86d532fca168f7b6e57de46d3cff2439cc6242b7"
+    "@graphql-hive/pubsub": "npm:next"
     "@graphql-mesh/store": "npm:^0.104.7"
     "@graphql-tools/batch-delegate": "npm:^9.0.10"
     "@graphql-tools/delegate": "npm:^10.0.28"
