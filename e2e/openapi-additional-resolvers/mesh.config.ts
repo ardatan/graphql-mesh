@@ -8,6 +8,9 @@ export const composeConfig = defineComposeConfig({
       sourceHandler: loadOpenAPISubgraph('Wiki', {
         source: 'https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml',
         endpoint: 'https://wikimedia.org/api/rest_v1',
+        operationHeaders: {
+          'user-agent': 'my-app/1.0.0',
+        },
       }),
     },
   ],

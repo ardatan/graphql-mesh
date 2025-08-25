@@ -68,7 +68,7 @@ scalar ObjMap @join__type(graph: WIKI)
 
 scalar _DirectiveExtensions @join__type(graph: WIKI)
 
-type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Wiki", kind: "rest", location: "https://wikimedia.org/api/rest_v1"}]}) @join__type(graph: WIKI) {
+type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "Wiki", kind: "rest", location: "https://wikimedia.org/api/rest_v1", headers: [["user-agent", "my-app/1.0.0"]]}]}) @join__type(graph: WIKI) {
   """
   Gets availability of featured feed content for the apps by wiki domain.
   

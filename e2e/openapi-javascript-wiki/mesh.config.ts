@@ -10,6 +10,9 @@ export const composeConfig = defineComposeConfig({
         source: 'https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml',
         endpoint: 'https://wikimedia.org/api/rest_v1',
         ignoreErrorResponses: true,
+        operationHeaders: {
+          'user-agent': 'my-app/1.0.0',
+        },
       }),
     },
   ],

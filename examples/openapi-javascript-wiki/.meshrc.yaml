@@ -4,6 +4,8 @@ sources:
       openapi:
         source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
         endpoint: https://wikimedia.org/api/rest_v1
+        operationHeaders:
+          User-Agent: my-app
 
 additionalTypeDefs: |
   extend type Query {
