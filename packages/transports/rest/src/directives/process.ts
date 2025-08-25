@@ -8,7 +8,7 @@ import {
   isUnionType,
 } from 'graphql';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
-import type { Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
+import type { HivePubSub, Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processDictionaryDirective } from './dictionary.js';
@@ -26,7 +26,7 @@ import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
 
 export interface ProcessDirectiveArgs {
-  pubsub?: MeshPubSub;
+  pubsub?: MeshPubSub | HivePubSub;
   logger?: Logger;
   globalFetch?: MeshFetch;
   endpoint?: string;

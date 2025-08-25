@@ -2,10 +2,16 @@ import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo 
 import type { Plugin } from '@envelop/core';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import {
+  toMeshPubSub,
+  type HivePubSub,
+  type Logger,
+  type MeshPubSub,
+  type YamlConfig,
+} from '@graphql-mesh/types';
 
 interface InvalidateByResultParams {
-  pubsub: MeshPubSub;
+  pubsub: MeshPubSub | HivePubSub;
   invalidations: YamlConfig.LiveQueryInvalidation[];
   logger: Logger;
 }
@@ -19,6 +25,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
     );
     liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
   });
+  const pubsub = toMeshPubSub(params.pubsub);
   return {
     onExecute() {
       return {
@@ -49,7 +56,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
                       result,
                     }),
                   );
-                  params.pubsub.publish('live-query:invalidate', invalidationPaths);
+                  pubsub.publish('live-query:invalidate', invalidationPaths);
                 }
               },
             }),

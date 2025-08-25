@@ -2,12 +2,14 @@ import Redis, { type Cluster } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type {
-  KeyValueCache,
-  KeyValueCacheSetOptions,
-  Logger,
-  MeshPubSub,
-  YamlConfig,
+import {
+  toMeshPubSub,
+  type HivePubSub,
+  type KeyValueCache,
+  type KeyValueCacheSetOptions,
+  type Logger,
+  type MeshPubSub,
+  type YamlConfig,
 } from '@graphql-mesh/types';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
@@ -18,7 +20,9 @@ function interpolateStrWithEnv(str: string): string {
 export default class RedisCache<V = string> implements KeyValueCache<V>, Disposable {
   private client: Redis | Cluster;
 
-  constructor(options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub; logger: Logger }) {
+  constructor(
+    options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub | HivePubSub; logger: Logger },
+  ) {
     const lazyConnect = options.lazyConnect !== false;
     if ('startupNodes' in options) {
       const parsedUsername =
@@ -117,10 +121,11 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
         this.client = new RedisMock();
       }
     }
+    const pubsub = toMeshPubSub(options.pubsub);
     // TODO: PubSub.destroy will no longer be needed after v0
-    const id = options.pubsub?.subscribe('destroy', () => {
+    const id = pubsub?.subscribe('destroy', () => {
       this.client.disconnect(false);
-      options.pubsub.unsubscribe(id);
+      pubsub.unsubscribe(id);
     });
   }
 

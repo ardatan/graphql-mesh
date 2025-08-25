@@ -2,7 +2,13 @@ import type { Plugin } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import {
+  toMeshPubSub,
+  type HivePubSub,
+  type Logger,
+  type MeshPubSub,
+  type YamlConfig,
+} from '@graphql-mesh/types';
 import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
 import {
   defaultResourceIdentifierNormalizer,
@@ -13,7 +19,7 @@ import { useInvalidateByResult } from './useInvalidateByResult.js';
 export default function useMeshLiveQuery(
   options: {
     logger?: Logger;
-    pubsub?: MeshPubSub;
+    pubsub?: MeshPubSub | HivePubSub;
   } & YamlConfig.LiveQueryConfig,
 ): Plugin {
   options.logger ||= new DefaultLogger();
@@ -37,7 +43,8 @@ export default function useMeshLiveQuery(
     idFieldName: options.idFieldName,
     indexBy: options.indexBy,
   });
-  options.pubsub.subscribe('live-query:invalidate', (identifiers: string | string[]) =>
+  const pubsub = toMeshPubSub(options.pubsub);
+  pubsub.subscribe('live-query:invalidate', (identifiers: string | string[]) =>
     liveQueryStore.invalidate(identifiers),
   );
   return {
@@ -46,7 +53,7 @@ export default function useMeshLiveQuery(
       if (options.invalidations?.length) {
         addPlugin(
           useInvalidateByResult({
-            pubsub: options.pubsub,
+            pubsub,
             invalidations: options.invalidations,
             logger: options.logger,
           }),

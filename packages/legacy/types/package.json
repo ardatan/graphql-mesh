@@ -35,11 +35,14 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@graphql-hive/pubsub": "next",
     "@graphql-mesh/store": "^0.104.7",
     "@graphql-tools/batch-delegate": "^9.0.10",
     "@graphql-tools/delegate": "^10.0.28",
     "@graphql-tools/utils": "^10.8.0",
     "@graphql-typed-document-node/core": "^3.2.0",
+    "@repeaterjs/repeater": "^3.0.6",
+    "@whatwg-node/disposablestack": "^0.0.6",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
