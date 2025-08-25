@@ -1,0 +1,8 @@
+{
+  "name": "@e2e/semantic-conventions",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "graphql": "^16.10.0"
+  }
+}
