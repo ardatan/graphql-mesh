@@ -32,7 +32,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@apollo/client": "^3.5.9",
+    "@apollo/client": "^3.5.9 || ^4.0.0",
     "graphql": "^15.2.0 || ^16.0.0"
   },
   "dependencies": {
@@ -42,8 +42,9 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@apollo/client": "3.14.0",
-    "graphql": "16.11.0"
+    "@apollo/client": "4.0.0",
+    "graphql": "16.11.0",
+    "rxjs": "7.8.2"
   },
   "publishConfig": {
     "access": "public",

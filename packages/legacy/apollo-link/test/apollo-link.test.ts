@@ -29,7 +29,6 @@ describe('GraphApolloLink', () => {
       `),
     });
     expect(result.error).toBeUndefined();
-    expect(result.errors?.length).toBeFalsy();
     expect(result.data).toEqual({
       greetings: 'This is the `greetings` field of the root `Query` type',
     });
@@ -45,7 +44,7 @@ describe('GraphApolloLink', () => {
       `),
     });
     const asyncIterable =
-      observableToAsyncIterable<FetchResult<any, Record<string, any>, Record<string, any>>>(
+      observableToAsyncIterable<FetchResult>(
         observable,
       );
     let i = 0;
