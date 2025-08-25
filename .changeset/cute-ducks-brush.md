@@ -10,4 +10,4 @@
 '@graphql-mesh/cache-redis': patch
 ---
 
-Accept and support the new and improved `HivePubSub` from `@graphql-hive/pubsub`
+Accept and support the upcoming and improved `HivePubSub` from `@graphql-hive/pubsub`
