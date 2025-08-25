@@ -128,7 +128,10 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
     }
     return print(subgraph.typeDefs);
   }
-  const result = composeSubgraphs(subgraphConfigsForComposition);
+  const result = composeSubgraphs(subgraphConfigsForComposition, {
+    ignoreSemanticConventions: config.ignoreSemanticConventions,
+    alwaysAddTransportDirective: false,
+  });
   if (result.errors?.length) {
     logger.error(`Failed to compose subgraphs`);
     for (const error of result.errors) {
