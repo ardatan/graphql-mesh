@@ -342,8 +342,8 @@ type CurrentObs {
   """UV Index"""
   uv: Float
 
-  """Visibility - default (M)"""
-  vis: Int
+  """Visibility - default (KM)"""
+  vis: Float
   weather: query_current_oneOf_0_data_items_weather
 
   """Cardinal wind direction"""
