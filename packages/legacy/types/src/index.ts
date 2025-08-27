@@ -14,6 +14,9 @@ import type {
 import type { ExecutionRequest, Executor, IResolvers, MaybePromise } from '@graphql-tools/utils';
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import * as YamlConfig from './config.js';
+import type { MeshPubSub } from './pubsub.js';
+
+export * from './pubsub.js';
 
 export { jsonSchema } from './config-schema.js';
 
@@ -63,25 +66,6 @@ export interface MeshHandler {
 
 export interface MeshHandlerLibrary<TConfig = any> {
   new (options: MeshHandlerOptions<TConfig>): MeshHandler;
-}
-
-// Hooks
-export type AllHooks = {
-  destroy: void;
-  [key: string]: any;
-};
-export type HookName = keyof AllHooks & string;
-
-export interface MeshPubSub {
-  publish<THook extends HookName>(triggerName: THook, payload: AllHooks[THook]): void;
-  subscribe<THook extends HookName>(
-    triggerName: THook,
-    onMessage: (data: AllHooks[THook]) => void,
-    options?: any,
-  ): number;
-  unsubscribe(subId: number): void;
-  getEventNames(): Iterable<string>;
-  asyncIterator<THook extends HookName>(triggers: THook): AsyncIterable<AllHooks[THook]>;
 }
 
 export interface MeshTransformOptions<Config = any> {

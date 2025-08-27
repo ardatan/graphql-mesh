@@ -1,11 +1,11 @@
 import type { GraphQLField } from 'graphql';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshPubSub } from '@graphql-mesh/types';
+import { toMeshPubSub, type HivePubSub, type Logger, type MeshPubSub } from '@graphql-mesh/types';
 import { createGraphQLError } from '@graphql-tools/utils';
 
 interface ProcessPubSubOperationAnnotationsOpts {
   field: GraphQLField<any, any>;
-  globalPubsub: MeshPubSub;
+  globalPubsub: MeshPubSub | HivePubSub;
   pubsubTopic: string;
   logger: Logger;
 }
@@ -19,10 +19,11 @@ export function processPubSubOperationAnnotations({
   field.subscribe = function pubSubSubscribeFn(root, args, context, info) {
     const logger = context?.logger || globalLogger;
     const operationLogger = logger.child({ operation: `${info.parentType.name}.${field.name}` });
-    const pubsub = context?.pubsub || globalPubsub;
-    if (!pubsub) {
+    const meshOrHivePubsub: MeshPubSub | HivePubSub = context?.pubsub || globalPubsub;
+    if (!meshOrHivePubsub) {
       return new TypeError(`You should have PubSub defined in either the config or the context!`);
     }
+    const pubsub = toMeshPubSub(meshOrHivePubsub);
     const interpolationData = { root, args, context, info, env: process.env };
     let interpolatedPubSubTopic: string = stringInterpolator.parse(pubsubTopic, interpolationData);
     if (interpolatedPubSubTopic.startsWith('webhook:')) {

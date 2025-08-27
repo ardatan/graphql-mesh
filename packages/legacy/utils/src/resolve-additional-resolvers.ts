@@ -13,7 +13,13 @@ import toPath from 'lodash.topath';
 import { process } from '@graphql-mesh/cross-helpers';
 import type { MeshContext } from '@graphql-mesh/runtime';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { ImportFn, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import {
+  isHivePubSub,
+  type HivePubSub,
+  type ImportFn,
+  type MeshPubSub,
+  type YamlConfig,
+} from '@graphql-mesh/types';
 import type { IResolvers, MaybePromise } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
@@ -152,7 +158,7 @@ export function resolveAdditionalResolversWithoutImport(
     | YamlConfig.AdditionalStitchingResolverObject
     | YamlConfig.AdditionalSubscriptionObject
     | YamlConfig.AdditionalStitchingBatchResolverObject,
-  pubsub?: MeshPubSub,
+  pubsub?: MeshPubSub | HivePubSub,
 ): IResolvers {
   const baseOptions: any = {};
   if (additionalResolver.result) {
@@ -168,7 +174,11 @@ export function resolveAdditionalResolversWithoutImport(
     ): MaybePromise<AsyncIterator<any>> {
       const resolverData = { root, args, context, info, env: process.env };
       const topic = stringInterpolator.parse(pubsubTopic, resolverData);
-      return (context.pubsub || pubsub).asyncIterator(topic)[Symbol.asyncIterator]();
+      const ps = context.pubsub || pubsub;
+      if (isHivePubSub(ps)) {
+        return ps.subscribe(topic)[Symbol.asyncIterator]();
+      }
+      return ps.asyncIterator(topic)[Symbol.asyncIterator]();
     };
     if (additionalResolver.filterBy) {
       let filterFunction: any;
@@ -319,7 +329,7 @@ export function resolveAdditionalResolvers(
     | YamlConfig.AdditionalStitchingBatchResolverObject
   )[],
   importFn: ImportFn,
-  pubsub: MeshPubSub,
+  pubsub: MeshPubSub | HivePubSub,
 ): Promise<IResolvers[]> {
   return Promise.all(
     (additionalResolvers || []).map(async additionalResolver => {

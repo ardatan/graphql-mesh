@@ -6707,6 +6707,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-hive/pubsub@npm:next":
+  version: 2.0.0-next-4830ed6f34eb399e328ddb4d05f88aaff04fab46
+  resolution: "@graphql-hive/pubsub@npm:2.0.0-next-4830ed6f34eb399e328ddb4d05f88aaff04fab46"
+  dependencies:
+    "@repeaterjs/repeater": "npm:^3.0.6"
+    "@whatwg-node/disposablestack": "npm:^0.0.6"
+    "@whatwg-node/promise-helpers": "npm:^1.3.0"
+  peerDependencies:
+    ioredis: ^5
+  peerDependenciesMeta:
+    ioredis:
+      optional: true
+  checksum: 10c0/0478579aeabb3579aa96c4b746c34aaca07876df5af94521f786f64ac45e1f714825049f5b4850d07714daec1d5cd28cd07098bbf325fc657f9d03e6d6668a9a
+  languageName: node
+  linkType: hard
+
 "@graphql-hive/signal@npm:^1.0.0":
   version: 1.0.0
   resolution: "@graphql-hive/signal@npm:1.0.0"
@@ -8286,11 +8302,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/types@workspace:packages/legacy/types"
   dependencies:
+    "@graphql-hive/pubsub": "npm:next"
     "@graphql-mesh/store": "npm:^0.104.7"
     "@graphql-tools/batch-delegate": "npm:^9.0.10"
     "@graphql-tools/delegate": "npm:^10.0.28"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@graphql-typed-document-node/core": "npm:^3.2.0"
+    "@repeaterjs/repeater": "npm:^3.0.6"
+    "@whatwg-node/disposablestack": "npm:^0.0.6"
     graphql: "npm:16.11.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
