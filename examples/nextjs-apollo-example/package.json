@@ -18,11 +18,11 @@
     "graphql": "16.11.0",
     "micro": "10.0.1",
     "next": "15.5.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
   },
   "devDependencies": {
-    "@types/react": "19.1.8",
+    "@types/react": "19.1.9",
     "typescript": "^5.4.2"
   }
 }
