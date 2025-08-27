@@ -5431,7 +5431,7 @@ __metadata:
     "@grpc/proto-loader": "npm:0.8.0"
     "@types/node": "npm:22.17.0"
     concurrently: "npm:9.2.0"
-    google-protobuf: "npm:3.21.4"
+    google-protobuf: "npm:4.0.0"
     graphql: "npm:16.11.0"
     jest: "npm:29.7.0"
     ts-jest: "npm:29.4.1"
@@ -5451,7 +5451,7 @@ __metadata:
     "@grpc/proto-loader": "npm:0.8.0"
     "@types/node": "npm:22.17.0"
     concurrently: "npm:9.2.0"
-    google-protobuf: "npm:3.21.4"
+    google-protobuf: "npm:4.0.0"
     graphql: "npm:16.11.0"
     grpc-node-server-reflection: "npm:1.0.2"
     ts-node: "npm:^10.9.2"
@@ -23140,7 +23140,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"google-protobuf@npm:3.21.4, google-protobuf@npm:^3.12.2, google-protobuf@npm:^3.15.1":
+"google-protobuf@npm:4.0.0":
+  version: 4.0.0
+  resolution: "google-protobuf@npm:4.0.0"
+  checksum: 10c0/ce4f1554dec3d8416fe057a10bfed10da7cfb034c4a7f646f208197ca8554ccb85a46341cdbebf16be07d96016c88becfc1f5189d5871210ef5abe3d87fc0fec
+  languageName: node
+  linkType: hard
+
+"google-protobuf@npm:^3.12.2, google-protobuf@npm:^3.15.1":
   version: 3.21.4
   resolution: "google-protobuf@npm:3.21.4"
   checksum: 10c0/28f2800f7fe1a8fc55eb58ba76e158268407bfb3b90646eaf8a177dd92a2e522459b773f8132ae546e60ac3b6f5947557a1cf3d963a05bb594f43bcde640f54f

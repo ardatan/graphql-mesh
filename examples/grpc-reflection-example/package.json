@@ -15,7 +15,7 @@
     "@graphql-mesh/transform-naming-convention": "0.105.9",
     "@grpc/grpc-js": "1.13.4",
     "@grpc/proto-loader": "0.8.0",
-    "google-protobuf": "3.21.4",
+    "google-protobuf": "4.0.0",
     "graphql": "16.11.0",
     "grpc-node-server-reflection": "1.0.2"
   },
