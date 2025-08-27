@@ -9,7 +9,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.100.9",
     "@graphql-mesh/odata": "0.106.8",
-    "cross-env": "7.0.3",
+    "cross-env": "10.0.0",
     "graphql": "16.11.0"
   }
 }
