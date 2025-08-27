@@ -26,7 +26,8 @@
         "@opentelemetry/*",
         "@graphql-hive/*",
         "@graphql-mesh/*",
-        "@graphql-tools/*"
+        "@graphql-tools/*",
+        "@neo4j/*"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
