@@ -1,5 +1,21 @@
 # @graphql-mesh/transport-rest
 
+## 0.9.9
+
+### Patch Changes
+
+- [#8716](https://github.com/ardatan/graphql-mesh/pull/8716)
+  [`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Accept and support the upcoming and improved
+  `HivePubSub` from `@graphql-hive/pubsub`
+
+- Updated dependencies
+  [[`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07),
+  [`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07),
+  [`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07)]:
+  - @graphql-mesh/types@0.104.8
+  - @graphql-mesh/utils@0.104.8
+
 ## 0.9.8
 
 ### Patch Changes

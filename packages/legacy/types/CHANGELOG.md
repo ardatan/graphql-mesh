@@ -1,5 +1,31 @@
 # @graphql-mesh/types
 
+## 0.104.8
+
+### Patch Changes
+
+- [#8716](https://github.com/ardatan/graphql-mesh/pull/8716)
+  [`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Added dependency
+    [`@graphql-hive/pubsub@next` ↗︎](https://www.npmjs.com/package/@graphql-hive/pubsub/v/next) (to
+    `dependencies`)
+  - Added dependency
+    [`@repeaterjs/repeater@^3.0.6` ↗︎](https://www.npmjs.com/package/@repeaterjs/repeater/v/3.0.6)
+    (to `dependencies`)
+  - Added dependency
+    [`@whatwg-node/disposablestack@^0.0.6` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.6)
+    (to `dependencies`)
+
+- [#8716](https://github.com/ardatan/graphql-mesh/pull/8716)
+  [`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Export the upcoming and improved `HivePubSub`
+  from `@graphql-hive/pubsub` together with a utility to detect and convert it to the legacy
+  `MeshPubSub`
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.104.8
+
 ## 0.104.7
 
 ### Patch Changes

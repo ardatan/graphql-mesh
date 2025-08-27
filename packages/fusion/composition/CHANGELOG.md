@@ -1,5 +1,18 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.12
+
+### Patch Changes
+
+- [#8710](https://github.com/ardatan/graphql-mesh/pull/8710)
+  [`76df3d1`](https://github.com/ardatan/graphql-mesh/commit/76df3d166aea0f579192f68366ae1e9309070d8f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use the latest compatible federation version v2.6
+  not v2.3 when upgrading the existing import
+
+- Updated dependencies
+  [[`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07)]:
+  - @graphql-mesh/utils@0.104.8
+
 ## 0.8.11
 
 ### Patch Changes
