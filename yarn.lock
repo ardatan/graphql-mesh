@@ -4725,6 +4725,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@epic-web/invariant@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@epic-web/invariant@npm:1.0.0"
+  checksum: 10c0/72dbeb026e4e4eb3bc9c65739b91408ca77ab7d603a2494fa2eff3790ec22892c4caba751cffdf30f5ccf0e7ba79c1e9c96cf0a357404b9432bf1365baac23ca
+  languageName: node
+  linkType: hard
+
 "@esbuild/aix-ppc64@npm:0.25.2":
   version: 0.25.2
   resolution: "@esbuild/aix-ppc64@npm:0.25.2"
@@ -5713,7 +5720,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.9"
     "@graphql-mesh/odata": "npm:0.106.8"
-    cross-env: "npm:7.0.3"
+    cross-env: "npm:10.0.0"
     graphql: "npm:16.11.0"
   languageName: unknown
   linkType: soft
@@ -5894,7 +5901,7 @@ __metadata:
     "@graphql-mesh/runtime": "npm:0.106.8"
     "@graphql-mesh/transform-prefix": "npm:0.105.9"
     "@types/node": "npm:22.17.0"
-    cross-env: "npm:7.0.3"
+    cross-env: "npm:10.0.0"
     graphql: "npm:16.11.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
@@ -5945,7 +5952,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.9"
     "@graphql-mesh/soap": "npm:0.107.9"
-    cross-env: "npm:7.0.3"
+    cross-env: "npm:10.0.0"
     graphql: "npm:16.11.0"
   languageName: unknown
   linkType: soft
@@ -5956,7 +5963,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.9"
     "@graphql-mesh/soap": "npm:0.107.9"
-    cross-env: "npm:7.0.3"
+    cross-env: "npm:10.0.0"
     graphql: "npm:16.11.0"
   languageName: unknown
   linkType: soft
@@ -18757,15 +18764,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-env@npm:7.0.3, cross-env@npm:^7.0.3":
-  version: 7.0.3
-  resolution: "cross-env@npm:7.0.3"
+"cross-env@npm:10.0.0, cross-env@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "cross-env@npm:10.0.0"
   dependencies:
-    cross-spawn: "npm:^7.0.1"
+    "@epic-web/invariant": "npm:^1.0.0"
+    cross-spawn: "npm:^7.0.6"
   bin:
-    cross-env: src/bin/cross-env.js
-    cross-env-shell: src/bin/cross-env-shell.js
-  checksum: 10c0/f3765c25746c69fcca369655c442c6c886e54ccf3ab8c16847d5ad0e91e2f337d36eedc6599c1227904bf2a228d721e690324446876115bc8e7b32a866735ecf
+    cross-env: dist/bin/cross-env.js
+    cross-env-shell: dist/bin/cross-env-shell.js
+  checksum: 10c0/d16ffc3734106577d57b6253d81ab50294623bd59f96e161033eaf99c1c308ffbaba8463c23a6c0f72e841eff467cb7007a0a551f27554fcf2bbf6598cd828f9
   languageName: node
   linkType: hard
 
@@ -18800,7 +18808,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^7.0.1, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3, cross-spawn@npm:^7.0.5, cross-spawn@npm:^7.0.6":
+"cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3, cross-spawn@npm:^7.0.5, cross-spawn@npm:^7.0.6":
   version: 7.0.6
   resolution: "cross-spawn@npm:7.0.6"
   dependencies:
@@ -23452,7 +23460,7 @@ __metadata:
     babel-jest: "npm:29.7.0"
     bob-the-bundler: "npm:7.0.1"
     cp-cli: "npm:^2.0.0"
-    cross-env: "npm:^7.0.3"
+    cross-env: "npm:^10.0.0"
     eslint: "npm:9.32.0"
     eslint-config-prettier: "npm:10.1.8"
     eslint-config-standard: "npm:17.1.0"
@@ -38609,7 +38617,7 @@ __metadata:
     "@theguild/tailwind-config": "npm:0.6.3"
     "@types/node": "npm:22.17.0"
     "@types/react": "npm:19.1.9"
-    cross-env: "npm:7.0.3"
+    cross-env: "npm:10.0.0"
     eslint: "npm:9.32.0"
     eslint-config-next: "npm:15.5.2"
     next: "npm:^15.4.1"
