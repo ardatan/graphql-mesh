@@ -1800,6 +1800,7 @@ export interface AdditionalSubscriptionObject {
   pubsubTopic: string;
   result?: string;
   filterBy?: string;
+  sourceName?: string;
 }
 /**
  * Backend cache

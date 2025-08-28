@@ -810,6 +810,9 @@
         },
         "filterBy": {
           "type": "string"
+        },
+        "sourceName": {
+          "type": "string"
         }
       },
       "required": ["targetTypeName", "targetFieldName", "pubsubTopic"]
