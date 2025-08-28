@@ -59,45 +59,26 @@ it('consumes the pubsub topics and resolves the types correctly', async () => {
     port: redisEnv.REDIS_PORT,
   });
   leftoverStack.defer(() => pub.disconnect());
-  await setTimeout(300);
-  // Publish 3 messages
-  await pub.publish('gw:new_product', JSON.stringify({ id: '1' }));
-  await expect(iterator.next()).resolves.toMatchObject({
-    value: {
-      data: {
-        newProduct: {
-          id: '1',
-          name: 'Roomba X1',
-          price: 100,
+  for (let i = 0; i < 3; i++) {
+    const id = i + '';
+    const publishing = (async () => {
+      // Publish messages after making sure the user's subscribed
+      await setTimeout(500);
+      await pub.publish('gw:new_product', JSON.stringify({ id }));
+    })();
+    await expect(iterator.next()).resolves.toMatchObject({
+      value: {
+        data: {
+          newProduct: {
+            id,
+            name: 'Roomba X' + id,
+            price: 100,
+          },
         },
       },
-    },
-    done: false,
-  });
-  await pub.publish('gw:new_product', JSON.stringify({ id: '2' }));
-  await expect(iterator.next()).resolves.toMatchObject({
-    value: {
-      data: {
-        newProduct: {
-          id: '2',
-          name: 'Roomba X2',
-          price: 100,
-        },
-      },
-    },
-    done: false,
-  });
-  await pub.publish('gw:new_product', JSON.stringify({ id: '3' }));
-  await expect(iterator.next()).resolves.toMatchObject({
-    value: {
-      data: {
-        newProduct: {
-          id: '3',
-          name: 'Roomba X3',
-          price: 100,
-        },
-      },
-    },
-    done: false,
-  });
+      done: false,
+    });
+    // Avait publishing to ensure no unhandled rejections
+    await publishing;
+  }
 });
