@@ -177,7 +177,7 @@ export function resolveAdditionalResolversWithoutImport(
     ): MaybePromise<AsyncIterator<any>> {
       const resolverData = { root, args, context, info, env: process.env };
       const topic = stringInterpolator.parse(pubsubTopic, resolverData);
-      const ps = context.pubsub || pubsub;
+      const ps = context?.pubsub || pubsub;
       if (isHivePubSub(ps)) {
         return ps.subscribe(topic)[Symbol.asyncIterator]();
       }
