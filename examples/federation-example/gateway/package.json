@@ -3,9 +3,9 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.9",
-    "@graphql-mesh/graphql": "0.104.8",
-    "@graphql-mesh/transform-federation": "0.104.8",
+    "@graphql-mesh/cli": "0.100.10",
+    "@graphql-mesh/graphql": "0.104.9",
+    "@graphql-mesh/transform-federation": "0.104.9",
     "graphql": "16.11.0"
   }
 }
