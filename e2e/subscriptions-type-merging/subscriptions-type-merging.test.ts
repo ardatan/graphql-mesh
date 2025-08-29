@@ -4,6 +4,7 @@ import Redis from 'ioredis';
 import { createTenv } from '@e2e/tenv';
 import { createDeferred } from '@graphql-tools/utils';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
+import { fetch } from '@whatwg-node/fetch';
 
 const { container, compose, service, serve } = createTenv(__dirname);
 
@@ -40,7 +41,8 @@ it('consumes the pubsub topics and resolves the types correctly', async () => {
   await using gw = await serve({ supergraph: composition.output, env: redisEnv });
   const sseClient = createClient({
     retryAttempts: 0,
-    url: `http://localhost:${gw.port}/graphql`,
+    url: `http://0.0.0.0:${gw.port}/graphql`,
+    fetchFn: fetch,
   });
   const iterator = sseClient.iterate({
     query: /* GraphQL */ `
