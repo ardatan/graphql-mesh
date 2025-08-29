@@ -232,9 +232,9 @@ export function resolveAdditionalResolversWithoutImport(
                   `This "${returnTypeName}" type is not a merged type, disable typeMerging in the config!`,
                 );
               }
-              const subschema = stitchingInfo.subschemaMap
-                ?.values()
-                ?.find(s => s.name === additionalResolver.sourceName);
+              const subschema = Array.from(stitchingInfo.subschemaMap?.values() || []).find(
+                s => s.name === additionalResolver.sourceName,
+              );
               if (!subschema) {
                 throw new Error(`The source "${additionalResolver.sourceName}" is not found`);
               }
