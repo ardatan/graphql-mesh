@@ -62,6 +62,7 @@ it.each([
     selSet: `{ ... on Animal { first } }`,
     result: false,
   },
+  // TODO: fragment defs and spreads
   // TODO: inline fragments without type conditions can be flattened
   // {
   //   requiredSelSet: `{ ... { id name } }`,
