@@ -13,7 +13,7 @@ createServer(
         type Query {
           hello: String!
         }
-        type Product @key(fields: "id") @key(fields: name) {
+        type Product @key(fields: "id") @key(fields: "name") {
           id: ID!
           name: String!
           price: Float!
