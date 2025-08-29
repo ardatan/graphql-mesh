@@ -1,5 +1,6 @@
+import { print } from 'graphql';
 import { parseSelectionSet } from '@graphql-tools/utils';
-import { containsSelectionSet } from '../src/selectionSet';
+import { containsSelectionSet, selectionSetOfData } from '../src/selectionSet';
 
 it.each([
   {
@@ -93,3 +94,40 @@ it.each([
     );
   },
 );
+
+it('should create the correct selection set of data', () => {
+  const data = {
+    name: 'john',
+    surname: 'doe',
+    bestFriend: {
+      friends: [
+        {
+          surname: 'sabrina',
+        },
+      ],
+      name: 'jane',
+    },
+    friends: [
+      {
+        name: 'paul',
+      },
+    ],
+  };
+
+  const selSet = selectionSetOfData(data);
+  expect(print(selSet)).toMatchInlineSnapshot(`
+"{
+  name
+  surname
+  bestFriend {
+    friends {
+      surname
+    }
+    name
+  }
+  friends {
+    name
+  }
+}"
+`);
+});

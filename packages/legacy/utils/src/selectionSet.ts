@@ -82,11 +82,25 @@ export function selectionSetOfData(data: Record<string, unknown>): SelectionSetN
       kind: Kind.FIELD,
       name: { kind: Kind.NAME, value: fieldName },
     };
-    if (fieldValue && typeof fieldValue === 'object' && !Array.isArray(fieldValue)) {
-      selSet.selections.push({
-        ...selNode,
-        selectionSet: selectionSetOfData(fieldValue as Record<string, unknown>),
-      });
+    if (fieldValue && typeof fieldValue === 'object') {
+      if (Array.isArray(fieldValue)) {
+        // we assume that all items in the array are of the same shape, so we look at the first one
+        const firstItem = fieldValue[0];
+        if (firstItem && typeof firstItem === 'object') {
+          selSet.selections.push({
+            ...selNode,
+            selectionSet: selectionSetOfData(firstItem as Record<string, unknown>),
+          });
+        } else {
+          // is an array of scalars
+          selSet.selections.push(selNode);
+        }
+      } else {
+        selSet.selections.push({
+          ...selNode,
+          selectionSet: selectionSetOfData(fieldValue as Record<string, unknown>),
+        });
+      }
     } else {
       selSet.selections.push(selNode);
     }
