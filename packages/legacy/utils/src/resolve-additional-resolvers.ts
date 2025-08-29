@@ -246,7 +246,6 @@ export function resolveAdditionalResolversWithoutImport(
               return resolvePayload(payload);
             }
 
-            // we guarantee that the subgraph has a resolver in the search loop above
             return handleMaybePromise(
               () =>
                 resolver(
