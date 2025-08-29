@@ -13,7 +13,7 @@ createServer(
         type Query {
           hello: String!
         }
-        type Product @key(fields: "id") {
+        type Product @key(fields: "id") @key(fields: name) {
           id: ID!
           name: String!
           price: Float!
@@ -25,8 +25,8 @@ createServer(
         },
         Product: {
           __resolveReference: ref => ({
-            id: ref.id,
-            name: `Roomba X${ref.id}`,
+            id: ref.id || 'noid',
+            name: `Roomba X${ref.id || 'noid'}`,
             price: 100,
           }),
         },

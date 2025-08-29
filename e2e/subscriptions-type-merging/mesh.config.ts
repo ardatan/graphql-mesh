@@ -16,7 +16,7 @@ export const composeConfig = defineConfig({
       subscription: Subscription
     }
     type Subscription {
-      newProduct: Product! @resolveTo(pubsubTopic: "new_product", sourceName: "products")
+      newProduct: Product! @resolveTo(pubsubTopic: "new_product")
     }
   `,
 });

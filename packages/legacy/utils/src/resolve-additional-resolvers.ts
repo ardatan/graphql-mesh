@@ -229,7 +229,7 @@ export function resolveAdditionalResolversWithoutImport(
             let resolver: MergedTypeResolver | null = null;
             let subschema: Subschema | null = null;
             for (const [requiredSubschema, requiredSelSet] of mergedTypeInfo.selectionSets) {
-              const matchResolver = mergedTypeInfo?.resolvers.get(subschema);
+              const matchResolver = mergedTypeInfo?.resolvers.get(requiredSubschema);
               if (!matchResolver) {
                 // the subschema has no resolvers, nothing to search for
                 continue;
@@ -238,6 +238,7 @@ export function resolveAdditionalResolversWithoutImport(
                 // all of the fields of the requesting selection set is exist in the required selection set
                 resolver = matchResolver;
                 subschema = requiredSubschema;
+                break;
               }
             }
             if (!resolver || !subschema) {
