@@ -29,7 +29,7 @@ it('should resolve missing fields from subgraphs on subscription event', async (
     },
   });
 
-  const pubsub = new MemPubSub();
+  await using pubsub = new MemPubSub();
   const additionalTypeDefs = parse(/* GraphQL */ `
     extend schema {
       subscription: Subscription
