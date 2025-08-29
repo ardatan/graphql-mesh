@@ -1,5 +1,20 @@
 # @graphql-mesh/transport-grpc
 
+## 0.3.9
+
+### Patch Changes
+
+- [#8702](https://github.com/ardatan/graphql-mesh/pull/8702)
+  [`a34bb4d`](https://github.com/ardatan/graphql-mesh/commit/a34bb4d91f3d1cbf6bcc5bdafa8510c44c1f7bb4)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@grpc/proto-loader@^0.8.0` ↗︎](https://www.npmjs.com/package/@grpc/proto-loader/v/0.8.0)
+    (from `^0.7.8`, in `dependencies`)
+- Updated dependencies
+  [[`0c18fe1`](https://github.com/ardatan/graphql-mesh/commit/0c18fe12b1d92af006e945b19e9207cb16a1ee7e)]:
+  - @graphql-mesh/types@0.104.9
+  - @graphql-mesh/utils@0.104.9
+
 ## 0.3.8
 
 ### Patch Changes
