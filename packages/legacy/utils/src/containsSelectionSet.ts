@@ -42,8 +42,8 @@ export function containsSelectionSet(
             continue;
           }
           if (
-            sel.typeCondition.name.value &&
-            reqSel.typeCondition.name.value &&
+            sel.typeCondition?.name.value &&
+            reqSel.typeCondition?.name.value &&
             sel.typeCondition.name.value === reqSel.typeCondition.name.value
           ) {
             // both have matching type conditions
@@ -52,7 +52,7 @@ export function containsSelectionSet(
               continue ReqLoop;
             }
           }
-          if (!sel.typeCondition.name.value && !reqSel.typeCondition.name.value) {
+          if (!sel.typeCondition?.name.value && !reqSel.typeCondition?.name.value) {
             // neither have a type condition, just check the selection sets
             if (containsSelectionSet(reqSel.selectionSet, sel.selectionSet)) {
               // and they recursively contain all required fields
