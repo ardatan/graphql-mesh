@@ -38,11 +38,22 @@ export function containsSelectionSet(
       }
       case Kind.INLINE_FRAGMENT: {
         for (const sel of selSet.selections) {
+          if (sel.kind !== Kind.INLINE_FRAGMENT) {
+            continue;
+          }
           if (
-            sel.kind === Kind.INLINE_FRAGMENT &&
+            sel.typeCondition.name.value &&
+            reqSel.typeCondition.name.value &&
             sel.typeCondition.name.value === reqSel.typeCondition.name.value
           ) {
-            // required selection type matches the selection set type
+            // both have matching type conditions
+            if (containsSelectionSet(reqSel.selectionSet, sel.selectionSet)) {
+              // and they recursively contain all required fields
+              continue ReqLoop;
+            }
+          }
+          if (!sel.typeCondition.name.value && !reqSel.typeCondition.name.value) {
+            // neither have a type condition, just check the selection sets
             if (containsSelectionSet(reqSel.selectionSet, sel.selectionSet)) {
               // and they recursively contain all required fields
               continue ReqLoop;
