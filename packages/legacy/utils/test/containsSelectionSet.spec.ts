@@ -80,6 +80,11 @@ it.each([
   //   selSet: `{ user { a } user { b } }`,
   //   result: true,
   // },
+  // {
+  //   requiredSelSet: `{ ... { user { a b } } }`,
+  //   selSet: `{ user { a } user { b } }`,
+  //   result: true,
+  // },
 ])(
   'should return $result when searching for $requiredSelSet in $selSet',
   ({ selSet, requiredSelSet, result }) => {
