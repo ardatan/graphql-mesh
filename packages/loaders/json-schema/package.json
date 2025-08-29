@@ -56,12 +56,12 @@
     "qs": "^6.14.0",
     "to-json-schema": "^0.2.5",
     "tslib": "^2.4.0",
-    "url-join": "4.0.1"
+    "url-join": "5.0.0"
   },
   "devDependencies": {
     "@types/qs": "6.14.0",
     "@types/to-json-schema": "0.2.4",
-    "@types/url-join": "4.0.3",
+    "@types/url-join": "5.0.0",
     "graphql": "16.11.0"
   },
   "publishConfig": {
