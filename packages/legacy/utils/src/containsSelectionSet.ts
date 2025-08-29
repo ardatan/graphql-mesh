@@ -1,3 +1,4 @@
+/* eslint-disable no-labels */
 import { Kind, type SelectionSetNode } from 'graphql';
 
 /**

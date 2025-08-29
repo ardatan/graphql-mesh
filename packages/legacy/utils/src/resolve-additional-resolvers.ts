@@ -20,7 +20,7 @@ import {
   type MeshPubSub,
   type YamlConfig,
 } from '@graphql-mesh/types';
-import { Subschema, type MergedTypeResolver, type StitchingInfo } from '@graphql-tools/delegate';
+import type { MergedTypeResolver, StitchingInfo, Subschema } from '@graphql-tools/delegate';
 import type { IResolvers, Maybe, MaybePromise } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
