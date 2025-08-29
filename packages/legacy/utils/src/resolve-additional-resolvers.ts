@@ -20,15 +20,11 @@ import {
   type MeshPubSub,
   type YamlConfig,
 } from '@graphql-mesh/types';
-import {
-  resolveExternalValue,
-  Subschema,
-  type MergedTypeResolver,
-  type StitchingInfo,
-} from '@graphql-tools/delegate';
+import { Subschema, type MergedTypeResolver, type StitchingInfo } from '@graphql-tools/delegate';
 import type { IResolvers, Maybe, MaybePromise } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { containsSelectionSet } from './containsSelectionSet.js';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { withFilter } from './with-filter.js';
 
@@ -210,48 +206,59 @@ export function resolveAdditionalResolversWithoutImport(
         [additionalResolver.targetFieldName]: {
           subscribe: subscribeFn,
           resolve: (payload: any, _, ctx, info) => {
-            function handlePayload(payload: any) {
+            function resolvePayload(payload: any) {
               if (baseOptions.valuesFromResults) {
                 return baseOptions.valuesFromResults(payload);
               }
               return payload;
             }
-            if (additionalResolver.sourceName) {
-              const stitchingInfo = info?.schema.extensions?.stitchingInfo as Maybe<
-                StitchingInfo<any>
-              >;
-              if (!stitchingInfo) {
-                throw new Error(
-                  `Stitching Information object not found in the resolve information, contact maintainers!`,
-                );
-              }
-              const returnTypeName = getNamedType(info.returnType).name;
-              const mergedTypeInfo = stitchingInfo?.mergedTypes?.[returnTypeName];
-              if (!mergedTypeInfo) {
-                throw new Error(
-                  `This "${returnTypeName}" type is not a merged type, disable typeMerging in the config!`,
-                );
-              }
-              const subschema = Array.from(stitchingInfo.subschemaMap?.values() || []).find(
-                s => s.name === additionalResolver.sourceName,
-              );
-              if (!subschema) {
-                throw new Error(`The source "${additionalResolver.sourceName}" is not found`);
-              }
-              const resolver = mergedTypeInfo?.resolvers?.get(subschema);
-              if (!resolver) {
-                throw new Error(
-                  `The type "${returnTypeName}" is not resolvable from the source "${additionalResolver.sourceName}", check your typeMerging configuration!`,
-                );
-              }
-              const selectionSet = info.fieldNodes[0].selectionSet;
-              return handleMaybePromise(
-                () =>
-                  resolver(payload, ctx, info, subschema, selectionSet, undefined, info.returnType),
-                handlePayload,
-              );
+            const stitchingInfo = info?.schema.extensions?.stitchingInfo as Maybe<
+              StitchingInfo<any>
+            >;
+            if (!stitchingInfo) {
+              return resolvePayload(payload); // no stitching, cannot be resolved anywhere else
             }
-            return handlePayload(payload);
+            const returnTypeName = getNamedType(info.returnType).name;
+            const mergedTypeInfo = stitchingInfo?.mergedTypes?.[returnTypeName];
+            if (!mergedTypeInfo) {
+              return resolvePayload(payload); // this type is not merged or resolvable
+            }
+
+            // find the best resolver by diffing the selection sets
+            const availableSelSet = info.fieldNodes[0].selectionSet;
+            let resolver: MergedTypeResolver | null = null;
+            let subschema: Subschema | null = null;
+            for (const [requiredSubschema, requiredSelSet] of mergedTypeInfo.selectionSets) {
+              const matchResolver = mergedTypeInfo?.resolvers.get(subschema);
+              if (!matchResolver) {
+                // the subschema has no resolvers, nothing to search for
+                continue;
+              }
+              if (containsSelectionSet(requiredSelSet, availableSelSet)) {
+                // all of the fields of the requesting selection set is exist in the required selection set
+                resolver = matchResolver;
+                subschema = requiredSubschema;
+              }
+            }
+            if (!resolver || !subschema) {
+              // the type cannot be resolved
+              return resolvePayload(payload);
+            }
+
+            // we guarantee that the subgraph has a resolver in the search loop above
+            return handleMaybePromise(
+              () =>
+                resolver(
+                  payload,
+                  ctx,
+                  info,
+                  subschema,
+                  availableSelSet,
+                  undefined,
+                  info.returnType,
+                ),
+              resolvePayload,
+            );
           },
         },
       },
