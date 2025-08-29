@@ -82,7 +82,7 @@ export function selectionSetOfData(data: Record<string, unknown>): SelectionSetN
       kind: Kind.FIELD,
       name: { kind: Kind.NAME, value: fieldName },
     };
-    if (fieldValue && typeof fieldValue === 'object') {
+    if (fieldValue && typeof fieldValue === 'object' && !Array.isArray(fieldValue)) {
       selSet.selections.push({
         ...selNode,
         selectionSet: selectionSetOfData(fieldValue as Record<string, unknown>),
