@@ -23,7 +23,7 @@ export function containsSelectionSet(
               return false;
             }
             if (!reqSel.selectionSet && sel.selectionSet) {
-              // required field is a scalar, but the required selection under the same name is scalar
+              // required field is a scalar, but the selection under the same name is object
               return false;
             }
             // they're both objects
