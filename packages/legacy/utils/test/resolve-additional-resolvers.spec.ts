@@ -70,8 +70,11 @@ it('should resolve missing fields from subgraphs on subscription event', async (
       subscription {
         newProduct {
           name
-          price
+          ...P
         }
+      }
+      fragment P on Product {
+        price
       }
     `),
   });
