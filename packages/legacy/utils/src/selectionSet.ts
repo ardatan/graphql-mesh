@@ -1,5 +1,5 @@
 /* eslint-disable no-labels */
-import { Kind, type SelectionSetNode } from 'graphql';
+import { Kind, type SelectionNode, type SelectionSetNode } from 'graphql';
 
 /**
  * Checks recursively whether all of the fields of {@link requiredSelSet} exist in {@link selSet}
@@ -69,4 +69,27 @@ export function containsSelectionSet(
   }
   // all fields matched
   return true;
+}
+
+export function selectionSetOfData(data: Record<string, unknown>): SelectionSetNode {
+  const selSet = {
+    kind: Kind.SELECTION_SET,
+    selections: [] as SelectionNode[],
+  } as const;
+  for (const fieldName of Object.keys(data)) {
+    const fieldValue = data[fieldName];
+    const selNode: SelectionNode = {
+      kind: Kind.FIELD,
+      name: { kind: Kind.NAME, value: fieldName },
+    };
+    if (fieldValue && typeof fieldValue === 'object') {
+      selSet.selections.push({
+        ...selNode,
+        selectionSet: selectionSetOfData(fieldValue as Record<string, unknown>),
+      });
+    } else {
+      selSet.selections.push(selNode);
+    }
+  }
+  return selSet;
 }

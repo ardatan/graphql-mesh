@@ -7,7 +7,7 @@ import type {
   GraphQLType,
   SelectionSetNode,
 } from 'graphql';
-import { getNamedType, isAbstractType, isInterfaceType, isObjectType, Kind } from 'graphql';
+import { getNamedType, isAbstractType, isInterfaceType, isObjectType, Kind, print } from 'graphql';
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -25,7 +25,7 @@ import type { IResolvers, Maybe, MaybePromise } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
-import { containsSelectionSet } from './selectionSet.js';
+import { containsSelectionSet, selectionSetOfData } from './selectionSet.js';
 import { withFilter } from './with-filter.js';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
@@ -225,7 +225,7 @@ export function resolveAdditionalResolversWithoutImport(
             }
 
             // find the best resolver by diffing the selection sets
-            const availableSelSet = info.fieldNodes[0].selectionSet;
+            const availableSelSet = selectionSetOfData(payload);
             let resolver: MergedTypeResolver | null = null;
             let subschema: Subschema | null = null;
             for (const [requiredSubschema, requiredSelSet] of mergedTypeInfo.selectionSets) {
@@ -253,7 +253,7 @@ export function resolveAdditionalResolversWithoutImport(
                   ctx,
                   info,
                   subschema,
-                  availableSelSet,
+                  info.fieldNodes[0].selectionSet,
                   undefined,
                   info.returnType,
                 ),
