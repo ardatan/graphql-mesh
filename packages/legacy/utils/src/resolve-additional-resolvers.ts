@@ -24,8 +24,8 @@ import type { MergedTypeResolver, StitchingInfo, Subschema } from '@graphql-tool
 import type { IResolvers, Maybe, MaybePromise } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { containsSelectionSet } from './containsSelectionSet.js';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
+import { containsSelectionSet } from './selectionSet.js';
 import { withFilter } from './with-filter.js';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {

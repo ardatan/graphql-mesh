@@ -1,5 +1,5 @@
 import { parseSelectionSet } from '@graphql-tools/utils';
-import { containsSelectionSet } from '../src/containsSelectionSet';
+import { containsSelectionSet } from '../src/selectionSet';
 
 it.each([
   {
