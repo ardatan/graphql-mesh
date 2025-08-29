@@ -1,0 +1,11 @@
+{
+  "name": "@e2e/subscriptions-type-merging",
+  "private": true,
+  "dependencies": {
+    "@graphql-hive/gateway": "^1.16.3",
+    "@graphql-hive/pubsub": "next",
+    "graphql": "^16.9.0",
+    "graphql-sse": "^2.5.4",
+    "ioredis": "^5.7.0"
+  }
+}

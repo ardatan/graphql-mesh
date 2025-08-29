@@ -147,6 +147,7 @@ type AdditionalSubscriptionObject {
   pubsubTopic: String!
   result: String
   filterBy: String
+  sourceName: String
 }
 
 union PubSub = String | PubSubConfig

@@ -4367,6 +4367,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/subscriptions-type-merging@workspace:e2e/subscriptions-type-merging":
+  version: 0.0.0-use.local
+  resolution: "@e2e/subscriptions-type-merging@workspace:e2e/subscriptions-type-merging"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^1.16.3"
+    "@graphql-hive/pubsub": "npm:next"
+    graphql: "npm:^16.9.0"
+    graphql-sse: "npm:^2.5.4"
+    ioredis: "npm:^5.7.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/supergraph-url@workspace:e2e/supergraph-url":
   version: 0.0.0-use.local
   resolution: "@e2e/supergraph-url@workspace:e2e/supergraph-url"
@@ -6593,7 +6605,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/gateway@npm:^1.8.0":
+"@graphql-hive/gateway@npm:^1.16.3, @graphql-hive/gateway@npm:^1.8.0":
   version: 1.16.3
   resolution: "@graphql-hive/gateway@npm:1.16.3"
   dependencies:
@@ -10044,6 +10056,13 @@ __metadata:
   version: 1.2.0
   resolution: "@ioredis/commands@npm:1.2.0"
   checksum: 10c0/a5d3c29dd84d8a28b7c67a441ac1715cbd7337a7b88649c0f17c345d89aa218578d2b360760017c48149ef8a70f44b051af9ac0921a0622c2b479614c4f65b36
+  languageName: node
+  linkType: hard
+
+"@ioredis/commands@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@ioredis/commands@npm:1.3.0"
+  checksum: 10c0/5ab990a8f69c20daf3d7d64307aa9f13ee727c92ab4c7664a6943bb500227667a0c368892e9c4913f06416377db47dba78d58627fe723da476d25f2c04a6d5aa
   languageName: node
   linkType: hard
 
@@ -23577,7 +23596,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-sse@npm:^2.5.3":
+"graphql-sse@npm:^2.5.3, graphql-sse@npm:^2.5.4":
   version: 2.5.4
   resolution: "graphql-sse@npm:2.5.4"
   peerDependencies:
@@ -24789,6 +24808,23 @@ __metadata:
     redis-parser: "npm:^3.0.0"
     standard-as-callback: "npm:^2.1.0"
   checksum: 10c0/26ae49cf448e807e454a9bdea5a9dfdcf669e2fdbf2df341900a0fb693c5662fea7e39db3227ce8972d1bda0ba7da9b7410e5163b12d8878a579548d847220ac
+  languageName: node
+  linkType: hard
+
+"ioredis@npm:^5.7.0":
+  version: 5.7.0
+  resolution: "ioredis@npm:5.7.0"
+  dependencies:
+    "@ioredis/commands": "npm:^1.3.0"
+    cluster-key-slot: "npm:^1.1.0"
+    debug: "npm:^4.3.4"
+    denque: "npm:^2.1.0"
+    lodash.defaults: "npm:^4.2.0"
+    lodash.isarguments: "npm:^3.1.0"
+    redis-errors: "npm:^1.2.0"
+    redis-parser: "npm:^3.0.0"
+    standard-as-callback: "npm:^2.1.0"
+  checksum: 10c0/c63c521a953bfaf29f8c8871b122af38e439328336fa238f83bfbb066556f64daf69ed7a4ec01fc7b9ee1f0862059dd188b8c684150125d362d36642399b30ee
   languageName: node
   linkType: hard
 
