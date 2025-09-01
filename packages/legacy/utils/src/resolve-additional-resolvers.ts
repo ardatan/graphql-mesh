@@ -253,8 +253,9 @@ export function resolveAdditionalResolversWithoutImport(
                 // the subschema has no resolvers, nothing to search for
                 continue;
               }
-              if (containsSelectionSet(requiredSelSet, availableSelSet)) {
-                // all of the fields of the requesting selection set is exist in the required selection set
+              const diff = subtractSelectionSets(requiredSelSet, availableSelSet);
+              if (!diff.selections.length) {
+                // all of the fields of the requesting (available) selection set is exist in the required selection set
                 resolver = matchResolver;
                 subschema = requiredSubschema;
                 break;
