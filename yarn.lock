@@ -5172,7 +5172,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/hive-example-my-graphql@workspace:examples/v1-next/hive-example/my-graphql"
   dependencies:
-    "@graphql-hive/cli": "npm:0.50.3"
+    "@graphql-hive/cli": "npm:0.50.4"
     graphql: "npm:16.11.0"
     graphql-yoga: "npm:^5.13.4"
   languageName: unknown
@@ -5182,7 +5182,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/hive-example-my-rest@workspace:examples/v1-next/hive-example/my-rest"
   dependencies:
-    "@graphql-hive/cli": "npm:0.50.3"
+    "@graphql-hive/cli": "npm:0.50.4"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
     fets: "npm:0.8.5"
@@ -5533,7 +5533,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-sources-authors@workspace:examples/hive-example/sources/authors"
   dependencies:
-    "@graphql-hive/cli": "npm:0.50.3"
+    "@graphql-hive/cli": "npm:0.50.4"
     "@graphql-mesh/cli": "npm:0.100.10"
     "@graphql-mesh/openapi": "npm:0.109.16"
     "@types/node": "npm:22.17.0"
@@ -5548,7 +5548,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-sources-books@workspace:examples/hive-example/sources/books"
   dependencies:
-    "@graphql-hive/cli": "npm:0.50.3"
+    "@graphql-hive/cli": "npm:0.50.4"
     "@graphql-mesh/cli": "npm:0.100.10"
     "@graphql-mesh/openapi": "npm:0.109.16"
     "@types/node": "npm:22.17.0"
@@ -6515,9 +6515,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/cli@npm:0.50.3":
-  version: 0.50.3
-  resolution: "@graphql-hive/cli@npm:0.50.3"
+"@graphql-hive/cli@npm:0.50.4":
+  version: 0.50.4
+  resolution: "@graphql-hive/cli@npm:0.50.4"
   dependencies:
     "@graphql-hive/core": "npm:0.13.0"
     "@graphql-inspector/core": "npm:5.1.0-alpha-20231208113249-34700c8a"
@@ -6540,7 +6540,7 @@ __metadata:
     zod: "npm:3.24.1"
   bin:
     hive: bin/run
-  checksum: 10c0/c9a4f85aada417a8dda1481dcee2c6d1988d4f67b0b32d8ea1d81a3c7230c7ffadd91f4a1abfa399e730bbcbb6b9d51793e248ace87d31816b048b2db3c552a8
+  checksum: 10c0/4fbbcb8d5598eb9448f34951c81d4e7366932add6d9f2b5a11c4b9164471cf60c7a16d3aee482c7c2770035c4ebb4ec146e6925b54a729fae38f60924b048263
   languageName: node
   linkType: hard
 
