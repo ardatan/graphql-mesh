@@ -237,7 +237,7 @@ export function resolveAdditionalResolversWithoutImport(
               return resolvePayload(payload); // should never happen, but hey 🤷‍♂️
             }
 
-            const availableSelSet = selectionSetOfData(payload);
+            const availableSelSet = selectionSetOfData(resolvePayload(payload));
             const missingSelectionSet = subtractSelectionSets(requestedSelSet, availableSelSet);
             if (!missingSelectionSet.selections.length) {
               // all of the fields are already in the payload
