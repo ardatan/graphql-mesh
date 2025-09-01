@@ -21,15 +21,16 @@ import {
   type YamlConfig,
 } from '@graphql-mesh/types';
 import {
-  resolveExternalValue,
-  Subschema,
+  subtractSelectionSets,
   type MergedTypeResolver,
   type StitchingInfo,
+  type Subschema,
 } from '@graphql-tools/delegate';
 import type { IResolvers, Maybe, MaybePromise } from '@graphql-tools/utils';
-import { parseSelectionSet } from '@graphql-tools/utils';
+import { mergeDeep, parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
+import { selectionSetOfData } from './selectionSet.js';
 import { withFilter } from './with-filter.js';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
@@ -181,7 +182,7 @@ export function resolveAdditionalResolversWithoutImport(
     ): MaybePromise<AsyncIterator<any>> {
       const resolverData = { root, args, context, info, env: process.env };
       const topic = stringInterpolator.parse(pubsubTopic, resolverData);
-      const ps = context.pubsub || pubsub;
+      const ps = context?.pubsub || pubsub;
       if (isHivePubSub(ps)) {
         return ps.subscribe(topic)[Symbol.asyncIterator]();
       }
@@ -210,48 +211,74 @@ export function resolveAdditionalResolversWithoutImport(
         [additionalResolver.targetFieldName]: {
           subscribe: subscribeFn,
           resolve: (payload: any, _, ctx, info) => {
-            function handlePayload(payload: any) {
+            function resolvePayload(payload: any) {
               if (baseOptions.valuesFromResults) {
                 return baseOptions.valuesFromResults(payload);
               }
               return payload;
             }
-            if (additionalResolver.sourceName) {
-              const stitchingInfo = info?.schema.extensions?.stitchingInfo as Maybe<
-                StitchingInfo<any>
-              >;
-              if (!stitchingInfo) {
-                throw new Error(
-                  `Stitching Information object not found in the resolve information, contact maintainers!`,
-                );
-              }
-              const returnTypeName = getNamedType(info.returnType).name;
-              const mergedTypeInfo = stitchingInfo?.mergedTypes?.[returnTypeName];
-              if (!mergedTypeInfo) {
-                throw new Error(
-                  `This "${returnTypeName}" type is not a merged type, disable typeMerging in the config!`,
-                );
-              }
-              const subschema = Array.from(stitchingInfo.subschemaMap?.values() || []).find(
-                s => s.name === additionalResolver.sourceName,
-              );
-              if (!subschema) {
-                throw new Error(`The source "${additionalResolver.sourceName}" is not found`);
-              }
-              const resolver = mergedTypeInfo?.resolvers?.get(subschema);
-              if (!resolver) {
-                throw new Error(
-                  `The type "${returnTypeName}" is not resolvable from the source "${additionalResolver.sourceName}", check your typeMerging configuration!`,
-                );
-              }
-              const selectionSet = info.fieldNodes[0].selectionSet;
-              return handleMaybePromise(
-                () =>
-                  resolver(payload, ctx, info, subschema, selectionSet, undefined, info.returnType),
-                handlePayload,
-              );
+            const stitchingInfo = info?.schema.extensions?.stitchingInfo as Maybe<
+              StitchingInfo<any>
+            >;
+            if (!stitchingInfo) {
+              return resolvePayload(payload); // no stitching, cannot be resolved anywhere else
             }
-            return handlePayload(payload);
+            const returnTypeName = getNamedType(info.returnType).name;
+            const mergedTypeInfo = stitchingInfo?.mergedTypes?.[returnTypeName];
+            if (!mergedTypeInfo) {
+              return resolvePayload(payload); // this type is not merged or resolvable
+            }
+
+            // we dont compare fragment definitions because they mean there are type-conditions
+            // more advanced behavior. if we encounter such a case, the missing selection set
+            // will have fields and we will perform a call to the subschema
+            const requestedSelSet = info.fieldNodes[0]?.selectionSet;
+            if (!requestedSelSet) {
+              return resolvePayload(payload); // should never happen, but hey 🤷‍♂️
+            }
+
+            const availableSelSet = selectionSetOfData(resolvePayload(payload));
+            const missingSelectionSet = subtractSelectionSets(requestedSelSet, availableSelSet);
+            if (!missingSelectionSet.selections.length) {
+              // all of the fields are already in the payload
+              return resolvePayload(payload);
+            }
+
+            // find the best resolver by diffing the selection sets
+            let resolver: MergedTypeResolver | null = null;
+            let subschema: Subschema | null = null;
+            for (const [requiredSubschema, requiredSelSet] of mergedTypeInfo.selectionSets) {
+              const matchResolver = mergedTypeInfo?.resolvers.get(requiredSubschema);
+              if (!matchResolver) {
+                // the subschema has no resolvers, nothing to search for
+                continue;
+              }
+              const diff = subtractSelectionSets(requiredSelSet, availableSelSet);
+              if (!diff.selections.length) {
+                // all of the fields of the requesting (available) selection set is exist in the required selection set
+                resolver = matchResolver;
+                subschema = requiredSubschema;
+                break;
+              }
+            }
+            if (!resolver || !subschema) {
+              // the type cannot be resolved
+              return resolvePayload(payload);
+            }
+
+            return handleMaybePromise(
+              () =>
+                resolver(
+                  payload,
+                  ctx,
+                  info,
+                  subschema,
+                  missingSelectionSet,
+                  undefined,
+                  info.returnType,
+                ),
+              resolved => resolvePayload(mergeDeep([payload, resolved])),
+            );
           },
         },
       },
