@@ -26,7 +26,7 @@ createServer(
         Product: {
           __resolveReference: ref => ({
             id: ref.id || 'noid',
-            name: `Roomba X${ref.id || 'noid'}`,
+            name: ref.name || `Roomba X${ref.id || 'noid'}`,
             price: 100,
           }),
         },

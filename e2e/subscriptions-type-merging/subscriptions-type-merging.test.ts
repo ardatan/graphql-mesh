@@ -67,6 +67,8 @@ it('consumes the pubsub topics and resolves the types correctly', async () => {
       // Publish messages after making sure the user's subscribed
       await setTimeout(500);
       await pub.publish('gw:new_product', JSON.stringify({ id }));
+      await setTimeout(0); // ensure order
+      await pub.publish('gw:new_product', JSON.stringify({ name: 'Roborock 80P' }));
     })();
     await expect(iterator.next()).resolves.toMatchObject({
       value: {
@@ -74,6 +76,18 @@ it('consumes the pubsub topics and resolves the types correctly', async () => {
           newProduct: {
             id,
             name: 'Roomba X' + id,
+            price: 100,
+          },
+        },
+      },
+      done: false,
+    });
+    await expect(iterator.next()).resolves.toMatchObject({
+      value: {
+        data: {
+          newProduct: {
+            id: 'noid',
+            name: 'Roborock 80P',
             price: 100,
           },
         },
