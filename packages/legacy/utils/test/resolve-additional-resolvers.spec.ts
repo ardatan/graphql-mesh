@@ -26,6 +26,7 @@ function makeProducts() {
     },
   ];
   const productPriceResolver = jest.fn((parent: { price: number }) => parent.price);
+  const productByNameResolver = jest.fn((_, { name }) => data.find(p => p.name === name));
   const schema = makeExecutableSchema({
     typeDefs: parse(/* GraphQL */ `
       type Query {
@@ -41,7 +42,7 @@ function makeProducts() {
     resolvers: {
       Query: {
         productById: (_, { id }) => data.find(p => p.id === id),
-        productByName: (_, { name }) => data.find(p => p.name === name),
+        productByName: productByNameResolver,
       },
       Product: {
         price: productPriceResolver,
@@ -50,6 +51,7 @@ function makeProducts() {
   });
   return {
     schema,
+    productByNameResolver,
     productPriceResolver,
     subschemas: [
       {
@@ -156,8 +158,7 @@ it('should resolve fields from subgraphs on subscription event', async () => {
 `);
 });
 
-// TODO: we skip because this test will fail, we need to optimize the resolver to account for available fields
-it.skip('should resolve only missing fields from subgraphs on subscription event', async () => {
+it('should resolve only missing fields from subgraphs on subscription event', async () => {
   await using pubsub = new MemPubSub();
   const additionalTypeDefs = parse(/* GraphQL */ `
     extend schema {
@@ -189,11 +190,8 @@ it.skip('should resolve only missing fields from subgraphs on subscription event
       subscription {
         newProduct {
           name
-          ...P
+          price
         }
-      }
-      fragment P on Product {
-        price
       }
     `),
   });
@@ -219,4 +217,128 @@ it.skip('should resolve only missing fields from subgraphs on subscription event
 `);
 
   expect(products.productPriceResolver).toHaveBeenCalledTimes(0);
+});
+
+it('should not resolve from subgraphs when all fields are in the subscription event', async () => {
+  await using pubsub = new MemPubSub();
+  const additionalTypeDefs = parse(/* GraphQL */ `
+    extend schema {
+      subscription: Subscription
+    }
+    type Subscription {
+      newProduct: Product!
+    }
+  `);
+  const additionalResolvers = resolveAdditionalResolversWithoutImport(
+    {
+      targetTypeName: 'Subscription',
+      targetFieldName: 'newProduct',
+      pubsubTopic: 'new_product',
+    },
+    pubsub,
+  );
+
+  const products = makeProducts();
+  const stitched = stitchSchemas({
+    subschemas: products.subschemas,
+    typeDefs: additionalTypeDefs,
+    resolvers: additionalResolvers,
+  });
+
+  const result = await subscribe({
+    schema: stitched,
+    document: parse(/* GraphQL */ `
+      subscription {
+        newProduct {
+          name
+          price
+        }
+      }
+    `),
+  });
+  assertAsyncIterable(result);
+  const iter = result[Symbol.asyncIterator]();
+
+  setTimeout(() => {
+    pubsub.publish('new_product', { name: 'Roborock 80c', price: 999 });
+  }, 0);
+
+  await expect(iter.next()).resolves.toMatchInlineSnapshot(`
+{
+  "done": false,
+  "value": {
+    "data": {
+      "newProduct": {
+        "name": "Roborock 80c",
+        "price": 999,
+      },
+    },
+  },
+}
+`);
+
+  expect(products.productByNameResolver).toHaveBeenCalledTimes(0);
+  expect(products.productPriceResolver).toHaveBeenCalledTimes(0);
+});
+
+it('should resolve from subgraph when fragments are present even if all fields are in the subscription event', async () => {
+  await using pubsub = new MemPubSub();
+  const additionalTypeDefs = parse(/* GraphQL */ `
+    extend schema {
+      subscription: Subscription
+    }
+    type Subscription {
+      newProduct: Product!
+    }
+  `);
+  const additionalResolvers = resolveAdditionalResolversWithoutImport(
+    {
+      targetTypeName: 'Subscription',
+      targetFieldName: 'newProduct',
+      pubsubTopic: 'new_product',
+    },
+    pubsub,
+  );
+
+  const products = makeProducts();
+  const stitched = stitchSchemas({
+    subschemas: products.subschemas,
+    typeDefs: additionalTypeDefs,
+    resolvers: additionalResolvers,
+  });
+
+  const result = await subscribe({
+    schema: stitched,
+    document: parse(/* GraphQL */ `
+      subscription {
+        newProduct {
+          ...P
+        }
+      }
+      fragment P on Product {
+        price
+      }
+    `),
+  });
+  assertAsyncIterable(result);
+  const iter = result[Symbol.asyncIterator]();
+
+  setTimeout(() => {
+    pubsub.publish('new_product', { id: '3', price: 999 });
+  }, 0);
+
+  await expect(iter.next()).resolves.toMatchInlineSnapshot(`
+{
+  "done": false,
+  "value": {
+    "data": {
+      "newProduct": {
+        "price": 300,
+      },
+    },
+  },
+}
+`);
+
+  expect(products.productPriceResolver).toHaveBeenCalled();
 });

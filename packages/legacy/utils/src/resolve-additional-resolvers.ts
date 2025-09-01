@@ -7,7 +7,7 @@ import type {
   GraphQLType,
   SelectionSetNode,
 } from 'graphql';
-import { getNamedType, isAbstractType, isInterfaceType, isObjectType, Kind, print } from 'graphql';
+import { getNamedType, isAbstractType, isInterfaceType, isObjectType, Kind } from 'graphql';
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -20,7 +20,12 @@ import {
   type MeshPubSub,
   type YamlConfig,
 } from '@graphql-mesh/types';
-import type { MergedTypeResolver, StitchingInfo, Subschema } from '@graphql-tools/delegate';
+import {
+  subtractSelectionSets,
+  type MergedTypeResolver,
+  type StitchingInfo,
+  type Subschema,
+} from '@graphql-tools/delegate';
 import type { IResolvers, Maybe, MaybePromise } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
@@ -224,8 +229,22 @@ export function resolveAdditionalResolversWithoutImport(
               return resolvePayload(payload); // this type is not merged or resolvable
             }
 
-            // find the best resolver by diffing the selection sets
+            // we dont compare fragment definitions because they mean there are type-conditions
+            // more advanced behavior. if we encounter such a case, the missing selection set
+            // will have fields and we will perform a call to the subschema
+            const requestedSelSet = info.fieldNodes[0]?.selectionSet;
+            if (!requestedSelSet) {
+              return resolvePayload(payload); // should never happen, but hey 🤷‍♂️
+            }
+
             const availableSelSet = selectionSetOfData(payload);
+            const missingSelectionSet = subtractSelectionSets(requestedSelSet, availableSelSet);
+            if (!missingSelectionSet.selections.length) {
+              // all of the fields are already in the payload
+              return resolvePayload(payload);
+            }
+
+            // find the best resolver by diffing the selection sets
             let resolver: MergedTypeResolver | null = null;
             let subschema: Subschema | null = null;
             for (const [requiredSubschema, requiredSelSet] of mergedTypeInfo.selectionSets) {
@@ -253,11 +272,11 @@ export function resolveAdditionalResolversWithoutImport(
                   ctx,
                   info,
                   subschema,
-                  info.fieldNodes[0].selectionSet,
+                  missingSelectionSet,
                   undefined,
                   info.returnType,
                 ),
-              resolvePayload,
+              resolved => resolvePayload({ ...payload, ...resolved }),
             );
           },
         },
