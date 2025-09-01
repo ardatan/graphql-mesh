@@ -27,7 +27,7 @@ import {
   type Subschema,
 } from '@graphql-tools/delegate';
 import type { IResolvers, Maybe, MaybePromise } from '@graphql-tools/utils';
-import { parseSelectionSet } from '@graphql-tools/utils';
+import { mergeDeep, parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { containsSelectionSet, selectionSetOfData } from './selectionSet.js';
@@ -276,7 +276,7 @@ export function resolveAdditionalResolversWithoutImport(
                   undefined,
                   info.returnType,
                 ),
-              resolved => resolvePayload({ ...payload, ...resolved }),
+              resolved => resolvePayload(mergeDeep([payload, resolved])),
             );
           },
         },
