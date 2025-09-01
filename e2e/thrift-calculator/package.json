@@ -10,7 +10,7 @@
     "@creditkarma/thrift-server-express": "^1.0.4",
     "@creditkarma/thrift-typescript": "^3.7.6",
     "@graphql-hive/gateway": "^1.8.0",
-    "@omnigraph/thrift": "^0.9.10",
+    "@omnigraph/thrift": "^0.9.11",
     "@types/express": "^5.0.0",
     "express": "^5.0.0",
     "graphql": "^16.9.0",
