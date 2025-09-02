@@ -10,6 +10,11 @@ export const composeConfig = defineConfig({
         endpoint: `http://localhost:${opts.getServicePort('products')}/graphql`,
       }),
     },
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('inventory', {
+        endpoint: `http://localhost:${opts.getServicePort('inventory')}/graphql`,
+      }),
+    },
   ],
   additionalTypeDefs: /* GraphQL */ `
     extend schema {

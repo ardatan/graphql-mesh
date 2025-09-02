@@ -37,7 +37,8 @@ afterAll(async () => {
 
 it('consumes the pubsub topics and resolves the types correctly', async () => {
   await using products = await service('products');
-  await using composition = await compose({ output: 'graphql', services: [products] });
+  await using inventory = await service('inventory');
+  await using composition = await compose({ output: 'graphql', services: [products, inventory] });
   await using gw = await serve({ supergraph: composition.output, env: redisEnv });
   const sseClient = createClient({
     retryAttempts: 0,
@@ -51,6 +52,7 @@ it('consumes the pubsub topics and resolves the types correctly', async () => {
           id
           name
           price
+          shippingEstimate
         }
       }
     `,
@@ -77,6 +79,7 @@ it('consumes the pubsub topics and resolves the types correctly', async () => {
             id,
             name: 'Roomba X' + id,
             price: 100,
+            shippingEstimate: 10,
           },
         },
       },
@@ -89,6 +92,7 @@ it('consumes the pubsub topics and resolves the types correctly', async () => {
             id: 'noid',
             name: 'Roborock 80P',
             price: 100,
+            shippingEstimate: 10,
           },
         },
       },
