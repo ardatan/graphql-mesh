@@ -5,9 +5,17 @@ import type {
   GraphQLResolveInfo,
   GraphQLSchema,
   GraphQLType,
+  OperationTypeNode,
   SelectionSetNode,
 } from 'graphql';
-import { getNamedType, isAbstractType, isInterfaceType, isObjectType, Kind } from 'graphql';
+import {
+  getNamedType,
+  GraphQLList,
+  isAbstractType,
+  isInterfaceType,
+  isObjectType,
+  Kind,
+} from 'graphql';
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -20,9 +28,11 @@ import {
   type MeshPubSub,
   type YamlConfig,
 } from '@graphql-mesh/types';
+import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import {
+  delegateToSchema,
   subtractSelectionSets,
-  type MergedTypeResolver,
+  type MergedTypeConfig,
   type StitchingInfo,
   type Subschema,
 } from '@graphql-tools/delegate';
@@ -224,7 +234,7 @@ export function resolveAdditionalResolversWithoutImport(
               return resolvePayload(payload); // no stitching, cannot be resolved anywhere else
             }
             const returnTypeName = getNamedType(info.returnType).name;
-            const mergedTypeInfo = stitchingInfo?.mergedTypes?.[returnTypeName];
+            const mergedTypeInfo = stitchingInfo.mergedTypes[returnTypeName];
             if (!mergedTypeInfo) {
               return resolvePayload(payload); // this type is not merged or resolvable
             }
@@ -244,39 +254,58 @@ export function resolveAdditionalResolversWithoutImport(
               return resolvePayload(payload);
             }
 
-            // find the best resolver by diffing the selection sets
-            let resolver: MergedTypeResolver | null = null;
+            // find the best subgraph by diffing the selection sets
             let subschema: Subschema | null = null;
+            let mergedTypeConfig: MergedTypeConfig | null = null;
             for (const [requiredSubschema, requiredSelSet] of mergedTypeInfo.selectionSets) {
-              const matchResolver = mergedTypeInfo?.resolvers.get(requiredSubschema);
-              if (!matchResolver) {
-                // the subschema has no resolvers, nothing to search for
-                continue;
-              }
               const diff = subtractSelectionSets(requiredSelSet, availableSelSet);
               if (!diff.selections.length) {
                 // all of the fields of the requesting (available) selection set is exist in the required selection set
-                resolver = matchResolver;
                 subschema = requiredSubschema;
+                mergedTypeConfig = subschema.merge[returnTypeName]!;
                 break;
               }
             }
-            if (!resolver || !subschema) {
+            if (!subschema || !mergedTypeConfig) {
               // the type cannot be resolved
               return resolvePayload(payload);
             }
 
             return handleMaybePromise(
-              () =>
-                resolver(
-                  payload,
-                  ctx,
-                  info,
-                  subschema,
-                  missingSelectionSet,
-                  undefined,
-                  info.returnType,
-                ),
+              () => {
+                if (mergedTypeConfig.argsFromKeys) {
+                  return batchDelegateToSchema({
+                    schema: subschema,
+                    operation: 'query' as OperationTypeNode,
+                    fieldName: mergedTypeConfig.fieldName,
+                    returnType: new GraphQLList(info.returnType),
+                    key: undefined, // TODO: cant be undefined
+                    argsFromKeys: mergedTypeConfig.argsFromKeys,
+                    valuesFromResults: mergedTypeConfig.valuesFromResults,
+                    selectionSet: missingSelectionSet,
+                    context: ctx,
+                    info,
+                    dataLoaderOptions: mergedTypeConfig.dataLoaderOptions,
+                    skipTypeMerging: false, // important to be false so that fields outside this subgraph can be resolved properly
+                  });
+                }
+                if (mergedTypeConfig.args) {
+                  return delegateToSchema({
+                    schema: subschema,
+                    operation: 'query' as OperationTypeNode,
+                    fieldName: mergedTypeConfig.fieldName,
+                    returnType: info.returnType,
+                    args: mergedTypeConfig.args(payload), // TODO: should use valueFromResults on the args too?
+                    selectionSet: missingSelectionSet,
+                    context: ctx,
+                    info,
+                    skipTypeMerging: false, // important to be false so that fields outside this subgraph can be resolved properly
+                  });
+                }
+                // no way to delegate to anything, return empty - i.e. resolve just payload
+                // should not happen though, there'll be something to use
+                return {};
+              },
               resolved => resolvePayload(mergeDeep([payload, resolved])),
             );
           },
