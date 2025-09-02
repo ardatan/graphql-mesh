@@ -1,5 +1,17 @@
 # @graphql-mesh/utils
 
+## 0.104.11
+
+### Patch Changes
+
+- [#8740](https://github.com/ardatan/graphql-mesh/pull/8740)
+  [`d61faf0`](https://github.com/ardatan/graphql-mesh/commit/d61faf0370969cbd83acf04f4ca2f1c9253cc0e7)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Resolve fields from other subschemas when
+  merging types from subscriptions in additional type defs
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.104.11
+
 ## 0.104.10
 
 ### Patch Changes
