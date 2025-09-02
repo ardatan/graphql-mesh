@@ -6440,9 +6440,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/typescript-resolvers@npm:4.5.1, @graphql-codegen/typescript-resolvers@npm:^4.0.0":
-  version: 4.5.1
-  resolution: "@graphql-codegen/typescript-resolvers@npm:4.5.1"
+"@graphql-codegen/typescript-resolvers@npm:4.5.2, @graphql-codegen/typescript-resolvers@npm:^4.0.0":
+  version: 4.5.2
+  resolution: "@graphql-codegen/typescript-resolvers@npm:4.5.2"
   dependencies:
     "@graphql-codegen/plugin-helpers": "npm:^5.1.0"
     "@graphql-codegen/typescript": "npm:^4.1.6"
@@ -6456,7 +6456,7 @@ __metadata:
   peerDependenciesMeta:
     graphql-sock:
       optional: true
-  checksum: 10c0/40b56f9ef25d1cde868567131e1ff3dcdc6d707acf9ec547d445eea200465b98c28e44cb3f3cc6a963feb38451c99ed028ed8b828b170b640aec675fba19257b
+  checksum: 10c0/46d65a5f65604ac68a102697a38fb2ba1eb7f7b643b73ff4ca93fffe86416b643d65bc552e252912a11cfac9b49a85ce47c5a27a837c537bbb722937adffe15f
   languageName: node
   linkType: hard
 
@@ -21807,7 +21807,7 @@ __metadata:
   dependencies:
     "@graphql-codegen/cli": "npm:5.0.7"
     "@graphql-codegen/typescript": "npm:4.1.6"
-    "@graphql-codegen/typescript-resolvers": "npm:4.5.1"
+    "@graphql-codegen/typescript-resolvers": "npm:4.5.2"
     "@graphql-hive/gateway": "npm:^1.8.0"
     "@graphql-mesh/compose-cli": "npm:1.4.16"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.15.1"
