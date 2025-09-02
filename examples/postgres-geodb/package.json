@@ -8,13 +8,13 @@
     "start": "ts-node --transpile-only src/test-sdk.ts London"
   },
   "dependencies": {
-    "@graphql-mesh/cache-file": "0.104.10",
-    "@graphql-mesh/cli": "0.100.11",
-    "@graphql-mesh/config": "0.108.11",
-    "@graphql-mesh/graphql": "0.104.10",
-    "@graphql-mesh/postgraphile": "0.104.10",
-    "@graphql-mesh/runtime": "0.106.10",
-    "@graphql-mesh/transform-prefix": "0.105.11",
+    "@graphql-mesh/cache-file": "0.104.11",
+    "@graphql-mesh/cli": "0.100.12",
+    "@graphql-mesh/config": "0.108.12",
+    "@graphql-mesh/graphql": "0.104.11",
+    "@graphql-mesh/postgraphile": "0.104.11",
+    "@graphql-mesh/runtime": "0.106.11",
+    "@graphql-mesh/transform-prefix": "0.105.12",
     "graphql": "16.11.0"
   },
   "devDependencies": {

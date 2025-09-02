@@ -1,5 +1,14 @@
 # @graphql-mesh/odata
 
+## 0.106.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.104.11
+  - @omnigraph/odata@0.2.11
+  - @graphql-mesh/types@0.104.11
+
 ## 0.106.10
 
 ### Patch Changes
