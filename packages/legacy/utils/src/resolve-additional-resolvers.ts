@@ -258,11 +258,18 @@ export function resolveAdditionalResolversWithoutImport(
             let subschema: Subschema | null = null;
             let mergedTypeConfig: MergedTypeConfig | null = null;
             for (const [requiredSubschema, requiredSelSet] of mergedTypeInfo.selectionSets) {
+              const tentativeMergedTypeConfig = requiredSubschema.merge?.[returnTypeName];
+              if (tentativeMergedTypeConfig?.fields) {
+                // this resolver requires additional fields (think `@requires(fields: "x")`)
+                // TODO: actually implement whether the payload already contains those fields
+                // TODO: is there a better way for finding a match?
+                continue;
+              }
               const diff = subtractSelectionSets(requiredSelSet, availableSelSet);
               if (!diff.selections.length) {
                 // all of the fields of the requesting (available) selection set is exist in the required selection set
                 subschema = requiredSubschema;
-                mergedTypeConfig = subschema.merge[returnTypeName]!;
+                mergedTypeConfig = tentativeMergedTypeConfig;
                 break;
               }
             }
@@ -279,7 +286,7 @@ export function resolveAdditionalResolversWithoutImport(
                     operation: 'query' as OperationTypeNode,
                     fieldName: mergedTypeConfig.fieldName,
                     returnType: new GraphQLList(info.returnType),
-                    key: undefined, // TODO: cant be undefined
+                    key: mergedTypeConfig.key?.(payload) || payload, // TODO: cant be undefined
                     argsFromKeys: mergedTypeConfig.argsFromKeys,
                     valuesFromResults: mergedTypeConfig.valuesFromResults,
                     selectionSet: missingSelectionSet,
