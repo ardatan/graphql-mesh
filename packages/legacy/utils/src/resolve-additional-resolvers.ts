@@ -286,7 +286,7 @@ export function resolveAdditionalResolversWithoutImport(
                     operation: 'query' as OperationTypeNode,
                     fieldName: mergedTypeConfig.fieldName,
                     returnType: new GraphQLList(info.returnType),
-                    key: mergedTypeConfig.key?.(payload) || payload, // TODO: cant be undefined
+                    key: mergedTypeConfig.key?.(payload) || payload, // TODO: should use valueFromResults on the args too?
                     argsFromKeys: mergedTypeConfig.argsFromKeys,
                     valuesFromResults: mergedTypeConfig.valuesFromResults,
                     selectionSet: missingSelectionSet,
