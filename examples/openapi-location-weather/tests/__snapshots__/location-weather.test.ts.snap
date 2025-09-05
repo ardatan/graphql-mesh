@@ -1320,8 +1320,11 @@ type LightningObs {
 }
 
 type LightningObsGroup {
-  """Count of lightning events."""
+  """Total count of lightning events."""
   count: Int
+
+  """Valid date of data in response (YYYY-MM-DD)."""
+  date: Date
 
   """Latitude of point."""
   lat: Float
@@ -1339,8 +1342,14 @@ type LightningObsGroup {
   """Time backwards from current time searched for lightning."""
   search_mins: Int
 
+  """Number of results that were skipped in response (same as offset)."""
+  skip: Int
+
   """Ascending sort key of data (time or distance)."""
   sort: String
+
+  """Timezone of valid date."""
+  timezone: String
 }
 
 """A HATEAOS link"""
@@ -1641,21 +1650,25 @@ type Query {
     key: String
 
     """Latitude component of location."""
-    lat: Float
+    lat: Float!
 
     """Limit result lightning. (Default 20)"""
     limit: Int
 
     """Longitude component of location."""
-    lon: Float
+    lon: Float!
+    output_type: queryInput_current_lightning_output_type
 
-    """Radial search distance from point in KM. (Default 50 - Max 150)"""
-    search_dist_km: Int
+    """Radial search distance from point in KM. (Default 50 KM - Max 150 KM)"""
+    search_distance_km: Int
 
     """
-    Search time backwards from current time in minutes. (Default 30 - Max 240)
+    Search time backwards from current time in minutes. (Default 30 minutes - Max 240 minutes)
     """
     search_mins: Int
+
+    """Number of results to skip in response. (Offset)"""
+    skip: Int
     sort: queryInput_current_lightning_sort
   ): current_lightning_response
 
@@ -2836,6 +2849,33 @@ type Query {
     units: queryInput_history_hourly_units
   ): history_hourly_response
 
+  """Returns lightning data by lat/lon from a given date."""
+  history_lightning(
+    """Date to retrieve data for. (YYYY-MM-DD)"""
+    date: String!
+
+    """Your registered API key."""
+    key: String
+
+    """Latitude component of location."""
+    lat: Float!
+
+    """Limit result lightning. (Default 1500, Max 2500)"""
+    limit: Int
+
+    """Longitude component of location."""
+    lon: Float!
+    output_type: queryInput_history_lightning_output_type
+
+    """Radial search distance from point in KM. (Default 20 KM - Max 75 KM)"""
+    search_distance_km: Int
+
+    """Number of results to skip in response. (Offset)"""
+    skip: Int
+    sort: queryInput_history_lightning_sort
+    tz: queryInput_history_lightning_tz
+  ): history_lightning_response
+
   """
   Returns Historical Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.
   """
@@ -3025,6 +3065,8 @@ union history_energy_response = EnergyObsGroup | Void_container
 
 union history_hourly_response = History | Void_container
 
+union history_lightning_response = LightningObsGroup | Void_container
+
 union history_subhourly_response = HistorySubhourly | Void_container
 
 union normals_response = Normals | Void_container
@@ -3074,6 +3116,12 @@ enum queryInput_current_lang {
   uk
   zh
   zh_tw
+}
+
+"""Data type of reponse JSON or GeoJSON. Default JSON."""
+enum queryInput_current_lightning_output_type {
+  geojson
+  json
 }
 
 """
@@ -3343,6 +3391,26 @@ Convert to units. Default Metric See <a target='blank' href='/api/requests'>unit
 enum queryInput_history_hourly_units {
   I
   S
+}
+
+"""Data type of reponse JSON or GeoJSON. Default JSON."""
+enum queryInput_history_lightning_output_type {
+  geojson
+  json
+}
+
+"""
+Sort results by either most recent occurrence, or least distance from point. (Default distance)
+"""
+enum queryInput_history_lightning_sort {
+  distance
+  time
+}
+
+"""Assumed timezone option to use for date parameter. Default is local."""
+enum queryInput_history_lightning_tz {
+  local
+  utc
 }
 
 """
