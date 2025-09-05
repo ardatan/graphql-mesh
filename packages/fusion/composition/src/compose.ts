@@ -503,26 +503,28 @@ export function getAnnotatedSubgraphs(
     }
 
     const queryType = transformedSubgraph.getQueryType();
-    const queryTypeDirectives = getDirectiveExtensions(queryType) || {};
+    if (queryType) {
+      const queryTypeDirectives = getDirectiveExtensions(queryType) || {};
 
-    if (extraSchemaDefinitionDirectives) {
-      importedDirectives.add('@extraSchemaDefinitionDirective');
-      importedDirectivesAST.add(/* GraphQL */ `
-        scalar _DirectiveExtensions
-      `);
-      importedDirectivesAST.add(/* GraphQL */ `
-        directive @extraSchemaDefinitionDirective(
-          directives: _DirectiveExtensions
-        ) repeatable on OBJECT
-      `);
-      queryTypeDirectives.extraSchemaDefinitionDirective ||= [];
-      queryTypeDirectives.extraSchemaDefinitionDirective.push({
-        directives: extraSchemaDefinitionDirectives,
-      });
+      if (extraSchemaDefinitionDirectives) {
+        importedDirectives.add('@extraSchemaDefinitionDirective');
+        importedDirectivesAST.add(/* GraphQL */ `
+          scalar _DirectiveExtensions
+        `);
+        importedDirectivesAST.add(/* GraphQL */ `
+          directive @extraSchemaDefinitionDirective(
+            directives: _DirectiveExtensions
+          ) repeatable on OBJECT
+        `);
+        queryTypeDirectives.extraSchemaDefinitionDirective ||= [];
+        queryTypeDirectives.extraSchemaDefinitionDirective.push({
+          directives: extraSchemaDefinitionDirectives,
+        });
+      }
+
+      const queryTypeExtensions: Record<string, unknown> = (queryType.extensions ||= {});
+      queryTypeExtensions.directives = queryTypeDirectives;
     }
-
-    const queryTypeExtensions: Record<string, unknown> = (queryType.extensions ||= {});
-    queryTypeExtensions.directives = queryTypeDirectives;
 
     if (importedDirectives.size) {
       transformedSubgraph = importMeshDirectives(transformedSubgraph, [...importedDirectives]);

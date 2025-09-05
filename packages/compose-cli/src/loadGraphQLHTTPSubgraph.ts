@@ -101,6 +101,24 @@ export interface GraphQLSubgraphLoaderHTTPConfiguration {
 
 function fixExtends(node: DocumentNode) {
   return visit(node, {
+    [Kind.DIRECTIVE](node) {
+      if (node.name.value === 'link') {
+        const url = node.arguments?.find(arg => arg.name.value === 'url')?.value;
+        if (
+          url?.kind === Kind.STRING &&
+          url.value.startsWith('https://specs.apollo.dev/federation/v2.')
+        ) {
+          const imports = node.arguments?.find(arg => arg.name.value === 'import')?.value;
+          if (imports?.kind === Kind.LIST) {
+            // @ts-expect-error - We can modify it
+            imports.values.push({
+              kind: Kind.STRING,
+              value: '@extends',
+            });
+          }
+        }
+      }
+    },
     [Kind.OBJECT_TYPE_EXTENSION](node) {
       return {
         ...node,
