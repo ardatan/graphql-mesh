@@ -22,7 +22,7 @@ export function useOperationHeaders(factoryFn: OperationHeadersFactory): Gateway
             url,
             options,
             context,
-          }),
+          } as OperationHeadersFactoryPayload),
         newHeaders =>
           setOptions({
             ...options,
