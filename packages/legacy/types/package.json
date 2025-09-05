@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-hive/pubsub": "next",
+    "@graphql-hive/pubsub": "^2.1.0",
     "@graphql-mesh/store": "^0.104.11",
     "@graphql-tools/batch-delegate": "^10.0.0",
     "@graphql-tools/delegate": "^11.0.0",

@@ -1,7 +1,6 @@
 import { Redis } from 'ioredis';
 import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import { RedisPubSub } from '@graphql-hive/pubsub/redis';
-import { toMeshPubSub } from '@graphql-mesh/types';
 
 /**
  * When a Redis connection enters "subscriber mode" (after calling SUBSCRIBE), it can only execute
@@ -20,12 +19,10 @@ const sub = new Redis({
 });
 
 export const gatewayConfig = defineGatewayConfig({
-  pubsub: toMeshPubSub(
-    new RedisPubSub(
-      { pub, sub },
-      {
-        channelPrefix: 'gw',
-      },
-    ),
+  pubsub: new RedisPubSub(
+    { pub, sub },
+    {
+      channelPrefix: 'gw',
+    },
   ),
 });

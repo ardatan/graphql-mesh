@@ -159,6 +159,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
                   );
                 },
               );
+              // @ts-expect-error - Promise type mismatch
               context?.waitUntil?.(store$);
             }
             if (policy) {
