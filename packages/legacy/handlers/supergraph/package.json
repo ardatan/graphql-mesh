@@ -40,7 +40,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.8",
     "@graphql-mesh/types": "^0.104.11",
     "@graphql-mesh/utils": "^0.104.11",
-    "@graphql-tools/federation": "^3.0.0",
+    "@graphql-tools/federation": "^4.0.0",
     "@graphql-tools/url-loader": "^8.0.9",
     "@graphql-tools/utils": "^10.8.0",
     "lodash.get": "^4.4.2",
