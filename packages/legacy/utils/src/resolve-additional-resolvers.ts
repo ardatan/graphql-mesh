@@ -171,6 +171,142 @@ function generateValuesFromResults(resultExpression: string): (result: any) => a
   };
 }
 
+export interface PubSubOperationOptions {
+  pubsubTopic: string;
+  pubsub?: MeshPubSub | HivePubSub;
+  filterBy?: string;
+  result?: string;
+}
+
+export function getResolverForPubSubOperation(opts: PubSubOperationOptions) {
+  const pubsubTopic = opts.pubsubTopic;
+  let subscribeFn = function subscriber(
+    root: any,
+    args: Record<string, any>,
+    context: MeshContext,
+    info: GraphQLResolveInfo,
+  ): MaybePromise<AsyncIterator<any>> {
+    const resolverData = { root, args, context, info, env: process.env };
+    const topic = stringInterpolator.parse(pubsubTopic, resolverData);
+    const ps = context?.pubsub || opts?.pubsub;
+    if (isHivePubSub(ps)) {
+      return ps.subscribe(topic)[Symbol.asyncIterator]();
+    }
+    return ps.asyncIterator(topic)[Symbol.asyncIterator]();
+  };
+  if (opts.filterBy) {
+    let filterFunction: any;
+    try {
+      // eslint-disable-next-line no-new-func
+      filterFunction = new Function('root', 'args', 'context', 'info', `return ${opts.filterBy};`);
+    } catch (e) {
+      throw new Error(
+        `Error while parsing filterBy expression "${opts.filterBy}" in additional subscription resolver: ${e.message}`,
+      );
+    }
+    subscribeFn = withFilter(subscribeFn as any, filterFunction);
+  }
+  const valuesFromResults = opts.result ? generateValuesFromResults(opts.result) : undefined;
+
+  return {
+    subscribe: subscribeFn,
+    resolve: (payload: any, _: any, ctx, info: GraphQLResolveInfo) => {
+      function resolvePayload(payload: any) {
+        if (valuesFromResults) {
+          return valuesFromResults(payload);
+        }
+        return payload;
+      }
+      const stitchingInfo = info?.schema.extensions?.stitchingInfo as Maybe<StitchingInfo<any>>;
+      if (!stitchingInfo) {
+        return resolvePayload(payload); // no stitching, cannot be resolved anywhere else
+      }
+      const returnTypeName = getNamedType(info.returnType).name;
+      const mergedTypeInfo = stitchingInfo.mergedTypes[returnTypeName];
+      if (!mergedTypeInfo) {
+        return resolvePayload(payload); // this type is not merged or resolvable
+      }
+
+      // we dont compare fragment definitions because they mean there are type-conditions
+      // more advanced behavior. if we encounter such a case, the missing selection set
+      // will have fields and we will perform a call to the subschema
+      const requestedSelSet = info.fieldNodes[0]?.selectionSet;
+      if (!requestedSelSet) {
+        return resolvePayload(payload); // should never happen, but hey 🤷‍♂️
+      }
+
+      const availableSelSet = selectionSetOfData(resolvePayload(payload));
+      const missingSelectionSet = subtractSelectionSets(requestedSelSet, availableSelSet);
+      if (!missingSelectionSet.selections.length) {
+        // all of the fields are already in the payload
+        return resolvePayload(payload);
+      }
+
+      // find the best subgraph by diffing the selection sets
+      let subschema: Subschema | null = null;
+      let mergedTypeConfig: MergedTypeConfig | null = null;
+      for (const [requiredSubschema, requiredSelSet] of mergedTypeInfo.selectionSets) {
+        const tentativeMergedTypeConfig = requiredSubschema.merge?.[returnTypeName];
+        if (tentativeMergedTypeConfig?.fields) {
+          // this resolver requires additional fields (think `@requires(fields: "x")`)
+          // TODO: actually implement whether the payload already contains those fields
+          // TODO: is there a better way for finding a match?
+          continue;
+        }
+        const diff = subtractSelectionSets(requiredSelSet, availableSelSet);
+        if (!diff.selections.length) {
+          // all of the fields of the requesting (available) selection set is exist in the required selection set
+          subschema = requiredSubschema;
+          mergedTypeConfig = tentativeMergedTypeConfig;
+          break;
+        }
+      }
+      if (!subschema || !mergedTypeConfig) {
+        // the type cannot be resolved
+        return resolvePayload(payload);
+      }
+
+      return handleMaybePromise(
+        () => {
+          if (mergedTypeConfig.argsFromKeys) {
+            return batchDelegateToSchema({
+              schema: subschema,
+              operation: 'query' as OperationTypeNode,
+              fieldName: mergedTypeConfig.fieldName,
+              returnType: new GraphQLList(info.returnType),
+              key: mergedTypeConfig.key?.(payload) || payload, // TODO: should use valueFromResults on the args too?
+              argsFromKeys: mergedTypeConfig.argsFromKeys,
+              valuesFromResults: mergedTypeConfig.valuesFromResults,
+              selectionSet: missingSelectionSet,
+              context: ctx,
+              info,
+              dataLoaderOptions: mergedTypeConfig.dataLoaderOptions,
+              skipTypeMerging: false, // important to be false so that fields outside this subgraph can be resolved properly
+            });
+          }
+          if (mergedTypeConfig.args) {
+            return delegateToSchema({
+              schema: subschema,
+              operation: 'query' as OperationTypeNode,
+              fieldName: mergedTypeConfig.fieldName,
+              returnType: info.returnType,
+              args: mergedTypeConfig.args(payload), // TODO: should use valueFromResults on the args too?
+              selectionSet: missingSelectionSet,
+              context: ctx,
+              info,
+              skipTypeMerging: false, // important to be false so that fields outside this subgraph can be resolved properly
+            });
+          }
+          // no way to delegate to anything, return empty - i.e. resolve just payload
+          // should not happen though, there'll be something to use
+          return {};
+        },
+        resolved => resolvePayload(mergeDeep([payload, resolved])),
+      );
+    },
+  };
+}
+
 export function resolveAdditionalResolversWithoutImport(
   additionalResolver:
     | YamlConfig.AdditionalStitchingResolverObject
@@ -179,143 +315,18 @@ export function resolveAdditionalResolversWithoutImport(
   pubsub?: MeshPubSub | HivePubSub,
 ): IResolvers {
   const baseOptions: any = {};
-  if (additionalResolver.result) {
-    baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
-  }
   if ('pubsubTopic' in additionalResolver) {
-    const pubsubTopic = additionalResolver.pubsubTopic;
-    let subscribeFn = function subscriber(
-      root: any,
-      args: Record<string, any>,
-      context: MeshContext,
-      info: GraphQLResolveInfo,
-    ): MaybePromise<AsyncIterator<any>> {
-      const resolverData = { root, args, context, info, env: process.env };
-      const topic = stringInterpolator.parse(pubsubTopic, resolverData);
-      const ps = context?.pubsub || pubsub;
-      if (isHivePubSub(ps)) {
-        return ps.subscribe(topic)[Symbol.asyncIterator]();
-      }
-      return ps.asyncIterator(topic)[Symbol.asyncIterator]();
-    };
-    if (additionalResolver.filterBy) {
-      let filterFunction: any;
-      try {
-        // eslint-disable-next-line no-new-func
-        filterFunction = new Function(
-          'root',
-          'args',
-          'context',
-          'info',
-          `return ${additionalResolver.filterBy};`,
-        );
-      } catch (e) {
-        throw new Error(
-          `Error while parsing filterBy expression "${additionalResolver.filterBy}" in additional subscription resolver: ${e.message}`,
-        );
-      }
-      subscribeFn = withFilter(subscribeFn, filterFunction);
-    }
+    const { subscribe, resolve } = getResolverForPubSubOperation({
+      pubsubTopic: additionalResolver.pubsubTopic,
+      pubsub,
+      filterBy: additionalResolver.filterBy,
+      result: additionalResolver.result,
+    });
     return {
       [additionalResolver.targetTypeName]: {
         [additionalResolver.targetFieldName]: {
-          subscribe: subscribeFn,
-          resolve: (payload: any, _, ctx, info) => {
-            function resolvePayload(payload: any) {
-              if (baseOptions.valuesFromResults) {
-                return baseOptions.valuesFromResults(payload);
-              }
-              return payload;
-            }
-            const stitchingInfo = info?.schema.extensions?.stitchingInfo as Maybe<
-              StitchingInfo<any>
-            >;
-            if (!stitchingInfo) {
-              return resolvePayload(payload); // no stitching, cannot be resolved anywhere else
-            }
-            const returnTypeName = getNamedType(info.returnType).name;
-            const mergedTypeInfo = stitchingInfo.mergedTypes[returnTypeName];
-            if (!mergedTypeInfo) {
-              return resolvePayload(payload); // this type is not merged or resolvable
-            }
-
-            // we dont compare fragment definitions because they mean there are type-conditions
-            // more advanced behavior. if we encounter such a case, the missing selection set
-            // will have fields and we will perform a call to the subschema
-            const requestedSelSet = info.fieldNodes[0]?.selectionSet;
-            if (!requestedSelSet) {
-              return resolvePayload(payload); // should never happen, but hey 🤷‍♂️
-            }
-
-            const availableSelSet = selectionSetOfData(resolvePayload(payload));
-            const missingSelectionSet = subtractSelectionSets(requestedSelSet, availableSelSet);
-            if (!missingSelectionSet.selections.length) {
-              // all of the fields are already in the payload
-              return resolvePayload(payload);
-            }
-
-            // find the best subgraph by diffing the selection sets
-            let subschema: Subschema | null = null;
-            let mergedTypeConfig: MergedTypeConfig | null = null;
-            for (const [requiredSubschema, requiredSelSet] of mergedTypeInfo.selectionSets) {
-              const tentativeMergedTypeConfig = requiredSubschema.merge?.[returnTypeName];
-              if (tentativeMergedTypeConfig?.fields) {
-                // this resolver requires additional fields (think `@requires(fields: "x")`)
-                // TODO: actually implement whether the payload already contains those fields
-                // TODO: is there a better way for finding a match?
-                continue;
-              }
-              const diff = subtractSelectionSets(requiredSelSet, availableSelSet);
-              if (!diff.selections.length) {
-                // all of the fields of the requesting (available) selection set is exist in the required selection set
-                subschema = requiredSubschema;
-                mergedTypeConfig = tentativeMergedTypeConfig;
-                break;
-              }
-            }
-            if (!subschema || !mergedTypeConfig) {
-              // the type cannot be resolved
-              return resolvePayload(payload);
-            }
-
-            return handleMaybePromise(
-              () => {
-                if (mergedTypeConfig.argsFromKeys) {
-                  return batchDelegateToSchema({
-                    schema: subschema,
-                    operation: 'query' as OperationTypeNode,
-                    fieldName: mergedTypeConfig.fieldName,
-                    returnType: new GraphQLList(info.returnType),
-                    key: mergedTypeConfig.key?.(payload) || payload, // TODO: should use valueFromResults on the args too?
-                    argsFromKeys: mergedTypeConfig.argsFromKeys,
-                    valuesFromResults: mergedTypeConfig.valuesFromResults,
-                    selectionSet: missingSelectionSet,
-                    context: ctx,
-                    info,
-                    dataLoaderOptions: mergedTypeConfig.dataLoaderOptions,
-                    skipTypeMerging: false, // important to be false so that fields outside this subgraph can be resolved properly
-                  });
-                }
-                if (mergedTypeConfig.args) {
-                  return delegateToSchema({
-                    schema: subschema,
-                    operation: 'query' as OperationTypeNode,
-                    fieldName: mergedTypeConfig.fieldName,
-                    returnType: info.returnType,
-                    args: mergedTypeConfig.args(payload), // TODO: should use valueFromResults on the args too?
-                    selectionSet: missingSelectionSet,
-                    context: ctx,
-                    info,
-                    skipTypeMerging: false, // important to be false so that fields outside this subgraph can be resolved properly
-                  });
-                }
-                // no way to delegate to anything, return empty - i.e. resolve just payload
-                // should not happen though, there'll be something to use
-                return {};
-              },
-              resolved => resolvePayload(mergeDeep([payload, resolved])),
-            );
-          },
+          subscribe,
+          resolve,
         },
       },
     };

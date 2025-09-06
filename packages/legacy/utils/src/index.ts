@@ -25,3 +25,4 @@ export * from './getAdditionalResolversFromTypeDefs.js';
 export * from './get-def-directives.js';
 export * from './disposable.js';
 export * from './in-context-sdk.js';
+export * from './with-filter.js';
