@@ -1659,11 +1659,11 @@ type Query {
     lon: Float!
     output_type: queryInput_current_lightning_output_type
 
-    """Radial search distance from point in KM. (Default 50 KM - Max 150 KM)"""
+    """Radial search distance from point in KM. (Default 20 KM - Max 75 KM)"""
     search_distance_km: Int
 
     """
-    Search time backwards from current time in minutes. (Default 30 minutes - Max 240 minutes)
+    Search time backwards from current time in minutes. (Default 30 minutes - Max 45 minutes)
     """
     search_mins: Int
 
