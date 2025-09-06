@@ -1,5 +1,15 @@
 # @omnigraph/thrift
 
+## 0.9.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ffec6e7`](https://github.com/ardatan/graphql-mesh/commit/ffec6e7ae007b7019a895d4dbee79177a4a0a13e)]:
+  - @graphql-mesh/utils@0.104.12
+  - @graphql-mesh/transport-thrift@0.9.12
+  - @graphql-mesh/types@0.104.12
+
 ## 0.9.12
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @graphql-mesh/transform-federation
 
+## 0.104.12
+
+### Patch Changes
+
+- [`8c1456d`](https://github.com/ardatan/graphql-mesh/commit/8c1456d4c87b2fd0aabdf0e69fa6045672d89c17)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix issues with missing query type and `extends`
+  modifier
+
+- Updated dependencies
+  [[`ffec6e7`](https://github.com/ardatan/graphql-mesh/commit/ffec6e7ae007b7019a895d4dbee79177a4a0a13e)]:
+  - @graphql-mesh/utils@0.104.12
+  - @graphql-mesh/types@0.104.12
+
 ## 0.104.11
 
 ### Patch Changes

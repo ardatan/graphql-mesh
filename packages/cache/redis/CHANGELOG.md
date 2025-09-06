@@ -1,5 +1,12 @@
 # @graphql-mesh/cache-redis
 
+## 0.104.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.104.12
+
 ## 0.104.11
 
 ### Patch Changes
