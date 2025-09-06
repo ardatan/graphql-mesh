@@ -7,8 +7,8 @@
     "start:beta": "cross-env GRAPH_VERSION=\"beta\" mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.12",
-    "@graphql-mesh/odata": "0.106.11",
+    "@graphql-mesh/cli": "0.100.13",
+    "@graphql-mesh/odata": "0.106.12",
     "cross-env": "10.0.0",
     "graphql": "16.11.0"
   }

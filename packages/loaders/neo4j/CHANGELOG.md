@@ -1,5 +1,13 @@
 # @omnigraph/neo4j
 
+## 0.11.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.10
+  - @graphql-mesh/types@0.104.12
+
 ## 0.11.9
 
 ### Patch Changes

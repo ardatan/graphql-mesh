@@ -1,5 +1,16 @@
 # @graphql-mesh/utils
 
+## 0.104.12
+
+### Patch Changes
+
+- [#8747](https://github.com/ardatan/graphql-mesh/pull/8747)
+  [`ffec6e7`](https://github.com/ardatan/graphql-mesh/commit/ffec6e7ae007b7019a895d4dbee79177a4a0a13e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Export PubSub resolver factory
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.104.12
+
 ## 0.104.11
 
 ### Patch Changes
