@@ -688,6 +688,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@as-integrations/express4@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@as-integrations/express4@npm:1.1.2"
+  peerDependencies:
+    "@apollo/server": ^4.0.0 || ^5.0.0
+    express: ^4.0.0
+  checksum: 10c0/6934b4b878f71894f85dc0003eb404a4b701468693bf6cf686b4adf56709532f75f118b63abccc5daaf5ba3e961e541430664e21b9bfb84d7a28e6e248052e92
+  languageName: node
+  linkType: hard
+
 "@aws-crypto/crc32@npm:5.2.0":
   version: 5.2.0
   resolution: "@aws-crypto/crc32@npm:5.2.0"
@@ -11025,23 +11035,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neo4j/cypher-builder@npm:^2.4.0":
-  version: 2.5.1
-  resolution: "@neo4j/cypher-builder@npm:2.5.1"
-  checksum: 10c0/53115f528bc8f46ed01bbdd4d3bca3a91736fdca7530b95f9a11cf8770bffe6dd55763de9ad3d7bfac88614685c7bb29a545098c5d46f9398199a19d5aa10fc2
+"@neo4j/cypher-builder@npm:2.8.0":
+  version: 2.8.0
+  resolution: "@neo4j/cypher-builder@npm:2.8.0"
+  checksum: 10c0/99e02eb23ce6b50fe7df1ba13d12f9e2ed6cd95f1bf05ad6076419f6c9d7571cda0a1a3fd8d158a9f385ba76de0ca7759c1efa105e588b909a7f33daecb9ca54
   languageName: node
   linkType: hard
 
 "@neo4j/graphql@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@neo4j/graphql@npm:7.0.0"
+  version: 7.2.11
+  resolution: "@neo4j/graphql@npm:7.2.11"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
+    "@as-integrations/express4": "npm:^1.1.2"
     "@graphql-tools/merge": "npm:^9.0.0"
     "@graphql-tools/resolvers-composition": "npm:^7.0.0"
     "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-tools/utils": "npm:10.8.6"
-    "@neo4j/cypher-builder": "npm:^2.4.0"
+    "@graphql-tools/utils": "npm:10.9.1"
+    "@neo4j/cypher-builder": "npm:2.8.0"
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
     dot-prop: "npm:^6.0.1"
@@ -11056,7 +11067,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/170bff4114ddc63de17127712fc2e5d12a1ba264bd2fc6273c2b8da2034adabfaa049f724bd5b0152bf8f0e2c4c14b21bccf86ec083c40958910b37a31fa6acd
+  checksum: 10c0/c13a8d562125d0ac3d92105dd62b90f1b23cf00a18dc04ea0794e1ddca60952a4fdde962c9e040d65490bcf1f1c2782ecbf705c33b8e44b60126c7358e8b4682
   languageName: node
   linkType: hard
 
