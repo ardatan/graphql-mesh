@@ -1,5 +1,5 @@
 import { dset } from 'dset';
-import type { GraphQLField, GraphQLOutputType, GraphQLResolveInfo, GraphQLSchema } from 'graphql';
+import type { GraphQLField, GraphQLOutputType, GraphQLResolveInfo, GraphQLSchema, GraphQLUnionType } from 'graphql';
 import { getNamedType, isListType, isNonNullType, isScalarType, isUnionType } from 'graphql';
 import type { IStringifyOptions } from 'qs';
 import { parse as qsParse, stringify as qsStringify } from 'qs';
@@ -8,11 +8,12 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj } from '@graphql-mesh/utils';
-import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
+import { createGraphQLError, getDirective, memoize1 } from '@graphql-tools/utils';
 import { Blob, fetch as defaultFetch, File, FormData, URLSearchParams } from '@whatwg-node/fetch';
 import { isFileUpload } from './isFileUpload.js';
 import { getJsonApiFieldsQuery } from './jsonApiFields.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
+
 
 type HTTPMethod =
   | 'GET'
@@ -37,6 +38,21 @@ const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListTyp
 const defaultQsOptions: IStringifyOptions = {
   indices: false,
 };
+
+/**
+ * Check if a union type has a statusCodeTypeName directive mapping for the given status code
+ */
+function hasStatusCodeMapping(
+    schema: GraphQLSchema,
+    unionType: GraphQLUnionType,
+    statusCode: string,
+  ) {
+  const mappings = getDirective(schema, unionType, 'statusCodeTypeName') || [];
+  return mappings.some(d => {
+    const codes = Array.isArray(d?.statusCode) ? d.statusCode : [d?.statusCode];
+    return codes?.some(code => String(code) === String(statusCode));
+  });
+}
 
 export interface HTTPRootFieldResolverOpts {
   sourceName: string;
@@ -366,30 +382,35 @@ export function addHTTPRootFieldResolver(
     }
 
     if (!response.status.toString().startsWith('2')) {
-      if (!isUnionType(returnNamedGraphQLType)) {
-        return createGraphQLError(
-          `Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
-          {
-            extensions: {
-              code: 'DOWNSTREAM_SERVICE_ERROR',
-              serviceName: sourceName,
-              request: {
-                url: fullPath,
-                method: httpMethod,
-              },
-              response: {
-                status: response.status,
-                statusText: response.statusText,
-                get headers() {
-                  return getHeadersObj(response.headers);
+        // Check if this is a union type that has a mapping for the error response current status code
+        const hasErrorResponseMapping = isUnionType(returnNamedGraphQLType) &&
+          hasStatusCodeMapping(
+            schema,
+            returnNamedGraphQLType as GraphQLUnionType,
+            response.status.toString()
+          );
+
+        if (!hasErrorResponseMapping) {
+            return createGraphQLError(`Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`, {
+                extensions: {
+                    code: 'DOWNSTREAM_SERVICE_ERROR',
+                    serviceName: sourceName,
+                    request: {
+                        url: fullPath,
+                        method: httpMethod,
+                    },
+                    response: {
+                        status: response.status,
+                        statusText: response.statusText,
+                        get headers() {
+                            return getHeadersObj(response.headers);
+                        },
+                        body: responseJson,
+                    },
                 },
-                body: responseJson,
-              },
-            },
-          },
-        );
+            });
+        }
       }
-    }
 
     operationLogger.debug(`Returning `, responseJson);
     // Sometimes API returns an array but the return type is not an array
