@@ -16,7 +16,7 @@
     "@graphql-mesh/cli": "0.100.13",
     "@graphql-mesh/thrift": "0.106.13",
     "@types/express": "5.0.3",
-    "@types/node": "22.17.0",
+    "@types/node": "22.18.1",
     "express": "5.1.0",
     "graphql": "16.11.0",
     "thrift": "0.22.0",
@@ -24,6 +24,6 @@
     "typescript": "^5.4.2"
   },
   "devDependencies": {
-    "concurrently": "9.2.0"
+    "concurrently": "9.2.1"
   }
 }

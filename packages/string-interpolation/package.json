@@ -37,7 +37,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "dayjs": "1.11.13",
+    "dayjs": "1.11.18",
     "json-pointer": "0.6.2",
     "lodash.get": "4.4.2",
     "tslib": "^2.4.0"
