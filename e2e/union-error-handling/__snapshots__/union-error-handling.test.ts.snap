@@ -1,0 +1,202 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OpenAPI rest transport Union Error Handling should compose 1`] = `
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(
+  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
+  import: ["@statusCodeTypeName", "@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
+)
+  {
+    query: Query
+    
+    
+  }
+
+  
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
+
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
+
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+    directive @join__unionMember(
+      graph: join__Graph!
+      member: String!
+    ) repeatable on UNION
+
+    scalar join__FieldSet
+    
+  
+  
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+  
+  
+  
+  
+  
+  
+  
+enum join__Graph {
+  ERROR_API @join__graph(name: "ErrorAPI", url: "http://localhost:<ErrorService_port>") 
+}
+
+directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String)  repeatable on UNION
+
+directive @httpOperation(
+  subgraph: String
+  path: String
+  operationSpecificHeaders: [[String]]
+  httpMethod: HTTPMethod
+  isBinary: Boolean
+  requestBaseBody: ObjMap
+  queryParamArgMap: ObjMap
+  queryStringOptionsByParam: ObjMap
+  jsonApiFields: Boolean
+  queryStringOptions: ObjMap
+) repeatable on FIELD_DEFINITION
+
+directive @transport(
+  subgraph: String
+  kind: String
+  location: String
+  headers: [[String]]
+  queryStringOptions: ObjMap
+  queryParams: [[String]]
+) repeatable on SCHEMA
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+
+scalar ObjMap @join__type(graph: ERROR_API) 
+
+scalar _DirectiveExtensions @join__type(graph: ERROR_API) 
+
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{subgraph: "ErrorAPI", kind: "rest", location: "http://localhost:<ErrorService_port>"}]}
+) @join__type(graph: ERROR_API)  {
+  """
+  Get user - direct response type without error handling
+  """
+  getUserNoErrorHandling: User @httpOperation(
+    subgraph: "ErrorAPI"
+    path: "/userNoErrorHandling"
+    operationSpecificHeaders: [["accept", "application/json"]]
+    httpMethod: GET
+  )
+  """
+  Get user - union response type without error handling
+  """
+  getUserUnionNoErrorHandling: getUserUnionNoErrorHandling_response @httpOperation(
+    subgraph: "ErrorAPI"
+    path: "/userUnionNoErrorHandling"
+    operationSpecificHeaders: [["accept", "application/json"]]
+    httpMethod: GET
+  )
+  """
+  Get user - direct response type with error handling
+  """
+  getUserErrorHandling: getUserErrorHandling_response @httpOperation(
+    subgraph: "ErrorAPI"
+    path: "/userErrorHandling"
+    operationSpecificHeaders: [["accept", "application/json"]]
+    httpMethod: GET
+  )
+  """
+  Get user - union response type with error handling
+  """
+  getUserUnionErrorHandling: getUserUnionErrorHandling_response @httpOperation(
+    subgraph: "ErrorAPI"
+    path: "/userUnionErrorHandling"
+    operationSpecificHeaders: [["accept", "application/json"]]
+    httpMethod: GET
+  )
+}
+
+type User @join__type(graph: ERROR_API)  {
+  id: Int!
+  name: String!
+  email: String!
+}
+
+type AsyncJob @join__type(graph: ERROR_API)  {
+  asynchronous_job_id: String!
+  status: String!
+  estimated_completion: String
+}
+
+type Error @join__type(graph: ERROR_API)  {
+  error: String!
+  code: Int!
+}
+
+union getUserUnionNoErrorHandling_response @statusCodeTypeName(subgraph: "ErrorAPI", statusCode: "200", typeName: "User")  @statusCodeTypeName(subgraph: "ErrorAPI", statusCode: "202", typeName: "AsyncJob")  @join__type(graph: ERROR_API)  @join__unionMember(graph: ERROR_API, member: "User")  @join__unionMember(graph: ERROR_API, member: "AsyncJob")  = User | AsyncJob
+
+union getUserErrorHandling_response @statusCodeTypeName(subgraph: "ErrorAPI", statusCode: "200", typeName: "User")  @statusCodeTypeName(subgraph: "ErrorAPI", statusCode: "400", typeName: "Error")  @join__type(graph: ERROR_API)  @join__unionMember(graph: ERROR_API, member: "User")  @join__unionMember(graph: ERROR_API, member: "Error")  = User | Error
+
+union getUserUnionErrorHandling_response @statusCodeTypeName(subgraph: "ErrorAPI", statusCode: "200", typeName: "User")  @statusCodeTypeName(subgraph: "ErrorAPI", statusCode: "202", typeName: "AsyncJob")  @statusCodeTypeName(subgraph: "ErrorAPI", statusCode: "400", typeName: "Error")  @join__type(graph: ERROR_API)  @join__unionMember(graph: ERROR_API, member: "User")  @join__unionMember(graph: ERROR_API, member: "AsyncJob")  @join__unionMember(graph: ERROR_API, member: "Error")  = User | AsyncJob | Error
+
+enum HTTPMethod @join__type(graph: ERROR_API)  {
+  GET @join__enumValue(graph: ERROR_API) 
+  HEAD @join__enumValue(graph: ERROR_API) 
+  POST @join__enumValue(graph: ERROR_API) 
+  PUT @join__enumValue(graph: ERROR_API) 
+  DELETE @join__enumValue(graph: ERROR_API) 
+  CONNECT @join__enumValue(graph: ERROR_API) 
+  OPTIONS @join__enumValue(graph: ERROR_API) 
+  TRACE @join__enumValue(graph: ERROR_API) 
+  PATCH @join__enumValue(graph: ERROR_API) 
+}"
+`;

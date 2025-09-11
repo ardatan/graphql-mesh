@@ -4433,6 +4433,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/union-error-handling@workspace:e2e/union-error-handling":
+  version: 0.0.0-use.local
+  resolution: "@e2e/union-error-handling@workspace:e2e/union-error-handling"
+  dependencies:
+    "@graphql-mesh/compose-cli": "npm:*"
+    "@omnigraph/openapi": "npm:*"
+    express: "npm:*"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/utils@workspace:e2e/utils":
   version: 0.0.0-use.local
   resolution: "@e2e/utils@workspace:e2e/utils"
