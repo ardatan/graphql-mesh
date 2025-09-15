@@ -21,7 +21,7 @@ export function useOperationHeaders(factoryFn: OperationHeadersFactory): Gateway
           factoryFn({
             url,
             options,
-            context,
+            context: context as GatewayContext,
           }),
         newHeaders =>
           setOptions({

@@ -20,12 +20,10 @@ const sub = new Redis({
 });
 
 export const gatewayConfig = defineGatewayConfig({
-  pubsub: toMeshPubSub(
-    new RedisPubSub(
-      { pub, sub },
-      {
-        channelPrefix: 'gw',
-      },
-    ),
+  pubsub: new RedisPubSub(
+    { pub, sub },
+    {
+      channelPrefix: 'gw',
+    },
   ),
 });
