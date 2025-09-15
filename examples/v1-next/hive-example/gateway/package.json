@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "@graphql-hive/gateway": "^2.0.0",
-    "dotenv": "^16.4.5",
+    "dotenv": "^17.0.0",
     "graphql": "16.11.0"
   }
 }
