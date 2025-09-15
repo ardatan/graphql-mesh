@@ -7,7 +7,7 @@ let neo4j: Container;
 beforeAll(async () => {
   neo4j = await container({
     name: 'neo4j',
-    image: 'neo4j:5.22.0',
+    image: 'neo4j',
     containerPort: 7687,
     env: {
       NEO4J_AUTH: 'neo4j/password',
