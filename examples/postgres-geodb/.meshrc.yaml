@@ -10,7 +10,7 @@ sources:
     handler:
       graphql:
         endpoint: https://api.github.com/graphql
-        source: ./github.graphql
+        source: https://docs.github.com/public/fpt/schema.docs.graphql
         operationHeaders:
           Authorization: bearer {env.GH_ACCESS_TOKEN}
           User-Agent: GraphQL Mesh
