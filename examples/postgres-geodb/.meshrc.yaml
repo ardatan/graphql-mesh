@@ -21,6 +21,9 @@ sources:
           includeRootOperations: true
 
 additionalTypeDefs: |
+  extend type Query {
+    id: ID!
+  }
   extend type GeoCity {
     developers(limit: Int = 10): [GithubUser] @resolveTo(
       requiredSelectionSet: "{ name }",

@@ -139,7 +139,7 @@ export function getInContextSDK(
             if (returnsList) {
               const originalValuesFromResults = valuesFromResults || identical;
               valuesFromResults = result =>
-                handleMaybePromise(() => originalValuesFromResults(result), asArray, asArray);
+                handleMaybePromise(() => originalValuesFromResults(result), asArray);
             }
             inContextSdkLogger?.debug(`Called with`, {
               args,
