@@ -126,12 +126,12 @@ describe('OpenAPI rest transport Union Error Handling', () => {
     // Both direct and union fields should return error data when casting to Error type
     expect(errorHandlingResult.data?.getUserErrorHandling).toEqual({
       error: 'User not found',
-      code: 400
+      code: 400,
     });
 
     expect(errorHandlingResult.data?.getUserUnionErrorHandling).toEqual({
       error: 'User union error',
-      code: 400
+      code: 400,
     });
 
     // Verify that when error handling is in the OpenAPI schema,
