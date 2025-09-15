@@ -25245,14 +25245,14 @@ __metadata:
   linkType: hard
 
 "hot-shots@npm:^11.0.0":
-  version: 11.1.0
-  resolution: "hot-shots@npm:11.1.0"
+  version: 11.2.0
+  resolution: "hot-shots@npm:11.2.0"
   dependencies:
     unix-dgram: "npm:2.x"
   dependenciesMeta:
     unix-dgram:
       optional: true
-  checksum: 10c0/378b460269ed11d701319854c99ae79ac2db0d950d06bc7e96dccb6e62d10ceb203e61e46449c82bc99abaa05d3654211b8006f1b7698855d4d5dec05ccb760d
+  checksum: 10c0/2551954ab92f6cefdc8311b7bd6d3f2d0e45583d3908fe03a1e31c4c08c7c1123e9360f52226bf874cf5eb01b0808a76a00c9f5af3253d59e2dbbcd729a2328b
   languageName: node
   linkType: hard
 
