@@ -25,7 +25,7 @@ additionalTypeDefs: |
     id: ID!
   }
   extend type GeoCity {
-    developers(limit: Int = 10): [GithubUser] @resolveTo(
+    developers(limit: Int = 2): [GithubUser] @resolveTo(
       requiredSelectionSet: "{ name }",
       sourceName: "Github",
       sourceTypeName: "Query",

@@ -136,11 +136,6 @@ export function getInContextSDK(
             autoSelectionSetWithDepth?: number;
             dataLoaderOptions?: DataLoader.Options<any, any, any>;
           }) => {
-            if (returnsList) {
-              const originalValuesFromResults = valuesFromResults || identical;
-              valuesFromResults = result =>
-                handleMaybePromise(() => originalValuesFromResults(result), asArray);
-            }
             inContextSdkLogger?.debug(`Called with`, {
               args,
               key,

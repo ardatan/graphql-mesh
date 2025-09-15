@@ -24,7 +24,7 @@ if (typeof afterAll === 'function') {
           resolve();
           console.error('Failed to dispose leftover stack in time');
         }, 25_000);
-        leftoverStack.disposeAsync().then(
+        Promise.resolve(leftoverStack.disposeAsync()).then(
           () => {
             clearTimeout(timeout);
             resolve();

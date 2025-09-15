@@ -7074,6 +7074,7 @@ __metadata:
     "@graphql-tools/merge": "npm:^9.0.12"
     "@graphql-tools/url-loader": "npm:^8.0.9"
     "@graphql-tools/utils": "npm:^10.8.0"
+    "@whatwg-node/promise-helpers": "npm:^1.3.2"
     graphql: "npm:16.11.0"
     lodash.get: "npm:^4.4.2"
     tslib: "npm:^2.4.0"

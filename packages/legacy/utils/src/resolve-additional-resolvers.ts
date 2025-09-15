@@ -178,7 +178,10 @@ export interface PubSubOperationOptions {
   result?: string;
 }
 
-export function getResolverForPubSubOperation(opts: PubSubOperationOptions) {
+export function getResolverForPubSubOperation(
+  opts: PubSubOperationOptions,
+  valuesFromResults?: (result: any) => any,
+) {
   const pubsubTopic = opts.pubsubTopic;
   let subscribeFn = function subscriber(
     root: any,
@@ -206,7 +209,6 @@ export function getResolverForPubSubOperation(opts: PubSubOperationOptions) {
     }
     subscribeFn = withFilter(subscribeFn as any, filterFunction);
   }
-  const valuesFromResults = opts.result ? generateValuesFromResults(opts.result) : undefined;
 
   return {
     subscribe: subscribeFn,
@@ -314,14 +316,21 @@ export function resolveAdditionalResolversWithoutImport(
     | YamlConfig.AdditionalStitchingBatchResolverObject,
   pubsub?: MeshPubSub | HivePubSub,
 ): IResolvers {
-  const baseOptions: any = {};
+  const baseOptions: any = {
+    valuesFromResults: additionalResolver.result
+      ? generateValuesFromResults(additionalResolver.result)
+      : undefined,
+  };
   if ('pubsubTopic' in additionalResolver) {
-    const { subscribe, resolve } = getResolverForPubSubOperation({
-      pubsubTopic: additionalResolver.pubsubTopic,
-      pubsub,
-      filterBy: additionalResolver.filterBy,
-      result: additionalResolver.result,
-    });
+    const { subscribe, resolve } = getResolverForPubSubOperation(
+      {
+        pubsubTopic: additionalResolver.pubsubTopic,
+        pubsub,
+        filterBy: additionalResolver.filterBy,
+        result: additionalResolver.result,
+      },
+      baseOptions.valuesFromResults,
+    );
     return {
       [additionalResolver.targetTypeName]: {
         [additionalResolver.targetFieldName]: {

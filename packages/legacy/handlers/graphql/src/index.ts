@@ -55,6 +55,7 @@ import {
   memoize1,
   parseSelectionSet,
 } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
@@ -108,7 +109,17 @@ export default class GraphQLHandler implements MeshHandler {
       logger.debug(() => `Sending GraphQL Request: `, print(executionRequest.document));
       executionRequest.info = executionRequest.info || ({} as GraphQLResolveInfo);
       (executionRequest.info as any).sourceName = sourceName;
-      return executor(executionRequest);
+      return handleMaybePromise(
+        () => executor(executionRequest),
+        (result: any) => {
+          logger.debug(() => [`Received GraphQL Response: `, JSON.stringify(result, null, 2)]);
+          return result;
+        },
+        err => {
+          logger.debug(`GraphQL Response Error: `, err);
+          throw err;
+        },
+      );
     };
   }
 
