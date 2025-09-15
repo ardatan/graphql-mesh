@@ -4,6 +4,7 @@
   "dependencies": {
     "@graphql-mesh/compose-cli": "*",
     "@omnigraph/openapi": "*",
-    "express": "*"
+    "express": "*",
+    "graphql": "^16.9.0"
   }
 }

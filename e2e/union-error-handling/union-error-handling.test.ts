@@ -63,17 +63,27 @@ describe('OpenAPI rest transport Union Error Handling', () => {
     const firstError = noErrorHandlingResult.errors?.[0];
     const secondError = noErrorHandlingResult.errors?.[1];
 
-    expect(firstError?.extensions).toBeDefined();
-    expect(firstError?.extensions?.code).toBe('DOWNSTREAM_SERVICE_ERROR');
-    expect(firstError?.extensions?.serviceName).toBe('ErrorAPI');
-    expect(firstError?.extensions?.request?.method).toBe('GET');
-    expect(firstError?.extensions?.response?.status).toBe(400);
+    expect(firstError?.extensions).toMatchObject({
+      code: 'DOWNSTREAM_SERVICE_ERROR',
+      serviceName: 'ErrorAPI',
+      request: {
+        method: 'GET',
+      },
+      response: {
+        status: 400,
+      },
+    });
 
-    expect(secondError?.extensions).toBeDefined();
-    expect(secondError?.extensions?.code).toBe('DOWNSTREAM_SERVICE_ERROR');
-    expect(secondError?.extensions?.serviceName).toBe('ErrorAPI');
-    expect(secondError?.extensions?.request?.method).toBe('GET');
-    expect(secondError?.extensions?.response?.status).toBe(400);
+    expect(firstError?.extensions).toMatchObject({
+      code: 'DOWNSTREAM_SERVICE_ERROR',
+      serviceName: 'ErrorAPI',
+      request: {
+        method: 'GET',
+      },
+      response: {
+        status: 400,
+      },
+    });
   });
 
   it('should be able to cast error responses to Error type when error handling is in OpenAPI schema', async () => {
@@ -126,12 +136,12 @@ describe('OpenAPI rest transport Union Error Handling', () => {
     // Both direct and union fields should return error data when casting to Error type
     expect(errorHandlingResult.data?.getUserErrorHandling).toEqual({
       error: 'User not found',
-      code: 400
+      code: 400,
     });
 
     expect(errorHandlingResult.data?.getUserUnionErrorHandling).toEqual({
       error: 'User union error',
-      code: 400
+      code: 400,
     });
 
     // Verify that when error handling is in the OpenAPI schema,

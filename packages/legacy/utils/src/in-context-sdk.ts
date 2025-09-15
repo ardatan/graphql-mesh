@@ -4,6 +4,7 @@ import type {
   DocumentNode,
   FieldNode,
   GraphQLObjectType,
+  GraphQLOutputType,
   GraphQLResolveInfo,
   GraphQLSchema,
   OperationDefinitionNode,
@@ -11,7 +12,7 @@ import type {
   SelectionNode,
   SelectionSetNode,
 } from 'graphql';
-import { getNamedType, isLeafType, Kind, print } from 'graphql';
+import { getNamedType, isLeafType, isListType, isNonNullType, Kind, print } from 'graphql';
 import type {
   Logger,
   OnDelegateHook,
@@ -29,7 +30,12 @@ import type {
   SubschemaConfig,
 } from '@graphql-tools/delegate';
 import { applySchemaTransforms, delegateToSchema } from '@graphql-tools/delegate';
-import { buildOperationNodeForField, isDocumentNode, memoize1 } from '@graphql-tools/utils';
+import {
+  asArray,
+  buildOperationNodeForField,
+  isDocumentNode,
+  memoize1,
+} from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
 import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
 import { parseWithCache } from './parseAndPrintWithCache.js';
@@ -83,6 +89,7 @@ export function getInContextSDK(
             inContextSdk: `${rootType.name}.${fieldName}`,
           });
           const namedReturnType = getNamedType(rootTypeField.type);
+          const returnsList = isListReturnType(rootTypeField.type);
           const shouldHaveSelectionSet = !isLeafType(namedReturnType);
           rawSourceContext[rootType.name][fieldName] = ({
             root,
@@ -367,4 +374,11 @@ function fixInfo(info: GraphQLResolveInfo, operationType: OperationTypeNode) {
     },
   } as FieldNode;
   ((info.operation.selectionSet.selections[0] as FieldNode).arguments as ArgumentNode[]) ||= [];
+}
+
+function isListReturnType(type: GraphQLOutputType): boolean {
+  if (isNonNullType(type)) {
+    type = type.ofType;
+  }
+  return isListType(type);
 }

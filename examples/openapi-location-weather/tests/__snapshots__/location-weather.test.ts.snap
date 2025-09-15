@@ -261,7 +261,7 @@ type CurrentObs {
   """Country abbreviation"""
   country_code: String
 
-  """Cycle Hour (UTC) of observation"""
+  """[DEPRECATED - use 'ob_time'] Cycle Hour (UTC) of observation"""
   datetime: String
 
   """Dew point temperature - default (C)"""
@@ -494,7 +494,7 @@ type EnergyObsGroup {
   """State abbreviation"""
   state_code: String
 
-  """Nearest Station ID [DEPRECATED]"""
+  """Nearest Station ID [DEPRECATED - use 'sources']"""
   station_id: String
 
   """Degree day threshold units"""
@@ -671,13 +671,15 @@ type Forecast {
   """Cloud cover as a percentage (%)"""
   clouds: Int
 
-  """Date in format "YYYY-MM-DD:HH". All datetime is in (UTC)"""
+  """
+  [DEPRECATED - use 'valid_date'] Date in format "YYYY-MM-DD:HH". All datetime is in (UTC)
+  """
   datetime: String
 
   """Dewpoint (Average) - default (C)"""
   dewpt: Float
 
-  """[Deprecated] Max direct component of solar insolation (W/m^2)"""
+  """[DEPRECATED] Max direct component of solar insolation (W/m^2)"""
   max_dhi: Float
 
   """Maximum daily Temperature - default (C)"""
@@ -728,17 +730,14 @@ type Forecast {
   """Temperature (Average) - default (C)"""
   temp: Float
 
-  """Timestamp in local time"""
-  timestamp_local: String
-
-  """Timestamp UTC"""
-  timestamp_utc: String
-
   """Unix Timestamp"""
   ts: Float
 
   """UV Index"""
   uv: Float
+
+  """Valid Date"""
+  valid_date: Date
 
   """Average Visibility default (KM)"""
   vis: Float
@@ -758,13 +757,111 @@ type Forecast {
 }
 
 type ForecastAG {
-  data: [HistoryAGObj]
+  data: [ForecastAGObj]
 
   """Latitude"""
   lat: Float
 
   """Longitude"""
   lon: Float
+}
+
+type ForecastAGObj {
+  """Bulk Soil Density"""
+  bulk_soil_density: Float
+
+  """Average Downward Longwave Radiation Flux"""
+  dlwrf_avg: Float
+
+  """Maximum Downward Longwave Radiation Flux"""
+  dlwrf_max: Float
+
+  """Net Downward Longwave Radiation Flux"""
+  dlwrf_net: Float
+
+  """Average Downward Shortwave Radiation Flux"""
+  dswrf_avg: Float
+
+  """Maximum Downward Shortwave Radiation Flux"""
+  dswrf_max: Float
+
+  """Net Downward Shortwave Radiation Flux"""
+  dswrf_net: Float
+
+  """Evapotranspiration"""
+  evapotranspiration: Float
+
+  """Probability of Precipitation"""
+  pop: Float
+
+  """Precipitation"""
+  precip: Float
+
+  """Average Pressure"""
+  pres_avg: Float
+
+  """Data revision status"""
+  revision_status: String
+
+  """Final data revision version."""
+  revision_version: String
+
+  """Average Skin Temperature"""
+  skin_temp_avg: Float
+
+  """Maximum Skin Temperature"""
+  skin_temp_max: Float
+
+  """Minimum Skin Temperature"""
+  skin_temp_min: Float
+
+  """Soil Moisture (0-10cm depth)"""
+  soilm_0_10cm: Float
+
+  """Soil Moisture (10-40cm depth)"""
+  soilm_10_40cm: Float
+
+  """Soil Moisture (40-100cm depth)"""
+  soilm_40_100cm: Float
+
+  """Soil Moisture (100-200cm depth)"""
+  soilm_100_200cm: Float
+
+  """Soil Temperature (0-10cm depth)"""
+  soilt_0_10cm: Float
+
+  """Soil Temperature (10-40cm depth)"""
+  soilt_10_40cm: Float
+
+  """Soil Temperature (40-100cm depth)"""
+  soilt_40_100cm: Float
+
+  """Soil Temperature (100-200cm depth)"""
+  soilt_100_200cm: Float
+
+  """Specific Humidity"""
+  specific_humidity: Float
+
+  """Average Temperature at 2 meters"""
+  temp_2m_avg: Float
+
+  """Volumetric Soil Moisture (0-10cm depth)"""
+  v_soilm_0_10cm: Float
+
+  """Volumetric Soil Moisture (10-40cm depth)"""
+  v_soilm_10_40cm: Float
+
+  """Volumetric Soil Moisture (40-100cm depth)"""
+  v_soilm_40_100cm: Float
+
+  """Volumetric Soil Moisture (100-200cm depth)"""
+  v_soilm_100_200cm: Float
+
+  """Valid Date"""
+  valid_date: Date
+
+  """Average Wind Speed at 10 meters"""
+  wind_10m_spd_avg: Float
 }
 
 type ForecastDay {
@@ -795,7 +892,9 @@ type ForecastHour {
   """Cloud cover as a percentage (%)"""
   clouds: Int
 
-  """Date in format "YYYY-MM-DD:HH". All datetime is in (UTC)"""
+  """
+  [DEPRECATED - use 'timestamp_utc'] Date in format "YYYY-MM-DD:HH". All datetime is in (UTC)
+  """
   datetime: String
 
   """Dewpoint - Default (C)"""
@@ -1166,7 +1265,9 @@ type HistoryObj {
   """Cloud Cover 0-100 (%)"""
   clouds: Int
 
-  """Date in format "YYYY-MM-DD:HH". All datetime is in (UTC)"""
+  """
+  [DEPRECATED - use 'timestamp_utc'] Date in format "YYYY-MM-DD:HH". All datetime is in (UTC)
+  """
   datetime: String
 
   """Dew point (Default Celcius)"""
@@ -1340,7 +1441,7 @@ type LightningObsGroup {
   search_distance_km: Int
 
   """Time backwards from current time searched for lightning."""
-  search_mins: Int
+  search_mins: Float
 
   """Number of results that were skipped in response (same as offset)."""
   skip: Int
@@ -1564,14 +1665,6 @@ type Query {
     """Station Call ID."""
     station: String
   ): alerts_response
-
-  """
-  Downloads bulk data files - OPTIONS: ( current.csv.gz, forecast_hourly.csv.gz, forecast_daily.csv.gz). Units are Metric (Celcius, m/s, etc).
-  """
-  bulk_files(
-    """Your registered API key."""
-    key: String
-  ): Void
 
   """Returns a Current Observation - given a lat, and a lon."""
   current(
@@ -2338,7 +2431,7 @@ type Query {
     postal_code: String
   ): forecast_airquality_response
 
-  "Returns a daily forecast, where each point represents one day (24hr) period. Every point has a datetime string in the format \\"YYYY-MM-DD\\". One day begins at 00:00 UTC, and ends at 23:59 UTC. \\n"
+  "Returns a daily forecast, where each point represents one day (24hr) period. Every point has a valid_date string in the format \\"YYYY-MM-DD\\". One day begins at 00:00 UTC, and ends at 23:59 UTC. \\n"
   forecast_daily(
     """
     City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR
@@ -2391,7 +2484,9 @@ type Query {
     units: queryInput_forecast_energy_units
   ): forecast_energy_response
 
-  "Returns an hourly forecast, where each point represents a one hour period. Every point has a datetime string in the format \\"YYYY-MM-DD:HH\\". Time is UTC. \\n"
+  """
+  Returns an hourly forecast, where each point represents a one hour period.
+  """
   forecast_hourly(
     """
     City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR
