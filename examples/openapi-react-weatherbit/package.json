@@ -18,7 +18,7 @@
     "@graphql-mesh/cli": "0.100.13",
     "@types/react": "19.1.13",
     "@types/react-dom": "19.1.9",
-    "@vitejs/plugin-react": "4.7.0",
+    "@vitejs/plugin-react": "5.0.2",
     "typescript": "^5.4.2",
     "vite": "7.1.5"
   },
