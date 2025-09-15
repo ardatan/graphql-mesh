@@ -1,7 +1,7 @@
 import CachePolicy from 'http-cache-semantics';
 import type { GatewayPlugin } from '@graphql-hive/gateway';
 import type { KeyValueCache, Logger } from '@graphql-mesh/types';
-import { getHeadersObj, mapMaybePromise } from '@graphql-mesh/utils';
+import { getHeadersObj } from '@graphql-mesh/utils';
 import {
   Response as DefaultResponseCtor,
   URLPattern as DefaultURLPatternCtor,
@@ -159,6 +159,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
                   );
                 },
               );
+              // @ts-expect-error - type mismatch
               context?.waitUntil?.(store$);
             }
             if (policy) {

@@ -259,12 +259,12 @@ export default function useMeshResponseCache(
           if (parsedCacheControl['max-age'] != null) {
             const maxAgeInSeconds = parsedCacheControl['max-age'];
             const maxAgeInMs = maxAgeInSeconds * 1000;
-            checkTtl(context, maxAgeInMs);
+            checkTtl(context as GatewayContext, maxAgeInMs);
           }
           if (parsedCacheControl['s-maxage'] != null) {
             const sMaxAgeInSeconds = parsedCacheControl['s-maxage'];
             const sMaxAgeInMs = sMaxAgeInSeconds * 1000;
-            checkTtl(context, sMaxAgeInMs);
+            checkTtl(context as GatewayContext, sMaxAgeInMs);
           }
         }
       };
