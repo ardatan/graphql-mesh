@@ -8,7 +8,7 @@ jest.setTimeout(30000);
 describe('PostgresGeoDB', () => {
   let config: ProcessedConfig;
   let mesh: MeshInstance;
-  const debugEnvFlag = process.env.DEBUG;
+  const debugEnvFlag = '1';
   beforeAll(async () => {
     config = await findAndParseConfig({
       dir: join(__dirname, '..'),
