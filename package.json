@@ -126,6 +126,7 @@
     "ioredis-mock": "patch:ioredis-mock@npm%3A8.9.0#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch",
     "jest-leak-detector": "patch:jest-leak-detector@npm%3A29.7.0#~/.yarn/patches/jest-leak-detector-npm-29.7.0-3ae882ba75.patch",
     "jest-message-util": "patch:jest-message-util@npm%3A29.7.0#~/.yarn/patches/jest-message-util-npm-29.7.0-7f88b6e8d1.patch",
+    "lru-cache": "patch:lru-cache@npm%3A11.2.1#~/.yarn/patches/lru-cache-npm-11.2.1-60cdd96af2.patch",
     "node-fetch": "^2.6.7",
     "node-gyp": "^11.0.0",
     "nth-check": "^2.0.1",

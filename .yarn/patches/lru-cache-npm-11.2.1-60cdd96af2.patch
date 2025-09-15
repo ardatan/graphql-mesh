@@ -1,0 +1,68 @@
+diff --git a/dist/commonjs/index.js b/dist/commonjs/index.js
+index 921b8f10f71b148c4aa450593e84c87f16ee87f7..97aeb6837df65c2c90577580a87f845437bc93da 100644
+--- a/dist/commonjs/index.js
++++ b/dist/commonjs/index.js
+@@ -2,8 +2,8 @@
+ /**
+  * @module LRUCache
+  */
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.LRUCache = void 0;
++Object.defineProperty(module.exports, "__esModule", { value: true });
++module.exports.LRUCache = void 0;
+ const defaultPerf = (typeof performance === 'object' &&
+     performance &&
+     typeof performance.now === 'function') ?
+@@ -1560,5 +1560,7 @@ class LRUCache {
+         }
+     }
+ }
+-exports.LRUCache = LRUCache;
++module.exports = LRUCache;
++module.exports.LRUCache = LRUCache;
++module.exports.default = LRUCache;
+ //# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/dist/esm/index.js b/dist/esm/index.js
+index 8fd8fc5f31507b344decbd8fe9c567839e2c545f..a806da3a74836c7d131de37635610216925b6ebe 100644
+--- a/dist/esm/index.js
++++ b/dist/esm/index.js
+@@ -1558,3 +1558,5 @@ export class LRUCache {
+     }
+ }
+ //# sourceMappingURL=index.js.map
++
++export default LRUCache;
+\ No newline at end of file
+diff --git a/package.json b/package.json
+index 4953bdf4a7a35ef66f4c7be894a3554487eba823..4298041732866c5be20cf494b043a1de046fedc4 100644
+--- a/package.json
++++ b/package.json
+@@ -35,11 +35,11 @@
+       "./min": {
+         "import": {
+           "types": "./dist/esm/index.d.ts",
+-          "default": "./dist/esm/index.min.js"
++          "default": "./dist/esm/index.js"
+         },
+         "require": {
+           "types": "./dist/commonjs/index.d.ts",
+-          "default": "./dist/commonjs/index.min.js"
++          "default": "./dist/commonjs/index.js"
+         }
+       }
+     }
+@@ -100,11 +100,11 @@
+     "./min": {
+       "import": {
+         "types": "./dist/esm/index.d.ts",
+-        "default": "./dist/esm/index.min.js"
++        "default": "./dist/esm/index.js"
+       },
+       "require": {
+         "types": "./dist/commonjs/index.d.ts",
+-        "default": "./dist/commonjs/index.min.js"
++        "default": "./dist/commonjs/index.js"
+       }
+     }
+   },
