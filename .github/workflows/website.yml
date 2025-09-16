@@ -32,8 +32,11 @@ jobs:
           # Website build fails on Node.js 22.7.0, use `node-version-file` later
           node-version: 22.6.0
 
-      - name: website e2e
-        run: npx playwright install && npm run test:website
+      - name: install browsers
+        run: npx playwright install
+
+      - name: run website e2e tests
+        run: npm run test:website
         env:
           AGAINST_PROD: ${{ github.ref == 'refs/heads/master' && '1' || '0' }}
 

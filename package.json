@@ -61,7 +61,7 @@
     "test:integration": "cross-env \"JEST=1\" \"INTEGRATION_TEST=true\" jest --forceExit --no-watchman",
     "test:integration:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" \"INTEGRATION_TEST=true\" jest --detectOpenHandles --detectLeaks --no-watchman",
     "test:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" jest --detectOpenHandles --detectLeaks --no-watchman",
-    "test:website": "playwright test --config ./website/playwright.config.ts",
+    "test:website": "playwright test --config ./website/playwright.config.ts --fail-on-flaky-tests --retries 2",
     "typecheck": "yarn generate-config-schema && tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
