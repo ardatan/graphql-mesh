@@ -40,6 +40,14 @@ jobs:
         env:
           AGAINST_PROD: ${{ github.ref == 'refs/heads/master' && '1' || '0' }}
 
+      - name: upload playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: website/playwright/report/
+          retention-days: 14
+
       - uses: the-guild-org/shared-config/website-cf@v1
         name: build and deploy website
         env:
