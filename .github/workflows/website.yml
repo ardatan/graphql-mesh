@@ -35,18 +35,9 @@ jobs:
       - name: install browsers
         run: npx playwright install
 
-      - name: run website e2e tests
+      - name: run website e2e tests before deploy for PRs
         run: npm run test:website
-        env:
-          AGAINST_PROD: ${{ github.ref == 'refs/heads/master' && '1' || '0' }}
-
-      - name: upload playwright report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: website/playwright/report/
-          retention-days: 14
+        if: ${{ github.ref != 'refs/heads/master' }}
 
       - uses: the-guild-org/shared-config/website-cf@v1
         name: build and deploy website
@@ -63,3 +54,17 @@ jobs:
           websiteDirectory: ./
           buildScript: yarn build:website
           artifactDir: website/out
+
+      - name: run website e2e tests on master against prod
+        run: npm run test:website
+        if: ${{ github.ref == 'refs/heads/master' }}
+        env:
+          AGAINST_PROD: '1'
+
+      - name: upload playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: website/playwright/report/
+          retention-days: 14
