@@ -32,6 +32,11 @@ jobs:
           # Website build fails on Node.js 22.7.0, use `node-version-file` later
           node-version: 22.6.0
 
+      - name: test production website
+        run: npm run test:website
+        env:
+          AGAINST_PROD: ${{ github.ref == 'refs/heads/master' && '1' || '0' }}
+
       - uses: the-guild-org/shared-config/website-cf@v1
         name: build and deploy website
         env:
