@@ -63,10 +63,27 @@ export interface ExamplesSandboxProps extends React.HTMLAttributes<HTMLElement> 
   border?: boolean;
 }
 
+/**
+ * Checks whether a given example directory slug exists in the EXAMPLES mapping.
+ *
+ * @param value - The example directory slug to validate (e.g., "json-schema-example").
+ * @returns True if `value` matches any slug in any EXAMPLES group; otherwise false.
+ */
 function isValidExampleDir(value: string): boolean {
   return Object.values(EXAMPLES).some(group => Object.values(group).includes(value));
 }
 
+/**
+ * Renders a selectable live CodeSandbox iframe populated with grouped example directories.
+ *
+ * The component shows a grouped <select> of example slugs and an embedded iframe that is revealed
+ * when the component scrolls near the viewport (unless `lazy` is false). Selecting an example sends
+ * a postMessage to the iframe with `{ type: 'set-dir', dir }` to change the sandbox directory.
+ *
+ * @param lazy - If true, the iframe is hidden until the container is near the viewport; also makes the iframe use eager loading. Defaults to `false`.
+ * @param border - If true, apply rounded border styling to the sandbox container. Defaults to `false`.
+ * @returns The ExamplesSandbox React element.
+ */
 export function ExamplesSandbox({ lazy = false, border = false, ...rest }: ExamplesSandboxProps) {
   const [isVisible, setIsVisible] = useState(!lazy);
   const containerRef = useRef<HTMLDivElement>(null!);
