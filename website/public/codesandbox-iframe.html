@@ -24,12 +24,15 @@
         padding: 1rem;
         font-family: system-ui, sans-serif;
       }
+      .crisp-client {
+        display: none;
+      }
     </style>
   </head>
   <body>
     <noscript>JavaScript is required to load the example.</noscript>
     <iframe
-      src="about:blank"
+      src="https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/json-schema-example"
       loading="eager"
       title="Example"
       allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
@@ -38,14 +41,11 @@
       onload="window.scrollTo(0,0)"
     ></iframe>
     <script>
-      const params = new URLSearchParams(window.location.search);
-      const example = params.get('example');
-      if (!example) {
-        document.body.innerHTML = '<div class="error">Error: No source URL provided</div>';
-      } else {
+      window.addEventListener('message', e => {
+        if (e.data.type !== 'set-dir') return;
         const iframe = document.querySelector('iframe');
-        iframe.src = `https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/${example}`;
-      }
+        iframe.src = `https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/${e.data.dir}`
+      });
     </script>
   </body>
 </html>

@@ -68,9 +68,18 @@ function isValidExampleDir(value: string): boolean {
 }
 
 export function ExamplesSandbox({ lazy = false, border = false, ...rest }: ExamplesSandboxProps) {
-  const [exampleDir, setExampleDir] = useState('json-schema-example');
   const [isVisible, setIsVisible] = useState(!lazy);
   const containerRef = useRef<HTMLDivElement>(null!);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  function postExampleDir(exampleDir: string) {
+    const iframe = iframeRef.current;
+    const iframeWindow = iframe?.contentWindow;
+    if (iframeWindow && iframe.title !== exampleDir) {
+      iframe.title = exampleDir;
+      iframeWindow.postMessage({ type: 'set-dir', dir: exampleDir }, '*');
+    }
+  }
 
   useEffect(() => {
     if (isVisible) return;
@@ -97,18 +106,16 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
 
   const { basePath } = useRouter();
 
-  const iframeSrc = `${basePath}/codesandbox-iframe.html?example=${encodeURIComponent(exampleDir)}`;
-
   return (
     <div {...rest} className={cn('w-full', rest.className)}>
       <div className="flex items-center justify-center gap-2">
         Choose Live Example:
         <select
-          value={exampleDir}
+          defaultValue="json-schema-example"
           onChange={e => {
             const value = e.target.value;
             if (isValidExampleDir(value)) {
-              setExampleDir(value);
+              postExampleDir(value);
             }
           }}
           className="bg-inherit hive-focus w-[200px] cursor-pointer px-3 pr-8 p-2 border-beige-400 dark:border-neutral-800 border rounded-lg hover:bg-beige-100 dark:hover:bg-neutral-900 appearance-none"
@@ -137,10 +144,11 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
       >
         {isVisible && (
           <iframe
+            ref={iframeRef}
             loading={lazy ? 'eager' : 'lazy'}
-            src={iframeSrc}
+            src={`${basePath}/codesandbox-iframe.html`}
             className="size-full"
-            title={exampleDir}
+            title="GraphQL Mesh Example"
             allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
             sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
           />
