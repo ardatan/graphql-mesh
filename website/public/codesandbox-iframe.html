@@ -42,9 +42,14 @@
     ></iframe>
     <script>
       window.addEventListener('message', e => {
-        if (e.data.type !== 'set-dir') return;
+        // only trust messages from our own origin
+        if (e.origin !== window.location.origin) return;
+        if (!e.data || e.data.type !== 'set-dir') return;
+        const dir = String(e.data.dir ?? '');
+        // allow only simple slug names to avoid path/query injection
+        if (!/^[a-z0-9-]+$/i.test(dir)) return;
         const iframe = document.querySelector('iframe');
-        iframe.src = `https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/${e.data.dir}`;
+        iframe.src = `https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/${encodeURIComponent(dir)}`;
       });
     </script>
   </body>
