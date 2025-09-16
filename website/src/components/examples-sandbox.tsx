@@ -77,7 +77,7 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
     const iframeWindow = iframe?.contentWindow;
     if (iframeWindow && iframe.title !== exampleDir) {
       iframe.title = exampleDir;
-      iframeWindow.postMessage({ type: 'set-dir', dir: exampleDir }, '*');
+      iframeWindow.postMessage({ type: 'set-dir', dir: exampleDir });
     }
   }
 
