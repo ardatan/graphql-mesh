@@ -63,10 +63,24 @@ export interface ExamplesSandboxProps extends React.HTMLAttributes<HTMLElement> 
   border?: boolean;
 }
 
+/**
+ * Checks whether a given directory identifier exists in the EXAMPLES groups.
+ *
+ * @param value - The example directory identifier to validate (e.g. "json-schema-example").
+ * @returns True if `value` is present in any EXAMPLES group, otherwise false.
+ */
 function isValidExampleDir(value: string): boolean {
   return Object.values(EXAMPLES).some(group => Object.values(group).includes(value));
 }
 
+/**
+ * Renders a client-side iframe sandbox with a dropdown to choose live example projects.
+ *
+ * The component lazy-mounts the embedded CodeSandbox iframe when its container scrolls into view (unless `lazy` is false) and communicates example directory changes to the iframe via postMessage ({ type: 'set-dir', dir }). The iframe source is a static `${basePath}/codesandbox-iframe.html`; selecting an example sends its directory identifier to the iframe and updates the iframe's title to avoid redundant messages.
+ *
+ * @param lazy - When true, the iframe is not mounted until the container intersects the viewport (default: `false`).
+ * @param border - When true, renders a visible rounded border around the iframe container.
+ */
 export function ExamplesSandbox({ lazy = false, border = false, ...rest }: ExamplesSandboxProps) {
   const [isVisible, setIsVisible] = useState(!lazy);
   const containerRef = useRef<HTMLDivElement>(null!);
