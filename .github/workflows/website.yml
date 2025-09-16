@@ -33,7 +33,7 @@ jobs:
           node-version: 22.6.0
 
       - name: test production website
-        run: npm run test:website
+        run: npx playwright install && npm run test:website
         env:
           AGAINST_PROD: ${{ github.ref == 'refs/heads/master' && '1' || '0' }}
 
