@@ -11,6 +11,10 @@ test('switches and loads StackExchange example', async ({ page }) => {
   await exampleSelect.scrollIntoViewIfNeeded();
   await expect(exampleSelect).toBeVisible();
 
+  if (process.env.CI && process.env.AGAINST_PROD === '1') {
+    // this isn't ideal, but should help with some flakiness
+    await page.waitForTimeout(500);
+  }
   await exampleSelect.selectOption('openapi-stackexchange');
 
   const middlemanIframe = page.frameLocator('iframe');
