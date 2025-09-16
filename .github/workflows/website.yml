@@ -36,7 +36,7 @@ jobs:
         run: npx playwright install
 
       - name: run website e2e tests before deploy for PRs
-        run: npm run test:website
+        run: npm run test:website -- --fail-on-flaky-tests
         if: ${{ github.ref != 'refs/heads/master' }}
 
       - uses: the-guild-org/shared-config/website-cf@v1
