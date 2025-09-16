@@ -33,7 +33,7 @@
       "e2e/*"
     ]
   },
-  "packageManager": "yarn@4.9.4",
+  "packageManager": "yarn@4.9.4+sha512.7b1cb0b62abba6a537b3a2ce00811a843bea02bcf53138581a6ae5b1bf563f734872bd47de49ce32a9ca9dcaff995aa789577ffb16811da7c603dcf69e73750b",
   "scripts": {
     "build": "yarn prebuild && bob build && yarn postbuild",
     "build-test-artifacts": "yarn workspace @examples/json-schema-example build && yarn workspace @examples-v1-next/fastify compose && yarn workspace @examples/fastify build && yarn workspace @examples/persisted-operations build && yarn workspace example-response-cache build && yarn workspace @examples/json-schema-complex-url build",
@@ -61,6 +61,7 @@
     "test:integration": "cross-env \"JEST=1\" \"INTEGRATION_TEST=true\" jest --forceExit --no-watchman",
     "test:integration:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" \"INTEGRATION_TEST=true\" jest --detectOpenHandles --detectLeaks --no-watchman",
     "test:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" jest --detectOpenHandles --detectLeaks --no-watchman",
+    "test:website": "playwright test --config ./website/playwright.config.ts --fail-on-flaky-tests --retries 2",
     "typecheck": "yarn generate-config-schema && tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

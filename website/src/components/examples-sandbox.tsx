@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { CaretSlimIcon, cn } from '@theguild/components';
 
@@ -85,6 +85,7 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
   const [isVisible, setIsVisible] = useState(!lazy);
   const containerRef = useRef<HTMLDivElement>(null!);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const labelId = useId();
 
   function postExampleDir(exampleDir: string) {
     const iframe = iframeRef.current;
@@ -123,8 +124,10 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
   return (
     <div {...rest} className={cn('w-full', rest.className)}>
       <div className="flex items-center justify-center gap-2">
-        Choose Live Example:
+        <span id={labelId}>Choose Live Example</span>:
         <select
+          aria-labelledby={labelId}
+          name="codesandbox-example-name"
           defaultValue="json-schema-example"
           onChange={e => {
             const value = e.target.value;
@@ -161,6 +164,13 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
             ref={iframeRef}
             loading={lazy ? 'eager' : 'lazy'}
             src={`${basePath}/codesandbox-iframe.html`}
+            onLoad={() => {
+              // in case the select is interacted with before the iframe loads
+              const select = document.getElementById(labelId)
+                ?.nextElementSibling as null | HTMLSelectElement;
+              if (!select) return;
+              postExampleDir(select.value);
+            }}
             className="size-full"
             title="GraphQL Mesh Example"
             allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
