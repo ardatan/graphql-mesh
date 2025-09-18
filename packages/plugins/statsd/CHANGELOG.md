@@ -1,5 +1,28 @@
 # @graphql-mesh/plugin-statsd
 
+## 0.104.14
+
+### Patch Changes
+
+- [#8685](https://github.com/ardatan/graphql-mesh/pull/8685)
+  [`7be5852`](https://github.com/ardatan/graphql-mesh/commit/7be58526f521cc26c6befed188f60cf8fb6e70a9)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`hot-shots@^11.0.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/11.0.0)
+    (from `^10.2.1`, in `dependencies`)
+
+- [#8776](https://github.com/ardatan/graphql-mesh/pull/8776)
+  [`e4204ad`](https://github.com/ardatan/graphql-mesh/commit/e4204ad7ac39a247ee5ae0da18f2051e543ba1fb)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/core@^5.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.3.2) (from
+    `^5.1.0`, in `dependencies`)
+- Updated dependencies
+  [[`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38)]:
+  - @graphql-mesh/types@0.104.13
+  - @graphql-mesh/utils@0.104.13
+
 ## 0.104.13
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.9
+
+### Patch Changes
+
+- [#8731](https://github.com/ardatan/graphql-mesh/pull/8731)
+  [`f7ce86c`](https://github.com/ardatan/graphql-mesh/commit/f7ce86c86a170dc62ac88caea4a6ad6979249571)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`dayjs@1.11.18` ↗︎](https://www.npmjs.com/package/dayjs/v/1.11.18) (from
+    `1.11.13`, in `dependencies`)
+
 ## 0.5.8
 
 ### Patch Changes
@@ -9,7 +19,6 @@
   Thanks [@ardatan](https://github.com/ardatan)! - Avoid logging sensitive data directly. Instead,
   log a generic error message without including the potentially sensitive str variable. This way, it
   still notifies of errors without risking the exposure of sensitive information.
-
   - Replace the logging statement on line 176 in `packages/string-interpolation/src/interpolator.js`
     to avoid logging the `str` variable.
   - Ensure that the new logging statement provides enough information to debug the issue without
@@ -44,7 +53,6 @@
 - [#7311](https://github.com/ardatan/graphql-mesh/pull/7311)
   [`b01f3ea`](https://github.com/ardatan/graphql-mesh/commit/b01f3eabdc42d8905e8d586a4845e8394c094033)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`dayjs@1.11.12` ↗︎](https://www.npmjs.com/package/dayjs/v/1.11.12) (from
     `1.11.11`, in `dependencies`)
 
@@ -187,7 +195,6 @@
 - [#4298](https://github.com/Urigo/graphql-mesh/pull/4298)
   [`991373717`](https://github.com/Urigo/graphql-mesh/commit/99137371708b7fe12b32dfcfe93d535507a7f968)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-
   - Updated dependency [`dayjs@1.11.5` ↗︎](https://www.npmjs.com/package/dayjs/v/1.11.5) (was
     `1.11.4`, in `dependencies`)
 

@@ -1,5 +1,35 @@
 # @graphql-mesh/transport-neo4j
 
+## 0.10.11
+
+### Patch Changes
+
+- [#8745](https://github.com/ardatan/graphql-mesh/pull/8745)
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/transport-common@^1.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/1.0.0)
+    (from `^0.7.13`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/11.0.0)
+    (from `^10.0.28`, in `dependencies`)
+
+- [#8763](https://github.com/ardatan/graphql-mesh/pull/8763)
+  [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@^7.2.11` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/7.2.11) (from
+    `^7.0.0`, in `dependencies`)
+  - Updated dependency
+    [`neo4j-driver@^5.28.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/5.28.1) (from
+    `^5.17.0`, in `dependencies`)
+- Updated dependencies
+  [[`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38)]:
+  - @graphql-mesh/types@0.104.13
+  - @graphql-mesh/utils@0.104.13
+
 ## 0.10.10
 
 ### Patch Changes

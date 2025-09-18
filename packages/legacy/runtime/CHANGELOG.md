@@ -1,5 +1,37 @@
 # @graphql-mesh/runtime
 
+## 0.106.13
+
+### Patch Changes
+
+- [#8745](https://github.com/ardatan/graphql-mesh/pull/8745)
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@^10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/10.0.0)
+    (from `^9.0.9`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/11.0.0)
+    (from `^10.0.28`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/11.0.0)
+    (from `^10.0.28`, in `dependencies`)
+
+- [#8776](https://github.com/ardatan/graphql-mesh/pull/8776)
+  [`e4204ad`](https://github.com/ardatan/graphql-mesh/commit/e4204ad7ac39a247ee5ae0da18f2051e543ba1fb)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/core@^5.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.3.2) (from
+    `^5.1.0`, in `dependencies`)
+- Updated dependencies
+  [[`f7ce86c`](https://github.com/ardatan/graphql-mesh/commit/f7ce86c86a170dc62ac88caea4a6ad6979249571),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38)]:
+  - @graphql-mesh/string-interpolation@0.5.9
+  - @graphql-mesh/types@0.104.13
+  - @graphql-mesh/utils@0.104.13
+
 ## 0.106.12
 
 ### Patch Changes
