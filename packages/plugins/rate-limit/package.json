@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/rate-limiter": "^8.0.0",
+    "@envelop/rate-limiter": "^8.1.0",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "0.5.8",
     "@graphql-mesh/types": "^0.104.12",
@@ -45,7 +45,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@envelop/core": "5.3.1",
+    "@envelop/core": "^5.3.2",
     "graphql": "16.11.0"
   },
   "publishConfig": {
