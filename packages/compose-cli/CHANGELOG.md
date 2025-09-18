@@ -1,5 +1,28 @@
 # @graphql-mesh/compose-cli
 
+## 1.4.18
+
+### Patch Changes
+
+- [#8684](https://github.com/ardatan/graphql-mesh/pull/8684)
+  [`b6d7fd0`](https://github.com/ardatan/graphql-mesh/commit/b6d7fd033d7328f322bbf4eca11bec14730d004b)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`dotenv@^17.0.0` ↗︎](https://www.npmjs.com/package/dotenv/v/17.0.0) (from
+    `^16.3.1`, in `dependencies`)
+- Updated dependencies
+  [[`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`c880540`](https://github.com/ardatan/graphql-mesh/commit/c880540ec19a42caf3efa435d9c3cd1b02016725),
+  [`b6d7fd0`](https://github.com/ardatan/graphql-mesh/commit/b6d7fd033d7328f322bbf4eca11bec14730d004b),
+  [`f7ce86c`](https://github.com/ardatan/graphql-mesh/commit/f7ce86c86a170dc62ac88caea4a6ad6979249571),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38)]:
+  - @graphql-mesh/fusion-composition@0.8.17
+  - @graphql-mesh/include@0.3.13
+  - @graphql-mesh/string-interpolation@0.5.9
+  - @graphql-mesh/types@0.104.13
+  - @graphql-mesh/utils@0.104.13
+
 ## 1.4.17
 
 ### Patch Changes

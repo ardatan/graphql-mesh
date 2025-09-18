@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/string-interpolation",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "type": "module",
   "description": "Dynamic string manipulation",
   "repository": {

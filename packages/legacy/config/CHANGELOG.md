@@ -1,5 +1,30 @@
 # @graphql-mesh/config
 
+## 0.108.14
+
+### Patch Changes
+
+- [#8776](https://github.com/ardatan/graphql-mesh/pull/8776)
+  [`e4204ad`](https://github.com/ardatan/graphql-mesh/commit/e4204ad7ac39a247ee5ae0da18f2051e543ba1fb)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/core@^5.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.3.2) (from
+    `^5.1.0`, in `dependencies`)
+- Updated dependencies
+  [[`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`e4204ad`](https://github.com/ardatan/graphql-mesh/commit/e4204ad7ac39a247ee5ae0da18f2051e543ba1fb),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38)]:
+  - @graphql-mesh/merger-stitching@0.105.13
+  - @graphql-mesh/runtime@0.106.13
+  - @graphql-mesh/types@0.104.13
+  - @graphql-mesh/utils@0.104.13
+  - @graphql-mesh/merger-bare@0.105.13
+  - @graphql-mesh/cache-localforage@0.105.14
+  - @graphql-mesh/store@0.104.13
+
 ## 0.108.13
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @graphql-mesh/mongoose
 
+## 0.104.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f7ce86c`](https://github.com/ardatan/graphql-mesh/commit/f7ce86c86a170dc62ac88caea4a6ad6979249571),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38)]:
+  - @graphql-mesh/string-interpolation@0.5.9
+  - @graphql-mesh/types@0.104.13
+  - @graphql-mesh/utils@0.104.13
+
 ## 0.104.12
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @graphql-mesh/include
 
+## 0.3.13
+
+### Patch Changes
+
+- [#8684](https://github.com/ardatan/graphql-mesh/pull/8684)
+  [`b6d7fd0`](https://github.com/ardatan/graphql-mesh/commit/b6d7fd033d7328f322bbf4eca11bec14730d004b)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`dotenv@^17.0.0` ↗︎](https://www.npmjs.com/package/dotenv/v/17.0.0) (from
+    `^16.3.1`, in `dependencies`)
+- Updated dependencies
+  [[`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38)]:
+  - @graphql-mesh/utils@0.104.13
+
 ## 0.3.12
 
 ### Patch Changes
