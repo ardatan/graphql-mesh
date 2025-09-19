@@ -835,7 +835,7 @@ type Mutation {
   User_removeById(_id: MongoID!): RemoveByIdUserPayload
 
   """
-  Remove many documents without returning them: Use Query.remove mongoose method. Do not apply mongoose defaults, setters, hooks and validation.
+  Remove many documents without returning them: Use Query.remove mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
   """
   User_removeMany(
     """Filter by fields"""
@@ -858,7 +858,7 @@ type Mutation {
   User_updateById(_id: MongoID!, record: UpdateByIdUserInput!): UpdateByIdUserPayload
 
   """
-  Update many documents without returning them: Use Query.update mongoose method. Do not apply mongoose defaults, setters, hooks and validation.
+  Update many documents without returning them: Use Query.update mongoose method. Do not apply mongoose defaults, setters, hooks and validation. 
   """
   User_updateMany(
     """Filter by fields"""
