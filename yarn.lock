@@ -17036,13 +17036,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/fetch@npm:0.10.10":
-  version: 0.10.10
-  resolution: "@whatwg-node/fetch@npm:0.10.10"
+"@whatwg-node/fetch@npm:0.10.11":
+  version: 0.10.11
+  resolution: "@whatwg-node/fetch@npm:0.10.11"
   dependencies:
-    "@whatwg-node/node-fetch": "npm:^0.7.25"
+    "@whatwg-node/node-fetch": "npm:^0.8.0"
     urlpattern-polyfill: "npm:^10.0.0"
-  checksum: 10c0/f8d94d58402176279c99517ab516a3c51f64c3eecc825b09ea46a4088c9928a713041f688a635be1b4ee351f0819360f7d936161420cce0d43307630c1bc4821
+  checksum: 10c0/d64fd5b545313f3d5cd362aa5700de5f6a25684ac7b74d8dd809ac27b67d3fc99cf5e47124dcc6623bbfef55ee87394c423933298feedc13c29aa6061f0cb894
   languageName: node
   linkType: hard
 
