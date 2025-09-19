@@ -57,3 +57,11 @@ updates:
           - 'major'
           - 'minor'
           - 'patch'
+      newrelic:
+        patterns:
+          - '@newrelic/*'
+          - 'newrelic'
+        update-types:
+          - 'major'
+          - 'minor'
+          - 'patch'
