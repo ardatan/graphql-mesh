@@ -5047,7 +5047,7 @@ __metadata:
     "@envelop/depth-limit": "npm:^6.0.0"
     "@graphql-hive/gateway": "npm:^2.0.0"
     "@graphql-mesh/cache-cfw-kv": "workspace:^"
-    "@graphql-mesh/plugin-rate-limit": "npm:^0.105.0"
+    "@graphql-mesh/plugin-rate-limit": "npm:^0.105.1"
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.14"
     graphql: "npm:16.11.0"
     wrangler: "npm:4.37.0"
@@ -5917,7 +5917,7 @@ __metadata:
     "@graphql-mesh/cache-cfw-kv": "npm:0.105.13"
     "@graphql-mesh/cli": "npm:0.100.14"
     "@graphql-mesh/graphql": "npm:0.104.13"
-    "@graphql-mesh/plugin-rate-limit": "npm:0.105.0"
+    "@graphql-mesh/plugin-rate-limit": "npm:0.105.1"
     "@graphql-mesh/plugin-response-cache": "npm:0.104.14"
     graphql: "npm:16.11.0"
     wrangler: "npm:4.37.0"
@@ -7488,7 +7488,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-mesh/plugin-rate-limit@npm:0.105.0, @graphql-mesh/plugin-rate-limit@npm:^0.105.0, @graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit":
+"@graphql-mesh/plugin-rate-limit@npm:0.105.1, @graphql-mesh/plugin-rate-limit@npm:^0.105.1, @graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit"
   dependencies:
