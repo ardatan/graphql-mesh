@@ -12,6 +12,6 @@
     "mongoose": "8.18.1"
   },
   "devDependencies": {
-    "jest": "29.7.0"
+    "jest": "30.1.3"
   }
 }
