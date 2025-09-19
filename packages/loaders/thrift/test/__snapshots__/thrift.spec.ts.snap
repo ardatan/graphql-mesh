@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`thrift Calc: Calc-schema 1`] = `
 "schema @transport(subgraph: "Calc", kind: "thrift", location: "http://localhost:4000/thrift-with-imports", headers: {x-api-key: "123"}, options: {clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 1, name: "AddRequest", type: 12, fields: {left: {name: "calc_types_digit", type: "ref", id: 1}, right: {name: "calc_types_digit", type: "ref", id: 2}}}}}) {

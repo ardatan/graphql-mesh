@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Spotify should generate correct schema: spotify-schema 1`] = `
 "schema @transport(subgraph: "test", kind: "rest", location: "https://api.spotify.com/v1") {

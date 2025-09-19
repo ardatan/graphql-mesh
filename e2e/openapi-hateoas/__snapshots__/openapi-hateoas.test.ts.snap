@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI HATEOAS should compose 1`] = `
 "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@discriminator", "@httpOperation", "@linkResolver", "@oas_link", "@transport", "@extraSchemaDefinitionDirective", "@merge"]) {

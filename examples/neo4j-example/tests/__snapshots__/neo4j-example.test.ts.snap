@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Neo4j should generate correct schema 1`] = `
 "schema @transport(kind: "neo4j", subgraph: "Neo4j", location: "neo4j+s://demo.neo4jlabs.com", options: {database: "movies", auth: {type: "basic", username: "movies", password: "movies"}}) {

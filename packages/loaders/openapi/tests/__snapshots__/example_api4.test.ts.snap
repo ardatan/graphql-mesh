@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI loader: Handle anyOf and oneOf should generate the schema correctly 1`] = `
 "schema @transport(subgraph: "test", kind: "rest", location: "http://localhost:8080/api") {

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI Loader: Cloudfunction should generate correct schema: cloudfunction-schema 1`] = `
 "schema @transport(subgraph: "test", kind: "rest", location: "https://openwhisk.ng.bluemix.net/api/v1/namespaces/_/actions", headers: [["Authorization", "Basic {args.usernamePassword|base64}"]]) {

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Thrift Calculator should generate correct schema: thrift-calculator-schema 1`] = `
 "schema @transport(subgraph: "Calculator", kind: "thrift", location: "http://localhost:9876/thrift", headers: {}, options: {clientAnnotations: {serviceName: "calculator-service", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {

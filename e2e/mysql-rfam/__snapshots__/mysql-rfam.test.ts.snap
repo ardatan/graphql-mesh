@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`should compose the appropriate schema 1`] = `
+exports[`should execute TestQuery 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
@@ -5153,7 +5153,7 @@ input wikitext_UpdateInput @join__type(graph: RFAM)  {
 "
 `;
 
-exports[`should execute TestQuery 1`] = `
+exports[`should execute TestQuery 2`] = `
 {
   "data": {
     "alignment_and_tree": [

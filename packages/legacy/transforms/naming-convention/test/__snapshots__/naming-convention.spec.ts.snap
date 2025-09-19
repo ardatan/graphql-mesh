@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`naming-convention (bare) should change the name of a types, enums, fields and fieldArguments 1`] = `
 "schema {

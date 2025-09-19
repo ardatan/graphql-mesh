@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SOAP Headers should pass headers to the executor: soap-with-headers 1`] = `
 "schema @transport(kind: "soap", subgraph: "Test") {

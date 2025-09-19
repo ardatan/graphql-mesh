@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`example_api6 should generate the schema correctly 1`] = `
 "schema @transport(subgraph: "example_api6", kind: "rest", location: "http://localhost:3000/api") {

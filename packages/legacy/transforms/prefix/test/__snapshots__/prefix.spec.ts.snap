@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`prefix (bare) should prefix all schema types when prefix is specified explicitly 1`] = `
 "type Query {

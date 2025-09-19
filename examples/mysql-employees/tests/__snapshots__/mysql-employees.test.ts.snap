@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`MySQL Employees should generate correct schema: schema 1`] = `
 "schema @transport(subgraph: "Employees", kind: "mysql", location: "mysql://root:passwd@localhost:33306/employees") {

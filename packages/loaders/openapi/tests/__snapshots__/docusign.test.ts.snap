@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Docusign should generate correct schema: docusign-schema 1`] = `
 "schema @transport(subgraph: "test", kind: "rest", location: "https://www.docusign.net/restapi") {

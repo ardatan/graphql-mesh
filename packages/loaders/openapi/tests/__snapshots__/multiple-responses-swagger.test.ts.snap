@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Multiple Responses Swagger should create correct response types with 204 empty response: schema 1`] = `
 "schema @transport(subgraph: "test", kind: "rest", location: "https://api.example.com/v1") {

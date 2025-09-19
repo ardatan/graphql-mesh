@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when the tableFields option is provided in order to filter some fields out 1`] = `
 "schema @transport(subgraph: "test", kind: "mysql", location: "mysql://test:test@localhost:3306/testdb") {

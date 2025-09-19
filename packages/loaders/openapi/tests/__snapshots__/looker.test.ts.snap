@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Looker.4.0.oas should generate correct schema: Looker.4.0.oas-schema 1`] = `
 "schema @transport(subgraph: "test", kind: "rest", location: "http://dummy") {
