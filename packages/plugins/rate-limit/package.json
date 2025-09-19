@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/rate-limiter": "^8.1.0",
+    "@envelop/rate-limiter": "^8.1.1",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "0.5.9",
     "@graphql-mesh/types": "^0.104.13",
