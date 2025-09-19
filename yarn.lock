@@ -4408,7 +4408,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/compose-cli": "npm:*"
     "@omnigraph/openapi": "npm:*"
-    express: "npm:*"
+    express: "npm:5.1.0"
     graphql: "npm:^16.9.0"
   languageName: unknown
   linkType: soft
