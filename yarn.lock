@@ -21310,10 +21310,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-and-time@npm:^3.0.0":
-  version: 3.6.0
-  resolution: "date-and-time@npm:3.6.0"
-  checksum: 10c0/f2691740fdcf5ab893e3798fa98a3838e58f287c10b5ea0265f23ce136c65ad9c2591c5682ee5c736db3b0c447d1ab4ec105717cd0e9a13790fa83a287da9f5e
+"date-and-time@npm:^4.0.0":
+  version: 4.0.5
+  resolution: "date-and-time@npm:4.0.5"
+  checksum: 10c0/ba08d2e1e8093501b59865d083773b3e629228e08094704e20359e8f915c1e935872d390bdf620308d768609263e5a35dfb4097c4acdb9e3f317ed3c67682bfd
   languageName: node
   linkType: hard
 

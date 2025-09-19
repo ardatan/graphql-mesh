@@ -120,7 +120,7 @@
     "brace-expansion": "2.0.2",
     "cookie": "1.0.2",
     "cross-fetch": "^4.0.0",
-    "date-and-time": "^3.0.0",
+    "date-and-time": "^4.0.0",
     "es5-ext": "0.10.64",
     "esbuild": "^0.25.0",
     "estree-util-value-to-estree": "3.4.0",
