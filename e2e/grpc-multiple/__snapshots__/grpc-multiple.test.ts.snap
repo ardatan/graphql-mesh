@@ -4,28 +4,28 @@ exports[`gRPC Multiple composes 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@grpcMethod", "@grpcConnectivityState", "@transport", "@source", "@extraSchemaDefinitionDirective"]
 )
   {
     query: Query
-
-
+    
+    
   }
 
-
+  
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-
+    
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`gRPC Multiple composes 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-
-
+        
+        
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-
+    
+    
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`gRPC Multiple composes 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-
-
-
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -83,16 +83,16 @@ exports[`gRPC Multiple composes 1`] = `
     EXECUTION
   }
 
-
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
-  PETS @join__graph(name: "Pets", url: "localhost:<Pets_port>")
-  STORES @join__graph(name: "Stores", url: "localhost:<Stores_port>")
+  PETS @join__graph(name: "Pets", url: "localhost:<Pets_port>") 
+  STORES @join__graph(name: "Stores", url: "localhost:<Stores_port>") 
 }
 
 directive @grpcMethod(
@@ -120,9 +120,9 @@ scalar pets__Empty_Input @join__type(graph: PETS)  @specifiedBy(
   url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf"
 )
 
-scalar TransportOptions @join__type(graph: PETS)  @join__type(graph: STORES)
+scalar TransportOptions @join__type(graph: PETS)  @join__type(graph: STORES) 
 
-scalar _DirectiveExtensions @join__type(graph: PETS)  @join__type(graph: STORES)
+scalar _DirectiveExtensions @join__type(graph: PETS)  @join__type(graph: STORES) 
 
 """
 Request to get all pet stores
@@ -142,7 +142,7 @@ type Query @extraSchemaDefinitionDirective(
     objPath: "pets.PetService"
     methodName: "GetAllPets"
     responseStream: false
-  ) @source(name: "pets_PetService_GetAllPets", type: "pets__Pets", subgraph: "Pets")  @join__field(graph: PETS)
+  ) @source(name: "pets_PetService_GetAllPets", type: "pets__Pets", subgraph: "Pets")  @join__field(graph: PETS) 
   connectivityState(tryToConnect: Boolean) : ConnectivityState @grpcConnectivityState(subgraph: "Pets", rootJsonName: "Root0", objPath: "pets.PetService")  @source(
     name: "pets_PetService_connectivityState"
     type: "ConnectivityState"
@@ -166,7 +166,7 @@ type Query @extraSchemaDefinitionDirective(
     name: "petstore_PetStoreService_GetAllPetStores"
     type: "petstore__PetStoreList"
     subgraph: "Stores"
-  ) @join__field(graph: STORES)
+  ) @join__field(graph: STORES) 
   GetPetStorePets(input: petstore__PetStore_Input) : petstore__PetStore @grpcMethod(
     subgraph: "Stores"
     rootJsonName: "Root0"
@@ -177,7 +177,7 @@ type Query @extraSchemaDefinitionDirective(
     name: "petstore_PetStoreService_GetPetStorePets"
     type: "petstore__PetStore"
     subgraph: "Stores"
-  ) @join__field(graph: STORES)
+  ) @join__field(graph: STORES) 
 }
 
 """
@@ -213,11 +213,11 @@ type petstore__PetStore @join__type(graph: STORES)  {
 }
 
 enum ConnectivityState @join__type(graph: PETS)  @join__type(graph: STORES)  {
-  IDLE @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES)
-  CONNECTING @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES)
-  READY @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES)
-  TRANSIENT_FAILURE @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES)
-  SHUTDOWN @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES)
+  IDLE @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES) 
+  CONNECTING @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES) 
+  READY @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES) 
+  TRANSIENT_FAILURE @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES) 
+  SHUTDOWN @join__enumValue(graph: PETS)  @join__enumValue(graph: STORES) 
 }
 
 """

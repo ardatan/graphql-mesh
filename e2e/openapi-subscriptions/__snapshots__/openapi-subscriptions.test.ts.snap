@@ -4,12 +4,12 @@ exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@httpOperation", "@pubsubOperation", "@transport", "@extraSchemaDefinitionDirective"]
@@ -20,12 +20,12 @@ exports[`should compose the appropriate schema 1`] = `
     subscription: Subscription
   }
 
-
+  
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-
+    
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`should compose the appropriate schema 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-
-
+        
+        
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-
+    
+    
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`should compose the appropriate schema 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-
-
-
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -83,15 +83,15 @@ exports[`should compose the appropriate schema 1`] = `
     EXECUTION
   }
 
-
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
-  OPEN_API_CALLBACK_EXAMPLE @join__graph(name: "OpenAPICallbackExample", url: "http://localhost:<api_port>")
+  OPEN_API_CALLBACK_EXAMPLE @join__graph(name: "OpenAPICallbackExample", url: "http://localhost:<api_port>") 
 }
 
 directive @httpOperation(
@@ -123,16 +123,16 @@ directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  rep
 """
 A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.
 """
-scalar URL @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
+scalar URL @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) 
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar DateTime @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
+scalar DateTime @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) 
 
-scalar ObjMap @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
+scalar ObjMap @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) 
 
-scalar _DirectiveExtensions @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
+scalar _DirectiveExtensions @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) 
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "OpenAPICallbackExample", kind: "rest", location: "http://localhost:<api_port>"}]}
@@ -178,15 +178,15 @@ type SubscriptionPayload @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)  {
 }
 
 enum HTTPMethod @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)  {
-  GET @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  HEAD @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  POST @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  PUT @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  DELETE @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  CONNECT @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  OPTIONS @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  TRACE @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  PATCH @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
+  GET @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE) 
+  HEAD @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE) 
+  POST @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE) 
+  PUT @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE) 
+  DELETE @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE) 
+  CONNECT @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE) 
+  OPTIONS @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE) 
+  TRACE @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE) 
+  PATCH @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE) 
 }
 
 input post_streams_request_Input @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)  {

@@ -4,12 +4,12 @@ exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@relationshipProperties", "@relationship", "@introspection", "@transport", "@node", "@extraSchemaDefinitionDirective"]
@@ -17,15 +17,15 @@ exports[`should compose the appropriate schema 1`] = `
   {
     query: Query
     mutation: Mutation
-
+    
   }
 
-
+  
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-
+    
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`should compose the appropriate schema 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-
-
+        
+        
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-
+    
+    
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`should compose the appropriate schema 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-
-
-
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -83,15 +83,15 @@ exports[`should compose the appropriate schema 1`] = `
     EXECUTION
   }
 
-
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
-  MOVIES @join__graph(name: "Movies", url: "neo4j://localhost:<neo4j_port>")
+  MOVIES @join__graph(name: "Movies", url: "neo4j://localhost:<neo4j_port>") 
 }
 
 directive @relationshipProperties on OBJECT
@@ -109,11 +109,11 @@ directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  rep
 """
 A BigInt value up to 64 bits in size, which can be a number or a string if used inline, or a string only if used as a variable. Always returned as a string.
 """
-scalar BigInt @join__type(graph: MOVIES)
+scalar BigInt @join__type(graph: MOVIES) 
 
-scalar TransportOptions @join__type(graph: MOVIES)
+scalar TransportOptions @join__type(graph: MOVIES) 
 
-scalar _DirectiveExtensions @join__type(graph: MOVIES)
+scalar _DirectiveExtensions @join__type(graph: MOVIES) 
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{kind: "neo4j", subgraph: "Movies", location: "neo4j://localhost:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}]}
@@ -188,35 +188,35 @@ type Movie @introspection @node @join__type(graph: MOVIES)  {
   released: BigInt! @introspection
   tagline: String @introspection
   title: String! @introspection
-  peopleActedIn(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
+  peopleActedIn(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties") 
   peopleActedInConnection(
     where: MoviePeopleActedInConnectionWhere
     first: Int
     after: String
     sort: [MoviePeopleActedInConnectionSort!]
   ): MoviePeopleActedInConnection!
-  peopleDirected(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "DIRECTED", direction: IN)
+  peopleDirected(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "DIRECTED", direction: IN) 
   peopleDirectedConnection(
     where: MoviePeopleDirectedConnectionWhere
     first: Int
     after: String
     sort: [MoviePeopleDirectedConnectionSort!]
   ): MoviePeopleDirectedConnection!
-  peopleProduced(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "PRODUCED", direction: IN)
+  peopleProduced(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "PRODUCED", direction: IN) 
   peopleProducedConnection(
     where: MoviePeopleProducedConnectionWhere
     first: Int
     after: String
     sort: [MoviePeopleProducedConnectionSort!]
   ): MoviePeopleProducedConnection!
-  peopleReviewed(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "REVIEWED", direction: IN, properties: "ReviewedProperties")
+  peopleReviewed(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "REVIEWED", direction: IN, properties: "ReviewedProperties") 
   peopleReviewedConnection(
     where: MoviePeopleReviewedConnectionWhere
     first: Int
     after: String
     sort: [MoviePeopleReviewedConnectionSort!]
   ): MoviePeopleReviewedConnection!
-  peopleWrote(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "WROTE", direction: IN)
+  peopleWrote(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "WROTE", direction: IN) 
   peopleWroteConnection(
     where: MoviePeopleWroteConnectionWhere
     first: Int
@@ -386,49 +386,49 @@ type PeopleConnection @join__type(graph: MOVIES)  {
 type Person @introspection @node @join__type(graph: MOVIES)  {
   born: BigInt @introspection
   name: String! @introspection
-  actedInMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
+  actedInMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties") 
   actedInMoviesConnection(
     where: PersonActedInMoviesConnectionWhere
     first: Int
     after: String
     sort: [PersonActedInMoviesConnectionSort!]
   ): PersonActedInMoviesConnection!
-  directedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT)
+  directedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT) 
   directedMoviesConnection(
     where: PersonDirectedMoviesConnectionWhere
     first: Int
     after: String
     sort: [PersonDirectedMoviesConnectionSort!]
   ): PersonDirectedMoviesConnection!
-  followsPeople(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "FOLLOWS", direction: OUT)
+  followsPeople(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "FOLLOWS", direction: OUT) 
   followsPeopleConnection(
     where: PersonFollowsPeopleConnectionWhere
     first: Int
     after: String
     sort: [PersonFollowsPeopleConnectionSort!]
   ): PersonFollowsPeopleConnection!
-  peopleFollows(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "FOLLOWS", direction: IN)
+  peopleFollows(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "FOLLOWS", direction: IN) 
   peopleFollowsConnection(
     where: PersonPeopleFollowsConnectionWhere
     first: Int
     after: String
     sort: [PersonPeopleFollowsConnectionSort!]
   ): PersonPeopleFollowsConnection!
-  producedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "PRODUCED", direction: OUT)
+  producedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "PRODUCED", direction: OUT) 
   producedMoviesConnection(
     where: PersonProducedMoviesConnectionWhere
     first: Int
     after: String
     sort: [PersonProducedMoviesConnectionSort!]
   ): PersonProducedMoviesConnection!
-  reviewedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "REVIEWED", direction: OUT, properties: "ReviewedProperties")
+  reviewedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "REVIEWED", direction: OUT, properties: "ReviewedProperties") 
   reviewedMoviesConnection(
     where: PersonReviewedMoviesConnectionWhere
     first: Int
     after: String
     sort: [PersonReviewedMoviesConnectionSort!]
   ): PersonReviewedMoviesConnection!
-  wroteMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "WROTE", direction: OUT)
+  wroteMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "WROTE", direction: OUT) 
   wroteMoviesConnection(
     where: PersonWroteMoviesConnectionWhere
     first: Int
@@ -655,8 +655,8 @@ type UpdatePeopleMutationResponse @join__type(graph: MOVIES)  {
 }
 
 enum _RelationDirections @join__type(graph: MOVIES)  {
-  IN @join__enumValue(graph: MOVIES)
-  OUT @join__enumValue(graph: MOVIES)
+  IN @join__enumValue(graph: MOVIES) 
+  OUT @join__enumValue(graph: MOVIES) 
 }
 
 """
@@ -666,11 +666,11 @@ enum SortDirection @join__type(graph: MOVIES)  {
   """
   Sort by field values in ascending order.
   """
-  ASC @join__enumValue(graph: MOVIES)
+  ASC @join__enumValue(graph: MOVIES) 
   """
   Sort by field values in descending order.
   """
-  DESC @join__enumValue(graph: MOVIES)
+  DESC @join__enumValue(graph: MOVIES) 
 }
 
 input ActedInPropertiesCreateInput @join__type(graph: MOVIES)  {
@@ -684,14 +684,14 @@ input ActedInPropertiesSort @join__type(graph: MOVIES)  {
 input ActedInPropertiesUpdateInput @join__type(graph: MOVIES)  {
   roles: ListStringMutations
   roles_SET: [String!]
-  roles_POP: Int @deprecated(reason: "Please use the generic mutation 'roles: { pop: ... } }' instead.")
-  roles_PUSH: [String!] @deprecated(reason: "Please use the generic mutation 'roles: { push: ... } }' instead.")
+  roles_POP: Int @deprecated(reason: "Please use the generic mutation 'roles: { pop: ... } }' instead.") 
+  roles_PUSH: [String!] @deprecated(reason: "Please use the generic mutation 'roles: { push: ... } }' instead.") 
 }
 
 input ActedInPropertiesWhere @join__type(graph: MOVIES)  {
   roles: StringListFilters
-  roles_EQ: [String!] @deprecated(reason: "Please use the relevant generic filter roles: { eq: ... }")
-  roles_INCLUDES: String @deprecated(reason: "Please use the relevant generic filter roles: { includes: ... }")
+  roles_EQ: [String!] @deprecated(reason: "Please use the relevant generic filter roles: { eq: ... }") 
+  roles_INCLUDES: String @deprecated(reason: "Please use the relevant generic filter roles: { includes: ... }") 
   OR: [ActedInPropertiesWhere!]
   AND: [ActedInPropertiesWhere!]
   NOT: ActedInPropertiesWhere
@@ -1892,24 +1892,24 @@ input MovieUpdateInput @join__type(graph: MOVIES)  {
 
 input MovieWhere @join__type(graph: MOVIES)  {
   released: BigIntScalarFilters
-  released_EQ: BigInt @deprecated(reason: "Please use the relevant generic filter released: { eq: ... }")
-  released_IN: [BigInt!] @deprecated(reason: "Please use the relevant generic filter released: { in: ... }")
-  released_LT: BigInt @deprecated(reason: "Please use the relevant generic filter released: { lt: ... }")
-  released_LTE: BigInt @deprecated(reason: "Please use the relevant generic filter released: { lte: ... }")
-  released_GT: BigInt @deprecated(reason: "Please use the relevant generic filter released: { gt: ... }")
-  released_GTE: BigInt @deprecated(reason: "Please use the relevant generic filter released: { gte: ... }")
+  released_EQ: BigInt @deprecated(reason: "Please use the relevant generic filter released: { eq: ... }") 
+  released_IN: [BigInt!] @deprecated(reason: "Please use the relevant generic filter released: { in: ... }") 
+  released_LT: BigInt @deprecated(reason: "Please use the relevant generic filter released: { lt: ... }") 
+  released_LTE: BigInt @deprecated(reason: "Please use the relevant generic filter released: { lte: ... }") 
+  released_GT: BigInt @deprecated(reason: "Please use the relevant generic filter released: { gt: ... }") 
+  released_GTE: BigInt @deprecated(reason: "Please use the relevant generic filter released: { gte: ... }") 
   tagline: StringScalarFilters
-  tagline_EQ: String @deprecated(reason: "Please use the relevant generic filter tagline: { eq: ... }")
-  tagline_IN: [String] @deprecated(reason: "Please use the relevant generic filter tagline: { in: ... }")
-  tagline_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter tagline: { contains: ... }")
-  tagline_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter tagline: { startsWith: ... }")
-  tagline_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter tagline: { endsWith: ... }")
+  tagline_EQ: String @deprecated(reason: "Please use the relevant generic filter tagline: { eq: ... }") 
+  tagline_IN: [String] @deprecated(reason: "Please use the relevant generic filter tagline: { in: ... }") 
+  tagline_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter tagline: { contains: ... }") 
+  tagline_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter tagline: { startsWith: ... }") 
+  tagline_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter tagline: { endsWith: ... }") 
   title: StringScalarFilters
-  title_EQ: String @deprecated(reason: "Please use the relevant generic filter title: { eq: ... }")
-  title_IN: [String!] @deprecated(reason: "Please use the relevant generic filter title: { in: ... }")
-  title_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter title: { contains: ... }")
-  title_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter title: { startsWith: ... }")
-  title_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter title: { endsWith: ... }")
+  title_EQ: String @deprecated(reason: "Please use the relevant generic filter title: { eq: ... }") 
+  title_IN: [String!] @deprecated(reason: "Please use the relevant generic filter title: { in: ... }") 
+  title_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter title: { contains: ... }") 
+  title_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter title: { startsWith: ... }") 
+  title_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter title: { endsWith: ... }") 
   OR: [MovieWhere!]
   AND: [MovieWhere!]
   NOT: MovieWhere
@@ -3701,18 +3701,18 @@ input PersonUpdateInput @join__type(graph: MOVIES)  {
 
 input PersonWhere @join__type(graph: MOVIES)  {
   born: BigIntScalarFilters
-  born_EQ: BigInt @deprecated(reason: "Please use the relevant generic filter born: { eq: ... }")
-  born_IN: [BigInt] @deprecated(reason: "Please use the relevant generic filter born: { in: ... }")
-  born_LT: BigInt @deprecated(reason: "Please use the relevant generic filter born: { lt: ... }")
-  born_LTE: BigInt @deprecated(reason: "Please use the relevant generic filter born: { lte: ... }")
-  born_GT: BigInt @deprecated(reason: "Please use the relevant generic filter born: { gt: ... }")
-  born_GTE: BigInt @deprecated(reason: "Please use the relevant generic filter born: { gte: ... }")
+  born_EQ: BigInt @deprecated(reason: "Please use the relevant generic filter born: { eq: ... }") 
+  born_IN: [BigInt] @deprecated(reason: "Please use the relevant generic filter born: { in: ... }") 
+  born_LT: BigInt @deprecated(reason: "Please use the relevant generic filter born: { lt: ... }") 
+  born_LTE: BigInt @deprecated(reason: "Please use the relevant generic filter born: { lte: ... }") 
+  born_GT: BigInt @deprecated(reason: "Please use the relevant generic filter born: { gt: ... }") 
+  born_GTE: BigInt @deprecated(reason: "Please use the relevant generic filter born: { gte: ... }") 
   name: StringScalarFilters
-  name_EQ: String @deprecated(reason: "Please use the relevant generic filter name: { eq: ... }")
-  name_IN: [String!] @deprecated(reason: "Please use the relevant generic filter name: { in: ... }")
-  name_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter name: { contains: ... }")
-  name_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter name: { startsWith: ... }")
-  name_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter name: { endsWith: ... }")
+  name_EQ: String @deprecated(reason: "Please use the relevant generic filter name: { eq: ... }") 
+  name_IN: [String!] @deprecated(reason: "Please use the relevant generic filter name: { in: ... }") 
+  name_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter name: { contains: ... }") 
+  name_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter name: { startsWith: ... }") 
+  name_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter name: { endsWith: ... }") 
   OR: [PersonWhere!]
   AND: [PersonWhere!]
   NOT: PersonWhere
@@ -4478,18 +4478,18 @@ input ReviewedPropertiesUpdateInput @join__type(graph: MOVIES)  {
 
 input ReviewedPropertiesWhere @join__type(graph: MOVIES)  {
   rating: BigIntScalarFilters
-  rating_EQ: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { eq: ... }")
-  rating_IN: [BigInt!] @deprecated(reason: "Please use the relevant generic filter rating: { in: ... }")
-  rating_LT: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { lt: ... }")
-  rating_LTE: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { lte: ... }")
-  rating_GT: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { gt: ... }")
-  rating_GTE: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { gte: ... }")
+  rating_EQ: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { eq: ... }") 
+  rating_IN: [BigInt!] @deprecated(reason: "Please use the relevant generic filter rating: { in: ... }") 
+  rating_LT: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { lt: ... }") 
+  rating_LTE: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { lte: ... }") 
+  rating_GT: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { gt: ... }") 
+  rating_GTE: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { gte: ... }") 
   summary: StringScalarFilters
-  summary_EQ: String @deprecated(reason: "Please use the relevant generic filter summary: { eq: ... }")
-  summary_IN: [String!] @deprecated(reason: "Please use the relevant generic filter summary: { in: ... }")
-  summary_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter summary: { contains: ... }")
-  summary_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter summary: { startsWith: ... }")
-  summary_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter summary: { endsWith: ... }")
+  summary_EQ: String @deprecated(reason: "Please use the relevant generic filter summary: { eq: ... }") 
+  summary_IN: [String!] @deprecated(reason: "Please use the relevant generic filter summary: { in: ... }") 
+  summary_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter summary: { contains: ... }") 
+  summary_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter summary: { startsWith: ... }") 
+  summary_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter summary: { endsWith: ... }") 
   OR: [ReviewedPropertiesWhere!]
   AND: [ReviewedPropertiesWhere!]
   NOT: ReviewedPropertiesWhere

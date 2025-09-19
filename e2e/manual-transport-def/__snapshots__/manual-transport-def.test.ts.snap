@@ -4,28 +4,28 @@ exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
 )
   {
     query: Query
-
-
+    
+    
   }
 
-
+  
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-
+    
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`should compose the appropriate schema 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-
-
+        
+        
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-
+    
+    
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`should compose the appropriate schema 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-
-
-
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -83,16 +83,16 @@ exports[`should compose the appropriate schema 1`] = `
     EXECUTION
   }
 
-
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
-  GREETINGS @join__graph(name: "greetings", url: "http://localhost:<greetings_port>")
-  HELLOER @join__graph(name: "helloer", url: "http://localhost:<helloer_port>/graphql")
+  GREETINGS @join__graph(name: "greetings", url: "http://localhost:<greetings_port>") 
+  HELLOER @join__graph(name: "helloer", url: "http://localhost:<helloer_port>/graphql") 
 }
 
 directive @httpOperation(
@@ -119,11 +119,11 @@ directive @transport(
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
-scalar ObjMap @join__type(graph: GREETINGS)
+scalar ObjMap @join__type(graph: GREETINGS) 
 
-scalar _DirectiveExtensions @join__type(graph: GREETINGS)
+scalar _DirectiveExtensions @join__type(graph: GREETINGS) 
 
-scalar TransportOptions @join__type(graph: HELLOER)
+scalar TransportOptions @join__type(graph: HELLOER) 
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "greetings", kind: "rest", location: "http://localhost:<greetings_port>"}]}
@@ -133,8 +133,8 @@ type Query @extraSchemaDefinitionDirective(
     path: "/greet/{args.name}"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @join__field(graph: GREETINGS)
-  hello: String! @join__field(graph: HELLOER)
+  ) @join__field(graph: GREETINGS) 
+  hello: String! @join__field(graph: HELLOER) 
 }
 
 type greet_200_response @join__type(graph: GREETINGS)  {
@@ -142,15 +142,15 @@ type greet_200_response @join__type(graph: GREETINGS)  {
 }
 
 enum HTTPMethod @join__type(graph: GREETINGS)  {
-  GET @join__enumValue(graph: GREETINGS)
-  HEAD @join__enumValue(graph: GREETINGS)
-  POST @join__enumValue(graph: GREETINGS)
-  PUT @join__enumValue(graph: GREETINGS)
-  DELETE @join__enumValue(graph: GREETINGS)
-  CONNECT @join__enumValue(graph: GREETINGS)
-  OPTIONS @join__enumValue(graph: GREETINGS)
-  TRACE @join__enumValue(graph: GREETINGS)
-  PATCH @join__enumValue(graph: GREETINGS)
+  GET @join__enumValue(graph: GREETINGS) 
+  HEAD @join__enumValue(graph: GREETINGS) 
+  POST @join__enumValue(graph: GREETINGS) 
+  PUT @join__enumValue(graph: GREETINGS) 
+  DELETE @join__enumValue(graph: GREETINGS) 
+  CONNECT @join__enumValue(graph: GREETINGS) 
+  OPTIONS @join__enumValue(graph: GREETINGS) 
+  TRACE @join__enumValue(graph: GREETINGS) 
+  PATCH @join__enumValue(graph: GREETINGS) 
 }
 "
 `;

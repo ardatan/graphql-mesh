@@ -44,13 +44,13 @@ type Query {
   ): getInvitees_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.uuid}/invitees", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
   """
   Returns a list of  Events.
-
+  
   * Pass \`organization\` parameter to return events for that organization (requires admin/owner privilege)
   * Pass \`user\` parameter to return events for a specific User
-
+  
   **NOTES:**
   * If you are the admin/owner of the organization, you can use both \`organization\` and \`user\` to get a list of events for a specific user within your organization.
-
+  
   * \`user\` can only be used alone when requesting your own personal events. This will return your events within any organization that you are currently in or were a part of in the past.
   """
   getScheduledEvents(
@@ -90,11 +90,11 @@ type Query {
   ): getScheduledEvents_response @httpOperation(subgraph: "calendly", path: "/scheduled_events", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"user\\":\\"user\\",\\"organization\\":\\"organization\\",\\"invitee_email\\":\\"invitee_email\\",\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"min_start_time\\":\\"min_start_time\\",\\"max_start_time\\":\\"max_start_time\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
   """
   Returns all Event Types associated with a specified User. Use:
-
+  
   * \`organization\` to look up all Event Types that belong to the organization
-
+  
   * \`user\` to look up a user's Event Types in an organization
-
+  
   Either \`organization\` or \`user\` are required query params when using this endpoint.
   """
   getEventTypes(
@@ -182,11 +182,11 @@ type Query {
   ): get_organizations_uuid_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """
   Use this to list the Organization Memberships for all users belonging to an organization, use:
-
+  
   * \`user\` to look up a user's membership in an organization
-
+  
   * \`organization\` to look up all users that belong to the organization
-
+  
   This endpoint can also be used to retrieve your organization URI.
   """
   get_organization_memberships(
@@ -269,9 +269,9 @@ type Query {
   get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @httpOperation(subgraph: "calendly", path: "/routing_form_submissions/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
   """
   Returns a list of available times for an event type within a specified date range.
-
+  
   Date range can be no greater than 1 week (7 days).
-
+  
   **NOTE:**
   * This endpoint does not support traditional keyset pagination.
   """
@@ -286,7 +286,7 @@ type Query {
   """
   <!-- theme: info -->
     > This endpoint requires an <strong>Enterprise</strong> subscription.
-
+  
   Returns a list of activity log entries
   """
   activityLog(
@@ -296,7 +296,7 @@ type Query {
     organization: URL!
     """
     Filters entries based on the search term.
-
+    
     Supported operators:
       - \`|\` - to allow filtering by one term or another. Example: \`this | that\`
       - \`+\` - to allow filtering by one term and another. Example: \`this + that\`
@@ -1740,7 +1740,7 @@ scalar PositiveInt
 
 type Mutation {
   """
-
+  	
   Invites a user to an organization.
   """
   post_organizations_uuid_invitations(
@@ -1759,11 +1759,11 @@ type Mutation {
   ): revoke_users_organization_invitation_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
   """
   Removes a user from an organization.
-
+  
   Notes:
-
+  
   * To remove users, the caller must have admin rights for the organization
-
+  
   * An organization owner can’t be removed
   """
   delete_organizations_uuid_memberships(
@@ -1772,10 +1772,10 @@ type Mutation {
   ): delete_organizations_uuid_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
   """
   Create a Webhook Subscription for an Organization or User.
-
+  
   * The \`organization\` subscription scope triggers the webhook for all subscribed events within the organization.
   * The \`user\` subscription scope only triggers the webhook for subscribed events that belong to the specific user.
-
+  
   | Event | Allowed Subscription Scopes |
   | ----- | --------------------------- |
   | <pre>invitee.created</pre> | \`organization\` \`user\` |
@@ -1790,7 +1790,7 @@ type Mutation {
   """
   <!-- theme: info -->
     > This endpoint requires an <strong>Enterprise</strong> subscription.
-
+  
   To submit a request to remove invitee data from all previously booked events in your organization, use this endpoint. Requests for data deletion can take up to 7 days to complete.
   """
   post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @httpOperation(subgraph: "calendly", path: "/data_compliance/deletion/invitees", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)

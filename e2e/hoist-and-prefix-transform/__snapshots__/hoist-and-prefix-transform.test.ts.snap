@@ -4,28 +4,28 @@ exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@hoist", "@source"]
 )
   {
     query: Query
-
-
+    
+    
   }
 
-
+  
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-
+    
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`should compose the appropriate schema 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-
-
+        
+        
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-
+    
+    
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`should compose the appropriate schema 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-
-
-
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -83,32 +83,32 @@ exports[`should compose the appropriate schema 1`] = `
     EXECUTION
   }
 
-
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
-  WEATHER @join__graph(name: "weather", url: "http://localhost:<weather_port>/graphql")
+  WEATHER @join__graph(name: "weather", url: "http://localhost:<weather_port>/graphql") 
 }
 
 directive @hoist(subgraph: String, pathConfig: _HoistConfig)  repeatable on FIELD_DEFINITION
 
 directive @source(name: String!, type: String, subgraph: String!)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
-scalar Test_TransportOptions @source(name: "TransportOptions", subgraph: "weather")  @join__type(graph: WEATHER)
+scalar Test_TransportOptions @source(name: "TransportOptions", subgraph: "weather")  @join__type(graph: WEATHER) 
 
-scalar _HoistConfig @join__type(graph: WEATHER)
+scalar _HoistConfig @join__type(graph: WEATHER) 
 
 type Query @source(name: "Query", subgraph: "weather")  @join__type(graph: WEATHER)  {
-  here: Test_Weather @source(name: "here", type: "Weather", subgraph: "weather")
+  here: Test_Weather @source(name: "here", type: "Weather", subgraph: "weather") 
 }
 
 type Test_Weather @source(name: "Weather", subgraph: "weather")  @join__type(graph: WEATHER)  {
-  rain: Test_Rain! @source(name: "rain", type: "Rain!", subgraph: "weather")
-  chanceOfRain: Float! @hoist(subgraph: "weather", pathConfig: ["rain", "chance"])
+  rain: Test_Rain! @source(name: "rain", type: "Rain!", subgraph: "weather") 
+  chanceOfRain: Float! @hoist(subgraph: "weather", pathConfig: ["rain", "chance"]) 
 }
 
 type Test_Rain @source(name: "Rain", subgraph: "weather")  @join__type(graph: WEATHER)  {

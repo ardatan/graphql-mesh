@@ -4,28 +4,28 @@ exports[`OpenAPI rest transport Union Error Handling should compose 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@statusCodeTypeName", "@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
 )
   {
     query: Query
-
-
+    
+    
   }
 
-
+  
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-
+    
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`OpenAPI rest transport Union Error Handling should compose 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-
-
+        
+        
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-
+    
+    
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`OpenAPI rest transport Union Error Handling should compose 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-
-
-
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -83,15 +83,15 @@ exports[`OpenAPI rest transport Union Error Handling should compose 1`] = `
     EXECUTION
   }
 
-
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
-  ERROR_API @join__graph(name: "ErrorAPI", url: "http://localhost:<ErrorService_port>")
+  ERROR_API @join__graph(name: "ErrorAPI", url: "http://localhost:<ErrorService_port>") 
 }
 
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String)  repeatable on UNION
@@ -120,9 +120,9 @@ directive @transport(
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
-scalar ObjMap @join__type(graph: ERROR_API)
+scalar ObjMap @join__type(graph: ERROR_API) 
 
-scalar _DirectiveExtensions @join__type(graph: ERROR_API)
+scalar _DirectiveExtensions @join__type(graph: ERROR_API) 
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "ErrorAPI", kind: "rest", location: "http://localhost:<ErrorService_port>"}]}
@@ -189,14 +189,14 @@ union getUserErrorHandling_response @statusCodeTypeName(subgraph: "ErrorAPI", st
 union getUserUnionErrorHandling_response @statusCodeTypeName(subgraph: "ErrorAPI", statusCode: "200", typeName: "User")  @statusCodeTypeName(subgraph: "ErrorAPI", statusCode: "202", typeName: "AsyncJob")  @statusCodeTypeName(subgraph: "ErrorAPI", statusCode: "400", typeName: "Error")  @join__type(graph: ERROR_API)  @join__unionMember(graph: ERROR_API, member: "User")  @join__unionMember(graph: ERROR_API, member: "AsyncJob")  @join__unionMember(graph: ERROR_API, member: "Error")  = User | AsyncJob | Error
 
 enum HTTPMethod @join__type(graph: ERROR_API)  {
-  GET @join__enumValue(graph: ERROR_API)
-  HEAD @join__enumValue(graph: ERROR_API)
-  POST @join__enumValue(graph: ERROR_API)
-  PUT @join__enumValue(graph: ERROR_API)
-  DELETE @join__enumValue(graph: ERROR_API)
-  CONNECT @join__enumValue(graph: ERROR_API)
-  OPTIONS @join__enumValue(graph: ERROR_API)
-  TRACE @join__enumValue(graph: ERROR_API)
-  PATCH @join__enumValue(graph: ERROR_API)
+  GET @join__enumValue(graph: ERROR_API) 
+  HEAD @join__enumValue(graph: ERROR_API) 
+  POST @join__enumValue(graph: ERROR_API) 
+  PUT @join__enumValue(graph: ERROR_API) 
+  DELETE @join__enumValue(graph: ERROR_API) 
+  CONNECT @join__enumValue(graph: ERROR_API) 
+  OPTIONS @join__enumValue(graph: ERROR_API) 
+  TRACE @join__enumValue(graph: ERROR_API) 
+  PATCH @join__enumValue(graph: ERROR_API) 
 }"
 `;

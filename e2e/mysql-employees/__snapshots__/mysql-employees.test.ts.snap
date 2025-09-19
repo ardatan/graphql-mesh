@@ -4,12 +4,12 @@ exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@transport", "@mysqlSelect", "@mysqlInsert", "@mysqlUpdate", "@mysqlDelete", "@mysqlTableForeign", "@mysqlCount", "@extraSchemaDefinitionDirective"]
@@ -17,15 +17,15 @@ exports[`should compose the appropriate schema 1`] = `
   {
     query: Query
     mutation: Mutation
-
+    
   }
 
-
+  
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-
+    
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`should compose the appropriate schema 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-
-
+        
+        
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-
+    
+    
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`should compose the appropriate schema 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-
-
-
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -83,15 +83,15 @@ exports[`should compose the appropriate schema 1`] = `
     EXECUTION
   }
 
-
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
-  EMPLOYEES @join__graph(name: "Employees", url: "mysql://root:passwd@localhost:<employees_port>/employees")
+  EMPLOYEES @join__graph(name: "Employees", url: "mysql://root:passwd@localhost:<employees_port>/employees") 
 }
 
 directive @transport(subgraph: String, kind: String, location: String)  repeatable on SCHEMA
@@ -113,9 +113,9 @@ directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  rep
 """
 A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar Date @join__type(graph: EMPLOYEES)
+scalar Date @join__type(graph: EMPLOYEES) 
 
-scalar _DirectiveExtensions @join__type(graph: EMPLOYEES)
+scalar _DirectiveExtensions @join__type(graph: EMPLOYEES) 
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "Employees", kind: "mysql", location: "mysql://root:passwd@localhost:<employees_port>/employees"}]}
@@ -125,71 +125,71 @@ type Query @extraSchemaDefinitionDirective(
     offset: Int
     where: current_dept_emp_WhereInput
     orderBy: current_dept_emp_OrderByInput
-  ): [current_dept_emp] @mysqlSelect(subgraph: "Employees", table: "current_dept_emp")
-  count_current_dept_emp(where: current_dept_emp_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "current_dept_emp")
+  ): [current_dept_emp] @mysqlSelect(subgraph: "Employees", table: "current_dept_emp") 
+  count_current_dept_emp(where: current_dept_emp_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "current_dept_emp") 
   departments(
     limit: Int
     offset: Int
     where: departments_WhereInput
     orderBy: departments_OrderByInput
-  ): [departments] @mysqlSelect(subgraph: "Employees", table: "departments")
-  count_departments(where: departments_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "departments")
+  ): [departments] @mysqlSelect(subgraph: "Employees", table: "departments") 
+  count_departments(where: departments_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "departments") 
   dept_emp(
     limit: Int
     offset: Int
     where: dept_emp_WhereInput
     orderBy: dept_emp_OrderByInput
-  ): [dept_emp] @mysqlSelect(subgraph: "Employees", table: "dept_emp")
-  count_dept_emp(where: dept_emp_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "dept_emp")
+  ): [dept_emp] @mysqlSelect(subgraph: "Employees", table: "dept_emp") 
+  count_dept_emp(where: dept_emp_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "dept_emp") 
   dept_emp_latest_date(
     limit: Int
     offset: Int
     where: dept_emp_latest_date_WhereInput
     orderBy: dept_emp_latest_date_OrderByInput
-  ): [dept_emp_latest_date] @mysqlSelect(subgraph: "Employees", table: "dept_emp_latest_date")
-  count_dept_emp_latest_date(where: dept_emp_latest_date_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "dept_emp_latest_date")
+  ): [dept_emp_latest_date] @mysqlSelect(subgraph: "Employees", table: "dept_emp_latest_date") 
+  count_dept_emp_latest_date(where: dept_emp_latest_date_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "dept_emp_latest_date") 
   dept_manager(
     limit: Int
     offset: Int
     where: dept_manager_WhereInput
     orderBy: dept_manager_OrderByInput
-  ): [dept_manager] @mysqlSelect(subgraph: "Employees", table: "dept_manager")
-  count_dept_manager(where: dept_manager_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "dept_manager")
+  ): [dept_manager] @mysqlSelect(subgraph: "Employees", table: "dept_manager") 
+  count_dept_manager(where: dept_manager_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "dept_manager") 
   employees(
     limit: Int
     offset: Int
     where: employees_WhereInput
     orderBy: employees_OrderByInput
-  ): [employees] @mysqlSelect(subgraph: "Employees", table: "employees")
-  count_employees(where: employees_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "employees")
+  ): [employees] @mysqlSelect(subgraph: "Employees", table: "employees") 
+  count_employees(where: employees_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "employees") 
   salaries(
     limit: Int
     offset: Int
     where: salaries_WhereInput
     orderBy: salaries_OrderByInput
-  ): [salaries] @mysqlSelect(subgraph: "Employees", table: "salaries")
-  count_salaries(where: salaries_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "salaries")
+  ): [salaries] @mysqlSelect(subgraph: "Employees", table: "salaries") 
+  count_salaries(where: salaries_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "salaries") 
   titles(
     limit: Int
     offset: Int
     where: titles_WhereInput
     orderBy: titles_OrderByInput
-  ): [titles] @mysqlSelect(subgraph: "Employees", table: "titles")
-  count_titles(where: titles_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "titles")
+  ): [titles] @mysqlSelect(subgraph: "Employees", table: "titles") 
+  count_titles(where: titles_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "titles") 
   v_full_departments(
     limit: Int
     offset: Int
     where: v_full_departments_WhereInput
     orderBy: v_full_departments_OrderByInput
-  ): [v_full_departments] @mysqlSelect(subgraph: "Employees", table: "v_full_departments")
-  count_v_full_departments(where: v_full_departments_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "v_full_departments")
+  ): [v_full_departments] @mysqlSelect(subgraph: "Employees", table: "v_full_departments") 
+  count_v_full_departments(where: v_full_departments_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "v_full_departments") 
   v_full_employees(
     limit: Int
     offset: Int
     where: v_full_employees_WhereInput
     orderBy: v_full_employees_OrderByInput
-  ): [v_full_employees] @mysqlSelect(subgraph: "Employees", table: "v_full_employees")
-  count_v_full_employees(where: v_full_employees_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "v_full_employees")
+  ): [v_full_employees] @mysqlSelect(subgraph: "Employees", table: "v_full_employees") 
+  count_v_full_employees(where: v_full_employees_WhereInput) : Int @mysqlCount(subgraph: "Employees", table: "v_full_employees") 
 }
 
 """
@@ -210,7 +210,7 @@ type departments @join__type(graph: EMPLOYEES)  {
     offset: Int
     where: dept_emp_WhereInput
     orderBy: dept_emp_OrderByInput
-  ): [dept_emp] @mysqlSelect(subgraph: "Employees", table: "dept_emp", columnMap: [["dept_no", "dept_no"]])
+  ): [dept_emp] @mysqlSelect(subgraph: "Employees", table: "dept_emp", columnMap: [["dept_no", "dept_no"]]) 
   dept_manager(
     limit: Int
     offset: Int
@@ -237,13 +237,13 @@ type dept_emp @join__type(graph: EMPLOYEES)  {
     subgraph: "Employees"
     table: "departments"
     columnMap: [["dept_no", "dept_no"]]
-  ) @mysqlTableForeign(subgraph: "Employees", columnName: "dept_no")
+  ) @mysqlTableForeign(subgraph: "Employees", columnName: "dept_no") 
   employees(
     where: employees_WhereInput
     orderBy: employees_OrderByInput
     limit: Int
     offset: Int
-  ): [employees] @mysqlSelect(subgraph: "Employees", table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(subgraph: "Employees", columnName: "emp_no")
+  ): [employees] @mysqlSelect(subgraph: "Employees", table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(subgraph: "Employees", columnName: "emp_no") 
 }
 
 type employees @join__type(graph: EMPLOYEES)  {
@@ -258,7 +258,7 @@ type employees @join__type(graph: EMPLOYEES)  {
     offset: Int
     where: dept_emp_WhereInput
     orderBy: dept_emp_OrderByInput
-  ): [dept_emp] @mysqlSelect(subgraph: "Employees", table: "dept_emp", columnMap: [["emp_no", "emp_no"]])
+  ): [dept_emp] @mysqlSelect(subgraph: "Employees", table: "dept_emp", columnMap: [["emp_no", "emp_no"]]) 
   dept_manager(
     limit: Int
     offset: Int
@@ -274,13 +274,13 @@ type employees @join__type(graph: EMPLOYEES)  {
     offset: Int
     where: salaries_WhereInput
     orderBy: salaries_OrderByInput
-  ): [salaries] @mysqlSelect(subgraph: "Employees", table: "salaries", columnMap: [["emp_no", "emp_no"]])
+  ): [salaries] @mysqlSelect(subgraph: "Employees", table: "salaries", columnMap: [["emp_no", "emp_no"]]) 
   titles(
     limit: Int
     offset: Int
     where: titles_WhereInput
     orderBy: titles_OrderByInput
-  ): [titles] @mysqlSelect(subgraph: "Employees", table: "titles", columnMap: [["emp_no", "emp_no"]])
+  ): [titles] @mysqlSelect(subgraph: "Employees", table: "titles", columnMap: [["emp_no", "emp_no"]]) 
 }
 
 type dept_manager @join__type(graph: EMPLOYEES)  {
@@ -297,13 +297,13 @@ type dept_manager @join__type(graph: EMPLOYEES)  {
     subgraph: "Employees"
     table: "departments"
     columnMap: [["dept_no", "dept_no"]]
-  ) @mysqlTableForeign(subgraph: "Employees", columnName: "dept_no")
+  ) @mysqlTableForeign(subgraph: "Employees", columnName: "dept_no") 
   employees(
     where: employees_WhereInput
     orderBy: employees_OrderByInput
     limit: Int
     offset: Int
-  ): [employees] @mysqlSelect(subgraph: "Employees", table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(subgraph: "Employees", columnName: "emp_no")
+  ): [employees] @mysqlSelect(subgraph: "Employees", table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(subgraph: "Employees", columnName: "emp_no") 
 }
 
 type salaries @join__type(graph: EMPLOYEES)  {
@@ -316,7 +316,7 @@ type salaries @join__type(graph: EMPLOYEES)  {
     orderBy: employees_OrderByInput
     limit: Int
     offset: Int
-  ): [employees] @mysqlSelect(subgraph: "Employees", table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(subgraph: "Employees", columnName: "emp_no")
+  ): [employees] @mysqlSelect(subgraph: "Employees", table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(subgraph: "Employees", columnName: "emp_no") 
 }
 
 type titles @join__type(graph: EMPLOYEES)  {
@@ -329,7 +329,7 @@ type titles @join__type(graph: EMPLOYEES)  {
     orderBy: employees_OrderByInput
     limit: Int
     offset: Int
-  ): [employees] @mysqlSelect(subgraph: "Employees", table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(subgraph: "Employees", columnName: "emp_no")
+  ): [employees] @mysqlSelect(subgraph: "Employees", table: "employees", columnMap: [["emp_no", "emp_no"]])  @mysqlTableForeign(subgraph: "Employees", columnName: "emp_no") 
 }
 
 """
@@ -364,75 +364,75 @@ type v_full_employees @join__type(graph: EMPLOYEES)  {
 }
 
 type Mutation @join__type(graph: EMPLOYEES)  {
-  insert_current_dept_emp(current_dept_emp: current_dept_emp_InsertInput!) : current_dept_emp @mysqlInsert(subgraph: "Employees", table: "current_dept_emp", primaryKeys: [])
+  insert_current_dept_emp(current_dept_emp: current_dept_emp_InsertInput!) : current_dept_emp @mysqlInsert(subgraph: "Employees", table: "current_dept_emp", primaryKeys: []) 
   update_current_dept_emp(
     current_dept_emp: current_dept_emp_UpdateInput!
     where: current_dept_emp_WhereInput
-  ): current_dept_emp @mysqlUpdate(subgraph: "Employees", table: "current_dept_emp")
-  delete_current_dept_emp(where: current_dept_emp_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "current_dept_emp")
-  insert_departments(departments: departments_InsertInput!) : departments @mysqlInsert(subgraph: "Employees", table: "departments", primaryKeys: ["dept_no"])
-  update_departments(departments: departments_UpdateInput!, where: departments_WhereInput) : departments @mysqlUpdate(subgraph: "Employees", table: "departments")
-  delete_departments(where: departments_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "departments")
-  insert_dept_emp(dept_emp: dept_emp_InsertInput!) : dept_emp @mysqlInsert(subgraph: "Employees", table: "dept_emp", primaryKeys: ["emp_no", "dept_no"])
-  update_dept_emp(dept_emp: dept_emp_UpdateInput!, where: dept_emp_WhereInput) : dept_emp @mysqlUpdate(subgraph: "Employees", table: "dept_emp")
-  delete_dept_emp(where: dept_emp_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "dept_emp")
-  insert_dept_emp_latest_date(dept_emp_latest_date: dept_emp_latest_date_InsertInput!) : dept_emp_latest_date @mysqlInsert(subgraph: "Employees", table: "dept_emp_latest_date", primaryKeys: [])
+  ): current_dept_emp @mysqlUpdate(subgraph: "Employees", table: "current_dept_emp") 
+  delete_current_dept_emp(where: current_dept_emp_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "current_dept_emp") 
+  insert_departments(departments: departments_InsertInput!) : departments @mysqlInsert(subgraph: "Employees", table: "departments", primaryKeys: ["dept_no"]) 
+  update_departments(departments: departments_UpdateInput!, where: departments_WhereInput) : departments @mysqlUpdate(subgraph: "Employees", table: "departments") 
+  delete_departments(where: departments_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "departments") 
+  insert_dept_emp(dept_emp: dept_emp_InsertInput!) : dept_emp @mysqlInsert(subgraph: "Employees", table: "dept_emp", primaryKeys: ["emp_no", "dept_no"]) 
+  update_dept_emp(dept_emp: dept_emp_UpdateInput!, where: dept_emp_WhereInput) : dept_emp @mysqlUpdate(subgraph: "Employees", table: "dept_emp") 
+  delete_dept_emp(where: dept_emp_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "dept_emp") 
+  insert_dept_emp_latest_date(dept_emp_latest_date: dept_emp_latest_date_InsertInput!) : dept_emp_latest_date @mysqlInsert(subgraph: "Employees", table: "dept_emp_latest_date", primaryKeys: []) 
   update_dept_emp_latest_date(
     dept_emp_latest_date: dept_emp_latest_date_UpdateInput!
     where: dept_emp_latest_date_WhereInput
-  ): dept_emp_latest_date @mysqlUpdate(subgraph: "Employees", table: "dept_emp_latest_date")
-  delete_dept_emp_latest_date(where: dept_emp_latest_date_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "dept_emp_latest_date")
+  ): dept_emp_latest_date @mysqlUpdate(subgraph: "Employees", table: "dept_emp_latest_date") 
+  delete_dept_emp_latest_date(where: dept_emp_latest_date_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "dept_emp_latest_date") 
   insert_dept_manager(dept_manager: dept_manager_InsertInput!) : dept_manager @mysqlInsert(
     subgraph: "Employees"
     table: "dept_manager"
     primaryKeys: ["emp_no", "dept_no"]
   )
-  update_dept_manager(dept_manager: dept_manager_UpdateInput!, where: dept_manager_WhereInput) : dept_manager @mysqlUpdate(subgraph: "Employees", table: "dept_manager")
-  delete_dept_manager(where: dept_manager_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "dept_manager")
-  insert_employees(employees: employees_InsertInput!) : employees @mysqlInsert(subgraph: "Employees", table: "employees", primaryKeys: ["emp_no"])
-  update_employees(employees: employees_UpdateInput!, where: employees_WhereInput) : employees @mysqlUpdate(subgraph: "Employees", table: "employees")
-  delete_employees(where: employees_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "employees")
+  update_dept_manager(dept_manager: dept_manager_UpdateInput!, where: dept_manager_WhereInput) : dept_manager @mysqlUpdate(subgraph: "Employees", table: "dept_manager") 
+  delete_dept_manager(where: dept_manager_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "dept_manager") 
+  insert_employees(employees: employees_InsertInput!) : employees @mysqlInsert(subgraph: "Employees", table: "employees", primaryKeys: ["emp_no"]) 
+  update_employees(employees: employees_UpdateInput!, where: employees_WhereInput) : employees @mysqlUpdate(subgraph: "Employees", table: "employees") 
+  delete_employees(where: employees_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "employees") 
   insert_salaries(salaries: salaries_InsertInput!) : salaries @mysqlInsert(
     subgraph: "Employees"
     table: "salaries"
     primaryKeys: ["emp_no", "from_date"]
   )
-  update_salaries(salaries: salaries_UpdateInput!, where: salaries_WhereInput) : salaries @mysqlUpdate(subgraph: "Employees", table: "salaries")
-  delete_salaries(where: salaries_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "salaries")
+  update_salaries(salaries: salaries_UpdateInput!, where: salaries_WhereInput) : salaries @mysqlUpdate(subgraph: "Employees", table: "salaries") 
+  delete_salaries(where: salaries_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "salaries") 
   insert_titles(titles: titles_InsertInput!) : titles @mysqlInsert(
     subgraph: "Employees"
     table: "titles"
     primaryKeys: ["emp_no", "title", "from_date"]
   )
-  update_titles(titles: titles_UpdateInput!, where: titles_WhereInput) : titles @mysqlUpdate(subgraph: "Employees", table: "titles")
-  delete_titles(where: titles_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "titles")
-  insert_v_full_departments(v_full_departments: v_full_departments_InsertInput!) : v_full_departments @mysqlInsert(subgraph: "Employees", table: "v_full_departments", primaryKeys: [])
+  update_titles(titles: titles_UpdateInput!, where: titles_WhereInput) : titles @mysqlUpdate(subgraph: "Employees", table: "titles") 
+  delete_titles(where: titles_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "titles") 
+  insert_v_full_departments(v_full_departments: v_full_departments_InsertInput!) : v_full_departments @mysqlInsert(subgraph: "Employees", table: "v_full_departments", primaryKeys: []) 
   update_v_full_departments(
     v_full_departments: v_full_departments_UpdateInput!
     where: v_full_departments_WhereInput
-  ): v_full_departments @mysqlUpdate(subgraph: "Employees", table: "v_full_departments")
-  delete_v_full_departments(where: v_full_departments_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "v_full_departments")
-  insert_v_full_employees(v_full_employees: v_full_employees_InsertInput!) : v_full_employees @mysqlInsert(subgraph: "Employees", table: "v_full_employees", primaryKeys: [])
+  ): v_full_departments @mysqlUpdate(subgraph: "Employees", table: "v_full_departments") 
+  delete_v_full_departments(where: v_full_departments_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "v_full_departments") 
+  insert_v_full_employees(v_full_employees: v_full_employees_InsertInput!) : v_full_employees @mysqlInsert(subgraph: "Employees", table: "v_full_employees", primaryKeys: []) 
   update_v_full_employees(
     v_full_employees: v_full_employees_UpdateInput!
     where: v_full_employees_WhereInput
-  ): v_full_employees @mysqlUpdate(subgraph: "Employees", table: "v_full_employees")
-  delete_v_full_employees(where: v_full_employees_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "v_full_employees")
+  ): v_full_employees @mysqlUpdate(subgraph: "Employees", table: "v_full_employees") 
+  delete_v_full_employees(where: v_full_employees_WhereInput) : Boolean @mysqlDelete(subgraph: "Employees", table: "v_full_employees") 
 }
 
 enum OrderBy @join__type(graph: EMPLOYEES)  {
-  asc @join__enumValue(graph: EMPLOYEES)
-  desc @join__enumValue(graph: EMPLOYEES)
+  asc @join__enumValue(graph: EMPLOYEES) 
+  desc @join__enumValue(graph: EMPLOYEES) 
 }
 
 enum employees_gender @join__type(graph: EMPLOYEES)  {
-  M @join__enumValue(graph: EMPLOYEES)
-  F @join__enumValue(graph: EMPLOYEES)
+  M @join__enumValue(graph: EMPLOYEES) 
+  F @join__enumValue(graph: EMPLOYEES) 
 }
 
 enum v_full_employees_gender @join__type(graph: EMPLOYEES)  {
-  M @join__enumValue(graph: EMPLOYEES)
-  F @join__enumValue(graph: EMPLOYEES)
+  M @join__enumValue(graph: EMPLOYEES) 
+  F @join__enumValue(graph: EMPLOYEES) 
 }
 
 """

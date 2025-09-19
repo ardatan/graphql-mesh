@@ -262,7 +262,7 @@ interface IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode",
 
     Matches moment.js, Luxon and DateFns implementations
     ,/. is valid for decimal places and +/- is a valid prefix
-
+  
 """
 scalar ISO8601Duration
 

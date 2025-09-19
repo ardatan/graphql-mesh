@@ -29,6 +29,8 @@ exports[`executes a query 1`] = `
 }
 `;
 
+exports[`executes a query 2`] = `""`;
+
 exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
