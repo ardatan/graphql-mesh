@@ -4982,10 +4982,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.35.0":
-  version: 9.35.0
-  resolution: "@eslint/js@npm:9.35.0"
-  checksum: 10c0/d40fe38724bc76c085c0b753cdf937fa35c0d6807ae76b2632e3f5f66c3040c91adcf1aff2ce70b4f45752e60629fadc415eeec9af3be3c274bae1cac54b9840
+"@eslint/js@npm:9.36.0":
+  version: 9.36.0
+  resolution: "@eslint/js@npm:9.36.0"
+  checksum: 10c0/e3f6fb7d6f117d79615574f7bef4f238bcfed6ece0465d28226c3a75d2b6fac9cc189121e8673562796ca8ccea2bf9861715ee5cf4a3dbef87d17811c0dac22c
   languageName: node
   linkType: hard
 
@@ -5357,7 +5357,7 @@ __metadata:
     graphql-yoga: "npm:^5.13.4"
     jest: "npm:29.7.0"
     sharp: "npm:0.34.4"
-    ts-jest: "npm:29.4.3"
+    ts-jest: "npm:29.4.4"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -5377,7 +5377,7 @@ __metadata:
     google-protobuf: "npm:4.0.0"
     graphql: "npm:16.11.0"
     jest: "npm:29.7.0"
-    ts-jest: "npm:29.4.3"
+    ts-jest: "npm:29.4.4"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -23050,9 +23050,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:9.35.0":
-  version: 9.35.0
-  resolution: "eslint@npm:9.35.0"
+"eslint@npm:9.36.0":
+  version: 9.36.0
+  resolution: "eslint@npm:9.36.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.8.0"
     "@eslint-community/regexpp": "npm:^4.12.1"
@@ -23060,7 +23060,7 @@ __metadata:
     "@eslint/config-helpers": "npm:^0.3.1"
     "@eslint/core": "npm:^0.15.2"
     "@eslint/eslintrc": "npm:^3.3.1"
-    "@eslint/js": "npm:9.35.0"
+    "@eslint/js": "npm:9.36.0"
     "@eslint/plugin-kit": "npm:^0.3.5"
     "@humanfs/node": "npm:^0.16.6"
     "@humanwhocodes/module-importer": "npm:^1.0.1"
@@ -23096,7 +23096,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/798c527520ccf62106f8cd210bd1db1f8eb1b0e7a56feb0a8b322bf3a1e6a0bc6dc3a414542c22b1b393d58d5e3cd0252c44c023049de9067b836450503a2f03
+  checksum: 10c0/0e2705a94847813b03f2f3c1367c0708319cbb66458250a09b2d056a088c56e079a1c1d76c44feebf51971d9ce64d010373b2a4f007cd1026fc24f95c89836df
   languageName: node
   linkType: hard
 
@@ -25205,7 +25205,7 @@ __metadata:
     bob-the-bundler: "npm:7.0.1"
     cp-cli: "npm:^2.0.0"
     cross-env: "npm:^10.0.0"
-    eslint: "npm:9.35.0"
+    eslint: "npm:9.36.0"
     eslint-config-prettier: "npm:10.1.8"
     eslint-config-standard: "npm:17.1.0"
     eslint-plugin-import: "npm:2.32.0"
@@ -25222,7 +25222,7 @@ __metadata:
     node-gyp: "npm:^11.0.0"
     prettier: "npm:3.6.2"
     threads: "npm:^1.7.0"
-    ts-jest: "npm:29.4.3"
+    ts-jest: "npm:29.4.4"
     tsx: "npm:^4.19.0"
     typescript: "npm:^5.4.2"
   languageName: unknown
@@ -38673,9 +38673,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.4.3":
-  version: 29.4.3
-  resolution: "ts-jest@npm:29.4.3"
+"ts-jest@npm:29.4.4":
+  version: 29.4.4
+  resolution: "ts-jest@npm:29.4.4"
   dependencies:
     bs-logger: "npm:^0.2.6"
     fast-json-stable-stringify: "npm:^2.1.0"
@@ -38709,7 +38709,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/c86ef3482521d6f90a783da9a01f6116702058fb3a3b75df89f33e9b4cf79dd57f1287be8963c06abc3994055515201e49b3a515b766cb1de21b293cd7cdd43e
+  checksum: 10c0/f99d612704cda98369f4a54d3db771bad5edd1390fded4f1691f3182f0c8ce8b7f827e5846952bd8bcd26df26c9fb18f11089de760956bdf357875a5f1d49fcc
   languageName: node
   linkType: hard
 
@@ -40302,7 +40302,7 @@ __metadata:
     "@types/node": "npm:^24.4.0"
     "@types/react": "npm:19.1.13"
     cross-env: "npm:10.0.0"
-    eslint: "npm:9.35.0"
+    eslint: "npm:9.36.0"
     eslint-config-next: "npm:15.5.3"
     next: "npm:^15.4.1"
     next-sitemap: "npm:^4.2.3"
