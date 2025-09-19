@@ -29,18 +29,16 @@ exports[`executes a query 1`] = `
 }
 `;
 
-exports[`executes a query 2`] = `""`;
-
 exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@entityInfo", "@abstractType", "@singularNav", "@pluralNav", "@navProp", "@unboundFunction", "@boundFunction", "@unboundAction", "@boundAction", "@singleton", "@entitySet", "@entitySetByIdentifier", "@entitySetCount", "@createEntitySet", "@deleteEntitySet", "@updateEntitySet", "@merge", "@extraSchemaDefinitionDirective"]
@@ -48,15 +46,15 @@ exports[`should compose the appropriate schema 1`] = `
   {
     query: Query
     mutation: Mutation
-
+    
   }
 
-
+  
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-
+    
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -65,11 +63,11 @@ exports[`should compose the appropriate schema 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-
-
+        
+        
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-
+    
+    
 
     directive @join__implements(
       graph: join__Graph!
@@ -90,9 +88,9 @@ exports[`should compose the appropriate schema 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-
-
-
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -114,13 +112,13 @@ exports[`should compose the appropriate schema 1`] = `
     EXECUTION
   }
 
-
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
   TRIPPIN @join__graph(
     name: "Trippin"
@@ -198,7 +196,7 @@ directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  rep
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
-scalar BigInt @join__type(graph: TRIPPIN)
+scalar BigInt @join__type(graph: TRIPPIN) 
 
 """
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
@@ -210,12 +208,12 @@ scalar JSON @join__type(graph: TRIPPIN)  @specifiedBy(
 """
 A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.
 """
-scalar GUID @join__type(graph: TRIPPIN)
+scalar GUID @join__type(graph: TRIPPIN) 
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar DateTime @join__type(graph: TRIPPIN)
+scalar DateTime @join__type(graph: TRIPPIN) 
 
 """
 
@@ -235,11 +233,11 @@ scalar DateTime @join__type(graph: TRIPPIN)
 
     Matches moment.js, Luxon and DateFns implementations
     ,/. is valid for decimal places and +/- is a valid prefix
-
+  
 """
-scalar ISO8601Duration @join__type(graph: TRIPPIN)
+scalar ISO8601Duration @join__type(graph: TRIPPIN) 
 
-scalar _DirectiveExtensions @join__type(graph: TRIPPIN)
+scalar _DirectiveExtensions @join__type(graph: TRIPPIN) 
 
 type Person implements IPerson @entityInfo(
   actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"]
@@ -265,15 +263,15 @@ type Person implements IPerson @entityInfo(
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID) : Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions) : [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID) : Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput) : Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!) : [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips")
-  UpdateLastName(person: PersonInput, lastName: String!) : JSON @boundAction(actionRef: "Trippin.UpdateLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!) : JSON @boundAction(actionRef: "Trippin.ShareTrip")
+  Friends(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "Friends") 
+  FriendsById(id: ID) : Person @singularNav(navigationPropertyName: "Friends") 
+  BestFriend: Person @navProp(navigationPropertyName: "BestFriend") 
+  Trips(queryOptions: QueryOptions) : [Trip] @pluralNav(navigationPropertyName: "Trips") 
+  TripsById(id: ID) : Trip @singularNav(navigationPropertyName: "Trips") 
+  GetFavoriteAirline(person: PersonInput) : Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline") 
+  GetFriendsTrips(person: PersonInput, userName: String!) : [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips") 
+  UpdateLastName(person: PersonInput, lastName: String!) : JSON @boundAction(actionRef: "Trippin.UpdateLastName") 
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!) : JSON @boundAction(actionRef: "Trippin.ShareTrip") 
 }
 
 type Airline @entityInfo(
@@ -315,9 +313,9 @@ type Trip @entityInfo(
   Tags: [String]
   StartsAt: DateTime!
   EndsAt: DateTime!
-  PlanItems(queryOptions: QueryOptions) : [PlanItem] @pluralNav(navigationPropertyName: "PlanItems")
-  PlanItemsById(id: ID) : PlanItem @singularNav(navigationPropertyName: "PlanItems")
-  GetInvolvedPeople(trip: TripInput) : [Person] @boundFunction(functionRef: "Trippin.GetInvolvedPeople")
+  PlanItems(queryOptions: QueryOptions) : [PlanItem] @pluralNav(navigationPropertyName: "PlanItems") 
+  PlanItemsById(id: ID) : PlanItem @singularNav(navigationPropertyName: "PlanItems") 
+  GetInvolvedPeople(trip: TripInput) : [Person] @boundFunction(functionRef: "Trippin.GetInvolvedPeople") 
 }
 
 type PlanItem implements IPlanItem @entityInfo(
@@ -385,9 +383,9 @@ type Flight implements IPublicTransportation @entityInfo(
   identifierFieldTypeRef: "Edm.Int32"
 ) @join__type(graph: TRIPPIN)  @join__implements(graph: TRIPPIN, interface: "IPublicTransportation")  {
   FlightNumber: String
-  Airline: Airline @navProp(navigationPropertyName: "Airline")
-  From: Airport @navProp(navigationPropertyName: "From")
-  To: Airport @navProp(navigationPropertyName: "To")
+  Airline: Airline @navProp(navigationPropertyName: "Airline") 
+  From: Airport @navProp(navigationPropertyName: "From") 
+  To: Airport @navProp(navigationPropertyName: "To") 
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
@@ -404,8 +402,8 @@ type Employee implements IPerson @entityInfo(
   identifierFieldTypeRef: "Edm.String"
 ) @join__type(graph: TRIPPIN)  @join__implements(graph: TRIPPIN, interface: "IPerson")  {
   Cost: BigInt!
-  Peers(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "Peers")
-  PeersById(id: ID) : Person @singularNav(navigationPropertyName: "Peers")
+  Peers(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "Peers") 
+  PeersById(id: ID) : Person @singularNav(navigationPropertyName: "Peers") 
   UserName: String!
   FirstName: String!
   LastName: String
@@ -417,15 +415,15 @@ type Employee implements IPerson @entityInfo(
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID) : Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions) : [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID) : Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput) : Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!) : [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips")
-  UpdateLastName(person: PersonInput, lastName: String!) : JSON @boundAction(actionRef: "Trippin.UpdateLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!) : JSON @boundAction(actionRef: "Trippin.ShareTrip")
+  Friends(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "Friends") 
+  FriendsById(id: ID) : Person @singularNav(navigationPropertyName: "Friends") 
+  BestFriend: Person @navProp(navigationPropertyName: "BestFriend") 
+  Trips(queryOptions: QueryOptions) : [Trip] @pluralNav(navigationPropertyName: "Trips") 
+  TripsById(id: ID) : Trip @singularNav(navigationPropertyName: "Trips") 
+  GetFavoriteAirline(person: PersonInput) : Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline") 
+  GetFriendsTrips(person: PersonInput, userName: String!) : [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips") 
+  UpdateLastName(person: PersonInput, lastName: String!) : JSON @boundAction(actionRef: "Trippin.UpdateLastName") 
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!) : JSON @boundAction(actionRef: "Trippin.ShareTrip") 
 }
 
 type Manager implements IPerson @entityInfo(
@@ -437,8 +435,8 @@ type Manager implements IPerson @entityInfo(
 ) @join__type(graph: TRIPPIN)  @join__implements(graph: TRIPPIN, interface: "IPerson")  {
   Budget: BigInt!
   BossOffice: Location
-  DirectReports(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "DirectReports")
-  DirectReportsById(id: ID) : Person @singularNav(navigationPropertyName: "DirectReports")
+  DirectReports(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "DirectReports") 
+  DirectReportsById(id: ID) : Person @singularNav(navigationPropertyName: "DirectReports") 
   UserName: String!
   FirstName: String!
   LastName: String
@@ -450,15 +448,15 @@ type Manager implements IPerson @entityInfo(
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID) : Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions) : [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID) : Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput) : Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!) : [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips")
-  UpdateLastName(person: PersonInput, lastName: String!) : JSON @boundAction(actionRef: "Trippin.UpdateLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!) : JSON @boundAction(actionRef: "Trippin.ShareTrip")
+  Friends(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "Friends") 
+  FriendsById(id: ID) : Person @singularNav(navigationPropertyName: "Friends") 
+  BestFriend: Person @navProp(navigationPropertyName: "BestFriend") 
+  Trips(queryOptions: QueryOptions) : [Trip] @pluralNav(navigationPropertyName: "Trips") 
+  TripsById(id: ID) : Trip @singularNav(navigationPropertyName: "Trips") 
+  GetFavoriteAirline(person: PersonInput) : Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline") 
+  GetFriendsTrips(person: PersonInput, userName: String!) : [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips") 
+  UpdateLastName(person: PersonInput, lastName: String!) : JSON @boundAction(actionRef: "Trippin.UpdateLastName") 
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!) : JSON @boundAction(actionRef: "Trippin.ShareTrip") 
 }
 
 type Location implements ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false)  @abstractType(
@@ -505,41 +503,41 @@ type EventLocation implements ILocation @entityInfo(
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{kind: "odata", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [], options: {batch: "multipart", expandNavProps: true}}]}
 ) @join__type(graph: TRIPPIN)  {
-  GetPersonWithMostFriends: Person @unboundFunction(functionName: "GetPersonWithMostFriends")
-  GetNearestAirport(lat: Float!, lon: Float!) : Airport @unboundFunction(functionName: "GetNearestAirport")
-  Me: Person @singleton(singletonName: "Me")
-  People(queryOptions: QueryOptions) : [IPerson] @entitySet(entitySetName: "People")
+  GetPersonWithMostFriends: Person @unboundFunction(functionName: "GetPersonWithMostFriends") 
+  GetNearestAirport(lat: Float!, lon: Float!) : Airport @unboundFunction(functionName: "GetNearestAirport") 
+  Me: Person @singleton(singletonName: "Me") 
+  People(queryOptions: QueryOptions) : [IPerson] @entitySet(entitySetName: "People") 
   PeopleByUserName(UserName: String!) : IPerson @entitySetByIdentifier(
     entitySetName: "People"
     identifierFieldName: "UserName"
     identifierFieldTypeRef: "Edm.String"
   )
-  PeopleCount(queryOptions: QueryOptions) : Int @entitySetCount(entitySetName: "People")
-  Airlines(queryOptions: QueryOptions) : [Airline] @entitySet(entitySetName: "Airlines")
+  PeopleCount(queryOptions: QueryOptions) : Int @entitySetCount(entitySetName: "People") 
+  Airlines(queryOptions: QueryOptions) : [Airline] @entitySet(entitySetName: "Airlines") 
   AirlinesByAirlineCode(AirlineCode: String!) : Airline @entitySetByIdentifier(
     entitySetName: "Airlines"
     identifierFieldName: "AirlineCode"
     identifierFieldTypeRef: "Edm.String"
-  ) @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode")
-  AirlinesCount(queryOptions: QueryOptions) : Int @entitySetCount(entitySetName: "Airlines")
-  Airports(queryOptions: QueryOptions) : [Airport] @entitySet(entitySetName: "Airports")
+  ) @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode") 
+  AirlinesCount(queryOptions: QueryOptions) : Int @entitySetCount(entitySetName: "Airlines") 
+  Airports(queryOptions: QueryOptions) : [Airport] @entitySet(entitySetName: "Airports") 
   AirportsByIcaoCode(IcaoCode: String!) : Airport @entitySetByIdentifier(
     entitySetName: "Airports"
     identifierFieldName: "IcaoCode"
     identifierFieldTypeRef: "Edm.String"
-  ) @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode")
-  AirportsCount(queryOptions: QueryOptions) : Int @entitySetCount(entitySetName: "Airports")
+  ) @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode") 
+  AirportsCount(queryOptions: QueryOptions) : Int @entitySetCount(entitySetName: "Airports") 
 }
 
 type Mutation @join__type(graph: TRIPPIN)  {
-  ResetDataSource: JSON @unboundAction(actionName: "ResetDataSource")
-  People(queryOptions: QueryOptions) : [IPerson] @entitySet(entitySetName: "People")
+  ResetDataSource: JSON @unboundAction(actionName: "ResetDataSource") 
+  People(queryOptions: QueryOptions) : [IPerson] @entitySet(entitySetName: "People") 
   PeopleByUserName(UserName: String!) : IPerson @entitySetByIdentifier(
     entitySetName: "People"
     identifierFieldName: "UserName"
     identifierFieldTypeRef: "Edm.String"
   )
-  createPeople(input: PersonInput) : IPerson @createEntitySet(entitySetName: "People")
+  createPeople(input: PersonInput) : IPerson @createEntitySet(entitySetName: "People") 
   deletePeopleByUserName(UserName: String!) : JSON @deleteEntitySet(
     entitySetName: "People"
     identifierFieldName: "UserName"
@@ -550,13 +548,13 @@ type Mutation @join__type(graph: TRIPPIN)  {
     identifierFieldName: "UserName"
     identifierFieldTypeRef: "Edm.String"
   )
-  Airlines(queryOptions: QueryOptions) : [Airline] @entitySet(entitySetName: "Airlines")
+  Airlines(queryOptions: QueryOptions) : [Airline] @entitySet(entitySetName: "Airlines") 
   AirlinesByAirlineCode(AirlineCode: String!) : Airline @entitySetByIdentifier(
     entitySetName: "Airlines"
     identifierFieldName: "AirlineCode"
     identifierFieldTypeRef: "Edm.String"
-  ) @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode")
-  createAirlines(input: AirlineInput) : Airline @createEntitySet(entitySetName: "Airlines")
+  ) @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode") 
+  createAirlines(input: AirlineInput) : Airline @createEntitySet(entitySetName: "Airlines") 
   deleteAirlinesByAirlineCode(AirlineCode: String!) : JSON @deleteEntitySet(
     entitySetName: "Airlines"
     identifierFieldName: "AirlineCode"
@@ -567,13 +565,13 @@ type Mutation @join__type(graph: TRIPPIN)  {
     identifierFieldName: "AirlineCode"
     identifierFieldTypeRef: "Edm.String"
   )
-  Airports(queryOptions: QueryOptions) : [Airport] @entitySet(entitySetName: "Airports")
+  Airports(queryOptions: QueryOptions) : [Airport] @entitySet(entitySetName: "Airports") 
   AirportsByIcaoCode(IcaoCode: String!) : Airport @entitySetByIdentifier(
     entitySetName: "Airports"
     identifierFieldName: "IcaoCode"
     identifierFieldTypeRef: "Edm.String"
-  ) @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode")
-  createAirports(input: AirportInput) : Airport @createEntitySet(entitySetName: "Airports")
+  ) @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode") 
+  createAirports(input: AirportInput) : Airport @createEntitySet(entitySetName: "Airports") 
   deleteAirportsByIcaoCode(IcaoCode: String!) : JSON @deleteEntitySet(
     entitySetName: "Airports"
     identifierFieldName: "IcaoCode"
@@ -610,15 +608,15 @@ interface IPerson @entityInfo(
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID) : Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions) : [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID) : Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput) : Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!) : [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips")
-  UpdateLastName(person: PersonInput, lastName: String!) : JSON @boundAction(actionRef: "Trippin.UpdateLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!) : JSON @boundAction(actionRef: "Trippin.ShareTrip")
+  Friends(queryOptions: QueryOptions) : [Person] @pluralNav(navigationPropertyName: "Friends") 
+  FriendsById(id: ID) : Person @singularNav(navigationPropertyName: "Friends") 
+  BestFriend: Person @navProp(navigationPropertyName: "BestFriend") 
+  Trips(queryOptions: QueryOptions) : [Trip] @pluralNav(navigationPropertyName: "Trips") 
+  TripsById(id: ID) : Trip @singularNav(navigationPropertyName: "Trips") 
+  GetFavoriteAirline(person: PersonInput) : Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline") 
+  GetFriendsTrips(person: PersonInput, userName: String!) : [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips") 
+  UpdateLastName(person: PersonInput, lastName: String!) : JSON @boundAction(actionRef: "Trippin.UpdateLastName") 
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!) : JSON @boundAction(actionRef: "Trippin.ShareTrip") 
 }
 
 interface IPlanItem @entityInfo(
@@ -674,27 +672,27 @@ interface ILocation @entityInfo(actualFields: ["Address", "City"], navigationFie
 }
 
 enum PersonGender @join__type(graph: TRIPPIN)  {
-  Male @join__enumValue(graph: TRIPPIN)
-  Female @join__enumValue(graph: TRIPPIN)
-  Unknown @join__enumValue(graph: TRIPPIN)
+  Male @join__enumValue(graph: TRIPPIN) 
+  Female @join__enumValue(graph: TRIPPIN) 
+  Unknown @join__enumValue(graph: TRIPPIN) 
 }
 
 enum Feature @join__type(graph: TRIPPIN)  {
-  Feature1 @join__enumValue(graph: TRIPPIN)
-  Feature2 @join__enumValue(graph: TRIPPIN)
-  Feature3 @join__enumValue(graph: TRIPPIN)
-  Feature4 @join__enumValue(graph: TRIPPIN)
+  Feature1 @join__enumValue(graph: TRIPPIN) 
+  Feature2 @join__enumValue(graph: TRIPPIN) 
+  Feature3 @join__enumValue(graph: TRIPPIN) 
+  Feature4 @join__enumValue(graph: TRIPPIN) 
 }
 
 enum InlineCount @join__type(graph: TRIPPIN)  {
   """
   The OData MUST include a count of the number of entities in the collection identified by the URI (after applying any $filter System Query Options present on the URI)
   """
-  allpages @join__enumValue(graph: TRIPPIN)
+  allpages @join__enumValue(graph: TRIPPIN) 
   """
   The OData service MUST NOT include a count in the response. This is equivalence to a URI that does not include a $inlinecount query string parameter.
   """
-  none @join__enumValue(graph: TRIPPIN)
+  none @join__enumValue(graph: TRIPPIN) 
 }
 
 input QueryOptions @join__type(graph: TRIPPIN)  {
