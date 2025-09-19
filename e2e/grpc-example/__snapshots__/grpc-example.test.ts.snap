@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`gRPC Example fetches movies by cast as a subscription correctly: 0 1`] = `
 {
@@ -38,28 +38,28 @@ exports[`gRPC Example generates the correct schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@grpcMethod", "@grpcConnectivityState", "@enum", "@transport", "@source", "@extraSchemaDefinitionDirective"]
 )
   {
     query: Query
-    
+
     subscription: Subscription
   }
 
-  
+
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
+
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -68,11 +68,11 @@ exports[`gRPC Example generates the correct schema 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-        
-        
+
+
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+
+
 
     directive @join__implements(
       graph: join__Graph!
@@ -93,9 +93,9 @@ exports[`gRPC Example generates the correct schema 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-    
-  
-  
+
+
+
   directive @link(
     url: String
     as: String
@@ -117,15 +117,15 @@ exports[`gRPC Example generates the correct schema 1`] = `
     EXECUTION
   }
 
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 enum join__Graph {
-  MOVIES @join__graph(name: "movies", url: "localhost:<movies_port>") 
+  MOVIES @join__graph(name: "movies", url: "localhost:<movies_port>")
 }
 
 directive @grpcMethod(
@@ -151,11 +151,11 @@ directive @stream(if: Boolean!, label: String, initialCount: Int)  on FIELD
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
-scalar BigInt @join__type(graph: MOVIES) 
+scalar BigInt @join__type(graph: MOVIES)
 
-scalar TransportOptions @join__type(graph: MOVIES) 
+scalar TransportOptions @join__type(graph: MOVIES)
 
-scalar _DirectiveExtensions @join__type(graph: MOVIES) 
+scalar _DirectiveExtensions @join__type(graph: MOVIES)
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "movies", kind: "grpc", location: "localhost:<movies_port>", options: {requestTimeout: 200000, metaData: {someKey: "someValue", connection_type: "{context.headers.connection}"}, roots: [{name: "Root0", rootJson: "{\\"nested\\":{\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int64\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}}]}
@@ -169,7 +169,7 @@ type Query @extraSchemaDefinitionDirective(
     objPath: "Example"
     methodName: "GetMovies"
     responseStream: false
-  ) @source(name: "Example_GetMovies", type: "MoviesResult", subgraph: "movies") 
+  ) @source(name: "Example_GetMovies", type: "MoviesResult", subgraph: "movies")
   """
   search movies by the name of the cast
   """
@@ -179,7 +179,7 @@ type Query @extraSchemaDefinitionDirective(
     objPath: "Example"
     methodName: "SearchMoviesByCast"
     responseStream: true
-  ) @source(name: "Example_SearchMoviesByCast", type: "[Movie]", subgraph: "movies") 
+  ) @source(name: "Example_SearchMoviesByCast", type: "[Movie]", subgraph: "movies")
   exampleConnectivityState(tryToConnect: Boolean) : ConnectivityState @grpcConnectivityState(subgraph: "movies", rootJsonName: "Root0", objPath: "Example")  @source(
     name: "Example_connectivityState"
     type: "ConnectivityState"
@@ -194,7 +194,7 @@ type Query @extraSchemaDefinitionDirective(
     objPath: "AnotherExample"
     methodName: "GetMovies"
     responseStream: false
-  ) @source(name: "AnotherExample_GetMovies", type: "MoviesResult", subgraph: "movies") 
+  ) @source(name: "AnotherExample_GetMovies", type: "MoviesResult", subgraph: "movies")
   """
   search movies by the name of the cast
   """
@@ -256,7 +256,7 @@ type Subscription @join__type(graph: MOVIES)  {
     objPath: "Example"
     methodName: "SearchMoviesByCast"
     responseStream: true
-  ) @source(name: "Example_SearchMoviesByCast", type: "Movie", subgraph: "movies") 
+  ) @source(name: "Example_SearchMoviesByCast", type: "Movie", subgraph: "movies")
   """
   search movies by the name of the cast
   """
@@ -266,21 +266,21 @@ type Subscription @join__type(graph: MOVIES)  {
     objPath: "AnotherExample"
     methodName: "SearchMoviesByCast"
     responseStream: true
-  ) @source(name: "AnotherExample_SearchMoviesByCast", type: "Movie", subgraph: "movies") 
+  ) @source(name: "AnotherExample_SearchMoviesByCast", type: "Movie", subgraph: "movies")
 }
 
 enum ConnectivityState @join__type(graph: MOVIES)  {
-  IDLE @join__enumValue(graph: MOVIES) 
-  CONNECTING @join__enumValue(graph: MOVIES) 
-  READY @join__enumValue(graph: MOVIES) 
-  TRANSIENT_FAILURE @join__enumValue(graph: MOVIES) 
-  SHUTDOWN @join__enumValue(graph: MOVIES) 
+  IDLE @join__enumValue(graph: MOVIES)
+  CONNECTING @join__enumValue(graph: MOVIES)
+  READY @join__enumValue(graph: MOVIES)
+  TRANSIENT_FAILURE @join__enumValue(graph: MOVIES)
+  SHUTDOWN @join__enumValue(graph: MOVIES)
 }
 
 enum Genre @join__type(graph: MOVIES)  {
-  UNSPECIFIED @enum(subgraph: "movies", value: "0")  @join__enumValue(graph: MOVIES) 
-  ACTION @enum(subgraph: "movies", value: "1")  @join__enumValue(graph: MOVIES) 
-  DRAMA @enum(subgraph: "movies", value: "2")  @join__enumValue(graph: MOVIES) 
+  UNSPECIFIED @enum(subgraph: "movies", value: "0")  @join__enumValue(graph: MOVIES)
+  ACTION @enum(subgraph: "movies", value: "1")  @join__enumValue(graph: MOVIES)
+  DRAMA @enum(subgraph: "movies", value: "2")  @join__enumValue(graph: MOVIES)
 }
 
 input MovieRequest_Input @join__type(graph: MOVIES)  {

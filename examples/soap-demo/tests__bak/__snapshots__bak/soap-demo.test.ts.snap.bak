@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SOAP Demo should generate correct schema: soap-demo-schema 1`] = `
 "schema @transport(kind: "soap", subgraph: "SOAPDemo") {

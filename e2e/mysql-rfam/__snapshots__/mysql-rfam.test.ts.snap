@@ -1,15 +1,15 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@transport", "@mysqlSelect", "@mysqlInsert", "@mysqlUpdate", "@mysqlDelete", "@mysqlTableForeign", "@mysqlCount", "@extraSchemaDefinitionDirective"]
@@ -17,15 +17,15 @@ exports[`should compose the appropriate schema 1`] = `
   {
     query: Query
     mutation: Mutation
-    
+
   }
 
-  
+
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
+
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`should compose the appropriate schema 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-        
-        
+
+
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+
+
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`should compose the appropriate schema 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-    
-  
-  
+
+
+
   directive @link(
     url: String
     as: String
@@ -83,15 +83,15 @@ exports[`should compose the appropriate schema 1`] = `
     EXECUTION
   }
 
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 enum join__Graph {
-  RFAM @join__graph(name: "Rfam", url: "mysql://rfamro@mysql-rfam-public.ebi.ac.uk:4497/Rfam") 
+  RFAM @join__graph(name: "Rfam", url: "mysql://rfamro@mysql-rfam-public.ebi.ac.uk:4497/Rfam")
 }
 
 directive @transport(subgraph: String, kind: String, location: String)  repeatable on SCHEMA
@@ -113,24 +113,24 @@ directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  rep
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
-scalar BigInt @join__type(graph: RFAM) 
+scalar BigInt @join__type(graph: RFAM)
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar DateTime @join__type(graph: RFAM) 
+scalar DateTime @join__type(graph: RFAM)
 
 """
 The javascript \`Date\` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
-scalar Timestamp @join__type(graph: RFAM) 
+scalar Timestamp @join__type(graph: RFAM)
 
 """
 A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar Date @join__type(graph: RFAM) 
+scalar Date @join__type(graph: RFAM)
 
-scalar _DirectiveExtensions @join__type(graph: RFAM) 
+scalar _DirectiveExtensions @join__type(graph: RFAM)
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "Rfam", kind: "mysql", location: "mysql://rfamro@mysql-rfam-public.ebi.ac.uk:4497/Rfam"}]}
@@ -140,422 +140,422 @@ type Query @extraSchemaDefinitionDirective(
     offset: Int
     where: _annotated_file_WhereInput
     orderBy: _annotated_file_OrderByInput
-  ): [_annotated_file] @mysqlSelect(subgraph: "Rfam", table: "_annotated_file") 
-  count__annotated_file(where: _annotated_file_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_annotated_file") 
+  ): [_annotated_file] @mysqlSelect(subgraph: "Rfam", table: "_annotated_file")
+  count__annotated_file(where: _annotated_file_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_annotated_file")
   _family_file(
     limit: Int
     offset: Int
     where: _family_file_WhereInput
     orderBy: _family_file_OrderByInput
-  ): [_family_file] @mysqlSelect(subgraph: "Rfam", table: "_family_file") 
-  count__family_file(where: _family_file_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_family_file") 
+  ): [_family_file] @mysqlSelect(subgraph: "Rfam", table: "_family_file")
+  count__family_file(where: _family_file_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_family_file")
   _genome_data(
     limit: Int
     offset: Int
     where: _genome_data_WhereInput
     orderBy: _genome_data_OrderByInput
-  ): [_genome_data] @mysqlSelect(subgraph: "Rfam", table: "_genome_data") 
-  count__genome_data(where: _genome_data_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_genome_data") 
-  _lock(limit: Int, offset: Int, where: _lock_WhereInput, orderBy: _lock_OrderByInput) : [_lock] @mysqlSelect(subgraph: "Rfam", table: "_lock") 
-  count__lock(where: _lock_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_lock") 
+  ): [_genome_data] @mysqlSelect(subgraph: "Rfam", table: "_genome_data")
+  count__genome_data(where: _genome_data_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_genome_data")
+  _lock(limit: Int, offset: Int, where: _lock_WhereInput, orderBy: _lock_OrderByInput) : [_lock] @mysqlSelect(subgraph: "Rfam", table: "_lock")
+  count__lock(where: _lock_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_lock")
   _overlap(
     limit: Int
     offset: Int
     where: _overlap_WhereInput
     orderBy: _overlap_OrderByInput
-  ): [_overlap] @mysqlSelect(subgraph: "Rfam", table: "_overlap") 
-  count__overlap(where: _overlap_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_overlap") 
+  ): [_overlap] @mysqlSelect(subgraph: "Rfam", table: "_overlap")
+  count__overlap(where: _overlap_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_overlap")
   _overlap_membership(
     limit: Int
     offset: Int
     where: _overlap_membership_WhereInput
     orderBy: _overlap_membership_OrderByInput
-  ): [_overlap_membership] @mysqlSelect(subgraph: "Rfam", table: "_overlap_membership") 
-  count__overlap_membership(where: _overlap_membership_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_overlap_membership") 
+  ): [_overlap_membership] @mysqlSelect(subgraph: "Rfam", table: "_overlap_membership")
+  count__overlap_membership(where: _overlap_membership_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_overlap_membership")
   _post_process(
     limit: Int
     offset: Int
     where: _post_process_WhereInput
     orderBy: _post_process_OrderByInput
-  ): [_post_process] @mysqlSelect(subgraph: "Rfam", table: "_post_process") 
-  count__post_process(where: _post_process_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_post_process") 
+  ): [_post_process] @mysqlSelect(subgraph: "Rfam", table: "_post_process")
+  count__post_process(where: _post_process_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "_post_process")
   alignment_and_tree(
     limit: Int
     offset: Int
     where: alignment_and_tree_WhereInput
     orderBy: alignment_and_tree_OrderByInput
-  ): [alignment_and_tree] @mysqlSelect(subgraph: "Rfam", table: "alignment_and_tree") 
-  count_alignment_and_tree(where: alignment_and_tree_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "alignment_and_tree") 
+  ): [alignment_and_tree] @mysqlSelect(subgraph: "Rfam", table: "alignment_and_tree")
+  count_alignment_and_tree(where: alignment_and_tree_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "alignment_and_tree")
   author(
     limit: Int
     offset: Int
     where: author_WhereInput
     orderBy: author_OrderByInput
-  ): [author] @mysqlSelect(subgraph: "Rfam", table: "author") 
-  count_author(where: author_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "author") 
-  clan(limit: Int, offset: Int, where: clan_WhereInput, orderBy: clan_OrderByInput) : [clan] @mysqlSelect(subgraph: "Rfam", table: "clan") 
-  count_clan(where: clan_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "clan") 
+  ): [author] @mysqlSelect(subgraph: "Rfam", table: "author")
+  count_author(where: author_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "author")
+  clan(limit: Int, offset: Int, where: clan_WhereInput, orderBy: clan_OrderByInput) : [clan] @mysqlSelect(subgraph: "Rfam", table: "clan")
+  count_clan(where: clan_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "clan")
   clan_database_link(
     limit: Int
     offset: Int
     where: clan_database_link_WhereInput
     orderBy: clan_database_link_OrderByInput
-  ): [clan_database_link] @mysqlSelect(subgraph: "Rfam", table: "clan_database_link") 
-  count_clan_database_link(where: clan_database_link_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "clan_database_link") 
+  ): [clan_database_link] @mysqlSelect(subgraph: "Rfam", table: "clan_database_link")
+  count_clan_database_link(where: clan_database_link_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "clan_database_link")
   clan_literature_reference(
     limit: Int
     offset: Int
     where: clan_literature_reference_WhereInput
     orderBy: clan_literature_reference_OrderByInput
-  ): [clan_literature_reference] @mysqlSelect(subgraph: "Rfam", table: "clan_literature_reference") 
-  count_clan_literature_reference(where: clan_literature_reference_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "clan_literature_reference") 
+  ): [clan_literature_reference] @mysqlSelect(subgraph: "Rfam", table: "clan_literature_reference")
+  count_clan_literature_reference(where: clan_literature_reference_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "clan_literature_reference")
   clan_membership(
     limit: Int
     offset: Int
     where: clan_membership_WhereInput
     orderBy: clan_membership_OrderByInput
-  ): [clan_membership] @mysqlSelect(subgraph: "Rfam", table: "clan_membership") 
-  count_clan_membership(where: clan_membership_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "clan_membership") 
+  ): [clan_membership] @mysqlSelect(subgraph: "Rfam", table: "clan_membership")
+  count_clan_membership(where: clan_membership_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "clan_membership")
   database_link(
     limit: Int
     offset: Int
     where: database_link_WhereInput
     orderBy: database_link_OrderByInput
-  ): [database_link] @mysqlSelect(subgraph: "Rfam", table: "database_link") 
-  count_database_link(where: database_link_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "database_link") 
+  ): [database_link] @mysqlSelect(subgraph: "Rfam", table: "database_link")
+  count_database_link(where: database_link_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "database_link")
   db_version(
     limit: Int
     offset: Int
     where: db_version_WhereInput
     orderBy: db_version_OrderByInput
-  ): [db_version] @mysqlSelect(subgraph: "Rfam", table: "db_version") 
-  count_db_version(where: db_version_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "db_version") 
+  ): [db_version] @mysqlSelect(subgraph: "Rfam", table: "db_version")
+  count_db_version(where: db_version_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "db_version")
   dead_clan(
     limit: Int
     offset: Int
     where: dead_clan_WhereInput
     orderBy: dead_clan_OrderByInput
-  ): [dead_clan] @mysqlSelect(subgraph: "Rfam", table: "dead_clan") 
-  count_dead_clan(where: dead_clan_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "dead_clan") 
+  ): [dead_clan] @mysqlSelect(subgraph: "Rfam", table: "dead_clan")
+  count_dead_clan(where: dead_clan_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "dead_clan")
   dead_family(
     limit: Int
     offset: Int
     where: dead_family_WhereInput
     orderBy: dead_family_OrderByInput
-  ): [dead_family] @mysqlSelect(subgraph: "Rfam", table: "dead_family") 
-  count_dead_family(where: dead_family_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "dead_family") 
+  ): [dead_family] @mysqlSelect(subgraph: "Rfam", table: "dead_family")
+  count_dead_family(where: dead_family_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "dead_family")
   ensembl_names(
     limit: Int
     offset: Int
     where: ensembl_names_WhereInput
     orderBy: ensembl_names_OrderByInput
-  ): [ensembl_names] @mysqlSelect(subgraph: "Rfam", table: "ensembl_names") 
-  count_ensembl_names(where: ensembl_names_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "ensembl_names") 
+  ): [ensembl_names] @mysqlSelect(subgraph: "Rfam", table: "ensembl_names")
+  count_ensembl_names(where: ensembl_names_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "ensembl_names")
   family(
     limit: Int
     offset: Int
     where: family_WhereInput
     orderBy: family_OrderByInput
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family") 
-  count_family(where: family_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "family") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family")
+  count_family(where: family_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "family")
   family_author(
     limit: Int
     offset: Int
     where: family_author_WhereInput
     orderBy: family_author_OrderByInput
-  ): [family_author] @mysqlSelect(subgraph: "Rfam", table: "family_author") 
-  count_family_author(where: family_author_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "family_author") 
+  ): [family_author] @mysqlSelect(subgraph: "Rfam", table: "family_author")
+  count_family_author(where: family_author_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "family_author")
   family_literature_reference(
     limit: Int
     offset: Int
     where: family_literature_reference_WhereInput
     orderBy: family_literature_reference_OrderByInput
-  ): [family_literature_reference] @mysqlSelect(subgraph: "Rfam", table: "family_literature_reference") 
-  count_family_literature_reference(where: family_literature_reference_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "family_literature_reference") 
+  ): [family_literature_reference] @mysqlSelect(subgraph: "Rfam", table: "family_literature_reference")
+  count_family_literature_reference(where: family_literature_reference_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "family_literature_reference")
   family_long(
     limit: Int
     offset: Int
     where: family_long_WhereInput
     orderBy: family_long_OrderByInput
-  ): [family_long] @mysqlSelect(subgraph: "Rfam", table: "family_long") 
-  count_family_long(where: family_long_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "family_long") 
+  ): [family_long] @mysqlSelect(subgraph: "Rfam", table: "family_long")
+  count_family_long(where: family_long_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "family_long")
   family_ncbi(
     limit: Int
     offset: Int
     where: family_ncbi_WhereInput
     orderBy: family_ncbi_OrderByInput
-  ): [family_ncbi] @mysqlSelect(subgraph: "Rfam", table: "family_ncbi") 
-  count_family_ncbi(where: family_ncbi_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "family_ncbi") 
+  ): [family_ncbi] @mysqlSelect(subgraph: "Rfam", table: "family_ncbi")
+  count_family_ncbi(where: family_ncbi_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "family_ncbi")
   features(
     limit: Int
     offset: Int
     where: features_WhereInput
     orderBy: features_OrderByInput
-  ): [features] @mysqlSelect(subgraph: "Rfam", table: "features") 
-  count_features(where: features_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "features") 
+  ): [features] @mysqlSelect(subgraph: "Rfam", table: "features")
+  count_features(where: features_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "features")
   full_region(
     limit: Int
     offset: Int
     where: full_region_WhereInput
     orderBy: full_region_OrderByInput
-  ): [full_region] @mysqlSelect(subgraph: "Rfam", table: "full_region") 
-  count_full_region(where: full_region_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "full_region") 
+  ): [full_region] @mysqlSelect(subgraph: "Rfam", table: "full_region")
+  count_full_region(where: full_region_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "full_region")
   genome(
     limit: Int
     offset: Int
     where: genome_WhereInput
     orderBy: genome_OrderByInput
-  ): [genome] @mysqlSelect(subgraph: "Rfam", table: "genome") 
-  count_genome(where: genome_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "genome") 
+  ): [genome] @mysqlSelect(subgraph: "Rfam", table: "genome")
+  count_genome(where: genome_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "genome")
   genome_temp(
     limit: Int
     offset: Int
     where: genome_temp_WhereInput
     orderBy: genome_temp_OrderByInput
-  ): [genome_temp] @mysqlSelect(subgraph: "Rfam", table: "genome_temp") 
-  count_genome_temp(where: genome_temp_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "genome_temp") 
+  ): [genome_temp] @mysqlSelect(subgraph: "Rfam", table: "genome_temp")
+  count_genome_temp(where: genome_temp_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "genome_temp")
   genseq(
     limit: Int
     offset: Int
     where: genseq_WhereInput
     orderBy: genseq_OrderByInput
-  ): [genseq] @mysqlSelect(subgraph: "Rfam", table: "genseq") 
-  count_genseq(where: genseq_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "genseq") 
+  ): [genseq] @mysqlSelect(subgraph: "Rfam", table: "genseq")
+  count_genseq(where: genseq_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "genseq")
   genseq_temp(
     limit: Int
     offset: Int
     where: genseq_temp_WhereInput
     orderBy: genseq_temp_OrderByInput
-  ): [genseq_temp] @mysqlSelect(subgraph: "Rfam", table: "genseq_temp") 
-  count_genseq_temp(where: genseq_temp_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "genseq_temp") 
+  ): [genseq_temp] @mysqlSelect(subgraph: "Rfam", table: "genseq_temp")
+  count_genseq_temp(where: genseq_temp_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "genseq_temp")
   html_alignment(
     limit: Int
     offset: Int
     where: html_alignment_WhereInput
     orderBy: html_alignment_OrderByInput
-  ): [html_alignment] @mysqlSelect(subgraph: "Rfam", table: "html_alignment") 
-  count_html_alignment(where: html_alignment_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "html_alignment") 
+  ): [html_alignment] @mysqlSelect(subgraph: "Rfam", table: "html_alignment")
+  count_html_alignment(where: html_alignment_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "html_alignment")
   keywords(
     limit: Int
     offset: Int
     where: keywords_WhereInput
     orderBy: keywords_OrderByInput
-  ): [keywords] @mysqlSelect(subgraph: "Rfam", table: "keywords") 
-  count_keywords(where: keywords_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "keywords") 
+  ): [keywords] @mysqlSelect(subgraph: "Rfam", table: "keywords")
+  count_keywords(where: keywords_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "keywords")
   literature_reference(
     limit: Int
     offset: Int
     where: literature_reference_WhereInput
     orderBy: literature_reference_OrderByInput
-  ): [literature_reference] @mysqlSelect(subgraph: "Rfam", table: "literature_reference") 
-  count_literature_reference(where: literature_reference_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "literature_reference") 
+  ): [literature_reference] @mysqlSelect(subgraph: "Rfam", table: "literature_reference")
+  count_literature_reference(where: literature_reference_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "literature_reference")
   matches_and_fasta(
     limit: Int
     offset: Int
     where: matches_and_fasta_WhereInput
     orderBy: matches_and_fasta_OrderByInput
-  ): [matches_and_fasta] @mysqlSelect(subgraph: "Rfam", table: "matches_and_fasta") 
-  count_matches_and_fasta(where: matches_and_fasta_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "matches_and_fasta") 
-  motif(limit: Int, offset: Int, where: motif_WhereInput, orderBy: motif_OrderByInput) : [motif] @mysqlSelect(subgraph: "Rfam", table: "motif") 
-  count_motif(where: motif_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif") 
+  ): [matches_and_fasta] @mysqlSelect(subgraph: "Rfam", table: "matches_and_fasta")
+  count_matches_and_fasta(where: matches_and_fasta_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "matches_and_fasta")
+  motif(limit: Int, offset: Int, where: motif_WhereInput, orderBy: motif_OrderByInput) : [motif] @mysqlSelect(subgraph: "Rfam", table: "motif")
+  count_motif(where: motif_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif")
   motif_database_link(
     limit: Int
     offset: Int
     where: motif_database_link_WhereInput
     orderBy: motif_database_link_OrderByInput
-  ): [motif_database_link] @mysqlSelect(subgraph: "Rfam", table: "motif_database_link") 
-  count_motif_database_link(where: motif_database_link_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_database_link") 
+  ): [motif_database_link] @mysqlSelect(subgraph: "Rfam", table: "motif_database_link")
+  count_motif_database_link(where: motif_database_link_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_database_link")
   motif_family_stats(
     limit: Int
     offset: Int
     where: motif_family_stats_WhereInput
     orderBy: motif_family_stats_OrderByInput
-  ): [motif_family_stats] @mysqlSelect(subgraph: "Rfam", table: "motif_family_stats") 
-  count_motif_family_stats(where: motif_family_stats_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_family_stats") 
+  ): [motif_family_stats] @mysqlSelect(subgraph: "Rfam", table: "motif_family_stats")
+  count_motif_family_stats(where: motif_family_stats_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_family_stats")
   motif_file(
     limit: Int
     offset: Int
     where: motif_file_WhereInput
     orderBy: motif_file_OrderByInput
-  ): [motif_file] @mysqlSelect(subgraph: "Rfam", table: "motif_file") 
-  count_motif_file(where: motif_file_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_file") 
+  ): [motif_file] @mysqlSelect(subgraph: "Rfam", table: "motif_file")
+  count_motif_file(where: motif_file_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_file")
   motif_literature(
     limit: Int
     offset: Int
     where: motif_literature_WhereInput
     orderBy: motif_literature_OrderByInput
-  ): [motif_literature] @mysqlSelect(subgraph: "Rfam", table: "motif_literature") 
-  count_motif_literature(where: motif_literature_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_literature") 
+  ): [motif_literature] @mysqlSelect(subgraph: "Rfam", table: "motif_literature")
+  count_motif_literature(where: motif_literature_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_literature")
   motif_matches(
     limit: Int
     offset: Int
     where: motif_matches_WhereInput
     orderBy: motif_matches_OrderByInput
-  ): [motif_matches] @mysqlSelect(subgraph: "Rfam", table: "motif_matches") 
-  count_motif_matches(where: motif_matches_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_matches") 
+  ): [motif_matches] @mysqlSelect(subgraph: "Rfam", table: "motif_matches")
+  count_motif_matches(where: motif_matches_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_matches")
   motif_old(
     limit: Int
     offset: Int
     where: motif_old_WhereInput
     orderBy: motif_old_OrderByInput
-  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old") 
-  count_motif_old(where: motif_old_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_old") 
+  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old")
+  count_motif_old(where: motif_old_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_old")
   motif_pdb(
     limit: Int
     offset: Int
     where: motif_pdb_WhereInput
     orderBy: motif_pdb_OrderByInput
-  ): [motif_pdb] @mysqlSelect(subgraph: "Rfam", table: "motif_pdb") 
-  count_motif_pdb(where: motif_pdb_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_pdb") 
+  ): [motif_pdb] @mysqlSelect(subgraph: "Rfam", table: "motif_pdb")
+  count_motif_pdb(where: motif_pdb_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_pdb")
   motif_ss_image(
     limit: Int
     offset: Int
     where: motif_ss_image_WhereInput
     orderBy: motif_ss_image_OrderByInput
-  ): [motif_ss_image] @mysqlSelect(subgraph: "Rfam", table: "motif_ss_image") 
-  count_motif_ss_image(where: motif_ss_image_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_ss_image") 
-  pdb(limit: Int, offset: Int, where: pdb_WhereInput, orderBy: pdb_OrderByInput) : [pdb] @mysqlSelect(subgraph: "Rfam", table: "pdb") 
-  count_pdb(where: pdb_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pdb") 
+  ): [motif_ss_image] @mysqlSelect(subgraph: "Rfam", table: "motif_ss_image")
+  count_motif_ss_image(where: motif_ss_image_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "motif_ss_image")
+  pdb(limit: Int, offset: Int, where: pdb_WhereInput, orderBy: pdb_OrderByInput) : [pdb] @mysqlSelect(subgraph: "Rfam", table: "pdb")
+  count_pdb(where: pdb_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pdb")
   pdb_full_region(
     limit: Int
     offset: Int
     where: pdb_full_region_WhereInput
     orderBy: pdb_full_region_OrderByInput
-  ): [pdb_full_region] @mysqlSelect(subgraph: "Rfam", table: "pdb_full_region") 
-  count_pdb_full_region(where: pdb_full_region_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pdb_full_region") 
+  ): [pdb_full_region] @mysqlSelect(subgraph: "Rfam", table: "pdb_full_region")
+  count_pdb_full_region(where: pdb_full_region_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pdb_full_region")
   pdb_full_region_old(
     limit: Int
     offset: Int
     where: pdb_full_region_old_WhereInput
     orderBy: pdb_full_region_old_OrderByInput
-  ): [pdb_full_region_old] @mysqlSelect(subgraph: "Rfam", table: "pdb_full_region_old") 
-  count_pdb_full_region_old(where: pdb_full_region_old_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pdb_full_region_old") 
+  ): [pdb_full_region_old] @mysqlSelect(subgraph: "Rfam", table: "pdb_full_region_old")
+  count_pdb_full_region_old(where: pdb_full_region_old_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pdb_full_region_old")
   pdb_rfam_reg(
     limit: Int
     offset: Int
     where: pdb_rfam_reg_WhereInput
     orderBy: pdb_rfam_reg_OrderByInput
-  ): [pdb_rfam_reg] @mysqlSelect(subgraph: "Rfam", table: "pdb_rfam_reg") 
-  count_pdb_rfam_reg(where: pdb_rfam_reg_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pdb_rfam_reg") 
+  ): [pdb_rfam_reg] @mysqlSelect(subgraph: "Rfam", table: "pdb_rfam_reg")
+  count_pdb_rfam_reg(where: pdb_rfam_reg_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pdb_rfam_reg")
   pdb_sequence(
     limit: Int
     offset: Int
     where: pdb_sequence_WhereInput
     orderBy: pdb_sequence_OrderByInput
-  ): [pdb_sequence] @mysqlSelect(subgraph: "Rfam", table: "pdb_sequence") 
-  count_pdb_sequence(where: pdb_sequence_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pdb_sequence") 
+  ): [pdb_sequence] @mysqlSelect(subgraph: "Rfam", table: "pdb_sequence")
+  count_pdb_sequence(where: pdb_sequence_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pdb_sequence")
   processed_data(
     limit: Int
     offset: Int
     where: processed_data_WhereInput
     orderBy: processed_data_OrderByInput
-  ): [processed_data] @mysqlSelect(subgraph: "Rfam", table: "processed_data") 
-  count_processed_data(where: processed_data_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "processed_data") 
+  ): [processed_data] @mysqlSelect(subgraph: "Rfam", table: "processed_data")
+  count_processed_data(where: processed_data_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "processed_data")
   pseudoknot(
     limit: Int
     offset: Int
     where: pseudoknot_WhereInput
     orderBy: pseudoknot_OrderByInput
-  ): [pseudoknot] @mysqlSelect(subgraph: "Rfam", table: "pseudoknot") 
-  count_pseudoknot(where: pseudoknot_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pseudoknot") 
+  ): [pseudoknot] @mysqlSelect(subgraph: "Rfam", table: "pseudoknot")
+  count_pseudoknot(where: pseudoknot_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "pseudoknot")
   refseq(
     limit: Int
     offset: Int
     where: refseq_WhereInput
     orderBy: refseq_OrderByInput
-  ): [refseq] @mysqlSelect(subgraph: "Rfam", table: "refseq") 
-  count_refseq(where: refseq_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "refseq") 
+  ): [refseq] @mysqlSelect(subgraph: "Rfam", table: "refseq")
+  count_refseq(where: refseq_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "refseq")
   refseq_full_region(
     limit: Int
     offset: Int
     where: refseq_full_region_WhereInput
     orderBy: refseq_full_region_OrderByInput
-  ): [refseq_full_region] @mysqlSelect(subgraph: "Rfam", table: "refseq_full_region") 
-  count_refseq_full_region(where: refseq_full_region_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "refseq_full_region") 
+  ): [refseq_full_region] @mysqlSelect(subgraph: "Rfam", table: "refseq_full_region")
+  count_refseq_full_region(where: refseq_full_region_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "refseq_full_region")
   rfamseq(
     limit: Int
     offset: Int
     where: rfamseq_WhereInput
     orderBy: rfamseq_OrderByInput
-  ): [rfamseq] @mysqlSelect(subgraph: "Rfam", table: "rfamseq") 
-  count_rfamseq(where: rfamseq_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "rfamseq") 
+  ): [rfamseq] @mysqlSelect(subgraph: "Rfam", table: "rfamseq")
+  count_rfamseq(where: rfamseq_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "rfamseq")
   rfamseq_temp(
     limit: Int
     offset: Int
     where: rfamseq_temp_WhereInput
     orderBy: rfamseq_temp_OrderByInput
-  ): [rfamseq_temp] @mysqlSelect(subgraph: "Rfam", table: "rfamseq_temp") 
-  count_rfamseq_temp(where: rfamseq_temp_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "rfamseq_temp") 
+  ): [rfamseq_temp] @mysqlSelect(subgraph: "Rfam", table: "rfamseq_temp")
+  count_rfamseq_temp(where: rfamseq_temp_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "rfamseq_temp")
   rnacentral_matches(
     limit: Int
     offset: Int
     where: rnacentral_matches_WhereInput
     orderBy: rnacentral_matches_OrderByInput
-  ): [rnacentral_matches] @mysqlSelect(subgraph: "Rfam", table: "rnacentral_matches") 
-  count_rnacentral_matches(where: rnacentral_matches_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "rnacentral_matches") 
+  ): [rnacentral_matches] @mysqlSelect(subgraph: "Rfam", table: "rnacentral_matches")
+  count_rnacentral_matches(where: rnacentral_matches_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "rnacentral_matches")
   rscape_annotations(
     limit: Int
     offset: Int
     where: rscape_annotations_WhereInput
     orderBy: rscape_annotations_OrderByInput
-  ): [rscape_annotations] @mysqlSelect(subgraph: "Rfam", table: "rscape_annotations") 
-  count_rscape_annotations(where: rscape_annotations_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "rscape_annotations") 
+  ): [rscape_annotations] @mysqlSelect(subgraph: "Rfam", table: "rscape_annotations")
+  count_rscape_annotations(where: rscape_annotations_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "rscape_annotations")
   secondary_structure_image(
     limit: Int
     offset: Int
     where: secondary_structure_image_WhereInput
     orderBy: secondary_structure_image_OrderByInput
-  ): [secondary_structure_image] @mysqlSelect(subgraph: "Rfam", table: "secondary_structure_image") 
-  count_secondary_structure_image(where: secondary_structure_image_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "secondary_structure_image") 
+  ): [secondary_structure_image] @mysqlSelect(subgraph: "Rfam", table: "secondary_structure_image")
+  count_secondary_structure_image(where: secondary_structure_image_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "secondary_structure_image")
   seed_region(
     limit: Int
     offset: Int
     where: seed_region_WhereInput
     orderBy: seed_region_OrderByInput
-  ): [seed_region] @mysqlSelect(subgraph: "Rfam", table: "seed_region") 
-  count_seed_region(where: seed_region_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "seed_region") 
+  ): [seed_region] @mysqlSelect(subgraph: "Rfam", table: "seed_region")
+  count_seed_region(where: seed_region_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "seed_region")
   sunburst(
     limit: Int
     offset: Int
     where: sunburst_WhereInput
     orderBy: sunburst_OrderByInput
-  ): [sunburst] @mysqlSelect(subgraph: "Rfam", table: "sunburst") 
-  count_sunburst(where: sunburst_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "sunburst") 
+  ): [sunburst] @mysqlSelect(subgraph: "Rfam", table: "sunburst")
+  count_sunburst(where: sunburst_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "sunburst")
   taxonomic_tree(
     limit: Int
     offset: Int
     where: taxonomic_tree_WhereInput
     orderBy: taxonomic_tree_OrderByInput
-  ): [taxonomic_tree] @mysqlSelect(subgraph: "Rfam", table: "taxonomic_tree") 
-  count_taxonomic_tree(where: taxonomic_tree_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "taxonomic_tree") 
+  ): [taxonomic_tree] @mysqlSelect(subgraph: "Rfam", table: "taxonomic_tree")
+  count_taxonomic_tree(where: taxonomic_tree_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "taxonomic_tree")
   taxonomy(
     limit: Int
     offset: Int
     where: taxonomy_WhereInput
     orderBy: taxonomy_OrderByInput
-  ): [taxonomy] @mysqlSelect(subgraph: "Rfam", table: "taxonomy") 
-  count_taxonomy(where: taxonomy_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "taxonomy") 
+  ): [taxonomy] @mysqlSelect(subgraph: "Rfam", table: "taxonomy")
+  count_taxonomy(where: taxonomy_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "taxonomy")
   taxonomy_websearch(
     limit: Int
     offset: Int
     where: taxonomy_websearch_WhereInput
     orderBy: taxonomy_websearch_OrderByInput
-  ): [taxonomy_websearch] @mysqlSelect(subgraph: "Rfam", table: "taxonomy_websearch") 
-  count_taxonomy_websearch(where: taxonomy_websearch_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "taxonomy_websearch") 
+  ): [taxonomy_websearch] @mysqlSelect(subgraph: "Rfam", table: "taxonomy_websearch")
+  count_taxonomy_websearch(where: taxonomy_websearch_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "taxonomy_websearch")
   version(
     limit: Int
     offset: Int
     where: version_WhereInput
     orderBy: version_OrderByInput
-  ): [version] @mysqlSelect(subgraph: "Rfam", table: "version") 
-  count_version(where: version_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "version") 
+  ): [version] @mysqlSelect(subgraph: "Rfam", table: "version")
+  count_version(where: version_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "version")
   wikitext(
     limit: Int
     offset: Int
     where: wikitext_WhereInput
     orderBy: wikitext_OrderByInput
-  ): [wikitext] @mysqlSelect(subgraph: "Rfam", table: "wikitext") 
-  count_wikitext(where: wikitext_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "wikitext") 
+  ): [wikitext] @mysqlSelect(subgraph: "Rfam", table: "wikitext")
+  count_wikitext(where: wikitext_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "wikitext")
 }
 
 type _annotated_file @join__type(graph: RFAM)  {
@@ -574,7 +574,7 @@ type _family_file @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type family @join__type(graph: RFAM)  {
@@ -678,7 +678,7 @@ type family @join__type(graph: RFAM)  {
     orderBy: wikitext_OrderByInput
     limit: Int
     offset: Int
-  ): [wikitext] @mysqlSelect(subgraph: "Rfam", table: "wikitext", columnMap: [["auto_wiki", "auto_wiki"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "auto_wiki") 
+  ): [wikitext] @mysqlSelect(subgraph: "Rfam", table: "wikitext", columnMap: [["auto_wiki", "auto_wiki"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "auto_wiki")
   family_literature_reference(
     limit: Int
     offset: Int
@@ -694,19 +694,19 @@ type family @join__type(graph: RFAM)  {
     offset: Int
     where: family_long_WhereInput
     orderBy: family_long_OrderByInput
-  ): [family_long] @mysqlSelect(subgraph: "Rfam", table: "family_long", columnMap: [["rfam_acc", "rfam_acc"]]) 
+  ): [family_long] @mysqlSelect(subgraph: "Rfam", table: "family_long", columnMap: [["rfam_acc", "rfam_acc"]])
   family_ncbi(
     limit: Int
     offset: Int
     where: family_ncbi_WhereInput
     orderBy: family_ncbi_OrderByInput
-  ): [family_ncbi] @mysqlSelect(subgraph: "Rfam", table: "family_ncbi", columnMap: [["rfam_acc", "rfam_acc"]]) 
+  ): [family_ncbi] @mysqlSelect(subgraph: "Rfam", table: "family_ncbi", columnMap: [["rfam_acc", "rfam_acc"]])
   full_region(
     limit: Int
     offset: Int
     where: full_region_WhereInput
     orderBy: full_region_OrderByInput
-  ): [full_region] @mysqlSelect(subgraph: "Rfam", table: "full_region", columnMap: [["rfam_acc", "rfam_acc"]]) 
+  ): [full_region] @mysqlSelect(subgraph: "Rfam", table: "full_region", columnMap: [["rfam_acc", "rfam_acc"]])
   html_alignment(
     limit: Int
     offset: Int
@@ -782,7 +782,7 @@ type family @join__type(graph: RFAM)  {
     offset: Int
     where: pseudoknot_WhereInput
     orderBy: pseudoknot_OrderByInput
-  ): [pseudoknot] @mysqlSelect(subgraph: "Rfam", table: "pseudoknot", columnMap: [["rfam_acc", "rfam_acc"]]) 
+  ): [pseudoknot] @mysqlSelect(subgraph: "Rfam", table: "pseudoknot", columnMap: [["rfam_acc", "rfam_acc"]])
   refseq_full_region(
     limit: Int
     offset: Int
@@ -808,13 +808,13 @@ type family @join__type(graph: RFAM)  {
     offset: Int
     where: seed_region_WhereInput
     orderBy: seed_region_OrderByInput
-  ): [seed_region] @mysqlSelect(subgraph: "Rfam", table: "seed_region", columnMap: [["rfam_acc", "rfam_acc"]]) 
+  ): [seed_region] @mysqlSelect(subgraph: "Rfam", table: "seed_region", columnMap: [["rfam_acc", "rfam_acc"]])
   sunburst(
     limit: Int
     offset: Int
     where: sunburst_WhereInput
     orderBy: sunburst_OrderByInput
-  ): [sunburst] @mysqlSelect(subgraph: "Rfam", table: "sunburst", columnMap: [["rfam_acc", "rfam_acc"]]) 
+  ): [sunburst] @mysqlSelect(subgraph: "Rfam", table: "sunburst", columnMap: [["rfam_acc", "rfam_acc"]])
 }
 
 type _overlap_membership @join__type(graph: RFAM)  {
@@ -825,7 +825,7 @@ type _overlap_membership @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
   _overlap(
     where: _overlap_WhereInput
     orderBy: _overlap_OrderByInput
@@ -835,7 +835,7 @@ type _overlap_membership @join__type(graph: RFAM)  {
     subgraph: "Rfam"
     table: "_overlap"
     columnMap: [["auto_overlap", "auto_overlap"]]
-  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "auto_overlap") 
+  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "auto_overlap")
 }
 
 type _overlap @join__type(graph: RFAM)  {
@@ -871,7 +871,7 @@ type _post_process @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type alignment_and_tree @join__type(graph: RFAM)  {
@@ -888,19 +888,19 @@ type alignment_and_tree @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type clan_membership @join__type(graph: RFAM)  {
   clan_acc: String!
   rfam_acc: String!
-  clan(where: clan_WhereInput, orderBy: clan_OrderByInput, limit: Int, offset: Int) : [clan] @mysqlSelect(subgraph: "Rfam", table: "clan", columnMap: [["clan_acc", "clan_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "clan_acc") 
+  clan(where: clan_WhereInput, orderBy: clan_OrderByInput, limit: Int, offset: Int) : [clan] @mysqlSelect(subgraph: "Rfam", table: "clan", columnMap: [["clan_acc", "clan_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "clan_acc")
   family(
     where: family_WhereInput
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type clan @join__type(graph: RFAM)  {
@@ -950,7 +950,7 @@ type clan_database_link @join__type(graph: RFAM)  {
   comment: String
   db_link: String!
   other_params: String
-  clan(where: clan_WhereInput, orderBy: clan_OrderByInput, limit: Int, offset: Int) : [clan] @mysqlSelect(subgraph: "Rfam", table: "clan", columnMap: [["clan_acc", "clan_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "clan_acc") 
+  clan(where: clan_WhereInput, orderBy: clan_OrderByInput, limit: Int, offset: Int) : [clan] @mysqlSelect(subgraph: "Rfam", table: "clan", columnMap: [["clan_acc", "clan_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "clan_acc")
 }
 
 type clan_literature_reference @join__type(graph: RFAM)  {
@@ -958,7 +958,7 @@ type clan_literature_reference @join__type(graph: RFAM)  {
   pmid: Int!
   comment: String
   order_added: Int
-  clan(where: clan_WhereInput, orderBy: clan_OrderByInput, limit: Int, offset: Int) : [clan] @mysqlSelect(subgraph: "Rfam", table: "clan", columnMap: [["clan_acc", "clan_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "clan_acc") 
+  clan(where: clan_WhereInput, orderBy: clan_OrderByInput, limit: Int, offset: Int) : [clan] @mysqlSelect(subgraph: "Rfam", table: "clan", columnMap: [["clan_acc", "clan_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "clan_acc")
   literature_reference(
     where: literature_reference_WhereInput
     orderBy: literature_reference_OrderByInput
@@ -968,7 +968,7 @@ type clan_literature_reference @join__type(graph: RFAM)  {
     subgraph: "Rfam"
     table: "literature_reference"
     columnMap: [["pmid", "pmid"]]
-  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "pmid") 
+  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "pmid")
 }
 
 type literature_reference @join__type(graph: RFAM)  {
@@ -1001,7 +1001,7 @@ type literature_reference @join__type(graph: RFAM)  {
     offset: Int
     where: motif_literature_WhereInput
     orderBy: motif_literature_OrderByInput
-  ): [motif_literature] @mysqlSelect(subgraph: "Rfam", table: "motif_literature", columnMap: [["pmid", "pmid"]]) 
+  ): [motif_literature] @mysqlSelect(subgraph: "Rfam", table: "motif_literature", columnMap: [["pmid", "pmid"]])
 }
 
 type family_literature_reference @join__type(graph: RFAM)  {
@@ -1014,7 +1014,7 @@ type family_literature_reference @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
   literature_reference(
     where: literature_reference_WhereInput
     orderBy: literature_reference_OrderByInput
@@ -1024,7 +1024,7 @@ type family_literature_reference @join__type(graph: RFAM)  {
     subgraph: "Rfam"
     table: "literature_reference"
     columnMap: [["pmid", "pmid"]]
-  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "pmid") 
+  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "pmid")
 }
 
 type motif_literature @join__type(graph: RFAM)  {
@@ -1041,13 +1041,13 @@ type motif_literature @join__type(graph: RFAM)  {
     subgraph: "Rfam"
     table: "literature_reference"
     columnMap: [["pmid", "pmid"]]
-  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "pmid") 
+  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "pmid")
   motif_old(
     where: motif_old_WhereInput
     orderBy: motif_old_OrderByInput
     limit: Int
     offset: Int
-  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc") 
+  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc")
 }
 
 type motif_old @join__type(graph: RFAM)  {
@@ -1108,7 +1108,7 @@ type motif_old @join__type(graph: RFAM)  {
     offset: Int
     where: motif_pdb_WhereInput
     orderBy: motif_pdb_OrderByInput
-  ): [motif_pdb] @mysqlSelect(subgraph: "Rfam", table: "motif_pdb", columnMap: [["motif_acc", "motif_acc"]]) 
+  ): [motif_pdb] @mysqlSelect(subgraph: "Rfam", table: "motif_pdb", columnMap: [["motif_acc", "motif_acc"]])
   motif_ss_image(
     limit: Int
     offset: Int
@@ -1133,13 +1133,13 @@ type motif_family_stats @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
   motif_old(
     where: motif_old_WhereInput
     orderBy: motif_old_OrderByInput
     limit: Int
     offset: Int
-  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc") 
+  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc")
 }
 
 type motif_matches @join__type(graph: RFAM)  {
@@ -1159,13 +1159,13 @@ type motif_matches @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
   motif_old(
     where: motif_old_WhereInput
     orderBy: motif_old_OrderByInput
     limit: Int
     offset: Int
-  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc") 
+  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc")
   rfamseq(
     where: rfamseq_WhereInput
     orderBy: rfamseq_OrderByInput
@@ -1175,12 +1175,12 @@ type motif_matches @join__type(graph: RFAM)  {
     subgraph: "Rfam"
     table: "rfamseq"
     columnMap: [["rfamseq_acc", "rfamseq_acc"]]
-  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "rfamseq_acc") 
+  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "rfamseq_acc")
 }
 
 type rfamseq @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   rfamseq_acc: String!
   accession: String!
@@ -1236,7 +1236,7 @@ type rfamseq @join__type(graph: RFAM)  {
     orderBy: taxonomy_OrderByInput
     limit: Int
     offset: Int
-  ): [taxonomy] @mysqlSelect(subgraph: "Rfam", table: "taxonomy", columnMap: [["ncbi_id", "ncbi_id"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "ncbi_id") 
+  ): [taxonomy] @mysqlSelect(subgraph: "Rfam", table: "taxonomy", columnMap: [["ncbi_id", "ncbi_id"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "ncbi_id")
   seed_region(
     limit: Int
     offset: Int
@@ -1267,7 +1267,7 @@ type features @join__type(graph: RFAM)  {
     subgraph: "Rfam"
     table: "rfamseq"
     columnMap: [["rfamseq_acc", "rfamseq_acc"]]
-  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "rfamseq_acc") 
+  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "rfamseq_acc")
 }
 
 type full_region @join__type(graph: RFAM)  {
@@ -1290,7 +1290,7 @@ type full_region @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
   rfamseq(
     where: rfamseq_WhereInput
     orderBy: rfamseq_OrderByInput
@@ -1300,7 +1300,7 @@ type full_region @join__type(graph: RFAM)  {
     subgraph: "Rfam"
     table: "rfamseq"
     columnMap: [["rfamseq_acc", "rfamseq_acc"]]
-  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "rfamseq_acc") 
+  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "rfamseq_acc")
 }
 
 type pdb_rfam_reg @join__type(graph: RFAM)  {
@@ -1320,14 +1320,14 @@ type pdb_rfam_reg @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
-  pdb(where: pdb_WhereInput, orderBy: pdb_OrderByInput, limit: Int, offset: Int) : [pdb] @mysqlSelect(subgraph: "Rfam", table: "pdb", columnMap: [["pdb_id", "pdb_id"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "pdb_id") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
+  pdb(where: pdb_WhereInput, orderBy: pdb_OrderByInput, limit: Int, offset: Int) : [pdb] @mysqlSelect(subgraph: "Rfam", table: "pdb", columnMap: [["pdb_id", "pdb_id"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "pdb_id")
   pdb_sequence(
     where: pdb_sequence_WhereInput
     orderBy: pdb_sequence_OrderByInput
     limit: Int
     offset: Int
-  ): [pdb_sequence] @mysqlSelect(subgraph: "Rfam", table: "pdb_sequence", columnMap: [["pdb_seq", "pdb_seq"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "pdb_seq") 
+  ): [pdb_sequence] @mysqlSelect(subgraph: "Rfam", table: "pdb_sequence", columnMap: [["pdb_seq", "pdb_seq"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "pdb_seq")
   rfamseq(
     where: rfamseq_WhereInput
     orderBy: rfamseq_OrderByInput
@@ -1337,7 +1337,7 @@ type pdb_rfam_reg @join__type(graph: RFAM)  {
     subgraph: "Rfam"
     table: "rfamseq"
     columnMap: [["rfamseq_acc", "rfamseq_acc"]]
-  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "rfamseq_acc") 
+  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "rfamseq_acc")
 }
 
 type pdb @join__type(graph: RFAM)  {
@@ -1353,13 +1353,13 @@ type pdb @join__type(graph: RFAM)  {
     offset: Int
     where: pdb_rfam_reg_WhereInput
     orderBy: pdb_rfam_reg_OrderByInput
-  ): [pdb_rfam_reg] @mysqlSelect(subgraph: "Rfam", table: "pdb_rfam_reg", columnMap: [["pdb_id", "pdb_id"]]) 
+  ): [pdb_rfam_reg] @mysqlSelect(subgraph: "Rfam", table: "pdb_rfam_reg", columnMap: [["pdb_id", "pdb_id"]])
   pdb_sequence(
     limit: Int
     offset: Int
     where: pdb_sequence_WhereInput
     orderBy: pdb_sequence_OrderByInput
-  ): [pdb_sequence] @mysqlSelect(subgraph: "Rfam", table: "pdb_sequence", columnMap: [["pdb_id", "pdb_id"]]) 
+  ): [pdb_sequence] @mysqlSelect(subgraph: "Rfam", table: "pdb_sequence", columnMap: [["pdb_id", "pdb_id"]])
 }
 
 type pdb_sequence @join__type(graph: RFAM)  {
@@ -1371,8 +1371,8 @@ type pdb_sequence @join__type(graph: RFAM)  {
     offset: Int
     where: pdb_rfam_reg_WhereInput
     orderBy: pdb_rfam_reg_OrderByInput
-  ): [pdb_rfam_reg] @mysqlSelect(subgraph: "Rfam", table: "pdb_rfam_reg", columnMap: [["pdb_seq", "pdb_seq"]]) 
-  pdb(where: pdb_WhereInput, orderBy: pdb_OrderByInput, limit: Int, offset: Int) : [pdb] @mysqlSelect(subgraph: "Rfam", table: "pdb", columnMap: [["pdb_id", "pdb_id"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "pdb_id") 
+  ): [pdb_rfam_reg] @mysqlSelect(subgraph: "Rfam", table: "pdb_rfam_reg", columnMap: [["pdb_seq", "pdb_seq"]])
+  pdb(where: pdb_WhereInput, orderBy: pdb_OrderByInput, limit: Int, offset: Int) : [pdb] @mysqlSelect(subgraph: "Rfam", table: "pdb", columnMap: [["pdb_id", "pdb_id"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "pdb_id")
 }
 
 type taxonomy @join__type(graph: RFAM)  {
@@ -1386,13 +1386,13 @@ type taxonomy @join__type(graph: RFAM)  {
     offset: Int
     where: family_ncbi_WhereInput
     orderBy: family_ncbi_OrderByInput
-  ): [family_ncbi] @mysqlSelect(subgraph: "Rfam", table: "family_ncbi", columnMap: [["ncbi_id", "ncbi_id"]]) 
+  ): [family_ncbi] @mysqlSelect(subgraph: "Rfam", table: "family_ncbi", columnMap: [["ncbi_id", "ncbi_id"]])
   rfamseq(
     limit: Int
     offset: Int
     where: rfamseq_WhereInput
     orderBy: rfamseq_OrderByInput
-  ): [rfamseq] @mysqlSelect(subgraph: "Rfam", table: "rfamseq", columnMap: [["ncbi_id", "ncbi_id"]]) 
+  ): [rfamseq] @mysqlSelect(subgraph: "Rfam", table: "rfamseq", columnMap: [["ncbi_id", "ncbi_id"]])
 }
 
 type family_ncbi @join__type(graph: RFAM)  {
@@ -1407,13 +1407,13 @@ type family_ncbi @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
   taxonomy(
     where: taxonomy_WhereInput
     orderBy: taxonomy_OrderByInput
     limit: Int
     offset: Int
-  ): [taxonomy] @mysqlSelect(subgraph: "Rfam", table: "taxonomy", columnMap: [["ncbi_id", "ncbi_id"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "ncbi_id") 
+  ): [taxonomy] @mysqlSelect(subgraph: "Rfam", table: "taxonomy", columnMap: [["ncbi_id", "ncbi_id"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "ncbi_id")
 }
 
 type seed_region @join__type(graph: RFAM)  {
@@ -1427,7 +1427,7 @@ type seed_region @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
   rfamseq(
     where: rfamseq_WhereInput
     orderBy: rfamseq_OrderByInput
@@ -1437,7 +1437,7 @@ type seed_region @join__type(graph: RFAM)  {
     subgraph: "Rfam"
     table: "rfamseq"
     columnMap: [["rfamseq_acc", "rfamseq_acc"]]
-  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "rfamseq_acc") 
+  ) @mysqlTableForeign(subgraph: "Rfam", columnName: "rfamseq_acc")
 }
 
 type motif_pdb @join__type(graph: RFAM)  {
@@ -1451,7 +1451,7 @@ type motif_pdb @join__type(graph: RFAM)  {
     orderBy: motif_old_OrderByInput
     limit: Int
     offset: Int
-  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc") 
+  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc")
 }
 
 type motif_ss_image @join__type(graph: RFAM)  {
@@ -1463,13 +1463,13 @@ type motif_ss_image @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
   motif_old(
     where: motif_old_WhereInput
     orderBy: motif_old_OrderByInput
     limit: Int
     offset: Int
-  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc") 
+  ): [motif_old] @mysqlSelect(subgraph: "Rfam", table: "motif_old", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc")
 }
 
 type database_link @join__type(graph: RFAM)  {
@@ -1483,7 +1483,7 @@ type database_link @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type wikitext @join__type(graph: RFAM)  {
@@ -1494,7 +1494,7 @@ type wikitext @join__type(graph: RFAM)  {
     offset: Int
     where: family_WhereInput
     orderBy: family_OrderByInput
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["auto_wiki", "auto_wiki"]]) 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["auto_wiki", "auto_wiki"]])
 }
 
 type family_long @join__type(graph: RFAM)  {
@@ -1506,7 +1506,7 @@ type family_long @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type html_alignment @join__type(graph: RFAM)  {
@@ -1520,7 +1520,7 @@ type html_alignment @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type matches_and_fasta @join__type(graph: RFAM)  {
@@ -1533,7 +1533,7 @@ type matches_and_fasta @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type processed_data @join__type(graph: RFAM)  {
@@ -1552,7 +1552,7 @@ type processed_data @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type pseudoknot @join__type(graph: RFAM)  {
@@ -1565,7 +1565,7 @@ type pseudoknot @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type refseq_full_region @join__type(graph: RFAM)  {
@@ -1586,13 +1586,13 @@ type refseq_full_region @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
   refseq(
     where: refseq_WhereInput
     orderBy: refseq_OrderByInput
     limit: Int
     offset: Int
-  ): [refseq] @mysqlSelect(subgraph: "Rfam", table: "refseq", columnMap: [["refseq_acc", "refseq_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "refseq_acc") 
+  ): [refseq] @mysqlSelect(subgraph: "Rfam", table: "refseq", columnMap: [["refseq_acc", "refseq_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "refseq_acc")
 }
 
 type refseq @join__type(graph: RFAM)  {
@@ -1621,7 +1621,7 @@ type secondary_structure_image @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type sunburst @join__type(graph: RFAM)  {
@@ -1633,7 +1633,7 @@ type sunburst @join__type(graph: RFAM)  {
     orderBy: family_OrderByInput
     limit: Int
     offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc")
 }
 
 type _genome_data @join__type(graph: RFAM)  {
@@ -1699,7 +1699,7 @@ type dead_family @join__type(graph: RFAM)  {
   forward_to: String
   """
   wikipedia page title
-  
+
   """
   title: String
   user: String!
@@ -1718,7 +1718,7 @@ type family_author @join__type(graph: RFAM)  {
 
 type genome @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String!
   assembly_acc: String
@@ -1746,7 +1746,7 @@ type genome @join__type(graph: RFAM)  {
 
 type genome_temp @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String!
   assembly_acc: String
@@ -1774,7 +1774,7 @@ type genome_temp @join__type(graph: RFAM)  {
 
 type genseq @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String!
   rfamseq_acc: String
@@ -1785,7 +1785,7 @@ type genseq @join__type(graph: RFAM)  {
 
 type genseq_temp @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String!
   rfamseq_acc: String
@@ -1860,14 +1860,14 @@ type motif_database_link @join__type(graph: RFAM)  {
   comment: String
   db_link: String!
   other_params: String
-  motif(where: motif_WhereInput, orderBy: motif_OrderByInput, limit: Int, offset: Int) : [motif] @mysqlSelect(subgraph: "Rfam", table: "motif", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc") 
+  motif(where: motif_WhereInput, orderBy: motif_OrderByInput, limit: Int, offset: Int) : [motif] @mysqlSelect(subgraph: "Rfam", table: "motif", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc")
 }
 
 type motif_file @join__type(graph: RFAM)  {
   motif_acc: String!
   seed: String!
   cm: String!
-  motif(where: motif_WhereInput, orderBy: motif_OrderByInput, limit: Int, offset: Int) : [motif] @mysqlSelect(subgraph: "Rfam", table: "motif", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc") 
+  motif(where: motif_WhereInput, orderBy: motif_OrderByInput, limit: Int, offset: Int) : [motif] @mysqlSelect(subgraph: "Rfam", table: "motif", columnMap: [["motif_acc", "motif_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "motif_acc")
 }
 
 type pdb_full_region @join__type(graph: RFAM)  {
@@ -1900,7 +1900,7 @@ type pdb_full_region_old @join__type(graph: RFAM)  {
 
 type rfamseq_temp @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   rfamseq_acc: String!
   accession: String!
@@ -1965,418 +1965,418 @@ type version @join__type(graph: RFAM)  {
 }
 
 type Mutation @join__type(graph: RFAM)  {
-  insert__annotated_file(_annotated_file: _annotated_file_InsertInput!) : _annotated_file @mysqlInsert(subgraph: "Rfam", table: "_annotated_file", primaryKeys: ["rfam_acc"]) 
+  insert__annotated_file(_annotated_file: _annotated_file_InsertInput!) : _annotated_file @mysqlInsert(subgraph: "Rfam", table: "_annotated_file", primaryKeys: ["rfam_acc"])
   update__annotated_file(
     _annotated_file: _annotated_file_UpdateInput!
     where: _annotated_file_WhereInput
-  ): _annotated_file @mysqlUpdate(subgraph: "Rfam", table: "_annotated_file") 
-  delete__annotated_file(where: _annotated_file_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_annotated_file") 
-  insert__family_file(_family_file: _family_file_InsertInput!) : _family_file @mysqlInsert(subgraph: "Rfam", table: "_family_file", primaryKeys: []) 
-  update__family_file(_family_file: _family_file_UpdateInput!, where: _family_file_WhereInput) : _family_file @mysqlUpdate(subgraph: "Rfam", table: "_family_file") 
-  delete__family_file(where: _family_file_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_family_file") 
-  insert__genome_data(_genome_data: _genome_data_InsertInput!) : _genome_data @mysqlInsert(subgraph: "Rfam", table: "_genome_data", primaryKeys: []) 
-  update__genome_data(_genome_data: _genome_data_UpdateInput!, where: _genome_data_WhereInput) : _genome_data @mysqlUpdate(subgraph: "Rfam", table: "_genome_data") 
-  delete__genome_data(where: _genome_data_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_genome_data") 
-  insert__lock(_lock: _lock_InsertInput!) : _lock @mysqlInsert(subgraph: "Rfam", table: "_lock", primaryKeys: []) 
-  update__lock(_lock: _lock_UpdateInput!, where: _lock_WhereInput) : _lock @mysqlUpdate(subgraph: "Rfam", table: "_lock") 
-  delete__lock(where: _lock_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_lock") 
-  insert__overlap(_overlap: _overlap_InsertInput!) : _overlap @mysqlInsert(subgraph: "Rfam", table: "_overlap", primaryKeys: ["auto_overlap"]) 
-  update__overlap(_overlap: _overlap_UpdateInput!, where: _overlap_WhereInput) : _overlap @mysqlUpdate(subgraph: "Rfam", table: "_overlap") 
-  delete__overlap(where: _overlap_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_overlap") 
-  insert__overlap_membership(_overlap_membership: _overlap_membership_InsertInput!) : _overlap_membership @mysqlInsert(subgraph: "Rfam", table: "_overlap_membership", primaryKeys: []) 
+  ): _annotated_file @mysqlUpdate(subgraph: "Rfam", table: "_annotated_file")
+  delete__annotated_file(where: _annotated_file_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_annotated_file")
+  insert__family_file(_family_file: _family_file_InsertInput!) : _family_file @mysqlInsert(subgraph: "Rfam", table: "_family_file", primaryKeys: [])
+  update__family_file(_family_file: _family_file_UpdateInput!, where: _family_file_WhereInput) : _family_file @mysqlUpdate(subgraph: "Rfam", table: "_family_file")
+  delete__family_file(where: _family_file_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_family_file")
+  insert__genome_data(_genome_data: _genome_data_InsertInput!) : _genome_data @mysqlInsert(subgraph: "Rfam", table: "_genome_data", primaryKeys: [])
+  update__genome_data(_genome_data: _genome_data_UpdateInput!, where: _genome_data_WhereInput) : _genome_data @mysqlUpdate(subgraph: "Rfam", table: "_genome_data")
+  delete__genome_data(where: _genome_data_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_genome_data")
+  insert__lock(_lock: _lock_InsertInput!) : _lock @mysqlInsert(subgraph: "Rfam", table: "_lock", primaryKeys: [])
+  update__lock(_lock: _lock_UpdateInput!, where: _lock_WhereInput) : _lock @mysqlUpdate(subgraph: "Rfam", table: "_lock")
+  delete__lock(where: _lock_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_lock")
+  insert__overlap(_overlap: _overlap_InsertInput!) : _overlap @mysqlInsert(subgraph: "Rfam", table: "_overlap", primaryKeys: ["auto_overlap"])
+  update__overlap(_overlap: _overlap_UpdateInput!, where: _overlap_WhereInput) : _overlap @mysqlUpdate(subgraph: "Rfam", table: "_overlap")
+  delete__overlap(where: _overlap_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_overlap")
+  insert__overlap_membership(_overlap_membership: _overlap_membership_InsertInput!) : _overlap_membership @mysqlInsert(subgraph: "Rfam", table: "_overlap_membership", primaryKeys: [])
   update__overlap_membership(
     _overlap_membership: _overlap_membership_UpdateInput!
     where: _overlap_membership_WhereInput
-  ): _overlap_membership @mysqlUpdate(subgraph: "Rfam", table: "_overlap_membership") 
-  delete__overlap_membership(where: _overlap_membership_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_overlap_membership") 
-  insert__post_process(_post_process: _post_process_InsertInput!) : _post_process @mysqlInsert(subgraph: "Rfam", table: "_post_process", primaryKeys: []) 
-  update__post_process(_post_process: _post_process_UpdateInput!, where: _post_process_WhereInput) : _post_process @mysqlUpdate(subgraph: "Rfam", table: "_post_process") 
-  delete__post_process(where: _post_process_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_post_process") 
-  insert_alignment_and_tree(alignment_and_tree: alignment_and_tree_InsertInput!) : alignment_and_tree @mysqlInsert(subgraph: "Rfam", table: "alignment_and_tree", primaryKeys: []) 
+  ): _overlap_membership @mysqlUpdate(subgraph: "Rfam", table: "_overlap_membership")
+  delete__overlap_membership(where: _overlap_membership_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_overlap_membership")
+  insert__post_process(_post_process: _post_process_InsertInput!) : _post_process @mysqlInsert(subgraph: "Rfam", table: "_post_process", primaryKeys: [])
+  update__post_process(_post_process: _post_process_UpdateInput!, where: _post_process_WhereInput) : _post_process @mysqlUpdate(subgraph: "Rfam", table: "_post_process")
+  delete__post_process(where: _post_process_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "_post_process")
+  insert_alignment_and_tree(alignment_and_tree: alignment_and_tree_InsertInput!) : alignment_and_tree @mysqlInsert(subgraph: "Rfam", table: "alignment_and_tree", primaryKeys: [])
   update_alignment_and_tree(
     alignment_and_tree: alignment_and_tree_UpdateInput!
     where: alignment_and_tree_WhereInput
-  ): alignment_and_tree @mysqlUpdate(subgraph: "Rfam", table: "alignment_and_tree") 
-  delete_alignment_and_tree(where: alignment_and_tree_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "alignment_and_tree") 
-  insert_author(author: author_InsertInput!) : author @mysqlInsert(subgraph: "Rfam", table: "author", primaryKeys: ["author_id"]) 
-  update_author(author: author_UpdateInput!, where: author_WhereInput) : author @mysqlUpdate(subgraph: "Rfam", table: "author") 
-  delete_author(where: author_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "author") 
-  insert_clan(clan: clan_InsertInput!) : clan @mysqlInsert(subgraph: "Rfam", table: "clan", primaryKeys: ["clan_acc"]) 
-  update_clan(clan: clan_UpdateInput!, where: clan_WhereInput) : clan @mysqlUpdate(subgraph: "Rfam", table: "clan") 
-  delete_clan(where: clan_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "clan") 
-  insert_clan_database_link(clan_database_link: clan_database_link_InsertInput!) : clan_database_link @mysqlInsert(subgraph: "Rfam", table: "clan_database_link", primaryKeys: []) 
+  ): alignment_and_tree @mysqlUpdate(subgraph: "Rfam", table: "alignment_and_tree")
+  delete_alignment_and_tree(where: alignment_and_tree_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "alignment_and_tree")
+  insert_author(author: author_InsertInput!) : author @mysqlInsert(subgraph: "Rfam", table: "author", primaryKeys: ["author_id"])
+  update_author(author: author_UpdateInput!, where: author_WhereInput) : author @mysqlUpdate(subgraph: "Rfam", table: "author")
+  delete_author(where: author_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "author")
+  insert_clan(clan: clan_InsertInput!) : clan @mysqlInsert(subgraph: "Rfam", table: "clan", primaryKeys: ["clan_acc"])
+  update_clan(clan: clan_UpdateInput!, where: clan_WhereInput) : clan @mysqlUpdate(subgraph: "Rfam", table: "clan")
+  delete_clan(where: clan_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "clan")
+  insert_clan_database_link(clan_database_link: clan_database_link_InsertInput!) : clan_database_link @mysqlInsert(subgraph: "Rfam", table: "clan_database_link", primaryKeys: [])
   update_clan_database_link(
     clan_database_link: clan_database_link_UpdateInput!
     where: clan_database_link_WhereInput
-  ): clan_database_link @mysqlUpdate(subgraph: "Rfam", table: "clan_database_link") 
-  delete_clan_database_link(where: clan_database_link_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "clan_database_link") 
-  insert_clan_literature_reference(clan_literature_reference: clan_literature_reference_InsertInput!) : clan_literature_reference @mysqlInsert(subgraph: "Rfam", table: "clan_literature_reference", primaryKeys: []) 
+  ): clan_database_link @mysqlUpdate(subgraph: "Rfam", table: "clan_database_link")
+  delete_clan_database_link(where: clan_database_link_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "clan_database_link")
+  insert_clan_literature_reference(clan_literature_reference: clan_literature_reference_InsertInput!) : clan_literature_reference @mysqlInsert(subgraph: "Rfam", table: "clan_literature_reference", primaryKeys: [])
   update_clan_literature_reference(
     clan_literature_reference: clan_literature_reference_UpdateInput!
     where: clan_literature_reference_WhereInput
-  ): clan_literature_reference @mysqlUpdate(subgraph: "Rfam", table: "clan_literature_reference") 
-  delete_clan_literature_reference(where: clan_literature_reference_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "clan_literature_reference") 
-  insert_clan_membership(clan_membership: clan_membership_InsertInput!) : clan_membership @mysqlInsert(subgraph: "Rfam", table: "clan_membership", primaryKeys: ["rfam_acc"]) 
+  ): clan_literature_reference @mysqlUpdate(subgraph: "Rfam", table: "clan_literature_reference")
+  delete_clan_literature_reference(where: clan_literature_reference_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "clan_literature_reference")
+  insert_clan_membership(clan_membership: clan_membership_InsertInput!) : clan_membership @mysqlInsert(subgraph: "Rfam", table: "clan_membership", primaryKeys: ["rfam_acc"])
   update_clan_membership(
     clan_membership: clan_membership_UpdateInput!
     where: clan_membership_WhereInput
-  ): clan_membership @mysqlUpdate(subgraph: "Rfam", table: "clan_membership") 
-  delete_clan_membership(where: clan_membership_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "clan_membership") 
-  insert_database_link(database_link: database_link_InsertInput!) : database_link @mysqlInsert(subgraph: "Rfam", table: "database_link", primaryKeys: []) 
-  update_database_link(database_link: database_link_UpdateInput!, where: database_link_WhereInput) : database_link @mysqlUpdate(subgraph: "Rfam", table: "database_link") 
-  delete_database_link(where: database_link_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "database_link") 
-  insert_db_version(db_version: db_version_InsertInput!) : db_version @mysqlInsert(subgraph: "Rfam", table: "db_version", primaryKeys: ["rfam_release"]) 
-  update_db_version(db_version: db_version_UpdateInput!, where: db_version_WhereInput) : db_version @mysqlUpdate(subgraph: "Rfam", table: "db_version") 
-  delete_db_version(where: db_version_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "db_version") 
-  insert_dead_clan(dead_clan: dead_clan_InsertInput!) : dead_clan @mysqlInsert(subgraph: "Rfam", table: "dead_clan", primaryKeys: ["clan_acc"]) 
-  update_dead_clan(dead_clan: dead_clan_UpdateInput!, where: dead_clan_WhereInput) : dead_clan @mysqlUpdate(subgraph: "Rfam", table: "dead_clan") 
-  delete_dead_clan(where: dead_clan_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "dead_clan") 
-  insert_dead_family(dead_family: dead_family_InsertInput!) : dead_family @mysqlInsert(subgraph: "Rfam", table: "dead_family", primaryKeys: ["rfam_acc"]) 
-  update_dead_family(dead_family: dead_family_UpdateInput!, where: dead_family_WhereInput) : dead_family @mysqlUpdate(subgraph: "Rfam", table: "dead_family") 
-  delete_dead_family(where: dead_family_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "dead_family") 
-  insert_ensembl_names(ensembl_names: ensembl_names_InsertInput!) : ensembl_names @mysqlInsert(subgraph: "Rfam", table: "ensembl_names", primaryKeys: ["insdc"]) 
-  update_ensembl_names(ensembl_names: ensembl_names_UpdateInput!, where: ensembl_names_WhereInput) : ensembl_names @mysqlUpdate(subgraph: "Rfam", table: "ensembl_names") 
-  delete_ensembl_names(where: ensembl_names_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "ensembl_names") 
-  insert_family(family: family_InsertInput!) : family @mysqlInsert(subgraph: "Rfam", table: "family", primaryKeys: ["rfam_acc"]) 
-  update_family(family: family_UpdateInput!, where: family_WhereInput) : family @mysqlUpdate(subgraph: "Rfam", table: "family") 
-  delete_family(where: family_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "family") 
-  insert_family_author(family_author: family_author_InsertInput!) : family_author @mysqlInsert(subgraph: "Rfam", table: "family_author", primaryKeys: []) 
-  update_family_author(family_author: family_author_UpdateInput!, where: family_author_WhereInput) : family_author @mysqlUpdate(subgraph: "Rfam", table: "family_author") 
-  delete_family_author(where: family_author_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "family_author") 
-  insert_family_literature_reference(family_literature_reference: family_literature_reference_InsertInput!) : family_literature_reference @mysqlInsert(subgraph: "Rfam", table: "family_literature_reference", primaryKeys: []) 
+  ): clan_membership @mysqlUpdate(subgraph: "Rfam", table: "clan_membership")
+  delete_clan_membership(where: clan_membership_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "clan_membership")
+  insert_database_link(database_link: database_link_InsertInput!) : database_link @mysqlInsert(subgraph: "Rfam", table: "database_link", primaryKeys: [])
+  update_database_link(database_link: database_link_UpdateInput!, where: database_link_WhereInput) : database_link @mysqlUpdate(subgraph: "Rfam", table: "database_link")
+  delete_database_link(where: database_link_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "database_link")
+  insert_db_version(db_version: db_version_InsertInput!) : db_version @mysqlInsert(subgraph: "Rfam", table: "db_version", primaryKeys: ["rfam_release"])
+  update_db_version(db_version: db_version_UpdateInput!, where: db_version_WhereInput) : db_version @mysqlUpdate(subgraph: "Rfam", table: "db_version")
+  delete_db_version(where: db_version_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "db_version")
+  insert_dead_clan(dead_clan: dead_clan_InsertInput!) : dead_clan @mysqlInsert(subgraph: "Rfam", table: "dead_clan", primaryKeys: ["clan_acc"])
+  update_dead_clan(dead_clan: dead_clan_UpdateInput!, where: dead_clan_WhereInput) : dead_clan @mysqlUpdate(subgraph: "Rfam", table: "dead_clan")
+  delete_dead_clan(where: dead_clan_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "dead_clan")
+  insert_dead_family(dead_family: dead_family_InsertInput!) : dead_family @mysqlInsert(subgraph: "Rfam", table: "dead_family", primaryKeys: ["rfam_acc"])
+  update_dead_family(dead_family: dead_family_UpdateInput!, where: dead_family_WhereInput) : dead_family @mysqlUpdate(subgraph: "Rfam", table: "dead_family")
+  delete_dead_family(where: dead_family_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "dead_family")
+  insert_ensembl_names(ensembl_names: ensembl_names_InsertInput!) : ensembl_names @mysqlInsert(subgraph: "Rfam", table: "ensembl_names", primaryKeys: ["insdc"])
+  update_ensembl_names(ensembl_names: ensembl_names_UpdateInput!, where: ensembl_names_WhereInput) : ensembl_names @mysqlUpdate(subgraph: "Rfam", table: "ensembl_names")
+  delete_ensembl_names(where: ensembl_names_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "ensembl_names")
+  insert_family(family: family_InsertInput!) : family @mysqlInsert(subgraph: "Rfam", table: "family", primaryKeys: ["rfam_acc"])
+  update_family(family: family_UpdateInput!, where: family_WhereInput) : family @mysqlUpdate(subgraph: "Rfam", table: "family")
+  delete_family(where: family_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "family")
+  insert_family_author(family_author: family_author_InsertInput!) : family_author @mysqlInsert(subgraph: "Rfam", table: "family_author", primaryKeys: [])
+  update_family_author(family_author: family_author_UpdateInput!, where: family_author_WhereInput) : family_author @mysqlUpdate(subgraph: "Rfam", table: "family_author")
+  delete_family_author(where: family_author_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "family_author")
+  insert_family_literature_reference(family_literature_reference: family_literature_reference_InsertInput!) : family_literature_reference @mysqlInsert(subgraph: "Rfam", table: "family_literature_reference", primaryKeys: [])
   update_family_literature_reference(
     family_literature_reference: family_literature_reference_UpdateInput!
     where: family_literature_reference_WhereInput
-  ): family_literature_reference @mysqlUpdate(subgraph: "Rfam", table: "family_literature_reference") 
-  delete_family_literature_reference(where: family_literature_reference_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "family_literature_reference") 
-  insert_family_long(family_long: family_long_InsertInput!) : family_long @mysqlInsert(subgraph: "Rfam", table: "family_long", primaryKeys: []) 
-  update_family_long(family_long: family_long_UpdateInput!, where: family_long_WhereInput) : family_long @mysqlUpdate(subgraph: "Rfam", table: "family_long") 
-  delete_family_long(where: family_long_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "family_long") 
-  insert_family_ncbi(family_ncbi: family_ncbi_InsertInput!) : family_ncbi @mysqlInsert(subgraph: "Rfam", table: "family_ncbi", primaryKeys: []) 
-  update_family_ncbi(family_ncbi: family_ncbi_UpdateInput!, where: family_ncbi_WhereInput) : family_ncbi @mysqlUpdate(subgraph: "Rfam", table: "family_ncbi") 
-  delete_family_ncbi(where: family_ncbi_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "family_ncbi") 
-  insert_features(features: features_InsertInput!) : features @mysqlInsert(subgraph: "Rfam", table: "features", primaryKeys: []) 
-  update_features(features: features_UpdateInput!, where: features_WhereInput) : features @mysqlUpdate(subgraph: "Rfam", table: "features") 
-  delete_features(where: features_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "features") 
-  insert_full_region(full_region: full_region_InsertInput!) : full_region @mysqlInsert(subgraph: "Rfam", table: "full_region", primaryKeys: []) 
-  update_full_region(full_region: full_region_UpdateInput!, where: full_region_WhereInput) : full_region @mysqlUpdate(subgraph: "Rfam", table: "full_region") 
-  delete_full_region(where: full_region_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "full_region") 
-  insert_genome(genome: genome_InsertInput!) : genome @mysqlInsert(subgraph: "Rfam", table: "genome", primaryKeys: ["upid"]) 
-  update_genome(genome: genome_UpdateInput!, where: genome_WhereInput) : genome @mysqlUpdate(subgraph: "Rfam", table: "genome") 
-  delete_genome(where: genome_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "genome") 
-  insert_genome_temp(genome_temp: genome_temp_InsertInput!) : genome_temp @mysqlInsert(subgraph: "Rfam", table: "genome_temp", primaryKeys: ["upid"]) 
-  update_genome_temp(genome_temp: genome_temp_UpdateInput!, where: genome_temp_WhereInput) : genome_temp @mysqlUpdate(subgraph: "Rfam", table: "genome_temp") 
-  delete_genome_temp(where: genome_temp_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "genome_temp") 
-  insert_genseq(genseq: genseq_InsertInput!) : genseq @mysqlInsert(subgraph: "Rfam", table: "genseq", primaryKeys: []) 
-  update_genseq(genseq: genseq_UpdateInput!, where: genseq_WhereInput) : genseq @mysqlUpdate(subgraph: "Rfam", table: "genseq") 
-  delete_genseq(where: genseq_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "genseq") 
-  insert_genseq_temp(genseq_temp: genseq_temp_InsertInput!) : genseq_temp @mysqlInsert(subgraph: "Rfam", table: "genseq_temp", primaryKeys: []) 
-  update_genseq_temp(genseq_temp: genseq_temp_UpdateInput!, where: genseq_temp_WhereInput) : genseq_temp @mysqlUpdate(subgraph: "Rfam", table: "genseq_temp") 
-  delete_genseq_temp(where: genseq_temp_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "genseq_temp") 
-  insert_html_alignment(html_alignment: html_alignment_InsertInput!) : html_alignment @mysqlInsert(subgraph: "Rfam", table: "html_alignment", primaryKeys: []) 
-  update_html_alignment(html_alignment: html_alignment_UpdateInput!, where: html_alignment_WhereInput) : html_alignment @mysqlUpdate(subgraph: "Rfam", table: "html_alignment") 
-  delete_html_alignment(where: html_alignment_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "html_alignment") 
-  insert_keywords(keywords: keywords_InsertInput!) : keywords @mysqlInsert(subgraph: "Rfam", table: "keywords", primaryKeys: ["rfam_acc"]) 
-  update_keywords(keywords: keywords_UpdateInput!, where: keywords_WhereInput) : keywords @mysqlUpdate(subgraph: "Rfam", table: "keywords") 
-  delete_keywords(where: keywords_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "keywords") 
-  insert_literature_reference(literature_reference: literature_reference_InsertInput!) : literature_reference @mysqlInsert(subgraph: "Rfam", table: "literature_reference", primaryKeys: ["pmid"]) 
+  ): family_literature_reference @mysqlUpdate(subgraph: "Rfam", table: "family_literature_reference")
+  delete_family_literature_reference(where: family_literature_reference_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "family_literature_reference")
+  insert_family_long(family_long: family_long_InsertInput!) : family_long @mysqlInsert(subgraph: "Rfam", table: "family_long", primaryKeys: [])
+  update_family_long(family_long: family_long_UpdateInput!, where: family_long_WhereInput) : family_long @mysqlUpdate(subgraph: "Rfam", table: "family_long")
+  delete_family_long(where: family_long_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "family_long")
+  insert_family_ncbi(family_ncbi: family_ncbi_InsertInput!) : family_ncbi @mysqlInsert(subgraph: "Rfam", table: "family_ncbi", primaryKeys: [])
+  update_family_ncbi(family_ncbi: family_ncbi_UpdateInput!, where: family_ncbi_WhereInput) : family_ncbi @mysqlUpdate(subgraph: "Rfam", table: "family_ncbi")
+  delete_family_ncbi(where: family_ncbi_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "family_ncbi")
+  insert_features(features: features_InsertInput!) : features @mysqlInsert(subgraph: "Rfam", table: "features", primaryKeys: [])
+  update_features(features: features_UpdateInput!, where: features_WhereInput) : features @mysqlUpdate(subgraph: "Rfam", table: "features")
+  delete_features(where: features_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "features")
+  insert_full_region(full_region: full_region_InsertInput!) : full_region @mysqlInsert(subgraph: "Rfam", table: "full_region", primaryKeys: [])
+  update_full_region(full_region: full_region_UpdateInput!, where: full_region_WhereInput) : full_region @mysqlUpdate(subgraph: "Rfam", table: "full_region")
+  delete_full_region(where: full_region_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "full_region")
+  insert_genome(genome: genome_InsertInput!) : genome @mysqlInsert(subgraph: "Rfam", table: "genome", primaryKeys: ["upid"])
+  update_genome(genome: genome_UpdateInput!, where: genome_WhereInput) : genome @mysqlUpdate(subgraph: "Rfam", table: "genome")
+  delete_genome(where: genome_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "genome")
+  insert_genome_temp(genome_temp: genome_temp_InsertInput!) : genome_temp @mysqlInsert(subgraph: "Rfam", table: "genome_temp", primaryKeys: ["upid"])
+  update_genome_temp(genome_temp: genome_temp_UpdateInput!, where: genome_temp_WhereInput) : genome_temp @mysqlUpdate(subgraph: "Rfam", table: "genome_temp")
+  delete_genome_temp(where: genome_temp_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "genome_temp")
+  insert_genseq(genseq: genseq_InsertInput!) : genseq @mysqlInsert(subgraph: "Rfam", table: "genseq", primaryKeys: [])
+  update_genseq(genseq: genseq_UpdateInput!, where: genseq_WhereInput) : genseq @mysqlUpdate(subgraph: "Rfam", table: "genseq")
+  delete_genseq(where: genseq_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "genseq")
+  insert_genseq_temp(genseq_temp: genseq_temp_InsertInput!) : genseq_temp @mysqlInsert(subgraph: "Rfam", table: "genseq_temp", primaryKeys: [])
+  update_genseq_temp(genseq_temp: genseq_temp_UpdateInput!, where: genseq_temp_WhereInput) : genseq_temp @mysqlUpdate(subgraph: "Rfam", table: "genseq_temp")
+  delete_genseq_temp(where: genseq_temp_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "genseq_temp")
+  insert_html_alignment(html_alignment: html_alignment_InsertInput!) : html_alignment @mysqlInsert(subgraph: "Rfam", table: "html_alignment", primaryKeys: [])
+  update_html_alignment(html_alignment: html_alignment_UpdateInput!, where: html_alignment_WhereInput) : html_alignment @mysqlUpdate(subgraph: "Rfam", table: "html_alignment")
+  delete_html_alignment(where: html_alignment_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "html_alignment")
+  insert_keywords(keywords: keywords_InsertInput!) : keywords @mysqlInsert(subgraph: "Rfam", table: "keywords", primaryKeys: ["rfam_acc"])
+  update_keywords(keywords: keywords_UpdateInput!, where: keywords_WhereInput) : keywords @mysqlUpdate(subgraph: "Rfam", table: "keywords")
+  delete_keywords(where: keywords_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "keywords")
+  insert_literature_reference(literature_reference: literature_reference_InsertInput!) : literature_reference @mysqlInsert(subgraph: "Rfam", table: "literature_reference", primaryKeys: ["pmid"])
   update_literature_reference(
     literature_reference: literature_reference_UpdateInput!
     where: literature_reference_WhereInput
-  ): literature_reference @mysqlUpdate(subgraph: "Rfam", table: "literature_reference") 
-  delete_literature_reference(where: literature_reference_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "literature_reference") 
-  insert_matches_and_fasta(matches_and_fasta: matches_and_fasta_InsertInput!) : matches_and_fasta @mysqlInsert(subgraph: "Rfam", table: "matches_and_fasta", primaryKeys: []) 
+  ): literature_reference @mysqlUpdate(subgraph: "Rfam", table: "literature_reference")
+  delete_literature_reference(where: literature_reference_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "literature_reference")
+  insert_matches_and_fasta(matches_and_fasta: matches_and_fasta_InsertInput!) : matches_and_fasta @mysqlInsert(subgraph: "Rfam", table: "matches_and_fasta", primaryKeys: [])
   update_matches_and_fasta(
     matches_and_fasta: matches_and_fasta_UpdateInput!
     where: matches_and_fasta_WhereInput
-  ): matches_and_fasta @mysqlUpdate(subgraph: "Rfam", table: "matches_and_fasta") 
-  delete_matches_and_fasta(where: matches_and_fasta_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "matches_and_fasta") 
-  insert_motif(motif: motif_InsertInput!) : motif @mysqlInsert(subgraph: "Rfam", table: "motif", primaryKeys: ["motif_acc"]) 
-  update_motif(motif: motif_UpdateInput!, where: motif_WhereInput) : motif @mysqlUpdate(subgraph: "Rfam", table: "motif") 
-  delete_motif(where: motif_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif") 
-  insert_motif_database_link(motif_database_link: motif_database_link_InsertInput!) : motif_database_link @mysqlInsert(subgraph: "Rfam", table: "motif_database_link", primaryKeys: []) 
+  ): matches_and_fasta @mysqlUpdate(subgraph: "Rfam", table: "matches_and_fasta")
+  delete_matches_and_fasta(where: matches_and_fasta_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "matches_and_fasta")
+  insert_motif(motif: motif_InsertInput!) : motif @mysqlInsert(subgraph: "Rfam", table: "motif", primaryKeys: ["motif_acc"])
+  update_motif(motif: motif_UpdateInput!, where: motif_WhereInput) : motif @mysqlUpdate(subgraph: "Rfam", table: "motif")
+  delete_motif(where: motif_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif")
+  insert_motif_database_link(motif_database_link: motif_database_link_InsertInput!) : motif_database_link @mysqlInsert(subgraph: "Rfam", table: "motif_database_link", primaryKeys: [])
   update_motif_database_link(
     motif_database_link: motif_database_link_UpdateInput!
     where: motif_database_link_WhereInput
-  ): motif_database_link @mysqlUpdate(subgraph: "Rfam", table: "motif_database_link") 
-  delete_motif_database_link(where: motif_database_link_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_database_link") 
-  insert_motif_family_stats(motif_family_stats: motif_family_stats_InsertInput!) : motif_family_stats @mysqlInsert(subgraph: "Rfam", table: "motif_family_stats", primaryKeys: []) 
+  ): motif_database_link @mysqlUpdate(subgraph: "Rfam", table: "motif_database_link")
+  delete_motif_database_link(where: motif_database_link_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_database_link")
+  insert_motif_family_stats(motif_family_stats: motif_family_stats_InsertInput!) : motif_family_stats @mysqlInsert(subgraph: "Rfam", table: "motif_family_stats", primaryKeys: [])
   update_motif_family_stats(
     motif_family_stats: motif_family_stats_UpdateInput!
     where: motif_family_stats_WhereInput
-  ): motif_family_stats @mysqlUpdate(subgraph: "Rfam", table: "motif_family_stats") 
-  delete_motif_family_stats(where: motif_family_stats_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_family_stats") 
-  insert_motif_file(motif_file: motif_file_InsertInput!) : motif_file @mysqlInsert(subgraph: "Rfam", table: "motif_file", primaryKeys: []) 
-  update_motif_file(motif_file: motif_file_UpdateInput!, where: motif_file_WhereInput) : motif_file @mysqlUpdate(subgraph: "Rfam", table: "motif_file") 
-  delete_motif_file(where: motif_file_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_file") 
-  insert_motif_literature(motif_literature: motif_literature_InsertInput!) : motif_literature @mysqlInsert(subgraph: "Rfam", table: "motif_literature", primaryKeys: []) 
+  ): motif_family_stats @mysqlUpdate(subgraph: "Rfam", table: "motif_family_stats")
+  delete_motif_family_stats(where: motif_family_stats_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_family_stats")
+  insert_motif_file(motif_file: motif_file_InsertInput!) : motif_file @mysqlInsert(subgraph: "Rfam", table: "motif_file", primaryKeys: [])
+  update_motif_file(motif_file: motif_file_UpdateInput!, where: motif_file_WhereInput) : motif_file @mysqlUpdate(subgraph: "Rfam", table: "motif_file")
+  delete_motif_file(where: motif_file_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_file")
+  insert_motif_literature(motif_literature: motif_literature_InsertInput!) : motif_literature @mysqlInsert(subgraph: "Rfam", table: "motif_literature", primaryKeys: [])
   update_motif_literature(
     motif_literature: motif_literature_UpdateInput!
     where: motif_literature_WhereInput
-  ): motif_literature @mysqlUpdate(subgraph: "Rfam", table: "motif_literature") 
-  delete_motif_literature(where: motif_literature_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_literature") 
-  insert_motif_matches(motif_matches: motif_matches_InsertInput!) : motif_matches @mysqlInsert(subgraph: "Rfam", table: "motif_matches", primaryKeys: []) 
-  update_motif_matches(motif_matches: motif_matches_UpdateInput!, where: motif_matches_WhereInput) : motif_matches @mysqlUpdate(subgraph: "Rfam", table: "motif_matches") 
-  delete_motif_matches(where: motif_matches_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_matches") 
-  insert_motif_old(motif_old: motif_old_InsertInput!) : motif_old @mysqlInsert(subgraph: "Rfam", table: "motif_old", primaryKeys: ["motif_acc"]) 
-  update_motif_old(motif_old: motif_old_UpdateInput!, where: motif_old_WhereInput) : motif_old @mysqlUpdate(subgraph: "Rfam", table: "motif_old") 
-  delete_motif_old(where: motif_old_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_old") 
-  insert_motif_pdb(motif_pdb: motif_pdb_InsertInput!) : motif_pdb @mysqlInsert(subgraph: "Rfam", table: "motif_pdb", primaryKeys: []) 
-  update_motif_pdb(motif_pdb: motif_pdb_UpdateInput!, where: motif_pdb_WhereInput) : motif_pdb @mysqlUpdate(subgraph: "Rfam", table: "motif_pdb") 
-  delete_motif_pdb(where: motif_pdb_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_pdb") 
-  insert_motif_ss_image(motif_ss_image: motif_ss_image_InsertInput!) : motif_ss_image @mysqlInsert(subgraph: "Rfam", table: "motif_ss_image", primaryKeys: []) 
-  update_motif_ss_image(motif_ss_image: motif_ss_image_UpdateInput!, where: motif_ss_image_WhereInput) : motif_ss_image @mysqlUpdate(subgraph: "Rfam", table: "motif_ss_image") 
-  delete_motif_ss_image(where: motif_ss_image_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_ss_image") 
-  insert_pdb(pdb: pdb_InsertInput!) : pdb @mysqlInsert(subgraph: "Rfam", table: "pdb", primaryKeys: ["pdb_id"]) 
-  update_pdb(pdb: pdb_UpdateInput!, where: pdb_WhereInput) : pdb @mysqlUpdate(subgraph: "Rfam", table: "pdb") 
-  delete_pdb(where: pdb_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pdb") 
-  insert_pdb_full_region(pdb_full_region: pdb_full_region_InsertInput!) : pdb_full_region @mysqlInsert(subgraph: "Rfam", table: "pdb_full_region", primaryKeys: []) 
+  ): motif_literature @mysqlUpdate(subgraph: "Rfam", table: "motif_literature")
+  delete_motif_literature(where: motif_literature_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_literature")
+  insert_motif_matches(motif_matches: motif_matches_InsertInput!) : motif_matches @mysqlInsert(subgraph: "Rfam", table: "motif_matches", primaryKeys: [])
+  update_motif_matches(motif_matches: motif_matches_UpdateInput!, where: motif_matches_WhereInput) : motif_matches @mysqlUpdate(subgraph: "Rfam", table: "motif_matches")
+  delete_motif_matches(where: motif_matches_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_matches")
+  insert_motif_old(motif_old: motif_old_InsertInput!) : motif_old @mysqlInsert(subgraph: "Rfam", table: "motif_old", primaryKeys: ["motif_acc"])
+  update_motif_old(motif_old: motif_old_UpdateInput!, where: motif_old_WhereInput) : motif_old @mysqlUpdate(subgraph: "Rfam", table: "motif_old")
+  delete_motif_old(where: motif_old_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_old")
+  insert_motif_pdb(motif_pdb: motif_pdb_InsertInput!) : motif_pdb @mysqlInsert(subgraph: "Rfam", table: "motif_pdb", primaryKeys: [])
+  update_motif_pdb(motif_pdb: motif_pdb_UpdateInput!, where: motif_pdb_WhereInput) : motif_pdb @mysqlUpdate(subgraph: "Rfam", table: "motif_pdb")
+  delete_motif_pdb(where: motif_pdb_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_pdb")
+  insert_motif_ss_image(motif_ss_image: motif_ss_image_InsertInput!) : motif_ss_image @mysqlInsert(subgraph: "Rfam", table: "motif_ss_image", primaryKeys: [])
+  update_motif_ss_image(motif_ss_image: motif_ss_image_UpdateInput!, where: motif_ss_image_WhereInput) : motif_ss_image @mysqlUpdate(subgraph: "Rfam", table: "motif_ss_image")
+  delete_motif_ss_image(where: motif_ss_image_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "motif_ss_image")
+  insert_pdb(pdb: pdb_InsertInput!) : pdb @mysqlInsert(subgraph: "Rfam", table: "pdb", primaryKeys: ["pdb_id"])
+  update_pdb(pdb: pdb_UpdateInput!, where: pdb_WhereInput) : pdb @mysqlUpdate(subgraph: "Rfam", table: "pdb")
+  delete_pdb(where: pdb_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pdb")
+  insert_pdb_full_region(pdb_full_region: pdb_full_region_InsertInput!) : pdb_full_region @mysqlInsert(subgraph: "Rfam", table: "pdb_full_region", primaryKeys: [])
   update_pdb_full_region(
     pdb_full_region: pdb_full_region_UpdateInput!
     where: pdb_full_region_WhereInput
-  ): pdb_full_region @mysqlUpdate(subgraph: "Rfam", table: "pdb_full_region") 
-  delete_pdb_full_region(where: pdb_full_region_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pdb_full_region") 
-  insert_pdb_full_region_old(pdb_full_region_old: pdb_full_region_old_InsertInput!) : pdb_full_region_old @mysqlInsert(subgraph: "Rfam", table: "pdb_full_region_old", primaryKeys: []) 
+  ): pdb_full_region @mysqlUpdate(subgraph: "Rfam", table: "pdb_full_region")
+  delete_pdb_full_region(where: pdb_full_region_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pdb_full_region")
+  insert_pdb_full_region_old(pdb_full_region_old: pdb_full_region_old_InsertInput!) : pdb_full_region_old @mysqlInsert(subgraph: "Rfam", table: "pdb_full_region_old", primaryKeys: [])
   update_pdb_full_region_old(
     pdb_full_region_old: pdb_full_region_old_UpdateInput!
     where: pdb_full_region_old_WhereInput
-  ): pdb_full_region_old @mysqlUpdate(subgraph: "Rfam", table: "pdb_full_region_old") 
-  delete_pdb_full_region_old(where: pdb_full_region_old_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pdb_full_region_old") 
-  insert_pdb_rfam_reg(pdb_rfam_reg: pdb_rfam_reg_InsertInput!) : pdb_rfam_reg @mysqlInsert(subgraph: "Rfam", table: "pdb_rfam_reg", primaryKeys: ["auto_pdb_reg"]) 
-  update_pdb_rfam_reg(pdb_rfam_reg: pdb_rfam_reg_UpdateInput!, where: pdb_rfam_reg_WhereInput) : pdb_rfam_reg @mysqlUpdate(subgraph: "Rfam", table: "pdb_rfam_reg") 
-  delete_pdb_rfam_reg(where: pdb_rfam_reg_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pdb_rfam_reg") 
-  insert_pdb_sequence(pdb_sequence: pdb_sequence_InsertInput!) : pdb_sequence @mysqlInsert(subgraph: "Rfam", table: "pdb_sequence", primaryKeys: ["pdb_seq"]) 
-  update_pdb_sequence(pdb_sequence: pdb_sequence_UpdateInput!, where: pdb_sequence_WhereInput) : pdb_sequence @mysqlUpdate(subgraph: "Rfam", table: "pdb_sequence") 
-  delete_pdb_sequence(where: pdb_sequence_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pdb_sequence") 
-  insert_processed_data(processed_data: processed_data_InsertInput!) : processed_data @mysqlInsert(subgraph: "Rfam", table: "processed_data", primaryKeys: []) 
-  update_processed_data(processed_data: processed_data_UpdateInput!, where: processed_data_WhereInput) : processed_data @mysqlUpdate(subgraph: "Rfam", table: "processed_data") 
-  delete_processed_data(where: processed_data_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "processed_data") 
-  insert_pseudoknot(pseudoknot: pseudoknot_InsertInput!) : pseudoknot @mysqlInsert(subgraph: "Rfam", table: "pseudoknot", primaryKeys: []) 
-  update_pseudoknot(pseudoknot: pseudoknot_UpdateInput!, where: pseudoknot_WhereInput) : pseudoknot @mysqlUpdate(subgraph: "Rfam", table: "pseudoknot") 
-  delete_pseudoknot(where: pseudoknot_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pseudoknot") 
-  insert_refseq(refseq: refseq_InsertInput!) : refseq @mysqlInsert(subgraph: "Rfam", table: "refseq", primaryKeys: ["refseq_acc"]) 
-  update_refseq(refseq: refseq_UpdateInput!, where: refseq_WhereInput) : refseq @mysqlUpdate(subgraph: "Rfam", table: "refseq") 
-  delete_refseq(where: refseq_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "refseq") 
-  insert_refseq_full_region(refseq_full_region: refseq_full_region_InsertInput!) : refseq_full_region @mysqlInsert(subgraph: "Rfam", table: "refseq_full_region", primaryKeys: []) 
+  ): pdb_full_region_old @mysqlUpdate(subgraph: "Rfam", table: "pdb_full_region_old")
+  delete_pdb_full_region_old(where: pdb_full_region_old_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pdb_full_region_old")
+  insert_pdb_rfam_reg(pdb_rfam_reg: pdb_rfam_reg_InsertInput!) : pdb_rfam_reg @mysqlInsert(subgraph: "Rfam", table: "pdb_rfam_reg", primaryKeys: ["auto_pdb_reg"])
+  update_pdb_rfam_reg(pdb_rfam_reg: pdb_rfam_reg_UpdateInput!, where: pdb_rfam_reg_WhereInput) : pdb_rfam_reg @mysqlUpdate(subgraph: "Rfam", table: "pdb_rfam_reg")
+  delete_pdb_rfam_reg(where: pdb_rfam_reg_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pdb_rfam_reg")
+  insert_pdb_sequence(pdb_sequence: pdb_sequence_InsertInput!) : pdb_sequence @mysqlInsert(subgraph: "Rfam", table: "pdb_sequence", primaryKeys: ["pdb_seq"])
+  update_pdb_sequence(pdb_sequence: pdb_sequence_UpdateInput!, where: pdb_sequence_WhereInput) : pdb_sequence @mysqlUpdate(subgraph: "Rfam", table: "pdb_sequence")
+  delete_pdb_sequence(where: pdb_sequence_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pdb_sequence")
+  insert_processed_data(processed_data: processed_data_InsertInput!) : processed_data @mysqlInsert(subgraph: "Rfam", table: "processed_data", primaryKeys: [])
+  update_processed_data(processed_data: processed_data_UpdateInput!, where: processed_data_WhereInput) : processed_data @mysqlUpdate(subgraph: "Rfam", table: "processed_data")
+  delete_processed_data(where: processed_data_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "processed_data")
+  insert_pseudoknot(pseudoknot: pseudoknot_InsertInput!) : pseudoknot @mysqlInsert(subgraph: "Rfam", table: "pseudoknot", primaryKeys: [])
+  update_pseudoknot(pseudoknot: pseudoknot_UpdateInput!, where: pseudoknot_WhereInput) : pseudoknot @mysqlUpdate(subgraph: "Rfam", table: "pseudoknot")
+  delete_pseudoknot(where: pseudoknot_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "pseudoknot")
+  insert_refseq(refseq: refseq_InsertInput!) : refseq @mysqlInsert(subgraph: "Rfam", table: "refseq", primaryKeys: ["refseq_acc"])
+  update_refseq(refseq: refseq_UpdateInput!, where: refseq_WhereInput) : refseq @mysqlUpdate(subgraph: "Rfam", table: "refseq")
+  delete_refseq(where: refseq_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "refseq")
+  insert_refseq_full_region(refseq_full_region: refseq_full_region_InsertInput!) : refseq_full_region @mysqlInsert(subgraph: "Rfam", table: "refseq_full_region", primaryKeys: [])
   update_refseq_full_region(
     refseq_full_region: refseq_full_region_UpdateInput!
     where: refseq_full_region_WhereInput
-  ): refseq_full_region @mysqlUpdate(subgraph: "Rfam", table: "refseq_full_region") 
-  delete_refseq_full_region(where: refseq_full_region_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "refseq_full_region") 
-  insert_rfamseq(rfamseq: rfamseq_InsertInput!) : rfamseq @mysqlInsert(subgraph: "Rfam", table: "rfamseq", primaryKeys: ["rfamseq_acc"]) 
-  update_rfamseq(rfamseq: rfamseq_UpdateInput!, where: rfamseq_WhereInput) : rfamseq @mysqlUpdate(subgraph: "Rfam", table: "rfamseq") 
-  delete_rfamseq(where: rfamseq_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "rfamseq") 
-  insert_rfamseq_temp(rfamseq_temp: rfamseq_temp_InsertInput!) : rfamseq_temp @mysqlInsert(subgraph: "Rfam", table: "rfamseq_temp", primaryKeys: ["rfamseq_acc"]) 
-  update_rfamseq_temp(rfamseq_temp: rfamseq_temp_UpdateInput!, where: rfamseq_temp_WhereInput) : rfamseq_temp @mysqlUpdate(subgraph: "Rfam", table: "rfamseq_temp") 
-  delete_rfamseq_temp(where: rfamseq_temp_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "rfamseq_temp") 
-  insert_rnacentral_matches(rnacentral_matches: rnacentral_matches_InsertInput!) : rnacentral_matches @mysqlInsert(subgraph: "Rfam", table: "rnacentral_matches", primaryKeys: []) 
+  ): refseq_full_region @mysqlUpdate(subgraph: "Rfam", table: "refseq_full_region")
+  delete_refseq_full_region(where: refseq_full_region_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "refseq_full_region")
+  insert_rfamseq(rfamseq: rfamseq_InsertInput!) : rfamseq @mysqlInsert(subgraph: "Rfam", table: "rfamseq", primaryKeys: ["rfamseq_acc"])
+  update_rfamseq(rfamseq: rfamseq_UpdateInput!, where: rfamseq_WhereInput) : rfamseq @mysqlUpdate(subgraph: "Rfam", table: "rfamseq")
+  delete_rfamseq(where: rfamseq_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "rfamseq")
+  insert_rfamseq_temp(rfamseq_temp: rfamseq_temp_InsertInput!) : rfamseq_temp @mysqlInsert(subgraph: "Rfam", table: "rfamseq_temp", primaryKeys: ["rfamseq_acc"])
+  update_rfamseq_temp(rfamseq_temp: rfamseq_temp_UpdateInput!, where: rfamseq_temp_WhereInput) : rfamseq_temp @mysqlUpdate(subgraph: "Rfam", table: "rfamseq_temp")
+  delete_rfamseq_temp(where: rfamseq_temp_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "rfamseq_temp")
+  insert_rnacentral_matches(rnacentral_matches: rnacentral_matches_InsertInput!) : rnacentral_matches @mysqlInsert(subgraph: "Rfam", table: "rnacentral_matches", primaryKeys: [])
   update_rnacentral_matches(
     rnacentral_matches: rnacentral_matches_UpdateInput!
     where: rnacentral_matches_WhereInput
-  ): rnacentral_matches @mysqlUpdate(subgraph: "Rfam", table: "rnacentral_matches") 
-  delete_rnacentral_matches(where: rnacentral_matches_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "rnacentral_matches") 
-  insert_rscape_annotations(rscape_annotations: rscape_annotations_InsertInput!) : rscape_annotations @mysqlInsert(subgraph: "Rfam", table: "rscape_annotations", primaryKeys: ["rfam_acc"]) 
+  ): rnacentral_matches @mysqlUpdate(subgraph: "Rfam", table: "rnacentral_matches")
+  delete_rnacentral_matches(where: rnacentral_matches_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "rnacentral_matches")
+  insert_rscape_annotations(rscape_annotations: rscape_annotations_InsertInput!) : rscape_annotations @mysqlInsert(subgraph: "Rfam", table: "rscape_annotations", primaryKeys: ["rfam_acc"])
   update_rscape_annotations(
     rscape_annotations: rscape_annotations_UpdateInput!
     where: rscape_annotations_WhereInput
-  ): rscape_annotations @mysqlUpdate(subgraph: "Rfam", table: "rscape_annotations") 
-  delete_rscape_annotations(where: rscape_annotations_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "rscape_annotations") 
-  insert_secondary_structure_image(secondary_structure_image: secondary_structure_image_InsertInput!) : secondary_structure_image @mysqlInsert(subgraph: "Rfam", table: "secondary_structure_image", primaryKeys: []) 
+  ): rscape_annotations @mysqlUpdate(subgraph: "Rfam", table: "rscape_annotations")
+  delete_rscape_annotations(where: rscape_annotations_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "rscape_annotations")
+  insert_secondary_structure_image(secondary_structure_image: secondary_structure_image_InsertInput!) : secondary_structure_image @mysqlInsert(subgraph: "Rfam", table: "secondary_structure_image", primaryKeys: [])
   update_secondary_structure_image(
     secondary_structure_image: secondary_structure_image_UpdateInput!
     where: secondary_structure_image_WhereInput
-  ): secondary_structure_image @mysqlUpdate(subgraph: "Rfam", table: "secondary_structure_image") 
-  delete_secondary_structure_image(where: secondary_structure_image_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "secondary_structure_image") 
-  insert_seed_region(seed_region: seed_region_InsertInput!) : seed_region @mysqlInsert(subgraph: "Rfam", table: "seed_region", primaryKeys: []) 
-  update_seed_region(seed_region: seed_region_UpdateInput!, where: seed_region_WhereInput) : seed_region @mysqlUpdate(subgraph: "Rfam", table: "seed_region") 
-  delete_seed_region(where: seed_region_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "seed_region") 
-  insert_sunburst(sunburst: sunburst_InsertInput!) : sunburst @mysqlInsert(subgraph: "Rfam", table: "sunburst", primaryKeys: []) 
-  update_sunburst(sunburst: sunburst_UpdateInput!, where: sunburst_WhereInput) : sunburst @mysqlUpdate(subgraph: "Rfam", table: "sunburst") 
-  delete_sunburst(where: sunburst_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "sunburst") 
-  insert_taxonomic_tree(taxonomic_tree: taxonomic_tree_InsertInput!) : taxonomic_tree @mysqlInsert(subgraph: "Rfam", table: "taxonomic_tree", primaryKeys: ["ncbi_code"]) 
-  update_taxonomic_tree(taxonomic_tree: taxonomic_tree_UpdateInput!, where: taxonomic_tree_WhereInput) : taxonomic_tree @mysqlUpdate(subgraph: "Rfam", table: "taxonomic_tree") 
-  delete_taxonomic_tree(where: taxonomic_tree_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "taxonomic_tree") 
-  insert_taxonomy(taxonomy: taxonomy_InsertInput!) : taxonomy @mysqlInsert(subgraph: "Rfam", table: "taxonomy", primaryKeys: ["ncbi_id"]) 
-  update_taxonomy(taxonomy: taxonomy_UpdateInput!, where: taxonomy_WhereInput) : taxonomy @mysqlUpdate(subgraph: "Rfam", table: "taxonomy") 
-  delete_taxonomy(where: taxonomy_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "taxonomy") 
-  insert_taxonomy_websearch(taxonomy_websearch: taxonomy_websearch_InsertInput!) : taxonomy_websearch @mysqlInsert(subgraph: "Rfam", table: "taxonomy_websearch", primaryKeys: []) 
+  ): secondary_structure_image @mysqlUpdate(subgraph: "Rfam", table: "secondary_structure_image")
+  delete_secondary_structure_image(where: secondary_structure_image_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "secondary_structure_image")
+  insert_seed_region(seed_region: seed_region_InsertInput!) : seed_region @mysqlInsert(subgraph: "Rfam", table: "seed_region", primaryKeys: [])
+  update_seed_region(seed_region: seed_region_UpdateInput!, where: seed_region_WhereInput) : seed_region @mysqlUpdate(subgraph: "Rfam", table: "seed_region")
+  delete_seed_region(where: seed_region_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "seed_region")
+  insert_sunburst(sunburst: sunburst_InsertInput!) : sunburst @mysqlInsert(subgraph: "Rfam", table: "sunburst", primaryKeys: [])
+  update_sunburst(sunburst: sunburst_UpdateInput!, where: sunburst_WhereInput) : sunburst @mysqlUpdate(subgraph: "Rfam", table: "sunburst")
+  delete_sunburst(where: sunburst_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "sunburst")
+  insert_taxonomic_tree(taxonomic_tree: taxonomic_tree_InsertInput!) : taxonomic_tree @mysqlInsert(subgraph: "Rfam", table: "taxonomic_tree", primaryKeys: ["ncbi_code"])
+  update_taxonomic_tree(taxonomic_tree: taxonomic_tree_UpdateInput!, where: taxonomic_tree_WhereInput) : taxonomic_tree @mysqlUpdate(subgraph: "Rfam", table: "taxonomic_tree")
+  delete_taxonomic_tree(where: taxonomic_tree_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "taxonomic_tree")
+  insert_taxonomy(taxonomy: taxonomy_InsertInput!) : taxonomy @mysqlInsert(subgraph: "Rfam", table: "taxonomy", primaryKeys: ["ncbi_id"])
+  update_taxonomy(taxonomy: taxonomy_UpdateInput!, where: taxonomy_WhereInput) : taxonomy @mysqlUpdate(subgraph: "Rfam", table: "taxonomy")
+  delete_taxonomy(where: taxonomy_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "taxonomy")
+  insert_taxonomy_websearch(taxonomy_websearch: taxonomy_websearch_InsertInput!) : taxonomy_websearch @mysqlInsert(subgraph: "Rfam", table: "taxonomy_websearch", primaryKeys: [])
   update_taxonomy_websearch(
     taxonomy_websearch: taxonomy_websearch_UpdateInput!
     where: taxonomy_websearch_WhereInput
-  ): taxonomy_websearch @mysqlUpdate(subgraph: "Rfam", table: "taxonomy_websearch") 
-  delete_taxonomy_websearch(where: taxonomy_websearch_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "taxonomy_websearch") 
-  insert_version(version: version_InsertInput!) : version @mysqlInsert(subgraph: "Rfam", table: "version", primaryKeys: ["rfam_release"]) 
-  update_version(version: version_UpdateInput!, where: version_WhereInput) : version @mysqlUpdate(subgraph: "Rfam", table: "version") 
-  delete_version(where: version_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "version") 
-  insert_wikitext(wikitext: wikitext_InsertInput!) : wikitext @mysqlInsert(subgraph: "Rfam", table: "wikitext", primaryKeys: ["auto_wiki"]) 
-  update_wikitext(wikitext: wikitext_UpdateInput!, where: wikitext_WhereInput) : wikitext @mysqlUpdate(subgraph: "Rfam", table: "wikitext") 
-  delete_wikitext(where: wikitext_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "wikitext") 
+  ): taxonomy_websearch @mysqlUpdate(subgraph: "Rfam", table: "taxonomy_websearch")
+  delete_taxonomy_websearch(where: taxonomy_websearch_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "taxonomy_websearch")
+  insert_version(version: version_InsertInput!) : version @mysqlInsert(subgraph: "Rfam", table: "version", primaryKeys: ["rfam_release"])
+  update_version(version: version_UpdateInput!, where: version_WhereInput) : version @mysqlUpdate(subgraph: "Rfam", table: "version")
+  delete_version(where: version_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "version")
+  insert_wikitext(wikitext: wikitext_InsertInput!) : wikitext @mysqlInsert(subgraph: "Rfam", table: "wikitext", primaryKeys: ["auto_wiki"])
+  update_wikitext(wikitext: wikitext_UpdateInput!, where: wikitext_WhereInput) : wikitext @mysqlUpdate(subgraph: "Rfam", table: "wikitext")
+  delete_wikitext(where: wikitext_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "wikitext")
 }
 
 enum OrderBy @join__type(graph: RFAM)  {
-  asc @join__enumValue(graph: RFAM) 
-  desc @join__enumValue(graph: RFAM) 
+  asc @join__enumValue(graph: RFAM)
+  desc @join__enumValue(graph: RFAM)
 }
 
 enum _post_process_status @join__type(graph: RFAM)  {
-  DONE @join__enumValue(graph: RFAM) 
-  PEND @join__enumValue(graph: RFAM) 
-  RUN @join__enumValue(graph: RFAM) 
-  FAIL @join__enumValue(graph: RFAM) 
-  KILL @join__enumValue(graph: RFAM) 
+  DONE @join__enumValue(graph: RFAM)
+  PEND @join__enumValue(graph: RFAM)
+  RUN @join__enumValue(graph: RFAM)
+  FAIL @join__enumValue(graph: RFAM)
+  KILL @join__enumValue(graph: RFAM)
 }
 
 enum alignment_and_tree_type @join__type(graph: RFAM)  {
-  seed @join__enumValue(graph: RFAM) 
-  seedTax @join__enumValue(graph: RFAM) 
-  genome @join__enumValue(graph: RFAM) 
-  genomeTax @join__enumValue(graph: RFAM) 
+  seed @join__enumValue(graph: RFAM)
+  seedTax @join__enumValue(graph: RFAM)
+  genome @join__enumValue(graph: RFAM)
+  genomeTax @join__enumValue(graph: RFAM)
 }
 
 enum rfamseq_mol_type @join__type(graph: RFAM)  {
-  protein @join__enumValue(graph: RFAM) 
-  genomic_DNA @join__enumValue(graph: RFAM) 
-  DNA @join__enumValue(graph: RFAM) 
-  ss_DNA @join__enumValue(graph: RFAM) 
-  RNA @join__enumValue(graph: RFAM) 
-  genomic_RNA @join__enumValue(graph: RFAM) 
-  ds_RNA @join__enumValue(graph: RFAM) 
-  ss_cRNA @join__enumValue(graph: RFAM) 
-  ss_RNA @join__enumValue(graph: RFAM) 
-  mRNA @join__enumValue(graph: RFAM) 
-  tRNA @join__enumValue(graph: RFAM) 
-  rRNA @join__enumValue(graph: RFAM) 
-  snoRNA @join__enumValue(graph: RFAM) 
-  snRNA @join__enumValue(graph: RFAM) 
-  scRNA @join__enumValue(graph: RFAM) 
-  pre_RNA @join__enumValue(graph: RFAM) 
-  other_RNA @join__enumValue(graph: RFAM) 
-  other_DNA @join__enumValue(graph: RFAM) 
-  unassigned_DNA @join__enumValue(graph: RFAM) 
-  unassigned_RNA @join__enumValue(graph: RFAM) 
-  viral_cRNA @join__enumValue(graph: RFAM) 
-  cRNA @join__enumValue(graph: RFAM) 
-  transcribed_RNA @join__enumValue(graph: RFAM) 
-  ncRNA @join__enumValue(graph: RFAM) 
-  ribozyme @join__enumValue(graph: RFAM) 
-  antisense_RNA @join__enumValue(graph: RFAM) 
-  other @join__enumValue(graph: RFAM) 
+  protein @join__enumValue(graph: RFAM)
+  genomic_DNA @join__enumValue(graph: RFAM)
+  DNA @join__enumValue(graph: RFAM)
+  ss_DNA @join__enumValue(graph: RFAM)
+  RNA @join__enumValue(graph: RFAM)
+  genomic_RNA @join__enumValue(graph: RFAM)
+  ds_RNA @join__enumValue(graph: RFAM)
+  ss_cRNA @join__enumValue(graph: RFAM)
+  ss_RNA @join__enumValue(graph: RFAM)
+  mRNA @join__enumValue(graph: RFAM)
+  tRNA @join__enumValue(graph: RFAM)
+  rRNA @join__enumValue(graph: RFAM)
+  snoRNA @join__enumValue(graph: RFAM)
+  snRNA @join__enumValue(graph: RFAM)
+  scRNA @join__enumValue(graph: RFAM)
+  pre_RNA @join__enumValue(graph: RFAM)
+  other_RNA @join__enumValue(graph: RFAM)
+  other_DNA @join__enumValue(graph: RFAM)
+  unassigned_DNA @join__enumValue(graph: RFAM)
+  unassigned_RNA @join__enumValue(graph: RFAM)
+  viral_cRNA @join__enumValue(graph: RFAM)
+  cRNA @join__enumValue(graph: RFAM)
+  transcribed_RNA @join__enumValue(graph: RFAM)
+  ncRNA @join__enumValue(graph: RFAM)
+  ribozyme @join__enumValue(graph: RFAM)
+  antisense_RNA @join__enumValue(graph: RFAM)
+  other @join__enumValue(graph: RFAM)
 }
 
 enum full_region_truncated @join__type(graph: RFAM)  {
-  _0 @join__enumValue(graph: RFAM) 
-  _5 @join__enumValue(graph: RFAM) 
-  _3 @join__enumValue(graph: RFAM) 
-  _53 @join__enumValue(graph: RFAM) 
+  _0 @join__enumValue(graph: RFAM)
+  _5 @join__enumValue(graph: RFAM)
+  _3 @join__enumValue(graph: RFAM)
+  _53 @join__enumValue(graph: RFAM)
 }
 
 enum full_region_type @join__type(graph: RFAM)  {
-  seed @join__enumValue(graph: RFAM) 
-  full @join__enumValue(graph: RFAM) 
+  seed @join__enumValue(graph: RFAM)
+  full @join__enumValue(graph: RFAM)
 }
 
 enum html_alignment_type @join__type(graph: RFAM)  {
-  seed @join__enumValue(graph: RFAM) 
-  genome @join__enumValue(graph: RFAM) 
-  seedColorstock @join__enumValue(graph: RFAM) 
-  genomeColorstock @join__enumValue(graph: RFAM) 
+  seed @join__enumValue(graph: RFAM)
+  genome @join__enumValue(graph: RFAM)
+  seedColorstock @join__enumValue(graph: RFAM)
+  genomeColorstock @join__enumValue(graph: RFAM)
 }
 
 enum matches_and_fasta_type @join__type(graph: RFAM)  {
-  rfamseq @join__enumValue(graph: RFAM) 
-  genome @join__enumValue(graph: RFAM) 
-  refseq @join__enumValue(graph: RFAM) 
+  rfamseq @join__enumValue(graph: RFAM)
+  genome @join__enumValue(graph: RFAM)
+  refseq @join__enumValue(graph: RFAM)
 }
 
 enum pseudoknot_source @join__type(graph: RFAM)  {
-  seed @join__enumValue(graph: RFAM) 
-  rscape @join__enumValue(graph: RFAM) 
+  seed @join__enumValue(graph: RFAM)
+  rscape @join__enumValue(graph: RFAM)
 }
 
 enum refseq_full_region_truncated @join__type(graph: RFAM)  {
-  _0 @join__enumValue(graph: RFAM) 
-  _5 @join__enumValue(graph: RFAM) 
-  _3 @join__enumValue(graph: RFAM) 
-  _53 @join__enumValue(graph: RFAM) 
+  _0 @join__enumValue(graph: RFAM)
+  _5 @join__enumValue(graph: RFAM)
+  _3 @join__enumValue(graph: RFAM)
+  _53 @join__enumValue(graph: RFAM)
 }
 
 enum secondary_structure_image_type @join__type(graph: RFAM)  {
-  cons @join__enumValue(graph: RFAM) 
-  dist @join__enumValue(graph: RFAM) 
-  ent @join__enumValue(graph: RFAM) 
-  fcbp @join__enumValue(graph: RFAM) 
-  cov @join__enumValue(graph: RFAM) 
-  disttruc @join__enumValue(graph: RFAM) 
-  maxcm @join__enumValue(graph: RFAM) 
-  norm @join__enumValue(graph: RFAM) 
-  rchie @join__enumValue(graph: RFAM) 
-  species @join__enumValue(graph: RFAM) 
-  ss @join__enumValue(graph: RFAM) 
-  rscape @join__enumValue(graph: RFAM) 
-  rscape_cyk @join__enumValue(graph: RFAM) 
+  cons @join__enumValue(graph: RFAM)
+  dist @join__enumValue(graph: RFAM)
+  ent @join__enumValue(graph: RFAM)
+  fcbp @join__enumValue(graph: RFAM)
+  cov @join__enumValue(graph: RFAM)
+  disttruc @join__enumValue(graph: RFAM)
+  maxcm @join__enumValue(graph: RFAM)
+  norm @join__enumValue(graph: RFAM)
+  rchie @join__enumValue(graph: RFAM)
+  species @join__enumValue(graph: RFAM)
+  ss @join__enumValue(graph: RFAM)
+  rscape @join__enumValue(graph: RFAM)
+  rscape_cyk @join__enumValue(graph: RFAM)
 }
 
 enum sunburst_type @join__type(graph: RFAM)  {
-  rfamseq @join__enumValue(graph: RFAM) 
-  genome @join__enumValue(graph: RFAM) 
-  refseq @join__enumValue(graph: RFAM) 
+  rfamseq @join__enumValue(graph: RFAM)
+  genome @join__enumValue(graph: RFAM)
+  refseq @join__enumValue(graph: RFAM)
 }
 
 enum _genome_data_status @join__type(graph: RFAM)  {
-  DONE @join__enumValue(graph: RFAM) 
-  PEND @join__enumValue(graph: RFAM) 
-  RUN @join__enumValue(graph: RFAM) 
-  FAIL @join__enumValue(graph: RFAM) 
-  KILL @join__enumValue(graph: RFAM) 
+  DONE @join__enumValue(graph: RFAM)
+  PEND @join__enumValue(graph: RFAM)
+  RUN @join__enumValue(graph: RFAM)
+  FAIL @join__enumValue(graph: RFAM)
+  KILL @join__enumValue(graph: RFAM)
 }
 
 enum genome_assembly_level @join__type(graph: RFAM)  {
-  contig @join__enumValue(graph: RFAM) 
-  chromosome @join__enumValue(graph: RFAM) 
-  scaffold @join__enumValue(graph: RFAM) 
-  complete_genome @join__enumValue(graph: RFAM) 
+  contig @join__enumValue(graph: RFAM)
+  chromosome @join__enumValue(graph: RFAM)
+  scaffold @join__enumValue(graph: RFAM)
+  complete_genome @join__enumValue(graph: RFAM)
 }
 
 enum genome_temp_assembly_level @join__type(graph: RFAM)  {
-  contig @join__enumValue(graph: RFAM) 
-  chromosome @join__enumValue(graph: RFAM) 
-  scaffold @join__enumValue(graph: RFAM) 
-  complete_genome @join__enumValue(graph: RFAM) 
+  contig @join__enumValue(graph: RFAM)
+  chromosome @join__enumValue(graph: RFAM)
+  scaffold @join__enumValue(graph: RFAM)
+  complete_genome @join__enumValue(graph: RFAM)
 }
 
 enum rfamseq_temp_mol_type @join__type(graph: RFAM)  {
-  protein @join__enumValue(graph: RFAM) 
-  genomic_DNA @join__enumValue(graph: RFAM) 
-  DNA @join__enumValue(graph: RFAM) 
-  ss_DNA @join__enumValue(graph: RFAM) 
-  RNA @join__enumValue(graph: RFAM) 
-  genomic_RNA @join__enumValue(graph: RFAM) 
-  ds_RNA @join__enumValue(graph: RFAM) 
-  ss_cRNA @join__enumValue(graph: RFAM) 
-  ss_RNA @join__enumValue(graph: RFAM) 
-  mRNA @join__enumValue(graph: RFAM) 
-  tRNA @join__enumValue(graph: RFAM) 
-  rRNA @join__enumValue(graph: RFAM) 
-  snoRNA @join__enumValue(graph: RFAM) 
-  snRNA @join__enumValue(graph: RFAM) 
-  scRNA @join__enumValue(graph: RFAM) 
-  pre_RNA @join__enumValue(graph: RFAM) 
-  other_RNA @join__enumValue(graph: RFAM) 
-  other_DNA @join__enumValue(graph: RFAM) 
-  unassigned_DNA @join__enumValue(graph: RFAM) 
-  unassigned_RNA @join__enumValue(graph: RFAM) 
-  viral_cRNA @join__enumValue(graph: RFAM) 
-  cRNA @join__enumValue(graph: RFAM) 
-  transcribed_RNA @join__enumValue(graph: RFAM) 
-  ncRNA @join__enumValue(graph: RFAM) 
-  ribozyme @join__enumValue(graph: RFAM) 
-  antisense_RNA @join__enumValue(graph: RFAM) 
-  other @join__enumValue(graph: RFAM) 
+  protein @join__enumValue(graph: RFAM)
+  genomic_DNA @join__enumValue(graph: RFAM)
+  DNA @join__enumValue(graph: RFAM)
+  ss_DNA @join__enumValue(graph: RFAM)
+  RNA @join__enumValue(graph: RFAM)
+  genomic_RNA @join__enumValue(graph: RFAM)
+  ds_RNA @join__enumValue(graph: RFAM)
+  ss_cRNA @join__enumValue(graph: RFAM)
+  ss_RNA @join__enumValue(graph: RFAM)
+  mRNA @join__enumValue(graph: RFAM)
+  tRNA @join__enumValue(graph: RFAM)
+  rRNA @join__enumValue(graph: RFAM)
+  snoRNA @join__enumValue(graph: RFAM)
+  snRNA @join__enumValue(graph: RFAM)
+  scRNA @join__enumValue(graph: RFAM)
+  pre_RNA @join__enumValue(graph: RFAM)
+  other_RNA @join__enumValue(graph: RFAM)
+  other_DNA @join__enumValue(graph: RFAM)
+  unassigned_DNA @join__enumValue(graph: RFAM)
+  unassigned_RNA @join__enumValue(graph: RFAM)
+  viral_cRNA @join__enumValue(graph: RFAM)
+  cRNA @join__enumValue(graph: RFAM)
+  transcribed_RNA @join__enumValue(graph: RFAM)
+  ncRNA @join__enumValue(graph: RFAM)
+  ribozyme @join__enumValue(graph: RFAM)
+  antisense_RNA @join__enumValue(graph: RFAM)
+  other @join__enumValue(graph: RFAM)
 }
 
 enum rnacentral_matches_type @join__type(graph: RFAM)  {
-  seed @join__enumValue(graph: RFAM) 
-  full @join__enumValue(graph: RFAM) 
+  seed @join__enumValue(graph: RFAM)
+  full @join__enumValue(graph: RFAM)
 }
 
 input _annotated_file_WhereInput @join__type(graph: RFAM)  {
@@ -2717,7 +2717,7 @@ input motif_literature_OrderByInput @join__type(graph: RFAM)  {
 
 input rfamseq_WhereInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   rfamseq_acc: String
   accession: String
@@ -2732,7 +2732,7 @@ input rfamseq_WhereInput @join__type(graph: RFAM)  {
 
 input rfamseq_OrderByInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   rfamseq_acc: OrderBy
   accession: OrderBy
@@ -3269,7 +3269,7 @@ input dead_family_WhereInput @join__type(graph: RFAM)  {
   forward_to: String
   """
   wikipedia page title
-  
+
   """
   title: String
   user: String
@@ -3285,7 +3285,7 @@ input dead_family_OrderByInput @join__type(graph: RFAM)  {
   forward_to: OrderBy
   """
   wikipedia page title
-  
+
   """
   title: OrderBy
   user: OrderBy
@@ -3315,7 +3315,7 @@ input family_author_OrderByInput @join__type(graph: RFAM)  {
 
 input genome_WhereInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   assembly_acc: String
@@ -3343,7 +3343,7 @@ input genome_WhereInput @join__type(graph: RFAM)  {
 
 input genome_OrderByInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: OrderBy
   assembly_acc: OrderBy
@@ -3371,7 +3371,7 @@ input genome_OrderByInput @join__type(graph: RFAM)  {
 
 input genome_temp_WhereInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   assembly_acc: String
@@ -3399,7 +3399,7 @@ input genome_temp_WhereInput @join__type(graph: RFAM)  {
 
 input genome_temp_OrderByInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: OrderBy
   assembly_acc: OrderBy
@@ -3427,7 +3427,7 @@ input genome_temp_OrderByInput @join__type(graph: RFAM)  {
 
 input genseq_WhereInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   rfamseq_acc: String
@@ -3438,7 +3438,7 @@ input genseq_WhereInput @join__type(graph: RFAM)  {
 
 input genseq_OrderByInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: OrderBy
   rfamseq_acc: OrderBy
@@ -3449,7 +3449,7 @@ input genseq_OrderByInput @join__type(graph: RFAM)  {
 
 input genseq_temp_WhereInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   rfamseq_acc: String
@@ -3460,7 +3460,7 @@ input genseq_temp_WhereInput @join__type(graph: RFAM)  {
 
 input genseq_temp_OrderByInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: OrderBy
   rfamseq_acc: OrderBy
@@ -3635,7 +3635,7 @@ input pdb_full_region_old_OrderByInput @join__type(graph: RFAM)  {
 
 input rfamseq_temp_WhereInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   rfamseq_acc: String
   accession: String
@@ -3650,7 +3650,7 @@ input rfamseq_temp_WhereInput @join__type(graph: RFAM)  {
 
 input rfamseq_temp_OrderByInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   rfamseq_acc: OrderBy
   accession: OrderBy
@@ -4057,7 +4057,7 @@ input dead_family_InsertInput @join__type(graph: RFAM)  {
   forward_to: String
   """
   wikipedia page title
-  
+
   """
   title: String
   user: String!
@@ -4073,7 +4073,7 @@ input dead_family_UpdateInput @join__type(graph: RFAM)  {
   forward_to: String
   """
   wikipedia page title
-  
+
   """
   title: String
   user: String
@@ -4279,7 +4279,7 @@ input full_region_UpdateInput @join__type(graph: RFAM)  {
 
 input genome_InsertInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   assembly_acc: String
@@ -4307,7 +4307,7 @@ input genome_InsertInput @join__type(graph: RFAM)  {
 
 input genome_UpdateInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   assembly_acc: String
@@ -4335,7 +4335,7 @@ input genome_UpdateInput @join__type(graph: RFAM)  {
 
 input genome_temp_InsertInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   assembly_acc: String
@@ -4363,7 +4363,7 @@ input genome_temp_InsertInput @join__type(graph: RFAM)  {
 
 input genome_temp_UpdateInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   assembly_acc: String
@@ -4391,7 +4391,7 @@ input genome_temp_UpdateInput @join__type(graph: RFAM)  {
 
 input genseq_InsertInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   rfamseq_acc: String
@@ -4402,7 +4402,7 @@ input genseq_InsertInput @join__type(graph: RFAM)  {
 
 input genseq_UpdateInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   rfamseq_acc: String
@@ -4413,7 +4413,7 @@ input genseq_UpdateInput @join__type(graph: RFAM)  {
 
 input genseq_temp_InsertInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   rfamseq_acc: String
@@ -4424,7 +4424,7 @@ input genseq_temp_InsertInput @join__type(graph: RFAM)  {
 
 input genseq_temp_UpdateInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   upid: String
   rfamseq_acc: String
@@ -4925,7 +4925,7 @@ input refseq_full_region_UpdateInput @join__type(graph: RFAM)  {
 
 input rfamseq_InsertInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   rfamseq_acc: String
   accession: String
@@ -4940,7 +4940,7 @@ input rfamseq_InsertInput @join__type(graph: RFAM)  {
 
 input rfamseq_UpdateInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   rfamseq_acc: String
   accession: String
@@ -4955,7 +4955,7 @@ input rfamseq_UpdateInput @join__type(graph: RFAM)  {
 
 input rfamseq_temp_InsertInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   rfamseq_acc: String
   accession: String
@@ -4970,7 +4970,7 @@ input rfamseq_temp_InsertInput @join__type(graph: RFAM)  {
 
 input rfamseq_temp_UpdateInput @join__type(graph: RFAM)  {
   """
-  This should be 
+  This should be
   """
   rfamseq_acc: String
   accession: String

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`openAPI loader: government_social_work should generate the schema correctly 1`] = `
 "schema @transport(subgraph: "example_api", kind: "rest", location: "/government/socialwork") {

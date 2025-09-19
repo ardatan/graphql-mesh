@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SOAP Loader should create executor for a service with mutations and query placeholder 1`] = `
 "schema @transport(kind: "soap", subgraph: "Test") {

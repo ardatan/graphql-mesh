@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Pet should generate the correct schema: schema 1`] = `
 "schema @transport(subgraph: "Pet", kind: "rest", location: "http://example.com") {

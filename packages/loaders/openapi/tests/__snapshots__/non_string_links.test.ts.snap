@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Links on non-object fields should generate the correct schema 1`] = `
 "schema @transport(subgraph: "toto", kind: "rest", location: "http://localhost:7777") {

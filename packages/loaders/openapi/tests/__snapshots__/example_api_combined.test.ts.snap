@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Example API Combined should generate correct schema: example_oas_combined-schema 1`] = `
 "schema @transport(subgraph: "example_api_combined", kind: "rest", location: "http://localhost:3000/api") {

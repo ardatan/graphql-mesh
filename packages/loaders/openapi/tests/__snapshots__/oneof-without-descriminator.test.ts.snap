@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`oneOf without discriminator should generate correct schema: discriminator-mapping 1`] = `
 "schema @transport(subgraph: "test", kind: "rest") {

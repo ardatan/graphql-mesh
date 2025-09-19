@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Query Parameters generates correct schema 1`] = `
 "schema @transport(subgraph: "query-params", kind: "rest", location: "http://localhost:3000") {

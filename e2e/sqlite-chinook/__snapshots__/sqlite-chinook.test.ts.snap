@@ -1,15 +1,15 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@extraSchemaDefinitionDirective"]
@@ -17,15 +17,15 @@ exports[`should compose the appropriate schema 1`] = `
   {
     query: Query
     mutation: Mutation
-    
+
   }
 
-  
+
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
+
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`should compose the appropriate schema 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-        
-        
+
+
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+
+
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`should compose the appropriate schema 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-    
-  
-  
+
+
+
   directive @link(
     url: String
     as: String
@@ -83,15 +83,15 @@ exports[`should compose the appropriate schema 1`] = `
     EXECUTION
   }
 
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 enum join__Graph {
-  CHINOOK @join__graph(name: "chinook", url: "chinook.db") 
+  CHINOOK @join__graph(name: "chinook", url: "chinook.db")
 }
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
@@ -99,9 +99,9 @@ directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  rep
 """
 The \`JSON\` scalar type represents raw JSON as values.
 """
-scalar SequelizeJSON @join__type(graph: CHINOOK) 
+scalar SequelizeJSON @join__type(graph: CHINOOK)
 
-scalar _DirectiveExtensions @join__type(graph: CHINOOK) 
+scalar _DirectiveExtensions @join__type(graph: CHINOOK)
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{kind: "sqlite", subgraph: "chinook", location: "chinook.db", options: {type: "db"}}]}

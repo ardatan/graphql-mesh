@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Discriminator with invalid key in the mapping should generate correct schema: discriminator-invalid-key 1`] = `
 "schema @transport(subgraph: "test", kind: "rest", location: "http://localhost") {

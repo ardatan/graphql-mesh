@@ -1,31 +1,31 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@merge", "@httpOperation", "@transport", "@source", "@extraSchemaDefinitionDirective"]
 )
   {
     query: Query
-    
-    
+
+
   }
 
-  
+
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
+
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`should compose the appropriate schema 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-        
-        
+
+
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+
+
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`should compose the appropriate schema 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-    
-  
-  
+
+
+
   directive @link(
     url: String
     as: String
@@ -83,18 +83,18 @@ exports[`should compose the appropriate schema 1`] = `
     EXECUTION
   }
 
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 enum join__Graph {
-  ACCOUNTS @join__graph(name: "accounts", url: "http://localhost:<accounts_port>") 
-  INVENTORY @join__graph(name: "inventory", url: "http://localhost:<inventory_port>/graphql") 
-  PRODUCTS @join__graph(name: "products", url: "http://localhost:<products_port>/graphql") 
-  REVIEWS @join__graph(name: "reviews", url: "http://localhost:<reviews_port>/graphql") 
+  ACCOUNTS @join__graph(name: "accounts", url: "http://localhost:<accounts_port>")
+  INVENTORY @join__graph(name: "inventory", url: "http://localhost:<inventory_port>/graphql")
+  PRODUCTS @join__graph(name: "products", url: "http://localhost:<products_port>/graphql")
+  REVIEWS @join__graph(name: "reviews", url: "http://localhost:<reviews_port>/graphql")
 }
 
 directive @merge(
@@ -132,11 +132,11 @@ directive @source(name: String!, type: String, subgraph: String!)  repeatable on
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
-scalar ObjMap @join__type(graph: ACCOUNTS) 
+scalar ObjMap @join__type(graph: ACCOUNTS)
 
-scalar _DirectiveExtensions @join__type(graph: ACCOUNTS) 
+scalar _DirectiveExtensions @join__type(graph: ACCOUNTS)
 
-scalar TransportOptions @join__type(graph: INVENTORY)  @join__type(graph: PRODUCTS)  @join__type(graph: REVIEWS) 
+scalar TransportOptions @join__type(graph: INVENTORY)  @join__type(graph: PRODUCTS)  @join__type(graph: REVIEWS)
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "accounts", kind: "rest", location: "http://localhost:<accounts_port>"}]}
@@ -146,56 +146,56 @@ type Query @extraSchemaDefinitionDirective(
     path: "/me"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @join__field(graph: ACCOUNTS) 
+  ) @join__field(graph: ACCOUNTS)
   user(id: String!) : User @httpOperation(
     subgraph: "accounts"
     path: "/users/{args.id}"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @merge(subgraph: "accounts", keyField: "id", keyArg: "id")  @join__field(graph: ACCOUNTS) 
+  ) @merge(subgraph: "accounts", keyField: "id", keyArg: "id")  @join__field(graph: ACCOUNTS)
   users: [User] @httpOperation(
     subgraph: "accounts"
     path: "/users"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @join__field(graph: ACCOUNTS) 
-  topProducts(first: Int = 5) : [Product] @join__field(graph: PRODUCTS) 
+  ) @join__field(graph: ACCOUNTS)
+  topProducts(first: Int = 5) : [Product] @join__field(graph: PRODUCTS)
 }
 
 type User @join__type(graph: ACCOUNTS, key: "id")  @join__type(graph: REVIEWS, key: "id", extension: true)  {
-  id: ID! @source(name: "id", type: "String!", subgraph: "accounts") 
-  name: String @join__field(graph: ACCOUNTS) 
-  username: String @join__field(graph: ACCOUNTS)  @join__field(graph: REVIEWS, external: true) 
-  reviews: [Review] @join__field(graph: REVIEWS) 
+  id: ID! @source(name: "id", type: "String!", subgraph: "accounts")
+  name: String @join__field(graph: ACCOUNTS)
+  username: String @join__field(graph: ACCOUNTS)  @join__field(graph: REVIEWS, external: true)
+  reviews: [Review] @join__field(graph: REVIEWS)
 }
 
 type Product @join__type(graph: INVENTORY, key: "upc", extension: true)  @join__type(graph: PRODUCTS, key: "upc")  @join__type(graph: REVIEWS, key: "upc", extension: true)  {
   upc: String!
-  weight: Int @join__field(graph: INVENTORY, external: true)  @join__field(graph: PRODUCTS) 
-  price: Int @join__field(graph: INVENTORY, external: true)  @join__field(graph: PRODUCTS) 
-  inStock: Boolean @join__field(graph: INVENTORY) 
-  shippingEstimate: Int @join__field(graph: INVENTORY, requires: "price weight") 
-  name: String @join__field(graph: PRODUCTS) 
-  reviews: [Review] @join__field(graph: REVIEWS) 
+  weight: Int @join__field(graph: INVENTORY, external: true)  @join__field(graph: PRODUCTS)
+  price: Int @join__field(graph: INVENTORY, external: true)  @join__field(graph: PRODUCTS)
+  inStock: Boolean @join__field(graph: INVENTORY)
+  shippingEstimate: Int @join__field(graph: INVENTORY, requires: "price weight")
+  name: String @join__field(graph: PRODUCTS)
+  reviews: [Review] @join__field(graph: REVIEWS)
 }
 
 type Review @join__type(graph: REVIEWS, key: "id")  {
   id: ID!
   body: String
-  author: User @join__field(graph: REVIEWS, provides: "username") 
+  author: User @join__field(graph: REVIEWS, provides: "username")
   product: Product
 }
 
 enum HTTPMethod @join__type(graph: ACCOUNTS)  {
-  GET @join__enumValue(graph: ACCOUNTS) 
-  HEAD @join__enumValue(graph: ACCOUNTS) 
-  POST @join__enumValue(graph: ACCOUNTS) 
-  PUT @join__enumValue(graph: ACCOUNTS) 
-  DELETE @join__enumValue(graph: ACCOUNTS) 
-  CONNECT @join__enumValue(graph: ACCOUNTS) 
-  OPTIONS @join__enumValue(graph: ACCOUNTS) 
-  TRACE @join__enumValue(graph: ACCOUNTS) 
-  PATCH @join__enumValue(graph: ACCOUNTS) 
+  GET @join__enumValue(graph: ACCOUNTS)
+  HEAD @join__enumValue(graph: ACCOUNTS)
+  POST @join__enumValue(graph: ACCOUNTS)
+  PUT @join__enumValue(graph: ACCOUNTS)
+  DELETE @join__enumValue(graph: ACCOUNTS)
+  CONNECT @join__enumValue(graph: ACCOUNTS)
+  OPTIONS @join__enumValue(graph: ACCOUNTS)
+  TRACE @join__enumValue(graph: ACCOUNTS)
+  PATCH @join__enumValue(graph: ACCOUNTS)
 }
 "
 `;

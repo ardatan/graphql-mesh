@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Reproductions GW-164 1`] = `
 {
@@ -390,25 +390,25 @@ enum MyEnum {
   "supergraphSdl": "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@myDirective"]) 
+
+
+
+
+
+
+    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@myDirective"])
   {
     query: Query
-    
-    
+
+
   }
 
-  
+
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
+
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -417,11 +417,11 @@ enum MyEnum {
         external: Boolean
         override: String
         usedOverridden: Boolean
-        
-        
+
+
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+
+
 
     directive @join__implements(
       graph: join__Graph!
@@ -442,9 +442,9 @@ enum MyEnum {
     ) repeatable on UNION
 
     scalar join__FieldSet
-    
-  
-  
+
+
+
   directive @link(
     url: String
     as: String
@@ -466,15 +466,15 @@ enum MyEnum {
     EXECUTION
   }
 
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 enum join__Graph {
-  A @join__graph(name: "A", url: "") 
+  A @join__graph(name: "A", url: "")
 }
 
 directive @myDirective(myarg: [MyEnum!]!)  on OBJECT
@@ -488,7 +488,7 @@ type MyObject @myDirective(myarg: [])  @join__type(graph: A)  {
 }
 
 enum MyEnum @join__type(graph: A)  {
-  MY_ENUM_VALUE @join__enumValue(graph: A) 
+  MY_ENUM_VALUE @join__enumValue(graph: A)
 }",
 }
 `;

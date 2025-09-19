@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`odata should create a GraphQL schema from a simple OData endpoint 1`] = `
 "schema @transport(kind: "odata", subgraph: "TripPin", location: "https://services.odata.org/TripPinRESTierService", headers: [], options: {}) {
@@ -262,7 +262,7 @@ interface IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode",
 
     Matches moment.js, Luxon and DateFns implementations
     ,/. is valid for decimal places and +/- is a valid prefix
-  
+
 """
 scalar ISO8601Duration
 

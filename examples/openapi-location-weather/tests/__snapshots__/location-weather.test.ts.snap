@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Location Weather should generate correct schema: location-weather-schema 1`] = `
 "directive @enum(subgraph: String, value: String) on ENUM_VALUE
@@ -1826,8 +1826,8 @@ type Query {
     radius: Int
 
     """
-    How to sort places. 
-    Format: ±SORT_FIELD,±SORT_FIELD 
+    How to sort places.
+    Format: ±SORT_FIELD,±SORT_FIELD
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -1895,8 +1895,8 @@ type Query {
     radius: Int
 
     """
-    How to sort places. 
-    Format: ±SORT_FIELD,±SORT_FIELD 
+    How to sort places.
+    Format: ±SORT_FIELD,±SORT_FIELD
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -1967,8 +1967,8 @@ type Query {
     radius: Int
 
     """
-    How to sort places. 
-    Format: ±SORT_FIELD,±SORT_FIELD 
+    How to sort places.
+    Format: ±SORT_FIELD,±SORT_FIELD
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -2039,8 +2039,8 @@ type Query {
     radius: Int
 
     """
-    How to sort places. 
-    Format: ±SORT_FIELD,±SORT_FIELD 
+    How to sort places.
+    Format: ±SORT_FIELD,±SORT_FIELD
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -2113,8 +2113,8 @@ type Query {
     radius: Int
 
     """
-    How to sort places. 
-    Format: ±SORT_FIELD,±SORT_FIELD 
+    How to sort places.
+    Format: ±SORT_FIELD,±SORT_FIELD
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -2185,8 +2185,8 @@ type Query {
     radius: Int
 
     """
-    How to sort places. 
-    Format: ±SORT_FIELD,±SORT_FIELD 
+    How to sort places.
+    Format: ±SORT_FIELD,±SORT_FIELD
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -2254,8 +2254,8 @@ type Query {
     radius: Int
 
     """
-    How to sort places. 
-    Format: ±SORT_FIELD,±SORT_FIELD 
+    How to sort places.
+    Format: ±SORT_FIELD,±SORT_FIELD
     where SORT_FIELD = countryCode | elevation | name | population
     """
     sort: String
@@ -2310,8 +2310,8 @@ type Query {
     regionCode: String!
 
     """
-    How to sort place results. 
-    'Format: ±SORT_FIELD,±SORT_FIELD' 
+    How to sort place results.
+    'Format: ±SORT_FIELD,±SORT_FIELD'
     where SORT_FIELD = elevation | name | population
     """
     sort: String
@@ -2369,8 +2369,8 @@ type Query {
     regionCode: String!
 
     """
-    How to sort place results. 
-    'Format: ±SORT_FIELD,±SORT_FIELD' 
+    How to sort place results.
+    'Format: ±SORT_FIELD,±SORT_FIELD'
     where SORT_FIELD = elevation | name | population
     """
     sort: String
@@ -2644,8 +2644,8 @@ type Query {
     offset: Int
 
     """
-    How to sort countries. 
-    Format: ±SORT_FIELD 
+    How to sort countries.
+    Format: ±SORT_FIELD
     where SORT_FIELD = code | name
     """
     sort: String
@@ -2753,8 +2753,8 @@ type Query {
     offset: Int
 
     """
-    How to sort regions. 
-    Format: ±SORT_FIELD 
+    How to sort regions.
+    Format: ±SORT_FIELD
     where SORT_FIELD = fipsCode | isoCode | name
     """
     sort: String
