@@ -4425,19 +4425,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/core@npm:^5.0.0, @envelop/core@npm:^5.2.3, @envelop/core@npm:^5.3.0, @envelop/core@npm:^5.3.1":
-  version: 5.3.1
-  resolution: "@envelop/core@npm:5.3.1"
-  dependencies:
-    "@envelop/instrumentation": "npm:^1.0.0"
-    "@envelop/types": "npm:^5.2.1"
-    "@whatwg-node/promise-helpers": "npm:^1.2.4"
-    tslib: "npm:^2.5.0"
-  checksum: 10c0/b925c4809ac1889d822f91669da0e117052eaf26ebbdb911af11a01e4989c68c5771938e2835382d6fcf68a6fd62c14b48de5b7e55d03ecbcd4f1e08994781a4
-  languageName: node
-  linkType: hard
-
-"@envelop/core@npm:^5.3.2":
+"@envelop/core@npm:^5.0.0, @envelop/core@npm:^5.2.3, @envelop/core@npm:^5.3.0, @envelop/core@npm:^5.3.1, @envelop/core@npm:^5.3.2":
   version: 5.3.2
   resolution: "@envelop/core@npm:5.3.2"
   dependencies:
@@ -4610,9 +4598,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/rate-limiter@npm:^8.0.0, @envelop/rate-limiter@npm:^8.1.0":
-  version: 8.1.0
-  resolution: "@envelop/rate-limiter@npm:8.1.0"
+"@envelop/rate-limiter@npm:^8.0.0, @envelop/rate-limiter@npm:^8.1.1":
+  version: 8.1.1
+  resolution: "@envelop/rate-limiter@npm:8.1.1"
   dependencies:
     "@envelop/on-resolve": "npm:^6.0.0"
     "@graphql-tools/utils": "npm:^10.5.4"
@@ -4625,28 +4613,11 @@ __metadata:
   peerDependencies:
     "@envelop/core": ^5.3.2
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/2a846ae76ca728a7e37c30bdff3d5096d5ae42dd4152c9c6218fd87b291463d070956890d0518b5e11b6a1126ad9a472edf5cd6949c862508620c675f8ca23ff
+  checksum: 10c0/fdcc545fa5589a73a04a15357c6b07f1db2ac1a75a0c20c55b3a1979669139705dfe5f6655ffcff85493f8bd6e5f18aa092eed8d1a3e565f1074aa598c54b486
   languageName: node
   linkType: hard
 
-"@envelop/response-cache@npm:^8.0.0":
-  version: 8.0.1
-  resolution: "@envelop/response-cache@npm:8.0.1"
-  dependencies:
-    "@graphql-tools/utils": "npm:^10.0.3"
-    "@whatwg-node/fetch": "npm:^0.10.0"
-    "@whatwg-node/promise-helpers": "npm:^1.2.4"
-    fast-json-stable-stringify: "npm:^2.1.0"
-    lru-cache: "npm:^10.0.0"
-    tslib: "npm:^2.5.0"
-  peerDependencies:
-    "@envelop/core": ^5.3.1
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/b4c6cd734f0317aad15121b6de3f12a9683261b94def85f4ab8a7d158ac2bf29618051a2de0abe4457218a364fd06a0ea32b02a5dbebff2b0e4354775cda357d
-  languageName: node
-  linkType: hard
-
-"@envelop/response-cache@npm:^8.0.2":
+"@envelop/response-cache@npm:^8.0.0, @envelop/response-cache@npm:^8.0.2":
   version: 8.0.2
   resolution: "@envelop/response-cache@npm:8.0.2"
   dependencies:
@@ -7522,7 +7493,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-rate-limit@workspace:packages/plugins/rate-limit"
   dependencies:
     "@envelop/core": "npm:^5.3.2"
-    "@envelop/rate-limiter": "npm:^8.1.0"
+    "@envelop/rate-limiter": "npm:^8.1.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:0.5.9"
     "@graphql-mesh/types": "npm:^0.104.13"
@@ -8587,26 +8558,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/executor-http@npm:^3.0.0":
-  version: 3.0.1
-  resolution: "@graphql-tools/executor-http@npm:3.0.1"
-  dependencies:
-    "@graphql-hive/signal": "npm:^2.0.0"
-    "@graphql-tools/executor-common": "npm:^1.0.1"
-    "@graphql-tools/utils": "npm:^10.9.1"
-    "@repeaterjs/repeater": "npm:^3.0.4"
-    "@whatwg-node/disposablestack": "npm:^0.0.6"
-    "@whatwg-node/fetch": "npm:^0.10.10"
-    "@whatwg-node/promise-helpers": "npm:^1.3.0"
-    meros: "npm:^1.3.1"
-    tslib: "npm:^2.8.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/5cab84eafe0a3a3e8cbfd2596ed3b1bcff6b9ace5edecfa91a99e7b89835a6f284aac226c3eb36f3a3debce27aa6d61b5ab1abd71114850791d1f8816ede4b78
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/executor-http@npm:^3.0.2":
+"@graphql-tools/executor-http@npm:^3.0.0, @graphql-tools/executor-http@npm:^3.0.2":
   version: 3.0.2
   resolution: "@graphql-tools/executor-http@npm:3.0.2"
   dependencies:
@@ -29893,19 +29845,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"meros@npm:^1.2.1, meros@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "meros@npm:1.3.1"
-  peerDependencies:
-    "@types/node": ">=13"
-  peerDependenciesMeta:
-    "@types/node":
-      optional: true
-  checksum: 10c0/a3af0702b3086fc7394b38af0f35c2abb445b5e486d6810380d60f6ac241fb114b5423eb55898f8b86b73d58c91f6b4e961087f841e8ba86a0538d2ff249e877
-  languageName: node
-  linkType: hard
-
-"meros@npm:^1.3.2":
+"meros@npm:^1.2.1, meros@npm:^1.3.2":
   version: 1.3.2
   resolution: "meros@npm:1.3.2"
   peerDependencies:
