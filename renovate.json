@@ -43,6 +43,14 @@
         "@graphql-mesh/*",
         "@graphql-tools/*"
       ]
+    },
+    {
+      "groupName": "newrelic dependencies",
+      "groupSlug": "all-newrelic",
+      "matchPackagePatterns": [
+        "@newrelic/*",
+        "newrelic"
+      ]
     }
   ]
 }
