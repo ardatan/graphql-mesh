@@ -7,7 +7,7 @@
     "@graphql-mesh/cache-cfw-kv": "0.105.13",
     "@graphql-mesh/cli": "0.100.14",
     "@graphql-mesh/graphql": "0.104.13",
-    "@graphql-mesh/plugin-rate-limit": "0.105.0",
+    "@graphql-mesh/plugin-rate-limit": "0.105.1",
     "@graphql-mesh/plugin-response-cache": "0.104.14",
     "graphql": "16.11.0"
   },

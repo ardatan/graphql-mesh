@@ -1,5 +1,21 @@
 # @graphql-mesh/plugin-rate-limit
 
+## 0.105.1
+
+### Patch Changes
+
+- [#8777](https://github.com/ardatan/graphql-mesh/pull/8777)
+  [`e054806`](https://github.com/ardatan/graphql-mesh/commit/e054806c3ba7daaeaa7c6c54607412590d7926b2)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/rate-limiter@^8.1.1` ↗︎](https://www.npmjs.com/package/@envelop/rate-limiter/v/8.1.1)
+    (from `^8.1.0`, in `dependencies`)
+
+- [#8777](https://github.com/ardatan/graphql-mesh/pull/8777)
+  [`e054806`](https://github.com/ardatan/graphql-mesh/commit/e054806c3ba7daaeaa7c6c54607412590d7926b2)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Fix rate limiting being wrongly applied
+  to all fields with a default configuration.
+
 ## 0.105.0
 
 ### Minor Changes
