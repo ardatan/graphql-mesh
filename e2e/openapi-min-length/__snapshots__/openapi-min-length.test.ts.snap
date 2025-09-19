@@ -4,28 +4,28 @@ exports[`should compose 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@length", "@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
 )
   {
     query: Query
-
-
+    
+    
   }
 
-
+  
     directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
     directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-
+    
       directive @join__field(
         graph: join__Graph
         requires: join__FieldSet
@@ -34,11 +34,11 @@ exports[`should compose 1`] = `
         external: Boolean
         override: String
         usedOverridden: Boolean
-
-
+        
+        
       ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-
+    
+    
 
     directive @join__implements(
       graph: join__Graph!
@@ -59,9 +59,9 @@ exports[`should compose 1`] = `
     ) repeatable on UNION
 
     scalar join__FieldSet
-
-
-
+    
+  
+  
   directive @link(
     url: String
     as: String
@@ -83,15 +83,15 @@ exports[`should compose 1`] = `
     EXECUTION
   }
 
-
-
-
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
 enum join__Graph {
-  WIKI @join__graph(name: "Wiki", url: "https://api.chucknorris.io")
+  WIKI @join__graph(name: "Wiki", url: "https://api.chucknorris.io") 
 }
 
 directive @length(subgraph: String, min: Int, max: Int)  repeatable on SCALAR
@@ -120,11 +120,11 @@ directive @transport(
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
-scalar Category @length(subgraph: "Wiki", max: 100)  @join__type(graph: WIKI)
+scalar Category @length(subgraph: "Wiki", max: 100)  @join__type(graph: WIKI) 
 
-scalar ObjMap @join__type(graph: WIKI)
+scalar ObjMap @join__type(graph: WIKI) 
 
-scalar _DirectiveExtensions @join__type(graph: WIKI)
+scalar _DirectiveExtensions @join__type(graph: WIKI) 
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io"}]}
@@ -138,14 +138,14 @@ type Query @extraSchemaDefinitionDirective(
 }
 
 enum HTTPMethod @join__type(graph: WIKI)  {
-  GET @join__enumValue(graph: WIKI)
-  HEAD @join__enumValue(graph: WIKI)
-  POST @join__enumValue(graph: WIKI)
-  PUT @join__enumValue(graph: WIKI)
-  DELETE @join__enumValue(graph: WIKI)
-  CONNECT @join__enumValue(graph: WIKI)
-  OPTIONS @join__enumValue(graph: WIKI)
-  TRACE @join__enumValue(graph: WIKI)
-  PATCH @join__enumValue(graph: WIKI)
+  GET @join__enumValue(graph: WIKI) 
+  HEAD @join__enumValue(graph: WIKI) 
+  POST @join__enumValue(graph: WIKI) 
+  PUT @join__enumValue(graph: WIKI) 
+  DELETE @join__enumValue(graph: WIKI) 
+  CONNECT @join__enumValue(graph: WIKI) 
+  OPTIONS @join__enumValue(graph: WIKI) 
+  TRACE @join__enumValue(graph: WIKI) 
+  PATCH @join__enumValue(graph: WIKI) 
 }"
 `;
