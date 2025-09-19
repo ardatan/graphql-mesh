@@ -712,6 +712,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-crypto/crc32@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@aws-crypto/crc32@npm:3.0.0"
+  dependencies:
+    "@aws-crypto/util": "npm:^3.0.0"
+    "@aws-sdk/types": "npm:^3.222.0"
+    tslib: "npm:^1.11.1"
+  checksum: 10c0/09189ada61a4ffe6b3bd363b0535438470a8cc1a83c89a2591ef2a0b91acb9c4ba95626557cddf856abb9df0d2bfdb0969512f1949b6db7bff5d17109d8beb3f
+  languageName: node
+  linkType: hard
+
 "@aws-crypto/crc32@npm:5.2.0":
   version: 5.2.0
   resolution: "@aws-crypto/crc32@npm:5.2.0"
@@ -755,6 +766,17 @@ __metadata:
   dependencies:
     tslib: "npm:^2.6.2"
   checksum: 10c0/4d2118e29d68ca3f5947f1e37ce1fbb3239a0c569cc938cdc8ab8390d595609b5caf51a07c9e0535105b17bf5c52ea256fed705a07e9681118120ab64ee73af2
+  languageName: node
+  linkType: hard
+
+"@aws-crypto/util@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@aws-crypto/util@npm:3.0.0"
+  dependencies:
+    "@aws-sdk/types": "npm:^3.222.0"
+    "@aws-sdk/util-utf8-browser": "npm:^3.0.0"
+    tslib: "npm:^1.11.1"
+  checksum: 10c0/71ab6963daabbf080b274e24d160e4af6c8bbb6832bb885644018849ff53356bf82bb8000b8596cf296e7d6b14ad6201872b6b902f944e97e121eb2b2f692667
   languageName: node
   linkType: hard
 
@@ -1596,6 +1618,15 @@ __metadata:
     aws-crt:
       optional: true
   checksum: 10c0/ec0da41bc610859ec2004cbd33cb934091bc92f857d5c4f1d21be5487afd7cc98dfd7afb1170e4507dc7a54f594a8898e0bef80543f5b7c2cfd1b66c680b50f1
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-utf8-browser@npm:^3.0.0":
+  version: 3.259.0
+  resolution: "@aws-sdk/util-utf8-browser@npm:3.259.0"
+  dependencies:
+    tslib: "npm:^2.3.1"
+  checksum: 10c0/ff56ff252c0ea22b760b909ba5bbe9ca59a447066097e73b1e2ae50a6d366631ba560c373ec4e83b3e225d16238eeaf8def210fdbf135070b3dd3ceb1cc2ef9a
   languageName: node
   linkType: hard
 
@@ -7422,7 +7453,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.9"
     "@graphql-mesh/types": "npm:^0.104.13"
     "@graphql-mesh/utils": "npm:^0.104.13"
-    "@newrelic/test-utilities": "npm:6.5.5"
+    "@newrelic/test-utilities": "npm:10.0.0"
     "@types/newrelic": "npm:9.14.8"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     graphql: "npm:16.11.0"
@@ -11630,21 +11661,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@newrelic/test-utilities@npm:6.5.5":
-  version: 6.5.5
-  resolution: "@newrelic/test-utilities@npm:6.5.5"
+"@newrelic/test-utilities@npm:10.0.0":
+  version: 10.0.0
+  resolution: "@newrelic/test-utilities@npm:10.0.0"
   dependencies:
+    "@smithy/eventstream-codec": "npm:^2.1.1"
+    "@smithy/util-utf8": "npm:^2.1.1"
     async: "npm:^3.2.3"
     colors: "npm:^1.1.2"
     commander: "npm:^2.14.1"
     concat-stream: "npm:^1.6.0"
-    glob: "npm:^7.2.0"
+    glob: "npm:^7.2.3"
     lodash: "npm:^4.17.5"
     log-update: "npm:^1.0.2"
-    semver: "npm:^5.5.0"
+    semver: "npm:^7.5.2"
   bin:
     versioned-tests: bin/version-manager.js
-  checksum: 10c0/544c206ea278973b57d11ac5c5298afbcb861208736a3857285999c93b364934aaceeb213a408d5568914e2c1a39a2e812ffeec35401edce88d56b551b960421
+  checksum: 10c0/e9803cdc768808e29c782fda737dc033cc98b2f37e5673581ab7aa0a2b9c2d15ce76ec2872a5b2941e91f912e31ca5e568d51f435ecdebf844377b548d593f7e
   languageName: node
   linkType: hard
 
@@ -14216,6 +14249,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@smithy/eventstream-codec@npm:^2.1.1":
+  version: 2.2.0
+  resolution: "@smithy/eventstream-codec@npm:2.2.0"
+  dependencies:
+    "@aws-crypto/crc32": "npm:3.0.0"
+    "@smithy/types": "npm:^2.12.0"
+    "@smithy/util-hex-encoding": "npm:^2.2.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/b2b45542d81b56be382a40866af378a66579c76a8a099e8025b96b97bc4944662cbbd9fafef1ce88a3c8181c7bebb33470a9a064772ecc3b378b0e8e6899681d
+  languageName: node
+  linkType: hard
+
 "@smithy/eventstream-codec@npm:^4.0.2":
   version: 4.0.2
   resolution: "@smithy/eventstream-codec@npm:4.0.2"
@@ -14602,6 +14647,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@smithy/types@npm:^2.12.0":
+  version: 2.12.0
+  resolution: "@smithy/types@npm:2.12.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/3530ba5b4f4e52a4028679f73e133af928cf6ea22a16d29669b8c67ea540ed46ab15dc6d391598fbdfd476884cdc57881c480168e2dbe7c5bb007f5afad01531
+  languageName: node
+  linkType: hard
+
 "@smithy/types@npm:^4.2.0, @smithy/types@npm:^4.3.2, @smithy/types@npm:^4.5.0":
   version: 4.5.0
   resolution: "@smithy/types@npm:4.5.0"
@@ -14758,6 +14812,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@smithy/util-hex-encoding@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@smithy/util-hex-encoding@npm:2.2.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/35b23bb3e654464f4e621407d27a7b6eb8a813ca69156e805126514954e21478fbe26bbd7b90f0911d1ca179e6b2a4c2e7ce6d879d9b31b74462541d3092ea83
+  languageName: node
+  linkType: hard
+
 "@smithy/util-hex-encoding@npm:^4.0.0, @smithy/util-hex-encoding@npm:^4.1.0":
   version: 4.1.0
   resolution: "@smithy/util-hex-encoding@npm:4.1.0"
@@ -14840,7 +14903,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@smithy/util-utf8@npm:^2.0.0":
+"@smithy/util-utf8@npm:^2.0.0, @smithy/util-utf8@npm:^2.1.1":
   version: 2.3.0
   resolution: "@smithy/util-utf8@npm:2.3.0"
   dependencies:
@@ -24803,7 +24866,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.0":
+"glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.3":
   version: 7.2.3
   resolution: "glob@npm:7.2.3"
   dependencies:
