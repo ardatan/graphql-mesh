@@ -47,10 +47,7 @@
     {
       "groupName": "newrelic dependencies",
       "groupSlug": "all-newrelic",
-      "matchPackagePatterns": [
-        "@newrelic/*",
-        "newrelic"
-      ]
+      "matchPackagePatterns": ["@newrelic/*", "newrelic"]
     }
   ]
 }
