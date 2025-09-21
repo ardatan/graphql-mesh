@@ -125,7 +125,7 @@
     "esbuild": "^0.25.0",
     "estree-util-value-to-estree": "3.4.0",
     "express": "5.1.0",
-    "form-data": "3.0.4",
+    "form-data": "4.0.4",
     "graphql": "16.11.0",
     "graphql-jit": "patch:graphql-jit@npm%3A0.8.7#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch",
     "graphql-rate-limit": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
