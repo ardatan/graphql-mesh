@@ -2,10 +2,20 @@ import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import type { Logger, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger, pathExists, withCookies } from '@graphql-mesh/utils';
-import { createServerAdapter, Response } from '@whatwg-node/server';
+import { createServerAdapter, Response, type FetchAPI, type OnRequestHook, type OnResponseHook, type ServerAdapter, type ServerAdapterInitialContext, type ServerAdapterPlugin } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';
 
 export type MeshHTTPHandler = ReturnType<typeof createMeshHTTPHandler>;
+
+/*
+ Extends server context's request with SERVICE_HEADERS
+*/
+type ServerAdapterInitialContextWithServiceHeaders<TServerContext> = {
+  req: Request & {
+    SERVICE_HEADERS:Map<string,string>
+  }
+} & ServerAdapterInitialContext & TServerContext
+
 
 export function createMeshHTTPHandler<TServerContext>({
   baseDir,
@@ -53,6 +63,18 @@ export function createMeshHTTPHandler<TServerContext>({
     {
       plugins: [
         {
+          onResponse({response,serverContext}) {
+              const headers = (serverContext as ServerAdapterInitialContextWithServiceHeaders<TServerContext>)?.req?.SERVICE_HEADERS;
+              const exposedHeaders = corsConfig?.exposedHeaders?.map((header) => header.toLowerCase())
+              if ( headers && exposedHeaders?.length ) {
+                  Object.entries(headers).forEach(([name,value])=>{
+                      if ( exposedHeaders.indexOf(name) ) {
+                          logger.debug(`Injecting service header ${name} => ${value}`);
+                          response.headers.append(name,value);
+                      }
+                  });
+              }
+          },
           onRequest({ request, url, endResponse }): void | Promise<void> {
             switch (url.pathname) {
               case healthCheckEndpoint:
