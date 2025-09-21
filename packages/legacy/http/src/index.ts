@@ -68,7 +68,7 @@ export function createMeshHTTPHandler<TServerContext>({
               const exposedHeaders = corsConfig?.exposedHeaders?.map((header) => header.toLowerCase())
               if ( headers && exposedHeaders?.length ) {
                   Object.entries(headers).forEach(([name,value])=>{
-                      if ( exposedHeaders.indexOf(name) ) {
+                      if ( exposedHeaders.indexOf(name) !== -1 ) {
                           logger.debug(`Injecting service header ${name} => ${value}`);
                           response.headers.append(name,value);
                       }
