@@ -1,5 +1,5 @@
 import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
-import type { Plugin } from '@envelop/core';
+import { type Plugin } from '@envelop/core';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
 import {
@@ -9,23 +9,42 @@ import {
   type MeshPubSub,
   type YamlConfig,
 } from '@graphql-mesh/types';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 interface InvalidateByResultParams {
   pubsub: MeshPubSub | HivePubSub;
-  invalidations: YamlConfig.LiveQueryInvalidation[];
+  invalidations: (
+    | YamlConfig.LiveQueryInvalidationByMutation
+    | YamlConfig.LiveQueryInvalidationByPolling
+  )[];
   logger: Logger;
 }
 
-export function useInvalidateByResult(params: InvalidateByResultParams): Plugin {
+export function useInvalidateByResult(params: InvalidateByResultParams): Plugin & Disposable {
   const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
+  const timers = new Set<ReturnType<typeof setInterval>>();
+  const pubsub = toMeshPubSub(params.pubsub);
   params.invalidations.forEach(liveQueryInvalidation => {
     const rawInvalidationPaths = liveQueryInvalidation.invalidate;
     const factories = rawInvalidationPaths.map(rawInvalidationPath =>
       getInterpolatedStringFactory(rawInvalidationPath),
     );
-    liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
+    if ('pollingInterval' in liveQueryInvalidation) {
+      timers.add(
+        setInterval(() => {
+          pubsub.publish('live-query:invalidate', liveQueryInvalidation.invalidate);
+        }, liveQueryInvalidation.pollingInterval),
+      );
+    } else if ('field' in liveQueryInvalidation) {
+      liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
+    }
   });
-  const pubsub = toMeshPubSub(params.pubsub);
+  const id = pubsub.subscribe('destroy', () => {
+    for (const timer of timers) {
+      clearInterval(timer);
+    }
+    pubsub.unsubscribe(id);
+  });
   return {
     onExecute() {
       return {
@@ -63,6 +82,11 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
           );
         },
       };
+    },
+    [DisposableSymbols.dispose]() {
+      for (const timer of timers) {
+        clearInterval(timer);
+      }
     },
   };
 }

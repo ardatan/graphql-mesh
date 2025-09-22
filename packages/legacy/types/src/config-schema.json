@@ -2461,10 +2461,18 @@
         "invalidations": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/LiveQueryInvalidation"
+            "description": "Any of: LiveQueryInvalidationByMutation, LiveQueryInvalidationByPolling",
+            "anyOf": [
+              {
+                "$ref": "#/definitions/LiveQueryInvalidationByMutation"
+              },
+              {
+                "$ref": "#/definitions/LiveQueryInvalidationByPolling"
+              }
+            ]
           },
           "additionalItems": false,
-          "description": "Invalidate a query or queries when a specific operation is done without an error"
+          "description": "Invalidate a query or queries when a specific operation is done without an error (Any of: LiveQueryInvalidationByMutation, LiveQueryInvalidationByPolling)"
         },
         "resourceIdentifier": {
           "type": "string",
@@ -2488,10 +2496,10 @@
         }
       }
     },
-    "LiveQueryInvalidation": {
+    "LiveQueryInvalidationByMutation": {
       "additionalProperties": false,
       "type": "object",
-      "title": "LiveQueryInvalidation",
+      "title": "LiveQueryInvalidationByMutation",
       "properties": {
         "field": {
           "type": "string",
@@ -2506,6 +2514,24 @@
         }
       },
       "required": ["field", "invalidate"]
+    },
+    "LiveQueryInvalidationByPolling": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "LiveQueryInvalidationByPolling",
+      "properties": {
+        "pollingInterval": {
+          "type": "integer"
+        },
+        "invalidate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        }
+      },
+      "required": ["pollingInterval", "invalidate"]
     },
     "LiveQueryIndexBy": {
       "additionalProperties": false,

@@ -7418,6 +7418,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.104.13"
     "@graphql-mesh/utils": "npm:^0.104.13"
     "@n1ru4l/in-memory-live-query-store": "npm:^0.10.0"
+    "@whatwg-node/disposablestack": "npm:^0.0.6"
     graphql: "npm:16.11.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
