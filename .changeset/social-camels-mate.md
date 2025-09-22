@@ -8,7 +8,7 @@ Support polling in an interval by milliseconds
 ```yaml
 plugins:
   - live-query:
-      invalidateByPolling:
+      invalidations:
         - pollingInterval: 10000 # Polling interval in milliseconds
           invalidate:
             - Query.products
