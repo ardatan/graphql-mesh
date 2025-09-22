@@ -100,7 +100,7 @@ query to be polled.
 ```yaml filename=".meshrc.yaml"
 plugins:
   - live-query:
-      invalidateByPolling:
+      invalidations:
         - pollingInterval: 10000 # Polling interval in milliseconds
           invalidate:
             - Query.products
