@@ -11362,8 +11362,8 @@ __metadata:
   linkType: hard
 
 "@neo4j/graphql@npm:^7.2.11":
-  version: 7.2.11
-  resolution: "@neo4j/graphql@npm:7.2.11"
+  version: 7.2.12
+  resolution: "@neo4j/graphql@npm:7.2.12"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@as-integrations/express4": "npm:^1.1.2"
@@ -11386,7 +11386,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/c13a8d562125d0ac3d92105dd62b90f1b23cf00a18dc04ea0794e1ddca60952a4fdde962c9e040d65490bcf1f1c2782ecbf705c33b8e44b60126c7358e8b4682
+  checksum: 10c0/f0127118222389ca4ccb052235b7dc99a43bc9749117c6a357d4348601b07e13f2c183be84d4d4ccf61a4797357d0b910854293f5352e859f51dfa98cc4d7039
   languageName: node
   linkType: hard
 
