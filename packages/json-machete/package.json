@@ -37,7 +37,7 @@
     "json-pointer": "^0.6.2",
     "to-json-schema": "^0.2.5",
     "tslib": "^2.4.0",
-    "url-join": "^4.0.1"
+    "url-join": "^5.0.0"
   },
   "devDependencies": {
     "@types/json-pointer": "1.0.34"
