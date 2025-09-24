@@ -38,7 +38,9 @@ type LiveQueryConfig {
   indexBy: [LiveQueryIndexBy]
 }
 
-type LiveQueryInvalidation {
+union LiveQueryInvalidation @md = LiveQueryInvalidationByMutation | LiveQueryInvalidationByPolling
+
+type LiveQueryInvalidationByMutation @md {
   """
   Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field.
   """
@@ -46,7 +48,18 @@ type LiveQueryInvalidation {
   invalidate: [String!]!
 }
 
-type LiveQueryIndexBy {
+type LiveQueryInvalidationByPolling @md {
+  """
+  Polling interval in milliseconds
+  """
+  pollingInterval: Int!
+  """
+  Schema coordinate of the query to be polled
+  """
+  invalidate: [String!]!
+}
+
+type LiveQueryIndexBy @md {
   field: String!
   args: [String]!
 }
