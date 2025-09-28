@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`should execute Add 1`] = `
+exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
@@ -122,7 +122,7 @@ input AddRequestInput @join__type(graph: CALCULATOR)  {
 "
 `;
 
-exports[`should execute Add 2`] = `
+exports[`should execute Add 1`] = `
 {
   "data": {
     "add": 5,

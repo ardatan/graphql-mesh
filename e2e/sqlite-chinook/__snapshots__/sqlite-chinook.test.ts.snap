@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`should execute Albums 1`] = `
+exports[`should compose the appropriate schema 1`] = `
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
@@ -597,7 +597,7 @@ type GenericResponse @join__type(graph: CHINOOK)  {
 "
 `;
 
-exports[`should execute Albums 2`] = `
+exports[`should execute Albums 1`] = `
 {
   "data": {
     "albums": [
