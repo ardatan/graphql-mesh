@@ -22,7 +22,7 @@
     "@theguild/tailwind-config": "0.6.3",
     "@types/node": "^24.4.0",
     "@types/react": "19.1.15",
-    "cross-env": "10.0.0",
+    "cross-env": "10.1.0",
     "eslint": "9.36.0",
     "eslint-config-next": "15.5.4",
     "postcss": "8.5.6",
