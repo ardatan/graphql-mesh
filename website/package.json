@@ -21,7 +21,7 @@
     "@playwright/test": "^1.55.0",
     "@theguild/tailwind-config": "0.6.3",
     "@types/node": "^24.4.0",
-    "@types/react": "19.1.15",
+    "@types/react": "19.1.16",
     "cross-env": "10.1.0",
     "eslint": "9.36.0",
     "eslint-config-next": "15.5.4",
