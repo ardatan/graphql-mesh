@@ -43,7 +43,7 @@
     "@graphql-tools/utils": "^10.8.0",
     "@neo4j/graphql": "^7.3.2",
     "graphql-scalars": "^1.22.4",
-    "neo4j-driver": "^5.28.1",
+    "neo4j-driver": "^6.0.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
