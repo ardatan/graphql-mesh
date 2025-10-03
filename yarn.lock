@@ -3670,16 +3670,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/unenv-preset@npm:2.7.5":
-  version: 2.7.5
-  resolution: "@cloudflare/unenv-preset@npm:2.7.5"
+"@cloudflare/unenv-preset@npm:2.7.6":
+  version: 2.7.6
+  resolution: "@cloudflare/unenv-preset@npm:2.7.6"
   peerDependencies:
     unenv: 2.0.0-rc.21
-    workerd: ^1.20250924.0
+    workerd: ^1.20250927.0
   peerDependenciesMeta:
     workerd:
       optional: true
-  checksum: 10c0/22c4d8e395138870c6cc24c90bba80674892d2a922f64fa5ecb23e05cf247f30b39cb548a4fabfa78ca2680363d84769eed0efa8bd363ee917888d2aea92d6ef
+  checksum: 10c0/f5ef27be5cd4c918ff9e537aef994b0367eb67735f94a8c8ea8483fbab9ec86f3a434b5530f5b1bb85e1d6cdf8c8f6eee0dd2c8d00e2a874b26694ce36041987
   languageName: node
   linkType: hard
 
@@ -5082,7 +5082,7 @@ __metadata:
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.14"
     "@omnigraph/json-schema": "workspace:^"
     graphql: "npm:16.11.0"
-    wrangler: "npm:4.41.0"
+    wrangler: "npm:4.42.0"
   languageName: unknown
   linkType: soft
 
@@ -5097,7 +5097,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:^0.105.1"
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.14"
     graphql: "npm:16.11.0"
-    wrangler: "npm:4.41.0"
+    wrangler: "npm:4.42.0"
   languageName: unknown
   linkType: soft
 
@@ -5237,7 +5237,7 @@ __metadata:
     "@graphql-mesh/json-schema": "npm:0.109.14"
     "@graphql-mesh/plugin-response-cache": "npm:0.104.14"
     graphql: "npm:16.11.0"
-    wrangler: "npm:4.41.0"
+    wrangler: "npm:4.42.0"
   languageName: unknown
   linkType: soft
 
@@ -5967,7 +5967,7 @@ __metadata:
     "@graphql-mesh/plugin-rate-limit": "npm:0.105.1"
     "@graphql-mesh/plugin-response-cache": "npm:0.104.14"
     graphql: "npm:16.11.0"
-    wrangler: "npm:4.41.0"
+    wrangler: "npm:4.42.0"
   languageName: unknown
   linkType: soft
 
@@ -41115,12 +41115,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:4.41.0":
-  version: 4.41.0
-  resolution: "wrangler@npm:4.41.0"
+"wrangler@npm:4.42.0":
+  version: 4.42.0
+  resolution: "wrangler@npm:4.42.0"
   dependencies:
     "@cloudflare/kv-asset-handler": "npm:0.4.0"
-    "@cloudflare/unenv-preset": "npm:2.7.5"
+    "@cloudflare/unenv-preset": "npm:2.7.6"
     blake3-wasm: "npm:2.1.5"
     esbuild: "npm:0.25.4"
     fsevents: "npm:~2.3.2"
@@ -41139,7 +41139,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 10c0/cbf461d2e613e9fec083881a89389296c470c4ad9e21944bf43619e1acfc7ed56c4591ee445546d8f6681b21a591c4046ca12abea73f762ee894214a80e25892
+  checksum: 10c0/e107821bdc92b47dfb044b5a07cf5a1b31227ae305bd084f3a770cc28fe38e3fe6c1bdf5c926029a672c46e574ab31887e2cfbc17febd3dd733eca5632b41b45
   languageName: node
   linkType: hard
 
