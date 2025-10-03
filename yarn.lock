@@ -3718,10 +3718,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20251001.0":
-  version: 4.20251001.0
-  resolution: "@cloudflare/workers-types@npm:4.20251001.0"
-  checksum: 10c0/444dfae8779b87106b1d7b784832c874b8f89b153b3b9b11a792d9db24fe636b4a941318b3917b0abe2f0d5dcb526a9d99b6ff886a7018a2e4c703284bbea29b
+"@cloudflare/workers-types@npm:4.20251003.0":
+  version: 4.20251003.0
+  resolution: "@cloudflare/workers-types@npm:4.20251003.0"
+  checksum: 10c0/d7b2ad8e4ad515f82b3c7626bfade156ce3cbe7ff89c532934182dd1074046b15ac85a3d2996b6d65a2974b8d90bbf72135f9f35181b99f7a03a9ff196a73d17
   languageName: node
   linkType: hard
 
@@ -5797,7 +5797,7 @@ __metadata:
     react: "npm:19.2.0"
     react-dom: "npm:19.2.0"
     typescript: "npm:^5.4.2"
-    vite: "npm:7.1.8"
+    vite: "npm:7.1.9"
   languageName: unknown
   linkType: soft
 
@@ -6832,7 +6832,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20251001.0"
+    "@cloudflare/workers-types": "npm:4.20251003.0"
     "@graphql-mesh/types": "npm:^0.104.13"
     "@graphql-mesh/utils": "npm:^0.104.13"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -40206,9 +40206,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:7.1.8":
-  version: 7.1.8
-  resolution: "vite@npm:7.1.8"
+"vite@npm:7.1.9":
+  version: 7.1.9
+  resolution: "vite@npm:7.1.9"
   dependencies:
     esbuild: "npm:^0.25.0"
     fdir: "npm:^6.5.0"
@@ -40257,7 +40257,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/fcbd6582c84c4e4ce744b0c51f5c6db94905074a7aadeee8abf27c6211d0d660da2becab28f5b80bb17fe90213e50a2830f3d791bf16b2e6bc790c1b9aa55c73
+  checksum: 10c0/f628f903a137c1410232558bde99c223ea00a090bda6af77752c61f912955f0050aac12d3cfe024d08a0f150ff6fab61b3d0be75d634a59b94d49f525392e1f7
   languageName: node
   linkType: hard
 
