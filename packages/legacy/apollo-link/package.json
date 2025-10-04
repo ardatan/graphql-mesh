@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/apollo-link",
-  "version": "0.106.13",
+  "version": "0.106.14",
   "type": "module",
   "repository": {
     "type": "git",
