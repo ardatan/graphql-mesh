@@ -52,11 +52,11 @@
     "http-string-parser": "^0.0.6",
     "pascal-case": "^3.1.2",
     "tslib": "^2.4.0",
-    "url-join": "^4.0.1"
+    "url-join": "^5.0.0"
   },
   "devDependencies": {
     "@types/http-string-parser": "0.0.33",
-    "@types/url-join": "4.0.3",
+    "@types/url-join": "5.0.0",
     "graphql": "16.11.0"
   },
   "publishConfig": {
