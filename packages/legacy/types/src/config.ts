@@ -2153,9 +2153,9 @@ export interface HTTPDetailsExtensionsConfig {
 }
 export interface LiveQueryConfig {
   /**
-   * Invalidate a query or queries when a specific operation is done without an error
+   * Invalidate a query or queries when a specific operation is done without an error (Any of: LiveQueryInvalidationByMutation, LiveQueryInvalidationByPolling)
    */
-  invalidations?: LiveQueryInvalidation[];
+  invalidations?: (LiveQueryInvalidationByMutation | LiveQueryInvalidationByPolling)[];
   /**
    * Custom strategy for building resources identifiers
    * By default resource identifiers are built by concatenating the Typename with the id separated by a color (`User:1`).
@@ -2184,11 +2184,15 @@ export interface LiveQueryConfig {
    */
   indexBy?: LiveQueryIndexBy[];
 }
-export interface LiveQueryInvalidation {
+export interface LiveQueryInvalidationByMutation {
   /**
    * Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field.
    */
   field: string;
+  invalidate: string[];
+}
+export interface LiveQueryInvalidationByPolling {
+  pollingInterval: number;
   invalidate: string[];
 }
 export interface LiveQueryIndexBy {
