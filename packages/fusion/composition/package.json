@@ -59,7 +59,7 @@
     "graphql-scalars": "^1.23.0",
     "minimatch": "^10.0.3",
     "pluralize": "^8.0.0",
-    "snake-case": "^3.0.0",
+    "snake-case": "^4.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

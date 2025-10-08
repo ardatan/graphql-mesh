@@ -7063,7 +7063,7 @@ __metadata:
     graphql-scalars: "npm:^1.23.0"
     minimatch: "npm:^10.0.3"
     pluralize: "npm:^8.0.0"
-    snake-case: "npm:^3.0.0"
+    snake-case: "npm:^4.0.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
@@ -31958,6 +31958,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"no-case@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "no-case@npm:4.0.0"
+  checksum: 10c0/619860434dc33e65cec2cb0b57942903bac864dd1efc834f71d04f5e060f5eb2189224c8557aa5ad3dacf5594d26e33882b3fb7f975a9bf3481c7e7867011a2f
+  languageName: node
+  linkType: hard
+
 "node-abi@npm:^3.3.0":
   version: 3.77.0
   resolution: "node-abi@npm:3.77.0"
@@ -37021,13 +37028,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"snake-case@npm:^3.0.0, snake-case@npm:^3.0.4":
+"snake-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "snake-case@npm:3.0.4"
   dependencies:
     dot-case: "npm:^3.0.4"
     tslib: "npm:^2.0.3"
   checksum: 10c0/ab19a913969f58f4474fe9f6e8a026c8a2142a01f40b52b79368068343177f818cdfef0b0c6b9558f298782441d5ca8ed5932eb57822439fad791d866e62cecd
+  languageName: node
+  linkType: hard
+
+"snake-case@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "snake-case@npm:4.0.0"
+  dependencies:
+    no-case: "npm:^4.0.0"
+  checksum: 10c0/3cf3bb309b69465c3d863c73fefcef573420777f9108b7cec9ff492c55275e8fb49d8a97a84503749dc6b6c530aa5062b5b8f6bed7cdbed703f308ade7c4f6a5
   languageName: node
   linkType: hard
 
