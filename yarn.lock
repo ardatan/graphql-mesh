@@ -6475,26 +6475,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/visitor-plugin-common@npm:6.0.1":
-  version: 6.0.1
-  resolution: "@graphql-codegen/visitor-plugin-common@npm:6.0.1"
-  dependencies:
-    "@graphql-codegen/plugin-helpers": "npm:^6.0.0"
-    "@graphql-tools/optimize": "npm:^2.0.0"
-    "@graphql-tools/relay-operation-optimizer": "npm:^7.0.0"
-    "@graphql-tools/utils": "npm:^10.0.0"
-    auto-bind: "npm:~4.0.0"
-    change-case-all: "npm:1.0.15"
-    dependency-graph: "npm:^1.0.0"
-    graphql-tag: "npm:^2.11.0"
-    parse-filepath: "npm:^1.0.2"
-    tslib: "npm:~2.6.0"
-  peerDependencies:
-    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/554997e86324b23e3e33057eef28aece5a13c2ecb6e37f4a82851c14f84b85b0554dd17c26dc6c042105525f6e4dce215b778b0172df0e47a3e5ac4a40ba09d6
-  languageName: node
-  linkType: hard
-
 "@graphql-codegen/visitor-plugin-common@npm:6.1.0":
   version: 6.1.0
   resolution: "@graphql-codegen/visitor-plugin-common@npm:6.1.0"

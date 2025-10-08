@@ -3,9 +3,9 @@ sources:
     handler:
       neo4j:
         endpoint: neo4j+s://demo.neo4jlabs.com
-        username: movies
-        password: movies
-        database: movies
+        username: recommendations
+        password: recommendations
+        database: recommendations
 
 documents:
   - ./example-query.graphql
