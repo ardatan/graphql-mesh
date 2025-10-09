@@ -15410,16 +15410,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/tailwind-config@npm:0.6.3":
-  version: 0.6.3
-  resolution: "@theguild/tailwind-config@npm:0.6.3"
+"@theguild/tailwind-config@npm:0.6.4":
+  version: 0.6.4
+  resolution: "@theguild/tailwind-config@npm:0.6.4"
   dependencies:
     "@tailwindcss/container-queries": "npm:^0.1.1"
   peerDependencies:
     postcss-import: ^16.1.0
     postcss-lightningcss: ^1.0.1
     tailwindcss: ^3.4.14
-  checksum: 10c0/43bdd62c70ef952d4845f7c75d653336fd1b0536002ec7aef0fefc466c522f3524e5007238f16d4bb49c18cbb9ab0fcc8262112bf717da8dc898af952b2aa5a5
+  checksum: 10c0/5f69b9138f5b77398b8b6e646d491468f778955a58f4b7a1ab5917754cc5138327bad76c70f09e689dfe75c9590940d075898840bb649fc6f6c5e93af3e88d4b
   languageName: node
   linkType: hard
 
@@ -40502,7 +40502,7 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.55.0"
     "@theguild/components": "npm:^7.6.0"
-    "@theguild/tailwind-config": "npm:0.6.3"
+    "@theguild/tailwind-config": "npm:0.6.4"
     "@types/node": "npm:^24.4.0"
     "@types/react": "npm:19.2.2"
     cross-env: "npm:10.1.0"
