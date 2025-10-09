@@ -16,7 +16,7 @@
     "sharp": "0.34.4"
   },
   "devDependencies": {
-    "@types/node": "^24.4.0",
+    "@types/node": "^24.7.1",
     "jest": "30.2.0",
     "ts-jest": "29.4.4",
     "ts-node": "^10.9.2",

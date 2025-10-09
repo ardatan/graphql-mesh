@@ -16,7 +16,7 @@
     "@graphql-hive/cli": "0.50.5",
     "@graphql-mesh/cli": "0.100.14",
     "@graphql-mesh/openapi": "0.109.20",
-    "@types/node": "^24.4.0",
+    "@types/node": "^24.7.1",
     "graphql": "16.11.0"
   }
 }

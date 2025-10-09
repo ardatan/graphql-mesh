@@ -7,8 +7,8 @@
   },
   "dependencies": {
     "@apollo/server": "5.0.0",
-    "@apollo/subgraph": "2.11.2",
-    "@types/node": "^24.4.0",
+    "@apollo/subgraph": "2.11.3",
+    "@types/node": "^24.7.1",
     "graphql": "16.11.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"

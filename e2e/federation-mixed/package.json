@@ -3,7 +3,7 @@
   "private": true,
   "devDependencies": {
     "@apollo/server": "^5.0.0",
-    "@apollo/subgraph": "^2.7.2",
+    "@apollo/subgraph": "^2.11.3",
     "@graphql-hive/gateway": "^2.0.0",
     "fets": "^0.8.1",
     "graphql": "^16.10.0"

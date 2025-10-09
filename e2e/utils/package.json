@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@apollo/gateway": "^2.8.3",
+    "@apollo/gateway": "^2.11.3",
     "@graphql-hive/gateway": "^2.0.0",
     "@types/dockerode": "^3.3.28",
     "@whatwg-node/disposablestack": "^0.0.6",

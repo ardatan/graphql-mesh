@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/apollo-upload-client": "19.0.0",
     "@types/jest": "30.0.0",
-    "@types/node": "^24.4.0",
+    "@types/node": "^24.7.1",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.1",
     "typescript": "^5.4.2"

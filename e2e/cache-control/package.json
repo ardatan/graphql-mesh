@@ -3,7 +3,7 @@
   "private": true,
   "devDependencies": {
     "@apollo/server": "^5.0.0",
-    "@apollo/subgraph": "^2.9.3",
+    "@apollo/subgraph": "^2.11.3",
     "@graphql-hive/gateway": "^2.0.0",
     "@graphql-mesh/cache-upstash-redis": "^0.1.13",
     "@graphql-mesh/compose-cli": "^1.4.18",
