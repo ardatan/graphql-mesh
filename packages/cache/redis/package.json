@@ -40,7 +40,7 @@
     "@graphql-mesh/types": "^0.104.13",
     "@whatwg-node/disposablestack": "^0.0.6",
     "ioredis": "^5.3.2",
-    "ioredis-mock": "^8.8.3",
+    "ioredis-mock": "^8.13.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
