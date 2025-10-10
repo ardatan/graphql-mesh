@@ -146,13 +146,15 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
 
   set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<any> {
     return this.tracer.startActiveSpan('hive.cache.set', async span => {
-      const stringifiedValue = JSON.stringify(value);
-      if (options?.ttl && options.ttl > 0) {
-        return this.client
-          .set(key, stringifiedValue, 'PX', options.ttl * 1000)
-          .finally(() => span.end());
-      } else {
-        return this.client.set(key, stringifiedValue).finally(() => span.end());
+      try {
+        const stringifiedValue = JSON.stringify(value);
+        if (options?.ttl && options.ttl > 0) {
+          return await this.client.set(key, stringifiedValue, 'PX', options.ttl * 1000);
+        } else {
+          return await this.client.set(key, stringifiedValue);
+        }
+      } finally {
+        span.end();
       }
     });
   }
