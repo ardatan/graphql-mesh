@@ -15553,12 +15553,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:24.7.1, @types/node@npm:>=13.7.0, @types/node@npm:^24.4.0, @types/node@npm:^24.6.2":
-  version: 24.7.1
-  resolution: "@types/node@npm:24.7.1"
+"@types/node@npm:*, @types/node@npm:24.7.2, @types/node@npm:>=13.7.0, @types/node@npm:^24.4.0, @types/node@npm:^24.6.2":
+  version: 24.7.2
+  resolution: "@types/node@npm:24.7.2"
   dependencies:
     undici-types: "npm:~7.14.0"
-  checksum: 10c0/2525f2aa865d78b1c75faaf8c6bf2af51c930962d8078306620d9a76eafcbbea035142cf2cdc2fcf1b4010cd3958a1c6c59b67aba1ac205dc1e5f895ef6af673
+  checksum: 10c0/03f662f10e4b89bc97016e067101cbabe55025b54c24afb581fb50992d5eeaaf417bdae34bbc668ae8759d3cdbbbadf35fc8b9b29d26f52ede2525d48e919e49
   languageName: node
   linkType: hard
 
@@ -15586,11 +15586,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^22.5.5":
-  version: 22.18.9
-  resolution: "@types/node@npm:22.18.9"
+  version: 22.18.10
+  resolution: "@types/node@npm:22.18.10"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/0d342e17e0b36a4475ba36f0a0b9d7e28cf85ae44b1ea1f218c8cffe8c9519820eef9b97c171b0b93d8066c8710d7660e31660678bac0842655dff2118a23248
+  checksum: 10c0/37b34553f1953ab8fc25b7467d44701446400f62547adb62c842cebac091350985470aeed87acd60f5295778c370d9721d477310e643677a7eab03a8dc6ed74f
   languageName: node
   linkType: hard
 
@@ -24309,7 +24309,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:24.7.1"
+    "@types/node": "npm:24.7.2"
     "@types/react": "npm:19.2.2"
     "@types/react-dom": "npm:19.2.1"
     "@typescript-eslint/eslint-plugin": "npm:8.46.0"
