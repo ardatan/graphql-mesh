@@ -17,7 +17,12 @@ export const composeConfig = defineComposeConfig({
           someKey: 'someValue',
           'connection-type': '{context.headers.connection}',
         },
-        source: './services/movies/proto/service.proto',
+        source: {
+          file: './services/movies/proto/service.proto',
+          load: {
+            defaults: true,
+          },
+        },
       }),
       transforms: [
         createNamingConventionTransform({
