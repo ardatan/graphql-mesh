@@ -1,5 +1,33 @@
 # @graphql-mesh/compose-cli
 
+## 1.5.0
+
+### Minor Changes
+
+- [#8851](https://github.com/ardatan/graphql-mesh/pull/8851)
+  [`9ed6940`](https://github.com/ardatan/graphql-mesh/commit/9ed6940b904acff47d7fc8e0fbe52d7da9e304f2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add `introspectionOptions` to
+  `loadGraphQLHTTPSubgraph` with some defaults. Previously, it was not possible to configure the
+  introspection query options. By default it was ignoring deprecated input fields and not including
+  descriptions. Now it includes descriptions and deprecated input fields by default. And you can
+  still override the defaults by providing your own options.
+
+  ```ts
+  import { loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
+
+  loadGraphQLHTTPSubgraph('my-subgraph', {
+    source: 'http://my-subgraph/graphql',
+    introspectionOptions: {
+      descriptions: true,
+      specifiedByUrl: false,
+      directiveIsRepeatable: false,
+      schemaDescription: false,
+      inputValueDeprecation: true,
+      oneOf: false // New in GraphQL 16
+    }
+  })
+  ```
+
 ## 1.4.18
 
 ### Patch Changes
