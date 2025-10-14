@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/compose-cli",
-  "version": "1.4.18",
+  "version": "1.5.0",
   "type": "module",
   "repository": {
     "type": "git",

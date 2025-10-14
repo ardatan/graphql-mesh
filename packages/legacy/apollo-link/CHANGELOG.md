@@ -1,5 +1,16 @@
 # @graphql-mesh/apollo-link
 
+## 0.106.14
+
+### Patch Changes
+
+- [#8680](https://github.com/ardatan/graphql-mesh/pull/8680)
+  [`8de7691`](https://github.com/ardatan/graphql-mesh/commit/8de76913b840870f2d62bde3d46fbc64786e33b8)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@apollo/client@^3.5.9 || ^4.0.0` ↗︎](https://www.npmjs.com/package/@apollo/client/v/3.5.9)
+    (from `^3.5.9`, in `peerDependencies`)
+
 ## 0.106.13
 
 ### Patch Changes

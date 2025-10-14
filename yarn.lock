@@ -3914,7 +3914,7 @@ __metadata:
     "@apollo/subgraph": "npm:^2.9.3"
     "@graphql-hive/gateway": "npm:^2.0.0"
     "@graphql-mesh/cache-upstash-redis": "npm:^0.1.13"
-    "@graphql-mesh/compose-cli": "npm:^1.4.18"
+    "@graphql-mesh/compose-cli": "npm:^1.5.0"
     "@graphql-yoga/plugin-response-cache": "npm:^3.13.1"
     graphql: "npm:^16.9.0"
     graphql-yoga: "npm:^5.13.4"
@@ -6844,7 +6844,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/compose-cli@npm:*, @graphql-mesh/compose-cli@npm:1.4.18, @graphql-mesh/compose-cli@npm:^1.4.18, @graphql-mesh/compose-cli@workspace:*, @graphql-mesh/compose-cli@workspace:^, @graphql-mesh/compose-cli@workspace:packages/compose-cli":
+"@graphql-mesh/compose-cli@npm:*, @graphql-mesh/compose-cli@npm:1.5.0, @graphql-mesh/compose-cli@npm:^1.5.0, @graphql-mesh/compose-cli@workspace:*, @graphql-mesh/compose-cli@workspace:^, @graphql-mesh/compose-cli@workspace:packages/compose-cli":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
@@ -7124,7 +7124,7 @@ __metadata:
   resolution: "@graphql-mesh/migrate-config-cli@workspace:packages/legacy/migrate-config-cli"
   dependencies:
     "@graphql-mesh/cli": "npm:^0.100.14"
-    "@graphql-mesh/compose-cli": "npm:^1.4.18"
+    "@graphql-mesh/compose-cli": "npm:^1.5.0"
     "@graphql-mesh/config": "npm:^0.108.14"
     "@graphql-mesh/types": "npm:^0.104.13"
     "@graphql-mesh/utils": "npm:^0.104.13"
@@ -23299,7 +23299,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:5.0.2"
     "@graphql-codegen/typescript-resolvers": "npm:5.1.0"
     "@graphql-hive/gateway": "npm:^2.0.0"
-    "@graphql-mesh/compose-cli": "npm:1.4.18"
+    "@graphql-mesh/compose-cli": "npm:1.5.0"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.16.0"
     "@types/node": "npm:^24.4.0"
     concurrently: "npm:9.2.1"
