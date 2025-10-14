@@ -3940,6 +3940,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/deprecated-merging@workspace:e2e/deprecated-merging":
+  version: 0.0.0-use.local
+  resolution: "@e2e/deprecated-merging@workspace:e2e/deprecated-merging"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^2.0.0"
+    graphql: "npm:^16.9.0"
+    graphql-yoga: "npm:^5.13.4"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/esm-config-in-cjs-project@workspace:e2e/esm-config-in-cjs-project":
   version: 0.0.0-use.local
   resolution: "@e2e/esm-config-in-cjs-project@workspace:e2e/esm-config-in-cjs-project"

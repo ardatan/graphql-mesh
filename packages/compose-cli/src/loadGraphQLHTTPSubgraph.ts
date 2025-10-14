@@ -16,6 +16,7 @@ import {
   parse,
   visit,
   type DocumentNode,
+  type IntrospectionOptions,
   type IntrospectionQuery,
 } from 'graphql';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
@@ -97,6 +98,25 @@ export interface GraphQLSubgraphLoaderHTTPConfiguration {
    * @default 'http'
    */
   transportKind?: 'http';
+
+  /**
+   * While introspecting the schema, you can customize the introspection query by providing these options.
+   * This is useful if you have a GraphQL server that does not support some of the newer features of GraphQL.
+   *
+   * By default, Mesh has the following options;
+   *
+   * ```json
+   * {
+   *  "descriptions": true,
+   *  "specifiedByUrl": false,
+   *  "directiveIsRepeatable": false,
+   *  "schemaDescription": false,
+   *  "inputValueDeprecation": true,
+   *  "oneOf": false
+   * }
+   * ```
+   */
+  introspectionOptions?: IntrospectionOptions;
 }
 
 function fixExtends(node: DocumentNode) {
@@ -218,6 +238,15 @@ function fixExtends(node: DocumentNode) {
   });
 }
 
+export const DEFAULT_INTROSPECTION_OPTIONS: Required<IntrospectionOptions> = {
+  descriptions: true,
+  specifiedByUrl: false,
+  directiveIsRepeatable: false,
+  schemaDescription: false,
+  inputValueDeprecation: true,
+  oneOf: false,
+};
+
 export function loadGraphQLHTTPSubgraph(
   subgraphName: string,
   {
@@ -232,6 +261,8 @@ export function loadGraphQLHTTPSubgraph(
 
     source,
     schemaHeaders,
+
+    introspectionOptions = DEFAULT_INTROSPECTION_OPTIONS,
 
     federation = false,
 
@@ -303,7 +334,7 @@ export function loadGraphQLHTTPSubgraph(
                 ...schemaHeaders,
               },
               body: JSON.stringify({
-                query: getIntrospectionQuery(),
+                query: getIntrospectionQuery(introspectionOptions),
               }),
             }),
           res => {
