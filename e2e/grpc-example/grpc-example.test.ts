@@ -15,6 +15,29 @@ describe('gRPC Example', () => {
     const { result } = await compose({ services: [movies], maskServicePorts: true });
     expect(result).toMatchSnapshot();
   });
+  it('gets empty movies correctly', async () => {
+    const { output } = await compose({ services: [movies], output: 'graphql' });
+    const { execute } = await serve({ supergraph: output });
+    // Genre HORROR does not exist in mock data
+    const query = /* GraphQL */ `
+      query GetMovies {
+        exampleGetMovies(input: { movie: { genre: HORROR, year: 2015 } }) {
+          result {
+            name
+            year
+            rating
+            cast
+            time {
+              seconds
+            }
+          }
+        }
+      }
+    `;
+    await expect(execute({ query })).resolves.toMatchSnapshot(
+      'get-empty-movies-grpc-example-result',
+    );
+  });
   it('gets movies correctly', async () => {
     const { output } = await compose({ services: [movies], output: 'graphql' });
     const { execute } = await serve({ supergraph: output });
