@@ -17161,11 +17161,11 @@ __metadata:
   linkType: hard
 
 "@upstash/redis@npm:^1.34.3":
-  version: 1.35.5
-  resolution: "@upstash/redis@npm:1.35.5"
+  version: 1.35.6
+  resolution: "@upstash/redis@npm:1.35.6"
   dependencies:
     uncrypto: "npm:^0.1.3"
-  checksum: 10c0/0a19782ae2b687a37a4ae083eea32d159b91e40a1cdffda14c34e40ca41d687dce20fe96423676ecbc7ac1d5e7ed193d2b42a47cbc2e79d9b1eb59430c37cba8
+  checksum: 10c0/d04a62449f3550f318d1b36d666e14f1c1591b7308a3066a63e4b58c237a3605fdc51af8f4dd4a2eb3e74bb706d0bd851352c28a57d2baf5f50e401378d92e86
   languageName: node
   linkType: hard
 
