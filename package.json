@@ -117,7 +117,7 @@
     "@whatwg-node/node-fetch": "0.8.1",
     "@whatwg-node/server": "0.10.13",
     "axios": "^1.0.0",
-    "brace-expansion": "2.0.2",
+    "brace-expansion": "4.0.1",
     "cookie": "1.0.2",
     "cross-fetch": "^4.0.0",
     "date-and-time": "^4.0.0",
