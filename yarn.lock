@@ -3597,10 +3597,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20251011.0":
-  version: 4.20251011.0
-  resolution: "@cloudflare/workers-types@npm:4.20251011.0"
-  checksum: 10c0/9bfcd5a05ca3355523b9b21ed55066f3bd3dbfa3c3d83497036975dc66d6940fe574a6b1ec9cf764a1ad77b67ac4b1d58c1535c5afeba92322f3e795dd458aec
+"@cloudflare/workers-types@npm:4.20251014.0":
+  version: 4.20251014.0
+  resolution: "@cloudflare/workers-types@npm:4.20251014.0"
+  checksum: 10c0/11cf2e509b673f4d2d980e56a074c95ae085e6685a4e7afd9907b6f32b96ad9528ee125451feed04035c4eface939503c6259a40864890ccc46e53edd4e57042
   languageName: node
   linkType: hard
 
@@ -5518,7 +5518,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.104.13"
     graphql: "npm:16.11.0"
     jest: "npm:30.2.0"
-    mongoose: "npm:8.19.1"
+    mongoose: "npm:8.19.2"
   languageName: unknown
   linkType: soft
 
@@ -6703,7 +6703,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20251011.0"
+    "@cloudflare/workers-types": "npm:4.20251014.0"
     "@graphql-mesh/types": "npm:^0.104.13"
     "@graphql-mesh/utils": "npm:^0.104.13"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -7152,7 +7152,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.19.1"
+    mongoose: "npm:8.19.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -16158,12 +16158,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:24.8.1, @types/node@npm:>=13.7.0, @types/node@npm:^24.4.0, @types/node@npm:^24.7.1":
-  version: 24.8.1
-  resolution: "@types/node@npm:24.8.1"
+"@types/node@npm:*, @types/node@npm:24.9.1, @types/node@npm:>=13.7.0, @types/node@npm:^24.4.0, @types/node@npm:^24.7.1":
+  version: 24.9.1
+  resolution: "@types/node@npm:24.9.1"
   dependencies:
-    undici-types: "npm:~7.14.0"
-  checksum: 10c0/d185f2f14aa26cc2b482aa730bfc452943f9636df37aad6ceed80aa397f1278f894043336bd72f74c47b3dbef23e772ac9b1a256168984aa8aee26836132d290
+    undici-types: "npm:~7.16.0"
+  checksum: 10c0/c52f8168080ef9a7c3dc23d8ac6061fab5371aad89231a0f6f4c075869bc3de7e89b075b1f3e3171d9e5143d0dda1807c3dab8e32eac6d68f02e7480e7e78576
   languageName: node
   linkType: hard
 
@@ -16191,11 +16191,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^22.5.5":
-  version: 22.18.11
-  resolution: "@types/node@npm:22.18.11"
+  version: 22.18.12
+  resolution: "@types/node@npm:22.18.12"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/3802f598608638e13ca350fbe2db0db5dde9a0b6704295fa1b6cec6defe24f9baf6a891eee6eaecd016bcd5ea18edecdaf71679d87079fe468913701adb61387
+  checksum: 10c0/13a4638f2baba3efba2b8bc369dd6f950dccbfca78f318f9c9f2c7adc11fce14fc119723c38567dada2d57a873c092b7356c024924d5974a08f3c1f93dc706c6
   languageName: node
   linkType: hard
 
@@ -23194,12 +23194,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"estree-util-value-to-estree@npm:3.4.0":
-  version: 3.4.0
-  resolution: "estree-util-value-to-estree@npm:3.4.0"
+"estree-util-value-to-estree@npm:3.4.1":
+  version: 3.4.1
+  resolution: "estree-util-value-to-estree@npm:3.4.1"
   dependencies:
     "@types/estree": "npm:^1.0.0"
-  checksum: 10c0/e90e0c784b29182a3feb471589ab3c031be3ff1ab068b2b473e9ee96467f99442f2c571b2708ee3493906af5bf1a0aa9712d9f90fb113a30d99669100235ba4f
+  checksum: 10c0/93aec4aafbc6a6a76de951833b4a0134fe1c8b06de55f0296bd410585f105ec4b80e01368899b2823fbedaff41137c5086bb5a2c38885508ef92a08b46d1dfd8
   languageName: node
   linkType: hard
 
@@ -25050,7 +25050,7 @@ __metadata:
     "@tsconfig/node16": "npm:^16.1.3"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:24.8.1"
+    "@types/node": "npm:24.9.1"
     "@types/react": "npm:19.2.2"
     "@types/react-dom": "npm:19.2.2"
     "@typescript-eslint/eslint-plugin": "npm:8.46.2"
@@ -25070,7 +25070,7 @@ __metadata:
     graphql: "npm:16.11.0"
     husky: "npm:9.1.7"
     jest: "npm:30.2.0"
-    lint-staged: "npm:16.2.4"
+    lint-staged: "npm:16.2.5"
     lru-cache: "npm:11.2.2"
     minimatch: "npm:10.0.3"
     node-gyp: "npm:^11.0.0"
@@ -29044,9 +29044,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:16.2.4":
-  version: 16.2.4
-  resolution: "lint-staged@npm:16.2.4"
+"lint-staged@npm:16.2.5":
+  version: 16.2.5
+  resolution: "lint-staged@npm:16.2.5"
   dependencies:
     commander: "npm:^14.0.1"
     listr2: "npm:^9.0.4"
@@ -29057,7 +29057,7 @@ __metadata:
     yaml: "npm:^2.8.1"
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 10c0/101b32040b9601938a7da6aa58195ce5a1f7a1a96998e8f700c219d9a1070e0f87ade9289d85ff8041a5f901252e834411c7e4f35538593678ed304ba2c58eba
+  checksum: 10c0/debe2815d9c20c675eb8063f7ad0ce4a94e828832d975b0d8ad7d464e3ee387120056e0e0deaa7bd23a4849edfdc28c9c4f32e99a40746509ba3b76fd78e175a
   languageName: node
   linkType: hard
 
@@ -31110,9 +31110,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:8.19.1":
-  version: 8.19.1
-  resolution: "mongoose@npm:8.19.1"
+"mongoose@npm:8.19.2":
+  version: 8.19.2
+  resolution: "mongoose@npm:8.19.2"
   dependencies:
     bson: "npm:^6.10.4"
     kareem: "npm:2.6.3"
@@ -31121,7 +31121,7 @@ __metadata:
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/eee1f43f26d8d0410c48924b30545a810c056e841f1f9bc50ee9ddb1831452cab17f037f2e2ed3724a01a523f5a1df9460c4fbff58ff721d313a2ced5ee88da4
+  checksum: 10c0/4d58e2aa0856efb24b79b53b83f5cf146fa4c19b22f85d91e3fade4d656c09d566be115f547bde1c01e1515df284f778aea8e8db5bbe7da8e51e7d6f0b1b84b8
   languageName: node
   linkType: hard
 
@@ -38938,10 +38938,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~7.14.0":
-  version: 7.14.0
-  resolution: "undici-types@npm:7.14.0"
-  checksum: 10c0/e7f3214b45d788f03c51ceb33817be99c65dae203863aa9386b3ccc47201a245a7955fc721fb581da9c888b6ebad59fa3f53405214afec04c455a479908f0f14
+"undici-types@npm:~7.16.0":
+  version: 7.16.0
+  resolution: "undici-types@npm:7.16.0"
+  checksum: 10c0/3033e2f2b5c9f1504bdc5934646cb54e37ecaca0f9249c983f7b1fc2e87c6d18399ebb05dc7fd5419e02b2e915f734d872a65da2e3eeed1813951c427d33cc9a
   languageName: node
   linkType: hard
 
