@@ -49,7 +49,7 @@
     "@types/mkdirp": "2.0.0",
     "@types/rimraf": "4.0.5",
     "@types/ws": "8.18.1",
-    "@types/yargs": "17.0.33",
+    "@types/yargs": "17.0.34",
     "graphql": "16.11.0"
   },
   "publishConfig": {
