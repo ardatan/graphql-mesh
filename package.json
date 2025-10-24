@@ -123,7 +123,7 @@
     "date-and-time": "^4.0.0",
     "es5-ext": "0.10.64",
     "esbuild": "^0.25.0",
-    "estree-util-value-to-estree": "3.4.1",
+    "estree-util-value-to-estree": "3.5.0",
     "express": "5.1.0",
     "form-data": "4.0.4",
     "graphql": "16.11.0",
