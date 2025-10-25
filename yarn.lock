@@ -12118,7 +12118,7 @@ __metadata:
     graphql: "npm:16.11.0"
     graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
-    soap: "npm:1.5.0"
+    soap: "npm:1.6.0"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -36961,9 +36961,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"soap@npm:1.5.0":
-  version: 1.5.0
-  resolution: "soap@npm:1.5.0"
+"soap@npm:1.6.0":
+  version: 1.6.0
+  resolution: "soap@npm:1.6.0"
   dependencies:
     axios: "npm:^1.12.2"
     axios-ntlm: "npm:^1.4.6"
@@ -36975,7 +36975,7 @@ __metadata:
     strip-bom: "npm:^3.0.0"
     whatwg-mimetype: "npm:4.0.0"
     xml-crypto: "npm:^6.1.2"
-  checksum: 10c0/fae7a596582e5a380aae541673b0eaa216936a23f4af887d20e31bed509c218833b6fde6923fd15730c0bcbb2c7378df67d24d1dd61c35b8c20f157efd42ce0b
+  checksum: 10c0/f7c9b3e204929a64a688b48faacaef4e99227c25c26b169743543c329b3ad0245ee30c3c5896c35adaec365294e7c3f6ae6093697aa66289ecb91c3a514b8a7f
   languageName: node
   linkType: hard
 
