@@ -2582,8 +2582,20 @@
           "description": "Faker.js expression or function\nRead more (https://github.com/marak/Faker.js/#fakerfake)\nExample:\nfaker: `name.firstName`\nfaker: `{{ name.firstName }} {{ name.lastName }}`"
         },
         "custom": {
-          "type": "string",
-          "description": "Custom mocking\nIt can be a module or json file.\nBoth \"moduleName#exportName\" or only \"moduleName\" would work"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ],
+          "description": "Custom mocking\nIt can be a module or json file.\nBoth \"moduleName#exportName\" or only \"moduleName\" would work\n\nYou can also provide a function directly"
         },
         "length": {
           "type": "integer",

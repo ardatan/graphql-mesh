@@ -2241,8 +2241,10 @@ export interface MockingFieldConfig {
    * Custom mocking
    * It can be a module or json file.
    * Both "moduleName#exportName" or only "moduleName" would work
+   *
+   * You can also provide a function directly
    */
-  custom?: string;
+  custom?: any;
   /**
    * Length of the mock list
    * For the list types `[ObjectType]`, how many `ObjectType` you want to return?

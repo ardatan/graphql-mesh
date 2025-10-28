@@ -87,7 +87,7 @@ describe('mocking', () => {
     expect(userFullNameCalled).toBeFalsy();
   });
 
-  it('should mock fields by using the "custom" property', async () => {
+  it('should mock fields by using the "custom" propert (module path)', async () => {
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type User {
@@ -118,6 +118,143 @@ describe('mocking', () => {
         {
           apply: 'User.fullName',
           custom: './mocks.ts#fullName',
+        },
+      ],
+    };
+
+    const getEnveloped = envelop({
+      plugins: [
+        enginePlugin,
+        useSchema(schema),
+        useMock({
+          ...mockingConfig,
+          baseDir,
+          importFn,
+        }),
+      ],
+    });
+    const enveloped = getEnveloped();
+    const result = await enveloped.execute({
+      schema: enveloped.schema,
+      document: enveloped.parse(/* GraphQL */ `
+        {
+          users {
+            id
+            fullName
+          }
+        }
+      `),
+      contextValue: {},
+    });
+
+    const users = result.data?.users;
+    expect(users).toBeTruthy();
+    expect(users[0]).toBeTruthy();
+    expect(users[0].id).toBe('sample-id');
+    expect(users[0].fullName).toBe('John Snow');
+  });
+
+  it('should mock fields by using the "custom" property (function)', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type User {
+          id: ID
+          fullName: String
+        }
+        type Query {
+          users: [User]
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [],
+        },
+        User: {
+          id: () => 'sample-id-coming-from-the-resolver',
+          fullName: () => 'Sample name coming from the resolver',
+        },
+      },
+    });
+
+    const { id, fullName } = await import('./mocks.js');
+
+    const mockingConfig: YamlConfig.MockingConfig = {
+      mocks: [
+        {
+          apply: 'User.id',
+          custom: id,
+        },
+        {
+          apply: 'User.fullName',
+          custom: fullName,
+        },
+      ],
+    };
+
+    const getEnveloped = envelop({
+      plugins: [
+        enginePlugin,
+        useSchema(schema),
+        useMock({
+          ...mockingConfig,
+          baseDir,
+          importFn,
+        }),
+      ],
+    });
+    const enveloped = getEnveloped();
+    const result = await enveloped.execute({
+      schema: enveloped.schema,
+      document: enveloped.parse(/* GraphQL */ `
+        {
+          users {
+            id
+            fullName
+          }
+        }
+      `),
+      contextValue: {},
+    });
+
+    const users = result.data?.users;
+    expect(users).toBeTruthy();
+    expect(users[0]).toBeTruthy();
+    expect(users[0].id).toBe('sample-id');
+    expect(users[0].fullName).toBe('John Snow');
+  });
+  it('should mock fields by using the "custom" property (value directly)', async () => {
+    const schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type User {
+          id: ID
+          fullName: String
+        }
+        type Query {
+          users: [User]
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [],
+        },
+        User: {
+          id: () => 'sample-id-coming-from-the-resolver',
+          fullName: () => 'Sample name coming from the resolver',
+        },
+      },
+    });
+
+    const { id, fullName } = await import('./mocks.js');
+
+    const mockingConfig: YamlConfig.MockingConfig = {
+      mocks: [
+        {
+          apply: 'User.id',
+          custom: 'sample-id',
+        },
+        {
+          apply: 'User.fullName',
+          custom: 'John Snow',
         },
       ],
     };
@@ -204,6 +341,7 @@ describe('mocking', () => {
     const addUserResult: any = await enveloped.execute({
       schema: enveloped.schema,
       document: ADD_USER,
+      contextValue: await enveloped.contextFactory({}),
     });
     expect(addUserResult?.data?.addUser?.name).toBe('John Doe');
     const addedUserId = addUserResult.data.addUser.id;
@@ -218,6 +356,7 @@ describe('mocking', () => {
     const getUserResult: any = await enveloped.execute({
       schema: enveloped.schema,
       document: GET_USER,
+      contextValue: await enveloped.contextFactory({}),
     });
     expect(getUserResult?.data?.user?.id).toBe(addedUserId);
     expect(getUserResult?.data?.user?.name).toBe('John Doe');
@@ -232,6 +371,7 @@ describe('mocking', () => {
     const updateUserResult: any = await enveloped.execute({
       schema: enveloped.schema,
       document: UPDATE_USER,
+      contextValue: await enveloped.contextFactory({}),
     });
     expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
     expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');

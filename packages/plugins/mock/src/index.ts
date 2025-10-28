@@ -5,7 +5,7 @@ import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import type { IMocks } from '@graphql-tools/mock';
+import type { IMocks, IMockStore, MockStore } from '@graphql-tools/mock';
 import { addMocksToSchema, createMockStore } from '@graphql-tools/mock';
 
 const mockedSchemas = new WeakSet<GraphQLSchema>();
@@ -20,7 +20,13 @@ export default function useMock(
   const configIf = config != null && 'if' in config ? new Function(`return ${config.if}`)() : true;
 
   if (configIf) {
+    let mockStore: IMockStore;
     return {
+      onContextBuilding({ extendContext }) {
+        extendContext({
+          mockStore,
+        });
+      },
       onSchemaChange({ schema, replaceSchema }) {
         if (mockedSchemas.has(schema)) {
           return;
@@ -53,7 +59,10 @@ export default function useMock(
                   }
                   resolvers[typeName] = resolvers[typeName] || {};
                   resolvers[typeName][fieldName] = fakerFn;
-                } else if (fieldConfig.custom) {
+                } else if (
+                  typeof fieldConfig.custom === 'string' &&
+                  fieldConfig.custom.includes('#')
+                ) {
                   const exportedVal$ = loadFromModuleExportExpression<any>(fieldConfig.custom, {
                     cwd: config.baseDir,
                     defaultExportName: 'default',
@@ -66,14 +75,18 @@ export default function useMock(
                     context: any,
                     info: GraphQLResolveInfo,
                   ) => {
-                    context = context || {};
-                    context.mockStore = store;
                     return exportedVal$.then(exportedVal =>
                       typeof exportedVal === 'function'
                         ? exportedVal(root, args, context, info)
                         : exportedVal,
                     );
                   };
+                } else if (typeof fieldConfig.custom === 'function') {
+                  resolvers[typeName] = resolvers[typeName] || {};
+                  resolvers[typeName][fieldName] = fieldConfig.custom;
+                } else if (fieldConfig.custom != null) {
+                  resolvers[typeName] = resolvers[typeName] || {};
+                  resolvers[typeName][fieldName] = () => fieldConfig.custom;
                 } else if ('length' in fieldConfig) {
                   resolvers[typeName] = resolvers[typeName] || {};
                   resolvers[typeName][fieldName] = () => new Array(fieldConfig.length).fill({});
@@ -105,11 +118,16 @@ export default function useMock(
                       ({ updateStoreConfig, keyFactory, valueFactory }) => {
                         const key = keyFactory(resolverData);
                         const value = valueFactory(resolverData);
-                        store.set(updateStoreConfig.type, key, updateStoreConfig.fieldName, value);
+                        mockStore.set(
+                          updateStoreConfig.type,
+                          key,
+                          updateStoreConfig.fieldName,
+                          value,
+                        );
                       },
                     );
                     const key = getFromStoreKeyFactory(resolverData);
-                    return store.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
+                    return mockStore.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
                   };
                 } else if ('store' in fieldConfig) {
                   const keyFactory = getInterpolatedStringFactory(fieldConfig.store.key);
@@ -121,7 +139,7 @@ export default function useMock(
                     info: GraphQLResolveInfo,
                   ) => {
                     const key = keyFactory({ root, args, context, info, env: process.env });
-                    return store.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
+                    return mockStore.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
                   };
                 }
               } else {
@@ -142,7 +160,7 @@ export default function useMock(
                   });
                   mocks[typeName] = () => {
                     return exportedVal$.then(exportedVal =>
-                      typeof exportedVal === 'function' ? exportedVal(store) : exportedVal,
+                      typeof exportedVal === 'function' ? exportedVal(mockStore) : exportedVal,
                     );
                   };
                 }
@@ -150,7 +168,7 @@ export default function useMock(
             }
           }
         }
-        const store = createMockStore({ schema, mocks });
+        mockStore = createMockStore({ schema, mocks });
         if (config?.initializeStore) {
           const initializeStoreFn$ = loadFromModuleExportExpression(config.initializeStore, {
             cwd: config.baseDir,
@@ -158,11 +176,11 @@ export default function useMock(
             importFn: config.importFn,
           });
           // eslint-disable-next-line no-void
-          void initializeStoreFn$.then(fn => fn(store));
+          void initializeStoreFn$.then(fn => fn(mockStore));
         }
         const mockedSchema = addMocksToSchema({
           schema,
-          store,
+          store: mockStore,
           mocks,
           resolvers,
           preserveResolvers: config?.preserveResolvers,

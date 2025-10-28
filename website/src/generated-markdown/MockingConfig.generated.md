@@ -13,9 +13,11 @@ Read more (https://github.com/marak/Faker.js/#fakerfake)
 Example:
 faker: `name.firstName`
 faker: `{{ name.firstName }} {{ name.lastName }}`
-  * `custom` (type: `String`) - Custom mocking
+  * `custom` (type: `Any`) - Custom mocking
 It can be a module or json file.
 Both "moduleName#exportName" or only "moduleName" would work
+
+You can also provide a function directly
   * `length` (type: `Int`) - Length of the mock list
 For the list types `[ObjectType]`, how many `ObjectType` you want to return?
 default: 2
