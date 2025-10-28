@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.104.13",
+  "version": "0.104.14",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
     "@envelop/instrumentation": "^1.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "^0.5.9",
-    "@graphql-mesh/types": "^0.104.13",
+    "@graphql-mesh/types": "^0.104.14",
     "@graphql-tools/batch-delegate": "^10.0.0",
     "@graphql-tools/delegate": "^11.0.0",
     "@graphql-tools/utils": "^10.8.0",
