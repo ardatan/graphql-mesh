@@ -1,5 +1,15 @@
 # example-response-cache
 
+## 0.6.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1db3c6b`](https://github.com/ardatan/graphql-mesh/commit/1db3c6bc7e1b88e246b4e27562072312ea2bd266)]:
+  - @graphql-mesh/plugin-mock@0.105.15
+  - @graphql-mesh/cli@0.100.15
+  - @graphql-mesh/json-schema@0.109.15
+
 ## 0.6.15
 
 ### Patch Changes

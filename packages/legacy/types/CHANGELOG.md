@@ -1,5 +1,18 @@
 # @graphql-mesh/types
 
+## 0.104.14
+
+### Patch Changes
+
+- [`1db3c6b`](https://github.com/ardatan/graphql-mesh/commit/1db3c6bc7e1b88e246b4e27562072312ea2bd266)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix the behavior matching the documentation
+
+  Now `custom` property accepts a factory function or the value directly. Previously it was just the
+  path to the module with the export (`./module.ts#exportName`)
+
+- Updated dependencies []:
+  - @graphql-mesh/store@0.104.14
+
 ## 0.104.13
 
 ### Patch Changes
