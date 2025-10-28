@@ -1,6 +1,6 @@
 services:
   products:
-    image: 'node:22'
+    image: 'node:24'
     user: 'node'
     working_dir: /web
     volumes:
