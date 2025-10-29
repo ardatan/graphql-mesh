@@ -103,7 +103,7 @@
     "jest": "30.2.0",
     "lint-staged": "16.2.6",
     "lru-cache": "11.2.2",
-    "minimatch": "10.0.3",
+    "minimatch": "10.1.1",
     "node-gyp": "^11.0.0",
     "prettier": "3.6.2",
     "threads": "^1.7.0",
