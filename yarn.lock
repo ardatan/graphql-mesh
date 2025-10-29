@@ -15689,9 +15689,9 @@ __metadata:
   linkType: hard
 
 "@tsconfig/recommended@npm:^1.0.5":
-  version: 1.0.10
-  resolution: "@tsconfig/recommended@npm:1.0.10"
-  checksum: 10c0/402ef03da7300ea0f9f9d6e0507dcb8782c6b764c1f45b946a6c34f2bd3153571a1a85f10659606c24d1052aed699c3e32dd0da876e8f7eea577374eeeb80d17
+  version: 1.0.11
+  resolution: "@tsconfig/recommended@npm:1.0.11"
+  checksum: 10c0/b1e7c8cc50b07cd838271edeb277365ca06ca6816dcd5877be4e8e38143db6be39c1fdc80350a8946ae5022fcda4c457d6b5885430561eecf67d4dbae2ab8bfc
   languageName: node
   linkType: hard
 
