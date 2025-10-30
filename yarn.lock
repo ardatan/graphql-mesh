@@ -6869,7 +6869,7 @@ __metadata:
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     graphql: "npm:16.11.0"
     ioredis: "npm:^5.3.2"
-    ioredis-mock: "npm:^8.13.0"
+    ioredis-mock: "npm:^8.13.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
