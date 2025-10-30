@@ -2217,6 +2217,12 @@ export interface MockingConfig {
    * The path to the code runs before the store is attached to the schema
    */
   initializeStore?: any;
+  /**
+   * Set to `'deterministic'` if the default random mock generation behavior causes flakiness.
+   *
+   * Default: 'random' (Allowed values: deterministic, random)
+   */
+  mockGenerationBehavior?: 'deterministic' | 'random';
 }
 export interface MockingFieldConfig {
   /**

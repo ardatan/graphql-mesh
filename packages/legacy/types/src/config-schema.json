@@ -2561,6 +2561,11 @@
             }
           ],
           "description": "The path to the code runs before the store is attached to the schema"
+        },
+        "mockGenerationBehavior": {
+          "type": "string",
+          "enum": ["deterministic", "random"],
+          "description": "Set to `'deterministic'` if the default random mock generation behavior causes flakiness.\n\nDefault: 'random' (Allowed values: deterministic, random)"
         }
       }
     },

@@ -111,6 +111,11 @@ directive @mysqlCount(subgraph: String, table: String)  repeatable on FIELD_DEFI
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
 """
+Integers that will have a value of 0 or more.
+"""
+scalar UnsignedInt @join__type(graph: RFAM) 
+
+"""
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
 scalar BigInt @join__type(graph: RFAM) 
@@ -580,7 +585,7 @@ type _family_file @join__type(graph: RFAM)  {
 type family @join__type(graph: RFAM)  {
   rfam_acc: String!
   rfam_id: String!
-  auto_wiki: Int!
+  auto_wiki: UnsignedInt!
   description: String
   author: String
   seed_source: String
@@ -820,12 +825,6 @@ type family @join__type(graph: RFAM)  {
 type _overlap_membership @join__type(graph: RFAM)  {
   rfam_acc: String!
   auto_overlap: Int!
-  family(
-    where: family_WhereInput
-    orderBy: family_OrderByInput
-    limit: Int
-    offset: Int
-  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
   _overlap(
     where: _overlap_WhereInput
     orderBy: _overlap_OrderByInput
@@ -836,6 +835,12 @@ type _overlap_membership @join__type(graph: RFAM)  {
     table: "_overlap"
     columnMap: [["auto_overlap", "auto_overlap"]]
   ) @mysqlTableForeign(subgraph: "Rfam", columnName: "auto_overlap") 
+  family(
+    where: family_WhereInput
+    orderBy: family_OrderByInput
+    limit: Int
+    offset: Int
+  ): [family] @mysqlSelect(subgraph: "Rfam", table: "family", columnMap: [["rfam_acc", "rfam_acc"]])  @mysqlTableForeign(subgraph: "Rfam", columnName: "rfam_acc") 
 }
 
 type _overlap @join__type(graph: RFAM)  {
@@ -865,7 +870,7 @@ type _post_process @join__type(graph: RFAM)  {
   opened: DateTime
   closed: DateTime
   message: String
-  lsf_id: Int
+  lsf_id: UnsignedInt
   family(
     where: family_WhereInput
     orderBy: family_OrderByInput
@@ -1185,9 +1190,9 @@ type rfamseq @join__type(graph: RFAM)  {
   rfamseq_acc: String!
   accession: String!
   version: Int!
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   mol_type: rfamseq_mol_type!
-  length: Int
+  length: UnsignedInt
   description: String!
   previous_acc: String
   source: String!
@@ -1280,11 +1285,11 @@ type full_region @join__type(graph: RFAM)  {
   """
   bit_score: Float!
   evalue_score: String!
-  cm_start: Int!
-  cm_end: Int!
+  cm_start: UnsignedInt!
+  cm_end: UnsignedInt!
   truncated: full_region_truncated!
   type: full_region_type!
-  is_significant: Int!
+  is_significant: UnsignedInt!
   family(
     where: family_WhereInput
     orderBy: family_OrderByInput
@@ -1304,7 +1309,7 @@ type full_region @join__type(graph: RFAM)  {
 }
 
 type pdb_rfam_reg @join__type(graph: RFAM)  {
-  auto_pdb_reg: Int!
+  auto_pdb_reg: UnsignedInt!
   rfam_acc: String!
   pdb_seq: String!
   pdb_id: String!
@@ -1376,7 +1381,7 @@ type pdb_sequence @join__type(graph: RFAM)  {
 }
 
 type taxonomy @join__type(graph: RFAM)  {
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   species: String!
   tax_string: String
   tree_display_name: String
@@ -1396,7 +1401,7 @@ type taxonomy @join__type(graph: RFAM)  {
 }
 
 type family_ncbi @join__type(graph: RFAM)  {
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   """
   Is this really needed?
   """
@@ -1487,7 +1492,7 @@ type database_link @join__type(graph: RFAM)  {
 }
 
 type wikitext @join__type(graph: RFAM)  {
-  auto_wiki: Int!
+  auto_wiki: UnsignedInt!
   title: String!
   family(
     limit: Int
@@ -1578,8 +1583,8 @@ type refseq_full_region @join__type(graph: RFAM)  {
   """
   bit_score: Float!
   evalue_score: String!
-  cm_start: Int!
-  cm_end: Int!
+  cm_start: UnsignedInt!
+  cm_end: UnsignedInt!
   truncated: refseq_full_region_truncated!
   family(
     where: family_WhereInput
@@ -1645,7 +1650,7 @@ type _genome_data @join__type(graph: RFAM)  {
   opened: DateTime
   closed: DateTime
   message: String
-  lsf_id: Int
+  lsf_id: UnsignedInt
 }
 
 type _lock @join__type(graph: RFAM)  {
@@ -1722,9 +1727,9 @@ type genome @join__type(graph: RFAM)  {
   """
   upid: String!
   assembly_acc: String
-  assembly_version: Int
+  assembly_version: UnsignedInt
   wgs_acc: String
-  wgs_version: Int
+  wgs_version: UnsignedInt
   assembly_name: String
   assembly_level: genome_assembly_level
   study_ref: String
@@ -1732,7 +1737,7 @@ type genome @join__type(graph: RFAM)  {
   total_length: BigInt
   ungapped_length: BigInt
   circular: Int
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   scientific_name: String
   common_name: String
   kingdom: String
@@ -1750,9 +1755,9 @@ type genome_temp @join__type(graph: RFAM)  {
   """
   upid: String!
   assembly_acc: String
-  assembly_version: Int
+  assembly_version: UnsignedInt
   wgs_acc: String
-  wgs_version: Int
+  wgs_version: UnsignedInt
   assembly_name: String
   assembly_level: genome_temp_assembly_level
   study_ref: String
@@ -1760,7 +1765,7 @@ type genome_temp @join__type(graph: RFAM)  {
   total_length: BigInt
   ungapped_length: BigInt
   circular: Int
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   scientific_name: String
   common_name: String
   kingdom: String
@@ -1905,9 +1910,9 @@ type rfamseq_temp @join__type(graph: RFAM)  {
   rfamseq_acc: String!
   accession: String!
   version: Int!
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   mol_type: rfamseq_temp_mol_type!
-  length: Int
+  length: UnsignedInt
   description: String
   previous_acc: String
   source: String!
@@ -1946,12 +1951,12 @@ type taxonomic_tree @join__type(graph: RFAM)  {
 }
 
 type taxonomy_websearch @join__type(graph: RFAM)  {
-  ncbi_id: Int
+  ncbi_id: UnsignedInt
   species: String
   rgt: Int
   taxonomy: String
   lft: Int
-  parent: Int
+  parent: UnsignedInt
   level: String
   minimal: Int!
   rank: String
@@ -2405,6 +2410,32 @@ input _family_file_OrderByInput @join__type(graph: RFAM)  {
   cm: OrderBy
 }
 
+input _overlap_membership_WhereInput @join__type(graph: RFAM)  {
+  rfam_acc: String
+  auto_overlap: String
+}
+
+input _overlap_membership_OrderByInput @join__type(graph: RFAM)  {
+  rfam_acc: OrderBy
+  auto_overlap: OrderBy
+}
+
+input _overlap_WhereInput @join__type(graph: RFAM)  {
+  auto_overlap: String
+  id: String
+  description: String
+  author: String
+  comment: String
+}
+
+input _overlap_OrderByInput @join__type(graph: RFAM)  {
+  auto_overlap: OrderBy
+  id: OrderBy
+  description: OrderBy
+  author: OrderBy
+  comment: OrderBy
+}
+
 input family_WhereInput @join__type(graph: RFAM)  {
   rfam_acc: String
   rfam_id: String
@@ -2479,32 +2510,6 @@ input family_OrderByInput @join__type(graph: RFAM)  {
   hmm_lambda: OrderBy
   created: OrderBy
   updated: OrderBy
-}
-
-input _overlap_membership_WhereInput @join__type(graph: RFAM)  {
-  rfam_acc: String
-  auto_overlap: String
-}
-
-input _overlap_membership_OrderByInput @join__type(graph: RFAM)  {
-  rfam_acc: OrderBy
-  auto_overlap: OrderBy
-}
-
-input _overlap_WhereInput @join__type(graph: RFAM)  {
-  auto_overlap: String
-  id: String
-  description: String
-  author: String
-  comment: String
-}
-
-input _overlap_OrderByInput @join__type(graph: RFAM)  {
-  auto_overlap: OrderBy
-  id: OrderBy
-  description: OrderBy
-  author: OrderBy
-  comment: OrderBy
 }
 
 input _post_process_WhereInput @join__type(graph: RFAM)  {
@@ -3800,7 +3805,7 @@ input _genome_data_InsertInput @join__type(graph: RFAM)  {
   opened: DateTime
   closed: DateTime
   message: String
-  lsf_id: Int
+  lsf_id: UnsignedInt
 }
 
 input _genome_data_UpdateInput @join__type(graph: RFAM)  {
@@ -3812,7 +3817,7 @@ input _genome_data_UpdateInput @join__type(graph: RFAM)  {
   opened: DateTime
   closed: DateTime
   message: String
-  lsf_id: Int
+  lsf_id: UnsignedInt
 }
 
 input _lock_InsertInput @join__type(graph: RFAM)  {
@@ -3870,7 +3875,7 @@ input _post_process_InsertInput @join__type(graph: RFAM)  {
   opened: DateTime
   closed: DateTime
   message: String
-  lsf_id: Int
+  lsf_id: UnsignedInt
 }
 
 input _post_process_UpdateInput @join__type(graph: RFAM)  {
@@ -3882,7 +3887,7 @@ input _post_process_UpdateInput @join__type(graph: RFAM)  {
   opened: DateTime
   closed: DateTime
   message: String
-  lsf_id: Int
+  lsf_id: UnsignedInt
 }
 
 input alignment_and_tree_InsertInput @join__type(graph: RFAM)  {
@@ -4092,7 +4097,7 @@ input ensembl_names_UpdateInput @join__type(graph: RFAM)  {
 input family_InsertInput @join__type(graph: RFAM)  {
   rfam_acc: String!
   rfam_id: String!
-  auto_wiki: Int!
+  auto_wiki: UnsignedInt!
   description: String
   author: String
   seed_source: String
@@ -4130,7 +4135,7 @@ input family_InsertInput @join__type(graph: RFAM)  {
 input family_UpdateInput @join__type(graph: RFAM)  {
   rfam_acc: String
   rfam_id: String
-  auto_wiki: Int
+  auto_wiki: UnsignedInt
   description: String
   author: String
   seed_source: String
@@ -4204,7 +4209,7 @@ input family_long_UpdateInput @join__type(graph: RFAM)  {
 }
 
 input family_ncbi_InsertInput @join__type(graph: RFAM)  {
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   """
   Is this really needed?
   """
@@ -4213,7 +4218,7 @@ input family_ncbi_InsertInput @join__type(graph: RFAM)  {
 }
 
 input family_ncbi_UpdateInput @join__type(graph: RFAM)  {
-  ncbi_id: Int
+  ncbi_id: UnsignedInt
   """
   Is this really needed?
   """
@@ -4253,11 +4258,11 @@ input full_region_InsertInput @join__type(graph: RFAM)  {
   """
   bit_score: Float
   evalue_score: String
-  cm_start: Int!
-  cm_end: Int!
+  cm_start: UnsignedInt!
+  cm_end: UnsignedInt!
   truncated: full_region_truncated!
   type: full_region_type
-  is_significant: Int!
+  is_significant: UnsignedInt!
 }
 
 input full_region_UpdateInput @join__type(graph: RFAM)  {
@@ -4270,11 +4275,11 @@ input full_region_UpdateInput @join__type(graph: RFAM)  {
   """
   bit_score: Float
   evalue_score: String
-  cm_start: Int
-  cm_end: Int
+  cm_start: UnsignedInt
+  cm_end: UnsignedInt
   truncated: full_region_truncated
   type: full_region_type
-  is_significant: Int
+  is_significant: UnsignedInt
 }
 
 input genome_InsertInput @join__type(graph: RFAM)  {
@@ -4283,9 +4288,9 @@ input genome_InsertInput @join__type(graph: RFAM)  {
   """
   upid: String
   assembly_acc: String
-  assembly_version: Int
+  assembly_version: UnsignedInt
   wgs_acc: String
-  wgs_version: Int
+  wgs_version: UnsignedInt
   assembly_name: String
   assembly_level: genome_assembly_level
   study_ref: String
@@ -4293,7 +4298,7 @@ input genome_InsertInput @join__type(graph: RFAM)  {
   total_length: BigInt
   ungapped_length: BigInt
   circular: Int
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   scientific_name: String
   common_name: String
   kingdom: String
@@ -4311,9 +4316,9 @@ input genome_UpdateInput @join__type(graph: RFAM)  {
   """
   upid: String
   assembly_acc: String
-  assembly_version: Int
+  assembly_version: UnsignedInt
   wgs_acc: String
-  wgs_version: Int
+  wgs_version: UnsignedInt
   assembly_name: String
   assembly_level: genome_assembly_level
   study_ref: String
@@ -4321,7 +4326,7 @@ input genome_UpdateInput @join__type(graph: RFAM)  {
   total_length: BigInt
   ungapped_length: BigInt
   circular: Int
-  ncbi_id: Int
+  ncbi_id: UnsignedInt
   scientific_name: String
   common_name: String
   kingdom: String
@@ -4339,9 +4344,9 @@ input genome_temp_InsertInput @join__type(graph: RFAM)  {
   """
   upid: String
   assembly_acc: String
-  assembly_version: Int
+  assembly_version: UnsignedInt
   wgs_acc: String
-  wgs_version: Int
+  wgs_version: UnsignedInt
   assembly_name: String
   assembly_level: genome_temp_assembly_level
   study_ref: String
@@ -4349,7 +4354,7 @@ input genome_temp_InsertInput @join__type(graph: RFAM)  {
   total_length: BigInt
   ungapped_length: BigInt
   circular: Int
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   scientific_name: String
   common_name: String
   kingdom: String
@@ -4367,9 +4372,9 @@ input genome_temp_UpdateInput @join__type(graph: RFAM)  {
   """
   upid: String
   assembly_acc: String
-  assembly_version: Int
+  assembly_version: UnsignedInt
   wgs_acc: String
-  wgs_version: Int
+  wgs_version: UnsignedInt
   assembly_name: String
   assembly_level: genome_temp_assembly_level
   study_ref: String
@@ -4377,7 +4382,7 @@ input genome_temp_UpdateInput @join__type(graph: RFAM)  {
   total_length: BigInt
   ungapped_length: BigInt
   circular: Int
-  ncbi_id: Int
+  ncbi_id: UnsignedInt
   scientific_name: String
   common_name: String
   kingdom: String
@@ -4800,7 +4805,7 @@ input pdb_full_region_old_UpdateInput @join__type(graph: RFAM)  {
 }
 
 input pdb_rfam_reg_InsertInput @join__type(graph: RFAM)  {
-  auto_pdb_reg: Int
+  auto_pdb_reg: UnsignedInt
   rfam_acc: String!
   pdb_seq: String!
   pdb_id: String!
@@ -4814,7 +4819,7 @@ input pdb_rfam_reg_InsertInput @join__type(graph: RFAM)  {
 }
 
 input pdb_rfam_reg_UpdateInput @join__type(graph: RFAM)  {
-  auto_pdb_reg: Int
+  auto_pdb_reg: UnsignedInt
   rfam_acc: String
   pdb_seq: String
   pdb_id: String
@@ -4903,8 +4908,8 @@ input refseq_full_region_InsertInput @join__type(graph: RFAM)  {
   """
   bit_score: Float
   evalue_score: String
-  cm_start: Int!
-  cm_end: Int!
+  cm_start: UnsignedInt!
+  cm_end: UnsignedInt!
   truncated: refseq_full_region_truncated!
 }
 
@@ -4918,8 +4923,8 @@ input refseq_full_region_UpdateInput @join__type(graph: RFAM)  {
   """
   bit_score: Float
   evalue_score: String
-  cm_start: Int
-  cm_end: Int
+  cm_start: UnsignedInt
+  cm_end: UnsignedInt
   truncated: refseq_full_region_truncated
 }
 
@@ -4930,9 +4935,9 @@ input rfamseq_InsertInput @join__type(graph: RFAM)  {
   rfamseq_acc: String
   accession: String
   version: Int!
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   mol_type: rfamseq_mol_type!
-  length: Int
+  length: UnsignedInt
   description: String
   previous_acc: String
   source: String!
@@ -4945,9 +4950,9 @@ input rfamseq_UpdateInput @join__type(graph: RFAM)  {
   rfamseq_acc: String
   accession: String
   version: Int
-  ncbi_id: Int
+  ncbi_id: UnsignedInt
   mol_type: rfamseq_mol_type
-  length: Int
+  length: UnsignedInt
   description: String
   previous_acc: String
   source: String
@@ -4960,9 +4965,9 @@ input rfamseq_temp_InsertInput @join__type(graph: RFAM)  {
   rfamseq_acc: String
   accession: String
   version: Int!
-  ncbi_id: Int!
+  ncbi_id: UnsignedInt!
   mol_type: rfamseq_temp_mol_type!
-  length: Int
+  length: UnsignedInt
   description: String
   previous_acc: String
   source: String!
@@ -4975,9 +4980,9 @@ input rfamseq_temp_UpdateInput @join__type(graph: RFAM)  {
   rfamseq_acc: String
   accession: String
   version: Int
-  ncbi_id: Int
+  ncbi_id: UnsignedInt
   mol_type: rfamseq_temp_mol_type
-  length: Int
+  length: UnsignedInt
   description: String
   previous_acc: String
   source: String
@@ -5088,7 +5093,7 @@ input taxonomic_tree_UpdateInput @join__type(graph: RFAM)  {
 }
 
 input taxonomy_InsertInput @join__type(graph: RFAM)  {
-  ncbi_id: Int
+  ncbi_id: UnsignedInt
   species: String
   tax_string: String
   tree_display_name: String
@@ -5096,7 +5101,7 @@ input taxonomy_InsertInput @join__type(graph: RFAM)  {
 }
 
 input taxonomy_UpdateInput @join__type(graph: RFAM)  {
-  ncbi_id: Int
+  ncbi_id: UnsignedInt
   species: String
   tax_string: String
   tree_display_name: String
@@ -5104,24 +5109,24 @@ input taxonomy_UpdateInput @join__type(graph: RFAM)  {
 }
 
 input taxonomy_websearch_InsertInput @join__type(graph: RFAM)  {
-  ncbi_id: Int
+  ncbi_id: UnsignedInt
   species: String
   rgt: Int
   taxonomy: String
   lft: Int
-  parent: Int
+  parent: UnsignedInt
   level: String
   minimal: Int
   rank: String
 }
 
 input taxonomy_websearch_UpdateInput @join__type(graph: RFAM)  {
-  ncbi_id: Int
+  ncbi_id: UnsignedInt
   species: String
   rgt: Int
   taxonomy: String
   lft: Int
-  parent: Int
+  parent: UnsignedInt
   level: String
   minimal: Int
   rank: String
@@ -5142,12 +5147,12 @@ input version_UpdateInput @join__type(graph: RFAM)  {
 }
 
 input wikitext_InsertInput @join__type(graph: RFAM)  {
-  auto_wiki: Int
+  auto_wiki: UnsignedInt
   title: String!
 }
 
 input wikitext_UpdateInput @join__type(graph: RFAM)  {
-  auto_wiki: Int
+  auto_wiki: UnsignedInt
   title: String
 }
 "

@@ -31,3 +31,6 @@ default: 2
     * `fieldName` (type: `String`)
     * `value` (type: `String`)
 * `initializeStore` (type: `Any`) - The path to the code runs before the store is attached to the schema
+* `mockGenerationBehavior` (type: `String (deterministic | random)`) - Set to `'deterministic'` if the default random mock generation behavior causes flakiness.
+
+Default: 'random'
