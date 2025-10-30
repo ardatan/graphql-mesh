@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-mock",
-  "version": "0.105.15",
+  "version": "0.105.16",
   "type": "module",
   "repository": {
     "type": "git",

@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-mock
 
+## 0.105.16
+
+### Patch Changes
+
+- [`faf24c9`](https://github.com/ardatan/graphql-mesh/commit/faf24c9b7ac9dcac903d9209fea1b61962cde057)
+  Thanks [@ardatan](https://github.com/ardatan)! - Align documentation with the implementation
+
 ## 0.105.15
 
 ### Patch Changes
