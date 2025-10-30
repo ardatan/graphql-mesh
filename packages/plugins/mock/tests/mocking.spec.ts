@@ -3,7 +3,7 @@ import { envelop, useEngine, useSchema } from '@envelop/core';
 import type { ImportFn, YamlConfig } from '@graphql-mesh/types';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import useMock from '../src/index.js';
+import useMock, { type IMockStore } from '../src/index.js';
 
 describe('mocking', () => {
   const baseDir: string = __dirname;
@@ -482,5 +482,130 @@ describe('mocking', () => {
     });
     expect(updateUserResult?.data?.updateUser?.id).toBe(addedUserId);
     expect(updateUserResult?.data?.updateUser?.name).toBe('Jane Doe');
+  });
+  describe('Documentation', () => {
+    function initializeStore(mockStore: IMockStore) {
+      const users = [{ id: 'uuid', name: 'John Snow' }];
+      // Set individual users' data in the store so that they can be queried as individuals later on
+      users.forEach(user => {
+        mockStore.set('User', user.id, user);
+      });
+
+      // Populate the `users` query on the root with data
+      mockStore.set('Query', 'ROOT', 'users', users);
+    }
+    const schema = buildSchema(/* GraphQL */ `
+      type User {
+        id: ID
+        name: String
+      }
+      type Query {
+        user(id: ID): User
+        users: [User]
+        me: User
+      }
+      type Mutation {
+        changeMyName(newName: String): User
+        updateUser(id: ID, name: String): User
+      }
+    `);
+    interface User {
+      id: string;
+      name: string;
+    }
+    it('works', async () => {
+      const plugin = useMock({
+        initializeStore,
+        mocks: [
+          {
+            apply: 'Query.user',
+            custom: (_, args, context) => context.mockStore.get('User', args.id),
+          },
+          {
+            apply: 'Query.me',
+            custom: (_, args, context) => context.mockStore.get('User', 'uuid'),
+          },
+          {
+            apply: 'Mutation.changeMyName',
+            custom: (_, args, context) => {
+              const user = context.mockStore.get('User', 'uuid') as User;
+              user.name = args.newName;
+              context.mockStore.set('User', 'uuid', user);
+              return user;
+            },
+          },
+          {
+            apply: 'Mutation.updateUser',
+            custom: (_, args, context) => {
+              const user = context.mockStore.get('User', args.id) as User;
+              user.name = args.name;
+              context.mockStore.set('User', args.id, user);
+              return user;
+            },
+          },
+        ],
+      });
+      const getEnveloped = envelop({
+        plugins: [enginePlugin, useSchema(schema), plugin],
+      });
+      const enveloped = getEnveloped();
+
+      // Query the `me` field to get the current user
+      const meResult: any = await enveloped.execute({
+        schema: enveloped.schema,
+        document: enveloped.parse(/* GraphQL */ `
+          {
+            me {
+              id
+              name
+            }
+          }
+        `),
+        contextValue: await enveloped.contextFactory({}),
+      });
+      expect(meResult?.data?.me).toEqual({ id: 'uuid', name: 'John Snow' });
+      // Change the current user's name
+      const changeMyNameResult: any = await enveloped.execute({
+        schema: enveloped.schema,
+        document: enveloped.parse(/* GraphQL */ `
+          mutation {
+            changeMyName(newName: "Arya Stark") {
+              id
+              name
+            }
+          }
+        `),
+        contextValue: await enveloped.contextFactory({}),
+      });
+      expect(changeMyNameResult?.data?.changeMyName).toEqual({ id: 'uuid', name: 'Arya Stark' });
+      // Update another user's name by their ID
+      const updateUserResult: any = await enveloped.execute({
+        schema: enveloped.schema,
+        document: enveloped.parse(/* GraphQL */ `
+          mutation {
+            updateUser(id: "uuid", name: "Tyrion Lannister") {
+              id
+              name
+            }
+          }
+        `),
+        contextValue: await enveloped.contextFactory({}),
+      });
+      expect(updateUserResult?.data?.updateUser).toEqual({ id: 'uuid', name: 'Tyrion Lannister' });
+      // Verify that the changes are reflected when querying `me` again
+      const meResultAfterUpdates: any = await enveloped.execute({
+        schema: enveloped.schema,
+        document: enveloped.parse(/* GraphQL */ `
+          {
+            me {
+              id
+              name
+            }
+          }
+        `),
+        contextValue: await enveloped.contextFactory({}),
+      });
+      expect(meResultAfterUpdates?.data?.me).toEqual({ id: 'uuid', name: 'Tyrion Lannister' });
+    });
   });
 });
