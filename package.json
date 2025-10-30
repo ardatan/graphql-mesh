@@ -158,9 +158,6 @@
     ],
     "**/*.{ts,tsx,graphql,yml,json,md,js,mjs,cjs,mdx}": [
       "prettier --write"
-    ],
-    "yarn.lock": [
-      "yarn dedupe && git add yarn.lock"
     ]
   }
 }
