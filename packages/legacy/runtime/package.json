@@ -53,7 +53,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "10.0.25",
+    "@graphql-tools/schema": "10.0.26",
     "graphql": "16.11.0"
   },
   "publishConfig": {
