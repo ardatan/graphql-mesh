@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-mock
 
+## 0.105.16
+
+### Patch Changes
+
+- [`ee33c09`](https://github.com/ardatan/graphql-mesh/commit/ee33c098fd686fc5b2d2c991a5a5fb5f2f7876c1)
+  Thanks [@ardatan](https://github.com/ardatan)! - Align documentation with the implementation
+  - Export `MockStore`, `useMock` and `IMockStore` from the package.
+
 ## 0.105.15
 
 ### Patch Changes

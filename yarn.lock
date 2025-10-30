@@ -5441,7 +5441,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.15"
     "@graphql-mesh/json-schema": "npm:0.109.15"
-    "@graphql-mesh/plugin-mock": "npm:0.105.15"
+    "@graphql-mesh/plugin-mock": "npm:0.105.16"
     "@types/node": "npm:^24.4.0"
     graphql: "npm:16.11.0"
     jest: "npm:30.2.0"
@@ -5456,7 +5456,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.15"
     "@graphql-mesh/json-schema": "npm:0.109.15"
-    "@graphql-mesh/plugin-mock": "npm:0.105.15"
+    "@graphql-mesh/plugin-mock": "npm:0.105.16"
     "@graphql-yoga/plugin-sofa": "npm:3.16.0"
     graphql: "npm:16.11.0"
     graphql-yoga: "npm:^5.13.4"
@@ -5537,7 +5537,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.15"
     "@graphql-mesh/json-schema": "npm:0.109.15"
-    "@graphql-mesh/plugin-mock": "npm:0.105.15"
+    "@graphql-mesh/plugin-mock": "npm:0.105.16"
     "@graphql-mesh/transform-naming-convention": "npm:0.105.15"
     graphql: "npm:16.11.0"
     jest: "npm:30.2.0"
@@ -5841,7 +5841,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.15"
     "@graphql-mesh/json-schema": "npm:0.109.15"
-    "@graphql-mesh/plugin-mock": "npm:0.105.15"
+    "@graphql-mesh/plugin-mock": "npm:0.105.16"
     "@graphql-yoga/plugin-sofa": "npm:3.16.0"
     graphql: "npm:16.11.0"
     graphql-yoga: "npm:^5.13.4"
@@ -7416,7 +7416,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-mock@npm:0.105.15, @graphql-mesh/plugin-mock@npm:^0.105.15, @graphql-mesh/plugin-mock@workspace:packages/plugins/mock":
+"@graphql-mesh/plugin-mock@npm:0.105.16, @graphql-mesh/plugin-mock@npm:^0.105.16, @graphql-mesh/plugin-mock@workspace:packages/plugins/mock":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-mock@workspace:packages/plugins/mock"
   dependencies:
@@ -23028,7 +23028,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:^0.100.15"
     "@graphql-mesh/json-schema": "npm:^0.109.15"
-    "@graphql-mesh/plugin-mock": "npm:^0.105.15"
+    "@graphql-mesh/plugin-mock": "npm:^0.105.16"
     graphql: "npm:16.11.0"
   languageName: unknown
   linkType: soft
