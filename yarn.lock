@@ -31296,6 +31296,56 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nextra@patch:nextra@npm%3A3.2.5#~/.yarn/patches/nextra-npm-3.2.5-ab823bf5b2.patch":
+  version: 3.2.5
+  resolution: "nextra@patch:nextra@npm%3A3.2.5#~/.yarn/patches/nextra-npm-3.2.5-ab823bf5b2.patch::version=3.2.5&hash=6c43f7"
+  dependencies:
+    "@formatjs/intl-localematcher": "npm:^0.5.4"
+    "@headlessui/react": "npm:^2.1.2"
+    "@mdx-js/mdx": "npm:^3.0.0"
+    "@mdx-js/react": "npm:^3.0.0"
+    "@napi-rs/simple-git": "npm:^0.1.9"
+    "@shikijs/twoslash": "npm:^1.0.0"
+    "@theguild/remark-mermaid": "npm:^0.1.3"
+    "@theguild/remark-npm2yarn": "npm:^0.3.2"
+    better-react-mathjax: "npm:^2.0.3"
+    clsx: "npm:^2.0.0"
+    estree-util-to-js: "npm:^2.0.0"
+    estree-util-value-to-estree: "npm:^3.0.1"
+    github-slugger: "npm:^2.0.0"
+    graceful-fs: "npm:^4.2.11"
+    gray-matter: "npm:^4.0.3"
+    hast-util-to-estree: "npm:^3.1.0"
+    katex: "npm:^0.16.9"
+    mdast-util-from-markdown: "npm:^2.0.1"
+    mdast-util-gfm: "npm:^3.0.0"
+    mdast-util-to-hast: "npm:^13.2.0"
+    negotiator: "npm:^1.0.0"
+    p-limit: "npm:^6.0.0"
+    rehype-katex: "npm:^7.0.0"
+    rehype-pretty-code: "npm:0.14.0"
+    rehype-raw: "npm:^7.0.0"
+    remark-frontmatter: "npm:^5.0.0"
+    remark-gfm: "npm:^4.0.0"
+    remark-math: "npm:^6.0.0"
+    remark-reading-time: "npm:^2.0.1"
+    remark-smartypants: "npm:^3.0.0"
+    shiki: "npm:^1.0.0"
+    slash: "npm:^5.1.0"
+    title: "npm:^4.0.0"
+    unist-util-remove: "npm:^4.0.0"
+    unist-util-visit: "npm:^5.0.0"
+    yaml: "npm:^2.3.2"
+    zod: "npm:^3.22.3"
+    zod-validation-error: "npm:^3.0.0"
+  peerDependencies:
+    next: ">=13"
+    react: ">=18"
+    react-dom: ">=18"
+  checksum: 10c0/fa1405e120b6e619dc312334ccd7e34311895a4d793ba0f695a4de866c93cc0bbce941f414cad48c20a8b234626d3fae986c4c4471f9e0f23a0c8b05457168af
+  languageName: node
+  linkType: hard
+
 "nice-try@npm:^1.0.4":
   version: 1.0.5
   resolution: "nice-try@npm:1.0.5"

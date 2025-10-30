@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
-    "build": "next build && next-sitemap",
-    "dev": "next",
-    "start": "next start"
+    "build": "next build --webpack && next-sitemap",
+    "dev": "next dev --webpack",
+    "start": "next start --webpack"
   },
   "dependencies": {
     "@theguild/components": "^7.6.0",
