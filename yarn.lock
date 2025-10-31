@@ -11437,15 +11437,15 @@ __metadata:
   linkType: hard
 
 "@neo4j/introspector@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@neo4j/introspector@npm:5.0.0"
+  version: 5.0.1
+  resolution: "@neo4j/introspector@npm:5.0.1"
   dependencies:
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
     pluralize: "npm:^8.0.0"
   peerDependencies:
     neo4j-driver: ^5.8.0
-  checksum: 10c0/06430237f02447cc7fa5038d4c28d7b6296e6a01706660534fe5a5a6231075b0f6273237ce32d139c7e5194b09724140b74db74c1e90187a82127a2ff84a0fa1
+  checksum: 10c0/17d64f8a73cddd5ee569d1128977c69e09c818fc25769b7edf9909db56995af2142cacbd1fc597e14d5e72cc0e5c0e7e6bf85879786309a3a6f30b47fbfe2b45
   languageName: node
   linkType: hard
 
