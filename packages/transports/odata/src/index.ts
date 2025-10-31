@@ -1,7 +1,7 @@
 import { createDefaultExecutor, type Transport } from '@graphql-mesh/transport-common';
 import { processDirectives } from '@omnigraph/odata';
 
-export default {
+const transport: Transport = {
   getSubgraphExecutor({ subgraph, fetch }) {
     return createDefaultExecutor(
       processDirectives({
@@ -10,4 +10,6 @@ export default {
       }),
     );
   },
-} satisfies Transport;
+};
+
+export default transport;

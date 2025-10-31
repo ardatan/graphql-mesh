@@ -15,13 +15,7 @@ import {
   type Transport,
 } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
-import {
-  getDirective,
-  getDirectives,
-  getRootTypes,
-  mapMaybePromise,
-  type MaybePromise,
-} from '@graphql-tools/utils';
+import { getDirective, getDirectives, getRootTypes, type MaybePromise } from '@graphql-tools/utils';
 import type { ChannelCredentials } from '@grpc/grpc-js';
 import { credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import type { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
@@ -333,7 +327,7 @@ export class GrpcTransportHelper extends DisposableStack {
   }
 }
 
-export default {
+const transport: Transport<gRPCTransportOptions> = {
   getSubgraphExecutor({ transportEntry, subgraph, cwd, logger }) {
     const transport = new GrpcTransportHelper(
       transportEntry.subgraph,
@@ -350,7 +344,9 @@ export default {
       },
     );
   },
-} satisfies Transport<gRPCTransportOptions>;
+};
+
+export default transport;
 
 function identityFn<T>(obj: T): T {
   return obj;
