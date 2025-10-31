@@ -94,7 +94,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
             redisUrl.searchParams.set('family', '6');
           }
           const urlStr = redisUrl.toString();
-          options.logger.debug(`Connecting to Redis at ${urlStr}`);
+          safelyLogURL(options.logger, urlStr);
           this.client = new Redis(urlStr);
         } else {
           const parsedHost =
@@ -198,4 +198,12 @@ function scanPatterns(
     }
     return scanPatterns(redis, pattern, nextCursor, keys);
   });
+}
+
+function safelyLogURL(log: Logger, url: string): void {
+  const logURL = new URL(url);
+  if (logURL.password) {
+    logURL.password = '*'.repeat(logURL.password.length);
+  }
+  log.debug(`Connecting to Redis at ${logURL}`);
 }
