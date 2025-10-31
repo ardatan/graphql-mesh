@@ -42,7 +42,7 @@
     "@graphql-tools/resolvers-composition": "^7.0.0",
     "@graphql-tools/schema": "^10.0.5",
     "@graphql-tools/utils": "^10.8.0",
-    "dayjs": "^1.11.7",
+    "dayjs": "^1.11.19",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

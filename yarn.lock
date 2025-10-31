@@ -70,7 +70,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:4.0.8, @apollo/client@npm:^4.0.0":
+"@apollo/client@npm:4.0.9":
+  version: 4.0.9
+  resolution: "@apollo/client@npm:4.0.9"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@wry/caches": "npm:^1.0.0"
+    "@wry/equality": "npm:^0.5.6"
+    "@wry/trie": "npm:^0.5.0"
+    graphql-tag: "npm:^2.12.6"
+    optimism: "npm:^0.18.0"
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    graphql: ^16.0.0
+    graphql-ws: ^5.5.5 || ^6.0.3
+    react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    react-dom: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    rxjs: ^7.3.0
+    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
+  peerDependenciesMeta:
+    graphql-ws:
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    subscriptions-transport-ws:
+      optional: true
+  checksum: 10c0/38eab9026fbb267af28f7567606624a8d73869fe0b90579c92a91b1503e8723f2a71ae95d101d92ebf4cf3d6d228ab0428d68ac91ce4f26fac1c3871881ce735
+  languageName: node
+  linkType: hard
+
+"@apollo/client@npm:^4.0.0":
   version: 4.0.8
   resolution: "@apollo/client@npm:4.0.8"
   dependencies:
@@ -5365,7 +5396,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/graphql-file-upload-example-frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
-    "@apollo/client": "npm:4.0.8"
+    "@apollo/client": "npm:4.0.9"
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.9.1"
     "@testing-library/react": "npm:16.3.0"
@@ -6786,7 +6817,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link"
   dependencies:
-    "@apollo/client": "npm:4.0.8"
+    "@apollo/client": "npm:4.0.9"
     "@graphql-mesh/runtime": "npm:^0.106.14"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -7706,7 +7737,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/string-interpolation@workspace:packages/string-interpolation"
   dependencies:
-    dayjs: "npm:1.11.18"
+    dayjs: "npm:1.11.19"
     graphql: "npm:16.11.0"
     json-pointer: "npm:0.6.2"
     lodash.get: "npm:4.4.2"
@@ -7767,7 +7798,7 @@ __metadata:
     "@graphql-tools/resolvers-composition": "npm:^7.0.0"
     "@graphql-tools/schema": "npm:^10.0.5"
     "@graphql-tools/utils": "npm:^10.8.0"
-    dayjs: "npm:^1.11.7"
+    dayjs: "npm:^1.11.19"
     graphql: "npm:16.11.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -20967,7 +20998,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:1.11.18, dayjs@npm:^1.11.18, dayjs@npm:^1.11.7":
+"dayjs@npm:1.11.19, dayjs@npm:^1.11.19":
+  version: 1.11.19
+  resolution: "dayjs@npm:1.11.19"
+  checksum: 10c0/7d8a6074a343f821f81ea284d700bd34ea6c7abbe8d93bce7aba818948957c1b7f56131702e5e890a5622cdfc05dcebe8aed0b8313bdc6838a594d7846b0b000
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.18":
   version: 1.11.18
   resolution: "dayjs@npm:1.11.18"
   checksum: 10c0/83b67f5d977e2634edf4f5abdd91d9041a696943143638063016915d2cd8c7e57e0751e40379a07ebca8be7a48dd380bef8752d22a63670f2d15970e34f96d7a
