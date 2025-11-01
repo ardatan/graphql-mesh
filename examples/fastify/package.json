@@ -10,7 +10,7 @@
     "@graphql-mesh/graphql": "0.104.14",
     "@types/node": "^24.4.0",
     "fastify": "5.6.1",
-    "graphql": "16.11.0",
+    "graphql": "16.12.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "2.0.0",
     "typescript": "^5.4.2"

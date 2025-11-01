@@ -47,7 +47,7 @@
     "@graphql-mesh/cache-localforage": "0.105.15",
     "@graphql-tools/schema": "10.0.26",
     "@graphql-tools/wrap": "^11.0.0",
-    "graphql": "16.11.0"
+    "graphql": "16.12.0"
   },
   "publishConfig": {
     "access": "public",

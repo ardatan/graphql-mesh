@@ -8,6 +8,6 @@
     "@grpc/grpc-js": "^1.12.2",
     "@grpc/proto-loader": "^0.8.0",
     "@omnigraph/grpc": "workspace:*",
-    "graphql": "16.11.0"
+    "graphql": "16.12.0"
   }
 }
