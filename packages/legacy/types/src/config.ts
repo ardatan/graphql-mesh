@@ -2192,7 +2192,13 @@ export interface LiveQueryInvalidationByMutation {
   invalidate: string[];
 }
 export interface LiveQueryInvalidationByPolling {
+  /**
+   * Polling interval in milliseconds
+   */
   pollingInterval: number;
+  /**
+   * Schema coordinate of the query to be polled
+   */
   invalidate: string[];
 }
 export interface LiveQueryIndexBy {

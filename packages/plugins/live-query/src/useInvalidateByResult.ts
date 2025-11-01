@@ -11,12 +11,15 @@ import {
 } from '@graphql-mesh/types';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
+// Hybrid type that supports both polling and mutation-based invalidation
+type LiveQueryInvalidationHybrid = (
+  | YamlConfig.LiveQueryInvalidationByMutation
+  | YamlConfig.LiveQueryInvalidationByPolling
+) & Partial<YamlConfig.LiveQueryInvalidationByMutation> & Partial<YamlConfig.LiveQueryInvalidationByPolling>;
+
 interface InvalidateByResultParams {
   pubsub: MeshPubSub | HivePubSub;
-  invalidations: (
-    | YamlConfig.LiveQueryInvalidationByMutation
-    | YamlConfig.LiveQueryInvalidationByPolling
-  )[];
+  invalidations: LiveQueryInvalidationHybrid[];
   logger: Logger;
 }
 
@@ -29,13 +32,18 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
     const factories = rawInvalidationPaths.map(rawInvalidationPath =>
       getInterpolatedStringFactory(rawInvalidationPath),
     );
-    if ('pollingInterval' in liveQueryInvalidation) {
+
+    // Set up polling-based invalidation if pollingInterval is provided
+    if ('pollingInterval' in liveQueryInvalidation && liveQueryInvalidation.pollingInterval) {
       timers.add(
         setInterval(() => {
           pubsub.publish('live-query:invalidate', liveQueryInvalidation.invalidate);
         }, liveQueryInvalidation.pollingInterval),
       );
-    } else if ('field' in liveQueryInvalidation) {
+    }
+
+    // Set up mutation-based invalidation if field is provided
+    if ('field' in liveQueryInvalidation && liveQueryInvalidation.field) {
       liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
     }
   });
