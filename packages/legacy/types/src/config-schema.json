@@ -2521,14 +2521,16 @@
       "title": "LiveQueryInvalidationByPolling",
       "properties": {
         "pollingInterval": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Polling interval in milliseconds"
         },
         "invalidate": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "additionalItems": false
+          "additionalItems": false,
+          "description": "Schema coordinate of the query to be polled"
         }
       },
       "required": ["pollingInterval", "invalidate"]
