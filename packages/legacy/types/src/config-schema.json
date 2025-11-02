@@ -2461,18 +2461,10 @@
         "invalidations": {
           "type": "array",
           "items": {
-            "description": "Any of: LiveQueryInvalidationByMutation, LiveQueryInvalidationByPolling",
-            "anyOf": [
-              {
-                "$ref": "#/definitions/LiveQueryInvalidationByMutation"
-              },
-              {
-                "$ref": "#/definitions/LiveQueryInvalidationByPolling"
-              }
-            ]
+            "$ref": "#/definitions/LiveQueryInvalidation"
           },
           "additionalItems": false,
-          "description": "Invalidate a query or queries when a specific operation is done without an error (Any of: LiveQueryInvalidationByMutation, LiveQueryInvalidationByPolling)"
+          "description": "Invalidate a query or queries when a specific operation is done without an error"
         },
         "resourceIdentifier": {
           "type": "string",
@@ -2496,30 +2488,15 @@
         }
       }
     },
-    "LiveQueryInvalidationByMutation": {
+    "LiveQueryInvalidation": {
       "additionalProperties": false,
       "type": "object",
-      "title": "LiveQueryInvalidationByMutation",
+      "title": "LiveQueryInvalidation",
       "properties": {
         "field": {
           "type": "string",
           "description": "Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field."
         },
-        "invalidate": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        }
-      },
-      "required": ["field", "invalidate"]
-    },
-    "LiveQueryInvalidationByPolling": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "LiveQueryInvalidationByPolling",
-      "properties": {
         "pollingInterval": {
           "type": "integer",
           "description": "Polling interval in milliseconds"
@@ -2529,11 +2506,10 @@
           "items": {
             "type": "string"
           },
-          "additionalItems": false,
-          "description": "Schema coordinate of the query to be polled"
+          "additionalItems": false
         }
       },
-      "required": ["pollingInterval", "invalidate"]
+      "required": ["invalidate"]
     },
     "LiveQueryIndexBy": {
       "additionalProperties": false,

@@ -11,15 +11,9 @@ import {
 } from '@graphql-mesh/types';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
-// Hybrid type that supports both polling and mutation-based invalidation
-type LiveQueryInvalidationHybrid = (
-  | YamlConfig.LiveQueryInvalidationByMutation
-  | YamlConfig.LiveQueryInvalidationByPolling
-) & Partial<YamlConfig.LiveQueryInvalidationByMutation> & Partial<YamlConfig.LiveQueryInvalidationByPolling>;
-
 interface InvalidateByResultParams {
   pubsub: MeshPubSub | HivePubSub;
-  invalidations: LiveQueryInvalidationHybrid[];
+  invalidations: YamlConfig.LiveQueryInvalidation[];
   logger: Logger;
 }
 
@@ -34,7 +28,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
     );
 
     // Set up polling-based invalidation if pollingInterval is provided
-    if ('pollingInterval' in liveQueryInvalidation && liveQueryInvalidation.pollingInterval) {
+    if (liveQueryInvalidation.pollingInterval != null) {
       timers.add(
         setInterval(() => {
           pubsub.publish('live-query:invalidate', liveQueryInvalidation.invalidate);
@@ -43,7 +37,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
     }
 
     // Set up mutation-based invalidation if field is provided
-    if ('field' in liveQueryInvalidation && liveQueryInvalidation.field) {
+    if (liveQueryInvalidation.field != null) {
       liveQueryInvalidationFactoryMap.set(liveQueryInvalidation.field, factories);
     }
   });
