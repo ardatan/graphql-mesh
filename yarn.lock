@@ -9258,7 +9258,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.10.0, @graphql-tools/utils@npm:^10.10.0":
+"@graphql-tools/utils@npm:10.10.0, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.10.0, @graphql-tools/utils@npm:^10.3.2, @graphql-tools/utils@npm:^10.5.1, @graphql-tools/utils@npm:^10.5.4, @graphql-tools/utils@npm:^10.6.1, @graphql-tools/utils@npm:^10.6.2, @graphql-tools/utils@npm:^10.6.4, @graphql-tools/utils@npm:^10.8.0, @graphql-tools/utils@npm:^10.8.1, @graphql-tools/utils@npm:^10.9.1":
   version: 10.10.0
   resolution: "@graphql-tools/utils@npm:10.10.0"
   dependencies:
@@ -9273,7 +9273,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.9.1, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.3.2, @graphql-tools/utils@npm:^10.5.1, @graphql-tools/utils@npm:^10.5.4, @graphql-tools/utils@npm:^10.6.1, @graphql-tools/utils@npm:^10.6.2, @graphql-tools/utils@npm:^10.6.4, @graphql-tools/utils@npm:^10.8.0, @graphql-tools/utils@npm:^10.8.1, @graphql-tools/utils@npm:^10.9.1":
+"@graphql-tools/utils@npm:10.9.1":
   version: 10.9.1
   resolution: "@graphql-tools/utils@npm:10.9.1"
   dependencies:
