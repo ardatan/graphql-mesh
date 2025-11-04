@@ -113,9 +113,9 @@
   },
   "resolutions": {
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
-    "@whatwg-node/fetch": "0.10.11",
-    "@whatwg-node/node-fetch": "0.8.1",
-    "@whatwg-node/server": "0.10.13",
+    "@whatwg-node/fetch": "0.10.12",
+    "@whatwg-node/node-fetch": "0.8.2",
+    "@whatwg-node/server": "0.10.15",
     "axios": "^1.0.0",
     "brace-expansion": "2.0.2",
     "cookie": "1.0.2",
