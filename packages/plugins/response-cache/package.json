@@ -42,10 +42,10 @@
     "@graphql-mesh/types": "^0.104.14",
     "@graphql-mesh/utils": "^0.104.14",
     "@graphql-tools/utils": "^10.6.2",
-    "@graphql-yoga/plugin-response-cache": "^3.13.1",
+    "@graphql-yoga/plugin-response-cache": "^3.18.1",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "cache-control-parser": "^2.0.6",
-    "graphql-yoga": "^5.13.4",
+    "graphql-yoga": "^5.16.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
