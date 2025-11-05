@@ -6928,7 +6928,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/cache-redis@npm:^0.104.14, @graphql-mesh/cache-redis@workspace:packages/cache/redis":
+"@graphql-mesh/cache-redis@npm:^0.104.14":
+  version: 0.104.14
+  resolution: "@graphql-mesh/cache-redis@npm:0.104.14"
+  dependencies:
+    "@graphql-mesh/cross-helpers": "npm:^0.4.10"
+    "@graphql-mesh/string-interpolation": "npm:0.5.9"
+    "@graphql-mesh/types": "npm:^0.104.14"
+    "@whatwg-node/disposablestack": "npm:^0.0.6"
+    ioredis: "npm:^5.3.2"
+    ioredis-mock: "npm:^8.13.0"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: "*"
+  checksum: 10c0/4afe7542ff8d453fca2ba88d8e9dcc3733494484a42eab5c9603f7e8152de630481fd16e264d2136141e08ceedafd415937b35f6ab172c4ac95d6782b945c651
+  languageName: node
+  linkType: hard
+
+"@graphql-mesh/cache-redis@workspace:packages/cache/redis":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-redis@workspace:packages/cache/redis"
   dependencies:

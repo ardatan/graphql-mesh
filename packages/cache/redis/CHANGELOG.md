@@ -1,5 +1,23 @@
 # @graphql-mesh/cache-redis
 
+## 0.105.0
+
+### Minor Changes
+
+- [#8830](https://github.com/ardatan/graphql-mesh/pull/8830)
+  [`4087109`](https://github.com/ardatan/graphql-mesh/commit/4087109ce6b80a5214bd4e57cbaf924cf338988b)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - Add support of OTEL tracing with spans
+  for Get, Set, Delete and initialisation.
+
+### Patch Changes
+
+- [#8830](https://github.com/ardatan/graphql-mesh/pull/8830)
+  [`4087109`](https://github.com/ardatan/graphql-mesh/commit/4087109ce6b80a5214bd4e57cbaf924cf338988b)
+  Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
+  - Added dependency
+    [`@opentelemetry/api@^1.9.0` ↗︎](https://www.npmjs.com/package/@opentelemetry/api/v/1.9.0) (to
+    `dependencies`)
+
 ## 0.104.14
 
 ### Patch Changes
