@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/mysql",
-  "version": "0.9.15",
+  "version": "0.9.16",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,9 +37,9 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "^0.5.9",
-    "@graphql-mesh/transport-mysql": "^0.9.14",
-    "@graphql-mesh/types": "^0.104.14",
-    "@graphql-mesh/utils": "^0.104.14",
+    "@graphql-mesh/transport-mysql": "^0.9.15",
+    "@graphql-mesh/types": "^0.104.15",
+    "@graphql-mesh/utils": "^0.104.15",
     "@graphql-tools/delegate": "^11.0.0",
     "@graphql-tools/utils": "^10.8.0",
     "graphql-compose": "^9.0.11",

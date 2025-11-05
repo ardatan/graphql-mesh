@@ -1,5 +1,34 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.104.15
+
+### Patch Changes
+
+- [#8793](https://github.com/ardatan/graphql-mesh/pull/8793)
+  [`b077f20`](https://github.com/ardatan/graphql-mesh/commit/b077f2014379934deee9803adbed754926550098)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@whatwg-node/disposablestack@^0.0.6` ↗︎](https://www.npmjs.com/package/@whatwg-node/disposablestack/v/0.0.6)
+    (to `dependencies`)
+
+- [#8793](https://github.com/ardatan/graphql-mesh/pull/8793)
+  [`b077f20`](https://github.com/ardatan/graphql-mesh/commit/b077f2014379934deee9803adbed754926550098)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support polling in an interval by milliseconds
+
+  ```yaml
+  plugins:
+    - liveQuery:
+        invalidations:
+          - pollingInterval: 10000 # Polling interval in milliseconds
+            invalidate:
+              - Query.products
+  ```
+
+- Updated dependencies
+  [[`b077f20`](https://github.com/ardatan/graphql-mesh/commit/b077f2014379934deee9803adbed754926550098)]:
+  - @graphql-mesh/types@0.104.15
+  - @graphql-mesh/utils@0.104.15
+
 ## 0.104.14
 
 ### Patch Changes
