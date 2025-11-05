@@ -6925,7 +6925,7 @@ __metadata:
     "@types/yargs": "npm:17.0.34"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     ajv: "npm:^8.12.0"
-    change-case: "npm:^4.1.2"
+    change-case: "npm:^5.4.4"
     cosmiconfig: "npm:^9.0.0"
     dotenv: "npm:^17.0.0"
     graphql: "npm:16.12.0"
@@ -7035,7 +7035,7 @@ __metadata:
     "@types/minimatch": "npm:6.0.0"
     "@types/pluralize": "npm:^0.0.33"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
-    change-case: "npm:^4.1.2"
+    change-case: "npm:^5.4.4"
     graphql: "npm:16.12.0"
     graphql-scalars: "npm:^1.23.0"
     minimatch: "npm:^10.0.3"
@@ -7901,7 +7901,7 @@ __metadata:
     "@graphql-tools/schema": "npm:10.0.27"
     "@graphql-tools/utils": "npm:^10.8.0"
     "@graphql-tools/wrap": "npm:^11.0.0"
-    change-case: "npm:^4.1.2"
+    change-case: "npm:^5.4.4"
     graphql: "npm:16.12.0"
     graphql-scalars: "npm:^1.22.4"
     lower-case: "npm:^2.0.2"
@@ -11900,7 +11900,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.6.4"
     "@omnigraph/json-schema": "npm:^0.109.16"
     "@whatwg-node/fetch": "npm:^0.10.6"
-    change-case: "npm:^4.1.2"
+    change-case: "npm:^5.4.4"
     fets: "npm:0.8.5"
     graphql: "npm:16.12.0"
     graphql-yoga: "npm:^5.13.4"
@@ -11926,7 +11926,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^10.8.0"
     "@omnigraph/json-schema": "npm:0.109.16"
     "@whatwg-node/fetch": "npm:^0.10.6"
-    change-case: "npm:4.1.2"
+    change-case: "npm:5.4.4"
     graphql: "npm:16.12.0"
     json-machete: "npm:^0.97.6"
     to-json-schema: "npm:^0.2.5"
@@ -19340,7 +19340,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"change-case@npm:4.1.2, change-case@npm:^4.1.2":
+"change-case@npm:5.4.4, change-case@npm:^5.4.4":
+  version: 5.4.4
+  resolution: "change-case@npm:5.4.4"
+  checksum: 10c0/2a9c2b9c9ad6ab2491105aaf506db1a9acaf543a18967798dcce20926c6a173aa63266cb6189f3086e3c14bf7ae1f8ea4f96ecc466fcd582310efa00372f3734
+  languageName: node
+  linkType: hard
+
+"change-case@npm:^4.1.2":
   version: 4.1.2
   resolution: "change-case@npm:4.1.2"
   dependencies:

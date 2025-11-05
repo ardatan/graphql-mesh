@@ -42,7 +42,7 @@
     "@graphql-mesh/utils": "^0.104.15",
     "@graphql-tools/utils": "^10.6.4",
     "@omnigraph/json-schema": "^0.109.16",
-    "change-case": "^4.1.2",
+    "change-case": "^5.4.4",
     "json-machete": "^0.97.6",
     "openapi-types": "^12.1.0",
     "tslib": "^2.4.0"
