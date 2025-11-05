@@ -45,7 +45,7 @@
     "copy-config-schema": "cp-cli ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/esm/config-schema.json && cp-cli ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/cjs/config-schema.json",
     "dev:website": "yarn workspace website run dev",
     "fix-bin": "node scripts/fix-bin.js",
-    "generate-config-schema": "yarn graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/legacy/types/src/config-schema.json --typings ./packages/legacy/types/src/config.ts --markdown ./website/src/generated-markdown && yarn postgenerate-config-schema",
+    "generate-config-schema": "rm -rf ./website/src/generated-markdown && yarn graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/legacy/types/src/config-schema.json --typings ./packages/legacy/types/src/config.ts --markdown ./website/src/generated-markdown && yarn postgenerate-config-schema",
     "inject-version": "yarn workspaces foreach -A run inject-version",
     "lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --ext .ts \"./packages/**/src/**/*.ts\"",
     "package-binary": "yarn workspaces foreach -A run package-binary",

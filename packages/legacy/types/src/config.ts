@@ -2188,7 +2188,11 @@ export interface LiveQueryInvalidation {
   /**
    * Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field.
    */
-  field: string;
+  field?: string;
+  /**
+   * Polling interval in milliseconds
+   */
+  pollingInterval?: number;
   invalidate: string[];
 }
 export interface LiveQueryIndexBy {

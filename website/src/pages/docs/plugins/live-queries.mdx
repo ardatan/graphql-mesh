@@ -92,6 +92,20 @@ invalidations:
       - Query.todo(id:"{args.id}")
 ```
 
+### Polling Based Invalidation
+
+You can also invalidate queries in a polling interval by specifying the schema coordinate of the
+query to be polled.
+
+```yaml filename=".meshrc.yaml"
+plugins:
+  - liveQuery:
+      invalidations:
+        - pollingInterval: 10000 # Polling interval in milliseconds
+          invalidate:
+            - Query.products
+```
+
 ### Programmatic Usage
 
 `liveQueryStore` is available in GraphQL Context, so you can access it in resolvers composition

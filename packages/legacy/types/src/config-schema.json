@@ -2497,6 +2497,10 @@
           "type": "string",
           "description": "Path to the operation that could effect it. In a form: Mutation.something. Note that wildcard is not supported in this field."
         },
+        "pollingInterval": {
+          "type": "integer",
+          "description": "Polling interval in milliseconds"
+        },
         "invalidate": {
           "type": "array",
           "items": {
@@ -2505,7 +2509,7 @@
           "additionalItems": false
         }
       },
-      "required": ["field", "invalidate"]
+      "required": ["invalidate"]
     },
     "LiveQueryIndexBy": {
       "additionalProperties": false,
