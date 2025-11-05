@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-redis
 
+## 0.105.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b077f20`](https://github.com/ardatan/graphql-mesh/commit/b077f2014379934deee9803adbed754926550098)]:
+  - @graphql-mesh/types@0.104.15
+
 ## 0.105.0
 
 ### Minor Changes

@@ -2,10 +2,10 @@
   "name": "@examples/cloudflare-workers",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/cache-cfw-kv": "0.105.14",
-    "@graphql-mesh/cli": "0.100.15",
-    "@graphql-mesh/json-schema": "0.109.15",
-    "@graphql-mesh/plugin-response-cache": "0.104.15",
+    "@graphql-mesh/cache-cfw-kv": "0.105.15",
+    "@graphql-mesh/cli": "0.100.16",
+    "@graphql-mesh/json-schema": "0.109.16",
+    "@graphql-mesh/plugin-response-cache": "0.104.16",
     "graphql": "16.12.0"
   },
   "devDependencies": {
