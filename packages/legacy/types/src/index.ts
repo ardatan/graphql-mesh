@@ -2,7 +2,6 @@
 import type { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode } from 'graphql';
 import type { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import type { Plugin } from '@envelop/core';
-import type { MeshStore } from '@graphql-mesh/store';
 import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import type {
   CreateProxyingResolverFn,
@@ -15,6 +14,7 @@ import type { ExecutionRequest, Executor, IResolvers, MaybePromise } from '@grap
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import * as YamlConfig from './config.js';
 import type { MeshPubSub } from './pubsub.js';
+import type { IMeshStore } from './store.js';
 
 export * from './pubsub.js';
 
@@ -50,7 +50,7 @@ export type MeshHandlerOptions<THandlerConfig> = {
   baseDir: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
-  store: MeshStore;
+  store: IMeshStore;
   logger: Logger;
   importFn: ImportFn;
 };
@@ -92,7 +92,7 @@ export interface MeshMergerOptions {
   cache: KeyValueCache;
   pubsub: MeshPubSub;
   logger: Logger;
-  store: MeshStore;
+  store: IMeshStore;
 }
 
 export interface MeshMergerLibrary {
