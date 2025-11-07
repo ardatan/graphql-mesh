@@ -4677,23 +4677,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/response-cache@npm:^8.0.0":
-  version: 8.1.0
-  resolution: "@envelop/response-cache@npm:8.1.0"
-  dependencies:
-    "@graphql-tools/utils": "npm:^10.0.3"
-    "@whatwg-node/fetch": "npm:^0.10.0"
-    "@whatwg-node/promise-helpers": "npm:^1.2.4"
-    fast-json-stable-stringify: "npm:^2.1.0"
-    lru-cache: "npm:^11.0.0"
-    tslib: "npm:^2.5.0"
-  peerDependencies:
-    "@envelop/core": ^5.3.2
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/93f641cc2e73fc7b0573c357e1728833ae03923405bfea533062f4b71b7d6e189194a2d8e65e1bbd13688939ef790ee00c744611de57db345c9a46afd7bc4423
-  languageName: node
-  linkType: hard
-
 "@envelop/response-cache@npm:^9.0.0":
   version: 9.0.0
   resolution: "@envelop/response-cache@npm:9.0.0"
@@ -5829,7 +5812,7 @@ __metadata:
     react: "npm:19.2.0"
     react-dom: "npm:19.2.0"
     typescript: "npm:^5.4.2"
-    vite: "npm:7.2.1"
+    vite: "npm:7.2.2"
   languageName: unknown
   linkType: soft
 
@@ -9432,16 +9415,16 @@ __metadata:
   linkType: hard
 
 "@graphql-yoga/plugin-response-cache@npm:^3.13.1":
-  version: 3.18.1
-  resolution: "@graphql-yoga/plugin-response-cache@npm:3.18.1"
+  version: 3.18.2
+  resolution: "@graphql-yoga/plugin-response-cache@npm:3.18.2"
   dependencies:
     "@envelop/core": "npm:^5.3.0"
-    "@envelop/response-cache": "npm:^8.0.0"
+    "@envelop/response-cache": "npm:^9.0.0"
     "@whatwg-node/promise-helpers": "npm:^1.2.4"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.16.1
-  checksum: 10c0/1fa685c607805c7768557d85d40b43ee852ff0cb10680ec1a909815f194bde7f56822156f6e2c15ed65a5da5ad0ed400b7166d69f277c442f6a1ee1471a30ccf
+    graphql-yoga: ^5.16.2
+  checksum: 10c0/edd2b9975adf8d3a323e951cca8964df0ab0c353a9fcf30392271f89ffc94215199f41e92cc23ef7256773094551162605ce9e0ad4ad78246f9d119e46fa4d6a
   languageName: node
   linkType: hard
 
@@ -25317,8 +25300,8 @@ __metadata:
   linkType: hard
 
 "graphql-yoga@npm:^5.13.4, graphql-yoga@npm:^5.16.0":
-  version: 5.16.1
-  resolution: "graphql-yoga@npm:5.16.1"
+  version: 5.16.2
+  resolution: "graphql-yoga@npm:5.16.2"
   dependencies:
     "@envelop/core": "npm:^5.3.0"
     "@envelop/instrumentation": "npm:^1.0.0"
@@ -25334,7 +25317,7 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-  checksum: 10c0/78a78058b600342ae15763cf6f15f5a7082c1073c33cb7a4e1cc47988acbe71e355568b8e1b6cd1795e80a3e1420f25311fd2e1e1907e185bf741c30a2702d34
+  checksum: 10c0/436da339b0d136bc9feac05a0e2fb81ced5a12abb7e27ddb265d1078128e1b416710c35d05ef3e7cf5bb455bf77de95119a39b83330bf187762ec70338f472c0
   languageName: node
   linkType: hard
 
@@ -39788,9 +39771,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:7.2.1":
-  version: 7.2.1
-  resolution: "vite@npm:7.2.1"
+"vite@npm:7.2.2":
+  version: 7.2.2
+  resolution: "vite@npm:7.2.2"
   dependencies:
     esbuild: "npm:^0.25.0"
     fdir: "npm:^6.5.0"
@@ -39839,7 +39822,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/25fbcfc67b1598fa6152f3ed0a7355144a2ac203859ad3b6a2e466b0930ec1081c19cc6f0d83104897517ecf30c0aac3e4a50c4e5e2980d3659decb1d9e41a28
+  checksum: 10c0/9c76ee441f8dbec645ddaecc28d1f9cf35670ffa91cff69af7b1d5081545331603f0b1289d437b2fa8dc43cdc77b4d96b5bd9c9aed66310f490cb1a06f9c814c
   languageName: node
   linkType: hard
 
