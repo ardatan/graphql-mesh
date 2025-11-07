@@ -3687,10 +3687,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20251106.1":
-  version: 4.20251106.1
-  resolution: "@cloudflare/workers-types@npm:4.20251106.1"
-  checksum: 10c0/11e0db83e27213af777be8ca3490d94ccf9307449da9c9933d41c320285e752723390f2d1ebc577038e6b1a81fd23366b648d1ede711ca6c727567aff811b2e7
+"@cloudflare/workers-types@npm:4.20251107.0":
+  version: 4.20251107.0
+  resolution: "@cloudflare/workers-types@npm:4.20251107.0"
+  checksum: 10c0/e1ea9086d79ed531edf9734339ae948acea19e13dd06d8e9d59b4bf509ace7b74f88186d422d94f0ffad8144ba96ca979c00b252791c650700d695f80a67495f
   languageName: node
   linkType: hard
 
@@ -5435,7 +5435,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.100.17"
     "@graphql-mesh/grpc": "npm:0.108.16"
     "@graphql-mesh/transform-naming-convention": "npm:0.105.16"
-    "@grpc/grpc-js": "npm:1.14.0"
+    "@grpc/grpc-js": "npm:1.14.1"
     "@grpc/proto-loader": "npm:0.8.0"
     "@types/node": "npm:^24.4.0"
     concurrently: "npm:9.2.1"
@@ -5455,7 +5455,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.100.17"
     "@graphql-mesh/grpc": "npm:0.108.16"
     "@graphql-mesh/transform-naming-convention": "npm:0.105.16"
-    "@grpc/grpc-js": "npm:1.14.0"
+    "@grpc/grpc-js": "npm:1.14.1"
     "@grpc/proto-loader": "npm:0.8.0"
     "@types/node": "npm:^24.4.0"
     concurrently: "npm:9.2.1"
@@ -6827,7 +6827,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20251106.1"
+    "@cloudflare/workers-types": "npm:4.20251107.0"
     "@graphql-mesh/types": "npm:^0.104.15"
     "@graphql-mesh/utils": "npm:^0.104.15"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -9488,13 +9488,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.14.0, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.11.1, @grpc/grpc-js@npm:^1.12.2, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
-  version: 1.14.0
-  resolution: "@grpc/grpc-js@npm:1.14.0"
+"@grpc/grpc-js@npm:1.14.1, @grpc/grpc-js@npm:^1.1.7, @grpc/grpc-js@npm:^1.11.1, @grpc/grpc-js@npm:^1.12.2, @grpc/grpc-js@npm:^1.2.8, @grpc/grpc-js@npm:^1.7.1, @grpc/grpc-js@npm:^1.8.10":
+  version: 1.14.1
+  resolution: "@grpc/grpc-js@npm:1.14.1"
   dependencies:
     "@grpc/proto-loader": "npm:^0.8.0"
     "@js-sdsl/ordered-map": "npm:^4.4.2"
-  checksum: 10c0/51e0eb32f6dac68c49502b227e565c4244f53983d2efab8ef3fd2cc923999751c059f6c77fec4941a93c44eaa58cbc321ce1e9868e1ec226fba5a6c93722c3b1
+  checksum: 10c0/a9a8fc7f4dfa374a34e37350b37ad2c092ed533b203fe16d45ba3220fe38195d17a87527dade2e5546afeeeccfcf68d3e914705d94e44e8df461321b0c02cc7a
   languageName: node
   linkType: hard
 
