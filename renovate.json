@@ -12,42 +12,42 @@
   },
   "packageRules": [
     {
-      "excludePackagePatterns": [
-        "@changesets/*",
-        "typescript",
-        "typedoc*",
-        "^@theguild/",
-        "@graphql-inspector/core",
-        "next",
-        "tailwindcss",
-        "@whatwg-node/*",
-        "graphql-jit",
-        "husky",
-        "@opentelemetry/*",
-        "@graphql-hive/*",
-        "@graphql-mesh/*",
-        "@graphql-tools/*",
-        "@neo4j/*"
-      ],
-      "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dependencies",
-      "groupSlug": "all-minor-patch"
+      "groupSlug": "all-minor-patch",
+      "matchPackageNames": [
+        "!/@changesets/*/",
+        "!/typescript/",
+        "!/typedoc*/",
+        "!/^@theguild//",
+        "!/@graphql-inspector/core/",
+        "!/next/",
+        "!/tailwindcss/",
+        "!/@whatwg-node/*/",
+        "!/graphql-jit/",
+        "!/husky/",
+        "!/@opentelemetry/*/",
+        "!/@graphql-hive/*/",
+        "!/@graphql-mesh/*/",
+        "!/@graphql-tools/*/",
+        "!/@neo4j/*/",
+        "*"
+      ]
     },
     {
       "groupName": "gateway dependencies",
       "groupSlug": "all-gateway",
-      "matchPackagePatterns": [
-        "@whatwg-node/*",
-        "@graphql-hive/*",
-        "@graphql-mesh/*",
-        "@graphql-tools/*"
+      "matchPackageNames": [
+        "/@whatwg-node/*/",
+        "/@graphql-hive/*/",
+        "/@graphql-mesh/*/",
+        "/@graphql-tools/*/"
       ]
     },
     {
       "groupName": "newrelic dependencies",
       "groupSlug": "all-newrelic",
-      "matchPackagePatterns": ["@newrelic/*", "newrelic"]
+      "matchPackageNames": ["/@newrelic/*/", "/newrelic/"]
     }
   ]
 }
