@@ -37,7 +37,7 @@
   "dependencies": {
     "@graphql-mesh/transport-neo4j": "^0.10.13",
     "@graphql-mesh/types": "^0.104.15",
-    "@graphql-tools/delegate": "^11.0.0",
+    "@graphql-tools/delegate": "^11.1.2",
     "@graphql-tools/schema": "^10.0.5",
     "@neo4j/introspector": "^5.0.0",
     "neo4j-driver": "^5.9.2",
