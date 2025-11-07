@@ -7,10 +7,10 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.16",
-    "@graphql-mesh/config": "0.108.16",
+    "@graphql-mesh/cli": "0.100.17",
+    "@graphql-mesh/config": "0.108.17",
     "@graphql-mesh/odata": "0.106.15",
-    "@graphql-mesh/runtime": "0.106.15",
+    "@graphql-mesh/runtime": "0.106.16",
     "@types/node": "^24.4.0",
     "graphql": "16.12.0",
     "ts-node": "^10.9.2",
