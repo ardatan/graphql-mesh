@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-rate-limit",
-  "version": "0.105.3",
+  "version": "0.105.4",
   "type": "module",
   "repository": {
     "type": "git",
