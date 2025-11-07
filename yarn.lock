@@ -6706,7 +6706,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/pubsub@npm:2.1.1, @graphql-hive/pubsub@npm:^2.1.1":
+"@graphql-hive/pubsub@npm:^2.1.1":
   version: 2.1.1
   resolution: "@graphql-hive/pubsub@npm:2.1.1"
   dependencies:
@@ -8308,7 +8308,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/types@workspace:packages/legacy/types"
   dependencies:
-    "@graphql-hive/pubsub": "npm:2.1.1"
+    "@graphql-hive/pubsub": "npm:^2.1.1"
     "@graphql-tools/batch-delegate": "npm:^10.0.0"
     "@graphql-tools/delegate": "npm:^11.0.0"
     "@graphql-tools/utils": "npm:^10.8.0"
