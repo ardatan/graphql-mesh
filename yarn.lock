@@ -6793,16 +6793,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-inspector/core@npm:6.2.1":
-  version: 6.2.1
-  resolution: "@graphql-inspector/core@npm:6.2.1"
+"@graphql-inspector/core@npm:6.3.0":
+  version: 6.3.0
+  resolution: "@graphql-inspector/core@npm:6.3.0"
   dependencies:
     dependency-graph: "npm:1.0.0"
     object-inspect: "npm:1.13.2"
     tslib: "npm:2.6.2"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/9e37699e1fd6aedd18b71caace4a605f7a8b3dd28758385dcb0d6d2ce1ffd48003cf3b5de401dc3763d0066cea64fecf7aaea620070ee52172705a4d6744ff0a
+  checksum: 10c0/6294ba5ca9c97598c65760655132ee2fc4e6074166bfc6a89dee33a27ee3f052b36db8f92032724b6f97c9f79b79563022cfefd8ed3b6dc180ea54c90d19b8a2
   languageName: node
   linkType: hard
 
@@ -7733,7 +7733,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/store@workspace:packages/legacy/store"
   dependencies:
-    "@graphql-inspector/core": "npm:6.2.1"
+    "@graphql-inspector/core": "npm:6.3.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/types": "npm:^0.104.15"
     "@graphql-mesh/utils": "npm:^0.104.15"
