@@ -1,5 +1,23 @@
 # @graphql-mesh/types
 
+## 0.104.16
+
+### Patch Changes
+
+- [#8945](https://github.com/ardatan/graphql-mesh/pull/8945)
+  [`bb42d37`](https://github.com/ardatan/graphql-mesh/commit/bb42d37196e37c18289699db1a57aa3efd9a8a88)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/pubsub@^2.1.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/pubsub/v/2.1.1)
+    (from `next`, in `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/store@^0.104.15` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.104.15)
+    (from `dependencies`)
+
+- [#8945](https://github.com/ardatan/graphql-mesh/pull/8945)
+  [`bb42d37`](https://github.com/ardatan/graphql-mesh/commit/bb42d37196e37c18289699db1a57aa3efd9a8a88)
+  Thanks [@ardatan](https://github.com/ardatan)! - Remove unnecessary store dependency
+
 ## 0.104.15
 
 ### Patch Changes
