@@ -122,7 +122,7 @@
     "cross-fetch": "^4.0.0",
     "date-and-time": "^4.0.0",
     "es5-ext": "0.10.64",
-    "esbuild": "^0.26.0",
+    "esbuild": "^0.27.0",
     "estree-util-value-to-estree": "3.5.0",
     "express": "5.1.0",
     "form-data": "4.0.4",
