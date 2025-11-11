@@ -3687,10 +3687,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20251109.0":
-  version: 4.20251109.0
-  resolution: "@cloudflare/workers-types@npm:4.20251109.0"
-  checksum: 10c0/ff5e091a4454c1b84f23fd5cea71b1f0071d2005c8f592424787386ef7ebf75ee227ee6f5da55c72c5a93f7279e38a1486231c4a4cb1f743b3ea8ac5772ab4f7
+"@cloudflare/workers-types@npm:4.20251111.0":
+  version: 4.20251111.0
+  resolution: "@cloudflare/workers-types@npm:4.20251111.0"
+  checksum: 10c0/1e96988f5793d0d7cfcff22be32dbfa170654b9f739f66be60dc0224824491ffb19b1c6d25065575d572fc693a4f916314c90e2ea431ce3d31fc356d3e4e3fb5
   languageName: node
   linkType: hard
 
@@ -6818,7 +6818,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20251109.0"
+    "@cloudflare/workers-types": "npm:4.20251111.0"
     "@graphql-mesh/types": "npm:^0.104.16"
     "@graphql-mesh/utils": "npm:^0.104.16"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -15041,9 +15041,9 @@ __metadata:
   linkType: hard
 
 "@tsconfig/recommended@npm:^1.0.5":
-  version: 1.0.11
-  resolution: "@tsconfig/recommended@npm:1.0.11"
-  checksum: 10c0/b1e7c8cc50b07cd838271edeb277365ca06ca6816dcd5877be4e8e38143db6be39c1fdc80350a8946ae5022fcda4c457d6b5885430561eecf67d4dbae2ab8bfc
+  version: 1.0.12
+  resolution: "@tsconfig/recommended@npm:1.0.12"
+  checksum: 10c0/ab548b08d4a58d0ea6e8a7532c786dccc319f82366b41e487dca3a2e0c01522857698ca32ca3a7bba428e21b0ce52842910c50faab666b4b0e9743b62a5c7d73
   languageName: node
   linkType: hard
 
@@ -39361,9 +39361,9 @@ __metadata:
   linkType: hard
 
 "validator@npm:^13.7.0":
-  version: 13.15.22
-  resolution: "validator@npm:13.15.22"
-  checksum: 10c0/69c0ad0abff0bc9f96faeb6790f5dd4e11b685031e4a115a056f3ed729aaac4d218e61f3582c051cb593305614a0a0d3b5da6ca7d5e0b426fa21be256a0ad852
+  version: 13.15.23
+  resolution: "validator@npm:13.15.23"
+  checksum: 10c0/22a05ec6a98d48d2b6fb34d43ce854af61d15842362d142e64cfca0325d4d0c2d1051d9f9d3a0f741e58ea888f73a35baf7a2a810f5aed0f89183bd5040f0177
   languageName: node
   linkType: hard
 
