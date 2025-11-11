@@ -33,11 +33,11 @@
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
     "graphql": "*",
-    "newrelic": "^7 || ^8.0.0 || ^10.0.0"
+    "newrelic": "^7 || ^8.0.0 || ^10.0.0 || ^13.0.0"
   },
   "dependencies": {
     "@envelop/core": "^5.3.2",
-    "@envelop/newrelic": "^9.0.0",
+    "@envelop/newrelic": "^10.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "^0.5.9",
     "@graphql-mesh/types": "^0.104.16",
@@ -47,11 +47,11 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@newrelic/test-utilities": "6.5.5",
+    "@newrelic/test-utilities": "10.0.0",
     "@types/newrelic": "9.14.8",
     "graphql": "16.12.0",
     "graphql-yoga": "^5.13.4",
-    "newrelic": "10.6.2"
+    "newrelic": "13.6.2"
   },
   "publishConfig": {
     "access": "public",
