@@ -35,8 +35,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-hive/core": "^0.13.0",
-    "@graphql-hive/yoga": "^0.42.0",
+    "@graphql-hive/core": "^0.13.1",
+    "@graphql-hive/yoga": "^0.42.3",
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/string-interpolation": "^0.5.9",
     "@graphql-mesh/types": "^0.104.16",
