@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@graphql-codegen/core": "^5.0.0",
-    "@graphql-codegen/typed-document-node": "^6.0.0",
+    "@graphql-codegen/typed-document-node": "^6.1.1",
     "@graphql-codegen/typescript": "^5.0.0",
     "@graphql-codegen/typescript-generic-sdk": "^4.0.0",
     "@graphql-codegen/typescript-operations": "^5.0.0",
