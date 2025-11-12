@@ -41,7 +41,7 @@
     "@graphql-mesh/utils": "^0.104.16",
     "@graphql-tools/delegate": "^11.0.0",
     "@graphql-tools/utils": "^10.8.0",
-    "@neo4j/graphql": "^7.2.11",
+    "@neo4j/graphql": "^7.3.1",
     "graphql-scalars": "^1.22.4",
     "neo4j-driver": "^5.28.1",
     "tslib": "^2.4.0"
