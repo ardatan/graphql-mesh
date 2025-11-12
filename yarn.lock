@@ -8758,24 +8758,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/graphql-tag-pluck@npm:8.3.25":
-  version: 8.3.25
-  resolution: "@graphql-tools/graphql-tag-pluck@npm:8.3.25"
-  dependencies:
-    "@babel/core": "npm:^7.26.10"
-    "@babel/parser": "npm:^7.26.10"
-    "@babel/plugin-syntax-import-assertions": "npm:^7.26.0"
-    "@babel/traverse": "npm:^7.26.10"
-    "@babel/types": "npm:^7.26.10"
-    "@graphql-tools/utils": "npm:^10.10.3"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/8dfda2a39543876acf1c1a9f00724eece198d25997795160c64b0eae0c07b5292b45d6f3ffd7dee6eaece70fa35a72739807990a4a639f106a044a83176fb577
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/graphql-tag-pluck@npm:^8.3.25":
+"@graphql-tools/graphql-tag-pluck@npm:8.3.25, @graphql-tools/graphql-tag-pluck@npm:^8.3.25":
   version: 8.3.25
   resolution: "@graphql-tools/graphql-tag-pluck@npm:8.3.25"
   dependencies:
@@ -9214,20 +9197,6 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/dd589d970fee9ce093a545c69d6306b61af0f38358361295af1274164a87db2985a51d05ca0e0dd08a4e709f0b5c7c201e69ab0b30480fe2fa0c7a7b8310da0a
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/utils@npm:^10.10.3":
-  version: 10.10.3
-  resolution: "@graphql-tools/utils@npm:10.10.3"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    "@whatwg-node/promise-helpers": "npm:^1.0.0"
-    cross-inspect: "npm:1.0.1"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/c294a7e239e5bc18fd0cb16fd3e579fed64ae0d8913524ab3e2368de0bee9e39abb2b9b701f877adab5e1a78162b5545dc93539a4c9ab8f3981e1fbaa03e3ed9
   languageName: node
   linkType: hard
 
