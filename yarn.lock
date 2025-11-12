@@ -11458,16 +11458,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neo4j/cypher-builder@npm:2.8.1":
-  version: 2.8.1
-  resolution: "@neo4j/cypher-builder@npm:2.8.1"
-  checksum: 10c0/9924277b222ff1610836565145ec3a82e5294883b57580ed4d1bfd1b37b02414d46c75195796853d280243ed26ce576c151099766d66bacae37337d4f9fadcb6
+"@neo4j/cypher-builder@npm:2.10.0":
+  version: 2.10.0
+  resolution: "@neo4j/cypher-builder@npm:2.10.0"
+  checksum: 10c0/7d115ae0e33fe7427d08c75edc070d20d2ee15abed8974efa5a9ec8a8f6d84d8360cc0f58f4bb5095761e7d075366c6828dbb6636237e41709b462925baa526d
   languageName: node
   linkType: hard
 
 "@neo4j/graphql@npm:^7.2.11":
-  version: 7.3.0
-  resolution: "@neo4j/graphql@npm:7.3.0"
+  version: 7.3.1
+  resolution: "@neo4j/graphql@npm:7.3.1"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@as-integrations/express4": "npm:^1.1.2"
@@ -11475,7 +11475,7 @@ __metadata:
     "@graphql-tools/resolvers-composition": "npm:^7.0.0"
     "@graphql-tools/schema": "npm:^10.0.0"
     "@graphql-tools/utils": "npm:10.9.1"
-    "@neo4j/cypher-builder": "npm:2.8.1"
+    "@neo4j/cypher-builder": "npm:2.10.0"
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
     dot-prop: "npm:^6.0.1"
@@ -11490,7 +11490,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0
-  checksum: 10c0/a26b0975f79ce23a79f70783109e5a45ae61fb4bfcda4ebf88b2a3883d67ec5d57c4e4342ce55dcdac19ecd15edb7e95b40de1cb7c2e93f0c38e9353cb1f6453
+  checksum: 10c0/a5e775f50ea6b7e7ca102fac3aa79c1c951c12e1d89bee6b549ea2cb010bb85024b58fbe5746f3a025b6464d513f369c44606e73f454f737fe248e979a51ee96
   languageName: node
   linkType: hard
 
