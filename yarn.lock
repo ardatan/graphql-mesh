@@ -6792,6 +6792,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-inspector/core@npm:7.0.0":
+  version: 7.0.0
+  resolution: "@graphql-inspector/core@npm:7.0.0"
+  dependencies:
+    dependency-graph: "npm:1.0.0"
+    object-inspect: "npm:1.13.2"
+    tslib: "npm:2.6.2"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/7b10e17192daf9a8421506108bceeaef42edd6d196791862a72b643ab5e92020edab0302ddfdee7bce1ee743a45dedf0569384a3461156c8a9d460c8b3360355
+  languageName: node
+  linkType: hard
+
 "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link"
@@ -7702,7 +7715,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/store@workspace:packages/legacy/store"
   dependencies:
-    "@graphql-inspector/core": "npm:6.4.1"
+    "@graphql-inspector/core": "npm:7.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/types": "npm:^0.104.16"
     "@graphql-mesh/utils": "npm:^0.104.16"
