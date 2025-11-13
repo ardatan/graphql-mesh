@@ -15044,16 +15044,16 @@ __metadata:
   linkType: hard
 
 "@tsconfig/node16@npm:^16.1.3":
-  version: 16.1.6
-  resolution: "@tsconfig/node16@npm:16.1.6"
-  checksum: 10c0/d1746bf027241ffbe8b2a5667685bd13188db32e134e7a7edc04ff4c1655d56a337a8efbf8875f871c73630e9af80f54ef7e2ba8e0a80a509456f2b169dc080b
+  version: 16.1.7
+  resolution: "@tsconfig/node16@npm:16.1.7"
+  checksum: 10c0/d612ed8a4b914f25ac3d68aaa6e109508f7e6711c8a6a3236fe80d60dfbe7d96994430c9b59fd054e4cb8fad04938577be9a3eebc5f912410d711f7a8fba9d2e
   languageName: node
   linkType: hard
 
 "@tsconfig/recommended@npm:^1.0.5":
-  version: 1.0.12
-  resolution: "@tsconfig/recommended@npm:1.0.12"
-  checksum: 10c0/ab548b08d4a58d0ea6e8a7532c786dccc319f82366b41e487dca3a2e0c01522857698ca32ca3a7bba428e21b0ce52842910c50faab666b4b0e9743b62a5c7d73
+  version: 1.0.13
+  resolution: "@tsconfig/recommended@npm:1.0.13"
+  checksum: 10c0/b0fae7ff8243621da68cd7a259499e1fd536e1aa3b3e3be233d30ab8d5bf046ec3dcc4ff68fc640435f421575e41e56bc735f61a1fe8a47b4475f3f2bf5ed882
   languageName: node
   linkType: hard
 
