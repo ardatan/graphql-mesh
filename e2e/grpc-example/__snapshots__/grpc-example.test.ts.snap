@@ -313,6 +313,16 @@ input SearchByCastRequest_Input @join__type(graph: MOVIES)  {
 "
 `;
 
+exports[`gRPC Example gets empty movies correctly: get-empty-movies-grpc-example-result 1`] = `
+{
+  "data": {
+    "exampleGetMovies": {
+      "result": [],
+    },
+  },
+}
+`;
+
 exports[`gRPC Example gets movies correctly: get-movies-grpc-example-result 1`] = `
 {
   "data": {
