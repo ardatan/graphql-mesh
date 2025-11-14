@@ -5640,7 +5640,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.104.16"
     graphql: "npm:16.12.0"
     jest: "npm:30.2.0"
-    mongoose: "npm:8.19.3"
+    mongoose: "npm:8.19.4"
   languageName: unknown
   linkType: soft
 
@@ -6955,7 +6955,7 @@ __metadata:
     graphql-import-node: "npm:^0.0.5"
     graphql-tag: "npm:^2.12.6"
     graphql-ws: "npm:^6.0.0"
-    json-bigint-patch: "npm:^0.0.8"
+    json-bigint-patch: "npm:^0.0.9"
     json5: "npm:^2.2.3"
     mkdirp: "npm:^3.0.0"
     open: "npm:^7.4.2"
@@ -7283,7 +7283,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.19.3"
+    mongoose: "npm:8.19.4"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -11958,7 +11958,7 @@ __metadata:
     fets: "npm:0.8.5"
     graphql: "npm:16.12.0"
     graphql-yoga: "npm:^5.13.4"
-    json-bigint-patch: "npm:0.0.8"
+    json-bigint-patch: "npm:0.0.9"
     json-machete: "npm:^0.97.6"
     openapi-types: "npm:^12.1.0"
     tslib: "npm:^2.4.0"
@@ -28231,10 +28231,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-bigint-patch@npm:0.0.8, json-bigint-patch@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "json-bigint-patch@npm:0.0.8"
-  checksum: 10c0/f2ee19607c4927d1b0f1fda2f3c3cdba1162d1a7f6a40ae5e3e034363cddd437a0ef48d975e1e572dc514a7396ab2247b443113444004f1e64af47ba298687b9
+"json-bigint-patch@npm:0.0.9, json-bigint-patch@npm:^0.0.9":
+  version: 0.0.9
+  resolution: "json-bigint-patch@npm:0.0.9"
+  checksum: 10c0/44055ad436b4356eb2838b48e8a98118e23d616ffa7e51aecc87224d61ffc941eb3087f8e88c67922249f8ff32fdfff408f03b5e392acbbe6ac51558dac4b38d
   languageName: node
   linkType: hard
 
@@ -30941,9 +30941,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:8.19.3":
-  version: 8.19.3
-  resolution: "mongoose@npm:8.19.3"
+"mongoose@npm:8.19.4":
+  version: 8.19.4
+  resolution: "mongoose@npm:8.19.4"
   dependencies:
     bson: "npm:^6.10.4"
     kareem: "npm:2.6.3"
@@ -30952,7 +30952,7 @@ __metadata:
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/80e1a27d97178d6052fae5966e9b0c2b23d4740863382be10858d04d39b6b6950fd65d7068eb6378a9da6f10288fe069928aae3dbb16e7444209164d3414b40f
+  checksum: 10c0/df9a47f781f30cb60a65fcbfefed85dd6e15c390aacf6f49c866dfd1b94e2964fc5653ea618d139d1cdc2d503b992b79eeb2c4234c4b359d6ab67136eee21293
   languageName: node
   linkType: hard
 
