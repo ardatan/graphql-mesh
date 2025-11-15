@@ -42,7 +42,7 @@
     "@graphql-tools/utils": "^10.8.0",
     "@grpc/grpc-js": "^1.1.7",
     "@whatwg-node/disposablestack": "^0.0.6",
-    "globby": "^11.1.0",
+    "globby": "^16.0.0",
     "graphql-compose": "^9.1.0",
     "graphql-scalars": "^1.23.0",
     "lodash.has": "^4.5.2",
