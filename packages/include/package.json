@@ -56,7 +56,7 @@
     "sucrase": "^3.35.0"
   },
   "devDependencies": {
-    "glob": "^11.1.0",
+    "glob": "^12.0.0",
     "graphql": "16.12.0"
   },
   "publishConfig": {
