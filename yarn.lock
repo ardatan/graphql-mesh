@@ -4420,7 +4420,7 @@ __metadata:
   dependencies:
     "@apollo/gateway": "npm:^2.8.3"
     "@graphql-hive/gateway": "npm:^2.0.0"
-    "@types/dockerode": "npm:^3.3.46"
+    "@types/dockerode": "npm:^3.3.47"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     dockerode: "npm:^4.0.2"
     glob: "npm:^12.0.0"
@@ -5437,7 +5437,7 @@ __metadata:
     "@grpc/proto-loader": "npm:0.8.0"
     "@types/node": "npm:^24.4.0"
     concurrently: "npm:9.2.1"
-    google-protobuf: "npm:4.0.0"
+    google-protobuf: "npm:4.0.1"
     graphql: "npm:16.12.0"
     jest: "npm:30.2.0"
     ts-jest: "npm:29.4.5"
@@ -5457,7 +5457,7 @@ __metadata:
     "@grpc/proto-loader": "npm:0.8.0"
     "@types/node": "npm:^24.4.0"
     concurrently: "npm:9.2.1"
-    google-protobuf: "npm:4.0.0"
+    google-protobuf: "npm:4.0.1"
     graphql: "npm:16.12.0"
     grpc-node-server-reflection: "npm:1.0.2"
     ts-node: "npm:^10.9.2"
@@ -6973,7 +6973,7 @@ __metadata:
     mkdirp: "npm:^3.0.0"
     open: "npm:^7.4.2"
     pascal-case: "npm:^3.1.2"
-    rimraf: "npm:^6.0.0"
+    rimraf: "npm:^6.1.2"
     tslib: "npm:^2.4.0"
     typescript: "npm:^5.4.2"
     ws: "npm:^8.17.1"
@@ -7203,7 +7203,7 @@ __metadata:
     glob: "npm:^12.0.0"
     graphql: "npm:16.12.0"
     jiti: "npm:^2.0.0"
-    sucrase: "npm:^3.35.0"
+    sucrase: "npm:^3.35.1"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -15540,14 +15540,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dockerode@npm:^3.3.46":
-  version: 3.3.46
-  resolution: "@types/dockerode@npm:3.3.46"
+"@types/dockerode@npm:^3.3.47":
+  version: 3.3.47
+  resolution: "@types/dockerode@npm:3.3.47"
   dependencies:
     "@types/docker-modem": "npm:*"
     "@types/node": "npm:*"
     "@types/ssh2": "npm:*"
-  checksum: 10c0/9c6bd81d9209b752d1b2d470b04942a913e4f879444a3a43172cc0a4c36ce100ab945eeb58921b074766df9e4aada3154ce0c2cb42d9d4eb9237ce07b3b1a103
+  checksum: 10c0/165746fdeceab022608ec28a6021c7d6835d6b164847f5d3cda63e721da4e6e3f1bcf72bb6f9c266117991f9d8038332a0d69d2a8d73ef02a4874bc0853d214c
   languageName: node
   linkType: hard
 
@@ -19960,7 +19960,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^14.0.0, commander@npm:^14.0.1, commander@npm:^14.0.2":
+"commander@npm:^14.0.0, commander@npm:^14.0.2":
   version: 14.0.2
   resolution: "commander@npm:14.0.2"
   checksum: 10c0/245abd1349dbad5414cb6517b7b5c584895c02c4f7836ff5395f301192b8566f9796c82d7bd6c92d07eba8775fe4df86602fca5d86d8d10bcc2aded1e21c2aeb
@@ -24563,6 +24563,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"glob@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "glob@npm:13.0.0"
+  dependencies:
+    minimatch: "npm:^10.1.1"
+    minipass: "npm:^7.1.2"
+    path-scurry: "npm:^2.0.0"
+  checksum: 10c0/8e2f5821f3f7c312dd102e23a15b80c79e0837a9872784293ba2e15ec73b3f3749a49a42a31bfcb4e52c84820a474e92331c2eebf18819d20308f5c33876630a
+  languageName: node
+  linkType: hard
+
 "glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.0":
   version: 7.2.3
   resolution: "glob@npm:7.2.3"
@@ -24692,10 +24703,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"google-protobuf@npm:4.0.0":
-  version: 4.0.0
-  resolution: "google-protobuf@npm:4.0.0"
-  checksum: 10c0/ce4f1554dec3d8416fe057a10bfed10da7cfb034c4a7f646f208197ca8554ccb85a46341cdbebf16be07d96016c88becfc1f5189d5871210ef5abe3d87fc0fec
+"google-protobuf@npm:4.0.1":
+  version: 4.0.1
+  resolution: "google-protobuf@npm:4.0.1"
+  checksum: 10c0/e8b3a84aecd9b1d203ff292d9f9142a7c8b0bbfdf7d2237ce5c0ad1c2b18c84c096bd9cc0ec8f1e5ad6635d8e16c558817e84f2b9964d61a690c9ca08aca9f5b
   languageName: node
   linkType: hard
 
@@ -24983,7 +24994,7 @@ __metadata:
     graphql: "npm:16.12.0"
     husky: "npm:9.1.7"
     jest: "npm:30.2.0"
-    lint-staged: "npm:16.2.6"
+    lint-staged: "npm:16.2.7"
     lru-cache: "npm:11.2.2"
     minimatch: "npm:10.1.1"
     node-gyp: "npm:^12.0.0"
@@ -28942,11 +28953,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:16.2.6":
-  version: 16.2.6
-  resolution: "lint-staged@npm:16.2.6"
+"lint-staged@npm:16.2.7":
+  version: 16.2.7
+  resolution: "lint-staged@npm:16.2.7"
   dependencies:
-    commander: "npm:^14.0.1"
+    commander: "npm:^14.0.2"
     listr2: "npm:^9.0.5"
     micromatch: "npm:^4.0.8"
     nano-spawn: "npm:^2.0.0"
@@ -28955,7 +28966,7 @@ __metadata:
     yaml: "npm:^2.8.1"
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 10c0/6bae38082a0fcb3f699b144d1a4b85394f259f17a1f8a58b22122b9f1c6bb5e8340d6ee4bff12e52dbc4267377d6dde9e5c206157f381f1924a2640717f769c1
+  checksum: 10c0/9a677c21a8112d823ae5bc565ba2c9e7b803786f2a021c46827a55fe44ed59def96edb24fc99c06a2545cdbbf366022ad82addcb3bf60c712f3b98ef92069717
   languageName: node
   linkType: hard
 
@@ -35406,7 +35417,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:*, rimraf@npm:^6.0.0":
+"rimraf@npm:*":
   version: 6.1.0
   resolution: "rimraf@npm:6.1.0"
   dependencies:
@@ -35437,6 +35448,18 @@ __metadata:
   bin:
     rimraf: bin.js
   checksum: 10c0/9cb7757acb489bd83757ba1a274ab545eafd75598a9d817e0c3f8b164238dd90eba50d6b848bd4dcc5f3040912e882dc7ba71653e35af660d77b25c381d402e8
+  languageName: node
+  linkType: hard
+
+"rimraf@npm:^6.1.2":
+  version: 6.1.2
+  resolution: "rimraf@npm:6.1.2"
+  dependencies:
+    glob: "npm:^13.0.0"
+    package-json-from-dist: "npm:^1.0.1"
+  bin:
+    rimraf: dist/esm/bin.mjs
+  checksum: 10c0/c11a6a6fad937ada03c12fe688860690df8296d7cd08dbe59e3cc087f44e43573ae26ecbe48e54cb7a6db745b8c81fe5a15b9359233cc21d52d9b5b3330fcc74
   languageName: node
   linkType: hard
 
@@ -37424,6 +37447,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sucrase@npm:^3.35.1":
+  version: 3.35.1
+  resolution: "sucrase@npm:3.35.1"
+  dependencies:
+    "@jridgewell/gen-mapping": "npm:^0.3.2"
+    commander: "npm:^4.0.0"
+    lines-and-columns: "npm:^1.1.6"
+    mz: "npm:^2.7.0"
+    pirates: "npm:^4.0.1"
+    tinyglobby: "npm:^0.2.11"
+    ts-interface-checker: "npm:^0.1.9"
+  bin:
+    sucrase: bin/sucrase
+    sucrase-node: bin/sucrase-node
+  checksum: 10c0/6fa22329c261371feb9560630d961ad0d0b9c87dce21ea74557c5f3ffbe5c1ee970ea8bcce9962ae9c90c3c47165ffa7dd41865c7414f5d8ea7a40755d612c5c
+  languageName: node
+  linkType: hard
+
 "supports-color@npm:8.1.1, supports-color@npm:^8.0.0, supports-color@npm:^8.1.1":
   version: 8.1.1
   resolution: "supports-color@npm:8.1.1"
@@ -37972,7 +38013,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyglobby@npm:^0.2.12, tinyglobby@npm:^0.2.13, tinyglobby@npm:^0.2.15":
+"tinyglobby@npm:^0.2.11, tinyglobby@npm:^0.2.12, tinyglobby@npm:^0.2.13, tinyglobby@npm:^0.2.15":
   version: 0.2.15
   resolution: "tinyglobby@npm:0.2.15"
   dependencies:
