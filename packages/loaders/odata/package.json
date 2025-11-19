@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/odata",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.10",
-    "@graphql-mesh/store": "^0.104.16",
+    "@graphql-mesh/store": "^0.104.17",
     "@graphql-mesh/string-interpolation": "^0.5.9",
     "@graphql-mesh/types": "^0.104.16",
     "@graphql-mesh/utils": "^0.104.16",
