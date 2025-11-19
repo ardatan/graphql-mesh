@@ -6,8 +6,8 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.18",
-    "@graphql-mesh/openapi": "0.109.23",
+    "@graphql-mesh/cli": "0.100.19",
+    "@graphql-mesh/openapi": "0.109.24",
     "@graphql-mesh/plugin-hive": "0.104.18",
     "@graphql-mesh/transform-hive": "0.104.18",
     "graphql": "16.12.0"

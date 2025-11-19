@@ -1,5 +1,21 @@
 # @graphql-mesh/cli
 
+## 0.100.19
+
+### Patch Changes
+
+- [#8988](https://github.com/ardatan/graphql-mesh/pull/8988)
+  [`123ad56`](https://github.com/ardatan/graphql-mesh/commit/123ad567d0ab84b7a6f7f47669c7fb172b239b00)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`json-bigint-patch@^0.0.9` ↗︎](https://www.npmjs.com/package/json-bigint-patch/v/0.0.9) (from
+    `^0.0.8`, in `dependencies`)
+- Updated dependencies
+  [[`da07ed0`](https://github.com/ardatan/graphql-mesh/commit/da07ed0ffd6d1637d86229f389a394ca3f7270f2),
+  [`c9af42d`](https://github.com/ardatan/graphql-mesh/commit/c9af42d8be4a9009d2bd7fdbb7608d9904afb6f9)]:
+  - @graphql-mesh/store@0.104.17
+  - @graphql-mesh/config@0.108.19
+
 ## 0.100.18
 
 ### Patch Changes
