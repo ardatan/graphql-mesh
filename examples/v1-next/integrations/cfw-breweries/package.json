@@ -6,7 +6,7 @@
     "start": "wrangler dev"
   },
   "dependencies": {
-    "@graphql-hive/gateway": "^2.0.0",
+    "@graphql-hive/gateway": "^2.1.17",
     "@graphql-mesh/cache-cfw-kv": "workspace:^",
     "@graphql-mesh/cache-localforage": "workspace:^",
     "@graphql-mesh/compose-cli": "workspace:^",
