@@ -4423,7 +4423,7 @@ __metadata:
     "@types/dockerode": "npm:^3.3.47"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     dockerode: "npm:^4.0.2"
-    glob: "npm:^12.0.0"
+    glob: "npm:^13.0.0"
     graphql: "npm:^16.10.0"
     tsx: "npm:^4.16.5"
   languageName: unknown
@@ -7196,7 +7196,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.104.16"
     dotenv: "npm:^17.0.0"
     get-tsconfig: "npm:^4.7.6"
-    glob: "npm:^12.0.0"
+    glob: "npm:^13.0.0"
     graphql: "npm:16.12.0"
     jiti: "npm:^2.0.0"
     sucrase: "npm:^3.35.1"
@@ -24540,22 +24540,6 @@ __metadata:
   bin:
     glob: dist/esm/bin.mjs
   checksum: 10c0/1ceae07f23e316a6fa74581d9a74be6e8c2e590d2f7205034dd5c0435c53f5f7b712c2be00c3b65bf0a49294a1c6f4b98cd84c7637e29453b5aa13b79f1763a2
-  languageName: node
-  linkType: hard
-
-"glob@npm:^12.0.0":
-  version: 12.0.0
-  resolution: "glob@npm:12.0.0"
-  dependencies:
-    foreground-child: "npm:^3.3.1"
-    jackspeak: "npm:^4.1.1"
-    minimatch: "npm:^10.1.1"
-    minipass: "npm:^7.1.2"
-    package-json-from-dist: "npm:^1.0.0"
-    path-scurry: "npm:^2.0.0"
-  bin:
-    glob: dist/esm/bin.mjs
-  checksum: 10c0/923fbb7e30913496dc1c30191edb7ebb610a26edac81710a5f697c718b08694bce7fb0245baceba5383472778a8431ff7c36571703507cc6563602d3c139c993
   languageName: node
   linkType: hard
 
