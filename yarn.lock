@@ -260,9 +260,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:5.1.0, @apollo/server@npm:^5.0.0":
-  version: 5.1.0
-  resolution: "@apollo/server@npm:5.1.0"
+"@apollo/server@npm:5.2.0, @apollo/server@npm:^5.0.0":
+  version: 5.2.0
+  resolution: "@apollo/server@npm:5.2.0"
   dependencies:
     "@apollo/cache-control-types": "npm:^1.0.3"
     "@apollo/server-gateway-interface": "npm:^2.0.0"
@@ -286,7 +286,7 @@ __metadata:
     whatwg-mimetype: "npm:^4.0.0"
   peerDependencies:
     graphql: ^16.11.0
-  checksum: 10c0/5ae3e6de4144a30107d5108f36603302e61591b730d259b695d9fa06b4b2007c1caa173cdc3d9ec319cf04417ec2e2e9f4163af64aa7be18a2c3545a7da702b6
+  checksum: 10c0/2500a8244bda60b65b11ba37711039e869c14d7cacae84ddc940b150e824ab684792be39424336c6aba0e8ca5332b945012cf9b05282fdad70ec2416333c484b
   languageName: node
   linkType: hard
 
@@ -5294,7 +5294,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph"
   dependencies:
-    "@apollo/server": "npm:5.1.0"
+    "@apollo/server": "npm:5.2.0"
     "@apollo/subgraph": "npm:2.12.1"
     "@types/node": "npm:^24.4.0"
     graphql: "npm:16.12.0"
@@ -5307,7 +5307,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-accounts@workspace:examples/federation-example/services/accounts"
   dependencies:
-    "@apollo/server": "npm:5.1.0"
+    "@apollo/server": "npm:5.2.0"
     "@types/node": "npm:^24.4.0"
     graphql: "npm:16.12.0"
     ts-node: "npm:^10.9.2"
@@ -5319,7 +5319,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-inventory@workspace:examples/federation-example/services/inventory"
   dependencies:
-    "@apollo/server": "npm:5.1.0"
+    "@apollo/server": "npm:5.2.0"
     "@apollo/subgraph": "npm:2.12.1"
     "@types/node": "npm:^24.4.0"
     graphql: "npm:16.12.0"
@@ -5332,7 +5332,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-products@workspace:examples/federation-example/services/products"
   dependencies:
-    "@apollo/server": "npm:5.1.0"
+    "@apollo/server": "npm:5.2.0"
     "@apollo/subgraph": "npm:2.12.1"
     "@types/node": "npm:^24.4.0"
     graphql: "npm:16.12.0"
@@ -5345,7 +5345,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-reviews@workspace:examples/federation-example/services/reviews"
   dependencies:
-    "@apollo/server": "npm:5.1.0"
+    "@apollo/server": "npm:5.2.0"
     "@apollo/subgraph": "npm:2.12.1"
     "@types/node": "npm:^24.4.0"
     graphql: "npm:16.12.0"
@@ -5358,7 +5358,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example@workspace:examples/federation-example"
   dependencies:
-    "@apollo/server": "npm:5.1.0"
+    "@apollo/server": "npm:5.2.0"
     "@types/node": "npm:^24.4.0"
     apollo-server-caching: "npm:3.3.0"
     concurrently: "npm:9.2.1"
@@ -5640,7 +5640,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.104.16"
     graphql: "npm:16.12.0"
     jest: "npm:30.2.0"
-    mongoose: "npm:8.20.0"
+    mongoose: "npm:8.20.1"
   languageName: unknown
   linkType: soft
 
@@ -6954,7 +6954,7 @@ __metadata:
     "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:4.0.5"
     "@types/ws": "npm:8.18.1"
-    "@types/yargs": "npm:17.0.34"
+    "@types/yargs": "npm:17.0.35"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     ajv: "npm:^8.12.0"
     change-case: "npm:^4.1.2"
@@ -7179,7 +7179,7 @@ __metadata:
     "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:4.0.5"
     "@types/ws": "npm:8.18.1"
-    "@types/yargs": "npm:17.0.34"
+    "@types/yargs": "npm:17.0.35"
     "@whatwg-node/server": "npm:^0.10.5"
     graphql: "npm:16.12.0"
     graphql-yoga: "npm:^5.13.4"
@@ -7292,7 +7292,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.0.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:8.20.0"
+    mongoose: "npm:8.20.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -8367,7 +8367,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/utils@workspace:packages/legacy/utils"
   dependencies:
-    "@apollo/server": "npm:5.1.0"
+    "@apollo/server": "npm:5.2.0"
     "@envelop/instrumentation": "npm:^1.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.9"
@@ -16502,12 +16502,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yargs@npm:17.0.34, @types/yargs@npm:^17.0.33, @types/yargs@npm:^17.0.8":
-  version: 17.0.34
-  resolution: "@types/yargs@npm:17.0.34"
+"@types/yargs@npm:17.0.35":
+  version: 17.0.35
+  resolution: "@types/yargs@npm:17.0.35"
   dependencies:
     "@types/yargs-parser": "npm:*"
-  checksum: 10c0/7d4c6a6bc2b8dd4c7deaf507633fe6fd91424873add76b63c8263479223ea7a061bea86e7e0f3ed28cbe897338a934f3c04d802e8f67b7d2d3874924c94468c5
+  checksum: 10c0/609557826a6b85e73ccf587923f6429850d6dc70e420b455bab4601b670bfadf684b09ae288bccedab042c48ba65f1666133cf375814204b544009f57d6eef63
   languageName: node
   linkType: hard
 
@@ -16517,6 +16517,15 @@ __metadata:
   dependencies:
     "@types/yargs-parser": "npm:*"
   checksum: 10c0/be24bd9a56c97ddb2964c1c18f5b9fe8271a50e100dc6945989901aae58f7ce6fb8f3a591c749a518401b6301358dbd1997e83c36138a297094feae7f9ac8211
+  languageName: node
+  linkType: hard
+
+"@types/yargs@npm:^17.0.33, @types/yargs@npm:^17.0.8":
+  version: 17.0.34
+  resolution: "@types/yargs@npm:17.0.34"
+  dependencies:
+    "@types/yargs-parser": "npm:*"
+  checksum: 10c0/7d4c6a6bc2b8dd4c7deaf507633fe6fd91424873add76b63c8263479223ea7a061bea86e7e0f3ed28cbe897338a934f3c04d802e8f67b7d2d3874924c94468c5
   languageName: node
   linkType: hard
 
@@ -21143,9 +21152,9 @@ __metadata:
   linkType: hard
 
 "date-and-time@npm:^4.0.0":
-  version: 4.1.0
-  resolution: "date-and-time@npm:4.1.0"
-  checksum: 10c0/257a30ad0fd699609fb50cc7a12bbeccf215e3164186d008a2665d9ef8fd332e2cbf9a303dd9443357c417962889c4a404c9a96447af4013a1fdb85f8fbf1773
+  version: 4.1.1
+  resolution: "date-and-time@npm:4.1.1"
+  checksum: 10c0/3da661a8d749d5afa8d5f1e66425e3f9e858db00b1a971b5911c929fd24b1a7048b72cdb68f0679df8192ec0e03d6aac516651d545018bba71a44a324f186a6a
   languageName: node
   linkType: hard
 
@@ -24027,16 +24036,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:4.0.4":
-  version: 4.0.4
-  resolution: "form-data@npm:4.0.4"
+"form-data@npm:4.0.5":
+  version: 4.0.5
+  resolution: "form-data@npm:4.0.5"
   dependencies:
     asynckit: "npm:^0.4.0"
     combined-stream: "npm:^1.0.8"
     es-set-tostringtag: "npm:^2.1.0"
     hasown: "npm:^2.0.2"
     mime-types: "npm:^2.1.12"
-  checksum: 10c0/373525a9a034b9d57073e55eab79e501a714ffac02e7a9b01be1c820780652b16e4101819785e1e18f8d98f0aee866cc654d660a435c378e16a72f2e7cac9695
+  checksum: 10c0/dd6b767ee0bbd6d84039db12a0fa5a2028160ffbfaba1800695713b46ae974a5f6e08b3356c3195137f8530dcd9dfcb5d5ae1eeff53d0db1e5aad863b619ce3b
   languageName: node
   linkType: hard
 
@@ -30977,9 +30986,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:8.20.0":
-  version: 8.20.0
-  resolution: "mongoose@npm:8.20.0"
+"mongoose@npm:8.20.1":
+  version: 8.20.1
+  resolution: "mongoose@npm:8.20.1"
   dependencies:
     bson: "npm:^6.10.4"
     kareem: "npm:2.6.3"
@@ -30988,7 +30997,7 @@ __metadata:
     mquery: "npm:5.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/209cda971329e215dac4dd7bb38a7ec24d55be6b17d15d7db7c0398ee5ed9b7402b5da25196c805cbf2b9d35b4a14fd7d280edba6eb3af7ec5ba8e88899d548b
+  checksum: 10c0/5313aa4235a99c1dff482265266511626f8e35e2c4305dd9fdf5d7ea0e29c21063648fe6b104b457f603e2d0ed84891936ae2c871a987cd35b7cd4ced4c83af0
   languageName: node
   linkType: hard
 
