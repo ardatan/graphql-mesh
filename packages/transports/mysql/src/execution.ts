@@ -42,7 +42,7 @@ export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): Disp
               const where = {
                 ...args.where,
               };
-              columnMap.forEach((localColumn, foreignColumn) => {
+              columnMap.forEach((foreignColumn, localColumn) => {
                 where[localColumn] = root[foreignColumn];
               });
               const limit: number[] = [args.limit, args.offset].filter(Boolean);
