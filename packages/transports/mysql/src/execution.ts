@@ -42,8 +42,8 @@ export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): Disp
               const where = {
                 ...args.where,
               };
-              columnMap.forEach((foreignColumn, localColumn) => {
-                where[foreignColumn] = root[localColumn];
+              columnMap.forEach((localColumn, foreignColumn) => {
+                where[localColumn] = root[foreignColumn];
               });
               const limit: number[] = [args.limit, args.offset].filter(Boolean);
               const fieldMap: Record<string, any> = graphqlFields(info);
