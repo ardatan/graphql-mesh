@@ -6580,6 +6580,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-hive/core@npm:0.15.1, @graphql-hive/core@npm:^0.15.1":
+  version: 0.15.1
+  resolution: "@graphql-hive/core@npm:0.15.1"
+  dependencies:
+    "@graphql-hive/signal": "npm:^2.0.0"
+    "@graphql-tools/utils": "npm:^10.0.0"
+    "@whatwg-node/fetch": "npm:^0.10.13"
+    async-retry: "npm:^1.3.3"
+    events: "npm:^3.3.0"
+    js-md5: "npm:0.8.3"
+    lodash.sortby: "npm:^4.7.0"
+    tiny-lru: "npm:^8.0.2"
+  peerDependencies:
+    graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/53db4014cc7517c55050f71b7aafa32c157f8c11036ba96f9a03f736dd0a7ea859af7ca2ae2f53471e188856d227d92c362766eaa9347e485134036f63a88912
+  languageName: node
+  linkType: hard
+
 "@graphql-hive/core@npm:^0.13.2":
   version: 0.13.2
   resolution: "@graphql-hive/core@npm:0.13.2"
@@ -6843,16 +6861,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/yoga@npm:^0.43.0":
-  version: 0.43.0
-  resolution: "@graphql-hive/yoga@npm:0.43.0"
+"@graphql-hive/yoga@npm:^0.43.1":
+  version: 0.43.1
+  resolution: "@graphql-hive/yoga@npm:0.43.1"
   dependencies:
-    "@graphql-hive/core": "npm:0.15.0"
+    "@graphql-hive/core": "npm:0.15.1"
     "@graphql-yoga/plugin-persisted-operations": "npm:^3.9.0"
   peerDependencies:
     graphql: ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     graphql-yoga: ^5.10.8
-  checksum: 10c0/464ba1a4816ae0dfd292a594c82f83e4c1431d219cb239de5d9c46a9f7ac940bfc202507f2e547eba5eb70686c3b79659948159f6bd9a78a840068eee947441b
+  checksum: 10c0/88f5569d814a5c429375ba68dde6ebf766dad1bacdf862f7b1ef0a6b7259cc18584bd4f55cd602f092eec69d38d03331db990af6f8a699d880113af79338a3c0
   languageName: node
   linkType: hard
 
@@ -7441,8 +7459,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
-    "@graphql-hive/core": "npm:^0.15.0"
-    "@graphql-hive/yoga": "npm:^0.43.0"
+    "@graphql-hive/core": "npm:^0.15.1"
+    "@graphql-hive/yoga": "npm:^0.43.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.9"
     "@graphql-mesh/types": "npm:^0.104.16"
