@@ -263,8 +263,8 @@ export type CaseStudyResolvers<
 
 export type DeprecatedProductResolvers<
   ContextType = any,
-  ParentType extends
-    ResolversParentTypes['DeprecatedProduct'] = ResolversParentTypes['DeprecatedProduct'],
+  ParentType extends ResolversParentTypes['DeprecatedProduct'] =
+    ResolversParentTypes['DeprecatedProduct'],
 > = {
   createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   package?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -303,8 +303,8 @@ export type ProductResolvers<
 
 export type ProductDimensionResolvers<
   ContextType = any,
-  ParentType extends
-    ResolversParentTypes['ProductDimension'] = ResolversParentTypes['ProductDimension'],
+  ParentType extends ResolversParentTypes['ProductDimension'] =
+    ResolversParentTypes['ProductDimension'],
 > = {
   size?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -314,8 +314,8 @@ export type ProductDimensionResolvers<
 
 export type ProductResearchResolvers<
   ContextType = any,
-  ParentType extends
-    ResolversParentTypes['ProductResearch'] = ResolversParentTypes['ProductResearch'],
+  ParentType extends ResolversParentTypes['ProductResearch'] =
+    ResolversParentTypes['ProductResearch'],
 > = {
   outcome?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   study?: Resolver<ResolversTypes['CaseStudy'], ParentType, ContextType>;
@@ -324,8 +324,8 @@ export type ProductResearchResolvers<
 
 export type ProductVariationResolvers<
   ContextType = any,
-  ParentType extends
-    ResolversParentTypes['ProductVariation'] = ResolversParentTypes['ProductVariation'],
+  ParentType extends ResolversParentTypes['ProductVariation'] =
+    ResolversParentTypes['ProductVariation'],
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
