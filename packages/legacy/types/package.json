@@ -38,7 +38,7 @@
     "@graphql-hive/pubsub": "^2.1.1",
     "@graphql-tools/batch-delegate": "^10.0.0",
     "@graphql-tools/delegate": "^11.0.0",
-    "@graphql-tools/utils": "^10.8.0",
+    "@graphql-tools/utils": "^10.11.0",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@repeaterjs/repeater": "^3.0.6",
     "@whatwg-node/disposablestack": "^0.0.6",

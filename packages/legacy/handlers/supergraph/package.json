@@ -41,8 +41,8 @@
     "@graphql-mesh/types": "^0.104.16",
     "@graphql-mesh/utils": "^0.104.16",
     "@graphql-tools/federation": "^4.0.0",
-    "@graphql-tools/url-loader": "^9.0.0",
-    "@graphql-tools/utils": "^10.8.0",
+    "@graphql-tools/url-loader": "^9.0.5",
+    "@graphql-tools/utils": "^10.11.0",
     "lodash.get": "^4.4.2",
     "tslib": "^2.4.0"
   },
