@@ -40,7 +40,7 @@
     "@graphql-mesh/transport-common": "^1.0.0",
     "@graphql-mesh/types": "^0.104.17",
     "@graphql-mesh/utils": "^0.104.17",
-    "@graphql-tools/utils": "^10.8.0",
+    "@graphql-tools/utils": "^10.11.0",
     "@grpc/grpc-js": "^1.1.7",
     "@grpc/proto-loader": "^0.8.0",
     "@whatwg-node/disposablestack": "^0.0.6",
