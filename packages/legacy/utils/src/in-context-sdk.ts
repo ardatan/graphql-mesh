@@ -146,7 +146,7 @@ export function getInContextSDK(
               operation: operationType as OperationTypeNode,
               fieldName,
               context,
-              transformedSchema,
+              targetSchema: transformedSchema,
               info,
               transforms: [],
             };
