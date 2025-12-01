@@ -41,7 +41,7 @@
     "@graphql-mesh/utils": "^0.104.17",
     "@graphql-tools/utils": "^10.8.0",
     "@whatwg-node/server": "^0.10.5",
-    "graphql-yoga": "^5.13.4",
+    "graphql-yoga": "^5.17.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
