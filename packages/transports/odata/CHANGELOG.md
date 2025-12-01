@@ -1,5 +1,13 @@
 # @graphql-mesh/transport-odata
 
+## 0.2.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @omnigraph/odata@0.2.18
+
 ## 0.2.17
 
 ### Patch Changes

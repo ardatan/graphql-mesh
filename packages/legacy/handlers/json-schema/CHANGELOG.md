@@ -1,5 +1,18 @@
 # @graphql-mesh/json-schema
 
+## 0.109.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+  - @omnigraph/json-schema@0.109.18
+  - @graphql-mesh/store@0.104.18
+
 ## 0.109.18
 
 ### Patch Changes
@@ -363,8 +376,8 @@
     [`graphql-compose@^9.1.0` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.1.0) (from
     `9.1.0`, in `dependencies`)
   - Updated dependency
-    [`json-machete@^0.97.5` ↗︎](https://www.npmjs.com/package/json-machete/v/0.97.5) (from
-    `0.97.5`, in `dependencies`)
+    [`json-machete@^0.97.5` ↗︎](https://www.npmjs.com/package/json-machete/v/0.97.5) (from `0.97.5`,
+    in `dependencies`)
 - Updated dependencies
   [[`2ff45ed`](https://github.com/ardatan/graphql-mesh/commit/2ff45ed06c9d0eb717b619e761a8918c97c1a434),
   [`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab),
@@ -1781,8 +1794,8 @@
     [`@omnigraph/json-schema@0.93.0` ↗︎](https://www.npmjs.com/package/@omnigraph/json-schema/v/0.93.0)
     (from `1.0.0`, in `dependencies`)
   - Updated dependency
-    [`json-machete@0.93.0` ↗︎](https://www.npmjs.com/package/json-machete/v/0.93.0) (from `1.0.0`,
-    in `dependencies`)
+    [`json-machete@0.93.0` ↗︎](https://www.npmjs.com/package/json-machete/v/0.93.0) (from `1.0.0`, in
+    `dependencies`)
   - Updated dependency
     [`@graphql-mesh/store@^0.93.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.93.0)
     (from `^1.0.0`, in `peerDependencies`)

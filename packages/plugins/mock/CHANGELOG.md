@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-mock
 
+## 0.105.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+
 ## 0.105.18
 
 ### Patch Changes
@@ -1624,8 +1634,8 @@
   [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/mock@8.7.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.9)
-    (from `8.7.8`, in `dependencies`)
+    [`@graphql-tools/mock@8.7.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.9) (from
+    `8.7.8`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.7)
     (from `9.0.6`, in `dependencies`)
@@ -1670,8 +1680,8 @@
     [`@graphql-tools/utils@8.13.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.1)
     (from `8.13.0`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/mock@8.7.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.8)
-    (from `8.7.7`, in `dependencies`)
+    [`@graphql-tools/mock@8.7.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.8) (from
+    `8.7.7`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.6)
     (from `9.0.5`, in `dependencies`)
@@ -1703,8 +1713,8 @@
     [`@graphql-tools/utils@8.13.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.13.0)
     (from `8.12.0`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/mock@8.7.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.7)
-    (from `8.7.6`, in `dependencies`)
+    [`@graphql-tools/mock@8.7.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.7) (from
+    `8.7.6`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.5)
     (from `9.0.4`, in `dependencies`)
@@ -1922,8 +1932,8 @@
     [`@graphql-tools/utils@8.12.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.12.0)
     (from `8.10.1`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/mock@8.7.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.6)
-    (from `8.7.4`, in `dependencies`)
+    [`@graphql-tools/mock@8.7.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.6) (from
+    `8.7.4`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.4)
     (from `9.0.2`, in `dependencies`)
@@ -1947,8 +1957,8 @@
     [`@graphql-tools/utils@8.12.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.12.0)
     (from `8.11.0`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/mock@8.7.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.6)
-    (from `8.7.5`, in `dependencies`)
+    [`@graphql-tools/mock@8.7.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.6) (from
+    `8.7.5`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.4)
     (from `9.0.3`, in `dependencies`)
@@ -2001,8 +2011,8 @@
     [`@graphql-tools/utils@8.11.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.11.0)
     (from `8.10.1`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/mock@8.7.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.5)
-    (from `8.7.4`, in `dependencies`)
+    [`@graphql-tools/mock@8.7.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.5) (from
+    `8.7.4`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.3)
     (from `9.0.2`, in `dependencies`)
@@ -2054,8 +2064,8 @@
     [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1)
     (from `8.10.0`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/mock@8.7.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.4)
-    (from `8.7.3`, in `dependencies`)
+    [`@graphql-tools/mock@8.7.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.4) (from
+    `8.7.3`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.2)
     (from `9.0.1`, in `dependencies`)
@@ -2067,8 +2077,8 @@
     [`@graphql-tools/utils@8.10.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.1)
     (from `8.10.0`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/mock@8.7.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.4)
-    (from `8.7.3`, in `dependencies`)
+    [`@graphql-tools/mock@8.7.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.4) (from
+    `8.7.3`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.2)
     (from `9.0.1`, in `dependencies`)
@@ -2140,8 +2150,8 @@
     [`@graphql-tools/utils@8.10.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/8.10.0)
     (was `8.9.1`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/mock@8.7.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.3)
-    (was `8.7.2`, in `dependencies`)
+    [`@graphql-tools/mock@8.7.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/8.7.3) (was
+    `8.7.2`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.1)
     (was `9.0.0`, in `dependencies`)

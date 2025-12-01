@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-operation-field-permissions
 
+## 0.104.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+
 ## 0.104.17
 
 ### Patch Changes
@@ -44,8 +52,8 @@
   [`e4204ad`](https://github.com/ardatan/graphql-mesh/commit/e4204ad7ac39a247ee5ae0da18f2051e543ba1fb)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^5.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.3.2) (from
-    `^5.1.0`, in `dependencies`)
+    [`@envelop/core@^5.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.3.2) (from `^5.1.0`,
+    in `dependencies`)
 - Updated dependencies
   [[`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681)]:
   - @graphql-mesh/types@0.104.13
@@ -184,9 +192,8 @@
   - Updated dependency
     [`@envelop/operation-field-permissions@^7.0.0` ↗︎](https://www.npmjs.com/package/@envelop/operation-field-permissions/v/7.0.0)
     (from `7.0.0`, in `dependencies`)
-  - Added dependency
-    [`@envelop/core@^5.1.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.1.0) (to
-    `dependencies`)
+  - Added dependency [`@envelop/core@^5.1.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.1.0)
+    (to `dependencies`)
 - Updated dependencies []:
   - @graphql-mesh/types@0.103.18
 

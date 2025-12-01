@@ -1,5 +1,17 @@
 # @graphql-mesh/http
 
+## 0.106.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/runtime@0.106.18
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+
 ## 0.106.17
 
 ### Patch Changes
@@ -158,8 +170,8 @@
     [`@whatwg-node/server@^0.10.5` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.10.5)
     (from `^0.10.0`, in `dependencies`)
   - Updated dependency
-    [`graphql-yoga@^5.13.4` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.13.4) (from
-    `^5.12.0`, in `dependencies`)
+    [`graphql-yoga@^5.13.4` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.13.4) (from `^5.12.0`,
+    in `dependencies`)
 
 - [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
@@ -255,8 +267,8 @@
     [`@whatwg-node/server@^0.9.68` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.68)
     (from `^0.9.46`, in `dependencies`)
   - Updated dependency
-    [`graphql-yoga@^5.12.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.12.0) (from
-    `^5.7.0`, in `dependencies`)
+    [`graphql-yoga@^5.12.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.12.0) (from `^5.7.0`,
+    in `dependencies`)
 - Updated dependencies
   [[`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2),
   [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
@@ -710,9 +722,8 @@
 - [#7524](https://github.com/ardatan/graphql-mesh/pull/7524)
   [`eeab8fe`](https://github.com/ardatan/graphql-mesh/commit/eeab8fe6bd5d930a1faed22f8c78e302876de7af)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@^5.7.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.7.0) (from `^5.6.0`,
-    in `dependencies`)
+  - Updated dependency [`graphql-yoga@^5.7.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.7.0)
+    (from `^5.6.0`, in `dependencies`)
 
 ## 0.102.0
 
@@ -885,9 +896,8 @@
 - [#7183](https://github.com/ardatan/graphql-mesh/pull/7183)
   [`8a04cf7`](https://github.com/ardatan/graphql-mesh/commit/8a04cf7abff41122d5268c57acfb26e97712730b)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@^5.6.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.6.0) (from `^5.3.0`,
-    in `dependencies`)
+  - Updated dependency [`graphql-yoga@^5.6.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.6.0)
+    (from `^5.3.0`, in `dependencies`)
 
 - [#7185](https://github.com/ardatan/graphql-mesh/pull/7185)
   [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)
@@ -1087,9 +1097,8 @@
   - Updated dependency
     [`@whatwg-node/server@^0.9.34` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.9.34)
     (from `^0.9.0`, in `dependencies`)
-  - Updated dependency
-    [`graphql-yoga@^5.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.3.0) (from `^5.1.1`,
-    in `dependencies`)
+  - Updated dependency [`graphql-yoga@^5.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.3.0)
+    (from `^5.1.1`, in `dependencies`)
 - Updated dependencies
   [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
   [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
@@ -1228,9 +1237,8 @@
 - [#6541](https://github.com/ardatan/graphql-mesh/pull/6541)
   [`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@^5.1.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.1.1) (from `^5.0.0`,
-    in `dependencies`)
+  - Updated dependency [`graphql-yoga@^5.1.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.1.1)
+    (from `^5.0.0`, in `dependencies`)
 - Updated dependencies
   [[`ae7b085`](https://github.com/ardatan/graphql-mesh/commit/ae7b085e93ba911f03bbfd2a15ff9ca8be9f4de8)]:
   - @graphql-mesh/types@0.96.4
@@ -1306,9 +1314,8 @@
 - [#6094](https://github.com/Urigo/graphql-mesh/pull/6094)
   [`7c509bf2d`](https://github.com/Urigo/graphql-mesh/commit/7c509bf2d9f110ca0da0984d4bed783c3b267458)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@^5.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.0.0) (from `^4.0.5`,
-    in `dependencies`)
+  - Updated dependency [`graphql-yoga@^5.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.0.0)
+    (from `^4.0.5`, in `dependencies`)
 - Updated dependencies
   [[`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b)]:
   - @graphql-mesh/runtime@0.96.12
@@ -1347,9 +1354,8 @@
 - [#6018](https://github.com/Urigo/graphql-mesh/pull/6018)
   [`41005ff7d`](https://github.com/Urigo/graphql-mesh/commit/41005ff7d240ef7803c7fcca0504aaf84be850b0)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@^4.0.5` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.5) (from `^4.0.0`,
-    in `dependencies`)
+  - Updated dependency [`graphql-yoga@^4.0.5` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.5)
+    (from `^4.0.0`, in `dependencies`)
 - Updated dependencies
   [[`41005ff7d`](https://github.com/Urigo/graphql-mesh/commit/41005ff7d240ef7803c7fcca0504aaf84be850b0)]:
   - @graphql-mesh/runtime@0.96.8
@@ -1559,15 +1565,15 @@
 - [#5457](https://github.com/Urigo/graphql-mesh/pull/5457)
   [`f6867b62a`](https://github.com/Urigo/graphql-mesh/commit/f6867b62a003c060afde88212603bcee18084ff3)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`fets@^0.2.0` ↗︎](https://www.npmjs.com/package/fets/v/0.2.0) (from
-    `^0.1.1`, in `dependencies`)
+  - Updated dependency [`fets@^0.2.0` ↗︎](https://www.npmjs.com/package/fets/v/0.2.0) (from `^0.1.1`,
+    in `dependencies`)
 
 - [#5465](https://github.com/Urigo/graphql-mesh/pull/5465)
   [`317e4f00e`](https://github.com/Urigo/graphql-mesh/commit/317e4f00e45448d2e3d2d890aefaebcc8ca87fba)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Added dependency
-    [`@whatwg-node/server@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.8.0)
-    (to `dependencies`)
+    [`@whatwg-node/server@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.8.0) (to
+    `dependencies`)
   - Removed dependency [`fets@^0.2.0` ↗︎](https://www.npmjs.com/package/fets/v/0.2.0) (from
     `dependencies`)
 
@@ -1581,9 +1587,8 @@
 - [#5516](https://github.com/Urigo/graphql-mesh/pull/5516)
   [`6f22ed875`](https://github.com/Urigo/graphql-mesh/commit/6f22ed875707a2c6616ecbc48516b095f89351da)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@^4.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.0) (from `^3.9.1`,
-    in `dependencies`)
+  - Updated dependency [`graphql-yoga@^4.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.0)
+    (from `^3.9.1`, in `dependencies`)
 
 - [#5465](https://github.com/Urigo/graphql-mesh/pull/5465)
   [`317e4f00e`](https://github.com/Urigo/graphql-mesh/commit/317e4f00e45448d2e3d2d890aefaebcc8ca87fba)
@@ -1623,17 +1628,16 @@
 - [#5365](https://github.com/Urigo/graphql-mesh/pull/5365)
   [`1dd9a6940`](https://github.com/Urigo/graphql-mesh/commit/1dd9a694092094c7f00c6ca53686becadee62cb8)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@^3.9.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.9.1) (from `3.9.1`,
-    in `dependencies`)
+  - Updated dependency [`graphql-yoga@^3.9.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.9.1)
+    (from `3.9.1`, in `dependencies`)
   - Added dependency [`fets@^0.1.1` ↗︎](https://www.npmjs.com/package/fets/v/0.1.1) (to
     `dependencies`)
   - Removed dependency
     [`@graphql-mesh/runtime@1.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/runtime/v/1.0.0)
     (from `dependencies`)
   - Removed dependency
-    [`@whatwg-node/router@0.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.3.0)
-    (from `dependencies`)
+    [`@whatwg-node/router@0.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.3.0) (from
+    `dependencies`)
   - Updated dependency
     [`@graphql-mesh/types@^0.93.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.93.0)
     (from `^1.0.0`, in `peerDependencies`)
@@ -1658,9 +1662,8 @@
 - [#5345](https://github.com/Urigo/graphql-mesh/pull/5345)
   [`0da46e1e6`](https://github.com/Urigo/graphql-mesh/commit/0da46e1e6de9d9f49e1a4444784689a992f4e678)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.9.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.9.1) (from `3.9.0`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.9.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.9.1)
+    (from `3.9.0`, in `dependencies`)
 - Updated dependencies
   [[`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f),
   [`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f),
@@ -1678,9 +1681,8 @@
 - [#5328](https://github.com/Urigo/graphql-mesh/pull/5328)
   [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.9.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.9.0) (from `3.8.0`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.9.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.9.0)
+    (from `3.8.0`, in `dependencies`)
 - Updated dependencies
   [[`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
   [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
@@ -1712,9 +1714,8 @@
 - [#5263](https://github.com/Urigo/graphql-mesh/pull/5263)
   [`5156add74`](https://github.com/Urigo/graphql-mesh/commit/5156add74c011b7cfcdc5f56245676d327153229)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.8.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.8.0) (from `3.7.3`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.8.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.8.0)
+    (from `3.7.3`, in `dependencies`)
 - Updated dependencies
   [[`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8),
   [`870de5dae`](https://github.com/Urigo/graphql-mesh/commit/870de5dae08a7e43d9aa0f52d5d504cffb4d8fc8),
@@ -1747,9 +1748,8 @@
 - [#5192](https://github.com/Urigo/graphql-mesh/pull/5192)
   [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.7.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.7.3) (from `3.7.0`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.7.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.7.3)
+    (from `3.7.0`, in `dependencies`)
 - Updated dependencies
   [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54),
   [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
@@ -1804,16 +1804,15 @@
 - [#5167](https://github.com/Urigo/graphql-mesh/pull/5167)
   [`ab08c2af5`](https://github.com/Urigo/graphql-mesh/commit/ab08c2af559aee4ee009c1bafceab7f5d1e87321)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.7.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.7.0) (from `3.6.0`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.7.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.7.0)
+    (from `3.6.0`, in `dependencies`)
 
 - [#5183](https://github.com/Urigo/graphql-mesh/pull/5183)
   [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/router@0.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.3.0)
-    (from `0.2.7`, in `dependencies`)
+    [`@whatwg-node/router@0.3.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.3.0) (from
+    `0.2.7`, in `dependencies`)
 - Updated dependencies
   [[`7def5adae`](https://github.com/Urigo/graphql-mesh/commit/7def5adae9e1cab3597320731ca6767bde5c04a1),
   [`ab08c2af5`](https://github.com/Urigo/graphql-mesh/commit/ab08c2af559aee4ee009c1bafceab7f5d1e87321),
@@ -1855,9 +1854,8 @@
 - [#5137](https://github.com/Urigo/graphql-mesh/pull/5137)
   [`4d61de74e`](https://github.com/Urigo/graphql-mesh/commit/4d61de74ee4bc288eb488c55ae2597b1cb5654a1)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.6.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.6.0) (from `3.5.1`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.6.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.6.0)
+    (from `3.5.1`, in `dependencies`)
 
 ## 0.3.16
 
@@ -1910,11 +1908,10 @@
   [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/router@0.2.7` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.2.7)
-    (from `0.1.7`, in `dependencies`)
-  - Updated dependency
-    [`graphql-yoga@3.5.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.5.1) (from `3.4.0`, in
-    `dependencies`)
+    [`@whatwg-node/router@0.2.7` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.2.7) (from
+    `0.1.7`, in `dependencies`)
+  - Updated dependency [`graphql-yoga@3.5.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.5.1)
+    (from `3.4.0`, in `dependencies`)
 - Updated dependencies
   [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
   [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
@@ -1933,9 +1930,8 @@
 - [#5080](https://github.com/Urigo/graphql-mesh/pull/5080)
   [`93692213a`](https://github.com/Urigo/graphql-mesh/commit/93692213a7397110a4ad87cb7d4c752f947f2013)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.4.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.4.0) (from `3.3.0`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.4.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.4.0)
+    (from `3.3.0`, in `dependencies`)
 - Updated dependencies
   [[`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
   [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
@@ -1965,8 +1961,8 @@
   [`a4ccf07fc`](https://github.com/Urigo/graphql-mesh/commit/a4ccf07fca48813878284d335d7ef8a37a89dacb)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/router@0.1.7` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.1.7)
-    (from `0.1.4`, in `dependencies`)
+    [`@whatwg-node/router@0.1.7` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.1.7) (from
+    `0.1.4`, in `dependencies`)
 
 ## 0.3.8
 
@@ -1976,18 +1972,17 @@
   [`ad938f485`](https://github.com/Urigo/graphql-mesh/commit/ad938f485a9b881a0379284ac582c6c599aa1117)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/router@0.1.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.1.2)
-    (from `0.0.3`, in `dependencies`)
+    [`@whatwg-node/router@0.1.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.1.2) (from
+    `0.0.3`, in `dependencies`)
 
 - [#4991](https://github.com/Urigo/graphql-mesh/pull/4991)
   [`bb5abc15d`](https://github.com/Urigo/graphql-mesh/commit/bb5abc15d8ff9227f5fc9fafe78d1befc7ae0797)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/router@0.1.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.1.3)
-    (from `0.1.2`, in `dependencies`)
-  - Updated dependency
-    [`graphql-yoga@3.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.3.0) (from `3.2.1`, in
-    `dependencies`)
+    [`@whatwg-node/router@0.1.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.1.3) (from
+    `0.1.2`, in `dependencies`)
+  - Updated dependency [`graphql-yoga@3.3.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.3.0)
+    (from `3.2.1`, in `dependencies`)
 
 - [#5020](https://github.com/Urigo/graphql-mesh/pull/5020)
   [`d573d203f`](https://github.com/Urigo/graphql-mesh/commit/d573d203f8bb04ff75cb4d83ba0deaa2bf9818a7)
@@ -2000,8 +1995,8 @@
   [`d17b6d09d`](https://github.com/Urigo/graphql-mesh/commit/d17b6d09d0f7ddfd529736ea4371f66feafe64ac)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/router@0.1.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.1.4)
-    (from `0.1.3`, in `dependencies`)
+    [`@whatwg-node/router@0.1.4` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.1.4) (from
+    `0.1.3`, in `dependencies`)
 
 - [#5020](https://github.com/Urigo/graphql-mesh/pull/5020)
   [`d573d203f`](https://github.com/Urigo/graphql-mesh/commit/d573d203f8bb04ff75cb4d83ba0deaa2bf9818a7)
@@ -2029,9 +2024,8 @@
 - [#4980](https://github.com/Urigo/graphql-mesh/pull/4980)
   [`e701041f3`](https://github.com/Urigo/graphql-mesh/commit/e701041f315e918e74719e2f89e946f56320157e)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.2.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.2.1) (from `3.2.0`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.2.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.2.1)
+    (from `3.2.0`, in `dependencies`)
 
 ## 0.3.6
 
@@ -2041,11 +2035,10 @@
   [`06db3cd64`](https://github.com/Urigo/graphql-mesh/commit/06db3cd6479853e536e36cc2619c94dea9c7e5ed)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/router@0.0.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.0.3)
-    (from `0.0.2`, in `dependencies`)
-  - Updated dependency
-    [`graphql-yoga@3.2.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.2.0) (from `3.1.1`, in
-    `dependencies`)
+    [`@whatwg-node/router@0.0.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.0.3) (from
+    `0.0.2`, in `dependencies`)
+  - Updated dependency [`graphql-yoga@3.2.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.2.0)
+    (from `3.1.1`, in `dependencies`)
 
 ## 0.3.5
 
@@ -2058,8 +2051,8 @@
     [`@whatwg-node/router@0.0.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/router/v/0.0.2) (to
     `dependencies`)
   - Removed dependency
-    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0)
-    (from `dependencies`)
+    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0) (from
+    `dependencies`)
   - Removed dependency
     [`@whatwg-node/server@^0.4.10` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.4.10)
     (from `dependencies`)
@@ -2132,9 +2125,8 @@
 - [#4878](https://github.com/Urigo/graphql-mesh/pull/4878)
   [`c047b3088`](https://github.com/Urigo/graphql-mesh/commit/c047b3088e91fec2265dc84ce82d5d45d3429609)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.1.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.1.1) (from `3.1.0`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.1.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.1.1)
+    (from `3.1.0`, in `dependencies`)
 - Updated dependencies
   [[`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
   [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
@@ -2171,9 +2163,8 @@
 - [#4856](https://github.com/Urigo/graphql-mesh/pull/4856)
   [`8b25eb578`](https://github.com/Urigo/graphql-mesh/commit/8b25eb578c293ef72de70301f2e24dc0c22ba75b)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.1.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.1.0) (from `3.0.3`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.1.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.1.0)
+    (from `3.0.3`, in `dependencies`)
 
 ## 0.2.17
 
@@ -2196,16 +2187,14 @@
 - [#4846](https://github.com/Urigo/graphql-mesh/pull/4846)
   [`968bb382e`](https://github.com/Urigo/graphql-mesh/commit/968bb382e40674adb85e7a3a53e94683dd070aae)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.0.2` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.2) (from `3.0.1`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.0.2` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.2)
+    (from `3.0.1`, in `dependencies`)
 
 - [#4850](https://github.com/Urigo/graphql-mesh/pull/4850)
   [`7df7c644d`](https://github.com/Urigo/graphql-mesh/commit/7df7c644d85c00c0c0c3f8907854bbef50d298eb)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.0.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.3) (from `3.0.2`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.0.3` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.3)
+    (from `3.0.2`, in `dependencies`)
 - Updated dependencies
   [[`7df7c644d`](https://github.com/Urigo/graphql-mesh/commit/7df7c644d85c00c0c0c3f8907854bbef50d298eb)]:
   - @graphql-mesh/runtime@0.44.34
@@ -2217,16 +2206,14 @@
 - [#4835](https://github.com/Urigo/graphql-mesh/pull/4835)
   [`ef6cc3b25`](https://github.com/Urigo/graphql-mesh/commit/ef6cc3b2565b8efd0c6c0dfbc8040747b8d80573)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0) (from
-    `3.0.0-next.12`, in `dependencies`)
+  - Updated dependency [`graphql-yoga@3.0.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0)
+    (from `3.0.0-next.12`, in `dependencies`)
 
 - [#4837](https://github.com/Urigo/graphql-mesh/pull/4837)
   [`b0adaa48c`](https://github.com/Urigo/graphql-mesh/commit/b0adaa48cf9f389ead587a23decd4750a74d8f55)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@3.0.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.1) (from `3.0.0`, in
-    `dependencies`)
+  - Updated dependency [`graphql-yoga@3.0.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.1)
+    (from `3.0.0`, in `dependencies`)
 
 ## 0.2.14
 
@@ -2379,8 +2366,8 @@
   [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0)
-    (from `^0.4.6`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0) (from
+    `^0.4.6`, in `dependencies`)
   - Updated dependency
     [`graphql-yoga@3.0.0-next.7` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0) (from
     `3.0.0-next.6`, in `dependencies`)
@@ -2561,15 +2548,15 @@
   [`1a8e80870`](https://github.com/Urigo/graphql-mesh/commit/1a8e8087039646b7ccf02d76cbed134854271516)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`graphql-yoga@3.0.0-next.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-next.1)
-    (from `3.0.0-next.0`, in `dependencies`)
+    [`graphql-yoga@3.0.0-next.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-next.1) (from
+    `3.0.0-next.0`, in `dependencies`)
 
 - [#4573](https://github.com/Urigo/graphql-mesh/pull/4573)
   [`6df0993b7`](https://github.com/Urigo/graphql-mesh/commit/6df0993b777e1fe7ed0f4bb500e48aa2672ca0ea)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`graphql-yoga@3.0.0-next.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-next.1)
-    (from `3.0.0-next.0`, in `dependencies`)
+    [`graphql-yoga@3.0.0-next.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-next.1) (from
+    `3.0.0-next.0`, in `dependencies`)
 
 - [#4575](https://github.com/Urigo/graphql-mesh/pull/4575)
   [`88ab8f9ae`](https://github.com/Urigo/graphql-mesh/commit/88ab8f9ae32a4d0f52c978d625082abe075bebe4)
@@ -2605,8 +2592,8 @@
   [`d08ed0e77`](https://github.com/Urigo/graphql-mesh/commit/d08ed0e77a274ceaccff6c7a2b2c80326ca5d035)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`graphql-yoga@3.0.0-next.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-next.0)
-    (from `3.0.0-alpha-20220917000718-4285245d`, in `dependencies`)
+    [`graphql-yoga@3.0.0-next.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-next.0) (from
+    `3.0.0-alpha-20220917000718-4285245d`, in `dependencies`)
 
 - Updated dependencies
   [[`93f4ed55d`](https://github.com/Urigo/graphql-mesh/commit/93f4ed55de7b9f2a55e11bf1df4ab7b4c59b3825)]:
@@ -2667,8 +2654,8 @@
   [`7254e96a5`](https://github.com/Urigo/graphql-mesh/commit/7254e96a51758353c450b0fbac2ebfd0455274be)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/server@0.4.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.4.0)
-    (from `0.3.0`, in `dependencies`)
+    [`@whatwg-node/server@0.4.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.4.0) (from
+    `0.3.0`, in `dependencies`)
   - Updated dependency
     [`graphql-yoga@3.0.0-alpha-20220917000718-4285245d` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/3.0.0-alpha-20220917000718-4285245d)
     (from `3.0.0-alpha-20220905163021-e923bb34`, in `dependencies`)
@@ -2681,8 +2668,8 @@
   [`82f4b24fb`](https://github.com/Urigo/graphql-mesh/commit/82f4b24fbd64fb9bf0deb8990c153666a71f42aa)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Added dependency
-    [`@graphql-mesh/types@0.84.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.84.0)
-    (to `dependencies`)
+    [`@graphql-mesh/types@0.84.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.84.0) (to
+    `dependencies`)
 
 - [#4502](https://github.com/Urigo/graphql-mesh/pull/4502)
   [`82f4b24fb`](https://github.com/Urigo/graphql-mesh/commit/82f4b24fbd64fb9bf0deb8990c153666a71f42aa)
@@ -2786,8 +2773,8 @@
   [`2a3753b5a`](https://github.com/Urigo/graphql-mesh/commit/2a3753b5a4bd23c7c89f4f08a3e55093e24902a8)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/server@0.2.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.2.0)
-    (from `0.1.2`, in `dependencies`)
+    [`@whatwg-node/server@0.2.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/server/v/0.2.0) (from
+    `0.1.2`, in `dependencies`)
   - Updated dependency
     [`@whatwg-node/fetch@0.4.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.4.2) (from
     `0.3.2`, in `dependencies`)

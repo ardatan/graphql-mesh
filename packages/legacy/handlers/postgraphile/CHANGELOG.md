@@ -1,5 +1,22 @@
 # @graphql-mesh/postgraphile
 
+## 0.104.18
+
+### Patch Changes
+
+- [#9022](https://github.com/ardatan/graphql-mesh/pull/9022)
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.0)
+    (from `^11.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+  - @graphql-mesh/store@0.104.18
+
 ## 0.104.17
 
 ### Patch Changes
@@ -1612,8 +1629,8 @@
   [`c0b1d3bc2`](https://github.com/Urigo/graphql-mesh/commit/c0b1d3bc2f08d5617a77c834d1e54d621b1b9eab)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`postgraphile@4.13.0` ↗︎](https://www.npmjs.com/package/postgraphile/v/4.13.0) (from
-    `4.12.12`, in `dependencies`)
+    [`postgraphile@4.13.0` ↗︎](https://www.npmjs.com/package/postgraphile/v/4.13.0) (from `4.12.12`,
+    in `dependencies`)
   - Updated dependency
     [`postgraphile-core@4.13.0` ↗︎](https://www.npmjs.com/package/postgraphile-core/v/4.13.0) (from
     `4.12.3`, in `dependencies`)
