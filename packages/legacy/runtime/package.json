@@ -43,7 +43,7 @@
     "@graphql-mesh/types": "^0.104.16",
     "@graphql-mesh/utils": "^0.104.16",
     "@graphql-tools/batch-delegate": "^10.0.0",
-    "@graphql-tools/delegate": "^11.0.0",
+    "@graphql-tools/delegate": "^12.0.0",
     "@graphql-tools/executor": "^1.3.2",
     "@graphql-tools/utils": "^10.8.0",
     "@graphql-tools/wrap": "^11.0.0",
