@@ -7946,7 +7946,7 @@ __metadata:
     graphql-scalars: "npm:^1.22.4"
     lower-case: "npm:^2.0.2"
     tslib: "npm:^2.5.0"
-    upper-case: "npm:^2.0.2"
+    upper-case: "npm:^3.0.0"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -39266,6 +39266,13 @@ __metadata:
   dependencies:
     tslib: "npm:^2.0.3"
   checksum: 10c0/5ac176c9d3757abb71400df167f9abb46d63152d5797c630d1a9f083fbabd89711fb4b3dc6de06ff0138fe8946fa5b8518b4fcdae9ca8a3e341417075beae069
+  languageName: node
+  linkType: hard
+
+"upper-case@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "upper-case@npm:3.0.0"
+  checksum: 10c0/0812e7999d00f357b5841179a941ce326525e53fe004857448f27b617e68b1308bb8dae985104f1712125e3be22a9326440404647003c9e94875a168433fef80
   languageName: node
   linkType: hard
 

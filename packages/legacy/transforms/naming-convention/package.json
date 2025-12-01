@@ -44,7 +44,7 @@
     "graphql-scalars": "^1.22.4",
     "lower-case": "^2.0.2",
     "tslib": "^2.5.0",
-    "upper-case": "^2.0.2"
+    "upper-case": "^3.0.0"
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "^0.105.18",
