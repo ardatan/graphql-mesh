@@ -1,6 +1,6 @@
 {
   "name": "example-apollo-federation-compatibility",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "description": "Apollo Federation implemented with GraphQL Mesh",
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "private": true,
@@ -27,7 +27,7 @@
     "@graphql-codegen/cli": "6.1.0",
     "@graphql-codegen/typescript": "5.0.5",
     "@graphql-codegen/typescript-resolvers": "5.1.3",
-    "@graphql-mesh/compose-cli": "1.5.3",
+    "@graphql-mesh/compose-cli": "1.5.4",
     "@types/node": "^24.4.0",
     "esbuild": "^0.27.0",
     "lru-cache": "patch:lru-cache@npm%3A11.2.1#~/.yarn/patches/lru-cache-npm-11.2.1-60cdd96af2.patch"

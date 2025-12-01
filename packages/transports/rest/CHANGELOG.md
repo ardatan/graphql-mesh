@@ -1,5 +1,15 @@
 # @graphql-mesh/transport-rest
 
+## 0.9.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+
 ## 0.9.17
 
 ### Patch Changes
@@ -334,8 +344,8 @@
 - [#8269](https://github.com/ardatan/graphql-mesh/pull/8269)
   [`2ff45ed`](https://github.com/ardatan/graphql-mesh/commit/2ff45ed06c9d0eb717b619e761a8918c97c1a434)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.14.0` ↗︎](https://www.npmjs.com/package/qs/v/6.14.0) (from `6.13.1`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.14.0` ↗︎](https://www.npmjs.com/package/qs/v/6.14.0) (from `6.13.1`, in
+    `dependencies`)
 
 - [#8270](https://github.com/ardatan/graphql-mesh/pull/8270)
   [`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab)
@@ -520,8 +530,8 @@
 - [#7949](https://github.com/ardatan/graphql-mesh/pull/7949)
   [`10dd636`](https://github.com/ardatan/graphql-mesh/commit/10dd6363c8a8dba762cd3a42c4c5069457a1976b)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.13.1` ↗︎](https://www.npmjs.com/package/qs/v/6.13.1) (from `6.13.0`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.13.1` ↗︎](https://www.npmjs.com/package/qs/v/6.13.1) (from `6.13.0`, in
+    `dependencies`)
 
 ## 0.7.14
 
@@ -840,8 +850,8 @@
 - [#7444](https://github.com/ardatan/graphql-mesh/pull/7444)
   [`a4e53d9`](https://github.com/ardatan/graphql-mesh/commit/a4e53d9407b8dcb4b57fb233b8dddfee770d06f5)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.13.0` ↗︎](https://www.npmjs.com/package/qs/v/6.13.0) (from `6.12.3`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.13.0` ↗︎](https://www.npmjs.com/package/qs/v/6.13.0) (from `6.12.3`, in
+    `dependencies`)
 
 - [#7443](https://github.com/ardatan/graphql-mesh/pull/7443)
   [`8bccd9a`](https://github.com/ardatan/graphql-mesh/commit/8bccd9a2475c49444a8751a1cdc25386fbacc2b7)
@@ -947,20 +957,20 @@
 - [#6772](https://github.com/ardatan/graphql-mesh/pull/6772)
   [`27e3cc9`](https://github.com/ardatan/graphql-mesh/commit/27e3cc97c1218863cf2948902bdca050bd71d18a)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`, in
+    `dependencies`)
 
 - [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
   [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
   Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
-  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`, in
+    `dependencies`)
 
 - [#7240](https://github.com/ardatan/graphql-mesh/pull/7240)
   [`3aa1583`](https://github.com/ardatan/graphql-mesh/commit/3aa1583db989ef79a706873e9e5786d1cf61de89)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`, in
+    `dependencies`)
 - Updated dependencies
   [[`69e6eb5`](https://github.com/ardatan/graphql-mesh/commit/69e6eb55b8e66024ccb7c97c017589e1eeb6bb1e),
   [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2),
@@ -979,8 +989,8 @@
 - [#7191](https://github.com/ardatan/graphql-mesh/pull/7191)
   [`a387451`](https://github.com/ardatan/graphql-mesh/commit/a38745126d8f7f58247afad9d4c16213c6dc4a65)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.12.2` ↗︎](https://www.npmjs.com/package/qs/v/6.12.2) (from `6.12.1`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.2` ↗︎](https://www.npmjs.com/package/qs/v/6.12.2) (from `6.12.1`, in
+    `dependencies`)
 
 ## 0.3.1
 
@@ -1203,8 +1213,8 @@
 - [#6845](https://github.com/ardatan/graphql-mesh/pull/6845)
   [`d793807`](https://github.com/ardatan/graphql-mesh/commit/d793807f43ece9bf797f1b9fc9252ab959753492)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.12.1` ↗︎](https://www.npmjs.com/package/qs/v/6.12.1) (from `6.12.0`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.1` ↗︎](https://www.npmjs.com/package/qs/v/6.12.1) (from `6.12.0`, in
+    `dependencies`)
 
 - [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
   [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
@@ -1269,8 +1279,8 @@
 - [#6645](https://github.com/ardatan/graphql-mesh/pull/6645)
   [`9667954`](https://github.com/ardatan/graphql-mesh/commit/96679547598ccdaf765335b13b937248df662d77)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.12.0` ↗︎](https://www.npmjs.com/package/qs/v/6.12.0) (from `6.11.2`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.0` ↗︎](https://www.npmjs.com/package/qs/v/6.12.0) (from `6.11.2`, in
+    `dependencies`)
 
 ## 0.1.1
 

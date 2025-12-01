@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.104.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+
 ## 0.104.17
 
 ### Patch Changes
@@ -36,8 +46,8 @@
   [`e4204ad`](https://github.com/ardatan/graphql-mesh/commit/e4204ad7ac39a247ee5ae0da18f2051e543ba1fb)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^5.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.3.2) (from
-    `^5.0.0`, in `dependencies`)
+    [`@envelop/core@^5.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.3.2) (from `^5.0.0`,
+    in `dependencies`)
 - Updated dependencies
   [[`f7ce86c`](https://github.com/ardatan/graphql-mesh/commit/f7ce86c86a170dc62ac88caea4a6ad6979249571),
   [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
@@ -145,8 +155,8 @@
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
   - Updated dependency
-    [`graphql-yoga@^5.13.4` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.13.4) (from
-    `^5.12.0`, in `dependencies`)
+    [`graphql-yoga@^5.13.4` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.13.4) (from `^5.12.0`,
+    in `dependencies`)
 
 - [#8615](https://github.com/ardatan/graphql-mesh/pull/8615)
   [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)
@@ -238,8 +248,8 @@
   [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`graphql-yoga@^5.12.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.12.0) (from
-    `^5.10.4`, in `dependencies`)
+    [`graphql-yoga@^5.12.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.12.0) (from `^5.10.4`,
+    in `dependencies`)
 - Updated dependencies
   [[`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
   - @graphql-mesh/utils@0.103.18
@@ -377,9 +387,8 @@
   - Added dependency
     [`@graphql-mesh/utils@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.103.5)
     (to `dependencies`)
-  - Added dependency
-    [`graphql-yoga@^5.10.4` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.10.4) (to
-    `dependencies`)
+  - Added dependency [`graphql-yoga@^5.10.4` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.10.4)
+    (to `dependencies`)
   - Added dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (to
     `dependencies`)
   - Removed dependency
@@ -986,8 +995,8 @@
   [`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.0) (from
-    `^4.0.0`, in `dependencies`)
+    [`@envelop/core@^5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.0) (from `^4.0.0`,
+    in `dependencies`)
 
 ## 0.95.9
 
@@ -1005,9 +1014,8 @@
 - [#6018](https://github.com/Urigo/graphql-mesh/pull/6018)
   [`41005ff7d`](https://github.com/Urigo/graphql-mesh/commit/41005ff7d240ef7803c7fcca0504aaf84be850b0)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency
-    [`graphql-yoga@^4.0.5` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.5) (from `^4.0.3`,
-    in `peerDependencies`)
+  - Updated dependency [`graphql-yoga@^4.0.5` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/4.0.5)
+    (from `^4.0.3`, in `peerDependencies`)
 
 ## 0.95.7
 
@@ -1195,8 +1203,8 @@
   [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from
-    `^3.0.0`, in `dependencies`)
+    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from `^3.0.0`,
+    in `dependencies`)
   - Updated dependency
     [`@envelop/newrelic@6.0.0` ↗︎](https://www.npmjs.com/package/@envelop/newrelic/v/6.0.0) (from
     `5.0.6`, in `dependencies`)
@@ -1205,8 +1213,8 @@
   [`b52b4c7c1`](https://github.com/Urigo/graphql-mesh/commit/b52b4c7c1133a9904080c344dcb5140c1af67f2a)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from
-    `^3.0.0`, in `dependencies`)
+    [`@envelop/core@^4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/4.0.0) (from `^3.0.0`,
+    in `dependencies`)
   - Updated dependency
     [`@envelop/newrelic@6.0.0` ↗︎](https://www.npmjs.com/package/@envelop/newrelic/v/6.0.0) (from
     `5.0.6`, in `dependencies`)
@@ -1694,8 +1702,8 @@
   [`299770a78`](https://github.com/Urigo/graphql-mesh/commit/299770a781211badd594e2f3c88bf1e66736b170)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^3.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.0) (from
-    `^2.3.2`, in `dependencies`)
+    [`@envelop/core@^3.0.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/3.0.0) (from `^2.3.2`,
+    in `dependencies`)
 
 - [#4682](https://github.com/Urigo/graphql-mesh/pull/4682)
   [`e46ffb4dc`](https://github.com/Urigo/graphql-mesh/commit/e46ffb4dc5fa103e8edd4a9c3c2302aa8ea8dd9e)

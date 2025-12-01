@@ -1,5 +1,18 @@
 # @graphql-mesh/raml
 
+## 0.109.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+  - @omnigraph/raml@0.109.18
+  - @graphql-mesh/store@0.104.18
+
 ## 0.109.18
 
 ### Patch Changes
@@ -1956,8 +1969,8 @@
   [`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Added dependency
-    [`@graphql-tools/utils@9.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.3)
-    (to `dependencies`)
+    [`@graphql-tools/utils@9.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.3) (to
+    `dependencies`)
 - Updated dependencies
   [[`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)]:
   - @omnigraph/raml@0.9.0

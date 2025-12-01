@@ -1,5 +1,22 @@
 # @omnigraph/json-schema
 
+## 0.109.18
+
+### Patch Changes
+
+- [#9022](https://github.com/ardatan/graphql-mesh/pull/9022)
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.0)
+    (from `^11.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+  - @graphql-mesh/transport-rest@0.9.18
+
 ## 0.109.17
 
 ### Patch Changes
@@ -358,8 +375,8 @@
 - [#8269](https://github.com/ardatan/graphql-mesh/pull/8269)
   [`2ff45ed`](https://github.com/ardatan/graphql-mesh/commit/2ff45ed06c9d0eb717b619e761a8918c97c1a434)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.14.0` ↗︎](https://www.npmjs.com/package/qs/v/6.14.0) (from `6.13.1`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.14.0` ↗︎](https://www.npmjs.com/package/qs/v/6.14.0) (from `6.13.1`, in
+    `dependencies`)
 
 - [#8270](https://github.com/ardatan/graphql-mesh/pull/8270)
   [`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab)
@@ -367,23 +384,23 @@
   - Updated dependency
     [`@json-schema-tools/meta-schema@^1.7.5` ↗︎](https://www.npmjs.com/package/@json-schema-tools/meta-schema/v/1.7.5)
     (from `1.7.5`, in `dependencies`)
-  - Updated dependency [`ajv@^8.17.1` ↗︎](https://www.npmjs.com/package/ajv/v/8.17.1) (from
-    `8.17.1`, in `dependencies`)
+  - Updated dependency [`ajv@^8.17.1` ↗︎](https://www.npmjs.com/package/ajv/v/8.17.1) (from `8.17.1`,
+    in `dependencies`)
   - Updated dependency [`ajv-formats@^2.1.1` ↗︎](https://www.npmjs.com/package/ajv-formats/v/2.1.1)
     (from `2.1.1`, in `dependencies`)
-  - Updated dependency [`dset@^3.1.4` ↗︎](https://www.npmjs.com/package/dset/v/3.1.4) (from
-    `3.1.4`, in `dependencies`)
+  - Updated dependency [`dset@^3.1.4` ↗︎](https://www.npmjs.com/package/dset/v/3.1.4) (from `3.1.4`,
+    in `dependencies`)
   - Updated dependency
     [`graphql-compose@^9.1.0` ↗︎](https://www.npmjs.com/package/graphql-compose/v/9.1.0) (from
     `^9.0.11`, in `dependencies`)
   - Updated dependency
-    [`json-machete@^0.97.5` ↗︎](https://www.npmjs.com/package/json-machete/v/0.97.5) (from
-    `0.97.5`, in `dependencies`)
+    [`json-machete@^0.97.5` ↗︎](https://www.npmjs.com/package/json-machete/v/0.97.5) (from `0.97.5`,
+    in `dependencies`)
   - Updated dependency [`qs@^6.14.0` ↗︎](https://www.npmjs.com/package/qs/v/6.14.0) (from `6.14.0`,
     in `dependencies`)
   - Updated dependency
-    [`to-json-schema@^0.2.5` ↗︎](https://www.npmjs.com/package/to-json-schema/v/0.2.5) (from
-    `0.2.5`, in `dependencies`)
+    [`to-json-schema@^0.2.5` ↗︎](https://www.npmjs.com/package/to-json-schema/v/0.2.5) (from `0.2.5`,
+    in `dependencies`)
 - Updated dependencies
   [[`2ff45ed`](https://github.com/ardatan/graphql-mesh/commit/2ff45ed06c9d0eb717b619e761a8918c97c1a434),
   [`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab),
@@ -577,8 +594,8 @@
 - [#7949](https://github.com/ardatan/graphql-mesh/pull/7949)
   [`10dd636`](https://github.com/ardatan/graphql-mesh/commit/10dd6363c8a8dba762cd3a42c4c5069457a1976b)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.13.1` ↗︎](https://www.npmjs.com/package/qs/v/6.13.1) (from `6.13.0`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.13.1` ↗︎](https://www.npmjs.com/package/qs/v/6.13.1) (from `6.13.0`, in
+    `dependencies`)
 - Updated dependencies
   [[`10dd636`](https://github.com/ardatan/graphql-mesh/commit/10dd6363c8a8dba762cd3a42c4c5069457a1976b)]:
   - @graphql-mesh/transport-rest@0.7.15
@@ -996,8 +1013,8 @@
 - [#7444](https://github.com/ardatan/graphql-mesh/pull/7444)
   [`a4e53d9`](https://github.com/ardatan/graphql-mesh/commit/a4e53d9407b8dcb4b57fb233b8dddfee770d06f5)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.13.0` ↗︎](https://www.npmjs.com/package/qs/v/6.13.0) (from `6.12.3`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.13.0` ↗︎](https://www.npmjs.com/package/qs/v/6.13.0) (from `6.12.3`, in
+    `dependencies`)
 - Updated dependencies
   [[`a4e53d9`](https://github.com/ardatan/graphql-mesh/commit/a4e53d9407b8dcb4b57fb233b8dddfee770d06f5),
   [`8bccd9a`](https://github.com/ardatan/graphql-mesh/commit/8bccd9a2475c49444a8751a1cdc25386fbacc2b7)]:
@@ -1089,8 +1106,8 @@
 - [#7284](https://github.com/ardatan/graphql-mesh/pull/7284)
   [`22e4dd0`](https://github.com/ardatan/graphql-mesh/commit/22e4dd038b73d38b4cf9eaa407c4e652bec77455)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`ajv@8.17.1` ↗︎](https://www.npmjs.com/package/ajv/v/8.17.1) (from
-    `8.16.0`, in `dependencies`)
+  - Updated dependency [`ajv@8.17.1` ↗︎](https://www.npmjs.com/package/ajv/v/8.17.1) (from `8.16.0`,
+    in `dependencies`)
 
 - [#7316](https://github.com/ardatan/graphql-mesh/pull/7316)
   [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)
@@ -1114,20 +1131,20 @@
 - [#6772](https://github.com/ardatan/graphql-mesh/pull/6772)
   [`27e3cc9`](https://github.com/ardatan/graphql-mesh/commit/27e3cc97c1218863cf2948902bdca050bd71d18a)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`, in
+    `dependencies`)
 
 - [#7218](https://github.com/ardatan/graphql-mesh/pull/7218)
   [`ededa2c`](https://github.com/ardatan/graphql-mesh/commit/ededa2c9e0fd44b338f2d3c66adfa1b59b130fa2)
   Thanks [@EmrysMyrddin](https://github.com/EmrysMyrddin)! - dependencies updates:
-  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`, in
+    `dependencies`)
 
 - [#7240](https://github.com/ardatan/graphql-mesh/pull/7240)
   [`3aa1583`](https://github.com/ardatan/graphql-mesh/commit/3aa1583db989ef79a706873e9e5786d1cf61de89)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.3` ↗︎](https://www.npmjs.com/package/qs/v/6.12.3) (from `6.12.2`, in
+    `dependencies`)
 
 - [#7198](https://github.com/ardatan/graphql-mesh/pull/7198)
   [`bdefa6f`](https://github.com/ardatan/graphql-mesh/commit/bdefa6ff98a1b67ee7458e9ed233f261f523baae)
@@ -1156,8 +1173,8 @@
 - [#7191](https://github.com/ardatan/graphql-mesh/pull/7191)
   [`a387451`](https://github.com/ardatan/graphql-mesh/commit/a38745126d8f7f58247afad9d4c16213c6dc4a65)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.12.2` ↗︎](https://www.npmjs.com/package/qs/v/6.12.2) (from `6.12.1`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.2` ↗︎](https://www.npmjs.com/package/qs/v/6.12.2) (from `6.12.1`, in
+    `dependencies`)
 - Updated dependencies
   [[`a387451`](https://github.com/ardatan/graphql-mesh/commit/a38745126d8f7f58247afad9d4c16213c6dc4a65)]:
   - @graphql-mesh/transport-rest@0.3.2
@@ -1416,8 +1433,8 @@
 - [#7065](https://github.com/ardatan/graphql-mesh/pull/7065)
   [`40d9235`](https://github.com/ardatan/graphql-mesh/commit/40d9235fc9b90b5d3b75adc8228b40bc6e476078)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`ajv@8.16.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.16.0) (from
-    `8.15.0`, in `dependencies`)
+  - Updated dependency [`ajv@8.16.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.16.0) (from `8.15.0`,
+    in `dependencies`)
 - Updated dependencies []:
   - @graphql-mesh/types@0.98.7
   - @graphql-mesh/utils@0.98.7
@@ -1431,8 +1448,8 @@
 - [#7057](https://github.com/ardatan/graphql-mesh/pull/7057)
   [`882091b`](https://github.com/ardatan/graphql-mesh/commit/882091b1cb0b76c110b258c7a52a54eec4ad7815)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`ajv@8.15.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.15.0) (from
-    `8.14.0`, in `dependencies`)
+  - Updated dependency [`ajv@8.15.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.15.0) (from `8.14.0`,
+    in `dependencies`)
 
 ## 0.100.9
 
@@ -1441,8 +1458,8 @@
 - [#7023](https://github.com/ardatan/graphql-mesh/pull/7023)
   [`3288e30`](https://github.com/ardatan/graphql-mesh/commit/3288e302d3a8ed82a6138e33fa5c47aa95493aec)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`ajv@8.14.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.14.0) (from
-    `8.13.0`, in `dependencies`)
+  - Updated dependency [`ajv@8.14.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.14.0) (from `8.13.0`,
+    in `dependencies`)
 
 - [#7030](https://github.com/ardatan/graphql-mesh/pull/7030)
   [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)
@@ -1537,8 +1554,8 @@
 - [#6916](https://github.com/ardatan/graphql-mesh/pull/6916)
   [`f6af4b0`](https://github.com/ardatan/graphql-mesh/commit/f6af4b07807f135d131348839230e2923737af79)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`ajv@8.13.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.13.0) (from
-    `8.12.0`, in `dependencies`)
+  - Updated dependency [`ajv@8.13.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.13.0) (from `8.12.0`,
+    in `dependencies`)
 
 ## 0.100.2
 
@@ -1582,8 +1599,8 @@
 - [#6845](https://github.com/ardatan/graphql-mesh/pull/6845)
   [`d793807`](https://github.com/ardatan/graphql-mesh/commit/d793807f43ece9bf797f1b9fc9252ab959753492)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.12.1` ↗︎](https://www.npmjs.com/package/qs/v/6.12.1) (from `6.12.0`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.1` ↗︎](https://www.npmjs.com/package/qs/v/6.12.1) (from `6.12.0`, in
+    `dependencies`)
 
 - [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
   [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
@@ -1659,8 +1676,8 @@
 - [#6645](https://github.com/ardatan/graphql-mesh/pull/6645)
   [`9667954`](https://github.com/ardatan/graphql-mesh/commit/96679547598ccdaf765335b13b937248df662d77)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.12.0` ↗︎](https://www.npmjs.com/package/qs/v/6.12.0) (from `6.11.2`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.12.0` ↗︎](https://www.npmjs.com/package/qs/v/6.12.0) (from `6.11.2`, in
+    `dependencies`)
 - Updated dependencies
   [[`9667954`](https://github.com/ardatan/graphql-mesh/commit/96679547598ccdaf765335b13b937248df662d77)]:
   - @graphql-mesh/transport-rest@0.1.2
@@ -2084,8 +2101,8 @@
   [`bc438f835`](https://github.com/Urigo/graphql-mesh/commit/bc438f83549599a544d956ccbb931cf44fb834f4)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/fetch@^0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0)
-    (from `^0.8.3`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.9.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.0) (from
+    `^0.8.3`, in `dependencies`)
 
 - [#5503](https://github.com/Urigo/graphql-mesh/pull/5503)
   [`3039224b2`](https://github.com/Urigo/graphql-mesh/commit/3039224b2d9f25c2e203fba6ed7aa461cfa4424f)
@@ -2116,8 +2133,8 @@
 - [#5416](https://github.com/Urigo/graphql-mesh/pull/5416)
   [`272c3f9b4`](https://github.com/Urigo/graphql-mesh/commit/272c3f9b4c7f68672e81c05cda5da5ef0e571d88)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.11.2` ↗︎](https://www.npmjs.com/package/qs/v/6.11.2) (from `6.11.1`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.11.2` ↗︎](https://www.npmjs.com/package/qs/v/6.11.2) (from `6.11.1`, in
+    `dependencies`)
 
 - [#5441](https://github.com/Urigo/graphql-mesh/pull/5441)
   [`5a6b66034`](https://github.com/Urigo/graphql-mesh/commit/5a6b6603437b93f8543c3bf35668c64f1a8a510c)
@@ -2137,8 +2154,8 @@
   [`1dd9a6940`](https://github.com/Urigo/graphql-mesh/commit/1dd9a694092094c7f00c6ca53686becadee62cb8)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`json-machete@0.93.0` ↗︎](https://www.npmjs.com/package/json-machete/v/0.93.0) (from `1.0.0`,
-    in `dependencies`)
+    [`json-machete@0.93.0` ↗︎](https://www.npmjs.com/package/json-machete/v/0.93.0) (from `1.0.0`, in
+    `dependencies`)
   - Updated dependency
     [`@graphql-mesh/types@^0.93.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.93.0)
     (from `^1.0.0`, in `peerDependencies`)
@@ -2212,8 +2229,8 @@
 - [#5192](https://github.com/Urigo/graphql-mesh/pull/5192)
   [`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`qs@6.11.1` ↗︎](https://www.npmjs.com/package/qs/v/6.11.1) (from `6.11.0`,
-    in `dependencies`)
+  - Updated dependency [`qs@6.11.1` ↗︎](https://www.npmjs.com/package/qs/v/6.11.1) (from `6.11.0`, in
+    `dependencies`)
 - Updated dependencies
   [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
   - @graphql-mesh/types@0.91.11
@@ -2228,8 +2245,8 @@
   [`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/fetch@^0.8.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.3)
-    (from `^0.8.0`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.8.3` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.3) (from
+    `^0.8.0`, in `dependencies`)
 - Updated dependencies
   [[`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce),
   [`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)]:
@@ -2368,8 +2385,8 @@
     [`@graphql-tools/utils@9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
     (from `9.1.4`, in `dependencies`)
   - Updated dependency
-    [`@whatwg-node/fetch@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.0)
-    (from `^0.6.0`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.8.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.8.0) (from
+    `^0.6.0`, in `dependencies`)
 
 - [`e246b4d63`](https://github.com/Urigo/graphql-mesh/commit/e246b4d63b3c7f2b56c5447d771cc68f6fd6b354)
   Thanks [@ardatan](https://github.com/ardatan)! - Handle `items: null` and `default` values as a
@@ -2418,14 +2435,14 @@
   [`ad938f485`](https://github.com/Urigo/graphql-mesh/commit/ad938f485a9b881a0379284ac582c6c599aa1117)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/fetch@^0.6.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.6.0)
-    (from `^0.5.0`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.6.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.6.0) (from
+    `^0.5.0`, in `dependencies`)
 
 - [#4991](https://github.com/Urigo/graphql-mesh/pull/4991)
   [`bb5abc15d`](https://github.com/Urigo/graphql-mesh/commit/bb5abc15d8ff9227f5fc9fafe78d1befc7ae0797)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`ajv@8.12.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.12.0) (from
-    `8.11.2`, in `dependencies`)
+  - Updated dependency [`ajv@8.12.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.12.0) (from `8.11.2`,
+    in `dependencies`)
 
 - [#5028](https://github.com/Urigo/graphql-mesh/pull/5028)
   [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c)
@@ -2630,8 +2647,8 @@
   - Updated dependency
     [`@graphql-tools/utils@9.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.1)
     (from `9.1.0`, in `dependencies`)
-  - Updated dependency [`ajv@8.11.2` ↗︎](https://www.npmjs.com/package/ajv/v/8.11.2) (from
-    `8.11.0`, in `dependencies`)
+  - Updated dependency [`ajv@8.11.2` ↗︎](https://www.npmjs.com/package/ajv/v/8.11.2) (from `8.11.0`,
+    in `dependencies`)
 
 - [#4792](https://github.com/Urigo/graphql-mesh/pull/4792)
   [`d63bd93e0`](https://github.com/Urigo/graphql-mesh/commit/d63bd93e0feedf7bcdb4dc49c22e3c09d11ee8ea)
@@ -2781,8 +2798,8 @@
   [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0)
-    (from `^0.4.6`, in `dependencies`)
+    [`@whatwg-node/fetch@^0.5.0` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.5.0) (from
+    `^0.4.6`, in `dependencies`)
   - Updated dependency
     [`graphql-scalars@1.20.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.20.0) (from
     `1.19.0`, in `dependencies`)

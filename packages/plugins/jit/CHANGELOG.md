@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-jit
 
+## 0.2.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/utils@0.104.17
+
 ## 0.2.16
 
 ### Patch Changes
@@ -29,8 +37,8 @@
   [`e4204ad`](https://github.com/ardatan/graphql-mesh/commit/e4204ad7ac39a247ee5ae0da18f2051e543ba1fb)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^5.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.3.2) (from
-    `^5.1.0`, in `dependencies`)
+    [`@envelop/core@^5.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.3.2) (from `^5.1.0`,
+    in `dependencies`)
 - Updated dependencies
   [[`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
   [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38)]:
@@ -174,8 +182,8 @@
   [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`@envelop/core@^5.1.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.1.0) (from
-    `^5.0.2`, in `dependencies`)
+    [`@envelop/core@^5.1.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.1.0) (from `^5.0.2`,
+    in `dependencies`)
 - Updated dependencies
   [[`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
   - @graphql-mesh/utils@0.103.18
@@ -278,9 +286,8 @@
 - [#8092](https://github.com/ardatan/graphql-mesh/pull/8092)
   [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
-  - Added dependency
-    [`@envelop/core@^5.0.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.2) (to
-    `dependencies`)
+  - Added dependency [`@envelop/core@^5.0.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.0.2)
+    (to `dependencies`)
   - Added dependency
     [`@graphql-mesh/utils@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.103.5)
     (to `dependencies`)

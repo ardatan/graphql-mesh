@@ -1,5 +1,14 @@
 # example-response-cache
 
+## 0.6.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.20
+  - @graphql-mesh/json-schema@0.109.19
+  - @graphql-mesh/plugin-mock@0.105.19
+
 ## 0.6.21
 
 ### Patch Changes

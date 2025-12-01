@@ -1,5 +1,19 @@
 # @graphql-mesh/utils
 
+## 0.104.17
+
+### Patch Changes
+
+- [#9022](https://github.com/ardatan/graphql-mesh/pull/9022)
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.0)
+    (from `^11.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+
 ## 0.104.16
 
 ### Patch Changes
@@ -1562,8 +1576,8 @@
 - [#5311](https://github.com/Urigo/graphql-mesh/pull/5311)
   [`4296a55f4`](https://github.com/Urigo/graphql-mesh/commit/4296a55f4a6fb1c8e1701403cfe88067255ae9b7)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`tiny-lru@^11.0.0` ↗︎](https://www.npmjs.com/package/tiny-lru/v/11.0.0)
-    (from `^8.0.2`, in `dependencies`)
+  - Updated dependency [`tiny-lru@^11.0.0` ↗︎](https://www.npmjs.com/package/tiny-lru/v/11.0.0) (from
+    `^8.0.2`, in `dependencies`)
 
 - [#5446](https://github.com/Urigo/graphql-mesh/pull/5446)
   [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d)
@@ -2308,8 +2322,8 @@
   - Removed dependency
     [`@graphql-typed-document-node/core@3.1.1` ↗︎](https://www.npmjs.com/package/@graphql-typed-document-node/core/v/3.1.1)
     (from `dependencies`)
-  - Removed dependency [`fetchache@0.1.2` ↗︎](https://www.npmjs.com/package/fetchache/v/0.1.2)
-    (from `dependencies`)
+  - Removed dependency [`fetchache@0.1.2` ↗︎](https://www.npmjs.com/package/fetchache/v/0.1.2) (from
+    `dependencies`)
   - Removed dependency
     [`@whatwg-node/fetch@0.3.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.3.2) (from
     `dependencies`)
@@ -2353,8 +2367,8 @@
   - Removed dependency
     [`@graphql-typed-document-node/core@3.1.1` ↗︎](https://www.npmjs.com/package/@graphql-typed-document-node/core/v/3.1.1)
     (from `dependencies`)
-  - Removed dependency [`fetchache@0.1.3` ↗︎](https://www.npmjs.com/package/fetchache/v/0.1.3)
-    (from `dependencies`)
+  - Removed dependency [`fetchache@0.1.3` ↗︎](https://www.npmjs.com/package/fetchache/v/0.1.3) (from
+    `dependencies`)
   - Removed dependency
     [`@whatwg-node/fetch@0.4.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.4.2) (from
     `dependencies`)
@@ -2372,8 +2386,8 @@
 - [#4453](https://github.com/Urigo/graphql-mesh/pull/4453)
   [`2a3753b5a`](https://github.com/Urigo/graphql-mesh/commit/2a3753b5a4bd23c7c89f4f08a3e55093e24902a8)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
-  - Updated dependency [`fetchache@0.1.3` ↗︎](https://www.npmjs.com/package/fetchache/v/0.1.3)
-    (from `0.1.2`, in `dependencies`)
+  - Updated dependency [`fetchache@0.1.3` ↗︎](https://www.npmjs.com/package/fetchache/v/0.1.3) (from
+    `0.1.2`, in `dependencies`)
   - Updated dependency
     [`@whatwg-node/fetch@0.4.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.4.2) (from
     `0.3.2`, in `dependencies`)

@@ -1,5 +1,17 @@
 # @graphql-mesh/grpc
 
+## 0.108.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+  - @graphql-mesh/store@0.104.18
+  - @graphql-mesh/transport-grpc@0.3.17
+
 ## 0.108.18
 
 ### Patch Changes
@@ -638,8 +650,8 @@
     [`@grpc/grpc-js@^1.1.7` ↗︎](https://www.npmjs.com/package/@grpc/grpc-js/v/1.1.7) (from
     `dependencies`)
   - Removed dependency
-    [`@grpc/proto-loader@^0.7.8` ↗︎](https://www.npmjs.com/package/@grpc/proto-loader/v/0.7.8)
-    (from `dependencies`)
+    [`@grpc/proto-loader@^0.7.8` ↗︎](https://www.npmjs.com/package/@grpc/proto-loader/v/0.7.8) (from
+    `dependencies`)
   - Removed dependency [`globby@^11.1.0` ↗︎](https://www.npmjs.com/package/globby/v/11.1.0) (from
     `dependencies`)
   - Removed dependency

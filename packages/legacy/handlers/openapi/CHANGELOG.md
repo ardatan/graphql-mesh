@@ -1,5 +1,17 @@
 # @graphql-mesh/openapi
 
+## 0.109.25
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+  - @graphql-mesh/store@0.104.18
+  - @omnigraph/openapi@0.109.24
+
 ## 0.109.24
 
 ### Patch Changes
@@ -1671,8 +1683,8 @@
   [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`@omnigraph/openapi@0.93.2` ↗︎](https://www.npmjs.com/package/@omnigraph/openapi/v/0.93.2)
-    (from `0.93.1`, in `dependencies`)
+    [`@omnigraph/openapi@0.93.2` ↗︎](https://www.npmjs.com/package/@omnigraph/openapi/v/0.93.2) (from
+    `0.93.1`, in `dependencies`)
 
 - [#5446](https://github.com/Urigo/graphql-mesh/pull/5446)
   [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d)
@@ -1714,8 +1726,8 @@
   [`1dd9a6940`](https://github.com/Urigo/graphql-mesh/commit/1dd9a694092094c7f00c6ca53686becadee62cb8)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Updated dependency
-    [`@omnigraph/openapi@0.93.0` ↗︎](https://www.npmjs.com/package/@omnigraph/openapi/v/0.93.0)
-    (from `1.0.0`, in `dependencies`)
+    [`@omnigraph/openapi@0.93.0` ↗︎](https://www.npmjs.com/package/@omnigraph/openapi/v/0.93.0) (from
+    `1.0.0`, in `dependencies`)
   - Updated dependency
     [`@graphql-mesh/store@^0.93.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.93.0)
     (from `^1.0.0`, in `peerDependencies`)
@@ -2104,8 +2116,8 @@
   [`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)
   Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
   - Added dependency
-    [`@graphql-tools/utils@9.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.3)
-    (to `dependencies`)
+    [`@graphql-tools/utils@9.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.3) (to
+    `dependencies`)
 - Updated dependencies
   [[`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)]:
   - @omnigraph/openapi@0.19.0
@@ -2270,8 +2282,8 @@
     [`@graphql-mesh/types@0.85.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.85.2)
     (from `0.85.1`, in `dependencies`)
   - Updated dependency
-    [`@omnigraph/openapi@0.17.1` ↗︎](https://www.npmjs.com/package/@omnigraph/openapi/v/0.17.1)
-    (from `0.17.0`, in `dependencies`)
+    [`@omnigraph/openapi@0.17.1` ↗︎](https://www.npmjs.com/package/@omnigraph/openapi/v/0.17.1) (from
+    `0.17.0`, in `dependencies`)
   - Updated dependency
     [`@graphql-mesh/utils@0.42.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.42.1)
     (from `0.42.0`, in `dependencies`)
@@ -2778,17 +2790,16 @@
   - Removed dependency
     [`jsonpath-plus@7.0.0` ↗︎](https://www.npmjs.com/package/jsonpath-plus/v/7.0.0) (from
     `dependencies`)
-  - Removed dependency
-    [`json-pointer@0.6.2` ↗︎](https://www.npmjs.com/package/json-pointer/v/0.6.2) (from
-    `dependencies`)
+  - Removed dependency [`json-pointer@0.6.2` ↗︎](https://www.npmjs.com/package/json-pointer/v/0.6.2)
+    (from `dependencies`)
   - Removed dependency
     [`openapi-diff@0.23.6` ↗︎](https://www.npmjs.com/package/openapi-diff/v/0.23.6) (from
     `dependencies`)
   - Removed dependency
     [`graphql-scalars@1.18.0` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.18.0) (from
     `dependencies`)
-  - Removed dependency [`pluralize@8.0.0` ↗︎](https://www.npmjs.com/package/pluralize/v/8.0.0)
-    (from `dependencies`)
+  - Removed dependency [`pluralize@8.0.0` ↗︎](https://www.npmjs.com/package/pluralize/v/8.0.0) (from
+    `dependencies`)
   - Removed dependency [`qs@6.11.0` ↗︎](https://www.npmjs.com/package/qs/v/6.11.0) (from
     `dependencies`)
   - Removed dependency
@@ -3031,8 +3042,8 @@
   [`162c06744`](https://github.com/Urigo/graphql-mesh/commit/162c067448c74ff0ed4a8ee78d39c8aecf87f67e)
   Thanks [@renovate](https://github.com/apps/renovate)! - ### Dependencies Updates
   - Updated dependency
-    ([`openapi-diff@0.23.6` ↗︎](https://www.npmjs.com/package/openapi-diff/v/0.23.6)) (was
-    `0.23.5`, in `dependencies`)
+    ([`openapi-diff@0.23.6` ↗︎](https://www.npmjs.com/package/openapi-diff/v/0.23.6)) (was `0.23.5`,
+    in `dependencies`)
 
 * [#4228](https://github.com/Urigo/graphql-mesh/pull/4228)
   [`31d5f6eaa`](https://github.com/Urigo/graphql-mesh/commit/31d5f6eaac6342c2d8786ea4b3e5b774fe95a5ff)

@@ -1,5 +1,22 @@
 # @graphql-mesh/graphql
 
+## 0.104.18
+
+### Patch Changes
+
+- [#9022](https://github.com/ardatan/graphql-mesh/pull/9022)
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.0)
+    (from `^11.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+  - @graphql-mesh/store@0.104.18
+
 ## 0.104.17
 
 ### Patch Changes
@@ -1651,8 +1668,8 @@
     [`@graphql-tools/url-loader@7.17.18` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.17.18)
     (from `7.17.17`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.4.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.4.2)
-    (from `9.4.1`, in `dependencies`)
+    [`@graphql-tools/wrap@9.4.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.4.2) (from
+    `9.4.1`, in `dependencies`)
 - Updated dependencies
   [[`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
   [`0d73b3f71`](https://github.com/Urigo/graphql-mesh/commit/0d73b3f71e847d751eea130df62d795c3b06a192),
@@ -1682,8 +1699,8 @@
     [`@graphql-tools/delegate@9.0.29` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.29)
     (from `9.0.28`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.4.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.4.0)
-    (from `9.3.8`, in `dependencies`)
+    [`@graphql-tools/wrap@9.4.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.4.0) (from
+    `9.3.8`, in `dependencies`)
 
 - [#5301](https://github.com/Urigo/graphql-mesh/pull/5301)
   [`3926ac41a`](https://github.com/Urigo/graphql-mesh/commit/3926ac41ac3405ea352b5a945d33770c5bf5d3c2)
@@ -1695,8 +1712,8 @@
     [`@graphql-tools/url-loader@7.17.15` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.17.15)
     (from `7.17.14`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.4.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.4.1)
-    (from `9.4.0`, in `dependencies`)
+    [`@graphql-tools/wrap@9.4.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.4.1) (from
+    `9.4.0`, in `dependencies`)
 - Updated dependencies
   [[`20de686dc`](https://github.com/Urigo/graphql-mesh/commit/20de686dcd414112c841cd2c11b1567b82bee134),
   [`3926ac41a`](https://github.com/Urigo/graphql-mesh/commit/3926ac41ac3405ea352b5a945d33770c5bf5d3c2),
@@ -1746,8 +1763,8 @@
     [`@graphql-tools/url-loader@7.17.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.17.14)
     (from `7.17.13`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.3.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.8)
-    (from `9.3.7`, in `dependencies`)
+    [`@graphql-tools/wrap@9.3.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.8) (from
+    `9.3.7`, in `dependencies`)
 - Updated dependencies
   [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
   - @graphql-mesh/types@0.91.11
@@ -1808,8 +1825,8 @@
     [`@graphql-tools/delegate@9.0.28` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.28)
     (from `9.0.27`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.3.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.7)
-    (from `9.3.6`, in `dependencies`)
+    [`@graphql-tools/wrap@9.3.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.7) (from
+    `9.3.6`, in `dependencies`)
 - Updated dependencies
   [[`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
   [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)]:
@@ -1851,8 +1868,8 @@
     [`@graphql-tools/url-loader@7.17.13` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.17.13)
     (from `7.17.12`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.3.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.6)
-    (from `9.3.5`, in `dependencies`)
+    [`@graphql-tools/wrap@9.3.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.6) (from
+    `9.3.5`, in `dependencies`)
 - Updated dependencies
   [[`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e),
   [`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e)]:
@@ -1899,8 +1916,8 @@
     [`@graphql-tools/utils@9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.2.1)
     (from `9.1.4`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.3.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.5)
-    (from `9.3.3`, in `dependencies`)
+    [`@graphql-tools/wrap@9.3.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.5) (from
+    `9.3.3`, in `dependencies`)
 
 - [`a3a315b38`](https://github.com/Urigo/graphql-mesh/commit/a3a315b380133dc304e2da9f56b7d0774ae5fdc9)
   Thanks [@ardatan](https://github.com/ardatan)! - Handle local source files inside the artifacts
@@ -1935,8 +1952,8 @@
     [`@graphql-tools/url-loader@7.17.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.17.5)
     (from `7.17.4`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.3.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.3)
-    (from `9.3.2`, in `dependencies`)
+    [`@graphql-tools/wrap@9.3.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.3) (from
+    `9.3.2`, in `dependencies`)
 - Updated dependencies
   [[`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
   [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
@@ -1959,8 +1976,8 @@
     [`@graphql-tools/url-loader@7.17.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.17.4)
     (from `7.17.3`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.3.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.2)
-    (from `9.3.1`, in `dependencies`)
+    [`@graphql-tools/wrap@9.3.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.2) (from
+    `9.3.1`, in `dependencies`)
 - Updated dependencies
   [[`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5),
   [`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5)]:
@@ -1996,8 +2013,8 @@
     [`@graphql-tools/utils@9.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/9.1.4)
     (from `9.1.3`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.3.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.0)
-    (from `9.2.23`, in `dependencies`)
+    [`@graphql-tools/wrap@9.3.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.3.0) (from
+    `9.2.23`, in `dependencies`)
 
 - [#4930](https://github.com/Urigo/graphql-mesh/pull/4930)
   [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664)
@@ -2302,8 +2319,8 @@
     [`@graphql-tools/url-loader@7.16.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.16.8)
     (from `7.16.6`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.7)
-    (from `9.2.5`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.7) (from
+    `9.2.5`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.12)
     (from `9.0.10`, in `dependencies`)
@@ -2322,8 +2339,8 @@
     [`@graphql-tools/url-loader@7.16.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.16.10)
     (from `7.16.8`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.9)
-    (from `9.2.7`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.9) (from
+    `9.2.7`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.14)
     (from `9.0.12`, in `dependencies`)
@@ -2357,8 +2374,8 @@
     [`@graphql-tools/url-loader@7.16.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.16.6)
     (from `7.16.5`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.5)
-    (from `9.2.4`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.5) (from
+    `9.2.4`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.10)
     (from `9.0.9`, in `dependencies`)
@@ -2396,8 +2413,8 @@
     [`@graphql-tools/url-loader@7.16.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.16.5)
     (from `7.16.4`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.4)
-    (from `9.2.3`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.4) (from
+    `9.2.3`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.9)
     (from `9.0.8`, in `dependencies`)
@@ -2516,8 +2533,8 @@
     [`@graphql-tools/url-loader@7.16.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.16.4)
     (from `7.16.2`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.3)
-    (from `9.2.1`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.3) (from
+    `9.2.1`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.8)
     (from `9.0.6`, in `dependencies`)
@@ -2539,8 +2556,8 @@
     [`@graphql-tools/url-loader@7.16.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.16.4)
     (from `7.16.2`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.3)
-    (from `9.2.1`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.3) (from
+    `9.2.1`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.8)
     (from `9.0.6`, in `dependencies`)
@@ -2623,8 +2640,8 @@
     [`@graphql-tools/url-loader@7.16.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.16.2)
     (from `7.16.1`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.1)
-    (from `9.2.0`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.1) (from
+    `9.2.0`, in `dependencies`)
 
 ## 0.31.11
 
@@ -2659,8 +2676,8 @@
     [`@graphql-tools/url-loader@7.16.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.16.1)
     (from `7.14.2`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0)
-    (from `9.0.5`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0) (from
+    `9.0.5`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.6)
     (from `9.0.4`, in `dependencies`)
@@ -2696,8 +2713,8 @@
     [`@graphql-tools/url-loader@7.16.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.16.1)
     (from `7.15.0`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0)
-    (from `9.0.6`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0) (from
+    `9.0.6`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.6)
     (from `9.0.5`, in `dependencies`)
@@ -2755,8 +2772,8 @@
   [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.6)
-    (from `9.0.5`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.6) (from
+    `9.0.5`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.5)
     (from `9.0.4`, in `dependencies`)
@@ -2841,8 +2858,8 @@
     [`@graphql-tools/url-loader@7.14.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.14.1)
     (from `7.14.0`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.5)
-    (from `9.0.4`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.5) (from
+    `9.0.4`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.4)
     (from `9.0.3`, in `dependencies`)
@@ -2857,8 +2874,8 @@
     [`@graphql-tools/url-loader@7.14.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.14.1)
     (from `7.14.0`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.5)
-    (from `9.0.4`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.5) (from
+    `9.0.4`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.4)
     (from `9.0.3`, in `dependencies`)
@@ -2967,8 +2984,8 @@
     [`@graphql-tools/url-loader@7.13.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.13.5)
     (was `7.13.4`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.1)
-    (was `9.0.0`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.1) (was
+    `9.0.0`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.1)
     (was `9.0.0`, in `dependencies`)
@@ -2983,8 +3000,8 @@
     [`@graphql-tools/url-loader@7.13.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.13.8)
     (was `7.13.5`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.4)
-    (was `9.0.1`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.4) (was
+    `9.0.1`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.3)
     (was `9.0.1`, in `dependencies`)
@@ -3014,8 +3031,8 @@
     [`@graphql-tools/url-loader@7.13.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/7.13.4)
     (was `7.13.3`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.0)
-    (was `8.5.1`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.0) (was
+    `8.5.1`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/delegate@9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/9.0.0)
     (was `8.8.1`, in `dependencies`)

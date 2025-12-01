@@ -1,5 +1,18 @@
 # @omnigraph/openapi
 
+## 0.109.24
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+  - @omnigraph/json-schema@0.109.18
+  - @graphql-mesh/fusion-composition@0.8.21
+
 ## 0.109.23
 
 ### Patch Changes
@@ -2077,8 +2090,8 @@
     [`@omnigraph/json-schema@^0.93.0` ↗︎](https://www.npmjs.com/package/@omnigraph/json-schema/v/0.93.0)
     (from `^1.0.0`, in `dependencies`)
   - Updated dependency
-    [`json-machete@^0.93.0` ↗︎](https://www.npmjs.com/package/json-machete/v/0.93.0) (from
-    `^1.0.0`, in `dependencies`)
+    [`json-machete@^0.93.0` ↗︎](https://www.npmjs.com/package/json-machete/v/0.93.0) (from `^1.0.0`,
+    in `dependencies`)
   - Updated dependency
     [`@graphql-mesh/types@^0.93.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.93.0)
     (from `^1.0.0`, in `peerDependencies`)
@@ -2407,8 +2420,8 @@
   [`766be703f`](https://github.com/Urigo/graphql-mesh/commit/766be703f88bbac7a5d1a15cc506cb186791fcf2)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`openapi-types@12.1.0` ↗︎](https://www.npmjs.com/package/openapi-types/v/12.1.0) (from
-    `12.0.2`, in `dependencies`)
+    [`openapi-types@12.1.0` ↗︎](https://www.npmjs.com/package/openapi-types/v/12.1.0) (from `12.0.2`,
+    in `dependencies`)
 
 ## 0.19.4
 
@@ -3087,8 +3100,8 @@
   [`59dbb1985`](https://github.com/Urigo/graphql-mesh/commit/59dbb1985b07a250f0113d70e0f55e467dc17812)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`openapi-types@12.0.2` ↗︎](https://www.npmjs.com/package/openapi-types/v/12.0.2) (from
-    `12.0.0`, in `dependencies`)
+    [`openapi-types@12.0.2` ↗︎](https://www.npmjs.com/package/openapi-types/v/12.0.2) (from `12.0.0`,
+    in `dependencies`)
 
 - [`e1891993c`](https://github.com/Urigo/graphql-mesh/commit/e1891993c1b638987b62ea93f5571f656f668ccc)
   Thanks [@ardatan](https://github.com/ardatan)! - Respect descriptions for binary/file fields and

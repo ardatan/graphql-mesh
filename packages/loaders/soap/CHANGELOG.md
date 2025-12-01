@@ -1,5 +1,16 @@
 # @omnigraph/soap
 
+## 0.107.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+  - @graphql-mesh/transport-soap@0.10.18
+
 ## 0.107.17
 
 ### Patch Changes
@@ -1305,8 +1316,8 @@
     [`@graphql-mesh/transport-soap@^0.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-soap/v/0.0.0)
     (to `dependencies`)
   - Added dependency
-    [`@whatwg-node/fetch@^0.9.15` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.15)
-    (to `dependencies`)
+    [`@whatwg-node/fetch@^0.9.15` ↗︎](https://www.npmjs.com/package/@whatwg-node/fetch/v/0.9.15) (to
+    `dependencies`)
 - Updated dependencies
   [[`ae7b085`](https://github.com/ardatan/graphql-mesh/commit/ae7b085e93ba911f03bbfd2a15ff9ca8be9f4de8),
   [`a7984e5`](https://github.com/ardatan/graphql-mesh/commit/a7984e5ab214ddd7f75dca0f03b2e7e8ad768211)]:

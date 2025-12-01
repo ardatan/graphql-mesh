@@ -1,5 +1,17 @@
 # @graphql-mesh/compose-cli
 
+## 1.5.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+  - @graphql-mesh/fusion-composition@0.8.21
+  - @graphql-mesh/include@0.3.17
+
 ## 1.5.3
 
 ### Patch Changes
@@ -1596,8 +1608,7 @@
 - [#6779](https://github.com/ardatan/graphql-mesh/pull/6779)
   [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)
   Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
-  - Added dependency [`tsx@^4.7.1` ↗︎](https://www.npmjs.com/package/tsx/v/4.7.1) (to
-    `dependencies`)
+  - Added dependency [`tsx@^4.7.1` ↗︎](https://www.npmjs.com/package/tsx/v/4.7.1) (to `dependencies`)
   - Removed dependency [`ts-node@^10.9.2` ↗︎](https://www.npmjs.com/package/ts-node/v/10.9.2) (from
     `dependencies`)
 

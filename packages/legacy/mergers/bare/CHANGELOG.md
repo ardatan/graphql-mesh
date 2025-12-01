@@ -1,5 +1,17 @@
 # @graphql-mesh/merger-bare
 
+## 0.105.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/merger-stitching@0.105.18
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+
 ## 0.105.17
 
 ### Patch Changes
@@ -2090,8 +2102,8 @@
     [`@graphql-mesh/merger-stitching@0.16.23` ↗︎](https://www.npmjs.com/package/@graphql-mesh/merger-stitching/v/0.16.23)
     (to `dependencies`)
   - Removed dependency
-    [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0)
-    (from `dependencies`)
+    [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0) (from
+    `dependencies`)
 
 - [#4487](https://github.com/Urigo/graphql-mesh/pull/4487)
   [`39f440e36`](https://github.com/Urigo/graphql-mesh/commit/39f440e36018f98a41a37b5465ea6617c5fc6c7e)
@@ -2124,8 +2136,8 @@
     [`@graphql-mesh/utils@0.41.8` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.41.8)
     (from `0.41.2`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0)
-    (from `9.0.5`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0) (from
+    `9.0.5`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.4)
     (from `9.0.2`, in `dependencies`)
@@ -2147,8 +2159,8 @@
   [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0)
-    (from `9.0.6`, in `dependencies`)
+    [`@graphql-tools/wrap@9.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.2.0) (from
+    `9.0.6`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.4)
     (from `9.0.3`, in `dependencies`)
@@ -2199,8 +2211,8 @@
   [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.6)
-    (from `9.0.5`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.6) (from
+    `9.0.5`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.3)
     (from `9.0.2`, in `dependencies`)
@@ -2250,8 +2262,8 @@
   [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.5)
-    (from `9.0.4`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.5) (from
+    `9.0.4`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.2)
     (from `9.0.1`, in `dependencies`)
@@ -2263,8 +2275,8 @@
   [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.5)
-    (from `9.0.4`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.5) (from
+    `9.0.4`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.2)
     (from `9.0.1`, in `dependencies`)
@@ -2331,8 +2343,8 @@
   [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.1)
-    (was `9.0.0`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.1) (was
+    `9.0.0`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.1)
     (was `9.0.0`, in `dependencies`)
@@ -2344,8 +2356,8 @@
   [`991373717`](https://github.com/Urigo/graphql-mesh/commit/99137371708b7fe12b32dfcfe93d535507a7f968)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.4)
-    (was `9.0.1`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.4) (was
+    `9.0.1`, in `dependencies`)
 
 * Updated dependencies
   [[`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2),
@@ -2363,8 +2375,8 @@
   [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/wrap@9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.0)
-    (was `8.5.1`, in `dependencies`)
+    [`@graphql-tools/wrap@9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/9.0.0) (was
+    `8.5.1`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.0)
     (was `8.5.1`, in `dependencies`)

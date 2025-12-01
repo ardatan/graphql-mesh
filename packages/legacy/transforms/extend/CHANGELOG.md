@@ -1,5 +1,15 @@
 # @graphql-mesh/transform-extend
 
+## 0.104.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+
 ## 0.104.16
 
 ### Patch Changes
@@ -895,8 +905,8 @@
     [`@graphql-tools/graphql-file-loader@8.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.0.1)
     (from `8.0.0`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/load@8.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.0.2)
-    (from `8.0.1`, in `dependencies`)
+    [`@graphql-tools/load@8.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.0.2) (from
+    `8.0.1`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@10.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.3)
     (from `10.0.2`, in `dependencies`)
@@ -966,8 +976,8 @@
   [`865adb8`](https://github.com/ardatan/graphql-mesh/commit/865adb812c2dd12496d0ef296632bfa6e3e4012f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@8.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.0.1)
-    (from `8.0.0`, in `dependencies`)
+    [`@graphql-tools/load@8.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.0.1) (from
+    `8.0.0`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@10.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.2)
     (from `10.0.0`, in `dependencies`)
@@ -1150,8 +1160,8 @@
     [`@graphql-tools/graphql-file-loader@8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.0.0)
     (from `7.5.17`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/load@8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.0.0)
-    (from `7.8.14`, in `dependencies`)
+    [`@graphql-tools/load@8.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.0.0) (from
+    `7.8.14`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@10.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.0)
     (from `9.0.19`, in `dependencies`)
@@ -1448,8 +1458,8 @@
     [`@graphql-tools/graphql-file-loader@7.5.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/7.5.14)
     (from `7.5.13`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/load@7.8.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.9)
-    (from `7.8.8`, in `dependencies`)
+    [`@graphql-tools/load@7.8.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.9) (from
+    `7.8.8`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.13` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.13)
     (from `9.0.12`, in `dependencies`)
@@ -1530,8 +1540,8 @@
     [`@graphql-tools/graphql-file-loader@7.5.13` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/7.5.13)
     (from `7.5.11`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/load@7.8.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.8)
-    (from `7.8.6`, in `dependencies`)
+    [`@graphql-tools/load@7.8.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.8) (from
+    `7.8.6`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/schema@9.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/9.0.12)
     (from `9.0.10`, in `dependencies`)
@@ -1585,8 +1595,8 @@
   [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.8.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.5)
-    (from `7.8.4`, in `dependencies`)
+    [`@graphql-tools/load@7.8.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.5) (from
+    `7.8.4`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.11)
     (from `7.3.10`, in `dependencies`)
@@ -1604,8 +1614,8 @@
   [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.8.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.6)
-    (from `7.8.5`, in `dependencies`)
+    [`@graphql-tools/load@7.8.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.6) (from
+    `7.8.5`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.12)
     (from `7.3.11`, in `dependencies`)
@@ -1642,8 +1652,8 @@
   [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.8.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.3)
-    (from `7.8.2`, in `dependencies`)
+    [`@graphql-tools/load@7.8.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.3) (from
+    `7.8.2`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.9)
     (from `7.3.8`, in `dependencies`)
@@ -1665,8 +1675,8 @@
   [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.8.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.4)
-    (from `7.8.3`, in `dependencies`)
+    [`@graphql-tools/load@7.8.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.4) (from
+    `7.8.3`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.10)
     (from `7.3.9`, in `dependencies`)
@@ -1697,8 +1707,8 @@
   [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.8.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.2)
-    (from `7.8.1`, in `dependencies`)
+    [`@graphql-tools/load@7.8.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.2) (from
+    `7.8.1`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.8)
     (from `7.3.7`, in `dependencies`)
@@ -1736,8 +1746,8 @@
   [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.8.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.1)
-    (from `7.8.0`, in `dependencies`)
+    [`@graphql-tools/load@7.8.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.1) (from
+    `7.8.0`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.7)
     (from `7.3.6`, in `dependencies`)
@@ -1785,8 +1795,8 @@
   [`c72d904dc`](https://github.com/Urigo/graphql-mesh/commit/c72d904dc11adfd3b6ee1695b1aaeae6ab64e1e9)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.8.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.0)
-    (from `7.7.7`, in `dependencies`)
+    [`@graphql-tools/load@7.8.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.8.0) (from
+    `7.7.7`, in `dependencies`)
 - Updated dependencies
   [[`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786)]:
   - @graphql-mesh/types@0.85.2
@@ -1935,8 +1945,8 @@
     [`@graphql-mesh/utils@0.41.8` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.41.8)
     (from `0.41.2`, in `dependencies`)
   - Updated dependency
-    [`@graphql-tools/load@7.7.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.7)
-    (from `7.7.5`, in `dependencies`)
+    [`@graphql-tools/load@7.7.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.7) (from
+    `7.7.5`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.6)
     (from `7.3.4`, in `dependencies`)
@@ -1969,8 +1979,8 @@
   [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.7.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.7)
-    (from `7.7.6`, in `dependencies`)
+    [`@graphql-tools/load@7.7.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.7) (from
+    `7.7.6`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.6)
     (from `7.3.5`, in `dependencies`)
@@ -2029,8 +2039,8 @@
   [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.7.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.6)
-    (from `7.7.5`, in `dependencies`)
+    [`@graphql-tools/load@7.7.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.6) (from
+    `7.7.5`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.5)
     (from `7.3.4`, in `dependencies`)
@@ -2088,8 +2098,8 @@
   [`e69462cac`](https://github.com/Urigo/graphql-mesh/commit/e69462cac667c4ffb2d9ba35adeef15264d263fd)
   Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.7.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.5)
-    (from `7.7.4`, in `dependencies`)
+    [`@graphql-tools/load@7.7.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.5) (from
+    `7.7.4`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.4)
     (from `7.3.3`, in `dependencies`)
@@ -2107,8 +2117,8 @@
   [`12ae4469a`](https://github.com/Urigo/graphql-mesh/commit/12ae4469aa89d613bfd36a87579adc1ae62c4a1f)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.7.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.5)
-    (from `7.7.4`, in `dependencies`)
+    [`@graphql-tools/load@7.7.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.5) (from
+    `7.7.4`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.4)
     (from `7.3.3`, in `dependencies`)
@@ -2184,8 +2194,8 @@
   [`a2e59dfdd`](https://github.com/Urigo/graphql-mesh/commit/a2e59dfdd70b8a7bc0e9d658ff1a53029757eaa2)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.7.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.4)
-    (was `7.7.3`, in `dependencies`)
+    [`@graphql-tools/load@7.7.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.4) (was
+    `7.7.3`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.3)
     (was `7.3.2`, in `dependencies`)
@@ -2217,8 +2227,8 @@
   [`db10974ea`](https://github.com/Urigo/graphql-mesh/commit/db10974eaa422967b3ce0ff0101ae97bca3ebf73)
   Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
   - Updated dependency
-    [`@graphql-tools/load@7.7.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.3)
-    (was `7.7.1`, in `dependencies`)
+    [`@graphql-tools/load@7.7.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/7.7.3) (was
+    `7.7.1`, in `dependencies`)
   - Updated dependency
     [`@graphql-tools/code-file-loader@7.3.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/7.3.2)
     (was `7.3.1`, in `dependencies`)
