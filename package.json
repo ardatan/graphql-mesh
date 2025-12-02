@@ -105,10 +105,10 @@
     "lru-cache": "11.2.2",
     "minimatch": "10.1.1",
     "node-gyp": "^12.0.0",
-    "prettier": "3.7.1",
+    "prettier": "3.7.3",
     "threads": "^1.7.0",
-    "ts-jest": "29.4.5",
-    "tsx": "^4.19.0",
+    "ts-jest": "29.4.6",
+    "tsx": "^4.21.0",
     "typescript": "^5.4.2"
   },
   "resolutions": {
