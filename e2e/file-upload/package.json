@@ -3,8 +3,8 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.1.20",
-    "@graphql-tools/schema": "^10.0.6",
+    "@graphql-hive/gateway": "^2.1.22",
+    "@graphql-tools/schema": "^10.0.30",
     "graphql": "16.12.0"
   }
 }
