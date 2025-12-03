@@ -48,10 +48,10 @@
     "@graphql-tools/graphql-file-loader": "^8.0.0",
     "@graphql-tools/load": "^8.0.0",
     "@graphql-tools/utils": "^10.8.0",
-    "@graphql-yoga/plugin-persisted-operations": "^3.0.0",
+    "@graphql-yoga/plugin-persisted-operations": "^3.17.1",
     "@whatwg-node/fetch": "^0.10.6",
     "camel-case": "^4.1.2",
-    "graphql-yoga": "^5.13.4",
+    "graphql-yoga": "^5.17.1",
     "param-case": "^3.0.4",
     "pascal-case": "^3.1.2",
     "tslib": "^2.4.0"
