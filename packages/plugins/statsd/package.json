@@ -40,7 +40,7 @@
     "@graphql-mesh/types": "^0.104.17",
     "@graphql-mesh/utils": "^0.104.17",
     "@whatwg-node/disposablestack": "^0.0.6",
-    "hot-shots": "^11.0.0",
+    "hot-shots": "^11.3.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

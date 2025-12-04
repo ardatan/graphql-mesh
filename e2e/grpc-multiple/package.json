@@ -5,7 +5,7 @@
   "dependencies": {
     "@graphql-hive/gateway": "^2.1.22",
     "@graphql-mesh/compose-cli": "workspace:*",
-    "@grpc/grpc-js": "^1.12.2",
+    "@grpc/grpc-js": "^1.14.2",
     "@grpc/proto-loader": "^0.8.0",
     "@grpc/reflection": "^1.0.4",
     "@omnigraph/grpc": "workspace:*",

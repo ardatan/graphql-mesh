@@ -13,7 +13,7 @@
     "@graphql-mesh/cli": "0.100.20",
     "@graphql-mesh/grpc": "0.108.19",
     "@graphql-mesh/transform-naming-convention": "0.105.18",
-    "@grpc/grpc-js": "1.14.1",
+    "@grpc/grpc-js": "1.14.2",
     "@grpc/proto-loader": "0.8.0",
     "google-protobuf": "4.0.1",
     "graphql": "16.12.0",
