@@ -7042,7 +7042,7 @@ __metadata:
     "@graphql-tools/schema": "npm:^10.0.30"
     "@graphql-tools/stitching-directives": "npm:^4.0.8"
     "@graphql-tools/utils": "npm:^10.11.0"
-    "@theguild/federation-composition": "npm:^0.20.0"
+    "@theguild/federation-composition": "npm:^0.21.0"
     "@types/minimatch": "npm:6.0.0"
     "@types/pluralize": "npm:^0.0.33"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -15167,7 +15167,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/federation-composition@npm:^0.20.0, @theguild/federation-composition@npm:^0.20.2":
+"@theguild/federation-composition@npm:^0.20.2":
   version: 0.20.2
   resolution: "@theguild/federation-composition@npm:0.20.2"
   dependencies:
