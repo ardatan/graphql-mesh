@@ -18,7 +18,7 @@ jobs:
     with:
       node-version-file: .node-version
     secrets:
-      githubToken: ${{ secrets.GITHUB_TOKEN }}
+      githubToken: ${{ secrets.GUILD_BOT_TOKN }}
 
   release:
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
