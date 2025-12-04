@@ -10,7 +10,7 @@
     "start": "next start --webpack"
   },
   "dependencies": {
-    "@theguild/components": "^7.6.0",
+    "@theguild/components": "^7.6.5",
     "next": "^16.0.7",
     "next-sitemap": "^4.2.3",
     "react": "^19.0.0",

@@ -14956,9 +14956,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/components@npm:^7.6.0":
-  version: 7.6.3
-  resolution: "@theguild/components@npm:7.6.3"
+"@theguild/components@npm:^7.6.5":
+  version: 7.6.5
+  resolution: "@theguild/components@npm:7.6.5"
   dependencies:
     "@giscus/react": "npm:3.0.0"
     "@next/bundle-analyzer": "npm:15.1.0"
@@ -14978,7 +14978,7 @@ __metadata:
     next: ^13 || ^14 || ^15.0.0
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/4de44a667f75ae945585e19d2cbd0ad36aa7445c9ab217e4106acbe78fc0ead355fd280fb58556a42466b4bc006acc7de1e7d02f7c2d47f40a4b5fa3ad347b88
+  checksum: 10c0/5d34b4cfbadfc5c9d9915d03544039d0050d70965eb8c631c8b1c248f218e8a32344a539df4665cd25d80246515ddb4df95a681f36b38ab2991ff312f42c816c
   languageName: node
   linkType: hard
 
@@ -39851,7 +39851,7 @@ __metadata:
   resolution: "website@workspace:website"
   dependencies:
     "@playwright/test": "npm:^1.57.0"
-    "@theguild/components": "npm:^7.6.0"
+    "@theguild/components": "npm:^7.6.5"
     "@theguild/tailwind-config": "npm:0.6.4"
     "@types/node": "npm:^24.4.0"
     "@types/react": "npm:19.2.7"
