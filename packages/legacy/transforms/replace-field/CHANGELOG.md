@@ -1,5 +1,30 @@
 # @graphql-mesh/replace-field
 
+## 0.105.19
+
+### Patch Changes
+
+- [#9027](https://github.com/ardatan/graphql-mesh/pull/9027)
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/code-file-loader@^8.1.27` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/8.1.27)
+    (from `^8.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/graphql-file-loader@^8.1.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.1.8)
+    (from `^8.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/load@^8.1.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.1.7)
+    (from `^8.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.11.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.11.0)
+    (from `^10.8.0`, in `dependencies`)
+- Updated dependencies
+  [[`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)]:
+  - @graphql-mesh/types@0.104.18
+  - @graphql-mesh/utils@0.104.18
+
 ## 0.105.18
 
 ### Patch Changes

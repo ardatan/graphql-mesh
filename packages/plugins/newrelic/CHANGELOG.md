@@ -1,5 +1,23 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.104.19
+
+### Patch Changes
+
+- [#9037](https://github.com/ardatan/graphql-mesh/pull/9037)
+  [`7c0b01e`](https://github.com/ardatan/graphql-mesh/commit/7c0b01e01b61853feb95ae5b5c4045507c5def1c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`graphql-yoga@^5.17.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.17.1) (from `^5.13.4`,
+    in `dependencies`)
+- Updated dependencies
+  [[`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)]:
+  - @graphql-mesh/cross-helpers@0.4.11
+  - @graphql-mesh/types@0.104.18
+  - @graphql-mesh/utils@0.104.18
+
 ## 0.104.18
 
 ### Patch Changes

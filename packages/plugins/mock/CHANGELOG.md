@@ -1,5 +1,32 @@
 # @graphql-mesh/plugin-mock
 
+## 0.105.20
+
+### Patch Changes
+
+- [#9027](https://github.com/ardatan/graphql-mesh/pull/9027)
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/executor@^1.5.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.5.0)
+    (from `^1.4.9`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/mock@^9.1.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/mock/v/9.1.4)
+    (from `^9.1.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.30` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.30)
+    (from `^10.0.5`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.11.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.11.0)
+    (from `^10.8.0`, in `dependencies`)
+- Updated dependencies
+  [[`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)]:
+  - @graphql-mesh/cross-helpers@0.4.11
+  - @graphql-mesh/types@0.104.18
+  - @graphql-mesh/utils@0.104.18
+
 ## 0.105.19
 
 ### Patch Changes

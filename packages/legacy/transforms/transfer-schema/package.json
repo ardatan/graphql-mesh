@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-transfer-schema",
-  "version": "0.104.17",
+  "version": "0.104.18",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,8 +35,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "^0.104.17",
-    "@graphql-mesh/utils": "^0.104.17",
+    "@graphql-mesh/types": "^0.104.18",
+    "@graphql-mesh/utils": "^0.104.18",
     "@graphql-tools/utils": "^10.11.0",
     "micromatch": "4.0.8"
   },

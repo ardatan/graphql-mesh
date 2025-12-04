@@ -10,7 +10,7 @@
     "@graphql-mesh/cache-cfw-kv": "workspace:^",
     "@graphql-mesh/cache-localforage": "workspace:^",
     "@graphql-mesh/compose-cli": "workspace:^",
-    "@graphql-mesh/plugin-response-cache": "^0.104.19",
+    "@graphql-mesh/plugin-response-cache": "^0.104.20",
     "@omnigraph/json-schema": "workspace:^",
     "graphql": "16.12.0"
   },

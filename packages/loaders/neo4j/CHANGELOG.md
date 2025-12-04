@@ -1,5 +1,32 @@
 # @omnigraph/neo4j
 
+## 0.11.16
+
+### Patch Changes
+
+- [#8817](https://github.com/ardatan/graphql-mesh/pull/8817)
+  [`72f470e`](https://github.com/ardatan/graphql-mesh/commit/72f470edd882829ef26471dbd70d078d4048a783)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`neo4j-driver@^6.0.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/6.0.1)
+    (from `^5.9.2`, in `dependencies`)
+
+- [#9027](https://github.com/ardatan/graphql-mesh/pull/9027)
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.2)
+    (from `^12.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.30` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.30)
+    (from `^10.0.5`, in `dependencies`)
+- Updated dependencies
+  [[`72f470e`](https://github.com/ardatan/graphql-mesh/commit/72f470edd882829ef26471dbd70d078d4048a783),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`7c0b01e`](https://github.com/ardatan/graphql-mesh/commit/7c0b01e01b61853feb95ae5b5c4045507c5def1c),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)]:
+  - @graphql-mesh/transport-neo4j@0.10.16
+  - @graphql-mesh/types@0.104.18
+
 ## 0.11.15
 
 ### Patch Changes

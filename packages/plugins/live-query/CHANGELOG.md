@@ -1,5 +1,17 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.104.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)]:
+  - @graphql-mesh/cross-helpers@0.4.11
+  - @graphql-mesh/types@0.104.18
+  - @graphql-mesh/utils@0.104.18
+
 ## 0.104.18
 
 ### Patch Changes

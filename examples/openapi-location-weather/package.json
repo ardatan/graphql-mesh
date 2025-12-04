@@ -6,12 +6,12 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.20",
-    "@graphql-mesh/openapi": "0.109.25",
-    "@graphql-mesh/plugin-response-cache": "0.104.19",
-    "@graphql-mesh/runtime": "0.106.18",
-    "@graphql-mesh/transform-cache": "0.105.18",
-    "@graphql-mesh/transform-rename": "0.105.18",
+    "@graphql-mesh/cli": "0.100.21",
+    "@graphql-mesh/openapi": "0.109.26",
+    "@graphql-mesh/plugin-response-cache": "0.104.20",
+    "@graphql-mesh/runtime": "0.106.19",
+    "@graphql-mesh/transform-cache": "0.105.19",
+    "@graphql-mesh/transform-rename": "0.105.19",
     "graphql": "16.12.0"
   }
 }
