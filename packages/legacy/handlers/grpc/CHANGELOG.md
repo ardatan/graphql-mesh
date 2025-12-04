@@ -1,5 +1,23 @@
 # @graphql-mesh/grpc
 
+## 0.108.20
+
+### Patch Changes
+
+- Updated dependencies
+  [[`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`7c0b01e`](https://github.com/ardatan/graphql-mesh/commit/7c0b01e01b61853feb95ae5b5c4045507c5def1c),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`7c0b01e`](https://github.com/ardatan/graphql-mesh/commit/7c0b01e01b61853feb95ae5b5c4045507c5def1c)]:
+  - @graphql-mesh/store@0.104.19
+  - @graphql-mesh/transport-grpc@0.3.18
+  - @graphql-mesh/types@0.104.18
+  - @graphql-mesh/utils@0.104.18
+  - @omnigraph/grpc@0.2.8
+
 ## 0.108.19
 
 ### Patch Changes

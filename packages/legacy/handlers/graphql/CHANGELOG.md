@@ -1,5 +1,37 @@
 # @graphql-mesh/graphql
 
+## 0.104.19
+
+### Patch Changes
+
+- [#9027](https://github.com/ardatan/graphql-mesh/pull/9027)
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.2)
+    (from `^12.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/federation@^4.2.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/4.2.6)
+    (from `^4.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/merge@^9.1.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/merge/v/9.1.6)
+    (from `^9.0.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/url-loader@^9.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/9.0.5)
+    (from `^9.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^10.11.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.11.0)
+    (from `^10.8.0`, in `dependencies`)
+- Updated dependencies
+  [[`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)]:
+  - @graphql-mesh/cross-helpers@0.4.11
+  - @graphql-mesh/store@0.104.19
+  - @graphql-mesh/types@0.104.18
+  - @graphql-mesh/utils@0.104.18
+
 ## 0.104.18
 
 ### Patch Changes

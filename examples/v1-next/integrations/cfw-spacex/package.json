@@ -9,8 +9,8 @@
     "@envelop/depth-limit": "^7.0.0",
     "@graphql-hive/gateway": "^2.1.22",
     "@graphql-mesh/cache-cfw-kv": "workspace:^",
-    "@graphql-mesh/plugin-rate-limit": "^0.105.6",
-    "@graphql-mesh/plugin-response-cache": "^0.104.19",
+    "@graphql-mesh/plugin-rate-limit": "^0.105.7",
+    "@graphql-mesh/plugin-response-cache": "^0.104.20",
     "graphql": "16.12.0"
   },
   "devDependencies": {
