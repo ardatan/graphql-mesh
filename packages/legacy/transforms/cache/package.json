@@ -39,9 +39,9 @@
     "@graphql-mesh/string-interpolation": "^0.5.9",
     "@graphql-mesh/types": "^0.104.17",
     "@graphql-mesh/utils": "^0.104.17",
-    "@graphql-tools/resolvers-composition": "^7.0.0",
-    "@graphql-tools/schema": "^10.0.5",
-    "@graphql-tools/utils": "^10.8.0",
+    "@graphql-tools/resolvers-composition": "^7.0.25",
+    "@graphql-tools/schema": "^10.0.30",
+    "@graphql-tools/utils": "^10.11.0",
     "dayjs": "^1.11.19",
     "tslib": "^2.4.0"
   },

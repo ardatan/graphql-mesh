@@ -38,11 +38,11 @@
     "@graphql-mesh/cross-helpers": "^0.4.10",
     "@graphql-mesh/types": "^0.104.17",
     "@graphql-mesh/utils": "^0.104.17",
-    "@graphql-tools/code-file-loader": "^8.1.3",
-    "@graphql-tools/graphql-file-loader": "^8.0.1",
-    "@graphql-tools/load": "^8.0.2",
-    "@graphql-tools/schema": "^10.0.5",
-    "@graphql-tools/utils": "^10.8.0",
+    "@graphql-tools/code-file-loader": "^8.1.27",
+    "@graphql-tools/graphql-file-loader": "^8.1.8",
+    "@graphql-tools/load": "^8.1.7",
+    "@graphql-tools/schema": "^10.0.30",
+    "@graphql-tools/utils": "^10.11.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
