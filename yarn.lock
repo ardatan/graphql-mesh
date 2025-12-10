@@ -4620,29 +4620,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/newrelic@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@envelop/newrelic@npm:9.0.0"
+"@envelop/newrelic@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@envelop/newrelic@npm:10.0.0"
   dependencies:
-    "@envelop/on-resolve": "npm:^6.0.0"
+    "@envelop/on-resolve": "npm:^7.0.0"
     tslib: "npm:^2.5.0"
   peerDependencies:
-    "@envelop/core": ^5.3.0
+    "@envelop/core": ^5.4.0
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
     newrelic: ">=7 <12"
-  checksum: 10c0/732b241e192996d4963c2e500f20bf3cf88859be52d74318a20b993520a336155c941bf5a253e0b25bf9366d746809176660961708da916e919dbc4e06240174
-  languageName: node
-  linkType: hard
-
-"@envelop/on-resolve@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@envelop/on-resolve@npm:6.0.0"
-  dependencies:
-    "@whatwg-node/promise-helpers": "npm:^1.0.0"
-  peerDependencies:
-    "@envelop/core": ^5.3.0
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/06f057dd9b59ea8e42550944da9c0722365d7fbe1c1266219df3ba3a7c646e56084c79d1b7fbb73d6c7744fe1930de690a5a03e94e15334ad4f81564db0a3e2f
+  checksum: 10c0/659578c75a9ef4c07e8e2a610ce4facdfddb850c1a4e40ee6e97944c4d98121f4bfc114b921fa36f3318d5ac855debdf462a765fdc8e9517d0aa1c4a8b28376b
   languageName: node
   linkType: hard
 
@@ -7578,7 +7566,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-newrelic@workspace:packages/plugins/newrelic"
   dependencies:
     "@envelop/core": "npm:^5.3.2"
-    "@envelop/newrelic": "npm:^9.0.0"
+    "@envelop/newrelic": "npm:^10.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.11"
     "@graphql-mesh/string-interpolation": "npm:^0.5.9"
     "@graphql-mesh/types": "npm:^0.104.18"
