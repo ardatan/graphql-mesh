@@ -8,7 +8,7 @@
     "test": "react-scripts test"
   },
   "dependencies": {
-    "@apollo/client": "4.0.9",
+    "@apollo/client": "4.0.10",
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.0",

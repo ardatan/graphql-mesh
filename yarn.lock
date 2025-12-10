@@ -70,7 +70,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:4.0.9, @apollo/client@npm:^4.0.0":
+"@apollo/client@npm:4.0.10":
+  version: 4.0.10
+  resolution: "@apollo/client@npm:4.0.10"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@wry/caches": "npm:^1.0.0"
+    "@wry/equality": "npm:^0.5.6"
+    "@wry/trie": "npm:^0.5.0"
+    graphql-tag: "npm:^2.12.6"
+    optimism: "npm:^0.18.0"
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    graphql: ^16.0.0
+    graphql-ws: ^5.5.5 || ^6.0.3
+    react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    react-dom: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    rxjs: ^7.3.0
+    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
+  peerDependenciesMeta:
+    graphql-ws:
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    subscriptions-transport-ws:
+      optional: true
+  checksum: 10c0/56ce9486e17c20d2019ac0f23bd7504cdfc9fcde65749056cd3da6d4e6f06e3668305595ea06f312e64ba4990e0591e1170d4f279c522fcc14087dcf78275d15
+  languageName: node
+  linkType: hard
+
+"@apollo/client@npm:^4.0.0":
   version: 4.0.9
   resolution: "@apollo/client@npm:4.0.9"
   dependencies:
@@ -3730,10 +3761,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20251209.0":
-  version: 4.20251209.0
-  resolution: "@cloudflare/workers-types@npm:4.20251209.0"
-  checksum: 10c0/2c73c626de56dee2581b58ef51cd0153e4c5bc5b5513f436afd1aeb14fe4a4b9d2e525e28d47165cb486dc618e1e38b6ec971917b41a7a847806c418af86fda5
+"@cloudflare/workers-types@npm:4.20251210.0":
+  version: 4.20251210.0
+  resolution: "@cloudflare/workers-types@npm:4.20251210.0"
+  checksum: 10c0/b5deacfe629f7b1f40a8f3f14002b116726e610ad04c5d3db7b006d83620b75337fca7bb3a3ae8e5d3c716fcf05646fed99fa55db68c0d05c342fb69ad001715
   languageName: node
   linkType: hard
 
@@ -5405,7 +5436,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/graphql-file-upload-example-frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
-    "@apollo/client": "npm:4.0.9"
+    "@apollo/client": "npm:4.0.10"
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.9.1"
     "@testing-library/react": "npm:16.3.0"
@@ -6887,7 +6918,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link"
   dependencies:
-    "@apollo/client": "npm:4.0.9"
+    "@apollo/client": "npm:4.0.10"
     "@graphql-mesh/runtime": "npm:^0.106.19"
     "@graphql-tools/utils": "npm:^10.11.0"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -6904,7 +6935,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20251209.0"
+    "@cloudflare/workers-types": "npm:4.20251210.0"
     "@graphql-mesh/types": "npm:^0.104.18"
     "@graphql-mesh/utils": "npm:^0.104.18"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
