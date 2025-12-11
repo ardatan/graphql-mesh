@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.1.22",
+    "@graphql-hive/gateway": "^2.1.23",
     "graphql": "^16.9.0"
   }
 }
