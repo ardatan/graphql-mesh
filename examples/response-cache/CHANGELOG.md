@@ -1,5 +1,12 @@
 # example-response-cache
 
+## 0.6.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.109.21
+
 ## 0.6.23
 
 ### Patch Changes

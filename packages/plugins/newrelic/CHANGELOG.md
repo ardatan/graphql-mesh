@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.104.20
+
+### Patch Changes
+
+- [#9056](https://github.com/ardatan/graphql-mesh/pull/9056)
+  [`eec19e7`](https://github.com/ardatan/graphql-mesh/commit/eec19e734a096b4960772685b2b96fff71b18093)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/newrelic@^10.0.0` ↗︎](https://www.npmjs.com/package/@envelop/newrelic/v/10.0.0) (from
+    `^9.0.0`, in `dependencies`)
+
 ## 0.104.19
 
 ### Patch Changes
