@@ -1,5 +1,16 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.23
+
+### Patch Changes
+
+- [#9061](https://github.com/ardatan/graphql-mesh/pull/9061)
+  [`3878067`](https://github.com/ardatan/graphql-mesh/commit/38780670ae4d777d192c95e10308b51b9ee6a3fd)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@theguild/federation-composition@^0.21.1` ↗︎](https://www.npmjs.com/package/@theguild/federation-composition/v/0.21.1)
+    (from `^0.21.0`, in `dependencies`)
+
 ## 0.8.22
 
 ### Patch Changes

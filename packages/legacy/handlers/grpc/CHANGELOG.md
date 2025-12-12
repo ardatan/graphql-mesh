@@ -1,5 +1,15 @@
 # @graphql-mesh/grpc
 
+## 0.108.21
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2b1c3ae`](https://github.com/ardatan/graphql-mesh/commit/2b1c3ae0dd9b470a9779d0eaa78df4b6989ac5bc),
+  [`2b1c3ae`](https://github.com/ardatan/graphql-mesh/commit/2b1c3ae0dd9b470a9779d0eaa78df4b6989ac5bc)]:
+  - @graphql-mesh/transport-grpc@0.3.19
+  - @omnigraph/grpc@0.2.9
+
 ## 0.108.20
 
 ### Patch Changes
