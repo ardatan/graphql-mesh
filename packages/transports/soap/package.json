@@ -43,7 +43,7 @@
     "@graphql-tools/executor": "^1.5.0",
     "@graphql-tools/utils": "^10.11.0",
     "@whatwg-node/fetch": "^0.10.6",
-    "fast-xml-parser": "^5.0.0",
+    "fast-xml-parser": "^5.3.3",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
