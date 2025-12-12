@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@theguild/components": "^7.6.5",
-    "next": "^16.0.8",
+    "next": "^16.0.9",
     "next-sitemap": "^4.2.3",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
