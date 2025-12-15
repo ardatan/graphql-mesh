@@ -37978,7 +37978,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:3.4.18, tailwindcss@npm:^3.0.2":
+"tailwindcss@npm:4.1.18":
+  version: 4.1.18
+  resolution: "tailwindcss@npm:4.1.18"
+  checksum: 10c0/c79263cea0b2c577859b02f28284caa4eb3844e4d0f563686726ca97817c045c5c395a55bc776daaa351ba9e4aefa9a75bfbb43c22d86f3c573eecc2b87d6bf1
+  languageName: node
+  linkType: hard
+
+"tailwindcss@npm:^3.0.2":
   version: 3.4.18
   resolution: "tailwindcss@npm:3.4.18"
   dependencies:
@@ -40254,7 +40261,7 @@ __metadata:
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
     react-icons: "npm:^5.0.0"
-    tailwindcss: "npm:3.4.18"
+    tailwindcss: "npm:4.1.18"
     typescript: "npm:^5.4.2"
   languageName: unknown
   linkType: soft
