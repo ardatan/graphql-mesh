@@ -8029,7 +8029,7 @@ __metadata:
     change-case: "npm:^4.1.2"
     graphql: "npm:16.12.0"
     graphql-scalars: "npm:^1.22.4"
-    lower-case: "npm:^2.0.2"
+    lower-case: "npm:^3.0.0"
     tslib: "npm:^2.5.0"
     upper-case: "npm:^2.0.2"
   peerDependencies:
@@ -29802,6 +29802,13 @@ __metadata:
   dependencies:
     tslib: "npm:^2.0.3"
   checksum: 10c0/3d925e090315cf7dc1caa358e0477e186ffa23947740e4314a7429b6e62d72742e0bbe7536a5ae56d19d7618ce998aba05caca53c2902bd5742fdca5fc57fd7b
+  languageName: node
+  linkType: hard
+
+"lower-case@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "lower-case@npm:3.0.0"
+  checksum: 10c0/6b3b7ac41697313d648e46d5ea5a2338d2a2cc173cf893beedf866529080ae631337ed1b5f3a7a9a6967d34a08187973e586247c1ca40d8941937993d8f3e7d6
   languageName: node
   linkType: hard
 

@@ -42,7 +42,7 @@
     "@graphql-tools/wrap": "^11.1.2",
     "change-case": "^4.1.2",
     "graphql-scalars": "^1.22.4",
-    "lower-case": "^2.0.2",
+    "lower-case": "^3.0.0",
     "tslib": "^2.5.0",
     "upper-case": "^2.0.2"
   },
