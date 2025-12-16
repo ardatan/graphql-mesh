@@ -53,7 +53,7 @@
     "camel-case": "^4.1.2",
     "graphql-yoga": "^5.17.1",
     "param-case": "^3.0.4",
-    "pascal-case": "^3.1.2",
+    "pascal-case": "^4.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

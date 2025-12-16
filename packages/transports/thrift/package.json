@@ -41,7 +41,7 @@
     "@graphql-mesh/transport-common": "^1.0.0",
     "@graphql-mesh/utils": "^0.104.18",
     "@graphql-tools/utils": "^10.11.0",
-    "pascal-case": "^3.1.2",
+    "pascal-case": "^4.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
