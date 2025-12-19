@@ -1,0 +1,19 @@
+scalar Date
+
+type Query {
+  hello: String
+}
+
+type Mutation {
+  updatePaymentDate(input: UpdatePaymentDateInput!): PaymentResponse
+}
+
+input UpdatePaymentDateInput {
+  id: ID!
+  date: Date!
+}
+
+type PaymentResponse {
+  success: Boolean!
+  newDate: String
+}
