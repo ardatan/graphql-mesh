@@ -78,7 +78,7 @@
     "@changesets/cli": "2.29.8",
     "@repeaterjs/repeater": "^3.0.5",
     "@theguild/prettier-config": "3.0.1",
-    "@tsconfig/node16": "^16.1.8",
+    "@tsconfig/node18": "^18.2.0",
     "@tsconfig/recommended": "^1.0.5",
     "@types/jest": "30.0.0",
     "@types/node": "24.10.2",
