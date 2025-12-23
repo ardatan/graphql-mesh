@@ -9,7 +9,7 @@
     "@creditkarma/thrift-server-core": "^1.0.4",
     "@creditkarma/thrift-server-express": "^1.0.4",
     "@creditkarma/thrift-typescript": "^3.7.6",
-    "@graphql-hive/gateway": "^2.1.23",
+    "@graphql-hive/gateway": "^2.2.0",
     "@omnigraph/thrift": "^0.9.19",
     "@types/express": "^5.0.6",
     "express": "^5.2.1",
