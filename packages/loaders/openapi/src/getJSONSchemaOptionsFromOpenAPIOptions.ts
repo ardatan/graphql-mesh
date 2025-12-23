@@ -169,8 +169,38 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
   handleUntitledDefinitions(oasOrSwagger);
 
+  function lookByTitle(map: any, key: string): any {
+    if (map != null) {
+      for (const keyInMap in map) {
+        const val = map[keyInMap];
+        if (val.title === key) {
+          return val;
+        }
+      }
+    }
+  }
+
+  function lookFromMap(map: any, key: string): any {
+    if (map != null) {
+      const val = map[key];
+      if (val == null) {
+        return lookByTitle(map, key);
+      }
+      return val;
+    }
+  }
+
+  function lookFromMaps(oas: OpenAPIV3.Document | OpenAPIV2.Document, key: string) {
+    return (
+      lookFromMap((oas as OpenAPIV3.Document).components?.schemas, key) ||
+      lookFromMap((oas as OpenAPIV2.Document).definitions, key)
+    );
+  }
+
   for (const [_name, schema] of Object.entries(
-    (oasOrSwagger as OpenAPIV3.Document).components?.schemas || {},
+    (oasOrSwagger as OpenAPIV3.Document).components?.schemas ||
+      (oasOrSwagger as OpenAPIV2.Document).definitions ||
+      {},
   )) {
     const mapping = (schema as any).discriminator?.mapping as Record<string, string>;
     if (mapping) {
@@ -185,7 +215,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             logger.warn(`Unsupported discriminator mapping: ${value}`);
             continue;
           } else {
-            const schemaObj = (oasOrSwagger as OpenAPIV3.Document).components?.schemas?.[value];
+            const schemaObj = lookFromMaps(oasOrSwagger, value);
             if (!schemaObj) {
               logger.warn(`Invalid discriminator mapping: ${value}`);
               continue;
