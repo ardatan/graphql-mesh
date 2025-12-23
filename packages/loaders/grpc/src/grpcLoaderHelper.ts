@@ -15,18 +15,14 @@ import {
   GraphQLVoid,
 } from 'graphql-scalars';
 import micromatch from 'micromatch';
-import protobufjs, {
-  type AnyNestedObject,
-  type IParseOptions,
-  type RootConstructor,
-} from 'protobufjs';
+import protobufjs, { type AnyNestedObject, type IParseOptions } from 'protobufjs';
 import type { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 import { Client } from '@ardatan/grpc-reflection-js';
 import { fs, path } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { Logger, YamlConfig } from '@graphql-mesh/types';
-import { GraphQLStreamDirective, type MaybePromise } from '@graphql-tools/utils';
+import { GraphQLStreamDirective, type Constructor, type MaybePromise } from '@graphql-tools/utils';
 import { credentials, type ChannelCredentials } from '@grpc/grpc-js';
 import { DisposableStack } from '@whatwg-node/disposablestack';
 import {
@@ -188,7 +184,7 @@ export class GrpcLoaderHelper extends DisposableStack {
       ) as unknown as DecodedDescriptorSet;
     }
     this.logger.debug(`Creating root from descriptor set`);
-    const rootFromDescriptor = (Root as RootConstructor).fromDescriptor(decodedDescriptorSet);
+    const rootFromDescriptor = (Root as any).fromDescriptor(decodedDescriptorSet);
     if (options.includeDirs) {
       if (!Array.isArray(options.includeDirs)) {
         return Promise.reject(new Error('The includeDirs option must be an array'));
