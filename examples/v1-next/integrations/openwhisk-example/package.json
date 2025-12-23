@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@graphql-hive/gateway": "^2.1.23",
-    "esbuild": "^0.27.1",
+    "esbuild": "^0.27.2",
     "graphql": "16.12.0",
     "typescript": "^5.4.2"
   }
