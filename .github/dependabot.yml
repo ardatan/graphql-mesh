@@ -44,6 +44,7 @@ updates:
           - '@graphql-hive/*'
           - '@graphql-mesh/*'
           - '@graphql-tools/*'
+          - '@neo4j/*'
         update-types:
           - 'minor'
           - 'patch'
@@ -61,6 +62,13 @@ updates:
         patterns:
           - '@newrelic/*'
           - 'newrelic'
+        update-types:
+          - 'major'
+          - 'minor'
+          - 'patch'
+      neo4j:
+        patterns:
+          - '@neo4j/*'
         update-types:
           - 'major'
           - 'minor'
