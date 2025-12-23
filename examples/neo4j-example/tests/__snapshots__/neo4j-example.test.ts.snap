@@ -109,11 +109,11 @@ input Actor2ActedInMoviesAggregateInput {
   NOT: Actor2ActedInMoviesAggregateInput
   OR: [Actor2ActedInMoviesAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   edge: ActedInPropertiesAggregationWhereInput
   node: Actor2ActedInMoviesNodeAggregationWhereInput
 }
@@ -524,11 +524,11 @@ input Actor2DirectedMoviesAggregateInput {
   NOT: Actor2DirectedMoviesAggregateInput
   OR: [Actor2DirectedMoviesAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   edge: DirectedPropertiesAggregationWhereInput
   node: Actor2DirectedMoviesNodeAggregationWhereInput
 }
@@ -1132,11 +1132,11 @@ input ActorActedInMoviesAggregateInput {
   NOT: ActorActedInMoviesAggregateInput
   OR: [ActorActedInMoviesAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   edge: ActedInPropertiesAggregationWhereInput
   node: ActorActedInMoviesNodeAggregationWhereInput
 }
@@ -1961,11 +1961,11 @@ input DirectorDirectedMoviesAggregateInput {
   NOT: DirectorDirectedMoviesAggregateInput
   OR: [DirectorDirectedMoviesAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   edge: DirectedPropertiesAggregationWhereInput
   node: DirectorDirectedMoviesNodeAggregationWhereInput
 }
@@ -2616,11 +2616,11 @@ input GenreMoviesInGenreAggregateInput {
   NOT: GenreMoviesInGenreAggregateInput
   OR: [GenreMoviesInGenreAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   node: GenreMoviesInGenreNodeAggregationWhereInput
 }
 
@@ -3147,11 +3147,11 @@ input MovieActor2SActedInAggregateInput {
   NOT: MovieActor2SActedInAggregateInput
   OR: [MovieActor2SActedInAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   edge: ActedInPropertiesAggregationWhereInput
   node: MovieActor2SActedInNodeAggregationWhereInput
 }
@@ -3377,11 +3377,11 @@ input MovieActor2SDirectedAggregateInput {
   NOT: MovieActor2SDirectedAggregateInput
   OR: [MovieActor2SDirectedAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   edge: DirectedPropertiesAggregationWhereInput
   node: MovieActor2SDirectedNodeAggregationWhereInput
 }
@@ -3627,11 +3627,11 @@ input MovieActorsActedInAggregateInput {
   NOT: MovieActorsActedInAggregateInput
   OR: [MovieActorsActedInAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   edge: ActedInPropertiesAggregationWhereInput
   node: MovieActorsActedInNodeAggregationWhereInput
 }
@@ -3948,11 +3948,11 @@ input MovieDirectorsDirectedAggregateInput {
   NOT: MovieDirectorsDirectedAggregateInput
   OR: [MovieDirectorsDirectedAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   edge: DirectedPropertiesAggregationWhereInput
   node: MovieDirectorsDirectedNodeAggregationWhereInput
 }
@@ -4201,11 +4201,11 @@ input MovieInGenreGenresAggregateInput {
   NOT: MovieInGenreGenresAggregateInput
   OR: [MovieInGenreGenresAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   node: MovieInGenreGenresNodeAggregationWhereInput
 }
 
@@ -4441,11 +4441,11 @@ input MovieUsersRatedAggregateInput {
   NOT: MovieUsersRatedAggregateInput
   OR: [MovieUsersRatedAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   edge: RatedPropertiesAggregationWhereInput
   node: MovieUsersRatedNodeAggregationWhereInput
 }
@@ -5187,11 +5187,11 @@ input UserRatedMoviesAggregateInput {
   NOT: UserRatedMoviesAggregateInput
   OR: [UserRatedMoviesAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   edge: RatedPropertiesAggregationWhereInput
   node: UserRatedMoviesNodeAggregationWhereInput
 }
@@ -5660,11 +5660,11 @@ input _Bloom_Perspective_BloomHasSceneBloomSceneSAggregateInput {
   NOT: _Bloom_Perspective_BloomHasSceneBloomSceneSAggregateInput
   OR: [_Bloom_Perspective_BloomHasSceneBloomSceneSAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   node: _Bloom_Perspective_BloomHasSceneBloomSceneSNodeAggregationWhereInput
 }
 
@@ -6240,11 +6240,11 @@ input _Bloom_Scene_BloomPerspectiveSBloomHasSceneAggregateInput {
   NOT: _Bloom_Scene_BloomPerspectiveSBloomHasSceneAggregateInput
   OR: [_Bloom_Scene_BloomPerspectiveSBloomHasSceneAggregateInput!]
   count: IntScalarFilters
-  count_EQ: Int
-  count_GT: Int
-  count_GTE: Int
-  count_LT: Int
-  count_LTE: Int
+  count_EQ: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead.")
+  count_GT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead.")
+  count_GTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead.")
+  count_LT: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead.")
+  count_LTE: Int @deprecated(reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead.")
   node: _Bloom_Scene_BloomPerspectiveSBloomHasSceneNodeAggregationWhereInput
 }
 

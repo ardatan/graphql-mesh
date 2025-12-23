@@ -806,11 +806,21 @@ input MovieDisconnectInput @join__type(graph: MOVIES)  {
 }
 
 input MoviePeopleActedInAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [MoviePeopleActedInAggregateInput!]
   OR: [MoviePeopleActedInAggregateInput!]
@@ -1016,11 +1026,21 @@ input MoviePeopleActedInUpdateFieldInput @join__type(graph: MOVIES)  {
 }
 
 input MoviePeopleDirectedAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [MoviePeopleDirectedAggregateInput!]
   OR: [MoviePeopleDirectedAggregateInput!]
@@ -1221,11 +1241,21 @@ input MoviePeopleDirectedUpdateFieldInput @join__type(graph: MOVIES)  {
 }
 
 input MoviePeopleProducedAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [MoviePeopleProducedAggregateInput!]
   OR: [MoviePeopleProducedAggregateInput!]
@@ -1426,11 +1456,21 @@ input MoviePeopleProducedUpdateFieldInput @join__type(graph: MOVIES)  {
 }
 
 input MoviePeopleReviewedAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [MoviePeopleReviewedAggregateInput!]
   OR: [MoviePeopleReviewedAggregateInput!]
@@ -1638,11 +1678,21 @@ input MoviePeopleReviewedUpdateFieldInput @join__type(graph: MOVIES)  {
 }
 
 input MoviePeopleWroteAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [MoviePeopleWroteAggregateInput!]
   OR: [MoviePeopleWroteAggregateInput!]
@@ -2181,11 +2231,21 @@ input MovieWhere @join__type(graph: MOVIES)  {
 }
 
 input PersonActedInMoviesAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [PersonActedInMoviesAggregateInput!]
   OR: [PersonActedInMoviesAggregateInput!]
@@ -2473,11 +2533,21 @@ input PersonDeleteInput @join__type(graph: MOVIES)  {
 }
 
 input PersonDirectedMoviesAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [PersonDirectedMoviesAggregateInput!]
   OR: [PersonDirectedMoviesAggregateInput!]
@@ -2734,11 +2804,21 @@ input PersonDisconnectInput @join__type(graph: MOVIES)  {
 }
 
 input PersonFollowsPeopleAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [PersonFollowsPeopleAggregateInput!]
   OR: [PersonFollowsPeopleAggregateInput!]
@@ -2939,11 +3019,21 @@ input PersonFollowsPeopleUpdateFieldInput @join__type(graph: MOVIES)  {
 }
 
 input PersonPeopleFollowsAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [PersonPeopleFollowsAggregateInput!]
   OR: [PersonPeopleFollowsAggregateInput!]
@@ -3144,11 +3234,21 @@ input PersonPeopleFollowsUpdateFieldInput @join__type(graph: MOVIES)  {
 }
 
 input PersonProducedMoviesAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [PersonProducedMoviesAggregateInput!]
   OR: [PersonProducedMoviesAggregateInput!]
@@ -3414,11 +3514,21 @@ input PersonRelationshipFilters @join__type(graph: MOVIES)  {
 }
 
 input PersonReviewedMoviesAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [PersonReviewedMoviesAggregateInput!]
   OR: [PersonReviewedMoviesAggregateInput!]
@@ -4090,11 +4200,21 @@ input PersonWhere @join__type(graph: MOVIES)  {
 }
 
 input PersonWroteMoviesAggregateInput @join__type(graph: MOVIES)  {
-  count_EQ: Int
-  count_LT: Int
-  count_LTE: Int
-  count_GT: Int
-  count_GTE: Int
+  count_EQ: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
+  )
+  count_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lt: ... } } }' instead."
+  )
+  count_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { lte: ... } } }' instead."
+  )
+  count_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gt: ... } } }' instead."
+  )
+  count_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter '{ count: { gte: ... } } }' instead."
+  )
   count: IntScalarFilters
   AND: [PersonWroteMoviesAggregateInput!]
   OR: [PersonWroteMoviesAggregateInput!]
