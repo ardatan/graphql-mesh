@@ -37,7 +37,7 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.11",
     "@graphql-mesh/types": "^0.104.18",
-    "@upstash/redis": "^1.35.8",
+    "@upstash/redis": "^1.36.0",
     "@whatwg-node/disposablestack": "^0.0.6",
     "tslib": "^2.4.0"
   },
