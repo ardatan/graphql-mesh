@@ -1,5 +1,23 @@
 # @graphql-mesh/cli
 
+## 0.100.22
+
+### Patch Changes
+
+- [#9094](https://github.com/ardatan/graphql-mesh/pull/9094)
+  [`3d12bc1`](https://github.com/ardatan/graphql-mesh/commit/3d12bc1ebb223d3d00c76add906c4c28bd2601fc)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-codegen/typed-document-node@^6.1.5` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typed-document-node/v/6.1.5)
+    (from `^6.1.4`, in `dependencies`)
+- Updated dependencies
+  [[`3d12bc1`](https://github.com/ardatan/graphql-mesh/commit/3d12bc1ebb223d3d00c76add906c4c28bd2601fc),
+  [`3d12bc1`](https://github.com/ardatan/graphql-mesh/commit/3d12bc1ebb223d3d00c76add906c4c28bd2601fc),
+  [`6f8bba6`](https://github.com/ardatan/graphql-mesh/commit/6f8bba61d7a9ffdb2c97a18707a68efa56d9fea8)]:
+  - @graphql-mesh/config@0.108.22
+  - @graphql-mesh/http@0.106.20
+  - @graphql-mesh/store@0.104.20
+
 ## 0.100.21
 
 ### Patch Changes
