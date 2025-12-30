@@ -1,0 +1,703 @@
+openapi: 3.0.0
+info:
+  title: OAuth 2.0
+  description: |
+    Contact Us: [USPS API Support](https://emailus.usps.com/s/web-tools-inquiry) | [Terms of Service](https://about.usps.com/termsofuse.htm)
+
+    OAuth access tokens are used to grant authorized access to USPS&#174; APIs. Access tokens will expire, requiring applications to periodically check the expiration time and get new tokens.
+
+    The following __OAuth 2.0__ grant types are supported:
+
+    * _**Client Credentials**_: The token request exchanges the client Id and secret to get an access token. The client Id and secret are the credentials for your client application and are validated.
+    * _**Refresh Token**_: The refresh token is exchanged to get a new access token and an optional refresh token. The refresh token is validated and must not have expired or been revoked.
+    * _**Authorization Code**_: The token request exchanges an authorization code previously received for access and refresh tokens. User (Resource Owner) authentication and consent is prerequisite for authorization code generation. The authorization code is validated and must not have expired.
+
+    Other OAuth flows may become supported in future releases.You will need to add an app to get a client Id and secret. These are the _**Consumer Key**_ and _**Consumer Secret**_ values in the API developer portal.
+
+    Each API will stipulate the level of authentication assurance required to access its resources, either *Client Application* or *Resource Owner* credentials. The value in the `access_token` field of the /token response is placed in the _**Authorization**_ header in accordance with the *Bearer* token authentication scheme. See example value below (bearer token string truncated):
+
+    * Authorization: Bearer `eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJ1c3BzLmNvbSIsInN1YiI6IjI0ODI4OTc2MTAwMSIsImF1ZCI6InM2QmhkUmtxdDMiLCJub25jZSI6Im4tMFM2X1d6QT` ......
+
+    Each API will validate the access token, its expiration in addition to its OAuth scope for example. There may be further validations required which are specific to the resource being accessed.You will need to get a new access token once the one you have has expired. It is best practice to get a new access token before expiration if further access to resources is needed. You may also revoke a refresh token which you suspect has been disclosed or dispose it when it is no longer needed.
+
+  version: 3.0.6
+servers:
+  - url: https://apis.usps.com/oauth2/v3
+    description: Production Environment Endpoint
+  - url: https://apis-tem.usps.com/oauth2/v3
+    description: Testing Environment Endpoint
+paths:
+  /token:
+    post:
+      tags:
+        - Resources
+      summary: Generate OAuth tokens.
+      description: |-
+        Issue one or more OAuth tokens for a client application to use in making subsequent resource requests. Based on the _OAuth 2.0 Authorization Framework_, IETF Draft RFC 6749, October 2012, see [IETF 6749](https://datatracker.ietf.org/doc/html/rfc6749). **Access tokens are valid for eight hours after issuance, while refresh tokens are valid for seven days**.
+
+        Note that the following OAuth grant types are supported:
+        - **Client Credentials Grant**, see [IETF 6749, section 4.4](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4).
+        - **Refresh Token**, see [IETF 6749, section 6](https://datatracker.ietf.org/doc/html/rfc6749#section-6)
+        - **Authorization Code Grant**, see [IETF 6749, section 4.1](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
+      operationId: post-token
+      requestBody:
+        description: |-
+          The input parameters corresponding to the supported grant types. You will need to add an app to get a client ID and secret. These are the Consumer Key and Consumer Secret values in the API developer portal.
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              discriminator:
+                propertyName: grant_type
+                mapping:
+                  client_credentials: '#/components/schemas/ClientCredentials'
+                  refresh_token: '#/components/schemas/RefreshTokenCredentials'
+                  authorization_code: '#/components/schemas/AuthorizationCodeCredentials'
+              oneOf:
+                - $ref: '#/components/schemas/ClientCredentials'
+                - $ref: '#/components/schemas/RefreshTokenCredentials'
+                - $ref: '#/components/schemas/AuthorizationCodeCredentials'
+            examples:
+              client-credentials-grant:
+                $ref: '#/components/examples/clientCredentialsTokenRequestFormURLEncoded'
+          application/json:
+            schema:
+              discriminator:
+                propertyName: grant_type
+                mapping:
+                  client_credentials: '#/components/schemas/ClientCredentials'
+                  refresh_token: '#/components/schemas/RefreshTokenCredentials'
+                  authorization_code: '#/components/schemas/AuthorizationCodeCredentials'
+              oneOf:
+                - $ref: '#/components/schemas/ClientCredentials'
+                - $ref: '#/components/schemas/RefreshTokenCredentials'
+                - $ref: '#/components/schemas/AuthorizationCodeCredentials'
+            examples:
+              client-credentials-grant:
+                $ref: '#/components/examples/clientCredentialsTokenRequest'
+              refresh-token-credentials-grant:
+                $ref: '#/components/examples/refreshTokenCredentialsTokenRequest'
+              authorization-code-grant:
+                $ref: '#/components/examples/authorizationCodeTokenRequest'
+      responses:
+        '200':
+          description:
+            Token Issued. Client application authorization has been granted and OAuth token(s)
+            issued.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ProviderAccessTokenResponse'
+                  - $ref: '#/components/schemas/ProviderTokensResponse'
+              examples:
+                client-credentials:
+                  $ref: '#/components/examples/clientCredentialsTokenResponse'
+                refresh-token:
+                  $ref: '#/components/examples/refreshTokenResponse'
+                resource-owner-credentials:
+                  $ref: '#/components/examples/resourceOwnerCredentialsTokenResponse'
+        '400':
+          description: Bad Request.  Check the input parameters and values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardErrorResponse'
+        '401':
+          description:
+            Unauthorized Request.  Check the authentication scheme and values being used to make the
+            request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardErrorResponse'
+        '429':
+          description:
+            Too Many Requests. Too many requests have been received from client in a short amout of
+            time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardErrorResponse'
+        '503':
+          description: Service Unavailable.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardErrorResponse'
+      x-implementation:
+        description:
+          'See Requesting Access Tokens and Authorization Codes,
+          https://docs.apigee.com/api-platform/security/oauth/access-tokens See OAuthV2 Policy,
+          https://docs.apigee.com/api-platform/reference/policies/oauthv2-policy See Customizing
+          Access Tokens and Authorization Codes,
+          https://docs.apigee.com/api-platform/security/oauth/customizing-access-tokens See
+          SetOAuthV2Info Policy,
+          https://docs.apigee.com/api-platform/reference/policies/set-oauth-v2-info-policy'
+  /revoke:
+    post:
+      tags:
+        - Resources
+      summary: Invalidate OAuth tokens.
+      description: |
+        Prevent tokens from being further used to access APIs by disposing one or more OAuth tokens that are no longer needed. Basic Authentication is used to access this resource, using the issued client Id and client secret. This resource is based on the *OAuth 2.0 Token Revocation* IETF Draft RFC 7009, August 2013.
+        * [IETF 7009](https://datatracker.ietf.org/doc/html/rfc7009).
+      operationId: post-revoke
+      requestBody:
+        description: The token to be inspected. The hint is used to locate the token.
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRevokeRequest'
+            examples:
+              revoke-request-form-example:
+                $ref: '#/components/examples/revokeTokenRequestFormURLEncoded'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRevokeRequest'
+            examples:
+              revoke-request-example:
+                $ref: '#/components/examples/revokeTokenRequest'
+      responses:
+        '200':
+          description: Successful Operation. No response payload.
+        '400':
+          description: Bad Request.  Check the input parameters and values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardErrorResponse'
+              examples:
+                invalid-refresh-token-response:
+                  $ref: '#/components/examples/invalidRefreshTokenResponse'
+        '401':
+          description:
+            Unauthorized Request.  Check the authentication scheme and values being used to make the
+            request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardErrorResponse'
+        '429':
+          description:
+            Too Many Requests. Too many requests have been received from client in a short amout of
+            time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardErrorResponse'
+      security:
+        - BasicAuth: []
+      x-implementation:
+        description:
+          'See Approving and Revoking Access Tokens,
+          https://cloud.google.com/apigee/docs/api-platform/security/oauth/validating-and-invalidating-access-tokens#:~:text=Apigee%20provides%20an%20InvalidateToken%20operation%20that%20enables%20you,the%20state%20of%20the%20token%20%28approved%20or%20revoked%29'
+components:
+  schemas:
+    AuthorizationCodeRequest:
+      title: Authorization Code Request
+      required:
+        - client_id
+        - response_type
+      type: object
+      properties:
+        client_id:
+          type: string
+          description: The unique identifier of the third-party client application.
+        response_type:
+          type: string
+          description: The type of response requested.  Must be set to 'code'.
+          default: code
+          enum:
+            - code
+        redirect_uri:
+          type: string
+          description:
+            The authorization code redirect uri for the third-party application to receive the
+            authorization code.  This is used to verify the identify of the requester. The request
+            will not be redirected to this URI.
+          format: uri
+          example: https://mycompany.com/authorize
+        scope:
+          type: string
+          description:
+            A client application may request a limited scope based on the resource owner's consent
+            choices.
+          example: prices labels tracking
+        state:
+          type: string
+          description: |
+            An opaque value used by the client to maintain
+            state between the request and callback.  The authorization
+            server includes this value when redirecting the user-agent back
+            to the client.  The parameter SHOULD be used for preventing
+            cross-site request forgery.
+
+
+            The client application should provide sufficient information to complete the authorization process in their application.  It may also include a nonce value for security purposes.
+          example: nonce=abscdefg#
+      additionalProperties: false
+      description: To be done.
+    TokenRequest:
+      title: Base Token Request
+      required:
+        - grant_type
+      type: object
+      properties:
+        grant_type:
+          type: string
+          description: The OAuth standard flow being requested by the client application.
+          enum:
+            - authorization_code
+            - client_credentials
+            - refresh_token
+            - password
+        scope:
+          type: string
+          description:
+            'The OAuth scope being requested by the client application, specified as a list of
+            space-delimited, case-sensitive strings.  If ommitted then the default scope configured
+            for the client application will be used.'
+      additionalProperties: false
+      description:
+        'The base object for an OAuth token request, in accordance with OAuth industry standards.'
+      discriminator:
+        propertyName: grant_type
+        mapping:
+          client_credentials: '#/components/schemas/ClientCredentials'
+          authorization_code: '#/components/schemas/AuthorizationCodeCredentials'
+          refresh_token: '#/components/schemas/RefreshTokenCredentials'
+    ClientCredentials:
+      title: OAuth Client Credentials Request
+      required:
+        - client_id
+        - client_secret
+      description:
+        The credentials of the client application that are verified by the authorization server.
+      allOf:
+        - $ref: '#/components/schemas/TokenRequest'
+        - type: object
+          properties:
+            client_id:
+              type: string
+              description:
+                "The unique identifier issued to the client application making the request. Used for
+                authenticating the client application.\n\nYou will need to add an app to get a
+                client Id and secret. These are the Consumer Key and Consumer Secret values
+                respectfully in the API developer portal.                           "
+            client_secret:
+              type: string
+              description:
+                "The shared secret issued to the client application making the request. Used for
+                authenticating the client application.\n\nYou will need to add an app to get a
+                client Id and secret. These are the Consumer Key and Consumer Secret values
+                respectfully in the API developer portal.                                  "
+          additionalProperties: false
+    AuthorizationCodeCredentials:
+      title: OAuth Authorization Code Credentials Request
+      required:
+        - code
+        - redirect_uri
+      description:
+        The credentials of the client application that are verified by the authorization server.
+      allOf:
+        - $ref: '#/components/schemas/ClientCredentials'
+        - type: object
+          properties:
+            code:
+              type: string
+              description: The authorization code.
+            redirect_uri:
+              type: string
+              description:
+                The authorization code redirect URI ( Uniform Resource Identifier) for the
+                third-party application to receive the authorization code.
+          additionalProperties: false
+    RefreshTokenCredentials:
+      title: OAuth Refresh Token Credentials Request
+      required:
+        - refresh_token
+      description: To be done.
+      allOf:
+        - $ref: '#/components/schemas/ClientCredentials'
+        - type: object
+          properties:
+            refresh_token:
+              type: string
+              description: The refresh token value to be used to issue a new access token.
+          additionalProperties: false
+    TokenRevokeRequest:
+      title: Token Revocation Request
+      required:
+        - token
+      type: object
+      properties:
+        token:
+          type: string
+          description: The token (a hash value).
+        token_type_hint:
+          type: string
+          description:
+            'A hint to the type of the given token. See OAuth Token Types Hint registry,
+            https://www.rfc-editor.org/rfc/rfc7009#section-4.1.2.1'
+          default: refresh_token
+          enum:
+            - access_token
+            - refresh_token
+      additionalProperties: false
+      description: The token revocation request.
+    AccessTokenResponse:
+      title: OAuth Standard Access Token Response
+      required:
+        - access_token
+        - expires_in
+        - token_type
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: The access token issued to use to acess protected resources.
+        expires_in:
+          type: integer
+          description: 'The expiration time of the issued access token, in seconds.'
+        token_type:
+          type: string
+          description:
+            The access token type provides the client with the information required to successfully
+            utilize the access token to make a protected resource request (along with type-specific
+            attributes).  The client MUST NOT use an access token if it does not understand the
+            token type.
+          enum:
+            - Bearer
+        scope:
+          type: string
+          description:
+            'The OAuth scope being requested by the client application, specified as a list of
+            space-delimited, case-sensitive strings.  If ommitted then the default scope configured
+            for the client application will be used.'
+      additionalProperties: true
+      description:
+        'The base object for an OAuth token response, in accordance with OAuth 2.0 industry
+        standards.'
+      readOnly: true
+    ProviderAccessTokenResponse:
+      title: Provider-specific Access Token Response
+      additionalProperties: false
+      description:
+        The OAuth token response for the implementation provided by the authorization server.
+      readOnly: true
+      allOf:
+        - $ref: '#/components/schemas/AccessTokenResponse'
+        - type: object
+          properties:
+            issued_at:
+              type: integer
+              description:
+                'The date and time the access token was issued, expressed in Unix epoch time in
+                milliseconds.'
+            status:
+              type: string
+              description: The status of the access token.
+              enum:
+                - approved
+                - revoked
+            issuer:
+              type: string
+              description: The authority that issued the token(s).
+              example: api.usps.com
+            client_id:
+              type: string
+              description: The unique identifier for the client application.
+            application_name:
+              type: string
+              description: The name of the client application.
+            api_products:
+              type: string
+              description: The list of API products approved for use by the client application.
+            public_key:
+              type: string
+              description:
+                'The base64-encoded public cryptographic key used to validate the signature of the
+                access token.  Validation ensures that the access token has not been tampered with
+                and it originated from a known, trusted source.'
+              format: byte
+          additionalProperties: false
+    TokensResponse:
+      title: OAuth Tokens Response
+      required:
+        - refresh_token
+      additionalProperties: true
+      description:
+        The IETF standard tokens response. Contains access and optional refresh token values.
+      readOnly: true
+      allOf:
+        - $ref: '#/components/schemas/AccessTokenResponse'
+        - type: object
+          properties:
+            refresh_token:
+              type: string
+              description: The refresh token.
+          additionalProperties: true
+    ProviderTokensResponse:
+      title: Provider-specific Tokens Response
+      additionalProperties: true
+      description:
+        The OAuth tokens response for the implementation provided by the authorization server.
+      readOnly: true
+      allOf:
+        - $ref: '#/components/schemas/TokensResponse'
+        - type: object
+          properties:
+            refresh_token_issued_at:
+              type: integer
+              description:
+                The date and time the refresh token was issued expressed in Unix epoch time in
+                milliseconds.
+            refresh_token_expires_in:
+              type: integer
+              description: 'The refresh token expiration, in seconds.'
+            refresh_count:
+              type: integer
+              description: The number of times the refresh token operation has been used.
+            refresh_token_status:
+              type: string
+              description: The current state of the refresh token.
+              enum:
+                - approved
+                - revoked
+            issued_at:
+              type: integer
+              description:
+                'The date and time the access token was issued, expressed in Unix epoch time in
+                milliseconds.'
+            status:
+              type: string
+              description: The status of the access token.
+              enum:
+                - approved
+                - revoked
+            issuer:
+              type: string
+              description: The authority that issued the token(s).
+              example: api.usps.com
+            client_id:
+              type: string
+              description: The unique identifier for the client application.
+            application_name:
+              type: string
+              description: The name of the client application.
+            api_products:
+              type: string
+              description: The list of API products approved for use by the client application.
+            public_key:
+              type: string
+              description:
+                'The base64-encoded public cryptographic key used to validate the signature of the
+                access token.  Validation ensures that the access token has not been tampered with
+                and it originated from a known, trusted source.'
+              format: byte
+          additionalProperties: true
+    StandardErrorResponse:
+      title: OAuth Standard Error Response
+      type: object
+      properties:
+        error:
+          type: string
+          description:
+            'See [The OAuth 2.0 Authorization Framework, Section
+            5.2](https://datatracker.ietf.org/doc/html/rfc6749#section-5.2), for information about
+            the specific error codes.'
+          enum:
+            - invalid_request
+            - invalid_client
+            - invalid_grant
+            - unauthorized_client
+            - unsupported_grant_type
+            - invalid_scope
+        error_description:
+          type: string
+          description:
+            'A human-readable text providing additional information, used to assist the client
+            developer in understanding the error that occurred.'
+        error_uri:
+          type: string
+          description:
+            'A URI identifying a human-readable web page with information about the error, used to
+            provide the client developer with additional information about the error.'
+      additionalProperties: false
+      description:
+        The authorization server responds with an HTTP 400 (Bad Request) status code (unless
+        specified otherwise) and includes the following parameters with the response.
+      readOnly: true
+  examples:
+    clientCredentialsTokenRequest:
+      summary: Client credentials token request example.
+      value:
+        grant_type: client_credentials
+        client_id: '123456789'
+        client_secret: A1B2c3d4E5
+        scope: ResourceA ResourceB ResourceC
+    clientCredentialsTokenRequestFormURLEncoded:
+      summary: Client credentials token request.
+      value:
+        grant_type=client_credentials &client_id=123456789 &client_secret=A1B2C3D4E5
+        &scope=ResourceA+ResourceB+ResourceC
+    authorizationCodeTokenRequest:
+      summary: Authorization code token request example.
+      value:
+        grant_type: authorization_code
+        client_id: '123456789'
+        client_secret: A1B2c3d4E5
+        scope: ResourceA ResourceB ResourceC
+        code: EyQPFYVI
+        redirect_uri: https://mycompany.com/etc
+    resourceOwnerCredentialsTokenRequest:
+      summary: Resource Owner Password credentials token request example.
+      value:
+        grant_type: password
+        client_id: '123456789'
+        client_secret: A1B2c3d4E5
+        scope: ResourceA ResourceB ResourceC
+        username: jsmith
+        password: ZYX98765432
+    refreshTokenCredentialsTokenRequest:
+      summary: Refresh Token credentials token request example.
+      value:
+        grant_type: refresh_token
+        client_id: '123456789'
+        client_secret: A1B2c3d4E5
+        scope: ResourceA ResourceB ResourceC
+        refresh_token: ExDTmpomcDt6pTbFVvSgQ1km39YmX8Oy
+    revokeTokenRequest:
+      summary: Token revocation request JSON example.
+      value:
+        token: ExDTmpomcDt6pTbFVvSgQ1km39YmX8Oy
+        token_type_hint: refresh_token
+    revokeTokenRequestFormURLEncoded:
+      summary: Token revocation request form parameters example.
+      value: token=ExDTmpomcDt6pTbFVvSgQ1km39YmX8Oy &token_type_hint=refresh_token
+    authorizationCodeResponse:
+      summary: Authorization Code Response Example.
+      value:
+        code: EoQOUwm0
+        state: nonce=8IBTHwOdqNKAWeKl7plt8g==
+    clientCredentialsTokenResponse:
+      summary:
+        An access token is returned. The access token is self-contained and in JSON Web Token
+        format.
+      description: The public key provided should be used to verify the access token signature.
+      value:
+        access_token: eyJraWQiOiIxMDEwMTAiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIiLCJhdWQiOiJhZGRyZXNzZXMgaW50ZXJuYXRpb25hbC1wcmljZXMgc3Vic2NyaXB0aW9ucyBwYXltZW50cyBwaWNrdXAgdHJhY2tpbmcgbGFiZWxzIHNjYW4tZm9ybXMgY29tcGFuaWVzIHNlcnZpY2UtZGVsaXZlcnktc3RhbmRhcmRzIGxvY2F0aW9ucyBpbnRlcm5hdGlvbmFsLWxhYmVscyBwcmljZXMiLCJhenAiOiJoeXI3YjN2Q1J0cFl0QUhNMWE4Y2RVcmt5eUZtTmtiZyIsIm9yZ2FuaXphdGlvbl9pZCI6IjAiLCJpc3MiOiJ1cm46XC9cL2FwaS51c3BzLmNvbSIsImV4cCI6MTY4MDkxNzc4NiwiaWF0IjoxNjgwODg4OTg2LCJqdGkiOiI3YjU5MzJlMS05NjIxLTQzZDAtYTMyNy0xMzIxYWVjNzJjZGYifQ.QzrUxlT2rG4jvYbMDGnk23j8ZYfHJcdXPKR9CbSmcKeVpURaHhEMpPB6K4x5ut3xxeEGSzeE5VRz8vixI4iqyHsD8rSdkLTPHy0iovUHOZQBAJVQ6hii9jpLhxUXmiTtH3jKzSj_f2fuNmZbIGhf-CR2FBeWF-aBPzEDEMV95nkCUMfW_Z2BmkbraSfvQZxkCO-cLrMAwlYcrzUtaJ7vnazeQB4sep5BBHBEvsa4kfq6_tz6BAKgv3R7cI2NkSv-wgy_IGoTjVCMTS8mJHGs_t8cWCO8-z4lxW1tUwIBKOCUDpmEEnGgiG6Sl0C_gGl4bZ5cDSl4IgPpcOVi9jZ7LA
+        token_type: Bearer
+        issued_at: 1680888985929
+        expires_in: 28799
+        status: approved
+        scope:
+          addresses international-prices subscriptions payments pickup tracking labels scan-form
+          companies service-delivery-standards locations international-labels prices
+        issuer: api.usps.com
+        client_id: hyr7b3vCRtpYtAHM1a8cdUrkyyFmNkbg
+        application_name: Silver Shipper Developer
+        api_products: '[Shipping-Silver]'
+        public_key: LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF4QWxwZjNSNEE1S0lwZnhJVWk1bgpMTFByZjZVZTV3MktzeGxSVzE1UWV0UzBjWGVxaW9OT2hXbDNaaVhEWEdKT3ZuK3RoY0NWVVQ3WC9JZWYvTENZCkhUWk1kYUJOdW55VHEwT2RNZmVkUU8zYUNKZmwvUnJPTHYyaG9TRDR4U1YxRzFuTTc1RTlRYitFZ1p0cmFEUXoKNW42SXRpMUMzOHFGMjU5NVRHUWVUemx3Wk1LQng1VTY2bGwzNzlkZ2plTUJxS3ppVHZHWEpOdVg5ZzRrRlBIaApTLzNERm9FNkVFSW8zUHExeDlXTnRaSm93VkRwQUVZZTQ3SU1UdXJDN2NGcXp2d3M1b1BDRHQ4c083N2lUdDN0Cm1vK3NrM2ExWnZSaGs2WUQ3Zkt1UldQVzFEYUM4dC9pazlnWnhqQndYNlZsSUhDRzRZSHlYejZteWdGV09jMmEKOVFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0t
+    resourceOwnerCredentialsTokenResponse:
+      summary:
+        'An access token, and a refresh token are returnred. The access token is self-contained and
+        in JSON Web Token format.'
+      description:
+        The public key provided should be used to verify the access token signature. The refresh
+        token is an opaque value that is managed internally.
+      value:
+        access_token: eyJraWQiOiIxMDEwMTAiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxMDAwNDY5ODQ4IiwiYXVkIjoiYWRkcmVzc2VzIGludGVybmF0aW9uYWwtcHJpY2VzIHN1YnNjcmlwdGlvbnMgcGF5bWVudHMgcGlja3VwIHRyYWNraW5nIGxhYmVscyBzY2FuLWZvcm1zIGNvbXBhbmllcyBzZXJ2aWNlLWRlbGl2ZXJ5LXN0YW5kYXJkcyBsb2NhdGlvbnMgaW50ZXJuYXRpb25hbC1sYWJlbHMgcHJpY2VzIiwiYXpwIjoiaHlyN2IzdkNSdHBZdEFITTFhOGNkVXJreXlGbU5rYmciLCJtYWlsX293bmVycyI6Ilt7XCJjcmlkXCI6XCIyMDUzODM1M1wiLFwibWFzdGVyX01JRFwiOlwiXCJ9XSIsInBheW1lbnRfYWNjb3VudHMiOiJ7fSIsImlzcyI6InVybjpcL1wvYXBpLnVzcHMuY29tIiwiY29udHJhY3RzIjoie1wicGF5bWVudEFjY291bnRzXCI6e30sXCJwZXJtaXRzXCI6e319IiwiZXhwIjoxNjgwOTE3ODI0LCJpYXQiOjE2ODA4ODkwMjQsImp0aSI6IjU5NjIxYmJlLWVmNzUtNDIwNy04YTJmLTIzN2I3ZTk0NmIwMCJ9.bdoHjgUqMdyb9Ntim_DJa667j1CJITHj6XpDxcHLpm5IQ6-1tpNH4NFMoWOz_cKSVIoMhzAcsaTMtdgbbhPouEbyGXuaI_CUVpeRX02vGheX0TE8e_R0jy0uXZm4_NwmtFW9zpcTlqIg_qEjUzXPrU2FV1u8jvDLAzR0J8i5fuWtwBLdIn0n79ep92wjS3ZAsP3jdSSs1TGbGyVeMJF3AOIksKpWb7Weu3ZKPX5NU3UleZszhssUMa204B0GQDLAkaR647lny8s-RZbfOFTIWECyHhX9IkrHkW8UwYuwlQGxRxzMGNDDE2XfZK9kIWxB5ci2t_s8LAH1HcCyjAa8Ow
+        token_type: Bearer
+        issued_at: 1680889020006
+        expires_in: 28799
+        status: approved
+        scope:
+          addresses international-prices subscriptions payments pickup tracking labels scan-form
+          companies service-delivery-standards locations international-labels prices
+        issuer: api.usps.com
+        refresh_token: U5BcWWaSKREEHbz2DSJEGqLVAJNXg21P
+        refresh_token_issued_at: 1680889020006
+        refresh_token_status: approved
+        refresh_token_expires_in: 43199
+        refresh_count: 0
+        client_id: hyr7b3vCRtpYtAHM1a8cdUrkyyFmNkbg
+        application_name: Silver Shipper Developer
+        api_products: '[Shipping-Silver]'
+        public_key: LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF4QWxwZjNSNEE1S0lwZnhJVWk1bgpMTFByZjZVZTV3MktzeGxSVzE1UWV0UzBjWGVxaW9OT2hXbDNaaVhEWEdKT3ZuK3RoY0NWVVQ3WC9JZWYvTENZCkhUWk1kYUJOdW55VHEwT2RNZmVkUU8zYUNKZmwvUnJPTHYyaG9TRDR4U1YxRzFuTTc1RTlRYitFZ1p0cmFEUXoKNW42SXRpMUMzOHFGMjU5NVRHUWVUemx3Wk1LQng1VTY2bGwzNzlkZ2plTUJxS3ppVHZHWEpOdVg5ZzRrRlBIaApTLzNERm9FNkVFSW8zUHExeDlXTnRaSm93VkRwQUVZZTQ3SU1UdXJDN2NGcXp2d3M1b1BDRHQ4c083N2lUdDN0Cm1vK3NrM2ExWnZSaGs2WUQ3Zkt1UldQVzFEYUM4dC9pazlnWnhqQndYNlZsSUhDRzRZSHlYejZteWdGV09jMmEKOVFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0t
+    invalidRefreshTokenResponse:
+      summary: Invalid refresh token specified.
+      description: 'The refresh token specified in the request is missing, invalid or has expired.'
+      value:
+        error: invalid_refresh_token
+        error_description:
+          'refresh_token_expired: Check the value of the refresh token. It may be missing, have
+          expired or have been revoked.'
+        error_uri: https://datatracker.ietf.org/doc/html/rfc7009#section-2.2.1
+        refresh_token_status: Unknown
+    refreshTokenResponse:
+      summary:
+        An access token and a new refresh token has been issued.  Indicates the refresh token count.
+      description:
+        The public key provided should be used to verify the access token signature. The refresh
+        token is an opaque value that is managed internally.
+      value:
+        access_token: eyJraWQiOiIxMDEwMTAiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIiLCJhdWQiOiJhZGRyZXNzZXMgaW50ZXJuYXRpb25hbC1wcmljZXMgc3Vic2NyaXB0aW9ucyBwYXltZW50cyBwaWNrdXAgdHJhY2tpbmcgbGFiZWxzIHNjYW4tZm9ybXMgY29tcGFuaWVzIHNlcnZpY2UtZGVsaXZlcnktc3RhbmRhcmRzIGxvY2F0aW9ucyBpbnRlcm5hdGlvbmFsLWxhYmVscyBwcmljZXMiLCJhenAiOiIiLCJtYWlsX293bmVycyI6IiIsInBheW1lbnRfYWNjb3VudHMiOiIiLCJpc3MiOiJ1cm46XC9cL2FwaS51c3BzLmNvbSIsImNvbnRyYWN0cyI6IiIsImV4cCI6MTY4MDkxODQyOCwiaWF0IjoxNjgwODg5NjI4LCJqdGkiOiI4ODQyOGNhNy1kMTE2LTQ1YWUtOWE2Ny1kMThkNDExOGJhNWQifQ.TTJh01hL8TGSyHTL4pf7ilAeTcAfndNGyhKdGs14jRzzV70PcqqGS3PZHLiCqq65LF3kJLGGniciNWH4dc3mVNPKmgvzcIWR73ezS-a_BDoxx9DmkqJF6ur4OsnsYQyKbhHqAf9iddnK4QRv6NN8fKHfBVmSCHEq4gcJ0zKV_HhBSE-DgeTWSOACeYt3zBRmuhfgwL40Eb9jV8cSdawyLGgQWEvvZoq7eai_f5gMJAcadLZ9Y-x_YSbJ0zUjU-J1kD-ngeogb66QoM1TYKIa_oqkFa6rtybZeeUZdmzxNLwj8ahQXy6EPA9qnPTdm1y03k-Mxh9O4JZPALDBNi5y1A
+        token_type: Bearer
+        issued_at: 1680889628876
+        expires_in: 28799
+        status: approved
+        scope:
+          addresses international-prices subscriptions payments pickup tracking labels scan-form
+          companies service-delivery-standards locations international-labels prices
+        issuer: api.usps.com
+        refresh_token: hqhm7KuTJKzmvhCbRzKNbkgdFlw7kU18
+        refresh_token_issued_at: 1680889628876
+        refresh_token_status: approved
+        refresh_token_expires_in: 43199
+        refresh_count: 1
+        client_id: hyr7b3vCRtpYtAHM1a8cdUrkyyFmNkbg
+        application_name: Silver Shipper Developer
+        api_products: '[Shipping-Silver]'
+        public_key: LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF4QWxwZjNSNEE1S0lwZnhJVWk1bgpMTFByZjZVZTV3MktzeGxSVzE1UWV0UzBjWGVxaW9OT2hXbDNaaVhEWEdKT3ZuK3RoY0NWVVQ3WC9JZWYvTENZCkhUWk1kYUJOdW55VHEwT2RNZmVkUU8zYUNKZmwvUnJPTHYyaG9TRDR4U1YxRzFuTTc1RTlRYitFZ1p0cmFEUXoKNW42SXRpMUMzOHFGMjU5NVRHUWVUemx3Wk1LQng1VTY2bGwzNzlkZ2plTUJxS3ppVHZHWEpOdVg5ZzRrRlBIaApTLzNERm9FNkVFSW8zUHExeDlXTnRaSm93VkRwQUVZZTQ3SU1UdXJDN2NGcXp2d3M1b1BDRHQ4c083N2lUdDN0Cm1vK3NrM2ExWnZSaGs2WUQ3Zkt1UldQVzFEYUM4dC9pazlnWnhqQndYNlZsSUhDRzRZSHlYejZteWdGV09jMmEKOVFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0t
+  headers:
+    RetryAfter:
+      description:
+        Indicate to the client application a time after which they can retry a resource request.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: 'Retry-After: 30'
+    WWWAuthenticate:
+      description:
+        Hint to the client application which security scheme to authorize a resource request.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: 'WWW-Authenticate: Bearer realm="https://api.usps.com"'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      description:
+        'Use the client_id and client_secret for the username and password, respectfully. The client
+        application is authenticated using the Basic authentication security scheme.'
+      scheme: basic
