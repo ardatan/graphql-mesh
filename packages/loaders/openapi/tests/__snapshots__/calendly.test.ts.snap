@@ -1824,7 +1824,7 @@ enum mutation_post_organizations_uuid_invitations_oneOf_3_message {
   You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_ @enum(subgraph: "calendly", value: "\\"You cannot perform this action for an organization with SCIM enabled.\\"")
 }
 
-input post_organizations_uuid_invitations_request_Input @example(subgraph: "calendly", value: "{\\"value\\":{\\"email\\":\\"alice@example.com\\"}}") {
+input post_organizations_uuid_invitations_request_Input {
   """The email of the user being invited"""
   email: EmailAddress!
 }
@@ -1860,7 +1860,7 @@ enum Hook_with_this_url_already_exists_const @typescript(subgraph: "calendly", t
   Hook_with_this_url_already_exists @enum(subgraph: "calendly", value: "\\"Hook with this url already exists\\"")
 }
 
-input post_users_uuid_webhooks_request_Input @example(subgraph: "calendly", value: "{\\"value\\":{\\"url\\":\\"https://blah.foo/bar\\",\\"events\\":[\\"invitee.created\\",\\"invitee.canceled\\"],\\"organization\\":\\"https://api.calendly.com/organizations/AAAAAAAAAAAAAAAA\\",\\"user\\":\\"https://api.calendly.com/users/BBBBBBBBBBBBBBBB\\",\\"scope\\":\\"user\\",\\"signing_key\\":\\"5mEzn9C-I28UtwOjZJtFoob0sAAFZ95GbZkqj4y3i0I\\"}}") {
+input post_users_uuid_webhooks_request_Input {
   """
   The URL where you want to receive POST requests for events you are subscribed to.
   """
@@ -1916,7 +1916,7 @@ enum EventType_const @typescript(subgraph: "calendly", type: "\\"EventType\\"") 
   EventType @enum(subgraph: "calendly", value: "\\"EventType\\"")
 }
 
-input post_scheduling_links_request_Input @example(subgraph: "calendly", value: "{\\"value\\":{\\"max_event_count\\":1,\\"owner\\":\\"https://api.calendly.com/event_types/012345678901234567890\\",\\"owner_type\\":\\"EventType\\"}}") {
+input post_scheduling_links_request_Input {
   max_event_count: _1_const!
   """
   A link to the resource that owns this Scheduling Link (currently, this is always an Event Type)
@@ -1935,7 +1935,7 @@ type JSON_container {
   JSON: JSON @resolveRoot(subgraph: "calendly")
 }
 
-input post_data_compliance_deletion_invitees_request_Input @example(subgraph: "calendly", value: "{\\"value\\":{\\"emails\\":[\\"test@example.com\\"]}}") {
+input post_data_compliance_deletion_invitees_request_Input {
   emails: [EmailAddress]!
 }
 
@@ -1947,7 +1947,7 @@ type postInviteeNoShow_201_response {
   resource: InviteeNoShow!
 }
 
-input postInviteeNoShow_request_Input @example(subgraph: "calendly", value: "{\\"value\\":{\\"invitee\\":\\"https://api.calendly.com/scheduled_events/GBGBDCAADAEDCRZ2/invitees/7c1dbe46-bd84-42e2-9b97-05e2fb379bfe\\"}}") {
+input postInviteeNoShow_request_Input {
   invitee: URL
 }
 
