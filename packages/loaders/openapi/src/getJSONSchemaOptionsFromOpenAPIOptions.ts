@@ -450,7 +450,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           const contentKeys = Object.keys(requestBodyObj.content);
           const contentKey =
             contentKeys.find(
-              contentKey => typeof contentKey === 'string' && contentKey.match('json'),
+              contentKey => typeof contentKey === 'string' && contentKey.includes('json'),
             ) || contentKeys[0];
           const contentSchema = requestBodyObj.content[contentKey]?.schema;
           if (contentSchema && Object.keys(contentSchema).length > 0) {
@@ -458,7 +458,12 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           }
           const examplesObj = requestBodyObj.content[contentKey]?.examples;
           if (examplesObj) {
-            operationConfig.requestSample = Object.values(examplesObj)[0];
+            const firstItem = Object.values(examplesObj)[0];
+            if (typeof firstItem === 'object' && 'value' in firstItem) {
+              operationConfig.requestSample = firstItem.value;
+            } else {
+              operationConfig.requestSample = firstItem;
+            }
           }
           if (!operationConfig.headers?.['Content-Type'] && typeof contentKey === 'string') {
             operationConfig.headers = operationConfig.headers || {};
