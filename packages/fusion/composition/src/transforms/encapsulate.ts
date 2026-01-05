@@ -49,6 +49,13 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
         const wrappedFieldMap: GraphQLFieldConfigMap<any, any> = {};
         for (const fieldName in originalTypeConfig.fields) {
           const originalFieldConfig = originalTypeConfig.fields[fieldName];
+          // Generate sourceArgs to forward all arguments
+          const sourceArgs: Record<string, string> = {};
+          if (originalFieldConfig.args) {
+            for (const argName in originalFieldConfig.args) {
+              sourceArgs[argName] = `{args.${argName}}`;
+            }
+          }
           wrappedFieldMap[fieldName] = {
             ...originalFieldConfig,
             extensions: {
@@ -58,6 +65,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
                     sourceName: subgraphConfig.name,
                     sourceTypeName: originalType.name,
                     sourceFieldName: fieldName,
+                    ...(Object.keys(sourceArgs).length > 0 && { sourceArgs }),
                   },
                 ],
               },
