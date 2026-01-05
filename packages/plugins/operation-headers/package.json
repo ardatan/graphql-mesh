@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-operation-headers",
-  "version": "1.4.18",
+  "version": "1.4.19",
   "type": "module",
   "repository": {
     "type": "git",

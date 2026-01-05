@@ -1,5 +1,16 @@
 # @graphql-mesh/migrate-config-cli
 
+## 1.7.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3d12bc1`](https://github.com/ardatan/graphql-mesh/commit/3d12bc1ebb223d3d00c76add906c4c28bd2601fc),
+  [`3d12bc1`](https://github.com/ardatan/graphql-mesh/commit/3d12bc1ebb223d3d00c76add906c4c28bd2601fc)]:
+  - @graphql-mesh/cli@0.100.22
+  - @graphql-mesh/config@0.108.22
+  - @graphql-mesh/compose-cli@1.5.6
+
 ## 1.7.7
 
 ### Patch Changes

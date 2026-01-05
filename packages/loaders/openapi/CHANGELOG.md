@@ -1,5 +1,25 @@
 # @omnigraph/openapi
 
+## 0.109.26
+
+### Patch Changes
+
+- [#9089](https://github.com/ardatan/graphql-mesh/pull/9089)
+  [`c25d02e`](https://github.com/ardatan/graphql-mesh/commit/c25d02e906b54e6179204a297e5cad56c00774f8)
+  Thanks [@ardatan](https://github.com/ardatan)! - - Support `discriminator` for OpenAPI documents
+  with the definitions defined in `definitions` instead of `components.schemas`
+  - Also while handling
+    [Inheritance and Polymorphism](https://swagger.io/docs/specification/v3_0/data-models/inheritance-and-polymorphism/)
+    to look up for types in `discriminator.mapping`, if the pointers are not used, also check
+    `title` to find the correct definition.
+- Updated dependencies
+  [[`3878067`](https://github.com/ardatan/graphql-mesh/commit/38780670ae4d777d192c95e10308b51b9ee6a3fd),
+  [`4dea313`](https://github.com/ardatan/graphql-mesh/commit/4dea3139deaa6a5e81cd67d5b24d3515e4af7564),
+  [`0a2a0bc`](https://github.com/ardatan/graphql-mesh/commit/0a2a0bc053c7f6ede3fa33bc1d4f751b0b6422f5),
+  [`d420cb2`](https://github.com/ardatan/graphql-mesh/commit/d420cb23a09c1bb3525fb4f2a341dfea8ff53b4e)]:
+  - @graphql-mesh/fusion-composition@0.8.23
+  - @omnigraph/json-schema@0.109.20
+
 ## 0.109.25
 
 ### Patch Changes

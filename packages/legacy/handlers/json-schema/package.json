@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/json-schema",
-  "version": "0.109.20",
+  "version": "0.109.21",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,12 +36,12 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.11",
-    "@graphql-mesh/store": "^0.104.19",
+    "@graphql-mesh/store": "^0.104.20",
     "@graphql-mesh/string-interpolation": "^0.5.9",
     "@graphql-mesh/types": "^0.104.18",
     "@graphql-mesh/utils": "^0.104.18",
     "@json-schema-tools/meta-schema": "^1.7.5",
-    "@omnigraph/json-schema": "^0.109.19",
+    "@omnigraph/json-schema": "^0.109.20",
     "graphql-compose": "^9.1.0",
     "json-machete": "^0.97.6",
     "tslib": "^2.4.0"

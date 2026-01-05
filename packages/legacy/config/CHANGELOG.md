@@ -1,5 +1,24 @@
 # @graphql-mesh/config
 
+## 0.108.22
+
+### Patch Changes
+
+- [#9094](https://github.com/ardatan/graphql-mesh/pull/9094)
+  [`3d12bc1`](https://github.com/ardatan/graphql-mesh/commit/3d12bc1ebb223d3d00c76add906c4c28bd2601fc)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-yoga/plugin-persisted-operations@^3.18.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-persisted-operations/v/3.18.0)
+    (from `^3.17.1`, in `dependencies`)
+  - Updated dependency
+    [`graphql-yoga@^5.18.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.18.0) (from `^5.17.1`,
+    in `dependencies`)
+- Updated dependencies
+  [[`6f8bba6`](https://github.com/ardatan/graphql-mesh/commit/6f8bba61d7a9ffdb2c97a18707a68efa56d9fea8)]:
+  - @graphql-mesh/store@0.104.20
+  - @graphql-mesh/merger-stitching@0.105.20
+  - @graphql-mesh/merger-bare@0.105.20
+
 ## 0.108.21
 
 ### Patch Changes

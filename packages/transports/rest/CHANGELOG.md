@@ -1,5 +1,15 @@
 # @graphql-mesh/transport-rest
 
+## 0.9.20
+
+### Patch Changes
+
+- [#9108](https://github.com/ardatan/graphql-mesh/pull/9108)
+  [`0a2a0bc`](https://github.com/ardatan/graphql-mesh/commit/0a2a0bc053c7f6ede3fa33bc1d4f751b0b6422f5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`qs@^6.14.1` ↗︎](https://www.npmjs.com/package/qs/v/6.14.1) (from `^6.14.0`,
+    in `dependencies`)
+
 ## 0.9.19
 
 ### Patch Changes
