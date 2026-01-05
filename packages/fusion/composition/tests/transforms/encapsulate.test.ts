@@ -154,4 +154,44 @@ describe('encapsulate', () => {
     ]);
     expect(printSchemaWithDirectives(newSchema)).toMatchSnapshot();
   });
+  it('forwards field arguments via sourceArgs', async () => {
+    const schemaWithArgs = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Item {
+          id: ID!
+          name: String!
+        }
+
+        type Query {
+          itemById(id: ID!, options: [String]): Item
+        }
+      `,
+      resolvers: {
+        Query: {
+          itemById: (_: any, args: { id: string; options?: string[] }) => ({
+            id: args.id,
+            name: `Item ${args.id}`,
+          }),
+        },
+      },
+    });
+    const transform = createEncapsulateTransform();
+    const executor = composeAndGetExecutor([
+      {
+        schema: schemaWithArgs,
+        transforms: [transform],
+        name: 'items',
+      },
+    ]);
+
+    const result = await executor({
+      query: `query ($id: ID!, $options: [String]) { items { itemById(id: $id, options: $options) { id name } } }`,
+      variables: { id: '123', options: ['opt1', 'opt2'] },
+    });
+
+    expect(result.items.itemById).toEqual({
+      id: '123',
+      name: 'Item 123',
+    });
+  });
 });
