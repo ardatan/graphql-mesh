@@ -1,0 +1,418 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Example API",
+    "description": "An API to test converting Open API Specs 3.0 to GraphQL",
+    "version": "1.0.0",
+    "termsOfService": "http://example.com/terms/",
+    "contact": {
+      "name": "Erik Wittern",
+      "url": "http://www.example.com/support"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "externalDocs": {
+    "url": "http://example.com/docs",
+    "description": "Some more natural language description."
+  },
+  "tags": [
+    {
+      "name": "test",
+      "description": "Indicates this API is for testing"
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:{port}/{basePath}",
+      "description": "The location of the local test server.",
+      "variables": {
+        "port": {
+          "default": "3001"
+        },
+        "basePath": {
+          "default": "api"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/categories/{id}": {
+      "get": {
+        "operationId": "getCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Category"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "definitions": {
+    "Category": {
+      "title": "Category",
+      "oneOf": [
+        { "$ref": "#/definitions/CategoryRoot" },
+        { "$ref": "#/definitions/CategoryDefault" },
+        { "$ref": "#/definitions/CategoryListing" },
+        { "$ref": "#/definitions/CategoryAtmosphere" },
+        { "$ref": "#/definitions/CategorySuggestions" },
+        { "$ref": "#/definitions/Pillar" }
+      ],
+      "discriminator": {
+        "propertyName": "template",
+        "mapping": {
+          "categoryListing": "CategoryCategoryListing",
+          "categoryDefault": "CategoryDefault",
+          "categoryRoot": "CategoryCategoryRoot",
+          "categoryAtmosphere": "CategoryCategoryAtmosphere",
+          "categorySuggestions": "CategoryCategorySuggestions",
+          "pillar": "CategoryPillar"
+        }
+      }
+    },
+    "CategoryDefault": {
+      "title": "CategoryDefault",
+      "type": "object",
+      "properties": {
+        "template": {
+          "type": "string"
+        },
+        "content": {
+          "title": "CategoryDefaultContent",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": ["string", "null"]
+            },
+            "url": {
+              "type": ["string", "null"]
+            },
+            "article": {
+              "type": ["string", "null"]
+            }
+          }
+        }
+      }
+    },
+    "CategoryRoot": {
+      "title": "CategoryCategoryRoot",
+      "type": "object",
+      "properties": {
+        "template": {
+          "type": "string"
+        },
+        "content": {
+          "title": "CategoryRootContent",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": ["string", "null"]
+            },
+            "url": {
+              "type": ["string", "null"]
+            }
+          }
+        }
+      }
+    },
+    "CategoryListing": {
+      "title": "CategoryCategoryListing",
+      "type": "object",
+      "properties": {
+        "template": {
+          "type": "string"
+        },
+        "content": {
+          "title": "CategoryListingContent",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": ["string", "null"]
+            },
+            "colorTitle": {
+              "type": ["string", "null"]
+            },
+            "url": {
+              "type": ["string", "null"]
+            },
+            "descriptionTitle": {
+              "type": ["string", "null"]
+            },
+            "customParentTitle": {
+              "type": ["string", "null"]
+            },
+            "menuLabel": {
+              "type": ["string", "null"]
+            },
+            "parentCategory": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "nodeType": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "template": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": ["string", "null"]
+                    },
+                    "url": {
+                      "type": ["string", "null"]
+                    }
+                  }
+                },
+                "view": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "url": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "author": {
+                  "type": "string"
+                },
+                "authored": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "changer": {
+                  "type": "integer"
+                },
+                "changed": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "creator": {
+                  "type": "integer"
+                },
+                "created": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            },
+            "headerTextColor": {
+              "type": ["string", "null"]
+            },
+            "collectionDescription": {
+              "type": ["string", "null"]
+            },
+            "preFooterTitle": {
+              "type": ["string", "null"]
+            },
+            "preFooterParagraph": {
+              "type": ["string", "null"]
+            },
+            "autoplayMenuMedia": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "CategoryAtmosphere": {
+      "title": "CategoryCategoryAtmosphere",
+      "type": "object",
+      "properties": {
+        "template": {
+          "type": "string"
+        },
+        "content": {
+          "title": "CategoryAtmosphereContent",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": ["string", "null"]
+            },
+            "url": {
+              "type": ["string", "null"]
+            }
+          }
+        }
+      }
+    },
+    "CategorySuggestions": {
+      "title": "CategoryCategorySuggestions",
+      "type": "object",
+      "properties": {
+        "template": {
+          "type": "string"
+        },
+        "content": {
+          "title": "CategorySuggestionsContent",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": ["string", "null"]
+            },
+            "url": {
+              "type": ["string", "null"]
+            }
+          }
+        }
+      }
+    },
+    "Pillar": {
+      "title": "CategoryPillar",
+      "type": "object",
+      "properties": {
+        "template": {
+          "type": "string"
+        },
+        "content": {
+          "title": "CategoryPillarContent",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": ["string", "null"]
+            },
+            "url": {
+              "type": ["string", "null"]
+            },
+            "parentCategory": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "nodeType": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "template": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": ["string", "null"]
+                    },
+                    "url": {
+                      "type": ["string", "null"]
+                    }
+                  }
+                },
+                "view": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "url": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "productListingWithCta": {
+              "type": "array",
+              "items": {
+                "title": "CategoryPillarProductListingWithCta",
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["listingSectionWithCta"]
+                  },
+                  "settings": {
+                    "type": "object"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "listingItems": {
+                    "type": "array",
+                    "items": {
+                      "title": "CategoryPillarProductListingWithCtaListItem",
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "sku": {
+                          "type": ["string", "null"]
+                        }
+                      }
+                    }
+                  },
+                  "buttonText": {
+                    "type": ["string", "null"]
+                  },
+                  "defaultButtonText": {
+                    "type": ["string", "null"]
+                  },
+                  "buttonTextHidden": {
+                    "type": ["string", "null"]
+                  },
+                  "buttonLink": {
+                    "type": ["string", "null"],
+                    "format": "string"
+                  },
+                  "targetBlankLink": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "preFooterTitle": {
+              "type": ["string", "null"]
+            },
+            "preFooterParagraph": {
+              "type": ["string", "null"]
+            }
+          }
+        }
+      }
+    }
+  }
+}
