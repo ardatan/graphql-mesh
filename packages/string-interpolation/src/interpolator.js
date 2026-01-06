@@ -126,7 +126,17 @@ export class Interpolator {
   applyRule(str, rule, data = {}) {
     const dataToReplace = this.applyData(rule.key, data);
     if (dataToReplace !== undefined) {
-      return str.replace(rule.replace, this.applyModifiers(rule.modifiers, dataToReplace, data));
+      const modifiedData = this.applyModifiers(rule.modifiers, dataToReplace, data);
+      // If the entire string is just the placeholder and the replacement is an object,
+      // return the object directly instead of converting to "[object Object]"
+      if (str === rule.replace && typeof modifiedData === 'object' && modifiedData !== null) {
+        return modifiedData;
+      }
+      // For objects embedded in a larger string, JSON stringify them
+      if (typeof modifiedData === 'object' && modifiedData !== null) {
+        return str.replace(rule.replace, JSON.stringify(modifiedData));
+      }
+      return str.replace(rule.replace, modifiedData);
     } else if (rule.alternativeText) {
       return str.replace(
         rule.replace,
