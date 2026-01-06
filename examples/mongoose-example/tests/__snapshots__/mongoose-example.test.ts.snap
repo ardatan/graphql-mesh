@@ -101,7 +101,7 @@ input FilterCountUserAgeOperatorsInput {
 """"""
 input FilterCountUserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 input FilterCountUserGenderOperatorsInput {
@@ -205,7 +205,7 @@ input FilterFindManyUserAgeOperatorsInput {
 """"""
 input FilterFindManyUserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 input FilterFindManyUserGenderOperatorsInput {
@@ -309,7 +309,7 @@ input FilterFindOneUserAgeOperatorsInput {
 """"""
 input FilterFindOneUserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 input FilterFindOneUserGenderOperatorsInput {
@@ -413,7 +413,7 @@ input FilterRemoveManyUserAgeOperatorsInput {
 """"""
 input FilterRemoveManyUserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 input FilterRemoveManyUserGenderOperatorsInput {
@@ -517,7 +517,7 @@ input FilterRemoveOneUserAgeOperatorsInput {
 """"""
 input FilterRemoveOneUserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 input FilterRemoveOneUserGenderOperatorsInput {
@@ -621,7 +621,7 @@ input FilterUpdateManyUserAgeOperatorsInput {
 """"""
 input FilterUpdateManyUserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 input FilterUpdateManyUserGenderOperatorsInput {
@@ -725,7 +725,7 @@ input FilterUpdateOneUserAgeOperatorsInput {
 """"""
 input FilterUpdateOneUserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 input FilterUpdateOneUserGenderOperatorsInput {
@@ -1105,7 +1105,7 @@ input UpdateByIdUserAddressInput {
 """"""
 input UpdateByIdUserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 """"""
@@ -1151,7 +1151,7 @@ input UpdateManyUserAddressInput {
 """"""
 input UpdateManyUserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 """"""
@@ -1194,7 +1194,7 @@ input UpdateOneUserAddressInput {
 """"""
 input UpdateOneUserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 """"""
@@ -1270,12 +1270,12 @@ type UserConnection {
 
 type UserContacts {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 input UserContactsInput {
   email: String
-  phones: [String]
+  phones: JSON
 }
 
 """An edge in a connection."""
