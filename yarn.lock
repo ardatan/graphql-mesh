@@ -7297,6 +7297,7 @@ __metadata:
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
+    mongoose: "*"
   languageName: unknown
   linkType: soft
 

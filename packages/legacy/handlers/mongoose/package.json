@@ -32,7 +32,8 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "*",
+    "mongoose": "*"
   },
   "dependencies": {
     "@graphql-mesh/string-interpolation": "^0.5.9",
@@ -42,7 +43,6 @@
     "graphql-compose-connection": "^8.2.1",
     "graphql-compose-mongoose": "^10.1.0",
     "graphql-compose-pagination": "^8.3.0",
-    "mongoose": "*",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
