@@ -52,7 +52,7 @@
     "@whatwg-node/fetch": "^0.10.6",
     "camel-case": "^4.1.2",
     "graphql-yoga": "^5.18.0",
-    "param-case": "^3.0.4",
+    "param-case": "^4.0.0",
     "pascal-case": "^3.1.2",
     "tslib": "^2.4.0"
   },
