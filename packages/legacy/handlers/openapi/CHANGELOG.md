@@ -1,5 +1,16 @@
 # @graphql-mesh/openapi
 
+## 0.109.28
+
+### Patch Changes
+
+- Updated dependencies
+  [[`30e8e32`](https://github.com/ardatan/graphql-mesh/commit/30e8e324ca3e011530c3d6f61856f6dd69b582e9)]:
+  - @graphql-mesh/string-interpolation@0.5.10
+  - @graphql-mesh/utils@0.104.19
+  - @omnigraph/openapi@0.109.27
+  - @graphql-mesh/store@0.104.21
+
 ## 0.109.27
 
 ### Patch Changes
