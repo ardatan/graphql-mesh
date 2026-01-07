@@ -39,7 +39,7 @@
     "@graphql-mesh/store": "^0.104.21",
     "@graphql-mesh/types": "^0.104.18",
     "@graphql-mesh/utils": "^0.104.19",
-    "@graphql-tools/utils": "^10.11.0",
+    "@graphql-tools/utils": "^11.0.0",
     "@omnigraph/thrift": "^0.9.20",
     "tslib": "^2.4.0"
   },
