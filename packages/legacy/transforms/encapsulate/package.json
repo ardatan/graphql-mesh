@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-encapsulate",
-  "version": "0.104.18",
+  "version": "0.104.19",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "^0.104.18",
-    "@graphql-mesh/utils": "^0.104.18",
+    "@graphql-mesh/utils": "^0.104.19",
     "@graphql-tools/delegate": "^12.0.2",
     "@graphql-tools/utils": "^10.11.0",
     "@graphql-tools/wrap": "^11.1.2",

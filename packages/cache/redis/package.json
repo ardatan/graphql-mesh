@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-redis",
-  "version": "0.105.4",
+  "version": "0.105.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.11",
-    "@graphql-mesh/string-interpolation": "0.5.9",
+    "@graphql-mesh/string-interpolation": "0.5.10",
     "@graphql-mesh/types": "^0.104.18",
     "@opentelemetry/api": "^1.9.0",
     "@whatwg-node/disposablestack": "^0.0.6",

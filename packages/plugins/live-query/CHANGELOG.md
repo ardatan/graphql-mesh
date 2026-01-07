@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-live-query
 
+## 0.104.20
+
+### Patch Changes
+
+- Updated dependencies
+  [[`30e8e32`](https://github.com/ardatan/graphql-mesh/commit/30e8e324ca3e011530c3d6f61856f6dd69b582e9)]:
+  - @graphql-mesh/string-interpolation@0.5.10
+  - @graphql-mesh/utils@0.104.19
+
 ## 0.104.19
 
 ### Patch Changes

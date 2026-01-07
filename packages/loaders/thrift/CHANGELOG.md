@@ -1,5 +1,13 @@
 # @omnigraph/thrift
 
+## 0.9.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.19
+  - @graphql-mesh/transport-thrift@0.9.19
+
 ## 0.9.19
 
 ### Patch Changes

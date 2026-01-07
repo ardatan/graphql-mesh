@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-mock
 
+## 0.105.21
+
+### Patch Changes
+
+- Updated dependencies
+  [[`30e8e32`](https://github.com/ardatan/graphql-mesh/commit/30e8e324ca3e011530c3d6f61856f6dd69b582e9)]:
+  - @graphql-mesh/string-interpolation@0.5.10
+  - @graphql-mesh/utils@0.104.19
+
 ## 0.105.20
 
 ### Patch Changes

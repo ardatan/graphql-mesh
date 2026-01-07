@@ -1,5 +1,13 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.10
+
+### Patch Changes
+
+- [#9114](https://github.com/ardatan/graphql-mesh/pull/9114)
+  [`30e8e32`](https://github.com/ardatan/graphql-mesh/commit/30e8e324ca3e011530c3d6f61856f6dd69b582e9)
+  Thanks [@tazsingh](https://github.com/tazsingh)! - Fix string interpolation of objects
+
 ## 0.5.9
 
 ### Patch Changes
