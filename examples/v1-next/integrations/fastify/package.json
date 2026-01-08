@@ -9,7 +9,7 @@
     "@graphql-hive/gateway": "^2.2.1",
     "@graphql-mesh/compose-cli": "workspace:^",
     "@omnigraph/openapi": "workspace:^",
-    "@types/node": "^24.10.2",
+    "@types/node": "^25.0.3",
     "fastify": "^5.0.0",
     "graphql": "16.12.0",
     "ts-node": "^10.9.2",
