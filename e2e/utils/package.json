@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/gateway": "^2.12.2",
-    "@graphql-hive/gateway": "^2.1.23",
+    "@graphql-hive/gateway": "^2.2.1",
     "@types/dockerode": "^3.3.47",
     "@whatwg-node/disposablestack": "^0.0.6",
     "dockerode": "^4.0.2",
