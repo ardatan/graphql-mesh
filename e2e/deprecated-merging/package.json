@@ -2,7 +2,7 @@
   "name": "@e2e/deprecated-merging",
   "private": true,
   "devDependencies": {
-    "@graphql-hive/gateway": "^2.2.1",
+    "@graphql-hive/gateway": "^2.2.2",
     "graphql": "^16.9.0",
     "graphql-yoga": "^5.18.0"
   }
