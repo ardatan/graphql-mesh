@@ -108,7 +108,9 @@ export async function loadGraphQLSchemaFromMySQL(
   const endConnection$ = util.promisify<
     // we need to define the generic because introspectionConnection.end is overloaded
     (err?: MysqlError) => void
+    // @ts-expect-error - We know it works
   >(introspectionConnection.end.bind(introspectionConnection));
+  // @ts-expect-error - We know it works
   await endConnection$(undefined);
 
   const schema = schemaComposer.buildSchema();
