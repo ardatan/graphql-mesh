@@ -20,7 +20,7 @@
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@theguild/tailwind-config": "0.6.4",
-    "@types/node": "^25.0.7",
+    "@types/node": "^25.0.8",
     "@types/react": "19.2.8",
     "cross-env": "10.1.0",
     "eslint": "9.39.2",
