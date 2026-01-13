@@ -81,7 +81,7 @@
     "@tsconfig/node22": "^22.0.0",
     "@tsconfig/recommended": "^1.0.5",
     "@types/jest": "30.0.0",
-    "@types/node": "24.10.2",
+    "@types/node": "25.0.7",
     "@types/react": "19.2.8",
     "@types/react-dom": "19.2.3",
     "@typescript-eslint/eslint-plugin": "8.53.0",
