@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/transport-common": "^1.0.0",
+    "@graphql-mesh/transport-common": "^1.0.13",
     "@omnigraph/odata": "^0.2.21",
     "tslib": "^2.4.0"
   },
