@@ -1,5 +1,16 @@
 # @graphql-mesh/cross-helpers
 
+## 0.4.12
+
+### Patch Changes
+
+- [#9120](https://github.com/ardatan/graphql-mesh/pull/9120)
+  [`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.0)
+    (from `^10.11.0`, in `dependencies`)
+
 ## 0.4.11
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/merger-stitching",
-  "version": "0.105.21",
+  "version": "0.105.22",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,9 +35,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "^0.104.21",
-    "@graphql-mesh/types": "^0.104.18",
-    "@graphql-mesh/utils": "^0.104.19",
+    "@graphql-mesh/store": "^0.104.22",
+    "@graphql-mesh/types": "^0.104.19",
+    "@graphql-mesh/utils": "^0.104.20",
     "@graphql-tools/delegate": "^12.0.4",
     "@graphql-tools/schema": "^10.0.31",
     "@graphql-tools/stitch": "^10.1.8",

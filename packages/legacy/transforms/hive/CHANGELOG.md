@@ -1,5 +1,45 @@
 # @graphql-mesh/transform-hive
 
+## 0.104.22
+
+### Patch Changes
+
+- [#9128](https://github.com/ardatan/graphql-mesh/pull/9128)
+  [`e02baa2`](https://github.com/ardatan/graphql-mesh/commit/e02baa249160aa55b0f626edd0e1bbc72feb5ae2)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/core@^0.15.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.15.0)
+    (from `^0.13.0`, in `dependencies`)
+
+- [#9120](https://github.com/ardatan/graphql-mesh/pull/9120)
+  [`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/core@^0.19.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.19.0)
+    (from `^0.18.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.3)
+    (from `^12.0.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.0)
+    (from `^10.11.0`, in `dependencies`)
+
+- [#9129](https://github.com/ardatan/graphql-mesh/pull/9129)
+  [`3f91b5a`](https://github.com/ardatan/graphql-mesh/commit/3f91b5a5ca6dcb470e0e3897dd96c607f6e358c8)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/core@^0.20.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.20.0)
+    (from `^0.19.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.4)
+    (from `^12.0.3`, in `dependencies`)
+- Updated dependencies
+  [[`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948),
+  [`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948),
+  [`3f91b5a`](https://github.com/ardatan/graphql-mesh/commit/3f91b5a5ca6dcb470e0e3897dd96c607f6e358c8)]:
+  - @graphql-mesh/cross-helpers@0.4.12
+  - @graphql-mesh/types@0.104.19
+
 ## 0.104.21
 
 ### Patch Changes

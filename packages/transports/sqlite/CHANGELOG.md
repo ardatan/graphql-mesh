@@ -1,5 +1,27 @@
 # @graphql-mesh/transport-sqlite
 
+## 0.9.19
+
+### Patch Changes
+
+- [#9120](https://github.com/ardatan/graphql-mesh/pull/9120)
+  [`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.0)
+    (from `^10.11.0`, in `dependencies`)
+
+- [#9129](https://github.com/ardatan/graphql-mesh/pull/9129)
+  [`3f91b5a`](https://github.com/ardatan/graphql-mesh/commit/3f91b5a5ca6dcb470e0e3897dd96c607f6e358c8)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/transport-common@^1.0.13` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/1.0.13)
+    (from `^1.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948),
+  [`3f91b5a`](https://github.com/ardatan/graphql-mesh/commit/3f91b5a5ca6dcb470e0e3897dd96c607f6e358c8)]:
+  - @omnigraph/sqlite@0.8.19
+
 ## 0.9.18
 
 ### Patch Changes
