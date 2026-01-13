@@ -15112,10 +15112,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node20@npm:^20.1.0":
-  version: 20.1.8
-  resolution: "@tsconfig/node20@npm:20.1.8"
-  checksum: 10c0/5a9fcc0234e639c26f36f01d5912a59c47964361e9b9a8981a10806553799441f929474aed71cdec0ce5464ad1d757698df1651ac94cd55bb6bc01601a6003ea
+"@tsconfig/node22@npm:^22.0.0":
+  version: 22.0.5
+  resolution: "@tsconfig/node22@npm:22.0.5"
+  checksum: 10c0/c64b1d51e1556da9212463799f5096289d2cc8561eaed10cd0a0a36c25790b4c6bed30c0f846afccf8da75b5750326fa281216a908c2b67ead7b55adaf3eda22
   languageName: node
   linkType: hard
 
@@ -24965,7 +24965,7 @@ __metadata:
     "@changesets/cli": "npm:2.29.8"
     "@repeaterjs/repeater": "npm:^3.0.5"
     "@theguild/prettier-config": "npm:3.0.1"
-    "@tsconfig/node20": "npm:^20.1.0"
+    "@tsconfig/node22": "npm:^22.0.0"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:30.0.0"
     "@types/node": "npm:24.10.2"
