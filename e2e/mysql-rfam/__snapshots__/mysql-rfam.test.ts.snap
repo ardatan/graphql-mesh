@@ -547,6 +547,13 @@ type Query @extraSchemaDefinitionDirective(
     orderBy: taxonomy_websearch_OrderByInput
   ): [taxonomy_websearch] @mysqlSelect(subgraph: "Rfam", table: "taxonomy_websearch") 
   count_taxonomy_websearch(where: taxonomy_websearch_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "taxonomy_websearch") 
+  unique_genseq(
+    limit: Int
+    offset: Int
+    where: unique_genseq_WhereInput
+    orderBy: unique_genseq_OrderByInput
+  ): [unique_genseq] @mysqlSelect(subgraph: "Rfam", table: "unique_genseq") 
+  count_unique_genseq(where: unique_genseq_WhereInput) : Int @mysqlCount(subgraph: "Rfam", table: "unique_genseq") 
   version(
     limit: Int
     offset: Int
@@ -1619,7 +1626,7 @@ type refseq @join__type(graph: RFAM)  {
 
 type secondary_structure_image @join__type(graph: RFAM)  {
   rfam_acc: String!
-  type: secondary_structure_image_type
+  type: String
   image: String
   family(
     where: family_WhereInput
@@ -1962,11 +1969,23 @@ type taxonomy_websearch @join__type(graph: RFAM)  {
   rank: String
 }
 
+type unique_genseq @join__type(graph: RFAM)  {
+  """
+  This should be 
+  """
+  upid: String!
+  rfamseq_acc: String!
+  chromosome_name: String
+  chromosome_type: String
+  version: String!
+  genseq_id: Int!
+}
+
 type version @join__type(graph: RFAM)  {
   rfam_release_date: Date!
   number_families: Int!
   embl_release: String!
-  rfam_release: Float!
+  rfam_release: String!
 }
 
 type Mutation @join__type(graph: RFAM)  {
@@ -2210,6 +2229,9 @@ type Mutation @join__type(graph: RFAM)  {
     where: taxonomy_websearch_WhereInput
   ): taxonomy_websearch @mysqlUpdate(subgraph: "Rfam", table: "taxonomy_websearch") 
   delete_taxonomy_websearch(where: taxonomy_websearch_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "taxonomy_websearch") 
+  insert_unique_genseq(unique_genseq: unique_genseq_InsertInput!) : unique_genseq @mysqlInsert(subgraph: "Rfam", table: "unique_genseq", primaryKeys: ["genseq_id"]) 
+  update_unique_genseq(unique_genseq: unique_genseq_UpdateInput!, where: unique_genseq_WhereInput) : unique_genseq @mysqlUpdate(subgraph: "Rfam", table: "unique_genseq") 
+  delete_unique_genseq(where: unique_genseq_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "unique_genseq") 
   insert_version(version: version_InsertInput!) : version @mysqlInsert(subgraph: "Rfam", table: "version", primaryKeys: ["rfam_release"]) 
   update_version(version: version_UpdateInput!, where: version_WhereInput) : version @mysqlUpdate(subgraph: "Rfam", table: "version") 
   delete_version(where: version_WhereInput) : Boolean @mysqlDelete(subgraph: "Rfam", table: "version") 
@@ -2303,22 +2325,6 @@ enum refseq_full_region_truncated @join__type(graph: RFAM)  {
   _5 @join__enumValue(graph: RFAM) 
   _3 @join__enumValue(graph: RFAM) 
   _53 @join__enumValue(graph: RFAM) 
-}
-
-enum secondary_structure_image_type @join__type(graph: RFAM)  {
-  cons @join__enumValue(graph: RFAM) 
-  dist @join__enumValue(graph: RFAM) 
-  ent @join__enumValue(graph: RFAM) 
-  fcbp @join__enumValue(graph: RFAM) 
-  cov @join__enumValue(graph: RFAM) 
-  disttruc @join__enumValue(graph: RFAM) 
-  maxcm @join__enumValue(graph: RFAM) 
-  norm @join__enumValue(graph: RFAM) 
-  rchie @join__enumValue(graph: RFAM) 
-  species @join__enumValue(graph: RFAM) 
-  ss @join__enumValue(graph: RFAM) 
-  rscape @join__enumValue(graph: RFAM) 
-  rscape_cyk @join__enumValue(graph: RFAM) 
 }
 
 enum sunburst_type @join__type(graph: RFAM)  {
@@ -3756,6 +3762,30 @@ input taxonomy_websearch_OrderByInput @join__type(graph: RFAM)  {
   rank: OrderBy
 }
 
+input unique_genseq_WhereInput @join__type(graph: RFAM)  {
+  """
+  This should be 
+  """
+  upid: String
+  rfamseq_acc: String
+  chromosome_name: String
+  chromosome_type: String
+  version: String
+  genseq_id: String
+}
+
+input unique_genseq_OrderByInput @join__type(graph: RFAM)  {
+  """
+  This should be 
+  """
+  upid: OrderBy
+  rfamseq_acc: OrderBy
+  chromosome_name: OrderBy
+  chromosome_type: OrderBy
+  version: OrderBy
+  genseq_id: OrderBy
+}
+
 input version_WhereInput @join__type(graph: RFAM)  {
   rfam_release_date: String
   number_families: String
@@ -5034,13 +5064,13 @@ input rscape_annotations_UpdateInput @join__type(graph: RFAM)  {
 
 input secondary_structure_image_InsertInput @join__type(graph: RFAM)  {
   rfam_acc: String!
-  type: secondary_structure_image_type
+  type: String
   image: String
 }
 
 input secondary_structure_image_UpdateInput @join__type(graph: RFAM)  {
   rfam_acc: String
-  type: secondary_structure_image_type
+  type: String
   image: String
 }
 
@@ -5132,18 +5162,42 @@ input taxonomy_websearch_UpdateInput @join__type(graph: RFAM)  {
   rank: String
 }
 
+input unique_genseq_InsertInput @join__type(graph: RFAM)  {
+  """
+  This should be 
+  """
+  upid: String
+  rfamseq_acc: String!
+  chromosome_name: String
+  chromosome_type: String
+  version: String!
+  genseq_id: Int
+}
+
+input unique_genseq_UpdateInput @join__type(graph: RFAM)  {
+  """
+  This should be 
+  """
+  upid: String
+  rfamseq_acc: String
+  chromosome_name: String
+  chromosome_type: String
+  version: String
+  genseq_id: Int
+}
+
 input version_InsertInput @join__type(graph: RFAM)  {
   rfam_release_date: Date!
   number_families: Int!
   embl_release: String!
-  rfam_release: Float!
+  rfam_release: String!
 }
 
 input version_UpdateInput @join__type(graph: RFAM)  {
   rfam_release_date: Date
   number_families: Int
   embl_release: String
-  rfam_release: Float
+  rfam_release: String
 }
 
 input wikitext_InsertInput @join__type(graph: RFAM)  {
