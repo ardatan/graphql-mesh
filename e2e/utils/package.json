@@ -5,7 +5,7 @@
   "dependencies": {
     "@apollo/gateway": "^2.12.2",
     "@graphql-hive/gateway": "^2.2.2",
-    "@types/dockerode": "^3.3.47",
+    "@types/dockerode": "^4.0.0",
     "@whatwg-node/disposablestack": "^0.0.6",
     "dockerode": "^4.0.2",
     "glob": "^13.0.0",
