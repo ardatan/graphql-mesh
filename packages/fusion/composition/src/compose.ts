@@ -627,7 +627,7 @@ function addAnnotationsForSemanticConventions({
         }
       } else {
         for (const [currentArgName, currentArg] of argEntries) {
-          if (currentArgName === fieldName || pluralize(fieldName) === currentArgName) {
+          if (currentArgName === fieldName || pluralFieldName === currentArgName) {
             argName = currentArgName;
             arg = currentArg;
             break;
