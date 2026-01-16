@@ -40,7 +40,7 @@
     "@graphql-mesh/types": "^0.104.18",
     "@opentelemetry/api": "^1.9.0",
     "@whatwg-node/disposablestack": "^0.0.6",
-    "ioredis": "^5.9.1",
+    "ioredis": "^5.9.2",
     "ioredis-mock": "^8.13.1",
     "tslib": "^2.4.0"
   },
