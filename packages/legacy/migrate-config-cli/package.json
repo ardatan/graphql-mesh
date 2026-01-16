@@ -44,7 +44,7 @@
     "@graphql-mesh/types": "^0.104.18",
     "@graphql-mesh/utils": "^0.104.19",
     "lodash.kebabcase": "^4.1.1",
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

@@ -10,7 +10,7 @@
     "@graphql-mesh/cli": "0.100.23",
     "@graphql-mesh/json-schema": "0.109.22",
     "@graphql-mesh/plugin-live-query": "0.104.20",
-    "@types/node": "^25.0.8",
+    "@types/node": "^25.0.9",
     "@whatwg-node/fetch": "^0.10.6",
     "fets": "0.8.5",
     "graphql": "16.12.0"
