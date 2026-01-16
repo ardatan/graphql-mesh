@@ -1,0 +1,264 @@
+openapi: 3.0.3
+info:
+  title: User Profile API
+  version: 1.0.0
+  description: API for retrieving user profile data with posts, followers, and social information
+
+paths:
+  /api/data:
+    get:
+      summary: Get user profile data
+      description:
+        Retrieve comprehensive user profile information including posts, followers, and social data
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'user_001'
+        name:
+          type: string
+          example: 'John Smith'
+        age:
+          type: integer
+          example: 32
+        isActive:
+          type: boolean
+          example: true
+        profile:
+          $ref: '#/components/schemas/Profile'
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        followers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Follower'
+        following:
+          type: array
+          items:
+            $ref: '#/components/schemas/Following'
+
+    Profile:
+      type: object
+      properties:
+        bio:
+          type: string
+          example: 'Software engineer with 8 years of experience'
+        location:
+          type: string
+          example: 'San Francisco, CA'
+        social:
+          $ref: '#/components/schemas/SocialLinks'
+        preferences:
+          $ref: '#/components/schemas/Preferences'
+
+    SocialLinks:
+      type: object
+      properties:
+        twitter:
+          type: string
+          example: '@johnsmith'
+        linkedin:
+          type: string
+          example: 'linkedin.com/in/johnsmith'
+        github:
+          type: string
+          example: 'github.com/johnsmith'
+
+    Preferences:
+      type: object
+      properties:
+        theme:
+          type: string
+          example: 'dark'
+        language:
+          type: string
+          example: 'en'
+        timezone:
+          type: string
+          example: 'America/Los_Angeles'
+        notifications:
+          type: boolean
+          example: true
+
+    Post:
+      type: object
+      properties:
+        postId:
+          type: string
+          example: 'post_001'
+        title:
+          type: string
+          example: 'Getting Started with GraphQL'
+        content:
+          type: string
+          example: 'GraphQL is a powerful query language for APIs...'
+        author:
+          type: string
+          example: 'John Smith'
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['graphql', 'api', 'tutorial']
+        likes:
+          type: integer
+          example: 42
+        comments:
+          type: integer
+          example: 12
+        views:
+          type: integer
+          example: 1250
+        isPublished:
+          type: boolean
+          example: true
+        category:
+          type: string
+          example: 'Technology'
+        readTime:
+          type: integer
+          example: 8
+        featured:
+          type: boolean
+          example: false
+
+    Comment:
+      type: object
+      properties:
+        commentId:
+          type: string
+          example: 'comment_001'
+        postId:
+          type: string
+          example: 'post_001'
+        author:
+          type: string
+          example: 'Jane Doe'
+        content:
+          type: string
+          example: 'Great article! Very helpful for beginners.'
+        likes:
+          type: integer
+          example: 5
+        replies:
+          type: integer
+          example: 2
+        isEdited:
+          type: boolean
+          example: false
+        isModerated:
+          type: boolean
+          example: false
+        parentId:
+          type: string
+          nullable: true
+          example: null
+
+    Follower:
+      type: object
+      properties:
+        followerId:
+          type: string
+          example: 'user_002'
+        name:
+          type: string
+          example: 'Alice Brown'
+        isMutual:
+          type: boolean
+          example: true
+        status:
+          type: string
+          enum: [online, offline]
+          example: 'online'
+        bio:
+          type: string
+          example: 'Frontend developer passionate about React'
+        location:
+          type: string
+          example: 'Austin, TX'
+        socialLinks:
+          $ref: '#/components/schemas/SocialLinks'
+        interests:
+          type: array
+          items:
+            type: string
+          example: ['react', 'javascript', 'css', 'ui/ux']
+        postsCount:
+          type: integer
+          example: 15
+        followersCount:
+          type: integer
+          example: 234
+        followingCount:
+          type: integer
+          example: 189
+        verified:
+          type: boolean
+          example: false
+        premium:
+          type: boolean
+          example: true
+
+    Following:
+      type: object
+      properties:
+        followingId:
+          type: string
+          example: 'user_004'
+        name:
+          type: string
+          example: 'Carol Davis'
+        isMutual:
+          type: boolean
+          example: true
+        status:
+          type: string
+          enum: [online, offline]
+          example: 'online'
+        bio:
+          type: string
+          example: 'DevOps engineer and cloud architecture expert'
+        location:
+          type: string
+          example: 'Denver, CO'
+        socialLinks:
+          $ref: '#/components/schemas/SocialLinks'
+        interests:
+          type: array
+          items:
+            type: string
+          example: ['aws', 'kubernetes', 'terraform', 'ci/cd']
+        postsCount:
+          type: integer
+          example: 22
+        followersCount:
+          type: integer
+          example: 445
+        followingCount:
+          type: integer
+          example: 178
+        verified:
+          type: boolean
+          example: true
+        premium:
+          type: boolean
+          example: true

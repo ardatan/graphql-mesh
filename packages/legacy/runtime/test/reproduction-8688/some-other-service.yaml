@@ -1,0 +1,16 @@
+openapi: 3.1.0
+info:
+  title: Non-existing service
+paths:
+  /mock-not-existing:
+    get:
+      operationId: api_advertisers_get_collection
+      tags:
+        - Advertiser
+      responses:
+        '200':
+          description: Advertiser collection
+          content:
+            application/json:
+              schema:
+                type: array
