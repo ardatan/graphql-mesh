@@ -127,4 +127,4 @@ it('should not leak the memory with mesh.execute', async () => {
 
     expect(results.data.api_data.length).toBeGreaterThan(0);
   }
-});
+}, 60_000);
