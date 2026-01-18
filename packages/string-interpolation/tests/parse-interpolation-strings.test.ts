@@ -31,4 +31,9 @@ describe('parseInterpolationStrings', () => {
     const result = stringInterpolator.parse('Items: {items}', context);
     expect(result).toBe('Items: [1,2,3]');
   });
+  it('returns undefined when entire string is a placeholder for undefined', () => {
+    const context = {};
+    const result = stringInterpolator.parse('{missing}', context);
+    expect(result).toBeUndefined();
+  });
 });
