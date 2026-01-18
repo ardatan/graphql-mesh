@@ -115,11 +115,11 @@ export class Interpolator {
     if (rules && rules.length > 0) {
       const result = this.parseFromRules(str, data, rules);
       if (
+        rules.length === 1 &&
         result === '' &&
         str != null &&
         str.startsWith('{') &&
-        str.endsWith('}') &&
-        rules.length === 1
+        str.endsWith('}')
       ) {
         return undefined;
       }
