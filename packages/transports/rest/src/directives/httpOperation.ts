@@ -126,8 +126,8 @@ export function addHTTPRootFieldResolver(
     });
     operationLogger.debug(`Resolving`);
     const interpolationData = { root, args, context, env: process.env };
-    const interpolatedBaseUrl = stringInterpolator.parse(endpoint, interpolationData);
-    const interpolatedPath = stringInterpolator.parse(path, interpolationData);
+    const interpolatedBaseUrl = stringInterpolator.parse(endpoint, interpolationData) || '';
+    const interpolatedPath = stringInterpolator.parse(path, interpolationData) || '';
     let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);
     const headers: Record<string, any> = {};
     for (const headerName in globalOperationHeaders) {
