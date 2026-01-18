@@ -110,7 +110,7 @@ export class Interpolator {
     return [];
   }
 
-  parse(str = '', data = {}) {
+  parse(str, data = {}) {
     const rules = this.parseRules(str);
     if (rules && rules.length > 0) {
       const result = this.parseFromRules(str, data, rules);
