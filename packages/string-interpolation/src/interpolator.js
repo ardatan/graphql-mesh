@@ -110,12 +110,21 @@ export class Interpolator {
     return [];
   }
 
-  parse(str = '', data = {}) {
-    const rules = this.parseRules(str);
+  parse(str, data = {}) {
+    const strOrEmptyStr = str || '';
+    const rules = this.parseRules(strOrEmptyStr);
     if (rules && rules.length > 0) {
-      return this.parseFromRules(str, data, rules);
+      const result = this.parseFromRules(strOrEmptyStr, data, rules);
+      if (
+        rules.length === 1 &&
+        result === '' &&
+        strOrEmptyStr.startsWith('{') &&
+        strOrEmptyStr.endsWith('}')
+      ) {
+        return undefined;
+      }
+      return result;
     }
-
     return str;
   }
 
