@@ -322,7 +322,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
 
   function createExecutor(globalContext: any = EMPTY_CONTEXT_VALUE): MeshExecutor {
     const getEnveloped = memoizedGetEnvelopedFactory(plugins);
-    const { schema, parse, execute, subscribe, contextFactory } = getEnveloped(globalContext);
     return function meshExecutor<TVariables = any, TContext = any, TRootValue = any, TData = any>(
       documentOrSDL: GraphQLOperation<TData, TVariables>,
       variableValues: TVariables = EMPTY_VARIABLES_VALUE,
@@ -330,6 +329,9 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       rootValue: TRootValue = EMPTY_ROOT_VALUE,
       operationName?: string,
     ) {
+      const { schema, parse, execute, subscribe, contextFactory } = getEnveloped(
+        Object.assign({}, globalContext, contextValue),
+      );
       const document = typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL;
       const operationAST = getOperationAST(document, operationName);
       if (!operationAST) {
@@ -338,7 +340,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       const isSubscription = operationAST.operation === 'subscription';
       const executeFn = isSubscription ? subscribe : execute;
       return handleMaybePromise(
-        () => contextFactory(contextValue),
+        () => contextFactory(),
         contextValue =>
           executeFn({
             schema,
