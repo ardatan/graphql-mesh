@@ -10,7 +10,7 @@
     "@graphql-hive/gateway": "^2.2.3",
     "@graphql-mesh/cache-cfw-kv": "workspace:^",
     "@graphql-mesh/plugin-rate-limit": "^0.106.0",
-    "@graphql-mesh/plugin-response-cache": "^0.104.24",
+    "@graphql-mesh/plugin-response-cache": "^0.104.25",
     "graphql": "16.12.0"
   },
   "devDependencies": {
