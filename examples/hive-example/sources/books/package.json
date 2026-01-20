@@ -13,7 +13,7 @@
     "typescript": "^5.4.2"
   },
   "devDependencies": {
-    "@graphql-hive/cli": "0.57.1",
+    "@graphql-hive/cli": "0.57.2",
     "@graphql-mesh/cli": "0.100.25",
     "@graphql-mesh/openapi": "0.109.30",
     "@types/node": "^25.0.9",
