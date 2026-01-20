@@ -1,5 +1,18 @@
 # @graphql-mesh/plugin-operation-headers
 
+## 1.4.22
+
+### Patch Changes
+
+- [#9153](https://github.com/ardatan/graphql-mesh/pull/9153)
+  [`2410c44`](https://github.com/ardatan/graphql-mesh/commit/2410c44712ecc0d2e3f7eaaa03d854a32dc847de)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/gateway-runtime@^2.5.3` ↗︎](https://www.npmjs.com/package/@graphql-hive/gateway-runtime/v/2.5.3)
+    (from `^2.5.1`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.21
+
 ## 1.4.21
 
 ### Patch Changes

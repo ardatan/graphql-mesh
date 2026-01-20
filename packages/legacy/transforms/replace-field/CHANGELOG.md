@@ -1,5 +1,12 @@
 # @graphql-mesh/replace-field
 
+## 0.105.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.21
+
 ## 0.105.21
 
 ### Patch Changes

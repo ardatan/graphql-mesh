@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.100.25
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d61bc96`](https://github.com/ardatan/graphql-mesh/commit/d61bc96b1c0143105251d7b6a6eed60551936274)]:
+  - @graphql-mesh/runtime@0.106.22
+  - @graphql-mesh/config@0.108.25
+  - @graphql-mesh/http@0.106.23
+  - @graphql-mesh/utils@0.104.21
+  - @graphql-mesh/include@0.3.21
+  - @graphql-mesh/store@0.104.23
+
 ## 0.100.24
 
 ### Patch Changes

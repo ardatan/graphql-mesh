@@ -1,5 +1,17 @@
 # @graphql-mesh/soap
 
+## 0.107.24
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2410c44`](https://github.com/ardatan/graphql-mesh/commit/2410c44712ecc0d2e3f7eaaa03d854a32dc847de),
+  [`0028f3b`](https://github.com/ardatan/graphql-mesh/commit/0028f3bf555488ac91d3d92ac9bb33911fb79904)]:
+  - @omnigraph/soap@0.107.23
+  - @graphql-mesh/string-interpolation@0.5.11
+  - @graphql-mesh/utils@0.104.21
+  - @graphql-mesh/store@0.104.23
+
 ## 0.107.23
 
 ### Patch Changes

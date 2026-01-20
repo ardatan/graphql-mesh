@@ -1,5 +1,19 @@
 # @graphql-mesh/plugin-rate-limit
 
+## 0.106.0
+
+### Minor Changes
+
+- [`308900f`](https://github.com/ardatan/graphql-mesh/commit/308900fcc9aa462741a0cc12a9e515e907c6320f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update the underlying Envelop plugin
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0028f3b`](https://github.com/ardatan/graphql-mesh/commit/0028f3bf555488ac91d3d92ac9bb33911fb79904)]:
+  - @graphql-mesh/string-interpolation@0.5.11
+  - @graphql-mesh/utils@0.104.21
+
 ## 0.105.9
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @omnigraph/neo4j
 
+## 0.11.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2410c44`](https://github.com/ardatan/graphql-mesh/commit/2410c44712ecc0d2e3f7eaaa03d854a32dc847de)]:
+  - @graphql-mesh/transport-neo4j@0.10.19
+
 ## 0.11.18
 
 ### Patch Changes
