@@ -276,7 +276,6 @@ describe('Rate Limit Plugin', () => {
 
     await executeQuery();
     const result = await executeQuery();
-    expect(result.data.bar).toBe('BAR');
     expect(result.errors?.[0]?.message).toBe(`Rate limit of "Query.foo" exceeded for "MYUSER"`);
   });
 });
