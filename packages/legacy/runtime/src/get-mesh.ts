@@ -316,17 +316,13 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     ...initialPluginList,
   ];
 
-  const EMPTY_ROOT_VALUE: any = {};
-  const EMPTY_CONTEXT_VALUE: any = {};
-  const EMPTY_VARIABLES_VALUE: any = {};
-
-  function createExecutor(globalContext: any = EMPTY_CONTEXT_VALUE): MeshExecutor {
+  function createExecutor(globalContext?: any): MeshExecutor {
     const getEnveloped = memoizedGetEnvelopedFactory(plugins);
     return function meshExecutor<TVariables = any, TContext = any, TRootValue = any, TData = any>(
       documentOrSDL: GraphQLOperation<TData, TVariables>,
-      variableValues: TVariables = EMPTY_VARIABLES_VALUE,
-      contextValue: TContext = EMPTY_CONTEXT_VALUE,
-      rootValue: TRootValue = EMPTY_ROOT_VALUE,
+      variableValues?: TVariables,
+      contextValue?: TContext,
+      rootValue?: TRootValue,
       operationName?: string,
     ) {
       const { schema, parse, execute, subscribe, contextFactory } = getEnveloped(
