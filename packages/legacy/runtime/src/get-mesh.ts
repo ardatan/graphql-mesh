@@ -316,20 +316,18 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     ...initialPluginList,
   ];
 
-  const EMPTY_ROOT_VALUE: any = {};
-  const EMPTY_CONTEXT_VALUE: any = {};
-  const EMPTY_VARIABLES_VALUE: any = {};
-
-  function createExecutor(globalContext: any = EMPTY_CONTEXT_VALUE): MeshExecutor {
+  function createExecutor(globalContext?: any): MeshExecutor {
     const getEnveloped = memoizedGetEnvelopedFactory(plugins);
-    const { schema, parse, execute, subscribe, contextFactory } = getEnveloped(globalContext);
     return function meshExecutor<TVariables = any, TContext = any, TRootValue = any, TData = any>(
       documentOrSDL: GraphQLOperation<TData, TVariables>,
-      variableValues: TVariables = EMPTY_VARIABLES_VALUE,
-      contextValue: TContext = EMPTY_CONTEXT_VALUE,
-      rootValue: TRootValue = EMPTY_ROOT_VALUE,
+      variableValues?: TVariables,
+      contextValue?: TContext,
+      rootValue?: TRootValue,
       operationName?: string,
     ) {
+      const globalContextClone = globalContext ? Object.create(globalContext) : undefined;
+      const { schema, parse, execute, subscribe, contextFactory } =
+        getEnveloped(globalContextClone);
       const document = typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL;
       const operationAST = getOperationAST(document, operationName);
       if (!operationAST) {
