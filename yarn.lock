@@ -8234,7 +8234,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.104.21"
     "@graphql-tools/delegate": "npm:^12.0.4"
     "@graphql-tools/utils": "npm:^11.0.0"
-    "@neo4j/graphql": "npm:^7.4.1"
+    "@neo4j/graphql": "npm:^7.4.2"
     graphql: "npm:16.12.0"
     graphql-scalars: "npm:^1.22.4"
     neo4j-driver: "npm:^6.0.1"
@@ -9200,20 +9200,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:10.11.0, @graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.10.3, @graphql-tools/utils@npm:^10.11.0, @graphql-tools/utils@npm:^10.5.1, @graphql-tools/utils@npm:^10.5.4, @graphql-tools/utils@npm:^10.6.1, @graphql-tools/utils@npm:^10.8.1, @graphql-tools/utils@npm:^10.9.1":
-  version: 10.11.0
-  resolution: "@graphql-tools/utils@npm:10.11.0"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    "@whatwg-node/promise-helpers": "npm:^1.0.0"
-    cross-inspect: "npm:1.0.1"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/73459332c199d8f3aa698bdee4ac6ce802274dba95cc7eff1f0219b6fe6e3a8f314d2e824168e296df8f5ce18f6dbd23ca14406b71890a41ce80b7548e8ccd6d
-  languageName: node
-  linkType: hard
-
 "@graphql-tools/utils@npm:10.9.1":
   version: 10.9.1
   resolution: "@graphql-tools/utils@npm:10.9.1"
@@ -9263,6 +9249,20 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/dd589d970fee9ce093a545c69d6306b61af0f38358361295af1274164a87db2985a51d05ca0e0dd08a4e709f0b5c7c201e69ab0b30480fe2fa0c7a7b8310da0a
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/utils@npm:^10.0.0, @graphql-tools/utils@npm:^10.0.3, @graphql-tools/utils@npm:^10.10.3, @graphql-tools/utils@npm:^10.11.0, @graphql-tools/utils@npm:^10.5.1, @graphql-tools/utils@npm:^10.5.4, @graphql-tools/utils@npm:^10.6.1, @graphql-tools/utils@npm:^10.8.1, @graphql-tools/utils@npm:^10.9.1":
+  version: 10.11.0
+  resolution: "@graphql-tools/utils@npm:10.11.0"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@whatwg-node/promise-helpers": "npm:^1.0.0"
+    cross-inspect: "npm:1.0.1"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/73459332c199d8f3aa698bdee4ac6ce802274dba95cc7eff1f0219b6fe6e3a8f314d2e824168e296df8f5ce18f6dbd23ca14406b71890a41ce80b7548e8ccd6d
   languageName: node
   linkType: hard
 
@@ -11325,16 +11325,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neo4j/graphql@npm:^7.4.1":
-  version: 7.4.1
-  resolution: "@neo4j/graphql@npm:7.4.1"
+"@neo4j/graphql@npm:^7.4.2":
+  version: 7.4.2
+  resolution: "@neo4j/graphql@npm:7.4.2"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@as-integrations/express4": "npm:^1.1.2"
     "@graphql-tools/merge": "npm:^9.0.0"
     "@graphql-tools/resolvers-composition": "npm:^7.0.0"
     "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-tools/utils": "npm:10.11.0"
+    "@graphql-tools/utils": "npm:11.0.0"
     "@neo4j/cypher-builder": "npm:2.11.0"
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
@@ -11350,7 +11350,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0 || ^6.0.0
-  checksum: 10c0/f0e70f8fef61f36457d3a223511563c3c193a6e93192ccc965453a317d1750c70d57eaa52cefef8edce807cf2e3d031862d7822ad332fbe19979e48d1cf8ed37
+  checksum: 10c0/85e7033298a927ffaccc8ba780c9ad5e9420143f97419f5e69bd9419f0ec3b5e68d687c37f8894cc535d8615746afe8309870d0296910e799fe8a55704775e91
   languageName: node
   linkType: hard
 
