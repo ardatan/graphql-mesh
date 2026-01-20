@@ -325,9 +325,9 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       rootValue?: TRootValue,
       operationName?: string,
     ) {
-      const { schema, parse, execute, subscribe, contextFactory } = getEnveloped(
-        Object.assign({}, globalContext, contextValue),
-      );
+      const globalContextClone = globalContext ? Object.create(globalContext) : undefined;
+      const { schema, parse, execute, subscribe, contextFactory } =
+        getEnveloped(globalContextClone);
       const document = typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL;
       const operationAST = getOperationAST(document, operationName);
       if (!operationAST) {
@@ -336,7 +336,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       const isSubscription = operationAST.operation === 'subscription';
       const executeFn = isSubscription ? subscribe : execute;
       return handleMaybePromise(
-        () => contextFactory(),
+        () => contextFactory(contextValue),
         contextValue =>
           executeFn({
             schema,
