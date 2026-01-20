@@ -1,5 +1,19 @@
 # @graphql-mesh/runtime
 
+## 0.106.23
+
+### Patch Changes
+
+- [#9157](https://github.com/ardatan/graphql-mesh/pull/9157)
+  [`03c4735`](https://github.com/ardatan/graphql-mesh/commit/03c4735aad653ebd43d67b592d335bcb4666fbb9)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/extended-validation@^7.1.0` ↗︎](https://www.npmjs.com/package/@envelop/extended-validation/v/7.1.0)
+    (from `^7.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@envelop/graphql-jit@^11.1.0` ↗︎](https://www.npmjs.com/package/@envelop/graphql-jit/v/11.1.0)
+    (from `^11.0.0`, in `dependencies`)
+
 ## 0.106.22
 
 ### Patch Changes

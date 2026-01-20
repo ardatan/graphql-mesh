@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-operation-field-permissions
 
+## 0.104.21
+
+### Patch Changes
+
+- [#9157](https://github.com/ardatan/graphql-mesh/pull/9157)
+  [`03c4735`](https://github.com/ardatan/graphql-mesh/commit/03c4735aad653ebd43d67b592d335bcb4666fbb9)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/operation-field-permissions@^9.1.0` ↗︎](https://www.npmjs.com/package/@envelop/operation-field-permissions/v/9.1.0)
+    (from `^9.0.0`, in `dependencies`)
+
 ## 0.104.20
 
 ### Patch Changes
