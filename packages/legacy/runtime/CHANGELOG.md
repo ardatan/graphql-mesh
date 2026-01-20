@@ -1,5 +1,18 @@
 # @graphql-mesh/runtime
 
+## 0.106.22
+
+### Patch Changes
+
+- [#9148](https://github.com/ardatan/graphql-mesh/pull/9148)
+  [`d61bc96`](https://github.com/ardatan/graphql-mesh/commit/d61bc96b1c0143105251d7b6a6eed60551936274)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not use the global context which causes a leak
+
+- Updated dependencies
+  [[`0028f3b`](https://github.com/ardatan/graphql-mesh/commit/0028f3bf555488ac91d3d92ac9bb33911fb79904)]:
+  - @graphql-mesh/string-interpolation@0.5.11
+  - @graphql-mesh/utils@0.104.21
+
 ## 0.106.21
 
 ### Patch Changes

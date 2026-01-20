@@ -1,5 +1,28 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.11
+
+### Patch Changes
+
+- [#9151](https://github.com/ardatan/graphql-mesh/pull/9151)
+  [`0028f3b`](https://github.com/ardatan/graphql-mesh/commit/0028f3bf555488ac91d3d92ac9bb33911fb79904)
+  Thanks [@ardatan](https://github.com/ardatan)! - Return `undefined` when interpolated string is
+  completely an expression that resolves to `undefined`
+
+  ```js
+  stringInterpolator.parse('{missing}', {})
+  ```
+
+  will now return `undefined` instead of the string `''`.
+
+  Also if the given string is `undefined`, return an undefined too;
+
+  ```js
+  stringInterpolator.parse(undefined, {})
+  ```
+
+  will return `undefined` instead of the string `''`.
+
 ## 0.5.10
 
 ### Patch Changes

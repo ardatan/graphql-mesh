@@ -1,5 +1,19 @@
 # @omnigraph/grpc
 
+## 0.2.12
+
+### Patch Changes
+
+- [#9153](https://github.com/ardatan/graphql-mesh/pull/9153)
+  [`2410c44`](https://github.com/ardatan/graphql-mesh/commit/2410c44712ecc0d2e3f7eaaa03d854a32dc847de)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/transport-common@^1.0.14` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/1.0.14)
+    (from `^1.0.13`, in `dependencies`)
+- Updated dependencies
+  [[`0028f3b`](https://github.com/ardatan/graphql-mesh/commit/0028f3bf555488ac91d3d92ac9bb33911fb79904)]:
+  - @graphql-mesh/string-interpolation@0.5.11
+
 ## 0.2.11
 
 ### Patch Changes

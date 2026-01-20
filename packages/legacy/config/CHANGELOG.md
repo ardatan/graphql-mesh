@@ -1,5 +1,18 @@
 # @graphql-mesh/config
 
+## 0.108.25
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d61bc96`](https://github.com/ardatan/graphql-mesh/commit/d61bc96b1c0143105251d7b6a6eed60551936274)]:
+  - @graphql-mesh/runtime@0.106.22
+  - @graphql-mesh/utils@0.104.21
+  - @graphql-mesh/cache-localforage@0.105.22
+  - @graphql-mesh/merger-bare@0.105.23
+  - @graphql-mesh/merger-stitching@0.105.23
+  - @graphql-mesh/store@0.104.23
+
 ## 0.108.24
 
 ### Patch Changes
