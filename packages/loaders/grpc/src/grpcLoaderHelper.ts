@@ -127,7 +127,7 @@ export class GrpcLoaderHelper extends DisposableStack {
         requestTimeout: this.config.requestTimeout,
         credentialsSsl: this.config.credentialsSsl,
         useHTTPS: this.config.useHTTPS,
-        metaData: this.config.metaData,
+        metaData: this.config.metaData ? JSON.stringify(this.config.metaData) : undefined,
         roots,
       },
     };

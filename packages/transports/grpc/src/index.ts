@@ -164,7 +164,7 @@ export class GrpcTransportHelper extends DisposableStack {
     methodName: string;
     isResponseStream: boolean;
   }): GraphQLFieldResolver<any, any> {
-    const metaData = this.config.metaData;
+    const metaData = typeof this.config.metaData === 'string' ? JSON.parse(this.config.metaData) : this.config.metaData;
     const clientMethod = client[methodName].bind(client);
     return function grpcFieldResolver(root, args, context) {
       return addMetaDataToCall(
