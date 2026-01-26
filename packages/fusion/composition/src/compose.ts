@@ -617,6 +617,7 @@ function addAnnotationsForSemanticConventions({
       const objectField = fieldMap[fieldName];
       const objectFieldType = getNamedType(objectField.type);
       const argEntries = Object.entries(queryFieldConfig.args);
+      const pluralFieldName = pluralize(fieldName);
       let argName: string;
       let arg: GraphQLArgumentConfig;
       if (argEntries.length === 1) {
@@ -626,7 +627,7 @@ function addAnnotationsForSemanticConventions({
         }
       } else {
         for (const [currentArgName, currentArg] of argEntries) {
-          if (currentArgName === fieldName || pluralize(fieldName) === currentArgName) {
+          if (currentArgName === fieldName || pluralFieldName === currentArgName) {
             argName = currentArgName;
             arg = currentArg;
             break;
@@ -662,8 +663,9 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(pluralTypeName):
           case snakeCase(`get_${pluralTypeName}_by_${fieldName}`):
           case snakeCase(`${pluralTypeName}_by_${fieldName}`):
-          case snakeCase(`get_${pluralTypeName}_by_${fieldName}s`):
-          case snakeCase(`${pluralTypeName}_by_${fieldName}s`): {
+          case snakeCase(`get_${pluralTypeName}_by_${pluralFieldName}`):
+          case snakeCase(`${pluralTypeName}_by_${pluralFieldName}`):
+          case snakeCase(`${pluralTypeName}_by_${pluralFieldName}_list`): {
             directiveExtensions.merge ||= [];
             directiveExtensions.merge.push({
               subgraph: subgraphName,
