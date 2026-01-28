@@ -123,11 +123,11 @@ export class GrpcLoaderHelper extends DisposableStack {
       subgraph: this.subgraphName,
       kind: 'grpc',
       location: this.config.endpoint,
+      headers: this.config.metaData ? Object.entries(this.config.metaData) : undefined,
       options: {
         requestTimeout: this.config.requestTimeout,
         credentialsSsl: this.config.credentialsSsl,
         useHTTPS: this.config.useHTTPS,
-        metaData: this.config.metaData,
         roots,
       },
     };

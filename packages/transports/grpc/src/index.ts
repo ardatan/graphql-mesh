@@ -47,7 +47,7 @@ export interface gRPCTransportOptions {
    */
   useHTTPS?: boolean;
   /**
-   * MetaData
+   * MetaData for backwards compatibility
    */
   metaData?: {
     [k: string]: any;
@@ -65,6 +65,7 @@ export class GrpcTransportHelper extends DisposableStack {
     private logger: Logger,
     private endpoint: string,
     private config: gRPCTransportOptions,
+    private headers?: [string, string][],
   ) {
     super();
   }
@@ -164,8 +165,19 @@ export class GrpcTransportHelper extends DisposableStack {
     methodName: string;
     isResponseStream: boolean;
   }): GraphQLFieldResolver<any, any> {
-    const metaData = this.config.metaData;
     const clientMethod = client[methodName].bind(client);
+    let metaData: Record<string, any> | undefined;
+    if (this.headers) {
+      metaData ||= Object.fromEntries(this.headers);
+    }
+    if (this.config.metaData) {
+      if (!metaData) {
+        metaData = this.config.metaData;
+      } else {
+        Object.assign(metaData, this.config.metaData);
+      }
+    }
+
     return function grpcFieldResolver(root, args, context) {
       return addMetaDataToCall(
         clientMethod,
@@ -335,6 +347,7 @@ const transport: Transport<gRPCTransportOptions> = {
       logger,
       transportEntry.location,
       transportEntry.options,
+      transportEntry.headers,
     );
     return handleMaybePromise(
       () => transport.getCredentials(),
