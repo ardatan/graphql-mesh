@@ -2,12 +2,9 @@ import {
   DirectiveLocation,
   GraphQLBoolean,
   GraphQLDirective,
-  GraphQLInputObjectType,
-  GraphQLInt,
   GraphQLScalarType,
   GraphQLString,
 } from 'graphql';
-import { ObjMapScalar } from '@graphql-mesh/transport-common';
 
 export const grpcMethodDirective = new GraphQLDirective({
   name: 'grpcMethod',

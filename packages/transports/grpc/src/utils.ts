@@ -19,7 +19,7 @@ export function addMetaDataToCall(
   callFn: any,
   input: any,
   resolverData: ResolverData,
-  metaData: Record<string, string | string[] | Buffer>,
+  metaData: Record<string, string | string[] | Buffer> | [string, string][],
   isResponseStream = false,
 ) {
   const callFnArguments: any[] = [];
@@ -28,6 +28,9 @@ export function addMetaDataToCall(
   }
   if (metaData) {
     const meta = new Metadata();
+    if (Array.isArray(metaData)) {
+      metaData = Object.fromEntries(metaData);
+    }
     for (const [key, value] of Object.entries(metaData)) {
       let metaValue: unknown = value;
       if (Array.isArray(value)) {

@@ -49,9 +49,11 @@ export interface gRPCTransportOptions {
   /**
    * MetaData for backwards compatibility
    */
-  metaData?: {
-    [k: string]: any;
-  };
+  metaData?:
+    | {
+        [k: string]: any;
+      }
+    | [string, string][];
 }
 
 interface LoadOptions {
@@ -166,18 +168,7 @@ export class GrpcTransportHelper extends DisposableStack {
     isResponseStream: boolean;
   }): GraphQLFieldResolver<any, any> {
     const clientMethod = client[methodName].bind(client);
-    let metaData: Record<string, any> | undefined;
-    if (this.headers) {
-      metaData ||= Object.fromEntries(this.headers);
-    }
-    if (this.config.metaData) {
-      if (!metaData) {
-        metaData = this.config.metaData;
-      } else {
-        Object.assign(metaData, this.config.metaData);
-      }
-    }
-
+    const metaData = this.config.metaData;
     return function grpcFieldResolver(root, args, context) {
       return addMetaDataToCall(
         clientMethod,
