@@ -1,5 +1,16 @@
 # @graphql-mesh/store
 
+## 0.104.24
+
+### Patch Changes
+
+- [#9173](https://github.com/ardatan/graphql-mesh/pull/9173)
+  [`c632d70`](https://github.com/ardatan/graphql-mesh/commit/c632d70d15061cbd906257aba80298665685e361)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-inspector/core@7.1.1` ↗︎](https://www.npmjs.com/package/@graphql-inspector/core/v/7.1.1)
+    (from `7.1.0`, in `dependencies`)
+
 ## 0.104.23
 
 ### Patch Changes

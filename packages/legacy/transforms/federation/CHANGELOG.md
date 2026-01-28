@@ -1,5 +1,16 @@
 # @graphql-mesh/transform-federation
 
+## 0.104.23
+
+### Patch Changes
+
+- [#9166](https://github.com/ardatan/graphql-mesh/pull/9166)
+  [`2785642`](https://github.com/ardatan/graphql-mesh/commit/27856429d8ee3216ebf0347efc7f4b7dccdd5311)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@apollo/subgraph@^2.13.0` ↗︎](https://www.npmjs.com/package/@apollo/subgraph/v/2.13.0) (from
+    `^2.12.2`, in `dependencies`)
+
 ## 0.104.22
 
 ### Patch Changes
