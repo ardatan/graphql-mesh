@@ -47,7 +47,7 @@ export interface gRPCTransportOptions {
    */
   useHTTPS?: boolean;
   /**
-   * MetaData for backwards compatibility
+   * MetaData
    */
   metaData?:
     | {
@@ -67,7 +67,6 @@ export class GrpcTransportHelper extends DisposableStack {
     private logger: Logger,
     private endpoint: string,
     private config: gRPCTransportOptions,
-    private headers?: [string, string][],
   ) {
     super();
   }
@@ -338,7 +337,6 @@ const transport: Transport<gRPCTransportOptions> = {
       logger,
       transportEntry.location,
       transportEntry.options,
-      transportEntry.headers,
     );
     return handleMaybePromise(
       () => transport.getCredentials(),
