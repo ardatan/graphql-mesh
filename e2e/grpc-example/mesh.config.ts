@@ -15,7 +15,7 @@ export const composeConfig = defineComposeConfig({
         endpoint: 'localhost:' + opts.getServicePort('movies'),
         metaData: {
           someKey: 'someValue',
-          connection_type: '{context.headers.connection}',
+          'connection-type': '{context.headers.connection}',
         },
         source: './services/movies/proto/service.proto',
       }),

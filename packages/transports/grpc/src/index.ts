@@ -49,9 +49,11 @@ export interface gRPCTransportOptions {
   /**
    * MetaData
    */
-  metaData?: {
-    [k: string]: any;
-  };
+  metaData?:
+    | {
+        [k: string]: any;
+      }
+    | [string, string][];
 }
 
 interface LoadOptions {
@@ -164,8 +166,8 @@ export class GrpcTransportHelper extends DisposableStack {
     methodName: string;
     isResponseStream: boolean;
   }): GraphQLFieldResolver<any, any> {
-    const metaData = this.config.metaData;
     const clientMethod = client[methodName].bind(client);
+    const metaData = this.config.metaData;
     return function grpcFieldResolver(root, args, context) {
       return addMetaDataToCall(
         clientMethod,
