@@ -2,7 +2,7 @@
   "name": "@e2e/mysql-employees",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.3.0",
+    "@graphql-hive/gateway": "^2.3.1",
     "graphql": "^16.9.0"
   }
 }
