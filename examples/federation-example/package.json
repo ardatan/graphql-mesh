@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@apollo/server": "5.3.0",
-    "@types/node": "^25.0.10",
+    "@types/node": "^25.1.0",
     "apollo-server-caching": "3.3.0",
     "concurrently": "9.2.1",
     "delay-cli": "3.0.0",

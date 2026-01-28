@@ -63,7 +63,7 @@
     "dotenv": "^17.0.0",
     "graphql-import-node": "^0.0.5",
     "graphql-tag": "^2.12.6",
-    "graphql-ws": "^6.0.0",
+    "graphql-ws": "^6.0.7",
     "json-bigint-patch": "^0.0.9",
     "json5": "^2.2.3",
     "mkdirp": "^3.0.0",

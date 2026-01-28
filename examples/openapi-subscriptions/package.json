@@ -9,7 +9,7 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.100.26",
     "@graphql-mesh/openapi": "0.109.30",
-    "@types/node": "^25.0.10",
+    "@types/node": "^25.1.0",
     "@whatwg-node/fetch": "^0.10.6",
     "concurrently": "9.2.1",
     "fets": "^0.8.0",
