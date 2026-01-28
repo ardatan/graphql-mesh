@@ -1,5 +1,13 @@
 # @graphql-mesh/json-schema
 
+## 0.109.25
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c632d70`](https://github.com/ardatan/graphql-mesh/commit/c632d70d15061cbd906257aba80298665685e361)]:
+  - @graphql-mesh/store@0.104.24
+
 ## 0.109.24
 
 ### Patch Changes

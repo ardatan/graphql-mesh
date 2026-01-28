@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mysql",
-  "version": "0.105.24",
+  "version": "0.105.25",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "^0.104.23",
+    "@graphql-mesh/store": "^0.104.24",
     "@graphql-mesh/types": "^0.104.19",
     "@graphql-mesh/utils": "^0.104.21",
     "@graphql-tools/utils": "^11.0.0",
