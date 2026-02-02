@@ -6891,7 +6891,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-inspector/core@npm:7.1.2":
+"@graphql-inspector/core@npm:^7.1.2":
   version: 7.1.2
   resolution: "@graphql-inspector/core@npm:7.1.2"
   dependencies:
@@ -7815,7 +7815,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/store@workspace:packages/legacy/store"
   dependencies:
-    "@graphql-inspector/core": "npm:7.1.2"
+    "@graphql-inspector/core": "npm:^7.1.2"
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/types": "npm:^0.104.19"
     "@graphql-mesh/utils": "npm:^0.104.21"
