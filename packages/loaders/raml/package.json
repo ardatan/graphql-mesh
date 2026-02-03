@@ -40,7 +40,7 @@
     "@graphql-mesh/string-interpolation": "0.5.11",
     "@graphql-mesh/types": "^0.104.19",
     "@graphql-mesh/utils": "^0.104.21",
-    "@graphql-tools/delegate": "^12.0.4",
+    "@graphql-tools/delegate": "^12.0.5",
     "@graphql-tools/utils": "^11.0.0",
     "@omnigraph/json-schema": "0.109.23",
     "@whatwg-node/fetch": "^0.10.6",
