@@ -270,9 +270,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:5.3.0, @apollo/server@npm:^5.3.0":
-  version: 5.3.0
-  resolution: "@apollo/server@npm:5.3.0"
+"@apollo/server@npm:5.4.0, @apollo/server@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "@apollo/server@npm:5.4.0"
   dependencies:
     "@apollo/cache-control-types": "npm:^1.0.3"
     "@apollo/server-gateway-interface": "npm:^2.0.0"
@@ -287,6 +287,7 @@ __metadata:
     "@graphql-tools/schema": "npm:^10.0.0"
     async-retry: "npm:^1.2.1"
     body-parser: "npm:^2.2.2"
+    content-type: "npm:^1.0.5"
     cors: "npm:^2.8.5"
     finalhandler: "npm:^2.1.0"
     loglevel: "npm:^1.6.8"
@@ -296,7 +297,7 @@ __metadata:
     whatwg-mimetype: "npm:^4.0.0"
   peerDependencies:
     graphql: ^16.11.0
-  checksum: 10c0/39b90f09c598bef23010490e976b1a8935398fe9d4c388becb4693f0069d342e0d7cbec19cff27fce3136e058009dcc3d54b18e1c2c2939214360674825f2e92
+  checksum: 10c0/6cba28e43fffb66af1384675afe5a91efab3c0002da6f1ca025bb6e52fced12843c1ef9129b627b733f6468849568898045b38b2122cb843860b8a4196b99b9d
   languageName: node
   linkType: hard
 
@@ -4032,7 +4033,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/cache-control@workspace:e2e/cache-control"
   dependencies:
-    "@apollo/server": "npm:^5.3.0"
+    "@apollo/server": "npm:^5.4.0"
     "@apollo/subgraph": "npm:^2.13.0"
     "@graphql-hive/gateway": "npm:^2.3.1"
     "@graphql-mesh/cache-upstash-redis": "npm:^0.1.20"
@@ -4104,7 +4105,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/federation-mixed@workspace:e2e/federation-mixed"
   dependencies:
-    "@apollo/server": "npm:^5.3.0"
+    "@apollo/server": "npm:^5.4.0"
     "@apollo/subgraph": "npm:^2.13.0"
     "@graphql-hive/gateway": "npm:^2.3.1"
     fets: "npm:^0.8.1"
@@ -5270,7 +5271,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph"
   dependencies:
-    "@apollo/server": "npm:5.3.0"
+    "@apollo/server": "npm:5.4.0"
     "@apollo/subgraph": "npm:2.13.0"
     "@types/node": "npm:^25.1.0"
     graphql: "npm:16.12.0"
@@ -5283,7 +5284,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-accounts@workspace:examples/federation-example/services/accounts"
   dependencies:
-    "@apollo/server": "npm:5.3.0"
+    "@apollo/server": "npm:5.4.0"
     "@types/node": "npm:^25.1.0"
     graphql: "npm:16.12.0"
     ts-node: "npm:^10.9.2"
@@ -5295,7 +5296,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-inventory@workspace:examples/federation-example/services/inventory"
   dependencies:
-    "@apollo/server": "npm:5.3.0"
+    "@apollo/server": "npm:5.4.0"
     "@apollo/subgraph": "npm:2.13.0"
     "@types/node": "npm:^25.1.0"
     graphql: "npm:16.12.0"
@@ -5308,7 +5309,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-products@workspace:examples/federation-example/services/products"
   dependencies:
-    "@apollo/server": "npm:5.3.0"
+    "@apollo/server": "npm:5.4.0"
     "@apollo/subgraph": "npm:2.13.0"
     "@types/node": "npm:^25.1.0"
     graphql: "npm:16.12.0"
@@ -5321,7 +5322,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example-services-reviews@workspace:examples/federation-example/services/reviews"
   dependencies:
-    "@apollo/server": "npm:5.3.0"
+    "@apollo/server": "npm:5.4.0"
     "@apollo/subgraph": "npm:2.13.0"
     "@types/node": "npm:^25.1.0"
     graphql: "npm:16.12.0"
@@ -5334,7 +5335,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/federation-example@workspace:examples/federation-example"
   dependencies:
-    "@apollo/server": "npm:5.3.0"
+    "@apollo/server": "npm:5.4.0"
     "@types/node": "npm:^25.1.0"
     apollo-server-caching: "npm:3.3.0"
     concurrently: "npm:9.2.1"
@@ -8353,7 +8354,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/utils@workspace:packages/legacy/utils"
   dependencies:
-    "@apollo/server": "npm:5.3.0"
+    "@apollo/server": "npm:5.4.0"
     "@envelop/instrumentation": "npm:^1.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/string-interpolation": "npm:^0.5.11"
