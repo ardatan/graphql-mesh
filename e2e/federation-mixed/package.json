@@ -2,7 +2,7 @@
   "name": "@e2e/federation-mixed",
   "private": true,
   "devDependencies": {
-    "@apollo/server": "^5.3.0",
+    "@apollo/server": "^5.4.0",
     "@apollo/subgraph": "^2.13.0",
     "@graphql-hive/gateway": "^2.3.1",
     "fets": "^0.8.1",

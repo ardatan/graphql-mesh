@@ -51,7 +51,7 @@
     "@graphql-tools/utils": "^11.0.0",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
-    "commander": "^14.0.0",
+    "commander": "^14.0.3",
     "dotenv": "^17.0.0"
   },
   "devDependencies": {
