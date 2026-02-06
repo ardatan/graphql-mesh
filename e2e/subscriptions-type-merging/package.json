@@ -2,7 +2,7 @@
   "name": "@e2e/subscriptions-type-merging",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.3.1",
+    "@graphql-hive/gateway": "^2.3.3",
     "@graphql-hive/pubsub": "next",
     "graphql": "^16.9.0",
     "graphql-sse": "^2.5.4",
