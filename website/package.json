@@ -18,10 +18,10 @@
     "react-icons": "^5.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.1",
+    "@playwright/test": "^1.58.2",
     "@theguild/tailwind-config": "0.6.4",
-    "@types/node": "^25.2.0",
-    "@types/react": "19.2.11",
+    "@types/node": "^25.2.1",
+    "@types/react": "19.2.13",
     "cross-env": "10.1.0",
     "eslint": "9.39.2",
     "eslint-config-next": "16.1.6",
