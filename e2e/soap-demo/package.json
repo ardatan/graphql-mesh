@@ -2,7 +2,7 @@
   "name": "@e2e/soap-demo",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.3.1",
+    "@graphql-hive/gateway": "^2.3.3",
     "graphql": "^16.9.0"
   }
 }
