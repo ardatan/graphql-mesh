@@ -1,5 +1,38 @@
 # @omnigraph/grpc
 
+## 0.2.13
+
+### Patch Changes
+
+- [#9182](https://github.com/ardatan/graphql-mesh/pull/9182)
+  [`1474343`](https://github.com/ardatan/graphql-mesh/commit/1474343567f953c97493e2da48de4f27f0bd109c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Support characters that are invalid for GraphQL
+  but valid for gRPC in metadata definitions.
+
+  For example, hyphens (-) are not allowed in GraphQL field names, but they are commonly used in
+  gRPC metadata keys. This change ensures that such characters are preserved when passing metadata
+  from GraphQL Mesh to gRPC services.
+
+  ```ts
+  // mesh.config.ts
+  import { defineConfig } from '@graphql-mesh/compose-cli'
+  import { loadGrpcSubgraph } from '@omnigraph/grpc'
+
+  export const composeConfig = defineConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadGrpcSubgraph('myService', {
+          endpoint: 'localhost:50051',
+          source: './service.proto',
+          metaData: {
+            'x-request-id': "{context.headers['x-request-id']}" // ← hyphen in key causes issue
+          }
+        })
+      }
+    ]
+  })
+  ```
+
 ## 0.2.12
 
 ### Patch Changes
