@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/include",
-  "version": "0.3.21",
+  "version": "0.3.22",
   "type": "module",
   "repository": {
     "type": "git",
@@ -49,7 +49,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/utils": "^0.104.21",
+    "@graphql-mesh/utils": "^0.104.22",
     "dotenv": "^17.2.4",
     "get-tsconfig": "^4.13.6",
     "jiti": "^2.0.0",
