@@ -2,6 +2,7 @@ import type { CORSOptions } from 'graphql-yoga';
 import { createYoga, useLogger } from 'graphql-yoga';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import { memoize1 } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export const graphqlHandler = ({
   getBuiltMesh,
@@ -23,7 +24,7 @@ export const graphqlHandler = ({
   extraParamNames?: string[];
 }) => {
   const getYogaForMesh = memoize1(function getYogaForMesh(mesh: MeshInstance) {
-    return createYoga({
+    const yoga = createYoga({
       plugins: [
         ...mesh.plugins,
         useLogger({
@@ -48,6 +49,15 @@ export const graphqlHandler = ({
       healthCheckEndpoint,
       disposeOnProcessTerminate: true,
     });
+    // Dispose Yoga instance when the Mesh instance is destroyed
+    const id = mesh.pubsub.subscribe('destroy', () => {
+      const unsubscribe = () => {
+        return mesh.pubsub.unsubscribe(id);
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      handleMaybePromise(() => yoga.dispose(), unsubscribe, unsubscribe);
+    });
+    return yoga;
   });
   return (request: Request, ctx: any) =>
     getBuiltMesh().then(mesh => getYogaForMesh(mesh).handleRequest(request, ctx));

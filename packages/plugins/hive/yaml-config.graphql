@@ -39,6 +39,7 @@ type HivePlugin @md {
 type HiveAgentOptions {
   name: String
   logger: Any
+  fetch: Any
   """
   30s by default
   """

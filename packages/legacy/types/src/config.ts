@@ -1987,6 +1987,7 @@ export interface HivePlugin {
 export interface HiveAgentOptions {
   name?: string;
   logger?: any;
+  fetch?: any;
   /**
    * 30s by default
    */
