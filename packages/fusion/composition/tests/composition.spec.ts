@@ -130,61 +130,62 @@ describe('Composition', () => {
     });
   });
   describe('Semantic Conventions', () => {
-    const foo = buildSchema(/* GraphQL */ `
-      type Query {
-        foo(id: ID!, barId: ID): Foo!
-      }
-      type Foo {
-        id: ID!
-        barId: ID!
-      }
-    `);
-    const bar = buildSchema(/* GraphQL */ `
-      type Query {
-        foo(id: ID!): Foo!
-        bar(id: ID!): Bar!
-      }
-      type Foo {
-        id: ID!
-        bar: Bar!
-      }
-      type Bar {
-        id: ID!
-      }
-    `);
-    // Should ignore semantic conventions
-    const baz = buildSchema(
-      /* GraphQL */ `
+    // Singular
+    it('type(key: Key)', () => {
+      const foo = buildSchema(/* GraphQL */ `
+        type Query {
+          foo(id: ID!, barId: ID): Foo!
+        }
+        type Foo {
+          id: ID!
+          barId: ID!
+        }
+      `);
+      const bar = buildSchema(/* GraphQL */ `
         type Query {
           foo(id: ID!): Foo!
+          bar(id: ID!): Bar!
         }
-        type Foo @key(fields: "id") {
+        type Foo {
+          id: ID!
+          bar: Bar!
+        }
+        type Bar {
           id: ID!
         }
-      `,
-      { assumeValid: true, assumeValidSDL: true },
-    );
-    const { supergraphSdl, errors } = composeSubgraphs([
-      {
-        name: 'Foo',
-        schema: foo,
-      },
-      {
-        name: 'Bar',
-        schema: bar,
-      },
-      {
-        name: 'Baz',
-        schema: baz,
-      },
-    ]);
-    if (errors?.length) {
-      if (errors.length > 1) {
-        throw new AggregateError(errors, errors.map(e => e.message).join('\n'));
+      `);
+      const baz = buildSchema(
+        /* GraphQL */ `
+          type Query {
+            foo(id: ID!): Foo!
+          }
+          type Foo @key(fields: "id") {
+            id: ID!
+          }
+        `,
+        { assumeValid: true, assumeValidSDL: true },
+      );
+      const { supergraphSdl, errors } = composeSubgraphs([
+        {
+          name: 'Foo',
+          schema: foo,
+        },
+        {
+          name: 'Bar',
+          schema: bar,
+        },
+        {
+          name: 'Baz',
+          schema: baz,
+        },
+      ]);
+      if (errors?.length) {
+        if (errors.length > 1) {
+          throw new AggregateError(errors, errors.map(e => e.message).join('\n'));
+        }
+        throw errors[0];
       }
-      throw errors[0];
-    }
-    expect(supergraphSdl).toMatchInlineSnapshot(`
+      expect(supergraphSdl).toMatchInlineSnapshot(`
 "schema
     @link(url: "https://specs.apollo.dev/link/v1.0")
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
@@ -301,5 +302,931 @@ type Bar @join__type(graph: BAR, key: "id")  {
   id: ID!
 }"
 `);
+    });
+    it('getTypeByKey(key: Key)', () => {
+      const foo = buildSchema(/* GraphQL */ `
+        type Query {
+          getFooById(id: ID!): Foo!
+        }
+        type Foo {
+          id: ID!
+        }
+      `);
+      const bar = buildSchema(/* GraphQL */ `
+        type Query {
+          getFooById(id: ID!): Foo!
+          getBarById(id: ID!): Bar!
+        }
+        type Foo {
+          id: ID!
+          bar: Bar!
+        }
+        type Bar {
+          id: ID!
+        }
+      `);
+      const { supergraphSdl, errors } = composeSubgraphs([
+        {
+          name: 'Foo',
+          schema: foo,
+        },
+        {
+          name: 'Bar',
+          schema: bar,
+        },
+      ]);
+      if (errors?.length) {
+        if (errors.length > 1) {
+          throw new AggregateError(errors, errors.map(e => e.message).join('\n'));
+        }
+        throw errors[0];
+      }
+      expect(supergraphSdl).toMatchInlineSnapshot(`
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
+  {
+    query: Query
+    
+    
+  }
+
+  
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
+
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
+
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+    directive @join__unionMember(
+      graph: join__Graph!
+      member: String!
+    ) repeatable on UNION
+
+    scalar join__FieldSet
+    
+  
+  
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+  
+  
+  
+  
+  
+  
+  
+enum join__Graph {
+  BAR @join__graph(name: "Bar", url: "") 
+  FOO @join__graph(name: "Foo", url: "") 
+}
+
+directive @merge(
+  subgraph: String
+  argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String!]
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
+
+type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
+  getFooById(id: ID!) : Foo! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @merge(subgraph: "Foo", keyField: "id", keyArg: "id") 
+  getBarById(id: ID!) : Bar! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @join__field(graph: BAR) 
+}
+
+type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+  id: ID!
+  bar: Bar! @join__field(graph: BAR) 
+}
+
+type Bar @join__type(graph: BAR, key: "id")  {
+  id: ID!
+}"
+`);
+    });
+    it('typeById(key: ID!)', () => {
+      const foo = buildSchema(/* GraphQL */ `
+        type Query {
+          fooById(id: ID!): Foo!
+        }
+        type Foo {
+          id: ID!
+        }
+      `);
+      const bar = buildSchema(/* GraphQL */ `
+        type Query {
+          fooById(id: ID!): Foo!
+          barById(id: ID!): Bar!
+        }
+        type Foo {
+          id: ID!
+          bar: Bar!
+        }
+        type Bar {
+          id: ID!
+        }
+      `);
+      const { supergraphSdl, errors } = composeSubgraphs([
+        {
+          name: 'Foo',
+          schema: foo,
+        },
+        {
+          name: 'Bar',
+          schema: bar,
+        },
+      ]);
+      if (errors?.length) {
+        if (errors.length > 1) {
+          throw new AggregateError(errors, errors.map(e => e.message).join('\n'));
+        }
+        throw errors[0];
+      }
+      expect(supergraphSdl).toMatchInlineSnapshot(`
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
+  {
+    query: Query
+    
+    
+  }
+
+  
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
+
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
+
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+    directive @join__unionMember(
+      graph: join__Graph!
+      member: String!
+    ) repeatable on UNION
+
+    scalar join__FieldSet
+    
+  
+  
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+  
+  
+  
+  
+  
+  
+  
+enum join__Graph {
+  BAR @join__graph(name: "Bar", url: "") 
+  FOO @join__graph(name: "Foo", url: "") 
+}
+
+directive @merge(
+  subgraph: String
+  argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String!]
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
+
+type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
+  fooById(id: ID!) : Foo! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @merge(subgraph: "Foo", keyField: "id", keyArg: "id") 
+  barById(id: ID!) : Bar! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @join__field(graph: BAR) 
+}
+
+type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+  id: ID!
+  bar: Bar! @join__field(graph: BAR) 
+}
+
+type Bar @join__type(graph: BAR, key: "id")  {
+  id: ID!
+}"
+`);
+    });
+    // Plural
+    it('types(keys: [Key!]!)', () => {
+      const foo = buildSchema(/* GraphQL */ `
+        type Query {
+          foos(ids: [ID!]!): [Foo!]!
+        }
+        type Foo {
+          id: ID!
+        }
+      `);
+      const bar = buildSchema(/* GraphQL */ `
+        type Query {
+          foos(ids: [ID!]!): [Foo!]!
+          bars(ids: [ID!]!): [Bar!]!
+        }
+        type Foo {
+          id: ID!
+          bar: Bar!
+        }
+        type Bar {
+          id: ID!
+        }
+      `);
+      const { supergraphSdl, errors } = composeSubgraphs([
+        {
+          name: 'Foo',
+          schema: foo,
+        },
+        {
+          name: 'Bar',
+          schema: bar,
+        },
+      ]);
+      if (errors?.length) {
+        if (errors.length > 1) {
+          throw new AggregateError(errors, errors.map(e => e.message).join('\n'));
+        }
+        throw errors[0];
+      }
+      expect(supergraphSdl).toMatchInlineSnapshot(`
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
+  {
+    query: Query
+    
+    
+  }
+
+  
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
+
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
+
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+    directive @join__unionMember(
+      graph: join__Graph!
+      member: String!
+    ) repeatable on UNION
+
+    scalar join__FieldSet
+    
+  
+  
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+  
+  
+  
+  
+  
+  
+  
+enum join__Graph {
+  BAR @join__graph(name: "Bar", url: "") 
+  FOO @join__graph(name: "Foo", url: "") 
+}
+
+directive @merge(
+  subgraph: String
+  argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String!]
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
+
+type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
+  foos(ids: [ID!]!) : [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @merge(subgraph: "Foo", keyField: "id", keyArg: "ids") 
+  bars(ids: [ID!]!) : [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @join__field(graph: BAR) 
+}
+
+type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+  id: ID!
+  bar: Bar! @join__field(graph: BAR) 
+}
+
+type Bar @join__type(graph: BAR, key: "id")  {
+  id: ID!
+}"
+`);
+    });
+    it('getTypesByKeys(keys: [Key!]!)', () => {
+      const foo = buildSchema(/* GraphQL */ `
+        type Query {
+          getFoosByIds(ids: [ID!]!): [Foo!]!
+        }
+        type Foo {
+          id: ID!
+        }
+      `);
+      const bar = buildSchema(/* GraphQL */ `
+        type Query {
+          getFoosByIds(ids: [ID!]!): [Foo!]!
+          getBarsByIds(ids: [ID!]!): [Bar!]!
+        }
+        type Foo {
+          id: ID!
+          bar: Bar!
+        }
+        type Bar {
+          id: ID!
+        }
+      `);
+      const { supergraphSdl, errors } = composeSubgraphs([
+        {
+          name: 'Foo',
+          schema: foo,
+        },
+        {
+          name: 'Bar',
+          schema: bar,
+        },
+      ]);
+      if (errors?.length) {
+        if (errors.length > 1) {
+          throw new AggregateError(errors, errors.map(e => e.message).join('\n'));
+        }
+        throw errors[0];
+      }
+      expect(supergraphSdl).toMatchInlineSnapshot(`
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
+  {
+    query: Query
+    
+    
+  }
+
+  
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
+
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
+
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+    directive @join__unionMember(
+      graph: join__Graph!
+      member: String!
+    ) repeatable on UNION
+
+    scalar join__FieldSet
+    
+  
+  
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+  
+  
+  
+  
+  
+  
+  
+enum join__Graph {
+  BAR @join__graph(name: "Bar", url: "") 
+  FOO @join__graph(name: "Foo", url: "") 
+}
+
+directive @merge(
+  subgraph: String
+  argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String!]
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
+
+type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
+  getFoosByIds(ids: [ID!]!) : [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @merge(subgraph: "Foo", keyField: "id", keyArg: "ids") 
+  getBarsByIds(ids: [ID!]!) : [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @join__field(graph: BAR) 
+}
+
+type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+  id: ID!
+  bar: Bar! @join__field(graph: BAR) 
+}
+
+type Bar @join__type(graph: BAR, key: "id")  {
+  id: ID!
+}"
+`);
+    });
+    it('typesByIds(keys: [ID!]!)', () => {
+      const foo = buildSchema(/* GraphQL */ `
+        type Query {
+          foosByIds(ids: [ID!]!): [Foo!]!
+        }
+        type Foo {
+          id: ID!
+        }
+      `);
+      const bar = buildSchema(/* GraphQL */ `
+        type Query {
+          foosByIds(ids: [ID!]!): [Foo!]!
+          barsByIds(ids: [ID!]!): [Bar!]!
+        }
+        type Foo {
+          id: ID!
+          bar: Bar!
+        }
+        type Bar {
+          id: ID!
+        }
+      `);
+      const { supergraphSdl, errors } = composeSubgraphs([
+        {
+          name: 'Foo',
+          schema: foo,
+        },
+        {
+          name: 'Bar',
+          schema: bar,
+        },
+      ]);
+      if (errors?.length) {
+        if (errors.length > 1) {
+          throw new AggregateError(errors, errors.map(e => e.message).join('\n'));
+        }
+        throw errors[0];
+      }
+      expect(supergraphSdl).toMatchInlineSnapshot(`
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
+  {
+    query: Query
+    
+    
+  }
+
+  
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
+
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
+
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+    directive @join__unionMember(
+      graph: join__Graph!
+      member: String!
+    ) repeatable on UNION
+
+    scalar join__FieldSet
+    
+  
+  
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+  
+  
+  
+  
+  
+  
+  
+enum join__Graph {
+  BAR @join__graph(name: "Bar", url: "") 
+  FOO @join__graph(name: "Foo", url: "") 
+}
+
+directive @merge(
+  subgraph: String
+  argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String!]
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
+
+type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
+  foosByIds(ids: [ID!]!) : [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @merge(subgraph: "Foo", keyField: "id", keyArg: "ids") 
+  barsByIds(ids: [ID!]!) : [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @join__field(graph: BAR) 
+}
+
+type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+  id: ID!
+  bar: Bar! @join__field(graph: BAR) 
+}
+
+type Bar @join__type(graph: BAR, key: "id")  {
+  id: ID!
+}"
+`);
+    });
+    it('typesByIdsList(keys: [ID!]!)', () => {
+      const foo = buildSchema(/* GraphQL */ `
+        type Query {
+          foosByIdsList(ids: [ID!]!): [Foo!]!
+        }
+        type Foo {
+          id: ID!
+        }
+      `);
+      const bar = buildSchema(/* GraphQL */ `
+        type Query {
+          foosByIdsList(ids: [ID!]!): [Foo!]!
+          barsByIdsList(ids: [ID!]!): [Bar!]!
+        }
+        type Foo {
+          id: ID!
+          bar: Bar!
+        }
+        type Bar {
+          id: ID!
+        }
+      `);
+      const { supergraphSdl, errors } = composeSubgraphs([
+        {
+          name: 'Foo',
+          schema: foo,
+        },
+        {
+          name: 'Bar',
+          schema: bar,
+        },
+      ]);
+      if (errors?.length) {
+        if (errors.length > 1) {
+          throw new AggregateError(errors, errors.map(e => e.message).join('\n'));
+        }
+        throw errors[0];
+      }
+      expect(supergraphSdl).toMatchInlineSnapshot(`
+"schema
+    @link(url: "https://specs.apollo.dev/link/v1.0")
+    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+    
+    
+    
+    
+    
+    
+    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
+  {
+    query: Query
+    
+    
+  }
+
+  
+    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+    
+      directive @join__field(
+        graph: join__Graph
+        requires: join__FieldSet
+        provides: join__FieldSet
+        type: String
+        external: Boolean
+        override: String
+        usedOverridden: Boolean
+        
+        
+      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+    
+    
+
+    directive @join__implements(
+      graph: join__Graph!
+      interface: String!
+    ) repeatable on OBJECT | INTERFACE
+
+    directive @join__type(
+      graph: join__Graph!
+      key: join__FieldSet
+      extension: Boolean! = false
+      resolvable: Boolean! = true
+      isInterfaceObject: Boolean! = false
+    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+    directive @join__unionMember(
+      graph: join__Graph!
+      member: String!
+    ) repeatable on UNION
+
+    scalar join__FieldSet
+    
+  
+  
+  directive @link(
+    url: String
+    as: String
+    for: link__Purpose
+    import: [link__Import]
+  ) repeatable on SCHEMA
+
+  scalar link__Import
+
+  enum link__Purpose {
+    """
+    \`SECURITY\` features provide metadata necessary to securely resolve fields.
+    """
+    SECURITY
+
+    """
+    \`EXECUTION\` features provide metadata necessary for operation execution.
+    """
+    EXECUTION
+  }
+
+  
+  
+  
+  
+  
+  
+  
+enum join__Graph {
+  BAR @join__graph(name: "Bar", url: "") 
+  FOO @join__graph(name: "Foo", url: "") 
+}
+
+directive @merge(
+  subgraph: String
+  argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String!]
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
+
+type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
+  foosByIdsList(ids: [ID!]!) : [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @merge(subgraph: "Foo", keyField: "id", keyArg: "ids") 
+  barsByIdsList(ids: [ID!]!) : [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @join__field(graph: BAR) 
+}
+
+type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+  id: ID!
+  bar: Bar! @join__field(graph: BAR) 
+}
+
+type Bar @join__type(graph: BAR, key: "id")  {
+  id: ID!
+}"
+`);
+    });
   });
 });
