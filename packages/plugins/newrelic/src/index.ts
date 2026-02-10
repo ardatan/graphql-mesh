@@ -1,4 +1,3 @@
-/* eslint-disable promise/param-names */
 import type { Plugin } from 'graphql-yoga';
 import newRelic from 'newrelic';
 import attributeFilter from 'newrelic/lib/config/attribute-filter.js';

@@ -16,7 +16,7 @@ export function polyfillStrReplaceAll() {
 export function revertStrReplaceAllPolyfill() {
   if (strReplaceAllPolyfilled) {
     strReplaceAllPolyfilled = false;
-    // eslint-disable-next-line no-extend-native
+
     delete String.prototype.replaceAll;
   }
 }

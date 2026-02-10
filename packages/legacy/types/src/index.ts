@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-new */
 import type { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode } from 'graphql';
 import type { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import type { Plugin } from '@envelop/core';

@@ -5283,6 +5283,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint/eslintrc@npm:^3.3.3":
+  version: 3.3.3
+  resolution: "@eslint/eslintrc@npm:3.3.3"
+  dependencies:
+    ajv: "npm:^6.12.4"
+    debug: "npm:^4.3.2"
+    espree: "npm:^10.0.1"
+    globals: "npm:^14.0.0"
+    ignore: "npm:^5.2.0"
+    import-fresh: "npm:^3.2.1"
+    js-yaml: "npm:^4.1.1"
+    minimatch: "npm:^3.1.2"
+    strip-json-comments: "npm:^3.1.1"
+  checksum: 10c0/532c7acc7ddd042724c28b1f020bd7bf148fcd4653bb44c8314168b5f772508c842ce4ee070299cac51c5c5757d2124bdcfcef5551c8c58ff9986e3e17f2260d
+  languageName: node
+  linkType: hard
+
 "@eslint/object-schema@npm:^3.0.1":
   version: 3.0.1
   resolution: "@eslint/object-schema@npm:3.0.1"
@@ -23264,6 +23281,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"espree@npm:^10.0.1":
+  version: 10.4.0
+  resolution: "espree@npm:10.4.0"
+  dependencies:
+    acorn: "npm:^8.15.0"
+    acorn-jsx: "npm:^5.3.2"
+    eslint-visitor-keys: "npm:^4.2.1"
+  checksum: 10c0/c63fe06131c26c8157b4083313cb02a9a54720a08e21543300e55288c40e06c3fc284bdecf108d3a1372c5934a0a88644c98714f38b6ae8ed272b40d9ea08d6b
+  languageName: node
+  linkType: hard
+
 "espree@npm:^11.1.0":
   version: 11.1.0
   resolution: "espree@npm:11.1.0"
@@ -24882,6 +24910,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"globals@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "globals@npm:14.0.0"
+  checksum: 10c0/b96ff42620c9231ad468d4c58ff42afee7777ee1c963013ff8aabe095a451d0ceeb8dcd8ef4cbd64d2538cef45f787a78ba3a9574f4a634438963e334471302d
+  languageName: node
+  linkType: hard
+
 "globals@npm:^15.11.0, globals@npm:^15.15.0":
   version: 15.15.0
   resolution: "globals@npm:15.15.0"
@@ -25220,6 +25255,7 @@ __metadata:
     "@babel/types": "npm:7.29.0"
     "@changesets/changelog-github": "npm:0.5.2"
     "@changesets/cli": "npm:2.29.8"
+    "@eslint/eslintrc": "npm:^3.3.3"
     "@repeaterjs/repeater": "npm:^3.0.5"
     "@theguild/prettier-config": "npm:3.0.1"
     "@tsconfig/node24": "npm:^24.0.0"

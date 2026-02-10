@@ -10,7 +10,6 @@ import type { resolveAdditionalResolvers } from './resolve-additional-resolvers.
 function parseObject(ast: ConstObjectValueNode): any {
   const value = Object.create(null);
   ast.fields.forEach(field => {
-    // eslint-disable-next-line no-use-before-define
     value[field.name.value] = parseLiteral(field.value);
   });
 

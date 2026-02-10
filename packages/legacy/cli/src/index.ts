@@ -128,17 +128,15 @@ export async function graphqlMesh(
           });
           logger = meshConfig.logger;
 
-          // eslint-disable-next-line no-inner-declarations
           function buildMeshInstance() {
             return getMesh(meshConfig).then(meshInstance => {
               // We already handle Mesh instance errors inside `serveMesh`
-              // eslint-disable-next-line @typescript-eslint/no-floating-promises
+
               writeFile(
                 pathModule.join(outputDir, 'schema.graphql'),
                 printSchemaWithDirectives(meshInstance.schema),
               ).catch(e => logger.error(`An error occured while writing the schema file: `, e));
 
-              // eslint-disable-next-line @typescript-eslint/no-floating-promises
               generateTsArtifacts(
                 {
                   unifiedSchema: meshInstance.schema,

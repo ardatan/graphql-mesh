@@ -98,7 +98,7 @@ export function createMeshHTTPHandler<TServerContext>({
                   },
                 }),
               );
-              // eslint-disable-next-line no-useless-return
+
               return;
             }
             withCookies(request);

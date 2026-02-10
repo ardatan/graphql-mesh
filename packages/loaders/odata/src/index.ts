@@ -496,7 +496,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       const args: ObjectTypeComposerArgumentConfigMapDefinition<any> = {
         ...commonArgs,
       };
-      // eslint-disable-next-line prefer-const
+
       let entitySetPath = boundFunctionObj.attributes.EntitySetPath?.split('/')[0];
       let field: ObjectTypeComposerFieldConfigDefinition<any, any, any>;
       let boundEntityTypeName: string;
