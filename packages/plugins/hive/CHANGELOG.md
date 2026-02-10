@@ -1,5 +1,51 @@
 # @graphql-mesh/plugin-hive
 
+## 0.104.25
+
+### Patch Changes
+
+- [#9167](https://github.com/ardatan/graphql-mesh/pull/9167)
+  [`a55ad38`](https://github.com/ardatan/graphql-mesh/commit/a55ad385c4e402d8ce90524f4778a30e10557d33)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/core@^0.20.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.20.1)
+    (from `^0.20.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-hive/yoga@^0.47.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/yoga/v/0.47.1)
+    (from `^0.47.0`, in `dependencies`)
+
+- [#9183](https://github.com/ardatan/graphql-mesh/pull/9183)
+  [`1f2b25e`](https://github.com/ardatan/graphql-mesh/commit/1f2b25eaf419a6e7ae48ea5067d8c68d51f821c4)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/core@^0.20.2` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.20.2)
+    (from `^0.20.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-hive/yoga@^0.47.2` ↗︎](https://www.npmjs.com/package/@graphql-hive/yoga/v/0.47.2)
+    (from `^0.47.1`, in `dependencies`)
+
+- [#9215](https://github.com/ardatan/graphql-mesh/pull/9215)
+  [`6e3779c`](https://github.com/ardatan/graphql-mesh/commit/6e3779c7672c582e7a53779669300d0f3c8c5d95)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/yoga@^0.47.3` ↗︎](https://www.npmjs.com/package/@graphql-hive/yoga/v/0.47.3)
+    (from `^0.47.2`, in `dependencies`)
+  - Removed dependency
+    [`@graphql-hive/core@^0.20.2` ↗︎](https://www.npmjs.com/package/@graphql-hive/core/v/0.20.2)
+    (from `dependencies`)
+
+- [#9215](https://github.com/ardatan/graphql-mesh/pull/9215)
+  [`6e3779c`](https://github.com/ardatan/graphql-mesh/commit/6e3779c7672c582e7a53779669300d0f3c8c5d95)
+  Thanks [@ardatan](https://github.com/ardatan)! - Destroy Hive client when Mesh instance is
+  destroyed, in Mesh v0, the destroy event is emitted by the Mesh instance's PubSub engine, so we
+  can subscribe to it and dispose the Hive client when the event is emitted. This ensures that any
+  resources used by the Hive client are properly cleaned up when the Mesh instance is destroyed.
+
+- Updated dependencies
+  [[`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6e3779c`](https://github.com/ardatan/graphql-mesh/commit/6e3779c7672c582e7a53779669300d0f3c8c5d95)]:
+  - @graphql-mesh/types@0.104.20
+
 ## 0.104.24
 
 ### Patch Changes

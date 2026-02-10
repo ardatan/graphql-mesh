@@ -1,5 +1,32 @@
 # @graphql-mesh/http
 
+## 0.106.25
+
+### Patch Changes
+
+- [#9215](https://github.com/ardatan/graphql-mesh/pull/9215)
+  [`6e3779c`](https://github.com/ardatan/graphql-mesh/commit/6e3779c7672c582e7a53779669300d0f3c8c5d95)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@whatwg-node/promise-helpers@^1.3.2` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/1.3.2)
+    (to `dependencies`)
+
+- [#9215](https://github.com/ardatan/graphql-mesh/pull/9215)
+  [`6e3779c`](https://github.com/ardatan/graphql-mesh/commit/6e3779c7672c582e7a53779669300d0f3c8c5d95)
+  Thanks [@ardatan](https://github.com/ardatan)! - Destroy Yoga instance when Mesh instance is
+  destroyed so that the plugins and components using
+  [Explicit Resource Management](https://the-guild.dev/graphql/yoga-server/docs/features/explicit-resource-management)
+  will be cleaned up properly
+
+- Updated dependencies
+  [[`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6e3779c`](https://github.com/ardatan/graphql-mesh/commit/6e3779c7672c582e7a53779669300d0f3c8c5d95)]:
+  - @graphql-mesh/runtime@0.106.24
+  - @graphql-mesh/types@0.104.20
+  - @graphql-mesh/utils@0.104.22
+
 ## 0.106.24
 
 ### Patch Changes

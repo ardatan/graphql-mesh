@@ -1,5 +1,27 @@
 # @omnigraph/openapi
 
+## 0.109.30
+
+### Patch Changes
+
+- [#9107](https://github.com/ardatan/graphql-mesh/pull/9107)
+  [`181937f`](https://github.com/ardatan/graphql-mesh/commit/181937f9a506ac12c83fad959caee3f432f3f15a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Handle oneOf with examples correctly
+
+- Updated dependencies
+  [[`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`b25cc8e`](https://github.com/ardatan/graphql-mesh/commit/b25cc8e496bce38cb1e2d71c8445d7eafe738c89),
+  [`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6e3779c`](https://github.com/ardatan/graphql-mesh/commit/6e3779c7672c582e7a53779669300d0f3c8c5d95),
+  [`181937f`](https://github.com/ardatan/graphql-mesh/commit/181937f9a506ac12c83fad959caee3f432f3f15a),
+  [`235c56b`](https://github.com/ardatan/graphql-mesh/commit/235c56b0bcd8f68e7c9dad77b051a14576d355f4)]:
+  - @graphql-mesh/fusion-composition@0.8.27
+  - @graphql-mesh/types@0.104.20
+  - @graphql-mesh/utils@0.104.22
+  - @omnigraph/json-schema@0.109.24
+
 ## 0.109.29
 
 ### Patch Changes
