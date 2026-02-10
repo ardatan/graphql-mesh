@@ -11,7 +11,7 @@
     "@graphql-mesh/config": "0.108.27",
     "@graphql-mesh/odata": "0.106.24",
     "@graphql-mesh/runtime": "0.106.24",
-    "@types/node": "^25.2.2",
+    "@types/node": "^25.2.3",
     "graphql": "16.12.0",
     "ts-node": "^10.9.2",
     "typescript": "5.9.3"

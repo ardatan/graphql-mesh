@@ -11,11 +11,11 @@
     "start": "functions-framework --target=mesh"
   },
   "dependencies": {
-    "@google-cloud/functions-framework": "^5.0.0",
+    "@google-cloud/functions-framework": "^5.0.1",
     "@graphql-hive/gateway": "^2.3.3",
     "@graphql-mesh/compose-cli": "workspace:^",
     "@omnigraph/json-schema": "workspace:^",
-    "@types/node": "^25.2.2",
+    "@types/node": "^25.2.3",
     "graphql": "^16.9.0",
     "typescript": "^5.4.2"
   }

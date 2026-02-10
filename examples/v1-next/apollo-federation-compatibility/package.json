@@ -28,7 +28,7 @@
     "@graphql-codegen/typescript": "5.0.7",
     "@graphql-codegen/typescript-resolvers": "5.1.5",
     "@graphql-mesh/compose-cli": "1.5.10",
-    "@types/node": "^25.2.2",
+    "@types/node": "^25.2.3",
     "esbuild": "^0.27.3",
     "lru-cache": "patch:lru-cache@npm%3A11.2.1#~/.yarn/patches/lru-cache-npm-11.2.1-60cdd96af2.patch"
   }

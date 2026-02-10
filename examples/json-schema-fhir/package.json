@@ -15,7 +15,7 @@
     "unzip-stream": "0.3.4"
   },
   "devDependencies": {
-    "@types/node": "^25.2.2",
+    "@types/node": "^25.2.3",
     "@types/unzip-stream": "0.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
