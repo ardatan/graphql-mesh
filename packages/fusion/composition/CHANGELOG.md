@@ -1,5 +1,34 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.27
+
+### Patch Changes
+
+- [#9199](https://github.com/ardatan/graphql-mesh/pull/9199)
+  [`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.12)
+    (from `^4.0.10`, in `dependencies`)
+
+- [#9203](https://github.com/ardatan/graphql-mesh/pull/9203)
+  [`b25cc8e`](https://github.com/ardatan/graphql-mesh/commit/b25cc8e496bce38cb1e2d71c8445d7eafe738c89)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`minimatch@^10.1.2` ↗︎](https://www.npmjs.com/package/minimatch/v/10.1.2)
+    (from `^10.0.3`, in `dependencies`)
+
+- [#9149](https://github.com/ardatan/graphql-mesh/pull/9149)
+  [`235c56b`](https://github.com/ardatan/graphql-mesh/commit/235c56b0bcd8f68e7c9dad77b051a14576d355f4)
+  Thanks [@ardatan](https://github.com/ardatan)! - Assign `Query.typenamesByKeysList` semantic
+  convention as the entity resolver.
+
+  Previously it only assigned `Query.typenamesByKeys` semantic convention for batched type
+  resolutions
+
+- Updated dependencies
+  [[`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909)]:
+  - @graphql-mesh/utils@0.104.22
+
 ## 0.8.26
 
 ### Patch Changes
