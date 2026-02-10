@@ -1,0 +1,271 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Reproduction #9106 should generate correct schema: reprod-9106 1`] = `
+"schema @transport(subgraph: "test", kind: "rest", location: "https://apis.usps.com/oauth2/v3") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
+
+directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
+
+directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+
+directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
+
+directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+
+"""
+The credentials of the client application that are verified by the authorization server.
+"""
+type OAuth_Client_Credentials_Request implements Base_Token_Request {
+  grant_type: mutationInput_post_token_input_oneOf_0_allOf_0_grant_type!
+  """
+  The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
+  """
+  scope: String
+  """
+  The unique identifier issued to the client application making the request. Used for authenticating the client application.
+  
+  You will need to add an app to get a client Id and secret. These are the Consumer Key and Consumer Secret values respectfully in the API developer portal.
+  """
+  client_id: String
+  """
+  The shared secret issued to the client application making the request. Used for authenticating the client application.
+  
+  You will need to add an app to get a client Id and secret. These are the Consumer Key and Consumer Secret values respectfully in the API developer portal.
+  """
+  client_secret: String
+}
+
+"""
+The base object for an OAuth token request, in accordance with OAuth industry standards.
+"""
+interface Base_Token_Request @discriminator(subgraph: "test", field: "grant_type", mapping: [["client_credentials", "OAuth_Client_Credentials_Request"], ["authorization_code", "OAuth_Authorization_Code_Credentials_Request"], ["refresh_token", "OAuth_Refresh_Token_Credentials_Request"]]) {
+  grant_type: mutationInput_post_token_input_oneOf_0_allOf_0_grant_type!
+  """
+  The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
+  """
+  scope: String
+}
+
+"""The OAuth standard flow being requested by the client application."""
+enum mutationInput_post_token_input_oneOf_0_allOf_0_grant_type {
+  authorization_code
+  client_credentials
+  refresh_token
+  password
+}
+
+type Query {
+  dummy: String
+}
+
+type Mutation {
+  """
+  Issue one or more OAuth tokens for a client application to use in making subsequent resource requests. Based on the _OAuth 2.0 Authorization Framework_, IETF Draft RFC 6749, October 2012, see [IETF 6749](https://datatracker.ietf.org/doc/html/rfc6749). **Access tokens are valid for eight hours after issuance, while refresh tokens are valid for seven days**.
+  
+  Note that the following OAuth grant types are supported:
+  - **Client Credentials Grant**, see [IETF 6749, section 4.4](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4).
+  - **Refresh Token**, see [IETF 6749, section 6](https://datatracker.ietf.org/doc/html/rfc6749#section-6)
+  - **Authorization Code Grant**, see [IETF 6749, section 4.1](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
+  """
+  post_token(input: post_token_request_Input): post_token_200_response @httpOperation(subgraph: "test", path: "/token", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  """
+  Prevent tokens from being further used to access APIs by disposing one or more OAuth tokens that are no longer needed. Basic Authentication is used to access this resource, using the issued client Id and client secret. This resource is based on the *OAuth 2.0 Token Revocation* IETF Draft RFC 7009, August 2013.
+  * [IETF 7009](https://datatracker.ietf.org/doc/html/rfc7009).
+  
+  """
+  post_revoke(input: Token_Revocation_Request_Input): JSON @httpOperation(subgraph: "test", path: "/revoke", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+}
+
+union post_token_200_response = Provider_specific_Access_Token_Response | Provider_specific_Tokens_Response
+
+"""
+The OAuth token response for the implementation provided by the authorization server.
+"""
+type Provider_specific_Access_Token_Response {
+  """The access token issued to use to acess protected resources."""
+  access_token: String!
+  """The expiration time of the issued access token, in seconds."""
+  expires_in: Int!
+  token_type: Bearer_const!
+  """
+  The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
+  """
+  scope: String
+  additionalProperties: JSON @resolveRoot(subgraph: "test")
+  """
+  The date and time the access token was issued, expressed in Unix epoch time in milliseconds.
+  """
+  issued_at: Int
+  status: mutation_post_token_oneOf_0_allOf_1_status
+  """The authority that issued the token(s)."""
+  issuer: String
+  """The unique identifier for the client application."""
+  client_id: String
+  """The name of the client application."""
+  application_name: String
+  """The list of API products approved for use by the client application."""
+  api_products: String
+  """
+  The base64-encoded public cryptographic key used to validate the signature of the access token.  Validation ensures that the access token has not been tampered with and it originated from a known, trusted source.
+  """
+  public_key: Byte
+}
+
+enum Bearer_const @typescript(subgraph: "test", type: "\\"Bearer\\"") @example(subgraph: "test", value: "Bearer") {
+  Bearer @enum(subgraph: "test", value: "\\"Bearer\\"")
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+"""The status of the access token."""
+enum mutation_post_token_oneOf_0_allOf_1_status {
+  approved
+  revoked
+}
+
+"""The \`Byte\` scalar type represents byte value as a Buffer"""
+scalar Byte
+
+"""
+The OAuth tokens response for the implementation provided by the authorization server.
+"""
+type Provider_specific_Tokens_Response {
+  """The access token issued to use to acess protected resources."""
+  access_token: String!
+  """The expiration time of the issued access token, in seconds."""
+  expires_in: Int!
+  token_type: Bearer_const!
+  """
+  The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
+  """
+  scope: String
+  additionalProperties: JSON @resolveRoot(subgraph: "test")
+  """The refresh token."""
+  refresh_token: String!
+  """
+  The date and time the refresh token was issued expressed in Unix epoch time in milliseconds.
+  """
+  refresh_token_issued_at: Int
+  """The refresh token expiration, in seconds."""
+  refresh_token_expires_in: Int
+  """The number of times the refresh token operation has been used."""
+  refresh_count: Int
+  refresh_token_status: mutation_post_token_oneOf_1_allOf_1_refresh_token_status
+  """
+  The date and time the access token was issued, expressed in Unix epoch time in milliseconds.
+  """
+  issued_at: Int
+  status: mutation_post_token_oneOf_1_allOf_1_status
+  """The authority that issued the token(s)."""
+  issuer: String
+  """The unique identifier for the client application."""
+  client_id: String
+  """The name of the client application."""
+  application_name: String
+  """The list of API products approved for use by the client application."""
+  api_products: String
+  """
+  The base64-encoded public cryptographic key used to validate the signature of the access token.  Validation ensures that the access token has not been tampered with and it originated from a known, trusted source.
+  """
+  public_key: Byte
+}
+
+"""The current state of the refresh token."""
+enum mutation_post_token_oneOf_1_allOf_1_refresh_token_status {
+  approved
+  revoked
+}
+
+"""The status of the access token."""
+enum mutation_post_token_oneOf_1_allOf_1_status {
+  approved
+  revoked
+}
+
+input post_token_request_Input @oneOf(subgraph: "test") {
+  OAuth_Client_Credentials_Request_Input: OAuth_Client_Credentials_Request_Input
+  OAuth_Refresh_Token_Credentials_Request_Input: OAuth_Refresh_Token_Credentials_Request_Input
+  OAuth_Authorization_Code_Credentials_Request_Input: OAuth_Authorization_Code_Credentials_Request_Input
+}
+
+"""
+The credentials of the client application that are verified by the authorization server.
+"""
+input OAuth_Client_Credentials_Request_Input {
+  grant_type: mutationInput_post_token_input_oneOf_0_allOf_0_grant_type!
+  """
+  The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
+  """
+  scope: String
+  """
+  The unique identifier issued to the client application making the request. Used for authenticating the client application.
+  
+  You will need to add an app to get a client Id and secret. These are the Consumer Key and Consumer Secret values respectfully in the API developer portal.
+  """
+  client_id: String
+  """
+  The shared secret issued to the client application making the request. Used for authenticating the client application.
+  
+  You will need to add an app to get a client Id and secret. These are the Consumer Key and Consumer Secret values respectfully in the API developer portal.
+  """
+  client_secret: String
+}
+
+"""To be done."""
+input OAuth_Refresh_Token_Credentials_Request_Input {
+  """The refresh token value to be used to issue a new access token."""
+  refresh_token: String
+}
+
+"""
+The credentials of the client application that are verified by the authorization server.
+"""
+input OAuth_Authorization_Code_Credentials_Request_Input {
+  """The authorization code."""
+  code: String
+  """
+  The authorization code redirect URI ( Uniform Resource Identifier) for the third-party application to receive the authorization code.
+  """
+  redirect_uri: String
+}
+
+"""The token revocation request."""
+input Token_Revocation_Request_Input {
+  """The token (a hash value)."""
+  token: String!
+  token_type_hint: mutationInput_post_revoke_input_token_type_hint = refresh_token
+}
+
+"""
+A hint to the type of the given token. See OAuth Token Types Hint registry, https://www.rfc-editor.org/rfc/rfc7009#section-4.1.2.1
+"""
+enum mutationInput_post_revoke_input_token_type_hint {
+  access_token
+  refresh_token
+}
+
+scalar ObjMap
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}"
+`;

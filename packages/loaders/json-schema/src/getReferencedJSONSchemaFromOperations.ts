@@ -279,12 +279,12 @@ export async function getReferencedJSONSchemaFromOperations({
               title: operationConfig.requestTypeName,
             }
           : operationConfig.requestSchema;
-      if (operationConfig.requestSample) {
+      /*       if (operationConfig.requestSample) {
         rootTypeInputTypeDefinition.properties[fieldName].properties.input.examples =
           rootTypeInputTypeDefinition.properties[fieldName].properties.input.examples || [
             operationConfig.requestSample,
           ];
-      }
+      } */
     } else if ('requestSample' in operationConfig) {
       const sample =
         typeof operationConfig.requestSample === 'object'
