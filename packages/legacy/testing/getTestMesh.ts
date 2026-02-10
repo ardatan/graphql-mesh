@@ -38,9 +38,9 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
       },
     }),
   });
-  const cache = new InMemoryLRUCache();
-  const pubsub = new PubSub();
-  const logger = new DefaultLogger('Test');
+  const cache = extraOptions?.cache || new InMemoryLRUCache();
+  const pubsub = extraOptions?.pubsub || new PubSub();
+  const logger = extraOptions?.logger || new DefaultLogger('Test');
   const store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
     readonly: false,
     validate: false,
