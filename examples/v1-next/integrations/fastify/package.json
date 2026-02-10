@@ -6,7 +6,7 @@
     "start": "ts-node-dev src/index.ts"
   },
   "dependencies": {
-    "@graphql-hive/gateway": "^2.3.3",
+    "@graphql-hive/gateway": "^2.4.0",
     "@graphql-mesh/compose-cli": "workspace:^",
     "@omnigraph/openapi": "workspace:^",
     "@types/node": "^25.2.2",
