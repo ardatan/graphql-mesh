@@ -1,6 +1,9 @@
 import { Callout, MDXLink } from '@theguild/components';
 import { PRODUCTS_MENU_LIST } from '@theguild/components/products';
 
+// @ts-expect-error
+globalThis._self___NEXT_DATA___autoExport ||= undefined;
+
 const meta = {
   index: {
     title: 'Home',

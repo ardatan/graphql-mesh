@@ -4,6 +4,9 @@ import '@theguild/components/style.css';
 import '../hotfix.css';
 import localFont from 'next/font/local';
 
+// @ts-expect-error
+globalThis._self___NEXT_DATA___autoExport ||= undefined;
+
 const neueMontreal = localFont({
   src: [
     { path: '../fonts/PPNeueMontreal-Regular.woff2', weight: '400' },
