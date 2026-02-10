@@ -105,7 +105,6 @@ export default class HiveTransform implements MeshTransform {
     _delegationContext: DelegationContext,
     transformationContext: TransformationContext,
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises -- we dont really care about usage reporting result
     try {
       const typeInfo = getTypeInfo(this.schema);
       transformationContext

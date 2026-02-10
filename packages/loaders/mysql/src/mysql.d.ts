@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as mysql from 'mysql';
 
 declare module 'mysql' {

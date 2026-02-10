@@ -39,7 +39,6 @@ export default function useMock(
 ): MeshPlugin<{
   mockStore: IMockStore;
 }> {
-  // eslint-disable-next-line no-new-func
   let configIf = true;
   if (config?.if != null) {
     if (typeof config.if === 'function') {
@@ -75,7 +74,7 @@ export default function useMock(
             const [typeName, fieldName] = fieldConfig.apply.split('.');
             if (fieldName) {
               if (fieldConfig.faker) {
-                let fakerFn: Function; // eslint-disable-line
+                let fakerFn: Function;
                 const [service, method] = fieldConfig.faker.split('.');
                 if (service in faker) {
                   fakerFn = () => (faker as any)[service][method]();

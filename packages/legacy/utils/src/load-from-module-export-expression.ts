@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/return-await */
 import { path } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
 import { fakePromise, mapMaybePromise } from '@graphql-tools/utils';

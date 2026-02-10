@@ -1,6 +1,5 @@
 /* eslint-disable import/no-nodejs-modules */
 
-/* eslint-disable dot-notation */
 import cluster from 'cluster';
 import os from 'os';
 import open from 'open';

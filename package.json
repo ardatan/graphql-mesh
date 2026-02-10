@@ -40,14 +40,14 @@
     "build:website": "yarn build && cd website && yarn build",
     "changeset": "changeset",
     "changeset-version": "changeset version && yarn postchangeset",
-    "ci:lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",
+    "ci:lint": "eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",
     "clean": "(rm -rf packages/**/dist & rm -rf packages/**/(!node_modules)/**/dist & rm -rf examples/**/node_modules/.bin/*mesh* & rm -rf .bob) || true",
     "copy-config-schema": "cp-cli ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/esm/config-schema.json && cp-cli ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/cjs/config-schema.json",
     "dev:website": "yarn workspace website run dev",
     "fix-bin": "node scripts/fix-bin.js",
     "generate-config-schema": "rm -rf ./website/src/generated-markdown && yarn graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/legacy/types/src/config-schema.json --typings ./packages/legacy/types/src/config.ts --markdown ./website/src/generated-markdown && yarn postgenerate-config-schema",
     "inject-version": "yarn workspaces foreach -A run inject-version",
-    "lint": "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --ext .ts \"./packages/**/src/**/*.ts\"",
+    "lint": "eslint --ext .ts \"./packages/**/src/**/*.ts\"",
     "package-binary": "yarn workspaces foreach -A run package-binary",
     "postbuild": "yarn inject-version && yarn copy-config-schema && yarn fix-bin && tsx scripts/replace-import-meta-url-in-cjs.ts",
     "postchangeset": "yarn install --no-immutable",
@@ -76,6 +76,7 @@
     "@babel/types": "7.29.0",
     "@changesets/changelog-github": "0.5.2",
     "@changesets/cli": "2.29.8",
+    "@eslint/eslintrc": "^3.3.3",
     "@repeaterjs/repeater": "^3.0.5",
     "@theguild/prettier-config": "3.0.1",
     "@tsconfig/node24": "^24.0.0",
@@ -90,7 +91,7 @@
     "bob-the-bundler": "7.0.1",
     "cp-cli": "^2.0.0",
     "cross-env": "^10.0.0",
-    "eslint": "9.39.2",
+    "eslint": "10.0.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-import": "2.32.0",
@@ -124,7 +125,7 @@
     "date-and-time": "^4.0.0",
     "es5-ext": "0.10.64",
     "esbuild": "^0.27.0",
-    "eslint": "9.39.2",
+    "eslint": "10.0.0",
     "estree-util-value-to-estree": "3.5.0",
     "express": "5.1.0",
     "fast-xml-parser": "5.3.4",
@@ -161,7 +162,7 @@
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
-      "cross-env \"ESLINT_USE_FLAT_CONFIG=false\" eslint --fix"
+      "eslint --fix"
     ],
     "**/*.{ts,tsx,graphql,yml,json,md,js,mjs,cjs,mdx}": [
       "prettier --write"

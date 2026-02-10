@@ -1,4 +1,3 @@
-/* eslint-disable no-labels */
 import { Kind, type SelectionNode, type SelectionSetNode } from 'graphql';
 
 export function selectionSetOfData(data: Record<string, unknown>): SelectionSetNode {

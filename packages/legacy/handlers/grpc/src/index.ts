@@ -1,4 +1,3 @@
-/* eslint-disable import/no-duplicates */
 import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';

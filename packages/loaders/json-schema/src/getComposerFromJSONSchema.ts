@@ -398,7 +398,7 @@ export function getComposerFromJSONSchema({
           }
           schemaComposer.addDirective(EnumDirective);
           // Falsy values are ignored by GraphQL
-          // eslint-disable-next-line no-unneeded-ternary
+
           const enumValue = value || value === 0 ? value : value?.toString();
           const directives: Directive[] = [];
           if (enumValue !== enumKey) {

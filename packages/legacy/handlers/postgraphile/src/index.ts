@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // eslint-disable-next-line import/no-nodejs-modules
 import { tmpdir } from 'os';
 import pg from 'pg';
