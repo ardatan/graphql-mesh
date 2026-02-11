@@ -45,6 +45,8 @@ updates:
           - '@graphql-mesh/*'
           - '@graphql-tools/*'
           - '@neo4j/*'
+          - 'newrelic'
+          - '@newrelic/*'
         update-types:
           - 'minor'
           - 'patch'
