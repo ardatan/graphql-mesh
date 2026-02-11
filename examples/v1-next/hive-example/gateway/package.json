@@ -5,7 +5,7 @@
     "gateway:start": "yarn mesh-serve supergraph"
   },
   "dependencies": {
-    "@graphql-hive/gateway": "^2.3.3",
+    "@graphql-hive/gateway": "^2.4.0",
     "dotenv": "^17.2.4",
     "graphql": "16.12.0"
   }
