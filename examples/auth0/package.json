@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@envelop/auth0": "^9.1.0",
+    "@envelop/auth0": "^9.1.1",
     "@envelop/core": "^5.3.2",
     "@graphql-mesh/cli": "0.100.27",
     "@graphql-mesh/json-schema": "0.109.25",
