@@ -1,5 +1,21 @@
 # @graphql-mesh/plugin-rate-limit
 
+## 0.106.2
+
+### Patch Changes
+
+- [#9224](https://github.com/ardatan/graphql-mesh/pull/9224)
+  [`bf58d6d`](https://github.com/ardatan/graphql-mesh/commit/bf58d6d710f653baf621680e7e86b463a658fd28)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/rate-limiter@^10.0.1` ↗︎](https://www.npmjs.com/package/@envelop/rate-limiter/v/10.0.1)
+    (from `^10.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`d213cd9`](https://github.com/ardatan/graphql-mesh/commit/d213cd912412c65602120243094795c9a1b5a28e),
+  [`d213cd9`](https://github.com/ardatan/graphql-mesh/commit/d213cd912412c65602120243094795c9a1b5a28e)]:
+  - @graphql-mesh/types@0.104.21
+  - @graphql-mesh/utils@0.104.23
+
 ## 0.106.1
 
 ### Patch Changes
