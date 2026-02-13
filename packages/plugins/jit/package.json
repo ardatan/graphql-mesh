@@ -42,7 +42,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "^2.6.0",
+    "@graphql-hive/gateway-runtime": "^2.6.1",
     "graphql": "16.12.0"
   },
   "publishConfig": {

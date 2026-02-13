@@ -6,7 +6,7 @@
     "serve": "yarn mesh-serve"
   },
   "dependencies": {
-    "@graphql-hive/gateway": "^2.4.0",
+    "@graphql-hive/gateway": "^2.4.1",
     "@graphql-mesh/compose-cli": "workspace:*",
     "@omnigraph/json-schema": "workspace:*",
     "graphql": "16.12.0"
