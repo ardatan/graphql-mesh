@@ -1,5 +1,40 @@
 # @graphql-mesh/runtime
 
+## 0.106.25
+
+### Patch Changes
+
+- [#9224](https://github.com/ardatan/graphql-mesh/pull/9224)
+  [`bf58d6d`](https://github.com/ardatan/graphql-mesh/commit/bf58d6d710f653baf621680e7e86b463a658fd28)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/core@^5.5.1` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.5.1) (from `^5.3.2`,
+    in `dependencies`)
+  - Updated dependency
+    [`@envelop/extended-validation@^7.1.1` ↗︎](https://www.npmjs.com/package/@envelop/extended-validation/v/7.1.1)
+    (from `^7.1.0`, in `dependencies`)
+  - Updated dependency
+    [`@envelop/graphql-jit@^11.1.1` ↗︎](https://www.npmjs.com/package/@envelop/graphql-jit/v/11.1.1)
+    (from `^11.1.0`, in `dependencies`)
+
+- [#9228](https://github.com/ardatan/graphql-mesh/pull/9228)
+  [`d213cd9`](https://github.com/ardatan/graphql-mesh/commit/d213cd912412c65602120243094795c9a1b5a28e)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@^10.0.13` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/10.0.13)
+    (from `^10.0.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.7)
+    (from `^12.0.6`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^11.1.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/11.1.7)
+    (from `^11.1.6`, in `dependencies`)
+- Updated dependencies
+  [[`d213cd9`](https://github.com/ardatan/graphql-mesh/commit/d213cd912412c65602120243094795c9a1b5a28e),
+  [`d213cd9`](https://github.com/ardatan/graphql-mesh/commit/d213cd912412c65602120243094795c9a1b5a28e)]:
+  - @graphql-mesh/types@0.104.21
+  - @graphql-mesh/utils@0.104.23
+
 ## 0.106.24
 
 ### Patch Changes
