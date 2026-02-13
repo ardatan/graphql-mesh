@@ -3713,10 +3713,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20260212.0":
-  version: 4.20260212.0
-  resolution: "@cloudflare/workers-types@npm:4.20260212.0"
-  checksum: 10c0/ffa82b46950b0e1775a7c4598ba9f33c8c3b53c792076867af941208376b7bf7e0fc0654346ded0da1036963e4cd25d3eff8b0172c886deabf7484835323208c
+"@cloudflare/workers-types@npm:4.20260213.0":
+  version: 4.20260213.0
+  resolution: "@cloudflare/workers-types@npm:4.20260213.0"
+  checksum: 10c0/e0731a26865c63e97d7b08b80ace36b8078bd91d6b93aa965aa3adf06bd307da21e8681c00389fa97dcaaf6a417c236df82f30937364c27589a889f7d2687566
   languageName: node
   linkType: hard
 
@@ -4449,7 +4449,7 @@ __metadata:
     "@types/dockerode": "npm:^4.0.1"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     dockerode: "npm:^4.0.2"
-    glob: "npm:^13.0.2"
+    glob: "npm:^13.0.3"
     graphql: "npm:^16.10.0"
     tsx: "npm:^4.21.0"
   languageName: unknown
@@ -5173,7 +5173,7 @@ __metadata:
   resolution: "@examples-v1-next/hive-example-gateway@workspace:examples/v1-next/hive-example/gateway"
   dependencies:
     "@graphql-hive/gateway": "npm:^2.4.1"
-    dotenv: "npm:^17.2.4"
+    dotenv: "npm:^17.3.1"
     graphql: "npm:16.12.0"
   languageName: unknown
   linkType: soft
@@ -6861,7 +6861,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20260212.0"
+    "@cloudflare/workers-types": "npm:4.20260213.0"
     "@graphql-mesh/types": "npm:^0.104.21"
     "@graphql-mesh/utils": "npm:^0.104.23"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -6978,7 +6978,7 @@ __metadata:
     ajv: "npm:^8.12.0"
     change-case: "npm:^4.1.2"
     cosmiconfig: "npm:^9.0.0"
-    dotenv: "npm:^17.2.4"
+    dotenv: "npm:^17.3.1"
     graphql: "npm:16.12.0"
     graphql-import-node: "npm:^0.0.5"
     graphql-tag: "npm:^2.12.6"
@@ -7021,7 +7021,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.10.6"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     commander: "npm:^14.0.3"
-    dotenv: "npm:^17.2.4"
+    dotenv: "npm:^17.3.1"
     graphql: "npm:16.12.0"
   peerDependencies:
     graphql: "*"
@@ -7089,7 +7089,7 @@ __metadata:
     change-case: "npm:^4.1.2"
     graphql: "npm:16.12.0"
     graphql-scalars: "npm:^1.23.0"
-    minimatch: "npm:^10.1.2"
+    minimatch: "npm:^10.2.0"
     pluralize: "npm:^8.0.0"
     snake-case: "npm:^3.0.0"
     tslib: "npm:^2.4.0"
@@ -7214,9 +7214,9 @@ __metadata:
   resolution: "@graphql-mesh/include@workspace:packages/include"
   dependencies:
     "@graphql-mesh/utils": "npm:^0.104.23"
-    dotenv: "npm:^17.2.4"
+    dotenv: "npm:^17.3.1"
     get-tsconfig: "npm:^4.13.6"
-    glob: "npm:^13.0.2"
+    glob: "npm:^13.0.3"
     graphql: "npm:16.12.0"
     jiti: "npm:^2.0.0"
     sucrase: "npm:^3.35.1"
@@ -7643,7 +7643,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.104.23"
     "@whatwg-node/fetch": "npm:^0.10.6"
     graphql: "npm:16.12.0"
-    minimatch: "npm:^10.1.2"
+    minimatch: "npm:^10.2.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -7902,7 +7902,7 @@ __metadata:
     "@graphql-tools/wrap": "npm:^11.1.7"
     "@types/minimatch": "npm:6.0.0"
     graphql: "npm:16.12.0"
-    minimatch: "npm:^10.1.2"
+    minimatch: "npm:^10.2.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -8009,7 +8009,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^11.0.0"
     "@graphql-tools/wrap": "npm:^11.1.7"
     graphql: "npm:16.12.0"
-    minimatch: "npm:^10.1.2"
+    minimatch: "npm:^10.2.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -11920,7 +11920,7 @@ __metadata:
     graphql: "npm:16.12.0"
     graphql-compose: "npm:^9.0.11"
     graphql-scalars: "npm:^1.22.4"
-    soap: "npm:1.6.4"
+    soap: "npm:1.6.5"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -13907,6 +13907,13 @@ __metadata:
   version: 1.12.0
   resolution: "@rushstack/eslint-patch@npm:1.12.0"
   checksum: 10c0/1e567656d92632c085a446f40767bc451caffe1131e8d6a7a3e8f3e3f4167f5f29744a84c709f2440f299442d4bc68ff773784462166800b8c09c0e08042415b
+  languageName: node
+  linkType: hard
+
+"@sec-ant/readable-stream@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "@sec-ant/readable-stream@npm:0.4.1"
+  checksum: 10c0/64e9e9cf161e848067a5bf60cdc04d18495dc28bb63a8d9f8993e4dd99b91ad34e4b563c85de17d91ffb177ec17a0664991d2e115f6543e73236a906068987af
   languageName: node
   linkType: hard
 
@@ -21810,10 +21817,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^17.2.3, dotenv@npm:^17.2.4":
+"dotenv@npm:^17.2.3":
   version: 17.2.4
   resolution: "dotenv@npm:17.2.4"
   checksum: 10c0/901aeee9cb40860291bdb452f6ca66aada78438331a026b0bd86fd41b94a79752dbc6a8971f4f26e6cafef11b4a27bb12ea99c0cbe7dfa61791f194727f799e5
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^17.3.1":
+  version: 17.3.1
+  resolution: "dotenv@npm:17.3.1"
+  checksum: 10c0/c78e0c2d5a549c751e544cc60e2b95e7cb67e0c551f42e094d161c6b297aa44b630a3c2dcacf5569e529a6c2a6b84e2ab9be8d37b299d425df5a18b81ce4a35f
   languageName: node
   linkType: hard
 
@@ -24382,6 +24396,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"get-stream@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "get-stream@npm:9.0.1"
+  dependencies:
+    "@sec-ant/readable-stream": "npm:^0.4.1"
+    is-stream: "npm:^4.0.1"
+  checksum: 10c0/d70e73857f2eea1826ac570c3a912757dcfbe8a718a033fa0c23e12ac8e7d633195b01710e0559af574cbb5af101009b42df7b6f6b29ceec8dbdf7291931b948
+  languageName: node
+  linkType: hard
+
 "get-symbol-description@npm:^1.1.0":
   version: 1.1.0
   resolution: "get-symbol-description@npm:1.1.0"
@@ -24513,14 +24537,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^13.0.2":
-  version: 13.0.2
-  resolution: "glob@npm:13.0.2"
+"glob@npm:^13.0.3":
+  version: 13.0.3
+  resolution: "glob@npm:13.0.3"
   dependencies:
-    minimatch: "npm:^10.1.2"
+    minimatch: "npm:^10.2.0"
     minipass: "npm:^7.1.2"
     path-scurry: "npm:^2.0.0"
-  checksum: 10c0/3d4b09efa922c4cba9be6d5b9efae14384e7422aeb886eb35fba8a94820b8281474b8d3f16927127fb1a0c8580e18fc00e3fda03c8dc31fa0af3ba918edeeb04
+  checksum: 10c0/333dc5c40ca0e50400465d8f5c45aa7cdd32580c4d1a4c502dfb4fb9c469a936b8e0c6bbd09cd6353fd05982e48d7f79e819159a36fb3e0a41ee722607bc11a9
   languageName: node
   linkType: hard
 
@@ -24938,7 +24962,7 @@ __metadata:
     jest: "npm:30.2.0"
     lint-staged: "npm:16.2.7"
     lru-cache: "npm:11.2.2"
-    minimatch: "npm:10.1.2"
+    minimatch: "npm:10.2.0"
     node-gyp: "npm:^12.2.0"
     prettier: "npm:3.8.1"
     threads: "npm:^1.7.0"
@@ -26809,6 +26833,13 @@ __metadata:
   version: 3.0.0
   resolution: "is-stream@npm:3.0.0"
   checksum: 10c0/eb2f7127af02ee9aa2a0237b730e47ac2de0d4e76a4a905a50a11557f2339df5765eaea4ceb8029f1efa978586abe776908720bfcb1900c20c6ec5145f6f29d8
+  languageName: node
+  linkType: hard
+
+"is-stream@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "is-stream@npm:4.0.1"
+  checksum: 10c0/2706c7f19b851327ba374687bc4a3940805e14ca496dc672b9629e744d143b1ad9c6f1b162dece81c7bfbc0f83b32b61ccc19ad2e05aad2dd7af347408f60c7f
   languageName: node
   linkType: hard
 
@@ -30674,12 +30705,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:*, minimatch@npm:10.1.2, minimatch@npm:^10.1.1, minimatch@npm:^10.1.2":
+"minimatch@npm:*, minimatch@npm:^10.1.1, minimatch@npm:^10.1.2":
   version: 10.1.2
   resolution: "minimatch@npm:10.1.2"
   dependencies:
     "@isaacs/brace-expansion": "npm:^5.0.1"
   checksum: 10c0/0cccef3622201703de6ecf9d772c0be1d5513dcc038ed9feb866c20cf798243e678ac35605dac3f1a054650c28037486713fe9e9a34b184b9097959114daf086
+  languageName: node
+  linkType: hard
+
+"minimatch@npm:10.2.0, minimatch@npm:^10.2.0":
+  version: 10.2.0
+  resolution: "minimatch@npm:10.2.0"
+  dependencies:
+    brace-expansion: "npm:^5.0.2"
+  checksum: 10c0/256e72812bb99a86cdc788bf46a4da3f6e139db9123e20ed85a6795b93fdc0b76468ac511eb5535a023adb02a53fd598f971e990d0ca3bd6de6d41ea0199def1
   languageName: node
   linkType: hard
 
@@ -36509,21 +36549,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"soap@npm:1.6.4":
-  version: 1.6.4
-  resolution: "soap@npm:1.6.4"
+"soap@npm:1.6.5":
+  version: 1.6.5
+  resolution: "soap@npm:1.6.5"
   dependencies:
-    axios: "npm:^1.13.1"
+    axios: "npm:^1.13.5"
     axios-ntlm: "npm:^1.4.6"
     debug: "npm:^4.4.3"
+    follow-redirects: "npm:^1.15.11"
     formidable: "npm:^3.5.4"
-    get-stream: "npm:^6.0.1"
+    get-stream: "npm:^9.0.1"
     lodash: "npm:^4.17.21"
     sax: "npm:^1.4.1"
-    strip-bom: "npm:^3.0.0"
+    strip-bom: "npm:^5.0.0"
     whatwg-mimetype: "npm:4.0.0"
     xml-crypto: "npm:^6.1.2"
-  checksum: 10c0/c03f708cd647dd5192269a1a4108607766a0300f10825cf8fe1c157981b7432c9c981c2a25b657b2124afb272e6d9c31a8fbd9100df5a9b0158466f9d97b0920
+  checksum: 10c0/1c77c40ed24f1df45d776d28fbe9158eb86cd712739dd63d1696e04d80ce34e1fd716bd7bfd99e95e0790f5d82a3b6806130be6b5e1dc8b98ea2ab861f06f2a5
   languageName: node
   linkType: hard
 
@@ -37273,6 +37314,13 @@ __metadata:
   version: 4.0.0
   resolution: "strip-bom@npm:4.0.0"
   checksum: 10c0/26abad1172d6bc48985ab9a5f96c21e440f6e7e476686de49be813b5a59b3566dccb5c525b831ec54fe348283b47f3ffb8e080bc3f965fde12e84df23f6bb7ef
+  languageName: node
+  linkType: hard
+
+"strip-bom@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "strip-bom@npm:5.0.0"
+  checksum: 10c0/f87e212f8a41e08e77d3994b3d9c4112258bd3a13688f9c7c85a6705a87a8e526422bce0762326cc2d9655c32a8c0ff1a2b14936795384c353828e4637823bc6
   languageName: node
   linkType: hard
 
