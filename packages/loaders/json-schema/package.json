@@ -45,7 +45,7 @@
     "@graphql-tools/utils": "^11.0.0",
     "@json-schema-tools/meta-schema": "^1.7.5",
     "@whatwg-node/fetch": "^0.10.6",
-    "ajv": "^8.17.1",
+    "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
     "dset": "^3.1.4",
     "graphql-compose": "^9.1.0",
