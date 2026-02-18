@@ -25,8 +25,8 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "6.1.1",
-    "@graphql-codegen/typescript": "5.0.7",
-    "@graphql-codegen/typescript-resolvers": "5.1.5",
+    "@graphql-codegen/typescript": "5.0.8",
+    "@graphql-codegen/typescript-resolvers": "5.1.6",
     "@graphql-mesh/compose-cli": "1.5.11",
     "@types/node": "^25.2.3",
     "esbuild": "^0.27.3",
