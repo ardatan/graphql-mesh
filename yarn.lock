@@ -29653,6 +29653,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@patch:lru-cache@npm%3A11.2.6#~/.yarn/patches/lru-cache-npm-11.2.6-acb7d4323e.patch":
+  version: 11.2.6
+  resolution: "lru-cache@patch:lru-cache@npm%3A11.2.6#~/.yarn/patches/lru-cache-npm-11.2.6-acb7d4323e.patch::version=11.2.6&hash=04ccf6"
+  checksum: 10c0/01dfe2fdf56b3165df0699b3b8cb379f974ee9082958f058a251a903beec670a767acc1af29f9224584a5d2858685d09a91297dfb23c5b535867fd766acdccb9
+  languageName: node
+  linkType: hard
+
 "lru-memoizer@npm:^2.2.0":
   version: 2.3.0
   resolution: "lru-memoizer@npm:2.3.0"
