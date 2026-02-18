@@ -1,5 +1,5 @@
 diff --git a/dist/commonjs/index.js b/dist/commonjs/index.js
-index 921b8f10f71b148c4aa450593e84c87f16ee87f7..97aeb6837df65c2c90577580a87f845437bc93da 100644
+index 91a8dea125fefdfad993658f5c97612d62ea98c2..3e4228fbce13f6143d345b2a3828d797b09cc612 100644
 --- a/dist/commonjs/index.js
 +++ b/dist/commonjs/index.js
 @@ -2,8 +2,8 @@
@@ -13,7 +13,7 @@ index 921b8f10f71b148c4aa450593e84c87f16ee87f7..97aeb6837df65c2c90577580a87f8454
  const defaultPerf = (typeof performance === 'object' &&
      performance &&
      typeof performance.now === 'function') ?
-@@ -1560,5 +1560,7 @@ class LRUCache {
+@@ -1585,5 +1585,7 @@ class LRUCache {
          }
      }
  }
@@ -23,23 +23,21 @@ index 921b8f10f71b148c4aa450593e84c87f16ee87f7..97aeb6837df65c2c90577580a87f8454
 +module.exports.default = LRUCache;
  //# sourceMappingURL=index.js.map
 \ No newline at end of file
-diff --git a/dist/esm/index.js b/dist/esm/index.js
-index 8fd8fc5f31507b344decbd8fe9c567839e2c545f..a806da3a74836c7d131de37635610216925b6ebe 100644
---- a/dist/esm/index.js
-+++ b/dist/esm/index.js
-@@ -1558,3 +1558,5 @@ export class LRUCache {
-     }
- }
- //# sourceMappingURL=index.js.map
-+
-+export default LRUCache;
-\ No newline at end of file
 diff --git a/package.json b/package.json
-index 4953bdf4a7a35ef66f4c7be894a3554487eba823..4298041732866c5be20cf494b043a1de046fedc4 100644
+index 1554184f053da470049f849330b076161db91076..e59dcca530c9196973e495b544d45baf635c8953 100644
 --- a/package.json
 +++ b/package.json
+@@ -27,7 +27,7 @@
+     "preprofile": "npm run prepare",
+     "profile": "make -C benchmark profile"
+   },
+-  "main": "./dist/commonjs/index.min.js",
++  "main": "./dist/commonjs/index.js",
+   "types": "./dist/commonjs/index.d.ts",
+   "tshy": {
+     "exports": {
 @@ -35,11 +35,11 @@
-       "./min": {
+       ".": {
          "import": {
            "types": "./dist/esm/index.d.ts",
 -          "default": "./dist/esm/index.min.js"
@@ -52,8 +50,8 @@ index 4953bdf4a7a35ef66f4c7be894a3554487eba823..4298041732866c5be20cf494b043a1de
          }
        }
      }
-@@ -100,11 +100,11 @@
-     "./min": {
+@@ -88,14 +88,14 @@
+     ".": {
        "import": {
          "types": "./dist/esm/index.d.ts",
 -        "default": "./dist/esm/index.min.js"
@@ -66,3 +64,7 @@ index 4953bdf4a7a35ef66f4c7be894a3554487eba823..4298041732866c5be20cf494b043a1de
        }
      }
    },
+   "type": "module",
+-  "module": "./dist/esm/index.min.js"
++  "module": "./dist/esm/index.js"
+ }
