@@ -1,0 +1,15 @@
+diff --git a/lib/config-array/override-tester.js b/lib/config-array/override-tester.js
+index 3a445b1a2bbfd384d6ea85883bded5b5f4a12813..13116f4bd00b3a9e6f36c9a6a5419388781e66ab 100644
+--- a/lib/config-array/override-tester.js
++++ b/lib/config-array/override-tester.js
+@@ -20,9 +20,7 @@
+ import assert from "node:assert";
+ import path from "node:path";
+ import util from "node:util";
+-import minimatch from "minimatch";
+-
+-const { Minimatch } = minimatch;
++import { Minimatch } from "minimatch";
+ 
+ const minimatchOpts = { dot: true, matchBase: true };
+ 

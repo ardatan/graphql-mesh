@@ -1,0 +1,15 @@
+diff --git a/lib/rules/no-extraneous-dependencies.js b/lib/rules/no-extraneous-dependencies.js
+index 0dcf9d0544610dcdfa04409d438e2f82b3b4b718..149af03ca896b1c667eac734609ed52d5255dc3a 100644
+--- a/lib/rules/no-extraneous-dependencies.js
++++ b/lib/rules/no-extraneous-dependencies.js
+@@ -252,8 +252,8 @@ function testConfig(config, filename) {
+     return config;
+   }
+   // Array of globs.
+-  return config.some(function (c) {return (0, _minimatch2['default'])(filename, c) ||
+-    (0, _minimatch2['default'])(filename, _path2['default'].join(process.cwd(), c));});
++  return config.some(function (c) {return (0, _minimatch2['minimatch'])(filename, c) ||
++    (0, _minimatch2['minimatch'])(filename, _path2['default'].join(process.cwd(), c));});
+ 
+ }
+ 
