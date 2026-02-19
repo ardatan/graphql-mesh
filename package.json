@@ -117,6 +117,7 @@
     "@whatwg-node/fetch": "0.10.13",
     "@whatwg-node/node-fetch": "0.8.5",
     "@whatwg-node/server": "0.10.18",
+    "ajv": "8.18.0",
     "axios": "1.13.5",
     "body-parser": "2.2.2",
     "brace-expansion": "5.0.2",
