@@ -40,7 +40,7 @@
     "@graphql-mesh/types": "^0.104.21",
     "@graphql-mesh/utils": "^0.104.23",
     "@whatwg-node/fetch": "^0.10.6",
-    "minimatch": "^10.1.2",
+    "minimatch": "^10.2.2",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

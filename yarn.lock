@@ -80,7 +80,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:4.1.4, @apollo/client@npm:^4.0.0":
+"@apollo/client@npm:4.1.5":
+  version: 4.1.5
+  resolution: "@apollo/client@npm:4.1.5"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@wry/caches": "npm:^1.0.0"
+    "@wry/equality": "npm:^0.5.6"
+    "@wry/trie": "npm:^0.5.0"
+    graphql-tag: "npm:^2.12.6"
+    optimism: "npm:^0.18.0"
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    graphql: ^16.0.0
+    graphql-ws: ^5.5.5 || ^6.0.3
+    react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    react-dom: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    rxjs: ^7.3.0
+    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
+  peerDependenciesMeta:
+    graphql-ws:
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    subscriptions-transport-ws:
+      optional: true
+  checksum: 10c0/ed51e4a3268e71862c97eafec53047e7a22e5e4f9a3e255bef719828c86d35e42f3af5471152953875b49169fcfa91f6d710972a9af8329f69aca47879ef2f38
+  languageName: node
+  linkType: hard
+
+"@apollo/client@npm:^4.0.0":
   version: 4.1.4
   resolution: "@apollo/client@npm:4.1.4"
   dependencies:
@@ -4449,7 +4480,7 @@ __metadata:
     "@types/dockerode": "npm:^4.0.1"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     dockerode: "npm:^4.0.2"
-    glob: "npm:^13.0.5"
+    glob: "npm:^13.0.6"
     graphql: "npm:^16.10.0"
     tsx: "npm:^4.21.0"
   languageName: unknown
@@ -5374,7 +5405,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/graphql-file-upload-example-frontend@workspace:examples/graphql-file-upload-example/frontend"
   dependencies:
-    "@apollo/client": "npm:4.1.4"
+    "@apollo/client": "npm:4.1.5"
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.9.1"
     "@testing-library/react": "npm:16.3.2"
@@ -6876,7 +6907,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/apollo-link@workspace:packages/legacy/apollo-link"
   dependencies:
-    "@apollo/client": "npm:4.1.4"
+    "@apollo/client": "npm:4.1.5"
     "@graphql-mesh/runtime": "npm:^0.106.25"
     "@graphql-tools/utils": "npm:^11.0.0"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -7121,7 +7152,7 @@ __metadata:
     change-case: "npm:^4.1.2"
     graphql: "npm:16.12.0"
     graphql-scalars: "npm:^1.23.0"
-    minimatch: "npm:^10.1.2"
+    minimatch: "npm:^10.2.2"
     pluralize: "npm:^8.0.0"
     snake-case: "npm:^3.0.0"
     tslib: "npm:^2.4.0"
@@ -7248,7 +7279,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.104.23"
     dotenv: "npm:^17.3.1"
     get-tsconfig: "npm:^4.13.6"
-    glob: "npm:^13.0.5"
+    glob: "npm:^13.0.6"
     graphql: "npm:16.12.0"
     jiti: "npm:^2.0.0"
     sucrase: "npm:^3.35.1"
@@ -7675,7 +7706,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.104.23"
     "@whatwg-node/fetch": "npm:^0.10.6"
     graphql: "npm:16.12.0"
-    minimatch: "npm:^10.1.2"
+    minimatch: "npm:^10.2.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -7934,7 +7965,7 @@ __metadata:
     "@graphql-tools/wrap": "npm:^11.1.7"
     "@types/minimatch": "npm:6.0.0"
     graphql: "npm:16.12.0"
-    minimatch: "npm:^10.1.2"
+    minimatch: "npm:^10.2.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -8041,7 +8072,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^11.0.0"
     "@graphql-tools/wrap": "npm:^11.1.7"
     graphql: "npm:16.12.0"
-    minimatch: "npm:^10.1.2"
+    minimatch: "npm:^10.2.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -24710,7 +24741,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^13.0.3, glob@npm:^13.0.5":
+"glob@npm:^13.0.3":
   version: 13.0.5
   resolution: "glob@npm:13.0.5"
   dependencies:
@@ -24718,6 +24749,17 @@ __metadata:
     minipass: "npm:^7.1.2"
     path-scurry: "npm:^2.0.0"
   checksum: 10c0/1388527676127f337877eaf3403d6c54d3fa5e5599e10c1532d73108435b4da66d8fff4b00eb5b306388090a180c6a92d70694df1c19171cf820e285fb1dfee5
+  languageName: node
+  linkType: hard
+
+"glob@npm:^13.0.6":
+  version: 13.0.6
+  resolution: "glob@npm:13.0.6"
+  dependencies:
+    minimatch: "npm:^10.2.2"
+    minipass: "npm:^7.1.3"
+    path-scurry: "npm:^2.0.2"
+  checksum: 10c0/269c236f11a9b50357fe7a8c6aadac667e01deb5242b19c84975628f05f4438d8ee1354bb62c5d6c10f37fd59911b54d7799730633a2786660d8c69f1d18120a
   languageName: node
   linkType: hard
 
@@ -25135,7 +25177,7 @@ __metadata:
     jest: "npm:30.2.0"
     lint-staged: "npm:16.2.7"
     lru-cache: "npm:11.2.6"
-    minimatch: "npm:10.2.1"
+    minimatch: "npm:10.2.2"
     node-gyp: "npm:^12.2.0"
     prettier: "npm:3.8.1"
     threads: "npm:^1.7.0"
@@ -30871,12 +30913,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:10.2.1":
-  version: 10.2.1
-  resolution: "minimatch@npm:10.2.1"
+"minimatch@npm:10.2.2":
+  version: 10.2.2
+  resolution: "minimatch@npm:10.2.2"
   dependencies:
     brace-expansion: "npm:^5.0.2"
-  checksum: 10c0/86c3ed013630e820fda00336ee786a03098723b60bfae452de6306708fc83619df40a99dc6ec59c97d14e25b3b3371669a04e5bf508b1b00339b20229c4907d2
+  checksum: 10c0/098831f2f542cb802e1f249c809008a016e1fef6b3a9eda9cf9ecb2b3d7979083951bd47c0c82fcf34330bd3b36638a493d4fa8e24cce58caf5b481de0f4e238
   languageName: node
   linkType: hard
 
@@ -30982,6 +31024,13 @@ __metadata:
   version: 7.1.2
   resolution: "minipass@npm:7.1.2"
   checksum: 10c0/b0fd20bb9fb56e5fa9a8bfac539e8915ae07430a619e4b86ff71f5fc757ef3924b23b2c4230393af1eda647ed3d75739e4e0acb250a6b1eb277cf7f8fe449557
+  languageName: node
+  linkType: hard
+
+"minipass@npm:^7.1.3":
+  version: 7.1.3
+  resolution: "minipass@npm:7.1.3"
+  checksum: 10c0/539da88daca16533211ea5a9ee98dc62ff5742f531f54640dd34429e621955e91cc280a91a776026264b7f9f6735947629f920944e9c1558369e8bf22eb33fbb
   languageName: node
   linkType: hard
 
@@ -32681,6 +32730,16 @@ __metadata:
     lru-cache: "npm:^11.0.0"
     minipass: "npm:^7.1.2"
   checksum: 10c0/3da4adedaa8e7ef8d6dc4f35a0ff8f05a9b4d8365f2b28047752b62d4c1ad73eec21e37b1579ef2d075920157856a3b52ae8309c480a6f1a8bbe06ff8e52b33c
+  languageName: node
+  linkType: hard
+
+"path-scurry@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "path-scurry@npm:2.0.2"
+  dependencies:
+    lru-cache: "npm:^11.0.0"
+    minipass: "npm:^7.1.2"
+  checksum: 10c0/b35ad37cf6557a87fd057121ce2be7695380c9138d93e87ae928609da259ea0a170fac6f3ef1eb3ece8a068e8b7f2f3adf5bb2374cf4d4a57fe484954fcc9482
   languageName: node
   linkType: hard
 
