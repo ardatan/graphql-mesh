@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-soap",
-  "version": "0.10.25",
+  "version": "0.10.26",
   "type": "module",
   "repository": {
     "type": "git",
