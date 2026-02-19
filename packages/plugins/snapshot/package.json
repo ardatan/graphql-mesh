@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-snapshot",
-  "version": "0.104.23",
+  "version": "0.104.24",
   "type": "module",
   "repository": {
     "type": "git",
