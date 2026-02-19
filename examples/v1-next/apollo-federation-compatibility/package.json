@@ -30,6 +30,6 @@
     "@graphql-mesh/compose-cli": "1.5.11",
     "@types/node": "^25.2.3",
     "esbuild": "^0.27.3",
-    "lru-cache": "patch:lru-cache@npm%3A11.2.1#~/.yarn/patches/lru-cache-npm-11.2.1-60cdd96af2.patch"
+    "lru-cache": "patch:lru-cache@npm%3A11.2.6#~/.yarn/patches/lru-cache-npm-11.2.6-acb7d4323e.patch"
   }
 }
