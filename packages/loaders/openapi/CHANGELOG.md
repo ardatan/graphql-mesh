@@ -1,5 +1,13 @@
 # @omnigraph/openapi
 
+## 0.109.33
+
+### Patch Changes
+
+- Updated dependencies
+  [[`63b2a0b`](https://github.com/ardatan/graphql-mesh/commit/63b2a0b62282e786e1db57fb1a7fd10d3f78e25a)]:
+  - @graphql-mesh/fusion-composition@0.8.29
+
 ## 0.109.32
 
 ### Patch Changes
