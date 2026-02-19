@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.28",
+    "@graphql-mesh/cli": "0.100.29",
     "@graphql-mesh/grpc": "0.108.26",
     "@graphql-mesh/transform-naming-convention": "0.105.24",
     "@grpc/grpc-js": "1.14.3",
