@@ -8,7 +8,7 @@
     "@types/dockerode": "^4.0.1",
     "@whatwg-node/disposablestack": "^0.0.6",
     "dockerode": "^4.0.2",
-    "glob": "^13.0.2",
+    "glob": "^13.0.5",
     "graphql": "^16.10.0",
     "tsx": "^4.21.0"
   }
