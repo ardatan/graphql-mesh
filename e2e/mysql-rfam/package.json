@@ -2,7 +2,7 @@
   "name": "@e2e/mysql-rfam",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.4.1",
+    "@graphql-hive/gateway": "^2.4.2",
     "graphql": "16.12.0"
   }
 }
