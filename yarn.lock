@@ -11758,7 +11758,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^11.0.0"
     "@grpc/grpc-js": "npm:^1.14.3"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
-    globby: "npm:^11.1.0"
+    globby: "npm:^16.1.1"
     graphql: "npm:16.12.0"
     graphql-compose: "npm:^9.1.0"
     graphql-scalars: "npm:^1.23.0"
@@ -14196,6 +14196,13 @@ __metadata:
   version: 7.1.0
   resolution: "@sindresorhus/is@npm:7.1.0"
   checksum: 10c0/44e10fa64fd40132a908286812b105115bc8d9a56b3b76f9dbadad5865d68163e1637b11ec558762636d2af23493a6448fc00daf2614e3d5569873d3edf573ec
+  languageName: node
+  linkType: hard
+
+"@sindresorhus/merge-streams@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@sindresorhus/merge-streams@npm:4.0.0"
+  checksum: 10c0/482ee543629aa1933b332f811a1ae805a213681ecdd98c042b1c1b89387df63e7812248bb4df3910b02b3cc5589d3d73e4393f30e197c9dde18046ccd471fc6b
   languageName: node
   linkType: hard
 
@@ -23696,7 +23703,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.1.1, fast-glob@npm:^3.2.12, fast-glob@npm:^3.2.9, fast-glob@npm:^3.3.0, fast-glob@npm:^3.3.2":
+"fast-glob@npm:^3.1.1, fast-glob@npm:^3.2.12, fast-glob@npm:^3.2.9, fast-glob@npm:^3.3.0, fast-glob@npm:^3.3.2, fast-glob@npm:^3.3.3":
   version: 3.3.3
   resolution: "fast-glob@npm:3.3.3"
   dependencies:
@@ -24842,7 +24849,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globby@npm:11.1.0, globby@npm:^11.0.0, globby@npm:^11.0.3, globby@npm:^11.0.4, globby@npm:^11.1.0":
+"globby@npm:16.1.1, globby@npm:^16.1.1":
+  version: 16.1.1
+  resolution: "globby@npm:16.1.1"
+  dependencies:
+    "@sindresorhus/merge-streams": "npm:^4.0.0"
+    fast-glob: "npm:^3.3.3"
+    ignore: "npm:^7.0.5"
+    is-path-inside: "npm:^4.0.0"
+    slash: "npm:^5.1.0"
+    unicorn-magic: "npm:^0.4.0"
+  checksum: 10c0/2fbed8e5c59639a98b9b9c700afe5bcedf14742b43c25950cfd34a032db0cce4b440d8436beb4a936d211744e0b7330646f086b95cd8054251162c5d83001600
+  languageName: node
+  linkType: hard
+
+"globby@npm:^11.0.0, globby@npm:^11.0.3, globby@npm:^11.0.4, globby@npm:^11.1.0":
   version: 11.1.0
   resolution: "globby@npm:11.1.0"
   dependencies:
@@ -25171,7 +25192,7 @@ __metadata:
     eslint-plugin-n: "npm:17.24.0"
     eslint-plugin-promise: "npm:7.2.1"
     eslint-plugin-standard: "npm:5.0.0"
-    globby: "npm:11.1.0"
+    globby: "npm:16.1.1"
     graphql: "npm:16.12.0"
     husky: "npm:9.1.7"
     jest: "npm:30.2.0"
@@ -26927,6 +26948,13 @@ __metadata:
   version: 2.1.0
   resolution: "is-observable@npm:2.1.0"
   checksum: 10c0/f6ae9e136f66ad59c4faa4661112c389b398461cdeb0ef5bc3c505989469b77b2ba4602e2abc54a635d65f616eec9b5a40cd7d2c1f96b2cc4748b56635eba1c6
+  languageName: node
+  linkType: hard
+
+"is-path-inside@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "is-path-inside@npm:4.0.0"
+  checksum: 10c0/51188d7e2b1d907a9a5f7c18d99a90b60870b951ed87cf97595d9aaa429d4c010652c3350bcbf31182e7f4b0eab9a1860b43e16729b13cb1a44baaa6cdb64c46
   languageName: node
   linkType: hard
 
@@ -39151,6 +39179,13 @@ __metadata:
   version: 0.1.0
   resolution: "unicorn-magic@npm:0.1.0"
   checksum: 10c0/e4ed0de05b0a05e735c7d8a2930881e5efcfc3ec897204d5d33e7e6247f4c31eac92e383a15d9a6bccb7319b4271ee4bea946e211bf14951fec6ff2cbbb66a92
+  languageName: node
+  linkType: hard
+
+"unicorn-magic@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "unicorn-magic@npm:0.4.0"
+  checksum: 10c0/cd6eff90967a5528dfa2016bdb5b38b0cd64c8558f9ba04fb5c2c23f3a232a67dfe2bfa4c45af3685d5f1a40dbac6a36d48e053f80f97ae4da1e0f6a55431685
   languageName: node
   linkType: hard
 
