@@ -3649,14 +3649,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chevrotain/cst-dts-gen@npm:11.0.3":
-  version: 11.0.3
-  resolution: "@chevrotain/cst-dts-gen@npm:11.0.3"
+"@chevrotain/cst-dts-gen@npm:11.1.1":
+  version: 11.1.1
+  resolution: "@chevrotain/cst-dts-gen@npm:11.1.1"
   dependencies:
-    "@chevrotain/gast": "npm:11.0.3"
-    "@chevrotain/types": "npm:11.0.3"
-    lodash-es: "npm:4.17.21"
-  checksum: 10c0/9e945a0611386e4e08af34c2d0b3af36c1af08f726b58145f11310f2aeafcb2d65264c06ec65a32df6b6a65771e6a55be70580c853afe3ceb51487e506967104
+    "@chevrotain/gast": "npm:11.1.1"
+    "@chevrotain/types": "npm:11.1.1"
+    lodash-es: "npm:4.17.23"
+  checksum: 10c0/31bdfadf2913529dec6f508aa33a3a8823eea2a75087a7a1283b76a787e62371f0b1fcb82a36be85cf01655bf62691f24d2c24b45aed22f13e5ffccf9c36a922
   languageName: node
   linkType: hard
 
@@ -3670,20 +3670,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chevrotain/gast@npm:11.0.3":
-  version: 11.0.3
-  resolution: "@chevrotain/gast@npm:11.0.3"
+"@chevrotain/gast@npm:11.1.1":
+  version: 11.1.1
+  resolution: "@chevrotain/gast@npm:11.1.1"
   dependencies:
-    "@chevrotain/types": "npm:11.0.3"
-    lodash-es: "npm:4.17.21"
-  checksum: 10c0/54fc44d7b4a7b0323f49d957dd88ad44504922d30cb226d93b430b0e09925efe44e0726068581d777f423fabfb878a2238ed2c87b690c0c0014ebd12b6968354
+    "@chevrotain/types": "npm:11.1.1"
+    lodash-es: "npm:4.17.23"
+  checksum: 10c0/3a1f870bdc4a7dc349ae0c2e48f875e120c24f1fe076a095f3476ffb66de72b935fe083a7bf0669e624941527044ee2de7cc7020e35a4741d4ac66891d7053da
   languageName: node
   linkType: hard
 
-"@chevrotain/regexp-to-ast@npm:11.0.3":
-  version: 11.0.3
-  resolution: "@chevrotain/regexp-to-ast@npm:11.0.3"
-  checksum: 10c0/6939c5c94fbfb8c559a4a37a283af5ded8e6147b184a7d7bcf5ad1404d9d663c78d81602bd8ea8458ec497358a9e1671541099c511835d0be2cad46f00c62b3f
+"@chevrotain/regexp-to-ast@npm:11.1.1":
+  version: 11.1.1
+  resolution: "@chevrotain/regexp-to-ast@npm:11.1.1"
+  checksum: 10c0/56d6900848a621bd5ee0e6babff62389245b97374290ebdc3afcedf5ba199297b47601b1f908c1021790051414fbafeea81e437c98b92817561301ee5050b5b2
   languageName: node
   linkType: hard
 
@@ -3694,10 +3694,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chevrotain/types@npm:11.0.3":
-  version: 11.0.3
-  resolution: "@chevrotain/types@npm:11.0.3"
-  checksum: 10c0/72fe8f0010ebef848e47faea14a88c6fdc3cdbafaef6b13df4a18c7d33249b1b675e37b05cb90a421700c7016dae7cd4187ab6b549e176a81cea434f69cd2503
+"@chevrotain/types@npm:11.1.1":
+  version: 11.1.1
+  resolution: "@chevrotain/types@npm:11.1.1"
+  checksum: 10c0/7cc3692ed8dec7ff6251b583bfd9dea4f7e77f5a172b017e90fa40ab6cc7eef626ec66623228a553e61805aaf126d295941f05defaa22cdab46c2fbf908f66c3
   languageName: node
   linkType: hard
 
@@ -3708,10 +3708,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chevrotain/utils@npm:11.0.3":
-  version: 11.0.3
-  resolution: "@chevrotain/utils@npm:11.0.3"
-  checksum: 10c0/b31972d1b2d444eef1499cf9b7576fc1793e8544910de33a3c18e07c270cfad88067f175d0ee63e7bc604713ebed647f8190db45cc8311852cd2d4fe2ef14068
+"@chevrotain/utils@npm:11.1.1":
+  version: 11.1.1
+  resolution: "@chevrotain/utils@npm:11.1.1"
+  checksum: 10c0/b862ba08bb6c6443a8316fcdc040ce940b61d06a15c746fb1cf63bc0e01e37b6976be4ec73285933c25201d2a17d2bfd65bf2a704de72320fc013e31e86fcedf
   languageName: node
   linkType: hard
 
@@ -3770,10 +3770,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20260227.0":
-  version: 4.20260227.0
-  resolution: "@cloudflare/workers-types@npm:4.20260227.0"
-  checksum: 10c0/5eac95dfa639c458a4ac68aa98b47575be0d82ade95266013351f92f8777b86274eb05dae36f00fd062cb5665227979eb7b36903983f94e7513b7602470cdf5c
+"@cloudflare/workers-types@npm:4.20260228.0":
+  version: 4.20260228.0
+  resolution: "@cloudflare/workers-types@npm:4.20260228.0"
+  checksum: 10c0/5de59a2faacdcb91b141e0b8719880c9ed66592335cd9e1a059eebf0a1fb24401994db5f8767c1e10fb877228f6c820260ea00f1e822b9f9dc785da4c5be372b
   languageName: node
   linkType: hard
 
@@ -6251,9 +6251,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/cli@npm:6.1.1":
-  version: 6.1.1
-  resolution: "@graphql-codegen/cli@npm:6.1.1"
+"@graphql-codegen/cli@npm:6.1.2":
+  version: 6.1.2
+  resolution: "@graphql-codegen/cli@npm:6.1.2"
   dependencies:
     "@babel/generator": "npm:^7.18.13"
     "@babel/template": "npm:^7.18.10"
@@ -6300,7 +6300,7 @@ __metadata:
     graphql-code-generator: cjs/bin.js
     graphql-codegen: cjs/bin.js
     graphql-codegen-esm: esm/bin.js
-  checksum: 10c0/8d3d8b32dfce0374fde14817ff2c4d8a495dedb5c606ff5f02586d39c036fd5c0f427be9adcfe291990f2ce43a515545cc6be77c2168ccdc080fc1d4738ecabf
+  checksum: 10c0/67ed0ccd4d2532f2d352fe6bbf39f7a65063122c4e1b0455088c43023559d3c161b476f5d7cc1b6c46944c4275b23647c2f8e59db7f7f2cfe684a886e2cfdb4e
   languageName: node
   linkType: hard
 
@@ -6950,7 +6950,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20260227.0"
+    "@cloudflare/workers-types": "npm:4.20260228.0"
     "@graphql-mesh/types": "npm:^0.104.21"
     "@graphql-mesh/utils": "npm:^0.104.23"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -11125,12 +11125,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mermaid-js/parser@npm:^0.6.3":
-  version: 0.6.3
-  resolution: "@mermaid-js/parser@npm:0.6.3"
+"@mermaid-js/parser@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@mermaid-js/parser@npm:1.0.0"
   dependencies:
-    langium: "npm:3.3.1"
-  checksum: 10c0/9711174ff31f32d93c8da03ed6b1a1380f5ccfb27ffcdfaf42236da4b381aa0602752b3afc7893582d5ccdfc79b0465c69afe963b825328049575831f4ddd28e
+    langium: "npm:^4.0.0"
+  checksum: 10c0/e311a0981d31984614eee25101c695e950cb1197befc51296d8735390433de59dc6e4a48c3cce1e23a1279b6baf60f9f724d529b741c0c86cdcb09afe3e5e046
   languageName: node
   linkType: hard
 
@@ -19253,12 +19253,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"brace-expansion@npm:5.0.2":
-  version: 5.0.2
-  resolution: "brace-expansion@npm:5.0.2"
+"brace-expansion@npm:5.0.3":
+  version: 5.0.3
+  resolution: "brace-expansion@npm:5.0.3"
   dependencies:
     balanced-match: "npm:^4.0.2"
-  checksum: 10c0/60c765e5df6fc0ceca3d5703202ae6779db61f28ea3bf93a04dbf0d50c22ef8e4644e09d0459c827077cd2d09ba8f199a04d92c36419fcf874601a5565013174
+  checksum: 10c0/e474d300e581ec56851b3863ff1cf18573170c6d06deb199ccbd03b2119c36975f6ce2abc7b770f5bebddc1ab022661a9fea9b4d56f33315d7bef54d8793869e
   languageName: node
   linkType: hard
 
@@ -19777,7 +19777,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chevrotain-allstar@npm:~0.3.0":
+"chevrotain-allstar@npm:~0.3.1":
   version: 0.3.1
   resolution: "chevrotain-allstar@npm:0.3.1"
   dependencies:
@@ -19802,17 +19802,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chevrotain@npm:~11.0.3":
-  version: 11.0.3
-  resolution: "chevrotain@npm:11.0.3"
+"chevrotain@npm:~11.1.1":
+  version: 11.1.1
+  resolution: "chevrotain@npm:11.1.1"
   dependencies:
-    "@chevrotain/cst-dts-gen": "npm:11.0.3"
-    "@chevrotain/gast": "npm:11.0.3"
-    "@chevrotain/regexp-to-ast": "npm:11.0.3"
-    "@chevrotain/types": "npm:11.0.3"
-    "@chevrotain/utils": "npm:11.0.3"
-    lodash-es: "npm:4.17.21"
-  checksum: 10c0/ffd425fa321e3f17e9833d7f44cd39f2743f066e92ca74b226176080ca5d455f853fe9091cdfd86354bd899d85c08b3bdc3f55b267e7d07124b048a88349765f
+    "@chevrotain/cst-dts-gen": "npm:11.1.1"
+    "@chevrotain/gast": "npm:11.1.1"
+    "@chevrotain/regexp-to-ast": "npm:11.1.1"
+    "@chevrotain/types": "npm:11.1.1"
+    "@chevrotain/utils": "npm:11.1.1"
+    lodash-es: "npm:4.17.23"
+  checksum: 10c0/cfd1a1206b0df75f2a08e40a39b1e2c69c1652495641b090fc25dcfae6c267ddb659f3a7d00e926d643d64f245636f89473609e7133f8157c5fd999007c9c555
   languageName: node
   linkType: hard
 
@@ -21488,9 +21488,9 @@ __metadata:
   linkType: hard
 
 "date-and-time@npm:^4.0.0":
-  version: 4.1.1
-  resolution: "date-and-time@npm:4.1.1"
-  checksum: 10c0/3da661a8d749d5afa8d5f1e66425e3f9e858db00b1a971b5911c929fd24b1a7048b72cdb68f0679df8192ec0e03d6aac516651d545018bba71a44a324f186a6a
+  version: 4.2.0
+  resolution: "date-and-time@npm:4.2.0"
+  checksum: 10c0/f3b5ccf3c96379d609ebd726ef01b669ccd0ff1c288c149ce4c25abf3c4aa03f177c4d2e4e389222d291b51223372914aaf91bef9e378fa94a986e4e8a8738e1
   languageName: node
   linkType: hard
 
@@ -23500,7 +23500,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-apollo-federation-compatibility@workspace:examples/v1-next/apollo-federation-compatibility"
   dependencies:
-    "@graphql-codegen/cli": "npm:6.1.1"
+    "@graphql-codegen/cli": "npm:6.1.2"
     "@graphql-codegen/typescript": "npm:5.0.8"
     "@graphql-codegen/typescript-resolvers": "npm:5.1.6"
     "@graphql-hive/gateway": "npm:^2.4.2"
@@ -23880,14 +23880,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:5.3.6":
-  version: 5.3.6
-  resolution: "fast-xml-parser@npm:5.3.6"
+"fast-xml-parser@npm:5.3.7":
+  version: 5.3.7
+  resolution: "fast-xml-parser@npm:5.3.7"
   dependencies:
     strnum: "npm:^2.1.2"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10c0/0150cc0566f327a76115de8b11628d717fb179010ed9bb77c52e579a7e6055a0f92f42f83678a6f1ec5b74411faec09713cb1f9b94bc687068ad86884a9199fa
+  checksum: 10c0/2452b8d4557f6958507ccb9694dad094fb56342385774ee900e0ae1e193027a6590dd5c4ce9e5485af64fb18c2299b64d5423c82dba5f5a698950d36d02a864d
   languageName: node
   linkType: hard
 
@@ -29014,16 +29014,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"langium@npm:3.3.1":
-  version: 3.3.1
-  resolution: "langium@npm:3.3.1"
+"langium@npm:^4.0.0":
+  version: 4.2.1
+  resolution: "langium@npm:4.2.1"
   dependencies:
-    chevrotain: "npm:~11.0.3"
-    chevrotain-allstar: "npm:~0.3.0"
+    chevrotain: "npm:~11.1.1"
+    chevrotain-allstar: "npm:~0.3.1"
     vscode-languageserver: "npm:~9.0.1"
     vscode-languageserver-textdocument: "npm:~1.0.11"
-    vscode-uri: "npm:~3.0.8"
-  checksum: 10c0/0c54803068addb0f7c16a57fdb2db2e5d4d9a21259d477c3c7d0587c2c2f65a313f9eeef3c95ac1c2e41cd11d4f2eaf620d2c03fe839a3350ffee59d2b4c7647
+    vscode-uri: "npm:~3.1.0"
+  checksum: 10c0/19ddf79cc3c435ec70f8eb50de255571711db7cea89d171cf80bc97e7ed73d4d0bb6b4215899df8369fa6d0e17f442f30af4ec2e9657041bf2f93be1310ba50a
   languageName: node
   linkType: hard
 
@@ -30329,13 +30329,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mermaid@npm:11.12.2":
-  version: 11.12.2
-  resolution: "mermaid@npm:11.12.2"
+"mermaid@npm:11.12.3":
+  version: 11.12.3
+  resolution: "mermaid@npm:11.12.3"
   dependencies:
     "@braintree/sanitize-url": "npm:^7.1.1"
     "@iconify/utils": "npm:^3.0.1"
-    "@mermaid-js/parser": "npm:^0.6.3"
+    "@mermaid-js/parser": "npm:^1.0.0"
     "@types/d3": "npm:^7.4.3"
     cytoscape: "npm:^3.29.3"
     cytoscape-cose-bilkent: "npm:^4.1.0"
@@ -30347,13 +30347,13 @@ __metadata:
     dompurify: "npm:^3.2.5"
     katex: "npm:^0.16.22"
     khroma: "npm:^2.1.0"
-    lodash-es: "npm:^4.17.21"
+    lodash-es: "npm:^4.17.23"
     marked: "npm:^16.2.1"
     roughjs: "npm:^4.6.6"
     stylis: "npm:^4.3.6"
     ts-dedent: "npm:^2.2.0"
     uuid: "npm:^11.1.0"
-  checksum: 10c0/00969b96171f1f11cf897df205d932237a6303041d9519b82bd727cfca43507b54cbf28dfb951aa7ff5e6129607f2297703a464361fc95942db9364c579da9f3
+  checksum: 10c0/a50e0e79fa913d8d0c88a8927d14b07c8236ebb595aade815152b2668ed4e3e5204884c776739ee0b473df2277a4431cf21ed98cc2a7d81995d0f5a94af93058
   languageName: node
   linkType: hard
 
@@ -38033,16 +38033,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:7.5.8":
-  version: 7.5.8
-  resolution: "tar@npm:7.5.8"
+"tar@npm:7.5.9":
+  version: 7.5.9
+  resolution: "tar@npm:7.5.9"
   dependencies:
     "@isaacs/fs-minipass": "npm:^4.0.0"
     chownr: "npm:^3.0.0"
     minipass: "npm:^7.1.2"
     minizlib: "npm:^3.1.0"
     yallist: "npm:^5.0.0"
-  checksum: 10c0/8569db1b49f5d72084cbdcad9d2b39fcc115993186455aa052c1da0a2739b20e2d94af6a23609fc25d3ae63c9fed8b159f3b1d16b699e9ef25e3b8464603d153
+  checksum: 10c0/e870beb1b2477135ca2abe86b2d18f7b35d0a4e3a37bbc523d3b8f7adca268dfab543f26528a431d569897f8c53a7cac745cdfbc4411c2f89aeeacc652b81b0a
   languageName: node
   linkType: hard
 
@@ -39088,9 +39088,9 @@ __metadata:
   linkType: hard
 
 "underscore@npm:^1.12.1":
-  version: 1.13.7
-  resolution: "underscore@npm:1.13.7"
-  checksum: 10c0/fad2b4aac48847674aaf3c30558f383399d4fdafad6dd02dd60e4e1b8103b52c5a9e5937e0cc05dacfd26d6a0132ed0410ab4258241240757e4a4424507471cd
+  version: 1.13.8
+  resolution: "underscore@npm:1.13.8"
+  checksum: 10c0/6677688daeda30484823e77c0b89ce4dcf29964a77d5a06f37299c007ab4bb1c66a0ff75e0d274620b62a1fe2a6ba29879f8214533ca611d71a1ae504f2bfc9b
   languageName: node
   linkType: hard
 
@@ -39747,9 +39747,9 @@ __metadata:
   linkType: hard
 
 "validator@npm:^13.7.0":
-  version: 13.15.23
-  resolution: "validator@npm:13.15.23"
-  checksum: 10c0/22a05ec6a98d48d2b6fb34d43ce854af61d15842362d142e64cfca0325d4d0c2d1051d9f9d3a0f741e58ea888f73a35baf7a2a810f5aed0f89183bd5040f0177
+  version: 13.15.26
+  resolution: "validator@npm:13.15.26"
+  checksum: 10c0/d66041685c531423f6b514d0481228503b96682fe30ed7925ad77ff3cd08c3983dc94f45e18457e44f62f89027b94a3342009d65421800ce65f6e0d2c6eaf7fc
   languageName: node
   linkType: hard
 
@@ -39923,10 +39923,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vscode-uri@npm:~3.0.8":
-  version: 3.0.8
-  resolution: "vscode-uri@npm:3.0.8"
-  checksum: 10c0/f7f217f526bf109589969fe6e66b71e70b937de1385a1d7bb577ca3ee7c5e820d3856a86e9ff2fa9b7a0bc56a3dd8c3a9a557d3fedd7df414bc618d5e6b567f9
+"vscode-uri@npm:~3.1.0":
+  version: 3.1.0
+  resolution: "vscode-uri@npm:3.1.0"
+  checksum: 10c0/5f6c9c10fd9b1664d71fab4e9fbbae6be93c7f75bb3a1d9d74399a88ab8649e99691223fd7cef4644376cac6e94fa2c086d802521b9a8e31c5af3e60f0f35624
   languageName: node
   linkType: hard
 

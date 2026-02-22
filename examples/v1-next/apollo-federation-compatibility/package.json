@@ -24,7 +24,7 @@
     "tsx": "^4.21.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "6.1.1",
+    "@graphql-codegen/cli": "6.1.2",
     "@graphql-codegen/typescript": "5.0.8",
     "@graphql-codegen/typescript-resolvers": "5.1.6",
     "@graphql-mesh/compose-cli": "1.5.12",
