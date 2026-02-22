@@ -1,6 +1,6 @@
 {
   // until https://github.com/TypeStrong/ts-node/pull/1958 is released
-  // "extends": ["@tsconfig/recommended/tsconfig.json", "@tsconfig/node16/tsconfig.json"],
+  // "extends": ["@tsconfig/recommended/tsconfig.json", "@tsconfig/node18/tsconfig.json"],
   "compilerOptions": {
     // part of @tsconfig/recommended
     "esModuleInterop": true,
