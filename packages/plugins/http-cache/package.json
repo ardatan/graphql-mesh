@@ -43,7 +43,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway": "^2.4.2",
+    "@graphql-hive/gateway": "^2.4.3",
     "@types/http-cache-semantics": "4.2.0",
     "graphql": "16.12.0"
   },
