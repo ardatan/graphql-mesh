@@ -27,7 +27,7 @@
     "apollo-server-caching": "3.3.0",
     "concurrently": "9.2.1",
     "delay-cli": "3.0.0",
-    "graphql": "^16.10.0",
+    "graphql": "^16.13.0",
     "jest": "30.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"

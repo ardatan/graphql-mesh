@@ -5,6 +5,6 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.100.30",
     "@graphql-mesh/supergraph": "0.10.25",
-    "graphql": "16.12.0"
+    "graphql": "16.13.0"
   }
 }
