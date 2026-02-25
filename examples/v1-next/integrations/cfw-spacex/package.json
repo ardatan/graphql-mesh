@@ -7,7 +7,7 @@
   "dependencies": {
     "@envelop/core": "^5.5.1",
     "@envelop/depth-limit": "^7.1.1",
-    "@graphql-hive/gateway": "^2.4.2",
+    "@graphql-hive/gateway": "^2.5.0",
     "@graphql-mesh/cache-cfw-kv": "workspace:^",
     "@graphql-mesh/plugin-rate-limit": "^0.106.2",
     "@graphql-mesh/plugin-response-cache": "^0.104.27",
