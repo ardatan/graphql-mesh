@@ -501,7 +501,7 @@ type EventLocation implements ILocation @entityInfo(
 }
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{kind: "odata", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [], options: {batch: "multipart", expandNavProps: true}}]}
+  directives: {transport: [{kind: "odata", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [["User-Agent", "GraphQL Mesh"]], options: {batch: "multipart", expandNavProps: true}}]}
 ) @join__type(graph: TRIPPIN)  {
   GetPersonWithMostFriends: Person @unboundFunction(functionName: "GetPersonWithMostFriends") 
   GetNearestAirport(lat: Float!, lon: Float!) : Airport @unboundFunction(functionName: "GetNearestAirport") 
