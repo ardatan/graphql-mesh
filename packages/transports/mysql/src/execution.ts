@@ -43,7 +43,7 @@ export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): Disp
                 ...args.where,
               };
               columnMap.forEach((foreignColumn, localColumn) => {
-                where[foreignColumn] = root[localColumn];
+                where[localColumn] = root[foreignColumn];
               });
               const limit: number[] = [args.limit, args.offset].filter(Boolean);
               const fieldMap: Record<string, any> = graphqlFields(info);
