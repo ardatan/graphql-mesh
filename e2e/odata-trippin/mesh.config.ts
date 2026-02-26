@@ -8,6 +8,9 @@ export const composeConfig = defineConfig({
         endpoint: 'https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/',
         batch: 'multipart',
         expandNavProps: true,
+        operationHeaders: {
+          'User-Agent': 'GraphQL Mesh',
+        },
       }),
     },
   ],

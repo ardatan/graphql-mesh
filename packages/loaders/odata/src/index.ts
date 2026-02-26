@@ -965,7 +965,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     kind: 'odata',
     subgraph: name,
     location: endpoint,
-    headers: Object.entries(schemaHeaders || []),
+    headers: Object.entries(operationHeaders || []),
     options: {
       batch,
       expandNavProps,
