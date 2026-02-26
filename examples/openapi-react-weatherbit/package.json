@@ -10,7 +10,7 @@
     "start": "vite"
   },
   "dependencies": {
-    "graphql": "16.12.0",
+    "graphql": "16.13.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },

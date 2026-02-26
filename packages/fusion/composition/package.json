@@ -57,7 +57,7 @@
     "@theguild/federation-composition": "^0.21.3",
     "change-case": "^4.1.2",
     "graphql-scalars": "^1.23.0",
-    "minimatch": "^10.2.2",
+    "minimatch": "^10.2.4",
     "pluralize": "^8.0.0",
     "snake-case": "^3.0.0",
     "tslib": "^2.4.0"
@@ -68,7 +68,7 @@
     "@types/minimatch": "6.0.0",
     "@types/pluralize": "^0.0.33",
     "@whatwg-node/promise-helpers": "^1.0.0",
-    "graphql": "16.12.0"
+    "graphql": "16.13.0"
   },
   "publishConfig": {
     "directory": "dist",
