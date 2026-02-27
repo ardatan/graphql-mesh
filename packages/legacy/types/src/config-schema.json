@@ -2193,6 +2193,21 @@
             }
           ]
         },
+        "fetch": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "additionalItems": true
+            }
+          ]
+        },
         "timeout": {
           "type": "integer",
           "description": "30s by default"

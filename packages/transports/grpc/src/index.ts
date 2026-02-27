@@ -1,6 +1,12 @@
 import {
+  defaultFieldResolver,
   isEnumType,
+  isInterfaceType,
+  isListType,
+  isNonNullType,
+  isObjectType,
   type GraphQLFieldResolver,
+  type GraphQLOutputType,
   type GraphQLScalarType,
   type GraphQLSchema,
 } from 'graphql';
@@ -233,72 +239,6 @@ export class GrpcTransportHelper extends DisposableStack {
       const rootLogger = this.logger.child({ root: name });
       grpcObjectByRootJsonName.set(name, this.getGrpcObject({ rootJson, loadOptions, rootLogger }));
     }
-    const rootTypes = getRootTypes(schema);
-    for (const rootType of rootTypes) {
-      const rootTypeFields = rootType.getFields();
-      for (const fieldName in rootTypeFields) {
-        const field = rootTypeFields[fieldName];
-        const directives = getDirectives(schema, field);
-        if (directives?.length) {
-          for (const directiveObj of directives) {
-            if (
-              this.subgraphName &&
-              directiveObj.args?.subgraph &&
-              directiveObj.args.subgraph !== this.subgraphName
-            ) {
-              continue;
-            }
-            switch (directiveObj.name) {
-              case 'grpcMethod': {
-                const { rootJsonName, objPath, methodName, responseStream } = directiveObj.args;
-                const grpcObject = grpcObjectByRootJsonName.get(rootJsonName);
-                if (!grpcObject) {
-                  throw new Error(
-                    `Root JSON '${rootJsonName}' not found for subgraph '${this.subgraphName}'`,
-                  );
-                }
-                const client = this.getServiceClient({
-                  grpcObject,
-                  objPath,
-                  creds,
-                });
-                if (rootType.name === 'Subscription') {
-                  field.subscribe = this.getFieldResolver({
-                    client,
-                    methodName,
-                    isResponseStream: responseStream,
-                  });
-                  field.resolve = identityFn;
-                } else {
-                  field.resolve = this.getFieldResolver({
-                    client,
-                    methodName,
-                    isResponseStream: responseStream,
-                  });
-                }
-                break;
-              }
-              case 'grpcConnectivityState': {
-                const { rootJsonName, objPath } = directiveObj.args;
-                const grpcObject = grpcObjectByRootJsonName.get(rootJsonName);
-                if (!grpcObject) {
-                  throw new Error(
-                    `Root JSON '${rootJsonName}' not found for subgraph '${this.subgraphName}'`,
-                  );
-                }
-                const client = this.getServiceClient({
-                  grpcObject,
-                  objPath,
-                  creds,
-                });
-                field.resolve = this.getConnectivityStateResolver({ client });
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
     const typeMap = schema.getTypeMap();
     for (const typeName in typeMap) {
       const type = typeMap[typeName];
@@ -324,8 +264,83 @@ export class GrpcTransportHelper extends DisposableStack {
             }
           }
         }
+      } else if (isObjectType(type) || isInterfaceType(type)) {
+        const fields = type.getFields();
+        for (const fieldName in fields) {
+          const field = fields[fieldName];
+          const directives = getDirectives(schema, field);
+          if (directives?.length) {
+            for (const directiveObj of directives) {
+              if (
+                this.subgraphName &&
+                directiveObj.args?.subgraph &&
+                directiveObj.args.subgraph !== this.subgraphName
+              ) {
+                continue;
+              }
+              switch (directiveObj.name) {
+                case 'grpcMethod': {
+                  const { rootJsonName, objPath, methodName, responseStream } = directiveObj.args;
+                  const grpcObject = grpcObjectByRootJsonName.get(rootJsonName);
+                  if (!grpcObject) {
+                    throw new Error(
+                      `Root JSON '${rootJsonName}' not found for subgraph '${this.subgraphName}'`,
+                    );
+                  }
+                  const client = this.getServiceClient({
+                    grpcObject,
+                    objPath,
+                    creds,
+                  });
+                  if (typeName === 'Subscription') {
+                    field.subscribe = this.getFieldResolver({
+                      client,
+                      methodName,
+                      isResponseStream: responseStream,
+                    });
+                    field.resolve = identityFn;
+                  } else {
+                    field.resolve = this.getFieldResolver({
+                      client,
+                      methodName,
+                      isResponseStream: responseStream,
+                    });
+                  }
+                  break;
+                }
+                case 'grpcConnectivityState': {
+                  const { rootJsonName, objPath } = directiveObj.args;
+                  const grpcObject = grpcObjectByRootJsonName.get(rootJsonName);
+                  if (!grpcObject) {
+                    throw new Error(
+                      `Root JSON '${rootJsonName}' not found for subgraph '${this.subgraphName}'`,
+                    );
+                  }
+                  const client = this.getServiceClient({
+                    grpcObject,
+                    objPath,
+                    creds,
+                  });
+                  field.resolve = this.getConnectivityStateResolver({ client });
+                  break;
+                }
+              }
+            }
+          }
+          if (isListTypeByAnyMeans(field.type)) {
+            field.resolve = wrapListFieldResolver(field.resolve || defaultFieldResolver);
+          }
+        }
       }
     }
+  }
+}
+
+function isListTypeByAnyMeans(type: GraphQLOutputType) {
+  if (isNonNullType(type)) {
+    return isListTypeByAnyMeans(type.ofType);
+  } else {
+    return isListType(type);
   }
 }
 
@@ -349,6 +364,22 @@ const transport: Transport<gRPCTransportOptions> = {
 };
 
 export default transport;
+
+function wrapListFieldResolver(
+  fieldResolver: GraphQLFieldResolver<any, any>,
+): GraphQLFieldResolver<any, any> {
+  return function listFieldResolver(root, args, context, info) {
+    return handleMaybePromise(
+      () => fieldResolver(root, args, context, info),
+      result => {
+        if (result == null) {
+          return [];
+        }
+        return result;
+      },
+    );
+  };
+}
 
 function identityFn<T>(obj: T): T {
   return obj;
