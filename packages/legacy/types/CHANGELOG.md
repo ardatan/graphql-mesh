@@ -1,5 +1,24 @@
 # @graphql-mesh/types
 
+## 0.104.22
+
+### Patch Changes
+
+- [#9261](https://github.com/ardatan/graphql-mesh/pull/9261)
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/batch-delegate@^10.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/10.0.14)
+    (from `^10.0.13`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.8)
+    (from `^12.0.7`, in `dependencies`)
+
+- [#8854](https://github.com/ardatan/graphql-mesh/pull/8854)
+  [`080aca9`](https://github.com/ardatan/graphql-mesh/commit/080aca90b3d102791d01ee4d3a9405dacadb06da)
+  Thanks [@hoi4](https://github.com/hoi4)! - gRPC Client returns `undefined` for empty arrays but
+  the transport should return them as empty arrays
+
 ## 0.104.21
 
 ### Patch Changes

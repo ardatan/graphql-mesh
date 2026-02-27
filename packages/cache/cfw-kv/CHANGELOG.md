@@ -1,5 +1,16 @@
 # @graphql-mesh/cache-cfw-kv
 
+## 0.105.24
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`080aca9`](https://github.com/ardatan/graphql-mesh/commit/080aca90b3d102791d01ee4d3a9405dacadb06da)]:
+  - @graphql-mesh/types@0.104.22
+  - @graphql-mesh/utils@0.104.24
+
 ## 0.105.23
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @graphql-mesh/plugin-snapshot
 
+## 0.104.25
+
+### Patch Changes
+
+- [#9258](https://github.com/ardatan/graphql-mesh/pull/9258)
+  [`e42819b`](https://github.com/ardatan/graphql-mesh/commit/e42819bd9ce3a95ba425cbb18de9a053892087b9)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`minimatch@^10.2.4` ↗︎](https://www.npmjs.com/package/minimatch/v/10.2.4)
+    (from `^10.2.2`, in `dependencies`)
+- Updated dependencies
+  [[`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`080aca9`](https://github.com/ardatan/graphql-mesh/commit/080aca90b3d102791d01ee4d3a9405dacadb06da)]:
+  - @graphql-mesh/types@0.104.22
+  - @graphql-mesh/utils@0.104.24
+
 ## 0.104.24
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-odata",
-  "version": "0.2.26",
+  "version": "0.2.27",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@graphql-mesh/transport-common": "^1.0.14",
-    "@omnigraph/odata": "^0.2.26",
+    "@omnigraph/odata": "^0.2.27",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

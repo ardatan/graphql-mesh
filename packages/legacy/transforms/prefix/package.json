@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-prefix",
-  "version": "0.105.24",
+  "version": "0.105.25",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,8 +35,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "^0.104.21",
-    "@graphql-mesh/utils": "^0.104.23",
+    "@graphql-mesh/types": "^0.104.22",
+    "@graphql-mesh/utils": "^0.104.24",
     "@graphql-tools/delegate": "^12.0.8",
     "@graphql-tools/utils": "^11.0.0",
     "@graphql-tools/wrap": "^11.1.8",
@@ -44,7 +44,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.105.24",
+    "@graphql-mesh/cache-localforage": "0.105.25",
     "@graphql-tools/schema": "10.0.31",
     "graphql": "16.13.0"
   },

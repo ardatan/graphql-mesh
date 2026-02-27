@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-rest",
-  "version": "0.9.25",
+  "version": "0.9.26",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,8 +38,8 @@
     "@graphql-mesh/cross-helpers": "^0.4.12",
     "@graphql-mesh/string-interpolation": "^0.5.11",
     "@graphql-mesh/transport-common": "^1.0.14",
-    "@graphql-mesh/types": "^0.104.21",
-    "@graphql-mesh/utils": "^0.104.23",
+    "@graphql-mesh/types": "^0.104.22",
+    "@graphql-mesh/utils": "^0.104.24",
     "@graphql-tools/utils": "^11.0.0",
     "@whatwg-node/fetch": "^0.10.6",
     "dset": "^3.1.3",
