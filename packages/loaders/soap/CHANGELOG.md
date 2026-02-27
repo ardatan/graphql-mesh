@@ -1,5 +1,40 @@
 # @omnigraph/soap
 
+## 0.107.27
+
+### Patch Changes
+
+- [#9245](https://github.com/ardatan/graphql-mesh/pull/9245)
+  [`857e45e`](https://github.com/ardatan/graphql-mesh/commit/857e45e8161302db20e5be0bf75bd7d3bfef561b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.3.7` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.3.7) (from
+    `^5.3.6`, in `dependencies`)
+
+- [#9258](https://github.com/ardatan/graphql-mesh/pull/9258)
+  [`e42819b`](https://github.com/ardatan/graphql-mesh/commit/e42819bd9ce3a95ba425cbb18de9a053892087b9)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.4.1` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.4.1) (from
+    `^5.3.7`, in `dependencies`)
+
+- [#9264](https://github.com/ardatan/graphql-mesh/pull/9264)
+  [`5738315`](https://github.com/ardatan/graphql-mesh/commit/5738315d83e8fa0acd6d11f7bbfba544568e1ff3)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.3.8` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.3.8) (from
+    `^5.4.1`, in `dependencies`)
+- Updated dependencies
+  [[`857e45e`](https://github.com/ardatan/graphql-mesh/commit/857e45e8161302db20e5be0bf75bd7d3bfef561b),
+  [`e42819b`](https://github.com/ardatan/graphql-mesh/commit/e42819bd9ce3a95ba425cbb18de9a053892087b9),
+  [`5738315`](https://github.com/ardatan/graphql-mesh/commit/5738315d83e8fa0acd6d11f7bbfba544568e1ff3),
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`080aca9`](https://github.com/ardatan/graphql-mesh/commit/080aca90b3d102791d01ee4d3a9405dacadb06da)]:
+  - @graphql-mesh/transport-soap@0.10.27
+  - @graphql-mesh/types@0.104.22
+  - @graphql-mesh/utils@0.104.24
+
 ## 0.107.26
 
 ### Patch Changes

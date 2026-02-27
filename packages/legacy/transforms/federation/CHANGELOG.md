@@ -1,5 +1,32 @@
 # @graphql-mesh/transform-federation
 
+## 0.104.25
+
+### Patch Changes
+
+- [#9245](https://github.com/ardatan/graphql-mesh/pull/9245)
+  [`857e45e`](https://github.com/ardatan/graphql-mesh/commit/857e45e8161302db20e5be0bf75bd7d3bfef561b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@apollo/subgraph@^2.13.1` ↗︎](https://www.npmjs.com/package/@apollo/subgraph/v/2.13.1) (from
+    `^2.13.0`, in `dependencies`)
+
+- [#9261](https://github.com/ardatan/graphql-mesh/pull/9261)
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.8)
+    (from `^12.0.7`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.14)
+    (from `^4.0.13`, in `dependencies`)
+- Updated dependencies
+  [[`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`080aca9`](https://github.com/ardatan/graphql-mesh/commit/080aca90b3d102791d01ee4d3a9405dacadb06da)]:
+  - @graphql-mesh/types@0.104.22
+  - @graphql-mesh/utils@0.104.24
+
 ## 0.104.24
 
 ### Patch Changes

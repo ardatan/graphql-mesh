@@ -1,5 +1,20 @@
 # @graphql-mesh/transport-grpc
 
+## 0.3.25
+
+### Patch Changes
+
+- [#8854](https://github.com/ardatan/graphql-mesh/pull/8854)
+  [`080aca9`](https://github.com/ardatan/graphql-mesh/commit/080aca90b3d102791d01ee4d3a9405dacadb06da)
+  Thanks [@hoi4](https://github.com/hoi4)! - gRPC Client returns `undefined` for empty arrays but
+  the transport should return them as empty arrays
+- Updated dependencies
+  [[`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`080aca9`](https://github.com/ardatan/graphql-mesh/commit/080aca90b3d102791d01ee4d3a9405dacadb06da)]:
+  - @graphql-mesh/types@0.104.22
+  - @graphql-mesh/utils@0.104.24
+
 ## 0.3.24
 
 ### Patch Changes
