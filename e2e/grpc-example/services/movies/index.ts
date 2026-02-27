@@ -1,3 +1,4 @@
+import 'json-bigint-patch';
 import { dirname, join } from 'path';
 import { setTimeout } from 'timers/promises';
 import { fileURLToPath } from 'url';
@@ -63,16 +64,23 @@ async function startServer(subscriptionInterval = 1000, debug = false): Promise<
   const grpcObject = loadPackageDefinition(packageDefinition);
   server.addService((grpcObject.Example as ServiceClientConstructor).service, {
     getMovies(call, callback) {
-      const result = Movies.filter(movie => {
-        for (const [key, value] of Object.entries(call.request.movie)) {
-          if (movie[key] === value) {
-            return true;
-          }
-        }
-      });
-      const moviesResult = { result };
       logger('called with MetaData:', JSON.stringify(call.metadata.getMap()));
-      callback(null, moviesResult);
+      try {
+        const result = Movies.filter(movie => {
+          for (const [key, value] of Object.entries(call.request.movie)) {
+            if (movie[key] === value) {
+              return true;
+            }
+          }
+          return false;
+        });
+        const moviesResult = { result };
+        logger('getMovies result:', JSON.stringify(moviesResult));
+        callback(null, moviesResult);
+      } catch (error) {
+        logger('Error in getMovies:', error);
+        callback(error, null);
+      }
     },
     async searchMoviesByCast(call) {
       logger('call started');
