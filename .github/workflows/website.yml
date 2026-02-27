@@ -62,7 +62,7 @@ jobs:
           AGAINST_PROD: '1'
 
       - name: upload playwright report
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
