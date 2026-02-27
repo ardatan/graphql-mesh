@@ -3977,7 +3977,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/auto-type-merging@workspace:e2e/auto-type-merging"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:^16.13.0"
     graphql-yoga: "npm:^5.18.0"
   languageName: unknown
@@ -3989,7 +3989,7 @@ __metadata:
   dependencies:
     "@apollo/server": "npm:^5.4.0"
     "@apollo/subgraph": "npm:^2.13.1"
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/cache-upstash-redis": "npm:^0.1.23"
     "@graphql-mesh/compose-cli": "npm:^1.5.13"
     "@graphql-yoga/plugin-response-cache": "npm:^3.20.0"
@@ -4003,7 +4003,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/cjs-project@workspace:e2e/cjs-project"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
   languageName: unknown
   linkType: soft
@@ -4012,7 +4012,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/compose-to-output@workspace:e2e/compose-to-output"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
   languageName: unknown
   linkType: soft
@@ -4021,7 +4021,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/deprecated-merging@workspace:e2e/deprecated-merging"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:^16.13.0"
     graphql-yoga: "npm:^5.18.0"
   languageName: unknown
@@ -4031,7 +4031,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/esm-config-in-cjs-project@workspace:e2e/esm-config-in-cjs-project"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
   languageName: unknown
   linkType: soft
@@ -4040,7 +4040,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/esm-project@workspace:e2e/esm-project"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
   languageName: unknown
   linkType: soft
@@ -4049,7 +4049,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/extra-fields@workspace:e2e/extra-fields"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
     graphql-yoga: "npm:^5.18.0"
   languageName: unknown
@@ -4061,7 +4061,7 @@ __metadata:
   dependencies:
     "@apollo/server": "npm:^5.4.0"
     "@apollo/subgraph": "npm:^2.13.1"
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     fets: "npm:^0.8.1"
     graphql: "npm:^16.13.0"
   languageName: unknown
@@ -4071,7 +4071,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/file-upload@workspace:e2e/file-upload"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-tools/schema": "npm:^10.0.31"
     graphql: "npm:16.13.0"
   languageName: unknown
@@ -4081,7 +4081,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/grpc-multiple@workspace:e2e/grpc-multiple"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@grpc/grpc-js": "npm:^1.14.3"
     "@grpc/proto-loader": "npm:^0.8.0"
@@ -4095,7 +4095,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/grpc@workspace:e2e/grpc-example"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-tools/executor-http": "npm:3.1.0"
     "@graphql-tools/utils": "npm:11.0.0"
@@ -4111,7 +4111,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/hoist-and-prefix-transform@workspace:e2e/hoist-and-prefix-transform"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-tools/schema": "npm:^10.0.31"
     graphql: "npm:16.13.0"
   languageName: unknown
@@ -4121,7 +4121,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/js-config@workspace:e2e/js-config"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
   languageName: unknown
   linkType: soft
@@ -4130,7 +4130,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/json-schema-subscriptions@workspace:e2e/json-schema-subscriptions"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     fets: "npm:^0.8.0"
     graphql: "npm:16.13.0"
     graphql-sse: "npm:^2.5.3"
@@ -4141,7 +4141,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/logs-to-stderr-results-to-stdout@workspace:e2e/logs-to-stderr-results-to-stdout"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
   languageName: unknown
   linkType: soft
@@ -4150,7 +4150,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/manual-transport-def@workspace:e2e/manual-transport-def"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     fets: "npm:0.8.5"
     graphql: "npm:16.13.0"
   languageName: unknown
@@ -4160,7 +4160,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/mysql-employees@workspace:e2e/mysql-employees"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:^16.13.0"
   languageName: unknown
   linkType: soft
@@ -4169,7 +4169,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/mysql-rfam@workspace:e2e/mysql-rfam"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
   languageName: unknown
   linkType: soft
@@ -4178,7 +4178,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/neo4j-example@workspace:e2e/neo4j-example"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:^16.13.0"
   languageName: unknown
   linkType: soft
@@ -4187,7 +4187,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/odata-trippin-example@workspace:e2e/odata-trippin"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:^16.13.0"
   languageName: unknown
   linkType: soft
@@ -4196,7 +4196,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-additional-resolvers@workspace:e2e/openapi-additional-resolvers"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
     moment: "npm:2.30.1"
   languageName: unknown
@@ -4206,7 +4206,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-arg-rename@workspace:e2e/openapi-arg-rename"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
     moment: "npm:2.30.1"
   languageName: unknown
@@ -4216,7 +4216,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-hateoas@workspace:e2e/openapi-hateoas"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
     moment: "npm:2.30.1"
   languageName: unknown
@@ -4226,7 +4226,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-javascript-wiki@workspace:e2e/openapi-javascript-wiki"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
     moment: "npm:2.30.1"
   languageName: unknown
@@ -4236,7 +4236,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-min-length@workspace:e2e/openapi-min-length"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
     moment: "npm:2.30.1"
   languageName: unknown
@@ -4246,7 +4246,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-naming-convention@workspace:e2e/openapi-naming-convention"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
     moment: "npm:2.30.1"
   languageName: unknown
@@ -4256,7 +4256,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-prune@workspace:e2e/openapi-prune"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
     moment: "npm:2.30.1"
   languageName: unknown
@@ -4266,7 +4266,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-subscriptions@workspace:e2e/openapi-subscriptions"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     fets: "npm:^0.8.0"
     graphql: "npm:16.13.0"
     graphql-sse: "npm:^2.5.3"
@@ -4278,7 +4278,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/programmatic-batching-example@workspace:e2e/programmatic-batching"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     fets: "npm:^0.8.0"
     graphql: "npm:16.13.0"
   languageName: unknown
@@ -4306,7 +4306,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/soap-demo@workspace:e2e/soap-demo"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:^16.13.0"
   languageName: unknown
   linkType: soft
@@ -4315,7 +4315,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/sqlite-chinook@workspace:e2e/sqlite-chinook"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:^16.13.0"
   languageName: unknown
   linkType: soft
@@ -4324,7 +4324,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/subscriptions-type-merging@workspace:e2e/subscriptions-type-merging"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-hive/pubsub": "npm:next"
     graphql: "npm:^16.13.0"
     graphql-sse: "npm:^2.5.4"
@@ -4336,7 +4336,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/supergraph-url@workspace:e2e/supergraph-url"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:^16.13.0"
   languageName: unknown
   linkType: soft
@@ -4348,7 +4348,7 @@ __metadata:
     "@creditkarma/thrift-server-core": "npm:^1.0.4"
     "@creditkarma/thrift-server-express": "npm:^1.0.4"
     "@creditkarma/thrift-typescript": "npm:^3.7.6"
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@omnigraph/thrift": "npm:^0.9.25"
     "@types/express": "npm:^5.0.6"
     express: "npm:^5.2.1"
@@ -4361,7 +4361,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/top-level-await@workspace:e2e/top-level-await"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:16.13.0"
   languageName: unknown
   linkType: soft
@@ -4370,7 +4370,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/type-merging-batching@workspace:e2e/type-merging-batching"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:^16.13.0"
     graphql-yoga: "npm:^5.18.0"
   languageName: unknown
@@ -4380,7 +4380,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/type-merging-with-transforms@workspace:e2e/type-merging-with-transforms"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     graphql: "npm:^16.13.0"
     graphql-yoga: "npm:^5.18.0"
   languageName: unknown
@@ -4402,7 +4402,7 @@ __metadata:
   resolution: "@e2e/utils@workspace:e2e/utils"
   dependencies:
     "@apollo/gateway": "npm:^2.13.1"
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@types/dockerode": "npm:^4.0.1"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     dockerode: "npm:^4.0.2"
@@ -5019,7 +5019,7 @@ __metadata:
   dependencies:
     "@envelop/auth0": "npm:^9.1.1"
     "@envelop/core": "npm:^5.5.1"
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/compose-cli": "workspace:^"
     "@graphql-mesh/plugin-operation-field-permissions": "npm:^0.104.24"
     "@omnigraph/json-schema": "workspace:^"
@@ -5032,7 +5032,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/cfw-breweries@workspace:examples/v1-next/integrations/cfw-breweries"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/cache-cfw-kv": "workspace:^"
     "@graphql-mesh/cache-localforage": "workspace:^"
     "@graphql-mesh/compose-cli": "workspace:^"
@@ -5049,7 +5049,7 @@ __metadata:
   dependencies:
     "@envelop/core": "npm:^5.5.1"
     "@envelop/depth-limit": "npm:^7.1.1"
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/cache-cfw-kv": "workspace:^"
     "@graphql-mesh/plugin-rate-limit": "npm:^0.106.3"
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.28"
@@ -5062,7 +5062,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/fastify@workspace:examples/v1-next/integrations/fastify"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/compose-cli": "workspace:^"
     "@omnigraph/openapi": "workspace:^"
     "@types/node": "npm:^25.3.0"
@@ -5079,7 +5079,7 @@ __metadata:
   resolution: "@examples-v1-next/gcp-functions@workspace:examples/v1-next/integrations/gcp-functions"
   dependencies:
     "@google-cloud/functions-framework": "npm:^5.0.2"
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/compose-cli": "workspace:^"
     "@omnigraph/json-schema": "workspace:^"
     "@types/node": "npm:^25.3.0"
@@ -5092,7 +5092,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/hive-example-gateway@workspace:examples/v1-next/hive-example/gateway"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     dotenv: "npm:^17.3.1"
     graphql: "npm:16.13.0"
   languageName: unknown
@@ -5130,7 +5130,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/json-schema-reddit@workspace:examples/v1-next/json-schema-reddit"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/json-schema": "workspace:*"
     graphql: "npm:16.13.0"
@@ -5141,7 +5141,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/openapi-location-weather@workspace:examples/v1-next/openapi-location-weather"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/cache-localforage": "workspace:^"
     "@graphql-mesh/compose-cli": "workspace:^"
     "@omnigraph/openapi": "workspace:^"
@@ -5153,7 +5153,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/openapi-youtrack@workspace:examples/v1-next/openapi-youtrack"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/compose-cli": "workspace:^"
     "@omnigraph/openapi": "workspace:^"
     graphql: "npm:^16.13.0"
@@ -5164,7 +5164,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/openwhisk-example@workspace:examples/v1-next/integrations/openwhisk-example"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     esbuild: "npm:^0.27.3"
     graphql: "npm:16.13.0"
     typescript: "npm:^5.4.2"
@@ -6498,24 +6498,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/gateway-runtime@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "@graphql-hive/gateway-runtime@npm:2.7.0"
+"@graphql-hive/gateway-runtime@npm:^2.7.1":
+  version: 2.7.1
+  resolution: "@graphql-hive/gateway-runtime@npm:2.7.1"
   dependencies:
     "@envelop/core": "npm:^5.4.0"
     "@envelop/disable-introspection": "npm:^9.0.0"
     "@envelop/generic-auth": "npm:^11.0.0"
     "@envelop/instrumentation": "npm:^1.0.0"
     "@graphql-hive/core": "npm:^0.20.2"
-    "@graphql-hive/logger": "npm:^1.0.10"
+    "@graphql-hive/logger": "npm:^1.1.0"
     "@graphql-hive/pubsub": "npm:^2.1.1"
     "@graphql-hive/signal": "npm:^2.0.0"
     "@graphql-hive/yoga": "npm:^0.47.3"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
-    "@graphql-mesh/fusion-runtime": "npm:^1.6.9"
+    "@graphql-mesh/fusion-runtime": "npm:^1.6.10"
     "@graphql-mesh/hmac-upstream-signature": "npm:^2.0.9"
     "@graphql-mesh/plugin-response-cache": "npm:^0.104.18"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.16"
     "@graphql-mesh/utils": "npm:^0.104.16"
     "@graphql-tools/batch-delegate": "npm:^10.0.14"
@@ -6540,24 +6540,24 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.9.0 || ^16.9.0
-  checksum: 10c0/93798b201f6012c1795627d1c4e6f17ab63136e4fac026035a7951704e6bcd025e9588f703aa8a830866d2418a86685a19e2d718bbea71c83bd1a9c56b85589c
+  checksum: 10c0/2b771dbf529431e473883da46358c2e0df4b646a917e5c1f5f3272d9e5a109eb54691a7a54b706e39356102d998f1760703cda7d88d802e83b86eece93cb2ce1
   languageName: node
   linkType: hard
 
-"@graphql-hive/gateway@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@graphql-hive/gateway@npm:2.5.0"
+"@graphql-hive/gateway@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "@graphql-hive/gateway@npm:2.5.1"
   dependencies:
     "@commander-js/extra-typings": "npm:^14.0.0"
     "@envelop/core": "npm:^5.4.0"
     "@escape.tech/graphql-armor-block-field-suggestions": "npm:^3.0.0"
     "@escape.tech/graphql-armor-max-depth": "npm:^2.4.2"
     "@escape.tech/graphql-armor-max-tokens": "npm:^2.5.0"
-    "@graphql-hive/gateway-runtime": "npm:^2.7.0"
+    "@graphql-hive/gateway-runtime": "npm:^2.7.1"
     "@graphql-hive/importer": "npm:^2.0.0"
-    "@graphql-hive/logger": "npm:^1.0.10"
-    "@graphql-hive/plugin-aws-sigv4": "npm:^2.0.27"
-    "@graphql-hive/plugin-opentelemetry": "npm:^1.3.10"
+    "@graphql-hive/logger": "npm:^1.1.0"
+    "@graphql-hive/plugin-aws-sigv4": "npm:^2.0.28"
+    "@graphql-hive/plugin-opentelemetry": "npm:^1.3.11"
     "@graphql-hive/pubsub": "npm:^2.1.1"
     "@graphql-mesh/cache-cfw-kv": "npm:^0.105.16"
     "@graphql-mesh/cache-localforage": "npm:^0.105.17"
@@ -6568,12 +6568,12 @@ __metadata:
     "@graphql-mesh/plugin-http-cache": "npm:^0.105.17"
     "@graphql-mesh/plugin-jit": "npm:^0.2.16"
     "@graphql-mesh/plugin-jwt-auth": "npm:^2.0.9"
-    "@graphql-mesh/plugin-prometheus": "npm:^2.1.18"
+    "@graphql-mesh/plugin-prometheus": "npm:^2.1.19"
     "@graphql-mesh/plugin-rate-limit": "npm:^0.106.0"
     "@graphql-mesh/plugin-snapshot": "npm:^0.104.16"
-    "@graphql-mesh/transport-http": "npm:^1.0.14"
-    "@graphql-mesh/transport-http-callback": "npm:^1.0.15"
-    "@graphql-mesh/transport-ws": "npm:^2.0.14"
+    "@graphql-mesh/transport-http": "npm:^1.0.15"
+    "@graphql-mesh/transport-http-callback": "npm:^1.0.16"
+    "@graphql-mesh/transport-ws": "npm:^2.0.15"
     "@graphql-mesh/types": "npm:^0.104.16"
     "@graphql-mesh/utils": "npm:^0.104.16"
     "@graphql-tools/code-file-loader": "npm:^8.1.26"
@@ -6605,7 +6605,7 @@ __metadata:
     graphql: ^15.9.0 || ^16.9.0
   bin:
     hive-gateway: ./dist/bin.js
-  checksum: 10c0/6e3ddf8afe131f5d4b61091c4c2cc74e3220e5e2d6501ae56470698b303f5b9db3bbec0b7309306dff4b9d5c82317b93b96ac616719d2dd57b913041c57cfc03
+  checksum: 10c0/9bb50f8e1663f9dbb7207907024b30ee445faaba5583415d506c123369b1f00393054c94e4d4761687626575a2c4c9da17bd833ba3d9edb5c7725ef61db6881a
   languageName: node
   linkType: hard
 
@@ -6616,7 +6616,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/logger@npm:^1.0.10, @graphql-hive/logger@npm:^1.0.9":
+"@graphql-hive/logger@npm:^1.0.9":
   version: 1.0.10
   resolution: "@graphql-hive/logger@npm:1.0.10"
   peerDependencies:
@@ -6633,30 +6633,47 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/plugin-aws-sigv4@npm:^2.0.27":
-  version: 2.0.27
-  resolution: "@graphql-hive/plugin-aws-sigv4@npm:2.0.27"
+"@graphql-hive/logger@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@graphql-hive/logger@npm:1.1.0"
+  peerDependencies:
+    "@logtape/logtape": ^1.2.0 || ^2.0.0
+    pino: ^9.13.0 || ^10.0.0
+  peerDependenciesMeta:
+    "@logtape/logtape":
+      optional: true
+    pino:
+      optional: true
+    winston:
+      optional: true
+  checksum: 10c0/9fd71dd60c38ae9464da0f4b770131ea1b35c0c5e617edac32fdb37c136479e54657029d50a056a5944749b6fc6901a6fcb199338d4fb9a3a8ddd05e82b44cfd
+  languageName: node
+  linkType: hard
+
+"@graphql-hive/plugin-aws-sigv4@npm:^2.0.28":
+  version: 2.0.28
+  resolution: "@graphql-hive/plugin-aws-sigv4@npm:2.0.28"
   dependencies:
     "@aws-sdk/client-sts": "npm:^3.995.0"
-    "@graphql-mesh/fusion-runtime": "npm:^1.6.9"
+    "@graphql-mesh/fusion-runtime": "npm:^1.6.10"
     "@whatwg-node/promise-helpers": "npm:^1.3.2"
     aws4: "npm:1.13.2"
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.9.0 || ^16.9.0
-  checksum: 10c0/96630b486add3a42c2eac9dea4d80c9c0ee012a383275c7121b1e9edb39d1366cd4dbb0242fdb16578efc58c8d674972d30a9e7f59440e59e53d16a64612e06b
+  checksum: 10c0/38cf4baa9f8da8402a36c5e0c68c655948a2fe08fc0a79e2afb7be94400832cedf56b6be0e0a58cd6afc4edef9afffd867bc5678e3545361c858b2e60eaebd8b
   languageName: node
   linkType: hard
 
-"@graphql-hive/plugin-opentelemetry@npm:^1.3.10":
-  version: 1.3.10
-  resolution: "@graphql-hive/plugin-opentelemetry@npm:1.3.10"
+"@graphql-hive/plugin-opentelemetry@npm:^1.3.11":
+  version: 1.3.11
+  resolution: "@graphql-hive/plugin-opentelemetry@npm:1.3.11"
   dependencies:
     "@graphql-hive/core": "npm:^0.20.0"
-    "@graphql-hive/gateway-runtime": "npm:^2.7.0"
-    "@graphql-hive/logger": "npm:^1.0.10"
+    "@graphql-hive/gateway-runtime": "npm:^2.7.1"
+    "@graphql-hive/logger": "npm:^1.1.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.16"
     "@graphql-mesh/utils": "npm:^0.104.16"
     "@graphql-tools/utils": "npm:^11.0.0"
@@ -6677,7 +6694,7 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.9.0 || ^16.9.0
-  checksum: 10c0/e531fbb517eccfa7108586383e6e819f23d1f7021094ea53f065ef8c10cdbf5dd6b3b0fa1cd00f6ac0dd49f7048e5620147869b2a4eea0d2bd2a8a3ad7dcaca9
+  checksum: 10c0/0cadd4ff154a83b5844d995e417c107317ed61e56fb83603de03e1b052ab5599044e63fbde3a7fb319081444492ef51fd8f6115e9857f3ec1c903a22b46c2c4d
   languageName: node
   linkType: hard
 
@@ -6996,8 +7013,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/fusion-composition@workspace:packages/fusion/composition"
   dependencies:
-    "@graphql-hive/gateway-runtime": "npm:^2.7.0"
-    "@graphql-mesh/fusion-runtime": "npm:^1.6.9"
+    "@graphql-hive/gateway-runtime": "npm:^2.7.1"
+    "@graphql-mesh/fusion-runtime": "npm:^1.6.10"
     "@graphql-mesh/utils": "npm:^0.104.24"
     "@graphql-tools/schema": "npm:^10.0.31"
     "@graphql-tools/stitching-directives": "npm:^4.0.14"
@@ -7018,15 +7035,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/fusion-runtime@npm:^1.6.9":
-  version: 1.6.9
-  resolution: "@graphql-mesh/fusion-runtime@npm:1.6.9"
+"@graphql-mesh/fusion-runtime@npm:^1.6.10":
+  version: 1.6.10
+  resolution: "@graphql-mesh/fusion-runtime@npm:1.6.10"
   dependencies:
     "@envelop/core": "npm:^5.4.0"
     "@envelop/instrumentation": "npm:^1.0.0"
-    "@graphql-hive/logger": "npm:^1.0.10"
+    "@graphql-hive/logger": "npm:^1.1.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.16"
     "@graphql-mesh/utils": "npm:^0.104.16"
     "@graphql-tools/batch-execute": "npm:^10.0.5"
@@ -7044,7 +7061,7 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/db5e14bee47efe224f17c6decfe293c95610394b8de7a2f45cfa05120ca5d76d604f031b119501894873580b90c89ff602dd3acd0f1519bc519d35129f6dfeda
+  checksum: 10c0/5a5b6712cc4946322ff37f38f9e421fe578d56e1d2adeb28b7efeac4d98c2bef684a125d01aa9597977a3ae2de952e3d3d60a1d6923d2b2f6ed7e5f42e29b316
   languageName: node
   linkType: hard
 
@@ -7337,7 +7354,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-http-cache@workspace:packages/plugins/http-cache"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/types": "npm:^0.104.22"
     "@graphql-mesh/utils": "npm:^0.104.24"
     "@types/http-cache-semantics": "npm:4.2.0"
@@ -7371,7 +7388,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-jit@workspace:packages/plugins/jit"
   dependencies:
     "@envelop/core": "npm:^5.5.1"
-    "@graphql-hive/gateway-runtime": "npm:^2.7.0"
+    "@graphql-hive/gateway-runtime": "npm:^2.7.1"
     "@graphql-mesh/utils": "npm:^0.104.24"
     "@graphql-tools/utils": "npm:^11.0.0"
     graphql: "npm:16.13.0"
@@ -7481,7 +7498,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-operation-headers@workspace:packages/plugins/operation-headers"
   dependencies:
-    "@graphql-hive/gateway-runtime": "npm:^2.7.0"
+    "@graphql-hive/gateway-runtime": "npm:^2.7.1"
     "@graphql-mesh/types": "npm:^0.104.22"
     "@graphql-mesh/utils": "npm:^0.104.24"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -7492,12 +7509,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-prometheus@npm:^2.1.18":
-  version: 2.1.18
-  resolution: "@graphql-mesh/plugin-prometheus@npm:2.1.18"
+"@graphql-mesh/plugin-prometheus@npm:^2.1.19":
+  version: 2.1.19
+  resolution: "@graphql-mesh/plugin-prometheus@npm:2.1.19"
   dependencies:
-    "@graphql-hive/gateway-runtime": "npm:^2.7.0"
-    "@graphql-hive/logger": "npm:^1.0.10"
+    "@graphql-hive/gateway-runtime": "npm:^2.7.1"
+    "@graphql-hive/logger": "npm:^1.1.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/types": "npm:^0.104.16"
     "@graphql-mesh/utils": "npm:^0.104.16"
@@ -7508,7 +7525,7 @@ __metadata:
   peerDependencies:
     graphql: ^15.9.0 || ^16.9.0
     prom-client: ^13 || ^14.0.0 || ^15.0.0
-  checksum: 10c0/780b64d84fa8b06055133d1a6f0e52cc5b28b641b9d7de1c017ed53a7e2790b7db45de1e496331b306b164af69f911ff79a117ecd0fac21fb5435d91744ba861
+  checksum: 10c0/3077da864cbae8ca3c3d3ccab8369c4432c1e57e5a8afa7f43c1d45ed93196f640b5e1b18af6c135cd10e2b197f3c1b61682b8719d82444c83dda16dbb45ca78
   languageName: node
   linkType: hard
 
@@ -8019,12 +8036,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-common@npm:^1.0.14":
-  version: 1.0.14
-  resolution: "@graphql-mesh/transport-common@npm:1.0.14"
+"@graphql-mesh/transport-common@npm:^1.0.15":
+  version: 1.0.15
+  resolution: "@graphql-mesh/transport-common@npm:1.0.15"
   dependencies:
     "@envelop/core": "npm:^5.4.0"
-    "@graphql-hive/logger": "npm:^1.0.10"
+    "@graphql-hive/logger": "npm:^1.1.0"
     "@graphql-hive/pubsub": "npm:^2.1.1"
     "@graphql-hive/signal": "npm:^2.0.0"
     "@graphql-mesh/types": "npm:^0.104.16"
@@ -8034,7 +8051,7 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.9.0 || ^16.9.0
-  checksum: 10c0/b0a162e9d8b2958e90ebab5bd853274ce5a23d583cd22f6582d05e68fa853705e7d49160ba33e1046462bdba1bc9a15f77d9748d0e5f5583ec19625fc8d89ed1
+  checksum: 10c0/2d4b076e228ba94340ce5eac741f16ae5d7390bdb56f9eb4f26cc401d6b2b416b129296a7f0ce769abde6e140e31b3cfea527ceeca077f7334d6666c114a867a
   languageName: node
   linkType: hard
 
@@ -8044,7 +8061,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/string-interpolation": "npm:^0.5.11"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.22"
     "@graphql-mesh/utils": "npm:^0.104.24"
     "@graphql-tools/utils": "npm:^11.0.0"
@@ -8063,14 +8080,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-http-callback@npm:^1.0.15":
-  version: 1.0.15
-  resolution: "@graphql-mesh/transport-http-callback@npm:1.0.15"
+"@graphql-mesh/transport-http-callback@npm:^1.0.16":
+  version: 1.0.16
+  resolution: "@graphql-mesh/transport-http-callback@npm:1.0.16"
   dependencies:
     "@graphql-hive/signal": "npm:^2.0.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.9"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.16"
     "@graphql-mesh/utils": "npm:^0.104.16"
     "@graphql-tools/executor-common": "npm:^1.0.6"
@@ -8081,17 +8098,17 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.9.0 || ^16.9.0
-  checksum: 10c0/1ec5f5ec99ec4d732255f1245a8473e718c2a1f78c32ae401767b161bdba53f875280945897b12b4b43faf295387da109dd71c0e5ca05de9dfed90ecc5680706
+  checksum: 10c0/3e85f0c7a4b443c662a4c8c60b6c1e1476584c9444ddae7861dfe41cc35d028805fc570550f976c5c02ed2c69da8fcd455954c0f2815441d2eda065d340ac4a9
   languageName: node
   linkType: hard
 
-"@graphql-mesh/transport-http@npm:^1.0.14":
-  version: 1.0.14
-  resolution: "@graphql-mesh/transport-http@npm:1.0.14"
+"@graphql-mesh/transport-http@npm:^1.0.15":
+  version: 1.0.15
+  resolution: "@graphql-mesh/transport-http@npm:1.0.15"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.9"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.16"
     "@graphql-mesh/utils": "npm:^0.104.16"
     "@graphql-tools/executor-http": "npm:^3.1.0"
@@ -8100,7 +8117,7 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.9.0 || ^16.9.0
-  checksum: 10c0/7e7edb59a4ea16867fb8fdcd5b95ba15a55403d142eecd676ff0c5d0d1475a5d88cbdd93ffdd57ef83db5015a670b8df13ce15f9bd85c9e65b69a81a7fae0bfe
+  checksum: 10c0/cc81c6fae2c981c2eeeaf94294a4d9cf617d1b37aa3200890abbb77c8c6a1f5ce59652be49f72eb19d829fdd35b3b4371a44ac306b98cf1dce067320e6e7fbf8
   languageName: node
   linkType: hard
 
@@ -8110,7 +8127,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/string-interpolation": "npm:^0.5.11"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.22"
     "@graphql-mesh/utils": "npm:^0.104.24"
     "@graphql-tools/delegate": "npm:^12.0.8"
@@ -8131,7 +8148,7 @@ __metadata:
   resolution: "@graphql-mesh/transport-neo4j@workspace:packages/transports/neo4j"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.22"
     "@graphql-mesh/utils": "npm:^0.104.24"
     "@graphql-tools/delegate": "npm:^12.0.8"
@@ -8150,7 +8167,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-odata@workspace:packages/transports/odata"
   dependencies:
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@omnigraph/odata": "npm:^0.2.27"
     graphql: "npm:16.13.0"
     tslib: "npm:^2.4.0"
@@ -8165,7 +8182,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/string-interpolation": "npm:^0.5.11"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.22"
     "@graphql-mesh/utils": "npm:^0.104.24"
     "@graphql-tools/utils": "npm:^11.0.0"
@@ -8188,7 +8205,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/string-interpolation": "npm:^0.5.11"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.22"
     "@graphql-mesh/utils": "npm:^0.104.24"
     "@graphql-tools/executor": "npm:^1.5.1"
@@ -8206,7 +8223,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-sqlite@workspace:packages/transports/sqlite"
   dependencies:
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-tools/utils": "npm:^11.0.0"
     "@omnigraph/sqlite": "npm:^0.8.22"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -8224,7 +8241,7 @@ __metadata:
     "@creditkarma/thrift-client": "npm:^1.0.4"
     "@creditkarma/thrift-server-core": "npm:^1.0.4"
     "@graphql-mesh/string-interpolation": "npm:^0.5.11"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/utils": "npm:^0.104.24"
     "@graphql-tools/utils": "npm:^11.0.0"
     graphql: "npm:16.13.0"
@@ -8235,13 +8252,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-ws@npm:^2.0.14":
-  version: 2.0.14
-  resolution: "@graphql-mesh/transport-ws@npm:2.0.14"
+"@graphql-mesh/transport-ws@npm:^2.0.15":
+  version: 2.0.15
+  resolution: "@graphql-mesh/transport-ws@npm:2.0.15"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.10"
     "@graphql-mesh/string-interpolation": "npm:^0.5.9"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/types": "npm:^0.104.16"
     "@graphql-mesh/utils": "npm:^0.104.16"
     "@graphql-tools/executor-graphql-ws": "npm:^3.1.4"
@@ -8251,7 +8268,7 @@ __metadata:
     ws: "npm:^8.18.3"
   peerDependencies:
     graphql: ^15.9.0 || ^16.9.0
-  checksum: 10c0/d7ed5dda028d63c1964c4c450450bcf6b2b5018fe00546d2e91b655a0ce0bcd390da5e8a59caec71ad87d97513254d9fe305836f51d52e822b3dea1a407eb1bf
+  checksum: 10c0/6017499d6315ed5d10598a986fd03b0c0d074b7956b13d7329a2c905c4ae9f904fdfef754d82b9d72e4b405a69ff17ff653e2a322a4bdc6e6ae13a387c2ba06c
   languageName: node
   linkType: hard
 
@@ -11602,7 +11619,7 @@ __metadata:
     "@ardatan/grpc-reflection-js": "npm:^0.0.2"
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/string-interpolation": "npm:^0.5.11"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-tools/utils": "npm:^11.0.0"
     "@grpc/grpc-js": "npm:^1.14.3"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
@@ -11624,7 +11641,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/string-interpolation": "npm:0.5.11"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/transport-rest": "npm:^0.9.26"
     "@graphql-mesh/types": "npm:^0.104.22"
     "@graphql-mesh/utils": "npm:^0.104.24"
@@ -11778,7 +11795,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/string-interpolation": "npm:^0.5.11"
-    "@graphql-mesh/transport-common": "npm:^1.0.14"
+    "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/transport-soap": "npm:^0.10.27"
     "@graphql-mesh/types": "npm:^0.104.22"
     "@graphql-mesh/utils": "npm:^0.104.24"
@@ -23207,7 +23224,7 @@ __metadata:
     "@graphql-codegen/cli": "npm:6.1.2"
     "@graphql-codegen/typescript": "npm:5.0.8"
     "@graphql-codegen/typescript-resolvers": "npm:5.1.6"
-    "@graphql-hive/gateway": "npm:^2.5.0"
+    "@graphql-hive/gateway": "npm:^2.5.1"
     "@graphql-mesh/compose-cli": "npm:1.5.13"
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.18.0"
     "@types/node": "npm:^25.3.0"

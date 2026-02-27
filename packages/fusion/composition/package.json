@@ -63,8 +63,8 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "^2.7.0",
-    "@graphql-mesh/fusion-runtime": "^1.6.9",
+    "@graphql-hive/gateway-runtime": "^2.7.1",
+    "@graphql-mesh/fusion-runtime": "^1.6.10",
     "@types/minimatch": "6.0.0",
     "@types/pluralize": "^0.0.33",
     "@whatwg-node/promise-helpers": "^1.0.0",
