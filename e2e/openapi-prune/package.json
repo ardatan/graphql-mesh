@@ -2,7 +2,7 @@
   "name": "@e2e/openapi-prune",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.5.0",
+    "@graphql-hive/gateway": "^2.5.1",
     "graphql": "16.13.0",
     "moment": "2.30.1"
   }

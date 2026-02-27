@@ -38,7 +38,7 @@
     "@ardatan/grpc-reflection-js": "^0.0.2",
     "@graphql-mesh/cross-helpers": "^0.4.12",
     "@graphql-mesh/string-interpolation": "^0.5.11",
-    "@graphql-mesh/transport-common": "^1.0.14",
+    "@graphql-mesh/transport-common": "^1.0.15",
     "@graphql-tools/utils": "^11.0.0",
     "@grpc/grpc-js": "^1.14.3",
     "@whatwg-node/disposablestack": "^0.0.6",
