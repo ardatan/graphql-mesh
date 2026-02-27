@@ -14,7 +14,7 @@
     "@google-cloud/functions-framework": "5.0.2",
     "@graphql-mesh/cli": "0.100.31",
     "@graphql-mesh/json-schema": "0.109.28",
-    "@types/node": "^25.3.0",
+    "@types/node": "^25.3.2",
     "graphql": "16.13.0",
     "typescript": "^5.4.2"
   }
