@@ -1,5 +1,23 @@
 # @graphql-mesh/transport-soap
 
+## 0.10.28
+
+### Patch Changes
+
+- [#9267](https://github.com/ardatan/graphql-mesh/pull/9267)
+  [`0664ddb`](https://github.com/ardatan/graphql-mesh/commit/0664ddba78476e90f38560b55fcb88410cdfa72d)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/transport-common@^1.0.15` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/1.0.15)
+    (from `^1.0.14`, in `dependencies`)
+
+- [#9274](https://github.com/ardatan/graphql-mesh/pull/9274)
+  [`ace8c95`](https://github.com/ardatan/graphql-mesh/commit/ace8c958b407c95e2c836afe65cf68df178c0201)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.4.2` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.4.2) (from
+    `^5.3.8`, in `dependencies`)
+
 ## 0.10.27
 
 ### Patch Changes

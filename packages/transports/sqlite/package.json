@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-sqlite",
-  "version": "0.9.23",
+  "version": "0.9.24",
   "type": "module",
   "repository": {
     "type": "git",

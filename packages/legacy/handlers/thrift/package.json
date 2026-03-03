@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/thrift",
-  "version": "0.106.27",
+  "version": "0.106.28",
   "type": "module",
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
     "@graphql-mesh/types": "^0.104.22",
     "@graphql-mesh/utils": "^0.104.24",
     "@graphql-tools/utils": "^11.0.0",
-    "@omnigraph/thrift": "^0.9.25",
+    "@omnigraph/thrift": "^0.9.26",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

@@ -7,8 +7,8 @@
   },
   "dependencies": {
     "@graphql-mesh/cache-file": "0.104.24",
-    "@graphql-mesh/cli": "0.100.31",
-    "@graphql-mesh/neo4j": "0.107.25",
+    "@graphql-mesh/cli": "0.100.32",
+    "@graphql-mesh/neo4j": "0.107.26",
     "graphql": "16.13.0"
   },
   "resolutions": {
