@@ -75,7 +75,7 @@
     "@babel/preset-typescript": "7.28.5",
     "@babel/types": "7.29.0",
     "@changesets/changelog-github": "0.5.2",
-    "@changesets/cli": "2.29.8",
+    "@changesets/cli": "2.30.0",
     "@eslint/eslintrc": "patch:@eslint/eslintrc@npm%3A3.3.3#~/.yarn/patches/@eslint-eslintrc-npm-3.3.3-8ccf6281a3.patch",
     "@repeaterjs/repeater": "^3.0.5",
     "@theguild/prettier-config": "3.0.1",
