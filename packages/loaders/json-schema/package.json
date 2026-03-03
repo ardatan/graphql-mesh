@@ -37,7 +37,7 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.12",
     "@graphql-mesh/string-interpolation": "0.5.11",
-    "@graphql-mesh/transport-common": "^1.0.14",
+    "@graphql-mesh/transport-common": "^1.0.15",
     "@graphql-mesh/transport-rest": "^0.9.26",
     "@graphql-mesh/types": "^0.104.22",
     "@graphql-mesh/utils": "^0.104.24",
