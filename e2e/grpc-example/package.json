@@ -8,7 +8,7 @@
     "@grpc/grpc-js": "^1.14.3",
     "@grpc/proto-loader": "^0.8.0",
     "@omnigraph/grpc": "workspace:*",
-    "graphql": "16.13.0",
+    "graphql": "16.13.1",
     "json-bigint-patch": "0.0.9"
   },
   "devDependencies": {

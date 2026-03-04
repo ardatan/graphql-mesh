@@ -10,6 +10,6 @@
     "@graphql-mesh/cli": "0.100.32",
     "@graphql-mesh/odata": "0.106.28",
     "cross-env": "10.1.0",
-    "graphql": "16.13.0"
+    "graphql": "16.13.1"
   }
 }
