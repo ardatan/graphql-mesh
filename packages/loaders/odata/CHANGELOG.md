@@ -1,5 +1,16 @@
 # @omnigraph/odata
 
+## 0.2.28
+
+### Patch Changes
+
+- [#9274](https://github.com/ardatan/graphql-mesh/pull/9274)
+  [`ace8c95`](https://github.com/ardatan/graphql-mesh/commit/ace8c958b407c95e2c836afe65cf68df178c0201)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.4.2` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.4.2) (from
+    `^5.3.8`, in `dependencies`)
+
 ## 0.2.27
 
 ### Patch Changes

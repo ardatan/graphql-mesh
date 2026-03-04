@@ -1,5 +1,13 @@
 # @graphql-mesh/json-schema
 
+## 0.109.29
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0664ddb`](https://github.com/ardatan/graphql-mesh/commit/0664ddba78476e90f38560b55fcb88410cdfa72d)]:
+  - @omnigraph/json-schema@0.109.28
+
 ## 0.109.28
 
 ### Patch Changes

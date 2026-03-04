@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.100.32
+
+### Patch Changes
+
+- [#9274](https://github.com/ardatan/graphql-mesh/pull/9274)
+  [`ace8c95`](https://github.com/ardatan/graphql-mesh/commit/ace8c958b407c95e2c836afe65cf68df178c0201)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`cosmiconfig@^9.0.1` ↗︎](https://www.npmjs.com/package/cosmiconfig/v/9.0.1)
+    (from `^9.0.0`, in `dependencies`)
+
 ## 0.100.31
 
 ### Patch Changes
