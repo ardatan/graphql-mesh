@@ -120,7 +120,7 @@ describe('encapsulate', () => {
 
     expect(resultAfter.TEST.getSomething).toBe('boop');
   });
-  it.only('works with federation transform', async () => {
+  it('works with federation transform', async () => {
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Book {
