@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "glob": "^13.0.6",
-    "graphql": "16.13.0"
+    "graphql": "16.13.1"
   },
   "publishConfig": {
     "access": "public",

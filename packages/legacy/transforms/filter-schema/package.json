@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@types/minimatch": "6.0.0",
-    "graphql": "16.13.0"
+    "graphql": "16.13.1"
   },
   "publishConfig": {
     "access": "public",

@@ -13,7 +13,7 @@
   "dependencies": {
     "@graphql-hive/gateway": "^2.5.1",
     "esbuild": "^0.27.3",
-    "graphql": "16.13.0",
+    "graphql": "16.13.1",
     "typescript": "^5.4.2"
   }
 }

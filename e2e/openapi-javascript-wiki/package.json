@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@graphql-hive/gateway": "^2.5.1",
-    "graphql": "16.13.0",
+    "graphql": "16.13.1",
     "moment": "2.30.1"
   }
 }
