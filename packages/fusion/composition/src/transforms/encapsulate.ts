@@ -56,6 +56,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
               sourceArgs[argName] = `{args.${argName}}`;
             }
           }
+          const wrappedFieldName = `_encapsulated_${groupName}_${fieldName}`;
           wrappedFieldMap[fieldName] = {
             ...originalFieldConfig,
             extensions: {
@@ -64,7 +65,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
                   {
                     sourceName: subgraphConfig.name,
                     sourceTypeName: originalType.name,
-                    sourceFieldName: fieldName,
+                    sourceFieldName: wrappedFieldName,
                     ...(Object.keys(sourceArgs).length > 0 && { sourceArgs }),
                   },
                 ],
@@ -76,7 +77,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             astNode: undefined,
           };
           addInaccessibleDirective(newOriginalFieldConfig);
-          originalFieldMapWithHidden[fieldName] = newOriginalFieldConfig;
+          originalFieldMapWithHidden[wrappedFieldName] = newOriginalFieldConfig;
         }
         const wrappedType = new GraphQLObjectType({
           name: wrappedTypeName,

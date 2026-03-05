@@ -7015,9 +7015,11 @@ __metadata:
     "@graphql-hive/gateway-runtime": "npm:^2.7.1"
     "@graphql-mesh/fusion-runtime": "npm:^1.6.10"
     "@graphql-mesh/utils": "npm:^0.104.24"
+    "@graphql-tools/executor": "npm:1.5.1"
     "@graphql-tools/schema": "npm:^10.0.31"
     "@graphql-tools/stitching-directives": "npm:^4.0.14"
     "@graphql-tools/utils": "npm:^11.0.0"
+    "@repeaterjs/repeater": "npm:3.0.6"
     "@theguild/federation-composition": "npm:^0.22.0"
     "@types/minimatch": "npm:6.0.0"
     "@types/pluralize": "npm:^0.0.33"
@@ -8609,7 +8611,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/executor@npm:^1.3.6, @graphql-tools/executor@npm:^1.4.13, @graphql-tools/executor@npm:^1.4.9, @graphql-tools/executor@npm:^1.5.0, @graphql-tools/executor@npm:^1.5.1":
+"@graphql-tools/executor@npm:1.5.1, @graphql-tools/executor@npm:^1.3.6, @graphql-tools/executor@npm:^1.4.13, @graphql-tools/executor@npm:^1.4.9, @graphql-tools/executor@npm:^1.5.0, @graphql-tools/executor@npm:^1.5.1":
   version: 1.5.1
   resolution: "@graphql-tools/executor@npm:1.5.1"
   dependencies:
@@ -13708,7 +13710,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@repeaterjs/repeater@npm:^3.0.4, @repeaterjs/repeater@npm:^3.0.5, @repeaterjs/repeater@npm:^3.0.6":
+"@repeaterjs/repeater@npm:3.0.6, @repeaterjs/repeater@npm:^3.0.4, @repeaterjs/repeater@npm:^3.0.5, @repeaterjs/repeater@npm:^3.0.6":
   version: 3.0.6
   resolution: "@repeaterjs/repeater@npm:3.0.6"
   checksum: 10c0/c3915e2603927c7d6a9eb09673bc28fc49ab3a86947ec191a74663b33deebee2fcc4b03c31cc663ff27bd6db9e6c9487639b6935e265d601ce71b8c497f5f4a8
