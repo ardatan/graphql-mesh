@@ -7015,6 +7015,7 @@ __metadata:
     "@graphql-hive/gateway-runtime": "npm:^2.7.1"
     "@graphql-mesh/fusion-runtime": "npm:^1.6.10"
     "@graphql-mesh/utils": "npm:^0.104.24"
+    "@graphql-tools/delegate": "npm:12.0.8"
     "@graphql-tools/executor": "npm:1.5.1"
     "@graphql-tools/schema": "npm:^10.0.31"
     "@graphql-tools/stitching-directives": "npm:^4.0.14"
@@ -8424,6 +8425,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-tools/delegate@npm:12.0.8, @graphql-tools/delegate@npm:^12.0.8":
+  version: 12.0.8
+  resolution: "@graphql-tools/delegate@npm:12.0.8"
+  dependencies:
+    "@graphql-tools/batch-execute": "npm:^10.0.5"
+    "@graphql-tools/executor": "npm:^1.4.13"
+    "@graphql-tools/schema": "npm:^10.0.29"
+    "@graphql-tools/utils": "npm:^11.0.0"
+    "@repeaterjs/repeater": "npm:^3.0.6"
+    "@whatwg-node/promise-helpers": "npm:^1.3.2"
+    dataloader: "npm:^2.2.3"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/2fc17f354d31f088d9cc1aabb789877866840caebf6a48de8bc3a55d9acd22fc3593068e4c04da6dc54a2a72d899e889678eaca9d43cba75d0e1a47b47c67218
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/delegate@npm:6.1.0":
   version: 6.1.0
   resolution: "@graphql-tools/delegate@npm:6.1.0"
@@ -8455,24 +8474,6 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/bcc917cad5f8d21c593ca3382e1808b19c75ed3161ab42b2b69cb43eb53183408d27d1c77d9bf9c6f71971cd9c48109eb78183d2451ab28834a63f7fe855e788
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/delegate@npm:^12.0.8":
-  version: 12.0.8
-  resolution: "@graphql-tools/delegate@npm:12.0.8"
-  dependencies:
-    "@graphql-tools/batch-execute": "npm:^10.0.5"
-    "@graphql-tools/executor": "npm:^1.4.13"
-    "@graphql-tools/schema": "npm:^10.0.29"
-    "@graphql-tools/utils": "npm:^11.0.0"
-    "@repeaterjs/repeater": "npm:^3.0.6"
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-    dataloader: "npm:^2.2.3"
-    tslib: "npm:^2.8.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/2fc17f354d31f088d9cc1aabb789877866840caebf6a48de8bc3a55d9acd22fc3593068e4c04da6dc54a2a72d899e889678eaca9d43cba75d0e1a47b47c67218
   languageName: node
   linkType: hard
 
