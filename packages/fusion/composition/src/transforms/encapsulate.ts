@@ -123,11 +123,12 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
       ...newRootTypes,
     });
     const schemaLevelDirectives = getDirectiveExtensions(newSchema);
-    const linkDirectives = (schemaLevelDirectives.link ||= []);
-    const importStatement = linkDirectives.find(linkDirectiveArgs =>
-      linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/'),
+    const importStatement = schemaLevelDirectives?.link?.find(
+      linkDirectiveArgs =>
+        linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/') &&
+        linkDirectiveArgs.import,
     );
-    if (importStatement?.import && inaccessibleDirectiveAdded) {
+    if (importStatement && inaccessibleDirectiveAdded) {
       return importFederationDirectives(newSchema, ['@inaccessible']);
     }
     return newSchema;
