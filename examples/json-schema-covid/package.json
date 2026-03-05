@@ -14,7 +14,7 @@
     "@graphql-mesh/cli": "0.100.32",
     "@graphql-mesh/graphql": "0.104.26",
     "@graphql-mesh/json-schema": "0.109.29",
-    "graphql": "16.13.0"
+    "graphql": "16.13.1"
   },
   "devDependencies": {
     "jest": "30.2.0"

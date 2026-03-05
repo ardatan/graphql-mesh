@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@urql/core": "6.0.1",
-    "graphql": "16.13.0"
+    "graphql": "16.13.1"
   },
   "publishConfig": {
     "access": "public",

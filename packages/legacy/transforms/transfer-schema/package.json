@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@types/micromatch": "4.0.10",
-    "graphql": "16.13.0"
+    "graphql": "16.13.1"
   },
   "publishConfig": {
     "access": "public",

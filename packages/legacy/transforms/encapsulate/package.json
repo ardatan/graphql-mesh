@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@graphql-tools/schema": "10.0.31",
-    "graphql": "16.13.0"
+    "graphql": "16.13.1"
   },
   "publishConfig": {
     "access": "public",

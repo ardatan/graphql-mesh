@@ -44,7 +44,7 @@
     "tuql": "^1.7.0"
   },
   "devDependencies": {
-    "graphql": "16.13.0"
+    "graphql": "16.13.1"
   },
   "publishConfig": {
     "access": "public",

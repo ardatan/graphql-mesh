@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@apollo/client": "4.1.6",
-    "graphql": "16.13.0",
+    "graphql": "16.13.1",
     "rxjs": "7.8.2"
   },
   "publishConfig": {
