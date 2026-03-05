@@ -12,7 +12,6 @@ import {
   isObjectType,
   isSpecifiedScalarType,
   parse,
-  print,
 } from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
