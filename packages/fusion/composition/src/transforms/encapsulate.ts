@@ -8,6 +8,7 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import { importFederationDirectives } from '../federation-utils.js';
 import { addInaccessibleDirective } from './filter-schema.js';
@@ -121,7 +122,12 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
       directives: newDirectives,
       ...newRootTypes,
     });
-    if (inaccessibleDirectiveAdded) {
+    const schemaLevelDirectives = getDirectiveExtensions(newSchema);
+    const linkDirectives = (schemaLevelDirectives.link ||= []);
+    const importStatement = linkDirectives.find(linkDirectiveArgs =>
+      linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/'),
+    );
+    if (importStatement?.import && inaccessibleDirectiveAdded) {
       return importFederationDirectives(newSchema, ['@inaccessible']);
     }
     return newSchema;
