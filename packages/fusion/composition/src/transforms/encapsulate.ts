@@ -9,6 +9,7 @@ import {
   GraphQLString,
 } from 'graphql';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
+import { importFederationDirectives } from '../federation-utils.js';
 import { addInaccessibleDirective } from './filter-schema.js';
 
 const OPERATION_TYPE_SUFFIX_MAP = {
@@ -39,6 +40,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
       ...(opts.applyTo || {}),
     };
     const newRootTypes: Record<string, GraphQLObjectType> = {};
+    let inaccessibleDirectiveAdded = false;
     for (const opTypeString in applyToMap) {
       const operationType = opTypeString as OperationTypeNode;
       const originalType = schema.getRootType(operationType);
@@ -77,6 +79,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             astNode: undefined,
           };
           addInaccessibleDirective(newOriginalFieldConfig);
+          inaccessibleDirectiveAdded = true;
           originalFieldMapWithHidden[wrappedFieldName] = newOriginalFieldConfig;
         }
         const wrappedType = new GraphQLObjectType({
@@ -112,12 +115,16 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     if (!newDirectives.some(directive => directive.name === 'resolveTo')) {
       newDirectives.push(resolveToDirective);
     }
-    return new GraphQLSchema({
+    const newSchema = new GraphQLSchema({
       ...schemaConfig,
       types: undefined,
       directives: newDirectives,
       ...newRootTypes,
     });
+    if (inaccessibleDirectiveAdded) {
+      return importFederationDirectives(newSchema, ['@inaccessible']);
+    }
+    return newSchema;
   };
 }
 

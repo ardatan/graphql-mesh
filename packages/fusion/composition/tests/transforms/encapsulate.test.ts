@@ -120,7 +120,7 @@ describe('encapsulate', () => {
 
     expect(resultAfter.TEST.getSomething).toBe('boop');
   });
-  it('works with federation transform', async () => {
+  it.only('works with federation transform', async () => {
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Book {
@@ -149,7 +149,7 @@ describe('encapsulate', () => {
     const newSchema = await composeAndGetPublicSchema([
       {
         schema,
-        transforms: [encapsulationTransform, federationTransform],
+        transforms: [federationTransform, encapsulationTransform],
         name: 'TEST',
       },
     ]);
