@@ -232,29 +232,17 @@ describe('encapsulate', () => {
       }
       return typeName;
     });
-    const transform = createEncapsulateTransform();
-    const newSchema = await composeAndGetPublicSchema([
-      {
-        schema: subgraphA,
-        transforms: [renameItemTransform, transform],
-        name: 'A',
-      },
-      {
-        schema: subgraphB,
-        transforms: [renameItemTransform, transform],
-        name: 'B',
-      },
-    ]);
+    const encapsulateTransform = createEncapsulateTransform();
 
     const executor = composeAndGetExecutor([
       {
         schema: subgraphA,
-        transforms: [renameItemTransform, transform],
+        transforms: [renameItemTransform, encapsulateTransform],
         name: 'A',
       },
       {
         schema: subgraphB,
-        transforms: [renameItemTransform, transform],
+        transforms: [renameItemTransform, encapsulateTransform],
         name: 'B',
       },
     ]);
