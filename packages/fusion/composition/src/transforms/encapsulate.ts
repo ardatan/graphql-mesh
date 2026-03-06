@@ -8,7 +8,9 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
+import { importFederationDirectives } from '../federation-utils.js';
 import { addInaccessibleDirective } from './filter-schema.js';
 
 const OPERATION_TYPE_SUFFIX_MAP = {
@@ -39,6 +41,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
       ...(opts.applyTo || {}),
     };
     const newRootTypes: Record<string, GraphQLObjectType> = {};
+    let inaccessibleDirectiveAdded = false;
     for (const opTypeString in applyToMap) {
       const operationType = opTypeString as OperationTypeNode;
       const originalType = schema.getRootType(operationType);
@@ -56,6 +59,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
               sourceArgs[argName] = `{args.${argName}}`;
             }
           }
+          const wrappedFieldName = `_encapsulated_${groupName}_${fieldName}`;
           wrappedFieldMap[fieldName] = {
             ...originalFieldConfig,
             extensions: {
@@ -64,7 +68,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
                   {
                     sourceName: subgraphConfig.name,
                     sourceTypeName: originalType.name,
-                    sourceFieldName: fieldName,
+                    sourceFieldName: wrappedFieldName,
                     ...(Object.keys(sourceArgs).length > 0 && { sourceArgs }),
                   },
                 ],
@@ -76,7 +80,8 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             astNode: undefined,
           };
           addInaccessibleDirective(newOriginalFieldConfig);
-          originalFieldMapWithHidden[fieldName] = newOriginalFieldConfig;
+          inaccessibleDirectiveAdded = true;
+          originalFieldMapWithHidden[wrappedFieldName] = newOriginalFieldConfig;
         }
         const wrappedType = new GraphQLObjectType({
           name: wrappedTypeName,
@@ -111,12 +116,22 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     if (!newDirectives.some(directive => directive.name === 'resolveTo')) {
       newDirectives.push(resolveToDirective);
     }
-    return new GraphQLSchema({
+    const newSchema = new GraphQLSchema({
       ...schemaConfig,
       types: undefined,
       directives: newDirectives,
       ...newRootTypes,
     });
+    const schemaLevelDirectives = getDirectiveExtensions(newSchema);
+    const importStatement = schemaLevelDirectives?.link?.find(
+      linkDirectiveArgs =>
+        linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/') &&
+        linkDirectiveArgs.import,
+    );
+    if (importStatement && inaccessibleDirectiveAdded) {
+      return importFederationDirectives(newSchema, ['@inaccessible']);
+    }
+    return newSchema;
   };
 }
 

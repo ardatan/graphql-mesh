@@ -1,16 +1,16 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import {
   buildClientSchema,
   buildSchema,
   getIntrospectionQuery,
-  GraphQLSchema,
   Kind,
   lexicographicSortSchema,
   parse,
   print,
   validate,
   visit,
+  type GraphQLSchema,
 } from 'graphql';
-import { getUnifiedGraphGracefully, type SubgraphConfig } from '@graphql-mesh/fusion-composition';
 import { UnifiedGraphManager } from '@graphql-mesh/fusion-runtime';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
@@ -20,6 +20,7 @@ import {
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { getUnifiedGraphGracefully, type SubgraphConfig } from '../../src/compose';
 
 export function composeAndGetPublicSchema(subgraphs: SubgraphConfig[]) {
   const executor = composeAndGetExecutor(subgraphs);

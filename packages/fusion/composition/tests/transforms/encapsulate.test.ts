@@ -1,12 +1,13 @@
-import { GraphQLSchema, parse } from 'graphql';
-import {
-  createEncapsulateTransform,
-  createFederationTransform,
-} from '@graphql-mesh/fusion-composition';
+import { parse, type GraphQLSchema } from 'graphql';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Repeater } from '@repeaterjs/repeater';
+import {
+  createEncapsulateTransform,
+  createFederationTransform,
+  createRenameTypeTransform,
+} from '../../src/transforms';
 import { composeAndGetExecutor, composeAndGetPublicSchema } from './utils';
 
 describe('encapsulate', () => {
@@ -148,7 +149,7 @@ describe('encapsulate', () => {
     const newSchema = await composeAndGetPublicSchema([
       {
         schema,
-        transforms: [encapsulationTransform, federationTransform],
+        transforms: [federationTransform, encapsulationTransform],
         name: 'TEST',
       },
     ]);
@@ -192,6 +193,71 @@ describe('encapsulate', () => {
     expect(result.items.itemById).toEqual({
       id: '123',
       name: 'Item 123',
+    });
+  });
+  it('does not conflict with other subgraphs having the same root field', async () => {
+    const subgraphA = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          getItems: [Item]
+        }
+        type Item {
+          id: ID!
+        }
+      `,
+      resolvers: {
+        Query: {
+          getItems: () => [{ id: '1' }, { id: '2' }],
+        },
+      },
+    });
+    const subgraphB = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          getItems: [Item]
+        }
+        type Item {
+          id: ID!
+        }
+      `,
+      resolvers: {
+        Query: {
+          getItems: () => [{ id: '3' }, { id: '4' }],
+        },
+      },
+    });
+    const renameItemTransform = createRenameTypeTransform(({ typeName, subgraphConfig }) => {
+      if (typeName === 'Item') {
+        return `${subgraphConfig.name}_Item`;
+      }
+      return typeName;
+    });
+    const encapsulateTransform = createEncapsulateTransform();
+
+    const executor = composeAndGetExecutor([
+      {
+        schema: subgraphA,
+        transforms: [renameItemTransform, encapsulateTransform],
+        name: 'A',
+      },
+      {
+        schema: subgraphB,
+        transforms: [renameItemTransform, encapsulateTransform],
+        name: 'B',
+      },
+    ]);
+
+    const result = await executor({
+      query: `query { A { getItems { id } } B { getItems { id } } }`,
+    });
+
+    expect(result).toEqual({
+      A: {
+        getItems: [{ id: '1' }, { id: '2' }],
+      },
+      B: {
+        getItems: [{ id: '3' }, { id: '4' }],
+      },
     });
   });
 });

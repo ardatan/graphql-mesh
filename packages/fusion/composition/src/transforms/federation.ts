@@ -376,10 +376,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           mergeDirectiveUsed = true;
         }
         for (const directiveName of federationDirectiveNames) {
-          if (
-            fieldDirectives[directiveName]?.length &&
-            federationDirectiveNames.includes(directiveName)
-          ) {
+          if (fieldDirectives[directiveName]?.length) {
             usedFederationDirectives.add(`@${directiveName}`);
           }
         }
@@ -410,10 +407,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
             }
           }
           for (const directiveName of federationDirectiveNames) {
-            if (
-              fieldDirectives[directiveName]?.length &&
-              federationDirectiveNames.includes(directiveName)
-            ) {
+            if (fieldDirectives[directiveName]?.length) {
               usedFederationDirectives.add(`@${directiveName}`);
             }
           }
