@@ -12,11 +12,11 @@
     "@graphql-mesh/graphql": "0.104.27",
     "concurrently": "9.2.1",
     "graphql": "16.13.1",
-    "graphql-yoga": "^5.18.0",
+    "graphql-yoga": "^5.18.1",
     "sharp": "0.34.5"
   },
   "devDependencies": {
-    "@types/node": "^25.3.3",
+    "@types/node": "^25.3.5",
     "jest": "30.2.0",
     "ts-jest": "29.4.6",
     "ts-node": "^10.9.2",
