@@ -6,7 +6,7 @@
     "start": "node --import tsx index.ts"
   },
   "dependencies": {
-    "@graphql-hive/cli": "0.58.4",
+    "@graphql-hive/cli": "0.58.5",
     "graphql": "16.13.1",
     "graphql-yoga": "^5.18.0"
   }
