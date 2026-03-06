@@ -1,5 +1,25 @@
 # @graphql-mesh/config
 
+## 0.108.30
+
+### Patch Changes
+
+- [#9283](https://github.com/ardatan/graphql-mesh/pull/9283)
+  [`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/graphql-file-loader@^8.1.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.1.11)
+    (from `^8.1.9`, in `dependencies`)
+- Updated dependencies
+  [[`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)]:
+  - @graphql-mesh/types@0.104.23
+  - @graphql-mesh/cache-localforage@0.105.26
+  - @graphql-mesh/merger-bare@0.105.27
+  - @graphql-mesh/merger-stitching@0.105.27
+  - @graphql-mesh/runtime@0.106.27
+  - @graphql-mesh/store@0.104.27
+  - @graphql-mesh/utils@0.104.25
+
 ## 0.108.29
 
 ### Patch Changes

@@ -6,8 +6,8 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.32",
-    "@graphql-mesh/mysql": "0.105.28",
+    "@graphql-mesh/cli": "0.100.33",
+    "@graphql-mesh/mysql": "0.105.29",
     "graphql": "16.13.1"
   }
 }

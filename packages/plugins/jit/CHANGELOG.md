@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-jit
 
+## 0.2.25
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.25
+
 ## 0.2.24
 
 ### Patch Changes

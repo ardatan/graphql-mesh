@@ -1,5 +1,25 @@
 # @graphql-mesh/migrate-config-cli
 
+## 1.7.19
+
+### Patch Changes
+
+- [#9283](https://github.com/ardatan/graphql-mesh/pull/9283)
+  [`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - BREAKING:
+  experimental\_\_persistedDocuments is now renamed to persistedDocuments
+
+- Updated dependencies
+  [[`485ca58`](https://github.com/ardatan/graphql-mesh/commit/485ca58e8b692c2d8cb2c654dc17fde5ba69078f),
+  [`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112),
+  [`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112),
+  [`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)]:
+  - @graphql-mesh/cli@0.100.33
+  - @graphql-mesh/compose-cli@1.5.15
+  - @graphql-mesh/config@0.108.30
+  - @graphql-mesh/types@0.104.23
+  - @graphql-mesh/utils@0.104.25
+
 ## 1.7.18
 
 ### Patch Changes

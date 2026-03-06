@@ -1,5 +1,20 @@
 # @graphql-mesh/postgraphile
 
+## 0.104.28
+
+### Patch Changes
+
+- [#9280](https://github.com/ardatan/graphql-mesh/pull/9280)
+  [`f7a0d05`](https://github.com/ardatan/graphql-mesh/commit/f7a0d05de751f106e7039e1e1f1f24adbf7aa72d)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`pg@^8.20.0` ↗︎](https://www.npmjs.com/package/pg/v/8.20.0) (from `^8.19.0`,
+    in `dependencies`)
+- Updated dependencies
+  [[`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)]:
+  - @graphql-mesh/types@0.104.23
+  - @graphql-mesh/store@0.104.27
+  - @graphql-mesh/utils@0.104.25
+
 ## 0.104.27
 
 ### Patch Changes

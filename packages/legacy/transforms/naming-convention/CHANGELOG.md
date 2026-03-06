@@ -1,5 +1,14 @@
 # @graphql-mesh/transform-naming-convention
 
+## 0.105.26
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)]:
+  - @graphql-mesh/types@0.104.23
+  - @graphql-mesh/utils@0.104.25
+
 ## 0.105.25
 
 ### Patch Changes
