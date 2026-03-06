@@ -1,5 +1,45 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.32
+
+### Patch Changes
+
+- [#9278](https://github.com/ardatan/graphql-mesh/pull/9278)
+  [`04df502`](https://github.com/ardatan/graphql-mesh/commit/04df5024842035d7718fd8a45129d20a35d3943e)
+  Thanks [@ardatan](https://github.com/ardatan)! - If the encapsulated fields are conflicting, they
+  will be renamed to include the subgraph name as a prefix and the renamed fields will be marked
+  with the `@inaccessible` directive. For example, if both Subgraph A and Subgraph B have a
+  `getItems` field, they will be renamed to `_encapsulated_SubgraphA_getItems` and
+  `_encapsulated_SubgraphB_getItems` respectively, and the original `getItems` fields will be
+  removed from the root type to prevent conflicts.
+
+  Subgraph A
+
+  ```graphql
+  type Query {
+    getItems: [SubgraphA_Item]
+  }
+
+  type SubgraphA_Item {
+    id: ID
+  }
+  ```
+
+  Subgraph B
+
+  ```graphql
+  type Query {
+    getItems: [SubgraphB_Item]
+  }
+
+  type SubgraphB_Item {
+    id: ID
+  }
+  ```
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.25
+
 ## 0.8.31
 
 ### Patch Changes

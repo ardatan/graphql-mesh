@@ -1,5 +1,26 @@
 # @graphql-mesh/plugin-hive
 
+## 0.105.0
+
+### Minor Changes
+
+- [#9283](https://github.com/ardatan/graphql-mesh/pull/9283)
+  [`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - BREAKING:
+  experimental\_\_persistedDocuments is now renamed to persistedDocuments
+
+### Patch Changes
+
+- [#9283](https://github.com/ardatan/graphql-mesh/pull/9283)
+  [`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-hive/yoga@^0.48.0` ↗︎](https://www.npmjs.com/package/@graphql-hive/yoga/v/0.48.0)
+    (from `^0.47.3`, in `dependencies`)
+- Updated dependencies
+  [[`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)]:
+  - @graphql-mesh/types@0.104.23
+
 ## 0.104.27
 
 ### Patch Changes
