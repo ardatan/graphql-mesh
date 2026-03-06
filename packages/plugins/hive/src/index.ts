@@ -1,7 +1,7 @@
 import { createHive, useHive } from '@graphql-hive/yoga';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import type { Logger, MeshFetch, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
 
 type HivePluginOptions = Parameters<typeof createHive>[0];
 
@@ -9,6 +9,7 @@ export default function useMeshHive<TContext>(
   pluginOptions: YamlConfig.HivePlugin & {
     logger?: Logger;
     pubsub?: MeshPubSub;
+    fetch?: MeshFetch;
   },
 ): MeshPlugin<TContext> {
   const enabled =
@@ -31,9 +32,10 @@ export default function useMeshHive<TContext>(
     pluginOptions.logger?.info('Reporting enabled');
   }
 
-  const persistedDocuments = pluginOptions.experimental__persistedDocuments;
+  const persistedDocuments = pluginOptions.persistedDocuments;
   if (persistedDocuments) {
     pluginOptions.logger?.info('Persisted documents enabled');
+    persistedDocuments.fetch ||= pluginOptions.fetch;
   }
 
   let usage: HivePluginOptions['usage'] = true;
@@ -119,7 +121,7 @@ export default function useMeshHive<TContext>(
     usage,
     reporting,
     selfHosting,
-    experimental__persistedDocuments: persistedDocuments,
+    persistedDocuments,
   };
   const client = createHive(yogaPluginOpts);
   // Destroy the Hive client when the Mesh instance is destroyed

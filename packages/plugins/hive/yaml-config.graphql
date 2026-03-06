@@ -30,10 +30,10 @@ type HivePlugin @md {
   """
   selfHosting: HiveSelfHostingOptions
   """
-  Experimental persisted documents configuration
+  Persisted documents configuration
   [See more](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway)
   """
-  experimental__persistedDocuments: HivePersistedDocumentsConfiguration
+  persistedDocuments: HivePersistedDocumentsConfiguration
 }
 
 type HiveAgentOptions {
@@ -160,6 +160,8 @@ type HivePersistedDocumentsConfiguration {
   Maximum amount of operations that shall be kept in memory after being loaded from the CDN. 10 seconds by default
   """
   cache: Int
+
+  fetch: Any
 }
 
 type HivePersistedDocumentsConfigurationCDN {

@@ -183,22 +183,20 @@ check Hive Gateway's docs to consume a supergraph.`,
         addImport(importMap, '@envelop/core', 'useImmediateIntrospection');
         pluginList.add('useImmediateIntrospection()');
       } else if (legacyPluginName === 'hive') {
-        // eslint-disable-next-line camelcase
-        const { experimental__persistedDocuments, ...hiveConfig } =
-          legacyPluginConfig[legacyPluginName];
+        const { persistedDocuments, ...hiveConfig } = legacyPluginConfig[legacyPluginName];
         serveConfigList.add(`
           reporting: ${JSON.stringify({
             type: 'hive',
             ...hiveConfig,
           })}
         `);
-        // eslint-disable-next-line camelcase
-        if (experimental__persistedDocuments) {
+
+        if (persistedDocuments) {
           serveConfigList.add(
             `persistedOperations: ${JSON.stringify({
               type: 'hive',
-              // eslint-disable-next-line camelcase
-              ...experimental__persistedDocuments,
+
+              ...persistedDocuments,
             })}`,
           );
         }

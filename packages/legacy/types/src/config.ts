@@ -1979,7 +1979,7 @@ export interface HivePlugin {
   usage?: HiveUsageOptions;
   reporting?: HiveReportingOptions;
   selfHosting?: HiveSelfHostingOptions;
-  experimental__persistedDocuments?: HivePersistedDocumentsConfiguration;
+  persistedDocuments?: HivePersistedDocumentsConfiguration;
 }
 /**
  * Agent Options
@@ -2099,7 +2099,7 @@ export interface HiveSelfHostingOptions {
   usageEndpoint?: string;
 }
 /**
- * Experimental persisted documents configuration
+ * Persisted documents configuration
  * [See more](https://the-guild.dev/graphql/hive/docs/features/app-deployments#persisted-documents-on-graphql-server-and-gateway)
  */
 export interface HivePersistedDocumentsConfiguration {
@@ -2112,6 +2112,7 @@ export interface HivePersistedDocumentsConfiguration {
    * Maximum amount of operations that shall be kept in memory after being loaded from the CDN. 10 seconds by default
    */
   cache?: number;
+  fetch?: any;
 }
 /**
  * Point to your own instance of GraphQL Hive API
