@@ -4444,26 +4444,3 @@ input StringScalarMutations @join__type(graph: MOVIES)  {
 }
 "
 `;
-
-exports[`should execute MovieWithActedIn 1`] = `
-{
-  "data": null,
-  "errors": [
-    {
-      "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
-      },
-      "locations": [
-        {
-          "column": 9,
-          "line": 3,
-        },
-      ],
-      "message": "Unexpected error.",
-      "path": [
-        "movies",
-      ],
-    },
-  ],
-}
-`;

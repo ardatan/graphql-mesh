@@ -51,7 +51,6 @@ it('should execute MovieWithActedIn', async () => {
       query MovieWithActedIn {
         movies(limit: 2) {
           title
-          released
           tagline
           peopleActedIn(limit: 2) {
             name
@@ -60,5 +59,36 @@ it('should execute MovieWithActedIn', async () => {
       }
     `,
   });
-  expect(result).toMatchSnapshot();
+  expect(result).toMatchInlineSnapshot(`
+{
+  "data": {
+    "movies": [
+      {
+        "peopleActedIn": [
+          {
+            "name": "Emil Eifrem",
+          },
+          {
+            "name": "Hugo Weaving",
+          },
+        ],
+        "tagline": "Welcome to the Real World",
+        "title": "The Matrix",
+      },
+      {
+        "peopleActedIn": [
+          {
+            "name": "Hugo Weaving",
+          },
+          {
+            "name": "Laurence Fishburne",
+          },
+        ],
+        "tagline": "Free your mind",
+        "title": "The Matrix Reloaded",
+      },
+    ],
+  },
+}
+`);
 });
