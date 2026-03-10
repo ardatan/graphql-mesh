@@ -106,11 +106,6 @@ directive @node on OBJECT
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
 
-"""
-A BigInt value up to 64 bits in size, which can be a number or a string if used inline, or a string only if used as a variable. Always returned as a string.
-"""
-scalar BigInt @join__type(graph: MOVIES) 
-
 scalar TransportOptions @join__type(graph: MOVIES) 
 
 scalar _DirectiveExtensions @join__type(graph: MOVIES) 
@@ -139,14 +134,7 @@ The edge properties for the following fields:
 * Person.actedInMovies
 """
 type ActedInProperties @relationshipProperties @introspection @join__type(graph: MOVIES)  {
-  roles: [String!]! @introspection
-}
-
-type BigIntAggregateSelection @join__type(graph: MOVIES)  {
-  max: BigInt
-  min: BigInt
-  average: BigInt
-  sum: BigInt
+  roles: String! @introspection
 }
 
 type Count @join__type(graph: MOVIES)  {
@@ -185,7 +173,7 @@ type DeleteInfo @join__type(graph: MOVIES)  {
 }
 
 type Movie @introspection @node @join__type(graph: MOVIES)  {
-  released: BigInt! @introspection
+  released: String! @introspection
   tagline: String @introspection
   title: String! @introspection
   peopleActedIn(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties") 
@@ -231,7 +219,7 @@ type MovieAggregate @join__type(graph: MOVIES)  {
 }
 
 type MovieAggregateNode @join__type(graph: MOVIES)  {
-  released: BigIntAggregateSelection!
+  released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
@@ -306,10 +294,15 @@ type MoviePeopleWroteRelationship @join__type(graph: MOVIES)  {
 type MoviePersonPeopleActedInAggregateSelection @join__type(graph: MOVIES)  {
   count: CountConnection!
   node: MoviePersonPeopleActedInNodeAggregateSelection
+  edge: MoviePersonPeopleActedInEdgeAggregateSelection
+}
+
+type MoviePersonPeopleActedInEdgeAggregateSelection @join__type(graph: MOVIES)  {
+  roles: StringAggregateSelection!
 }
 
 type MoviePersonPeopleActedInNodeAggregateSelection @join__type(graph: MOVIES)  {
-  born: BigIntAggregateSelection!
+  born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
@@ -319,7 +312,7 @@ type MoviePersonPeopleDirectedAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type MoviePersonPeopleDirectedNodeAggregateSelection @join__type(graph: MOVIES)  {
-  born: BigIntAggregateSelection!
+  born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
@@ -329,7 +322,7 @@ type MoviePersonPeopleProducedAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type MoviePersonPeopleProducedNodeAggregateSelection @join__type(graph: MOVIES)  {
-  born: BigIntAggregateSelection!
+  born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
@@ -340,12 +333,12 @@ type MoviePersonPeopleReviewedAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type MoviePersonPeopleReviewedEdgeAggregateSelection @join__type(graph: MOVIES)  {
-  rating: BigIntAggregateSelection!
+  rating: StringAggregateSelection!
   summary: StringAggregateSelection!
 }
 
 type MoviePersonPeopleReviewedNodeAggregateSelection @join__type(graph: MOVIES)  {
-  born: BigIntAggregateSelection!
+  born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
@@ -355,7 +348,7 @@ type MoviePersonPeopleWroteAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type MoviePersonPeopleWroteNodeAggregateSelection @join__type(graph: MOVIES)  {
-  born: BigIntAggregateSelection!
+  born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
@@ -384,7 +377,7 @@ type PeopleConnection @join__type(graph: MOVIES)  {
 }
 
 type Person @introspection @node @join__type(graph: MOVIES)  {
-  born: BigInt @introspection
+  born: String @introspection
   name: String! @introspection
   actedInMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties") 
   actedInMoviesConnection(
@@ -456,7 +449,7 @@ type PersonAggregate @join__type(graph: MOVIES)  {
 }
 
 type PersonAggregateNode @join__type(graph: MOVIES)  {
-  born: BigIntAggregateSelection!
+  born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
@@ -492,10 +485,15 @@ type PersonFollowsPeopleRelationship @join__type(graph: MOVIES)  {
 type PersonMovieActedInMoviesAggregateSelection @join__type(graph: MOVIES)  {
   count: CountConnection!
   node: PersonMovieActedInMoviesNodeAggregateSelection
+  edge: PersonMovieActedInMoviesEdgeAggregateSelection
+}
+
+type PersonMovieActedInMoviesEdgeAggregateSelection @join__type(graph: MOVIES)  {
+  roles: StringAggregateSelection!
 }
 
 type PersonMovieActedInMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
-  released: BigIntAggregateSelection!
+  released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
@@ -506,7 +504,7 @@ type PersonMovieDirectedMoviesAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type PersonMovieDirectedMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
-  released: BigIntAggregateSelection!
+  released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
@@ -517,7 +515,7 @@ type PersonMovieProducedMoviesAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type PersonMovieProducedMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
-  released: BigIntAggregateSelection!
+  released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
@@ -529,12 +527,12 @@ type PersonMovieReviewedMoviesAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type PersonMovieReviewedMoviesEdgeAggregateSelection @join__type(graph: MOVIES)  {
-  rating: BigIntAggregateSelection!
+  rating: StringAggregateSelection!
   summary: StringAggregateSelection!
 }
 
 type PersonMovieReviewedMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
-  released: BigIntAggregateSelection!
+  released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
@@ -545,7 +543,7 @@ type PersonMovieWroteMoviesAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type PersonMovieWroteMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
-  released: BigIntAggregateSelection!
+  released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
@@ -568,7 +566,7 @@ type PersonPersonFollowsPeopleAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type PersonPersonFollowsPeopleNodeAggregateSelection @join__type(graph: MOVIES)  {
-  born: BigIntAggregateSelection!
+  born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
@@ -578,7 +576,7 @@ type PersonPersonPeopleFollowsAggregateSelection @join__type(graph: MOVIES)  {
 }
 
 type PersonPersonPeopleFollowsNodeAggregateSelection @join__type(graph: MOVIES)  {
-  born: BigIntAggregateSelection!
+  born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
@@ -625,7 +623,7 @@ The edge properties for the following fields:
 * Person.reviewedMovies
 """
 type ReviewedProperties @relationshipProperties @introspection @join__type(graph: MOVIES)  {
-  rating: BigInt! @introspection
+  rating: String! @introspection
   summary: String! @introspection
 }
 
@@ -673,8 +671,60 @@ enum SortDirection @join__type(graph: MOVIES)  {
   DESC @join__enumValue(graph: MOVIES) 
 }
 
+input ActedInPropertiesAggregationWhereInput @join__type(graph: MOVIES)  {
+  AND: [ActedInPropertiesAggregationWhereInput!]
+  OR: [ActedInPropertiesAggregationWhereInput!]
+  NOT: ActedInPropertiesAggregationWhereInput
+  roles_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { averageLength: { eq: ... } } }' instead."
+  )
+  roles_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { longestLength: { eq: ... } } }' instead."
+  )
+  roles_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { shortestLength: { eq: ... } } }' instead."
+  )
+  roles_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { averageLength: { gt: ... } } }' instead."
+  )
+  roles_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { longestLength: { gt: ... } } }' instead."
+  )
+  roles_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { shortestLength: { gt: ... } } }' instead."
+  )
+  roles_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { averageLength: { gte: ... } } }' instead."
+  )
+  roles_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { longestLength: { gte: ... } } }' instead."
+  )
+  roles_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { shortestLength: { gte: ... } } }' instead."
+  )
+  roles_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { averageLength: { lt: ... } } }' instead."
+  )
+  roles_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { longestLength: { lt: ... } } }' instead."
+  )
+  roles_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { shortestLength: { lt: ... } } }' instead."
+  )
+  roles_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { averageLength: { lte: ... } } }' instead."
+  )
+  roles_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { longestLength: { lte: ... } } }' instead."
+  )
+  roles_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'roles: { shortestLength: { lte: ... } } }' instead."
+  )
+  roles: StringScalarAggregationFilters
+}
+
 input ActedInPropertiesCreateInput @join__type(graph: MOVIES)  {
-  roles: [String!]!
+  roles: String!
 }
 
 input ActedInPropertiesSort @join__type(graph: MOVIES)  {
@@ -682,50 +732,20 @@ input ActedInPropertiesSort @join__type(graph: MOVIES)  {
 }
 
 input ActedInPropertiesUpdateInput @join__type(graph: MOVIES)  {
-  roles: ListStringMutations
-  roles_SET: [String!]
-  roles_POP: Int @deprecated(reason: "Please use the generic mutation 'roles: { pop: ... } }' instead.") 
-  roles_PUSH: [String!] @deprecated(reason: "Please use the generic mutation 'roles: { push: ... } }' instead.") 
+  roles: StringScalarMutations
+  roles_SET: String
 }
 
 input ActedInPropertiesWhere @join__type(graph: MOVIES)  {
-  roles: StringListFilters
-  roles_EQ: [String!] @deprecated(reason: "Please use the relevant generic filter roles: { eq: ... }") 
-  roles_INCLUDES: String @deprecated(reason: "Please use the relevant generic filter roles: { includes: ... }") 
+  roles: StringScalarFilters
+  roles_EQ: String @deprecated(reason: "Please use the relevant generic filter roles: { eq: ... }") 
+  roles_IN: [String!] @deprecated(reason: "Please use the relevant generic filter roles: { in: ... }") 
+  roles_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter roles: { contains: ... }") 
+  roles_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter roles: { startsWith: ... }") 
+  roles_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter roles: { endsWith: ... }") 
   OR: [ActedInPropertiesWhere!]
   AND: [ActedInPropertiesWhere!]
   NOT: ActedInPropertiesWhere
-}
-
-"""
-Filters for an aggregation of an BigInt field
-"""
-input BigIntScalarAggregationFilters @join__type(graph: MOVIES)  {
-  average: BigIntScalarFilters
-  max: BigIntScalarFilters
-  min: BigIntScalarFilters
-  sum: BigIntScalarFilters
-}
-
-"""
-BigInt filters
-"""
-input BigIntScalarFilters @join__type(graph: MOVIES)  {
-  eq: BigInt
-  gt: BigInt
-  gte: BigInt
-  in: [BigInt!]
-  lt: BigInt
-  lte: BigInt
-}
-
-"""
-BigInt mutations
-"""
-input BigIntScalarMutations @join__type(graph: MOVIES)  {
-  set: BigInt
-  add: BigInt
-  subtract: BigInt
 }
 
 input ConnectionAggregationCountFilterInput @join__type(graph: MOVIES)  {
@@ -757,15 +777,6 @@ input IntScalarFilters @join__type(graph: MOVIES)  {
   lte: Int
 }
 
-"""
-Mutations for a list for String
-"""
-input ListStringMutations @join__type(graph: MOVIES)  {
-  set: [String!]
-  push: [String!]
-  pop: Int
-}
-
 input MovieConnectInput @join__type(graph: MOVIES)  {
   peopleActedIn: [MoviePeopleActedInConnectFieldInput!]
   peopleDirected: [MoviePeopleDirectedConnectFieldInput!]
@@ -779,7 +790,7 @@ input MovieConnectWhere @join__type(graph: MOVIES)  {
 }
 
 input MovieCreateInput @join__type(graph: MOVIES)  {
-  released: BigInt!
+  released: String!
   tagline: String
   title: String!
   peopleActedIn: MoviePeopleActedInFieldInput
@@ -826,6 +837,7 @@ input MoviePeopleActedInAggregateInput @join__type(graph: MOVIES)  {
   OR: [MoviePeopleActedInAggregateInput!]
   NOT: MoviePeopleActedInAggregateInput
   node: MoviePeopleActedInNodeAggregationWhereInput
+  edge: ActedInPropertiesAggregationWhereInput
 }
 
 input MoviePeopleActedInConnectFieldInput @join__type(graph: MOVIES)  {
@@ -840,6 +852,7 @@ input MoviePeopleActedInConnectionAggregateInput @join__type(graph: MOVIES)  {
   OR: [MoviePeopleActedInConnectionAggregateInput!]
   NOT: MoviePeopleActedInConnectionAggregateInput
   node: MoviePeopleActedInNodeAggregationWhereInput
+  edge: ActedInPropertiesAggregationWhereInput
 }
 
 input MoviePeopleActedInConnectionFilters @join__type(graph: MOVIES)  {
@@ -902,67 +915,52 @@ input MoviePeopleActedInNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   AND: [MoviePeopleActedInNodeAggregationWhereInput!]
   OR: [MoviePeopleActedInNodeAggregationWhereInput!]
   NOT: MoviePeopleActedInNodeAggregationWhereInput
-  born_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { eq: ... } } }' instead."
   )
-  born_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { eq: ... } } }' instead."
+  born_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { eq: ... } } }' instead."
   )
-  born_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { eq: ... } } }' instead."
+  born_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { eq: ... } } }' instead."
   )
-  born_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gt: ... } } }' instead."
   )
-  born_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gt: ... } } }' instead."
   )
-  born_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gt: ... } } }' instead."
+  born_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gt: ... } } }' instead."
   )
-  born_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gt: ... } } }' instead."
+  born_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gte: ... } } }' instead."
   )
-  born_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gte: ... } } }' instead."
   )
-  born_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gte: ... } } }' instead."
   )
-  born_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gte: ... } } }' instead."
+  born_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lt: ... } } }' instead."
   )
-  born_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gte: ... } } }' instead."
+  born_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lt: ... } } }' instead."
   )
-  born_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lt: ... } } }' instead."
   )
-  born_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lt: ... } } }' instead."
+  born_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lte: ... } } }' instead."
   )
-  born_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lt: ... } } }' instead."
+  born_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lte: ... } } }' instead."
   )
-  born_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lt: ... } } }' instead."
+  born_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lte: ... } } }' instead."
   )
-  born_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lt: ... } } }' instead."
-  )
-  born_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lte: ... } } }' instead."
-  )
-  born_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lte: ... } } }' instead."
-  )
-  born_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lte: ... } } }' instead."
-  )
-  born_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lte: ... } } }' instead."
-  )
-  born: BigIntScalarAggregationFilters
+  born: StringScalarAggregationFilters
   name_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'name: { averageLength: { eq: ... } } }' instead."
   )
@@ -1118,67 +1116,52 @@ input MoviePeopleDirectedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   AND: [MoviePeopleDirectedNodeAggregationWhereInput!]
   OR: [MoviePeopleDirectedNodeAggregationWhereInput!]
   NOT: MoviePeopleDirectedNodeAggregationWhereInput
-  born_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { eq: ... } } }' instead."
   )
-  born_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { eq: ... } } }' instead."
+  born_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { eq: ... } } }' instead."
   )
-  born_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { eq: ... } } }' instead."
+  born_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { eq: ... } } }' instead."
   )
-  born_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gt: ... } } }' instead."
   )
-  born_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gt: ... } } }' instead."
   )
-  born_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gt: ... } } }' instead."
+  born_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gt: ... } } }' instead."
   )
-  born_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gt: ... } } }' instead."
+  born_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gte: ... } } }' instead."
   )
-  born_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gte: ... } } }' instead."
   )
-  born_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gte: ... } } }' instead."
   )
-  born_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gte: ... } } }' instead."
+  born_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lt: ... } } }' instead."
   )
-  born_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gte: ... } } }' instead."
+  born_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lt: ... } } }' instead."
   )
-  born_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lt: ... } } }' instead."
   )
-  born_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lt: ... } } }' instead."
+  born_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lte: ... } } }' instead."
   )
-  born_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lt: ... } } }' instead."
+  born_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lte: ... } } }' instead."
   )
-  born_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lt: ... } } }' instead."
+  born_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lte: ... } } }' instead."
   )
-  born_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lt: ... } } }' instead."
-  )
-  born_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lte: ... } } }' instead."
-  )
-  born_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lte: ... } } }' instead."
-  )
-  born_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lte: ... } } }' instead."
-  )
-  born_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lte: ... } } }' instead."
-  )
-  born: BigIntScalarAggregationFilters
+  born: StringScalarAggregationFilters
   name_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'name: { averageLength: { eq: ... } } }' instead."
   )
@@ -1333,67 +1316,52 @@ input MoviePeopleProducedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   AND: [MoviePeopleProducedNodeAggregationWhereInput!]
   OR: [MoviePeopleProducedNodeAggregationWhereInput!]
   NOT: MoviePeopleProducedNodeAggregationWhereInput
-  born_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { eq: ... } } }' instead."
   )
-  born_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { eq: ... } } }' instead."
+  born_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { eq: ... } } }' instead."
   )
-  born_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { eq: ... } } }' instead."
+  born_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { eq: ... } } }' instead."
   )
-  born_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gt: ... } } }' instead."
   )
-  born_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gt: ... } } }' instead."
   )
-  born_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gt: ... } } }' instead."
+  born_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gt: ... } } }' instead."
   )
-  born_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gt: ... } } }' instead."
+  born_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gte: ... } } }' instead."
   )
-  born_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gte: ... } } }' instead."
   )
-  born_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gte: ... } } }' instead."
   )
-  born_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gte: ... } } }' instead."
+  born_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lt: ... } } }' instead."
   )
-  born_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gte: ... } } }' instead."
+  born_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lt: ... } } }' instead."
   )
-  born_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lt: ... } } }' instead."
   )
-  born_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lt: ... } } }' instead."
+  born_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lte: ... } } }' instead."
   )
-  born_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lt: ... } } }' instead."
+  born_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lte: ... } } }' instead."
   )
-  born_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lt: ... } } }' instead."
+  born_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lte: ... } } }' instead."
   )
-  born_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lt: ... } } }' instead."
-  )
-  born_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lte: ... } } }' instead."
-  )
-  born_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lte: ... } } }' instead."
-  )
-  born_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lte: ... } } }' instead."
-  )
-  born_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lte: ... } } }' instead."
-  )
-  born: BigIntScalarAggregationFilters
+  born: StringScalarAggregationFilters
   name_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'name: { averageLength: { eq: ... } } }' instead."
   )
@@ -1554,67 +1522,52 @@ input MoviePeopleReviewedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   AND: [MoviePeopleReviewedNodeAggregationWhereInput!]
   OR: [MoviePeopleReviewedNodeAggregationWhereInput!]
   NOT: MoviePeopleReviewedNodeAggregationWhereInput
-  born_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { eq: ... } } }' instead."
   )
-  born_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { eq: ... } } }' instead."
+  born_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { eq: ... } } }' instead."
   )
-  born_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { eq: ... } } }' instead."
+  born_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { eq: ... } } }' instead."
   )
-  born_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gt: ... } } }' instead."
   )
-  born_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gt: ... } } }' instead."
   )
-  born_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gt: ... } } }' instead."
+  born_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gt: ... } } }' instead."
   )
-  born_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gt: ... } } }' instead."
+  born_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gte: ... } } }' instead."
   )
-  born_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gte: ... } } }' instead."
   )
-  born_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gte: ... } } }' instead."
   )
-  born_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gte: ... } } }' instead."
+  born_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lt: ... } } }' instead."
   )
-  born_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gte: ... } } }' instead."
+  born_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lt: ... } } }' instead."
   )
-  born_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lt: ... } } }' instead."
   )
-  born_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lt: ... } } }' instead."
+  born_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lte: ... } } }' instead."
   )
-  born_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lt: ... } } }' instead."
+  born_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lte: ... } } }' instead."
   )
-  born_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lt: ... } } }' instead."
+  born_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lte: ... } } }' instead."
   )
-  born_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lt: ... } } }' instead."
-  )
-  born_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lte: ... } } }' instead."
-  )
-  born_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lte: ... } } }' instead."
-  )
-  born_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lte: ... } } }' instead."
-  )
-  born_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lte: ... } } }' instead."
-  )
-  born: BigIntScalarAggregationFilters
+  born: StringScalarAggregationFilters
   name_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'name: { averageLength: { eq: ... } } }' instead."
   )
@@ -1770,67 +1723,52 @@ input MoviePeopleWroteNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   AND: [MoviePeopleWroteNodeAggregationWhereInput!]
   OR: [MoviePeopleWroteNodeAggregationWhereInput!]
   NOT: MoviePeopleWroteNodeAggregationWhereInput
-  born_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { eq: ... } } }' instead."
   )
-  born_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { eq: ... } } }' instead."
+  born_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { eq: ... } } }' instead."
   )
-  born_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { eq: ... } } }' instead."
+  born_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { eq: ... } } }' instead."
   )
-  born_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gt: ... } } }' instead."
   )
-  born_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gt: ... } } }' instead."
   )
-  born_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gt: ... } } }' instead."
+  born_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gt: ... } } }' instead."
   )
-  born_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gt: ... } } }' instead."
+  born_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gte: ... } } }' instead."
   )
-  born_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gte: ... } } }' instead."
   )
-  born_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gte: ... } } }' instead."
   )
-  born_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gte: ... } } }' instead."
+  born_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lt: ... } } }' instead."
   )
-  born_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gte: ... } } }' instead."
+  born_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lt: ... } } }' instead."
   )
-  born_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lt: ... } } }' instead."
   )
-  born_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lt: ... } } }' instead."
+  born_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lte: ... } } }' instead."
   )
-  born_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lt: ... } } }' instead."
+  born_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lte: ... } } }' instead."
   )
-  born_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lt: ... } } }' instead."
+  born_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lte: ... } } }' instead."
   )
-  born_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lt: ... } } }' instead."
-  )
-  born_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lte: ... } } }' instead."
-  )
-  born_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lte: ... } } }' instead."
-  )
-  born_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lte: ... } } }' instead."
-  )
-  born_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lte: ... } } }' instead."
-  )
-  born: BigIntScalarAggregationFilters
+  born: StringScalarAggregationFilters
   name_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'name: { averageLength: { eq: ... } } }' instead."
   )
@@ -1921,14 +1859,8 @@ input MovieSort @join__type(graph: MOVIES)  {
 }
 
 input MovieUpdateInput @join__type(graph: MOVIES)  {
-  released: BigIntScalarMutations
-  released_SET: BigInt
-  released_INCREMENT: BigInt @deprecated(
-    reason: "Please use the relevant generic mutation 'released: { increment: ... } }' instead."
-  )
-  released_DECREMENT: BigInt @deprecated(
-    reason: "Please use the relevant generic mutation 'released: { decrement: ... } }' instead."
-  )
+  released: StringScalarMutations
+  released_SET: String
   tagline: StringScalarMutations
   tagline_SET: String
   title: StringScalarMutations
@@ -1941,13 +1873,14 @@ input MovieUpdateInput @join__type(graph: MOVIES)  {
 }
 
 input MovieWhere @join__type(graph: MOVIES)  {
-  released: BigIntScalarFilters
-  released_EQ: BigInt @deprecated(reason: "Please use the relevant generic filter released: { eq: ... }") 
-  released_IN: [BigInt!] @deprecated(reason: "Please use the relevant generic filter released: { in: ... }") 
-  released_LT: BigInt @deprecated(reason: "Please use the relevant generic filter released: { lt: ... }") 
-  released_LTE: BigInt @deprecated(reason: "Please use the relevant generic filter released: { lte: ... }") 
-  released_GT: BigInt @deprecated(reason: "Please use the relevant generic filter released: { gt: ... }") 
-  released_GTE: BigInt @deprecated(reason: "Please use the relevant generic filter released: { gte: ... }") 
+  released: StringScalarFilters
+  released_EQ: String @deprecated(reason: "Please use the relevant generic filter released: { eq: ... }") 
+  released_IN: [String!] @deprecated(reason: "Please use the relevant generic filter released: { in: ... }") 
+  released_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter released: { contains: ... }") 
+  released_STARTS_WITH: String @deprecated(
+    reason: "Please use the relevant generic filter released: { startsWith: ... }"
+  )
+  released_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter released: { endsWith: ... }") 
   tagline: StringScalarFilters
   tagline_EQ: String @deprecated(reason: "Please use the relevant generic filter tagline: { eq: ... }") 
   tagline_IN: [String] @deprecated(reason: "Please use the relevant generic filter tagline: { in: ... }") 
@@ -2251,6 +2184,7 @@ input PersonActedInMoviesAggregateInput @join__type(graph: MOVIES)  {
   OR: [PersonActedInMoviesAggregateInput!]
   NOT: PersonActedInMoviesAggregateInput
   node: PersonActedInMoviesNodeAggregationWhereInput
+  edge: ActedInPropertiesAggregationWhereInput
 }
 
 input PersonActedInMoviesConnectFieldInput @join__type(graph: MOVIES)  {
@@ -2265,6 +2199,7 @@ input PersonActedInMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
   OR: [PersonActedInMoviesConnectionAggregateInput!]
   NOT: PersonActedInMoviesConnectionAggregateInput
   node: PersonActedInMoviesNodeAggregationWhereInput
+  edge: ActedInPropertiesAggregationWhereInput
 }
 
 input PersonActedInMoviesConnectionFilters @join__type(graph: MOVIES)  {
@@ -2327,67 +2262,52 @@ input PersonActedInMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   AND: [PersonActedInMoviesNodeAggregationWhereInput!]
   OR: [PersonActedInMoviesNodeAggregationWhereInput!]
   NOT: PersonActedInMoviesNodeAggregationWhereInput
-  released_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { eq: ... } } }' instead."
+  released_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { eq: ... } } }' instead."
   )
-  released_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { eq: ... } } }' instead."
+  released_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { eq: ... } } }' instead."
   )
-  released_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { eq: ... } } }' instead."
+  released_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { eq: ... } } }' instead."
   )
-  released_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { eq: ... } } }' instead."
+  released_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { gt: ... } } }' instead."
   )
-  released_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { gt: ... } } }' instead."
+  released_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { gt: ... } } }' instead."
   )
-  released_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { gt: ... } } }' instead."
+  released_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { gt: ... } } }' instead."
   )
-  released_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { gt: ... } } }' instead."
+  released_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { gte: ... } } }' instead."
   )
-  released_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { gt: ... } } }' instead."
+  released_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { gte: ... } } }' instead."
   )
-  released_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { gte: ... } } }' instead."
+  released_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { gte: ... } } }' instead."
   )
-  released_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { gte: ... } } }' instead."
+  released_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { lt: ... } } }' instead."
   )
-  released_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { gte: ... } } }' instead."
+  released_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { lt: ... } } }' instead."
   )
-  released_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { gte: ... } } }' instead."
+  released_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { lt: ... } } }' instead."
   )
-  released_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { lt: ... } } }' instead."
+  released_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { lte: ... } } }' instead."
   )
-  released_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { lt: ... } } }' instead."
+  released_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { lte: ... } } }' instead."
   )
-  released_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { lt: ... } } }' instead."
+  released_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { lte: ... } } }' instead."
   )
-  released_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { lt: ... } } }' instead."
-  )
-  released_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { lte: ... } } }' instead."
-  )
-  released_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { lte: ... } } }' instead."
-  )
-  released_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { lte: ... } } }' instead."
-  )
-  released_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { lte: ... } } }' instead."
-  )
-  released: BigIntScalarAggregationFilters
+  released: StringScalarAggregationFilters
   tagline_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'tagline: { averageLength: { eq: ... } } }' instead."
   )
@@ -2511,7 +2431,7 @@ input PersonConnectWhere @join__type(graph: MOVIES)  {
 }
 
 input PersonCreateInput @join__type(graph: MOVIES)  {
-  born: BigInt
+  born: String
   name: String!
   actedInMovies: PersonActedInMoviesFieldInput
   directedMovies: PersonDirectedMoviesFieldInput
@@ -2625,67 +2545,52 @@ input PersonDirectedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
   AND: [PersonDirectedMoviesNodeAggregationWhereInput!]
   OR: [PersonDirectedMoviesNodeAggregationWhereInput!]
   NOT: PersonDirectedMoviesNodeAggregationWhereInput
-  released_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { eq: ... } } }' instead."
+  released_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { eq: ... } } }' instead."
   )
-  released_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { eq: ... } } }' instead."
+  released_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { eq: ... } } }' instead."
   )
-  released_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { eq: ... } } }' instead."
+  released_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { eq: ... } } }' instead."
   )
-  released_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { eq: ... } } }' instead."
+  released_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { gt: ... } } }' instead."
   )
-  released_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { gt: ... } } }' instead."
+  released_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { gt: ... } } }' instead."
   )
-  released_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { gt: ... } } }' instead."
+  released_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { gt: ... } } }' instead."
   )
-  released_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { gt: ... } } }' instead."
+  released_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { gte: ... } } }' instead."
   )
-  released_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { gt: ... } } }' instead."
+  released_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { gte: ... } } }' instead."
   )
-  released_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { gte: ... } } }' instead."
+  released_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { gte: ... } } }' instead."
   )
-  released_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { gte: ... } } }' instead."
+  released_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { lt: ... } } }' instead."
   )
-  released_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { gte: ... } } }' instead."
+  released_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { lt: ... } } }' instead."
   )
-  released_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { gte: ... } } }' instead."
+  released_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { lt: ... } } }' instead."
   )
-  released_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { lt: ... } } }' instead."
+  released_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { lte: ... } } }' instead."
   )
-  released_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { lt: ... } } }' instead."
+  released_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { lte: ... } } }' instead."
   )
-  released_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { lt: ... } } }' instead."
+  released_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { lte: ... } } }' instead."
   )
-  released_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { lt: ... } } }' instead."
-  )
-  released_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { lte: ... } } }' instead."
-  )
-  released_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { lte: ... } } }' instead."
-  )
-  released_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { lte: ... } } }' instead."
-  )
-  released_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { lte: ... } } }' instead."
-  )
-  released: BigIntScalarAggregationFilters
+  released: StringScalarAggregationFilters
   tagline_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'tagline: { averageLength: { eq: ... } } }' instead."
   )
@@ -2896,67 +2801,52 @@ input PersonFollowsPeopleNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   AND: [PersonFollowsPeopleNodeAggregationWhereInput!]
   OR: [PersonFollowsPeopleNodeAggregationWhereInput!]
   NOT: PersonFollowsPeopleNodeAggregationWhereInput
-  born_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { eq: ... } } }' instead."
   )
-  born_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { eq: ... } } }' instead."
+  born_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { eq: ... } } }' instead."
   )
-  born_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { eq: ... } } }' instead."
+  born_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { eq: ... } } }' instead."
   )
-  born_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gt: ... } } }' instead."
   )
-  born_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gt: ... } } }' instead."
   )
-  born_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gt: ... } } }' instead."
+  born_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gt: ... } } }' instead."
   )
-  born_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gt: ... } } }' instead."
+  born_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gte: ... } } }' instead."
   )
-  born_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gte: ... } } }' instead."
   )
-  born_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gte: ... } } }' instead."
   )
-  born_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gte: ... } } }' instead."
+  born_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lt: ... } } }' instead."
   )
-  born_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gte: ... } } }' instead."
+  born_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lt: ... } } }' instead."
   )
-  born_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lt: ... } } }' instead."
   )
-  born_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lt: ... } } }' instead."
+  born_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lte: ... } } }' instead."
   )
-  born_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lt: ... } } }' instead."
+  born_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lte: ... } } }' instead."
   )
-  born_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lt: ... } } }' instead."
+  born_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lte: ... } } }' instead."
   )
-  born_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lt: ... } } }' instead."
-  )
-  born_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lte: ... } } }' instead."
-  )
-  born_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lte: ... } } }' instead."
-  )
-  born_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lte: ... } } }' instead."
-  )
-  born_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lte: ... } } }' instead."
-  )
-  born: BigIntScalarAggregationFilters
+  born: StringScalarAggregationFilters
   name_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'name: { averageLength: { eq: ... } } }' instead."
   )
@@ -3111,67 +3001,52 @@ input PersonPeopleFollowsNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   AND: [PersonPeopleFollowsNodeAggregationWhereInput!]
   OR: [PersonPeopleFollowsNodeAggregationWhereInput!]
   NOT: PersonPeopleFollowsNodeAggregationWhereInput
-  born_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { eq: ... } } }' instead."
   )
-  born_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { eq: ... } } }' instead."
+  born_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { eq: ... } } }' instead."
   )
-  born_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { eq: ... } } }' instead."
+  born_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { eq: ... } } }' instead."
   )
-  born_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { eq: ... } } }' instead."
+  born_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gt: ... } } }' instead."
   )
-  born_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gt: ... } } }' instead."
   )
-  born_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gt: ... } } }' instead."
+  born_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gt: ... } } }' instead."
   )
-  born_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gt: ... } } }' instead."
+  born_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { gte: ... } } }' instead."
   )
-  born_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gt: ... } } }' instead."
+  born_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { gte: ... } } }' instead."
   )
-  born_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { gte: ... } } }' instead."
   )
-  born_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { gte: ... } } }' instead."
+  born_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lt: ... } } }' instead."
   )
-  born_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { gte: ... } } }' instead."
+  born_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lt: ... } } }' instead."
   )
-  born_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { gte: ... } } }' instead."
+  born_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lt: ... } } }' instead."
   )
-  born_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lt: ... } } }' instead."
+  born_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'born: { averageLength: { lte: ... } } }' instead."
   )
-  born_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lt: ... } } }' instead."
+  born_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { longestLength: { lte: ... } } }' instead."
   )
-  born_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lt: ... } } }' instead."
+  born_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'born: { shortestLength: { lte: ... } } }' instead."
   )
-  born_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lt: ... } } }' instead."
-  )
-  born_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { min: { lte: ... } } }' instead."
-  )
-  born_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { max: { lte: ... } } }' instead."
-  )
-  born_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { sum: { lte: ... } } }' instead."
-  )
-  born_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'born: { average: { lte: ... } } }' instead."
-  )
-  born: BigIntScalarAggregationFilters
+  born: StringScalarAggregationFilters
   name_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'name: { averageLength: { eq: ... } } }' instead."
   )
@@ -3326,67 +3201,52 @@ input PersonProducedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
   AND: [PersonProducedMoviesNodeAggregationWhereInput!]
   OR: [PersonProducedMoviesNodeAggregationWhereInput!]
   NOT: PersonProducedMoviesNodeAggregationWhereInput
-  released_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { eq: ... } } }' instead."
+  released_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { eq: ... } } }' instead."
   )
-  released_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { eq: ... } } }' instead."
+  released_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { eq: ... } } }' instead."
   )
-  released_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { eq: ... } } }' instead."
+  released_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { eq: ... } } }' instead."
   )
-  released_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { eq: ... } } }' instead."
+  released_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { gt: ... } } }' instead."
   )
-  released_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { gt: ... } } }' instead."
+  released_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { gt: ... } } }' instead."
   )
-  released_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { gt: ... } } }' instead."
+  released_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { gt: ... } } }' instead."
   )
-  released_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { gt: ... } } }' instead."
+  released_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { gte: ... } } }' instead."
   )
-  released_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { gt: ... } } }' instead."
+  released_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { gte: ... } } }' instead."
   )
-  released_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { gte: ... } } }' instead."
+  released_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { gte: ... } } }' instead."
   )
-  released_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { gte: ... } } }' instead."
+  released_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { lt: ... } } }' instead."
   )
-  released_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { gte: ... } } }' instead."
+  released_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { lt: ... } } }' instead."
   )
-  released_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { gte: ... } } }' instead."
+  released_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { lt: ... } } }' instead."
   )
-  released_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { lt: ... } } }' instead."
+  released_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { lte: ... } } }' instead."
   )
-  released_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { lt: ... } } }' instead."
+  released_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { lte: ... } } }' instead."
   )
-  released_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { lt: ... } } }' instead."
+  released_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { lte: ... } } }' instead."
   )
-  released_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { lt: ... } } }' instead."
-  )
-  released_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { lte: ... } } }' instead."
-  )
-  released_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { lte: ... } } }' instead."
-  )
-  released_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { lte: ... } } }' instead."
-  )
-  released_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { lte: ... } } }' instead."
-  )
-  released: BigIntScalarAggregationFilters
+  released: StringScalarAggregationFilters
   tagline_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'tagline: { averageLength: { eq: ... } } }' instead."
   )
@@ -3612,67 +3472,52 @@ input PersonReviewedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
   AND: [PersonReviewedMoviesNodeAggregationWhereInput!]
   OR: [PersonReviewedMoviesNodeAggregationWhereInput!]
   NOT: PersonReviewedMoviesNodeAggregationWhereInput
-  released_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { eq: ... } } }' instead."
+  released_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { eq: ... } } }' instead."
   )
-  released_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { eq: ... } } }' instead."
+  released_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { eq: ... } } }' instead."
   )
-  released_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { eq: ... } } }' instead."
+  released_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { eq: ... } } }' instead."
   )
-  released_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { eq: ... } } }' instead."
+  released_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { gt: ... } } }' instead."
   )
-  released_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { gt: ... } } }' instead."
+  released_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { gt: ... } } }' instead."
   )
-  released_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { gt: ... } } }' instead."
+  released_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { gt: ... } } }' instead."
   )
-  released_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { gt: ... } } }' instead."
+  released_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { gte: ... } } }' instead."
   )
-  released_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { gt: ... } } }' instead."
+  released_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { gte: ... } } }' instead."
   )
-  released_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { gte: ... } } }' instead."
+  released_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { gte: ... } } }' instead."
   )
-  released_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { gte: ... } } }' instead."
+  released_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { lt: ... } } }' instead."
   )
-  released_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { gte: ... } } }' instead."
+  released_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { lt: ... } } }' instead."
   )
-  released_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { gte: ... } } }' instead."
+  released_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { lt: ... } } }' instead."
   )
-  released_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { lt: ... } } }' instead."
+  released_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { lte: ... } } }' instead."
   )
-  released_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { lt: ... } } }' instead."
+  released_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { lte: ... } } }' instead."
   )
-  released_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { lt: ... } } }' instead."
+  released_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { lte: ... } } }' instead."
   )
-  released_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { lt: ... } } }' instead."
-  )
-  released_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { lte: ... } } }' instead."
-  )
-  released_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { lte: ... } } }' instead."
-  )
-  released_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { lte: ... } } }' instead."
-  )
-  released_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { lte: ... } } }' instead."
-  )
-  released: BigIntScalarAggregationFilters
+  released: StringScalarAggregationFilters
   tagline_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'tagline: { averageLength: { eq: ... } } }' instead."
   )
@@ -3790,14 +3635,8 @@ input PersonSort @join__type(graph: MOVIES)  {
 }
 
 input PersonUpdateInput @join__type(graph: MOVIES)  {
-  born: BigIntScalarMutations
-  born_SET: BigInt
-  born_INCREMENT: BigInt @deprecated(
-    reason: "Please use the relevant generic mutation 'born: { increment: ... } }' instead."
-  )
-  born_DECREMENT: BigInt @deprecated(
-    reason: "Please use the relevant generic mutation 'born: { decrement: ... } }' instead."
-  )
+  born: StringScalarMutations
+  born_SET: String
   name: StringScalarMutations
   name_SET: String
   actedInMovies: [PersonActedInMoviesUpdateFieldInput!]
@@ -3810,13 +3649,12 @@ input PersonUpdateInput @join__type(graph: MOVIES)  {
 }
 
 input PersonWhere @join__type(graph: MOVIES)  {
-  born: BigIntScalarFilters
-  born_EQ: BigInt @deprecated(reason: "Please use the relevant generic filter born: { eq: ... }") 
-  born_IN: [BigInt] @deprecated(reason: "Please use the relevant generic filter born: { in: ... }") 
-  born_LT: BigInt @deprecated(reason: "Please use the relevant generic filter born: { lt: ... }") 
-  born_LTE: BigInt @deprecated(reason: "Please use the relevant generic filter born: { lte: ... }") 
-  born_GT: BigInt @deprecated(reason: "Please use the relevant generic filter born: { gt: ... }") 
-  born_GTE: BigInt @deprecated(reason: "Please use the relevant generic filter born: { gte: ... }") 
+  born: StringScalarFilters
+  born_EQ: String @deprecated(reason: "Please use the relevant generic filter born: { eq: ... }") 
+  born_IN: [String] @deprecated(reason: "Please use the relevant generic filter born: { in: ... }") 
+  born_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter born: { contains: ... }") 
+  born_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter born: { startsWith: ... }") 
+  born_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter born: { endsWith: ... }") 
   name: StringScalarFilters
   name_EQ: String @deprecated(reason: "Please use the relevant generic filter name: { eq: ... }") 
   name_IN: [String!] @deprecated(reason: "Please use the relevant generic filter name: { in: ... }") 
@@ -4292,67 +4130,52 @@ input PersonWroteMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   AND: [PersonWroteMoviesNodeAggregationWhereInput!]
   OR: [PersonWroteMoviesNodeAggregationWhereInput!]
   NOT: PersonWroteMoviesNodeAggregationWhereInput
-  released_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { eq: ... } } }' instead."
+  released_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { eq: ... } } }' instead."
   )
-  released_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { eq: ... } } }' instead."
+  released_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { eq: ... } } }' instead."
   )
-  released_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { eq: ... } } }' instead."
+  released_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { eq: ... } } }' instead."
   )
-  released_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { eq: ... } } }' instead."
+  released_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { gt: ... } } }' instead."
   )
-  released_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { gt: ... } } }' instead."
+  released_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { gt: ... } } }' instead."
   )
-  released_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { gt: ... } } }' instead."
+  released_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { gt: ... } } }' instead."
   )
-  released_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { gt: ... } } }' instead."
+  released_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { gte: ... } } }' instead."
   )
-  released_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { gt: ... } } }' instead."
+  released_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { gte: ... } } }' instead."
   )
-  released_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { gte: ... } } }' instead."
+  released_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { gte: ... } } }' instead."
   )
-  released_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { gte: ... } } }' instead."
+  released_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { lt: ... } } }' instead."
   )
-  released_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { gte: ... } } }' instead."
+  released_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { lt: ... } } }' instead."
   )
-  released_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { gte: ... } } }' instead."
+  released_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { lt: ... } } }' instead."
   )
-  released_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { lt: ... } } }' instead."
+  released_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'released: { averageLength: { lte: ... } } }' instead."
   )
-  released_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { lt: ... } } }' instead."
+  released_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { longestLength: { lte: ... } } }' instead."
   )
-  released_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { lt: ... } } }' instead."
+  released_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'released: { shortestLength: { lte: ... } } }' instead."
   )
-  released_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { lt: ... } } }' instead."
-  )
-  released_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { min: { lte: ... } } }' instead."
-  )
-  released_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { max: { lte: ... } } }' instead."
-  )
-  released_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { sum: { lte: ... } } }' instead."
-  )
-  released_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'released: { average: { lte: ... } } }' instead."
-  )
-  released: BigIntScalarAggregationFilters
+  released: StringScalarAggregationFilters
   tagline_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'tagline: { averageLength: { eq: ... } } }' instead."
   )
@@ -4464,67 +4287,52 @@ input ReviewedPropertiesAggregationWhereInput @join__type(graph: MOVIES)  {
   AND: [ReviewedPropertiesAggregationWhereInput!]
   OR: [ReviewedPropertiesAggregationWhereInput!]
   NOT: ReviewedPropertiesAggregationWhereInput
-  rating_MIN_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { min: { eq: ... } } }' instead."
+  rating_AVERAGE_LENGTH_EQUAL: Float @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { averageLength: { eq: ... } } }' instead."
   )
-  rating_MAX_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { max: { eq: ... } } }' instead."
+  rating_LONGEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { longestLength: { eq: ... } } }' instead."
   )
-  rating_SUM_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { sum: { eq: ... } } }' instead."
+  rating_SHORTEST_LENGTH_EQUAL: Int @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { shortestLength: { eq: ... } } }' instead."
   )
-  rating_AVERAGE_EQUAL: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { average: { eq: ... } } }' instead."
+  rating_AVERAGE_LENGTH_GT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { averageLength: { gt: ... } } }' instead."
   )
-  rating_MIN_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { min: { gt: ... } } }' instead."
+  rating_LONGEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { longestLength: { gt: ... } } }' instead."
   )
-  rating_MAX_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { max: { gt: ... } } }' instead."
+  rating_SHORTEST_LENGTH_GT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { shortestLength: { gt: ... } } }' instead."
   )
-  rating_SUM_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { sum: { gt: ... } } }' instead."
+  rating_AVERAGE_LENGTH_GTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { averageLength: { gte: ... } } }' instead."
   )
-  rating_AVERAGE_GT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { average: { gt: ... } } }' instead."
+  rating_LONGEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { longestLength: { gte: ... } } }' instead."
   )
-  rating_MIN_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { min: { gte: ... } } }' instead."
+  rating_SHORTEST_LENGTH_GTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { shortestLength: { gte: ... } } }' instead."
   )
-  rating_MAX_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { max: { gte: ... } } }' instead."
+  rating_AVERAGE_LENGTH_LT: Float @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { averageLength: { lt: ... } } }' instead."
   )
-  rating_SUM_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { sum: { gte: ... } } }' instead."
+  rating_LONGEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { longestLength: { lt: ... } } }' instead."
   )
-  rating_AVERAGE_GTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { average: { gte: ... } } }' instead."
+  rating_SHORTEST_LENGTH_LT: Int @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { shortestLength: { lt: ... } } }' instead."
   )
-  rating_MIN_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { min: { lt: ... } } }' instead."
+  rating_AVERAGE_LENGTH_LTE: Float @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { averageLength: { lte: ... } } }' instead."
   )
-  rating_MAX_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { max: { lt: ... } } }' instead."
+  rating_LONGEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { longestLength: { lte: ... } } }' instead."
   )
-  rating_SUM_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { sum: { lt: ... } } }' instead."
+  rating_SHORTEST_LENGTH_LTE: Int @deprecated(
+    reason: "Please use the relevant generic filter 'rating: { shortestLength: { lte: ... } } }' instead."
   )
-  rating_AVERAGE_LT: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { average: { lt: ... } } }' instead."
-  )
-  rating_MIN_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { min: { lte: ... } } }' instead."
-  )
-  rating_MAX_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { max: { lte: ... } } }' instead."
-  )
-  rating_SUM_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { sum: { lte: ... } } }' instead."
-  )
-  rating_AVERAGE_LTE: BigInt @deprecated(
-    reason: "Please use the relevant generic filter 'rating: { average: { lte: ... } } }' instead."
-  )
-  rating: BigIntScalarAggregationFilters
+  rating: StringScalarAggregationFilters
   summary_AVERAGE_LENGTH_EQUAL: Float @deprecated(
     reason: "Please use the relevant generic filter 'summary: { averageLength: { eq: ... } } }' instead."
   )
@@ -4574,7 +4382,7 @@ input ReviewedPropertiesAggregationWhereInput @join__type(graph: MOVIES)  {
 }
 
 input ReviewedPropertiesCreateInput @join__type(graph: MOVIES)  {
-  rating: BigInt!
+  rating: String!
   summary: String!
 }
 
@@ -4584,26 +4392,19 @@ input ReviewedPropertiesSort @join__type(graph: MOVIES)  {
 }
 
 input ReviewedPropertiesUpdateInput @join__type(graph: MOVIES)  {
-  rating: BigIntScalarMutations
-  rating_SET: BigInt
-  rating_INCREMENT: BigInt @deprecated(
-    reason: "Please use the relevant generic mutation 'rating: { increment: ... } }' instead."
-  )
-  rating_DECREMENT: BigInt @deprecated(
-    reason: "Please use the relevant generic mutation 'rating: { decrement: ... } }' instead."
-  )
+  rating: StringScalarMutations
+  rating_SET: String
   summary: StringScalarMutations
   summary_SET: String
 }
 
 input ReviewedPropertiesWhere @join__type(graph: MOVIES)  {
-  rating: BigIntScalarFilters
-  rating_EQ: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { eq: ... }") 
-  rating_IN: [BigInt!] @deprecated(reason: "Please use the relevant generic filter rating: { in: ... }") 
-  rating_LT: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { lt: ... }") 
-  rating_LTE: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { lte: ... }") 
-  rating_GT: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { gt: ... }") 
-  rating_GTE: BigInt @deprecated(reason: "Please use the relevant generic filter rating: { gte: ... }") 
+  rating: StringScalarFilters
+  rating_EQ: String @deprecated(reason: "Please use the relevant generic filter rating: { eq: ... }") 
+  rating_IN: [String!] @deprecated(reason: "Please use the relevant generic filter rating: { in: ... }") 
+  rating_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter rating: { contains: ... }") 
+  rating_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter rating: { startsWith: ... }") 
+  rating_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter rating: { endsWith: ... }") 
   summary: StringScalarFilters
   summary_EQ: String @deprecated(reason: "Please use the relevant generic filter summary: { eq: ... }") 
   summary_IN: [String!] @deprecated(reason: "Please use the relevant generic filter summary: { in: ... }") 
@@ -4613,14 +4414,6 @@ input ReviewedPropertiesWhere @join__type(graph: MOVIES)  {
   OR: [ReviewedPropertiesWhere!]
   AND: [ReviewedPropertiesWhere!]
   NOT: ReviewedPropertiesWhere
-}
-
-"""
-String list filters
-"""
-input StringListFilters @join__type(graph: MOVIES)  {
-  eq: [String!]
-  includes: String
 }
 
 """
@@ -4654,35 +4447,23 @@ input StringScalarMutations @join__type(graph: MOVIES)  {
 
 exports[`should execute MovieWithActedIn 1`] = `
 {
-  "data": {
-    "movies": [
-      {
-        "peopleActedIn": [
-          {
-            "name": "Emil Eifrem",
-          },
-          {
-            "name": "Hugo Weaving",
-          },
-        ],
-        "released": 1999,
-        "tagline": "Welcome to the Real World",
-        "title": "The Matrix",
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
       },
-      {
-        "peopleActedIn": [
-          {
-            "name": "Hugo Weaving",
-          },
-          {
-            "name": "Laurence Fishburne",
-          },
-        ],
-        "released": 2003,
-        "tagline": "Free your mind",
-        "title": "The Matrix Reloaded",
-      },
-    ],
-  },
+      "locations": [
+        {
+          "column": 9,
+          "line": 3,
+        },
+      ],
+      "message": "Unexpected error.",
+      "path": [
+        "movies",
+      ],
+    },
+  ],
 }
 `;
