@@ -52,4 +52,10 @@ startStandaloneServer(
     ],
   }),
   { listen: { port } },
-);
+)
+  .then(({ url }) => {
+    console.log(`Comments service ready at ${url}`);
+  })
+  .catch(err => {
+    console.error('Error starting Comments service', err);
+  });

@@ -69,4 +69,6 @@ createServer(
       },
     ],
   }),
-).listen(port);
+).listen(port, () => {
+  console.log(`Authors service ready at http://localhost:${port}/graphql`);
+});

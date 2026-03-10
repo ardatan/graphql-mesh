@@ -99,7 +99,10 @@ module.exports = {
       '<rootDir>/node_modules/@graphql-mesh/hmac-upstream-signature/dist/index.cjs',
     '@graphql-mesh/opentelemetry':
       '<rootDir>/node_modules/@graphql-mesh/opentelemetry/dist/index.cjs',
-    '@graphql-mesh/prometheus': '<rootDir>/node_modules/@graphql-mesh/prometheus/dist/index.cjs',
+    '@graphql-mesh/plugin-prometheus':
+      '<rootDir>/node_modules/@graphql-mesh/prometheus/dist/index.cjs',
+    '@graphql-mesh/plugin-jwt-auth':
+      '<rootDir>/node_modules/@graphql-mesh/plugin-jwt-auth/dist/index.cjs',
 
     '^graphql$': '<rootDir>/node_modules/graphql/index.js',
     '^lru-cache$': '<rootDir>/node_modules/lru-cache/dist/commonjs/index.js',

@@ -74,4 +74,10 @@ startStandaloneServer(
     ],
   }),
   { listen: { port } },
-);
+)
+  .then(({ url }) => {
+    console.log(`Books service ready at ${url}`);
+  })
+  .catch(err => {
+    console.error('Error starting Books service', err);
+  });

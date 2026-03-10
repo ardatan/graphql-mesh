@@ -23,7 +23,7 @@ async function createServices() {
   };
 }
 const composition = {
-  async ['Mesh Compose'](maskServicePorts: boolean) {
+  async 'Mesh Compose'(maskServicePorts: boolean) {
     const servicesContainer = await createServices();
     const composition = await env.compose({
       services: servicesContainer.services,
@@ -45,7 +45,7 @@ const composition = {
       },
     };
   },
-  async ['Apollo Rover'](maskServicePorts: boolean) {
+  async 'Apollo Rover'(maskServicePorts: boolean) {
     const servicesContainer = await createServices();
     const composition = await env.composeWithApollo({
       services: servicesContainer.services,
@@ -83,7 +83,7 @@ const cacheStorages: Record<
       },
     };
   },
-  async ['upstash-redis']() {
+  async 'upstash-redis'() {
     const redis = await env.container({
       name: 'redis',
       image: 'redis/redis-stack',
@@ -113,7 +113,7 @@ const cacheStorages: Record<
       },
     };
   },
-  async ['inmemory-lru']() {
+  async 'inmemory-lru'() {
     return {
       env: {
         CACHE_STORAGE: 'inmemory-lru',

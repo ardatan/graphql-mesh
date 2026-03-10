@@ -1,8 +1,8 @@
-import { defineConfig } from '@graphql-hive/gateway';
+import { defineConfig, type GatewayCLIConfig } from '@graphql-hive/gateway';
 import UpstashRedisCache from '@graphql-mesh/cache-upstash-redis';
 import useHTTPCache from '@graphql-mesh/plugin-http-cache';
 
-const config: ReturnType<typeof defineConfig> = {};
+const config: GatewayCLIConfig = {};
 
 if (!process.env.MESH_COMPOSE) {
   const VALID_CACHE_STORAGES = ['upstash-redis', 'inmemory-lru', 'redis'];

@@ -44,6 +44,8 @@ export interface URLPatternObj {
   baseURL?: string;
 }
 
+const cacheHeaders = ['Cache-Control', 'Expires', 'ETag', 'Last-Modified', 'Vary'];
+
 export default function useHTTPCache<TContext extends Record<string, any>>({
   cache,
   matches,
@@ -93,14 +95,14 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
       logger ||= yoga.logger;
     },
     onFetch({ url, options, setOptions, context, endResponse }) {
-      if (shouldSkip(url) || typeof options.body === 'object') {
+      if (shouldSkip(url) || typeof options?.body === 'object') {
         pluginLogger?.debug(`Skipping cache for ${url}`);
         return;
       }
-      const cacheKey = `http-cache-${url}-${options.method}-${options.body}`;
+      const cacheKey = `http-cache-${url}-${options?.method}-${options?.body}`;
       const policyRequest: CachePolicy.Request = {
         url,
-        headers: getHeadersObj(options.headers),
+        headers: getHeadersObj(options?.headers || {}),
       };
       return handleMaybePromise(
         () => cache.get(cacheKey),
@@ -124,13 +126,22 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
             } else if (policy?.revalidationHeaders) {
               pluginLogger?.debug(`Cache will be revalidated for ${url}`);
               setOptions({
-                ...options,
+                ...(options || {}),
                 // @ts-expect-error - Headers type mismatch
                 headers: policy.revalidationHeaders(policyRequest),
               });
             }
           }
           return function handleResponse({ response, setResponse }) {
+            const cacheControlHeader = response.headers.get('Cache-Control');
+            if (
+              cacheHeaders.every(header => !response.headers.has(header)) ||
+              cacheControlHeader?.includes('no-store') ||
+              cacheControlHeader?.includes('max-age=0') ||
+              cacheControlHeader?.includes('s-maxage=0')
+            ) {
+              return;
+            }
             let body$: Promise<string> | string;
             const policyResponse: CachePolicy.Response = {
               status: response.status,
