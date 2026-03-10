@@ -1,5 +1,13 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.105.27
+
+### Patch Changes
+
+- [`330d37c`](https://github.com/ardatan/graphql-mesh/commit/330d37caecbfa1a03144f3983268813ac5481875)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not store cache entry if Cache Control headers
+  don't exist or set to no-store
+
 ## 0.105.26
 
 ### Patch Changes

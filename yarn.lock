@@ -3938,7 +3938,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^2.5.3"
     "@graphql-mesh/cache-upstash-redis": "npm:^0.1.26"
     "@graphql-mesh/compose-cli": "npm:^1.5.16"
-    "@graphql-mesh/plugin-http-cache": "npm:^0.105.26"
+    "@graphql-mesh/plugin-http-cache": "npm:^0.105.27"
     "@graphql-yoga/plugin-response-cache": "npm:^3.20.1"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     graphql: "npm:^16.13.1"
@@ -7237,7 +7237,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/plugin-http-cache@npm:^0.105.17, @graphql-mesh/plugin-http-cache@npm:^0.105.26, @graphql-mesh/plugin-http-cache@workspace:packages/plugins/http-cache":
+"@graphql-mesh/plugin-http-cache@npm:^0.105.17, @graphql-mesh/plugin-http-cache@npm:^0.105.27, @graphql-mesh/plugin-http-cache@workspace:packages/plugins/http-cache":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-http-cache@workspace:packages/plugins/http-cache"
   dependencies:
