@@ -1,5 +1,12 @@
 # @graphql-mesh/transport-neo4j
 
+## 0.10.26
+
+### Patch Changes
+
+- [`1e5da5c`](https://github.com/ardatan/graphql-mesh/commit/1e5da5c89332110e0f0e6696002d7d53e62b5104)
+  Thanks [@ardatan](https://github.com/ardatan)! - Cleanup dependencies
+
 ## 0.10.25
 
 ### Patch Changes

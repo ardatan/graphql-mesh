@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-newrelic
 
+## 0.104.29
+
+### Patch Changes
+
+- [#9285](https://github.com/ardatan/graphql-mesh/pull/9285)
+  [`bf8c904`](https://github.com/ardatan/graphql-mesh/commit/bf8c90428614f9753e705ab6e315b15317db2f9e)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`graphql-yoga@^5.18.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.18.1) (from `^5.18.0`,
+    in `dependencies`)
+
 ## 0.104.28
 
 ### Patch Changes

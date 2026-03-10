@@ -1,5 +1,22 @@
 # @graphql-mesh/cli
 
+## 0.100.34
+
+### Patch Changes
+
+- [#9291](https://github.com/ardatan/graphql-mesh/pull/9291)
+  [`dd6f9ef`](https://github.com/ardatan/graphql-mesh/commit/dd6f9ef66a753e6e4e02fea563f7a691928db5f8)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-codegen/typescript-generic-sdk@^5.0.0` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-generic-sdk/v/5.0.0)
+    (from `^4.1.0`, in `dependencies`)
+- Updated dependencies
+  [[`bf8c904`](https://github.com/ardatan/graphql-mesh/commit/bf8c90428614f9753e705ab6e315b15317db2f9e),
+  [`2c11723`](https://github.com/ardatan/graphql-mesh/commit/2c1172385f90b1b2783663870eccb7b4fff7ef71),
+  [`bf8c904`](https://github.com/ardatan/graphql-mesh/commit/bf8c90428614f9753e705ab6e315b15317db2f9e)]:
+  - @graphql-mesh/config@0.108.31
+  - @graphql-mesh/http@0.106.29
+
 ## 0.100.33
 
 ### Patch Changes
