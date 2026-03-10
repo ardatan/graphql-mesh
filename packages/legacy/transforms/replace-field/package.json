@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-replace-field",
-  "version": "0.105.26",
+  "version": "0.105.27",
   "type": "module",
   "repository": {
     "type": "git",

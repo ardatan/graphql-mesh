@@ -1,5 +1,26 @@
 # @graphql-mesh/config
 
+## 0.108.31
+
+### Patch Changes
+
+- [#9285](https://github.com/ardatan/graphql-mesh/pull/9285)
+  [`bf8c904`](https://github.com/ardatan/graphql-mesh/commit/bf8c90428614f9753e705ab6e315b15317db2f9e)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-yoga/plugin-persisted-operations@^3.18.1` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-persisted-operations/v/3.18.1)
+    (from `^3.18.0`, in `dependencies`)
+  - Updated dependency
+    [`graphql-yoga@^5.18.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.18.1) (from `^5.18.0`,
+    in `dependencies`)
+
+- [#9286](https://github.com/ardatan/graphql-mesh/pull/9286)
+  [`2c11723`](https://github.com/ardatan/graphql-mesh/commit/2c1172385f90b1b2783663870eccb7b4fff7ef71)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/graphql-file-loader@^8.1.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.1.12)
+    (from `^8.1.11`, in `dependencies`)
+
 ## 0.108.30
 
 ### Patch Changes

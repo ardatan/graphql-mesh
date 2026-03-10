@@ -7,7 +7,7 @@
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.33",
+    "@graphql-mesh/cli": "0.100.34",
     "@graphql-mesh/json-schema": "0.109.30",
     "@graphql-mesh/plugin-live-query": "0.104.27",
     "@types/node": "^25.4.0",
