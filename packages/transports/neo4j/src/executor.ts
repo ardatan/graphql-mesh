@@ -1,6 +1,5 @@
 import type { DefinitionNode, DirectiveNode, DocumentNode, GraphQLSchema } from 'graphql';
 import { extendSchema, parse, visit } from 'graphql';
-import { GraphQLBigInt } from 'graphql-scalars';
 import type { Driver } from 'neo4j-driver';
 import type { DisposableExecutor } from '@graphql-mesh/transport-common';
 import { toMeshPubSub, type HivePubSub, type Logger, type MeshPubSub } from '@graphql-mesh/types';
@@ -153,9 +152,6 @@ export function getExecutableSchemaFromTypeDefsAndDriver({
     driver,
     validate: false,
     debug: !!process.env.DEBUG,
-    resolvers: {
-      BigInt: GraphQLBigInt,
-    },
     features,
   });
 

@@ -8040,7 +8040,6 @@ __metadata:
     "@graphql-tools/utils": "npm:^11.0.0"
     "@neo4j/graphql": "npm:^7.4.3"
     graphql: "npm:16.13.1"
-    graphql-scalars: "npm:^1.22.4"
     neo4j-driver: "npm:^6.0.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
