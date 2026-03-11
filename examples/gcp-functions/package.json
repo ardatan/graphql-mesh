@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@google-cloud/functions-framework": "5.0.2",
-    "@graphql-mesh/cli": "0.100.35",
+    "@graphql-mesh/cli": "0.100.36",
     "@graphql-mesh/json-schema": "0.109.30",
     "@types/node": "^25.4.0",
     "graphql": "16.13.1",
