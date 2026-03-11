@@ -1,5 +1,11 @@
 # @graphql-mesh/incontext-sdk-codegen
 
+## 0.0.3
+
+### Patch Changes
+
+- Allow to extend the codegen configuration
+
 ## 0.0.2
 
 ### Patch Changes

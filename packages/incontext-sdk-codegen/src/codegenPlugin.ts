@@ -58,7 +58,7 @@ export const codegenPlugin: CodegenPlugin = {
           skipTypename: false,
           nonOptionalTypename: true,
           useTypeImports: true,
-          maybeValue: 'T | null | undefined',
+          ...config,
         },
         unifiedContextIdentifier: '{}',
       });
