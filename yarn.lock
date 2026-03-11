@@ -4181,6 +4181,7 @@ __metadata:
     "@omnigraph/openapi": "npm:^0.109.36"
     graphql: "npm:16.13.1"
     graphql-scalars: "npm:^1.25.0"
+    json-bigint-patch: "npm:^0.0.9"
     typescript: "npm:^5.9.3"
   languageName: unknown
   linkType: soft
