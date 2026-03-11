@@ -11,168 +11,15 @@ import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import type { Source } from '@graphql-mesh/config';
 import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
+import {
+  generateIncontextSDKTypes,
+  generateUnifiedContextTypeFromIdentifiers,
+} from '@graphql-mesh/incontext-sdk-codegen';
 import type { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
 import { pathExists, printWithCache, writeFile, writeJSON } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
-
-const unifiedContextIdentifier = 'MeshContext';
-
-class CodegenHelpers extends tsBasePlugin.TsVisitor {
-  public getTypeToUse(namedType: NamedTypeNode, isVisitingInputType: boolean): string {
-    if (this.scalars[namedType.name.value]) {
-      return this._getScalar(namedType.name.value, isVisitingInputType ? 'input' : 'output');
-    }
-
-    return this._getTypeForNode(namedType, isVisitingInputType);
-  }
-}
-
-function buildSignatureBasedOnRootFields(
-  codegenHelpers: CodegenHelpers,
-  type: Maybe<GraphQLObjectType>,
-  schema: GraphQLSchema,
-): Record<string, string> {
-  if (!type) {
-    return {};
-  }
-
-  const fields = type.getFields();
-  const operationMap: Record<string, string> = {};
-  for (const fieldName in fields) {
-    const field = fields[fieldName];
-    const argsExists = field.args && field.args.length > 0;
-    const argsName = argsExists ? `${type.name}${field.name}Args` : '{}';
-    const parentTypeNode: NamedTypeNode = {
-      kind: Kind.NAMED_TYPE,
-      name: {
-        kind: Kind.NAME,
-        value: type.name,
-      },
-    };
-
-    const namedFieldType = getNamedType(field.type);
-
-    if (isAbstractType(namedFieldType)) {
-      const possibleTypes = schema.getPossibleTypes(namedFieldType);
-      const typeNamesDef = possibleTypes
-        .map(possibleType =>
-          codegenHelpers.getTypeToUse(
-            {
-              kind: Kind.NAMED_TYPE,
-              name: {
-                kind: Kind.NAME,
-                value: possibleType.name,
-              },
-            },
-            false,
-          ),
-        )
-        .join(' | ');
-      const originalDef = field.type.toString();
-      const def = originalDef.replace(namedFieldType.name, typeNamesDef);
-      operationMap[fieldName] = `  /** ${field.description} **/\n  ${
-        field.name
-      }: InContextSdkMethod<${def}, ${argsName}, ${unifiedContextIdentifier}>`;
-    } else {
-      operationMap[fieldName] = `  /** ${field.description} **/\n  ${
-        field.name
-      }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
-        parentTypeNode,
-        false,
-      )}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
-    }
-  }
-  return operationMap;
-}
-
-export async function generateIncontextSDKTypes(options: {
-  schema: GraphQLSchema;
-  subgraphName: string;
-  contextVariables: Record<string, string>;
-  flattenTypes: boolean;
-  codegenConfig: any;
-}) {
-  const config = {
-    skipTypename: true,
-    flattenGeneratedTypes: options.flattenTypes,
-    onlyOperationTypes: options.flattenTypes,
-    preResolveTypes: options.flattenTypes,
-    namingConvention: 'keep',
-    enumsAsTypes: true,
-    ignoreEnumValuesFromSchema: true,
-    useIndexSignature: true,
-    ...options.codegenConfig,
-  };
-  const baseTypes = await codegen({
-    filename: options.subgraphName + '_types.ts',
-    documents: [],
-    config,
-    schemaAst: options.schema,
-    schema: undefined as any, // This is not necessary on codegen. Will be removed later
-    skipDocumentsValidation: true,
-    plugins: [
-      {
-        typescript: {},
-      },
-    ],
-    pluginMap: {
-      typescript: tsBasePlugin,
-    },
-  });
-  const codegenHelpers = new CodegenHelpers(options.schema, config, {});
-  const namespace = pascalCase(`${options.subgraphName}Types`);
-  const queryOperationMap = buildSignatureBasedOnRootFields(
-    codegenHelpers,
-    options.schema.getQueryType(),
-    options.schema,
-  );
-  const mutationOperationMap = buildSignatureBasedOnRootFields(
-    codegenHelpers,
-    options.schema.getMutationType(),
-    options.schema,
-  );
-  const subscriptionsOperationMap = buildSignatureBasedOnRootFields(
-    codegenHelpers,
-    options.schema.getSubscriptionType(),
-    options.schema,
-  );
-
-  const codeAst = `
-import { InContextSdkMethod } from '@graphql-mesh/types';
-import { MeshContext } from '@graphql-mesh/runtime';
-
-export namespace ${namespace} {
-  ${baseTypes}
-  export type QuerySdk = {
-    ${Object.values(queryOperationMap).join(',\n')}
-  };
-
-  export type MutationSdk = {
-    ${Object.values(mutationOperationMap).join(',\n')}
-  };
-
-  export type SubscriptionSdk = {
-    ${Object.values(subscriptionsOperationMap).join(',\n')}
-  };
-
-  export type Context = {
-      [${JSON.stringify(
-        options.subgraphName,
-      )}]: { Query: QuerySdk, Mutation: MutationSdk, Subscription: SubscriptionSdk },
-      ${Object.keys(options.contextVariables)
-        .map(key => `[${JSON.stringify(key)}]: ${options.contextVariables[key]}`)
-        .join(',\n')}
-    };
-}
-`;
-
-  return {
-    identifier: namespace,
-    codeAst,
-  };
-}
 
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
 
@@ -275,7 +122,7 @@ export async function generateTsArtifacts(
           ignoreEnumValuesFromSchema: true,
           useIndexSignature: true,
           noSchemaStitching: false,
-          contextType: unifiedContextIdentifier,
+          contextType: 'MeshContext',
           federation: mergerType === 'federation',
           ...codegenConfig,
         },
@@ -306,10 +153,11 @@ export async function generateTsArtifacts(
                   const sourceSchema = sourceMap.get(source);
                   const { identifier, codeAst } = await generateIncontextSDKTypes({
                     schema: sourceSchema,
-                    subgraphName: source.name,
+                    name: source.name,
                     contextVariables: source.contextVariables,
                     flattenTypes,
                     codegenConfig,
+                    unifiedContextIdentifier: 'BaseMeshContext',
                   });
 
                   if (codeAst) {
@@ -333,10 +181,11 @@ export async function generateTsArtifacts(
                 }),
               );
 
-              const contextType = `export type ${unifiedContextIdentifier} = ${results
-                .map(r => `${r?.identifier}.Context`)
-                .filter(Boolean)
-                .join(' & ')} & BaseMeshContext;`;
+              let contextType = generateUnifiedContextTypeFromIdentifiers(
+                results.map(r => r.identifier).filter((id): id is string => Boolean(id)),
+              );
+
+              contextType += '\n\nexport type MeshContext = BaseMeshContext & MeshInContextSDK;';
 
               let meshMethods = `
 ${BASEDIR_ASSIGNMENT_COMMENT}
