@@ -87,9 +87,9 @@ function buildSignatureBasedOnRootFields(
   return operationMap;
 }
 
-async function generateTypesForApi(options: {
+export async function generateIncontextSDKTypes(options: {
   schema: GraphQLSchema;
-  name: string;
+  subgraphName: string;
   contextVariables: Record<string, string>;
   flattenTypes: boolean;
   codegenConfig: any;
@@ -106,7 +106,7 @@ async function generateTypesForApi(options: {
     ...options.codegenConfig,
   };
   const baseTypes = await codegen({
-    filename: options.name + '_types.ts',
+    filename: options.subgraphName + '_types.ts',
     documents: [],
     config,
     schemaAst: options.schema,
@@ -122,7 +122,7 @@ async function generateTypesForApi(options: {
     },
   });
   const codegenHelpers = new CodegenHelpers(options.schema, config, {});
-  const namespace = pascalCase(`${options.name}Types`);
+  const namespace = pascalCase(`${options.subgraphName}Types`);
   const queryOperationMap = buildSignatureBasedOnRootFields(
     codegenHelpers,
     options.schema.getQueryType(),
@@ -159,7 +159,7 @@ export namespace ${namespace} {
 
   export type Context = {
       [${JSON.stringify(
-        options.name,
+        options.subgraphName,
       )}]: { Query: QuerySdk, Mutation: MutationSdk, Subscription: SubscriptionSdk },
       ${Object.keys(options.contextVariables)
         .map(key => `[${JSON.stringify(key)}]: ${options.contextVariables[key]}`)
@@ -304,9 +304,9 @@ export async function generateTsArtifacts(
                     GraphQLSchema
                   >;
                   const sourceSchema = sourceMap.get(source);
-                  const { identifier, codeAst } = await generateTypesForApi({
+                  const { identifier, codeAst } = await generateIncontextSDKTypes({
                     schema: sourceSchema,
-                    name: source.name,
+                    subgraphName: source.name,
                     contextVariables: source.contextVariables,
                     flattenTypes,
                     codegenConfig,
