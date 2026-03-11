@@ -55,6 +55,10 @@ export const codegenPlugin: CodegenPlugin = {
         flattenTypes: false,
         codegenConfig: {
           scalars: scalarTypes,
+          skipTypename: false,
+          nonOptionalTypename: true,
+          useTypeImports: true,
+          maybeValue: 'T | null | undefined',
         },
         unifiedContextIdentifier: '{}',
       });
