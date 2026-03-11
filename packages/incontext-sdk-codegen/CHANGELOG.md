@@ -1,5 +1,12 @@
 # @graphql-mesh/incontext-sdk-codegen
 
+## 0.0.2
+
+### Patch Changes
+
+- [`66aaedf`](https://github.com/ardatan/graphql-mesh/commit/66aaedf79a78a159e09b1e210d92b5f9a6d77497)
+  Thanks [@ardatan](https://github.com/ardatan)! - Improve type generation
+
 ## 0.0.1
 
 ### Patch Changes
