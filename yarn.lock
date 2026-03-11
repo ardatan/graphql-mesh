@@ -4180,6 +4180,7 @@ __metadata:
     "@graphql-mesh/incontext-sdk-codegen": "npm:^0.0.0"
     "@omnigraph/openapi": "npm:^0.109.36"
     graphql: "npm:16.13.1"
+    graphql-scalars: "npm:^1.25.0"
     typescript: "npm:^5.9.3"
   languageName: unknown
   linkType: soft
@@ -6780,6 +6781,7 @@ __metadata:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/http": "npm:^0.106.29"
     "@graphql-mesh/include": "npm:^0.3.26"
+    "@graphql-mesh/incontext-sdk-codegen": "npm:^0.0.0"
     "@graphql-mesh/runtime": "npm:^0.106.27"
     "@graphql-mesh/store": "npm:^0.104.27"
     "@graphql-mesh/types": "npm:^0.104.23"
@@ -24769,7 +24771,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-scalars@npm:^1.22.4, graphql-scalars@npm:^1.23.0":
+"graphql-scalars@npm:^1.22.4, graphql-scalars@npm:^1.23.0, graphql-scalars@npm:^1.25.0":
   version: 1.25.0
   resolution: "graphql-scalars@npm:1.25.0"
   dependencies:

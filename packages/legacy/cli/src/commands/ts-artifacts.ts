@@ -1,7 +1,5 @@
-import type { GraphQLObjectType, GraphQLSchema, NamedTypeNode } from 'graphql';
-import { getNamedType, isAbstractType, Kind } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
 import JSON5 from 'json5';
-import { pascalCase } from 'pascal-case';
 import ts from 'typescript';
 import { codegen } from '@graphql-codegen/core';
 import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
@@ -15,7 +13,7 @@ import {
   generateIncontextSDKTypes,
   generateUnifiedContextTypeFromIdentifiers,
 } from '@graphql-mesh/incontext-sdk-codegen';
-import type { Logger, Maybe, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
+import type { Logger, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
 import { pathExists, printWithCache, writeFile, writeJSON } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../index.js';
