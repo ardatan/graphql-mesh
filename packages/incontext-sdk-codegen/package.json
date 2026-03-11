@@ -45,6 +45,7 @@
     "@graphql-mesh/utils": "^0.104.25",
     "@graphql-tools/utils": "^11.0.0",
     "@graphql-tools/wrap": "^11.1.9",
+    "graphql-scalars": "^1.25.0",
     "pascal-case": "^3.1.2",
     "tslib": "^2.4.0"
   },

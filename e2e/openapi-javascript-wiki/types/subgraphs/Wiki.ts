@@ -22,11 +22,11 @@ export namespace WikiTypes {
     Int: { input: number; output: number };
     Float: { input: number; output: number };
     /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
-    BigInt: { input: any; output: any };
+    BigInt: { input: bigint; output: bigint };
     /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
     JSON: { input: any; output: any };
     /** A string that cannot be passed as an empty value */
-    NonEmptyString: { input: any; output: any };
+    NonEmptyString: { input: string; output: string };
     ObjMap: { input: any; output: any };
     _DirectiveExtensions: { input: any; output: any };
     _Any: { input: any; output: any };

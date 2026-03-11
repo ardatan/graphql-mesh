@@ -1,3 +1,4 @@
+import { resolvers } from 'graphql-scalars';
 import {
   getCachedDocumentNodeFromSchema,
   type CodegenPlugin,
@@ -38,12 +39,23 @@ export const codegenPlugin: CodegenPlugin = {
           }
         },
       });
+      const scalarTypes: Record<string, string> = {};
+      for (const scalarName in resolvers) {
+        if (transformedSchema.getType(scalarName)) {
+          const codegenScalarType = resolvers[scalarName]?.extensions?.codegenScalarType;
+          if (typeof codegenScalarType === 'string') {
+            scalarTypes[scalarName] = codegenScalarType;
+          }
+        }
+      }
       const typesResult = await generateIncontextSDKTypes({
         schema: transformedSchema,
         name: sourceName,
         contextVariables: {},
         flattenTypes: false,
-        codegenConfig: {},
+        codegenConfig: {
+          scalars: scalarTypes,
+        },
         unifiedContextIdentifier: '{}',
       });
 

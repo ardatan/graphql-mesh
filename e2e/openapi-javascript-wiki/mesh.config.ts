@@ -1,3 +1,4 @@
+import 'json-bigint-patch';
 import { BigIntResolver } from 'graphql-scalars';
 import type { GraphQLResolveInfo } from 'graphql/type';
 import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
@@ -67,10 +68,10 @@ export const gatewayConfig = defineGatewayConfig({
             },
           );
 
-        let total = BigInt(0);
-        for (const item of result?.items || []) {
+        let total = 0n;
+        result?.items?.forEach(item => {
           total += BigInt(item.views);
-        }
+        });
         return total;
       },
     },
