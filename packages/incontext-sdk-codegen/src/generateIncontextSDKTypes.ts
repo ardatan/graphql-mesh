@@ -2,6 +2,7 @@ import type { GraphQLObjectType, GraphQLSchema, NamedTypeNode } from 'graphql';
 import { getNamedType, isAbstractType, Kind } from 'graphql';
 import { pascalCase } from 'pascal-case';
 import { codegen } from '@graphql-codegen/core';
+import { getCachedDocumentNodeFromSchema } from '@graphql-codegen/plugin-helpers';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import type { Maybe } from '@graphql-mesh/types';
 
@@ -98,7 +99,7 @@ export async function generateIncontextSDKTypes(options: {
     documents: [],
     config,
     schemaAst: options.schema,
-    schema: undefined as any, // This is not necessary on codegen. Will be removed later
+    schema: getCachedDocumentNodeFromSchema(options.schema),
     skipDocumentsValidation: true,
     plugins: [
       {
@@ -131,7 +132,7 @@ export async function generateIncontextSDKTypes(options: {
   );
 
   const codeAst = `
-import { InContextSdkMethod } from '@graphql-mesh/types';
+import type { InContextSdkMethod } from '@graphql-mesh/types';
 
 export namespace ${namespace} {
   ${baseTypes}

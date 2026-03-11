@@ -6,6 +6,7 @@ import { path } from '@graphql-mesh/cross-helpers';
 import { handleFederationSupergraph } from '@graphql-mesh/fusion-runtime';
 import { defaultPrintFn } from '@graphql-mesh/transport-common';
 import { writeFile } from '@graphql-mesh/utils';
+import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import {
   generateIncontextSDKTypes,
@@ -30,12 +31,18 @@ export const codegenPlugin: CodegenPlugin = {
     const identifiers = new Set<string>();
     for (const sourceName in inContextSDK) {
       const subschemaConfig = getSubschema(sourceName);
-      const transformedSchema = wrapSchema(subschemaConfig);
+      const transformedSchema = mapSchema(wrapSchema(subschemaConfig), {
+        [MapperKind.ROOT_FIELD](_, fieldName) {
+          if (fieldName === '_entities') {
+            return null;
+          }
+        },
+      });
       const typesResult = await generateIncontextSDKTypes({
         schema: transformedSchema,
         name: sourceName,
         contextVariables: {},
-        flattenTypes: true,
+        flattenTypes: false,
         codegenConfig: {},
         unifiedContextIdentifier: '{}',
       });
