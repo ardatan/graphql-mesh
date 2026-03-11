@@ -1,7 +1,10 @@
-import moment from 'moment';
+import 'json-bigint-patch';
+import { BigIntResolver } from 'graphql-scalars';
+import type { GraphQLResolveInfo } from 'graphql/type';
 import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
 import { loadOpenAPISubgraph } from '@omnigraph/openapi';
+import type { MeshInContextSDK } from './types/incontext-sdk';
 
 export const composeConfig = defineComposeConfig({
   subgraphs: [
@@ -17,9 +20,9 @@ export const composeConfig = defineComposeConfig({
     },
   ],
   additionalTypeDefs: /* GraphQL */ `
+    scalar BigInt
     extend type Query {
-      viewsInPastMonth(project: String!): Int!
-      feed_availability: availability!
+      viewsInPastMonth(project: String!): BigInt!
     }
   `,
 });
@@ -31,8 +34,14 @@ export const gatewayConfig = defineGatewayConfig({
     },
   },
   additionalResolvers: {
+    BigInt: BigIntResolver,
     Query: {
-      async viewsInPastMonth(root, { project }, context: any, info) {
+      async viewsInPastMonth(
+        root: never,
+        { project }, // args
+        context: MeshInContextSDK,
+        info: GraphQLResolveInfo,
+      ) {
         const result =
           await context.Wiki.Query.metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end(
             {
@@ -40,24 +49,30 @@ export const gatewayConfig = defineGatewayConfig({
               args: {
                 access: 'all_access',
                 agent: 'user',
-                end: moment().format('YYYYMMDD'),
-                start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
+                start: '20200101',
+                end: '20200226',
                 project,
                 granularity: 'daily',
               },
               context,
               info,
-              autoSelectionSetWithDepth: 2,
+              selectionSet: /* GraphQL */ `
+                {
+                  ... on pageview_project {
+                    items {
+                      views
+                    }
+                  }
+                }
+              `,
             },
           );
 
-        if (result == null || !('items' in result)) {
-          return null;
-        }
-
-        if (result != null && 'items' in result) {
-          return result?.items?.[0]?.views || 0;
-        }
+        let total = 0n;
+        result?.items?.forEach(item => {
+          total += BigInt(item.views);
+        });
+        return total;
       },
     },
   },

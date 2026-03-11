@@ -29,6 +29,14 @@ it.concurrent.each([
       }
     `,
   },
+  {
+    name: 'viewsInPastMonth',
+    query: /* GraphQL */ `
+      query ViewsInPastMonth {
+        viewsInPastMonth(project: "en.wikipedia.org")
+      }
+    `,
+  },
 ])('should execute $name', async ({ query }) => {
   const { output } = await compose({ output: 'graphql' });
   const { execute } = await serve({ supergraph: output });
