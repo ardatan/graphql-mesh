@@ -74,7 +74,7 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "
   
   Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
   """
-  feed_availability: availability! @httpOperation(subgraph: "Wiki", path: "/feed/availability", operationSpecificHeaders: [["Accept", "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"]], httpMethod: GET)
+  feed_availability: availability @httpOperation(subgraph: "Wiki", path: "/feed/availability", operationSpecificHeaders: [["Accept", "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"]], httpMethod: GET)
   """
   Returns the previously-stored formula via \`/media/math/check/{type}\` for
   the given hash.
@@ -846,7 +846,7 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "
     word: String!
     provider: queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider!
   ): cx_dict @httpOperation(subgraph: "Wiki", path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}/{args.provider}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
-  viewsInPastMonth(project: String!): Int! @additionalField
+  viewsInPastMonth(project: String!): BigInt! @additionalField
 }
 
 type availability @join__type(graph: WIKI) {
@@ -2169,6 +2169,14 @@ exports[`should execute Metrics 1`] = `
         },
       ],
     },
+  },
+}
+`;
+
+exports[`should execute viewsInPastMonth 1`] = `
+{
+  "data": {
+    "viewsInPastMonth": 15113694589,
   },
 }
 `;
