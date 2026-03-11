@@ -42,6 +42,8 @@ function buildSignatureBasedOnRootFields(
 
     const namedFieldType = getNamedType(field.type);
 
+    const fieldDescriptionBlock = field.description ? `/** ${field.description} **/\n` : '';
+
     if (isAbstractType(namedFieldType)) {
       const possibleTypes = schema.getPossibleTypes(namedFieldType);
       const typeNamesDef = possibleTypes
@@ -60,11 +62,11 @@ function buildSignatureBasedOnRootFields(
         .join(' | ');
       const originalDef = field.type.toString();
       const def = originalDef.replace(namedFieldType.name, typeNamesDef);
-      operationMap[fieldName] = `  /** ${field.description} **/\n  ${
+      operationMap[fieldName] = `  ${fieldDescriptionBlock}  ${
         field.name
       }: InContextSdkMethod<${def}, ${argsName}, ${unifiedContextIdentifier}>`;
     } else {
-      operationMap[fieldName] = `  /** ${field.description} **/\n  ${
+      operationMap[fieldName] = `  ${fieldDescriptionBlock}\n  ${
         field.name
       }: InContextSdkMethod<${codegenHelpers.getTypeToUse(
         parentTypeNode,
@@ -166,6 +168,9 @@ export namespace ${namespace} {
 }
 
 export function generateUnifiedContextTypeFromIdentifiers(identifiers: string[]): string {
+  if (identifiers.length === 0) {
+    return 'export type MeshInContextSDK = {};';
+  }
   return `export type MeshInContextSDK = ${identifiers
     .map(identifier => `${identifier}.Context`)
     .filter(Boolean)
