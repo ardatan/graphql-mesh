@@ -12,7 +12,7 @@ import { wrapSchema } from '@graphql-tools/wrap';
 import {
   generateIncontextSDKTypes,
   generateUnifiedContextTypeFromIdentifiers,
-} from './generateIncontextSDKTypes';
+} from './generateIncontextSDKTypes.js';
 
 export interface InContextSDKCodegenPluginConfig {}
 
