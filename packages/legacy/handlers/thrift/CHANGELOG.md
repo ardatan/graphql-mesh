@@ -1,5 +1,14 @@
 # @graphql-mesh/thrift
 
+## 0.106.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.26
+  - @graphql-mesh/store@0.104.28
+  - @omnigraph/thrift@0.9.28
+
 ## 0.106.29
 
 ### Patch Changes

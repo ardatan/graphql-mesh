@@ -1,5 +1,13 @@
 # @graphql-mesh/cache-localforage
 
+## 0.105.27
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.26
+  - @graphql-mesh/cache-inmemory-lru@0.8.27
+
 ## 0.105.26
 
 ### Patch Changes
