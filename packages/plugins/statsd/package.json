@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-statsd",
-  "version": "0.104.30",
+  "version": "0.104.31",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
     "@envelop/core": "^5.5.1",
     "@envelop/statsd": "^8.1.1",
     "@graphql-mesh/types": "^0.104.23",
-    "@graphql-mesh/utils": "^0.104.25",
+    "@graphql-mesh/utils": "^0.104.26",
     "@whatwg-node/disposablestack": "^0.0.6",
     "hot-shots": "^14.1.1",
     "tslib": "^2.4.0"
