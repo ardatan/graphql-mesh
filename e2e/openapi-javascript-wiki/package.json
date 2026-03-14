@@ -9,9 +9,9 @@
   "dependencies": {
     "@graphql-codegen/cli": "^6.2.1",
     "@graphql-hive/gateway": "^2.5.6",
-    "@graphql-mesh/compose-cli": "^1.5.16",
-    "@graphql-mesh/incontext-sdk-codegen": "^0.0.3",
-    "@omnigraph/openapi": "^0.109.36",
+    "@graphql-mesh/compose-cli": "^1.5.17",
+    "@graphql-mesh/incontext-sdk-codegen": "^0.0.4",
+    "@omnigraph/openapi": "^0.109.37",
     "graphql": "16.13.1",
     "graphql-scalars": "^1.25.0",
     "json-bigint-patch": "^0.0.9",

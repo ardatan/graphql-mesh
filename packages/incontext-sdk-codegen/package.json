@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/incontext-sdk-codegen",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "repository": {
     "type": "git",
@@ -42,7 +42,7 @@
     "@graphql-mesh/fusion-runtime": "^1.7.0",
     "@graphql-mesh/transport-common": "^1.0.15",
     "@graphql-mesh/types": "^0.104.23",
-    "@graphql-mesh/utils": "^0.104.25",
+    "@graphql-mesh/utils": "^0.104.26",
     "@graphql-tools/utils": "^11.0.0",
     "@graphql-tools/wrap": "^11.1.9",
     "graphql-scalars": "^1.25.0",

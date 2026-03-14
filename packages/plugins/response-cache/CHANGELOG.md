@@ -1,5 +1,14 @@
 # @graphql-mesh/plugin-response-cache
 
+## 0.104.31
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5d38d11`](https://github.com/ardatan/graphql-mesh/commit/5d38d11174172e27f3f0fd7588a83d481117d96c)]:
+  - @graphql-mesh/string-interpolation@0.5.12
+  - @graphql-mesh/utils@0.104.26
+
 ## 0.104.30
 
 ### Patch Changes

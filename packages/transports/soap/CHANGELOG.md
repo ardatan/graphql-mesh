@@ -1,5 +1,27 @@
 # @graphql-mesh/transport-soap
 
+## 0.10.31
+
+### Patch Changes
+
+- [#9297](https://github.com/ardatan/graphql-mesh/pull/9297)
+  [`bf6793e`](https://github.com/ardatan/graphql-mesh/commit/bf6793e6a6791043571388de308fe82954889994)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.5.3` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.5.3) (from
+    `^5.5.1`, in `dependencies`)
+
+- [#9304](https://github.com/ardatan/graphql-mesh/pull/9304)
+  [`cb8fc91`](https://github.com/ardatan/graphql-mesh/commit/cb8fc915af5fd4ebcafe94c7943c43f7b5b00996)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.5.5` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.5.5) (from
+    `^5.5.3`, in `dependencies`)
+- Updated dependencies
+  [[`5d38d11`](https://github.com/ardatan/graphql-mesh/commit/5d38d11174172e27f3f0fd7588a83d481117d96c)]:
+  - @graphql-mesh/string-interpolation@0.5.12
+  - @graphql-mesh/utils@0.104.26
+
 ## 0.10.30
 
 ### Patch Changes
