@@ -123,20 +123,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/federation-internals@npm:2.13.1":
-  version: 2.13.1
-  resolution: "@apollo/federation-internals@npm:2.13.1"
-  dependencies:
-    "@types/uuid": "npm:^9.0.0"
-    chalk: "npm:^4.1.0"
-    js-levenshtein: "npm:^1.1.6"
-    uuid: "npm:^9.0.0"
-  peerDependencies:
-    graphql: ^16.5.0
-  checksum: 10c0/0f699d2c69b49b6ae8091343edbe974c6e41e090c797cf7536f5304b7a198a88368f3d8fe07a900d3e5351391f6c4baa0e539e243b0f7782f64ca1cda7cae6c8
-  languageName: node
-  linkType: hard
-
 "@apollo/federation-internals@npm:2.13.2":
   version: 2.13.2
   resolution: "@apollo/federation-internals@npm:2.13.2"
@@ -315,7 +301,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/subgraph@npm:2.13.2, @apollo/subgraph@npm:^2.13.2":
+"@apollo/subgraph@npm:2.13.2, @apollo/subgraph@npm:^2.13.2, @apollo/subgraph@npm:^2.2.3":
   version: 2.13.2
   resolution: "@apollo/subgraph@npm:2.13.2"
   dependencies:
@@ -324,18 +310,6 @@ __metadata:
   peerDependencies:
     graphql: ^16.5.0
   checksum: 10c0/987343f93152e4c7fbea0d7fedadd7395ce166817d8af4e6a472a14d602f6a7d8814522961e99f87aa75ee0656469dfb84da9bba9fb255d3dfb7c311a436ddd7
-  languageName: node
-  linkType: hard
-
-"@apollo/subgraph@npm:^2.2.3":
-  version: 2.13.1
-  resolution: "@apollo/subgraph@npm:2.13.1"
-  dependencies:
-    "@apollo/cache-control-types": "npm:^1.0.2"
-    "@apollo/federation-internals": "npm:2.13.1"
-  peerDependencies:
-    graphql: ^16.5.0
-  checksum: 10c0/a607317d20ca3e80cead539a90eee1ddfe3ba4b249e0cd68a5cb9e114e5dcf3fad8ee04cf5c558ad384f9bce9f8b135117ac657eca55ebb44801d1b96e68b8a8
   languageName: node
   linkType: hard
 
@@ -38785,10 +38759,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:7.18.2":
-  version: 7.18.2
-  resolution: "undici@npm:7.18.2"
-  checksum: 10c0/4ff0722799f5e06fde5d1e58d318b1d78ba9a477836ad3e7374e9ac30ca20d1ab3282952d341635bf69b8e74b5c1cf366e595b3a96810e0dbf74e622dad7b5f9
+"undici@npm:7.24.0":
+  version: 7.24.0
+  resolution: "undici@npm:7.24.0"
+  checksum: 10c0/ccb2f3407ae35fec66183b80fff696dcc56c308bf568277c0c022d5dffa09e3ab35734ea4d99c77e837522c9c83fd284932816dec2cfc9023fcee4e02686514e
   languageName: node
   linkType: hard
 
