@@ -8,6 +8,8 @@ concurrency:
 
 env:
   YARN_ENABLE_HARDENED_MODE: 0
+  NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
 jobs:
   dependencies:
@@ -26,7 +28,7 @@ jobs:
       contents: write
       id-token: write
       pull-requests: write
-    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@v1
+    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@87735d0619d0c4fdae5de1f51a19e4feed1f8713
     with:
       node-version-file: .node-version
       npmTag: alpha

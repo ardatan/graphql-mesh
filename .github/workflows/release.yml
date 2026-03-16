@@ -20,7 +20,7 @@ jobs:
       id-token: write
       pull-requests: write
     if: github.ref == 'refs/heads/master'
-    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@v1
+    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@87735d0619d0c4fdae5de1f51a19e4feed1f8713
     with:
       releaseScript: release
       versionScript: 'changeset-version'
