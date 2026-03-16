@@ -102,7 +102,7 @@ scalar Test_TransportOptions @source(name: "TransportOptions", subgraph: "weathe
 
 scalar _HoistConfig @join__type(graph: WEATHER) 
 
-type Query @source(name: "Query", subgraph: "weather")  @join__type(graph: WEATHER)  {
+type Query @join__type(graph: WEATHER)  {
   here: Test_Weather @source(name: "here", type: "Weather", subgraph: "weather") 
 }
 
