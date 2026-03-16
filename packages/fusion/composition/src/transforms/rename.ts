@@ -376,7 +376,7 @@ export function createRenameFieldTransform(
         fieldName: string,
       ) => {
         if (fieldName.startsWith('_encapsulated')) {
-          return fieldName;
+          return [fieldName, field];
         }
         return [fieldName, resolveToUpdater(field, schema)];
       },
