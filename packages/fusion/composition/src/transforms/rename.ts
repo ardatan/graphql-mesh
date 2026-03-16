@@ -350,7 +350,7 @@ export function createRenameFieldTransform(
         typeName: string,
       ) => {
         if (fieldName.startsWith('_encapsulated')) {
-          return fieldName;
+          return [fieldName, field];
         }
         const type = schema.getType(typeName);
         const newFieldName =
