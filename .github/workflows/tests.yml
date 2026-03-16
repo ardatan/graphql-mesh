@@ -13,6 +13,8 @@ env:
   CI: true
   NODE_TLS_REJECT_UNAUTHORIZED: 0
   GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
   LC_ALL: en-US
   REDIS_HOST: localhost
   REDIS_PORT: 6379
