@@ -367,15 +367,17 @@ export function createRenameFieldTransform(
           fieldRenameMap.set(typeName, typeFieldRenameMap);
         }
         typeFieldRenameMap.set(fieldName, newFieldName);
-        return newFieldName;
+        return [newFieldName, field];
       },
     };
     const resolverUpdaterMapper = {
       [kind]: (
         field: GraphQLFieldConfig<any, any> | GraphQLInputFieldConfig,
         fieldName: string,
-        typeName: string,
       ) => {
+        if (fieldName.startsWith('_encapsulated')) {
+          return fieldName;
+        }
         return [fieldName, resolveToUpdater(field, schema)];
       },
     };
