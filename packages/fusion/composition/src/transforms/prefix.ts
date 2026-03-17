@@ -1,5 +1,5 @@
 import type { GraphQLSchema } from 'graphql';
-import { MapperKind } from '@graphql-tools/utils';
+import { getRootTypeNames, getRootTypes, MapperKind } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
 import { createRenameFieldTransform, createRenameTypeTransform } from './rename.js';
 
@@ -31,10 +31,15 @@ export function createPrefixTransform({
   return function prefixTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
     value = value || `${subgraphConfig.name}_`;
     const transforms: SubgraphTransform[] = [];
+    const rootTypes = getRootTypeNames(schema);
     if (includeRootOperations) {
       transforms.push(
         createRenameFieldTransform(({ typeName, fieldName }) => {
-          if (ignore.includes(typeName) || ignore.includes(`${typeName}.${fieldName}`)) {
+          if (
+            ignore.includes(typeName) ||
+            ignore.includes(`${typeName}.${fieldName}`) ||
+            fieldName.startsWith('_encapsulated')
+          ) {
             return fieldName;
           }
           return `${value}${fieldName}`;
@@ -44,7 +49,7 @@ export function createPrefixTransform({
     if (includeTypes) {
       transforms.push(
         createRenameTypeTransform(({ typeName }) => {
-          if (ignore.includes(typeName)) {
+          if (rootTypes.has(typeName) || ignore.includes(typeName)) {
             return typeName;
           }
           return `${value}${typeName}`;

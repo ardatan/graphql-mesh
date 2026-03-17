@@ -6,13 +6,13 @@ exports[`should compose the appropriate schema 1`] = `
     @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
     
     
-    
+    @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY)
     
     
     
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@hoist", "@source"]
+  import: ["@resolveTo", "@source"]
 )
   {
     query: Query
@@ -86,33 +86,68 @@ exports[`should compose the appropriate schema 1`] = `
   
   
   
+  directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ENUM | ENUM_VALUE | SCALAR | INPUT_OBJECT | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
+
   
   
   
   
 enum join__Graph {
-  WEATHER @join__graph(name: "weather", url: "http://localhost:<weather_port>/graphql") 
+  SUBGRAPH_A @join__graph(name: "subgraph-a", url: "http://localhost:<subgraph-a_port>/graphql") 
 }
 
-directive @hoist(subgraph: String, pathConfig: _HoistConfig)  repeatable on FIELD_DEFINITION
+directive @resolveTo(
+  additionalArgs: SubgraphAResolveToSourceArgs
+  filterBy: String
+  keyField: String
+  keysArg: String
+  pubsubTopic: String
+  requiredSelectionSet: String
+  result: String
+  resultType: String
+  sourceArgs: SubgraphAResolveToSourceArgs
+  sourceFieldName: String
+  sourceName: String
+  sourceSelectionSet: String
+  sourceTypeName: String
+) on FIELD_DEFINITION
 
 directive @source(name: String!, type: String, subgraph: String!)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
-scalar Test_TransportOptions @source(name: "TransportOptions", subgraph: "weather")  @join__type(graph: WEATHER) 
+scalar SubgraphAResolveToSourceArgs @join__type(graph: SUBGRAPH_A) 
 
-scalar _HoistConfig @join__type(graph: WEATHER) 
-
-type Query @join__type(graph: WEATHER)  {
-  here: Test_Weather @source(name: "here", type: "Weather", subgraph: "weather") 
+type Query @join__type(graph: SUBGRAPH_A)  {
+  _encapsulated_SubgraphA_foo(id: ID!) : SubgraphAFoo @source(name: "foo", type: "Foo", subgraph: "subgraph-a")  @inaccessible
+  SubgraphA: SubgraphASubgraphAQuery! @resolveTo(
+    sourceName: "subgraph-a"
+    sourceTypeName: "Query"
+    sourceFieldName: "__typename"
+  )
 }
 
-type Test_Weather @source(name: "Weather", subgraph: "weather")  @join__type(graph: WEATHER)  {
-  rain: Test_Rain! @source(name: "rain", type: "Rain!", subgraph: "weather") 
-  chanceOfRain: Float! @hoist(subgraph: "weather", pathConfig: ["rain", "chance"]) 
+type SubgraphAFoo @source(name: "Foo", subgraph: "subgraph-a")  @join__type(graph: SUBGRAPH_A)  {
+  id: ID!
 }
 
-type Test_Rain @source(name: "Rain", subgraph: "weather")  @join__type(graph: WEATHER)  {
-  chance: Float!
+type SubgraphASubgraphAQuery @join__type(graph: SUBGRAPH_A)  {
+  foo(id: ID!) : SubgraphAFoo @resolveTo(
+    sourceName: "subgraph-a"
+    sourceTypeName: "Query"
+    sourceFieldName: "_encapsulated_SubgraphA_foo"
+    sourceArgs: {id: "{args.id}"}
+  )
 }
 "
+`;
+
+exports[`should execute Query foo 1`] = `
+{
+  "data": {
+    "SubgraphA": {
+      "foo": {
+        "id": "123",
+      },
+    },
+  },
+}
 `;

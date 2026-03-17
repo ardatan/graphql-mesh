@@ -290,7 +290,7 @@ export function createRenameTypeTransform(
   return function renameTypeTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
     const rootTypes: Set<GraphQLNamedType> = getRootTypes(schema);
     const renamedTypeMap = new Map<string, string>();
-    return mapSchema(schema, {
+    const renamedTypes = mapSchema(schema, {
       [kind]: type => {
         if (isSpecifiedScalarType(type) || rootTypes.has(type)) {
           return type;
@@ -310,6 +310,8 @@ export function createRenameTypeTransform(
           name: newName,
         });
       },
+    });
+    const renamedFieldAndTypes = mapSchema(renamedTypes, {
       [MapperKind.FIELD](field) {
         const fieldDirectives = getDirectiveExtensions(field, schema);
         if (fieldDirectives?.resolveTo) {
@@ -324,6 +326,7 @@ export function createRenameTypeTransform(
         return field;
       },
     });
+    return renamedFieldAndTypes;
   };
 }
 
@@ -340,12 +343,15 @@ export function createRenameFieldTransform(
 ): SubgraphTransform {
   return function renameFieldTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
     const fieldRenameMap = new Map<string, Map<string, string>>();
-    const mapper = {
+    const fieldRenameMapper = {
       [kind]: (
         field: GraphQLFieldConfig<any, any> | GraphQLInputFieldConfig,
         fieldName: string,
         typeName: string,
       ) => {
+        if (fieldName.startsWith('_encapsulated')) {
+          return [fieldName, field];
+        }
         const type = schema.getType(typeName);
         const newFieldName =
           renameFn({
@@ -361,7 +367,18 @@ export function createRenameFieldTransform(
           fieldRenameMap.set(typeName, typeFieldRenameMap);
         }
         typeFieldRenameMap.set(fieldName, newFieldName);
-        return [newFieldName, resolveToUpdater(field, schema)];
+        return [newFieldName, field];
+      },
+    };
+    const resolverUpdaterMapper = {
+      [kind]: (
+        field: GraphQLFieldConfig<any, any> | GraphQLInputFieldConfig,
+        fieldName: string,
+      ) => {
+        if (fieldName.startsWith('_encapsulated')) {
+          return [fieldName, field];
+        }
+        return [fieldName, resolveToUpdater(field, schema)];
       },
     };
     function resolveToUpdater(
@@ -381,6 +398,6 @@ export function createRenameFieldTransform(
       fieldExtensions.directives = fieldDirectives;
       return field;
     }
-    return mapSchema(schema, mapper);
+    return mapSchema(mapSchema(schema, fieldRenameMapper), resolverUpdaterMapper);
   };
 }
