@@ -17,7 +17,7 @@ test('switches and loads StackExchange example', async ({ page }) => {
   }
   await exampleSelect.selectOption('openapi-stackexchange');
 
-  const middlemanIframe = page.frameLocator('iframe');
+  const middlemanIframe = page.frameLocator('iframe[title="GraphQL Mesh Example"]');
   const innerIframe = middlemanIframe.frameLocator('iframe');
   const title = innerIframe.getByText('@examples/openapi-stackexchange');
   await title.waitFor({ state: 'visible', timeout: 15_000 }); // this takes like 4 to 11 seconds
