@@ -1,5 +1,21 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.35
+
+### Patch Changes
+
+- [#9323](https://github.com/ardatan/graphql-mesh/pull/9323)
+  [`94c37cd`](https://github.com/ardatan/graphql-mesh/commit/94c37cdef8ba20e8b233445c679bf7604d310a1f)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@theguild/federation-composition@^0.22.1` ↗︎](https://www.npmjs.com/package/@theguild/federation-composition/v/0.22.1)
+    (from `^0.22.0`, in `dependencies`)
+
+- [#9311](https://github.com/ardatan/graphql-mesh/pull/9311)
+  [`17630d2`](https://github.com/ardatan/graphql-mesh/commit/17630d28ad8ce8fcedf1eb3992c41d72fe4d4eee)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix incompatibility when encapsulation and prefix
+  transforms are combined
+
 ## 0.8.34
 
 ### Patch Changes

@@ -6,7 +6,7 @@
     "@apollo/subgraph": "^2.13.2",
     "@graphql-hive/gateway": "^2.5.9",
     "@graphql-mesh/cache-upstash-redis": "^0.1.28",
-    "@graphql-mesh/compose-cli": "^1.5.18",
+    "@graphql-mesh/compose-cli": "^1.5.19",
     "@graphql-mesh/plugin-http-cache": "^0.105.29",
     "@graphql-yoga/plugin-response-cache": "^3.20.1",
     "@whatwg-node/disposablestack": "^0.0.6",
