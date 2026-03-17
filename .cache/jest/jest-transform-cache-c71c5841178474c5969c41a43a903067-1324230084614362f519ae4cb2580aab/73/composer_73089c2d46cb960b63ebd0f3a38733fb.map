@@ -1,0 +1,1 @@
+{"version":3,"names":["module","exports","next","root","args","context","info"],"sources":["composer.js"],"sourcesContent":["module.exports = next => (root, args, context, info) => {\n  return 'FOO';\n};\n"],"mappings":";;AAAAA,MAAM,CAACC,OAAO,GAAGC,IAAI,IAAI,CAACC,IAAI,EAAEC,IAAI,EAAEC,OAAO,EAAEC,IAAI,KAAK;EACtD,OAAO,KAAK;AACd,CAAC","ignoreList":[]}

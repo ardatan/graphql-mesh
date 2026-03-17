@@ -1,0 +1,14 @@
+499da85430d6129165f22bd81dae8ca7
+"use strict";
+
+module.exports = {
+  sources: [{
+    name: 'Dummy',
+    handler: {
+      graphql: {
+        source: '../fixtures/dummy-schema.graphql'
+      }
+    }
+  }]
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2R1bGUiLCJleHBvcnRzIiwic291cmNlcyIsIm5hbWUiLCJoYW5kbGVyIiwiZ3JhcGhxbCIsInNvdXJjZSJdLCJzb3VyY2VzIjpbIi5tZXNocmMuanMiXSwic291cmNlc0NvbnRlbnQiOlsibW9kdWxlLmV4cG9ydHMgPSB7XG4gIHNvdXJjZXM6IFtcbiAgICB7XG4gICAgICBuYW1lOiAnRHVtbXknLFxuICAgICAgaGFuZGxlcjoge1xuICAgICAgICBncmFwaHFsOiB7XG4gICAgICAgICAgc291cmNlOiAnLi4vZml4dHVyZXMvZHVtbXktc2NoZW1hLmdyYXBocWwnLFxuICAgICAgICB9LFxuICAgICAgfSxcbiAgICB9LFxuICBdLFxufTtcbiJdLCJtYXBwaW5ncyI6Ijs7QUFBQUEsTUFBTSxDQUFDQyxPQUFPLEdBQUc7RUFDZkMsT0FBTyxFQUFFLENBQ1A7SUFDRUMsSUFBSSxFQUFFLE9BQU87SUFDYkMsT0FBTyxFQUFFO01BQ1BDLE9BQU8sRUFBRTtRQUNQQyxNQUFNLEVBQUU7TUFDVjtJQUNGO0VBQ0YsQ0FBQztBQUVMLENBQUMiLCJpZ25vcmVMaXN0IjpbXX0=

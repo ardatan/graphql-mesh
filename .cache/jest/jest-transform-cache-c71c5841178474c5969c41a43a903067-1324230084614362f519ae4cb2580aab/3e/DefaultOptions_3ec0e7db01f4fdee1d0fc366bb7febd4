@@ -1,0 +1,11 @@
+cb1394cb6fa5fb5a2ed7205f60f8dca7
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.defaultOptions = void 0;
+const defaultOptions = exports.defaultOptions = {
+  delimiter: ['{', '}']
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJkZWZhdWx0T3B0aW9ucyIsImV4cG9ydHMiLCJkZWxpbWl0ZXIiXSwic291cmNlcyI6WyJEZWZhdWx0T3B0aW9ucy5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgY29uc3QgZGVmYXVsdE9wdGlvbnMgPSB7XG4gIGRlbGltaXRlcjogWyd7JywgJ30nXSxcbn07XG4iXSwibWFwcGluZ3MiOiI7Ozs7OztBQUFPLE1BQU1BLGNBQWMsR0FBQUMsT0FBQSxDQUFBRCxjQUFBLEdBQUc7RUFDNUJFLFNBQVMsRUFBRSxDQUFDLEdBQUcsRUFBRSxHQUFHO0FBQ3RCLENBQUMiLCJpZ25vcmVMaXN0IjpbXX0=

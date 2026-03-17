@@ -1,0 +1,10 @@
+ac3270a204df64de32742d600cfbadae
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _another = require("./another.js");
+var _default = exports.default = _another.john;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJfYW5vdGhlciIsInJlcXVpcmUiLCJfZGVmYXVsdCIsImV4cG9ydHMiLCJkZWZhdWx0Iiwiam9obiJdLCJzb3VyY2VzIjpbImluZGV4LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IGpvaG4gfSBmcm9tICcuL2Fub3RoZXIuanMnO1xuXG5leHBvcnQgZGVmYXVsdCBqb2huO1xuIl0sIm1hcHBpbmdzIjoiOzs7Ozs7QUFBQSxJQUFBQSxRQUFBLEdBQUFDLE9BQUE7QUFBb0MsSUFBQUMsUUFBQSxHQUFBQyxPQUFBLENBQUFDLE9BQUEsR0FFckJDLGFBQUkiLCJpZ25vcmVMaXN0IjpbXX0=

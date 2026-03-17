@@ -1,0 +1,12 @@
+430cf3f09a33ad2f4bfab6d66691d768
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createLruCache = createLruCache;
+var _tinyLru = require("tiny-lru");
+function createLruCache(max, ttl) {
+  return (0, _tinyLru.lru)(max, ttl);
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJfdGlueUxydSIsInJlcXVpcmUiLCJjcmVhdGVMcnVDYWNoZSIsIm1heCIsInR0bCIsImxydSJdLCJzb3VyY2VzIjpbImdsb2JhbC1scnUtY2FjaGUudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHR5cGUgeyBMUlUgfSBmcm9tICd0aW55LWxydSc7XG5pbXBvcnQgeyBscnUgfSBmcm9tICd0aW55LWxydSc7XG5cbmV4cG9ydCB0eXBlIExSVUNhY2hlPFQgPSBhbnk+ID0gTFJVPFQ+O1xuXG5leHBvcnQgZnVuY3Rpb24gY3JlYXRlTHJ1Q2FjaGU8VCA9IGFueT4obWF4PzogbnVtYmVyLCB0dGw/OiBudW1iZXIpOiBMUlVDYWNoZTxUPiB7XG4gIHJldHVybiBscnUobWF4LCB0dGwpO1xufVxuIl0sIm1hcHBpbmdzIjoiOzs7Ozs7QUFDQSxJQUFBQSxRQUFBLEdBQUFDLE9BQUE7QUFJTyxTQUFTQyxjQUFjQSxDQUFVQyxHQUFZLEVBQUVDLEdBQVksRUFBZTtFQUMvRSxPQUFPLElBQUFDLFlBQUcsRUFBQ0YsR0FBRyxFQUFFQyxHQUFHLENBQUM7QUFDdEIiLCJpZ25vcmVMaXN0IjpbXX0=

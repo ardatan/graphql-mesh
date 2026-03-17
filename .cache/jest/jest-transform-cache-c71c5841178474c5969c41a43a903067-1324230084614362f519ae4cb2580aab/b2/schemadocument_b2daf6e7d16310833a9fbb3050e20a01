@@ -1,0 +1,17 @@
+e9bc65be566521bbcb8ba5f69994b591
+"use strict";
+
+const {
+  parse
+} = require('graphql');
+module.exports = parse(/* GraphQL */`
+  type Query {
+    certificates: [Certificate!]!
+  }
+
+  type Certificate {
+    id: ID!
+    name: String!
+  }
+`);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJwYXJzZSIsInJlcXVpcmUiLCJtb2R1bGUiLCJleHBvcnRzIl0sInNvdXJjZXMiOlsic2NoZW1hLWRvY3VtZW50LmpzIl0sInNvdXJjZXNDb250ZW50IjpbImNvbnN0IHsgcGFyc2UgfSA9IHJlcXVpcmUoJ2dyYXBocWwnKTtcblxubW9kdWxlLmV4cG9ydHMgPSBwYXJzZSgvKiBHcmFwaFFMICovIGBcbiAgdHlwZSBRdWVyeSB7XG4gICAgY2VydGlmaWNhdGVzOiBbQ2VydGlmaWNhdGUhXSFcbiAgfVxuXG4gIHR5cGUgQ2VydGlmaWNhdGUge1xuICAgIGlkOiBJRCFcbiAgICBuYW1lOiBTdHJpbmchXG4gIH1cbmApO1xuIl0sIm1hcHBpbmdzIjoiOztBQUFBLE1BQU07RUFBRUE7QUFBTSxDQUFDLEdBQUdDLE9BQU8sQ0FBQyxTQUFTLENBQUM7QUFFcENDLE1BQU0sQ0FBQ0MsT0FBTyxHQUFHSCxLQUFLLENBQUMsYUFBYztBQUNyQztBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EsQ0FBQyxDQUFDIiwiaWdub3JlTGlzdCI6W119

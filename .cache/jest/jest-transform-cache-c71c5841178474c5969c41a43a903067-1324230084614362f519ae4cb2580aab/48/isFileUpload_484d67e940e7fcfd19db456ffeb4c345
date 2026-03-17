@@ -1,0 +1,11 @@
+dec8fa8f90eec8c207ddf7de1c4c7c4d
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.isFileUpload = isFileUpload;
+function isFileUpload(obj) {
+  return typeof obj.createReadStream === 'function';
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJpc0ZpbGVVcGxvYWQiLCJvYmoiLCJjcmVhdGVSZWFkU3RyZWFtIl0sInNvdXJjZXMiOlsiaXNGaWxlVXBsb2FkLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBmdW5jdGlvbiBpc0ZpbGVVcGxvYWQoXG4gIG9iajogYW55LFxuKTogb2JqIGlzIHsgY3JlYXRlUmVhZFN0cmVhbTogKCkgPT4gQXN5bmNJdGVyYWJsZTxVaW50OEFycmF5PjsgbWltZXR5cGU6IHN0cmluZyB9IHtcbiAgcmV0dXJuIHR5cGVvZiBvYmouY3JlYXRlUmVhZFN0cmVhbSA9PT0gJ2Z1bmN0aW9uJztcbn1cbiJdLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBQU8sU0FBU0EsWUFBWUEsQ0FDMUJDLEdBQVEsRUFDd0U7RUFDaEYsT0FBTyxPQUFPQSxHQUFHLENBQUNDLGdCQUFnQixLQUFLLFVBQVU7QUFDbkQiLCJpZ25vcmVMaXN0IjpbXX0=

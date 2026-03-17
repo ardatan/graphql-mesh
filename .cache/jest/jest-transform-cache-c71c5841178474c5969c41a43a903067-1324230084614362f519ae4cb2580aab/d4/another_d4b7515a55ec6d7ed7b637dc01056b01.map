@@ -1,0 +1,1 @@
+{"version":3,"names":["john","exports"],"sources":["another.js"],"sourcesContent":["export const john = 'doe';\n"],"mappings":";;;;;;AAAO,MAAMA,IAAI,GAAAC,OAAA,CAAAD,IAAA,GAAG,KAAK","ignoreList":[]}

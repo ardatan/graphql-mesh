@@ -1,0 +1,7 @@
+2f80a1daafb4f7b6fc9d0d9bca2428fd
+"use strict";
+
+module.exports = {
+  john: 'doe'
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2R1bGUiLCJleHBvcnRzIiwiam9obiJdLCJzb3VyY2VzIjpbImFub3RoZXIuanMiXSwic291cmNlc0NvbnRlbnQiOlsibW9kdWxlLmV4cG9ydHMgPSB7IGpvaG46ICdkb2UnIH07XG4iXSwibWFwcGluZ3MiOiI7O0FBQUFBLE1BQU0sQ0FBQ0MsT0FBTyxHQUFHO0VBQUVDLElBQUksRUFBRTtBQUFNLENBQUMiLCJpZ25vcmVMaXN0IjpbXX0=

@@ -1,0 +1,10 @@
+cc7c018aeaa9edf3ccd71d622c632062
+"use strict";
+
+require('json-bigint-patch');
+// Needed only for Jest
+const {
+  patchSymbols
+} = require('@whatwg-node/disposablestack');
+patchSymbols();
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJyZXF1aXJlIiwicGF0Y2hTeW1ib2xzIl0sInNvdXJjZXMiOlsic2V0dXAtamVzdC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJyZXF1aXJlKCdqc29uLWJpZ2ludC1wYXRjaCcpO1xuLy8gTmVlZGVkIG9ubHkgZm9yIEplc3RcbmNvbnN0IHsgcGF0Y2hTeW1ib2xzIH0gPSByZXF1aXJlKCdAd2hhdHdnLW5vZGUvZGlzcG9zYWJsZXN0YWNrJyk7XG5wYXRjaFN5bWJvbHMoKTtcbiJdLCJtYXBwaW5ncyI6Ijs7QUFBQUEsT0FBTyxDQUFDLG1CQUFtQixDQUFDO0FBQzVCO0FBQ0EsTUFBTTtFQUFFQztBQUFhLENBQUMsR0FBR0QsT0FBTyxDQUFDLDhCQUE4QixDQUFDO0FBQ2hFQyxZQUFZLENBQUMsQ0FBQyIsImlnbm9yZUxpc3QiOltdfQ==

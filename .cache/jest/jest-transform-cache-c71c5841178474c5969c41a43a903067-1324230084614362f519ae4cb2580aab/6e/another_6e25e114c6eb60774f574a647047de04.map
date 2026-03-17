@@ -1,0 +1,1 @@
+{"version":3,"names":["module","exports","john"],"sources":["another.js"],"sourcesContent":["module.exports = { john: 'doe' };\n"],"mappings":";;AAAAA,MAAM,CAACC,OAAO,GAAG;EAAEC,IAAI,EAAE;AAAM,CAAC","ignoreList":[]}

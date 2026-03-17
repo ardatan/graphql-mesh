@@ -1,0 +1,63 @@
+145140cfc6fc190398ffde24043a21a5
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var _exportNames = {
+  loadOpenAPISubgraph: true,
+  getJSONSchemaOptionsFromOpenAPIOptions: true,
+  processDirectives: true,
+  getSubgraphExecutor: true
+};
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function () {
+    return _loadGraphQLSchemaFromOpenAPI.loadGraphQLSchemaFromOpenAPI;
+  }
+});
+Object.defineProperty(exports, "getJSONSchemaOptionsFromOpenAPIOptions", {
+  enumerable: true,
+  get: function () {
+    return _getJSONSchemaOptionsFromOpenAPIOptions.getJSONSchemaOptionsFromOpenAPIOptions;
+  }
+});
+Object.defineProperty(exports, "getSubgraphExecutor", {
+  enumerable: true,
+  get: function () {
+    return _jsonSchema.getSubgraphExecutor;
+  }
+});
+exports.loadOpenAPISubgraph = loadOpenAPISubgraph;
+Object.defineProperty(exports, "processDirectives", {
+  enumerable: true,
+  get: function () {
+    return _jsonSchema.processDirectives;
+  }
+});
+var _loadGraphQLSchemaFromOpenAPI = require("./loadGraphQLSchemaFromOpenAPI.js");
+Object.keys(_loadGraphQLSchemaFromOpenAPI).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _loadGraphQLSchemaFromOpenAPI[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _loadGraphQLSchemaFromOpenAPI[key];
+    }
+  });
+});
+var _getJSONSchemaOptionsFromOpenAPIOptions = require("./getJSONSchemaOptionsFromOpenAPIOptions.js");
+var _jsonSchema = require("@omnigraph/json-schema");
+function loadOpenAPISubgraph(name, options) {
+  return ctx => ({
+    name,
+    schema$: (0, _loadGraphQLSchemaFromOpenAPI.loadNonExecutableGraphQLSchemaFromOpenAPI)(name, {
+      ...options,
+      fetch: ctx.fetch,
+      cwd: ctx.cwd,
+      logger: ctx.logger
+    })
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJfbG9hZEdyYXBoUUxTY2hlbWFGcm9tT3BlbkFQSSIsInJlcXVpcmUiLCJPYmplY3QiLCJrZXlzIiwiZm9yRWFjaCIsImtleSIsInByb3RvdHlwZSIsImhhc093blByb3BlcnR5IiwiY2FsbCIsIl9leHBvcnROYW1lcyIsImV4cG9ydHMiLCJkZWZpbmVQcm9wZXJ0eSIsImVudW1lcmFibGUiLCJnZXQiLCJfZ2V0SlNPTlNjaGVtYU9wdGlvbnNGcm9tT3BlbkFQSU9wdGlvbnMiLCJfanNvblNjaGVtYSIsImxvYWRPcGVuQVBJU3ViZ3JhcGgiLCJuYW1lIiwib3B0aW9ucyIsImN0eCIsInNjaGVtYSQiLCJsb2FkTm9uRXhlY3V0YWJsZUdyYXBoUUxTY2hlbWFGcm9tT3BlbkFQSSIsImZldGNoIiwiY3dkIiwibG9nZ2VyIl0sInNvdXJjZXMiOlsiaW5kZXgudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHR5cGUgeyBMb2dnZXIsIE1lc2hGZXRjaCB9IGZyb20gJ0BncmFwaHFsLW1lc2gvdHlwZXMnO1xuaW1wb3J0IHsgbG9hZE5vbkV4ZWN1dGFibGVHcmFwaFFMU2NoZW1hRnJvbU9wZW5BUEkgfSBmcm9tICcuL2xvYWRHcmFwaFFMU2NoZW1hRnJvbU9wZW5BUEkuanMnO1xuaW1wb3J0IHR5cGUgeyBPcGVuQVBJTG9hZGVyT3B0aW9ucyB9IGZyb20gJy4vdHlwZXMuanMnO1xuXG5leHBvcnQgeyBsb2FkR3JhcGhRTFNjaGVtYUZyb21PcGVuQVBJIGFzIGRlZmF1bHQgfSBmcm9tICcuL2xvYWRHcmFwaFFMU2NoZW1hRnJvbU9wZW5BUEkuanMnO1xuZXhwb3J0ICogZnJvbSAnLi9sb2FkR3JhcGhRTFNjaGVtYUZyb21PcGVuQVBJLmpzJztcbmV4cG9ydCB7IGdldEpTT05TY2hlbWFPcHRpb25zRnJvbU9wZW5BUElPcHRpb25zIH0gZnJvbSAnLi9nZXRKU09OU2NoZW1hT3B0aW9uc0Zyb21PcGVuQVBJT3B0aW9ucy5qcyc7XG5leHBvcnQgdHlwZSB7IE9wZW5BUElMb2FkZXJPcHRpb25zIH0gZnJvbSAnLi90eXBlcy5qcyc7XG5cbmV4cG9ydCBmdW5jdGlvbiBsb2FkT3BlbkFQSVN1YmdyYXBoKG5hbWU6IHN0cmluZywgb3B0aW9uczogT3BlbkFQSUxvYWRlck9wdGlvbnMpIHtcbiAgcmV0dXJuIChjdHg6IHsgZmV0Y2g6IE1lc2hGZXRjaDsgY3dkOiBzdHJpbmc7IGxvZ2dlcjogTG9nZ2VyIH0pID0+ICh7XG4gICAgbmFtZSxcbiAgICBzY2hlbWEkOiBsb2FkTm9uRXhlY3V0YWJsZUdyYXBoUUxTY2hlbWFGcm9tT3BlbkFQSShuYW1lLCB7XG4gICAgICAuLi5vcHRpb25zLFxuICAgICAgZmV0Y2g6IGN0eC5mZXRjaCxcbiAgICAgIGN3ZDogY3R4LmN3ZCxcbiAgICAgIGxvZ2dlcjogY3R4LmxvZ2dlcixcbiAgICB9KSxcbiAgfSk7XG59XG5cbmV4cG9ydCB7IHByb2Nlc3NEaXJlY3RpdmVzLCBnZXRTdWJncmFwaEV4ZWN1dG9yIH0gZnJvbSAnQG9tbmlncmFwaC9qc29uLXNjaGVtYSc7XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUNBLElBQUFBLDZCQUFBLEdBQUFDLE9BQUE7QUFJQUMsTUFBQSxDQUFBQyxJQUFBLENBQUFILDZCQUFBLEVBQUFJLE9BQUEsV0FBQUMsR0FBQTtFQUFBLElBQUFBLEdBQUEsa0JBQUFBLEdBQUE7RUFBQSxJQUFBSCxNQUFBLENBQUFJLFNBQUEsQ0FBQUMsY0FBQSxDQUFBQyxJQUFBLENBQUFDLFlBQUEsRUFBQUosR0FBQTtFQUFBLElBQUFBLEdBQUEsSUFBQUssT0FBQSxJQUFBQSxPQUFBLENBQUFMLEdBQUEsTUFBQUwsNkJBQUEsQ0FBQUssR0FBQTtFQUFBSCxNQUFBLENBQUFTLGNBQUEsQ0FBQUQsT0FBQSxFQUFBTCxHQUFBO0lBQUFPLFVBQUE7SUFBQUMsR0FBQSxXQUFBQSxDQUFBO01BQUEsT0FBQWIsNkJBQUEsQ0FBQUssR0FBQTtJQUFBO0VBQUE7QUFBQTtBQUNBLElBQUFTLHVDQUFBLEdBQUFiLE9BQUE7QUFlQSxJQUFBYyxXQUFBLEdBQUFkLE9BQUE7QUFaTyxTQUFTZSxtQkFBbUJBLENBQUNDLElBQVksRUFBRUMsT0FBNkIsRUFBRTtFQUMvRSxPQUFRQyxHQUFzRCxLQUFNO0lBQ2xFRixJQUFJO0lBQ0pHLE9BQU8sRUFBRSxJQUFBQyx1RUFBeUMsRUFBQ0osSUFBSSxFQUFFO01BQ3ZELEdBQUdDLE9BQU87TUFDVkksS0FBSyxFQUFFSCxHQUFHLENBQUNHLEtBQUs7TUFDaEJDLEdBQUcsRUFBRUosR0FBRyxDQUFDSSxHQUFHO01BQ1pDLE1BQU0sRUFBRUwsR0FBRyxDQUFDSztJQUNkLENBQUM7RUFDSCxDQUFDLENBQUM7QUFDSiIsImlnbm9yZUxpc3QiOltdfQ==

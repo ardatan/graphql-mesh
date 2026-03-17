@@ -1,0 +1,10 @@
+6443d709ee30a8bf5b346dc0e08adceb
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.lowercase = void 0;
+const lowercase = value => value.toLowerCase();
+exports.lowercase = lowercase;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJsb3dlcmNhc2UiLCJ2YWx1ZSIsInRvTG93ZXJDYXNlIiwiZXhwb3J0cyJdLCJzb3VyY2VzIjpbImxvd2VyY2FzZS5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgY29uc3QgbG93ZXJjYXNlID0gdmFsdWUgPT4gdmFsdWUudG9Mb3dlckNhc2UoKTtcbiJdLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBQU8sTUFBTUEsU0FBUyxHQUFHQyxLQUFLLElBQUlBLEtBQUssQ0FBQ0MsV0FBVyxDQUFDLENBQUM7QUFBQ0MsT0FBQSxDQUFBSCxTQUFBLEdBQUFBLFNBQUEiLCJpZ25vcmVMaXN0IjpbXX0=

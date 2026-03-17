@@ -1,0 +1,12 @@
+df2ed5d3b8d66805dc2044063fd1ac48
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _another = require("./another");
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+var _default = exports.default = _another.john;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJfYW5vdGhlciIsInJlcXVpcmUiLCJfZGVmYXVsdCIsImV4cG9ydHMiLCJkZWZhdWx0Iiwiam9obiJdLCJzb3VyY2VzIjpbImluZGV4LnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIGVzbGludC1kaXNhYmxlLW5leHQtbGluZSBAdHlwZXNjcmlwdC1lc2xpbnQvYmFuLXRzLWNvbW1lbnRcbi8vIEB0cy1leHBlY3QtZXJyb3JcbmltcG9ydCB7IGpvaG4gfSBmcm9tICcuL2Fub3RoZXInO1xuXG5leHBvcnQgZGVmYXVsdCBqb2huO1xuIl0sIm1hcHBpbmdzIjoiOzs7Ozs7QUFFQSxJQUFBQSxRQUFBLEdBQUFDLE9BQUE7QUFGQTtBQUNBO0FBQUEsSUFBQUMsUUFBQSxHQUFBQyxPQUFBLENBQUFDLE9BQUEsR0FHZUMsYUFBSSIsImlnbm9yZUxpc3QiOltdfQ==

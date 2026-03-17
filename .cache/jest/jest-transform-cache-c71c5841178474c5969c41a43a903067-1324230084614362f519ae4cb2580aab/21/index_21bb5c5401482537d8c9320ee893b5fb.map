@@ -1,0 +1,1 @@
+{"version":3,"names":["john","_default","exports","default"],"sources":["index.ts"],"sourcesContent":["const john = 'doe';\nexport default { john };\n"],"mappings":";;;;;;AAAA,MAAMA,IAAI,GAAG,KAAK;AAAC,IAAAC,QAAA,GAAAC,OAAA,CAAAC,OAAA,GACJ;EAAEH;AAAK,CAAC","ignoreList":[]}

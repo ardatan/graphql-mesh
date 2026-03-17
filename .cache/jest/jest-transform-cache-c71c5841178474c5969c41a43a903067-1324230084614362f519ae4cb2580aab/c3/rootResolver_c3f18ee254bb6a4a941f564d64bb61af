@@ -1,0 +1,11 @@
+769d292288496dc87e5a126e76f2766e
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.rootResolver = void 0;
+const rootResolver = exports.rootResolver = function rootResolver(root) {
+  return root;
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJyb290UmVzb2x2ZXIiLCJleHBvcnRzIiwicm9vdCJdLCJzb3VyY2VzIjpbInJvb3RSZXNvbHZlci50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IEdyYXBoUUxGaWVsZFJlc29sdmVyIH0gZnJvbSAnZ3JhcGhxbCc7XG5cbmV4cG9ydCBjb25zdCByb290UmVzb2x2ZXI6IEdyYXBoUUxGaWVsZFJlc29sdmVyPGFueSwgYW55PiA9IGZ1bmN0aW9uIHJvb3RSZXNvbHZlcihyb290KSB7XG4gIHJldHVybiByb290O1xufTtcbiJdLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBRU8sTUFBTUEsWUFBNEMsR0FBQUMsT0FBQSxDQUFBRCxZQUFBLEdBQUcsU0FBU0EsWUFBWUEsQ0FBQ0UsSUFBSSxFQUFFO0VBQ3RGLE9BQU9BLElBQUk7QUFDYixDQUFDIiwiaWdub3JlTGlzdCI6W119

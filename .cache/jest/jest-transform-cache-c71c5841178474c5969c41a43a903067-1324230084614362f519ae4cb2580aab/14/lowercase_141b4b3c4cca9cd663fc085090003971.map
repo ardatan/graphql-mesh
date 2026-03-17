@@ -1,0 +1,1 @@
+{"version":3,"names":["lowercase","value","toLowerCase","exports"],"sources":["lowercase.js"],"sourcesContent":["export const lowercase = value => value.toLowerCase();\n"],"mappings":";;;;;;AAAO,MAAMA,SAAS,GAAGC,KAAK,IAAIA,KAAK,CAACC,WAAW,CAAC,CAAC;AAACC,OAAA,CAAAH,SAAA,GAAAA,SAAA","ignoreList":[]}

@@ -1,0 +1,16 @@
+4736536fb8cb756bb5559fb5c745fbd7
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "MESH_API_CONTEXT_SYMBOL", {
+  enumerable: true,
+  get: function () {
+    return _utils.MESH_API_CONTEXT_SYMBOL;
+  }
+});
+exports.MESH_CONTEXT_SYMBOL = void 0;
+var _utils = require("@graphql-mesh/utils");
+const MESH_CONTEXT_SYMBOL = exports.MESH_CONTEXT_SYMBOL = Symbol('isMeshContext');
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJfdXRpbHMiLCJyZXF1aXJlIiwiTUVTSF9DT05URVhUX1NZTUJPTCIsImV4cG9ydHMiLCJTeW1ib2wiXSwic291cmNlcyI6WyJjb25zdGFudHMudHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNvbnN0IE1FU0hfQ09OVEVYVF9TWU1CT0wgPSBTeW1ib2woJ2lzTWVzaENvbnRleHQnKTtcbmV4cG9ydCB7IE1FU0hfQVBJX0NPTlRFWFRfU1lNQk9MIH0gZnJvbSAnQGdyYXBocWwtbWVzaC91dGlscyc7XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OztBQUNBLElBQUFBLE1BQUEsR0FBQUMsT0FBQTtBQURPLE1BQU1DLG1CQUFtQixHQUFBQyxPQUFBLENBQUFELG1CQUFBLEdBQUdFLE1BQU0sQ0FBQyxlQUFlLENBQUMiLCJpZ25vcmVMaXN0IjpbXX0=

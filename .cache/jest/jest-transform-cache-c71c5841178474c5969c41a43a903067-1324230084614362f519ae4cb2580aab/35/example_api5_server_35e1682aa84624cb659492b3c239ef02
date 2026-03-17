@@ -1,0 +1,67 @@
+3629eb519e1c32f005632a332e242752
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.exampleApi5 = void 0;
+var _fets = require("fets");
+// Copyright IBM Corp. 2017,2018. All Rights Reserved.
+// Node module: openapi-to-graphql
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+// eslint-disable-next-line import/no-extraneous-dependencies
+
+const exampleApi5 = exports.exampleApi5 = (0, _fets.createRouter)().route({
+  method: 'GET',
+  path: '/api/o_d_d___n_a_m_e',
+  handler: () => _fets.Response.json({
+    data: 'odd name'
+  })
+}).route({
+  method: 'GET',
+  path: '/api/w-e-i-r-d___n-a-m-e',
+  handler: () => _fets.Response.json({
+    data: 'weird name'
+  })
+}).route({
+  method: 'GET',
+  /**
+   * Cannot use f-u-n-k-y___p-a-r-a-m-e-t-e-r (like in the OAS) as it is not
+   * allowed by Express.js routing
+   *
+   * "The name of route parameters must be made up of "word characters"
+   * ([A-Za-z0-9_])."
+   */
+  path: '/api/w-e-i-r-d___n-a-m-e2/:funky___parameter',
+  handler: req => _fets.Response.json({
+    data: `weird name 2 param: ${req.params.funky___parameter}`
+  })
+}).route({
+  method: 'GET',
+  path: '/api/w-e-i-r-d___n-a-m-e3/:funky___parameter',
+  handler: req => _fets.Response.json({
+    data: `weird name 3 param: ${req.params.funky___parameter}`
+  })
+}).route({
+  method: 'GET',
+  path: '/api/getEnum',
+  handler: () => _fets.Response.json({
+    data: 'a-m-b-e-r'
+  })
+}).route({
+  method: 'GET',
+  path: '/api/getNumericalEnum',
+  handler: () => _fets.Response.json({
+    data: 3
+  })
+}).route({
+  method: 'GET',
+  path: '/api/getObjectEnum',
+  handler: () => _fets.Response.json({
+    data: {
+      value: 'a-m-b-e-r'
+    }
+  })
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJfZmV0cyIsInJlcXVpcmUiLCJleGFtcGxlQXBpNSIsImV4cG9ydHMiLCJjcmVhdGVSb3V0ZXIiLCJyb3V0ZSIsIm1ldGhvZCIsInBhdGgiLCJoYW5kbGVyIiwiUmVzcG9uc2UiLCJqc29uIiwiZGF0YSIsInJlcSIsInBhcmFtcyIsImZ1bmt5X19fcGFyYW1ldGVyIiwidmFsdWUiXSwic291cmNlcyI6WyJleGFtcGxlX2FwaTVfc2VydmVyLnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIENvcHlyaWdodCBJQk0gQ29ycC4gMjAxNywyMDE4LiBBbGwgUmlnaHRzIFJlc2VydmVkLlxuLy8gTm9kZSBtb2R1bGU6IG9wZW5hcGktdG8tZ3JhcGhxbFxuLy8gVGhpcyBmaWxlIGlzIGxpY2Vuc2VkIHVuZGVyIHRoZSBNSVQgTGljZW5zZS5cbi8vIExpY2Vuc2UgdGV4dCBhdmFpbGFibGUgYXQgaHR0cHM6Ly9vcGVuc291cmNlLm9yZy9saWNlbnNlcy9NSVRcbi8vIGVzbGludC1kaXNhYmxlLW5leHQtbGluZSBpbXBvcnQvbm8tZXh0cmFuZW91cy1kZXBlbmRlbmNpZXNcbmltcG9ydCB7IGNyZWF0ZVJvdXRlciwgUmVzcG9uc2UgfSBmcm9tICdmZXRzJztcblxuZXhwb3J0IGNvbnN0IGV4YW1wbGVBcGk1ID0gY3JlYXRlUm91dGVyKClcbiAgLnJvdXRlKHtcbiAgICBtZXRob2Q6ICdHRVQnLFxuICAgIHBhdGg6ICcvYXBpL29fZF9kX19fbl9hX21fZScsXG4gICAgaGFuZGxlcjogKCkgPT4gUmVzcG9uc2UuanNvbih7IGRhdGE6ICdvZGQgbmFtZScgfSksXG4gIH0pXG4gIC5yb3V0ZSh7XG4gICAgbWV0aG9kOiAnR0VUJyxcbiAgICBwYXRoOiAnL2FwaS93LWUtaS1yLWRfX19uLWEtbS1lJyxcbiAgICBoYW5kbGVyOiAoKSA9PiBSZXNwb25zZS5qc29uKHsgZGF0YTogJ3dlaXJkIG5hbWUnIH0pLFxuICB9KVxuICAucm91dGUoe1xuICAgIG1ldGhvZDogJ0dFVCcsXG4gICAgLyoqXG4gICAgICogQ2Fubm90IHVzZSBmLXUtbi1rLXlfX19wLWEtci1hLW0tZS10LWUtciAobGlrZSBpbiB0aGUgT0FTKSBhcyBpdCBpcyBub3RcbiAgICAgKiBhbGxvd2VkIGJ5IEV4cHJlc3MuanMgcm91dGluZ1xuICAgICAqXG4gICAgICogXCJUaGUgbmFtZSBvZiByb3V0ZSBwYXJhbWV0ZXJzIG11c3QgYmUgbWFkZSB1cCBvZiBcIndvcmQgY2hhcmFjdGVyc1wiXG4gICAgICogKFtBLVphLXowLTlfXSkuXCJcbiAgICAgKi9cbiAgICBwYXRoOiAnL2FwaS93LWUtaS1yLWRfX19uLWEtbS1lMi86ZnVua3lfX19wYXJhbWV0ZXInLFxuICAgIGhhbmRsZXI6IHJlcSA9PiBSZXNwb25zZS5qc29uKHsgZGF0YTogYHdlaXJkIG5hbWUgMiBwYXJhbTogJHtyZXEucGFyYW1zLmZ1bmt5X19fcGFyYW1ldGVyfWAgfSksXG4gIH0pXG4gIC5yb3V0ZSh7XG4gICAgbWV0aG9kOiAnR0VUJyxcbiAgICBwYXRoOiAnL2FwaS93LWUtaS1yLWRfX19uLWEtbS1lMy86ZnVua3lfX19wYXJhbWV0ZXInLFxuICAgIGhhbmRsZXI6IHJlcSA9PiBSZXNwb25zZS5qc29uKHsgZGF0YTogYHdlaXJkIG5hbWUgMyBwYXJhbTogJHtyZXEucGFyYW1zLmZ1bmt5X19fcGFyYW1ldGVyfWAgfSksXG4gIH0pXG4gIC5yb3V0ZSh7XG4gICAgbWV0aG9kOiAnR0VUJyxcbiAgICBwYXRoOiAnL2FwaS9nZXRFbnVtJyxcbiAgICBoYW5kbGVyOiAoKSA9PiBSZXNwb25zZS5qc29uKHsgZGF0YTogJ2EtbS1iLWUtcicgfSksXG4gIH0pXG4gIC5yb3V0ZSh7XG4gICAgbWV0aG9kOiAnR0VUJyxcbiAgICBwYXRoOiAnL2FwaS9nZXROdW1lcmljYWxFbnVtJyxcbiAgICBoYW5kbGVyOiAoKSA9PiBSZXNwb25zZS5qc29uKHsgZGF0YTogMyB9KSxcbiAgfSlcbiAgLnJvdXRlKHtcbiAgICBtZXRob2Q6ICdHRVQnLFxuICAgIHBhdGg6ICcvYXBpL2dldE9iamVjdEVudW0nLFxuICAgIGhhbmRsZXI6ICgpID0+IFJlc3BvbnNlLmpzb24oeyBkYXRhOiB7IHZhbHVlOiAnYS1tLWItZS1yJyB9IH0pLFxuICB9KTtcbiJdLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBS0EsSUFBQUEsS0FBQSxHQUFBQyxPQUFBO0FBTEE7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFHTyxNQUFNQyxXQUFXLEdBQUFDLE9BQUEsQ0FBQUQsV0FBQSxHQUFHLElBQUFFLGtCQUFZLEVBQUMsQ0FBQyxDQUN0Q0MsS0FBSyxDQUFDO0VBQ0xDLE1BQU0sRUFBRSxLQUFLO0VBQ2JDLElBQUksRUFBRSxzQkFBc0I7RUFDNUJDLE9BQU8sRUFBRUEsQ0FBQSxLQUFNQyxjQUFRLENBQUNDLElBQUksQ0FBQztJQUFFQyxJQUFJLEVBQUU7RUFBVyxDQUFDO0FBQ25ELENBQUMsQ0FBQyxDQUNETixLQUFLLENBQUM7RUFDTEMsTUFBTSxFQUFFLEtBQUs7RUFDYkMsSUFBSSxFQUFFLDBCQUEwQjtFQUNoQ0MsT0FBTyxFQUFFQSxDQUFBLEtBQU1DLGNBQVEsQ0FBQ0MsSUFBSSxDQUFDO0lBQUVDLElBQUksRUFBRTtFQUFhLENBQUM7QUFDckQsQ0FBQyxDQUFDLENBQ0ROLEtBQUssQ0FBQztFQUNMQyxNQUFNLEVBQUUsS0FBSztFQUNiO0FBQ0o7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0VBQ0lDLElBQUksRUFBRSw4Q0FBOEM7RUFDcERDLE9BQU8sRUFBRUksR0FBRyxJQUFJSCxjQUFRLENBQUNDLElBQUksQ0FBQztJQUFFQyxJQUFJLEVBQUUsdUJBQXVCQyxHQUFHLENBQUNDLE1BQU0sQ0FBQ0MsaUJBQWlCO0VBQUcsQ0FBQztBQUMvRixDQUFDLENBQUMsQ0FDRFQsS0FBSyxDQUFDO0VBQ0xDLE1BQU0sRUFBRSxLQUFLO0VBQ2JDLElBQUksRUFBRSw4Q0FBOEM7RUFDcERDLE9BQU8sRUFBRUksR0FBRyxJQUFJSCxjQUFRLENBQUNDLElBQUksQ0FBQztJQUFFQyxJQUFJLEVBQUUsdUJBQXVCQyxHQUFHLENBQUNDLE1BQU0sQ0FBQ0MsaUJBQWlCO0VBQUcsQ0FBQztBQUMvRixDQUFDLENBQUMsQ0FDRFQsS0FBSyxDQUFDO0VBQ0xDLE1BQU0sRUFBRSxLQUFLO0VBQ2JDLElBQUksRUFBRSxjQUFjO0VBQ3BCQyxPQUFPLEVBQUVBLENBQUEsS0FBTUMsY0FBUSxDQUFDQyxJQUFJLENBQUM7SUFBRUMsSUFBSSxFQUFFO0VBQVksQ0FBQztBQUNwRCxDQUFDLENBQUMsQ0FDRE4sS0FBSyxDQUFDO0VBQ0xDLE1BQU0sRUFBRSxLQUFLO0VBQ2JDLElBQUksRUFBRSx1QkFBdUI7RUFDN0JDLE9BQU8sRUFBRUEsQ0FBQSxLQUFNQyxjQUFRLENBQUNDLElBQUksQ0FBQztJQUFFQyxJQUFJLEVBQUU7RUFBRSxDQUFDO0FBQzFDLENBQUMsQ0FBQyxDQUNETixLQUFLLENBQUM7RUFDTEMsTUFBTSxFQUFFLEtBQUs7RUFDYkMsSUFBSSxFQUFFLG9CQUFvQjtFQUMxQkMsT0FBTyxFQUFFQSxDQUFBLEtBQU1DLGNBQVEsQ0FBQ0MsSUFBSSxDQUFDO0lBQUVDLElBQUksRUFBRTtNQUFFSSxLQUFLLEVBQUU7SUFBWTtFQUFFLENBQUM7QUFDL0QsQ0FBQyxDQUFDIiwiaWdub3JlTGlzdCI6W119
