@@ -3938,7 +3938,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@e2e/complex-encapsulation@workspace:e2e/complex-encapsulation"
   dependencies:
-    "@graphql-hive/gateway": "npm:^2.5.6"
+    "@graphql-hive/gateway": "npm:^2.5.9"
     "@graphql-mesh/compose-cli": "workspace:*"
     graphql: "npm:16.13.1"
     graphql-yoga: "npm:^5.18.1"
