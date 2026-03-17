@@ -1,1 +1,0 @@
-{"version":3,"names":["_another","require","_default","exports","default","john"],"sources":["index.ts"],"sourcesContent":["import { john } from './another';\n\nexport default john;\n"],"mappings":";;;;;;AAAA,IAAAA,QAAA,GAAAC,OAAA;AAAiC,IAAAC,QAAA,GAAAC,OAAA,CAAAC,OAAA,GAElBC,aAAI","ignoreList":[]}

@@ -1,1 +1,0 @@
-{"version":3,"names":["john","require","module","exports"],"sources":["index.js"],"sourcesContent":["const { john } = require('./another');\n\nmodule.exports = { john };\n"],"mappings":";;AAAA,MAAM;EAAEA;AAAK,CAAC,GAAGC,OAAO,CAAC,WAAW,CAAC;AAErCC,MAAM,CAACC,OAAO,GAAG;EAAEH;AAAK,CAAC","ignoreList":[]}

@@ -1,1 +1,0 @@
-{"version":3,"names":["futureAdditions","exports"],"sources":["future-additions.ts"],"sourcesContent":["import type { YamlConfig } from '@graphql-mesh/types';\n\nexport type FutureAddition = YamlConfig.AdditionalStitchingResolverObject;\nexport const futureAdditions: FutureAddition[] = [];\n"],"mappings":";;;;;;AAGO,MAAMA,eAAiC,GAAAC,OAAA,CAAAD,eAAA,GAAG,EAAE","ignoreList":[]}

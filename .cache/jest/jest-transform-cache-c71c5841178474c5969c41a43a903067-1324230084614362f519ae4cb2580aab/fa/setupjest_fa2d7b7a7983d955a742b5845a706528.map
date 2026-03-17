@@ -1,1 +1,0 @@
-{"version":3,"names":["require","patchSymbols"],"sources":["setup-jest.js"],"sourcesContent":["require('json-bigint-patch');\n// Needed only for Jest\nconst { patchSymbols } = require('@whatwg-node/disposablestack');\npatchSymbols();\n"],"mappings":";;AAAAA,OAAO,CAAC,mBAAmB,CAAC;AAC5B;AACA,MAAM;EAAEC;AAAa,CAAC,GAAGD,OAAO,CAAC,8BAA8B,CAAC;AAChEC,YAAY,CAAC,CAAC","ignoreList":[]}

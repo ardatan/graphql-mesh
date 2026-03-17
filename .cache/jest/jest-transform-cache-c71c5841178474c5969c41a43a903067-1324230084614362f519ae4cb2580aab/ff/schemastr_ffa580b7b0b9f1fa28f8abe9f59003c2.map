@@ -1,1 +1,0 @@
-{"version":3,"names":["module","exports"],"sources":["schema-str.js"],"sourcesContent":["module.exports = /* GraphQL */ `\n  type Query {\n    certificates: [Certificate!]!\n  }\n\n  type Certificate {\n    id: ID!\n    name: String!\n  }\n`;\n"],"mappings":";;AAAAA,MAAM,CAACC,OAAO,GAAG,aAAc;AAC/B;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA,CAAC","ignoreList":[]}

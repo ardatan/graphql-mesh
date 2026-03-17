@@ -1,1 +1,0 @@
-{"version":3,"names":["defaultOptions","exports","delimiter"],"sources":["DefaultOptions.js"],"sourcesContent":["export const defaultOptions = {\n  delimiter: ['{', '}'],\n};\n"],"mappings":";;;;;;AAAO,MAAMA,cAAc,GAAAC,OAAA,CAAAD,cAAA,GAAG;EAC5BE,SAAS,EAAE,CAAC,GAAG,EAAE,GAAG;AACtB,CAAC","ignoreList":[]}

@@ -1,9 +1,0 @@
-43ac60f670b16031e33f71ef8795f7d9
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.john = void 0;
-const john = exports.john = 'doe';
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJqb2huIiwiZXhwb3J0cyJdLCJzb3VyY2VzIjpbImFub3RoZXIudHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNvbnN0IGpvaG4gPSAnZG9lJztcbiJdLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBQU8sTUFBTUEsSUFBSSxHQUFBQyxPQUFBLENBQUFELElBQUEsR0FBRyxLQUFLIiwiaWdub3JlTGlzdCI6W119

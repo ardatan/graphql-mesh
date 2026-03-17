@@ -1,7 +1,0 @@
-bd6fa2d89d133f762965d086e5bd5b44
-"use strict";
-
-module.exports = next => (root, args, context, info) => {
-  return 'FOO';
-};
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2R1bGUiLCJleHBvcnRzIiwibmV4dCIsInJvb3QiLCJhcmdzIiwiY29udGV4dCIsImluZm8iXSwic291cmNlcyI6WyJjb21wb3Nlci5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJtb2R1bGUuZXhwb3J0cyA9IG5leHQgPT4gKHJvb3QsIGFyZ3MsIGNvbnRleHQsIGluZm8pID0+IHtcbiAgcmV0dXJuICdGT08nO1xufTtcbiJdLCJtYXBwaW5ncyI6Ijs7QUFBQUEsTUFBTSxDQUFDQyxPQUFPLEdBQUdDLElBQUksSUFBSSxDQUFDQyxJQUFJLEVBQUVDLElBQUksRUFBRUMsT0FBTyxFQUFFQyxJQUFJLEtBQUs7RUFDdEQsT0FBTyxLQUFLO0FBQ2QsQ0FBQyIsImlnbm9yZUxpc3QiOltdfQ==

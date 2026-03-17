@@ -32,4 +32,4 @@ newrelic_agent.log
 .mise.toml
 docker/supergraph.graphql
 eslint_report.json
-.jest
+.cache
