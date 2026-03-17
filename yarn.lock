@@ -5034,7 +5034,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/hive-example-my-graphql@workspace:examples/v1-next/hive-example/my-graphql"
   dependencies:
-    "@graphql-hive/cli": "npm:0.58.5"
+    "@graphql-hive/cli": "npm:0.59.0"
     graphql: "npm:16.13.1"
     graphql-yoga: "npm:^5.18.1"
   languageName: unknown
@@ -5044,7 +5044,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples-v1-next/hive-example-my-rest@workspace:examples/v1-next/hive-example/my-rest"
   dependencies:
-    "@graphql-hive/cli": "npm:0.58.5"
+    "@graphql-hive/cli": "npm:0.59.0"
     "@graphql-mesh/compose-cli": "workspace:*"
     "@omnigraph/openapi": "workspace:*"
     fets: "npm:0.8.5"
@@ -5396,7 +5396,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-sources-authors@workspace:examples/hive-example/sources/authors"
   dependencies:
-    "@graphql-hive/cli": "npm:0.58.5"
+    "@graphql-hive/cli": "npm:0.59.0"
     "@graphql-mesh/cli": "npm:0.100.38"
     "@graphql-mesh/openapi": "npm:0.109.39"
     "@types/node": "npm:^25.5.0"
@@ -5411,7 +5411,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@examples/hive-example-sources-books@workspace:examples/hive-example/sources/books"
   dependencies:
-    "@graphql-hive/cli": "npm:0.58.5"
+    "@graphql-hive/cli": "npm:0.59.0"
     "@graphql-mesh/cli": "npm:0.100.38"
     "@graphql-mesh/openapi": "npm:0.109.39"
     "@types/node": "npm:^25.5.0"
@@ -6326,9 +6326,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-hive/cli@npm:0.58.5":
-  version: 0.58.5
-  resolution: "@graphql-hive/cli@npm:0.58.5"
+"@graphql-hive/cli@npm:0.59.0":
+  version: 0.59.0
+  resolution: "@graphql-hive/cli@npm:0.59.0"
   dependencies:
     "@graphql-hive/core": "npm:0.21.0"
     "@graphql-inspector/core": "npm:7.1.2"
@@ -6342,7 +6342,7 @@ __metadata:
     "@oclif/core": "npm:3.26.6"
     "@oclif/plugin-help": "npm:6.2.36"
     "@oclif/plugin-update": "npm:4.7.16"
-    "@theguild/federation-composition": "npm:0.21.3"
+    "@theguild/federation-composition": "npm:0.22.1"
     cli-table3: "npm:0.6.5"
     colors: "npm:1.4.0"
     env-ci: "npm:7.3.0"
@@ -6352,7 +6352,7 @@ __metadata:
     zod: "npm:3.25.76"
   bin:
     hive: bin/run
-  checksum: 10c0/7f5905aa418389fae0eb80df5d081e99c9671a7abd7907e6fada5cf68feafb7c4c3c19897aa94f23a80675c0252f05b2d346ea90e0b7c33f96de8bd4ec6f1593
+  checksum: 10c0/ce0b40aa24d4a0b1eead6b589c0bf44b77963641acc7c1a5acabb676337a3b9e05434b152681dc54d99d4310fedda62c6d42aa3ce5f7bcd773bb1a04fd4627a9
   languageName: node
   linkType: hard
 
@@ -14975,9 +14975,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/federation-composition@npm:0.21.3":
-  version: 0.21.3
-  resolution: "@theguild/federation-composition@npm:0.21.3"
+"@theguild/federation-composition@npm:0.22.1":
+  version: 0.22.1
+  resolution: "@theguild/federation-composition@npm:0.22.1"
   dependencies:
     constant-case: "npm:^3.0.4"
     debug: "npm:4.4.3"
@@ -14985,7 +14985,7 @@ __metadata:
     lodash.sortby: "npm:^4.7.0"
   peerDependencies:
     graphql: ^16.0.0
-  checksum: 10c0/cb0880cfc0aa36b476f7e83513f747a9bf9498f13a3ab46f09dccd5ff243ac2d4c67774fec83f291fb041d800ce4216a5aa51c6b92d35f823b6c6484331796bd
+  checksum: 10c0/270402fec696664af5986ebb258411210fef3a62e896b9bc59ef09ad2a51166c6fda3ec5c27a9c43b56a59580857ffd7be89f6a0e54d6412ecba3bc782228513
   languageName: node
   linkType: hard
 
