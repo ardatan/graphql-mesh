@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.100.38",
-    "@graphql-mesh/openapi": "0.109.39",
+    "@graphql-mesh/openapi": "0.109.40",
     "@graphql-mesh/plugin-response-cache": "0.104.32",
     "@graphql-mesh/runtime": "0.106.29",
     "@graphql-mesh/transform-cache": "0.105.28",
