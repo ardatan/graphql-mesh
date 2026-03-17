@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/odata",
-  "version": "0.106.31",
+  "version": "0.106.32",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,9 +35,9 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "^0.104.28",
-    "@graphql-mesh/types": "^0.104.23",
-    "@omnigraph/odata": "^0.2.31",
+    "@graphql-mesh/store": "^0.104.29",
+    "@graphql-mesh/types": "^0.104.24",
+    "@omnigraph/odata": "^0.2.32",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

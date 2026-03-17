@@ -1,5 +1,24 @@
 # @graphql-mesh/incontext-sdk-codegen
 
+## 0.0.5
+
+### Patch Changes
+
+- [#9315](https://github.com/ardatan/graphql-mesh/pull/9315)
+  [`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/fusion-runtime@^1.8.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/fusion-runtime/v/1.8.0)
+    (from `^1.7.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^11.1.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/11.1.11)
+    (from `^11.1.9`, in `dependencies`)
+- Updated dependencies
+  [[`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728),
+  [`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728)]:
+  - @graphql-mesh/types@0.104.24
+  - @graphql-mesh/utils@0.104.27
+
 ## 0.0.4
 
 ### Patch Changes
