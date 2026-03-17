@@ -7,7 +7,9 @@ it('should not have race condition with getting while ttl setting values', async
   const parallelism = 5;
   const timeout = AbortSignal.timeout(3000);
 
-  (async () => {
+  // Capture the setter task so it can be awaited — an un-awaited floating promise would
+  // be reported as a memory leak by Jest's --detectLeaks flag.
+  const setterTask = (async () => {
     while (!timeout.aborted) {
       await Promise.all(
         [...Array(parallelism)].map(
@@ -37,6 +39,9 @@ it('should not have race condition with getting while ttl setting values', async
       ),
     ).resolves.toEqual([...Array(parallelism)].map(() => 'value'));
   }
+
+  // Wait for the setter loop to finish its current iteration before disposing.
+  await setterTask;
 
   cache[DisposableSymbols.dispose]();
 });
