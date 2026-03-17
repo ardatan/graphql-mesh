@@ -1,5 +1,29 @@
 # @omnigraph/odata
 
+## 0.2.32
+
+### Patch Changes
+
+- [#9314](https://github.com/ardatan/graphql-mesh/pull/9314)
+  [`9a9aa8c`](https://github.com/ardatan/graphql-mesh/commit/9a9aa8cecfdb09c93ee1ee6540428c9c91d84b0c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.5.6` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.5.6) (from
+    `^5.5.5`, in `dependencies`)
+
+- [#9315](https://github.com/ardatan/graphql-mesh/pull/9315)
+  [`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.11)
+    (from `^12.0.8`, in `dependencies`)
+- Updated dependencies
+  [[`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728),
+  [`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728)]:
+  - @graphql-mesh/types@0.104.24
+  - @graphql-mesh/utils@0.104.27
+  - @graphql-mesh/store@0.104.29
+
 ## 0.2.31
 
 ### Patch Changes
