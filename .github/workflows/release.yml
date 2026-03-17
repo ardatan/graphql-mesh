@@ -12,15 +12,42 @@ concurrency:
 
 env:
   YARN_ENABLE_HARDENED_MODE: 0
+  NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
 jobs:
+  dependencies:
+    if:
+      ${{ github.event.pull_request.title != 'Upcoming Release Changes' && github.base_ref ==
+      'master' }}
+    uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yml@v1
+    with:
+      node-version-file: .node-version
+    secrets:
+      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+
+  alpha:
+    if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@v1
+    with:
+      node-version-file: .node-version
+      npmTag: alpha
+      buildScript: build
+    secrets:
+      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
+
   stable:
     permissions:
       contents: write
       id-token: write
       pull-requests: write
     if: github.ref == 'refs/heads/master'
-    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@87735d0619d0c4fdae5de1f51a19e4feed1f8713
+    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@v1
     with:
       releaseScript: release
       versionScript: 'changeset-version'
