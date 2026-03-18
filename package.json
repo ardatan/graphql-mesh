@@ -130,7 +130,7 @@
     "eslint-plugin-import": "patch:eslint-plugin-import@npm%3A2.32.0#~/.yarn/patches/eslint-plugin-import-npm-2.32.0-a1643bce9b.patch",
     "estree-util-value-to-estree": "3.5.0",
     "express": "5.2.1",
-    "fast-xml-parser": "5.4.1",
+    "fast-xml-parser": ">=5.5.6",
     "form-data": "4.0.5",
     "graphql": "16.13.1",
     "graphql-jit": "patch:graphql-jit@npm%3A0.8.7#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch",
