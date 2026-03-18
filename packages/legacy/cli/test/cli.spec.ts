@@ -27,6 +27,26 @@ describe('runtime', () => {
       expect(builtMesh).toMatch(/case "\.meshrc.ts":/);
     });
 
+    it('Should clear meshInstance$ on failure so subsequent calls retry', async () => {
+      const tsConfigFolder = 'ts-config';
+      await graphqlMesh(DEFAULT_CLI_PARAMS, [
+        'build',
+        `--dir=${pathModule.resolve(__dirname, tsConfigFolder)}`,
+      ]);
+
+      const meshConfigPath = pathModule.resolve(
+        __dirname,
+        tsConfigFolder,
+        generatedMeshConfiguration,
+        'index.ts',
+      );
+      const builtMesh = (await fs.promises.readFile(meshConfigPath)).toString();
+
+      // The catch must reset meshInstance$ so a failed build doesn't get permanently cached
+      expect(builtMesh).toMatch(/\.catch\(/);
+      expect(builtMesh).toMatch(/meshInstance\$\s*=\s*undefined/);
+    });
+
     it('Should keep the `.js` extension of a config file in the built Mesh index file', async () => {
       const jsConfigFolder = 'js-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
