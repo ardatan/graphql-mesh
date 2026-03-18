@@ -11,7 +11,7 @@
     "dev": "mesh serve"
   },
   "dependencies": {
-    "@graphql-hive/gateway": "^2.5.9",
+    "@graphql-hive/gateway": "^2.5.10",
     "esbuild": "^0.27.4",
     "graphql": "16.13.1",
     "typescript": "^5.4.2"
