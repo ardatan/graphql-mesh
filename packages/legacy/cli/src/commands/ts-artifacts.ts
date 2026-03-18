@@ -255,6 +255,9 @@ export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance> {
         mesh.pubsub.unsubscribe(id);
       });
       return mesh;
+    }).catch((err) => {
+      meshInstance$ = undefined;
+      return Promise.reject(err);
     });
   }
   return meshInstance$;
