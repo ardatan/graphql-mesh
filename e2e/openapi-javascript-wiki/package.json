@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@graphql-codegen/cli": "^6.2.1",
-    "@graphql-hive/gateway": "^2.5.9",
+    "@graphql-hive/gateway": "^2.5.10",
     "@graphql-mesh/compose-cli": "^1.5.19",
     "@graphql-mesh/incontext-sdk-codegen": "^0.0.5",
     "@omnigraph/openapi": "^0.109.39",
