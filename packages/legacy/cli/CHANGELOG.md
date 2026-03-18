@@ -1,5 +1,29 @@
 # @graphql-mesh/cli
 
+## 0.100.39
+
+### Patch Changes
+
+- [#9332](https://github.com/ardatan/graphql-mesh/pull/9332)
+  [`78d1cd4`](https://github.com/ardatan/graphql-mesh/commit/78d1cd477d47be3ebdcac7133e41f30cf6bf67c6)
+  Thanks [@JacksonDahl2](https://github.com/JacksonDahl2)! - Fix: Added a .catch() to the initial
+  meshInstance$ assignment in the getBuiltMesh code generation template
+  (packages/legacy/cli/src/commands/ts-artifacts.ts) that resets meshInstance$ to undefined on
+  failure, allowing the next call to retry.
+- Updated dependencies
+  [[`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91),
+  [`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91),
+  [`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91),
+  [`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91)]:
+  - @graphql-mesh/incontext-sdk-codegen@0.0.6
+  - @graphql-mesh/runtime@0.106.30
+  - @graphql-mesh/types@0.104.25
+  - @graphql-mesh/utils@0.104.28
+  - @graphql-mesh/config@0.108.34
+  - @graphql-mesh/http@0.106.32
+  - @graphql-mesh/store@0.104.30
+  - @graphql-mesh/include@0.3.29
+
 ## 0.100.38
 
 ### Patch Changes
