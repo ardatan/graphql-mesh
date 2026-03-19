@@ -7540,8 +7540,8 @@ __metadata:
     "@graphql-tools/delegate": "npm:^12.0.12"
     graphql: "npm:16.13.1"
     pg: "npm:^8.20.0"
-    postgraphile: "npm:^4.13.0"
-    postgraphile-core: "npm:^4.13.0"
+    postgraphile: "npm:^4.14.1"
+    postgraphile-core: "npm:^4.14.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -33472,7 +33472,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postgraphile-core@npm:4.14.1, postgraphile-core@npm:^4.13.0":
+"postgraphile-core@npm:4.14.1, postgraphile-core@npm:^4.14.1":
   version: 4.14.1
   resolution: "postgraphile-core@npm:4.14.1"
   dependencies:
@@ -33486,7 +33486,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postgraphile@npm:^4.13.0":
+"postgraphile@npm:^4.14.1":
   version: 4.14.1
   resolution: "postgraphile@npm:4.14.1"
   dependencies:
