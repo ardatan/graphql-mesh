@@ -6,6 +6,6 @@
     "@graphql-hive/pubsub": "next",
     "graphql": "^16.13.1",
     "graphql-sse": "^2.5.4",
-    "ioredis": "^5.10.0"
+    "ioredis": "^5.10.1"
   }
 }
