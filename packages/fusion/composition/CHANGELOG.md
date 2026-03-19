@@ -1,5 +1,19 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.36
+
+### Patch Changes
+
+- [#9329](https://github.com/ardatan/graphql-mesh/pull/9329)
+  [`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.18` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.18)
+    (from `^4.0.17`, in `dependencies`)
+- Updated dependencies
+  [[`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91)]:
+  - @graphql-mesh/utils@0.104.28
+
 ## 0.8.35
 
 ### Patch Changes
