@@ -1,0 +1,261 @@
+---
+description:
+  Learn how to handle errors in GraphQL Mesh, including REST API errors by status code and
+  authentication errors.
+---
+
+import { Callout } from '@theguild/components'
+
+# Error Handling
+
+GraphQL Mesh forwards errors from downstream REST/HTTP sources to the GraphQL client by default.
+This guide explains how to map HTTP error responses (such as `404 Not Found` or `401 Unauthorized`)
+to proper GraphQL types and how to handle authentication errors.
+
+<Callout>
+  For masking sensitive error details from end clients, see the [Error Masking
+  guide](/docs/guides/error-masking).
+</Callout>
+
+## REST API errors
+
+When GraphQL Mesh calls an upstream REST API and receives a non-`2xx` HTTP status code for which no
+mapping is configured, it returns a GraphQL error with the `DOWNSTREAM_SERVICE_ERROR` extension code
+and the full HTTP response details.
+
+### Mapping responses by status code
+
+Both the [JSON Schema handler](/docs/handlers/json-schema) and the
+[OpenAPI handler](/docs/handlers/openapi) support the `responseByStatusCode` operation option. It
+lets you define a distinct response schema (or sample) for every HTTP status code that the upstream
+API can return, so that error payloads become typed GraphQL fields instead of generic error
+messages.
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: MyApi
+    handler:
+      jsonSchema:
+        endpoint: https://api.example.com
+        operations:
+          - type: Query
+            field: book
+            path: /books/{args.id}
+            method: GET
+            # Default (2xx) response schema
+            responseSchema: ./schemas/book.json
+            responseByStatusCode:
+              # Provide a typed response for 404
+              404:
+                responseSample: ./samples/book-not-found.json
+                responseTypeName: BookNotFound
+              # Provide a typed response for 500
+              500:
+                responseSample: ./samples/internal-error.json
+                responseTypeName: InternalError
+```
+
+GraphQL Mesh will generate a union type that includes all the mapped response types:
+
+```graphql
+type Query {
+  book(id: ID): BookResult
+}
+
+union BookResult = Book | BookNotFound | InternalError
+
+type Book {
+  id: ID!
+  title: String
+}
+
+type BookNotFound {
+  message: String!
+}
+
+type InternalError {
+  message: String!
+}
+```
+
+Clients can then use inline fragments to handle each case:
+
+```graphql
+query GetBook($id: ID!) {
+  book(id: $id) {
+    ... on Book {
+      title
+    }
+    ... on BookNotFound {
+      message
+    }
+    ... on InternalError {
+      message
+    }
+  }
+}
+```
+
+### Using a JSON Schema instead of a sample
+
+You can point `responseSchema` at a JSON Schema file (or a `$ref` path within one) rather than
+providing a sample:
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: MyApi
+    handler:
+      jsonSchema:
+        endpoint: https://api.example.com
+        operations:
+          - type: Query
+            field: book
+            path: /books/{args.id}
+            method: GET
+            responseSchema: ./schemas/book.json
+            responseByStatusCode:
+              404:
+                responseSchema: ./schemas/errors.json#/definitions/NotFoundError
+              422:
+                responseSchema: ./schemas/errors.json#/definitions/ValidationError
+```
+
+### OpenAPI / Swagger sources
+
+The OpenAPI handler inherits all `jsonSchema` handler options, so `responseByStatusCode` works
+identically. If your OpenAPI spec already defines response schemas per status code, GraphQL Mesh
+will use them automatically; `responseByStatusCode` lets you add or override them:
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: PetStore
+    handler:
+      openapi:
+        source: ./petstore.yaml
+        operations:
+          - field: getPetById
+            responseByStatusCode:
+              404:
+                responseSample: ./samples/pet-not-found.json
+                responseTypeName: PetNotFound
+```
+
+## Authentication errors
+
+### Mapping 401 / 403 to typed GraphQL responses
+
+Authentication (`401 Unauthorized`) and authorization (`403 Forbidden`) errors returned by upstream
+APIs can be mapped with `responseByStatusCode` just like any other status code:
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: MyApi
+    handler:
+      jsonSchema:
+        endpoint: https://api.example.com
+        operations:
+          - type: Mutation
+            field: createPost
+            path: /posts
+            method: POST
+            requestSample: ./samples/create-post-request.json
+            responseSample: ./samples/create-post-response.json
+            responseByStatusCode:
+              401:
+                responseSample: ./samples/unauthorized.json
+                responseTypeName: Unauthorized
+              403:
+                responseSample: ./samples/forbidden.json
+                responseTypeName: Forbidden
+```
+
+This generates a union that lets clients react to auth failures in the type system:
+
+```graphql
+type Mutation {
+  createPost(input: CreatePostInput): CreatePostResult
+}
+
+union CreatePostResult = Post | Unauthorized | Forbidden
+
+type Unauthorized {
+  message: String!
+}
+
+type Forbidden {
+  message: String!
+}
+```
+
+### Forwarding the Authorization header to upstream APIs
+
+To pass the caller's `Authorization` header through to the upstream REST API, use
+`operationHeaders`:
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: MyApi
+    handler:
+      openapi:
+        source: ./my-api.yaml
+        operationHeaders:
+          Authorization: '{context.headers.authorization}'
+```
+
+<Callout>
+  Header names in `operationHeaders` should be lower-case when reading from context. See the
+  [Headers guide](/docs/guides/headers) for more details.
+</Callout>
+
+### Propagating auth errors as GraphQL errors
+
+If you prefer upstream auth failures to surface as GraphQL-level errors (rather than typed union
+members), you can use `additionalResolvers` to inspect the response and throw a `GraphQLError`:
+
+```yaml filename=".meshrc.yaml"
+sources:
+  - name: MyApi
+    handler:
+      openapi:
+        source: ./my-api.yaml
+        operationHeaders:
+          Authorization: '{context.headers.authorization}'
+additionalResolvers:
+  - ./src/auth-error-resolvers.ts
+```
+
+```ts filename="auth-error-resolvers.ts"
+import { GraphQLError } from 'graphql'
+import { Resolvers } from './.mesh'
+
+const resolvers: Resolvers = {
+  Mutation: {
+    createPost: {
+      async resolve(root, args, context, info) {
+        const result = await context.MyApi.Mutation.createPost({ root, args, context, info })
+
+        // Surface auth failures as GraphQL errors
+        if (result?.__typename === 'Unauthorized') {
+          throw new GraphQLError('Not authenticated', {
+            extensions: { code: 'UNAUTHENTICATED' }
+          })
+        }
+        if (result?.__typename === 'Forbidden') {
+          throw new GraphQLError('Not authorized', {
+            extensions: { code: 'FORBIDDEN' }
+          })
+        }
+
+        return result
+      }
+    }
+  }
+}
+
+export default { resolvers }
+```
+
+<Callout>
+  See the [Error Masking guide](/docs/guides/error-masking) to learn how to hide raw error details
+  from end clients while still logging them internally.
+</Callout>
