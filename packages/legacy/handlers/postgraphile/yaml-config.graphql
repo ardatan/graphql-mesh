@@ -19,27 +19,19 @@ type PostGraphileHandler @md {
   """
   pool: Any
   """
-  Extra Postgraphile Plugins to append
+  Extra PostGraphile v5 plugins to append (must be GraphileConfig.Plugin objects compatible with v5)
   """
   appendPlugins: [String]
   """
-  Postgraphile Plugins to skip (e.g. "graphile-build#NodePlugin")
+  PostGraphile v5 plugin names to disable (e.g. "NodePlugin")
   """
   skipPlugins: [String]
   """
-  Extra Postgraphile options that will be added to the postgraphile constructor. It can either be an object or a string pointing to the object's path (e.g. "./my-config#options"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-library/) for more information.
+  A PostGraphile v5 preset object or the path to a file exporting one (e.g. "./my-config#preset"). This is merged on top of the default PostGraphileAmberPreset. See the [PostGraphile v5 docs](https://postgraphile.org/postgraphile/next/preset-amber) for more information.
   """
   options: PostgraphileExternalOptions
   """
-  Enable GraphQL websocket transport support for subscriptions (default: true)
-  """
-  subscriptions: Boolean
-  """
-  Enables live-query support via GraphQL subscriptions (sends updated payload any time nested collections/records change) (default: true)
-  """
-  live: Boolean
-  """
-  A file that exports a function which takes context as a paramter and returns postgraphile context options (e.g. "./my-function#pgSettings"). See the [postgraphile docs](https://www.graphile.org/postgraphile/usage-schema/) for more information.
+  A file that exports a function which takes mesh context as a parameter and returns extra context to merge into the GraphQL execution context (e.g. "./my-function#getContext"). The returned object may include `pgSettings` for per-request PostgreSQL settings. See the [PostGraphile v5 docs](https://postgraphile.org/postgraphile/next/config#graceful-context) for more information.
   """
   contextOptions: Any
 }
