@@ -179,7 +179,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
           }
           resolvedObjects.add(result);
           refMap.set($ref, result);
-          if (!result.$resolvedRef) {
+          if (!result.$resolvedRef && refPath) {
             result.$resolvedRef = refPath;
           }
           return result;
