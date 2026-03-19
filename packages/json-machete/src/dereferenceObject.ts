@@ -57,6 +57,71 @@ export function getCwd(path: string) {
   return pathParts.join('/');
 }
 
+interface SchemaIndex {
+  ids: Map<string, any>;
+  anchors: Map<string, any>;
+}
+
+/**
+ * Pre-scans a schema document to index all $id and $anchor declarations.
+ * Per JSON Schema 2020-12 §8.2.1, $id applies to the entire lexical scope
+ * of a schema resource, so all identifiers must be collected before any
+ * $ref resolution begins.
+ */
+function buildSchemaIndex(root: any): SchemaIndex {
+  const ids = new Map<string, any>();
+  const anchors = new Map<string, any>();
+  const visited = new WeakSet();
+
+  function walk(obj: any, baseId: string | null) {
+    if (obj == null || typeof obj !== 'object' || visited.has(obj)) return;
+    visited.add(obj);
+
+    let currentBaseId = baseId;
+    if (typeof obj.$id === 'string') {
+      currentBaseId = obj.$id;
+      ids.set(currentBaseId, obj);
+    }
+    if (typeof obj.$anchor === 'string' && currentBaseId != null) {
+      anchors.set(`${currentBaseId}#${obj.$anchor}`, obj);
+    }
+
+    for (const key in obj) {
+      const val = obj[key];
+      if (typeof val === 'object' && val !== null) {
+        walk(val, currentBaseId);
+      }
+    }
+  }
+
+  walk(root, null);
+  return { ids, anchors };
+}
+
+/**
+ * Attempts to resolve a split $ref (id part + fragment) against the schema index.
+ * Returns the target schema object, or undefined to fall through to standard resolution.
+ */
+function resolveFromSchemaIndex(
+  index: SchemaIndex,
+  idPart: string,
+  fragment: string | undefined,
+  root: any,
+): any | undefined {
+  if (idPart) {
+    const schema = index.ids.get(idPart);
+    if (!schema) return undefined;
+    if (!fragment) return schema;
+    if (fragment.startsWith('/')) return resolvePath(fragment, schema);
+    return index.anchors.get(`${idPart}#${fragment}`);
+  }
+  if (fragment && !fragment.startsWith('/')) {
+    const rootId = root?.$id;
+    if (rootId) return index.anchors.get(`${rootId}#${fragment}`);
+  }
+  return undefined;
+}
+
 export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
   {
@@ -67,6 +132,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     debugLogFn,
     readFileOrUrl,
     resolvedObjects = new WeakSet(),
+    schemaIndex: schemaIndexOpt,
   }: {
     cwd?: string;
     externalFileCache?: Map<string, any>;
@@ -75,8 +141,10 @@ export async function dereferenceObject<T extends object, TRoot = T>(
     debugLogFn?(message?: any): void;
     readFileOrUrl(path: string, opts: { cwd: string }): Promise<any> | any;
     resolvedObjects?: WeakSet<any>;
+    schemaIndex?: SchemaIndex;
   },
 ): Promise<T> {
+  const schemaIndex = schemaIndexOpt ?? buildSchemaIndex(root);
   if (obj != null && typeof obj === 'object') {
     if (isRefObject(obj)) {
       const $ref = obj.$ref;
@@ -85,6 +153,37 @@ export async function dereferenceObject<T extends object, TRoot = T>(
       } else {
         debugLogFn?.(`Resolving ${$ref}`);
         const [externalRelativeFilePath, refPath] = $ref.split('#');
+        const indexedSchema = resolveFromSchemaIndex(
+          schemaIndex,
+          externalRelativeFilePath,
+          refPath,
+          root,
+        );
+        if (indexedSchema) {
+          if (resolvedObjects.has(indexedSchema)) {
+            refMap.set($ref, indexedSchema);
+            return indexedSchema;
+          }
+          const result = await dereferenceObject(indexedSchema, {
+            cwd,
+            externalFileCache,
+            refMap,
+            root,
+            debugLogFn,
+            readFileOrUrl,
+            resolvedObjects,
+            schemaIndex,
+          });
+          if (!result) {
+            return obj;
+          }
+          resolvedObjects.add(result);
+          refMap.set($ref, result);
+          if (!result.$resolvedRef) {
+            result.$resolvedRef = refPath;
+          }
+          return result;
+        }
         if (externalRelativeFilePath) {
           const externalFilePath = getAbsolutePath(externalRelativeFilePath, cwd);
           const newCwd = getCwd(externalFilePath);
@@ -167,6 +266,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
             debugLogFn,
             readFileOrUrl,
             resolvedObjects,
+            schemaIndex,
           });
           if (!result) {
             return obj;
@@ -193,6 +293,7 @@ export async function dereferenceObject<T extends object, TRoot = T>(
               debugLogFn,
               readFileOrUrl,
               resolvedObjects,
+              schemaIndex,
             });
           }
         }
