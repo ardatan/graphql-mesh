@@ -257,4 +257,152 @@ describe('dereferenceObject', () => {
       dereferencedObject.paths['/pets'].get.responses[200].content['application/json'].schema,
     ).toBe(openapiSchema.components.schemas.Pets);
   });
+  describe('JSON Schema 2020-12 $id and $anchor resolution', () => {
+    const noFetch: (path: string, opts: { cwd: string }) => any = path => {
+      throw new Error(`readFileOrUrl should not be called, but was called with: ${path}`);
+    };
+
+    it('should resolve $ref against a $id URI (§8.2.1)', async () => {
+      const schema = {
+        definitions: {
+          Category: {
+            $id: '/schemas/category',
+            type: 'object',
+            title: 'Category',
+            properties: {
+              name: { type: 'string' },
+            },
+          },
+          Item: {
+            type: 'object',
+            title: 'Item',
+            properties: {
+              name: { type: 'string' },
+              category: {
+                $ref: '/schemas/category',
+              },
+            },
+          },
+        },
+      };
+      const result = await dereferenceObject<JSONSchemaObject>(schema, {
+        readFileOrUrl: noFetch,
+      });
+      expect(result.definitions.Item.properties.category.title).toBe('Category');
+      expect(result.definitions.Item.properties.category).toBe(schema.definitions.Category);
+    });
+
+    it('should resolve $ref with $id#anchor fragment (§8.2.2)', async () => {
+      const schema = {
+        definitions: {
+          Details: {
+            $id: '/schemas/details',
+            type: 'object',
+            properties: {
+              id: {
+                type: 'integer',
+                $anchor: 'details_id',
+              },
+            },
+          },
+          Item: {
+            type: 'object',
+            title: 'Item',
+            properties: {
+              detailsId: {
+                $ref: '/schemas/details#details_id',
+              },
+            },
+          },
+        },
+      };
+      const result = await dereferenceObject<JSONSchemaObject>(schema, {
+        readFileOrUrl: noFetch,
+      });
+      expect(result.definitions.Item.properties.detailsId.type).toBe('integer');
+      expect(result.definitions.Item.properties.detailsId).toBe(
+        schema.definitions.Details.properties.id,
+      );
+    });
+
+    it('should resolve fragment-only $ref against $anchor (§9.2)', async () => {
+      const schema = {
+        $id: 'https://example.com/root.json',
+        type: 'object' as const,
+        properties: {
+          item: { $ref: '#item' },
+        },
+        $defs: {
+          single: {
+            $anchor: 'item',
+            type: 'object',
+            title: 'SingleItem',
+            properties: {
+              name: { type: 'string' },
+            },
+          },
+        },
+      };
+      const result = await dereferenceObject<JSONSchemaObject>(schema, {
+        readFileOrUrl: noFetch,
+      });
+      expect(result.properties.item.title).toBe('SingleItem');
+      expect(result.properties.item).toBe(schema.$defs.single);
+    });
+
+    it('should resolve $ref when $id is declared later in the document', async () => {
+      const schema = {
+        definitions: {
+          Item: {
+            type: 'object',
+            title: 'Item',
+            properties: {
+              category: {
+                $ref: '/schemas/category',
+              },
+            },
+          },
+          Category: {
+            $id: '/schemas/category',
+            type: 'object',
+            title: 'Category',
+            properties: {
+              name: { type: 'string' },
+            },
+          },
+        },
+      };
+      const result = await dereferenceObject<JSONSchemaObject>(schema, {
+        readFileOrUrl: noFetch,
+      });
+      expect(result.definitions.Item.properties.category.title).toBe('Category');
+      expect(result.definitions.Item.properties.category).toBe(schema.definitions.Category);
+    });
+
+    it('should resolve all $id and $anchor refs in PetStore OpenAPI 3.1', async () => {
+      const schema = JSON.parse(readFileSync(__dirname + '/fixtures/petstore-3.1.json', 'utf8'));
+
+      const categorySchema = schema.components.schemas.Category;
+      const petDetailsSchema = schema.components.schemas.PetDetails;
+      const petDetailsIdSchema = schema.components.schemas.PetDetails.properties.id;
+      const tagSchema = schema.components.schemas.Tag;
+
+      const result = await dereferenceObject(schema, { readFileOrUrl: noFetch });
+      const pet = result.components.schemas.Pet;
+
+      // $id URI ref (Pet.petDetails → /api/v31/components/schemas/petdetails)
+      expect(pet.properties.petDetails).toBe(petDetailsSchema);
+
+      // $id#anchor ref (Pet.petDetailsId → /api/v31/components/schemas/petdetails#pet_details_id)
+      expect(pet.properties.petDetailsId).toBe(petDetailsIdSchema);
+
+      // $id refs from a schema that was itself resolved via $id
+      expect(petDetailsSchema.properties.category).toBe(categorySchema);
+      expect(petDetailsSchema.properties.tag).toBe(tagSchema);
+
+      // JSON Pointer refs and $id refs to the same schema yield the same object
+      expect(pet.properties.category).toBe(categorySchema);
+      expect(pet.properties.tags.items).toBe(tagSchema);
+    });
+  });
 });
