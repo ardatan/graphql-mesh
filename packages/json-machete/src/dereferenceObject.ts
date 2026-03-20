@@ -57,6 +57,7 @@ export function getCwd(path: string) {
   return pathParts.join('/');
 }
 
+/** Maps $id URIs to schema nodes and $id#anchor compound keys to anchored sub-schemas. */
 interface SchemaIndex {
   ids: Map<string, any>;
   anchors: Map<string, any>;
@@ -122,6 +123,11 @@ function resolveFromSchemaIndex(
   return undefined;
 }
 
+/**
+ * Walks an object graph and resolves every $ref in-place on its parent.
+ * Tries three strategies in order: the schema index ($id/$anchor),
+ * external file/URL loading, and same-document JSON Pointer.
+ */
 export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
   {

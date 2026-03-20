@@ -378,5 +378,31 @@ describe('dereferenceObject', () => {
       expect(result.definitions.Item.properties.category.title).toBe('Category');
       expect(result.definitions.Item.properties.category).toBe(schema.definitions.Category);
     });
+
+    it('should resolve all $id and $anchor refs in PetStore OpenAPI 3.1', async () => {
+      const schema = JSON.parse(readFileSync(__dirname + '/fixtures/petstore-3.1.json', 'utf8'));
+
+      const categorySchema = schema.components.schemas.Category;
+      const petDetailsSchema = schema.components.schemas.PetDetails;
+      const petDetailsIdSchema = schema.components.schemas.PetDetails.properties.id;
+      const tagSchema = schema.components.schemas.Tag;
+
+      const result = await dereferenceObject(schema, { readFileOrUrl: noFetch });
+      const pet = result.components.schemas.Pet;
+
+      // $id URI ref (Pet.petDetails → /api/v31/components/schemas/petdetails)
+      expect(pet.properties.petDetails).toBe(petDetailsSchema);
+
+      // $id#anchor ref (Pet.petDetailsId → /api/v31/components/schemas/petdetails#pet_details_id)
+      expect(pet.properties.petDetailsId).toBe(petDetailsIdSchema);
+
+      // $id refs from a schema that was itself resolved via $id
+      expect(petDetailsSchema.properties.category).toBe(categorySchema);
+      expect(petDetailsSchema.properties.tag).toBe(tagSchema);
+
+      // JSON Pointer refs and $id refs to the same schema yield the same object
+      expect(pet.properties.category).toBe(categorySchema);
+      expect(pet.properties.tags.items).toBe(tagSchema);
+    });
   });
 });
