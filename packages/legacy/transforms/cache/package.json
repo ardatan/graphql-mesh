@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-cache",
-  "version": "0.105.29",
+  "version": "0.105.30",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,9 +36,9 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.12",
-    "@graphql-mesh/string-interpolation": "^0.5.12",
+    "@graphql-mesh/string-interpolation": "^0.5.13",
     "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.28",
+    "@graphql-mesh/utils": "^0.104.29",
     "@graphql-tools/resolvers-composition": "^7.0.28",
     "@graphql-tools/schema": "^10.0.31",
     "@graphql-tools/utils": "^11.0.0",
@@ -46,7 +46,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.105.29",
+    "@graphql-mesh/cache-localforage": "0.105.30",
     "graphql": "16.13.1"
   },
   "publishConfig": {

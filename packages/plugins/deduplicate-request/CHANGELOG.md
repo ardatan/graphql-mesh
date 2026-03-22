@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-deduplicate-request
 
+## 0.104.29
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.29
+
 ## 0.104.28
 
 ### Patch Changes

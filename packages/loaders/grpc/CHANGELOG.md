@@ -1,5 +1,13 @@
 # @omnigraph/grpc
 
+## 0.2.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`13af2ff`](https://github.com/ardatan/graphql-mesh/commit/13af2ff997cc63953ff50198d1851f8b7101c292)]:
+  - @graphql-mesh/string-interpolation@0.5.13
+
 ## 0.2.15
 
 ### Patch Changes
