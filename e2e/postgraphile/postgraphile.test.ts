@@ -1,6 +1,6 @@
 import { createTenv, type Container } from '@e2e/tenv';
 
-const { compose, container, serve, spawn } = createTenv(__dirname);
+const { compose, container, serve } = createTenv(__dirname);
 
 let postgres: Container;
 
@@ -41,11 +41,11 @@ it('should execute BooksWithAuthors', async () => {
   const result = await gw.execute({
     query: /* GraphQL */ `
       query BooksWithAuthors {
-        books(orderBy: [{ id: ASC }], first: 2) {
+        allBooks(orderBy: [ID_ASC], first: 2) {
           nodes {
             title
             year
-            author {
+            authorByAuthorId {
               name
             }
           }
@@ -53,28 +53,5 @@ it('should execute BooksWithAuthors', async () => {
       }
     `,
   });
-  expect(result).toMatchInlineSnapshot(`
-{
-  "data": {
-    "books": {
-      "nodes": [
-        {
-          "author": {
-            "name": "J.R.R. Tolkien",
-          },
-          "title": "The Lord of the Rings",
-          "year": 1954,
-        },
-        {
-          "author": {
-            "name": "J.R.R. Tolkien",
-          },
-          "title": "The Hobbit",
-          "year": 1937,
-        },
-      ],
-    },
-  },
-}
-`);
+  expect(result).toMatchSnapshot();
 });

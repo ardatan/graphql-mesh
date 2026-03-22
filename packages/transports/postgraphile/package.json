@@ -35,8 +35,10 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@dataplan/pg": "^1.0.0-rc.0",
     "@graphql-mesh/transport-common": "^1.0.15",
     "@graphql-mesh/utils": "^0.104.28",
+    "grafast": "^1.0.0-rc.0",
     "pg": "^8.20.0",
     "postgraphile": "^5.0.0-rc.0",
     "tslib": "^2.4.0"

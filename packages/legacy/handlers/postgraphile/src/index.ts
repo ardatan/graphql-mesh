@@ -1,9 +1,9 @@
+import { execute } from 'grafast';
 import pg from 'pg';
 import type { PostGraphileInstance } from 'postgraphile';
 import { postgraphile } from 'postgraphile';
-import { makePgService } from 'postgraphile/adaptors/pg';
-import { execute } from 'postgraphile/grafast';
-import { PostGraphileAmberPreset } from 'postgraphile/presets/amber';
+import { PostGraphileAmberPreset } from 'postgraphile/dist/presets/amber';
+import { makePgService } from '@dataplan/pg/dist/adaptors/pg';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type {

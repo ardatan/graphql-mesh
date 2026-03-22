@@ -43,13 +43,13 @@ export const composeConfig = defineConfig({
 
 ## Configuration
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `connectionString` | `string` | A connection string to your Postgres database |
-| `schemas` | `string[]` | PostgreSQL schemas PostGraphile will use (default: `['public']`) |
-| `appendPlugins` | `GraphileConfig.Plugin[]` | Extra PostGraphile v5 plugins to append |
-| `skipPlugins` | `string[]` | PostGraphile v5 plugin names to disable (e.g. `"NodePlugin"`) |
-| `options` | `GraphileConfig.Preset` | A PostGraphile v5 preset object merged on top of the default `PostGraphileAmberPreset` |
+| Parameter          | Type                      | Description                                                                            |
+| ------------------ | ------------------------- | -------------------------------------------------------------------------------------- |
+| `connectionString` | `string`                  | A connection string to your Postgres database                                          |
+| `schemas`          | `string[]`                | PostgreSQL schemas PostGraphile will use (default: `['public']`)                       |
+| `appendPlugins`    | `GraphileConfig.Plugin[]` | Extra PostGraphile v5 plugins to append                                                |
+| `skipPlugins`      | `string[]`                | PostGraphile v5 plugin names to disable (e.g. `"NodePlugin"`)                          |
+| `options`          | `GraphileConfig.Preset`   | A PostGraphile v5 preset object merged on top of the default `PostGraphileAmberPreset` |
 
 ## Gateway
 
@@ -71,10 +71,10 @@ npm i @graphile-contrib/pg-many-to-many
 ```
 
 ```ts filename="mesh.config.ts"
-import { defineConfig } from '@graphql-mesh/compose-cli'
-import { loadPostgraphileSubgraph } from '@omnigraph/postgraphile'
 // @ts-ignore - not typed
 import PgManyToManyPlugin from '@graphile-contrib/pg-many-to-many'
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadPostgraphileSubgraph } from '@omnigraph/postgraphile'
 
 export const composeConfig = defineConfig({
   subgraphs: [
@@ -96,4 +96,3 @@ and add it under `appendPlugins`.
 ```sh npm2yarn
 npm i @graphile/postgis
 ```
-

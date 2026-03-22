@@ -1,9 +1,9 @@
 import pg from 'pg';
 import { postgraphile } from 'postgraphile';
-import { makePgService } from 'postgraphile/adaptors/pg';
-import { PostGraphileAmberPreset } from 'postgraphile/presets/amber';
-import type { Logger } from '@graphql-mesh/types';
+import { PostGraphileAmberPreset } from 'postgraphile/dist/presets/amber';
+import { makePgService } from '@dataplan/pg/dist/adaptors/pg';
 import type { PostGraphileTransportOptions } from '@graphql-mesh/transport-postgraphile';
+import type { Logger } from '@graphql-mesh/types';
 
 export type { PostGraphileTransportOptions } from '@graphql-mesh/transport-postgraphile';
 

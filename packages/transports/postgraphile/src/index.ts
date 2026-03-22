@@ -1,9 +1,9 @@
+import { execute } from 'grafast';
 import pg from 'pg';
 import type { PostGraphileInstance } from 'postgraphile';
 import { postgraphile } from 'postgraphile';
-import { makePgService } from 'postgraphile/adaptors/pg';
-import { execute } from 'postgraphile/grafast';
-import { PostGraphileAmberPreset } from 'postgraphile/presets/amber';
+import { PostGraphileAmberPreset } from 'postgraphile/dist/presets/amber';
+import { makePgService } from '@dataplan/pg/dist/adaptors/pg';
 import type { DisposableExecutor, Transport } from '@graphql-mesh/transport-common';
 import { makeAsyncDisposable } from '@graphql-mesh/utils';
 
@@ -20,10 +20,7 @@ export interface PostGraphileTransportOptions {
 }
 
 export default {
-  async getSubgraphExecutor({
-    transportEntry,
-    logger,
-  }): Promise<DisposableExecutor> {
+  async getSubgraphExecutor({ transportEntry, logger }): Promise<DisposableExecutor> {
     const connectionString: string = transportEntry.location;
     const opts: PostGraphileTransportOptions = transportEntry.options ?? {};
 

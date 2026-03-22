@@ -3928,7 +3928,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dataplan/pg@npm:^1.0.0-rc.8":
+"@dataplan/pg@npm:^1.0.0-rc.0, @dataplan/pg@npm:^1.0.0-rc.8":
   version: 1.0.0-rc.8
   resolution: "@dataplan/pg@npm:1.0.0-rc.8"
   dependencies:
@@ -7712,12 +7712,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/postgraphile@workspace:packages/legacy/handlers/postgraphile"
   dependencies:
+    "@dataplan/pg": "npm:^1.0.0-rc.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/store": "npm:^0.104.30"
     "@graphql-mesh/string-interpolation": "npm:^0.5.12"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.28"
     "@graphql-tools/delegate": "npm:^12.0.12"
+    grafast: "npm:^1.0.0-rc.0"
     graphql: "npm:16.13.1"
     pg: "npm:^8.20.0"
     postgraphile: "npm:^5.0.0-rc.0"
@@ -8282,8 +8284,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-postgraphile@workspace:packages/transports/postgraphile"
   dependencies:
+    "@dataplan/pg": "npm:^1.0.0-rc.0"
     "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/utils": "npm:^0.104.28"
+    grafast: "npm:^1.0.0-rc.0"
     graphql: "npm:16.13.1"
     pg: "npm:^8.20.0"
     postgraphile: "npm:^5.0.0-rc.0"
@@ -11911,6 +11915,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@omnigraph/postgraphile@workspace:packages/loaders/postgraphile"
   dependencies:
+    "@dataplan/pg": "npm:^1.0.0-rc.0"
     "@graphql-mesh/transport-postgraphile": "npm:^0.1.0"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-tools/delegate": "npm:^12.0.12"
@@ -25274,7 +25279,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"grafast@npm:^1.0.0-rc.9":
+"grafast@npm:^1.0.0-rc.0, grafast@npm:^1.0.0-rc.9":
   version: 1.0.0-rc.9
   resolution: "grafast@npm:1.0.0-rc.9"
   dependencies:
