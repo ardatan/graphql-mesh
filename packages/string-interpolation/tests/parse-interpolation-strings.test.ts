@@ -36,4 +36,30 @@ describe('parseInterpolationStrings', () => {
     const result = stringInterpolator.parse('{missing}', context);
     expect(result).toBeUndefined();
   });
+  it('returns true when entire string is a placeholder', () => {
+    const context = { flag: true };
+    const result = stringInterpolator.parse('{flag}', context);
+    expect(result).toBe(true);
+  });
+  it('returns false when entire string is a placeholder', () => {
+    const context = { flag: false };
+    const result = stringInterpolator.parse('{flag}', context);
+    expect(result).toBe(false);
+  });
+  it('returns the float when entire string is a placeholder', () => {
+    const context = { n: 1.5 };
+    const result = stringInterpolator.parse('{n}', context);
+    expect(result).toBe(1.5);
+  });
+  it('returns the integer when entire string is a placeholder', () => {
+    const context = { n: 42 };
+    const result = stringInterpolator.parse('{n}', context);
+    expect(result).toBe(42);
+  });
+  it('returns the bigint when entire string is a placeholder', () => {
+    const n = BigInt(9007199254740991);
+    const context = { n };
+    const result = stringInterpolator.parse('{n}', context);
+    expect(result).toBe(BigInt(9007199254740991));
+  });
 });
