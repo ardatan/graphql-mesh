@@ -32,7 +32,7 @@ describe('New Relic', () => {
             importFn: defaultImportFn,
           },
           {
-            instrumentationApi: helper.getShim(),
+            instrumentationApi: helper.getAgentApi().shim,
             agentApi: helper.getAgentApi(),
           },
         ),
