@@ -137,7 +137,7 @@ export class Interpolator {
     if (dataToReplace !== undefined) {
       const modifiedData = this.applyModifiers(rule.modifiers, dataToReplace, data);
       // If the entire string is just the placeholder, return the value
-      if (str === rule.replace) {
+      if (str === rule.replace && modifiedData != null) {
         return modifiedData;
       }
       // For objects embedded in a larger string, JSON stringify them
