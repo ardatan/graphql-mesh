@@ -41,7 +41,7 @@ describe('parseInterpolationStrings', () => {
     const result = stringInterpolator.parse('{flag}', context);
     expect(result).toBe(true);
   });
-  it('returns true when entire string is a placeholder', () => {
+  it('returns false when entire string is a placeholder', () => {
     const context = { flag: false };
     const result = stringInterpolator.parse('{flag}', context);
     expect(result).toBe(false);
