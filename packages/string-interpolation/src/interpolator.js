@@ -138,7 +138,10 @@ export class Interpolator {
       const modifiedData = this.applyModifiers(rule.modifiers, dataToReplace, data);
       // If the entire string is just the placeholder and the replacement is an object,
       // return the object directly instead of converting to "[object Object]"
-      if (str === rule.replace && typeof modifiedData === 'object' && modifiedData !== null) {
+      if (str === rule.replace) {
+        if (modifiedData !== null) {
+          return modifiedData;
+        }
         return modifiedData;
       }
       // For objects embedded in a larger string, JSON stringify them
