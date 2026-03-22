@@ -56,7 +56,7 @@ describe('parseInterpolationStrings', () => {
     const result = stringInterpolator.parse('{n}', context);
     expect(result).toBe(42);
   });
-  it('return the bigint when entire string is a placeholder', () => {
+  it('returns the bigint when entire string is a placeholder', () => {
     const n = BigInt(9007199254740991);
     const context = { n };
     const result = stringInterpolator.parse('{n}', context);
