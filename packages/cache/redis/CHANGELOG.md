@@ -1,5 +1,18 @@
 # @graphql-mesh/cache-redis
 
+## 0.105.16
+
+### Patch Changes
+
+- [#9337](https://github.com/ardatan/graphql-mesh/pull/9337)
+  [`ea2203c`](https://github.com/ardatan/graphql-mesh/commit/ea2203c414c797750161c610ebaadde7560c019c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`ioredis@^5.10.1` ↗︎](https://www.npmjs.com/package/ioredis/v/5.10.1) (from
+    `^5.10.0`, in `dependencies`)
+- Updated dependencies
+  [[`13af2ff`](https://github.com/ardatan/graphql-mesh/commit/13af2ff997cc63953ff50198d1851f8b7101c292)]:
+  - @graphql-mesh/string-interpolation@0.5.13
+
 ## 0.105.15
 
 ### Patch Changes

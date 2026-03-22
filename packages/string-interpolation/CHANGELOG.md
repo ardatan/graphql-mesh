@@ -1,5 +1,20 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.13
+
+### Patch Changes
+
+- [#9347](https://github.com/ardatan/graphql-mesh/pull/9347)
+  [`13af2ff`](https://github.com/ardatan/graphql-mesh/commit/13af2ff997cc63953ff50198d1851f8b7101c292)
+  Thanks [@ardatan](https://github.com/ardatan)! - If the entire interpolation string is a
+  placeholder for a value, then return that value;
+
+  If `{ args: { n: 1, flag: true, name: 'test' } }` is passed as data,
+  - `{args}` will return `{ n: 1, flag: true, name: 'test' }`
+  - `{args.name}` will return `"test"`
+  - `{args.n}` will return `1`
+  - `{args.flag}` will return `true`
+
 ## 0.5.12
 
 ### Patch Changes
