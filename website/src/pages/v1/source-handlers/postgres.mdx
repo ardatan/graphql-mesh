@@ -7,29 +7,31 @@ description:
 
 import { Callout } from '@theguild/components'
 
-# PostgreSQL (Coming soon)
+# PostgreSQL
 
 ![image](https://user-images.githubusercontent.com/20847995/79219670-5ae06300-7e5b-11ea-81f1-d0c08a884607.png)
 
 This handler allows you to use the GraphQL schema created by
 [PostGraphile](https://graphile.org/postgraphile), based on a PostgreSQL database schema.
 
+## How to use?
+
 To get started, install the handler library:
 
 ```sh npm2yarn
-npm i @omnigraph/postgresql
+npm i @omnigraph/postgraphile
 ```
 
 Now, you can use it directly in your Mesh config file:
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/compose-cli'
-import { loadPostgreSQLSubgraph } from '@omnigraph/postgresql'
+import { loadPostgraphileSubgraph } from '@omnigraph/postgraphile'
 
 export const composeConfig = defineConfig({
   subgraphs: [
     {
-      sourceHandler: loadPostgreSQLSubgraph('MyPostgreSQL', {
+      sourceHandler: loadPostgraphileSubgraph('MyPostgreSQL', {
         connectionString: 'postgres://postgres:password@localhost/postgres'
         // You can also use environment variables like below
         // connectionString: `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`
@@ -39,11 +41,25 @@ export const composeConfig = defineConfig({
 })
 ```
 
-### Federation and Automatic Type Merging support
+## Configuration
 
-The Federation plugin converts your Postgraphile schema into a federated schema that can also be
-recognized by Mesh, which brings Automatic Type Merging. It automatically uses
-`@graphile/federation` package, so you don't need to configure it manually.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `connectionString` | `string` | A connection string to your Postgres database |
+| `schemas` | `string[]` | PostgreSQL schemas PostGraphile will use (default: `['public']`) |
+| `appendPlugins` | `GraphileConfig.Plugin[]` | Extra PostGraphile v5 plugins to append |
+| `skipPlugins` | `string[]` | PostGraphile v5 plugin names to disable (e.g. `"NodePlugin"`) |
+| `options` | `GraphileConfig.Preset` | A PostGraphile v5 preset object merged on top of the default `PostGraphileAmberPreset` |
+
+## Gateway
+
+When using the composed schema with `@graphql-hive/gateway`, install the transport package:
+
+```sh npm2yarn
+npm i @graphql-mesh/transport-postgraphile
+```
+
+The transport is automatically detected from the composed schema and used by the gateway.
 
 ### Many-to-Many support
 
@@ -54,6 +70,24 @@ Suppose you want to have automatic many-to-many mapping across your entities. Yo
 npm i @graphile-contrib/pg-many-to-many
 ```
 
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadPostgraphileSubgraph } from '@omnigraph/postgraphile'
+// @ts-ignore - not typed
+import PgManyToManyPlugin from '@graphile-contrib/pg-many-to-many'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadPostgraphileSubgraph('MyPostgreSQL', {
+        connectionString: 'postgres://postgres:password@localhost/postgres',
+        appendPlugins: [PgManyToManyPlugin]
+      })
+    }
+  ]
+})
+```
+
 ### PostGIS Support
 
 If you use `PostGIS` in your PostgreSQL database, you need to install `@graphile/postgis` package
@@ -62,3 +96,4 @@ and add it under `appendPlugins`.
 ```sh npm2yarn
 npm i @graphile/postgis
 ```
+
