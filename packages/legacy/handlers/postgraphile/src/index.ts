@@ -74,6 +74,7 @@ export default class PostGraphileHandler implements MeshHandler {
     const id = this.pubsub.subscribe('destroy', () => {
       this.pubsub.unsubscribe(id);
       this.logger.debug('Destroying PostgreSQL pool');
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       pgPool.end();
     });
 

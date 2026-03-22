@@ -391,7 +391,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           };
         }
       },
-      [MapperKind.FIELD]: (fieldConfig, fieldName, typeName) => {
+      [MapperKind.FIELD]: ((fieldConfig, fieldName, typeName) => {
         const fieldTransformConfig = configurationByField.get(typeName)?.get(fieldName);
         if (fieldTransformConfig) {
           const fieldDirectives = getDirectiveExtensions(fieldConfig) || {};
@@ -420,7 +420,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
             },
           };
         }
-      },
+      }) as any,
     });
     subgraphSchema = addFederation2DirectivesToSubgraph(subgraphSchema);
     subgraphSchema = importFederationDirectives(subgraphSchema, [...usedFederationDirectives]);

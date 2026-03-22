@@ -10,6 +10,6 @@ export default {
   sqlite: 'SQLite',
   mysql: 'MySQL',
   neo4j: 'Neo4j',
-  postgres: 'PostgreSQL (soon)',
+  postgres: 'PostgreSQL',
   mongodb: 'MongoDB (soon)',
 };

@@ -1,6 +1,5 @@
 import type {
   DocumentNode,
-  ExecutionResult,
   GraphQLResolveInfo,
   IntrospectionQuery,
   SelectionNode,
@@ -46,7 +45,7 @@ import {
 } from '@graphql-mesh/utils';
 import type { SubscriptionProtocol } from '@graphql-tools/url-loader';
 import { UrlLoader } from '@graphql-tools/url-loader';
-import type { ExecutionRequest, Executor } from '@graphql-tools/utils';
+import type { ExecutionRequest, ExecutionResult, Executor } from '@graphql-tools/utils';
 import {
   getDocumentNodeFromSchema,
   getOperationASTFromRequest,
