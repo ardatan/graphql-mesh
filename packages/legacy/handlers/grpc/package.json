@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.108.33",
+  "version": "0.108.34",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,11 +35,11 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "^0.104.31",
-    "@graphql-mesh/transport-grpc": "^0.3.31",
+    "@graphql-mesh/store": "^0.104.32",
+    "@graphql-mesh/transport-grpc": "^0.3.32",
     "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.29",
-    "@omnigraph/grpc": "^0.2.16",
+    "@graphql-mesh/utils": "^0.104.30",
+    "@omnigraph/grpc": "^0.2.17",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

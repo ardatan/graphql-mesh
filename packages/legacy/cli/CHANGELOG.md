@@ -1,5 +1,18 @@
 # @graphql-mesh/cli
 
+## 0.100.41
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/config@0.108.36
+  - @graphql-mesh/runtime@0.106.32
+  - @graphql-mesh/utils@0.104.30
+  - @graphql-mesh/http@0.106.34
+  - @graphql-mesh/include@0.3.31
+  - @graphql-mesh/incontext-sdk-codegen@0.0.8
+  - @graphql-mesh/store@0.104.32
+
 ## 0.100.40
 
 ### Patch Changes

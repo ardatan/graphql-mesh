@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/config",
-  "version": "0.108.35",
+  "version": "0.108.36",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,14 +36,14 @@
   },
   "dependencies": {
     "@envelop/core": "^5.5.1",
-    "@graphql-mesh/cache-localforage": "^0.105.30",
+    "@graphql-mesh/cache-localforage": "^0.105.31",
     "@graphql-mesh/cross-helpers": "^0.4.12",
-    "@graphql-mesh/merger-bare": "^0.105.31",
-    "@graphql-mesh/merger-stitching": "^0.105.31",
-    "@graphql-mesh/runtime": "^0.106.31",
-    "@graphql-mesh/store": "^0.104.31",
+    "@graphql-mesh/merger-bare": "^0.105.32",
+    "@graphql-mesh/merger-stitching": "^0.105.32",
+    "@graphql-mesh/runtime": "^0.106.32",
+    "@graphql-mesh/store": "^0.104.32",
     "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.29",
+    "@graphql-mesh/utils": "^0.104.30",
     "@graphql-tools/code-file-loader": "^8.1.28",
     "@graphql-tools/graphql-file-loader": "^8.1.12",
     "@graphql-tools/load": "^8.1.8",
