@@ -1,5 +1,12 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.15
+
+### Patch Changes
+
+- [`339c32c`](https://github.com/ardatan/graphql-mesh/commit/339c32c44b5dfbc810c0cf3455b2ff068b5c5b00)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not treat empty strings as undefined
+
 ## 0.5.14
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @graphql-mesh/transform-hive
 
+## 0.104.33
+
+### Patch Changes
+
+- Updated dependencies
+  [[`339c32c`](https://github.com/ardatan/graphql-mesh/commit/339c32c44b5dfbc810c0cf3455b2ff068b5c5b00)]:
+  - @graphql-mesh/string-interpolation@0.5.15
+
 ## 0.104.32
 
 ### Patch Changes
