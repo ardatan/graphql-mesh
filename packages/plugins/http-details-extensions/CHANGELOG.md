@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-http-details-extensions
 
+## 0.104.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.30
+
 ## 0.104.29
 
 ### Patch Changes

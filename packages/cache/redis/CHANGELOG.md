@@ -1,5 +1,19 @@
 # @graphql-mesh/cache-redis
 
+## 0.105.17
+
+### Patch Changes
+
+- [#9348](https://github.com/ardatan/graphql-mesh/pull/9348)
+  [`3ad6a00`](https://github.com/ardatan/graphql-mesh/commit/3ad6a005a9daa1f93a4286dc3d240acd1059f53f)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/string-interpolation@^0.5.13` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.13)
+    (from `0.5.13`, in `dependencies`)
+- Updated dependencies
+  [[`3ad6a00`](https://github.com/ardatan/graphql-mesh/commit/3ad6a005a9daa1f93a4286dc3d240acd1059f53f)]:
+  - @graphql-mesh/string-interpolation@0.5.14
+
 ## 0.105.16
 
 ### Patch Changes

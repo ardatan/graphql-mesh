@@ -1,5 +1,15 @@
 # @graphql-mesh/supergraph
 
+## 0.10.32
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3ad6a00`](https://github.com/ardatan/graphql-mesh/commit/3ad6a005a9daa1f93a4286dc3d240acd1059f53f)]:
+  - @graphql-mesh/string-interpolation@0.5.14
+  - @graphql-mesh/utils@0.104.30
+  - @graphql-mesh/store@0.104.32
+
 ## 0.10.31
 
 ### Patch Changes
