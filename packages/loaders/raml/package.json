@@ -37,7 +37,7 @@
   "dependencies": {
     "@ardatan/raml-1-parser": "1.1.69",
     "@graphql-mesh/cross-helpers": "^0.4.12",
-    "@graphql-mesh/string-interpolation": "0.5.13",
+    "@graphql-mesh/string-interpolation": "^0.5.13",
     "@graphql-mesh/types": "^0.104.25",
     "@graphql-mesh/utils": "^0.104.29",
     "@graphql-tools/delegate": "^12.0.12",

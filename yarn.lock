@@ -123,20 +123,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/federation-internals@npm:2.13.2":
-  version: 2.13.2
-  resolution: "@apollo/federation-internals@npm:2.13.2"
-  dependencies:
-    "@types/uuid": "npm:^9.0.0"
-    chalk: "npm:^4.1.0"
-    js-levenshtein: "npm:^1.1.6"
-    uuid: "npm:^9.0.0"
-  peerDependencies:
-    graphql: ^16.5.0
-  checksum: 10c0/527b447f401c56b8ad2237d0982547114b6eb6115ccc725500a855df8fd4e768267e1c133d39e381e2a88208097d76c84b2c53db0c73264445b1b1057c0b4101
-  languageName: node
-  linkType: hard
-
 "@apollo/federation-internals@npm:2.13.3":
   version: 2.13.3
   resolution: "@apollo/federation-internals@npm:2.13.3"
@@ -315,7 +301,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/subgraph@npm:2.13.3, @apollo/subgraph@npm:^2.13.3":
+"@apollo/subgraph@npm:2.13.3, @apollo/subgraph@npm:^2.13.3, @apollo/subgraph@npm:^2.2.3":
   version: 2.13.3
   resolution: "@apollo/subgraph@npm:2.13.3"
   dependencies:
@@ -324,18 +310,6 @@ __metadata:
   peerDependencies:
     graphql: ^16.5.0
   checksum: 10c0/03701a5b7b9e4c1fa4db530885f51bfd9b5854d45ea6af68b1c512654eb55a9031621bdf25efd65a87aa5b1cffd9ae5b6574d5bc72727fb02d68c07f66c8d296
-  languageName: node
-  linkType: hard
-
-"@apollo/subgraph@npm:^2.2.3":
-  version: 2.13.2
-  resolution: "@apollo/subgraph@npm:2.13.2"
-  dependencies:
-    "@apollo/cache-control-types": "npm:^1.0.2"
-    "@apollo/federation-internals": "npm:2.13.2"
-  peerDependencies:
-    graphql: ^16.5.0
-  checksum: 10c0/987343f93152e4c7fbea0d7fedadd7395ce166817d8af4e6a472a14d602f6a7d8814522961e99f87aa75ee0656469dfb84da9bba9fb255d3dfb7c311a436ddd7
   languageName: node
   linkType: hard
 
@@ -6754,7 +6728,7 @@ __metadata:
   resolution: "@graphql-mesh/cache-redis@workspace:packages/cache/redis"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
-    "@graphql-mesh/string-interpolation": "npm:0.5.13"
+    "@graphql-mesh/string-interpolation": "npm:^0.5.13"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@opentelemetry/api": "npm:^1.9.0"
     "@types/ioredis-mock": "npm:8.2.7"
@@ -7108,7 +7082,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/merger-bare@workspace:packages/legacy/mergers/bare"
   dependencies:
-    "@graphql-mesh/merger-stitching": "npm:0.105.31"
+    "@graphql-mesh/merger-stitching": "npm:^0.105.31"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
     "@graphql-tools/schema": "npm:^10.0.31"
@@ -7120,7 +7094,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/merger-stitching@npm:0.105.31, @graphql-mesh/merger-stitching@npm:^0.105.31, @graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching":
+"@graphql-mesh/merger-stitching@npm:^0.105.31, @graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching"
   dependencies:
@@ -7229,10 +7203,10 @@ __metadata:
   resolution: "@graphql-mesh/openapi@workspace:packages/legacy/handlers/openapi"
   dependencies:
     "@graphql-mesh/store": "npm:^0.104.31"
-    "@graphql-mesh/string-interpolation": "npm:0.5.13"
+    "@graphql-mesh/string-interpolation": "npm:^0.5.13"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
-    "@omnigraph/openapi": "npm:0.109.41"
+    "@omnigraph/openapi": "npm:^0.109.41"
     graphql: "npm:16.13.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -7460,7 +7434,7 @@ __metadata:
     "@envelop/core": "npm:^5.5.1"
     "@envelop/rate-limiter": "npm:^10.0.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
-    "@graphql-mesh/string-interpolation": "npm:0.5.13"
+    "@graphql-mesh/string-interpolation": "npm:^0.5.13"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
     "@graphql-tools/utils": "npm:^11.0.0"
@@ -7479,7 +7453,7 @@ __metadata:
     "@envelop/core": "npm:^5.5.1"
     "@envelop/response-cache": "npm:^9.1.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
-    "@graphql-mesh/string-interpolation": "npm:0.5.13"
+    "@graphql-mesh/string-interpolation": "npm:^0.5.13"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
     "@graphql-tools/utils": "npm:^11.0.0"
@@ -7499,7 +7473,7 @@ __metadata:
   resolution: "@graphql-mesh/plugin-snapshot@workspace:packages/plugins/snapshot"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
-    "@graphql-mesh/string-interpolation": "npm:0.5.13"
+    "@graphql-mesh/string-interpolation": "npm:^0.5.13"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
     "@whatwg-node/fetch": "npm:^0.10.6"
@@ -7555,7 +7529,7 @@ __metadata:
     "@graphql-mesh/store": "npm:^0.104.31"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
-    "@omnigraph/raml": "npm:0.109.33"
+    "@omnigraph/raml": "npm:^0.109.33"
     graphql: "npm:16.13.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -7600,7 +7574,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
     "@graphql-tools/utils": "npm:^11.0.0"
-    "@omnigraph/soap": "npm:0.107.34"
+    "@omnigraph/soap": "npm:^0.107.34"
     graphql: "npm:16.13.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -7624,14 +7598,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/string-interpolation@npm:0.5.13, @graphql-mesh/string-interpolation@npm:^0.5.13, @graphql-mesh/string-interpolation@npm:^0.5.9, @graphql-mesh/string-interpolation@workspace:packages/string-interpolation":
+"@graphql-mesh/string-interpolation@npm:^0.5.13, @graphql-mesh/string-interpolation@npm:^0.5.9, @graphql-mesh/string-interpolation@workspace:packages/string-interpolation":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/string-interpolation@workspace:packages/string-interpolation"
   dependencies:
-    dayjs: "npm:1.11.20"
+    dayjs: "npm:^1.11.20"
     graphql: "npm:16.13.1"
-    json-pointer: "npm:0.6.2"
-    lodash.get: "npm:4.4.2"
+    json-pointer: "npm:^0.6.2"
+    lodash.get: "npm:^4.4.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -8377,24 +8351,6 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/bcc917cad5f8d21c593ca3382e1808b19c75ed3161ab42b2b69cb43eb53183408d27d1c77d9bf9c6f71971cd9c48109eb78183d2451ab28834a63f7fe855e788
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/delegate@npm:^12.0.11":
-  version: 12.0.11
-  resolution: "@graphql-tools/delegate@npm:12.0.11"
-  dependencies:
-    "@graphql-tools/batch-execute": "npm:^10.0.7"
-    "@graphql-tools/executor": "npm:^1.4.13"
-    "@graphql-tools/schema": "npm:^10.0.29"
-    "@graphql-tools/utils": "npm:^11.0.0"
-    "@repeaterjs/repeater": "npm:^3.0.6"
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-    dataloader: "npm:^2.2.3"
-    tslib: "npm:^2.8.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/e2f58f6cb41bf88a26b5685d4852b3a79baf3fcafd963f704759cf1691c12ceacdf36c8ae5005238a447557c8440aa47f3da24aea8f8be0f0c64f1cb59e7dc00
   languageName: node
   linkType: hard
 
@@ -9155,22 +9111,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/wrap@npm:^11.1.1":
-  version: 11.1.11
-  resolution: "@graphql-tools/wrap@npm:11.1.11"
-  dependencies:
-    "@graphql-tools/delegate": "npm:^12.0.11"
-    "@graphql-tools/schema": "npm:^10.0.29"
-    "@graphql-tools/utils": "npm:^11.0.0"
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-    tslib: "npm:^2.8.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/34a6762cae0e7f6569eaf9944ff9073c3ef7cb8bb3753e2acb3c3c8fddd2e361d8b3ac4668477feab15c04baadd9ada9f471383283924695aebb3807c4247aca
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/wrap@npm:^11.1.12":
+"@graphql-tools/wrap@npm:^11.1.1, @graphql-tools/wrap@npm:^11.1.12":
   version: 11.1.12
   resolution: "@graphql-tools/wrap@npm:11.1.12"
   dependencies:
@@ -11580,7 +11521,7 @@ __metadata:
   resolution: "@omnigraph/json-schema@workspace:packages/loaders/json-schema"
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
-    "@graphql-mesh/string-interpolation": "npm:0.5.13"
+    "@graphql-mesh/string-interpolation": "npm:^0.5.13"
     "@graphql-mesh/transport-common": "npm:^1.0.15"
     "@graphql-mesh/transport-rest": "npm:^0.9.32"
     "@graphql-mesh/types": "npm:^0.104.25"
@@ -11681,7 +11622,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/openapi@npm:*, @omnigraph/openapi@npm:0.109.41, @omnigraph/openapi@npm:^0.109.41, @omnigraph/openapi@workspace:*, @omnigraph/openapi@workspace:^, @omnigraph/openapi@workspace:packages/loaders/openapi":
+"@omnigraph/openapi@npm:*, @omnigraph/openapi@npm:^0.109.41, @omnigraph/openapi@workspace:*, @omnigraph/openapi@workspace:^, @omnigraph/openapi@workspace:packages/loaders/openapi":
   version: 0.0.0-use.local
   resolution: "@omnigraph/openapi@workspace:packages/loaders/openapi"
   dependencies:
@@ -11706,13 +11647,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/raml@npm:0.109.33, @omnigraph/raml@workspace:packages/loaders/raml":
+"@omnigraph/raml@npm:^0.109.33, @omnigraph/raml@workspace:packages/loaders/raml":
   version: 0.0.0-use.local
   resolution: "@omnigraph/raml@workspace:packages/loaders/raml"
   dependencies:
     "@ardatan/raml-1-parser": "npm:1.1.69"
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
-    "@graphql-mesh/string-interpolation": "npm:0.5.13"
+    "@graphql-mesh/string-interpolation": "npm:^0.5.13"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
     "@graphql-tools/delegate": "npm:^12.0.12"
@@ -11729,7 +11670,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/soap@npm:0.107.34, @omnigraph/soap@workspace:packages/loaders/soap":
+"@omnigraph/soap@npm:^0.107.34, @omnigraph/soap@workspace:packages/loaders/soap":
   version: 0.0.0-use.local
   resolution: "@omnigraph/soap@workspace:packages/loaders/soap"
   dependencies:
@@ -21186,7 +21127,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:1.11.20, dayjs@npm:^1.11.18, dayjs@npm:^1.11.20":
+"dayjs@npm:^1.11.18, dayjs@npm:^1.11.20":
   version: 1.11.20
   resolution: "dayjs@npm:1.11.20"
   checksum: 10c0/8af525e2aa100c8db9923d706c42b2b2d30579faf89456619413a5c10916efc92c2b166e193c27c02eb3174b30aa440ee1e7b72b0a2876b3da651d204db848a0
@@ -28229,7 +28170,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-pointer@npm:0.6.2, json-pointer@npm:^0.6.2":
+"json-pointer@npm:^0.6.2":
   version: 0.6.2
   resolution: "json-pointer@npm:0.6.2"
   dependencies:
@@ -29031,7 +28972,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.get@npm:4.4.2, lodash.get@npm:^4.0.0, lodash.get@npm:^4.4.2":
+"lodash.get@npm:^4.0.0, lodash.get@npm:^4.4.2":
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
   checksum: 10c0/48f40d471a1654397ed41685495acb31498d5ed696185ac8973daef424a749ca0c7871bf7b665d5c14f5cc479394479e0307e781f61d5573831769593411be6e

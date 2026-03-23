@@ -38,7 +38,7 @@
     "@graphql-mesh/store": "^0.104.31",
     "@graphql-mesh/types": "^0.104.25",
     "@graphql-mesh/utils": "^0.104.29",
-    "@omnigraph/raml": "0.109.33",
+    "@omnigraph/raml": "^0.109.33",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
@@ -49,11 +49,6 @@
     "directory": "dist"
   },
   "sideEffects": false,
-  "buildOptions": {
-    "external": [
-      "cross-fetch"
-    ]
-  },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   }

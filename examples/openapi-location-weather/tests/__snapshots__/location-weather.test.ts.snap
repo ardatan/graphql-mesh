@@ -1350,7 +1350,7 @@ type HistorySubhourly {
 
   """Country abbreviation"""
   country_code: String
-  data: [HistoryObj]
+  data: [HistorySubhourlyObj]
 
   """Latitude"""
   lat: Float
@@ -1366,6 +1366,87 @@ type HistorySubhourly {
 
   """Local IANA time zone"""
   timezone: String
+}
+
+type HistorySubhourlyObj {
+  """Apparent Temperature or Wind Chill/Heat Index (Default Celcius)"""
+  app_temp: Float
+
+  """Solar azimuth angle (Degrees)"""
+  azimuth: Float
+
+  """Cloud Cover 0-100 (%)"""
+  clouds: Int
+
+  """Dew point (Default Celcius)"""
+  dewpt: Float
+
+  """Diffuse normal solar irradiance (W/m^2)"""
+  dhi: Float
+
+  """Direct normal solar irradiance (W/m^2)"""
+  dni: Float
+
+  """Solar elevation angle (Degrees)"""
+  elev_angle: Float
+
+  """Global horizontal solar irradiance (W/m^2)"""
+  ghi: Float
+
+  """Part of the day (d = day, n = night)"""
+  pod: String
+
+  """Liquid equivalent precipitation rate - Default (mm/hr)"""
+  precip_rate: Float
+
+  """Pressure (mb)"""
+  pres: Float
+
+  """Data revision status (interim or final)"""
+  revision_status: String
+
+  """Final data revision version."""
+  revision_version: String
+
+  """Relative Humidity as a percentage (%)"""
+  rh: Int
+
+  """Sea level pressure (mb)"""
+  slp: Float
+
+  """Snowfall Rate - Default (mm/hr)"""
+  snow_rate: Float
+
+  """Estimated solar radiation (W/m^2)"""
+  solar_rad: Float
+
+  """Temperature (Default Celcius)"""
+  temp: Float
+
+  """Timestamp in local time"""
+  timestamp_local: String
+
+  """Timestamp UTC"""
+  timestamp_utc: String
+
+  """Unix Timestamp"""
+  ts: Float
+
+  """UV Index (1-11+)"""
+  uv: Float
+
+  """Visibility (KM)"""
+  vis: Float
+  weather: query_history_subhourly_oneOf_0_data_items_weather
+
+  """Wind direction (Degrees)"""
+  wind_dir: Int
+
+  """Wind Gust Speed - Default (m/s)"""
+  wind_gust_spd: Float
+
+  """Wind Speed (Default m/s)"""
+  wind_spd: Float
 }
 
 """A language supported by the service"""
@@ -3798,6 +3879,17 @@ enum query_getLanguagesUsingGET_allOf_1_data_items_code {
 }
 
 type query_history_hourly_oneOf_0_data_items_weather {
+  """Weather Condition code"""
+  code: Int
+
+  """Weather Condition description"""
+  description: String
+
+  """Icon code for forecast image display"""
+  icon: String
+}
+
+type query_history_subhourly_oneOf_0_data_items_weather {
   """Weather Condition code"""
   code: Int
 
