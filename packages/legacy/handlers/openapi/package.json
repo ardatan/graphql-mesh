@@ -50,11 +50,6 @@
     "directory": "dist"
   },
   "sideEffects": false,
-  "buildOptions": {
-    "external": [
-      "cross-fetch"
-    ]
-  },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   }

@@ -78,9 +78,6 @@
     "access": "public"
   },
   "sideEffects": false,
-  "buildOptions": {
-    "external": []
-  },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   }
