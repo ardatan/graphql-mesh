@@ -2,7 +2,7 @@ import { join } from 'path';
 import { readFile } from 'fs-extra';
 import { lexicographicSortSchema, printSchema } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
-import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
+import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 
 describe('Location Weather', () => {
