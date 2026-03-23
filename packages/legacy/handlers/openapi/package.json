@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@graphql-mesh/store": "^0.104.31",
-    "@graphql-mesh/string-interpolation": "0.5.13",
+    "@graphql-mesh/string-interpolation": "^0.5.13",
     "@graphql-mesh/types": "^0.104.25",
     "@graphql-mesh/utils": "^0.104.29",
     "@omnigraph/openapi": "0.109.41",
