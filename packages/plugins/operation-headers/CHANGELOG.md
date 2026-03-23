@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-operation-headers
 
+## 1.4.34
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.31
+
 ## 1.4.33
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @graphql-mesh/merger-stitching
 
+## 0.105.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.31
+  - @graphql-mesh/store@0.104.33
+
 ## 0.105.32
 
 ### Patch Changes

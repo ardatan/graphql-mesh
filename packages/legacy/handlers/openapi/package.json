@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/openapi",
-  "version": "0.109.43",
+  "version": "0.109.44",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,11 +35,11 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "^0.104.32",
-    "@graphql-mesh/string-interpolation": "^0.5.14",
+    "@graphql-mesh/store": "^0.104.33",
+    "@graphql-mesh/string-interpolation": "^0.5.15",
     "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.30",
-    "@omnigraph/openapi": "^0.109.42",
+    "@graphql-mesh/utils": "^0.104.31",
+    "@omnigraph/openapi": "^0.109.43",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

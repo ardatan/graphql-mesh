@@ -1,5 +1,12 @@
 # @graphql-mesh/transport-neo4j
 
+## 0.10.32
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.31
+
 ## 0.10.31
 
 ### Patch Changes

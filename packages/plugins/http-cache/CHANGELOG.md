@@ -1,5 +1,12 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.105.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.31
+
 ## 0.105.32
 
 ### Patch Changes
