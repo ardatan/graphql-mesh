@@ -62,4 +62,10 @@ describe('parseInterpolationStrings', () => {
     const result = stringInterpolator.parse('{n}', context);
     expect(result).toBe(BigInt(9007199254740991));
   });
+  it.only('does not treat empty strings as falsy', () => {
+    const emptyStr = '';
+    const context = { emptyStr };
+    const result = stringInterpolator.parse('{emptyStr}', context);
+    expect(result).toBe(emptyStr);
+  });
 });
