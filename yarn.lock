@@ -7082,7 +7082,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/merger-bare@workspace:packages/legacy/mergers/bare"
   dependencies:
-    "@graphql-mesh/merger-stitching": "npm:0.105.31"
+    "@graphql-mesh/merger-stitching": "npm:^0.105.31"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
     "@graphql-tools/schema": "npm:^10.0.31"
@@ -7094,7 +7094,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/merger-stitching@npm:0.105.31, @graphql-mesh/merger-stitching@npm:^0.105.31, @graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching":
+"@graphql-mesh/merger-stitching@npm:^0.105.31, @graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching"
   dependencies:
@@ -7206,7 +7206,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.13"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
-    "@omnigraph/openapi": "npm:0.109.41"
+    "@omnigraph/openapi": "npm:^0.109.41"
     graphql: "npm:16.13.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -7529,7 +7529,7 @@ __metadata:
     "@graphql-mesh/store": "npm:^0.104.31"
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
-    "@omnigraph/raml": "npm:0.109.33"
+    "@omnigraph/raml": "npm:^0.109.33"
     graphql: "npm:16.13.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -7574,7 +7574,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.104.25"
     "@graphql-mesh/utils": "npm:^0.104.29"
     "@graphql-tools/utils": "npm:^11.0.0"
-    "@omnigraph/soap": "npm:0.107.34"
+    "@omnigraph/soap": "npm:^0.107.34"
     graphql: "npm:16.13.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -7602,10 +7602,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/string-interpolation@workspace:packages/string-interpolation"
   dependencies:
-    dayjs: "npm:1.11.20"
+    dayjs: "npm:^1.11.20"
     graphql: "npm:16.13.1"
-    json-pointer: "npm:0.6.2"
-    lodash.get: "npm:4.4.2"
+    json-pointer: "npm:^0.6.2"
+    lodash.get: "npm:^4.4.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -11622,7 +11622,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/openapi@npm:*, @omnigraph/openapi@npm:0.109.41, @omnigraph/openapi@npm:^0.109.41, @omnigraph/openapi@workspace:*, @omnigraph/openapi@workspace:^, @omnigraph/openapi@workspace:packages/loaders/openapi":
+"@omnigraph/openapi@npm:*, @omnigraph/openapi@npm:^0.109.41, @omnigraph/openapi@workspace:*, @omnigraph/openapi@workspace:^, @omnigraph/openapi@workspace:packages/loaders/openapi":
   version: 0.0.0-use.local
   resolution: "@omnigraph/openapi@workspace:packages/loaders/openapi"
   dependencies:
@@ -11647,7 +11647,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/raml@npm:0.109.33, @omnigraph/raml@workspace:packages/loaders/raml":
+"@omnigraph/raml@npm:^0.109.33, @omnigraph/raml@workspace:packages/loaders/raml":
   version: 0.0.0-use.local
   resolution: "@omnigraph/raml@workspace:packages/loaders/raml"
   dependencies:
@@ -11670,7 +11670,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@omnigraph/soap@npm:0.107.34, @omnigraph/soap@workspace:packages/loaders/soap":
+"@omnigraph/soap@npm:^0.107.34, @omnigraph/soap@workspace:packages/loaders/soap":
   version: 0.0.0-use.local
   resolution: "@omnigraph/soap@workspace:packages/loaders/soap"
   dependencies:
@@ -21127,7 +21127,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:1.11.20, dayjs@npm:^1.11.18, dayjs@npm:^1.11.20":
+"dayjs@npm:^1.11.18, dayjs@npm:^1.11.20":
   version: 1.11.20
   resolution: "dayjs@npm:1.11.20"
   checksum: 10c0/8af525e2aa100c8db9923d706c42b2b2d30579faf89456619413a5c10916efc92c2b166e193c27c02eb3174b30aa440ee1e7b72b0a2876b3da651d204db848a0
@@ -28170,7 +28170,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-pointer@npm:0.6.2, json-pointer@npm:^0.6.2":
+"json-pointer@npm:^0.6.2":
   version: 0.6.2
   resolution: "json-pointer@npm:0.6.2"
   dependencies:
@@ -28972,7 +28972,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.get@npm:4.4.2, lodash.get@npm:^4.0.0, lodash.get@npm:^4.4.2":
+"lodash.get@npm:^4.0.0, lodash.get@npm:^4.4.2":
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
   checksum: 10c0/48f40d471a1654397ed41685495acb31498d5ed696185ac8973daef424a749ca0c7871bf7b665d5c14f5cc479394479e0307e781f61d5573831769593411be6e
