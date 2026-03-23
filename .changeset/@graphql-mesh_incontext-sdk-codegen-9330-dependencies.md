@@ -1,6 +1,5 @@
 ---
-"@graphql-mesh/transport-neo4j": patch
+"@graphql-mesh/incontext-sdk-codegen": patch
 ---
 dependencies updates:
   - Updated dependency [`@graphql-mesh/utils@^0.104.29` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.104.29) (from `^0.104.28`, in `dependencies`)
-  - Updated dependency [`@neo4j/graphql@^7.4.4` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/7.4.4) (from `^7.4.3`, in `dependencies`)
