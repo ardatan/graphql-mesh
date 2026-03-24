@@ -12,6 +12,6 @@
     "@graphql-mesh/config": "0.108.37",
     "@graphql-mesh/odata": "0.106.36",
     "@graphql-mesh/runtime": "0.106.33",
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   }
 }

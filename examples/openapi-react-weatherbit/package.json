@@ -10,7 +10,7 @@
     "start": "vite"
   },
   "dependencies": {
-    "graphql": "16.13.1",
+    "graphql": "16.13.2",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -20,7 +20,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.1",
     "typescript": "^5.4.2",
-    "vite": "8.0.1"
+    "vite": "8.0.2"
   },
   "browserslist": {
     "production": [
