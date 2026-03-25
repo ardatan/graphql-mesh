@@ -64,7 +64,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Return list of todos",
+            "description": "Return request URL",
             "content": {
               "application/json": {
                 "schema": {
