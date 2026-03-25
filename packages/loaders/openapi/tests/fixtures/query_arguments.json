@@ -49,6 +49,37 @@
           }
         }
       }
+    },
+    "/query": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "argument",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of todos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

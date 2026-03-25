@@ -43,4 +43,23 @@ describe('OpenAPI loader: Query Arguments', () => {
       },
     });
   });
+  it('Empty Query Arguments', async () => {
+    const query = /* GraphQL */ `
+      {
+        query(argument: "") {
+          url
+        }
+      }
+    `;
+
+    const result = await graphql({ schema: createdSchema, source: query });
+
+    expect(result).toEqual({
+      data: {
+        query: {
+          url: 'http://localhost:3000/query?argument=',
+        },
+      },
+    });
+  });
 });
