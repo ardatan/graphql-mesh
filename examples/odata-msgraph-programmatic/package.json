@@ -8,10 +8,10 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.42",
-    "@graphql-mesh/config": "0.108.37",
-    "@graphql-mesh/odata": "0.106.36",
-    "@graphql-mesh/runtime": "0.106.33",
+    "@graphql-mesh/cli": "0.100.43",
+    "@graphql-mesh/config": "0.108.38",
+    "@graphql-mesh/odata": "0.106.37",
+    "@graphql-mesh/runtime": "0.106.34",
     "graphql": "16.13.1"
   }
 }

@@ -1,5 +1,15 @@
 # @graphql-mesh/grpc
 
+## 0.108.36
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.32
+  - @omnigraph/grpc@0.2.19
+  - @graphql-mesh/transport-grpc@0.3.34
+  - @graphql-mesh/store@0.104.34
+
 ## 0.108.35
 
 ### Patch Changes

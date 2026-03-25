@@ -1,5 +1,16 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.16
+
+### Patch Changes
+
+- [`94fbfbd`](https://github.com/ardatan/graphql-mesh/commit/94fbfbd41d56cfba3d11a7c3dc21b200a1f89069)
+  Thanks [@ardatan](https://github.com/ardatan)! - When `{missing}` tries to interpolate `missing`
+  key from the context, it returns `undefined`. If the entire string is just the placeholder, it
+  should return `undefined` instead of the string with `undefined` in it. This change adds a check
+  for this case and returns `undefined` when the entire string is a placeholder for an undefined
+  value.
+
 ## 0.5.15
 
 ### Patch Changes
