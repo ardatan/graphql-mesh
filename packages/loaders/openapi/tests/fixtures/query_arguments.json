@@ -59,7 +59,8 @@
             "schema": {
               "type": "string"
             },
-            "required": true
+            "required": true,
+            "allowEmptyValue": true
           }
         ],
         "responses": {
