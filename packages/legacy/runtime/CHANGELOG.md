@@ -1,5 +1,14 @@
 # @graphql-mesh/runtime
 
+## 0.106.34
+
+### Patch Changes
+
+- Updated dependencies
+  [[`94fbfbd`](https://github.com/ardatan/graphql-mesh/commit/94fbfbd41d56cfba3d11a7c3dc21b200a1f89069)]:
+  - @graphql-mesh/string-interpolation@0.5.16
+  - @graphql-mesh/utils@0.104.32
+
 ## 0.106.33
 
 ### Patch Changes

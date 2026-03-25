@@ -1,5 +1,12 @@
 # @graphql-mesh/incontext-sdk-codegen
 
+## 0.0.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.32
+
 ## 0.0.9
 
 ### Patch Changes
