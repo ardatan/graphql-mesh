@@ -64,7 +64,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Return request URL",
+            "description": "Return object containing request URL",
             "content": {
               "application/json": {
                 "schema": {
