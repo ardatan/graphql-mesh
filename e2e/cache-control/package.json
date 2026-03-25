@@ -4,7 +4,7 @@
   "dependencies": {
     "@apollo/server": "^5.4.0",
     "@apollo/subgraph": "^2.13.3",
-    "@graphql-hive/gateway": "^2.5.13",
+    "@graphql-hive/gateway": "^2.5.14",
     "@graphql-mesh/cache-upstash-redis": "^0.1.29",
     "@graphql-mesh/compose-cli": "^1.5.24",
     "@graphql-mesh/plugin-http-cache": "^0.105.34",
