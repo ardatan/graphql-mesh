@@ -28,24 +28,11 @@ createServer(
           foo: (_parent, args, _context, _info) => {
             return { id: args.id };
           },
-          emptyString: (_parent, args, _context, _info) => {
-            return args.argument;
-          },
-          undefinedString: (_parent, args, _context, _info) => {
-            return args.argument;
-          },
-          undefinedInt: (_parent, args, _context, _info) => {
-            return args.argument;
-          },
-          zeroInt: (_parent, args, _context, _info) => {
-            return args.argument;
-          },
-          falseBoolean: (_parent, args, _context, _info) => {
-            return args.argument;
-          },
-          undefinedBoolean: (_parent, args, _context, _info) => {
-            return args.argument;
-          },
+          ...Object.fromEntries(
+            ['emptyString', 'undefinedString', 'undefinedInt', 'zeroInt', 'falseBoolean', 'undefinedBoolean'].map(
+              field => [field, (_parent: unknown, args: Record<string, unknown>) => args.argument],
+            ),
+          ),
         },
       },
     }),
