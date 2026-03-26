@@ -11,6 +11,12 @@ createServer(
       typeDefs: /* GraphQL */ `
         type Query {
           foo(id: ID!): Foo
+          emptyString(argument: String): String
+          undefinedString(argument: String): String
+          undefinedInt(argument: Int): Int
+          zeroInt(argument: Int!): Int
+          falseBoolean(argument: Boolean): Boolean
+          undefinedBoolean(argument: Boolean): Boolean
         }
 
         type Foo {
@@ -21,6 +27,24 @@ createServer(
         Query: {
           foo: (_parent, args, _context, _info) => {
             return { id: args.id };
+          },
+          emptyString: (_parent, args, _context, _info) => {
+            return args.argument;
+          },
+          undefinedString: (_parent, args, _context, _info) => {
+            return args.argument;
+          },
+          undefinedInt: (_parent, args, _context, _info) => {
+            return args.argument;
+          },
+          zeroInt: (_parent, args, _context, _info) => {
+            return args.argument;
+          },
+          falseBoolean: (_parent, args, _context, _info) => {
+            return args.argument;
+          },
+          undefinedBoolean: (_parent, args, _context, _info) => {
+            return args.argument;
           },
         },
       },
