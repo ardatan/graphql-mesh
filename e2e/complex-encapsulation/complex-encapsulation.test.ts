@@ -44,11 +44,11 @@ describe('should execute queries', () => {
       },
     },
     {
-      name: 'Query empty string',
+      name: 'Query echo empty string',
       query: /* GraphQL */ `
-        query EmptyString($argument: String) {
+        query EchoString($argument: String) {
           SubgraphA {
-            emptyString(argument: $argument)
+            echoString(argument: $argument)
           }
         }
       `,
@@ -58,51 +58,34 @@ describe('should execute queries', () => {
       expectedResult: {
         data: {
           SubgraphA: {
-            emptyString: '',
+            echoString: '',
           },
         },
       },
     },
     {
-      name: 'Query undefined string',
+      name: 'Query echo omitted string',
       query: /* GraphQL */ `
-        query UndefinedString($argument: String) {
+        query EchoString($argument: String) {
           SubgraphA {
-            undefinedString(argument: $argument)
+            echoString(argument: $argument)
           }
         }
       `,
       expectedResult: {
         data: {
           SubgraphA: {
-            undefinedString: null,
+            echoString: null,
           },
         },
       },
     },
     {
-      name: 'Query undefined int',
+      name: 'Query echo zero int',
       query: /* GraphQL */ `
-        query UndefinedInt($argument: Int) {
+        query EchoInt($argument: Int) {
           SubgraphA {
-            undefinedInt(argument: $argument)
-          }
-        }
-      `,
-      expectedResult: {
-        data: {
-          SubgraphA: {
-            undefinedInt: null,
-          },
-        },
-      },
-    },
-    {
-      name: 'Query zero int',
-      query: /* GraphQL */ `
-        query ZeroInt($argument: Int) {
-          SubgraphA {
-            zeroInt(argument: $argument)
+            echoInt(argument: $argument)
           }
         }
       `,
@@ -112,17 +95,34 @@ describe('should execute queries', () => {
       expectedResult: {
         data: {
           SubgraphA: {
-            zeroInt: 0,
+            echoInt: 0,
           },
         },
       },
     },
     {
-      name: 'Query false boolean',
+      name: 'Query echo omitted int',
       query: /* GraphQL */ `
-        query FalseBoolean($argument: Boolean) {
+        query EchoInt($argument: Int) {
           SubgraphA {
-            falseBoolean(argument: $argument)
+            echoInt(argument: $argument)
+          }
+        }
+      `,
+      expectedResult: {
+        data: {
+          SubgraphA: {
+            echoInt: null,
+          },
+        },
+      },
+    },
+    {
+      name: 'Query echo false boolean',
+      query: /* GraphQL */ `
+        query EchoBoolean($argument: Boolean) {
+          SubgraphA {
+            echoBoolean(argument: $argument)
           }
         }
       `,
@@ -132,24 +132,24 @@ describe('should execute queries', () => {
       expectedResult: {
         data: {
           SubgraphA: {
-            falseBoolean: false,
+            echoBoolean: false,
           },
         },
       },
     },
     {
-      name: 'Query undefined boolean',
+      name: 'Query echo omitted boolean',
       query: /* GraphQL */ `
-        query UndefinedBoolean($argument: Boolean) {
+        query EchoBoolean($argument: Boolean) {
           SubgraphA {
-            undefinedBoolean(argument: $argument)
+            echoBoolean(argument: $argument)
           }
         }
       `,
       expectedResult: {
         data: {
           SubgraphA: {
-            undefinedBoolean: null,
+            echoBoolean: null,
           },
         },
       },

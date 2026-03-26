@@ -11,12 +11,9 @@ createServer(
       typeDefs: /* GraphQL */ `
         type Query {
           foo(id: ID!): Foo
-          emptyString(argument: String): String
-          undefinedString(argument: String): String
-          undefinedInt(argument: Int): Int
-          zeroInt(argument: Int): Int
-          falseBoolean(argument: Boolean): Boolean
-          undefinedBoolean(argument: Boolean): Boolean
+          echoString(argument: String): String
+          echoInt(argument: Int): Int
+          echoBoolean(argument: Boolean): Boolean
         }
 
         type Foo {
@@ -29,7 +26,7 @@ createServer(
             return { id: args.id };
           },
           ...Object.fromEntries(
-            ['emptyString', 'undefinedString', 'undefinedInt', 'zeroInt', 'falseBoolean', 'undefinedBoolean'].map(
+            ['echoString', 'echoInt', 'echoBoolean'].map(
               field => [field, (_parent: unknown, args: Record<string, unknown>) => args.argument],
             ),
           ),
