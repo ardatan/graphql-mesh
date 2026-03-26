@@ -14,7 +14,7 @@ createServer(
           emptyString(argument: String): String
           undefinedString(argument: String): String
           undefinedInt(argument: Int): Int
-          zeroInt(argument: Int!): Int
+          zeroInt(argument: Int): Int
           falseBoolean(argument: Boolean): Boolean
           undefinedBoolean(argument: Boolean): Boolean
         }

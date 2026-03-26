@@ -1,6 +1,6 @@
-import { createTenv, type Container } from '@e2e/tenv';
+import { createTenv } from '@e2e/tenv';
 
-const { compose, service, serve, container } = createTenv(__dirname);
+const { compose, service, serve } = createTenv(__dirname);
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose({
@@ -22,11 +22,20 @@ it.concurrent.each([
         }
       }
     `,
+    expectedResult: {
+      data: {
+        SubgraphA: {
+          foo: {
+            id: '123',
+          },
+        },
+      },
+    },
   },
   {
     name: 'Query empty string',
     query: /* GraphQL */ `
-      query EmptyString($argument: String!) {
+      query EmptyString($argument: String) {
         SubgraphA {
           emptyString(argument: $argument)
         }
@@ -34,6 +43,13 @@ it.concurrent.each([
     `,
     variables: {
       argument: '',
+    },
+    expectedResult: {
+      data: {
+        SubgraphA: {
+          emptyString: '',
+        },
+      },
     },
   },
   {
@@ -45,6 +61,13 @@ it.concurrent.each([
         }
       }
     `,
+    expectedResult: {
+      data: {
+        SubgraphA: {
+          undefinedString: null,
+        },
+      },
+    },
   },
   {
     name: 'Query undefined int',
@@ -55,11 +78,18 @@ it.concurrent.each([
         }
       }
     `,
+    expectedResult: {
+      data: {
+        SubgraphA: {
+          undefinedInt: null,
+        },
+      },
+    },
   },
   {
     name: 'Query zero int',
     query: /* GraphQL */ `
-      query ZeroInt($argument: Int!) {
+      query ZeroInt($argument: Int) {
         SubgraphA {
           zeroInt(argument: $argument)
         }
@@ -67,6 +97,13 @@ it.concurrent.each([
     `,
     variables: {
       argument: 0,
+    },
+    expectedResult: {
+      data: {
+        SubgraphA: {
+          zeroInt: 0,
+        },
+      },
     },
   },
   {
@@ -81,6 +118,13 @@ it.concurrent.each([
     variables: {
       argument: false,
     },
+    expectedResult: {
+      data: {
+        SubgraphA: {
+          falseBoolean: false,
+        },
+      },
+    },
   },
   {
     name: 'Query undefined boolean',
@@ -91,12 +135,19 @@ it.concurrent.each([
         }
       }
     `,
+    expectedResult: {
+      data: {
+        SubgraphA: {
+          undefinedBoolean: null,
+        },
+      },
+    },
   },
-])('should execute $name', async ({ query }) => {
+])('should execute $name', async ({ query, variables, expectedResult }) => {
   const { output } = await compose({
     output: 'graphql',
     services: [await service('subgraph-a')],
   });
   const { execute } = await serve({ supergraph: output });
-  await expect(execute({ query })).resolves.toMatchSnapshot();
+  await expect(execute({ query, variables })).resolves.toStrictEqual(expectedResult);
 });
