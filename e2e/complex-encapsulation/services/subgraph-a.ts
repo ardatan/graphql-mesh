@@ -25,15 +25,11 @@ createServer(
           foo: (_parent, args, _context, _info) => {
             return { id: args.id };
           },
-          echoString: (_parent, args, _context, _info) => {
-            return args.argument;
-          },
-          echoInt: (_parent, args, _context, _info) => {
-            return args.argument;
-          },
-          echoBoolean: (_parent, args, _context, _info) => {
-            return args.argument;
-          },
+          ...Object.fromEntries(
+            ['echoString', 'echoInt', 'echoBoolean'].map(
+              field => [field, (_parent: unknown, args: Record<string, unknown>) => args.argument],
+            ),
+          ),
         },
       },
     }),
