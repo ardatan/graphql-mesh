@@ -41,7 +41,7 @@
     "changeset": "changeset",
     "changeset-version": "changeset version && yarn postchangeset",
     "ci:lint": "eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",
-    "clean": "(rm -rf packages/**/dist & rm -rf packages/**/(!node_modules)/**/dist & rm -rf examples/**/node_modules/.bin/*mesh* & rm -rf .bob) || true",
+    "clean": "(rm -rf packages/**/(!node_modules)/**/dist & rm -rf examples/**/node_modules/.bin/*mesh* & rm -rf .bob) || true",
     "copy-config-schema": "cp-cli ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/esm/config-schema.json && cp-cli ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/cjs/config-schema.json",
     "dev:website": "yarn workspace website run dev",
     "fix-bin": "node scripts/fix-bin.js",
