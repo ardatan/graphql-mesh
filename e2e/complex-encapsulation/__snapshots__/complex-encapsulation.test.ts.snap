@@ -118,6 +118,12 @@ scalar SubgraphAResolveToSourceArgs @join__type(graph: SUBGRAPH_A)
 
 type Query @join__type(graph: SUBGRAPH_A)  {
   _encapsulated_SubgraphA_foo(id: ID!) : SubgraphAFoo @source(name: "foo", type: "Foo", subgraph: "subgraph-a")  @inaccessible
+  _encapsulated_SubgraphA_emptyString(argument: String) : String @source(name: "emptyString", type: "String", subgraph: "subgraph-a")  @inaccessible
+  _encapsulated_SubgraphA_undefinedString(argument: String) : String @source(name: "undefinedString", type: "String", subgraph: "subgraph-a")  @inaccessible
+  _encapsulated_SubgraphA_undefinedInt(argument: Int) : Int @source(name: "undefinedInt", type: "Int", subgraph: "subgraph-a")  @inaccessible
+  _encapsulated_SubgraphA_zeroInt(argument: Int) : Int @source(name: "zeroInt", type: "Int", subgraph: "subgraph-a")  @inaccessible
+  _encapsulated_SubgraphA_falseBoolean(argument: Boolean) : Boolean @source(name: "falseBoolean", type: "Boolean", subgraph: "subgraph-a")  @inaccessible
+  _encapsulated_SubgraphA_undefinedBoolean(argument: Boolean) : Boolean @source(name: "undefinedBoolean", type: "Boolean", subgraph: "subgraph-a")  @inaccessible
   SubgraphA: SubgraphASubgraphAQuery! @resolveTo(
     sourceName: "subgraph-a"
     sourceTypeName: "Query"
@@ -136,18 +142,42 @@ type SubgraphASubgraphAQuery @join__type(graph: SUBGRAPH_A)  {
     sourceFieldName: "_encapsulated_SubgraphA_foo"
     sourceArgs: {id: "{args.id}"}
   )
+  emptyString(argument: String) : String @resolveTo(
+    sourceName: "subgraph-a"
+    sourceTypeName: "Query"
+    sourceFieldName: "_encapsulated_SubgraphA_emptyString"
+    sourceArgs: {argument: "{args.argument}"}
+  )
+  undefinedString(argument: String) : String @resolveTo(
+    sourceName: "subgraph-a"
+    sourceTypeName: "Query"
+    sourceFieldName: "_encapsulated_SubgraphA_undefinedString"
+    sourceArgs: {argument: "{args.argument}"}
+  )
+  undefinedInt(argument: Int) : Int @resolveTo(
+    sourceName: "subgraph-a"
+    sourceTypeName: "Query"
+    sourceFieldName: "_encapsulated_SubgraphA_undefinedInt"
+    sourceArgs: {argument: "{args.argument}"}
+  )
+  zeroInt(argument: Int) : Int @resolveTo(
+    sourceName: "subgraph-a"
+    sourceTypeName: "Query"
+    sourceFieldName: "_encapsulated_SubgraphA_zeroInt"
+    sourceArgs: {argument: "{args.argument}"}
+  )
+  falseBoolean(argument: Boolean) : Boolean @resolveTo(
+    sourceName: "subgraph-a"
+    sourceTypeName: "Query"
+    sourceFieldName: "_encapsulated_SubgraphA_falseBoolean"
+    sourceArgs: {argument: "{args.argument}"}
+  )
+  undefinedBoolean(argument: Boolean) : Boolean @resolveTo(
+    sourceName: "subgraph-a"
+    sourceTypeName: "Query"
+    sourceFieldName: "_encapsulated_SubgraphA_undefinedBoolean"
+    sourceArgs: {argument: "{args.argument}"}
+  )
 }
 "
-`;
-
-exports[`should execute Query foo 1`] = `
-{
-  "data": {
-    "SubgraphA": {
-      "foo": {
-        "id": "123",
-      },
-    },
-  },
-}
 `;
