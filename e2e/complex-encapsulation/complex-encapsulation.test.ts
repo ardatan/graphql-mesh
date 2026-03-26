@@ -1,4 +1,4 @@
-import { createTenv } from '@e2e/tenv';
+import { createTenv, type Serve } from '@e2e/tenv';
 
 const { compose, service, serve } = createTenv(__dirname);
 
@@ -10,144 +10,151 @@ it('should compose the appropriate schema', async () => {
   expect(result).toMatchSnapshot();
 });
 
-it.concurrent.each([
-  {
-    name: 'Query foo',
-    query: /* GraphQL */ `
-      query {
-        SubgraphA {
-          foo(id: "123") {
-            id
+describe('should execute queries', () => {
+  let gateway: Serve;
+
+  beforeAll(async () => {
+    const { output } = await compose({
+      output: 'graphql',
+      services: [await service('subgraph-a')],
+    });
+    gateway = await serve({ supergraph: output });
+  });
+
+  it.each([
+    {
+      name: 'Query foo',
+      query: /* GraphQL */ `
+        query {
+          SubgraphA {
+            foo(id: "123") {
+              id
+            }
           }
         }
-      }
-    `,
-    expectedResult: {
-      data: {
-        SubgraphA: {
-          foo: {
-            id: '123',
+      `,
+      expectedResult: {
+        data: {
+          SubgraphA: {
+            foo: {
+              id: '123',
+            },
           },
         },
       },
     },
-  },
-  {
-    name: 'Query empty string',
-    query: /* GraphQL */ `
-      query EmptyString($argument: String) {
-        SubgraphA {
-          emptyString(argument: $argument)
+    {
+      name: 'Query empty string',
+      query: /* GraphQL */ `
+        query EmptyString($argument: String) {
+          SubgraphA {
+            emptyString(argument: $argument)
+          }
         }
-      }
-    `,
-    variables: {
-      argument: '',
-    },
-    expectedResult: {
-      data: {
-        SubgraphA: {
-          emptyString: '',
+      `,
+      variables: {
+        argument: '',
+      },
+      expectedResult: {
+        data: {
+          SubgraphA: {
+            emptyString: '',
+          },
         },
       },
     },
-  },
-  {
-    name: 'Query undefined string',
-    query: /* GraphQL */ `
-      query UndefinedString($argument: String) {
-        SubgraphA {
-          undefinedString(argument: $argument)
+    {
+      name: 'Query undefined string',
+      query: /* GraphQL */ `
+        query UndefinedString($argument: String) {
+          SubgraphA {
+            undefinedString(argument: $argument)
+          }
         }
-      }
-    `,
-    expectedResult: {
-      data: {
-        SubgraphA: {
-          undefinedString: null,
+      `,
+      expectedResult: {
+        data: {
+          SubgraphA: {
+            undefinedString: null,
+          },
         },
       },
     },
-  },
-  {
-    name: 'Query undefined int',
-    query: /* GraphQL */ `
-      query UndefinedInt($argument: Int) {
-        SubgraphA {
-          undefinedInt(argument: $argument)
+    {
+      name: 'Query undefined int',
+      query: /* GraphQL */ `
+        query UndefinedInt($argument: Int) {
+          SubgraphA {
+            undefinedInt(argument: $argument)
+          }
         }
-      }
-    `,
-    expectedResult: {
-      data: {
-        SubgraphA: {
-          undefinedInt: null,
+      `,
+      expectedResult: {
+        data: {
+          SubgraphA: {
+            undefinedInt: null,
+          },
         },
       },
     },
-  },
-  {
-    name: 'Query zero int',
-    query: /* GraphQL */ `
-      query ZeroInt($argument: Int) {
-        SubgraphA {
-          zeroInt(argument: $argument)
+    {
+      name: 'Query zero int',
+      query: /* GraphQL */ `
+        query ZeroInt($argument: Int) {
+          SubgraphA {
+            zeroInt(argument: $argument)
+          }
         }
-      }
-    `,
-    variables: {
-      argument: 0,
-    },
-    expectedResult: {
-      data: {
-        SubgraphA: {
-          zeroInt: 0,
+      `,
+      variables: {
+        argument: 0,
+      },
+      expectedResult: {
+        data: {
+          SubgraphA: {
+            zeroInt: 0,
+          },
         },
       },
     },
-  },
-  {
-    name: 'Query false boolean',
-    query: /* GraphQL */ `
-      query FalseBoolean($argument: Boolean) {
-        SubgraphA {
-          falseBoolean(argument: $argument)
+    {
+      name: 'Query false boolean',
+      query: /* GraphQL */ `
+        query FalseBoolean($argument: Boolean) {
+          SubgraphA {
+            falseBoolean(argument: $argument)
+          }
         }
-      }
-    `,
-    variables: {
-      argument: false,
-    },
-    expectedResult: {
-      data: {
-        SubgraphA: {
-          falseBoolean: false,
+      `,
+      variables: {
+        argument: false,
+      },
+      expectedResult: {
+        data: {
+          SubgraphA: {
+            falseBoolean: false,
+          },
         },
       },
     },
-  },
-  {
-    name: 'Query undefined boolean',
-    query: /* GraphQL */ `
-      query UndefinedBoolean($argument: Boolean) {
-        SubgraphA {
-          undefinedBoolean(argument: $argument)
+    {
+      name: 'Query undefined boolean',
+      query: /* GraphQL */ `
+        query UndefinedBoolean($argument: Boolean) {
+          SubgraphA {
+            undefinedBoolean(argument: $argument)
+          }
         }
-      }
-    `,
-    expectedResult: {
-      data: {
-        SubgraphA: {
-          undefinedBoolean: null,
+      `,
+      expectedResult: {
+        data: {
+          SubgraphA: {
+            undefinedBoolean: null,
+          },
         },
       },
     },
-  },
-])('should execute $name', async ({ query, variables, expectedResult }) => {
-  const { output } = await compose({
-    output: 'graphql',
-    services: [await service('subgraph-a')],
+  ])('$name', async ({ query, variables, expectedResult }) => {
+    await expect(gateway.execute({ query, variables })).resolves.toStrictEqual(expectedResult);
   });
-  const { execute } = await serve({ supergraph: output });
-  await expect(execute({ query, variables })).resolves.toStrictEqual(expectedResult);
 });
