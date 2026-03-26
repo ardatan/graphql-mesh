@@ -21,7 +21,7 @@
     "graphql": "16.13.2",
     "thrift": "0.22.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.2"
+    "typescript": "^6.0.2"
   },
   "devDependencies": {
     "concurrently": "9.2.1"

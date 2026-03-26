@@ -17,6 +17,6 @@
     "@omnigraph/json-schema": "workspace:^",
     "@types/node": "^25.5.0",
     "graphql": "^16.13.2",
-    "typescript": "^5.4.2"
+    "typescript": "^6.0.2"
   }
 }
