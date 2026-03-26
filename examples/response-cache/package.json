@@ -12,6 +12,6 @@
     "@graphql-mesh/cli": "^0.100.43",
     "@graphql-mesh/json-schema": "^0.109.37",
     "@graphql-mesh/plugin-mock": "^0.105.34",
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   }
 }

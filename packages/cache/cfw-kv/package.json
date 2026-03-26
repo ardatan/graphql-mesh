@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20260317.1",
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   },
   "publishConfig": {
     "access": "public",

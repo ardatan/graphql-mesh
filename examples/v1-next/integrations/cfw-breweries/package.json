@@ -12,9 +12,9 @@
     "@graphql-mesh/compose-cli": "workspace:^",
     "@graphql-mesh/plugin-response-cache": "^0.104.37",
     "@omnigraph/json-schema": "workspace:^",
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   },
   "devDependencies": {
-    "wrangler": "4.76.0"
+    "wrangler": "4.77.0"
   }
 }
