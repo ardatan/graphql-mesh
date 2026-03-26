@@ -5009,7 +5009,7 @@ __metadata:
     "@graphql-mesh/compose-cli": "workspace:^"
     "@omnigraph/openapi": "workspace:^"
     "@types/node": "npm:^25.5.0"
-    fastify: "npm:^5.8.2"
+    fastify: "npm:^5.8.3"
     graphql: "npm:16.13.1"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
@@ -5148,7 +5148,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.100.43"
     "@graphql-mesh/graphql": "npm:0.104.34"
     "@types/node": "npm:^25.5.0"
-    fastify: "npm:5.8.2"
+    fastify: "npm:5.8.3"
     graphql: "npm:16.13.1"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
@@ -23480,9 +23480,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify@npm:5.8.2, fastify@npm:^5.8.2":
-  version: 5.8.2
-  resolution: "fastify@npm:5.8.2"
+"fastify@npm:5.8.3":
+  version: 5.8.3
+  resolution: "fastify@npm:5.8.3"
   dependencies:
     "@fastify/ajv-compiler": "npm:^4.0.5"
     "@fastify/error": "npm:^4.0.0"
@@ -23499,7 +23499,30 @@ __metadata:
     secure-json-parse: "npm:^4.0.0"
     semver: "npm:^7.6.0"
     toad-cache: "npm:^3.7.0"
-  checksum: 10c0/f6ee45032d8467c590b665a5d1d4c90b45c8cc51d427d29ff0c42759fa2ab88168bd9a473675bd163991bc84565e4d6ebdb8b914a6ecea5df59844fd1dfc7553
+  checksum: 10c0/8a127004ea030f160d3ab9db48bd3fb488574e5e87b051f6a66d21f723be6f152dbedf4f48f17e5ce9cb7fd4eb1e008a7cabf646aa239c8719d13ec4cce43a47
+  languageName: node
+  linkType: hard
+
+"fastify@npm:^5.8.3":
+  version: 5.8.4
+  resolution: "fastify@npm:5.8.4"
+  dependencies:
+    "@fastify/ajv-compiler": "npm:^4.0.5"
+    "@fastify/error": "npm:^4.0.0"
+    "@fastify/fast-json-stringify-compiler": "npm:^5.0.0"
+    "@fastify/proxy-addr": "npm:^5.0.0"
+    abstract-logging: "npm:^2.0.1"
+    avvio: "npm:^9.0.0"
+    fast-json-stringify: "npm:^6.0.0"
+    find-my-way: "npm:^9.0.0"
+    light-my-request: "npm:^6.0.0"
+    pino: "npm:^9.14.0 || ^10.1.0"
+    process-warning: "npm:^5.0.0"
+    rfdc: "npm:^1.3.1"
+    secure-json-parse: "npm:^4.0.0"
+    semver: "npm:^7.6.0"
+    toad-cache: "npm:^3.7.0"
+  checksum: 10c0/560ef35d59f96d9900c6e96946736215873ed8aa7a493f61f9489c1bdbddf8f714c735886c00e21077fe9a0ea96539b8b5d6755e8877c464b0b04b6afde9c5ab
   languageName: node
   linkType: hard
 
