@@ -8,7 +8,7 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "fets": "^0.8.0",
+    "fets": "^0.8.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   },
@@ -17,6 +17,6 @@
     "@graphql-mesh/cli": "0.100.43",
     "@graphql-mesh/openapi": "0.109.45",
     "@types/node": "^25.5.0",
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   }
 }

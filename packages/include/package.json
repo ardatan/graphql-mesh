@@ -51,13 +51,13 @@
   "dependencies": {
     "@graphql-mesh/utils": "^0.104.32",
     "dotenv": "^17.3.1",
-    "get-tsconfig": "^4.13.6",
+    "get-tsconfig": "^4.13.7",
     "jiti": "^2.0.0",
     "sucrase": "^3.35.1"
   },
   "devDependencies": {
     "glob": "^13.0.6",
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   },
   "publishConfig": {
     "access": "public",

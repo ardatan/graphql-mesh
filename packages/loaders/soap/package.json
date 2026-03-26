@@ -44,12 +44,12 @@
     "@graphql-tools/utils": "^11.0.0",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
-    "fast-xml-parser": "^5.5.8",
+    "fast-xml-parser": "^5.5.9",
     "graphql-compose": "^9.0.11",
     "graphql-scalars": "^1.22.4"
   },
   "devDependencies": {
-    "graphql": "16.13.1",
+    "graphql": "16.13.2",
     "soap": "1.8.0"
   },
   "publishConfig": {

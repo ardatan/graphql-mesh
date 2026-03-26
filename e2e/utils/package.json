@@ -7,9 +7,9 @@
     "@graphql-hive/gateway": "^2.5.14",
     "@types/dockerode": "^4.0.1",
     "@whatwg-node/disposablestack": "^0.0.6",
-    "dockerode": "^4.0.2",
+    "dockerode": "^4.0.10",
     "glob": "^13.0.6",
-    "graphql": "^16.13.1",
+    "graphql": "^16.13.2",
     "tsx": "^4.21.0"
   }
 }
