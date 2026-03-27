@@ -35,16 +35,16 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@dataplan/pg": "^1.0.0-rc.0",
+    "@dataplan/pg": "^1.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.12",
     "@graphql-mesh/store": "^0.104.30",
     "@graphql-mesh/string-interpolation": "^0.5.12",
     "@graphql-mesh/types": "^0.104.25",
     "@graphql-mesh/utils": "^0.104.28",
     "@graphql-tools/delegate": "^12.0.12",
-    "grafast": "^1.0.0-rc.0",
+    "grafast": "^1.0.0",
     "pg": "^8.20.0",
-    "postgraphile": "^5.0.0-rc.0",
+    "postgraphile": "^5.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

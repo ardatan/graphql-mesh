@@ -2,8 +2,8 @@ import { execute } from 'grafast';
 import pg from 'pg';
 import type { PostGraphileInstance } from 'postgraphile';
 import { postgraphile } from 'postgraphile';
-import { PostGraphileAmberPreset } from 'postgraphile/dist/presets/amber';
-import { makePgService } from '@dataplan/pg/dist/adaptors/pg';
+import { PostGraphileAmberPreset } from 'postgraphile/presets/amber';
+import { makePgService } from '@dataplan/pg/adaptors/pg';
 import type { DisposableExecutor, Transport } from '@graphql-mesh/transport-common';
 import { makeAsyncDisposable } from '@graphql-mesh/utils';
 
