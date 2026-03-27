@@ -52,7 +52,11 @@
       "@omnigraph/*": ["packages/loaders/*/src/index.ts"],
       "@e2e/opts": ["e2e/utils/opts.ts"],
       "@e2e/tenv": ["e2e/utils/tenv.ts"]
-    }
+    },
+
+    "ignoreDeprecations": "6.0",
+    "rootDir": ".",
+    "types": ["node", "jest"]
   },
   "include": ["declarations.d.ts", "packages", "e2e"],
   "exclude": ["**/node_modules", "**/dist", "**/bundle"]

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/fusion-composition",
-  "version": "0.8.36",
+  "version": "0.8.40",
   "type": "module",
   "description": "Basic composition utility for Fusion spec",
   "repository": {
@@ -50,7 +50,7 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/utils": "^0.104.28",
+    "@graphql-mesh/utils": "^0.104.32",
     "@graphql-tools/schema": "^10.0.31",
     "@graphql-tools/stitching-directives": "^4.0.18",
     "@graphql-tools/utils": "^11.0.0",
@@ -63,7 +63,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "^2.7.9",
+    "@graphql-hive/gateway-runtime": "^2.7.10",
     "@graphql-mesh/fusion-runtime": "^1.8.1",
     "@graphql-tools/delegate": "^12.0.12",
     "@graphql-tools/executor": "1.5.1",
@@ -71,16 +71,13 @@
     "@types/minimatch": "6.0.0",
     "@types/pluralize": "^0.0.33",
     "@whatwg-node/promise-helpers": "^1.0.0",
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   },
   "publishConfig": {
     "directory": "dist",
     "access": "public"
   },
   "sideEffects": false,
-  "buildOptions": {
-    "external": []
-  },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   }

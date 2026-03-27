@@ -7,17 +7,17 @@
     "start:mesh": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.39",
-    "@graphql-mesh/openapi": "0.109.41",
+    "@graphql-mesh/cli": "0.100.43",
+    "@graphql-mesh/openapi": "0.109.45",
     "@sinclair/typebox": "0.34.48",
-    "fets": "0.8.5",
-    "graphql": "16.13.1"
+    "fets": "0.8.6",
+    "graphql": "16.13.2"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
     "concurrently": "9.2.1",
     "jest": "30.3.0",
     "ts-node": "^10.9.2",
-    "typescript": "5.9.3"
+    "typescript": "6.0.2"
   }
 }

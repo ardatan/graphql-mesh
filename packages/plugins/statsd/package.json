@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-statsd",
-  "version": "0.104.33",
+  "version": "0.104.37",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,13 +38,13 @@
     "@envelop/core": "^5.5.1",
     "@envelop/statsd": "^8.1.1",
     "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.28",
+    "@graphql-mesh/utils": "^0.104.32",
     "@whatwg-node/disposablestack": "^0.0.6",
     "hot-shots": "^14.2.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   },
   "publishConfig": {
     "access": "public",

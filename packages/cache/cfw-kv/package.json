@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-cfw-kv",
-  "version": "0.105.28",
+  "version": "0.105.32",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,13 +36,13 @@
   },
   "dependencies": {
     "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.28",
+    "@graphql-mesh/utils": "^0.104.32",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20260317.1",
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   },
   "publishConfig": {
     "access": "public",

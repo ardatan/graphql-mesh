@@ -1,5 +1,41 @@
 # @graphql-mesh/mysql
 
+## 0.105.36
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.32
+  - @omnigraph/mysql@0.9.34
+  - @graphql-mesh/store@0.104.34
+
+## 0.105.35
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.31
+  - @omnigraph/mysql@0.9.33
+  - @graphql-mesh/store@0.104.33
+
+## 0.105.34
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.30
+  - @omnigraph/mysql@0.9.32
+  - @graphql-mesh/store@0.104.32
+
+## 0.105.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.29
+  - @omnigraph/mysql@0.9.31
+  - @graphql-mesh/store@0.104.31
+
 ## 0.105.32
 
 ### Patch Changes

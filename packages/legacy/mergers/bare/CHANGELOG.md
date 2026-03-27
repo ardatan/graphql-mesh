@@ -1,5 +1,43 @@
 # @graphql-mesh/merger-bare
 
+## 0.105.34
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.32
+  - @graphql-mesh/merger-stitching@0.105.34
+
+## 0.105.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.31
+  - @graphql-mesh/merger-stitching@0.105.33
+
+## 0.105.32
+
+### Patch Changes
+
+- [#9348](https://github.com/ardatan/graphql-mesh/pull/9348)
+  [`3ad6a00`](https://github.com/ardatan/graphql-mesh/commit/3ad6a005a9daa1f93a4286dc3d240acd1059f53f)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/merger-stitching@^0.105.31` ↗︎](https://www.npmjs.com/package/@graphql-mesh/merger-stitching/v/0.105.31)
+    (from `0.105.31`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.30
+  - @graphql-mesh/merger-stitching@0.105.32
+
+## 0.105.31
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.29
+  - @graphql-mesh/merger-stitching@0.105.31
+
 ## 0.105.30
 
 ### Patch Changes

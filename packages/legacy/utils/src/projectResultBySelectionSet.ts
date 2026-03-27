@@ -58,6 +58,7 @@ export function projectResultBySelectionSet({
           break;
         }
         default:
+          // @ts-expect-error - This should never happen, but we want to be exhaustive in our checks
           throw new Error(`Unsupported selection kind ${selection.kind}`);
       }
     }

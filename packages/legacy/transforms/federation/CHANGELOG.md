@@ -1,5 +1,47 @@
 # @graphql-mesh/transform-federation
 
+## 0.104.33
+
+### Patch Changes
+
+- Updated dependencies
+  [[`94fbfbd`](https://github.com/ardatan/graphql-mesh/commit/94fbfbd41d56cfba3d11a7c3dc21b200a1f89069)]:
+  - @graphql-mesh/string-interpolation@0.5.16
+  - @graphql-mesh/utils@0.104.32
+
+## 0.104.32
+
+### Patch Changes
+
+- Updated dependencies
+  [[`339c32c`](https://github.com/ardatan/graphql-mesh/commit/339c32c44b5dfbc810c0cf3455b2ff068b5c5b00)]:
+  - @graphql-mesh/string-interpolation@0.5.15
+  - @graphql-mesh/utils@0.104.31
+
+## 0.104.31
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3ad6a00`](https://github.com/ardatan/graphql-mesh/commit/3ad6a005a9daa1f93a4286dc3d240acd1059f53f)]:
+  - @graphql-mesh/string-interpolation@0.5.14
+  - @graphql-mesh/utils@0.104.30
+
+## 0.104.30
+
+### Patch Changes
+
+- [#9346](https://github.com/ardatan/graphql-mesh/pull/9346)
+  [`e1db67c`](https://github.com/ardatan/graphql-mesh/commit/e1db67c745d5c559a07460142f549c9b3b1dd618)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@apollo/subgraph@^2.13.3` ↗︎](https://www.npmjs.com/package/@apollo/subgraph/v/2.13.3) (from
+    `^2.13.2`, in `dependencies`)
+- Updated dependencies
+  [[`13af2ff`](https://github.com/ardatan/graphql-mesh/commit/13af2ff997cc63953ff50198d1851f8b7101c292)]:
+  - @graphql-mesh/string-interpolation@0.5.13
+  - @graphql-mesh/utils@0.104.29
+
 ## 0.104.29
 
 ### Patch Changes

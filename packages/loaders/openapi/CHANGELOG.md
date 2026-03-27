@@ -1,5 +1,52 @@
 # @omnigraph/openapi
 
+## 0.109.44
+
+### Patch Changes
+
+- Updated dependencies
+  [[`94fbfbd`](https://github.com/ardatan/graphql-mesh/commit/94fbfbd41d56cfba3d11a7c3dc21b200a1f89069)]:
+  - @graphql-mesh/string-interpolation@0.5.16
+  - @graphql-mesh/utils@0.104.32
+  - @omnigraph/json-schema@0.109.36
+  - @graphql-mesh/fusion-composition@0.8.40
+
+## 0.109.43
+
+### Patch Changes
+
+- Updated dependencies
+  [[`339c32c`](https://github.com/ardatan/graphql-mesh/commit/339c32c44b5dfbc810c0cf3455b2ff068b5c5b00)]:
+  - @graphql-mesh/string-interpolation@0.5.15
+  - @graphql-mesh/utils@0.104.31
+  - @omnigraph/json-schema@0.109.35
+  - @graphql-mesh/fusion-composition@0.8.39
+
+## 0.109.42
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3ad6a00`](https://github.com/ardatan/graphql-mesh/commit/3ad6a005a9daa1f93a4286dc3d240acd1059f53f),
+  [`3ad6a00`](https://github.com/ardatan/graphql-mesh/commit/3ad6a005a9daa1f93a4286dc3d240acd1059f53f)]:
+  - @graphql-mesh/string-interpolation@0.5.14
+  - @omnigraph/json-schema@0.109.34
+  - @graphql-mesh/utils@0.104.30
+  - @graphql-mesh/fusion-composition@0.8.38
+
+## 0.109.41
+
+### Patch Changes
+
+- Updated dependencies
+  [[`13af2ff`](https://github.com/ardatan/graphql-mesh/commit/13af2ff997cc63953ff50198d1851f8b7101c292),
+  [`62c1082`](https://github.com/ardatan/graphql-mesh/commit/62c1082c0c4916e0d6cabfd98fba136a4e549562)]:
+  - @graphql-mesh/string-interpolation@0.5.13
+  - json-machete@0.97.7
+  - @graphql-mesh/utils@0.104.29
+  - @omnigraph/json-schema@0.109.33
+  - @graphql-mesh/fusion-composition@0.8.37
+
 ## 0.109.40
 
 ### Patch Changes

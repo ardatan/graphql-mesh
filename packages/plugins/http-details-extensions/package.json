@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-http-details-extensions",
-  "version": "0.104.28",
+  "version": "0.104.32",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,12 +37,12 @@
   "dependencies": {
     "@envelop/core": "^5.5.1",
     "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.28",
+    "@graphql-mesh/utils": "^0.104.32",
     "@whatwg-node/fetch": "^0.10.6",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   },
   "publishConfig": {
     "access": "public",

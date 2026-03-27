@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/odata",
-  "version": "0.2.33",
+  "version": "0.2.37",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,16 +36,16 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.12",
-    "@graphql-mesh/store": "^0.104.30",
-    "@graphql-mesh/string-interpolation": "^0.5.12",
+    "@graphql-mesh/store": "^0.104.34",
+    "@graphql-mesh/string-interpolation": "^0.5.16",
     "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.28",
+    "@graphql-mesh/utils": "^0.104.32",
     "@graphql-tools/delegate": "^12.0.12",
     "@graphql-tools/utils": "^11.0.0",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "dataloader": "^2.2.2",
-    "fast-xml-parser": "^5.5.8",
+    "fast-xml-parser": "^5.5.9",
     "graphql-compose": "^9.0.11",
     "graphql-parse-resolve-info": "^4.13.0",
     "graphql-scalars": "^1.22.4",
@@ -57,7 +57,7 @@
   "devDependencies": {
     "@types/http-string-parser": "0.0.33",
     "@types/url-join": "4.0.3",
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   },
   "publishConfig": {
     "access": "public",

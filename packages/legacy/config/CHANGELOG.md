@@ -1,5 +1,54 @@
 # @graphql-mesh/config
 
+## 0.108.38
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/runtime@0.106.34
+  - @graphql-mesh/utils@0.104.32
+  - @graphql-mesh/cache-localforage@0.105.33
+  - @graphql-mesh/merger-bare@0.105.34
+  - @graphql-mesh/merger-stitching@0.105.34
+  - @graphql-mesh/store@0.104.34
+
+## 0.108.37
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/runtime@0.106.33
+  - @graphql-mesh/utils@0.104.31
+  - @graphql-mesh/cache-localforage@0.105.32
+  - @graphql-mesh/merger-bare@0.105.33
+  - @graphql-mesh/merger-stitching@0.105.33
+  - @graphql-mesh/store@0.104.33
+
+## 0.108.36
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3ad6a00`](https://github.com/ardatan/graphql-mesh/commit/3ad6a005a9daa1f93a4286dc3d240acd1059f53f)]:
+  - @graphql-mesh/merger-bare@0.105.32
+  - @graphql-mesh/runtime@0.106.32
+  - @graphql-mesh/utils@0.104.30
+  - @graphql-mesh/cache-localforage@0.105.31
+  - @graphql-mesh/merger-stitching@0.105.32
+  - @graphql-mesh/store@0.104.32
+
+## 0.108.35
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/runtime@0.106.31
+  - @graphql-mesh/utils@0.104.29
+  - @graphql-mesh/cache-localforage@0.105.30
+  - @graphql-mesh/merger-bare@0.105.31
+  - @graphql-mesh/merger-stitching@0.105.31
+  - @graphql-mesh/store@0.104.31
+
 ## 0.108.34
 
 ### Patch Changes

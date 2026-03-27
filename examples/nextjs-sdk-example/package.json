@@ -11,19 +11,19 @@
     "start:prod": "next start"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.39",
-    "@graphql-mesh/config": "0.108.34",
-    "@graphql-mesh/openapi": "0.109.41",
-    "@graphql-mesh/runtime": "0.106.30",
+    "@graphql-mesh/cli": "0.100.43",
+    "@graphql-mesh/config": "0.108.38",
+    "@graphql-mesh/openapi": "0.109.45",
+    "@graphql-mesh/runtime": "0.106.34",
     "apollo-server-micro": "3.13.0",
-    "graphql": "16.13.1",
+    "graphql": "16.13.2",
     "micro": "10.0.1",
-    "next": "16.1.7",
+    "next": "16.2.1",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@types/react": "19.2.14",
-    "typescript": "^5.4.2"
+    "typescript": "^6.0.2"
   }
 }

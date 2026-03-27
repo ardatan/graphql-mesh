@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-operation-headers",
-  "version": "1.4.31",
+  "version": "1.4.35",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,14 +35,14 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-hive/gateway-runtime": "^2.7.9",
+    "@graphql-hive/gateway-runtime": "^2.7.10",
     "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.28",
+    "@graphql-mesh/utils": "^0.104.32",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "graphql": "16.13.1"
+    "graphql": "16.13.2"
   },
   "publishConfig": {
     "access": "public",
