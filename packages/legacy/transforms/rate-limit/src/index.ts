@@ -1,4 +1,4 @@
-import type { ExecutionResult } from 'graphql';
+import type { ExecutionResult } from '@graphql-tools/utils';
 import { GraphQLError, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';

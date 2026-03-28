@@ -65,6 +65,7 @@ if (process.env.E2E_TEST && process.env.CI && !isLinux) {
   testMatch.push('!**/e2e/neo4j-example/**');
   testMatch.push('!**/e2e/soap-demo/**');
   testMatch.push('!**/e2e/mysql-employees/**');
+  testMatch.push('!**/e2e/postgraphile/**');
   testMatch.push('!**/e2e/opentelemetry/**');
   if (isWindows) {
     testMatch.push('!**/e2e/tsconfig-paths/**');

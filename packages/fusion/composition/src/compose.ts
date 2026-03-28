@@ -136,7 +136,7 @@ export function getAnnotatedSubgraphs(
           astNode: undefined,
         });
       },
-      [MapperKind.FIELD]: (fieldConfig, fieldName) => {
+      [MapperKind.FIELD]: ((fieldConfig, fieldName) => {
         if (!sourceDirectiveUsed) {
           return fieldConfig;
         }
@@ -199,7 +199,7 @@ export function getAnnotatedSubgraphs(
           },
           astNode: undefined,
         };
-      },
+      }) as any,
       [MapperKind.ENUM_VALUE]: (valueConfig, _typeName, _schema, externalValue) => {
         if (!sourceDirectiveUsed) {
           return valueConfig;
