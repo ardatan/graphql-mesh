@@ -7812,7 +7812,7 @@ __metadata:
     js-yaml: "npm:^4.1.0"
     lodash.get: "npm:^4.4.2"
     lodash.topath: "npm:^4.5.2"
-    tiny-lru: "npm:^11.4.7"
+    tiny-lru: "npm:^13.0.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -37442,6 +37442,13 @@ __metadata:
   version: 11.4.7
   resolution: "tiny-lru@npm:11.4.7"
   checksum: 10c0/2cd65b987396e331ddcef57133b3f0cb30c832641a215a2e627af04941c839ca6772f216b238e96500b4747f39b434d129cec4c0a25db3beb08c8f3d448a2705
+  languageName: node
+  linkType: hard
+
+"tiny-lru@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "tiny-lru@npm:13.0.0"
+  checksum: 10c0/1b1812f7042d9920a8bed48cb499f845bdba41147feccf7f5c9de1fb86667fde351cc2da8801eb315abeb0909b78f555931157034e093969d5d057fd0a7a0ae3
   languageName: node
   linkType: hard
 
