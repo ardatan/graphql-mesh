@@ -1,5 +1,16 @@
 # @graphql-mesh/cache-redis
 
+## 0.105.20
+
+### Patch Changes
+
+- [#9357](https://github.com/ardatan/graphql-mesh/pull/9357)
+  [`514f6f5`](https://github.com/ardatan/graphql-mesh/commit/514f6f55dce8b927d5c69a15dd14c5739d55ac88)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@opentelemetry/api@^1.9.1` ↗︎](https://www.npmjs.com/package/@opentelemetry/api/v/1.9.1) (from
+    `^1.9.0`, in `dependencies`)
+
 ## 0.105.19
 
 ### Patch Changes

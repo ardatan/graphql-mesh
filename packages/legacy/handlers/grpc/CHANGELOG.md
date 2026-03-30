@@ -1,5 +1,15 @@
 # @graphql-mesh/grpc
 
+## 0.108.37
+
+### Patch Changes
+
+- Updated dependencies
+  [[`46d8eed`](https://github.com/ardatan/graphql-mesh/commit/46d8eed3af7a7531e744da1d6b3449c332e3abb1)]:
+  - @graphql-mesh/utils@0.104.33
+  - @graphql-mesh/store@0.104.35
+  - @graphql-mesh/transport-grpc@0.3.35
+
 ## 0.108.36
 
 ### Patch Changes

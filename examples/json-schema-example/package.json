@@ -9,10 +9,10 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.43",
-    "@graphql-mesh/json-schema": "0.109.37",
-    "@graphql-mesh/plugin-mock": "0.105.34",
-    "@graphql-mesh/transform-naming-convention": "0.105.33",
+    "@graphql-mesh/cli": "0.100.44",
+    "@graphql-mesh/json-schema": "0.109.38",
+    "@graphql-mesh/plugin-mock": "0.105.35",
+    "@graphql-mesh/transform-naming-convention": "0.105.34",
     "graphql": "16.13.2"
   },
   "devDependencies": {

@@ -1,5 +1,15 @@
 # @graphql-mesh/utils
 
+## 0.104.33
+
+### Patch Changes
+
+- [#9377](https://github.com/ardatan/graphql-mesh/pull/9377)
+  [`46d8eed`](https://github.com/ardatan/graphql-mesh/commit/46d8eed3af7a7531e744da1d6b3449c332e3abb1)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`tiny-lru@^13.0.0` ↗︎](https://www.npmjs.com/package/tiny-lru/v/13.0.0) (from
+    `^11.4.7`, in `dependencies`)
+
 ## 0.104.32
 
 ### Patch Changes

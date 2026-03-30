@@ -1,5 +1,44 @@
 # @graphql-mesh/cli
 
+## 0.100.44
+
+### Patch Changes
+
+- [#9336](https://github.com/ardatan/graphql-mesh/pull/9336)
+  [`8536e3f`](https://github.com/ardatan/graphql-mesh/commit/8536e3fec16fe2d1b31e2b43cf8684d347d348c5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`typescript@^6.0.2` ↗︎](https://www.npmjs.com/package/typescript/v/6.0.2)
+    (from `^5.4.2`, in `dependencies`)
+
+- [#9360](https://github.com/ardatan/graphql-mesh/pull/9360)
+  [`45bb6de`](https://github.com/ardatan/graphql-mesh/commit/45bb6dec17b81e9048945e4d3a3dd741a6f4824b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`ws@^8.20.0` ↗︎](https://www.npmjs.com/package/ws/v/8.20.0) (from `^8.19.0`,
+    in `dependencies`)
+
+- [#9370](https://github.com/ardatan/graphql-mesh/pull/9370)
+  [`3df9831`](https://github.com/ardatan/graphql-mesh/commit/3df9831771d8d5da5f6fab0144121fcdee4c79e1)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`typescript@^6.0.2` ↗︎](https://www.npmjs.com/package/typescript/v/6.0.2)
+    (from `^5.4.2`, in `dependencies`)
+
+- [#9372](https://github.com/ardatan/graphql-mesh/pull/9372)
+  [`a0b0a27`](https://github.com/ardatan/graphql-mesh/commit/a0b0a2771304af1b9488eb2cc9b943fd5eabf59f)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`graphql-ws@^6.0.8` ↗︎](https://www.npmjs.com/package/graphql-ws/v/6.0.8)
+    (from `^6.0.7`, in `dependencies`)
+- Updated dependencies
+  [[`45bb6de`](https://github.com/ardatan/graphql-mesh/commit/45bb6dec17b81e9048945e4d3a3dd741a6f4824b),
+  [`0b26fa5`](https://github.com/ardatan/graphql-mesh/commit/0b26fa5855c64092e4560488a9b54c656b72ec75),
+  [`46d8eed`](https://github.com/ardatan/graphql-mesh/commit/46d8eed3af7a7531e744da1d6b3449c332e3abb1)]:
+  - @graphql-mesh/include@0.3.34
+  - @graphql-mesh/incontext-sdk-codegen@0.0.11
+  - @graphql-mesh/utils@0.104.33
+  - @graphql-mesh/config@0.108.39
+  - @graphql-mesh/http@0.106.37
+  - @graphql-mesh/runtime@0.106.35
+  - @graphql-mesh/store@0.104.35
+
 ## 0.100.43
 
 ### Patch Changes
