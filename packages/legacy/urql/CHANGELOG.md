@@ -1,5 +1,17 @@
 # @graphql-mesh/urql-exchange
 
+## 0.106.35
+
+### Patch Changes
+
+- [#9360](https://github.com/ardatan/graphql-mesh/pull/9360)
+  [`45bb6de`](https://github.com/ardatan/graphql-mesh/commit/45bb6dec17b81e9048945e4d3a3dd741a6f4824b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`wonka@^6.3.6` ↗︎](https://www.npmjs.com/package/wonka/v/6.3.6) (from
+    `^6.3.1`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/runtime@0.106.35
+
 ## 0.106.34
 
 ### Patch Changes
