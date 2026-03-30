@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-hive/gateway-runtime": "^2.7.10",
+    "@graphql-hive/gateway-runtime": "^2.8.0",
     "@graphql-mesh/types": "^0.104.25",
     "@graphql-mesh/utils": "^0.104.32",
     "@whatwg-node/promise-helpers": "^1.0.0",
