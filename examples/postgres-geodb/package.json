@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "@graphql-mesh/cache-file": "0.104.33",
-    "@graphql-mesh/cli": "0.100.44",
+    "@graphql-mesh/cli": "0.100.45",
     "@graphql-mesh/config": "0.108.39",
-    "@graphql-mesh/graphql": "0.104.35",
+    "@graphql-mesh/graphql": "0.104.36",
     "@graphql-mesh/postgraphile": "0.104.36",
     "@graphql-mesh/runtime": "0.106.35",
     "@graphql-mesh/transform-prefix": "0.105.34",
