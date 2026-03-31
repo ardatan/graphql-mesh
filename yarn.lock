@@ -9599,7 +9599,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ioredis/commands@npm:1.5.1, @ioredis/commands@npm:^1.2.0":
+"@ioredis/commands@npm:1.5.1, @ioredis/commands@npm:^1.4.0":
   version: 1.5.1
   resolution: "@ioredis/commands@npm:1.5.1"
   checksum: 10c0/cb8f6d13cff0753e3e7ef001fb895491985d9a623248192538f13bc2fd9bfdfde3c18cf2ba6f20ec8ceaa681b0771070d3a09b82eed044c798bcfef5e3ae54b3
@@ -25835,35 +25835,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis-mock@npm:8.9.0":
-  version: 8.9.0
-  resolution: "ioredis-mock@npm:8.9.0"
+"ioredis-mock@npm:8.13.1":
+  version: 8.13.1
+  resolution: "ioredis-mock@npm:8.13.1"
   dependencies:
     "@ioredis/as-callback": "npm:^3.0.0"
-    "@ioredis/commands": "npm:^1.2.0"
+    "@ioredis/commands": "npm:^1.4.0"
     fengari: "npm:^0.1.4"
     fengari-interop: "npm:^0.1.3"
-    semver: "npm:^7.5.4"
+    semver: "npm:^7.7.2"
   peerDependencies:
     "@types/ioredis-mock": ^8
     ioredis: ^5
-  checksum: 10c0/d5d3fddf6cdd8880d7ed7693505e48c2fa345c0d04ac6c7dc00101ba3da042ec58d4063e2350dbaf52b821b7f2e974175f1aaa89eda5d154d2a647266aea4157
+  checksum: 10c0/47e17a307301da01a89d041a6d6101828baefd3a1c216a09fe8ff9e1bd7d7239de93544365280f6cda4ad98af1f302e7497f9563f36cb24b528d9c7b3164301f
   languageName: node
   linkType: hard
 
-"ioredis-mock@patch:ioredis-mock@npm%3A8.9.0#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch":
-  version: 8.9.0
-  resolution: "ioredis-mock@patch:ioredis-mock@npm%3A8.9.0#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch::version=8.9.0&hash=a5b625"
+"ioredis-mock@patch:ioredis-mock@npm%3A8.13.1#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch":
+  version: 8.13.1
+  resolution: "ioredis-mock@patch:ioredis-mock@npm%3A8.13.1#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch::version=8.13.1&hash=a5b625"
   dependencies:
     "@ioredis/as-callback": "npm:^3.0.0"
-    "@ioredis/commands": "npm:^1.2.0"
+    "@ioredis/commands": "npm:^1.4.0"
     fengari: "npm:^0.1.4"
     fengari-interop: "npm:^0.1.3"
-    semver: "npm:^7.5.4"
+    semver: "npm:^7.7.2"
   peerDependencies:
     "@types/ioredis-mock": ^8
     ioredis: ^5
-  checksum: 10c0/d050eae6502b0ba2ae462eac3494c9352e97b6668e236d1435fb97b36fd7c879ddeca187974f4802594c572d500831779e5809647fd289b08356ee06793a71d8
+  checksum: 10c0/9dc77043786e9fedf55ada79f5dd664e2a2f99796e5731a4877f13ff0f47eca1ceccfa7932a35762150bc4f776e6bd59c7268da558f35858c0612eea2bbe665b
   languageName: node
   linkType: hard
 
