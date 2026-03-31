@@ -25851,9 +25851,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis-mock@patch:ioredis-mock@npm%3A8.13.1#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch":
+"ioredis-mock@patch:ioredis-mock@npm%3A8.13.1#~/.yarn/patches/ioredis-mock-npm-8.13.1-a1a567479e.patch":
   version: 8.13.1
-  resolution: "ioredis-mock@patch:ioredis-mock@npm%3A8.13.1#~/.yarn/patches/ioredis-mock-npm-8.9.0-3ae882ba75.patch::version=8.13.1&hash=a5b625"
+  resolution: "ioredis-mock@patch:ioredis-mock@npm%3A8.13.1#~/.yarn/patches/ioredis-mock-npm-8.13.1-a1a567479e.patch::version=8.13.1&hash=2a6f20"
   dependencies:
     "@ioredis/as-callback": "npm:^3.0.0"
     "@ioredis/commands": "npm:^1.4.0"
