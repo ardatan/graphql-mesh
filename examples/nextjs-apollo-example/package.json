@@ -10,7 +10,7 @@
     "start:prod": "next start"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.44",
+    "@graphql-mesh/cli": "0.100.45",
     "@graphql-mesh/config": "0.108.39",
     "@graphql-mesh/openapi": "0.109.46",
     "@graphql-mesh/runtime": "0.106.35",

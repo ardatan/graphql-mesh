@@ -10,7 +10,7 @@
     "@graphql-codegen/cli": "^6.2.1",
     "@graphql-hive/gateway": "^2.5.17",
     "@graphql-mesh/compose-cli": "^1.5.25",
-    "@graphql-mesh/incontext-sdk-codegen": "^0.0.11",
+    "@graphql-mesh/incontext-sdk-codegen": "^0.0.12",
     "@omnigraph/openapi": "^0.109.45",
     "graphql": "16.13.2",
     "graphql-scalars": "^1.25.0",

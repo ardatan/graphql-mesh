@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@graphql-mesh/cache-cfw-kv": "0.105.33",
-    "@graphql-mesh/cli": "0.100.44",
+    "@graphql-mesh/cli": "0.100.45",
     "@graphql-mesh/json-schema": "0.109.38",
     "@graphql-mesh/plugin-response-cache": "0.104.38",
     "graphql": "16.13.2"

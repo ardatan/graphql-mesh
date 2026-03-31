@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.100.44",
+  "version": "0.100.45",
   "type": "module",
   "repository": {
     "type": "git",
@@ -51,7 +51,7 @@
     "@graphql-mesh/cross-helpers": "^0.4.12",
     "@graphql-mesh/http": "^0.106.37",
     "@graphql-mesh/include": "^0.3.34",
-    "@graphql-mesh/incontext-sdk-codegen": "^0.0.11",
+    "@graphql-mesh/incontext-sdk-codegen": "^0.0.12",
     "@graphql-mesh/runtime": "^0.106.35",
     "@graphql-mesh/store": "^0.104.35",
     "@graphql-mesh/types": "^0.104.25",
