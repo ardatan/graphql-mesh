@@ -51,7 +51,7 @@
     "@types/newrelic": "9.14.8",
     "graphql": "16.13.2",
     "graphql-yoga": "^5.19.0",
-    "newrelic": "13.17.0"
+    "newrelic": "13.18.0"
   },
   "publishConfig": {
     "access": "public",
