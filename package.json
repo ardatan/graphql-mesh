@@ -109,7 +109,7 @@
     "node-gyp": "^12.2.0",
     "prettier": "3.8.1",
     "threads": "^1.7.0",
-    "ts-jest": "29.4.6",
+    "ts-jest": "29.4.9",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
   },
