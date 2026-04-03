@@ -26,9 +26,10 @@ createServer(
             return { id: args.id };
           },
           ...Object.fromEntries(
-            ['echoString', 'echoInt', 'echoBoolean'].map(
-              field => [field, (_parent: unknown, args: Record<string, unknown>) => args.argument],
-            ),
+            ['echoString', 'echoInt', 'echoBoolean'].map(field => [
+              field,
+              (_parent: unknown, args: Record<string, unknown>) => args.argument,
+            ]),
           ),
         },
       },
