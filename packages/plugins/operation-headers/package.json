@@ -35,13 +35,14 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-hive/gateway-runtime": "^2.8.1",
     "@graphql-mesh/types": "^0.104.25",
     "@graphql-mesh/utils": "^0.104.33",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
+    "@graphql-mesh/runtime": "workspace:*",
+    "@whatwg-node/fetch": "^0.10.13",
     "graphql": "16.13.2"
   },
   "publishConfig": {
