@@ -1,4 +1,4 @@
-import type { MeshFetchRequestInit, MeshPlugin, OnFetchHook } from '@graphql-mesh/types';
+import type { MeshFetchRequestInit, OnFetchHook } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
