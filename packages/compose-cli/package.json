@@ -44,7 +44,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.16",
     "@graphql-mesh/types": "^0.104.25",
     "@graphql-mesh/utils": "^0.104.33",
-    "@graphql-tools/code-file-loader": "^8.1.28",
+    "@graphql-tools/code-file-loader": "^8.1.30",
     "@graphql-tools/graphql-file-loader": "^8.1.12",
     "@graphql-tools/load": "^8.1.8",
     "@graphql-tools/schema": "^10.0.31",

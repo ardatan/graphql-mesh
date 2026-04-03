@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.5.17",
+    "@graphql-hive/gateway": "^2.5.20",
     "@graphql-mesh/compose-cli": "workspace:*",
     "@grpc/grpc-js": "^1.14.3",
     "@grpc/proto-loader": "^0.8.0",
@@ -12,7 +12,7 @@
     "json-bigint-patch": "0.0.9"
   },
   "devDependencies": {
-    "@graphql-tools/executor-http": "3.1.4",
+    "@graphql-tools/executor-http": "3.2.1",
     "@graphql-tools/utils": "11.0.0"
   }
 }
