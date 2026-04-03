@@ -1,5 +1,22 @@
 # @graphql-mesh/transport-rest
 
+## 0.9.37
+
+### Patch Changes
+
+- [#9365](https://github.com/ardatan/graphql-mesh/pull/9365)
+  [`f6d57a2`](https://github.com/ardatan/graphql-mesh/commit/f6d57a2e4a38dafb35fcff809445878803958409)
+  Thanks [@ardatan](https://github.com/ardatan)! - Respect empty strings for dynamic headers
+
+  When an operation header as `"x-custom-header": "{args.myArg}"` is defined, if `myArg` is `""`,
+  then the header value should also be `""` not `null`.
+
+- Updated dependencies
+  [[`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2),
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)]:
+  - @graphql-mesh/types@0.104.26
+  - @graphql-mesh/utils@0.104.34
+
 ## 0.9.36
 
 ### Patch Changes

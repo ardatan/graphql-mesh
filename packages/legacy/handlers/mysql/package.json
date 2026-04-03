@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/mysql",
-  "version": "0.105.37",
+  "version": "0.105.38",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,11 +35,11 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "^0.104.35",
-    "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.33",
+    "@graphql-mesh/store": "^0.104.36",
+    "@graphql-mesh/types": "^0.104.26",
+    "@graphql-mesh/utils": "^0.104.34",
     "@graphql-tools/utils": "^11.0.0",
-    "@omnigraph/mysql": "^0.9.35",
+    "@omnigraph/mysql": "^0.9.36",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
