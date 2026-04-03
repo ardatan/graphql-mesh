@@ -1,5 +1,19 @@
 # @omnigraph/soap
 
+## 0.107.40
+
+### Patch Changes
+
+- [#9390](https://github.com/ardatan/graphql-mesh/pull/9390)
+  [`d874091`](https://github.com/ardatan/graphql-mesh/commit/d874091f0711ef7cb376b3f121d891911a2ca52b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.5.10` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.5.10) (from
+    `^5.5.9`, in `dependencies`)
+- Updated dependencies
+  [[`d874091`](https://github.com/ardatan/graphql-mesh/commit/d874091f0711ef7cb376b3f121d891911a2ca52b)]:
+  - @graphql-mesh/transport-soap@0.10.40
+
 ## 0.107.39
 
 ### Patch Changes

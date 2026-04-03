@@ -1,5 +1,13 @@
 # @graphql-mesh/soap
 
+## 0.107.41
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d874091`](https://github.com/ardatan/graphql-mesh/commit/d874091f0711ef7cb376b3f121d891911a2ca52b)]:
+  - @omnigraph/soap@0.107.40
+
 ## 0.107.40
 
 ### Patch Changes

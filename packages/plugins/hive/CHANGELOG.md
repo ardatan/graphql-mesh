@@ -1,5 +1,16 @@
 # @graphql-mesh/plugin-hive
 
+## 0.105.10
+
+### Patch Changes
+
+- [#9390](https://github.com/ardatan/graphql-mesh/pull/9390)
+  [`d874091`](https://github.com/ardatan/graphql-mesh/commit/d874091f0711ef7cb376b3f121d891911a2ca52b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`graphql-yoga@^5.20.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.20.0) (from `^5.19.0`,
+    in `dependencies`)
+
 ## 0.105.9
 
 ### Patch Changes
