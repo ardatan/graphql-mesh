@@ -1,19 +1,20 @@
-import type { GatewayContext, GatewayPlugin } from '@graphql-hive/gateway-runtime';
-import type { MeshFetchRequestInit } from '@graphql-mesh/types';
+import type { MeshFetchRequestInit, OnFetchHook } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
-export interface OperationHeadersFactoryPayload {
-  context: GatewayContext;
+export interface OperationHeadersFactoryPayload<TContext> {
+  context: TContext;
   url: string;
   options: MeshFetchRequestInit;
 }
 
-export type OperationHeadersFactory = (
-  payload: OperationHeadersFactoryPayload,
+export type OperationHeadersFactory<TContext = any> = (
+  payload: OperationHeadersFactoryPayload<TContext>,
 ) => Promise<Record<string, string>> | Record<string, string>;
 
-export function useOperationHeaders(factoryFn: OperationHeadersFactory): GatewayPlugin {
+export function useOperationHeaders<TContext>(factoryFn: OperationHeadersFactory<TContext>): {
+  onFetch: OnFetchHook<TContext>;
+} {
   return {
     onFetch({ url, options, context, setOptions }) {
       return handleMaybePromise(
@@ -21,7 +22,7 @@ export function useOperationHeaders(factoryFn: OperationHeadersFactory): Gateway
           factoryFn({
             url,
             options,
-            context: context as GatewayContext,
+            context,
           }),
         newHeaders =>
           setOptions({

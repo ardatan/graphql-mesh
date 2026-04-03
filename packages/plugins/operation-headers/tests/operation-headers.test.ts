@@ -1,12 +1,13 @@
-import { useOperationHeaders } from '@graphql-mesh/plugin-operation-headers';
 import { wrapFetchWithPlugins } from '@graphql-mesh/runtime';
+import { Request, Response } from '@whatwg-node/fetch';
+import { useOperationHeaders } from '../src';
 
 describe('Operation Headers', () => {
   it('works', async () => {
-    const wrappedFetch = wrapFetchWithPlugins([
+    const wrappedFetch = wrapFetchWithPlugins<any>([
       {
         onFetch({ setFetchFn }) {
-          setFetchFn(async (url, opts) => {
+          setFetchFn((url, opts) => {
             const req = new Request(url, opts);
             if (req.headers.get('Authorization') !== 'Bearer test') {
               return new Response('Unauthorized', { status: 401 });
