@@ -4,7 +4,7 @@ const { compose, service, serve } = createTenv(__dirname);
 
 it('should compose the appropriate schema', async () => {
   const { result } = await compose({
-    services: [await service('subgraph-a')],
+    services: [await service('subgraph-a'), await service('subgraph-b')],
     maskServicePorts: true,
   });
   expect(result).toMatchSnapshot();
@@ -16,7 +16,7 @@ describe('should execute queries', () => {
   beforeAll(async () => {
     const { output } = await compose({
       output: 'graphql',
-      services: [await service('subgraph-a')],
+      services: [await service('subgraph-a'), await service('subgraph-b')],
     });
     gateway = await serve({ supergraph: output });
   });
@@ -150,6 +150,54 @@ describe('should execute queries', () => {
         data: {
           SubgraphA: {
             echoBoolean: null,
+          },
+        },
+      },
+    },
+    {
+      name: 'pass header from args',
+      query: /* GraphQL */ `
+        query ($xCustomHeader: String!) {
+          SubgraphB {
+            headers(xCustomHeader: $xCustomHeader) {
+              x_custom_header
+            }
+          }
+        }
+      `,
+      variables: {
+        xCustomHeader: 'test-value',
+      },
+      expectedResult: {
+        data: {
+          SubgraphB: {
+            headers: {
+              x_custom_header: 'test-value',
+            },
+          },
+        },
+      },
+    },
+    {
+      name: 'empty string header',
+      query: /* GraphQL */ `
+        query ($xCustomHeader: String!) {
+          SubgraphB {
+            headers(xCustomHeader: $xCustomHeader) {
+              x_custom_header
+            }
+          }
+        }
+      `,
+      variables: {
+        xCustomHeader: '',
+      },
+      expectedResult: {
+        data: {
+          SubgraphB: {
+            headers: {
+              x_custom_header: '',
+            },
           },
         },
       },

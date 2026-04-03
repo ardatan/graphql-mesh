@@ -133,7 +133,7 @@ export function addHTTPRootFieldResolver(
     for (const headerName in globalOperationHeaders) {
       const nonInterpolatedValue = globalOperationHeaders[headerName];
       const interpolatedValue = stringInterpolator.parse(nonInterpolatedValue, interpolationData);
-      if (interpolatedValue) {
+      if (interpolatedValue != null) {
         headers[headerName.toLowerCase()] = interpolatedValue;
       }
     }
@@ -141,7 +141,7 @@ export function addHTTPRootFieldResolver(
       for (const headerName in operationSpecificHeaders) {
         const nonInterpolatedValue = operationSpecificHeaders[headerName];
         const interpolatedValue = stringInterpolator.parse(nonInterpolatedValue, interpolationData);
-        if (interpolatedValue) {
+        if (interpolatedValue != null) {
           headers[headerName.toLowerCase()] = interpolatedValue;
         }
       }
