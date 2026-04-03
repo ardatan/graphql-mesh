@@ -1,5 +1,38 @@
 # @graphql-mesh/config
 
+## 0.108.40
+
+### Patch Changes
+
+- [#9386](https://github.com/ardatan/graphql-mesh/pull/9386)
+  [`efd48d3`](https://github.com/ardatan/graphql-mesh/commit/efd48d3e994b4db8415bc3eaf929bfbc40d80983)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-yoga/plugin-persisted-operations@^3.19.0` ↗︎](https://www.npmjs.com/package/@graphql-yoga/plugin-persisted-operations/v/3.19.0)
+    (from `^3.18.1`, in `dependencies`)
+  - Updated dependency
+    [`graphql-yoga@^5.19.0` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/5.19.0) (from `^5.18.1`,
+    in `dependencies`)
+
+- [#9389](https://github.com/ardatan/graphql-mesh/pull/9389)
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/code-file-loader@^8.1.30` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/8.1.30)
+    (from `^8.1.28`, in `dependencies`)
+- Updated dependencies
+  [[`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2),
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2),
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2),
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)]:
+  - @graphql-mesh/merger-stitching@0.105.36
+  - @graphql-mesh/runtime@0.106.36
+  - @graphql-mesh/types@0.104.26
+  - @graphql-mesh/utils@0.104.34
+  - @graphql-mesh/merger-bare@0.105.36
+  - @graphql-mesh/cache-localforage@0.105.35
+  - @graphql-mesh/store@0.104.36
+
 ## 0.108.39
 
 ### Patch Changes

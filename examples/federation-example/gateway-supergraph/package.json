@@ -3,8 +3,8 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.45",
-    "@graphql-mesh/supergraph": "0.10.36",
+    "@graphql-mesh/cli": "0.100.46",
+    "@graphql-mesh/supergraph": "0.10.37",
     "graphql": "16.13.2"
   }
 }

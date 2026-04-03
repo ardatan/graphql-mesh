@@ -1,5 +1,31 @@
 # @graphql-mesh/compose-cli
 
+## 1.5.26
+
+### Patch Changes
+
+- [#9386](https://github.com/ardatan/graphql-mesh/pull/9386)
+  [`efd48d3`](https://github.com/ardatan/graphql-mesh/commit/efd48d3e994b4db8415bc3eaf929bfbc40d80983)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`dotenv@^17.4.0` ↗︎](https://www.npmjs.com/package/dotenv/v/17.4.0) (from
+    `^17.3.1`, in `dependencies`)
+
+- [#9389](https://github.com/ardatan/graphql-mesh/pull/9389)
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/code-file-loader@^8.1.30` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/8.1.30)
+    (from `^8.1.28`, in `dependencies`)
+- Updated dependencies
+  [[`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2),
+  [`efd48d3`](https://github.com/ardatan/graphql-mesh/commit/efd48d3e994b4db8415bc3eaf929bfbc40d80983),
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2),
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)]:
+  - @graphql-mesh/fusion-composition@0.8.42
+  - @graphql-mesh/include@0.3.35
+  - @graphql-mesh/types@0.104.26
+  - @graphql-mesh/utils@0.104.34
+
 ## 1.5.25
 
 ### Patch Changes
