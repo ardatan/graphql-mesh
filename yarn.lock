@@ -3511,6 +3511,8 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway": "npm:^2.5.20"
     "@graphql-mesh/compose-cli": "workspace:*"
+    "@omnigraph/openapi": "workspace:*"
+    fets: "npm:^0.8.6"
     graphql: "npm:16.13.2"
     graphql-yoga: "npm:^5.19.0"
   languageName: unknown
