@@ -11,6 +11,7 @@ import {
 } from 'graphql';
 import {
   asArray,
+  getDefinedRootType,
   getDirectiveExtensions,
   getRootTypeMap,
   MapperKind,
@@ -284,7 +285,38 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                       operationMergeDirectiveConfig = new Map();
                       mergeDirectiveConfigMap.set(operation, operationMergeDirectiveConfig);
                     }
-                    operationMergeDirectiveConfig.set(keyConfig.resolveReference.fieldName, {
+                    // Validate merge directive
+                    // First validate operation config
+                    const operationType =
+                      keyConfig.resolveReference?.operation || ('query' as OperationTypeNode);
+                    if (
+                      operationType !== 'query' &&
+                      operationType !== 'mutation' &&
+                      operationType !== 'subscription'
+                    ) {
+                      throw new Error(
+                        `Invalid operation type "${operationType}" in resolveReference config for @key directive on ${type.name} type. Expected "query", "mutation" or "subscription".`,
+                      );
+                    }
+                    const targetFieldName = keyConfig.resolveReference.fieldName;
+                    if (!targetFieldName) {
+                      throw new Error(
+                        `Missing fieldName in resolveReference config for @key directive on ${type.name} type.`,
+                      );
+                    }
+                    const rootType = getDefinedRootType(subgraphSchema, operationType);
+                    if (!rootType) {
+                      throw new Error(
+                        `Root type for operation "${operationType}" not found in schema for @key directive on ${type.name} type.`,
+                      );
+                    }
+                    const rootTypeFields = rootType.getFields();
+                    if (!rootTypeFields[targetFieldName]) {
+                      throw new Error(
+                        `Field "${targetFieldName}" not found in root type "${rootType.name}" for @key directive on ${type.name} type.`,
+                      );
+                    }
+                    operationMergeDirectiveConfig.set(targetFieldName, {
                       keyField: keyConfig.fields,
                       ...keyConfig.resolveReference,
                     });
