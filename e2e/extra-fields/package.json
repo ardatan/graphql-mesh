@@ -5,6 +5,6 @@
   "dependencies": {
     "@graphql-hive/gateway": "^2.5.20",
     "graphql": "16.13.2",
-    "graphql-yoga": "^5.20.0"
+    "graphql-yoga": "^5.21.0"
   }
 }
