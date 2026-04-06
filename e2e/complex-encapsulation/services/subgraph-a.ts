@@ -18,12 +18,13 @@ createServer(
 
         type Foo {
           id: ID!
+          name: String
         }
       `,
       resolvers: {
         Query: {
           foo: (_parent, args, _context, _info) => {
-            return { id: args.id };
+            return { id: args.id, name: `Foo ${args.id}` };
           },
           ...Object.fromEntries(
             ['echoString', 'echoInt', 'echoBoolean'].map(field => [

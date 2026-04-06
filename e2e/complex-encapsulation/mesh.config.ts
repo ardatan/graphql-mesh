@@ -1,6 +1,7 @@
 import { Opts } from '@e2e/opts';
 import {
   createEncapsulateTransform,
+  createFederationTransform,
   createPrefixTransform,
   defineConfig,
   loadGraphQLHTTPSubgraph,
@@ -18,6 +19,16 @@ export const composeConfig = defineConfig({
         endpoint: `http://localhost:${subgraphAPort}/graphql`,
       }),
       transforms: [
+        createFederationTransform({
+          Foo: {
+            key: {
+              fields: 'id',
+              resolveReference: {
+                fieldName: 'foo',
+              },
+            },
+          },
+        }),
         createEncapsulateTransform({
           name: 'SubgraphA',
           applyTo: {

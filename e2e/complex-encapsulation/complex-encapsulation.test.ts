@@ -206,3 +206,36 @@ describe('should execute queries', () => {
     await expect(gateway.execute({ query, variables })).resolves.toStrictEqual(expectedResult);
   });
 });
+
+it('Subgraph mode entity queries with encapsulation', async () => {
+  const { output } = await compose({
+    output: 'graphql',
+    subgraph: 'subgraph-a',
+    services: [await service('subgraph-a'), await service('subgraph-b')],
+  });
+  const subgraphServer = await serve({
+    subgraph: output,
+  });
+  const response = await subgraphServer.execute({
+    query: /* GraphQL */ `
+      query {
+        _entities(representations: [{ __typename: "SubgraphAFoo", id: "123" }]) {
+          ... on SubgraphAFoo {
+            id
+            name
+          }
+        }
+      }
+    `,
+  });
+  expect(response).toEqual({
+    data: {
+      _entities: [
+        {
+          id: '123',
+          name: 'Foo 123',
+        },
+      ],
+    },
+  });
+});

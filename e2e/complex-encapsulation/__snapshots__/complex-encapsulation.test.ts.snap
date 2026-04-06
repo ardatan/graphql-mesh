@@ -12,7 +12,7 @@ exports[`should compose the appropriate schema 1`] = `
     
     @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@resolveTo", "@source", "@resolveRootField", "@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
+  import: ["@merge", "@resolveTo", "@source", "@resolveRootField", "@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]
 )
   {
     query: Query
@@ -97,6 +97,15 @@ enum join__Graph {
   SUBGRAPH_B @join__graph(name: "subgraph-b", url: "http://localhost:<subgraph-b_port>") 
 }
 
+directive @merge(
+  subgraph: String!
+  argsExpr: String
+  keyArg: String
+  keyField: String
+  key: [String]
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
+
 directive @resolveTo(
   additionalArgs: SubgraphAResolveToSourceArgs
   filterBy: String
@@ -152,7 +161,7 @@ scalar _DirectiveExtensions @join__type(graph: SUBGRAPH_B)
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "subgraph-b", kind: "rest", location: "http://localhost:<subgraph-b_port>", headers: [["x-custom-header", "{args.xCustomHeader}"]]}]}
 ) @join__type(graph: SUBGRAPH_A)  @join__type(graph: SUBGRAPH_B)  {
-  _encapsulated_SubgraphA_foo(id: ID!) : SubgraphAFoo @source(name: "foo", type: "Foo", subgraph: "subgraph-a")  @join__field(graph: SUBGRAPH_A)  @inaccessible
+  _encapsulated_SubgraphA_foo(id: ID!) : SubgraphAFoo @source(name: "foo", type: "Foo", subgraph: "subgraph-a")  @merge(subgraph: "subgraph-a", keyField: "id", argsExpr: "id: $key.id")  @join__field(graph: SUBGRAPH_A)  @inaccessible
   _encapsulated_SubgraphA_echoString(argument: String) : String @source(name: "echoString", type: "String", subgraph: "subgraph-a")  @join__field(graph: SUBGRAPH_A)  @inaccessible
   _encapsulated_SubgraphA_echoInt(argument: Int) : Int @source(name: "echoInt", type: "Int", subgraph: "subgraph-a")  @join__field(graph: SUBGRAPH_A)  @inaccessible
   _encapsulated_SubgraphA_echoBoolean(argument: Boolean) : Boolean @source(name: "echoBoolean", type: "Boolean", subgraph: "subgraph-a")  @join__field(graph: SUBGRAPH_A)  @inaccessible
@@ -174,8 +183,9 @@ type Query @extraSchemaDefinitionDirective(
   ) @join__field(graph: SUBGRAPH_B) 
 }
 
-type SubgraphAFoo @source(name: "Foo", subgraph: "subgraph-a")  @join__type(graph: SUBGRAPH_A)  {
+type SubgraphAFoo @source(name: "Foo", subgraph: "subgraph-a")  @join__type(graph: SUBGRAPH_A, key: "id")  {
   id: ID!
+  name: String
 }
 
 type SubgraphASubgraphAQuery @join__type(graph: SUBGRAPH_A)  {
