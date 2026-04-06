@@ -3161,10 +3161,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:4.20260403.1":
-  version: 4.20260403.1
-  resolution: "@cloudflare/workers-types@npm:4.20260403.1"
-  checksum: 10c0/74f2e6c7dd2e7ee7fb9aa06db53e3e88a02ac67de2ede3d33c4c9fdc01b044ab3afbb1e46c612160a170dd88349ae7edc23fcfabe0a798cf3410aef991416375
+"@cloudflare/workers-types@npm:4.20260405.1":
+  version: 4.20260405.1
+  resolution: "@cloudflare/workers-types@npm:4.20260405.1"
+  checksum: 10c0/931bc1566dc61ea48e78dbd6a3c3d50465bf5031e66f9d19b085cc9b106f110f625b35d5258c111e41fa45a37fd8f84920ce1aecc8f1cb66a282179e5e8b96ae
   languageName: node
   linkType: hard
 
@@ -3474,7 +3474,7 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway": "npm:^2.5.20"
     graphql: "npm:^16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
   languageName: unknown
   linkType: soft
 
@@ -3488,10 +3488,10 @@ __metadata:
     "@graphql-mesh/cache-upstash-redis": "npm:^0.1.30"
     "@graphql-mesh/compose-cli": "npm:^1.5.26"
     "@graphql-mesh/plugin-http-cache": "npm:^0.105.36"
-    "@graphql-yoga/plugin-response-cache": "npm:^3.22.0"
+    "@graphql-yoga/plugin-response-cache": "npm:^3.23.0"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     graphql: "npm:^16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     tslib: "npm:^2.8.1"
   languageName: unknown
   linkType: soft
@@ -3514,7 +3514,7 @@ __metadata:
     "@omnigraph/openapi": "workspace:*"
     fets: "npm:^0.8.6"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
   languageName: unknown
   linkType: soft
 
@@ -3533,7 +3533,7 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway": "npm:^2.5.20"
     graphql: "npm:^16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
   languageName: unknown
   linkType: soft
 
@@ -3561,7 +3561,7 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway": "npm:^2.5.20"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
   languageName: unknown
   linkType: soft
 
@@ -3888,7 +3888,7 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway": "npm:^2.5.20"
     graphql: "npm:^16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
   languageName: unknown
   linkType: soft
 
@@ -3898,7 +3898,7 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway": "npm:^2.5.20"
     graphql: "npm:^16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
   languageName: unknown
   linkType: soft
 
@@ -4195,184 +4195,184 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/aix-ppc64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/aix-ppc64@npm:0.27.4"
+"@esbuild/aix-ppc64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/aix-ppc64@npm:0.27.7"
   conditions: os=aix & cpu=ppc64
   languageName: node
   linkType: hard
 
-"@esbuild/android-arm64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/android-arm64@npm:0.27.4"
+"@esbuild/android-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/android-arm64@npm:0.27.7"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@esbuild/android-arm@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/android-arm@npm:0.27.4"
+"@esbuild/android-arm@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/android-arm@npm:0.27.7"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
 
-"@esbuild/android-x64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/android-x64@npm:0.27.4"
+"@esbuild/android-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/android-x64@npm:0.27.7"
   conditions: os=android & cpu=x64
   languageName: node
   linkType: hard
 
-"@esbuild/darwin-arm64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/darwin-arm64@npm:0.27.4"
+"@esbuild/darwin-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/darwin-arm64@npm:0.27.7"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@esbuild/darwin-x64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/darwin-x64@npm:0.27.4"
+"@esbuild/darwin-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/darwin-x64@npm:0.27.7"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@esbuild/freebsd-arm64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/freebsd-arm64@npm:0.27.4"
+"@esbuild/freebsd-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/freebsd-arm64@npm:0.27.7"
   conditions: os=freebsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"@esbuild/freebsd-x64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/freebsd-x64@npm:0.27.4"
+"@esbuild/freebsd-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/freebsd-x64@npm:0.27.7"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"@esbuild/linux-arm64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/linux-arm64@npm:0.27.4"
+"@esbuild/linux-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-arm64@npm:0.27.7"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"@esbuild/linux-arm@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/linux-arm@npm:0.27.4"
+"@esbuild/linux-arm@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-arm@npm:0.27.7"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@esbuild/linux-ia32@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/linux-ia32@npm:0.27.4"
+"@esbuild/linux-ia32@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-ia32@npm:0.27.7"
   conditions: os=linux & cpu=ia32
   languageName: node
   linkType: hard
 
-"@esbuild/linux-loong64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/linux-loong64@npm:0.27.4"
+"@esbuild/linux-loong64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-loong64@npm:0.27.7"
   conditions: os=linux & cpu=loong64
   languageName: node
   linkType: hard
 
-"@esbuild/linux-mips64el@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/linux-mips64el@npm:0.27.4"
+"@esbuild/linux-mips64el@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-mips64el@npm:0.27.7"
   conditions: os=linux & cpu=mips64el
   languageName: node
   linkType: hard
 
-"@esbuild/linux-ppc64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/linux-ppc64@npm:0.27.4"
+"@esbuild/linux-ppc64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-ppc64@npm:0.27.7"
   conditions: os=linux & cpu=ppc64
   languageName: node
   linkType: hard
 
-"@esbuild/linux-riscv64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/linux-riscv64@npm:0.27.4"
+"@esbuild/linux-riscv64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-riscv64@npm:0.27.7"
   conditions: os=linux & cpu=riscv64
   languageName: node
   linkType: hard
 
-"@esbuild/linux-s390x@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/linux-s390x@npm:0.27.4"
+"@esbuild/linux-s390x@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-s390x@npm:0.27.7"
   conditions: os=linux & cpu=s390x
   languageName: node
   linkType: hard
 
-"@esbuild/linux-x64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/linux-x64@npm:0.27.4"
+"@esbuild/linux-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/linux-x64@npm:0.27.7"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"@esbuild/netbsd-arm64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/netbsd-arm64@npm:0.27.4"
+"@esbuild/netbsd-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/netbsd-arm64@npm:0.27.7"
   conditions: os=netbsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"@esbuild/netbsd-x64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/netbsd-x64@npm:0.27.4"
+"@esbuild/netbsd-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/netbsd-x64@npm:0.27.7"
   conditions: os=netbsd & cpu=x64
   languageName: node
   linkType: hard
 
-"@esbuild/openbsd-arm64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/openbsd-arm64@npm:0.27.4"
+"@esbuild/openbsd-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/openbsd-arm64@npm:0.27.7"
   conditions: os=openbsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"@esbuild/openbsd-x64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/openbsd-x64@npm:0.27.4"
+"@esbuild/openbsd-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/openbsd-x64@npm:0.27.7"
   conditions: os=openbsd & cpu=x64
   languageName: node
   linkType: hard
 
-"@esbuild/openharmony-arm64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/openharmony-arm64@npm:0.27.4"
+"@esbuild/openharmony-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/openharmony-arm64@npm:0.27.7"
   conditions: os=openharmony & cpu=arm64
   languageName: node
   linkType: hard
 
-"@esbuild/sunos-x64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/sunos-x64@npm:0.27.4"
+"@esbuild/sunos-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/sunos-x64@npm:0.27.7"
   conditions: os=sunos & cpu=x64
   languageName: node
   linkType: hard
 
-"@esbuild/win32-arm64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/win32-arm64@npm:0.27.4"
+"@esbuild/win32-arm64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/win32-arm64@npm:0.27.7"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@esbuild/win32-ia32@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/win32-ia32@npm:0.27.4"
+"@esbuild/win32-ia32@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/win32-ia32@npm:0.27.7"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@esbuild/win32-x64@npm:0.27.4":
-  version: 0.27.4
-  resolution: "@esbuild/win32-x64@npm:0.27.4"
+"@esbuild/win32-x64@npm:0.27.7":
+  version: 0.27.7
+  resolution: "@esbuild/win32-x64@npm:0.27.7"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -4449,32 +4449,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/config-array@npm:^0.23.3":
-  version: 0.23.3
-  resolution: "@eslint/config-array@npm:0.23.3"
+"@eslint/config-array@npm:^0.23.4":
+  version: 0.23.4
+  resolution: "@eslint/config-array@npm:0.23.4"
   dependencies:
-    "@eslint/object-schema": "npm:^3.0.3"
+    "@eslint/object-schema": "npm:^3.0.4"
     debug: "npm:^4.3.1"
     minimatch: "npm:^10.2.4"
-  checksum: 10c0/7c19027acf9110cc542513ff9f3ca73a61d127e900c24f0e8e4d5e18aa22baf08d1d5bc386563d2f9311095f3b7898fe9b627b590fe9232b745ef60d4443cf9f
+  checksum: 10c0/813ce3588e67d615218219e77526ca4c742405c293f209f5c0ff945fec50a9a8007c7d82c5af8fa82c1a506b57f4dc37cef0e96b2366c41c257dd267862ece95
   languageName: node
   linkType: hard
 
-"@eslint/config-helpers@npm:^0.5.3":
-  version: 0.5.3
-  resolution: "@eslint/config-helpers@npm:0.5.3"
+"@eslint/config-helpers@npm:^0.5.4":
+  version: 0.5.4
+  resolution: "@eslint/config-helpers@npm:0.5.4"
   dependencies:
-    "@eslint/core": "npm:^1.1.1"
-  checksum: 10c0/c836476e839a79dcdc9f7e0013057cfe0341162180d50e5a08668edb4b4b6c520a3174011469f6ef02efd2affd092263c020e89d0a3452c801427b0ac003549a
+    "@eslint/core": "npm:^1.2.0"
+  checksum: 10c0/211bbfaba53fde341768eafbfdcceeca5587264c0a952d4c70b8b72c440df60e5b0e9bac33893c671dc556275a1b0c5d28c8023e843a127be216a773a11ae762
   languageName: node
   linkType: hard
 
-"@eslint/core@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@eslint/core@npm:1.1.1"
+"@eslint/core@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@eslint/core@npm:1.2.0"
   dependencies:
     "@types/json-schema": "npm:^7.0.15"
-  checksum: 10c0/129c654c78afc1f6d61dccb0ce841be667f09f052f7d5642614b6ba5eeebd579ca6cc336d7b750d88625e61f7aad22fdd62bf83847fbfc10cc3e58cfe6c5072e
+  checksum: 10c0/e564945218f7f3910dfd0f57bf7852072060f560c241f5ed96a7b13e9f7fed4cc5707ee5eb44653f2bf4f9576ee7b7921f55cc5ac96f72343d0c5e80818fe2bf
   languageName: node
   linkType: hard
 
@@ -4512,20 +4512,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/object-schema@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "@eslint/object-schema@npm:3.0.3"
-  checksum: 10c0/4abbb7cba5419dce46ae8aa8e979fa190f2e906a8e1b5a8e22e4489f62a68dea3967679f66acbc0c3ef89f33252a7460e39fc2d6f2b4f616a137f3514eda4784
+"@eslint/object-schema@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "@eslint/object-schema@npm:3.0.4"
+  checksum: 10c0/fedfc0acf5d899c9f58106c9d718fae4f4d5e6e21f0aa33b2333c746873d979ff9e295a09668bd7bf2a41f82dd886ebd3a73d023ce3c8722a1f24bd143842162
   languageName: node
   linkType: hard
 
-"@eslint/plugin-kit@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "@eslint/plugin-kit@npm:0.6.1"
+"@eslint/plugin-kit@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@eslint/plugin-kit@npm:0.7.0"
   dependencies:
-    "@eslint/core": "npm:^1.1.1"
+    "@eslint/core": "npm:^1.2.0"
     levn: "npm:^0.4.1"
-  checksum: 10c0/f8354a7b92cc41e7a55d51986d192134be84f9dc0c91b5e649d075d733b56981c4ca8bf4460d54120c4c87b47984167bad2cb9bceb303f11b0a3bad22b3ed06a
+  checksum: 10c0/ea96c393dc1424f1a74fdd253478eda6cf864f31527d9472bd379decc5195da0b141fcb2dc767d7fe296184a3f26c91a19b2e5445be9b6a9b48b1bed9d18b737
   languageName: node
   linkType: hard
 
@@ -4609,7 +4609,7 @@ __metadata:
   resolution: "@examples-v1-next/hive-example-gateway@workspace:examples/v1-next/hive-example/gateway"
   dependencies:
     "@graphql-hive/gateway": "npm:^2.5.20"
-    dotenv: "npm:^17.4.0"
+    dotenv: "npm:^17.4.1"
     graphql: "npm:16.13.2"
   languageName: unknown
   linkType: soft
@@ -4620,7 +4620,7 @@ __metadata:
   dependencies:
     "@graphql-hive/cli": "npm:0.59.0"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
   languageName: unknown
   linkType: soft
 
@@ -4877,7 +4877,7 @@ __metadata:
     "@types/node": "npm:^25.5.2"
     concurrently: "npm:9.2.1"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     jest: "npm:30.3.0"
     sharp: "npm:0.34.5"
     ts-jest: "npm:29.4.9"
@@ -4957,9 +4957,9 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.100.47"
     "@graphql-mesh/json-schema": "npm:0.109.39"
     "@graphql-mesh/plugin-mock": "npm:0.105.36"
-    "@graphql-yoga/plugin-sofa": "npm:3.20.0"
+    "@graphql-yoga/plugin-sofa": "npm:3.21.0"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     jest: "npm:30.3.0"
   languageName: unknown
   linkType: soft
@@ -5270,7 +5270,7 @@ __metadata:
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
     typescript: "npm:^6.0.2"
-    vite: "npm:8.0.3"
+    vite: "npm:8.0.5"
   languageName: unknown
   linkType: soft
 
@@ -5342,9 +5342,9 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.100.47"
     "@graphql-mesh/json-schema": "npm:0.109.39"
     "@graphql-mesh/plugin-mock": "npm:0.105.36"
-    "@graphql-yoga/plugin-sofa": "npm:3.20.0"
+    "@graphql-yoga/plugin-sofa": "npm:3.21.0"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     jest: "npm:30.3.0"
   languageName: unknown
   linkType: soft
@@ -5790,6 +5790,21 @@ __metadata:
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
   checksum: 10c0/a1c50d12e4a17c3a8c61d34209d03c0b5f51b62092259670e9a3dd9e4d1048559f7a8a5b76287dde3b50335b9e09efd575d816cfeaa4600622d3fab935cd8d02
+  languageName: node
+  linkType: hard
+
+"@graphql-codegen/plugin-helpers@npm:^6.2.1":
+  version: 6.2.1
+  resolution: "@graphql-codegen/plugin-helpers@npm:6.2.1"
+  dependencies:
+    "@graphql-tools/utils": "npm:^11.0.0"
+    change-case-all: "npm:1.0.15"
+    common-tags: "npm:1.8.2"
+    import-from: "npm:4.0.0"
+    tslib: "npm:~2.6.0"
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10c0/cd51f148a249fb0f5e3ea9c82765a3728377f3489cc0887f3bfe8dfe797bf602fa39dfd0acb9dc6b80c79eacabbab2b725d20d37a00482ea008d3bf1b3a6d1a9
   languageName: node
   linkType: hard
 
@@ -6241,7 +6256,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-cfw-kv@workspace:packages/cache/cfw-kv"
   dependencies:
-    "@cloudflare/workers-types": "npm:4.20260403.1"
+    "@cloudflare/workers-types": "npm:4.20260405.1"
     "@graphql-mesh/types": "npm:^0.104.26"
     "@graphql-mesh/utils": "npm:^0.104.34"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -6359,7 +6374,7 @@ __metadata:
     ajv: "npm:^8.18.0"
     change-case: "npm:^4.1.2"
     cosmiconfig: "npm:^9.0.1"
-    dotenv: "npm:^17.4.0"
+    dotenv: "npm:^17.4.1"
     graphql: "npm:16.13.2"
     graphql-import-node: "npm:^0.0.5"
     graphql-tag: "npm:^2.12.6"
@@ -6402,7 +6417,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.10.6"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     commander: "npm:^14.0.3"
-    dotenv: "npm:^17.4.0"
+    dotenv: "npm:^17.4.1"
     graphql: "npm:16.13.2"
   peerDependencies:
     graphql: "*"
@@ -6428,11 +6443,11 @@ __metadata:
     "@graphql-tools/graphql-file-loader": "npm:^8.1.12"
     "@graphql-tools/load": "npm:^8.1.8"
     "@graphql-tools/utils": "npm:^11.0.0"
-    "@graphql-yoga/plugin-persisted-operations": "npm:^3.20.0"
+    "@graphql-yoga/plugin-persisted-operations": "npm:^3.21.0"
     "@whatwg-node/fetch": "npm:^0.10.6"
     camel-case: "npm:^4.1.2"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     param-case: "npm:^3.0.4"
     pascal-case: "npm:^3.1.2"
     tslib: "npm:^2.4.0"
@@ -6585,7 +6600,7 @@ __metadata:
     "@whatwg-node/promise-helpers": "npm:^1.3.2"
     "@whatwg-node/server": "npm:^0.10.18"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -6597,7 +6612,7 @@ __metadata:
   resolution: "@graphql-mesh/include@workspace:packages/include"
   dependencies:
     "@graphql-mesh/utils": "npm:^0.104.34"
-    dotenv: "npm:^17.4.0"
+    dotenv: "npm:^17.4.1"
     get-tsconfig: "npm:^4.13.7"
     glob: "npm:^13.0.6"
     graphql: "npm:16.13.2"
@@ -6613,7 +6628,7 @@ __metadata:
   resolution: "@graphql-mesh/incontext-sdk-codegen@workspace:packages/incontext-sdk-codegen"
   dependencies:
     "@graphql-codegen/core": "npm:^5.0.1"
-    "@graphql-codegen/plugin-helpers": "npm:^6.2.0"
+    "@graphql-codegen/plugin-helpers": "npm:^6.2.1"
     "@graphql-codegen/typescript": "npm:^5.0.9"
     "@graphql-mesh/cross-helpers": "npm:^0.4.12"
     "@graphql-mesh/fusion-runtime": "npm:^1.8.6"
@@ -6812,7 +6827,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.16"
     "@graphql-mesh/types": "npm:^0.104.26"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -6941,7 +6956,7 @@ __metadata:
     "@types/newrelic": "npm:9.14.8"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     newrelic: "npm:13.18.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -7031,11 +7046,11 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.104.26"
     "@graphql-mesh/utils": "npm:^0.104.34"
     "@graphql-tools/utils": "npm:^11.0.0"
-    "@graphql-yoga/plugin-response-cache": "npm:^3.22.0"
+    "@graphql-yoga/plugin-response-cache": "npm:^3.23.0"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     cache-control-parser: "npm:^2.2.0"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -7069,7 +7084,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.104.34"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     graphql: "npm:16.13.2"
-    hot-shots: "npm:^14.2.0"
+    hot-shots: "npm:^14.3.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -7545,7 +7560,7 @@ __metadata:
     graphql-scalars: "npm:^1.22.4"
     lodash.get: "npm:^4.4.2"
     long: "npm:4.0.0"
-    protobufjs: "npm:^8.0.0"
+    protobufjs: "npm:^8.0.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -8867,17 +8882,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-apollo-inline-trace@npm:3.20.0":
-  version: 3.20.0
-  resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.20.0"
+"@graphql-yoga/plugin-apollo-inline-trace@npm:3.21.0":
+  version: 3.21.0
+  resolution: "@graphql-yoga/plugin-apollo-inline-trace@npm:3.21.0"
   dependencies:
     "@apollo/usage-reporting-protobuf": "npm:^4.1.1"
     "@envelop/on-resolve": "npm:^7.1.1"
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.20.0
-  checksum: 10c0/082cd7f800ffb3279491b12a5178099d4ac697af6c1dc959b2b0fe610a7023d9d93f6e955a915107d70309abe099bdb5d99bfb2ed0b48acbd6586ef66ce467bf
+    graphql-yoga: ^5.21.0
+  checksum: 10c0/c4c9d304325127821c10cace4564baaf517c1a890b754bf4131bd67f0421aa61644bf62a24f22b02969fda1d0b497dbc012be54bafbc48dcab6586ad35c0b91d
   languageName: node
   linkType: hard
 
@@ -8962,15 +8977,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-persisted-operations@npm:^3.20.0":
-  version: 3.20.0
-  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.20.0"
+"@graphql-yoga/plugin-persisted-operations@npm:^3.21.0":
+  version: 3.21.0
+  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.21.0"
   dependencies:
     "@whatwg-node/promise-helpers": "npm:^1.3.2"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.20.0
-  checksum: 10c0/1aad6ff5ecff83328d81c8d9bb9c7f593d1e1f9c35dff1c492af65fb1de3b54bab6aed3a5b38605f22b646cc45336761b8ff36ad32b5c10678ec17c84aa44072
+    graphql-yoga: ^5.21.0
+  checksum: 10c0/fd130ac0ec53f0cbd17933ed13fc540cbc3211b900e9aa966229d856ed6d38496ae7378cb5343cc5891ca37e07d4f7d6e52d33091733d4c5ebed0927b6f210ba
   languageName: node
   linkType: hard
 
@@ -8987,31 +9002,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-response-cache@npm:^3.22.0":
-  version: 3.22.0
-  resolution: "@graphql-yoga/plugin-response-cache@npm:3.22.0"
+"@graphql-yoga/plugin-response-cache@npm:^3.23.0":
+  version: 3.23.0
+  resolution: "@graphql-yoga/plugin-response-cache@npm:3.23.0"
   dependencies:
     "@envelop/core": "npm:^5.5.1"
     "@envelop/response-cache": "npm:^9.1.1"
     "@whatwg-node/promise-helpers": "npm:^1.3.2"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.20.0
-  checksum: 10c0/1c43c5988651bf77ba49546a8970eef1f1406caf4993dc56b08b1bb70d62f2ded345589abbbe5fb0e57bc37e23d5f5ba30468686c7fde39109e3384ec8adb6b3
+    graphql-yoga: ^5.21.0
+  checksum: 10c0/5550ca2e8c6aaef5db14912f2cc2ec36981f7594c6b1bc72bd674ea54b64bde455e016be0125ae911e884536915c71fb4aa03185f09810ee730c78786b63456f
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-sofa@npm:3.20.0":
-  version: 3.20.0
-  resolution: "@graphql-yoga/plugin-sofa@npm:3.20.0"
+"@graphql-yoga/plugin-sofa@npm:3.21.0":
+  version: 3.21.0
+  resolution: "@graphql-yoga/plugin-sofa@npm:3.21.0"
   dependencies:
     "@graphql-tools/utils": "npm:^10.11.0"
     "@whatwg-node/promise-helpers": "npm:^1.3.2"
     sofa-api: "npm:^0.18.8"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-    graphql-yoga: ^5.20.0
-  checksum: 10c0/57f3f7fef03eba824004704c9c5e518519e73c8cee3eb20c2e939de0b8c3201724fd8a88f4bbcf653a81a1c05b57bc4115d348e3990317f08a74962145916728
+    graphql-yoga: ^5.21.0
+  checksum: 10c0/f6fba52bea2d0c0c6c99f85b61b6b25d758f61e68a10c346e01040a0dff20bb849c3406678632509b9ee7125fdba272c915163a69de06cf572e1d118e395fe7f
   languageName: node
   linkType: hard
 
@@ -11233,7 +11248,7 @@ __metadata:
     graphql-scalars: "npm:^1.23.0"
     lodash.has: "npm:^4.5.2"
     micromatch: "npm:^4.0.8"
-    protobufjs: "npm:^8.0.0"
+    protobufjs: "npm:^8.0.1"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -11360,7 +11375,7 @@ __metadata:
     change-case: "npm:^4.1.2"
     fets: "npm:0.8.6"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     json-bigint-patch: "npm:0.0.9"
     json-machete: "npm:^0.97.7"
     openapi-types: "npm:^12.1.0"
@@ -21596,10 +21611,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^17.4.0":
-  version: 17.4.0
-  resolution: "dotenv@npm:17.4.0"
-  checksum: 10c0/f040215466f9a0b0eef5053951c048ee613f587bf050d4e73b39261ec315a5e0331d246a99a2fdcfd38051fce13e9bd7e2801ae83c4368fc86c2ff0f758dd1db
+"dotenv@npm:^17.4.1":
+  version: 17.4.1
+  resolution: "dotenv@npm:17.4.1"
+  checksum: 10c0/eb6ae592ee1e8f6b7f62e0f0c2827c4f27bbe9e00abe9d7910e06456e63dccd42f011de94da9450a63c07ccc52c318f527c1b56ad8e2c81a1a16314b53d4fd99
   languageName: node
   linkType: hard
 
@@ -22118,35 +22133,35 @@ __metadata:
   linkType: hard
 
 "esbuild@npm:^0.27.0":
-  version: 0.27.4
-  resolution: "esbuild@npm:0.27.4"
+  version: 0.27.7
+  resolution: "esbuild@npm:0.27.7"
   dependencies:
-    "@esbuild/aix-ppc64": "npm:0.27.4"
-    "@esbuild/android-arm": "npm:0.27.4"
-    "@esbuild/android-arm64": "npm:0.27.4"
-    "@esbuild/android-x64": "npm:0.27.4"
-    "@esbuild/darwin-arm64": "npm:0.27.4"
-    "@esbuild/darwin-x64": "npm:0.27.4"
-    "@esbuild/freebsd-arm64": "npm:0.27.4"
-    "@esbuild/freebsd-x64": "npm:0.27.4"
-    "@esbuild/linux-arm": "npm:0.27.4"
-    "@esbuild/linux-arm64": "npm:0.27.4"
-    "@esbuild/linux-ia32": "npm:0.27.4"
-    "@esbuild/linux-loong64": "npm:0.27.4"
-    "@esbuild/linux-mips64el": "npm:0.27.4"
-    "@esbuild/linux-ppc64": "npm:0.27.4"
-    "@esbuild/linux-riscv64": "npm:0.27.4"
-    "@esbuild/linux-s390x": "npm:0.27.4"
-    "@esbuild/linux-x64": "npm:0.27.4"
-    "@esbuild/netbsd-arm64": "npm:0.27.4"
-    "@esbuild/netbsd-x64": "npm:0.27.4"
-    "@esbuild/openbsd-arm64": "npm:0.27.4"
-    "@esbuild/openbsd-x64": "npm:0.27.4"
-    "@esbuild/openharmony-arm64": "npm:0.27.4"
-    "@esbuild/sunos-x64": "npm:0.27.4"
-    "@esbuild/win32-arm64": "npm:0.27.4"
-    "@esbuild/win32-ia32": "npm:0.27.4"
-    "@esbuild/win32-x64": "npm:0.27.4"
+    "@esbuild/aix-ppc64": "npm:0.27.7"
+    "@esbuild/android-arm": "npm:0.27.7"
+    "@esbuild/android-arm64": "npm:0.27.7"
+    "@esbuild/android-x64": "npm:0.27.7"
+    "@esbuild/darwin-arm64": "npm:0.27.7"
+    "@esbuild/darwin-x64": "npm:0.27.7"
+    "@esbuild/freebsd-arm64": "npm:0.27.7"
+    "@esbuild/freebsd-x64": "npm:0.27.7"
+    "@esbuild/linux-arm": "npm:0.27.7"
+    "@esbuild/linux-arm64": "npm:0.27.7"
+    "@esbuild/linux-ia32": "npm:0.27.7"
+    "@esbuild/linux-loong64": "npm:0.27.7"
+    "@esbuild/linux-mips64el": "npm:0.27.7"
+    "@esbuild/linux-ppc64": "npm:0.27.7"
+    "@esbuild/linux-riscv64": "npm:0.27.7"
+    "@esbuild/linux-s390x": "npm:0.27.7"
+    "@esbuild/linux-x64": "npm:0.27.7"
+    "@esbuild/netbsd-arm64": "npm:0.27.7"
+    "@esbuild/netbsd-x64": "npm:0.27.7"
+    "@esbuild/openbsd-arm64": "npm:0.27.7"
+    "@esbuild/openbsd-x64": "npm:0.27.7"
+    "@esbuild/openharmony-arm64": "npm:0.27.7"
+    "@esbuild/sunos-x64": "npm:0.27.7"
+    "@esbuild/win32-arm64": "npm:0.27.7"
+    "@esbuild/win32-ia32": "npm:0.27.7"
+    "@esbuild/win32-x64": "npm:0.27.7"
   dependenciesMeta:
     "@esbuild/aix-ppc64":
       optional: true
@@ -22202,7 +22217,7 @@ __metadata:
       optional: true
   bin:
     esbuild: bin/esbuild
-  checksum: 10c0/2a1c2bcccda279f2afd72a7f8259860cb4483b32453d17878e1ecb4ac416b9e7c1001e7aa0a25ba4c29c1e250a3ceaae5d8bb72a119815bc8db4e9b5f5321490
+  checksum: 10c0/ccd51f0555708bc9ff4ec9dc3ac92d3daacd45ecaac949ca8645984c5c323bf8cefe98c2df307418685e0b4ce37f9a3bdbfe8e3651fe632a0059a436195a17d4
   languageName: node
   linkType: hard
 
@@ -22689,16 +22704,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:10.1.0":
-  version: 10.1.0
-  resolution: "eslint@npm:10.1.0"
+"eslint@npm:10.2.0":
+  version: 10.2.0
+  resolution: "eslint@npm:10.2.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.8.0"
     "@eslint-community/regexpp": "npm:^4.12.2"
-    "@eslint/config-array": "npm:^0.23.3"
-    "@eslint/config-helpers": "npm:^0.5.3"
-    "@eslint/core": "npm:^1.1.1"
-    "@eslint/plugin-kit": "npm:^0.6.1"
+    "@eslint/config-array": "npm:^0.23.4"
+    "@eslint/config-helpers": "npm:^0.5.4"
+    "@eslint/core": "npm:^1.2.0"
+    "@eslint/plugin-kit": "npm:^0.7.0"
     "@humanfs/node": "npm:^0.16.6"
     "@humanwhocodes/module-importer": "npm:^1.0.1"
     "@humanwhocodes/retry": "npm:^0.4.2"
@@ -22730,7 +22745,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/b784ac18905b663fa4a801b0baa7bfa636c2d7ac08dad60690b15338c9b2126c5fa9fd4f9269b4f584cb0b426e428c1e353e23ff5ab6d8f8c610a0bb365831d6
+  checksum: 10c0/c275115f8937c243125986bf8f7d5c09bdc083f4a9fba8a77ad15a15989f05732f5037fe990cc1bc22dd887cf16060f57b8949dc5f1055d5020689adff49e219
   languageName: node
   linkType: hard
 
@@ -22988,12 +23003,12 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": "npm:5.1.7"
     "@graphql-hive/gateway": "npm:^2.5.20"
     "@graphql-mesh/compose-cli": "npm:1.5.26"
-    "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.20.0"
+    "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.21.0"
     "@types/node": "npm:^25.5.2"
     concurrently: "npm:9.2.1"
     esbuild: "npm:^0.28.0"
     graphql: "npm:16.13.2"
-    graphql-yoga: "npm:^5.20.0"
+    graphql-yoga: "npm:^5.21.0"
     lru-cache: "patch:lru-cache@npm%3A11.2.6#~/.yarn/patches/lru-cache-npm-11.2.6-acb7d4323e.patch"
     tslib: "npm:2.8.1"
     tsx: "npm:^4.21.0"
@@ -23373,15 +23388,15 @@ __metadata:
   linkType: hard
 
 "fast-xml-parser@npm:>=5.5.6":
-  version: 5.5.9
-  resolution: "fast-xml-parser@npm:5.5.9"
+  version: 5.5.10
+  resolution: "fast-xml-parser@npm:5.5.10"
   dependencies:
     fast-xml-builder: "npm:^1.1.4"
-    path-expression-matcher: "npm:^1.2.0"
+    path-expression-matcher: "npm:^1.2.1"
     strnum: "npm:^2.2.2"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10c0/b7f40f586c01a916a75be15b11ec0e83a38483885395bdeca51da8992a75e3d4d9b6c2690f362b975bfcb5118909ee4b0393e18ec9c9151345d5e13152370969
+  checksum: 10c0/7525e670e75d4a3da1c8fa25024879e3ddd06190ca7c390c18c2443e7aea6b9921c311207feb2901dc1728ac64220ddd838ca201e0fb564de158d9d18b9d170f
   languageName: node
   linkType: hard
 
@@ -24705,7 +24720,7 @@ __metadata:
     bob-the-bundler: "npm:7.0.1"
     cp-cli: "npm:^2.0.0"
     cross-env: "npm:^10.0.0"
-    eslint: "npm:10.1.0"
+    eslint: "npm:10.2.0"
     eslint-config-prettier: "npm:10.1.8"
     eslint-config-standard: "npm:17.1.0"
     eslint-plugin-import: "npm:2.32.0"
@@ -24895,9 +24910,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-yoga@npm:^5.20.0":
-  version: 5.20.0
-  resolution: "graphql-yoga@npm:5.20.0"
+"graphql-yoga@npm:^5.21.0":
+  version: 5.21.0
+  resolution: "graphql-yoga@npm:5.21.0"
   dependencies:
     "@envelop/core": "npm:^5.5.1"
     "@envelop/instrumentation": "npm:^1.0.0"
@@ -24913,7 +24928,7 @@ __metadata:
     tslib: "npm:^2.8.1"
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
-  checksum: 10c0/027b5c540092268719536e293981920f498ff8ff752d5ffe0de80e5212da4c554962a8522a5650db3fcc54b93fc49b9b86f58158b916c44053a2c2e0f9ce5817
+  checksum: 10c0/15e344ffd77e29e1f09efcaf4d6cb4d0bf92cb4a2f3e81d69c009c55103a03cd7eb1c24fdbafc31d67204b5e6669e2c3e5afef34ccea13d012a1f2581184eb44
   languageName: node
   linkType: hard
 
@@ -25350,15 +25365,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hot-shots@npm:^14.2.0":
-  version: 14.2.0
-  resolution: "hot-shots@npm:14.2.0"
+"hot-shots@npm:^14.3.0":
+  version: 14.3.0
+  resolution: "hot-shots@npm:14.3.0"
   dependencies:
     unix-dgram: "npm:2.x"
   dependenciesMeta:
     unix-dgram:
       optional: true
-  checksum: 10c0/7830dc561bd5c7a87187dcd1be208ca3f70f17b6e7702998f7f34300fc2dc2587e3f5c0155cfa39d9799ae02e16cc72672e8101e5ad4c2bd9313bf12b9a939fe
+  checksum: 10c0/344e2767b6b802b6ca937fbca9d79f1cbd540412ff872d13cb5b1e84c87bbc73750186ac9ae300635103a8f853d822edc2698c0c4304b675c51aa6941b9521e4
   languageName: node
   linkType: hard
 
@@ -32129,10 +32144,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-expression-matcher@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "path-expression-matcher@npm:1.2.0"
-  checksum: 10c0/86c661dfb265ed5dd1ddd9188f0dfbecf4ec4dc3ea6cabab081d3a2ba285054d9767a641a233bd6fd694fd89f7d0ef94913032feddf5365252700b02db4bf4e1
+"path-expression-matcher@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "path-expression-matcher@npm:1.2.1"
+  checksum: 10c0/71fb20dc80995931cbbecfa6a425113521eb213afd63b91ec2aca4e6cd75f1838617e4cbf42e66722b72ec32e01eccecddbec85cec3e2b2cf2cf938ce8fc8680
   languageName: node
   linkType: hard
 
@@ -33791,9 +33806,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protobufjs@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "protobufjs@npm:8.0.0"
+"protobufjs@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "protobufjs@npm:8.0.1"
   dependencies:
     "@protobufjs/aspromise": "npm:^1.1.2"
     "@protobufjs/base64": "npm:^1.1.2"
@@ -33807,7 +33822,7 @@ __metadata:
     "@protobufjs/utf8": "npm:^1.1.0"
     "@types/node": "npm:>=13.7.0"
     long: "npm:^5.0.0"
-  checksum: 10c0/6fb29ca3c6abc2095a777407750f6094448b7b68bbf04147ec49ee442f85f151592338449f56d19883ea67c39ce915e3d47ec6c5c92f0bcac1eaba1841ab84ff
+  checksum: 10c0/04c8c1b5b1b6355230534aaf01915f1d46cbf1ca14799628097997163d0c6611931fd9971c3eef9b2428703dc81464ef27c7f1f41f3cbb885a567ea942401454
   languageName: node
   linkType: hard
 
@@ -39162,9 +39177,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:8.0.3":
-  version: 8.0.3
-  resolution: "vite@npm:8.0.3"
+"vite@npm:8.0.5":
+  version: 8.0.5
+  resolution: "vite@npm:8.0.5"
   dependencies:
     fsevents: "npm:~2.3.3"
     lightningcss: "npm:^1.32.0"
@@ -39175,7 +39190,7 @@ __metadata:
   peerDependencies:
     "@types/node": ^20.19.0 || >=22.12.0
     "@vitejs/devtools": ^0.1.0
-    esbuild: ^0.27.0
+    esbuild: ^0.27.0 || ^0.28.0
     jiti: ">=1.21.0"
     less: ^4.0.0
     sass: ^1.70.0
@@ -39215,7 +39230,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/bed9520358080393a02fe22565b3309b4b3b8f916afe4c97577528f3efb05c1bf4b29f7b552179bc5b3938629e50fbd316231727457411dbc96648fa5c9d14bf
+  checksum: 10c0/bfc22896b2661753c01c398a058f1859bdbd3ebe55f3d8505ab629b39e5f68790c0a6f55f8644b6692b0b9b8e210f698082ef9f4fd0d76509f4a46762fbfbba2
   languageName: node
   linkType: hard
 
@@ -39537,7 +39552,7 @@ __metadata:
     "@types/node": "npm:^25.5.2"
     "@types/react": "npm:19.2.14"
     cross-env: "npm:10.1.0"
-    eslint: "npm:10.1.0"
+    eslint: "npm:10.2.0"
     eslint-config-next: "npm:16.2.2"
     next: "npm:16.2.2"
     next-sitemap: "npm:^4.2.3"

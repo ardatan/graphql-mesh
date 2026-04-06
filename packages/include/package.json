@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@graphql-mesh/utils": "^0.104.34",
-    "dotenv": "^17.4.0",
+    "dotenv": "^17.4.1",
     "get-tsconfig": "^4.13.7",
     "jiti": "^2.0.0",
     "sucrase": "^3.35.1"
