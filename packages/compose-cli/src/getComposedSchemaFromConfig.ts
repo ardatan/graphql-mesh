@@ -6,16 +6,14 @@ import {
   Kind,
   parse,
   print,
-  TypeInfo,
   visit,
-  visitWithTypeInfo,
   type DocumentNode,
   type GraphQLObjectType,
   type GraphQLSchema,
   type ObjectTypeDefinitionNode,
 } from 'graphql';
 import {
-  composeSubgraphs,
+  composeAnnotatedSubgraphs,
   futureAdditions,
   getAnnotatedSubgraphs,
   type FutureAddition,
@@ -116,22 +114,22 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       );
     }
   }
+  const annotatedSubgraphs = getAnnotatedSubgraphs(subgraphConfigsForComposition, {
+    ignoreSemanticConventions: config.ignoreSemanticConventions,
+    alwaysAddTransportDirective: config.subgraph != null,
+  });
   if (config.subgraph) {
-    const annotatedSubgraphs = getAnnotatedSubgraphs(subgraphConfigsForComposition, {
-      ignoreSemanticConventions: config.ignoreSemanticConventions,
-      alwaysAddTransportDirective: true,
-    });
     const subgraph = annotatedSubgraphs.find(sg => sg.name === config.subgraph);
     if (!subgraph) {
       logger.error(`Subgraph ${config.subgraph} not found`);
       process.exit(1);
     }
-    return print(subgraph.typeDefs);
+    return {
+      supergraphSdl: print(subgraph.typeDefs),
+      subgraphs: annotatedSubgraphs,
+    };
   }
-  const result = composeSubgraphs(subgraphConfigsForComposition, {
-    ignoreSemanticConventions: config.ignoreSemanticConventions,
-    alwaysAddTransportDirective: false,
-  });
+  const result = composeAnnotatedSubgraphs(annotatedSubgraphs);
   if (result.errors?.length) {
     logger.error(`Failed to compose subgraphs`);
     for (const error of result.errors) {
@@ -249,7 +247,10 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
             }
           },
         });
-        return print(composedSchemaAST);
+        return {
+          supergraphSdl: print(composedSchemaAST),
+          subgraphs: annotatedSubgraphs,
+        };
       }
     }
     /* TODO
@@ -260,7 +261,13 @@ export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, 
       }
     }
     */
-    return printSchemaWithDirectives(composedSchema);
+    return {
+      supergraphSdl: printSchemaWithDirectives(composedSchema),
+      subgraphs: annotatedSubgraphs,
+    };
   }
-  return result.supergraphSdl;
+  return {
+    supergraphSdl: result.supergraphSdl,
+    subgraphs: annotatedSubgraphs,
+  };
 }

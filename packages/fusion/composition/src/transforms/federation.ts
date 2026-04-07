@@ -6,9 +6,9 @@ import {
   GraphQLNonNull,
   GraphQLSchema,
   GraphQLString,
-  isLeafType,
   OperationTypeNode,
 } from 'graphql';
+import { suggestionList } from 'graphql/jsutils/suggestionList.js';
 import {
   asArray,
   getDefinedRootType,
@@ -219,7 +219,7 @@ const federationDirectiveNames = [
 ];
 
 export function createFederationTransform(config: FederationTransformConfig): SubgraphTransform {
-  return function (subgraphSchema, subgraphConfig) {
+  return function FederationTransform(subgraphSchema, subgraphConfig) {
     const configurationByType = new Map<string, FederationCoordinateConfig>();
     const configurationByField = new Map<string, Map<string, FederationCoordinateConfig>>();
     for (const coordinate in config) {
@@ -312,8 +312,15 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                     }
                     const rootTypeFields = rootType.getFields();
                     if (!rootTypeFields[targetFieldName]) {
+                      const suggestions = suggestionList(
+                        targetFieldName,
+                        Object.keys(rootTypeFields) as string[],
+                      );
+                      const suggestionStr = suggestions.length
+                        ? ` Did you mean "${suggestions.join(' or ')}"?`
+                        : '';
                       throw new Error(
-                        `Field "${targetFieldName}" not found in root type "${rootType.name}" for @key directive on ${type.name} type.`,
+                        `Field "${targetFieldName}" not found in root type "${rootType.name}" for @key directive on ${type.name} type. ${suggestionStr}`,
                       );
                     }
                     operationMergeDirectiveConfig.set(targetFieldName, {

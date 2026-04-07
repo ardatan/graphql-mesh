@@ -16,6 +16,7 @@ import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { getComposedSchemaFromConfig } from './getComposedSchemaFromConfig.js';
 import type { MeshComposeCLIConfig } from './types.js';
+import { validateSupergraphSdl } from './validate.js';
 
 /** Default config paths sorted by priority. */
 const defaultConfigPaths = [
@@ -126,7 +127,15 @@ export async function run({
 
   log.info('Composing');
 
-  const supergraphSdl = await getComposedSchemaFromConfig(config, log);
+  const { supergraphSdl, subgraphs } = await getComposedSchemaFromConfig(config, log);
+  const errors = validateSupergraphSdl(supergraphSdl, subgraphs);
+  if (errors.length) {
+    log.error(`Composition validation failed with the following errors:`);
+    for (const error of errors) {
+      log.error(error.message);
+    }
+    process.exit(1);
+  }
 
   let output = config.output;
   if (!output) {
