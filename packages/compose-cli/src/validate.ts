@@ -19,29 +19,6 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
     noLocation: true,
   });
   const typeMap = schema.getTypeMap();
-  const joinGraphEnum = typeMap.join__Graph;
-  if (!isEnumType(joinGraphEnum)) {
-    throw new FatalCompositionError(
-      `Expected join__Graph to be an enum type, but got ${inspect(joinGraphEnum)}`,
-    );
-  }
-  const subgraphNames = new Set();
-  for (const value of joinGraphEnum.getValues()) {
-    subgraphNames.add(value.name);
-    const directives = getDirectiveExtensions(value, schema);
-    if (!directives?.join__graph) {
-      throw new FatalCompositionError(
-        `Expected join__Graph enum value ${value.name} to have @join__graph directive`,
-      );
-    }
-    for (const directive of directives.join__graph) {
-      if (!directive.name) {
-        throw new FatalCompositionError(
-          `Expected @join__graph directive on join__Graph enum value ${value.name} to have a name argument`,
-        );
-      }
-    }
-  }
   const errors: GraphQLError[] = [];
   for (const typeName in typeMap) {
     const type = typeMap[typeName];
@@ -50,6 +27,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
       if (directives?.merge) {
         for (const mergeDirective of directives.merge) {
           const subgraphName = mergeDirective.subgraph;
+          const subgraph = subgraphs.find(s => s.name === subgraphName);
           if (!subgraphName) {
             errors.push(
               createGraphQLError(
@@ -60,7 +38,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
               ),
             );
             continue;
-          } else if (!subgraphNames.has(subgraphName)) {
+          } else if (!subgraph) {
             errors.push(
               createGraphQLError(
                 `@merge directive on type ${typeName} references unknown subgraph ${subgraphName}`,
@@ -69,13 +47,14 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
                 },
               ),
             );
-            continue;
           }
+          continue;
         }
       }
       if (directives?.resolveTo) {
         for (const resolveToDirective of directives.resolveTo) {
           const subgraphName = resolveToDirective.sourceName;
+          const subgraph = subgraphs.find(s => s.name === subgraphName);
           if (!subgraphName) {
             errors.push(
               createGraphQLError(
@@ -86,7 +65,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
               ),
             );
             continue;
-          } else if (!subgraphNames.has(subgraphName)) {
+          } else if (!subgraph) {
             errors.push(
               createGraphQLError(
                 `@resolveTo directive on type ${typeName} references unknown subgraph ${subgraphName}`,
@@ -99,7 +78,6 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
           }
           if (resolveToDirective.sourceFieldName && resolveToDirective.sourceTypeName) {
             const fieldName = resolveToDirective.sourceFieldName;
-            const subgraph = subgraphs.find(s => s.name === subgraphName);
             if (!subgraph) {
               errors.push(
                 createGraphQLError(
