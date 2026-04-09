@@ -1,5 +1,13 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.44
+
+### Patch Changes
+
+- [`d745894`](https://github.com/ardatan/graphql-mesh/commit/d7458941ea51f1e5af5c850ab9c051ac1fc6719b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Copy the implementation instead of importing it
+  from graphql-js
+
 ## 0.8.43
 
 ### Patch Changes
