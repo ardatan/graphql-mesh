@@ -1,7 +1,7 @@
-import { buildSchema, isEnumType, type FieldDefinitionNode } from 'graphql';
+import { buildSchema, type FieldDefinitionNode } from 'graphql';
 import type { GraphQLError } from 'graphql/error';
 import { suggestionList } from 'graphql/jsutils/suggestionList.js';
-import { createGraphQLError, getDirectiveExtensions, inspect } from '@graphql-tools/utils';
+import { createGraphQLError, getDirectiveExtensions } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 
 export class FatalCompositionError extends Error {
@@ -77,17 +77,6 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
             continue;
           }
           if (resolveToDirective.sourceFieldName && resolveToDirective.sourceTypeName) {
-            if (!subgraph) {
-              errors.push(
-                createGraphQLError(
-                  `@resolveTo directive on type ${typeName} references unknown subgraph ${subgraphName}`,
-                  {
-                    nodes: type.astNode,
-                  },
-                ),
-              );
-              continue;
-            }
             const typeDef = subgraph.typeDefs.definitions.find(
               def => 'name' in def && def.name.value === resolveToDirective.sourceTypeName,
             );

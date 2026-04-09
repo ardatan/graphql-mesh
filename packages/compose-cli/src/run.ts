@@ -14,7 +14,7 @@ import { parse } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
 import type { Logger } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
-import { getComposedSchemaFromConfig } from './getComposedSchemaFromConfig.js';
+import { getComposedResultFromConfig } from './getComposedSchemaFromConfig.js';
 import type { MeshComposeCLIConfig } from './types.js';
 import { validateSupergraphSdl } from './validate.js';
 
@@ -127,7 +127,7 @@ export async function run({
 
   log.info('Composing');
 
-  const { supergraphSdl, subgraphs } = await getComposedSchemaFromConfig(config, log);
+  const { supergraphSdl, subgraphs } = await getComposedResultFromConfig(config, log);
   if (!config.subgraph) {
     const errors = validateSupergraphSdl(supergraphSdl, subgraphs);
     if (errors.length) {

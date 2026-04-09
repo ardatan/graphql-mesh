@@ -31,11 +31,28 @@ import {
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import type { ServiceDefinition } from '@theguild/federation-composition';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
 const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(process.env.DEBUG));
 
-export async function getComposedSchemaFromConfig(config: MeshComposeCLIConfig, logger: Logger) {
+export interface ComposedResult {
+  supergraphSdl: string;
+  subgraphs: ServiceDefinition[];
+}
+
+export async function getComposedSchemaFromConfig(
+  config: MeshComposeCLIConfig,
+  logger: Logger,
+): Promise<string> {
+  const { supergraphSdl } = await getComposedResultFromConfig(config, logger);
+  return supergraphSdl;
+}
+
+export async function getComposedResultFromConfig(
+  config: MeshComposeCLIConfig,
+  logger: Logger,
+): Promise<ComposedResult> {
   const ctx: LoaderContext = {
     fetch: config.fetch || defaultFetch,
     cwd: config.cwd || globalThis.process?.cwd?.(),

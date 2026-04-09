@@ -294,19 +294,19 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                       operationType !== 'mutation' &&
                       operationType !== 'subscription'
                     ) {
-                      throw new Error(
+                      throw new TransformValidationError(
                         `Invalid operation type "${operationType}" in resolveReference config for @key directive on ${type.name} type. Expected "query", "mutation" or "subscription".`,
                       );
                     }
                     const targetFieldName = keyConfig.resolveReference.fieldName;
                     if (!targetFieldName) {
-                      throw new Error(
+                      throw new TransformValidationError(
                         `Missing fieldName in resolveReference config for @key directive on ${type.name} type.`,
                       );
                     }
                     const rootType = getDefinedRootType(subgraphSchema, operationType);
                     if (!rootType) {
-                      throw new Error(
+                      throw new TransformValidationError(
                         `Root type for operation "${operationType}" not found in schema for @key directive on ${type.name} type.`,
                       );
                     }
@@ -319,7 +319,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                       const suggestionStr = suggestions.length
                         ? ` Did you mean "${suggestions.join(' or ')}"?`
                         : '';
-                      throw new Error(
+                      throw new TransformValidationError(
                         `Field "${targetFieldName}" not found in root type "${rootType.name}" for @key directive on ${type.name} type. ${suggestionStr}`,
                       );
                     }
