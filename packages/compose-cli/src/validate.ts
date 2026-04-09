@@ -1,4 +1,4 @@
-import { buildSchema, isEnumType } from 'graphql';
+import { buildSchema, isEnumType, type FieldDefinitionNode } from 'graphql';
 import type { GraphQLError } from 'graphql/error';
 import { suggestionList } from 'graphql/jsutils/suggestionList.js';
 import { createGraphQLError, getDirectiveExtensions, inspect } from '@graphql-tools/utils';
@@ -77,7 +77,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
             continue;
           }
           if (resolveToDirective.sourceFieldName && resolveToDirective.sourceTypeName) {
-            const fieldName = resolveToDirective.sourceFieldName;
+            const fieldName = resolveToDirective.sourceFieldName as string;
             if (!subgraph) {
               errors.push(
                 createGraphQLError(
@@ -92,8 +92,19 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
             const typeDef = subgraph.typeDefs.definitions.find(
               def => 'name' in def && def.name.value === resolveToDirective.sourceTypeName,
             );
-            const fields = ('fields' in typeDef && typeDef.fields.map(f => f.name.value)) || [];
-            const fieldDef = fields.find(f => f === fieldName);
+            if (!typeDef) {
+              errors.push(
+                createGraphQLError(
+                  `@resolveTo directive on type ${typeName} references unknown type ${resolveToDirective.sourceTypeName} in subgraph ${subgraphName}`,
+                  {
+                    nodes: type.astNode,
+                  },
+                ),
+              );
+              continue;
+            }
+            const fields = ('fields' in typeDef && typeDef.fields) || ([] as FieldDefinitionNode[]);
+            const fieldDef = fields.find(f => f.name.value === fieldName);
             if (!fieldDef) {
               const suggestions = suggestionList(
                 fieldName,

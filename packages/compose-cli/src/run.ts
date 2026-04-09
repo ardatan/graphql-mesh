@@ -128,13 +128,15 @@ export async function run({
   log.info('Composing');
 
   const { supergraphSdl, subgraphs } = await getComposedSchemaFromConfig(config, log);
-  const errors = validateSupergraphSdl(supergraphSdl, subgraphs);
-  if (errors.length) {
-    log.error(`Composition validation failed with the following errors:`);
-    for (const error of errors) {
-      log.error(error.message);
+  if (!config.subgraph) {
+    const errors = validateSupergraphSdl(supergraphSdl, subgraphs);
+    if (errors.length) {
+      log.error(`Composition validation failed with the following errors:`);
+      for (const error of errors) {
+        log.error(error.message);
+      }
+      process.exit(1);
     }
-    process.exit(1);
   }
 
   let output = config.output;
