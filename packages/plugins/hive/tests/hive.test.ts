@@ -35,7 +35,14 @@ describe('Hive', () => {
           enabled: true,
           token: 'FAKE_TOKEN',
           pubsub,
-          logger,
+          logger: {
+            child: jest.fn().mockReturnThis(),
+            info: jest.fn(),
+            error: jest.fn(),
+            warn: jest.fn(),
+            debug: jest.fn(),
+            log: jest.fn(),
+          },
           agent: {
             fetch(url, init) {
               reportDeferred.resolve();
