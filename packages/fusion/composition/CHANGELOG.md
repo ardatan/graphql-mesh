@@ -1,5 +1,19 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.43
+
+### Patch Changes
+
+- [#9398](https://github.com/ardatan/graphql-mesh/pull/9398)
+  [`bc4b5d0`](https://github.com/ardatan/graphql-mesh/commit/bc4b5d05a92038cb5c0367e4e3c86330811f8065)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add validation for transforms such as Federation
+  Transform to provide better error messages when the configuration is incorrect. This includes
+  suggestions for field names and argument names when they are not found in the schema.
+  Additionally, improve error messages when applying transforms to subgraphs.
+
+  This also adds validation for `@merge` and `@resolveTo` directives to ensure that the referenced
+  fields and arguments exist in the subgraph schemas, providing suggestions when they do not.
+
 ## 0.8.42
 
 ### Patch Changes
