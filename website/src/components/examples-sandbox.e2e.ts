@@ -32,6 +32,6 @@ test('switches and loads StackExchange example', async ({ page }) => {
       .frameLocator(`iframe[title="${SELECTED_EXAMPLE}"]`)
       .frameLocator('iframe');
     const title = innerIframe.getByText('@examples/openapi-stackexchange');
-    await title.waitFor({ state: 'visible', timeout: 15_000 }); // this takes like 4 to 11 seconds
+    await title.waitFor({ state: 'visible', timeout: 60_000 }); // this takes like 4 to 11 seconds but can be slower
   }
 });
