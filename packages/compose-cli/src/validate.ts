@@ -53,7 +53,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
       }
       if (directives?.resolveTo) {
         for (const resolveToDirective of directives.resolveTo) {
-          const subgraphName = resolveToDirective.sourceName as string;
+          const subgraphName = resolveToDirective.sourceName;
           const subgraph = subgraphs.find(s => s.name === subgraphName);
           if (!subgraphName) {
             errors.push(
@@ -92,7 +92,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
               continue;
             }
             const fields = ('fields' in typeDef && typeDef.fields) || ([] as FieldDefinitionNode[]);
-            const fieldName = resolveToDirective.sourceFieldName as string;
+            const fieldName = resolveToDirective.sourceFieldName;
             const fieldDef = fields.find(f => f.name.value === fieldName);
             if (!fieldDef) {
               const suggestions = suggestionList(
