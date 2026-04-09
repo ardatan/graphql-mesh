@@ -22,7 +22,9 @@ describe('validateSupergraphSdl', () => {
         `,
       );
       const supergraphSdl = /* GraphQL */ `
-        directive @merge(subgraph: String) on OBJECT | INTERFACE | UNION | ENUM | SCALAR | INPUT_OBJECT
+        directive @merge(
+          subgraph: String
+        ) on OBJECT | INTERFACE | UNION | ENUM | SCALAR | INPUT_OBJECT
         type Product @merge(subgraph: "Products") {
           id: ID!
           name: String!
@@ -48,7 +50,9 @@ describe('validateSupergraphSdl', () => {
         `,
       );
       const supergraphSdl = /* GraphQL */ `
-        directive @merge(subgraph: String) on OBJECT | INTERFACE | UNION | ENUM | SCALAR | INPUT_OBJECT
+        directive @merge(
+          subgraph: String
+        ) on OBJECT | INTERFACE | UNION | ENUM | SCALAR | INPUT_OBJECT
         type Product @merge(subgraph: "UnknownSubgraph") {
           id: ID!
         }
@@ -83,11 +87,7 @@ describe('validateSupergraphSdl', () => {
           sourceFieldName: String
         ) on OBJECT | INTERFACE | UNION | ENUM | SCALAR | INPUT_OBJECT
         type Product
-          @resolveTo(
-            sourceName: "Products"
-            sourceTypeName: "Query"
-            sourceFieldName: "product"
-          ) {
+          @resolveTo(sourceName: "Products", sourceTypeName: "Query", sourceFieldName: "product") {
           id: ID!
           name: String!
         }
@@ -203,7 +203,9 @@ describe('validateSupergraphSdl', () => {
       `;
       const errors = validateSupergraphSdl(supergraphSdl, [subgraph]);
       expect(errors).toHaveLength(1);
-      expect(errors[0].message).toContain('references unknown field productByI in subgraph Products');
+      expect(errors[0].message).toContain(
+        'references unknown field productByI in subgraph Products',
+      );
       expect(errors[0].message).toContain('Did you mean "productById"');
     });
 
@@ -233,7 +235,7 @@ describe('validateSupergraphSdl', () => {
             sourceName: "Products"
             sourceTypeName: "Query"
             sourceFieldName: "productById"
-            sourceArgs: {productI: "someValue"}
+            sourceArgs: { productI: "someValue" }
           ) {
           id: ID!
         }
@@ -275,7 +277,7 @@ describe('validateSupergraphSdl', () => {
             sourceName: "Products"
             sourceTypeName: "Query"
             sourceFieldName: "productById"
-            sourceArgs: {productId: "someValue"}
+            sourceArgs: { productId: "someValue" }
           ) {
           id: ID!
         }

@@ -30,8 +30,8 @@ import {
   getDocumentNodeFromSchema,
   printSchemaWithDirectives,
 } from '@graphql-tools/utils';
-import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { ServiceDefinition } from '@theguild/federation-composition';
+import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
 const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(process.env.DEBUG));
