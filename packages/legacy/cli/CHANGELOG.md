@@ -1,5 +1,24 @@
 # @graphql-mesh/cli
 
+## 0.100.48
+
+### Patch Changes
+
+- [#9396](https://github.com/ardatan/graphql-mesh/pull/9396)
+  [`5904514`](https://github.com/ardatan/graphql-mesh/commit/5904514273b0d29fc4581bbddf082b392175640a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`dotenv@^17.4.1` ↗︎](https://www.npmjs.com/package/dotenv/v/17.4.1) (from
+    `^17.4.0`, in `dependencies`)
+- Updated dependencies
+  [[`5904514`](https://github.com/ardatan/graphql-mesh/commit/5904514273b0d29fc4581bbddf082b392175640a),
+  [`5904514`](https://github.com/ardatan/graphql-mesh/commit/5904514273b0d29fc4581bbddf082b392175640a),
+  [`5904514`](https://github.com/ardatan/graphql-mesh/commit/5904514273b0d29fc4581bbddf082b392175640a),
+  [`5904514`](https://github.com/ardatan/graphql-mesh/commit/5904514273b0d29fc4581bbddf082b392175640a)]:
+  - @graphql-mesh/config@0.108.42
+  - @graphql-mesh/http@0.106.40
+  - @graphql-mesh/include@0.3.36
+  - @graphql-mesh/incontext-sdk-codegen@0.0.14
+
 ## 0.100.47
 
 ### Patch Changes

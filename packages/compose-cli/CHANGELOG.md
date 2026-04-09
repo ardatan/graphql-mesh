@@ -1,5 +1,31 @@
 # @graphql-mesh/compose-cli
 
+## 1.5.27
+
+### Patch Changes
+
+- [#9396](https://github.com/ardatan/graphql-mesh/pull/9396)
+  [`5904514`](https://github.com/ardatan/graphql-mesh/commit/5904514273b0d29fc4581bbddf082b392175640a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`dotenv@^17.4.1` ↗︎](https://www.npmjs.com/package/dotenv/v/17.4.1) (from
+    `^17.4.0`, in `dependencies`)
+
+- [#9398](https://github.com/ardatan/graphql-mesh/pull/9398)
+  [`bc4b5d0`](https://github.com/ardatan/graphql-mesh/commit/bc4b5d05a92038cb5c0367e4e3c86330811f8065)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add validation for transforms such as Federation
+  Transform to provide better error messages when the configuration is incorrect. This includes
+  suggestions for field names and argument names when they are not found in the schema.
+  Additionally, improve error messages when applying transforms to subgraphs.
+
+  This also adds validation for `@merge` and `@resolveTo` directives to ensure that the referenced
+  fields and arguments exist in the subgraph schemas, providing suggestions when they do not.
+
+- Updated dependencies
+  [[`5904514`](https://github.com/ardatan/graphql-mesh/commit/5904514273b0d29fc4581bbddf082b392175640a),
+  [`bc4b5d0`](https://github.com/ardatan/graphql-mesh/commit/bc4b5d05a92038cb5c0367e4e3c86330811f8065)]:
+  - @graphql-mesh/include@0.3.36
+  - @graphql-mesh/fusion-composition@0.8.43
+
 ## 1.5.26
 
 ### Patch Changes
