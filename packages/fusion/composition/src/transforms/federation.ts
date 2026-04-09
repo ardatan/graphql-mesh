@@ -6,11 +6,12 @@ import {
   GraphQLNonNull,
   GraphQLSchema,
   GraphQLString,
-  isLeafType,
   OperationTypeNode,
 } from 'graphql';
+import { suggestionList } from 'graphql/jsutils/suggestionList.js';
 import {
   asArray,
+  getDefinedRootType,
   getDirectiveExtensions,
   getRootTypeMap,
   MapperKind,
@@ -218,7 +219,7 @@ const federationDirectiveNames = [
 ];
 
 export function createFederationTransform(config: FederationTransformConfig): SubgraphTransform {
-  return function (subgraphSchema, subgraphConfig) {
+  return function FederationTransform(subgraphSchema, subgraphConfig) {
     const configurationByType = new Map<string, FederationCoordinateConfig>();
     const configurationByField = new Map<string, Map<string, FederationCoordinateConfig>>();
     for (const coordinate in config) {
@@ -284,7 +285,45 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                       operationMergeDirectiveConfig = new Map();
                       mergeDirectiveConfigMap.set(operation, operationMergeDirectiveConfig);
                     }
-                    operationMergeDirectiveConfig.set(keyConfig.resolveReference.fieldName, {
+                    // Validate merge directive
+                    // First validate operation config
+                    const operationType =
+                      keyConfig.resolveReference?.operation || ('query' as OperationTypeNode);
+                    if (
+                      operationType !== 'query' &&
+                      operationType !== 'mutation' &&
+                      operationType !== 'subscription'
+                    ) {
+                      throw new TransformValidationError(
+                        `Invalid operation type "${operationType}" in resolveReference config for @key directive on ${type.name} type. Expected "query", "mutation" or "subscription".`,
+                      );
+                    }
+                    const targetFieldName = keyConfig.resolveReference.fieldName;
+                    if (!targetFieldName) {
+                      throw new TransformValidationError(
+                        `Missing fieldName in resolveReference config for @key directive on ${type.name} type.`,
+                      );
+                    }
+                    const rootType = getDefinedRootType(subgraphSchema, operationType);
+                    if (!rootType) {
+                      throw new TransformValidationError(
+                        `Root type for operation "${operationType}" not found in schema for @key directive on ${type.name} type.`,
+                      );
+                    }
+                    const rootTypeFields = rootType.getFields();
+                    if (!rootTypeFields[targetFieldName]) {
+                      const suggestions = suggestionList(
+                        targetFieldName,
+                        Object.keys(rootTypeFields) as string[],
+                      );
+                      const suggestionStr = suggestions.length
+                        ? ` Did you mean "${suggestions.join(' or ')}"?`
+                        : '';
+                      throw new TransformValidationError(
+                        `Field "${targetFieldName}" not found in root type "${rootType.name}" for @key directive on ${type.name} type. ${suggestionStr}`,
+                      );
+                    }
+                    operationMergeDirectiveConfig.set(targetFieldName, {
                       keyField: keyConfig.fields,
                       ...keyConfig.resolveReference,
                     });

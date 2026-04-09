@@ -17,6 +17,7 @@ import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
+  createGraphQLError,
   getDirectiveExtensions,
   getDocumentNodeFromSchema,
   MapperKind,
@@ -322,7 +323,16 @@ export function getAnnotatedSubgraphs(
     let transformedSubgraph = annotatedSubgraph;
     if (transforms?.length) {
       for (const transform of transforms) {
-        transformedSubgraph = transform(transformedSubgraph, subgraphConfig);
+        try {
+          transformedSubgraph = transform(transformedSubgraph, subgraphConfig);
+        } catch (e) {
+          const cause = e instanceof Error ? e : new Error(String(e));
+          const errorMessage = e instanceof Error ? e.message : String(e);
+          throw new Error(
+            `Failed to apply transform "${transform.name}" on subgraph "${subgraphName}": ${errorMessage}`,
+            { cause },
+          );
+        }
       }
       // Semantic conventions
       transformedSubgraph = mapSchema(transformedSubgraph, {

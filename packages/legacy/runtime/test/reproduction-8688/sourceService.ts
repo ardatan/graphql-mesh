@@ -14,11 +14,11 @@ export function startService() {
 
   app.use((req, res, next) => {
     activeConnections++;
-    console.log(`Active connections: ${activeConnections}`);
+    // console.log(`Active connections: ${activeConnections}`);
 
     res.on('finish', () => {
       activeConnections--;
-      console.log(`Active connections: ${activeConnections}`);
+      // console.log(`Active connections: ${activeConnections}`);
     });
 
     next();
