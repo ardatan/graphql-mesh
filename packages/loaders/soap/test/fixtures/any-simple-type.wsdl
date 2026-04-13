@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://example.com/any-simple-type"
+             name="AnySimpleType"
+             targetNamespace="http://example.com/any-simple-type">
+  <types>
+    <xs:schema targetNamespace="http://example.com/any-simple-type"
+               id="example_any_simple_type"
+               xmlns:tns="http://example.com/any-simple-type">
+      <!--
+        xs:anySimpleType is a standard XSD abstract base type that acts as
+        the base for all simple types (string, int, date, etc.). It is valid
+        in WSDL schemas but was missing from the loader's built-in type map,
+        causing a crash when the loader tried to resolve it.
+      -->
+      <xs:complexType name="Attribute">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string"/>
+          <xs:element name="value" type="xs:anySimpleType"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetAttributes">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="filter" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetAttributesResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="attribute" type="tns:Attribute"
+                        minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+  <message name="GetAttributesRequest">
+    <part name="parameters" element="tns:GetAttributes"/>
+  </message>
+  <message name="GetAttributesResponse">
+    <part name="parameters" element="tns:GetAttributesResponse"/>
+  </message>
+  <portType name="AttributePortType">
+    <operation name="getAttributes">
+      <input message="tns:GetAttributesRequest"/>
+      <output message="tns:GetAttributesResponse"/>
+    </operation>
+  </portType>
+  <binding name="AttributeBinding" type="tns:AttributePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="getAttributes">
+      <soap:operation soapAction="getAttributes" style="document"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+  </binding>
+  <service name="AttributeService">
+    <port name="AttributePort" binding="tns:AttributeBinding">
+      <soap:address location="http://example.com/attributes"/>
+    </port>
+  </service>
+</definitions>
