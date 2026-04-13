@@ -220,6 +220,7 @@ export class SOAPLoader {
     const namespace = 'http://www.w3.org/2001/XMLSchema';
     const simpleTypeGraphQLScalarMap = new Map<string, GraphQLScalarType>([
       ['anyType', GraphQLJSON],
+      ['anySimpleType', GraphQLString],
       ['anyURI', GraphQLURL],
       ['base64Binary', GraphQLByte],
       ['byte', GraphQLByte],

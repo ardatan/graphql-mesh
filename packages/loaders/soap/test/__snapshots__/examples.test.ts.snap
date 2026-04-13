@@ -1,5 +1,38 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`Examples should generate schema for any-simple-type: any-simple-type 1`] = `
+"schema @transport(kind: "soap", subgraph: "any-simple-type") {
+  query: Query
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+
+type Query {
+  AnySimpleType_AttributeService_AttributePort_getAttributes(GetAttributes: AnySimpleType_GetAttributes_Input): AnySimpleType_GetAttributesResponse @soap(elementName: "GetAttributesResponse", bindingNamespace: "http://example.com/any-simple-type", endpoint: "http://example.com/attributes", subgraph: "any-simple-type", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "getAttributes")
+}
+
+type AnySimpleType_GetAttributesResponse {
+  attribute: [AnySimpleType_Attribute]
+}
+
+type AnySimpleType_Attribute {
+  name: String
+  value: String
+}
+
+input AnySimpleType_GetAttributes_Input {
+  filter: String
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
+scalar ObjMap"
+`;
+
 exports[`Examples should generate schema for axis: axis 1`] = `
 "schema @transport(kind: "soap", subgraph: "axis") {
   query: Query
