@@ -183,7 +183,7 @@ export class SOAPLoader {
     }
   >();
 
-  private complexTypeInputTCMap = new WeakMap<XSComplexType, InputTypeComposer>();
+  private complexTypeInputTCMap = new WeakMap<XSComplexType, InputTypeComposer | ScalarTypeComposer>();
   private complexTypeOutputTCMap = new WeakMap<
     XSComplexType,
     ObjectTypeComposer | ScalarTypeComposer
@@ -917,8 +917,10 @@ export class SOAPLoader {
               );
             }
             const baseTypeTC = this.getInputTypeForComplexType(baseType, baseTypeNamespace);
-            for (const fieldName in baseTypeTC.getFields()) {
-              fieldMap[fieldName] = baseTypeTC.getField(fieldName);
+            if ('getFields' in baseTypeTC) {
+              for (const fieldName in baseTypeTC.getFields()) {
+                fieldMap[fieldName] = baseTypeTC.getField(fieldName);
+              }
             }
             for (const sequenceObj of extensionObj.sequence) {
               for (const elementObj of sequenceObj.element) {
@@ -945,7 +947,7 @@ export class SOAPLoader {
         }
       }
       if (Object.keys(fieldMap).length === 0) {
-        complexTypeTC = GraphQLJSON as any;
+        complexTypeTC = this.schemaComposer.createScalarTC(GraphQLJSON);
       } else {
         complexTypeTC = this.schemaComposer.createInputTC({
           name: `${prefix}_${complexTypeName}_Input`,
