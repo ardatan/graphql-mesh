@@ -285,9 +285,6 @@ export class SOAPLoader {
     return namespaceComplexTypes;
   }
 
-  private toGQLName(name: string) {
-    return name?.replace(/[^_a-zA-Z0-9]/g, '_') ?? name;
-  }
 
   private getNamespaceSimpleTypeMap(namespace: string) {
     let namespaceSimpleTypes = this.namespaceSimpleTypesMap.get(namespace);
@@ -587,7 +584,7 @@ export class SOAPLoader {
               if (part.attributes.element) {
                 const [elementNamespaceAlias, elementName] = part.attributes.element.split(':');
                 rootTC.addFieldArgs(operationFieldName, {
-                  [this.toGQLName(elementName)]: {
+                  [sanitizeNameForGraphQL(elementName)]: {
                     type: () => {
                       const elementNamespace =
                         aliasMap.get(elementNamespaceAlias) ||
@@ -608,7 +605,7 @@ export class SOAPLoader {
               } else if (part.attributes.name) {
                 const partName = part.attributes.name;
                 rootTC.addFieldArgs(operationFieldName, {
-                  [this.toGQLName(partName)]: {
+                  [sanitizeNameForGraphQL(partName)]: {
                     type: () => {
                       const typeRef = part.attributes.type;
                       const [typeNamespaceAlias, typeName] = typeRef.split(':');
@@ -701,7 +698,7 @@ export class SOAPLoader {
   ): EnumTypeComposer | ScalarTypeComposer {
     let simpleTypeTC = this.simpleTypeTCMap.get(simpleType);
     if (!simpleTypeTC) {
-      const simpleTypeName = this.toGQLName(simpleType.attributes.name);
+      const simpleTypeName = sanitizeNameForGraphQL(simpleType.attributes.name);
       const restrictionObj = simpleType.restriction[0];
       const prefix = this.namespaceTypePrefixMap.get(simpleTypeNamespace);
       if (restrictionObj.enumeration) {
@@ -767,7 +764,7 @@ export class SOAPLoader {
   getInputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeInputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = this.toGQLName(complexType.attributes.name);
+      const complexTypeName = sanitizeNameForGraphQL(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: InputTypeComposerFieldConfigMapDefinition = {};
@@ -778,7 +775,7 @@ export class SOAPLoader {
       for (const sequenceOrChoiceObj of choiceOrSequenceObjects) {
         if (sequenceOrChoiceObj.element) {
           for (const elementObj of sequenceOrChoiceObj.element) {
-            const fieldName = this.toGQLName(elementObj.attributes.name);
+            const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
             if (fieldName) {
               fieldMap[fieldName] = {
                 type: () => {
@@ -1015,7 +1012,7 @@ export class SOAPLoader {
   getOutputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeOutputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = this.toGQLName(complexType.attributes.name);
+      const complexTypeName = sanitizeNameForGraphQL(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {};
@@ -1026,7 +1023,7 @@ export class SOAPLoader {
       for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
         if (choiceOrSequenceObj.element) {
           for (const elementObj of choiceOrSequenceObj.element) {
-            const fieldName = this.toGQLName(elementObj.attributes.name);
+            const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
             if (fieldName) {
               const maxOccurs =
                 choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
@@ -1118,7 +1115,7 @@ export class SOAPLoader {
             ];
             for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
               for (const elementObj of choiceOrSequenceObj.element) {
-                const fieldName = this.toGQLName(elementObj.attributes.name);
+                const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
                 const maxOccurs =
                   choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
                 const minOccurs =
