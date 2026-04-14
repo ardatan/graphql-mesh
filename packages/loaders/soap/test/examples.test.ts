@@ -17,6 +17,7 @@ const examples = [
   'any-simple-type',
   'any-wildcard-namespace',
   'illegal-gql-names',
+  'prefix-collision',
 ];
 
 describe('Examples', () => {
