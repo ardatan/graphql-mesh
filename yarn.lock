@@ -71,21 +71,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apm-js-collab/code-transformer@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "@apm-js-collab/code-transformer@npm:0.10.0"
-  checksum: 10c0/3460dc038589899ec7d0b0d8c1835f3337f7cd5bd65ca91a10f487aac647d174d57b7e0aed145074f3953dfd4bad09e0439f481b3f6fa5a368f38626fc4dcedd
+"@apm-js-collab/code-transformer@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "@apm-js-collab/code-transformer@npm:0.12.0"
+  dependencies:
+    "@types/estree": "npm:^1.0.8"
+    astring: "npm:^1.9.0"
+    esquery: "npm:^1.7.0"
+    meriyah: "npm:^6.1.4"
+    semifies: "npm:^1.0.0"
+    source-map: "npm:^0.6.0"
+  checksum: 10c0/9a4bffdc3d93c27854e709d06fa29c9f44cbd90e82daef5f54b5d97f01ed5c2282edb5c3ecdf2720644ceefd384131c607ea12b90c7d8a957ee6b6ab3dff60a3
   languageName: node
   linkType: hard
 
-"@apm-js-collab/tracing-hooks@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "@apm-js-collab/tracing-hooks@npm:0.5.0"
+"@apm-js-collab/tracing-hooks@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@apm-js-collab/tracing-hooks@npm:0.6.0"
   dependencies:
-    "@apm-js-collab/code-transformer": "npm:^0.10.0"
+    "@apm-js-collab/code-transformer": "npm:^0.12.0"
     debug: "npm:^4.4.1"
     module-details-from-path: "npm:^1.0.4"
-  checksum: 10c0/e6179f959cd9420453c763281d61b11d451244375ca5fc802107802f5e467c9dc9c8d6503637bea8c0a84cf32422d6dfa1b4fcd337cf384b8a9fe917bbb7592c
+  checksum: 10c0/84a5c01ffa2e4227c415a4d8575e0ef5f95ce4d74a6970d5560bc94eb72c296d23506fc13d7828570c56d5d2e8aeeee647c587f69ff2083ea3c7c94c63619942
   languageName: node
   linkType: hard
 
@@ -7016,7 +7023,7 @@ __metadata:
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     graphql: "npm:16.13.2"
     graphql-yoga: "npm:^5.21.0"
-    newrelic: "npm:13.18.0"
+    newrelic: "npm:13.19.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -18328,7 +18335,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"astring@npm:^1.8.0":
+"astring@npm:^1.8.0, astring@npm:^1.9.0":
   version: 1.9.0
   resolution: "astring@npm:1.9.0"
   bin:
@@ -29940,6 +29947,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"meriyah@npm:^6.1.4":
+  version: 6.1.4
+  resolution: "meriyah@npm:6.1.4"
+  checksum: 10c0/d792a12df453b9e86c2bb70e73adf41b2d0fa88125381143e4d339d309ddcbb7aeb108e286411dcb19be82539d29b881279c613ae03ce514b7c296c72e9a8d00
+  languageName: node
+  linkType: hard
+
 "mermaid@npm:11.12.3":
   version: 11.12.3
   resolution: "mermaid@npm:11.12.3"
@@ -31069,11 +31083,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"newrelic@npm:13.18.0":
-  version: 13.18.0
-  resolution: "newrelic@npm:13.18.0"
+"newrelic@npm:13.19.0":
+  version: 13.19.0
+  resolution: "newrelic@npm:13.19.0"
   dependencies:
-    "@apm-js-collab/tracing-hooks": "npm:^0.5.0"
+    "@apm-js-collab/tracing-hooks": "npm:^0.6.0"
     "@datadog/pprof": "npm:^5.13.3"
     "@grpc/grpc-js": "npm:^1.13.2"
     "@grpc/proto-loader": "npm:^0.7.5"
@@ -31111,7 +31125,7 @@ __metadata:
       optional: true
   bin:
     newrelic-naming-rules: bin/test-naming-rules.js
-  checksum: 10c0/f8e6bb5dade171413f983bb9415d433fe7cafbc2f296f79495e1e4b41061d51e39d36c54bba42361c7dd4d77dfff86a4256c4a1f13e9e5fc8046a1111976f9fe
+  checksum: 10c0/b941b55882f7bf3697ecf1ce269ea52a2fead324399e8d012b1a922deceef9cbf385b5d9d939b100385050cc2529f4926f8e2c81cedf7f30292034c74f5502a9
   languageName: node
   linkType: hard
 
@@ -35862,6 +35876,13 @@ __metadata:
     "@peculiar/x509": "npm:^1.14.2"
     pkijs: "npm:^3.3.3"
   checksum: 10c0/a31e9d928e22cd6f4e14759a099feba79d9d789c852c7cf65ff8e2f62d7f6313fe477639590e7ed06115b4516a4bebbe0dec5d072a2d01cc372a9cfd58eb893b
+  languageName: node
+  linkType: hard
+
+"semifies@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "semifies@npm:1.0.0"
+  checksum: 10c0/d93d5e8d2c0b7d5f972b9378736ed5cc1f2ab40d043234b4156665872f08cb0da914ee8c8b35c59dc6b17880a4c5502588c7515c6bb4dbc3ce5565746428d31d
   languageName: node
   linkType: hard
 
