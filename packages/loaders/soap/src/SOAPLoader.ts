@@ -604,7 +604,7 @@ export class SOAPLoader {
               if (part.attributes.element) {
                 const [elementNamespaceAlias, elementName] = part.attributes.element.split(':');
                 rootTC.addFieldArgs(operationFieldName, {
-                  [elementName]: {
+                  [sanitizeNameForGraphQL(elementName)]: {
                     type: () => {
                       const elementNamespace =
                         aliasMap.get(elementNamespaceAlias) ||
@@ -625,7 +625,7 @@ export class SOAPLoader {
               } else if (part.attributes.name) {
                 const partName = part.attributes.name;
                 rootTC.addFieldArgs(operationFieldName, {
-                  [partName]: {
+                  [sanitizeNameForGraphQL(partName)]: {
                     type: () => {
                       const typeRef = part.attributes.type;
                       const [typeNamespaceAlias, typeName] = typeRef.split(':');
@@ -967,7 +967,7 @@ export class SOAPLoader {
             }
             for (const sequenceObj of extensionObj.sequence) {
               for (const elementObj of sequenceObj.element) {
-                fieldMap[elementObj.attributes.name] = {
+                fieldMap[sanitizeNameForGraphQL(elementObj.attributes.name)] = {
                   type: () => {
                     const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(
                       ':',

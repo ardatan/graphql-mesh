@@ -728,6 +728,53 @@ input SOAPHeaders {
 scalar ObjMap"
 `;
 
+exports[`Examples should generate schema for illegal-gql-names: illegal-gql-names 1`] = `
+"schema @transport(kind: "soap", subgraph: "illegal-gql-names") {
+  query: Query
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+
+type Query {
+  IllegalGqlNames_IllegalGqlNames_IllegalGqlNamesSoap_GetState(GetState: IllegalGqlNames_GetState_Input): IllegalGqlNames_GetStateResponse @soap(elementName: "GetStateResponse", bindingNamespace: "http://example.com/illegal-gql-names/", endpoint: "http://example.com/illegal-gql-names/soap", subgraph: "illegal-gql-names", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/")
+}
+
+type IllegalGqlNames_GetStateResponse {
+  result: IllegalGqlNames_X721_Type
+  extended: IllegalGqlNames_Extended_Type
+}
+
+type IllegalGqlNames_X721_Type {
+  code: String
+}
+
+type IllegalGqlNames_Extended_Type {
+  code: String
+  extra_field: String
+}
+
+input IllegalGqlNames_GetState_Input {
+  input: IllegalGqlNames_My_ComplexType_Input
+}
+
+input IllegalGqlNames_My_ComplexType_Input {
+  state: IllegalGqlNames_X721_Type_Input
+  response_data: String
+}
+
+input IllegalGqlNames_X721_Type_Input {
+  code: String
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
+scalar ObjMap"
+`;
+
 exports[`Examples should generate schema for inline-type-collision: inline-type-collision 1`] = `
 "schema @transport(kind: "soap", subgraph: "inline-type-collision") {
   query: Query
