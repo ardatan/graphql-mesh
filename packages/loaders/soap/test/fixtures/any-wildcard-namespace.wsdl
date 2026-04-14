@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://example.com/any-wildcard-namespace"
+             name="AnyWildcardNamespace"
+             targetNamespace="http://example.com/any-wildcard-namespace">
+  <types>
+    <xs:schema targetNamespace="http://example.com/any-wildcard-namespace"
+               id="example_any_wildcard_namespace"
+               xmlns:tns="http://example.com/any-wildcard-namespace">
+      <!--
+        xs:any with namespace="##other" (or ##any / ##local / ##targetNamespace) is an
+        XSD wildcard token, not a real namespace URI. The loader must skip the type
+        lookup for these tokens instead of trying to resolve them as namespaces.
+      -->
+      <xs:complexType name="WildcardContainer">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string"/>
+          <xs:any namespace="##other" minOccurs="0" processContents="lax"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ProcessItem">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="item" type="tns:WildcardContainer"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ProcessItemResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="result" type="tns:WildcardContainer"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+  <message name="ProcessItemRequest">
+    <part name="parameters" element="tns:ProcessItem"/>
+  </message>
+  <message name="ProcessItemResponse">
+    <part name="parameters" element="tns:ProcessItemResponse"/>
+  </message>
+  <portType name="WildcardPortType">
+    <operation name="processItem">
+      <input message="tns:ProcessItemRequest"/>
+      <output message="tns:ProcessItemResponse"/>
+    </operation>
+  </portType>
+  <binding name="WildcardBinding" type="tns:WildcardPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="processItem">
+      <soap:operation soapAction="processItem" style="document"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+  </binding>
+  <service name="WildcardService">
+    <port name="WildcardPort" binding="tns:WildcardBinding">
+      <soap:address location="http://example.com/wildcard"/>
+    </port>
+  </service>
+</definitions>
