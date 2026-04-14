@@ -289,7 +289,6 @@ export class SOAPLoader {
     return namespaceComplexTypes;
   }
 
-
   private getNamespaceSimpleTypeMap(namespace: string) {
     let namespaceSimpleTypes = this.namespaceSimpleTypesMap.get(namespace);
     if (!namespaceSimpleTypes) {
