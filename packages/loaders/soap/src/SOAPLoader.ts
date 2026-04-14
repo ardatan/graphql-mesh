@@ -712,7 +712,6 @@ export class SOAPLoader {
     return aliasMap;
   }
 
-
   getTypeForSimpleType(
     simpleType: XSSimpleType,
     simpleTypeNamespace: string,
