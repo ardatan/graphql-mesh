@@ -16,6 +16,7 @@ const examples = [
   'tempconvert',
   'any-simple-type',
   'forward-ref-elements',
+  'any-wildcard-namespace',
   'inline-type-collision',
   'empty-complextype',
   'prefix-collision',
