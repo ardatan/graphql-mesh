@@ -187,6 +187,7 @@ export class SOAPLoader {
     XSComplexType,
     InputTypeComposer | ScalarTypeComposer
   >();
+
   private complexTypeOutputTCMap = new WeakMap<
     XSComplexType,
     ObjectTypeComposer | ScalarTypeComposer
