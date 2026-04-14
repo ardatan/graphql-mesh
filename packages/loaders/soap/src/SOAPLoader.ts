@@ -894,7 +894,7 @@ export class SOAPLoader {
                     `Invalid element type definition: ${complexTypeName}->${fieldName}`,
                   );
                 },
-              };
+              } as any;
             } else {
               if (elementObj.attributes?.ref) {
                 this.logger.warn(`element.ref isn't supported yet.`);
@@ -1082,7 +1082,7 @@ export class SOAPLoader {
                   }
                   return outputTC;
                 },
-              };
+              } as any;
             } else {
               if (elementObj.attributes?.ref) {
                 this.logger.warn(`element.ref isn't supported yet.`, elementObj.attributes?.ref);
@@ -1173,7 +1173,7 @@ export class SOAPLoader {
                     }
                     return outputTC;
                   },
-                };
+                } as any;
               }
             }
           }
