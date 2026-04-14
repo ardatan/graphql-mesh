@@ -183,7 +183,11 @@ export class SOAPLoader {
     }
   >();
 
-  private complexTypeInputTCMap = new WeakMap<XSComplexType, InputTypeComposer>();
+  private complexTypeInputTCMap = new WeakMap<
+    XSComplexType,
+    InputTypeComposer | ScalarTypeComposer
+  >();
+
   private complexTypeOutputTCMap = new WeakMap<
     XSComplexType,
     ObjectTypeComposer | ScalarTypeComposer
@@ -930,8 +934,10 @@ export class SOAPLoader {
               );
             }
             const baseTypeTC = this.getInputTypeForComplexType(baseType, baseTypeNamespace);
-            for (const fieldName in baseTypeTC.getFields()) {
-              fieldMap[fieldName] = baseTypeTC.getField(fieldName);
+            if ('getFields' in baseTypeTC) {
+              for (const fieldName in baseTypeTC.getFields()) {
+                fieldMap[fieldName] = baseTypeTC.getField(fieldName);
+              }
             }
             for (const sequenceObj of extensionObj.sequence) {
               for (const elementObj of sequenceObj.element) {
@@ -958,7 +964,7 @@ export class SOAPLoader {
         }
       }
       if (Object.keys(fieldMap).length === 0) {
-        complexTypeTC = GraphQLJSON as any;
+        complexTypeTC = this.schemaComposer.createScalarTC(GraphQLJSON);
       } else {
         // When two schemas share the same alias-derived prefix (e.g. both declare
         // xmlns:tns="<own namespace>"), types with the same name from different

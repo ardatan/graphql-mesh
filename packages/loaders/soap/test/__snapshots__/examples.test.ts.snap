@@ -165,6 +165,55 @@ input SOAPHeaders {
 scalar ObjMap"
 `;
 
+exports[`Examples should generate schema for empty-complextype: empty-complextype 1`] = `
+"schema @transport(kind: "soap", subgraph: "empty-complextype") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+
+type Query {
+  placeholder: Void
+}
+
+"""Represents NULL values"""
+scalar Void
+
+type Mutation {
+  EmptyComplexType_ProcessService_ProcessPort_process(Process: EmptyComplexType_Process_Input): EmptyComplexType_ProcessResponse @soap(elementName: "ProcessResponse", bindingNamespace: "http://example.com/empty-complextype", endpoint: "http://example.com/process", subgraph: "empty-complextype", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "process")
+}
+
+type EmptyComplexType_ProcessResponse {
+  result: EmptyComplexType_Container
+}
+
+type EmptyComplexType_Container {
+  extensions: [JSON]
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+input EmptyComplexType_Process_Input {
+  payload: EmptyComplexType_Container_Input
+}
+
+input EmptyComplexType_Container_Input {
+  extensions: [JSON]
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
+scalar ObjMap"
+`;
+
 exports[`Examples should generate schema for example1: example1 1`] = `
 "schema @transport(kind: "soap", subgraph: "example1") {
   query: Query
