@@ -8,7 +8,15 @@ import { SOAPLoader } from '../src/index.js';
 
 const { readFile } = promises;
 
-const examples = ['example1', 'example2', 'axis', 'greeting', 'tempconvert', 'any-simple-type'];
+const examples = [
+  'example1',
+  'example2',
+  'axis',
+  'greeting',
+  'tempconvert',
+  'any-simple-type',
+  'any-wildcard-namespace',
+];
 
 describe('Examples', () => {
   examples.forEach(example => {
