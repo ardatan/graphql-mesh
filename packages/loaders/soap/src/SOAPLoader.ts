@@ -827,10 +827,15 @@ export class SOAPLoader {
                       this.aliasMap.set(simpleTypeObj, aliasMap);
                       // Inherit the name from elementObj, scoped to the parent type name
                       // to avoid collisions when sibling types share an inline field name.
+                      // Skip scoping when complexTypeName already equals the namespace prefix
+                      // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing
+                      // like ByNameDataSet_ByNameDataSet_ByName.
                       simpleTypeObj.attributes = simpleTypeObj.attributes || ({} as any);
                       simpleTypeObj.attributes.name =
                         simpleTypeObj.attributes.name ||
-                        `${complexTypeName}_${elementObj.attributes.name}`;
+                        (complexTypeName !== prefix
+                          ? `${complexTypeName}_${elementObj.attributes.name}`
+                          : elementObj.attributes.name);
                       let finalTC: AnyTypeComposer<any> = this.getTypeForSimpleType(
                         simpleTypeObj,
                         complexTypeNamespace,
@@ -851,10 +856,14 @@ export class SOAPLoader {
                       this.aliasMap.set(complexTypeObj, aliasMap);
                       // Inherit the name from elementObj, scoped to the parent type name
                       // to avoid collisions when sibling types share an inline field name.
+                      // Skip scoping when complexTypeName already equals the namespace prefix
+                      // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
                       complexTypeObj.attributes = complexTypeObj.attributes || ({} as any);
                       complexTypeObj.attributes.name =
                         complexTypeObj.attributes.name ||
-                        `${complexTypeName}_${elementObj.attributes.name}`;
+                        (complexTypeName !== prefix
+                          ? `${complexTypeName}_${elementObj.attributes.name}`
+                          : elementObj.attributes.name);
                       let finalTC: AnyTypeComposer<any> = this.getInputTypeForComplexType(
                         complexTypeObj,
                         complexTypeNamespace,
@@ -991,11 +1000,16 @@ export class SOAPLoader {
         this.aliasMap.set(simpleTypeObj, aliasMap);
         // Inherit the name from elementObj, scoped to the parent type name
         // to avoid collisions when sibling types share an inline field name.
+        // Skip scoping when parentTypeName already equals the namespace prefix
+        // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
+        const nsPrefix = this.namespaceTypePrefixMap.get(namespace);
+        const effectiveParentName =
+          parentTypeName && parentTypeName !== nsPrefix ? parentTypeName : null;
         simpleTypeObj.attributes = simpleTypeObj.attributes || ({} as any);
         simpleTypeObj.attributes.name =
           simpleTypeObj.attributes.name ||
-          (parentTypeName
-            ? `${parentTypeName}_${elementObj.attributes.name}`
+          (effectiveParentName
+            ? `${effectiveParentName}_${elementObj.attributes.name}`
             : elementObj.attributes.name);
         const outputTC = this.getTypeForSimpleType(simpleTypeObj, namespace);
         return outputTC;
@@ -1008,11 +1022,16 @@ export class SOAPLoader {
         this.aliasMap.set(complexTypeObj, aliasMap);
         // Inherit the name from elementObj, scoped to the parent type name
         // to avoid collisions when sibling types share an inline field name.
+        // Skip scoping when parentTypeName already equals the namespace prefix
+        // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
+        const nsPrefix = this.namespaceTypePrefixMap.get(namespace);
+        const effectiveParentName =
+          parentTypeName && parentTypeName !== nsPrefix ? parentTypeName : null;
         complexTypeObj.attributes = complexTypeObj.attributes || ({} as any);
         complexTypeObj.attributes.name =
           complexTypeObj.attributes.name ||
-          (parentTypeName
-            ? `${parentTypeName}_${elementObj.attributes.name}`
+          (effectiveParentName
+            ? `${effectiveParentName}_${elementObj.attributes.name}`
             : elementObj.attributes.name);
         const outputTC = this.getOutputTypeForComplexType(complexTypeObj, namespace);
         return outputTC;
