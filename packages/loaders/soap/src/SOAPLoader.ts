@@ -767,6 +767,11 @@ export class SOAPLoader {
     typeName: string;
     typeNamespace: string;
   }) {
+    // Check element aliases first — consistent with the eager path that overwrites the type map
+    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
+    if (elementRef) {
+      return this.getInputTypeForTypeNameInNamespace(elementRef);
+    }
     const complexType = this.getNamespaceComplexTypeMap(typeNamespace)?.get(typeName);
     if (complexType) {
       return this.getInputTypeForComplexType(complexType, typeNamespace);
@@ -774,11 +779,6 @@ export class SOAPLoader {
     const simpleType = this.getNamespaceSimpleTypeMap(typeNamespace)?.get(typeName);
     if (simpleType) {
       return this.getTypeForSimpleType(simpleType, typeNamespace);
-    }
-    // Lazy fallback for forward-referenced element aliases
-    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
-    if (elementRef) {
-      return this.getInputTypeForTypeNameInNamespace(elementRef);
     }
     throw new Error(`Type: ${typeName} couldn't be found in ${typeNamespace}`);
   }
@@ -797,8 +797,8 @@ export class SOAPLoader {
       for (const sequenceOrChoiceObj of choiceOrSequenceObjects) {
         if (sequenceOrChoiceObj.element) {
           for (const elementObj of sequenceOrChoiceObj.element) {
-            const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
-            if (fieldName) {
+            if (elementObj.attributes?.name) {
+              const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
               fieldMap[fieldName] = {
                 type: () => {
                   const maxOccurs =
@@ -1048,8 +1048,8 @@ export class SOAPLoader {
       for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
         if (choiceOrSequenceObj.element) {
           for (const elementObj of choiceOrSequenceObj.element) {
-            const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
-            if (fieldName) {
+            if (elementObj.attributes?.name) {
+              const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
               const maxOccurs =
                 choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
               const minOccurs =
@@ -1143,6 +1143,7 @@ export class SOAPLoader {
             ];
             for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
               for (const elementObj of choiceOrSequenceObj.element) {
+                if (!elementObj.attributes?.name) continue;
                 const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
                 const maxOccurs =
                   choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
@@ -1202,6 +1203,11 @@ export class SOAPLoader {
     typeName: string;
     typeNamespace: string;
   }) {
+    // Check element aliases first — consistent with the eager path that overwrites the type map
+    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
+    if (elementRef) {
+      return this.getOutputTypeForTypeNameInNamespace(elementRef);
+    }
     const complexType = this.getNamespaceComplexTypeMap(typeNamespace)?.get(typeName);
     if (complexType) {
       return this.getOutputTypeForComplexType(complexType, typeNamespace);
@@ -1209,11 +1215,6 @@ export class SOAPLoader {
     const simpleType = this.getNamespaceSimpleTypeMap(typeNamespace)?.get(typeName);
     if (simpleType) {
       return this.getTypeForSimpleType(simpleType, typeNamespace);
-    }
-    // Lazy fallback for forward-referenced element aliases
-    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
-    if (elementRef) {
-      return this.getOutputTypeForTypeNameInNamespace(elementRef);
     }
     throw new Error(`Type: ${typeName} couldn't be found in ${typeNamespace}`);
   }
