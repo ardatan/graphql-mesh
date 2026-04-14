@@ -195,6 +195,7 @@ export class SOAPLoader {
     string,
     Map<string, { typeName: string; typeNamespace: string }>
   >();
+
   public loadedLocations = new Map<string, WSDLObject | XSDObject>();
   private schemaHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
   private fetchFn: MeshFetch;
