@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-live-query",
-  "version": "0.104.36",
+  "version": "0.104.37",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,10 +37,10 @@
   "dependencies": {
     "@envelop/core": "^5.5.1",
     "@envelop/live-query": "^10.1.1",
-    "@graphql-mesh/cross-helpers": "^0.4.12",
+    "@graphql-mesh/cross-helpers": "^0.4.13",
     "@graphql-mesh/string-interpolation": "^0.5.16",
-    "@graphql-mesh/types": "^0.104.26",
-    "@graphql-mesh/utils": "^0.104.34",
+    "@graphql-mesh/types": "^0.104.27",
+    "@graphql-mesh/utils": "^0.104.35",
     "@n1ru4l/in-memory-live-query-store": "^0.10.0",
     "@whatwg-node/disposablestack": "^0.0.6",
     "tslib": "^2.4.0"

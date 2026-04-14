@@ -1,5 +1,37 @@
 # @graphql-mesh/compose-cli
 
+## 1.5.29
+
+### Patch Changes
+
+- [#9406](https://github.com/ardatan/graphql-mesh/pull/9406)
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/code-file-loader@^8.1.31` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/8.1.31)
+    (from `^8.1.30`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/graphql-file-loader@^8.1.13` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.1.13)
+    (from `^8.1.12`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/load@^8.1.9` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.1.9)
+    (from `^8.1.8`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.32` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.32)
+    (from `^10.0.31`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^11.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.1)
+    (from `^11.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`6449161`](https://github.com/ardatan/graphql-mesh/commit/644916156aa92a866a59a249ea193ebaa5cf5ceb),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)]:
+  - @graphql-mesh/fusion-composition@0.8.45
+  - @graphql-mesh/types@0.104.27
+  - @graphql-mesh/utils@0.104.35
+  - @graphql-mesh/include@0.3.37
+
 ## 1.5.28
 
 ### Patch Changes
