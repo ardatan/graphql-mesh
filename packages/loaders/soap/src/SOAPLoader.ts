@@ -927,7 +927,7 @@ export class SOAPLoader {
             }
             for (const sequenceObj of extensionObj.sequence) {
               for (const elementObj of sequenceObj.element) {
-                fieldMap[elementObj.attributes.name] = {
+                fieldMap[sanitizeNameForGraphQL(elementObj.attributes.name)] = {
                   type: () => {
                     const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(
                       ':',
