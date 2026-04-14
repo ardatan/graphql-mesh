@@ -14,6 +14,15 @@
           <xs:element name="response-data" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="Extended.Type">
+        <xs:complexContent>
+          <xs:extension base="tns:X721.Type">
+            <xs:sequence>
+              <xs:element name="extra-field" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
       <xs:element name="GetState">
         <xs:complexType>
           <xs:sequence>
@@ -25,6 +34,7 @@
         <xs:complexType>
           <xs:sequence>
             <xs:element name="result" type="tns:X721.Type"/>
+            <xs:element name="extended" type="tns:Extended.Type"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>

@@ -652,10 +652,16 @@ type Query {
 
 type IllegalGqlNames_GetStateResponse {
   result: IllegalGqlNames_X721_Type
+  extended: IllegalGqlNames_Extended_Type
 }
 
 type IllegalGqlNames_X721_Type {
   code: String
+}
+
+type IllegalGqlNames_Extended_Type {
+  code: String
+  extra_field: String
 }
 
 input IllegalGqlNames_GetState_Input {
