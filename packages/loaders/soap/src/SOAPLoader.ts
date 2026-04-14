@@ -910,7 +910,7 @@ export class SOAPLoader {
             // ##other / ##any / ##local / ##targetNamespace are XSD wildcard tokens, not real URIs
             if (anyNamespace && !anyNamespace.startsWith('##')) {
               const anyTypeTC = this.getInputTypeForTypeNameInNamespace({
-                typeName: complexTypeName,
+                typeName: complexType.attributes.name,
                 typeNamespace: anyNamespace,
               });
               if ('getFields' in anyTypeTC) {
@@ -1098,7 +1098,7 @@ export class SOAPLoader {
             // ##other / ##any / ##local / ##targetNamespace are XSD wildcard tokens, not real URIs
             if (anyNamespace && !anyNamespace.startsWith('##')) {
               const anyTypeTC = this.getOutputTypeForTypeNameInNamespace({
-                typeName: complexTypeName,
+                typeName: complexType.attributes.name,
                 typeNamespace: anyNamespace,
               });
               if ('getFields' in anyTypeTC) {
