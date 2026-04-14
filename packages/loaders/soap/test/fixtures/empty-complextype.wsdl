@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://example.com/empty-complextype"
+             name="EmptyComplexType"
+             targetNamespace="http://example.com/empty-complextype">
+  <types>
+    <xs:schema targetNamespace="http://example.com/empty-complextype"
+               id="example_empty_complextype"
+               xmlns:tns="http://example.com/empty-complextype">
+      <!--
+        EmptyExtension has no fields. When used as a repeated element
+        (maxOccurs="unbounded"), the loader calls getTypePlural() on the
+        result of getInputTypeForComplexType(). Prior to the fix, that
+        method returned raw GraphQLJSON (not a TypeComposer), causing:
+          "finalTC.getTypePlural is not a function"
+      -->
+      <xs:complexType name="EmptyExtension"/>
+      <xs:complexType name="Container">
+        <xs:sequence>
+          <xs:element name="extensions" type="tns:EmptyExtension"
+                      minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Process">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="payload" type="tns:Container"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ProcessResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="result" type="tns:Container"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+  <message name="ProcessRequest">
+    <part name="parameters" element="tns:Process"/>
+  </message>
+  <message name="ProcessResponse">
+    <part name="parameters" element="tns:ProcessResponse"/>
+  </message>
+  <portType name="ProcessPortType">
+    <operation name="process">
+      <input message="tns:ProcessRequest"/>
+      <output message="tns:ProcessResponse"/>
+    </operation>
+  </portType>
+  <binding name="ProcessBinding" type="tns:ProcessPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="process">
+      <soap:operation soapAction="process" style="document"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+  </binding>
+  <service name="ProcessService">
+    <port name="ProcessPort" binding="tns:ProcessBinding">
+      <soap:address location="http://example.com/process"/>
+    </port>
+  </service>
+</definitions>

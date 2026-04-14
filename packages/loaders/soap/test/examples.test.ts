@@ -17,6 +17,8 @@ const examples = [
   'any-simple-type',
   'any-wildcard-namespace',
   'illegal-gql-names',
+  'inline-type-collision',
+  'empty-complextype',
   'prefix-collision',
 ];
 

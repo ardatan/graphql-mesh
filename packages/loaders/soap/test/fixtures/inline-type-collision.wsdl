@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://example.com/inline-collision"
+             name="InlineTypeCollision"
+             targetNamespace="http://example.com/inline-collision">
+  <types>
+    <xs:schema targetNamespace="http://example.com/inline-collision"
+               id="example_inline_collision"
+               xmlns:tns="http://example.com/inline-collision">
+      <!--
+        Two parent types each define an inline anonymous complex type on a field
+        named "details". Without the fix, both get the GraphQL name
+        "InlineTypeCollision_details", causing a schema build error.
+        With the fix they become "InlineTypeCollision_TypeA_details"
+        and "InlineTypeCollision_TypeB_details".
+      -->
+      <xs:complexType name="TypeA">
+        <xs:sequence>
+          <xs:element name="details">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="valueA" type="xs:string"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="TypeB">
+        <xs:sequence>
+          <xs:element name="details">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="valueB" type="xs:int"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetA">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="input" type="tns:TypeA"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetAResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="result" type="tns:TypeA"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetB">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="input" type="tns:TypeB"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetBResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="result" type="tns:TypeB"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+  <message name="GetARequest">
+    <part name="parameters" element="tns:GetA"/>
+  </message>
+  <message name="GetAResponse">
+    <part name="parameters" element="tns:GetAResponse"/>
+  </message>
+  <message name="GetBRequest">
+    <part name="parameters" element="tns:GetB"/>
+  </message>
+  <message name="GetBResponse">
+    <part name="parameters" element="tns:GetBResponse"/>
+  </message>
+  <portType name="CollisionPortType">
+    <operation name="getA">
+      <input message="tns:GetARequest"/>
+      <output message="tns:GetAResponse"/>
+    </operation>
+    <operation name="getB">
+      <input message="tns:GetBRequest"/>
+      <output message="tns:GetBResponse"/>
+    </operation>
+  </portType>
+  <binding name="CollisionBinding" type="tns:CollisionPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="getA">
+      <soap:operation soapAction="getA" style="document"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="getB">
+      <soap:operation soapAction="getB" style="document"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+  </binding>
+  <service name="CollisionService">
+    <port name="CollisionPort" binding="tns:CollisionBinding">
+      <soap:address location="http://example.com/collision"/>
+    </port>
+  </service>
+</definitions>
