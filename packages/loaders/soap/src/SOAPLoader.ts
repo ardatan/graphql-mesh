@@ -829,10 +829,17 @@ export class SOAPLoader {
                       // Dynamically defined simple type
                       // So we need to define alias map for this type
                       this.aliasMap.set(simpleTypeObj, aliasMap);
-                      // Inherit the name from elementObj
+                      // Inherit the name from elementObj, scoped to the parent type name
+                      // to avoid collisions when sibling types share an inline field name.
+                      // Skip scoping when complexTypeName already equals the namespace prefix
+                      // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing
+                      // like ByNameDataSet_ByNameDataSet_ByName.
                       simpleTypeObj.attributes = simpleTypeObj.attributes || ({} as any);
                       simpleTypeObj.attributes.name =
-                        simpleTypeObj.attributes.name || elementObj.attributes.name;
+                        simpleTypeObj.attributes.name ||
+                        (complexTypeName !== prefix
+                          ? `${complexTypeName}_${elementObj.attributes.name}`
+                          : elementObj.attributes.name);
                       let finalTC: AnyTypeComposer<any> = this.getTypeForSimpleType(
                         simpleTypeObj,
                         complexTypeNamespace,
@@ -851,10 +858,16 @@ export class SOAPLoader {
                       // Dynamically defined type
                       // So we need to define alias map for this type
                       this.aliasMap.set(complexTypeObj, aliasMap);
-                      // Inherit the name from elementObj
+                      // Inherit the name from elementObj, scoped to the parent type name
+                      // to avoid collisions when sibling types share an inline field name.
+                      // Skip scoping when complexTypeName already equals the namespace prefix
+                      // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
                       complexTypeObj.attributes = complexTypeObj.attributes || ({} as any);
                       complexTypeObj.attributes.name =
-                        complexTypeObj.attributes.name || elementObj.attributes.name;
+                        complexTypeObj.attributes.name ||
+                        (complexTypeName !== prefix
+                          ? `${complexTypeName}_${elementObj.attributes.name}`
+                          : elementObj.attributes.name);
                       let finalTC: AnyTypeComposer<any> = this.getInputTypeForComplexType(
                         complexTypeObj,
                         complexTypeNamespace,
@@ -986,6 +999,7 @@ export class SOAPLoader {
     elementObj: XSElement,
     aliasMap: Map<string, string>,
     namespace: string,
+    parentTypeName?: string,
   ) {
     if (elementObj.attributes?.type) {
       const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':') as [
@@ -1009,9 +1023,19 @@ export class SOAPLoader {
         // Dynamically defined simple type
         // So we need to define alias map for this type
         this.aliasMap.set(simpleTypeObj, aliasMap);
-        // Inherit the name from elementObj
+        // Inherit the name from elementObj, scoped to the parent type name
+        // to avoid collisions when sibling types share an inline field name.
+        // Skip scoping when parentTypeName already equals the namespace prefix
+        // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
+        const nsPrefix = this.namespaceTypePrefixMap.get(namespace);
+        const effectiveParentName =
+          parentTypeName && parentTypeName !== nsPrefix ? parentTypeName : null;
         simpleTypeObj.attributes = simpleTypeObj.attributes || ({} as any);
-        simpleTypeObj.attributes.name = simpleTypeObj.attributes.name || elementObj.attributes.name;
+        simpleTypeObj.attributes.name =
+          simpleTypeObj.attributes.name ||
+          (effectiveParentName
+            ? `${effectiveParentName}_${elementObj.attributes.name}`
+            : elementObj.attributes.name);
         const outputTC = this.getTypeForSimpleType(simpleTypeObj, namespace);
         return outputTC;
       }
@@ -1021,10 +1045,19 @@ export class SOAPLoader {
         // Dynamically defined type
         // So we need to define alias map for this type
         this.aliasMap.set(complexTypeObj, aliasMap);
-        // Inherit the name from elementObj
+        // Inherit the name from elementObj, scoped to the parent type name
+        // to avoid collisions when sibling types share an inline field name.
+        // Skip scoping when parentTypeName already equals the namespace prefix
+        // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
+        const nsPrefix = this.namespaceTypePrefixMap.get(namespace);
+        const effectiveParentName =
+          parentTypeName && parentTypeName !== nsPrefix ? parentTypeName : null;
         complexTypeObj.attributes = complexTypeObj.attributes || ({} as any);
         complexTypeObj.attributes.name =
-          complexTypeObj.attributes.name || elementObj.attributes.name;
+          complexTypeObj.attributes.name ||
+          (effectiveParentName
+            ? `${effectiveParentName}_${elementObj.attributes.name}`
+            : elementObj.attributes.name);
         const outputTC = this.getOutputTypeForComplexType(complexTypeObj, namespace);
         return outputTC;
       }
@@ -1071,6 +1104,7 @@ export class SOAPLoader {
                     elementObj,
                     aliasMap,
                     complexTypeNamespace,
+                    complexTypeName,
                   );
                   if (isPlural) {
                     outputTC = outputTC.getTypePlural();
@@ -1161,6 +1195,7 @@ export class SOAPLoader {
                       elementObj,
                       aliasMap,
                       complexTypeNamespace,
+                      complexTypeName,
                     );
                     if (isPlural) {
                       outputTC = outputTC.getTypePlural();

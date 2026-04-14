@@ -644,6 +644,75 @@ input SOAPHeaders {
 scalar ObjMap"
 `;
 
+exports[`Examples should generate schema for inline-type-collision: inline-type-collision 1`] = `
+"schema @transport(kind: "soap", subgraph: "inline-type-collision") {
+  query: Query
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+
+type Query {
+  InlineTypeCollision_CollisionService_CollisionPort_getA(GetA: InlineTypeCollision_GetA_Input): InlineTypeCollision_GetAResponse @soap(elementName: "GetAResponse", bindingNamespace: "http://example.com/inline-collision", endpoint: "http://example.com/collision", subgraph: "inline-type-collision", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "getA")
+  InlineTypeCollision_CollisionService_CollisionPort_getB(GetB: InlineTypeCollision_GetB_Input): InlineTypeCollision_GetBResponse @soap(elementName: "GetBResponse", bindingNamespace: "http://example.com/inline-collision", endpoint: "http://example.com/collision", subgraph: "inline-type-collision", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "getB")
+}
+
+type InlineTypeCollision_GetAResponse {
+  result: InlineTypeCollision_TypeA
+}
+
+type InlineTypeCollision_TypeA {
+  details: InlineTypeCollision_TypeA_details
+}
+
+type InlineTypeCollision_TypeA_details {
+  valueA: String
+}
+
+input InlineTypeCollision_GetA_Input {
+  input: InlineTypeCollision_TypeA_Input
+}
+
+input InlineTypeCollision_TypeA_Input {
+  details: InlineTypeCollision_TypeA_details_Input
+}
+
+input InlineTypeCollision_TypeA_details_Input {
+  valueA: String
+}
+
+type InlineTypeCollision_GetBResponse {
+  result: InlineTypeCollision_TypeB
+}
+
+type InlineTypeCollision_TypeB {
+  details: InlineTypeCollision_TypeB_details
+}
+
+type InlineTypeCollision_TypeB_details {
+  valueB: Int
+}
+
+input InlineTypeCollision_GetB_Input {
+  input: InlineTypeCollision_TypeB_Input
+}
+
+input InlineTypeCollision_TypeB_Input {
+  details: InlineTypeCollision_TypeB_details_Input
+}
+
+input InlineTypeCollision_TypeB_details_Input {
+  valueB: Int
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
+scalar ObjMap"
+`;
+
 exports[`Examples should generate schema for prefix-collision: prefix-collision 1`] = `
 "schema @transport(kind: "soap", subgraph: "prefix-collision") {
   query: Query
