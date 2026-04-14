@@ -33,6 +33,50 @@ input SOAPHeaders {
 scalar ObjMap"
 `;
 
+exports[`Examples should generate schema for any-wildcard-namespace: any-wildcard-namespace 1`] = `
+"schema @transport(kind: "soap", subgraph: "any-wildcard-namespace") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+
+type Query {
+  placeholder: Void
+}
+
+"""Represents NULL values"""
+scalar Void
+
+type Mutation {
+  AnyWildcardNamespace_WildcardService_WildcardPort_processItem(ProcessItem: AnyWildcardNamespace_ProcessItem_Input): AnyWildcardNamespace_ProcessItemResponse @soap(elementName: "ProcessItemResponse", bindingNamespace: "http://example.com/any-wildcard-namespace", endpoint: "http://example.com/wildcard", subgraph: "any-wildcard-namespace", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "processItem")
+}
+
+type AnyWildcardNamespace_ProcessItemResponse {
+  result: AnyWildcardNamespace_WildcardContainer
+}
+
+type AnyWildcardNamespace_WildcardContainer {
+  name: String
+}
+
+input AnyWildcardNamespace_ProcessItem_Input {
+  item: AnyWildcardNamespace_WildcardContainer_Input
+}
+
+input AnyWildcardNamespace_WildcardContainer_Input {
+  name: String
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
+scalar ObjMap"
+`;
+
 exports[`Examples should generate schema for axis: axis 1`] = `
 "schema @transport(kind: "soap", subgraph: "axis") {
   query: Query
@@ -584,6 +628,47 @@ type NumberConversion_NumberToDollarsResponse {
 
 input NumberConversion_NumberToDollars_Input {
   dNum: Float
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
+scalar ObjMap"
+`;
+
+exports[`Examples should generate schema for illegal-gql-names: illegal-gql-names 1`] = `
+"schema @transport(kind: "soap", subgraph: "illegal-gql-names") {
+  query: Query
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+
+type Query {
+  IllegalGqlNames_IllegalGqlNames_IllegalGqlNamesSoap_GetState(GetState: IllegalGqlNames_GetState_Input): IllegalGqlNames_GetStateResponse @soap(elementName: "GetStateResponse", bindingNamespace: "http://example.com/illegal-gql-names/", endpoint: "http://example.com/illegal-gql-names/soap", subgraph: "illegal-gql-names", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/")
+}
+
+type IllegalGqlNames_GetStateResponse {
+  result: IllegalGqlNames_X721_Type
+}
+
+type IllegalGqlNames_X721_Type {
+  code: String
+}
+
+input IllegalGqlNames_GetState_Input {
+  input: IllegalGqlNames_My_ComplexType_Input
+}
+
+input IllegalGqlNames_My_ComplexType_Input {
+  state: IllegalGqlNames_X721_Type_Input
+  response_data: String
+}
+
+input IllegalGqlNames_X721_Type_Input {
+  code: String
 }
 
 input SOAPHeaders {

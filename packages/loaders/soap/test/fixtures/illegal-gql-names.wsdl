@@ -1,0 +1,62 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://example.com/illegal-gql-names/"
+             name="IllegalGqlNames" targetNamespace="http://example.com/illegal-gql-names/">
+  <types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://example.com/illegal-gql-names/">
+      <xs:complexType name="X721.Type">
+        <xs:sequence>
+          <xs:element name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="My.ComplexType">
+        <xs:sequence>
+          <xs:element name="state" type="tns:X721.Type"/>
+          <xs:element name="response-data" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetState">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="input" type="tns:My.ComplexType"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetStateResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="result" type="tns:X721.Type"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+  <message name="GetStateSoapRequest">
+    <part name="parameters" element="tns:GetState"/>
+  </message>
+  <message name="GetStateSoapResponse">
+    <part name="parameters" element="tns:GetStateResponse"/>
+  </message>
+  <portType name="IllegalGqlNamesSoapType">
+    <operation name="GetState">
+      <input message="tns:GetStateSoapRequest"/>
+      <output message="tns:GetStateSoapResponse"/>
+    </operation>
+  </portType>
+  <binding name="IllegalGqlNamesSoapBinding" type="tns:IllegalGqlNamesSoapType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="GetState">
+      <soap:operation soapAction="" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="IllegalGqlNames">
+    <port name="IllegalGqlNamesSoap" binding="tns:IllegalGqlNamesSoapBinding">
+      <soap:address location="http://example.com/illegal-gql-names/soap"/>
+    </port>
+  </service>
+</definitions>

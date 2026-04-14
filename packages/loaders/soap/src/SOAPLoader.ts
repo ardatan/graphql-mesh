@@ -285,6 +285,10 @@ export class SOAPLoader {
     return namespaceComplexTypes;
   }
 
+  private toGQLName(name: string) {
+    return name?.replace(/[^_a-zA-Z0-9]/g, '_') ?? name;
+  }
+
   private getNamespaceSimpleTypeMap(namespace: string) {
     let namespaceSimpleTypes = this.namespaceSimpleTypesMap.get(namespace);
     if (!namespaceSimpleTypes) {
@@ -697,7 +701,7 @@ export class SOAPLoader {
   ): EnumTypeComposer | ScalarTypeComposer {
     let simpleTypeTC = this.simpleTypeTCMap.get(simpleType);
     if (!simpleTypeTC) {
-      const simpleTypeName = simpleType.attributes.name;
+      const simpleTypeName = this.toGQLName(simpleType.attributes.name);
       const restrictionObj = simpleType.restriction[0];
       const prefix = this.namespaceTypePrefixMap.get(simpleTypeNamespace);
       if (restrictionObj.enumeration) {
@@ -763,7 +767,7 @@ export class SOAPLoader {
   getInputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeInputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = complexType.attributes.name;
+      const complexTypeName = this.toGQLName(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: InputTypeComposerFieldConfigMapDefinition = {};
@@ -774,7 +778,7 @@ export class SOAPLoader {
       for (const sequenceOrChoiceObj of choiceOrSequenceObjects) {
         if (sequenceOrChoiceObj.element) {
           for (const elementObj of sequenceOrChoiceObj.element) {
-            const fieldName = elementObj.attributes.name;
+            const fieldName = this.toGQLName(elementObj.attributes.name);
             if (fieldName) {
               fieldMap[fieldName] = {
                 type: () => {
@@ -881,7 +885,8 @@ export class SOAPLoader {
         if (sequenceOrChoiceObj.any) {
           for (const anyObj of sequenceOrChoiceObj.any) {
             const anyNamespace = anyObj.attributes?.namespace;
-            if (anyNamespace) {
+            // ##other / ##any / ##local / ##targetNamespace are XSD wildcards, not real namespace URIs
+            if (anyNamespace && !anyNamespace.startsWith('##')) {
               const anyTypeTC = this.getInputTypeForTypeNameInNamespace({
                 typeName: complexTypeName,
                 typeNamespace: anyNamespace,
@@ -1010,7 +1015,7 @@ export class SOAPLoader {
   getOutputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeOutputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = complexType.attributes.name;
+      const complexTypeName = this.toGQLName(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {};
@@ -1021,7 +1026,7 @@ export class SOAPLoader {
       for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
         if (choiceOrSequenceObj.element) {
           for (const elementObj of choiceOrSequenceObj.element) {
-            const fieldName = elementObj.attributes.name;
+            const fieldName = this.toGQLName(elementObj.attributes.name);
             if (fieldName) {
               const maxOccurs =
                 choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
@@ -1068,7 +1073,8 @@ export class SOAPLoader {
         if (choiceOrSequenceObj.any) {
           for (const anyObj of choiceOrSequenceObj.any) {
             const anyNamespace = anyObj.attributes?.namespace;
-            if (anyNamespace) {
+            // ##other / ##any / ##local / ##targetNamespace are XSD wildcards, not real namespace URIs
+            if (anyNamespace && !anyNamespace.startsWith('##')) {
               const anyTypeTC = this.getOutputTypeForTypeNameInNamespace({
                 typeName: complexTypeName,
                 typeNamespace: anyNamespace,
@@ -1112,7 +1118,7 @@ export class SOAPLoader {
             ];
             for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
               for (const elementObj of choiceOrSequenceObj.element) {
-                const fieldName = elementObj.attributes.name;
+                const fieldName = this.toGQLName(elementObj.attributes.name);
                 const maxOccurs =
                   choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
                 const minOccurs =
