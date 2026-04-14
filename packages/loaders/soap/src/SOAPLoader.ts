@@ -587,7 +587,7 @@ export class SOAPLoader {
               if (part.attributes.element) {
                 const [elementNamespaceAlias, elementName] = part.attributes.element.split(':');
                 rootTC.addFieldArgs(operationFieldName, {
-                  [elementName]: {
+                  [this.toGQLName(elementName)]: {
                     type: () => {
                       const elementNamespace =
                         aliasMap.get(elementNamespaceAlias) ||
@@ -608,7 +608,7 @@ export class SOAPLoader {
               } else if (part.attributes.name) {
                 const partName = part.attributes.name;
                 rootTC.addFieldArgs(operationFieldName, {
-                  [partName]: {
+                  [this.toGQLName(partName)]: {
                     type: () => {
                       const typeRef = part.attributes.type;
                       const [typeNamespaceAlias, typeName] = typeRef.split(':');
@@ -888,7 +888,7 @@ export class SOAPLoader {
             // ##other / ##any / ##local / ##targetNamespace are XSD wildcards, not real namespace URIs
             if (anyNamespace && !anyNamespace.startsWith('##')) {
               const anyTypeTC = this.getInputTypeForTypeNameInNamespace({
-                typeName: complexTypeName,
+                typeName: complexType.attributes.name,
                 typeNamespace: anyNamespace,
               });
               if ('getFields' in anyTypeTC) {
@@ -1076,7 +1076,7 @@ export class SOAPLoader {
             // ##other / ##any / ##local / ##targetNamespace are XSD wildcards, not real namespace URIs
             if (anyNamespace && !anyNamespace.startsWith('##')) {
               const anyTypeTC = this.getOutputTypeForTypeNameInNamespace({
-                typeName: complexTypeName,
+                typeName: complexType.attributes.name,
                 typeNamespace: anyNamespace,
               });
               if ('getFields' in anyTypeTC) {
