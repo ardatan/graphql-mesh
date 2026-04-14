@@ -6531,7 +6531,7 @@ __metadata:
     "@graphql-tools/stitching-directives": "npm:^4.0.19"
     "@graphql-tools/utils": "npm:^11.0.0"
     "@repeaterjs/repeater": "npm:3.0.6"
-    "@theguild/federation-composition": "npm:^0.22.1"
+    "@theguild/federation-composition": "npm:^0.22.2"
     "@types/minimatch": "npm:6.0.0"
     "@types/pluralize": "npm:^0.0.33"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -14980,7 +14980,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@theguild/federation-composition@npm:0.22.1, @theguild/federation-composition@npm:^0.22.1":
+"@theguild/federation-composition@npm:0.22.1":
   version: 0.22.1
   resolution: "@theguild/federation-composition@npm:0.22.1"
   dependencies:
@@ -14991,6 +14991,20 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
   checksum: 10c0/270402fec696664af5986ebb258411210fef3a62e896b9bc59ef09ad2a51166c6fda3ec5c27a9c43b56a59580857ffd7be89f6a0e54d6412ecba3bc782228513
+  languageName: node
+  linkType: hard
+
+"@theguild/federation-composition@npm:^0.22.2":
+  version: 0.22.2
+  resolution: "@theguild/federation-composition@npm:0.22.2"
+  dependencies:
+    constant-case: "npm:^3.0.4"
+    debug: "npm:4.4.3"
+    json5: "npm:^2.2.3"
+    lodash.sortby: "npm:^4.7.0"
+  peerDependencies:
+    graphql: ^16.0.0
+  checksum: 10c0/24f2518e9c48104b20f0cca0e869b756d760081bf667164e370211da103132af6e475588ee8fd9c4ca65957e0dd3027be594b0f8f96f2e514e55283803b1aabe
   languageName: node
   linkType: hard
 
