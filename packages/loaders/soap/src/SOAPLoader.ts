@@ -191,6 +191,10 @@ export class SOAPLoader {
 
   private simpleTypeTCMap = new WeakMap<XSSimpleType, EnumTypeComposer | ScalarTypeComposer>();
   private namespaceTypePrefixMap = new Map<string, string>();
+  private namespaceElementRefMap = new Map<
+    string,
+    Map<string, { typeName: string; typeNamespace: string }>
+  >();
   public loadedLocations = new Map<string, WSDLObject | XSDObject>();
   private schemaHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
   private fetchFn: MeshFetch;
@@ -399,6 +403,18 @@ export class SOAPLoader {
               elementObj.attributes.name,
               refSimpleType,
             );
+          }
+          if (!refComplexType && !refSimpleType) {
+            // Forward reference: referenced type not yet loaded. Store for lazy lookup.
+            let elementRefs = this.namespaceElementRefMap.get(schemaNamespace);
+            if (!elementRefs) {
+              elementRefs = new Map();
+              this.namespaceElementRefMap.set(schemaNamespace, elementRefs);
+            }
+            elementRefs.set(elementObj.attributes.name, {
+              typeName: refTypeName,
+              typeNamespace: refTypeNamespace,
+            });
           }
         }
       }
@@ -691,13 +707,17 @@ export class SOAPLoader {
     return aliasMap;
   }
 
+  private toGQLName(name: string) {
+    return name?.replace(/[^_a-zA-Z0-9]/g, '_') ?? name;
+  }
+
   getTypeForSimpleType(
     simpleType: XSSimpleType,
     simpleTypeNamespace: string,
   ): EnumTypeComposer | ScalarTypeComposer {
     let simpleTypeTC = this.simpleTypeTCMap.get(simpleType);
     if (!simpleTypeTC) {
-      const simpleTypeName = simpleType.attributes.name;
+      const simpleTypeName = this.toGQLName(simpleType.attributes.name);
       const restrictionObj = simpleType.restriction[0];
       const prefix = this.namespaceTypePrefixMap.get(simpleTypeNamespace);
       if (restrictionObj.enumeration) {
@@ -757,13 +777,18 @@ export class SOAPLoader {
     if (simpleType) {
       return this.getTypeForSimpleType(simpleType, typeNamespace);
     }
+    // Lazy fallback for forward-referenced element aliases
+    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
+    if (elementRef) {
+      return this.getInputTypeForTypeNameInNamespace(elementRef);
+    }
     throw new Error(`Type: ${typeName} couldn't be found in ${typeNamespace}`);
   }
 
   getInputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeInputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = complexType.attributes.name;
+      const complexTypeName = this.toGQLName(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: InputTypeComposerFieldConfigMapDefinition = {};
@@ -774,7 +799,7 @@ export class SOAPLoader {
       for (const sequenceOrChoiceObj of choiceOrSequenceObjects) {
         if (sequenceOrChoiceObj.element) {
           for (const elementObj of sequenceOrChoiceObj.element) {
-            const fieldName = elementObj.attributes.name;
+            const fieldName = this.toGQLName(elementObj.attributes.name);
             if (fieldName) {
               fieldMap[fieldName] = {
                 type: () => {
@@ -881,7 +906,8 @@ export class SOAPLoader {
         if (sequenceOrChoiceObj.any) {
           for (const anyObj of sequenceOrChoiceObj.any) {
             const anyNamespace = anyObj.attributes?.namespace;
-            if (anyNamespace) {
+            // ##other / ##any / ##local / ##targetNamespace are XSD wildcard tokens, not real URIs
+            if (anyNamespace && !anyNamespace.startsWith('##')) {
               const anyTypeTC = this.getInputTypeForTypeNameInNamespace({
                 typeName: complexTypeName,
                 typeNamespace: anyNamespace,
@@ -1010,7 +1036,7 @@ export class SOAPLoader {
   getOutputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeOutputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = complexType.attributes.name;
+      const complexTypeName = this.toGQLName(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {};
@@ -1021,7 +1047,7 @@ export class SOAPLoader {
       for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
         if (choiceOrSequenceObj.element) {
           for (const elementObj of choiceOrSequenceObj.element) {
-            const fieldName = elementObj.attributes.name;
+            const fieldName = this.toGQLName(elementObj.attributes.name);
             if (fieldName) {
               const maxOccurs =
                 choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
@@ -1068,7 +1094,8 @@ export class SOAPLoader {
         if (choiceOrSequenceObj.any) {
           for (const anyObj of choiceOrSequenceObj.any) {
             const anyNamespace = anyObj.attributes?.namespace;
-            if (anyNamespace) {
+            // ##other / ##any / ##local / ##targetNamespace are XSD wildcard tokens, not real URIs
+            if (anyNamespace && !anyNamespace.startsWith('##')) {
               const anyTypeTC = this.getOutputTypeForTypeNameInNamespace({
                 typeName: complexTypeName,
                 typeNamespace: anyNamespace,
@@ -1112,7 +1139,7 @@ export class SOAPLoader {
             ];
             for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
               for (const elementObj of choiceOrSequenceObj.element) {
-                const fieldName = elementObj.attributes.name;
+                const fieldName = this.toGQLName(elementObj.attributes.name);
                 const maxOccurs =
                   choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
                 const minOccurs =
@@ -1178,6 +1205,11 @@ export class SOAPLoader {
     const simpleType = this.getNamespaceSimpleTypeMap(typeNamespace)?.get(typeName);
     if (simpleType) {
       return this.getTypeForSimpleType(simpleType, typeNamespace);
+    }
+    // Lazy fallback for forward-referenced element aliases
+    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
+    if (elementRef) {
+      return this.getOutputTypeForTypeNameInNamespace(elementRef);
     }
     throw new Error(`Type: ${typeName} couldn't be found in ${typeNamespace}`);
   }
