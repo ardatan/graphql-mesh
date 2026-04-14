@@ -183,7 +183,11 @@ export class SOAPLoader {
     }
   >();
 
-  private complexTypeInputTCMap = new WeakMap<XSComplexType, InputTypeComposer>();
+  private complexTypeInputTCMap = new WeakMap<
+    XSComplexType,
+    InputTypeComposer | ScalarTypeComposer
+  >();
+
   private complexTypeOutputTCMap = new WeakMap<
     XSComplexType,
     ObjectTypeComposer | ScalarTypeComposer
@@ -191,6 +195,11 @@ export class SOAPLoader {
 
   private simpleTypeTCMap = new WeakMap<XSSimpleType, EnumTypeComposer | ScalarTypeComposer>();
   private namespaceTypePrefixMap = new Map<string, string>();
+  private namespaceElementRefMap = new Map<
+    string,
+    Map<string, { typeName: string; typeNamespace: string }>
+  >();
+
   public loadedLocations = new Map<string, WSDLObject | XSDObject>();
   private schemaHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
   private fetchFn: MeshFetch;
@@ -220,6 +229,7 @@ export class SOAPLoader {
     const namespace = 'http://www.w3.org/2001/XMLSchema';
     const simpleTypeGraphQLScalarMap = new Map<string, GraphQLScalarType>([
       ['anyType', GraphQLJSON],
+      ['anySimpleType', GraphQLString],
       ['anyURI', GraphQLURL],
       ['base64Binary', GraphQLByte],
       ['byte', GraphQLByte],
@@ -398,6 +408,18 @@ export class SOAPLoader {
               elementObj.attributes.name,
               refSimpleType,
             );
+          }
+          if (!refComplexType && !refSimpleType) {
+            // Forward reference: referenced type not yet loaded. Store for lazy lookup.
+            let elementRefs = this.namespaceElementRefMap.get(schemaNamespace);
+            if (!elementRefs) {
+              elementRefs = new Map();
+              this.namespaceElementRefMap.set(schemaNamespace, elementRefs);
+            }
+            elementRefs.set(elementObj.attributes.name, {
+              typeName: refTypeName,
+              typeNamespace: refTypeNamespace,
+            });
           }
         }
       }
@@ -582,7 +604,7 @@ export class SOAPLoader {
               if (part.attributes.element) {
                 const [elementNamespaceAlias, elementName] = part.attributes.element.split(':');
                 rootTC.addFieldArgs(operationFieldName, {
-                  [elementName]: {
+                  [sanitizeNameForGraphQL(elementName)]: {
                     type: () => {
                       const elementNamespace =
                         aliasMap.get(elementNamespaceAlias) ||
@@ -603,7 +625,7 @@ export class SOAPLoader {
               } else if (part.attributes.name) {
                 const partName = part.attributes.name;
                 rootTC.addFieldArgs(operationFieldName, {
-                  [partName]: {
+                  [sanitizeNameForGraphQL(partName)]: {
                     type: () => {
                       const typeRef = part.attributes.type;
                       const [typeNamespaceAlias, typeName] = typeRef.split(':');
@@ -696,7 +718,7 @@ export class SOAPLoader {
   ): EnumTypeComposer | ScalarTypeComposer {
     let simpleTypeTC = this.simpleTypeTCMap.get(simpleType);
     if (!simpleTypeTC) {
-      const simpleTypeName = simpleType.attributes.name;
+      const simpleTypeName = sanitizeNameForGraphQL(simpleType.attributes.name);
       const restrictionObj = simpleType.restriction[0];
       const prefix = this.namespaceTypePrefixMap.get(simpleTypeNamespace);
       if (restrictionObj.enumeration) {
@@ -748,6 +770,11 @@ export class SOAPLoader {
     typeName: string;
     typeNamespace: string;
   }) {
+    // Check element aliases first — consistent with the eager path that overwrites the type map
+    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
+    if (elementRef) {
+      return this.getInputTypeForTypeNameInNamespace(elementRef);
+    }
     const complexType = this.getNamespaceComplexTypeMap(typeNamespace)?.get(typeName);
     if (complexType) {
       return this.getInputTypeForComplexType(complexType, typeNamespace);
@@ -762,7 +789,7 @@ export class SOAPLoader {
   getInputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeInputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = complexType.attributes.name;
+      const complexTypeName = sanitizeNameForGraphQL(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: InputTypeComposerFieldConfigMapDefinition = {};
@@ -773,8 +800,8 @@ export class SOAPLoader {
       for (const sequenceOrChoiceObj of choiceOrSequenceObjects) {
         if (sequenceOrChoiceObj.element) {
           for (const elementObj of sequenceOrChoiceObj.element) {
-            const fieldName = elementObj.attributes.name;
-            if (fieldName) {
+            if (elementObj.attributes?.name) {
+              const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
               fieldMap[fieldName] = {
                 type: () => {
                   const maxOccurs =
@@ -824,10 +851,17 @@ export class SOAPLoader {
                       // Dynamically defined simple type
                       // So we need to define alias map for this type
                       this.aliasMap.set(simpleTypeObj, aliasMap);
-                      // Inherit the name from elementObj
+                      // Inherit the name from elementObj, scoped to the parent type name
+                      // to avoid collisions when sibling types share an inline field name.
+                      // Skip scoping when complexTypeName already equals the namespace prefix
+                      // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing
+                      // like ByNameDataSet_ByNameDataSet_ByName.
                       simpleTypeObj.attributes = simpleTypeObj.attributes || ({} as any);
                       simpleTypeObj.attributes.name =
-                        simpleTypeObj.attributes.name || elementObj.attributes.name;
+                        simpleTypeObj.attributes.name ||
+                        (complexTypeName !== prefix
+                          ? `${complexTypeName}_${elementObj.attributes.name}`
+                          : elementObj.attributes.name);
                       let finalTC: AnyTypeComposer<any> = this.getTypeForSimpleType(
                         simpleTypeObj,
                         complexTypeNamespace,
@@ -846,10 +880,16 @@ export class SOAPLoader {
                       // Dynamically defined type
                       // So we need to define alias map for this type
                       this.aliasMap.set(complexTypeObj, aliasMap);
-                      // Inherit the name from elementObj
+                      // Inherit the name from elementObj, scoped to the parent type name
+                      // to avoid collisions when sibling types share an inline field name.
+                      // Skip scoping when complexTypeName already equals the namespace prefix
+                      // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
                       complexTypeObj.attributes = complexTypeObj.attributes || ({} as any);
                       complexTypeObj.attributes.name =
-                        complexTypeObj.attributes.name || elementObj.attributes.name;
+                        complexTypeObj.attributes.name ||
+                        (complexTypeName !== prefix
+                          ? `${complexTypeName}_${elementObj.attributes.name}`
+                          : elementObj.attributes.name);
                       let finalTC: AnyTypeComposer<any> = this.getInputTypeForComplexType(
                         complexTypeObj,
                         complexTypeNamespace,
@@ -867,7 +907,7 @@ export class SOAPLoader {
                     `Invalid element type definition: ${complexTypeName}->${fieldName}`,
                   );
                 },
-              };
+              } as any;
             } else {
               if (elementObj.attributes?.ref) {
                 this.logger.warn(`element.ref isn't supported yet.`);
@@ -879,10 +919,14 @@ export class SOAPLoader {
         }
         if (sequenceOrChoiceObj.any) {
           for (const anyObj of sequenceOrChoiceObj.any) {
-            const anyNamespace = anyObj.attributes?.namespace;
-            if (anyNamespace) {
+            // namespace may be a space-delimited list; trim each token and skip XSD wildcards
+            const anyNamespaces = (anyObj.attributes?.namespace ?? '')
+              .split(/\s+/)
+              .map((s: string) => s.trim())
+              .filter((ns: string) => ns && !ns.startsWith('##'));
+            for (const anyNamespace of anyNamespaces) {
               const anyTypeTC = this.getInputTypeForTypeNameInNamespace({
-                typeName: complexTypeName,
+                typeName: complexType.attributes.name,
                 typeNamespace: anyNamespace,
               });
               if ('getFields' in anyTypeTC) {
@@ -916,12 +960,14 @@ export class SOAPLoader {
               );
             }
             const baseTypeTC = this.getInputTypeForComplexType(baseType, baseTypeNamespace);
-            for (const fieldName in baseTypeTC.getFields()) {
-              fieldMap[fieldName] = baseTypeTC.getField(fieldName);
+            if ('getFields' in baseTypeTC) {
+              for (const fieldName in baseTypeTC.getFields()) {
+                fieldMap[fieldName] = baseTypeTC.getField(fieldName);
+              }
             }
             for (const sequenceObj of extensionObj.sequence) {
               for (const elementObj of sequenceObj.element) {
-                fieldMap[elementObj.attributes.name] = {
+                fieldMap[sanitizeNameForGraphQL(elementObj.attributes.name)] = {
                   type: () => {
                     const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(
                       ':',
@@ -944,10 +990,29 @@ export class SOAPLoader {
         }
       }
       if (Object.keys(fieldMap).length === 0) {
-        complexTypeTC = GraphQLJSON as any;
+        complexTypeTC = this.schemaComposer.createScalarTC(GraphQLJSON);
       } else {
+        // When two schemas share the same alias-derived prefix (e.g. both declare
+        // xmlns:tns="<own namespace>"), types with the same name from different
+        // namespaces collide. Detect the collision and fall back to a slug derived
+        // from the namespace URI. Loop until unique in case two URIs produce the
+        // same slug after normalization.
+        const candidateName = `${prefix}_${complexTypeName}_Input`;
+        let inputTypeName = candidateName;
+        if (this.schemaComposer.has(candidateName)) {
+          const nsSlug = complexTypeNamespace
+            .replace(/^https?:\/\//, '')
+            .replace(/[^a-zA-Z0-9]+/g, '_')
+            .replace(/^_+|_+$/g, '')
+            .replace(/^\d/, '_$&');
+          inputTypeName = `${nsSlug}_${complexTypeName}_Input`;
+          let i = 2;
+          while (this.schemaComposer.has(inputTypeName)) {
+            inputTypeName = `${nsSlug}_${complexTypeName}_Input_${i++}`;
+          }
+        }
         complexTypeTC = this.schemaComposer.createInputTC({
-          name: `${prefix}_${complexTypeName}_Input`,
+          name: inputTypeName,
           fields: fieldMap,
         });
       }
@@ -960,6 +1025,7 @@ export class SOAPLoader {
     elementObj: XSElement,
     aliasMap: Map<string, string>,
     namespace: string,
+    parentTypeName?: string,
   ) {
     if (elementObj.attributes?.type) {
       const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':') as [
@@ -983,9 +1049,19 @@ export class SOAPLoader {
         // Dynamically defined simple type
         // So we need to define alias map for this type
         this.aliasMap.set(simpleTypeObj, aliasMap);
-        // Inherit the name from elementObj
+        // Inherit the name from elementObj, scoped to the parent type name
+        // to avoid collisions when sibling types share an inline field name.
+        // Skip scoping when parentTypeName already equals the namespace prefix
+        // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
+        const nsPrefix = this.namespaceTypePrefixMap.get(namespace);
+        const effectiveParentName =
+          parentTypeName && parentTypeName !== nsPrefix ? parentTypeName : null;
         simpleTypeObj.attributes = simpleTypeObj.attributes || ({} as any);
-        simpleTypeObj.attributes.name = simpleTypeObj.attributes.name || elementObj.attributes.name;
+        simpleTypeObj.attributes.name =
+          simpleTypeObj.attributes.name ||
+          (effectiveParentName
+            ? `${effectiveParentName}_${elementObj.attributes.name}`
+            : elementObj.attributes.name);
         const outputTC = this.getTypeForSimpleType(simpleTypeObj, namespace);
         return outputTC;
       }
@@ -995,10 +1071,19 @@ export class SOAPLoader {
         // Dynamically defined type
         // So we need to define alias map for this type
         this.aliasMap.set(complexTypeObj, aliasMap);
-        // Inherit the name from elementObj
+        // Inherit the name from elementObj, scoped to the parent type name
+        // to avoid collisions when sibling types share an inline field name.
+        // Skip scoping when parentTypeName already equals the namespace prefix
+        // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
+        const nsPrefix = this.namespaceTypePrefixMap.get(namespace);
+        const effectiveParentName =
+          parentTypeName && parentTypeName !== nsPrefix ? parentTypeName : null;
         complexTypeObj.attributes = complexTypeObj.attributes || ({} as any);
         complexTypeObj.attributes.name =
-          complexTypeObj.attributes.name || elementObj.attributes.name;
+          complexTypeObj.attributes.name ||
+          (effectiveParentName
+            ? `${effectiveParentName}_${elementObj.attributes.name}`
+            : elementObj.attributes.name);
         const outputTC = this.getOutputTypeForComplexType(complexTypeObj, namespace);
         return outputTC;
       }
@@ -1009,7 +1094,7 @@ export class SOAPLoader {
   getOutputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeOutputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = complexType.attributes.name;
+      const complexTypeName = sanitizeNameForGraphQL(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {};
@@ -1020,8 +1105,8 @@ export class SOAPLoader {
       for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
         if (choiceOrSequenceObj.element) {
           for (const elementObj of choiceOrSequenceObj.element) {
-            const fieldName = elementObj.attributes.name;
-            if (fieldName) {
+            if (elementObj.attributes?.name) {
+              const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
               const maxOccurs =
                 choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
               const minOccurs =
@@ -1045,6 +1130,7 @@ export class SOAPLoader {
                     elementObj,
                     aliasMap,
                     complexTypeNamespace,
+                    complexTypeName,
                   );
                   if (isPlural) {
                     outputTC = outputTC.getTypePlural();
@@ -1054,7 +1140,7 @@ export class SOAPLoader {
                   }
                   return outputTC;
                 },
-              };
+              } as any;
             } else {
               if (elementObj.attributes?.ref) {
                 this.logger.warn(`element.ref isn't supported yet.`, elementObj.attributes?.ref);
@@ -1066,10 +1152,14 @@ export class SOAPLoader {
         }
         if (choiceOrSequenceObj.any) {
           for (const anyObj of choiceOrSequenceObj.any) {
-            const anyNamespace = anyObj.attributes?.namespace;
-            if (anyNamespace) {
+            // namespace may be a space-delimited list; trim each token and skip XSD wildcards
+            const anyNamespaces = (anyObj.attributes?.namespace ?? '')
+              .split(/\s+/)
+              .map((s: string) => s.trim())
+              .filter((ns: string) => ns && !ns.startsWith('##'));
+            for (const anyNamespace of anyNamespaces) {
               const anyTypeTC = this.getOutputTypeForTypeNameInNamespace({
-                typeName: complexTypeName,
+                typeName: complexType.attributes.name,
                 typeNamespace: anyNamespace,
               });
               if ('getFields' in anyTypeTC) {
@@ -1111,7 +1201,8 @@ export class SOAPLoader {
             ];
             for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
               for (const elementObj of choiceOrSequenceObj.element) {
-                const fieldName = elementObj.attributes.name;
+                if (!elementObj.attributes?.name) continue;
+                const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
                 const maxOccurs =
                   choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
                 const minOccurs =
@@ -1135,6 +1226,7 @@ export class SOAPLoader {
                       elementObj,
                       aliasMap,
                       complexTypeNamespace,
+                      complexTypeName,
                     );
                     if (isPlural) {
                       outputTC = outputTC.getTypePlural();
@@ -1144,7 +1236,7 @@ export class SOAPLoader {
                     }
                     return outputTC;
                   },
-                };
+                } as any;
               }
             }
           }
@@ -1153,8 +1245,27 @@ export class SOAPLoader {
       if (Object.keys(fieldMap).length === 0) {
         complexTypeTC = this.schemaComposer.createScalarTC(GraphQLJSON);
       } else {
+        // When two schemas share the same alias-derived prefix (e.g. both declare
+        // xmlns:tns="<own namespace>"), types with the same name from different
+        // namespaces collide. Detect the collision and fall back to a slug derived
+        // from the namespace URI. Loop until unique in case two URIs produce the
+        // same slug after normalization.
+        const candidateName = `${prefix}_${complexTypeName}`;
+        let outputTypeName = candidateName;
+        if (this.schemaComposer.has(candidateName)) {
+          const nsSlug = complexTypeNamespace
+            .replace(/^https?:\/\//, '')
+            .replace(/[^a-zA-Z0-9]+/g, '_')
+            .replace(/^_+|_+$/g, '')
+            .replace(/^\d/, '_$&');
+          outputTypeName = `${nsSlug}_${complexTypeName}`;
+          let i = 2;
+          while (this.schemaComposer.has(outputTypeName)) {
+            outputTypeName = `${nsSlug}_${complexTypeName}_${i++}`;
+          }
+        }
         complexTypeTC = this.schemaComposer.createObjectTC({
-          name: `${prefix}_${complexTypeName}`,
+          name: outputTypeName,
           fields: fieldMap,
         });
       }
@@ -1170,6 +1281,11 @@ export class SOAPLoader {
     typeName: string;
     typeNamespace: string;
   }) {
+    // Check element aliases first — consistent with the eager path that overwrites the type map
+    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
+    if (elementRef) {
+      return this.getOutputTypeForTypeNameInNamespace(elementRef);
+    }
     const complexType = this.getNamespaceComplexTypeMap(typeNamespace)?.get(typeName);
     if (complexType) {
       return this.getOutputTypeForComplexType(complexType, typeNamespace);
