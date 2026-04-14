@@ -778,8 +778,8 @@ export class SOAPLoader {
       for (const sequenceOrChoiceObj of choiceOrSequenceObjects) {
         if (sequenceOrChoiceObj.element) {
           for (const elementObj of sequenceOrChoiceObj.element) {
-            const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
-            if (fieldName) {
+            if (elementObj.attributes?.name) {
+              const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
               fieldMap[fieldName] = {
                 type: () => {
                   const maxOccurs =
@@ -1083,8 +1083,8 @@ export class SOAPLoader {
       for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
         if (choiceOrSequenceObj.element) {
           for (const elementObj of choiceOrSequenceObj.element) {
-            const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
-            if (fieldName) {
+            if (elementObj.attributes?.name) {
+              const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
               const maxOccurs =
                 choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
               const minOccurs =
@@ -1179,6 +1179,7 @@ export class SOAPLoader {
             ];
             for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
               for (const elementObj of choiceOrSequenceObj.element) {
+                if (!elementObj.attributes?.name) continue;
                 const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
                 const maxOccurs =
                   choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
