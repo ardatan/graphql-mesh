@@ -16,6 +16,7 @@ const examples = [
   'tempconvert',
   'any-simple-type',
   'forward-ref-elements',
+  'prefix-collision',
 ];
 
 describe('Examples', () => {

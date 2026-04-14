@@ -635,6 +635,53 @@ input SOAPHeaders {
 scalar ObjMap"
 `;
 
+exports[`Examples should generate schema for prefix-collision: prefix-collision 1`] = `
+"schema @transport(kind: "soap", subgraph: "prefix-collision") {
+  query: Query
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+
+type Query {
+  PrefixCollision_ItemsService_ItemsPort_getNs1Items(GetNs1Items: PrefixCollision_GetNs1Items_Input): PrefixCollision_GetNs1ItemsResponse @soap(elementName: "GetNs1ItemsResponse", bindingNamespace: "http://example.com/service", endpoint: "http://example.com/items", subgraph: "prefix-collision", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "getNs1Items")
+  PrefixCollision_ItemsService_ItemsPort_getNs2Items(GetNs2Items: PrefixCollision_GetNs2Items_Input): PrefixCollision_GetNs2ItemsResponse @soap(elementName: "GetNs2ItemsResponse", bindingNamespace: "http://example.com/service", endpoint: "http://example.com/items", subgraph: "prefix-collision", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "getNs2Items")
+}
+
+type PrefixCollision_GetNs1ItemsResponse {
+  item: [tns_Item]
+}
+
+type tns_Item {
+  id: String
+  label: String
+}
+
+input PrefixCollision_GetNs1Items_Input {
+  filter: String
+}
+
+type PrefixCollision_GetNs2ItemsResponse {
+  item: [example_com_ns2_Item]
+}
+
+type example_com_ns2_Item {
+  code: Int
+  description: String
+}
+
+input PrefixCollision_GetNs2Items_Input {
+  filter: String
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
+scalar ObjMap"
+`;
+
 exports[`Examples should generate schema for tempconvert: tempconvert 1`] = `
 "schema @transport(kind: "soap", subgraph: "tempconvert") {
   query: Query
