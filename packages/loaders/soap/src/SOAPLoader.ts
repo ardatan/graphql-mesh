@@ -880,9 +880,12 @@ export class SOAPLoader {
         }
         if (sequenceOrChoiceObj.any) {
           for (const anyObj of sequenceOrChoiceObj.any) {
-            const anyNamespace = anyObj.attributes?.namespace;
-            // ##other / ##any / ##local / ##targetNamespace are XSD wildcards, not real namespace URIs
-            if (anyNamespace && !anyNamespace.startsWith('##')) {
+            // namespace may be a space-delimited list; trim each token and skip XSD wildcards
+            const anyNamespaces = (anyObj.attributes?.namespace ?? '')
+              .split(/\s+/)
+              .map((s: string) => s.trim())
+              .filter((ns: string) => ns && !ns.startsWith('##'));
+            for (const anyNamespace of anyNamespaces) {
               const anyTypeTC = this.getInputTypeForTypeNameInNamespace({
                 typeName: complexTypeName,
                 typeNamespace: anyNamespace,
@@ -1068,9 +1071,12 @@ export class SOAPLoader {
         }
         if (choiceOrSequenceObj.any) {
           for (const anyObj of choiceOrSequenceObj.any) {
-            const anyNamespace = anyObj.attributes?.namespace;
-            // ##other / ##any / ##local / ##targetNamespace are XSD wildcards, not real namespace URIs
-            if (anyNamespace && !anyNamespace.startsWith('##')) {
+            // namespace may be a space-delimited list; trim each token and skip XSD wildcards
+            const anyNamespaces = (anyObj.attributes?.namespace ?? '')
+              .split(/\s+/)
+              .map((s: string) => s.trim())
+              .filter((ns: string) => ns && !ns.startsWith('##'));
+            for (const anyNamespace of anyNamespaces) {
               const anyTypeTC = this.getOutputTypeForTypeNameInNamespace({
                 typeName: complexTypeName,
                 typeNamespace: anyNamespace,

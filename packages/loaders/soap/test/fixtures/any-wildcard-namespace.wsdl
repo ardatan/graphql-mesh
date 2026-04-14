@@ -17,7 +17,12 @@
       <xs:complexType name="WildcardContainer">
         <xs:sequence>
           <xs:element name="name" type="xs:string"/>
+          <!-- single wildcard token -->
           <xs:any namespace="##other" minOccurs="0" processContents="lax"/>
+          <!-- whitespace-padded wildcard -->
+          <xs:any namespace="  ##any  " minOccurs="0" processContents="lax"/>
+          <!-- space-delimited list of wildcards -->
+          <xs:any namespace="##other ##local" minOccurs="0" processContents="lax"/>
         </xs:sequence>
       </xs:complexType>
       <xs:element name="ProcessItem">
