@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-replace-field",
-  "version": "0.105.36",
+  "version": "0.105.37",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,8 +35,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "^0.104.26",
-    "@graphql-mesh/utils": "^0.104.34",
+    "@graphql-mesh/types": "^0.104.27",
+    "@graphql-mesh/utils": "^0.104.35",
     "@graphql-tools/code-file-loader": "^8.1.31",
     "@graphql-tools/graphql-file-loader": "^8.1.13",
     "@graphql-tools/load": "^8.1.9",
@@ -44,7 +44,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.105.35",
+    "@graphql-mesh/cache-localforage": "0.105.36",
     "@graphql-tools/schema": "10.0.32",
     "graphql": "16.13.2"
   },

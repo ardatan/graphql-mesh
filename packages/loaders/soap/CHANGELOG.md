@@ -1,5 +1,61 @@
 # @omnigraph/soap
 
+## 0.107.42
+
+### Patch Changes
+
+- [#9406](https://github.com/ardatan/graphql-mesh/pull/9406)
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^11.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.1)
+    (from `^11.0.0`, in `dependencies`)
+
+- [#9414](https://github.com/ardatan/graphql-mesh/pull/9414)
+  [`136ebb7`](https://github.com/ardatan/graphql-mesh/commit/136ebb7f000b68e7a3c2543d66353ee91b622c9e)
+  Thanks [@zcag](https://github.com/zcag)! - Fix anonymous inline complex type name collisions when
+  multiple parent types define same-named inline fields
+
+- [#9420](https://github.com/ardatan/graphql-mesh/pull/9420)
+  [`9944c5b`](https://github.com/ardatan/graphql-mesh/commit/9944c5b1320a1e8c4aeeb1ebbb2cfd063d619f54)
+  Thanks [@zcag](https://github.com/zcag)! - fix(soap): skip xs:any wildcard namespace tokens
+  (##other, ##any, etc.) instead of treating them as namespace URIs
+
+- [#9416](https://github.com/ardatan/graphql-mesh/pull/9416)
+  [`4c604bf`](https://github.com/ardatan/graphql-mesh/commit/4c604bf4ac40ff2b7755cf1363b9ce2d41c02130)
+  Thanks [@zcag](https://github.com/zcag)! - Add missing xs:anySimpleType to built-in XSD type map,
+  mapping it to GraphQLString
+
+- [#9415](https://github.com/ardatan/graphql-mesh/pull/9415)
+  [`f86dfe1`](https://github.com/ardatan/graphql-mesh/commit/f86dfe18b3d2ab331a288c4ea47d70bcf8bd0800)
+  Thanks [@zcag](https://github.com/zcag)! - Fix crash when empty complex type used in repeated
+  element (getTypePlural called on raw GraphQLJSON scalar)
+
+- [#9422](https://github.com/ardatan/graphql-mesh/pull/9422)
+  [`a4b4cfd`](https://github.com/ardatan/graphql-mesh/commit/a4b4cfd1586e7625d06d6d41152ed8ae0c71ab24)
+  Thanks [@zcag](https://github.com/zcag)! - fix(soap): resolve element type aliases that
+  forward-reference types from later schemas
+
+- [#9421](https://github.com/ardatan/graphql-mesh/pull/9421)
+  [`46d314a`](https://github.com/ardatan/graphql-mesh/commit/46d314a1803456c2ca3ad367002cdc9fc4081944)
+  Thanks [@zcag](https://github.com/zcag)! - fix(soap): sanitize XSD type and field names containing
+  illegal GraphQL characters (dots, hyphens, etc.)
+
+- [#9417](https://github.com/ardatan/graphql-mesh/pull/9417)
+  [`5065c46`](https://github.com/ardatan/graphql-mesh/commit/5065c46e22b610f17fdb6d09c66a39fe8c99589e)
+  Thanks [@zcag](https://github.com/zcag)! - Fix GraphQL type name collisions when multiple embedded
+  schemas share the same namespace alias (e.g. tns)
+
+- Updated dependencies
+  [[`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)]:
+  - @graphql-mesh/cross-helpers@0.4.13
+  - @graphql-mesh/transport-soap@0.10.42
+  - @graphql-mesh/types@0.104.27
+  - @graphql-mesh/utils@0.104.35
+
 ## 0.107.41
 
 ### Patch Changes

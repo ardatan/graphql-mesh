@@ -1,5 +1,21 @@
 # @omnigraph/neo4j
 
+## 0.11.37
+
+### Patch Changes
+
+- [#9406](https://github.com/ardatan/graphql-mesh/pull/9406)
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.32` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.32)
+    (from `^10.0.31`, in `dependencies`)
+- Updated dependencies
+  [[`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)]:
+  - @graphql-mesh/transport-neo4j@0.10.37
+  - @graphql-mesh/types@0.104.27
+
 ## 0.11.36
 
 ### Patch Changes

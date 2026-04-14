@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/migrate-config-cli",
-  "version": "1.7.36",
+  "version": "1.7.37",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,11 +38,11 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "^0.100.48",
-    "@graphql-mesh/compose-cli": "^1.5.28",
-    "@graphql-mesh/config": "^0.108.42",
-    "@graphql-mesh/types": "^0.104.26",
-    "@graphql-mesh/utils": "^0.104.34",
+    "@graphql-mesh/cli": "^0.100.49",
+    "@graphql-mesh/compose-cli": "^1.5.29",
+    "@graphql-mesh/config": "^0.108.43",
+    "@graphql-mesh/types": "^0.104.27",
+    "@graphql-mesh/utils": "^0.104.35",
     "lodash.kebabcase": "^4.1.1",
     "prettier": "^3.8.2",
     "tslib": "^2.4.0"
