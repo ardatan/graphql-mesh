@@ -165,6 +165,55 @@ input SOAPHeaders {
 scalar ObjMap"
 `;
 
+exports[`Examples should generate schema for empty-complextype: empty-complextype 1`] = `
+"schema @transport(kind: "soap", subgraph: "empty-complextype") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+
+type Query {
+  placeholder: Void
+}
+
+"""Represents NULL values"""
+scalar Void
+
+type Mutation {
+  EmptyComplexType_ProcessService_ProcessPort_process(Process: EmptyComplexType_Process_Input): EmptyComplexType_ProcessResponse @soap(elementName: "ProcessResponse", bindingNamespace: "http://example.com/empty-complextype", endpoint: "http://example.com/process", subgraph: "empty-complextype", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "process")
+}
+
+type EmptyComplexType_ProcessResponse {
+  result: EmptyComplexType_Container
+}
+
+type EmptyComplexType_Container {
+  extensions: [JSON]
+}
+
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+input EmptyComplexType_Process_Input {
+  payload: EmptyComplexType_Container_Input
+}
+
+input EmptyComplexType_Container_Input {
+  extensions: [JSON]
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
+scalar ObjMap"
+`;
+
 exports[`Examples should generate schema for example1: example1 1`] = `
 "schema @transport(kind: "soap", subgraph: "example1") {
   query: Query
@@ -624,6 +673,75 @@ type NumberConversion_NumberToDollarsResponse {
 
 input NumberConversion_NumberToDollars_Input {
   dNum: Float
+}
+
+input SOAPHeaders {
+  namespace: String
+  alias: String
+  headers: ObjMap
+}
+
+scalar ObjMap"
+`;
+
+exports[`Examples should generate schema for inline-type-collision: inline-type-collision 1`] = `
+"schema @transport(kind: "soap", subgraph: "inline-type-collision") {
+  query: Query
+}
+
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+
+type Query {
+  InlineTypeCollision_CollisionService_CollisionPort_getA(GetA: InlineTypeCollision_GetA_Input): InlineTypeCollision_GetAResponse @soap(elementName: "GetAResponse", bindingNamespace: "http://example.com/inline-collision", endpoint: "http://example.com/collision", subgraph: "inline-type-collision", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "getA")
+  InlineTypeCollision_CollisionService_CollisionPort_getB(GetB: InlineTypeCollision_GetB_Input): InlineTypeCollision_GetBResponse @soap(elementName: "GetBResponse", bindingNamespace: "http://example.com/inline-collision", endpoint: "http://example.com/collision", subgraph: "inline-type-collision", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "getB")
+}
+
+type InlineTypeCollision_GetAResponse {
+  result: InlineTypeCollision_TypeA
+}
+
+type InlineTypeCollision_TypeA {
+  details: InlineTypeCollision_TypeA_details
+}
+
+type InlineTypeCollision_TypeA_details {
+  valueA: String
+}
+
+input InlineTypeCollision_GetA_Input {
+  input: InlineTypeCollision_TypeA_Input
+}
+
+input InlineTypeCollision_TypeA_Input {
+  details: InlineTypeCollision_TypeA_details_Input
+}
+
+input InlineTypeCollision_TypeA_details_Input {
+  valueA: String
+}
+
+type InlineTypeCollision_GetBResponse {
+  result: InlineTypeCollision_TypeB
+}
+
+type InlineTypeCollision_TypeB {
+  details: InlineTypeCollision_TypeB_details
+}
+
+type InlineTypeCollision_TypeB_details {
+  valueB: Int
+}
+
+input InlineTypeCollision_GetB_Input {
+  input: InlineTypeCollision_TypeB_Input
+}
+
+input InlineTypeCollision_TypeB_Input {
+  details: InlineTypeCollision_TypeB_details_Input
+}
+
+input InlineTypeCollision_TypeB_details_Input {
+  valueB: Int
 }
 
 input SOAPHeaders {
