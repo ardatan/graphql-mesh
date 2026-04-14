@@ -195,6 +195,11 @@ export class SOAPLoader {
 
   private simpleTypeTCMap = new WeakMap<XSSimpleType, EnumTypeComposer | ScalarTypeComposer>();
   private namespaceTypePrefixMap = new Map<string, string>();
+  private namespaceElementRefMap = new Map<
+    string,
+    Map<string, { typeName: string; typeNamespace: string }>
+  >();
+
   public loadedLocations = new Map<string, WSDLObject | XSDObject>();
   private schemaHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
   private fetchFn: MeshFetch;
@@ -403,6 +408,18 @@ export class SOAPLoader {
               elementObj.attributes.name,
               refSimpleType,
             );
+          }
+          if (!refComplexType && !refSimpleType) {
+            // Forward reference: referenced type not yet loaded. Store for lazy lookup.
+            let elementRefs = this.namespaceElementRefMap.get(schemaNamespace);
+            if (!elementRefs) {
+              elementRefs = new Map();
+              this.namespaceElementRefMap.set(schemaNamespace, elementRefs);
+            }
+            elementRefs.set(elementObj.attributes.name, {
+              typeName: refTypeName,
+              typeNamespace: refTypeNamespace,
+            });
           }
         }
       }
@@ -701,7 +718,7 @@ export class SOAPLoader {
   ): EnumTypeComposer | ScalarTypeComposer {
     let simpleTypeTC = this.simpleTypeTCMap.get(simpleType);
     if (!simpleTypeTC) {
-      const simpleTypeName = simpleType.attributes.name;
+      const simpleTypeName = sanitizeNameForGraphQL(simpleType.attributes.name);
       const restrictionObj = simpleType.restriction[0];
       const prefix = this.namespaceTypePrefixMap.get(simpleTypeNamespace);
       if (restrictionObj.enumeration) {
@@ -753,6 +770,11 @@ export class SOAPLoader {
     typeName: string;
     typeNamespace: string;
   }) {
+    // Check element aliases first — consistent with the eager path that overwrites the type map
+    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
+    if (elementRef) {
+      return this.getInputTypeForTypeNameInNamespace(elementRef);
+    }
     const complexType = this.getNamespaceComplexTypeMap(typeNamespace)?.get(typeName);
     if (complexType) {
       return this.getInputTypeForComplexType(complexType, typeNamespace);
@@ -767,7 +789,7 @@ export class SOAPLoader {
   getInputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeInputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = complexType.attributes.name;
+      const complexTypeName = sanitizeNameForGraphQL(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: InputTypeComposerFieldConfigMapDefinition = {};
@@ -778,8 +800,8 @@ export class SOAPLoader {
       for (const sequenceOrChoiceObj of choiceOrSequenceObjects) {
         if (sequenceOrChoiceObj.element) {
           for (const elementObj of sequenceOrChoiceObj.element) {
-            const fieldName = elementObj.attributes.name;
-            if (fieldName) {
+            if (elementObj.attributes?.name) {
+              const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
               fieldMap[fieldName] = {
                 type: () => {
                   const maxOccurs =
@@ -885,7 +907,7 @@ export class SOAPLoader {
                     `Invalid element type definition: ${complexTypeName}->${fieldName}`,
                   );
                 },
-              };
+              } as any;
             } else {
               if (elementObj.attributes?.ref) {
                 this.logger.warn(`element.ref isn't supported yet.`);
@@ -904,7 +926,7 @@ export class SOAPLoader {
               .filter((ns: string) => ns && !ns.startsWith('##'));
             for (const anyNamespace of anyNamespaces) {
               const anyTypeTC = this.getInputTypeForTypeNameInNamespace({
-                typeName: complexTypeName,
+                typeName: complexType.attributes.name,
                 typeNamespace: anyNamespace,
               });
               if ('getFields' in anyTypeTC) {
@@ -1072,7 +1094,7 @@ export class SOAPLoader {
   getOutputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeOutputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = complexType.attributes.name;
+      const complexTypeName = sanitizeNameForGraphQL(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {};
@@ -1083,8 +1105,8 @@ export class SOAPLoader {
       for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
         if (choiceOrSequenceObj.element) {
           for (const elementObj of choiceOrSequenceObj.element) {
-            const fieldName = elementObj.attributes.name;
-            if (fieldName) {
+            if (elementObj.attributes?.name) {
+              const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
               const maxOccurs =
                 choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
               const minOccurs =
@@ -1118,7 +1140,7 @@ export class SOAPLoader {
                   }
                   return outputTC;
                 },
-              };
+              } as any;
             } else {
               if (elementObj.attributes?.ref) {
                 this.logger.warn(`element.ref isn't supported yet.`, elementObj.attributes?.ref);
@@ -1137,7 +1159,7 @@ export class SOAPLoader {
               .filter((ns: string) => ns && !ns.startsWith('##'));
             for (const anyNamespace of anyNamespaces) {
               const anyTypeTC = this.getOutputTypeForTypeNameInNamespace({
-                typeName: complexTypeName,
+                typeName: complexType.attributes.name,
                 typeNamespace: anyNamespace,
               });
               if ('getFields' in anyTypeTC) {
@@ -1179,7 +1201,8 @@ export class SOAPLoader {
             ];
             for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
               for (const elementObj of choiceOrSequenceObj.element) {
-                const fieldName = elementObj.attributes.name;
+                if (!elementObj.attributes?.name) continue;
+                const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
                 const maxOccurs =
                   choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
                 const minOccurs =
@@ -1213,7 +1236,7 @@ export class SOAPLoader {
                     }
                     return outputTC;
                   },
-                };
+                } as any;
               }
             }
           }
@@ -1258,6 +1281,11 @@ export class SOAPLoader {
     typeName: string;
     typeNamespace: string;
   }) {
+    // Check element aliases first — consistent with the eager path that overwrites the type map
+    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
+    if (elementRef) {
+      return this.getOutputTypeForTypeNameInNamespace(elementRef);
+    }
     const complexType = this.getNamespaceComplexTypeMap(typeNamespace)?.get(typeName);
     if (complexType) {
       return this.getOutputTypeForComplexType(complexType, typeNamespace);

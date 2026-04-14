@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="urn:forward-ref-service"
+             name="ForwardRefService"
+             targetNamespace="urn:forward-ref-service">
+  <types>
+    <!--
+      Schema A is processed first and contains an element whose type= points
+      to a complexType declared in schema B, which appears later in the WSDL.
+      This exercises the forward-reference (deferred-ref) fix.
+    -->
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               xmlns:b="urn:schema-b"
+               targetNamespace="urn:schema-a"
+               elementFormDefault="qualified">
+      <xs:import namespace="urn:schema-b"/>
+      <!-- Forward reference: ServiceRequest is defined in schema B below -->
+      <xs:element name="Request" type="b:ServiceRequest"/>
+    </xs:schema>
+
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="urn:schema-b"
+               elementFormDefault="qualified">
+      <xs:complexType name="ServiceRequest">
+        <xs:sequence>
+          <xs:element name="id" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               xmlns:a="urn:schema-a"
+               targetNamespace="urn:forward-ref-service"
+               elementFormDefault="qualified">
+      <xs:import namespace="urn:schema-a"/>
+      <xs:element name="DoWork">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:a="urn:schema-a" name="request" type="a:Request"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DoWorkResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="result" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+
+  <message name="DoWorkRequest">
+    <part name="parameters" element="tns:DoWork"/>
+  </message>
+  <message name="DoWorkResponse">
+    <part name="parameters" element="tns:DoWorkResponse"/>
+  </message>
+
+  <portType name="ForwardRefPortType">
+    <operation name="doWork">
+      <input message="tns:DoWorkRequest"/>
+      <output message="tns:DoWorkResponse"/>
+    </operation>
+  </portType>
+
+  <binding name="ForwardRefBinding" type="tns:ForwardRefPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="doWork">
+      <soap:operation soapAction="doWork" style="document"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+  </binding>
+
+  <service name="ForwardRefService">
+    <port name="ForwardRefPort" binding="tns:ForwardRefBinding">
+      <soap:address location="http://example.com/forward-ref"/>
+    </port>
+  </service>
+</definitions>
