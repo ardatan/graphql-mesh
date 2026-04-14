@@ -15,6 +15,7 @@ const examples = [
   'greeting',
   'tempconvert',
   'any-simple-type',
+  'empty-complextype',
   'prefix-collision',
 ];
 
