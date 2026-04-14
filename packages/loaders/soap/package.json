@@ -41,7 +41,7 @@
     "@graphql-mesh/transport-soap": "^0.10.41",
     "@graphql-mesh/types": "^0.104.26",
     "@graphql-mesh/utils": "^0.104.34",
-    "@graphql-tools/utils": "^11.0.0",
+    "@graphql-tools/utils": "^11.0.1",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "fast-xml-parser": "^5.5.11",

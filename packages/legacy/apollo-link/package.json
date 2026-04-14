@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@graphql-mesh/runtime": "^0.106.36",
-    "@graphql-tools/utils": "^11.0.0",
+    "@graphql-tools/utils": "^11.0.1",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "tslib": "^2.4.0"
   },

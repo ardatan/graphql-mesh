@@ -39,7 +39,7 @@
     "@graphql-mesh/cross-helpers": "^0.4.12",
     "@graphql-mesh/string-interpolation": "^0.5.16",
     "@graphql-mesh/transport-common": "^1.0.15",
-    "@graphql-tools/utils": "^11.0.0",
+    "@graphql-tools/utils": "^11.0.1",
     "@grpc/grpc-js": "^1.14.3",
     "@whatwg-node/disposablestack": "^0.0.6",
     "globby": "^11.1.0",

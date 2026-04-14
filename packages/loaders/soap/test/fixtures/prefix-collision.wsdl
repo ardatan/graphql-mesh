@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://example.com/service"
+             xmlns:ns1="http://example.com/ns1"
+             xmlns:ns2="http://example.com/ns2"
+             name="PrefixCollision"
+             targetNamespace="http://example.com/service">
+  <types>
+    <!--
+      Both embedded schemas use "tns" as their self-referential alias (the standard
+      pattern in auto-generated WSDLs). Both also define a complex type named "Item".
+      Without the fix, both schemas get the prefix "tns", so both generate a type
+      named "tns_Item", causing buildSchema() to throw:
+        "Schema must contain uniquely named types but contains multiple types named 'tns_Item'"
+      With the fix, the second registration detects the collision via schemaComposer.has()
+      and falls back to a prefix derived from the namespace URI, which is globally unique.
+    -->
+    <xs:schema targetNamespace="http://example.com/ns1"
+               xmlns:tns="http://example.com/ns1">
+      <xs:complexType name="Item">
+        <xs:sequence>
+          <xs:element name="id" type="xs:string"/>
+          <xs:element name="label" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+    <xs:schema targetNamespace="http://example.com/ns2"
+               xmlns:tns="http://example.com/ns2">
+      <xs:complexType name="Item">
+        <xs:sequence>
+          <xs:element name="code" type="xs:int"/>
+          <xs:element name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+    <xs:schema targetNamespace="http://example.com/service"
+               xmlns:tns="http://example.com/service"
+               xmlns:ns1="http://example.com/ns1"
+               xmlns:ns2="http://example.com/ns2">
+      <xs:element name="GetNs1Items">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="filter" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetNs1ItemsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="item" type="ns1:Item" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetNs2Items">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="filter" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetNs2ItemsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="item" type="ns2:Item" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+  <message name="GetNs1ItemsRequest">
+    <part name="parameters" element="tns:GetNs1Items"/>
+  </message>
+  <message name="GetNs1ItemsResponse">
+    <part name="parameters" element="tns:GetNs1ItemsResponse"/>
+  </message>
+  <message name="GetNs2ItemsRequest">
+    <part name="parameters" element="tns:GetNs2Items"/>
+  </message>
+  <message name="GetNs2ItemsResponse">
+    <part name="parameters" element="tns:GetNs2ItemsResponse"/>
+  </message>
+  <portType name="ItemsPortType">
+    <operation name="getNs1Items">
+      <input message="tns:GetNs1ItemsRequest"/>
+      <output message="tns:GetNs1ItemsResponse"/>
+    </operation>
+    <operation name="getNs2Items">
+      <input message="tns:GetNs2ItemsRequest"/>
+      <output message="tns:GetNs2ItemsResponse"/>
+    </operation>
+  </portType>
+  <binding name="ItemsBinding" type="tns:ItemsPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="getNs1Items">
+      <soap:operation soapAction="getNs1Items" style="document"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+    <operation name="getNs2Items">
+      <soap:operation soapAction="getNs2Items" style="document"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+  </binding>
+  <service name="ItemsService">
+    <port name="ItemsPort" binding="tns:ItemsBinding">
+      <soap:address location="http://example.com/items"/>
+    </port>
+  </service>
+</definitions>

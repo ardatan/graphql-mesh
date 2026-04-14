@@ -39,13 +39,13 @@
     "@graphql-mesh/string-interpolation": "^0.5.16",
     "@graphql-mesh/types": "^0.104.26",
     "@graphql-mesh/utils": "^0.104.34",
-    "@graphql-tools/utils": "^11.0.0",
+    "@graphql-tools/utils": "^11.0.1",
     "minimatch": "^10.2.5",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "0.105.35",
-    "@graphql-tools/schema": "10.0.31",
+    "@graphql-tools/schema": "10.0.32",
     "@graphql-tools/wrap": "^11.1.13",
     "graphql": "16.13.2"
   },
