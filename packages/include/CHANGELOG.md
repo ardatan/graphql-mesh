@@ -1,5 +1,15 @@
 # @graphql-mesh/include
 
+## 0.3.38
+
+### Patch Changes
+
+- [#9424](https://github.com/ardatan/graphql-mesh/pull/9424)
+  [`3acfd01`](https://github.com/ardatan/graphql-mesh/commit/3acfd01f0b4190717dcc223e8dcdeb04945c1eeb)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`dotenv@^17.4.2` ↗︎](https://www.npmjs.com/package/dotenv/v/17.4.2) (from
+    `^17.4.1`, in `dependencies`)
+
 ## 0.3.37
 
 ### Patch Changes
