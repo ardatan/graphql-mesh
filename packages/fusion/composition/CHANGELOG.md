@@ -1,5 +1,12 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.46
+
+### Patch Changes
+
+- [`d62f684`](https://github.com/ardatan/graphql-mesh/commit/d62f684e77ff8e69af687cd044d563aad662465a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Remove broken `graphql/suggestionList` import
+
 ## 0.8.45
 
 ### Patch Changes
