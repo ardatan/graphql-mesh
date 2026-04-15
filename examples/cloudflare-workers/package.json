@@ -9,6 +9,6 @@
     "graphql": "16.13.2"
   },
   "devDependencies": {
-    "wrangler": "4.82.2"
+    "wrangler": "4.83.0"
   }
 }
