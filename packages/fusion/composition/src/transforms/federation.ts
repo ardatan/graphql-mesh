@@ -8,7 +8,6 @@ import {
   GraphQLString,
   OperationTypeNode,
 } from 'graphql';
-import { suggestionList } from 'graphql/jsutils/suggestionList.js';
 import {
   asArray,
   getDefinedRootType,
@@ -23,6 +22,7 @@ import {
   importFederationDirectives,
   importMeshDirectives,
 } from '../federation-utils.js';
+import { suggestionList } from '../suggestionList/index.js';
 import { TransformValidationError } from './utils.js';
 
 export interface FederationTransformConfig {
