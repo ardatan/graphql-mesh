@@ -195,32 +195,15 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   private async buildClient(options: RedisCacheOptions): Promise<Redis | Cluster> {
     const lazyConnect = options.lazyConnect !== false;
     if ('startupNodes' in options) {
-      let parsedUsername =
+      if (options.iam) {
+        throw new Error('Redis IAM authentication is not supported with Redis Cluster mode.');
+      }
+      const parsedUsername =
         interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
-      let parsedPassword =
+      const parsedPassword =
         interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
       const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
       const numDb = parseInt(parsedDb);
-      if (options.iam) {
-        const firstNode = options.startupNodes[0];
-        const host = firstNode?.host && interpolateStrWithEnv(firstNode.host);
-        const port = firstNode?.port ? parseInt(interpolateStrWithEnv(firstNode.port)) : undefined;
-        if (!host) {
-          throw new Error('Redis IAM authentication requires at least one startup node host.');
-        }
-        parsedUsername = interpolateStrWithEnv(options.iam.username || parsedUsername);
-        if (!parsedUsername) {
-          throw new Error(
-            'Redis IAM authentication requires a username via iam.username, username or REDIS_USERNAME.',
-          );
-        }
-        parsedPassword = await generateRedisIAMToken({
-          host,
-          port: isNaN(port) ? undefined : port,
-          iamConfig: parseRedisIAMConfig(options.iam),
-          username: parsedUsername,
-        });
-      }
       return new Redis.Cluster(
         options.startupNodes.map(s => ({
           host: s.host && interpolateStrWithEnv(s.host),
@@ -324,7 +307,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
           }
           parsedPassword = await generateRedisIAMToken({
             host: parsedHost,
-            port: isNaN(numPort) ? undefined : numPort,
+            port: !Number.isNaN(numPort) ? numPort : undefined,
             iamConfig,
             username: parsedUsername,
           });

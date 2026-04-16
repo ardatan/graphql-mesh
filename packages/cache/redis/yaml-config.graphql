@@ -27,10 +27,6 @@ type RedisConfigCluster @md {
   @see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls
   """
   tls: Boolean
-  """
-  IAM authentication configuration for AWS ElastiCache or MemoryDB.
-  """
-  iam: RedisCacheIAMConfig
 }
 
 type RedisConfigSentinel @md {
