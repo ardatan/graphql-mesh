@@ -35,10 +35,14 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@aws-sdk/credential-provider-node": "^3.972.13",
     "@graphql-mesh/cross-helpers": "^0.4.13",
     "@graphql-mesh/string-interpolation": "^0.5.16",
     "@graphql-mesh/types": "^0.104.27",
     "@opentelemetry/api": "^1.9.1",
+    "@smithy/hash-node": "^4.2.10",
+    "@smithy/protocol-http": "^5.3.10",
+    "@smithy/signature-v4": "^5.3.10",
     "@whatwg-node/disposablestack": "^0.0.6",
     "ioredis": "^5.10.1",
     "ioredis-mock": "^8.13.1",

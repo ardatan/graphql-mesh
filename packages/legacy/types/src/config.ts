@@ -1884,6 +1884,44 @@ export interface RedisConfigSingle {
    * @default: true
    */
   lazyConnect?: boolean;
+  iam?: RedisIAMConfig;
+}
+/**
+ * IAM authentication configuration for AWS ElastiCache or MemoryDB.
+ */
+export interface RedisIAMConfig {
+  /**
+   * AWS region for signing the IAM Redis authentication token.
+   */
+  region: string;
+  /**
+   * Redis ACL username to authenticate with.
+   */
+  username?: string;
+  /**
+   * AWS signing service name.
+   *
+   * @default: elasticache (Allowed values: elasticache, memorydb)
+   */
+  serviceName?: 'elasticache' | 'memorydb';
+  /**
+   * Optional static AWS access key id. If omitted, default AWS credentials provider chain is used.
+   */
+  accessKeyId?: string;
+  /**
+   * Optional static AWS secret access key. If omitted, default AWS credentials provider chain is used.
+   */
+  secretAccessKey?: string;
+  /**
+   * Optional static AWS session token.
+   */
+  sessionToken?: string;
+  /**
+   * Optional IAM token expiration in seconds.
+   *
+   * @default: 900
+   */
+  tokenExpirationSeconds?: number;
 }
 export interface RedisConfigCluster {
   startupNodes: RedisSentinelConfig[];
@@ -1908,6 +1946,44 @@ export interface RedisConfigCluster {
    * @see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls
    */
   tls?: boolean;
+  iam?: RedisIAMConfig1;
+}
+/**
+ * IAM authentication configuration for AWS ElastiCache or MemoryDB.
+ */
+export interface RedisIAMConfig1 {
+  /**
+   * AWS region for signing the IAM Redis authentication token.
+   */
+  region: string;
+  /**
+   * Redis ACL username to authenticate with.
+   */
+  username?: string;
+  /**
+   * AWS signing service name.
+   *
+   * @default: elasticache (Allowed values: elasticache, memorydb)
+   */
+  serviceName?: 'elasticache' | 'memorydb';
+  /**
+   * Optional static AWS access key id. If omitted, default AWS credentials provider chain is used.
+   */
+  accessKeyId?: string;
+  /**
+   * Optional static AWS secret access key. If omitted, default AWS credentials provider chain is used.
+   */
+  secretAccessKey?: string;
+  /**
+   * Optional static AWS session token.
+   */
+  sessionToken?: string;
+  /**
+   * Optional IAM token expiration in seconds.
+   *
+   * @default: 900
+   */
+  tokenExpirationSeconds?: number;
 }
 export interface PubSubConfig {
   name: string;

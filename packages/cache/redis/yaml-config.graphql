@@ -27,6 +27,10 @@ type RedisConfigCluster @md {
   @see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls
   """
   tls: Boolean
+  """
+  IAM authentication configuration for AWS ElastiCache or MemoryDB.
+  """
+  iam: RedisIAMConfig
 }
 
 type RedisConfigSentinel @md {
@@ -83,4 +87,48 @@ type RedisConfigSingle @md {
   @default: true
   """
   lazyConnect: Boolean
+  """
+  IAM authentication configuration for AWS ElastiCache or MemoryDB.
+  """
+  iam: RedisIAMConfig
+}
+
+type RedisIAMConfig @md {
+  """
+  AWS region for signing the IAM Redis authentication token.
+  """
+  region: String!
+  """
+  Redis ACL username to authenticate with.
+  """
+  username: String
+  """
+  AWS signing service name.
+
+  @default: elasticache
+  """
+  serviceName: RedisIAMServiceName
+  """
+  Optional static AWS access key id. If omitted, default AWS credentials provider chain is used.
+  """
+  accessKeyId: String
+  """
+  Optional static AWS secret access key. If omitted, default AWS credentials provider chain is used.
+  """
+  secretAccessKey: String
+  """
+  Optional static AWS session token.
+  """
+  sessionToken: String
+  """
+  Optional IAM token expiration in seconds.
+
+  @default: 900
+  """
+  tokenExpirationSeconds: Int
+}
+
+enum RedisIAMServiceName {
+  elasticache
+  memorydb
 }

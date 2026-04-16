@@ -6402,10 +6402,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-redis@workspace:packages/cache/redis"
   dependencies:
+    "@aws-sdk/credential-provider-node": "npm:^3.972.13"
     "@graphql-mesh/cross-helpers": "npm:^0.4.13"
     "@graphql-mesh/string-interpolation": "npm:^0.5.16"
     "@graphql-mesh/types": "npm:^0.104.27"
     "@opentelemetry/api": "npm:^1.9.1"
+    "@smithy/hash-node": "npm:^4.2.10"
+    "@smithy/protocol-http": "npm:^5.3.10"
+    "@smithy/signature-v4": "npm:^5.3.10"
     "@types/ioredis-mock": "npm:8.2.7"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     graphql: "npm:16.13.2"

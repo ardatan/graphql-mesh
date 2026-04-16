@@ -1,9 +1,25 @@
 /* eslint-disable no-new */
+import { defaultProvider } from '@aws-sdk/credential-provider-node';
 import Redis from 'ioredis';
+import { SignatureV4 } from '@smithy/signature-v4';
 import { dummyLogger as logger } from '../../../testing/dummyLogger';
 import RedisCache from '../src/index.js';
 
 jest.mock('ioredis');
+jest.mock('@aws-sdk/credential-provider-node', () => ({
+  defaultProvider: jest.fn(() => jest.fn(async () => ({ accessKeyId: 'akid', secretAccessKey: 'secret' }))),
+}));
+jest.mock('@smithy/signature-v4', () => ({
+  SignatureV4: jest.fn().mockImplementation(() => ({
+    presign: jest.fn(async () => ({
+      query: {
+        Action: 'connect',
+        User: 'cache-user',
+        'X-Amz-Signature': 'mock-signature',
+      },
+    })),
+  })),
+}));
 
 describe('redis', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -124,6 +140,51 @@ describe('redis', () => {
         }).toThrow('Redis URL must use either redis:// or rediss://');
       },
     );
+
+    it('passes IAM-generated credentials for host-based configuration', async () => {
+      using redis = new RedisCache({
+        host: 'cache.example.amazonaws.com',
+        port: '6379',
+        iam: {
+          region: 'us-east-1',
+          username: 'cache-user',
+        },
+        logger,
+      });
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(SignatureV4).toHaveBeenCalledWith(
+        expect.objectContaining({
+          region: 'us-east-1',
+          service: 'elasticache',
+        }),
+      );
+      expect(Redis).toHaveBeenCalledWith({
+        enableAutoPipelining: true,
+        enableOfflineQueue: true,
+        host: 'cache.example.amazonaws.com',
+        lazyConnect: true,
+        password: 'Action=connect&User=cache-user&X-Amz-Signature=mock-signature',
+        port: 6379,
+        tls: {},
+        username: 'cache-user',
+      });
+      expect(defaultProvider).toHaveBeenCalledTimes(1);
+    });
+
+    it('throws if iam is configured with redis:// URL', async () => {
+      using redis = new RedisCache({
+        url: 'redis://cache.example.amazonaws.com:6379',
+        iam: {
+          region: 'us-east-1',
+          username: 'cache-user',
+        },
+        logger,
+      });
+      await expect(redis.get('test')).rejects.toThrow(
+        'Redis IAM authentication requires rediss:// URLs.',
+      );
+    });
   });
 
   describe('String interpolation', () => {
