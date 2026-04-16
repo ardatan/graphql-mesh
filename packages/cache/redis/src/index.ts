@@ -245,17 +245,13 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
             db: isNaN(numDb) ? undefined : numDb,
             enableAutoPipelining: true,
             ...(lazyConnect ? { lazyConnect: true } : {}),
-            tls: options.tls || options.iam ? {} : undefined,
-          },
-          enableAutoPipelining: true,
-          enableOfflineQueue: true,
-          ...(lazyConnect ? { lazyConnect: true } : {}),
+          tls: options.tls || options.iam ? {} : undefined,
         },
-      );
-    } else if ('sentinels' in options) {
-      throw new Error(
-        'Redis IAM authentication is not supported with Sentinel mode.',
-      );
+        enableAutoPipelining: true,
+        enableOfflineQueue: true,
+        ...(lazyConnect ? { lazyConnect: true } : {}),
+      },
+    );
     } else if (options.url) {
       const redisUrl = new URL(interpolateStrWithEnv(options.url));
 

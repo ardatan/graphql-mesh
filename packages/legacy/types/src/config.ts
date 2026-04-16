@@ -1949,8 +1949,7 @@ export interface RedisConfigCluster {
   iam?: RedisCacheIAMConfig1;
 }
 /**
- * IAM authentication configuration for AWS ElastiCache or MemoryDB cluster.
- * The IAM token is signed using the first startup node's host and port.
+ * IAM authentication configuration for AWS ElastiCache or MemoryDB.
  */
 export interface RedisCacheIAMConfig1 {
   /**

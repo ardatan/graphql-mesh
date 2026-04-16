@@ -119,7 +119,7 @@
         },
         "iam": {
           "$ref": "#/definitions/RedisCacheIAMConfig",
-          "description": "IAM authentication configuration for AWS ElastiCache or MemoryDB cluster.\nThe IAM token is signed using the first startup node's host and port."
+          "description": "IAM authentication configuration for AWS ElastiCache or MemoryDB."
         }
       },
       "required": ["startupNodes"]
