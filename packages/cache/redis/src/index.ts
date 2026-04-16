@@ -48,6 +48,11 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   constructor(options: RedisCacheOptions) {
     this.tracer = trace.getTracer('hive.cache.redis');
     if (options.iam) {
+      if ('startupNodes' in options || 'sentinels' in options) {
+        throw new Error(
+          'Redis IAM authentication is only supported with single-node Redis host/port or URL configurations.',
+        );
+      }
       this.client$ = this.tracer.startActiveSpan('hive.cache.redis.init', span =>
         this.buildClient(options)
           .then(client => {
@@ -195,54 +200,13 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   private async buildClient(options: RedisCacheOptions): Promise<Redis | Cluster> {
     const lazyConnect = options.lazyConnect !== false;
     if ('startupNodes' in options) {
-      if (options.iam) {
-        throw new Error('Redis IAM authentication is not supported with Redis Cluster mode.');
-      }
-      const parsedUsername =
-        interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
-      const parsedPassword =
-        interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
-      const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
-      const numDb = parseInt(parsedDb);
-      return new Redis.Cluster(
-        options.startupNodes.map(s => ({
-          host: s.host && interpolateStrWithEnv(s.host),
-          port: s.port && parseInt(interpolateStrWithEnv(s.port)),
-          family: s.family && parseInt(interpolateStrWithEnv(s.family)),
-        })),
-        {
-          dnsLookup: options.dnsLookupAsIs ? (address, callback) => callback(null, address) : undefined,
-          redisOptions: {
-            username: parsedUsername,
-            password: parsedPassword,
-            db: isNaN(numDb) ? undefined : numDb,
-            enableAutoPipelining: true,
-            ...(lazyConnect ? { lazyConnect: true } : {}),
-            tls: options.tls || options.iam ? {} : undefined,
-          },
-          enableAutoPipelining: true,
-          enableOfflineQueue: true,
-          ...(lazyConnect ? { lazyConnect: true } : {}),
-        },
+      throw new Error(
+        'Redis IAM authentication is only supported with single-node Redis host/port or URL configurations.',
       );
     } else if ('sentinels' in options) {
-      if (options.iam) {
-        throw new Error('Redis IAM authentication is not supported with Sentinel mode.');
-      }
-      return new Redis({
-        name: options.name,
-        sentinelPassword: options.sentinelPassword && interpolateStrWithEnv(options.sentinelPassword),
-        sentinels: options.sentinels.map(s => ({
-          host: s.host && interpolateStrWithEnv(s.host),
-          port: s.port && parseInt(interpolateStrWithEnv(s.port)),
-          family: s.family && parseInt(interpolateStrWithEnv(s.family)),
-        })),
-        role: options.role,
-        enableTLSForSentinelMode: options.enableTLSForSentinelMode,
-        enableAutoPipelining: true,
-        enableOfflineQueue: true,
-        lazyConnect,
-      });
+      throw new Error(
+        'Redis IAM authentication is only supported with single-node Redis host/port or URL configurations.',
+      );
     } else if (options.url) {
       const redisUrl = new URL(interpolateStrWithEnv(options.url));
 
