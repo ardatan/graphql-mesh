@@ -1884,12 +1884,12 @@ export interface RedisConfigSingle {
    * @default: true
    */
   lazyConnect?: boolean;
-  iam?: RedisIAMConfig;
+  iam?: RedisCacheIAMConfig;
 }
 /**
  * IAM authentication configuration for AWS ElastiCache or MemoryDB.
  */
-export interface RedisIAMConfig {
+export interface RedisCacheIAMConfig {
   /**
    * AWS region for signing the IAM Redis authentication token.
    */
@@ -1946,12 +1946,12 @@ export interface RedisConfigCluster {
    * @see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls
    */
   tls?: boolean;
-  iam?: RedisIAMConfig1;
+  iam?: RedisCacheIAMConfig1;
 }
 /**
  * IAM authentication configuration for AWS ElastiCache or MemoryDB.
  */
-export interface RedisIAMConfig1 {
+export interface RedisCacheIAMConfig1 {
   /**
    * AWS region for signing the IAM Redis authentication token.
    */

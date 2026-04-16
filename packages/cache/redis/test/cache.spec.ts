@@ -1,4 +1,3 @@
-/* eslint-disable no-new */
 import { defaultProvider } from '@aws-sdk/credential-provider-node';
 import Redis from 'ioredis';
 import { SignatureV4 } from '@smithy/signature-v4';

@@ -30,7 +30,7 @@ type RedisConfigCluster @md {
   """
   IAM authentication configuration for AWS ElastiCache or MemoryDB.
   """
-  iam: RedisIAMConfig
+  iam: RedisCacheIAMConfig
 }
 
 type RedisConfigSentinel @md {
@@ -90,10 +90,10 @@ type RedisConfigSingle @md {
   """
   IAM authentication configuration for AWS ElastiCache or MemoryDB.
   """
-  iam: RedisIAMConfig
+  iam: RedisCacheIAMConfig
 }
 
-type RedisIAMConfig @md {
+type RedisCacheIAMConfig @md {
   """
   AWS region for signing the IAM Redis authentication token.
   """
