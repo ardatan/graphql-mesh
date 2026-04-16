@@ -77,12 +77,24 @@ function generateSelectionSetFactory(
     // If result path provided without a selectionSet
   } else if (additionalResolver.result) {
     const resultPath = toPath(additionalResolver.result);
+    const hasDataPathPrefix = resultPath[0] === 'data';
     let abstractResultTypeName: string;
 
     const sourceType = schema.getType(additionalResolver.sourceTypeName) as GraphQLObjectType;
     const sourceTypeFields = sourceType.getFields();
     const sourceField = sourceTypeFields[additionalResolver.sourceFieldName];
-    const resultFieldType = getTypeByPath(sourceField.type, resultPath);
+    let selectionSetPath = resultPath;
+    let resultFieldType: GraphQLNamedType;
+    try {
+      resultFieldType = getTypeByPath(sourceField.type, selectionSetPath);
+    } catch (error) {
+      if (hasDataPathPrefix) {
+        selectionSetPath = resultPath.slice(1);
+        resultFieldType = getTypeByPath(sourceField.type, selectionSetPath);
+      } else {
+        throw error;
+      }
+    }
 
     if (isAbstractType(resultFieldType)) {
       if (additionalResolver.resultType) {
@@ -112,7 +124,7 @@ function generateSelectionSetFactory(
     return (subtree: SelectionSetNode) => {
       let finalSelectionSet = subtree;
       let isLastResult = true;
-      const resultPathReversed = [...resultPath].reverse();
+      const resultPathReversed = [...selectionSetPath].reverse();
       for (const pathElem of resultPathReversed) {
         // Ensure the path elem is not array index
         if (Number.isNaN(parseInt(pathElem))) {
@@ -163,11 +175,18 @@ function generateSelectionSetFactory(
 }
 
 function generateValuesFromResults(resultExpression: string): (result: any) => any {
+  const resultPath = toPath(resultExpression);
+  const fallbackResultExpression =
+    resultPath[0] === 'data' ? resultPath.slice(1).join('.') : undefined;
   return function valuesFromResults(result: any): any {
     if (Array.isArray(result)) {
       return result.map(valuesFromResults);
     }
-    return lodashGet(result, resultExpression);
+    const value = lodashGet(result, resultExpression);
+    if (value !== undefined || !fallbackResultExpression) {
+      return value;
+    }
+    return lodashGet(result, fallbackResultExpression);
   };
 }
 

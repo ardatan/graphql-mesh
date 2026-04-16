@@ -342,3 +342,89 @@ it('should resolve from subgraph when fragments are present even if all fields a
 
   expect(products.productPriceResolver).toHaveBeenCalled();
 });
+
+it('should support result paths prefixed with data for additional resolvers', async () => {
+  const sourceResolver = jest.fn((_root, { id }) => ({
+    items: [
+      {
+        id,
+        name: `Product ${id}`,
+      },
+    ],
+  }));
+
+  const schema = makeExecutableSchema({
+    typeDefs: parse(/* GraphQL */ `
+      type Query {
+        product(id: ID!): Product
+        productData(id: ID!): ProductData
+      }
+
+      type Product {
+        id: ID!
+        name: String!
+        fromProductData: Product
+      }
+
+      type ProductData {
+        items: [Product!]!
+      }
+    `),
+    resolvers: {
+      Query: {
+        product: (_root, { id }) => ({
+          id,
+          name: `Product ${id}`,
+        }),
+      },
+      ...resolveAdditionalResolversWithoutImport({
+        targetTypeName: 'Product',
+        targetFieldName: 'fromProductData',
+        sourceName: 'ProductsSource',
+        sourceTypeName: 'Query',
+        sourceFieldName: 'productData',
+        sourceArgs: {
+          id: '{root.id}',
+        },
+        result: 'data.items[0]',
+      }),
+    },
+  });
+
+  const result = await execute({
+    schema,
+    document: parse(/* GraphQL */ `
+      query {
+        product(id: "1") {
+          fromProductData {
+            id
+            name
+          }
+        }
+      }
+    `),
+    contextValue: {
+      ProductsSource: {
+        Query: {
+          productData: options =>
+            options.valuesFromResults?.(sourceResolver(undefined, options.args)),
+        },
+      },
+    },
+  });
+
+  expect(result).toEqual({
+    data: {
+      product: {
+        fromProductData: {
+          id: '1',
+          name: 'Product 1',
+        },
+      },
+    },
+  });
+  expect(sourceResolver).toHaveBeenCalledTimes(1);
+  expect(sourceResolver).toHaveBeenCalledWith(undefined, {
+    id: '1',
+  });
+});
