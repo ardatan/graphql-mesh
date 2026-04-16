@@ -116,6 +116,10 @@
         "tls": {
           "type": "boolean",
           "description": "Enable TLS for Redis Cluster connections. Required for AWS Elasticache Clusters with TLS.\n\n@see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls"
+        },
+        "iam": {
+          "$ref": "#/definitions/RedisCacheIAMConfig",
+          "description": "IAM authentication configuration for AWS ElastiCache or MemoryDB cluster.\nThe IAM token is signed using the first startup node's host and port."
         }
       },
       "required": ["startupNodes"]

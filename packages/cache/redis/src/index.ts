@@ -48,9 +48,9 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   constructor(options: RedisCacheOptions) {
     this.tracer = trace.getTracer('hive.cache.redis');
     if (options.iam) {
-      if ('startupNodes' in options || 'sentinels' in options) {
+      if ('sentinels' in options) {
         throw new Error(
-          'Redis IAM authentication is only supported with single-node Redis host/port or URL configurations.',
+          'Redis IAM authentication is not supported with Sentinel mode. Use single-node (host/port or URL) or cluster configurations.',
         );
       }
       this.client$ = this.tracer.startActiveSpan('hive.cache.redis.init', span =>
@@ -200,12 +200,61 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   private async buildClient(options: RedisCacheOptions): Promise<Redis | Cluster> {
     const lazyConnect = options.lazyConnect !== false;
     if ('startupNodes' in options) {
-      throw new Error(
-        'Redis IAM authentication is only supported with single-node Redis host/port or URL configurations.',
+      let parsedUsername =
+        interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
+      let parsedPassword =
+        interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
+      const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+      const numDb = parseInt(parsedDb);
+      if (options.iam) {
+        const iamConfig = parseRedisIAMConfig(options.iam);
+        parsedUsername = interpolateStrWithEnv(options.iam.username || parsedUsername);
+        if (!parsedUsername) {
+          throw new Error(
+            'Redis IAM authentication requires a username via iam.username, username or REDIS_USERNAME.',
+          );
+        }
+        // The IAM token is signed for the first startup node; all cluster nodes accept
+        // tokens issued against the cluster's primary/configuration endpoint.
+        const firstNode = options.startupNodes[0];
+        if (!firstNode?.host) {
+          throw new Error(
+            'Redis IAM authentication with cluster mode requires at least one startup node with a host.',
+          );
+        }
+        const nodeHost = interpolateStrWithEnv(firstNode.host);
+        const rawPort = firstNode.port ? parseInt(interpolateStrWithEnv(firstNode.port)) : NaN;
+        parsedPassword = await generateRedisIAMToken({
+          host: nodeHost,
+          port: !Number.isNaN(rawPort) ? rawPort : undefined,
+          iamConfig,
+          username: parsedUsername,
+        });
+      }
+      return new Redis.Cluster(
+        options.startupNodes.map(s => ({
+          host: s.host && interpolateStrWithEnv(s.host),
+          port: s.port && parseInt(interpolateStrWithEnv(s.port)),
+          family: s.family && parseInt(interpolateStrWithEnv(s.family)),
+        })),
+        {
+          dnsLookup: options.dnsLookupAsIs ? (address, callback) => callback(null, address) : undefined,
+          redisOptions: {
+            username: parsedUsername,
+            password: parsedPassword,
+            db: isNaN(numDb) ? undefined : numDb,
+            enableAutoPipelining: true,
+            ...(lazyConnect ? { lazyConnect: true } : {}),
+            tls: options.tls || options.iam ? {} : undefined,
+          },
+          enableAutoPipelining: true,
+          enableOfflineQueue: true,
+          ...(lazyConnect ? { lazyConnect: true } : {}),
+        },
       );
     } else if ('sentinels' in options) {
       throw new Error(
-        'Redis IAM authentication is only supported with single-node Redis host/port or URL configurations.',
+        'Redis IAM authentication is not supported with Sentinel mode.',
       );
     } else if (options.url) {
       const redisUrl = new URL(interpolateStrWithEnv(options.url));

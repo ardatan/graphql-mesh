@@ -1,10 +1,24 @@
 import { defaultProvider } from '@aws-sdk/credential-provider-node';
-import Redis from 'ioredis';
 import { SignatureV4 } from '@smithy/signature-v4';
 import { dummyLogger as logger } from '../../../testing/dummyLogger';
 import RedisCache from '../src/index.js';
 
-jest.mock('ioredis');
+// `var` is used here intentionally: jest.mock factories are hoisted to the top of the
+// file by babel-jest, before `let`/`const` declarations are initialised. `var` avoids
+// the temporal dead zone, so MockRedis/MockCluster can be safely assigned inside the
+// factory and then read by the tests.
+// eslint-disable-next-line no-var
+var MockRedis: jest.Mock;
+// eslint-disable-next-line no-var
+var MockCluster: jest.Mock;
+
+jest.mock('ioredis', () => {
+  const makeMockInstance = () => ({ disconnect: jest.fn() });
+  MockCluster = jest.fn(() => makeMockInstance());
+  MockRedis = jest.fn(() => makeMockInstance());
+  (MockRedis as any).Cluster = MockCluster;
+  return { __esModule: true, default: MockRedis };
+});
 jest.mock('@aws-sdk/credential-provider-node', () => ({
   defaultProvider: jest.fn(() => jest.fn(async () => ({ accessKeyId: 'akid', secretAccessKey: 'secret' }))),
 }));
@@ -47,13 +61,13 @@ describe('redis', () => {
     it('never call Redis constructor if no config is provided', async () => {
       using redis = new RedisCache({ logger });
 
-      expect(Redis).toHaveBeenCalledTimes(0);
+      expect(MockRedis).toHaveBeenCalledTimes(0);
     });
 
     it('passes configuration to redis client with default options, url case', async () => {
       using redis = new RedisCache({ url: 'redis://password@localhost:6379', logger });
 
-      expect(Redis).toHaveBeenCalledWith(
+      expect(MockRedis).toHaveBeenCalledWith(
         'redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
       );
     });
@@ -65,7 +79,7 @@ describe('redis', () => {
         logger,
       });
 
-      expect(Redis).toHaveBeenCalledWith(
+      expect(MockRedis).toHaveBeenCalledWith(
         'redis://password@localhost:6379?enableAutoPipelining=true&enableOfflineQueue=true',
       );
     });
@@ -77,7 +91,7 @@ describe('redis', () => {
         logger,
       });
 
-      expect(Redis).toHaveBeenCalledWith(
+      expect(MockRedis).toHaveBeenCalledWith(
         'redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
       );
     });
@@ -90,7 +104,7 @@ describe('redis', () => {
         logger,
       });
 
-      expect(Redis).toHaveBeenCalledWith({
+      expect(MockRedis).toHaveBeenCalledWith({
         enableAutoPipelining: true,
         enableOfflineQueue: true,
         host: 'localhost',
@@ -109,7 +123,7 @@ describe('redis', () => {
         logger,
       });
 
-      expect(Redis).toHaveBeenCalledWith({
+      expect(MockRedis).toHaveBeenCalledWith({
         enableAutoPipelining: true,
         enableOfflineQueue: true,
         host: 'localhost',
@@ -126,7 +140,7 @@ describe('redis', () => {
         logger,
       });
 
-      expect(Redis).toHaveBeenCalledWith(
+      expect(MockRedis).toHaveBeenCalledWith(
         'redis://localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
       );
     });
@@ -158,7 +172,7 @@ describe('redis', () => {
           service: 'elasticache',
         }),
       );
-      expect(Redis).toHaveBeenCalledWith({
+      expect(MockRedis).toHaveBeenCalledWith({
         enableAutoPipelining: true,
         enableOfflineQueue: true,
         host: 'cache.example.amazonaws.com',
@@ -184,6 +198,53 @@ describe('redis', () => {
         'Redis IAM authentication requires rediss:// URLs.',
       );
     });
+
+    it('throws if iam is configured with Sentinel mode', () => {
+      expect(() => {
+        // `using` can't be used here as the constructor throws; lint rule no-new is
+        // satisfied because we need the constructor side-effect (the throw).
+        // eslint-disable-next-line no-new
+        new RedisCache({
+          name: 'mymaster',
+          sentinels: [{ host: 'sentinel.example.com', port: '26379' }],
+          sentinelPassword: 'sentpass',
+          iam: {
+            region: 'us-east-1',
+            username: 'cache-user',
+          },
+          logger,
+        } as any);
+      }).toThrow('Redis IAM authentication is not supported with Sentinel mode.');
+    });
+
+    it('passes IAM-generated credentials for cluster (startupNodes) configuration', async () => {
+      using redis = new RedisCache({
+        startupNodes: [{ host: 'cluster.example.amazonaws.com', port: '6379' }],
+        iam: {
+          region: 'us-east-1',
+          username: 'cache-user',
+        },
+        logger,
+      } as any);
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(SignatureV4).toHaveBeenCalledWith(
+        expect.objectContaining({
+          region: 'us-east-1',
+          service: 'elasticache',
+        }),
+      );
+      expect(MockCluster).toHaveBeenCalledWith(
+        [{ host: 'cluster.example.amazonaws.com', port: 6379, family: undefined }],
+        expect.objectContaining({
+          redisOptions: expect.objectContaining({
+            username: 'cache-user',
+            password: 'Action=connect&User=cache-user&X-Amz-Signature=mock-signature',
+            tls: {},
+          }),
+        }),
+      );
+    });
   });
 
   describe('String interpolation', () => {
@@ -204,7 +265,7 @@ describe('redis', () => {
         url: '{env.REDIS_URL}',
         logger,
       });
-      expect(Redis).toHaveBeenCalledWith(
+      expect(MockRedis).toHaveBeenCalledWith(
         'redis://myredis.com:9876?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
       );
     });
@@ -215,7 +276,7 @@ describe('redis', () => {
         password: '{env.REDIS_PASSWORD}',
         logger,
       });
-      expect(Redis).toHaveBeenCalledWith({
+      expect(MockRedis).toHaveBeenCalledWith({
         enableAutoPipelining: true,
         enableOfflineQueue: true,
         host: 'myredis.com',
