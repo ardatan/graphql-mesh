@@ -49,6 +49,9 @@ function normalizeArgValueForInterpolation(argValue: any): any {
 }
 
 export function serializeArgumentsForInterpolation(argValue: any, argType: GraphQLInputType) {
+  if (argValue == null) {
+    return argValue;
+  }
   if (isScalarType(argType)) {
     try {
       return normalizeArgValueForInterpolation(argType.serialize(argValue));
