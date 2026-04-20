@@ -3847,6 +3847,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/reproduction-9435@workspace:e2e/reproduction-9435":
+  version: 0.0.0-use.local
+  resolution: "@e2e/reproduction-9435@workspace:e2e/reproduction-9435"
+  dependencies:
+    "@graphql-mesh/compose-cli": "workspace:*"
+    graphql: "npm:^16.13.2"
+    graphql-yoga: "npm:^5.21.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/semantic-conventions@workspace:e2e/semantic-conventions":
   version: 0.0.0-use.local
   resolution: "@e2e/semantic-conventions@workspace:e2e/semantic-conventions"
