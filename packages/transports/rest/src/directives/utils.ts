@@ -1,6 +1,13 @@
-import type { ASTNode, ConstDirectiveNode } from 'graphql';
-import { valueFromASTUntyped } from 'graphql';
-import type { DirectiveAnnotation } from '@graphql-tools/utils';
+import type { ASTNode, ConstDirectiveNode, GraphQLArgument, GraphQLInputType } from 'graphql';
+import {
+  isInputObjectType,
+  isListType,
+  isNonNullType,
+  isObjectType,
+  isScalarType,
+  valueFromASTUntyped,
+} from 'graphql';
+import { asArray, type DirectiveAnnotation } from '@graphql-tools/utils';
 
 export function getDirectiveAnnotations(directableObj: {
   astNode?: ASTNode & { directives?: readonly ConstDirectiveNode[] };
@@ -33,4 +40,38 @@ export function getDirectiveAnnotations(directableObj: {
   }
 
   return directiveAnnotations;
+}
+
+function normalizeArgValueForInterpolation(argValue: any): any {
+  if (argValue instanceof Date) {
+    return argValue.toJSON();
+  }
+  return argValue;
+}
+
+export function serializeArgumentsForInterpolation(argValue: any, argType: GraphQLInputType) {
+  if (isScalarType(argType)) {
+    try {
+      return normalizeArgValueForInterpolation(argType.serialize(argValue));
+    } catch (e) {
+      return normalizeArgValueForInterpolation(argValue);
+    }
+  } else if (isListType(argType)) {
+    return asArray(argValue).map(item => serializeArgumentsForInterpolation(item, argType.ofType));
+  } else if (isInputObjectType(argType)) {
+    const serializedObj: Record<string, any> = {};
+    const argTypeFields = argType.getFields();
+    for (const fieldName in argValue) {
+      const fieldValue = argValue[fieldName];
+      const fieldType = argTypeFields[fieldName]?.type;
+      if (fieldType) {
+        serializedObj[fieldName] = serializeArgumentsForInterpolation(fieldValue, fieldType);
+      }
+    }
+    return serializedObj;
+  } else if (isNonNullType(argType)) {
+    return serializeArgumentsForInterpolation(argValue, argType.ofType);
+  }
+
+  return normalizeArgValueForInterpolation(argValue);
 }

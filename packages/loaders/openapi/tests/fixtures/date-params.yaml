@@ -1,0 +1,109 @@
+openapi: 3.0.0
+info:
+  title: Test Date API
+  version: 1.0.0
+  description: API with date handling in header, path variable, and body
+servers:
+  - url: http://localhost:3000
+    description: Development server
+paths:
+  /api/test-date-time/{dateInPathVariable}:
+    post:
+      operationId: testDateTime
+      summary: Process test date
+      description: Endpoint that accepts date in path variable, header, and request body
+      parameters:
+        - name: dateInPathVariable
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date-time
+            example: "2023-12-31T23:59:59.000Z"
+          description: Date passed as path variable (ISO 8601 format)
+        - name: request-date
+          in: header
+          required: true
+          schema:
+            type: string
+            format: date-time
+            example: "2023-12-31T23:59:59.000Z"
+          description: Date passed in request header (ISO 8601 format)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventDate:
+                  type: string
+                  format: date-time
+                  example: "2023-12-31T23:59:59.000Z"
+                  description: Date of the event
+                eventName:
+                  type: string
+                  example: "Sample Event"
+                  description: Name of the event
+                eventDescription:
+                  type: string
+                  example: "This is a sample event"
+                  description: Description of the event
+              required:
+                - eventDate
+                - eventName
+      responses:
+        '200':
+          description: Successfully processed the date
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Date processed successfully"
+                  pathDate:
+                    type: string
+                    format: date-time
+                    example: "2023-12-31T23:59:59.000Z"
+                  headerDate:
+                    type: string
+                    format: date-time
+                    example: "2023-12-31T23:59:59.000Z"
+                  bodyDate:
+                    type: string
+                    format: date-time
+                    example: "2023-12-31T23:59:59.000Z"
+                  eventName:
+                    type: string
+                    example: "Sample Event"
+        '400':
+          description: Bad request - invalid date format or missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Invalid date format"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Internal server error"

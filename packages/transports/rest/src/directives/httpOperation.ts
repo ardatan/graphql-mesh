@@ -19,6 +19,7 @@ import { Blob, fetch as defaultFetch, File, FormData, URLSearchParams } from '@w
 import { isFileUpload } from './isFileUpload.js';
 import { getJsonApiFieldsQuery } from './jsonApiFields.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
+import { serializeArgumentsForInterpolation } from './utils.js';
 
 type HTTPMethod =
   | 'GET'
@@ -125,7 +126,18 @@ export function addHTTPRootFieldResolver(
       operation: `${info.parentType.name}.${info.fieldName}`,
     });
     operationLogger.debug(`Resolving`);
-    const interpolationData = { root, args, context, env: process.env };
+    // Args should be serialized with their scalars
+    const argsSerializeProxy = new Proxy(args, {
+      get(args, argName) {
+        const value = args[argName];
+        const argDef = field.args?.find(arg => arg.name === argName.toString());
+        if (argDef) {
+          return serializeArgumentsForInterpolation(value, argDef.type);
+        }
+        return value;
+      },
+    });
+    const interpolationData = { root, args: argsSerializeProxy, context, env: process.env };
     const interpolatedBaseUrl = stringInterpolator.parse(endpoint, interpolationData) || '';
     const interpolatedPath = stringInterpolator.parse(path, interpolationData) || '';
     let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);
