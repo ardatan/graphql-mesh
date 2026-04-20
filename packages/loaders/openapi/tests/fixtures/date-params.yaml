@@ -19,7 +19,7 @@ paths:
           schema:
             type: string
             format: date-time
-            example: "2023-12-31T23:59:59.000Z"
+            example: '2023-12-31T23:59:59.000Z'
           description: Date passed as path variable (ISO 8601 format)
         - name: request-date
           in: header
@@ -27,7 +27,7 @@ paths:
           schema:
             type: string
             format: date-time
-            example: "2023-12-31T23:59:59.000Z"
+            example: '2023-12-31T23:59:59.000Z'
           description: Date passed in request header (ISO 8601 format)
       requestBody:
         required: true
@@ -39,15 +39,15 @@ paths:
                 eventDate:
                   type: string
                   format: date-time
-                  example: "2023-12-31T23:59:59.000Z"
+                  example: '2023-12-31T23:59:59.000Z'
                   description: Date of the event
                 eventName:
                   type: string
-                  example: "Sample Event"
+                  example: 'Sample Event'
                   description: Name of the event
                 eventDescription:
                   type: string
-                  example: "This is a sample event"
+                  example: 'This is a sample event'
                   description: Description of the event
               required:
                 - eventDate
@@ -65,22 +65,22 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Date processed successfully"
+                    example: 'Date processed successfully'
                   pathDate:
                     type: string
                     format: date-time
-                    example: "2023-12-31T23:59:59.000Z"
+                    example: '2023-12-31T23:59:59.000Z'
                   headerDate:
                     type: string
                     format: date-time
-                    example: "2023-12-31T23:59:59.000Z"
+                    example: '2023-12-31T23:59:59.000Z'
                   bodyDate:
                     type: string
                     format: date-time
-                    example: "2023-12-31T23:59:59.000Z"
+                    example: '2023-12-31T23:59:59.000Z'
                   eventName:
                     type: string
-                    example: "Sample Event"
+                    example: 'Sample Event'
         '400':
           description: Bad request - invalid date format or missing required fields
           content:
@@ -93,7 +93,7 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Invalid date format"
+                    example: 'Invalid date format'
         '500':
           description: Internal server error
           content:
@@ -106,4 +106,4 @@ paths:
                     example: false
                   error:
                     type: string
-                    example: "Internal server error"
+                    example: 'Internal server error'
