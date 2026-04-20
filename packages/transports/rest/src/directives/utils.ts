@@ -1,9 +1,8 @@
-import type { ASTNode, ConstDirectiveNode, GraphQLArgument, GraphQLInputType } from 'graphql';
+import type { ASTNode, ConstDirectiveNode, GraphQLInputType } from 'graphql';
 import {
   isInputObjectType,
   isListType,
   isNonNullType,
-  isObjectType,
   isScalarType,
   valueFromASTUntyped,
 } from 'graphql';
