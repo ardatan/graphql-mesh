@@ -1,24 +1,15 @@
 // inspired by https://github.com/redis/ioredis/issues/1738#issuecomment-1969925020
 
-import type { Cluster, Redis } from 'ioredis';
-import type { ErrorEmitter } from 'ioredis/built/connectors/AbstractConnector';
-import type ConnectorConstructor from 'ioredis/built/connectors/ConnectorConstructor';
-import StandaloneConnector from 'ioredis/built/connectors/StandaloneConnector';
-import type { StandaloneConnectionOptions } from 'ioredis/built/connectors/StandaloneConnector';
-import type { RedisOptions } from 'ioredis/built/redis/RedisOptions';
-import type { NetStream } from 'ioredis/built/types';
+// eslint-disable-next-line import/no-nodejs-modules
+import { createHash, createHmac } from 'node:crypto';
+import { AbstractConnector } from 'ioredis';
+import type { Cluster, Redis, RedisOptions, StandaloneConnectionOptions } from 'ioredis';
 import type { YamlConfig } from '@graphql-mesh/types';
 
 export type IamAuthConfig = NonNullable<YamlConfig.RedisIamAuthConfig>;
 
-// ESM interop: StandaloneConnector default export lands on .default when using dynamic import
-interface StandaloneConnectorConstructor {
-  new (opts: StandaloneConnectionOptions): StandaloneConnector;
-}
-
-const ActualStandaloneConnector =
-  (StandaloneConnector as unknown as { default: StandaloneConnectorConstructor }).default ??
-  (StandaloneConnector as unknown as StandaloneConnectorConstructor);
+type ErrorEmitter = (type: string, err: Error) => void;
+type ConnectResult = ReturnType<AbstractConnector['connect']>;
 
 // options shape passed through ioredis to our connector
 interface IamTokenConnectorOptions extends StandaloneConnectionOptions {
@@ -28,17 +19,22 @@ interface IamTokenConnectorOptions extends StandaloneConnectionOptions {
   };
 }
 
-class IamTokenConnector extends ActualStandaloneConnector {
+// IamTokenConnector extends the public AbstractConnector and replicates StandaloneConnector's
+// TCP/TLS connection logic so we avoid importing the non-exported deep internal path
+// ioredis/built/connectors/StandaloneConnector which is not resolvable in strict ESM.
+class IamTokenConnector extends AbstractConnector {
   private redisRef: { current: Redis | null };
   private getToken: () => Promise<string>;
+  private options: IamTokenConnectorOptions;
 
   constructor(options: IamTokenConnectorOptions) {
-    super(options);
+    super((options as any).disconnectTimeout);
+    this.options = options;
     this.redisRef = options.tokenConnector.redisRef;
     this.getToken = options.tokenConnector.getToken;
   }
 
-  override async connect(emitter: ErrorEmitter): Promise<NetStream> {
+  override async connect(emitter: ErrorEmitter): ConnectResult {
     const token = await this.getToken();
 
     const condition = this.redisRef.current?.condition;
@@ -50,7 +46,54 @@ class IamTokenConnector extends ActualStandaloneConnector {
       condition.auth = [condition.auth[0], token];
     }
 
-    return super.connect(emitter);
+    return this.createStream(emitter);
+  }
+
+  // replicates StandaloneConnector.connect() TCP/TLS stream creation
+  private createStream(_emitter: ErrorEmitter): ConnectResult {
+    const { options } = this;
+    this.connecting = true;
+
+    let connectionOptions: Record<string, unknown> = {};
+
+    if ('path' in options && options.path) {
+      connectionOptions = { path: options.path };
+    } else {
+      if (options.port != null) connectionOptions.port = options.port;
+      if (options.host != null) connectionOptions.host = options.host;
+      if (options.family != null) connectionOptions.family = options.family;
+    }
+
+    if (options.tls) {
+      Object.assign(connectionOptions, options.tls);
+    }
+
+    return new Promise((resolve, reject) => {
+      process.nextTick(async () => {
+        if (!this.connecting) {
+          reject(new Error('Connection is closed.'));
+          return;
+        }
+        try {
+          if (options.tls) {
+            // eslint-disable-next-line import/no-nodejs-modules
+            const { connect } = await import('node:tls');
+            this.stream = connect(connectionOptions);
+          } else {
+            // eslint-disable-next-line import/no-nodejs-modules
+            const { createConnection } = await import('node:net');
+            this.stream = createConnection(connectionOptions);
+          }
+        } catch (err) {
+          reject(err);
+          return;
+        }
+        this.stream.once('error', err => {
+          this.firstError = err;
+        });
+        resolve(this.stream);
+      });
+    });
   }
 }
 
@@ -68,9 +111,6 @@ export async function generateIamToken(cfg: IamAuthConfig): Promise<string> {
       'Missing dependency: install @aws-sdk/credential-providers to use Redis IAM authentication',
     );
   });
-
-  // eslint-disable-next-line import/no-nodejs-modules
-  const { createHash, createHmac } = await import('node:crypto');
 
   const service = cfg.serviceName ?? 'elasticache';
   const expirySeconds = cfg.tokenExpirySeconds ?? 900;
@@ -150,7 +190,7 @@ export function buildIamRedisOptions(
       redisRef,
       getToken: () => generateIamToken(cfg),
     },
-    Connector: IamTokenConnector as unknown as ConnectorConstructor,
+    Connector: IamTokenConnector as unknown as new (options: unknown) => AbstractConnector,
   } as RedisOptions;
 }
 
