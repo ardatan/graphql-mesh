@@ -166,6 +166,36 @@ describe('redis', () => {
     });
   });
 
+  describe('IAM authentication', () => {
+    it('passes Connector and tokenConnector to Redis when iamAuth is configured', async () => {
+      using _redis = new RedisCache({
+        host: 'my-cluster.abc123.use1.cache.amazonaws.com',
+        port: '6379',
+        username: 'iam-user-01',
+        logger,
+        iamAuth: {
+          region: 'us-east-1',
+          clusterName: 'my-cluster',
+          userId: 'iam-user-01',
+        },
+      });
+
+      expect(Redis).toHaveBeenCalledTimes(1);
+      expect(Redis).toHaveBeenCalledWith(
+        expect.objectContaining({
+          host: 'my-cluster.abc123.use1.cache.amazonaws.com',
+          port: 6379,
+          username: 'iam-user-01',
+          Connector: expect.any(Function),
+          tokenConnector: expect.objectContaining({
+            getToken: expect.any(Function),
+            redisRef: expect.objectContaining({ current: expect.any(Object) }),
+          }),
+        }),
+      );
+    });
+  });
+
   describe('methods', () => {
     it('get/set/delete', async () => {
       using redis = new RedisCache({ logger });
