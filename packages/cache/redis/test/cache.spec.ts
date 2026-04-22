@@ -1,9 +1,33 @@
 /* eslint-disable no-new */
 import Redis from 'ioredis';
 import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { buildIamRedisOptions, generateIamToken, setupIamAuthForCluster } from '../src/iam.js';
 import RedisCache from '../src/index.js';
 
 jest.mock('ioredis');
+
+jest.mock('@smithy/signature-v4', () => ({
+  SignatureV4: jest.fn().mockImplementation(() => ({
+    presign: jest.fn().mockResolvedValue({
+      protocol: 'http:',
+      hostname: 'my-cluster',
+      path: '/',
+      query: {
+        Action: 'connect',
+        User: 'iam-user-01',
+        'X-Amz-Signature': 'abc123',
+      },
+    }),
+  })),
+}));
+
+jest.mock('@aws-sdk/credential-providers', () => ({
+  fromNodeProviderChain: jest
+    .fn()
+    .mockReturnValue(() =>
+      Promise.resolve({ accessKeyId: 'AKIA_TEST', secretAccessKey: 'secret' }),
+    ),
+}));
 
 describe('redis', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -167,7 +191,7 @@ describe('redis', () => {
   });
 
   describe('IAM authentication', () => {
-    it('passes Connector and tokenConnector to Redis when iamAuth is configured', async () => {
+    it('passes Connector and tokenConnector to Redis when iamAuth is configured with host/port', async () => {
       using _redis = new RedisCache({
         host: 'my-cluster.abc123.use1.cache.amazonaws.com',
         port: '6379',
@@ -193,6 +217,118 @@ describe('redis', () => {
           }),
         }),
       );
+    });
+
+    it('passes Connector and tokenConnector to Redis when iamAuth is configured with url', async () => {
+      using _redis = new RedisCache({
+        url: 'rediss://iam-user-01@my-cluster.abc123.use1.cache.amazonaws.com:6379',
+        logger,
+        iamAuth: {
+          region: 'us-east-1',
+          clusterName: 'my-cluster',
+          userId: 'iam-user-01',
+        },
+      });
+
+      expect(Redis).toHaveBeenCalledTimes(1);
+      expect(Redis).toHaveBeenCalledWith(
+        expect.stringContaining('rediss://'),
+        expect.objectContaining({
+          Connector: expect.any(Function),
+          tokenConnector: expect.objectContaining({
+            getToken: expect.any(Function),
+            redisRef: expect.objectContaining({ current: expect.any(Object) }),
+          }),
+        }),
+      );
+    });
+
+    it('installs password getter on redisOptions for cluster iamAuth', async () => {
+      const redisOptions = { enableAutoPipelining: true };
+      const mockCluster = { nodes: () => [] } as any;
+      const cfg = {
+        region: 'us-east-1',
+        clusterName: 'my-cluster',
+        userId: 'iam-user-01',
+        tokenExpirySeconds: 900,
+      };
+
+      setupIamAuthForCluster(mockCluster, redisOptions, cfg, undefined, () => {});
+
+      const descriptor = Object.getOwnPropertyDescriptor(redisOptions, 'password');
+      expect(typeof descriptor?.get).toBe('function');
+      expect(typeof descriptor?.set).toBe('function');
+    });
+
+    it('IamTokenConnector.connect injects token into condition.auth (password-only)', async () => {
+      const token = 'test-iam-token';
+      const mockRedis = { condition: { auth: undefined, select: 0, subscriber: false } } as any;
+      const redisRef = { current: mockRedis };
+      const mockStream = {} as any;
+      const mockEmitter = jest.fn();
+      const iamCfg = { region: 'us-east-1', clusterName: 'my-cluster', userId: 'iam-user-01' };
+
+      const opts = buildIamRedisOptions({ host: 'localhost', port: 6379 }, iamCfg, redisRef) as any;
+      const connector = new opts.Connector({
+        host: 'localhost',
+        port: 6379,
+        tokenConnector: {
+          redisRef,
+          getToken: () => Promise.resolve(token),
+        },
+      });
+
+      // stub the inherited StandaloneConnector.connect so no real TCP connection is made
+      jest
+        .spyOn(Object.getPrototypeOf(Object.getPrototypeOf(connector)), 'connect')
+        .mockResolvedValue(mockStream);
+
+      await connector.connect(mockEmitter);
+
+      expect(mockRedis.condition.auth).toBe(token);
+    });
+
+    it('IamTokenConnector.connect injects token into condition.auth (username+password)', async () => {
+      const token = 'test-iam-token';
+      const mockRedis = {
+        condition: { auth: ['iam-user-01', 'old-token'], select: 0, subscriber: false },
+      } as any;
+      const redisRef = { current: mockRedis };
+      const mockStream = {} as any;
+      const mockEmitter = jest.fn();
+      const iamCfg = { region: 'us-east-1', clusterName: 'my-cluster', userId: 'iam-user-01' };
+
+      const opts = buildIamRedisOptions({ host: 'localhost', port: 6379 }, iamCfg, redisRef) as any;
+      const connector = new opts.Connector({
+        host: 'localhost',
+        port: 6379,
+        tokenConnector: {
+          redisRef,
+          getToken: () => Promise.resolve(token),
+        },
+      });
+
+      // stub the inherited StandaloneConnector.connect so no real TCP connection is made
+      jest
+        .spyOn(Object.getPrototypeOf(Object.getPrototypeOf(connector)), 'connect')
+        .mockResolvedValue(mockStream);
+
+      await connector.connect(mockEmitter);
+
+      expect(mockRedis.condition.auth).toEqual(['iam-user-01', token]);
+    });
+
+    it('generateIamToken returns token without protocol prefix containing required query params', async () => {
+      const token = await generateIamToken({
+        region: 'us-east-1',
+        clusterName: 'my-cluster',
+        userId: 'iam-user-01',
+      });
+
+      expect(token).not.toMatch(/^https?:\/\//);
+      expect(token).toMatch(/^my-cluster/);
+      expect(token).toContain('Action=connect');
+      expect(token).toContain('User=iam-user-01');
     });
   });
 
