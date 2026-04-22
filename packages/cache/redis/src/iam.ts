@@ -16,9 +16,9 @@ interface StandaloneConnectorConstructor {
   new (opts: StandaloneConnectionOptions): StandaloneConnector;
 }
 
-const ActualStandaloneConnector = (
-  StandaloneConnector as unknown as { default: StandaloneConnectorConstructor }
-).default;
+const ActualStandaloneConnector =
+  (StandaloneConnector as unknown as { default: StandaloneConnectorConstructor }).default ??
+  (StandaloneConnector as unknown as StandaloneConnectorConstructor);
 
 // options shape passed through ioredis to our connector
 interface IamTokenConnectorOptions extends StandaloneConnectionOptions {
