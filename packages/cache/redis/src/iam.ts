@@ -19,6 +19,12 @@ interface IamTokenConnectorOptions extends StandaloneConnectionOptions {
   };
 }
 
+// ioredis passes the entire options object to `new Connector(options)` (Redis.js line 57),
+// so we smuggle tokenConnector through RedisOptions to make it available inside IamTokenConnector
+export interface IamRedisOptions extends RedisOptions {
+  tokenConnector: IamTokenConnectorOptions['tokenConnector'];
+}
+
 // IamTokenConnector extends the public AbstractConnector and replicates StandaloneConnector's
 // TCP/TLS connection logic so we avoid importing the non-exported deep internal path
 // ioredis/built/connectors/StandaloneConnector which is not resolvable in strict ESM.
@@ -27,11 +33,13 @@ class IamTokenConnector extends AbstractConnector {
   private getToken: () => Promise<string>;
   private options: IamTokenConnectorOptions;
 
-  constructor(options: IamTokenConnectorOptions) {
-    super((options as any).disconnectTimeout);
-    this.options = options;
-    this.redisRef = options.tokenConnector.redisRef;
-    this.getToken = options.tokenConnector.getToken;
+  // ioredis calls Connector as `new (options: unknown)` so the parameter must be unknown here
+  constructor(options: unknown) {
+    const opts = options as IamTokenConnectorOptions;
+    super(opts.disconnectTimeout ?? 2000);
+    this.options = opts;
+    this.redisRef = opts.tokenConnector.redisRef;
+    this.getToken = opts.tokenConnector.getToken;
   }
 
   override async connect(emitter: ErrorEmitter): ConnectResult {
@@ -54,20 +62,6 @@ class IamTokenConnector extends AbstractConnector {
     const { options } = this;
     this.connecting = true;
 
-    let connectionOptions: Record<string, unknown> = {};
-
-    if ('path' in options && options.path) {
-      connectionOptions = { path: options.path };
-    } else {
-      if (options.port != null) connectionOptions.port = options.port;
-      if (options.host != null) connectionOptions.host = options.host;
-      if (options.family != null) connectionOptions.family = options.family;
-    }
-
-    if (options.tls) {
-      Object.assign(connectionOptions, options.tls);
-    }
-
     return new Promise((resolve, reject) => {
       process.nextTick(async () => {
         if (!this.connecting) {
@@ -78,11 +72,27 @@ class IamTokenConnector extends AbstractConnector {
           if (options.tls) {
             // eslint-disable-next-line import/no-nodejs-modules
             const { connect } = await import('node:tls');
-            this.stream = connect(connectionOptions);
+            if (options.path) {
+              this.stream = connect({ ...options.tls, path: options.path });
+            } else {
+              this.stream = connect({
+                ...options.tls,
+                port: options.port ?? 6380,
+                host: options.host,
+              });
+            }
           } else {
             // eslint-disable-next-line import/no-nodejs-modules
             const { createConnection } = await import('node:net');
-            this.stream = createConnection(connectionOptions);
+            if (options.path) {
+              this.stream = createConnection({ path: options.path });
+            } else {
+              this.stream = createConnection({
+                port: options.port ?? 6379,
+                host: options.host,
+                family: options.family,
+              });
+            }
           }
         } catch (err) {
           reject(err);
@@ -183,15 +193,15 @@ export function buildIamRedisOptions(
   base: RedisOptions,
   cfg: IamAuthConfig,
   redisRef: { current: Redis | null },
-): RedisOptions {
+): IamRedisOptions {
   return {
     ...base,
     tokenConnector: {
       redisRef,
       getToken: () => generateIamToken(cfg),
     },
-    Connector: IamTokenConnector as unknown as new (options: unknown) => AbstractConnector,
-  } as RedisOptions;
+    Connector: IamTokenConnector,
+  };
 }
 
 // cluster mode: ioredis does not support per-node credential providers, so we use a different
