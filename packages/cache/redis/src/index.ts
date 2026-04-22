@@ -1,5 +1,6 @@
 import Redis, { type Cluster } from 'ioredis';
 import RedisMock from 'ioredis-mock';
+import type { RedisOptions } from 'ioredis/built/redis/RedisOptions';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
@@ -13,6 +14,7 @@ import {
 } from '@graphql-mesh/types';
 import { trace, type Tracer } from '@opentelemetry/api';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import { buildIamRedisOptions, setupIamAuthForCluster } from './iam.js';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
@@ -21,6 +23,7 @@ function interpolateStrWithEnv(str: string): string {
 export default class RedisCache<V = string> implements KeyValueCache<V>, Disposable {
   private client: Redis | Cluster;
   private tracer: Tracer;
+  private iamRefreshTimer?: ReturnType<typeof setInterval>;
 
   constructor(
     options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub | HivePubSub; logger: Logger },
@@ -36,6 +39,14 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
             interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
           const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
           const numDb = parseInt(parsedDb);
+          const redisOptions: RedisOptions = {
+            username: parsedUsername,
+            password: parsedPassword,
+            db: isNaN(numDb) ? undefined : numDb,
+            enableAutoPipelining: true,
+            ...(lazyConnect ? { lazyConnect: true } : {}),
+            tls: options.tls ? {} : undefined,
+          };
           this.client = new Redis.Cluster(
             options.startupNodes.map(s => ({
               host: s.host && interpolateStrWithEnv(s.host),
@@ -46,19 +57,23 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
               dnsLookup: options.dnsLookupAsIs
                 ? (address, callback) => callback(null, address)
                 : undefined,
-              redisOptions: {
-                username: parsedUsername,
-                password: parsedPassword,
-                db: isNaN(numDb) ? undefined : numDb,
-                enableAutoPipelining: true,
-                ...(lazyConnect ? { lazyConnect: true } : {}),
-                tls: options.tls ? {} : undefined,
-              },
+              redisOptions,
               enableAutoPipelining: true,
               enableOfflineQueue: true,
               ...(lazyConnect ? { lazyConnect: true } : {}),
             },
           );
+          if (options.iamAuth) {
+            setupIamAuthForCluster(
+              this.client,
+              redisOptions,
+              options.iamAuth,
+              parsedUsername,
+              timer => {
+                this.iamRefreshTimer = timer;
+              },
+            );
+          }
         } else if ('sentinels' in options) {
           this.client = new Redis({
             name: options.name,
@@ -95,7 +110,21 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
           }
           const urlStr = redisUrl.toString();
           safelyLogURL(options.logger, urlStr);
-          this.client = new Redis(urlStr);
+          if (options.iamAuth) {
+            const redisRef: { current: Redis | null } = { current: null };
+            const connectorUsername = redisUrl.username || undefined;
+            // username from URL isn't in redisOptions so pass it via buildIamRedisOptions
+            const iamOpts = buildIamRedisOptions(
+              { username: connectorUsername },
+              options.iamAuth,
+              redisRef,
+            );
+            this.client = new Redis(urlStr, iamOpts);
+            // if you do not set redisRef.current you get an error when connecting
+            redisRef.current = this.client;
+          } else {
+            this.client = new Redis(urlStr);
+          }
         } else {
           const parsedHost =
             interpolateStrWithEnv(options.host?.toString()) || process.env.REDIS_HOST;
@@ -112,7 +141,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
           const numDb = parseInt(parsedDb);
           if (parsedHost) {
             options.logger.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
-            this.client = new Redis({
+            const baseOpts: RedisOptions = {
               host: parsedHost,
               port: isNaN(numPort) ? undefined : numPort,
               username: parsedUsername,
@@ -122,7 +151,14 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
               ...(lazyConnect ? { lazyConnect: true } : {}),
               enableAutoPipelining: true,
               enableOfflineQueue: true,
-            });
+            };
+            if (options.iamAuth) {
+              const redisRef: { current: Redis | null } = { current: null };
+              this.client = new Redis(buildIamRedisOptions(baseOpts, options.iamAuth, redisRef));
+              redisRef.current = this.client;
+            } else {
+              this.client = new Redis(baseOpts);
+            }
           } else {
             options.logger.debug(`Connecting to Redis mock`);
             this.client = new RedisMock();
@@ -141,17 +177,20 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   }
 
   [DisposableSymbols.dispose](): void {
+    if (this.iamRefreshTimer != null) {
+      clearInterval(this.iamRefreshTimer);
+    }
     this.client.disconnect(false);
   }
 
-  set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<any> {
+  set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {
     return this.tracer.startActiveSpan('hive.cache.set', async span => {
       try {
         const stringifiedValue = JSON.stringify(value);
         if (options?.ttl && options.ttl > 0) {
-          return await this.client.set(key, stringifiedValue, 'PX', options.ttl * 1000);
+          await this.client.set(key, stringifiedValue, 'PX', options.ttl * 1000);
         } else {
-          return await this.client.set(key, stringifiedValue);
+          await this.client.set(key, stringifiedValue);
         }
       } finally {
         span.end();
