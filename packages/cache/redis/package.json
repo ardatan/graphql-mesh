@@ -32,7 +32,17 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@aws-sdk/credential-providers": ">=3.0.0",
+    "@smithy/signature-v4": ">=2.0.0",
     "graphql": "*"
+  },
+  "peerDependenciesMeta": {
+    "@aws-sdk/credential-providers": {
+      "optional": true
+    },
+    "@smithy/signature-v4": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.15",
@@ -45,6 +55,8 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
+    "@aws-sdk/credential-providers": "^3.1034.0",
+    "@smithy/signature-v4": "^5.3.14",
     "@types/ioredis-mock": "8.2.7",
     "graphql": "16.14.0"
   },
