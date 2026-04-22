@@ -4,7 +4,18 @@ import { dummyLogger as logger } from '../../../testing/dummyLogger';
 import { buildIamRedisOptions, generateIamToken, setupIamAuthForCluster } from '../src/iam.js';
 import RedisCache from '../src/index.js';
 
-jest.mock('ioredis');
+jest.mock('ioredis', () => {
+  const actual = jest.requireActual<Redis>('ioredis');
+  const mockInstance = () => ({ disconnect: jest.fn(), on: jest.fn(), once: jest.fn() });
+  const MockRedis = jest.fn().mockImplementation(mockInstance);
+  (MockRedis as any).Cluster = jest.fn().mockImplementation(mockInstance);
+  return {
+    __esModule: true,
+    ...actual,
+    default: MockRedis,
+    Redis: MockRedis,
+  };
+});
 
 jest.mock('@smithy/signature-v4', () => ({
   SignatureV4: jest.fn().mockImplementation(() => ({
@@ -278,10 +289,8 @@ describe('redis', () => {
         },
       });
 
-      // stub the inherited StandaloneConnector.connect so no real TCP connection is made
-      jest
-        .spyOn(Object.getPrototypeOf(Object.getPrototypeOf(connector)), 'connect')
-        .mockResolvedValue(mockStream);
+      // stub createStream so no real TCP connection is made
+      jest.spyOn(connector as any, 'createStream').mockResolvedValue(mockStream);
 
       await connector.connect(mockEmitter);
 
@@ -308,10 +317,8 @@ describe('redis', () => {
         },
       });
 
-      // stub the inherited StandaloneConnector.connect so no real TCP connection is made
-      jest
-        .spyOn(Object.getPrototypeOf(Object.getPrototypeOf(connector)), 'connect')
-        .mockResolvedValue(mockStream);
+      // stub createStream so no real TCP connection is made
+      jest.spyOn(connector as any, 'createStream').mockResolvedValue(mockStream);
 
       await connector.connect(mockEmitter);
 
