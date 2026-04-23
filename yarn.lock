@@ -2969,13 +2969,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@changesets/get-github-info@npm:^0.8.0":
+"@changesets/get-github-info@npm:0.8.0":
   version: 0.8.0
   resolution: "@changesets/get-github-info@npm:0.8.0"
   dependencies:
     dataloader: "npm:^1.4.0"
     node-fetch: "npm:^2.5.0"
   checksum: 10c0/b7c53e368a1e77504a704de3080ee99c63e7610c3a69549ab6709089bdb3ae2faed33059852033440afe8225827504aae8124c464a65cd91a9ada1de1955cb9e
+  languageName: node
+  linkType: hard
+
+"@changesets/get-github-info@patch:@changesets/get-github-info@npm%3A0.8.0#~/.yarn/patches/@changesets-get-github-info-npm-0.8.0-cf3918dc5a.patch":
+  version: 0.8.0
+  resolution: "@changesets/get-github-info@patch:@changesets/get-github-info@npm%3A0.8.0#~/.yarn/patches/@changesets-get-github-info-npm-0.8.0-cf3918dc5a.patch::version=0.8.0&hash=77a798"
+  dependencies:
+    dataloader: "npm:^1.4.0"
+    node-fetch: "npm:^2.5.0"
+  checksum: 10c0/6f13d8f37c1fcb99218afb1bddee50c77439845d835ce7e0241869b266628740f747a4fe2922bdfecac1347cc1023930cd2fcc220ec66f07affbac4242c0d858
   languageName: node
   linkType: hard
 
