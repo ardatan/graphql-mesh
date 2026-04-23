@@ -1,3 +1,7 @@
+# fixes https://github.com/ardatan/graphql-mesh/actions/runs/24841015636/job/72714895361
+# the problem is that when we have a lot of commits/PRs, the GitHub GraphQL API times out
+# and doesn't return any data, breaking the release flow. this change splits the requests
+# into chunks of 20 items per request
 diff --git a/dist/changesets-get-github-info.cjs.js b/dist/changesets-get-github-info.cjs.js
 index 6c37428da9589f0ab80b5c628cfabe3d5f3b06f5..440a0457a348be8ee7916bf52856ab42da3942ea 100644
 --- a/dist/changesets-get-github-info.cjs.js
@@ -29,7 +33,7 @@ index 6c37428da9589f0ab80b5c628cfabe3d5f3b06f5..440a0457a348be8ee7916bf52856ab42
 -  if (data.errors) {
 -    throw new Error(`Fetched data from GitHub returned errors\n${JSON.stringify(data.errors, null, 2)}`);
 -  }
- 
+
 -  // this is mainly for the case where there's an authentication problem
 -  if (!data.data) {
 -    throw new Error(`Fetched data from GitHub has missing data\n${JSON.stringify(data)}`);
