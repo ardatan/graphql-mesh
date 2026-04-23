@@ -48,7 +48,7 @@
     "@graphql-tools/graphql-file-loader": "^8.1.13",
     "@graphql-tools/load": "^8.1.9",
     "@graphql-tools/schema": "^10.0.32",
-    "@graphql-tools/utils": "^11.0.1",
+    "@graphql-tools/utils": "^11.1.0",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "commander": "^14.0.3",

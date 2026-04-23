@@ -303,7 +303,13 @@ export function getResolverForPubSubOperation(
           // should not happen though, there'll be something to use
           return {};
         },
-        resolved => resolvePayload(mergeDeep([payload, resolved])),
+        // payload comes first so resolved wins on conflicting keys (subschema is authoritative).
+        // respectNonEnumerableSymbols preserves the external object annotation that delegateToSchema
+        // sets on resolved with non-enumerable symbol keys - without it, mergeDeep would return a plain
+        // object and the stitched executor would fall back to defaultFieldResolver, skipping entity merging
+        // for nested types (e.g. Review.content from a reviews subschema when the product subschema only
+        // knows Review.id)
+        resolved => resolvePayload(mergeDeep([payload, resolved], false, false, false, true)),
       );
     },
   };
