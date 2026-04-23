@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/fusion-composition",
-  "version": "0.8.46",
+  "version": "0.8.47",
   "type": "module",
   "description": "Basic composition utility for Fusion spec",
   "repository": {
@@ -50,7 +50,7 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/utils": "^0.104.35",
+    "@graphql-mesh/utils": "^0.104.36",
     "@graphql-tools/schema": "^10.0.32",
     "@graphql-tools/stitching-directives": "^4.0.20",
     "@graphql-tools/utils": "^11.1.0",
