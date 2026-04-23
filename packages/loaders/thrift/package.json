@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/thrift",
-  "version": "0.9.37",
+  "version": "0.9.38",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,10 +37,10 @@
   "dependencies": {
     "@creditkarma/thrift-parser": "^2.0.0",
     "@creditkarma/thrift-server-core": "^1.0.4",
-    "@graphql-mesh/cross-helpers": "^0.4.13",
-    "@graphql-mesh/transport-thrift": "^0.9.36",
-    "@graphql-mesh/types": "^0.104.27",
-    "@graphql-mesh/utils": "^0.104.35",
+    "@graphql-mesh/cross-helpers": "^0.4.14",
+    "@graphql-mesh/transport-thrift": "^0.9.37",
+    "@graphql-mesh/types": "^0.104.28",
+    "@graphql-mesh/utils": "^0.104.36",
     "@whatwg-node/fetch": "^0.10.6",
     "graphql-scalars": "^1.22.4",
     "thrift": "^0.22.0"
