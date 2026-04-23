@@ -29,7 +29,7 @@ createServer(
         Review: {
           __resolveReference: (ref: { id: string }) => ({
             id: ref.id,
-            content: `Resolved review for the product with the id of ${ref.id}`,
+            content: `Resolved review for product ${ref.id}`,
             productId: ref.id,
           }),
           product: (review: { productId?: string; id: string }) => {

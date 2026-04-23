@@ -88,7 +88,7 @@ it('consumes the pubsub topics and resolves the types correctly', async () => {
             price: 100,
             shippingEstimate: 10,
             review: {
-              content: 'Resolved review for the product with the id of ' + id,
+              content: 'Resolved review for product ' + id,
             },
           },
         },
@@ -104,7 +104,7 @@ it('consumes the pubsub topics and resolves the types correctly', async () => {
             price: 100,
             shippingEstimate: 10,
             review: {
-              content: 'Resolved review for the product with the id of noid',
+              content: 'Resolved review for product noid',
             },
           },
         },
