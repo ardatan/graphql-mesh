@@ -41,7 +41,7 @@
     "@graphql-mesh/utils": "^0.104.35",
     "@graphql-tools/resolvers-composition": "^7.0.30",
     "@graphql-tools/schema": "^10.0.32",
-    "@graphql-tools/utils": "^11.0.1",
+    "@graphql-tools/utils": "^11.1.0",
     "dayjs": "^1.11.20",
     "tslib": "^2.4.0"
   },

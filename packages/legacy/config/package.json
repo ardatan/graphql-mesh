@@ -47,7 +47,7 @@
     "@graphql-tools/code-file-loader": "^8.1.31",
     "@graphql-tools/graphql-file-loader": "^8.1.13",
     "@graphql-tools/load": "^8.1.9",
-    "@graphql-tools/utils": "^11.0.1",
+    "@graphql-tools/utils": "^11.1.0",
     "@graphql-yoga/plugin-persisted-operations": "^3.21.0",
     "@whatwg-node/fetch": "^0.10.6",
     "camel-case": "^4.1.2",
