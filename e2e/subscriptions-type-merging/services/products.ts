@@ -17,6 +17,10 @@ createServer(
           id: ID!
           name: String!
           price: Float!
+          review: Review
+        }
+        type Review @key(fields: "id") {
+          id: ID!
         }
       `),
       resolvers: {
@@ -29,6 +33,10 @@ createServer(
             name: ref.name || `Roomba X${ref.id || 'noid'}`,
             price: 100,
           }),
+          review: (product: { id: string }) => ({ id: product.id }),
+        },
+        Review: {
+          __resolveReference: (ref: { id: string }) => ({ id: ref.id }),
         },
       },
     }),
