@@ -1,0 +1,13 @@
+diff --git a/dist/changesets-get-github-info.cjs.js b/dist/changesets-get-github-info.cjs.js
+index 6c37428da9589f0ab80b5c628cfabe3d5f3b06f5..1eb8e59657092027f5f429b062ab2cd76e566395 100644
+--- a/dist/changesets-get-github-info.cjs.js
++++ b/dist/changesets-get-github-info.cjs.js
+@@ -185,7 +185,7 @@ const GHDataLoader = new DataLoader__default["default"](async requests => {
+     throw new Error(`Failed to parse data from GitHub\n${e.message}`);
+   }
+   if (data.errors) {
+-    throw new Error(`Fetched data from GitHub returned errors\n${JSON.stringify(data.errors, null, 2)}`);
++    throw new Error(`Fetched data from GitHub returned errors\n${JSON.stringify(data.errors, null, 2)}\nFor the following query\n${makeQuery(repos)}`);
+   }
+ 
+   // this is mainly for the case where there's an authentication problem
