@@ -37,7 +37,7 @@ import {
   type Subschema,
 } from '@graphql-tools/delegate';
 import type { IResolvers, Maybe, MaybePromise } from '@graphql-tools/utils';
-import { parseSelectionSet } from '@graphql-tools/utils';
+import { mergeDeep, parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { selectionSetOfData } from './selectionSet.js';
@@ -303,19 +303,10 @@ export function getResolverForPubSubOperation(
           // should not happen though, there'll be something to use
           return {};
         },
-        resolved => {
-          // merge payload fields into resolved without replacing existing ones,
-          // and without creating a new plain object - we must keep the external object
-          // annotation on resolved so the stitched schema executor can use defaultMergedResolver
-          // to resolve nested entities (e.g. Review.content from a separate subschema)
-          const resolvedPayload = resolvePayload(payload);
-          for (const key of Object.keys(resolvedPayload)) {
-            if (!(key in resolved)) {
-              resolved[key] = resolvedPayload[key];
-            }
-          }
-          return resolved;
-        },
+        // merge resolved first so its non-enumerable symbol properties (external object
+        // annotation set by delegateToSchema) are preserved on the output, allowing the
+        // stitched schema executor to resolve nested entities across subschemas
+        resolved => resolvePayload(mergeDeep([payload, resolved], false, false, false, true)),
       );
     },
   };
