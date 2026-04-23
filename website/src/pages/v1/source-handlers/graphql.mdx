@@ -35,7 +35,8 @@ configuration like below;
 In this case, Mesh will take the schema from `source`, but execute the operations against the
 `endpoint`.
 
-In this case, Mesh won't introspect the endpoint, and use `source` as a source schema before applying any transformations etc.
+In this case, Mesh won't introspect the endpoint, and use `source` as a source schema before
+applying any transformations etc.
 
 ```ts filename="mesh-config.ts" {9}
 import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'
