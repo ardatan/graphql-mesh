@@ -115,6 +115,7 @@
   },
   "resolutions": {
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
+    "@changesets/get-github-info@npm:^0.8.0": "patch:@changesets/get-github-info@npm%3A0.8.0#~/.yarn/patches/@changesets-get-github-info-npm-0.8.0-cf3918dc5a.patch",
     "@tootallnate/once": "3.0.1",
     "@whatwg-node/fetch": "0.10.13",
     "@whatwg-node/node-fetch": "0.8.5",
@@ -167,8 +168,7 @@
     "uuid": "11.1.0",
     "validator": "^13.7.0",
     "webpack-dev-server": "5.2.3",
-    "xml2js": "^0.6.0",
-    "@changesets/get-github-info@npm:^0.8.0": "patch:@changesets/get-github-info@npm%3A0.8.0#~/.yarn/patches/@changesets-get-github-info-npm-0.8.0-cf3918dc5a.patch"
+    "xml2js": "^0.6.0"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
