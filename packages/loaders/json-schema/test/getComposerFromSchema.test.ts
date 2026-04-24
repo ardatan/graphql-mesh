@@ -1424,4 +1424,39 @@ ${printType(GraphQLString)}
     });
     expect((output as ObjectTypeComposer).getField('bar').type.getTypeName()).toEqual('String');
   });
+  it('should not throw when an array schema also has oneOf (getter-only input/output, Node 25+)', async () => {
+    // Regression test for:
+    //   TypeError: Cannot set property input of #<Object> which has only a getter
+    //   at getUnionTypeComposers (getUnionTypeComposers.ts)
+    //
+    // When a schema has type:'array' with items, the enter() visitor returns an object
+    // with getter-only `input` and `output` properties. If that same schema also has
+    // `oneOf`, getUnionTypeComposers() is called with the getter-only object as
+    // subSchemaAndTypeComposers. In strict mode (Node.js 25+) assigning to a getter-only
+    // property throws; in sloppy mode it silently fails, producing wrong nested-list types.
+    // The function must use local variables instead.
+    const schema: JSONSchema = {
+      title: 'ArrayWithOneOf',
+      type: 'array',
+      items: {
+        title: 'ArrayItem',
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+        },
+      },
+      oneOf: [
+        // Both oneOf variants resolve to the same input type (String scalar), which
+        // triggers the unionInputFields.length === 1 assignment path in getUnionTypeComposers.
+        { type: 'array', items: { type: 'string' } },
+        { type: 'string' },
+      ],
+    } as JSONSchema;
+
+    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema, logger });
+    // The resolved type must be a list of String, not a spurious double-nested list like
+    // [[ArrayItemInput]] that would result from the getter silently not being updated.
+    expect(result.input?.getType().toString()).toBe('[String]');
+    expect(result.output?.getType?.().toString()).toBe('[String]');
+  });
 });
