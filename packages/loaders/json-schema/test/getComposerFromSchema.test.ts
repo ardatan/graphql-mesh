@@ -1457,6 +1457,6 @@ ${printType(GraphQLString)}
     // The resolved type must be a list of String, not a spurious double-nested list like
     // [[ArrayItemInput]] that would result from the getter silently not being updated.
     expect(result.input?.getType().toString()).toBe('[String]');
-    expect(result.output?.getType?.().toString()).toBe('[String]');
+    expect((result.output as ListComposer).getType().toString()).toBe('[String]');
   });
 });
