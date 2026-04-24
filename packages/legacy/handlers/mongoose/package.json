@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "graphql": "16.13.2",
-    "mongoose": "9.4.1"
+    "mongoose": "9.5.0"
   },
   "publishConfig": {
     "access": "public",
