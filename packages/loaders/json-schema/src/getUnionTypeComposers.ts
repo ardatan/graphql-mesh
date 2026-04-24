@@ -104,11 +104,10 @@ export function getUnionTypeComposers({
   if (new Set(outputTypeComposers).size === 1) {
     resolvedOutput = outputTypeComposers[0];
   } else {
-    const directives: Directive[] =
-      (resolvedOutput as UnionTypeComposer).getDirectives() || [];
-    const statusCodeOneOfIndexMap = (
-      resolvedOutput as UnionTypeComposer
-    ).getExtension('statusCodeOneOfIndexMap');
+    const directives: Directive[] = (resolvedOutput as UnionTypeComposer).getDirectives() || [];
+    const statusCodeOneOfIndexMap = (resolvedOutput as UnionTypeComposer).getExtension(
+      'statusCodeOneOfIndexMap',
+    );
     const statusCodeOneOfIndexMapEntries = Object.entries(statusCodeOneOfIndexMap || {});
     for (const outputTypeComposerIndex in outputTypeComposers) {
       const outputTypeComposer = outputTypeComposers[outputTypeComposerIndex];
@@ -148,9 +147,7 @@ export function getUnionTypeComposers({
 
   let flatten = false;
   // TODO: container suffix might not be coming from us
-  if (
-    (resolvedOutput as ObjectTypeComposer).getTypeName().endsWith('_container')
-  ) {
+  if ((resolvedOutput as ObjectTypeComposer).getTypeName().endsWith('_container')) {
     const fields = (resolvedOutput as ObjectTypeComposer).getFields();
     const fieldKeys = Object.keys(fields);
     if (fieldKeys.length === 1) {
