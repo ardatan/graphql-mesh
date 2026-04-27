@@ -1,0 +1,80 @@
+diff --git a/dist/commands/build.js b/dist/commands/build.js
+index e89c3982c115101a65e9a4d631dc5db14c345848..07631bdbbf57d1d0344e1d2bddba6bf412fe01d5 100644
+--- a/dist/commands/build.js
++++ b/dist/commands/build.js
+@@ -13,7 +13,7 @@ import { getWorkspaces } from '../utils/get-workspaces.js';
+ import { rewriteExports } from '../utils/rewrite-exports.js';
+ import { presetFields, presetFieldsESM } from './bootstrap.js';
+ export const DIST_DIR = 'dist';
+-export const DEFAULT_TS_BUILD_CONFIG = 'tsconfig.build.json';
++export const DEFAULT_TS_BUILD_CONFIG = 'tsgoonfig.build.json';
+ /**
+  * A list of files that we don't need within the published package.
+  * Also known as test files :)
+@@ -51,21 +51,21 @@ function assertTypeScriptBuildResult(result) {
+     }
+ }
+ async function buildTypeScript(buildPath, options) {
+-    let tsconfig = options.tsconfig;
+-    if (!tsconfig && (await fse.exists(join(options.cwd, DEFAULT_TS_BUILD_CONFIG)))) {
+-        tsconfig = join(options.cwd, DEFAULT_TS_BUILD_CONFIG);
++    let tsgoonfig = options.tsgoonfig;
++    if (!tsgoonfig && (await fse.exists(join(options.cwd, DEFAULT_TS_BUILD_CONFIG)))) {
++        tsgoonfig = join(options.cwd, DEFAULT_TS_BUILD_CONFIG);
+     }
+     assertTypeScriptBuildResult(await execa('npx', [
+-        'tsc',
+-        ...(tsconfig ? ['--project', tsconfig] : []),
++        'tsgo',
++        ...(tsgoonfig ? ['--project', tsgoonfig] : []),
+         ...compilerOptionsToArgs(typeScriptCompilerOptions('esm')),
+         ...(options.incremental ? ['--incremental'] : []),
+         '--outDir',
+         join(buildPath, 'esm'),
+     ]));
+     assertTypeScriptBuildResult(await execa('npx', [
+-        'tsc',
+-        ...(tsconfig ? ['--project', tsconfig] : []),
++        'tsgo',
++        ...(tsgoonfig ? ['--project', tsgoonfig] : []),
+         ...compilerOptionsToArgs(typeScriptCompilerOptions('cjs')),
+         ...(options.incremental ? ['--incremental'] : []),
+         '--outDir',
+@@ -79,8 +79,8 @@ export const buildCommand = createCommand(api => {
+         describe: 'Build',
+         builder(yargs) {
+             return yargs.options({
+-                tsconfig: {
+-                    describe: `Which tsconfig file to use when building TypeScript. By default bob will use ${DEFAULT_TS_BUILD_CONFIG} if it exists, otherwise the TSC's default.`,
++                tsgoonfig: {
++                    describe: `Which tsgoonfig file to use when building TypeScript. By default bob will use ${DEFAULT_TS_BUILD_CONFIG} if it exists, otherwise the tsgo's default.`,
+                     type: 'string',
+                 },
+                 incremental: {
+@@ -89,7 +89,7 @@ export const buildCommand = createCommand(api => {
+                 },
+             });
+         },
+-        async handler({ tsconfig, incremental }) {
++        async handler({ tsgoonfig, incremental }) {
+             const cwd = process.cwd();
+             const rootPackageJSON = await getRootPackageJSON();
+             const workspaces = await getWorkspaces(rootPackageJSON);
+@@ -99,7 +99,7 @@ export const buildCommand = createCommand(api => {
+                 if (!incremental) {
+                     await fse.remove(buildPath);
+                 }
+-                await buildTypeScript(buildPath, { cwd, tsconfig, incremental });
++                await buildTypeScript(buildPath, { cwd, tsgoonfig, incremental });
+                 const pkg = await fse.readJSON(resolve(cwd, 'package.json'));
+                 const fullName = pkg.name;
+                 const distPath = join(cwd, 'dist');
+@@ -126,7 +126,7 @@ export const buildCommand = createCommand(api => {
+             if (!incremental) {
+                 await fse.remove(bobBuildPath);
+             }
+-            await buildTypeScript(bobBuildPath, { cwd, tsconfig, incremental });
++            await buildTypeScript(bobBuildPath, { cwd, tsgoonfig, incremental });
+             await Promise.all(packageInfoList.map(({ cwd, pkg, fullName }) => limit(async () => {
+                 const getBuildPath = (target) => join(cwd.replace('packages', join('.bob', target)), 'src');
+                 const distPath = join(cwd, 'dist');
