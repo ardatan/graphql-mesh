@@ -7,7 +7,7 @@ index e89c3982c115101a65e9a4d631dc5db14c345848..07631bdbbf57d1d0344e1d2bddba6bf4
  import { presetFields, presetFieldsESM } from './bootstrap.js';
  export const DIST_DIR = 'dist';
 -export const DEFAULT_TS_BUILD_CONFIG = 'tsconfig.build.json';
-+export const DEFAULT_TS_BUILD_CONFIG = 'tsgoonfig.build.json';
++export const DEFAULT_TS_BUILD_CONFIG = 'tsconfig.build.json';
  /**
   * A list of files that we don't need within the published package.
   * Also known as test files :)
@@ -18,15 +18,15 @@ index e89c3982c115101a65e9a4d631dc5db14c345848..07631bdbbf57d1d0344e1d2bddba6bf4
 -    let tsconfig = options.tsconfig;
 -    if (!tsconfig && (await fse.exists(join(options.cwd, DEFAULT_TS_BUILD_CONFIG)))) {
 -        tsconfig = join(options.cwd, DEFAULT_TS_BUILD_CONFIG);
-+    let tsgoonfig = options.tsgoonfig;
-+    if (!tsgoonfig && (await fse.exists(join(options.cwd, DEFAULT_TS_BUILD_CONFIG)))) {
-+        tsgoonfig = join(options.cwd, DEFAULT_TS_BUILD_CONFIG);
++    let tsconfig = options.tsconfig;
++    if (!tsconfig && (await fse.exists(join(options.cwd, DEFAULT_TS_BUILD_CONFIG)))) {
++        tsconfig = join(options.cwd, DEFAULT_TS_BUILD_CONFIG);
      }
      assertTypeScriptBuildResult(await execa('npx', [
 -        'tsc',
 -        ...(tsconfig ? ['--project', tsconfig] : []),
 +        'tsgo',
-+        ...(tsgoonfig ? ['--project', tsgoonfig] : []),
++        ...(tsconfig ? ['--project', tsconfig] : []),
          ...compilerOptionsToArgs(typeScriptCompilerOptions('esm')),
          ...(options.incremental ? ['--incremental'] : []),
          '--outDir',
@@ -35,8 +35,8 @@ index e89c3982c115101a65e9a4d631dc5db14c345848..07631bdbbf57d1d0344e1d2bddba6bf4
      assertTypeScriptBuildResult(await execa('npx', [
 -        'tsc',
 -        ...(tsconfig ? ['--project', tsconfig] : []),
-+        'tsgo',
-+        ...(tsgoonfig ? ['--project', tsgoonfig] : []),
++        '',
++        ...(onfig ? ['--project', onfig] : []),
          ...compilerOptionsToArgs(typeScriptCompilerOptions('cjs')),
          ...(options.incremental ? ['--incremental'] : []),
          '--outDir',
@@ -46,8 +46,8 @@ index e89c3982c115101a65e9a4d631dc5db14c345848..07631bdbbf57d1d0344e1d2bddba6bf4
              return yargs.options({
 -                tsconfig: {
 -                    describe: `Which tsconfig file to use when building TypeScript. By default bob will use ${DEFAULT_TS_BUILD_CONFIG} if it exists, otherwise the TSC's default.`,
-+                tsgoonfig: {
-+                    describe: `Which tsgoonfig file to use when building TypeScript. By default bob will use ${DEFAULT_TS_BUILD_CONFIG} if it exists, otherwise the tsgo's default.`,
++                onfig: {
++                    describe: `Which onfig file to use when building TypeScript. By default bob will use ${DEFAULT_TS_BUILD_CONFIG} if it exists, otherwise the tsgo's default.`,
                      type: 'string',
                  },
                  incremental: {
@@ -56,7 +56,7 @@ index e89c3982c115101a65e9a4d631dc5db14c345848..07631bdbbf57d1d0344e1d2bddba6bf4
              });
          },
 -        async handler({ tsconfig, incremental }) {
-+        async handler({ tsgoonfig, incremental }) {
++        async handler({ tsconfig, incremental }) {
              const cwd = process.cwd();
              const rootPackageJSON = await getRootPackageJSON();
              const workspaces = await getWorkspaces(rootPackageJSON);
@@ -65,7 +65,7 @@ index e89c3982c115101a65e9a4d631dc5db14c345848..07631bdbbf57d1d0344e1d2bddba6bf4
                      await fse.remove(buildPath);
                  }
 -                await buildTypeScript(buildPath, { cwd, tsconfig, incremental });
-+                await buildTypeScript(buildPath, { cwd, tsgoonfig, incremental });
++                await buildTypeScript(buildPath, { cwd, tsconfig, incremental });
                  const pkg = await fse.readJSON(resolve(cwd, 'package.json'));
                  const fullName = pkg.name;
                  const distPath = join(cwd, 'dist');
@@ -74,7 +74,7 @@ index e89c3982c115101a65e9a4d631dc5db14c345848..07631bdbbf57d1d0344e1d2bddba6bf4
                  await fse.remove(bobBuildPath);
              }
 -            await buildTypeScript(bobBuildPath, { cwd, tsconfig, incremental });
-+            await buildTypeScript(bobBuildPath, { cwd, tsgoonfig, incremental });
++            await buildTypeScript(bobBuildPath, { cwd, tsconfig, incremental });
              await Promise.all(packageInfoList.map(({ cwd, pkg, fullName }) => limit(async () => {
                  const getBuildPath = (target) => join(cwd.replace('packages', join('.bob', target)), 'src');
                  const distPath = join(cwd, 'dist');
