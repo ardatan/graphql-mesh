@@ -18656,7 +18656,7 @@ __metadata:
 
 "bob-the-bundler@patch:bob-the-bundler@npm%3A7.0.1#~/.yarn/patches/bob-the-bundler-npm-7.0.1-ed23c34cf8.patch":
   version: 7.0.1
-  resolution: "bob-the-bundler@patch:bob-the-bundler@npm%3A7.0.1#~/.yarn/patches/bob-the-bundler-npm-7.0.1-ed23c34cf8.patch::version=7.0.1&hash=0192a8"
+  resolution: "bob-the-bundler@patch:bob-the-bundler@npm%3A7.0.1#~/.yarn/patches/bob-the-bundler-npm-7.0.1-ed23c34cf8.patch::version=7.0.1&hash=7539a0"
   dependencies:
     consola: "npm:^3.0.0"
     execa: "npm:7.1.1"
@@ -18673,7 +18673,7 @@ __metadata:
     typescript: ^5.0.0
   bin:
     bob: dist/index.js
-  checksum: 10c0/317422b0d70ba0747ec8cd2a44c28270dd4acba0c725d0899b5a87479517f71385d5f3435f49b791703667143b630d2fa7c9725055a8b901733c0ee66117466f
+  checksum: 10c0/e5f12ae181e74e827358adf9a22d85102598286f8cb8a4260660f3f994c2990aeaa4a8309c6117ff1a68de838c8725c033d731b7e0ce76e3836d21fc86d7f98f
   languageName: node
   linkType: hard
 
