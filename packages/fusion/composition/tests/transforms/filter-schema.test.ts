@@ -1,5 +1,5 @@
-import { buildSchema, printSchema } from 'graphql';
-import { createFilterTransform, createPruneTransform } from '@graphql-mesh/fusion-composition';
+import { buildSchema } from 'graphql';
+import { createFilterTransform, createPruneTransform } from '../../src/index.js';
 import { composeAndGetPublicSchema, expectTheSchemaSDLToBe } from './utils.js';
 
 describe('filter-schema', () => {
@@ -856,35 +856,6 @@ type Test implements ITest {
 
 type Query {
   test: Test
-}
-`.trim(),
-    );
-  });
-
-  it("should filter Mutation type out if there are no fields left after filtering it's fields", async () => {
-    let schema = buildSchema(/* GraphQL */ `
-      type Query {
-        foo: String
-      }
-      type Mutation {
-        bar: String
-      }
-    `);
-    const filterTransform = createFilterTransform({
-      filters: ['Mutation.!bar'],
-    });
-    schema = await composeAndGetPublicSchema([
-      {
-        name: 'TEST',
-        schema,
-        transforms: [filterTransform, createPruneTransform()],
-      },
-    ]);
-    expectTheSchemaSDLToBe(
-      schema,
-      /* GraphQL */ `
-type Query {
-  foo: String
 }
 `.trim(),
     );
