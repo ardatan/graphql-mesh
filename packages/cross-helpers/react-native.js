@@ -1,11 +1,25 @@
+let fs;
+let path;
+
 try {
-  module.exports.fs = require('react-native-fs');
-  module.exports.path = require('react-native-path');
+  fs = require('react-native-fs');
+  path = require('react-native-path');
 } catch (e) {
   console.error('react-native-fs and react-native-path are required for react-native');
 }
-module.exports.path.join = (...args) =>
-  module.exports.path.normalize(args.filter(x => !!x).join('/'));
+
+if (path) {
+  path.join = (...args) => path.normalize(args.filter(x => !!x).join('/'));
+} else {
+  path = {
+    normalize(value) {
+      return value;
+    },
+    join(...args) {
+      return args.filter(x => !!x).join('/');
+    },
+  };
+}
 
 Promise.allSettled =
   Promise.allSettled ||
@@ -24,7 +38,7 @@ Promise.allSettled =
       ),
     ));
 
-module.exports.process =
+const processPolyfill =
   typeof process !== 'undefined'
     ? process
     : {
@@ -36,7 +50,7 @@ module.exports.process =
 
 const { inspect } = require('@graphql-tools/utils');
 
-module.exports.util = {
+const util = {
   promisify(oldSchoolFn) {
     return function promisifiedFn(...args) {
       return new Promise(function executor(resolve, reject) {
@@ -51,4 +65,11 @@ module.exports.util = {
     };
   },
   inspect,
+};
+
+module.exports = {
+  fs,
+  path,
+  process: processPolyfill,
+  util,
 };

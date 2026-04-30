@@ -1,19 +1,16 @@
 import {
   isNonNullType,
-  type DirectiveLocation,
-  type GraphQLDirective,
   type GraphQLFieldConfig,
   type GraphQLInputFieldConfig,
   type GraphQLNamedType,
   type GraphQLSchema,
-  type isObjectType,
 } from 'graphql';
 import { Minimatch } from 'minimatch';
 import {
   getDirectiveExtensions,
+  getRootTypeNames,
   MapperKind,
   mapSchema,
-  type DirectableObject,
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
@@ -34,6 +31,7 @@ function compareAndAddInaccessibleDirective(
   originalSchema: GraphQLSchema,
   filteredSchema: GraphQLSchema,
 ) {
+  const rootTypeNames = getRootTypeNames(originalSchema);
   return mapSchema(originalSchema, {
     [MapperKind.TYPE]: type => {
       const typeInFiltered = filteredSchema.getType(type.name);
@@ -44,7 +42,7 @@ function compareAndAddInaccessibleDirective(
           addInaccessibleDirective(type);
         } else {
           const numOfFieldsInFiltered = Object.keys(typeInFiltered.getFields()).length;
-          if (numOfFieldsInFiltered === 0) {
+          if (numOfFieldsInFiltered === 0 && !rootTypeNames.has(type.name)) {
             addInaccessibleDirective(type);
           }
         }

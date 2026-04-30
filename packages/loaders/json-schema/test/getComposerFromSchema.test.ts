@@ -13,12 +13,12 @@ import {
 } from 'graphql';
 import {
   EnumTypeComposer,
-  InputTypeComposer,
-  ListComposer,
   ObjectTypeComposer,
-  ScalarTypeComposer,
   SchemaComposer,
-  UnionTypeComposer,
+  type InputTypeComposer,
+  type ListComposer,
+  type ScalarTypeComposer,
+  type UnionTypeComposer,
 } from 'graphql-compose';
 import {
   GraphQLBigInt,

@@ -5,6 +5,7 @@ import type {
   FieldDefinitionNode,
 } from 'graphql';
 import { Kind, visit } from 'graphql';
+import type { YamlConfig } from '@graphql-mesh/types';
 import type { resolveAdditionalResolvers } from './resolve-additional-resolvers.js';
 
 function parseObject(ast: ConstObjectValueNode): any {
@@ -33,7 +34,14 @@ function parseLiteral(ast: ConstValueNode): any {
   }
 }
 
-export function getAdditionalResolversFromTypeDefs(additionalTypeDefs: DocumentNode[]) {
+export function getAdditionalResolversFromTypeDefs(
+  additionalTypeDefs: DocumentNode[],
+): (
+  | string
+  | YamlConfig.AdditionalStitchingBatchResolverObject
+  | YamlConfig.AdditionalStitchingResolverObject
+  | YamlConfig.AdditionalSubscriptionObject
+)[] {
   const additionalResolversFromTypeDefs: Parameters<typeof resolveAdditionalResolvers>[1] = [];
   function handleFieldNode(targetTypeName: string, fieldNode: FieldDefinitionNode) {
     if (fieldNode.directives?.length) {

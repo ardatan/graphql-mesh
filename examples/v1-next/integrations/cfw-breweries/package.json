@@ -10,11 +10,11 @@
     "@graphql-mesh/cache-cfw-kv": "workspace:^",
     "@graphql-mesh/cache-localforage": "workspace:^",
     "@graphql-mesh/compose-cli": "workspace:^",
-    "@graphql-mesh/plugin-response-cache": "^0.104.42",
+    "@graphql-mesh/plugin-response-cache": "^0.104.43",
     "@omnigraph/json-schema": "workspace:^",
     "graphql": "16.13.2"
   },
   "devDependencies": {
-    "wrangler": "4.83.0"
+    "wrangler": "4.85.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-grpc",
-  "version": "0.3.38",
+  "version": "0.3.39",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,12 +35,12 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.13",
+    "@graphql-mesh/cross-helpers": "^0.4.14",
     "@graphql-mesh/string-interpolation": "^0.5.16",
     "@graphql-mesh/transport-common": "^1.0.16",
-    "@graphql-mesh/types": "^0.104.27",
-    "@graphql-mesh/utils": "^0.104.35",
-    "@graphql-tools/utils": "^11.0.1",
+    "@graphql-mesh/types": "^0.104.28",
+    "@graphql-mesh/utils": "^0.104.36",
+    "@graphql-tools/utils": "^11.1.0",
     "@grpc/grpc-js": "^1.14.3",
     "@grpc/proto-loader": "^0.8.0",
     "@whatwg-node/disposablestack": "^0.0.6",
@@ -48,7 +48,7 @@
     "graphql-scalars": "^1.22.4",
     "lodash.get": "^4.4.2",
     "long": "4.0.0",
-    "protobufjs": "^8.0.1",
+    "protobufjs": "^8.0.2",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
