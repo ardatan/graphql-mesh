@@ -3641,6 +3641,18 @@ __metadata:
     "@graphql-hive/gateway": "npm:^2.5.25"
     "@graphql-tools/schema": "npm:^10.0.32"
     graphql: "npm:16.13.2"
+    graphql-yoga: "npm:^5.21.0"
+  languageName: unknown
+  linkType: soft
+
+"@e2e/inaccessible-all-mutations@workspace:e2e/inaccessible-all-mutations":
+  version: 0.0.0-use.local
+  resolution: "@e2e/inaccessible-all-mutations@workspace:e2e/inaccessible-all-mutations"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^2.5.25"
+    "@graphql-tools/schema": "npm:^10.0.32"
+    graphql: "npm:16.13.2"
+    graphql-yoga: "npm:^5.21.0"
   languageName: unknown
   linkType: soft
 

@@ -1,5 +1,5 @@
 {
-  "name": "@e2e/hoist-and-prefix-transform",
+  "name": "@e2e/inaccessible-all-mutations",
   "type": "module",
   "private": true,
   "dependencies": {
