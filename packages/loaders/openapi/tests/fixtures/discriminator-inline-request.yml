@@ -21,6 +21,7 @@ paths:
                   dog: '#/components/schemas/CreateDogInput'
       responses:
         200:
+          description: Successful response
           content:
             application/json:
               schema:
