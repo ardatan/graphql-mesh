@@ -1,5 +1,17 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.48
+
+### Patch Changes
+
+- [#9454](https://github.com/ardatan/graphql-mesh/pull/9454)
+  [`9e23b1f`](https://github.com/ardatan/graphql-mesh/commit/9e23b1f3db8912018f601ed2a8ac9c9cd33b8a27)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not mark root types inaccessible solely
+  because all of their fields were filtered out. Previously, filtering all `Mutation` fields also
+  made the `Mutation` type inaccessible, which was unintended. Now, root types are only marked
+  inaccessible when explicitly marked as such. If all `Mutation` fields are filtered, the `Mutation`
+  type remains accessible while those fields are marked inaccessible.
+
 ## 0.8.47
 
 ### Patch Changes
