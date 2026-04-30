@@ -218,6 +218,21 @@ describe('Inline Discriminator Mapping (request body)', () => {
   });
 });
 
+describe('Inline Discriminator Mapping (callback)', () => {
+  it('should resolve inline discriminator mapping in callback request bodies', async () => {
+    const schema = await loadGraphQLSchemaFromOpenAPI('test', {
+      source: './fixtures/discriminator-inline-callback.yml',
+      cwd: __dirname,
+      ignoreErrorResponses: true,
+    });
+    const schemaWithDirectives = printSchemaWithDirectives(schema);
+    expect(schemaWithDirectives).toContain('type Subscription');
+    expect(schemaWithDirectives).toContain(
+      '@discriminator(subgraph: "test", field: "type", mapping: [["cat", "Cat"], ["dog", "Dog"]])',
+    );
+  });
+});
+
 describe('Inline Discriminator Mapping (nested property)', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {

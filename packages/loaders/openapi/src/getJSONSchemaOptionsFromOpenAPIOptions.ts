@@ -344,6 +344,60 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     }
   }
 
+  const operationMethodNames = new Set([
+    'get',
+    'post',
+    'put',
+    'delete',
+    'patch',
+    'options',
+    'head',
+    'trace',
+  ]);
+  const visitedPathItems = new WeakSet<object>();
+
+  function visitOperation(operation: unknown) {
+    if (!isObjectRecord(operation)) {
+      return;
+    }
+    visitParameters(operation.parameters);
+    visitRequestBody(operation.requestBody);
+    visitResponses(operation.responses);
+    visitCallbacks(operation.callbacks);
+  }
+
+  function visitPathItem(pathItem: unknown) {
+    if (!isObjectRecord(pathItem)) {
+      return;
+    }
+    if (visitedPathItems.has(pathItem)) {
+      return;
+    }
+    visitedPathItems.add(pathItem);
+
+    visitParameters(pathItem.parameters);
+    for (const [key, operation] of Object.entries(pathItem)) {
+      if (!operationMethodNames.has(key.toLowerCase())) {
+        continue;
+      }
+      visitOperation(operation);
+    }
+  }
+
+  function visitCallbacks(callbacks: unknown) {
+    if (!isObjectRecord(callbacks)) {
+      return;
+    }
+    for (const callback of Object.values(callbacks)) {
+      if (!isObjectRecord(callback)) {
+        continue;
+      }
+      for (const pathItem of Object.values(callback)) {
+        visitPathItem(pathItem);
+      }
+    }
+  }
+
   function visitOpenAPIDocument(oas: OpenAPIV3.Document | OpenAPIV2.Document) {
     const v3Components = (oas as OpenAPIV3.Document).components;
     if (isObjectRecord(v3Components)) {
@@ -375,6 +429,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           }
         }
       }
+      visitCallbacks(v3Components.callbacks);
     }
 
     const v2Definitions = (oas as OpenAPIV2.Document).definitions;
@@ -394,32 +449,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
     const paths = oas.paths;
     if (isObjectRecord(paths)) {
-      const methodNames = new Set([
-        'get',
-        'post',
-        'put',
-        'delete',
-        'patch',
-        'options',
-        'head',
-        'trace',
-      ]);
       for (const pathItem of Object.values(paths)) {
-        if (!isObjectRecord(pathItem)) {
-          continue;
-        }
-        visitParameters(pathItem.parameters);
-        for (const [key, operation] of Object.entries(pathItem)) {
-          if (!methodNames.has(key.toLowerCase())) {
-            continue;
-          }
-          if (!isObjectRecord(operation)) {
-            continue;
-          }
-          visitParameters(operation.parameters);
-          visitRequestBody(operation.requestBody);
-          visitResponses(operation.responses);
-        }
+        visitPathItem(pathItem);
       }
     }
   }
