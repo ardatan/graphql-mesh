@@ -244,33 +244,187 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     }
   }
 
-  function visitOpenAPIObjects(
-    value: unknown,
-    visit: (schema: Record<string, unknown>) => void,
-    visited = new WeakSet<object>(),
-  ) {
-    if (value == null || typeof value !== 'object') {
-      return;
-    }
-    if (visited.has(value)) {
-      return;
-    }
-    visited.add(value);
+  const visitedSchemas = new WeakSet<object>();
 
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        visitOpenAPIObjects(item, visit, visited);
+  function visitSchema(schema: unknown) {
+    if (!isObjectRecord(schema)) {
+      return;
+    }
+    if (visitedSchemas.has(schema)) {
+      return;
+    }
+    visitedSchemas.add(schema);
+
+    applyDiscriminatorMapping(schema);
+
+    for (const combinator of ['oneOf', 'anyOf', 'allOf'] as const) {
+      const list = schema[combinator];
+      if (Array.isArray(list)) {
+        for (const sub of list) {
+          visitSchema(sub);
+        }
       }
-      return;
     }
 
-    visit(value as Record<string, unknown>);
-    for (const item of Object.values(value)) {
-      visitOpenAPIObjects(item, visit, visited);
+    visitSchema(schema.items);
+    visitSchema(schema.not);
+    visitSchema(schema.additionalProperties);
+
+    for (const propsKey of ['properties', 'patternProperties'] as const) {
+      const props = schema[propsKey];
+      if (isObjectRecord(props)) {
+        for (const sub of Object.values(props)) {
+          visitSchema(sub);
+        }
+      }
+    }
+
+    // Freshly-resolved mapping targets may themselves contain inline discriminators
+    const resolvedMapping = schema.discriminatorMapping;
+    if (isObjectRecord(resolvedMapping)) {
+      for (const sub of Object.values(resolvedMapping)) {
+        visitSchema(sub);
+      }
     }
   }
 
-  visitOpenAPIObjects(oasOrSwagger, applyDiscriminatorMapping);
+  function visitContent(content: unknown) {
+    if (!isObjectRecord(content)) {
+      return;
+    }
+    for (const media of Object.values(content)) {
+      if (isObjectRecord(media)) {
+        visitSchema(media.schema);
+      }
+    }
+  }
+
+  function visitParameters(parameters: unknown) {
+    if (!Array.isArray(parameters)) {
+      return;
+    }
+    for (const parameter of parameters) {
+      if (!isObjectRecord(parameter)) {
+        continue;
+      }
+      // OpenAPI v3 / Swagger v2 body parameter
+      visitSchema(parameter.schema);
+      // OpenAPI v3 parameter content variant
+      visitContent(parameter.content);
+    }
+  }
+
+  function visitRequestBody(requestBody: unknown) {
+    if (!isObjectRecord(requestBody)) {
+      return;
+    }
+    visitContent(requestBody.content);
+  }
+
+  function visitResponses(responses: unknown) {
+    if (!isObjectRecord(responses)) {
+      return;
+    }
+    for (const response of Object.values(responses)) {
+      if (!isObjectRecord(response)) {
+        continue;
+      }
+      // OpenAPI v3
+      visitContent(response.content);
+      // Swagger v2
+      visitSchema(response.schema);
+      const headers = response.headers;
+      if (isObjectRecord(headers)) {
+        for (const header of Object.values(headers)) {
+          if (isObjectRecord(header)) {
+            visitSchema(header.schema);
+          }
+        }
+      }
+    }
+  }
+
+  function visitOpenAPIDocument(oas: OpenAPIV3.Document | OpenAPIV2.Document) {
+    const v3Components = (oas as OpenAPIV3.Document).components;
+    if (isObjectRecord(v3Components)) {
+      const schemas = v3Components.schemas;
+      if (isObjectRecord(schemas)) {
+        for (const schema of Object.values(schemas)) {
+          visitSchema(schema);
+        }
+      }
+      const parameters = v3Components.parameters;
+      if (isObjectRecord(parameters)) {
+        visitParameters(Object.values(parameters));
+      }
+      const requestBodies = v3Components.requestBodies;
+      if (isObjectRecord(requestBodies)) {
+        for (const requestBody of Object.values(requestBodies)) {
+          visitRequestBody(requestBody);
+        }
+      }
+      const componentResponses = v3Components.responses;
+      if (isObjectRecord(componentResponses)) {
+        visitResponses(componentResponses);
+      }
+      const headers = v3Components.headers;
+      if (isObjectRecord(headers)) {
+        for (const header of Object.values(headers)) {
+          if (isObjectRecord(header)) {
+            visitSchema(header.schema);
+          }
+        }
+      }
+    }
+
+    const v2Definitions = (oas as OpenAPIV2.Document).definitions;
+    if (isObjectRecord(v2Definitions)) {
+      for (const schema of Object.values(v2Definitions)) {
+        visitSchema(schema);
+      }
+    }
+    const v2Parameters = (oas as OpenAPIV2.Document).parameters;
+    if (isObjectRecord(v2Parameters)) {
+      visitParameters(Object.values(v2Parameters));
+    }
+    const v2Responses = (oas as OpenAPIV2.Document).responses;
+    if (isObjectRecord(v2Responses)) {
+      visitResponses(v2Responses);
+    }
+
+    const paths = oas.paths;
+    if (isObjectRecord(paths)) {
+      const methodNames = new Set([
+        'get',
+        'post',
+        'put',
+        'delete',
+        'patch',
+        'options',
+        'head',
+        'trace',
+      ]);
+      for (const pathItem of Object.values(paths)) {
+        if (!isObjectRecord(pathItem)) {
+          continue;
+        }
+        visitParameters(pathItem.parameters);
+        for (const [key, operation] of Object.entries(pathItem)) {
+          if (!methodNames.has(key.toLowerCase())) {
+            continue;
+          }
+          if (!isObjectRecord(operation)) {
+            continue;
+          }
+          visitParameters(operation.parameters);
+          visitRequestBody(operation.requestBody);
+          visitResponses(operation.responses);
+        }
+      }
+    }
+  }
+
+  visitOpenAPIDocument(oasOrSwagger);
 
   const operations: JSONSchemaOperationConfig[] = [];
   let baseOperationArgTypeMap: Record<string, JSONSchemaObject>;

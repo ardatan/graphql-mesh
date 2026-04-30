@@ -147,3 +147,66 @@ describe('Inline Discriminator Mapping', () => {
     });
   });
 });
+
+describe('Inline Discriminator Mapping (nested property)', () => {
+  let createdSchema: GraphQLSchema;
+  beforeAll(async () => {
+    createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
+      source: './fixtures/discriminator-inline-nested.yml',
+      cwd: __dirname,
+      ignoreErrorResponses: true,
+      async fetch(url) {
+        if (url === 'envelope') {
+          return Response.json({
+            pet: {
+              id: '1',
+              type: 'dog',
+              name: 'Milo',
+            },
+          });
+        }
+        return new Response(null, {
+          status: 404,
+        });
+      },
+    });
+  });
+
+  it('should resolve inline discriminator nested under object properties', async () => {
+    const query = /* GraphQL */ `
+      query {
+        envelope {
+          pet {
+            __typename
+            ... on Cat {
+              id
+              type
+              name
+            }
+            ... on Dog {
+              id
+              type
+              name
+            }
+          }
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+    expect(result).toEqual({
+      data: {
+        envelope: {
+          pet: {
+            __typename: 'Dog',
+            id: '1',
+            type: 'dog',
+            name: 'Milo',
+          },
+        },
+      },
+    });
+  });
+});
