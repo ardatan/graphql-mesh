@@ -205,7 +205,8 @@ function namespaceToSlug(namespace: string): string {
   }
 
   // Prefix a leading digit so the result is a valid GraphQL identifier
-  if (slug.length > 0 && slug.charCodeAt(0) >= 0x30 && slug.charCodeAt(0) <= 0x39) {
+  const firstCode = slug.charCodeAt(0);
+  if (firstCode >= 0x30 && firstCode <= 0x39) {
     slug = '_' + slug;
   }
 
