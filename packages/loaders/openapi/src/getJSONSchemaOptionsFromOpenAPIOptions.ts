@@ -197,36 +197,80 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     );
   }
 
-  for (const [_name, schema] of Object.entries(
-    (oasOrSwagger as OpenAPIV3.Document).components?.schemas ||
-      (oasOrSwagger as OpenAPIV2.Document).definitions ||
-      {},
-  )) {
-    const mapping = (schema as any).discriminator?.mapping as Record<string, string>;
-    if (mapping) {
-      for (const [key, value] of Object.entries(mapping)) {
-        if (typeof value === 'string') {
-          const docIdentifier = value.startsWith('#') ? '#' : value.startsWith('..') ? '..' : null;
-          if (docIdentifier) {
-            const [, ref] = value.split(docIdentifier);
-            (schema as any).discriminatorMapping = (schema as any).discriminatorMapping || {};
-            (schema as any).discriminatorMapping[key] = resolvePath(ref, oasOrSwagger);
-          } else if (value.includes('/')) {
-            logger.warn(`Unsupported discriminator mapping: ${value}`);
-            continue;
-          } else {
-            const schemaObj = lookFromMaps(oasOrSwagger, value);
-            if (!schemaObj) {
-              logger.warn(`Invalid discriminator mapping: ${value}`);
-              continue;
-            }
-            (schema as any).discriminatorMapping = (schema as any).discriminatorMapping || {};
-            (schema as any).discriminatorMapping[key] = schemaObj;
-          }
+  function isObjectRecord(value: unknown): value is Record<string, unknown> {
+    return value != null && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function ensureDiscriminatorMapping(schema: Record<string, unknown>): Record<string, unknown> {
+    const discriminatorMapping = schema.discriminatorMapping;
+    if (isObjectRecord(discriminatorMapping)) {
+      return discriminatorMapping;
+    }
+    const newDiscriminatorMapping: Record<string, unknown> = {};
+    schema.discriminatorMapping = newDiscriminatorMapping;
+    return newDiscriminatorMapping;
+  }
+
+  function applyDiscriminatorMapping(schema: Record<string, unknown>) {
+    const discriminator = schema.discriminator;
+    if (!isObjectRecord(discriminator)) {
+      return;
+    }
+
+    const mapping = discriminator.mapping;
+    if (!isObjectRecord(mapping)) {
+      return;
+    }
+
+    for (const [key, value] of Object.entries(mapping)) {
+      if (typeof value !== 'string') {
+        continue;
+      }
+
+      const docIdentifier = value.startsWith('#') ? '#' : value.startsWith('..') ? '..' : null;
+      if (docIdentifier) {
+        const [, ref] = value.split(docIdentifier);
+        ensureDiscriminatorMapping(schema)[key] = resolvePath(ref, oasOrSwagger);
+      } else if (value.includes('/')) {
+        logger.warn(`Unsupported discriminator mapping: ${value}`);
+      } else {
+        const schemaObj = lookFromMaps(oasOrSwagger, value);
+        if (!schemaObj) {
+          logger.warn(`Invalid discriminator mapping: ${value}`);
+          continue;
         }
+        ensureDiscriminatorMapping(schema)[key] = schemaObj;
       }
     }
   }
+
+  function visitOpenAPIObjects(
+    value: unknown,
+    visit: (schema: Record<string, unknown>) => void,
+    visited = new WeakSet<object>(),
+  ) {
+    if (value == null || typeof value !== 'object') {
+      return;
+    }
+    if (visited.has(value)) {
+      return;
+    }
+    visited.add(value);
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        visitOpenAPIObjects(item, visit, visited);
+      }
+      return;
+    }
+
+    visit(value as Record<string, unknown>);
+    for (const item of Object.values(value)) {
+      visitOpenAPIObjects(item, visit, visited);
+    }
+  }
+
+  visitOpenAPIObjects(oasOrSwagger, applyDiscriminatorMapping);
 
   const operations: JSONSchemaOperationConfig[] = [];
   let baseOperationArgTypeMap: Record<string, JSONSchemaObject>;

@@ -1,4 +1,5 @@
-import { execute, GraphQLSchema, parse } from 'graphql';
+import { execute, parse } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
@@ -64,6 +65,84 @@ describe('Discriminator Mapping', () => {
           __typename: 'Cat',
           petType: 'Cat',
         },
+      },
+    });
+  });
+});
+
+describe('Inline Discriminator Mapping', () => {
+  let createdSchema: GraphQLSchema;
+  beforeAll(async () => {
+    createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
+      source: './fixtures/discriminator-inline.yml',
+      cwd: __dirname,
+      ignoreErrorResponses: true,
+      async fetch(url) {
+        if (url === 'things') {
+          return Response.json([
+            {
+              id: '1',
+              type: 'cat',
+              name: 'Luna',
+              data: {},
+            },
+            {
+              id: '2',
+              type: 'dog',
+              name: 'Milo',
+              data: {},
+            },
+          ]);
+        }
+        return new Response(null, {
+          status: 404,
+        });
+      },
+    });
+  });
+
+  it('should generate correct schema', () => {
+    expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot('discriminator-inline');
+  });
+
+  it('should handle inline discriminator mapping', async () => {
+    const query = /* GraphQL */ `
+      query {
+        things {
+          __typename
+          ... on Cat {
+            id
+            type
+            name
+          }
+          ... on Dog {
+            id
+            type
+            name
+          }
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+    expect(result).toEqual({
+      data: {
+        things: [
+          {
+            __typename: 'Cat',
+            id: '1',
+            type: 'cat',
+            name: 'Luna',
+          },
+          {
+            __typename: 'Dog',
+            id: '2',
+            type: 'dog',
+            name: 'Milo',
+          },
+        ],
       },
     });
   });

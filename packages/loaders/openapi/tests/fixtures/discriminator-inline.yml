@@ -1,0 +1,47 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Inline Discriminator Test
+paths:
+  /things:
+    get:
+      operationId: things
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Cat'
+                    - $ref: '#/components/schemas/Dog'
+                  discriminator:
+                    propertyName: type
+                    mapping:
+                      cat: '#/components/schemas/Cat'
+                      dog: '#/components/schemas/Dog'
+components:
+  schemas:
+    Cat:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
+        data:
+          type: object
+    Dog:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
+        data:
+          type: object
