@@ -166,6 +166,52 @@ function isQueryOperationName(operationName: string) {
   return QUERY_PREFIXES.some(prefix => operationName.toLowerCase().startsWith(prefix));
 }
 
+/**
+ * Convert a namespace URI to a GraphQL-safe identifier slug.
+ * Uses a single linear pass to avoid polynomial regex backtracking on
+ * user-controlled input (CodeQL js/polynomial-redos).
+ */
+function namespaceToSlug(namespace: string): string {
+  // Determine start index after optional protocol prefix
+  let start = 0;
+  if (namespace.startsWith('https://')) {
+    start = 8;
+  } else if (namespace.startsWith('http://')) {
+    start = 7;
+  }
+
+  // Build slug in one pass:
+  // - keep alphanumeric characters as-is
+  // - collapse any run of non-alphanumeric characters into a single '_'
+  // - skip leading and trailing '_' (pendingUnderscore is only flushed when
+  //   a subsequent alphanumeric character is found)
+  let slug = '';
+  let pendingUnderscore = false;
+  for (let i = start; i < namespace.length; i++) {
+    const code = namespace.charCodeAt(i);
+    if (
+      (code >= 0x30 && code <= 0x39) || // 0-9
+      (code >= 0x41 && code <= 0x5a) || // A-Z
+      (code >= 0x61 && code <= 0x7a) // a-z
+    ) {
+      if (pendingUnderscore && slug.length > 0) {
+        slug += '_';
+      }
+      pendingUnderscore = false;
+      slug += namespace[i];
+    } else {
+      pendingUnderscore = true;
+    }
+  }
+
+  // Prefix a leading digit so the result is a valid GraphQL identifier
+  if (slug.length > 0 && slug.charCodeAt(0) >= 0x30 && slug.charCodeAt(0) <= 0x39) {
+    slug = '_' + slug;
+  }
+
+  return slug;
+}
+
 export class SOAPLoader {
   private schemaComposer = new SchemaComposer();
   private namespaceDefinitionsMap = new Map<string, WSDLDefinition[]>();
@@ -1000,12 +1046,7 @@ export class SOAPLoader {
         const candidateName = `${prefix}_${complexTypeName}_Input`;
         let inputTypeName = candidateName;
         if (this.schemaComposer.has(candidateName)) {
-          const nsSlug = complexTypeNamespace
-            .replace(/^https?:\/\//, '')
-            .replace(/[^a-zA-Z0-9]+/g, '_')
-            .replace(/^_+/, '')
-            .replace(/_+$/, '')
-            .replace(/^\d/, '_$&');
+          const nsSlug = namespaceToSlug(complexTypeNamespace);
           inputTypeName = `${nsSlug}_${complexTypeName}_Input`;
           let i = 2;
           while (this.schemaComposer.has(inputTypeName)) {
@@ -1254,12 +1295,7 @@ export class SOAPLoader {
         const candidateName = `${prefix}_${complexTypeName}`;
         let outputTypeName = candidateName;
         if (this.schemaComposer.has(candidateName)) {
-          const nsSlug = complexTypeNamespace
-            .replace(/^https?:\/\//, '')
-            .replace(/[^a-zA-Z0-9]+/g, '_')
-            .replace(/^_+/, '')
-            .replace(/_+$/, '')
-            .replace(/^\d/, '_$&');
+          const nsSlug = namespaceToSlug(complexTypeNamespace);
           outputTypeName = `${nsSlug}_${complexTypeName}`;
           let i = 2;
           while (this.schemaComposer.has(outputTypeName)) {
