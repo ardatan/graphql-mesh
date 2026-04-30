@@ -2,5 +2,5 @@
 '@graphql-mesh/fusion-composition': patch
 ---
 
-Do not filter root types if they don't have any fields accessible. Previously filtering all Mutation fields would make the Mutation type inaccessible, which is not the intended behavior. Root types should only be filtered if they are explicitly marked as inaccessible or if they have no fields and are not root types.
-In that case when Mutation is marked inaccessible, all the other subgraphs' Mutation fields are also marked inaccessible. Now Mutation is not marked inaccessible, but all the fields are marked inaccessible, which is the intended behavior.
+Do not mark root types inaccessible solely because all of their fields were filtered out. Previously, filtering all `Mutation` fields also made the `Mutation` type inaccessible, which was unintended.
+Now, root types are only marked inaccessible when explicitly marked as such. If all `Mutation` fields are filtered, the `Mutation` type remains accessible while those fields are marked inaccessible.
