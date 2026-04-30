@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cli",
-  "version": "0.100.51",
+  "version": "0.100.52",
   "type": "module",
   "repository": {
     "type": "git",

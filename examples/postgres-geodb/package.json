@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@graphql-mesh/cache-file": "0.104.36",
-    "@graphql-mesh/cli": "0.100.51",
+    "@graphql-mesh/cli": "0.100.52",
     "@graphql-mesh/config": "0.108.44",
     "@graphql-mesh/graphql": "0.104.39",
     "@graphql-mesh/postgraphile": "0.104.39",
