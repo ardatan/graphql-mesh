@@ -1003,7 +1003,8 @@ export class SOAPLoader {
           const nsSlug = complexTypeNamespace
             .replace(/^https?:\/\//, '')
             .replace(/[^a-zA-Z0-9]+/g, '_')
-            .replace(/^_+|_+$/g, '')
+            .replace(/^_+/, '')
+            .replace(/_+$/, '')
             .replace(/^\d/, '_$&');
           inputTypeName = `${nsSlug}_${complexTypeName}_Input`;
           let i = 2;
@@ -1256,7 +1257,8 @@ export class SOAPLoader {
           const nsSlug = complexTypeNamespace
             .replace(/^https?:\/\//, '')
             .replace(/[^a-zA-Z0-9]+/g, '_')
-            .replace(/^_+|_+$/g, '')
+            .replace(/^_+/, '')
+            .replace(/_+$/, '')
             .replace(/^\d/, '_$&');
           outputTypeName = `${nsSlug}_${complexTypeName}`;
           let i = 2;
