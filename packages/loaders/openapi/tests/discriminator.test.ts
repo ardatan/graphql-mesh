@@ -1,5 +1,6 @@
 import { execute, parse } from 'graphql';
 import type { GraphQLSchema } from 'graphql';
+import type { Logger } from '@graphql-mesh/types';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
 import { getJSONSchemaOptionsFromOpenAPIOptions } from '../src/getJSONSchemaOptionsFromOpenAPIOptions.js';
@@ -232,6 +233,50 @@ describe('External Relative Discriminator Mapping', () => {
         ],
       },
     });
+  });
+
+  it('should warn instead of resolving file-looking relative mappings without fragments', async () => {
+    const warn = jest.fn();
+    const logger: Logger = {
+      log: jest.fn(),
+      warn,
+      info: jest.fn(),
+      error: jest.fn(),
+      debug: jest.fn(),
+      child: () => logger,
+    };
+    await getJSONSchemaOptionsFromOpenAPIOptions('test', {
+      source: {
+        openapi: '3.0.0',
+        info: {
+          version: '1.0.0',
+          title: 'Invalid Relative Discriminator Mapping Test',
+        },
+        paths: {},
+        components: {
+          schemas: {
+            Pet: {
+              oneOf: [
+                {
+                  $ref: '#/components/schemas/Cat',
+                },
+              ],
+              discriminator: {
+                propertyName: 'type',
+                mapping: {
+                  cat: '../common.yml',
+                },
+              },
+            },
+            Cat: {
+              type: 'object',
+            },
+          },
+        },
+      },
+      logger,
+    });
+    expect(warn).toHaveBeenCalledWith('Unsupported discriminator mapping: ../common.yml');
   });
 });
 

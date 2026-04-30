@@ -224,8 +224,13 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     if (value.startsWith('..')) {
       const hashIndex = value.indexOf('#');
       if (hashIndex === -1) {
+        const refPath = value.slice(2);
+        const firstSegment = refPath.split('/').find(Boolean);
+        if (!refPath.startsWith('/') || firstSegment?.includes('.')) {
+          return null;
+        }
         return {
-          refPath: value.slice(2),
+          refPath,
           isExternalFileRef: false,
         };
       }
