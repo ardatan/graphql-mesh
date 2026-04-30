@@ -296,6 +296,16 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
   const visitedSchemas = new WeakSet<object>();
 
+  function visitSchemaOrSchemas(schemaOrSchemas: unknown) {
+    if (Array.isArray(schemaOrSchemas)) {
+      for (const schema of schemaOrSchemas) {
+        visitSchema(schema);
+      }
+    } else {
+      visitSchema(schemaOrSchemas);
+    }
+  }
+
   function visitSchema(schema: unknown) {
     if (!isObjectRecord(schema)) {
       return;
@@ -316,11 +326,20 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       }
     }
 
-    visitSchema(schema.items);
-    visitSchema(schema.not);
-    visitSchema(schema.additionalProperties);
+    for (const schemaKey of [
+      'additionalItems',
+      'additionalProperties',
+      'contains',
+      'else',
+      'if',
+      'items',
+      'not',
+      'then',
+    ] as const) {
+      visitSchemaOrSchemas(schema[schemaKey]);
+    }
 
-    for (const propsKey of ['properties', 'patternProperties'] as const) {
+    for (const propsKey of ['definitions', 'properties', 'patternProperties'] as const) {
       const props = schema[propsKey];
       if (isObjectRecord(props)) {
         for (const sub of Object.values(props)) {

@@ -235,6 +235,39 @@ describe('External Relative Discriminator Mapping', () => {
   });
 });
 
+describe('Inline Discriminator Mapping (schema keywords)', () => {
+  it('should visit discriminator mappings inside nested schema keywords', async () => {
+    const options = await getJSONSchemaOptionsFromOpenAPIOptions('test', {
+      source: './fixtures/discriminator-inline-schema-keywords.yml',
+      cwd: __dirname,
+    });
+    const operation = options.operations.find(operation => operation.field === 'petsWithContains');
+    expectRecord(operation);
+    const responseByStatusCode = operation.responseByStatusCode;
+    expectRecord(responseByStatusCode);
+    expectRecord(responseByStatusCode['200']);
+    const responseSchema = responseByStatusCode['200'].responseSchema;
+    expectRecord(responseSchema);
+    expectRecord(responseSchema.contains);
+    const discriminatorMapping = responseSchema.contains.discriminatorMapping;
+    expectRecord(discriminatorMapping);
+    expect(discriminatorMapping.cat).toMatchObject({
+      properties: {
+        meow: {
+          type: 'string',
+        },
+      },
+    });
+    expect(discriminatorMapping.dog).toMatchObject({
+      properties: {
+        bark: {
+          type: 'string',
+        },
+      },
+    });
+  });
+});
+
 describe('Inline Discriminator Mapping (request body)', () => {
   let createdSchema: GraphQLSchema;
   const receivedBodies: unknown[] = [];
@@ -336,6 +369,31 @@ describe('Inline Discriminator Mapping (request body)', () => {
 
 describe('Inline Discriminator Mapping (callback)', () => {
   it('should resolve inline discriminator mapping in callback request bodies', async () => {
+    const options = await getJSONSchemaOptionsFromOpenAPIOptions('test', {
+      source: './fixtures/discriminator-inline-callback.yml',
+      cwd: __dirname,
+    });
+    const operation = options.operations.find(operation => operation.field === 'thingChanged');
+    expectRecord(operation);
+    const responseSchema = operation.responseSchema;
+    expectRecord(responseSchema);
+    const discriminatorMapping = responseSchema.discriminatorMapping;
+    expectRecord(discriminatorMapping);
+    expect(discriminatorMapping.cat).toMatchObject({
+      properties: {
+        name: {
+          type: 'string',
+        },
+      },
+    });
+    expect(discriminatorMapping.dog).toMatchObject({
+      properties: {
+        name: {
+          type: 'string',
+        },
+      },
+    });
+
     const schema = await loadGraphQLSchemaFromOpenAPI('test', {
       source: './fixtures/discriminator-inline-callback.yml',
       cwd: __dirname,
