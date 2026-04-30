@@ -185,7 +185,8 @@ function namespaceToSlug(namespace: string): string {
   // - collapse any run of non-alphanumeric characters into a single '_'
   // - skip leading and trailing '_' (pendingUnderscore is only flushed when
   //   a subsequent alphanumeric character is found)
-  let slug = '';
+  // Use an array of chunks to avoid O(n^2) repeated string concatenation.
+  const chunks: string[] = [];
   let pendingUnderscore = false;
   for (let i = start; i < namespace.length; i++) {
     const code = namespace.charCodeAt(i);
@@ -194,23 +195,30 @@ function namespaceToSlug(namespace: string): string {
       (code >= 0x41 && code <= 0x5a) || // A-Z
       (code >= 0x61 && code <= 0x7a) // a-z
     ) {
-      if (pendingUnderscore && slug.length > 0) {
-        slug += '_';
+      if (pendingUnderscore && chunks.length > 0) {
+        chunks.push('_');
       }
       pendingUnderscore = false;
-      slug += namespace[i];
+      chunks.push(namespace[i]);
     } else {
       pendingUnderscore = true;
     }
   }
 
-  // Prefix a leading digit so the result is a valid GraphQL identifier
-  const firstCode = slug.charCodeAt(0);
-  if (firstCode >= 0x30 && firstCode <= 0x39) {
-    slug = '_' + slug;
+  // If nothing was accumulated (e.g. namespace is symbols-only or empty after
+  // stripping the protocol prefix), return a safe sentinel so callers always
+  // receive a non-empty, GraphQL-Name-compatible string.
+  if (chunks.length === 0) {
+    return '_';
   }
 
-  return slug;
+  // Prefix a leading digit so the result is a valid GraphQL identifier
+  const firstCode = chunks[0].charCodeAt(0);
+  if (firstCode >= 0x30 && firstCode <= 0x39) {
+    chunks.unshift('_');
+  }
+
+  return chunks.join('');
 }
 
 export class SOAPLoader {
