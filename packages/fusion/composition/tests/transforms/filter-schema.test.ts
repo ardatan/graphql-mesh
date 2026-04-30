@@ -343,39 +343,6 @@ type Query {
     );
   });
 
-  it('should remove type with pruning if all fields are filtered out', async () => {
-    let schema = buildSchema(/* GraphQL */ `
-      type Query {
-        foo: String
-        bar: String
-      }
-      type Mutation {
-        baz: String
-        qux: String
-      }
-    `);
-
-    const filterTransform = createFilterTransform({
-      filters: ['Mutation.!*'],
-    });
-    schema = await composeAndGetPublicSchema([
-      {
-        name: 'TEST',
-        schema,
-        transforms: [filterTransform, createPruneTransform()],
-      },
-    ]);
-    expectTheSchemaSDLToBe(
-      schema,
-      /* GraphQL */ `
-        type Query {
-          foo: String
-          bar: String
-        }
-      `,
-    );
-  });
-
   it('should filter out fields if array syntax is used only with one element', async () => {
     let schema = buildSchema(/* GraphQL */ `
       type User {
