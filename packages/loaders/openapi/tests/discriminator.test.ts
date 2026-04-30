@@ -2,7 +2,13 @@ import { execute, parse } from 'graphql';
 import type { GraphQLSchema } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
+import { getJSONSchemaOptionsFromOpenAPIOptions } from '../src/getJSONSchemaOptionsFromOpenAPIOptions.js';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
+
+function expectRecord(value: unknown): asserts value is Record<string, unknown> {
+  expect(value).toEqual(expect.any(Object));
+  expect(Array.isArray(value)).toBe(false);
+}
 
 describe('Discriminator Mapping', () => {
   let createdSchema: GraphQLSchema;
@@ -177,6 +183,35 @@ describe('Inline Discriminator Mapping (request body)', () => {
     expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot(
       'discriminator-inline-request',
     );
+  });
+
+  it('should attach discriminator mapping to inline request body schema', async () => {
+    const options = await getJSONSchemaOptionsFromOpenAPIOptions('test', {
+      source: './fixtures/discriminator-inline-request.yml',
+      cwd: __dirname,
+    });
+    const operation = options.operations.find(operation => operation.field === 'createThing');
+    expectRecord(operation);
+    const requestSchema = operation.requestSchema;
+    expectRecord(requestSchema);
+    const discriminatorMapping = requestSchema.discriminatorMapping;
+    expectRecord(discriminatorMapping);
+    expectRecord(discriminatorMapping.cat);
+    expectRecord(discriminatorMapping.dog);
+    expect(discriminatorMapping.cat).toMatchObject({
+      properties: {
+        meow: {
+          type: 'string',
+        },
+      },
+    });
+    expect(discriminatorMapping.dog).toMatchObject({
+      properties: {
+        bark: {
+          type: 'string',
+        },
+      },
+    });
   });
 
   it('should accept inline discriminated request body', async () => {
