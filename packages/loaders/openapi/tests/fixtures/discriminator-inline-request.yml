@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Inline Discriminator Request Body Test
+paths:
+  /things:
+    post:
+      operationId: createThing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/CreateCatInput'
+                - $ref: '#/components/schemas/CreateDogInput'
+              discriminator:
+                propertyName: type
+                mapping:
+                  cat: '#/components/schemas/CreateCatInput'
+                  dog: '#/components/schemas/CreateDogInput'
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Thing'
+components:
+  schemas:
+    CreateCatInput:
+      type: object
+      required: [type, name]
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        meow:
+          type: string
+    CreateDogInput:
+      type: object
+      required: [type, name]
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        bark:
+          type: string
+    Thing:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string

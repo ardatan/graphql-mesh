@@ -211,7 +211,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     return newDiscriminatorMapping;
   }
 
-  function applyDiscriminatorMapping(schema: Record<string, unknown>) {
+  function tryApplyDiscriminatorMapping(schema: Record<string, unknown>) {
     const discriminator = schema.discriminator;
     if (!isObjectRecord(discriminator)) {
       return;
@@ -255,7 +255,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     }
     visitedSchemas.add(schema);
 
-    applyDiscriminatorMapping(schema);
+    tryApplyDiscriminatorMapping(schema);
 
     for (const combinator of ['oneOf', 'anyOf', 'allOf'] as const) {
       const list = schema[combinator];

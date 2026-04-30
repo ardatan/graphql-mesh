@@ -42,6 +42,64 @@ enum HTTPMethod {
 scalar ObjMap"
 `;
 
+exports[`Inline Discriminator Mapping (request body) should generate correct schema: discriminator-inline-request 1`] = `
+"schema @transport(subgraph: "test", kind: "rest") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
+
+directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+
+directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+
+type Query {
+  dummy: String
+}
+
+type Mutation {
+  createThing(input: createThing_request_Input): Thing @httpOperation(subgraph: "test", path: "/things", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+}
+
+type Thing {
+  id: String
+  type: String
+  name: String
+}
+
+input createThing_request_Input @oneOf(subgraph: "test") {
+  CreateCatInput_Input: CreateCatInput_Input
+  CreateDogInput_Input: CreateDogInput_Input
+}
+
+input CreateCatInput_Input {
+  type: String!
+  name: String!
+  meow: String
+}
+
+input CreateDogInput_Input {
+  type: String!
+  name: String!
+  bark: String
+}
+
+enum HTTPMethod {
+  GET
+  HEAD
+  POST
+  PUT
+  DELETE
+  CONNECT
+  OPTIONS
+  TRACE
+  PATCH
+}
+
+scalar ObjMap"
+`;
+
 exports[`Inline Discriminator Mapping should generate correct schema: discriminator-inline 1`] = `
 "schema @transport(subgraph: "test", kind: "rest") {
   query: Query

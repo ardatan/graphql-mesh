@@ -148,6 +148,76 @@ describe('Inline Discriminator Mapping', () => {
   });
 });
 
+describe('Inline Discriminator Mapping (request body)', () => {
+  let createdSchema: GraphQLSchema;
+  const receivedBodies: unknown[] = [];
+  beforeAll(async () => {
+    createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
+      source: './fixtures/discriminator-inline-request.yml',
+      cwd: __dirname,
+      ignoreErrorResponses: true,
+      async fetch(url, init) {
+        if (url === 'things' && init?.method === 'POST') {
+          const body = typeof init.body === 'string' ? JSON.parse(init.body) : init.body;
+          receivedBodies.push(body);
+          return Response.json({
+            id: '1',
+            type: body.type,
+            name: body.name,
+          });
+        }
+        return new Response(null, {
+          status: 404,
+        });
+      },
+    });
+  });
+
+  it('should generate correct schema', () => {
+    expect(printSchemaWithDirectives(createdSchema)).toMatchSnapshot(
+      'discriminator-inline-request',
+    );
+  });
+
+  it('should accept inline discriminated request body', async () => {
+    const query = /* GraphQL */ `
+      mutation CreateCat($input: createThing_request_Input) {
+        createThing(input: $input) {
+          id
+          type
+          name
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+      variableValues: {
+        input: {
+          CreateCatInput_Input: {
+            type: 'cat',
+            name: 'Luna',
+            meow: 'loud',
+          },
+        },
+      },
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      createThing: {
+        id: '1',
+        type: 'cat',
+        name: 'Luna',
+      },
+    });
+    expect(receivedBodies).toContainEqual({
+      type: 'cat',
+      name: 'Luna',
+      meow: 'loud',
+    });
+  });
+});
+
 describe('Inline Discriminator Mapping (nested property)', () => {
   let createdSchema: GraphQLSchema;
   beforeAll(async () => {
