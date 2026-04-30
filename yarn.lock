@@ -7712,6 +7712,8 @@ __metadata:
     "@graphql-tools/utils": "npm:^11.1.0"
     "@whatwg-node/fetch": "npm:^0.10.6"
     fast-xml-parser: "npm:^5.7.1"
+    graphql: "npm:16.13.2"
+    tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
   languageName: unknown
@@ -11199,6 +11201,9 @@ __metadata:
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     dataloader: "npm:^2.2.2"
     fast-xml-parser: "npm:^5.7.1"
+    graphql: "npm:16.13.2"
+    graphql-compose: "npm:^9.0.11"
+    graphql-parse-resolve-info: "npm:^4.13.0"
     graphql-scalars: "npm:^1.22.4"
     http-string-parser: "npm:^0.0.6"
     pascal-case: "npm:^3.1.2"
@@ -11271,6 +11276,10 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.10.6"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     fast-xml-parser: "npm:^5.7.1"
+    graphql: "npm:16.13.2"
+    graphql-compose: "npm:^9.0.11"
+    graphql-scalars: "npm:^1.22.4"
+    soap: "npm:1.9.1"
   peerDependencies:
     graphql: "*"
   languageName: unknown
