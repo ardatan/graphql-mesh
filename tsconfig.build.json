@@ -4,7 +4,6 @@
     "importHelpers": true,
     "declaration": true,
     "verbatimModuleSyntax": false,
-    "moduleResolution": "node",
     "rootDir": "./packages"
   },
   "exclude": [

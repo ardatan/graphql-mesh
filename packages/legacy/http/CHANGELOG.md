@@ -1,5 +1,29 @@
 # @graphql-mesh/http
 
+## 0.106.42
+
+### Patch Changes
+
+- [#9446](https://github.com/ardatan/graphql-mesh/pull/9446)
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^11.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.1.0)
+    (from `^11.0.1`, in `dependencies`)
+- Updated dependencies
+  [[`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4)]:
+  - @graphql-mesh/cross-helpers@0.4.14
+  - @graphql-mesh/runtime@0.106.38
+  - @graphql-mesh/types@0.104.28
+  - @graphql-mesh/utils@0.104.36
+
 ## 0.106.41
 
 ### Patch Changes
