@@ -154,6 +154,87 @@ describe('Inline Discriminator Mapping', () => {
   });
 });
 
+describe('External Relative Discriminator Mapping', () => {
+  it('should resolve relative mapping values by JSON Pointer fragment', async () => {
+    const options = await getJSONSchemaOptionsFromOpenAPIOptions('test', {
+      source: './fixtures/discriminator-external/openapi/api.yml',
+      cwd: __dirname,
+    });
+    const operation = options.operations.find(operation => operation.field === 'externalThings');
+    expectRecord(operation);
+    const responseByStatusCode = operation.responseByStatusCode;
+    expectRecord(responseByStatusCode);
+    expectRecord(responseByStatusCode['200']);
+    const responseSchema = responseByStatusCode['200'].responseSchema;
+    expectRecord(responseSchema);
+    expectRecord(responseSchema.items);
+    const discriminatorMapping = responseSchema.items.discriminatorMapping;
+    expectRecord(discriminatorMapping);
+    expect(discriminatorMapping.cat).toMatchObject({
+      properties: {
+        externalOnly: {
+          type: 'string',
+        },
+      },
+    });
+    expect(discriminatorMapping.cat).not.toMatchObject({
+      properties: {
+        localOnly: {
+          type: 'string',
+        },
+      },
+    });
+
+    const createdSchema = await loadGraphQLSchemaFromOpenAPI('test', {
+      source: './fixtures/discriminator-external/openapi/api.yml',
+      cwd: __dirname,
+      ignoreErrorResponses: true,
+      async fetch(url) {
+        if (url === 'things') {
+          return Response.json([
+            {
+              id: '1',
+              type: 'dog',
+              name: 'Milo',
+            },
+          ]);
+        }
+        return new Response(null, {
+          status: 404,
+        });
+      },
+    });
+    const query = /* GraphQL */ `
+      query {
+        externalThings {
+          __typename
+          ... on Dog {
+            id
+            type
+            name
+          }
+        }
+      }
+    `;
+    const result = await execute({
+      schema: createdSchema,
+      document: parse(query),
+    });
+    expect(result).toEqual({
+      data: {
+        externalThings: [
+          {
+            __typename: 'Dog',
+            id: '1',
+            type: 'dog',
+            name: 'Milo',
+          },
+        ],
+      },
+    });
+  });
+});
+
 describe('Inline Discriminator Mapping (request body)', () => {
   let createdSchema: GraphQLSchema;
   const receivedBodies: unknown[] = [];

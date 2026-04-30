@@ -211,6 +211,48 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     return newDiscriminatorMapping;
   }
 
+  function getRefPathFromMappingValue(value: string): {
+    refPath: string;
+    isExternalFileRef: boolean;
+  } | null {
+    if (value.startsWith('#')) {
+      return {
+        refPath: value.slice(1),
+        isExternalFileRef: false,
+      };
+    }
+    if (value.startsWith('..')) {
+      const hashIndex = value.indexOf('#');
+      if (hashIndex === -1) {
+        return {
+          refPath: value.slice(2),
+          isExternalFileRef: false,
+        };
+      }
+      return {
+        refPath: value.slice(hashIndex + 1),
+        isExternalFileRef: true,
+      };
+    }
+    return null;
+  }
+
+  function lookInUnionBranchesByResolvedRef(
+    schema: Record<string, unknown>,
+    refPath: string,
+  ): unknown {
+    for (const combinator of ['oneOf', 'anyOf', 'allOf'] as const) {
+      const list = schema[combinator];
+      if (Array.isArray(list)) {
+        for (const subSchema of list) {
+          if (isObjectRecord(subSchema) && subSchema.$resolvedRef === refPath) {
+            return subSchema;
+          }
+        }
+      }
+    }
+  }
+
   function tryApplyDiscriminatorMapping(schema: Record<string, unknown>) {
     const discriminator = schema.discriminator;
     if (!isObjectRecord(discriminator)) {
@@ -227,10 +269,18 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         continue;
       }
 
-      const docIdentifier = value.startsWith('#') ? '#' : value.startsWith('..') ? '..' : null;
-      if (docIdentifier) {
-        const [, ref] = value.split(docIdentifier);
-        ensureDiscriminatorMapping(schema)[key] = resolvePath(ref, oasOrSwagger);
+      const ref = getRefPathFromMappingValue(value);
+      if (ref != null) {
+        const resolvedSchema = ref.isExternalFileRef
+          ? lookInUnionBranchesByResolvedRef(schema, ref.refPath) ||
+            resolvePath(ref.refPath, oasOrSwagger)
+          : resolvePath(ref.refPath, oasOrSwagger) ||
+            lookInUnionBranchesByResolvedRef(schema, ref.refPath);
+        if (!resolvedSchema) {
+          logger.warn(`Invalid discriminator mapping: ${value}`);
+          continue;
+        }
+        ensureDiscriminatorMapping(schema)[key] = resolvedSchema;
       } else if (value.includes('/')) {
         logger.warn(`Unsupported discriminator mapping: ${value}`);
       } else {
