@@ -29,6 +29,7 @@ const schemas: Record<string, string> = {
   StackExchange: 'stackexchange-api-v2.2_openapi-v3.0.yaml',
   YouTrack: 'youtrack.json',
   DefaultValues: 'default-values.json',
+  Slack: 'slack.json',
 };
 
 describe('Schemas', () => {
