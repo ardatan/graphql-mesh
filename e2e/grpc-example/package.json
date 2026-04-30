@@ -13,6 +13,6 @@
   },
   "devDependencies": {
     "@graphql-tools/executor-http": "3.2.1",
-    "@graphql-tools/utils": "11.0.1"
+    "@graphql-tools/utils": "11.1.0"
   }
 }

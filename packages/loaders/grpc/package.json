@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/grpc",
-  "version": "0.2.21",
+  "version": "0.2.22",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,10 +36,10 @@
   },
   "dependencies": {
     "@ardatan/grpc-reflection-js": "^0.0.2",
-    "@graphql-mesh/cross-helpers": "^0.4.13",
+    "@graphql-mesh/cross-helpers": "^0.4.14",
     "@graphql-mesh/string-interpolation": "^0.5.16",
     "@graphql-mesh/transport-common": "^1.0.16",
-    "@graphql-tools/utils": "^11.0.1",
+    "@graphql-tools/utils": "^11.1.0",
     "@grpc/grpc-js": "^1.14.3",
     "@whatwg-node/disposablestack": "^0.0.6",
     "globby": "^11.1.0",
@@ -47,7 +47,7 @@
     "graphql-scalars": "^1.23.0",
     "lodash.has": "^4.5.2",
     "micromatch": "^4.0.8",
-    "protobufjs": "^8.0.1"
+    "protobufjs": "^8.0.2"
   },
   "devDependencies": {
     "graphql": "16.13.2"

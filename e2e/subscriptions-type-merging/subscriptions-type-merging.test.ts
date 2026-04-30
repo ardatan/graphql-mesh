@@ -35,10 +35,14 @@ afterAll(async () => {
   }
 });
 
-it('consumes the pubsub topics and resolves the types correctly', async () => {
+it('consumes the pubsub topics and resolves fields', async () => {
   await using products = await service('products');
   await using inventory = await service('inventory');
-  await using composition = await compose({ output: 'graphql', services: [products, inventory] });
+  await using reviews = await service('reviews');
+  await using composition = await compose({
+    output: 'graphql',
+    services: [products, inventory, reviews],
+  });
   await using gw = await serve({ supergraph: composition.output, env: redisEnv });
   const sseClient = createClient({
     retryAttempts: 0,
@@ -101,4 +105,66 @@ it('consumes the pubsub topics and resolves the types correctly', async () => {
     // Avait publishing to ensure no unhandled rejections
     await publishing;
   }
+});
+
+it('consumes the pubsub topics and resolves entities', async () => {
+  await using products = await service('products');
+  await using inventory = await service('inventory');
+  await using reviews = await service('reviews');
+  await using composition = await compose({
+    output: 'graphql',
+    services: [products, inventory, reviews],
+  });
+  await using gw = await serve({ supergraph: composition.output, env: redisEnv });
+  const sseClient = createClient({
+    retryAttempts: 0,
+    url: `http://0.0.0.0:${gw.port}/graphql`,
+    fetchFn: fetch,
+  });
+  const iterator = sseClient.iterate({
+    query: /* GraphQL */ `
+      subscription {
+        newProduct {
+          name
+          price
+          shippingEstimate
+          review {
+            content
+          }
+        }
+      }
+    `,
+  });
+  leftoverStack.defer(() => iterator.return?.() as any);
+  const pub = new Redis({
+    host: redisEnv.REDIS_HOST,
+    port: redisEnv.REDIS_PORT,
+  });
+  leftoverStack.defer(() => pub.disconnect());
+
+  const id = '0';
+  const publishing = (async () => {
+    // Publish messages after making sure the user's subscribed
+    await setTimeout(500);
+    await pub.publish('gw:new_product', JSON.stringify({ id }));
+  })();
+  await expect(iterator.next()).resolves.toMatchObject({
+    value: {
+      data: {
+        newProduct: {
+          name: 'Roomba X' + id,
+          price: 100,
+          shippingEstimate: 10,
+          review: {
+            // NOTE: it's not the requested `id` because of stitching plan decision
+            // if we ever fix this and the requested `id` is used, just update the test
+            content: 'Resolved review for product ' + 'noid',
+          },
+        },
+      },
+    },
+    done: false,
+  });
+  // Avait publishing to ensure no unhandled rejections
+  await publishing;
 });
