@@ -1,0 +1,61 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Inline Discriminator Callback Test
+paths:
+  /things:
+    post:
+      operationId: subscribeThings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                callbackUrl:
+                  type: string
+      callbacks:
+        thingChanged:
+          '{$request.body#/callbackUrl}':
+            post:
+              operationId: thingChanged
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      oneOf:
+                        - $ref: '#/components/schemas/Cat'
+                        - $ref: '#/components/schemas/Dog'
+                      discriminator:
+                        propertyName: type
+                        mapping:
+                          cat: '#/components/schemas/Cat'
+                          dog: '#/components/schemas/Dog'
+              responses:
+                200:
+                  description: Successful response
+      responses:
+        202:
+          description: Accepted
+components:
+  schemas:
+    Cat:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
+    Dog:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
