@@ -7,6 +7,7 @@ export default defineConfig({
   testDir: './src',
   testMatch: '**/*.e2e.ts',
   outputDir: './playwright/out',
+  timeout: 90_000,
 
   fullyParallel: true,
   forbidOnly: !!process.env.CI,

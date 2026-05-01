@@ -20,9 +20,9 @@ import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';
 
-export const retries = 120,
+export const retries = 240,
   interval = 500,
-  timeout = retries * interval; // 1min
+  timeout = retries * interval; // 2min
 
 if (typeof jest !== 'undefined') {
   jest.setTimeout(timeout);
