@@ -416,7 +416,9 @@ export class SOAPLoader {
     // A bare <xsd:schema> wrapper that only contains imports (no targetNamespace,
     // no type definitions) is a valid pattern — it lets a WSDL pull external
     // schemas into its <wsdl:types> without redefining anything itself. Process
-    // its imports and return; there's nothing else to register.
+    // its imports here. A "chameleon" schema (no targetNamespace + own type
+    // definitions) is a different, larger case the loader doesn't yet support;
+    // surface it loudly rather than silently dropping the definitions.
     if (!schemaObj.attributes || !schemaObj.attributes.targetNamespace) {
       if (schemaObj.import) {
         for (const importObj of schemaObj.import) {
@@ -425,6 +427,12 @@ export class SOAPLoader {
             await this.fetchXSD(importLocation, parentAliasMap, baseUrl);
           }
         }
+      }
+      if (schemaObj.complexType || schemaObj.simpleType || schemaObj.element) {
+        throw new Error(
+          '<xsd:schema> without targetNamespace but with type definitions ' +
+            '(chameleon schemas) is not yet supported by the SOAP loader.',
+        );
       }
       return;
     }

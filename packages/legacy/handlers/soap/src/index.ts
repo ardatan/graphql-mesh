@@ -76,8 +76,9 @@ export default class SoapHandler implements MeshHandler {
           logger: this.logger,
           headers: schemaHeadersFactory({ env: process.env }),
         });
-        const object = await soapLoader.loadWSDL(wsdl);
-        soapLoader.loadedLocations.set(wsdlLocation, object);
+        // Pass wsdlLocation as the base URL so nested <wsdl:import> /
+        // <xsd:import> locations resolve relative to the importing document.
+        await soapLoader.loadWSDL(wsdl, wsdlLocation);
         return soapLoader.buildSchema();
       });
     }
