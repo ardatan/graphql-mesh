@@ -1,3 +1,4 @@
+import { dirname, isAbsolute, resolve as resolvePath } from 'path';
 import { XMLParser } from 'fast-xml-parser';
 import type { GraphQLScalarType } from 'graphql';
 import {
@@ -164,6 +165,27 @@ const QUERY_PREFIXES = [
 
 function isQueryOperationName(operationName: string) {
   return QUERY_PREFIXES.some(prefix => operationName.toLowerCase().startsWith(prefix));
+}
+
+/**
+ * Resolve a (possibly relative) WSDL/XSD location against the location of the
+ * document doing the import. Mirrors XML Schema's xml:base resolution rules:
+ * relative `schemaLocation` / `wsdl:import location` is resolved against the
+ * importing document's own URI, not against a fixed root.
+ *
+ * Handles both URLs (http/https/file) and filesystem paths uniformly.
+ */
+function resolveLocation(base: string | undefined, location: string): string {
+  // Already-absolute URLs and absolute filesystem paths pass through.
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(location)) return location;
+  if (isAbsolute(location)) return location;
+  if (!base) return location;
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(base)) {
+    // base is a URL — let URL handle "../" and similar.
+    return new URL(location, base).href;
+  }
+  // base is a filesystem path — resolve relative to its containing directory.
+  return resolvePath(dirname(base), location);
 }
 
 /**
@@ -385,7 +407,26 @@ export class SOAPLoader {
     return namespaceMessageMap;
   }
 
-  async loadSchema(schemaObj: XSSchema, parentAliasMap: Map<string, string> = new Map()) {
+  async loadSchema(
+    schemaObj: XSSchema,
+    parentAliasMap: Map<string, string> = new Map(),
+    baseUrl?: string,
+  ) {
+    // A bare <xsd:schema> wrapper that only contains imports (no targetNamespace,
+    // no type definitions) is a valid pattern — it lets a WSDL pull external
+    // schemas into its <wsdl:types> without redefining anything itself. Process
+    // its imports and return; there's nothing else to register.
+    if (!schemaObj.attributes || !schemaObj.attributes.targetNamespace) {
+      if (schemaObj.import) {
+        for (const importObj of schemaObj.import) {
+          const importLocation = importObj.attributes.schemaLocation;
+          if (importLocation) {
+            await this.fetchXSD(importLocation, parentAliasMap, baseUrl);
+          }
+        }
+      }
+      return;
+    }
     const schemaNamespace = schemaObj.attributes.targetNamespace;
     const aliasMap = this.getAliasMapFromAttributes(schemaObj.attributes);
     let typePrefix = this.namespaceTypePrefixMap.get(schemaNamespace);
@@ -403,8 +444,8 @@ export class SOAPLoader {
     if (schemaObj.import) {
       for (const importObj of schemaObj.import) {
         const importLocation = importObj.attributes.schemaLocation;
-        if (importLocation && !this.loadedLocations.has(importLocation)) {
-          await this.fetchXSD(importLocation);
+        if (importLocation) {
+          await this.fetchXSD(importLocation, parentAliasMap, baseUrl);
         }
       }
     }
@@ -481,7 +522,7 @@ export class SOAPLoader {
     }
   }
 
-  async loadDefinition(definition: WSDLDefinition) {
+  async loadDefinition(definition: WSDLDefinition, baseUrl?: string) {
     this.getNamespaceDefinitions(definition.attributes.targetNamespace).push(definition);
     if (definition.attributes.soap12) {
       this.soapNamespace = 'http://www.w3.org/2003/05/soap-envelope';
@@ -498,15 +539,15 @@ export class SOAPLoader {
     if (definition.import) {
       for (const importObj of definition.import) {
         const importLocation = importObj.attributes.location;
-        if (importLocation && !this.loadedLocations.has(importLocation)) {
-          await this.fetchWSDL(importLocation);
+        if (importLocation) {
+          await this.fetchWSDL(importLocation, baseUrl);
         }
       }
     }
     if (definition.types) {
       for (const typesObj of definition.types) {
         for (const schemaObj of typesObj.schema) {
-          await this.loadSchema(schemaObj, definitionAliasMap);
+          await this.loadSchema(schemaObj, definitionAliasMap, baseUrl);
         }
       }
     }
@@ -710,8 +751,14 @@ export class SOAPLoader {
 
   private xmlParser = new XMLParser(PARSE_XML_OPTIONS);
 
-  async fetchXSD(location: string, parentAliasMap = new Map<string, string>()) {
-    let xsdText = await readFileOrUrl<string>(location, {
+  async fetchXSD(
+    location: string,
+    parentAliasMap = new Map<string, string>(),
+    baseUrl?: string,
+  ) {
+    const resolved = resolveLocation(baseUrl ?? this.cwd, location);
+    if (this.loadedLocations.has(resolved)) return;
+    let xsdText = await readFileOrUrl<string>(resolved, {
       allowUnknownExtensions: true,
       cwd: this.cwd,
       fetch: this.fetchFn,
@@ -722,13 +769,14 @@ export class SOAPLoader {
     xsdText = xsdText.split('xmlns:').join('namespace:');
     // WSDL Import is different than XS Import
     const xsdObj: XSDObject = this.xmlParser.parse(xsdText, PARSE_XML_OPTIONS);
+    // Pre-register before recursing so circular imports terminate.
+    this.loadedLocations.set(resolved, xsdObj);
     for (const schemaObj of xsdObj.schema) {
-      await this.loadSchema(schemaObj, parentAliasMap);
+      await this.loadSchema(schemaObj, parentAliasMap, resolved);
     }
-    this.loadedLocations.set(location, xsdObj);
   }
 
-  async loadWSDL(wsdlText: string) {
+  async loadWSDL(wsdlText: string, baseUrl?: string) {
     wsdlText = wsdlText.split('xmlns:').join('namespace:');
     let wsdlObject: WSDLObject;
     try {
@@ -741,19 +789,28 @@ export class SOAPLoader {
         `WSDL definitions not found! Please make sure if your WSDL source is correct, and it contains <definitions> tag.\nReturned response;\n${wsdlText}`,
       );
     }
+    // Pre-register before recursing so circular imports terminate.
+    if (baseUrl) {
+      this.loadedLocations.set(baseUrl, wsdlObject);
+    }
     for (const definition of wsdlObject.definitions) {
-      await this.loadDefinition(definition);
+      await this.loadDefinition(definition, baseUrl);
     }
     return wsdlObject;
   }
 
-  async fetchWSDL(location: string) {
-    const response = await this.fetchFn(location, {
+  async fetchWSDL(location: string, baseUrl?: string) {
+    const resolved = resolveLocation(baseUrl ?? this.cwd, location);
+    if (this.loadedLocations.has(resolved)) return;
+    const wsdlText = await readFileOrUrl<string>(resolved, {
+      allowUnknownExtensions: true,
+      cwd: this.cwd,
+      fetch: this.fetchFn,
+      importFn: defaultImportFn,
+      logger: this.logger,
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
-    const wsdlText = await response.text();
-    const wsdlObject = await this.loadWSDL(wsdlText);
-    this.loadedLocations.set(location, wsdlObject);
+    await this.loadWSDL(wsdlText, resolved);
   }
 
   getAliasMapFromAttributes(attributes: XSSchema['attributes'] | WSDLDefinition['attributes']) {
