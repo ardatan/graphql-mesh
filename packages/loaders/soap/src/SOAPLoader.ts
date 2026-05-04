@@ -751,11 +751,7 @@ export class SOAPLoader {
 
   private xmlParser = new XMLParser(PARSE_XML_OPTIONS);
 
-  async fetchXSD(
-    location: string,
-    parentAliasMap = new Map<string, string>(),
-    baseUrl?: string,
-  ) {
+  async fetchXSD(location: string, parentAliasMap = new Map<string, string>(), baseUrl?: string) {
     const resolved = resolveLocation(baseUrl ?? this.cwd, location);
     if (this.loadedLocations.has(resolved)) return;
     let xsdText = await readFileOrUrl<string>(resolved, {

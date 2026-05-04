@@ -9,7 +9,7 @@ import { SOAPLoader } from '../src/index.js';
 const { readFile } = promises;
 
 describe('Multi-file WSDL', () => {
-  it('resolves nested <wsdl:import> / <xsd:import> against each document\'s own location', async () => {
+  it("resolves nested <wsdl:import> / <xsd:import> against each document's own location", async () => {
     // Fixture layout:
     //   service.wsdl                  — entry (has <xsd:schema> wrapper-only block)
     //   xsd/types.xsd                 — imports sibling names.xsd
