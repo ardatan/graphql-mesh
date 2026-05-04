@@ -146,21 +146,31 @@ function prefixWithAlias({
   return obj;
 }
 
+// Prefixes reserved by the XML/XML Namespaces specs — must never be bound.
+const RESERVED_XML_PREFIXES = new Set(['xml', 'xmlns']);
+
 /**
  * Derive a short, readable XML namespace prefix from a namespace URI.
- * Traverses path segments right-to-left, skipping version tokens (e.g. "v1").
+ * Traverses path segments right-to-left, skipping version tokens (e.g. "v1"),
+ * dotted hostnames (e.g. "www.example.com"), and reserved XML prefixes.
  * e.g. "http://www.tmforum.org/mtop/fmw/xsd/hdr/v1" → "hdr"
+ *
+ * Falls back to "body" so that schemas with a single XSD namespace and no
+ * bodyAlias produce envelopes byte-compatible with the legacy code path.
  */
 function deriveXmlPrefix(nsUri: string): string {
   const path = nsUri.replace(/^https?:\/\//, '');
   const segments = path.split(/[/-]/).filter(Boolean);
   for (let i = segments.length - 1; i >= 0; i--) {
     const seg = segments[i];
-    if (!/^v\d/.test(seg) && /^[a-zA-Z]/.test(seg) && seg.length > 1) {
-      return seg.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().substring(0, 20);
-    }
+    if (/^v\d/.test(seg)) continue;
+    if (!/^[a-zA-Z][a-zA-Z0-9]*$/.test(seg)) continue;
+    if (seg.length <= 1) continue;
+    const candidate = seg.toLowerCase().substring(0, 20);
+    if (RESERVED_XML_PREFIXES.has(candidate)) continue;
+    return candidate;
   }
-  return 'ns';
+  return 'body';
 }
 
 /**

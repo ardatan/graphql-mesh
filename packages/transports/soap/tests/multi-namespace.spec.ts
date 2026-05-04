@@ -64,4 +64,47 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
       ].join(''),
     );
   });
+
+  it('preserves legacy wire format for single-namespace WSDLs without bodyAlias', async () => {
+    // Regression guard: a WSDL with one XSD namespace and no bodyAlias must produce
+    // the same envelope it did before namespace-awareness was introduced — same
+    // "body" prefix, same xmlns binding, same element structure.
+    const soapLoader = new SOAPLoader({ subgraphName: 'Test', fetch, logger });
+    await soapLoader.loadWSDL(
+      readFileSync(
+        join(__dirname, '../../../loaders/soap/test/fixtures/tempconvert.wsdl'),
+        'utf-8',
+      ),
+    );
+    const schema = soapLoader.buildSchema();
+
+    const fetchSpy = jest.fn((_url: string, _init: RequestInit) =>
+      Promise.resolve(Response.error()),
+    );
+    const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
+
+    await executor({
+      document: parse(/* GraphQL */ `
+        mutation {
+          tns_TempConvert_TempConvertSoap12_FahrenheitToCelsius(
+            FahrenheitToCelsius: { Fahrenheit: "100" }
+          ) {
+            FahrenheitToCelsiusResult
+          }
+        }
+      `),
+    });
+
+    expect(fetchSpy.mock.calls[0][1].body).toBe(
+      [
+        '<soap:Envelope ',
+        'xmlns:soap="http://www.w3.org/2003/05/soap-envelope" ',
+        'xmlns:body="https://www.w3schools.com/xml/">',
+        '<soap:Body>',
+        '<body:FahrenheitToCelsius><body:Fahrenheit>100</body:Fahrenheit></body:FahrenheitToCelsius>',
+        '</soap:Body>',
+        '</soap:Envelope>',
+      ].join(''),
+    );
+  });
 });
