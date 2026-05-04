@@ -177,15 +177,16 @@ function isQueryOperationName(operationName: string) {
  * Handles both URLs (http/https/file) and filesystem paths uniformly.
  */
 function resolveLocation(base: string | undefined, location: string): string {
-  // Already-absolute URLs and absolute filesystem paths pass through.
+  // Already-absolute URLs pass through.
   if (/^[a-z][a-z0-9+.-]*:\/\//i.test(location)) return location;
-  if (isAbsolute(location)) return location;
   if (!base) return location;
   if (/^[a-z][a-z0-9+.-]*:\/\//i.test(base)) {
-    // base is a URL — let URL handle "../" and similar.
+    // base is a URL — let URL handle "../" and root-relative ("/foo") paths.
     return new URL(location, base).href;
   }
-  // base is a filesystem path — resolve relative to its containing directory.
+  // base is a filesystem path. A filesystem-absolute location passes through;
+  // anything else is resolved relative to base's containing directory.
+  if (isAbsolute(location)) return location;
   return resolvePath(dirname(base), location);
 }
 
