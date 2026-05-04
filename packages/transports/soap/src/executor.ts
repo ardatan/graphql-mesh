@@ -1,11 +1,13 @@
 import { XMLBuilder as JSONToXMLConverter, XMLParser } from 'fast-xml-parser';
 import type {
   GraphQLFieldResolver,
+  GraphQLInputObjectType,
   GraphQLOutputType,
   GraphQLResolveInfo,
   GraphQLSchema,
+  GraphQLType,
 } from 'graphql';
-import { isListType, isNonNullType } from 'graphql';
+import { getNamedType, isInputObjectType, isListType, isNonNullType } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverData, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import {
@@ -55,6 +57,9 @@ const defaultFieldResolver: GraphQLFieldResolver<any, any> = function soapDefaul
 
 function normalizeArgsForConverter(args: any): any {
   if (args != null) {
+    if (Array.isArray(args)) {
+      return args.map(normalizeArgsForConverter);
+    }
     if (typeof args === 'object') {
       for (const key in args) {
         args[key] = normalizeArgsForConverter(args[key]);
@@ -98,6 +103,8 @@ interface SoapAnnotations {
     headers: Record<string, string>;
   };
   soapAction?: string;
+  headerArgNames?: string[];
+  argNamespacesJson?: string;
 }
 
 interface CreateRootValueMethodOpts {
@@ -118,6 +125,9 @@ function prefixWithAlias({
   obj: unknown;
   resolverData?: ResolverData;
 }): Record<string, any> {
+  if (Array.isArray(obj)) {
+    return obj.map(item => prefixWithAlias({ alias, obj: item, resolverData }));
+  }
   if (typeof obj === 'object' && obj !== null) {
     const prefixedHeaderObj: Record<string, any> = {};
     for (const key in obj) {
@@ -134,6 +144,129 @@ function prefixWithAlias({
     return stringInterpolator.parse(obj, resolverData);
   }
   return obj;
+}
+
+/**
+ * Derive a short, readable XML namespace prefix from a namespace URI.
+ * Traverses path segments right-to-left, skipping version tokens (e.g. "v1").
+ * e.g. "http://www.tmforum.org/mtop/fmw/xsd/hdr/v1" → "hdr"
+ */
+function deriveXmlPrefix(nsUri: string): string {
+  const path = nsUri.replace(/^https?:\/\//, '');
+  const segments = path.split(/[/-]/).filter(Boolean);
+  for (let i = segments.length - 1; i >= 0; i--) {
+    const seg = segments[i];
+    if (!/^v\d/.test(seg) && /^[a-zA-Z]/.test(seg) && seg.length > 1) {
+      return seg.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().substring(0, 20);
+    }
+  }
+  return 'ns';
+}
+
+/**
+ * Return (or lazily assign) a unique XML namespace prefix for nsUri.
+ * Collision-free: appends a numeric suffix if the derived base name is taken.
+ */
+function getOrAssignPrefix(
+  nsUri: string,
+  assigned: Map<string, string>,
+  envelopeAttrs: Record<string, string>,
+): string {
+  const existing = assigned.get(nsUri);
+  if (existing) return existing;
+  const base = deriveXmlPrefix(nsUri);
+  let prefix = base;
+  let i = 2;
+  while (envelopeAttrs[`xmlns:${prefix}`] !== undefined) {
+    prefix = `${base}${i++}`;
+  }
+  assigned.set(nsUri, prefix);
+  envelopeAttrs[`xmlns:${prefix}`] = nsUri;
+  return prefix;
+}
+
+/**
+ * Recursively build an XML-ready object from a GraphQL arg value.
+ * Uses the parent GraphQL type's XSD namespace (from typeNamespaceMap) to qualify
+ * child element names, so each field gets the prefix of the schema where it is declared.
+ */
+function buildValueXml(
+  value: unknown,
+  graphqlType: GraphQLType | undefined,
+  typeNamespaceMap: Map<string, string>,
+  assigned: Map<string, string>,
+  envelopeAttrs: Record<string, string>,
+  resolverData: ResolverData,
+): unknown {
+  if (value == null) return value;
+
+  if (Array.isArray(value)) {
+    return value.map(item =>
+      buildValueXml(item, graphqlType, typeNamespaceMap, assigned, envelopeAttrs, resolverData),
+    );
+  }
+
+  if (typeof value === 'object') {
+    const namedType = graphqlType ? getNamedType(graphqlType) : null;
+    const typeNsUri = namedType ? typeNamespaceMap.get(namedType.name) : null;
+    const nsPrefix = typeNsUri ? getOrAssignPrefix(typeNsUri, assigned, envelopeAttrs) : null;
+
+    const result: Record<string, unknown> = {};
+    if (namedType && isInputObjectType(namedType)) {
+      const fields = (namedType as GraphQLInputObjectType).getFields();
+      for (const key of Object.keys(value as object)) {
+        const fieldType = fields[key]?.type;
+        const xmlKey = nsPrefix ? `${nsPrefix}:${key}` : key;
+        result[xmlKey] = buildValueXml(
+          (value as any)[key],
+          fieldType,
+          typeNamespaceMap,
+          assigned,
+          envelopeAttrs,
+          resolverData,
+        );
+      }
+    } else {
+      for (const key of Object.keys(value as object)) {
+        result[key] = buildValueXml(
+          (value as any)[key],
+          undefined,
+          typeNamespaceMap,
+          assigned,
+          envelopeAttrs,
+          resolverData,
+        );
+      }
+    }
+    return result;
+  }
+
+  return {
+    innerText:
+      typeof value === 'string'
+        ? stringInterpolator.parse(value, resolverData)
+        : String(value),
+  };
+}
+
+/**
+ * Wrap a single top-level arg in its namespace-qualified element name and build its content.
+ */
+function buildArgXml(
+  argName: string,
+  argValue: unknown,
+  nsUri: string | undefined,
+  argType: GraphQLType | undefined,
+  typeNamespaceMap: Map<string, string>,
+  assigned: Map<string, string>,
+  envelopeAttrs: Record<string, string>,
+  resolverData: ResolverData,
+): Record<string, unknown> {
+  const prefix = nsUri ? getOrAssignPrefix(nsUri, assigned, envelopeAttrs) : null;
+  const xmlKey = prefix ? `${prefix}:${argName}` : argName;
+  return {
+    [xmlKey]: buildValueXml(argValue, argType, typeNamespaceMap, assigned, envelopeAttrs, resolverData),
+  };
 }
 
 function createRootValueMethod({
@@ -164,32 +297,90 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       env: process.env,
     };
 
-    const bodyPrefix = soapAnnotations.bodyAlias || 'body';
-    envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
+    const typeNamespaceMap: Map<string, string> | undefined =
+      (info.schema.extensions as any)?.typeNamespaceMap;
 
-    const headerPrefix =
-      soapAnnotations.soapHeaders?.alias || soapAnnotations.bodyAlias || 'header';
-    if (soapAnnotations.soapHeaders?.headers) {
-      envelope['soap:Header'] = prefixWithAlias({
-        alias: headerPrefix,
-        obj: normalizeArgsForConverter(
-          typeof soapAnnotations.soapHeaders.headers === 'string'
-            ? JSON.parse(soapAnnotations.soapHeaders.headers)
-            : soapAnnotations.soapHeaders.headers,
-        ),
+    if (soapAnnotations.argNamespacesJson && !soapAnnotations.bodyAlias && typeNamespaceMap) {
+      // Namespace-aware mode: each arg/field gets the XSD namespace of its declaring schema.
+      // WSDL-declared soap:header parts are routed to soap:Header; the rest go to soap:Body.
+      const argNsMap: Record<string, string> = JSON.parse(soapAnnotations.argNamespacesJson);
+      const headerArgSet = new Set(soapAnnotations.headerArgNames ?? []);
+      const fieldDef = info.parentType.getFields()[info.fieldName];
+      const argTypeMap = Object.fromEntries(fieldDef.args.map(a => [a.name, a.type]));
+      const assigned = new Map<string, string>();
+      const headerContent: Record<string, unknown> = {};
+      const bodyContent: Record<string, unknown> = {};
+
+      for (const [argName, argValue] of Object.entries(args ?? {})) {
+        const chunk = buildArgXml(
+          argName,
+          argValue,
+          argNsMap[argName],
+          argTypeMap[argName],
+          typeNamespaceMap,
+          assigned,
+          envelopeAttributes,
+          resolverData,
+        );
+        if (headerArgSet.has(argName)) {
+          Object.assign(headerContent, chunk);
+        } else {
+          Object.assign(bodyContent, chunk);
+        }
+      }
+
+      // User-configured soapHeaders (from YAML/config) are merged into soap:Header.
+      if (soapAnnotations.soapHeaders?.headers) {
+        const cfgAlias = soapAnnotations.soapHeaders.alias ?? 'header';
+        if (soapAnnotations.soapHeaders.namespace) {
+          envelopeAttributes[`xmlns:${cfgAlias}`] = soapAnnotations.soapHeaders.namespace;
+        }
+        Object.assign(
+          headerContent,
+          prefixWithAlias({
+            alias: cfgAlias,
+            obj: normalizeArgsForConverter(
+              typeof soapAnnotations.soapHeaders.headers === 'string'
+                ? JSON.parse(soapAnnotations.soapHeaders.headers)
+                : soapAnnotations.soapHeaders.headers,
+            ),
+            resolverData,
+          }),
+        );
+      }
+
+      if (Object.keys(headerContent).length > 0) {
+        envelope['soap:Header'] = headerContent;
+      }
+      envelope['soap:Body'] = bodyContent;
+    } else {
+      // Legacy mode: single alias prefix for all args (preserves existing behavior exactly).
+      const bodyPrefix = soapAnnotations.bodyAlias ?? 'body';
+      envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
+
+      const headerPrefix =
+        soapAnnotations.soapHeaders?.alias ?? soapAnnotations.bodyAlias ?? 'header';
+      if (soapAnnotations.soapHeaders?.headers) {
+        envelope['soap:Header'] = prefixWithAlias({
+          alias: headerPrefix,
+          obj: normalizeArgsForConverter(
+            typeof soapAnnotations.soapHeaders.headers === 'string'
+              ? JSON.parse(soapAnnotations.soapHeaders.headers)
+              : soapAnnotations.soapHeaders.headers,
+          ),
+          resolverData,
+        });
+        if (soapAnnotations.soapHeaders?.namespace) {
+          envelopeAttributes[`xmlns:${headerPrefix}`] = soapAnnotations.soapHeaders.namespace;
+        }
+      }
+
+      envelope['soap:Body'] = prefixWithAlias({
+        alias: bodyPrefix,
+        obj: normalizeArgsForConverter(args),
         resolverData,
       });
-      if (soapAnnotations.soapHeaders?.namespace) {
-        envelopeAttributes[`xmlns:${headerPrefix}`] = soapAnnotations.soapHeaders.namespace;
-      }
     }
-
-    const body = prefixWithAlias({
-      alias: bodyPrefix,
-      obj: normalizeArgsForConverter(args),
-      resolverData,
-    });
-    envelope['soap:Body'] = body;
 
     const requestJson = {
       'soap:Envelope': envelope,

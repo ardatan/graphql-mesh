@@ -7,6 +7,7 @@ import {
   GraphQLFloat,
   GraphQLInputObjectType,
   GraphQLInt,
+  GraphQLList,
   GraphQLString,
 } from 'graphql';
 import type {
@@ -146,6 +147,12 @@ const soapDirective = new GraphQLDirective({
     soapNamespace: {
       type: GraphQLString,
     },
+    headerArgNames: {
+      type: new GraphQLList(GraphQLString),
+    },
+    argNamespacesJson: {
+      type: GraphQLString,
+    },
   },
 });
 
@@ -250,6 +257,8 @@ export class SOAPLoader {
 
   private simpleTypeTCMap = new WeakMap<XSSimpleType, EnumTypeComposer | ScalarTypeComposer>();
   private namespaceTypePrefixMap = new Map<string, string>();
+  /** Maps GraphQL input type name → the XSD namespace URI where that type is defined. */
+  private typeNamespaceMap = new Map<string, string>();
   private namespaceElementRefMap = new Map<
     string,
     Map<string, { typeName: string; typeNamespace: string }>
@@ -655,11 +664,36 @@ export class SOAPLoader {
               );
             }
             const aliasMap = this.aliasMap.get(inputMessageObj);
+
+            // Collect which message part names the binding routes to soap:Header
+            const headerPartNames = new Set<string>();
+            for (const inputBinding of bindingOperationObject?.input ?? []) {
+              for (const headerElem of inputBinding.header ?? []) {
+                if (headerElem.attributes?.part) {
+                  headerPartNames.add(headerElem.attributes.part);
+                }
+              }
+            }
+
+            // Build per-arg namespace map and header arg list alongside the existing arg registration
+            const argNamespaceMap: Record<string, string> = {};
+            const headerArgNames: string[] = [];
+
             for (const part of inputMessageObj.part) {
               if (part.attributes.element) {
                 const [elementNamespaceAlias, elementName] = part.attributes.element.split(':');
+                const argName = sanitizeNameForGraphQL(elementName);
+                const elementNs =
+                  aliasMap.get(elementNamespaceAlias) ||
+                  part.attributes[elementNamespaceAlias as keyof WSDLPartAttributes];
+                if (elementNs) {
+                  argNamespaceMap[argName] = elementNs;
+                }
+                if (headerPartNames.has(part.attributes.name || elementName)) {
+                  headerArgNames.push(argName);
+                }
                 rootTC.addFieldArgs(operationFieldName, {
-                  [sanitizeNameForGraphQL(elementName)]: {
+                  [argName]: {
                     type: () => {
                       const elementNamespace =
                         aliasMap.get(elementNamespaceAlias) ||
@@ -679,8 +713,19 @@ export class SOAPLoader {
                 });
               } else if (part.attributes.name) {
                 const partName = part.attributes.name;
+                const argName = sanitizeNameForGraphQL(partName);
+                if (part.attributes.type) {
+                  const [typeNsAlias] = part.attributes.type.split(':');
+                  const typeNs = aliasMap.get(typeNsAlias);
+                  if (typeNs) {
+                    argNamespaceMap[argName] = typeNs;
+                  }
+                }
+                if (headerPartNames.has(partName)) {
+                  headerArgNames.push(argName);
+                }
                 rootTC.addFieldArgs(operationFieldName, {
-                  [sanitizeNameForGraphQL(partName)]: {
+                  [argName]: {
                     type: () => {
                       const typeRef = part.attributes.type;
                       const [typeNamespaceAlias, typeName] = typeRef.split(':');
@@ -701,6 +746,13 @@ export class SOAPLoader {
                   },
                 });
               }
+            }
+
+            if (headerArgNames.length > 0) {
+              soapAnnotations.headerArgNames = headerArgNames;
+            }
+            if (Object.keys(argNamespaceMap).length > 0) {
+              soapAnnotations.argNamespacesJson = JSON.stringify(argNamespaceMap);
             }
           }
         }
@@ -1066,6 +1118,7 @@ export class SOAPLoader {
           name: inputTypeName,
           fields: fieldMap,
         });
+        this.typeNamespaceMap.set(inputTypeName, complexTypeNamespace);
       }
       this.complexTypeInputTCMap.set(complexType, complexTypeTC);
     }
@@ -1403,6 +1456,7 @@ export class SOAPLoader {
       kind: 'soap',
       subgraph: this.subgraphName,
     };
+    schemaExts.typeNamespaceMap = this.typeNamespaceMap;
     return schema;
   }
 }
