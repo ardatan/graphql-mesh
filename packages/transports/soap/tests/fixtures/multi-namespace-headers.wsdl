@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Minimal fixture covering three SOAP transport behaviors:
+  - elements are qualified with their declaring schema's XSD namespace
+    (auth fields use auth:, order fields use orders:), not bindingNamespace
+  - the <soap:header> binding routes the "auth" message part into <soap:Header>,
+    while the remaining "body" part goes into <soap:Body>
+  - an array-typed element (items, maxOccurs="unbounded") serializes as
+    repeated sibling elements, not <prefix:0>, <prefix:1>
+-->
+<wsdl:definitions
+  name="OrderService"
+  targetNamespace="http://example.com/order-service"
+  xmlns:tns="http://example.com/order-service"
+  xmlns:ord="http://example.com/orders"
+  xmlns:auth="http://example.com/auth"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://example.com/auth"
+                xmlns:tns="http://example.com/auth"
+                elementFormDefault="qualified">
+      <xsd:element name="AuthHeader">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="token" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+
+    <xsd:schema targetNamespace="http://example.com/orders"
+                xmlns:tns="http://example.com/orders"
+                elementFormDefault="qualified">
+      <xsd:complexType name="OrderItem">
+        <xsd:sequence>
+          <xsd:element name="productId" type="xsd:string"/>
+          <xsd:element name="quantity" type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="SubmitOrder">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="customerId" type="xsd:string"/>
+            <xsd:element name="items" type="tns:OrderItem" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="SubmitOrderResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="orderId" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="SubmitOrderRequest">
+    <wsdl:part name="auth" element="auth:AuthHeader"/>
+    <wsdl:part name="body" element="ord:SubmitOrder"/>
+  </wsdl:message>
+  <wsdl:message name="SubmitOrderResponseMessage">
+    <wsdl:part name="body" element="ord:SubmitOrderResponse"/>
+  </wsdl:message>
+
+  <wsdl:portType name="OrderPort">
+    <wsdl:operation name="submitOrder">
+      <wsdl:input message="tns:SubmitOrderRequest"/>
+      <wsdl:output message="tns:SubmitOrderResponseMessage"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="OrderBinding" type="tns:OrderPort">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="submitOrder">
+      <soap:operation soapAction="http://example.com/orders/submitOrder"/>
+      <wsdl:input>
+        <soap:header message="tns:SubmitOrderRequest" part="auth" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="OrderService">
+    <wsdl:port name="OrderPort" binding="tns:OrderBinding">
+      <soap:address location="http://example.com/orders"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
