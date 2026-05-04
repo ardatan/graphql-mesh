@@ -26,10 +26,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
             AuthHeader: { token: "tok-123" }
             SubmitOrder: {
               customerId: "cust-1"
-              items: [
-                { productId: "p1", quantity: 2 }
-                { productId: "p2", quantity: 1 }
-              ]
+              items: [{ productId: "p1", quantity: 2 }, { productId: "p2", quantity: 1 }]
             }
           ) {
             orderId

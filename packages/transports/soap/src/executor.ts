@@ -116,6 +116,10 @@ interface CreateRootValueMethodOpts {
   logger: Logger;
 }
 
+// Recursive: returns an array for array inputs, an object with prefixed keys
+// for object inputs, an interpolated string for string inputs, or the value
+// unchanged for other primitives. Typed as `any` because the shape mirrors
+// whatever the caller passed in.
 function prefixWithAlias({
   alias,
   obj,
@@ -124,7 +128,7 @@ function prefixWithAlias({
   alias: string;
   obj: unknown;
   resolverData?: ResolverData;
-}): Record<string, any> {
+}): any {
   if (Array.isArray(obj)) {
     return obj.map(item => prefixWithAlias({ alias, obj: item, resolverData }));
   }
@@ -134,7 +138,7 @@ function prefixWithAlias({
       const aliasedKey = key === 'innerText' ? key : `${alias}:${key}`;
       prefixedHeaderObj[aliasedKey] = prefixWithAlias({
         alias,
-        obj: obj[key],
+        obj: (obj as Record<string, unknown>)[key],
         resolverData,
       });
     }
@@ -253,9 +257,7 @@ function buildValueXml(
 
   return {
     innerText:
-      typeof value === 'string'
-        ? stringInterpolator.parse(value, resolverData)
-        : String(value),
+      typeof value === 'string' ? stringInterpolator.parse(value, resolverData) : String(value),
   };
 }
 
@@ -275,7 +277,14 @@ function buildArgXml(
   const prefix = nsUri ? getOrAssignPrefix(nsUri, assigned, envelopeAttrs) : null;
   const xmlKey = prefix ? `${prefix}:${argName}` : argName;
   return {
-    [xmlKey]: buildValueXml(argValue, argType, typeNamespaceMap, assigned, envelopeAttrs, resolverData),
+    [xmlKey]: buildValueXml(
+      argValue,
+      argType,
+      typeNamespaceMap,
+      assigned,
+      envelopeAttrs,
+      resolverData,
+    ),
   };
 }
 
@@ -307,8 +316,8 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       env: process.env,
     };
 
-    const typeNamespaceMap: Map<string, string> | undefined =
-      (info.schema.extensions as any)?.typeNamespaceMap;
+    const typeNamespaceMap: Map<string, string> | undefined = (info.schema.extensions as any)
+      ?.typeNamespaceMap;
 
     if (soapAnnotations.argNamespacesJson && !soapAnnotations.bodyAlias && typeNamespaceMap) {
       // Namespace-aware mode: each arg/field gets the XSD namespace of its declaring schema.
