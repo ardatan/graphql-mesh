@@ -62,6 +62,7 @@ export default class SoapHandler implements MeshHandler {
           subgraphName: this.name,
           fetch: fetchFn,
           logger: this.logger,
+          cwd: this.baseDir,
           schemaHeaders: this.config.schemaHeaders,
           operationHeaders: this.config.operationHeaders,
           soapHeaders: this.config.soapHeaders,

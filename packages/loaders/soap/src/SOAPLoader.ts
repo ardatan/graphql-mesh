@@ -794,12 +794,26 @@ export class SOAPLoader {
         `WSDL definitions not found! Please make sure if your WSDL source is correct, and it contains <definitions> tag.\nReturned response;\n${wsdlText}`,
       );
     }
+    // Anchor a relative filesystem baseUrl against this.cwd. Without this, a
+    // caller passing a relative source (e.g. "./wsdl/foo.wsdl") would have
+    // path.resolve fall back to process.cwd() — which can differ from the
+    // loader's working directory in monorepos / containers, sending nested
+    // imports to the wrong absolute paths.
+    let resolvedBase = baseUrl;
+    if (
+      resolvedBase &&
+      !/^[a-z][a-z0-9+.-]*:\/\//i.test(resolvedBase) &&
+      !isAbsolute(resolvedBase) &&
+      this.cwd
+    ) {
+      resolvedBase = resolvePath(this.cwd, resolvedBase);
+    }
     // Pre-register before recursing so circular imports terminate.
-    if (baseUrl) {
-      this.loadedLocations.set(baseUrl, wsdlObject);
+    if (resolvedBase) {
+      this.loadedLocations.set(resolvedBase, wsdlObject);
     }
     for (const definition of wsdlObject.definitions) {
-      await this.loadDefinition(definition, baseUrl);
+      await this.loadDefinition(definition, resolvedBase);
     }
     return wsdlObject;
   }
