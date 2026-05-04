@@ -1,4 +1,5 @@
-import { dirname, isAbsolute, resolve as resolvePath } from 'path';
+// eslint-disable-next-line import/no-nodejs-modules
+import { dirname, isAbsolute, resolve as resolvePath } from 'node:path';
 import { XMLParser } from 'fast-xml-parser';
 import type { GraphQLScalarType } from 'graphql';
 import {
