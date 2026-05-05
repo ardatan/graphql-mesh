@@ -30,6 +30,6 @@
     "graphql": "^16.13.2",
     "jest": "30.3.0",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }

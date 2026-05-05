@@ -14,6 +14,6 @@
     "@graphql-hive/gateway": "^2.5.25",
     "esbuild": "^0.28.0",
     "graphql": "16.13.2",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }
