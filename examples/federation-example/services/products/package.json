@@ -11,6 +11,6 @@
     "@types/node": "^25.6.0",
     "graphql": "16.13.2",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }
