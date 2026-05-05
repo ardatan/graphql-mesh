@@ -8258,25 +8258,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/delegate@npm:^12.0.14":
-  version: 12.0.14
-  resolution: "@graphql-tools/delegate@npm:12.0.14"
-  dependencies:
-    "@graphql-tools/batch-execute": "npm:^10.0.8"
-    "@graphql-tools/executor": "npm:^1.4.13"
-    "@graphql-tools/schema": "npm:^10.0.29"
-    "@graphql-tools/utils": "npm:^11.0.0"
-    "@repeaterjs/repeater": "npm:^3.0.6"
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-    dataloader: "npm:^2.2.3"
-    tslib: "npm:^2.8.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/66d94d55d068ba96d10bf41a9b082a8419b482643c3ebd7fdb0ecf1328ae27e647d6c35e9b7c163e0e3cac338f23cddcbe75f8a7e163e6c4c1c25d543d0591bf
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/delegate@npm:^12.0.15":
+"@graphql-tools/delegate@npm:^12.0.14, @graphql-tools/delegate@npm:^12.0.15":
   version: 12.0.15
   resolution: "@graphql-tools/delegate@npm:12.0.15"
   dependencies:
