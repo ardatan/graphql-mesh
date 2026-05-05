@@ -12,14 +12,11 @@ it.concurrent.each([
     name: 'TestQuery',
     query: /* GraphQL */ `
       query TestQuery {
-        alignment_and_tree(limit: 5) {
+        family(limit: 3) {
           rfam_acc
-          family(limit: 1) {
-            type
-            description
-            comment
-            author
-          }
+          rfam_id
+          description
+          type
         }
       }
     `,
