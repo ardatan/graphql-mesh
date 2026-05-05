@@ -187,7 +187,15 @@ function getOrAssignPrefix(
   envelopeAttrs: Record<string, string>,
 ): string {
   const existing = assigned.get(nsUri);
-  if (existing) return existing;
+  if (existing) {
+    // Pre-assigned prefixes (e.g. body → bindingNamespace) don't get an xmlns
+    // declaration until first use, so unused pre-assignments don't pollute the
+    // envelope. Set it here on first lookup.
+    if (envelopeAttrs[`xmlns:${existing}`] === undefined) {
+      envelopeAttrs[`xmlns:${existing}`] = nsUri;
+    }
+    return existing;
+  }
   const base = deriveXmlPrefix(nsUri);
   let prefix = base;
   let i = 2;
@@ -203,6 +211,10 @@ function getOrAssignPrefix(
  * Recursively build an XML-ready object from a GraphQL arg value.
  * Uses the parent GraphQL type's XSD namespace (from typeNamespaceMap) to qualify
  * child element names, so each field gets the prefix of the schema where it is declared.
+ *
+ * `fallbackPrefix` is used when the GraphQL type can't resolve a namespace
+ * (e.g. arg typed as GraphQLJSON for empty complex types or xs:any) — the
+ * children inherit the parent arg's prefix instead of being unprefixed.
  */
 function buildValueXml(
   value: unknown,
@@ -211,19 +223,29 @@ function buildValueXml(
   assigned: Map<string, string>,
   envelopeAttrs: Record<string, string>,
   resolverData: ResolverData,
+  fallbackPrefix?: string,
 ): unknown {
   if (value == null) return value;
 
   if (Array.isArray(value)) {
     return value.map(item =>
-      buildValueXml(item, graphqlType, typeNamespaceMap, assigned, envelopeAttrs, resolverData),
+      buildValueXml(
+        item,
+        graphqlType,
+        typeNamespaceMap,
+        assigned,
+        envelopeAttrs,
+        resolverData,
+        fallbackPrefix,
+      ),
     );
   }
 
   if (typeof value === 'object') {
     const namedType = graphqlType ? getNamedType(graphqlType) : null;
     const typeNsUri = namedType ? typeNamespaceMap.get(namedType.name) : null;
-    const nsPrefix = typeNsUri ? getOrAssignPrefix(typeNsUri, assigned, envelopeAttrs) : null;
+    const resolvedPrefix = typeNsUri ? getOrAssignPrefix(typeNsUri, assigned, envelopeAttrs) : null;
+    const nsPrefix = resolvedPrefix ?? fallbackPrefix ?? null;
 
     const result: Record<string, unknown> = {};
     if (namedType && isInputObjectType(namedType)) {
@@ -238,17 +260,22 @@ function buildValueXml(
           assigned,
           envelopeAttrs,
           resolverData,
+          nsPrefix ?? undefined,
         );
       }
     } else {
+      // Scalar / GraphQLJSON / unknown type: keys aren't typed, so use the
+      // current namespace prefix (possibly inherited from above) for children.
       for (const key of Object.keys(value as object)) {
-        result[key] = buildValueXml(
+        const xmlKey = nsPrefix ? `${nsPrefix}:${key}` : key;
+        result[xmlKey] = buildValueXml(
           (value as any)[key],
           undefined,
           typeNamespaceMap,
           assigned,
           envelopeAttrs,
           resolverData,
+          nsPrefix ?? undefined,
         );
       }
     }
@@ -277,6 +304,8 @@ function buildArgXml(
   const prefix = nsUri ? getOrAssignPrefix(nsUri, assigned, envelopeAttrs) : null;
   const xmlKey = prefix ? `${prefix}:${argName}` : argName;
   return {
+    // Pass the arg's prefix as fallback so JSON-typed / unknown-typed children
+    // inherit the parent's namespace instead of being emitted unqualified.
     [xmlKey]: buildValueXml(
       argValue,
       argType,
@@ -284,6 +313,7 @@ function buildArgXml(
       assigned,
       envelopeAttrs,
       resolverData,
+      prefix ?? undefined,
     ),
   };
 }
@@ -336,6 +366,15 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       const fieldDef = info.parentType.getFields()[info.fieldName];
       const argTypeMap = Object.fromEntries(fieldDef.args.map(a => [a.name, a.type]));
       const assigned = new Map<string, string>();
+      // Pre-assign 'body' to the binding namespace so single-namespace WSDLs
+      // keep their legacy 'body:' prefix even when deriveXmlPrefix would have
+      // produced a different name. The xmlns declaration is added lazily by
+      // getOrAssignPrefix on first use, so multi-namespace WSDLs that don't
+      // actually use the binding namespace don't end up with a stray
+      // xmlns:body attribute on the envelope.
+      if (soapAnnotations.bindingNamespace) {
+        assigned.set(soapAnnotations.bindingNamespace, 'body');
+      }
       const headerContent: Record<string, unknown> = {};
       const bodyContent: Record<string, unknown> = {};
 
