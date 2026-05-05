@@ -316,8 +316,17 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       env: process.env,
     };
 
-    const typeNamespaceMap: Map<string, string> | undefined = (info.schema.extensions as any)
-      ?.typeNamespaceMap;
+    // Read typeNamespacesJson from the transport definition (which survives
+    // SDL roundtrip via @extraSchemaDefinitionDirective), not directly from
+    // schema.extensions which is dropped on serialization.
+    const directives = (info.schema.extensions as any)?.directives;
+    const transport = Array.isArray(directives?.transport)
+      ? directives.transport[0]
+      : directives?.transport;
+    const typeNamespacesJson: string | undefined = transport?.typeNamespacesJson;
+    const typeNamespaceMap: Map<string, string> | undefined = typeNamespacesJson
+      ? new Map(Object.entries(JSON.parse(typeNamespacesJson) as Record<string, string>))
+      : undefined;
 
     if (soapAnnotations.argNamespacesJson && !soapAnnotations.bodyAlias && typeNamespaceMap) {
       // Namespace-aware mode: each arg/field gets the XSD namespace of its declaring schema.

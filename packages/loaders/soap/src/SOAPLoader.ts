@@ -1452,11 +1452,16 @@ export class SOAPLoader {
     const schema = this.schemaComposer.buildSchema();
     const schemaExts: any = (schema.extensions ||= {});
     schemaExts.directives ||= {};
+    // The transport definition survives SDL roundtrip via
+    // @extraSchemaDefinitionDirective, so subgraph routers that reconstruct
+    // the schema from SDL still see this metadata. typeNamespacesJson is
+    // included here (rather than on schema.extensions directly) so the
+    // namespace-aware envelope path also works after federation composition.
     schemaExts.directives.transport = {
       kind: 'soap',
       subgraph: this.subgraphName,
+      typeNamespacesJson: JSON.stringify(Object.fromEntries(this.typeNamespaceMap)),
     };
-    schemaExts.typeNamespaceMap = this.typeNamespaceMap;
     return schema;
   }
 }

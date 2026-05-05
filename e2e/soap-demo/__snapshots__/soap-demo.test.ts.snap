@@ -128,7 +128,9 @@ scalar ObjMap @join__type(graph: SOAP_DEMO)
 
 scalar _DirectiveExtensions @join__type(graph: SOAP_DEMO) 
 
-type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "soap", subgraph: "soap-demo"}]})  @join__type(graph: SOAP_DEMO)  {
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{kind: "soap", subgraph: "soap-demo", typeNamespacesJson: "{\\"s0_FindPerson_Input\\":\\"http://tempuri.org\\",\\"s0_GetByName_Input\\":\\"http://tempuri.org\\",\\"s0_GetDataSetByName_Input\\":\\"http://tempuri.org\\",\\"s0_GetListByName_Input\\":\\"http://tempuri.org\\",\\"s0_QueryByName_Input\\":\\"http://tempuri.org\\",\\"s0_AddInteger_Input\\":\\"http://tempuri.org\\",\\"s0_DivideInteger_Input\\":\\"http://tempuri.org\\",\\"s0_LookupCity_Input\\":\\"http://tempuri.org\\"}"}]}
+) @join__type(graph: SOAP_DEMO)  {
   s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: s0_FindPerson_Input = {}) : s0_FindPersonResponse @soap(
     elementName: "FindPersonResponse"
     bindingNamespace: "http://tempuri.org"

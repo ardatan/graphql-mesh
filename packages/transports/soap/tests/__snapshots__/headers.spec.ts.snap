@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SOAP Headers should pass headers to the executor: soap-with-headers 1`] = `
-"schema @transport(kind: "soap", subgraph: "Test") {
+"schema @transport(kind: "soap", subgraph: "Test", typeNamespacesJson: "{\\"tns_GetWeather_Input\\":\\"http://www.webserviceX.NET\\",\\"tns_GetCitiesByCountry_Input\\":\\"http://www.webserviceX.NET\\"}") {
   query: Query
 }
 

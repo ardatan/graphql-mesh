@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Examples should generate schema for any-simple-type: any-simple-type 1`] = `
-"schema @transport(kind: "soap", subgraph: "any-simple-type") {
+"schema @transport(kind: "soap", subgraph: "any-simple-type", typeNamespacesJson: "{\\"AnySimpleType_GetAttributes_Input\\":\\"http://example.com/any-simple-type\\"}") {
   query: Query
 }
 
@@ -34,7 +34,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for any-wildcard-namespace: any-wildcard-namespace 1`] = `
-"schema @transport(kind: "soap", subgraph: "any-wildcard-namespace") {
+"schema @transport(kind: "soap", subgraph: "any-wildcard-namespace", typeNamespacesJson: "{\\"AnyWildcardNamespace_ProcessItem_Input\\":\\"http://example.com/any-wildcard-namespace\\",\\"AnyWildcardNamespace_WildcardContainer_Input\\":\\"http://example.com/any-wildcard-namespace\\"}") {
   query: Query
   mutation: Mutation
 }
@@ -78,7 +78,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for axis: axis 1`] = `
-"schema @transport(kind: "soap", subgraph: "axis") {
+"schema @transport(kind: "soap", subgraph: "axis", typeNamespacesJson: "{\\"impl_createTestRequestType_Input\\":\\"urn:com.guild:operations/test\\",\\"impl_weekDays_Input\\":\\"urn:com.guild:operations/test\\"}") {
   query: Query
   mutation: Mutation
 }
@@ -210,7 +210,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for empty-complextype: empty-complextype 1`] = `
-"schema @transport(kind: "soap", subgraph: "empty-complextype") {
+"schema @transport(kind: "soap", subgraph: "empty-complextype", typeNamespacesJson: "{\\"EmptyComplexType_Process_Input\\":\\"http://example.com/empty-complextype\\",\\"EmptyComplexType_Container_Input\\":\\"http://example.com/empty-complextype\\"}") {
   query: Query
   mutation: Mutation
 }
@@ -259,7 +259,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for example1: example1 1`] = `
-"schema @transport(kind: "soap", subgraph: "example1") {
+"schema @transport(kind: "soap", subgraph: "example1", typeNamespacesJson: "{\\"TodoService_UpdateFileClass_Input\\":\\"http://tempuri.org/\\",\\"tns_EntityObject_Input\\":\\"http://schemas.datacontract.org/2004/07/WcfTodoService.Models\\",\\"tns_FileClass_Input\\":\\"http://WcfTodoService/Models/FileClass\\",\\"TodoService_AddUpdateClass_Input\\":\\"http://tempuri.org/\\",\\"tns_UpdateClass_Input\\":\\"http://schemas.datacontract.org/2004/07/WcfTodoService.Interface\\",\\"TodoService_AddTodo_Input\\":\\"http://tempuri.org/\\",\\"tns_TodoMessage_Input\\":\\"http://schemas.datacontract.org/2004/07/WcfTodoService.Interface\\",\\"TodoService_FaultAddTodo_Input\\":\\"http://tempuri.org/\\",\\"tns_Name_Input\\":\\"http://schemas.datacontract.org/2004/07/WcfTodoService.Interface\\"}") {
   query: Query
   mutation: Mutation
 }
@@ -400,7 +400,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for example2: example2 1`] = `
-"schema @transport(kind: "soap", subgraph: "example2") {
+"schema @transport(kind: "soap", subgraph: "example2", typeNamespacesJson: "{\\"AdminServiceType_GetFileClassByClassID_Input\\":\\"http://Pfx.Net/Document/IAdminService\\",\\"AdminServiceType_GetFileClassByClassIntIDCaasToMonolith_Input\\":\\"http://Pfx.Net/Document/IAdminService\\",\\"AdminServiceType_CreateFileClass_Input\\":\\"http://Pfx.Net/Document/IAdminService\\",\\"tns_EntityObject_Input\\":\\"http://schemas.cch.com/ProSystemfx/FAM/EntityObject\\",\\"tns_FileClass_Input\\":\\"http://Pfx.Net/Document/FileClass\\",\\"AdminServiceType_UpdateFileClass_Input\\":\\"http://Pfx.Net/Document/IAdminService\\",\\"AdminServiceType_DeleteFileClass_Input\\":\\"http://Pfx.Net/Document/IAdminService\\",\\"AdminServiceType_DeleteEntityClass_Input\\":\\"http://Pfx.Net/Document/IAdminService\\",\\"tns_EntityClassList_Input\\":\\"http://Pfx.Net/Document/BaseList\\",\\"tns_FileSubclassList_Input\\":\\"http://Pfx.Net/Document/BaseList\\",\\"tns_EntityClass_Input\\":\\"http://Pfx.Net/Document/EntityClass\\",\\"tns_FileSubclass_Input\\":\\"http://Pfx.Net/Document/FileSubclass\\"}") {
   query: Query
   mutation: Mutation
 }
@@ -639,7 +639,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for forward-ref-elements: forward-ref-elements 1`] = `
-"schema @transport(kind: "soap", subgraph: "forward-ref-elements") {
+"schema @transport(kind: "soap", subgraph: "forward-ref-elements", typeNamespacesJson: "{\\"ForwardRefService_DoWork_Input\\":\\"urn:forward-ref-service\\",\\"undefined_ServiceRequest_Input\\":\\"urn:schema-b\\"}") {
   query: Query
   mutation: Mutation
 }
@@ -679,7 +679,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for greeting: greeting 1`] = `
-"schema @transport(kind: "soap", subgraph: "greeting") {
+"schema @transport(kind: "soap", subgraph: "greeting", typeNamespacesJson: "{\\"NumberConversion_NumberToWords_Input\\":\\"http://www.dataaccess.com/webservicesserver/\\",\\"NumberConversion_NumberToDollars_Input\\":\\"http://www.dataaccess.com/webservicesserver/\\"}") {
   query: Query
   mutation: Mutation
 }
@@ -729,7 +729,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for illegal-gql-names: illegal-gql-names 1`] = `
-"schema @transport(kind: "soap", subgraph: "illegal-gql-names") {
+"schema @transport(kind: "soap", subgraph: "illegal-gql-names", typeNamespacesJson: "{\\"IllegalGqlNames_GetState_Input\\":\\"http://example.com/illegal-gql-names/\\",\\"IllegalGqlNames_My_ComplexType_Input\\":\\"http://example.com/illegal-gql-names/\\",\\"IllegalGqlNames_X721_Type_Input\\":\\"http://example.com/illegal-gql-names/\\"}") {
   query: Query
 }
 
@@ -776,7 +776,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for inline-type-collision: inline-type-collision 1`] = `
-"schema @transport(kind: "soap", subgraph: "inline-type-collision") {
+"schema @transport(kind: "soap", subgraph: "inline-type-collision", typeNamespacesJson: "{\\"InlineTypeCollision_GetA_Input\\":\\"http://example.com/inline-collision\\",\\"InlineTypeCollision_TypeA_Input\\":\\"http://example.com/inline-collision\\",\\"InlineTypeCollision_GetB_Input\\":\\"http://example.com/inline-collision\\",\\"InlineTypeCollision_TypeB_Input\\":\\"http://example.com/inline-collision\\",\\"InlineTypeCollision_TypeA_details_Input\\":\\"http://example.com/inline-collision\\",\\"InlineTypeCollision_TypeB_details_Input\\":\\"http://example.com/inline-collision\\"}") {
   query: Query
 }
 
@@ -845,7 +845,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for prefix-collision: prefix-collision 1`] = `
-"schema @transport(kind: "soap", subgraph: "prefix-collision") {
+"schema @transport(kind: "soap", subgraph: "prefix-collision", typeNamespacesJson: "{\\"PrefixCollision_GetNs1Items_Input\\":\\"http://example.com/service\\",\\"PrefixCollision_GetNs2Items_Input\\":\\"http://example.com/service\\"}") {
   query: Query
 }
 
@@ -892,7 +892,7 @@ scalar ObjMap"
 `;
 
 exports[`Examples should generate schema for tempconvert: tempconvert 1`] = `
-"schema @transport(kind: "soap", subgraph: "tempconvert") {
+"schema @transport(kind: "soap", subgraph: "tempconvert", typeNamespacesJson: "{\\"tns_FahrenheitToCelsius_Input\\":\\"https://www.w3schools.com/xml/\\",\\"tns_CelsiusToFahrenheit_Input\\":\\"https://www.w3schools.com/xml/\\"}") {
   query: Query
   mutation: Mutation
 }
