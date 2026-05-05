@@ -69,6 +69,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
               redisOptions,
               options.iamAuth,
               parsedUsername,
+              options.logger,
             );
           }
         } else if ('sentinels' in options) {

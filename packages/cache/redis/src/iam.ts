@@ -4,7 +4,7 @@
 import { createHash, createHmac } from 'node:crypto';
 import { AbstractConnector } from 'ioredis';
 import type { Cluster, Redis, RedisOptions, StandaloneConnectionOptions } from 'ioredis';
-import type { YamlConfig } from '@graphql-mesh/types';
+import type { Logger, YamlConfig } from '@graphql-mesh/types';
 
 export type IamAuthConfig = NonNullable<YamlConfig.RedisIamAuthConfig>;
 
@@ -216,6 +216,7 @@ export function setupIamAuthForCluster(
   redisOptions: RedisOptions,
   cfg: IamAuthConfig,
   username: string | undefined,
+  logger?: Logger,
 ): ReturnType<typeof setInterval> {
   const expiryMs = (cfg.tokenExpirySeconds ?? 900) * 1000;
   const refreshIntervalMs = expiryMs * 0.8;
@@ -243,10 +244,14 @@ export function setupIamAuthForCluster(
   };
 
   // kick off initial token generation - commands queue up until this resolves
-  refreshToken().catch(() => {});
+  refreshToken().catch(err => {
+    logger?.error('Failed to generate initial IAM token for Redis cluster:', err);
+  });
 
   const timer = setInterval(() => {
-    refreshToken().catch(() => {});
+    refreshToken().catch(err => {
+      logger?.error('Failed to refresh IAM token for Redis cluster:', err);
+    });
   }, refreshIntervalMs);
 
   return timer;
