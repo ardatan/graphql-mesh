@@ -216,8 +216,7 @@ export function setupIamAuthForCluster(
   redisOptions: RedisOptions,
   cfg: IamAuthConfig,
   username: string | undefined,
-  onTimer: (timer: ReturnType<typeof setInterval>) => void,
-): void {
+): ReturnType<typeof setInterval> {
   const expiryMs = (cfg.tokenExpirySeconds ?? 900) * 1000;
   const refreshIntervalMs = expiryMs * 0.8;
   let currentToken = '';
@@ -244,13 +243,11 @@ export function setupIamAuthForCluster(
   };
 
   // kick off initial token generation - commands queue up until this resolves
-  refreshToken()
-    .then(() => {
-      onTimer(
-        setInterval(() => {
-          refreshToken().catch(() => {});
-        }, refreshIntervalMs),
-      );
-    })
-    .catch(() => {});
+  refreshToken().catch(() => {});
+
+  const timer = setInterval(() => {
+    refreshToken().catch(() => {});
+  }, refreshIntervalMs);
+
+  return timer;
 }

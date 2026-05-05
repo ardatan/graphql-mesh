@@ -64,14 +64,11 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
             },
           );
           if (options.iamAuth) {
-            setupIamAuthForCluster(
+            this.iamRefreshTimer = setupIamAuthForCluster(
               this.client,
               redisOptions,
               options.iamAuth,
               parsedUsername,
-              timer => {
-                this.iamRefreshTimer = timer;
-              },
             );
           }
         } else if ('sentinels' in options) {
