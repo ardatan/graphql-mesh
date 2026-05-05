@@ -264,11 +264,13 @@ describe('redis', () => {
         tokenExpirySeconds: 900,
       };
 
-      setupIamAuthForCluster(mockCluster, redisOptions, cfg, undefined, () => {});
+      const timer = setupIamAuthForCluster(mockCluster, redisOptions, cfg, undefined);
 
       const descriptor = Object.getOwnPropertyDescriptor(redisOptions, 'password');
       expect(typeof descriptor?.get).toBe('function');
       expect(typeof descriptor?.set).toBe('function');
+
+      clearInterval(timer);
     });
 
     it('IamTokenConnector.connect injects token into condition.auth (password-only)', async () => {
