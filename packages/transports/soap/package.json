@@ -40,7 +40,7 @@
     "@graphql-mesh/transport-common": "^1.0.16",
     "@graphql-mesh/types": "^0.104.28",
     "@graphql-mesh/utils": "^0.104.36",
-    "@graphql-tools/executor": "^1.5.2",
+    "@graphql-tools/executor": "^1.5.3",
     "@graphql-tools/utils": "^11.1.0",
     "@whatwg-node/fetch": "^0.10.6",
     "fast-xml-parser": "^5.7.0",
