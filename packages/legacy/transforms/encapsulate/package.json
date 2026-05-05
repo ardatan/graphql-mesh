@@ -37,13 +37,13 @@
   "dependencies": {
     "@graphql-mesh/types": "^0.104.28",
     "@graphql-mesh/utils": "^0.104.36",
-    "@graphql-tools/delegate": "^12.0.14",
+    "@graphql-tools/delegate": "^12.0.15",
     "@graphql-tools/utils": "^11.1.0",
     "@graphql-tools/wrap": "^11.1.14",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "10.0.32",
+    "@graphql-tools/schema": "10.0.33",
     "graphql": "16.13.2"
   },
   "publishConfig": {
