@@ -10,7 +10,7 @@
   "dependencies": {
     "fets": "^0.8.6",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
     "@graphql-hive/cli": "0.59.1",
