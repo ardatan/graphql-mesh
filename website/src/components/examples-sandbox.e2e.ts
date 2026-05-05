@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 const SELECTED_EXAMPLE = 'openapi-stackexchange';
 
 test('switches and loads StackExchange example', async ({ page }) => {
+  test.setTimeout(120_000);
   // when we're running the CI on master, we run the test against prod to know if the
   // CodeSandbox iframe isn't broken by website-router
   const url = process.env.AGAINST_PROD === '1' ? 'https://the-guild.dev/graphql/mesh/' : '/';
