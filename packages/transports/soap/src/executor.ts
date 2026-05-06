@@ -199,7 +199,12 @@ function getOrAssignPrefix(
   const base = deriveXmlPrefix(nsUri);
   let prefix = base;
   let i = 2;
-  while (envelopeAttrs[`xmlns:${prefix}`] !== undefined) {
+  // Check both the envelope (already-declared xmlns) AND the `assigned` map
+  // (lazily-pre-assigned prefixes whose xmlns hasn't been emitted yet, e.g.
+  // body → bindingNamespace) so two namespaces can never silently land on the
+  // same prefix and overwrite each other's xmlns binding.
+  const taken = new Set(assigned.values());
+  while (envelopeAttrs[`xmlns:${prefix}`] !== undefined || taken.has(prefix)) {
     prefix = `${base}${i++}`;
   }
   assigned.set(nsUri, prefix);

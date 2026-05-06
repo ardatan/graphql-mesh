@@ -714,12 +714,13 @@ export class SOAPLoader {
               } else if (part.attributes.name) {
                 const partName = part.attributes.name;
                 const argName = sanitizeNameForGraphQL(partName);
-                if (part.attributes.type) {
-                  const [typeNsAlias] = part.attributes.type.split(':');
-                  const typeNs = aliasMap.get(typeNsAlias);
-                  if (typeNs) {
-                    argNamespaceMap[argName] = typeNs;
-                  }
+                // For RPC-style <wsdl:part name="X" type="ns:T"/>, the element
+                // wrapper QName is the part name in the binding's namespace —
+                // the type's namespace describes the value type, not the
+                // accessor element. Always use bindingNamespace here, never
+                // part@type's namespace.
+                if (bindingNamespace) {
+                  argNamespaceMap[argName] = bindingNamespace;
                 }
                 if (headerPartNames.has(partName)) {
                   headerArgNames.push(argName);
