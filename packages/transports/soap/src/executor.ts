@@ -380,6 +380,24 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       if (soapAnnotations.bindingNamespace) {
         assigned.set(soapAnnotations.bindingNamespace, 'body');
       }
+      // Pre-seed the user-configured soapHeaders alias (default 'header') so
+      // arg namespaces whose deriveXmlPrefix would land on the same name —
+      // e.g. a URI ending in /header/v1 — get a numeric suffix from
+      // getOrAssignPrefix instead of silently clobbering this xmlns binding.
+      // Honored only when free; if the alias is already bound to another
+      // namespace (e.g. equals 'body'), we let getOrAssignPrefix fall back to
+      // a derived prefix below.
+      if (soapAnnotations.soapHeaders?.headers && soapAnnotations.soapHeaders.namespace) {
+        const userAlias = soapAnnotations.soapHeaders.alias ?? 'header';
+        const nsUri = soapAnnotations.soapHeaders.namespace;
+        if (
+          !assigned.has(nsUri) &&
+          envelopeAttributes[`xmlns:${userAlias}`] === undefined &&
+          ![...assigned.values()].includes(userAlias)
+        ) {
+          assigned.set(nsUri, userAlias);
+        }
+      }
       const headerContent: Record<string, unknown> = {};
       const bodyContent: Record<string, unknown> = {};
 
@@ -403,10 +421,13 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
 
       // User-configured soapHeaders (from YAML/config) are merged into soap:Header.
       if (soapAnnotations.soapHeaders?.headers) {
-        const cfgAlias = soapAnnotations.soapHeaders.alias ?? 'header';
-        if (soapAnnotations.soapHeaders.namespace) {
-          envelopeAttributes[`xmlns:${cfgAlias}`] = soapAnnotations.soapHeaders.namespace;
-        }
+        // Route through getOrAssignPrefix when a namespace is given so collisions
+        // with an arg-namespace prefix (already bound during buildArgXml) get a
+        // numeric suffix instead of overwriting the existing xmlns binding. The
+        // user's preferred alias is honored via the pre-seed above when free.
+        const cfgAlias = soapAnnotations.soapHeaders.namespace
+          ? getOrAssignPrefix(soapAnnotations.soapHeaders.namespace, assigned, envelopeAttributes)
+          : (soapAnnotations.soapHeaders.alias ?? 'header');
         Object.assign(
           headerContent,
           prefixWithAlias({
