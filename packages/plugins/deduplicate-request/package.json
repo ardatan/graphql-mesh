@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@whatwg-node/fetch": "^0.10.6",
-    "graphql": "16.13.2"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",

@@ -10,9 +10,9 @@
     "start": "vite"
   },
   "dependencies": {
-    "graphql": "16.13.2",
-    "react": "19.2.5",
-    "react-dom": "19.2.5"
+    "graphql": "16.14.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
   },
   "devDependencies": {
     "@graphql-mesh/cli": "0.100.52",
