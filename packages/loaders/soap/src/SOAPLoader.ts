@@ -168,20 +168,26 @@ function isQueryOperationName(operationName: string) {
   return QUERY_PREFIXES.some(prefix => operationName.toLowerCase().startsWith(prefix));
 }
 
+// Matches any RFC-3986 scheme (2+ chars to avoid mistaking Windows drive
+// letters like "C:" for URI schemes). The scheme isn't required to be
+// followed by "//" — `file:/tmp/x`, `urn:isbn:1234`, etc. are valid
+// absolute URIs.
+const URI_SCHEME_RE = /^[a-zA-Z][a-zA-Z0-9+.-]+:/;
+
 /**
  * Resolve a (possibly relative) WSDL/XSD location against the location of the
  * document doing the import. Mirrors XML Schema's xml:base resolution rules:
  * relative `schemaLocation` / `wsdl:import location` is resolved against the
  * importing document's own URI, not against a fixed root.
  *
- * Handles both URLs (http/https/file) and filesystem paths uniformly.
+ * Handles both URIs (http, https, file, urn, …) and filesystem paths uniformly.
  */
 function resolveLocation(base: string | undefined, location: string): string {
-  // Already-absolute URLs pass through.
-  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(location)) return location;
+  // Already-absolute URIs (any scheme) pass through.
+  if (URI_SCHEME_RE.test(location)) return location;
   if (!base) return location;
-  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(base)) {
-    // base is a URL — let URL handle "../" and root-relative ("/foo") paths.
+  if (URI_SCHEME_RE.test(base)) {
+    // base is a URI — let URL handle "../" and root-relative ("/foo") paths.
     return new URL(location, base).href;
   }
   // base is a filesystem path. A filesystem-absolute location passes through;
@@ -803,7 +809,7 @@ export class SOAPLoader {
     let resolvedBase = baseUrl;
     if (
       resolvedBase &&
-      !/^[a-z][a-z0-9+.-]*:\/\//i.test(resolvedBase) &&
+      !URI_SCHEME_RE.test(resolvedBase) &&
       !isAbsolute(resolvedBase) &&
       this.cwd
     ) {
