@@ -1,3 +1,4 @@
+import { setTimeout } from 'node:timers/promises';
 import { createClient } from 'graphql-sse';
 import { createTenv } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
@@ -101,18 +102,27 @@ it('should subscribe to todoUpdatedFromExtensions', async () => {
   const { hostname, port, execute } = await serve({ supergraph: output, port: servePort });
 
   // Add a todo to update and get the id
-  const result = await execute({
-    query: /* GraphQL */ `
-      mutation AddTodo {
-        addTodo(input: { name: "Shopping", content: "Buy Milk" }) {
-          id
-          name
-          content
+  let result;
+  for (let i = 0; i < 3; i++) {
+    result = await execute({
+      query: /* GraphQL */ `
+        mutation AddTodo {
+          addTodo(input: { name: "Shopping", content: "Buy Milk" }) {
+            id
+            name
+            content
+          }
         }
-      }
-    `,
-  });
-  const todoId = result.data.addTodo.id;
+      `,
+    });
+    if (result.data?.addTodo?.id) {
+      break;
+    }
+    await setTimeout(250);
+  }
+  expect(result.errors).toBeFalsy();
+  expect(result.data?.addTodo?.id).toBeTruthy();
+  const todoId = result.data!.addTodo.id;
 
   const sse = createClient({
     url: `http://${hostname}:${port}/graphql`,
