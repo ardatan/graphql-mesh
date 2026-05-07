@@ -5,6 +5,8 @@ import { fetch } from '@whatwg-node/fetch';
 import { getAvailablePort } from '../../packages/testing/getAvailablePort';
 
 const { compose, serve, service } = createTenv(__dirname);
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 250;
 
 it('should compose the appropriate schema', async () => {
   const api = await service('api');
@@ -103,7 +105,7 @@ it('should subscribe to todoUpdatedFromExtensions', async () => {
 
   // Add a todo to update and get the id
   let result;
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < MAX_RETRY_ATTEMPTS; i++) {
     result = await execute({
       query: /* GraphQL */ `
         mutation AddTodo {
@@ -118,7 +120,7 @@ it('should subscribe to todoUpdatedFromExtensions', async () => {
     if (result.data?.addTodo?.id) {
       break;
     }
-    await setTimeout(250);
+    await setTimeout(RETRY_DELAY_MS);
   }
   expect(result.errors).toBeFalsy();
   expect(result.data?.addTodo?.id).toBeTruthy();
