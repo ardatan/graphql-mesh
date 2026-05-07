@@ -199,6 +199,7 @@ exports[`should write compose output to supergraph.json 1`] = `
           "directives": []
         }
       ],
+      "directives": [],
       "repeatable": true,
       "locations": [
         {
@@ -251,6 +252,7 @@ exports[`should write compose output to supergraph.json 1`] = `
           "directives": []
         }
       ],
+      "directives": [],
       "repeatable": false,
       "locations": [
         {
@@ -372,6 +374,7 @@ exports[`should write compose output to supergraph.json 1`] = `
           "directives": []
         }
       ],
+      "directives": [],
       "repeatable": true,
       "locations": [
         {
@@ -428,6 +431,7 @@ exports[`should write compose output to supergraph.json 1`] = `
           "directives": []
         }
       ],
+      "directives": [],
       "repeatable": true,
       "locations": [
         {
@@ -547,6 +551,7 @@ exports[`should write compose output to supergraph.json 1`] = `
           "directives": []
         }
       ],
+      "directives": [],
       "repeatable": true,
       "locations": [
         {
@@ -619,6 +624,7 @@ exports[`should write compose output to supergraph.json 1`] = `
           "directives": []
         }
       ],
+      "directives": [],
       "repeatable": true,
       "locations": [
         {
@@ -706,6 +712,7 @@ exports[`should write compose output to supergraph.json 1`] = `
           "directives": []
         }
       ],
+      "directives": [],
       "repeatable": true,
       "locations": [
         {
