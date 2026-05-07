@@ -11,7 +11,7 @@ exports[`gRPC Example fetches movies by cast as a subscription correctly: 0 1`] 
       ],
       "name": "Mission: Impossible Rogue Nation",
       "rating": 0.9700000286102295,
-      "year": 0,
+      "year": 2015,
     },
   },
 }
@@ -28,7 +28,7 @@ exports[`gRPC Example fetches movies by cast as a subscription correctly: 1 1`] 
       ],
       "name": "Mission: Impossible - Fallout",
       "rating": 0.9300000071525574,
-      "year": 0,
+      "year": 2018,
     },
   },
 }
@@ -339,7 +339,7 @@ exports[`gRPC Example gets movies correctly: get-movies-grpc-example-result 1`] 
           "time": {
             "seconds": 1608422400000,
           },
-          "year": 0,
+          "year": 2013,
         },
       ],
     },
@@ -367,7 +367,7 @@ exports[`gRPC Example streams movies by cast correctly: 1 1`] = `
         ],
         "name": "Mission: Impossible Rogue Nation",
         "rating": 0.9700000286102295,
-        "year": 0,
+        "year": 2015,
       },
     ],
   },
@@ -386,7 +386,7 @@ exports[`gRPC Example streams movies by cast correctly: 2 1`] = `
         ],
         "name": "Mission: Impossible Rogue Nation",
         "rating": 0.9700000286102295,
-        "year": 0,
+        "year": 2015,
       },
       {
         "cast": [
@@ -396,7 +396,7 @@ exports[`gRPC Example streams movies by cast correctly: 2 1`] = `
         ],
         "name": "Mission: Impossible - Fallout",
         "rating": 0.9300000071525574,
-        "year": 0,
+        "year": 2018,
       },
     ],
   },
@@ -415,7 +415,7 @@ exports[`gRPC Example streams movies by cast correctly: 3 1`] = `
         ],
         "name": "Mission: Impossible Rogue Nation",
         "rating": 0.9700000286102295,
-        "year": 0,
+        "year": 2015,
       },
       {
         "cast": [
@@ -425,7 +425,7 @@ exports[`gRPC Example streams movies by cast correctly: 3 1`] = `
         ],
         "name": "Mission: Impossible - Fallout",
         "rating": 0.9300000071525574,
-        "year": 0,
+        "year": 2018,
       },
       null,
     ],
@@ -445,7 +445,7 @@ exports[`gRPC Example streams movies by cast correctly: 4 1`] = `
         ],
         "name": "Mission: Impossible Rogue Nation",
         "rating": 0.9700000286102295,
-        "year": 0,
+        "year": 2015,
       },
       {
         "cast": [
@@ -455,7 +455,7 @@ exports[`gRPC Example streams movies by cast correctly: 4 1`] = `
         ],
         "name": "Mission: Impossible - Fallout",
         "rating": 0.9300000071525574,
-        "year": 0,
+        "year": 2018,
       },
       null,
     ],
