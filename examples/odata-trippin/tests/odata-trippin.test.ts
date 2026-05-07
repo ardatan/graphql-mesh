@@ -17,6 +17,8 @@ describe('OData TripPin', () => {
     expect(
       introspectionFromSchema(lexicographicSortSchema(mesh.schema), {
         descriptions: false,
+        experimentalDirectiveDeprecation: false,
+        typeDepth: 7,
       }),
     ).toMatchSnapshot('odata-trippin-schema');
   });

@@ -246,7 +246,7 @@ export const DEFAULT_INTROSPECTION_OPTIONS: Required<IntrospectionOptions> = {
   schemaDescription: false,
   inputValueDeprecation: true,
   oneOf: false,
-  typeDepth: 9,
+  typeDepth: 7,
 };
 
 export function loadGraphQLHTTPSubgraph(
