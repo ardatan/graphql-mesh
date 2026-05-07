@@ -242,7 +242,7 @@ export const DEFAULT_INTROSPECTION_OPTIONS: Required<IntrospectionOptions> = {
   descriptions: true,
   specifiedByUrl: false,
   directiveIsRepeatable: false,
-  experimentalDirectiveDeprecation: false,
+  experimentalDirectiveDeprecation: true,
   schemaDescription: false,
   inputValueDeprecation: true,
   oneOf: false,
