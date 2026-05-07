@@ -401,30 +401,15 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       const headerContent: Record<string, unknown> = {};
       const bodyContent: Record<string, unknown> = {};
 
-      for (const [argName, argValue] of Object.entries(args ?? {})) {
-        const chunk = buildArgXml(
-          argName,
-          argValue,
-          argNsMap[argName],
-          argTypeMap[argName],
-          typeNamespaceMap,
-          assigned,
-          envelopeAttributes,
-          resolverData,
-        );
-        if (headerArgSet.has(argName)) {
-          Object.assign(headerContent, chunk);
-        } else {
-          Object.assign(bodyContent, chunk);
-        }
-      }
-
-      // User-configured soapHeaders (from YAML/config) are merged into soap:Header.
+      // Seed soap:Header with loader-level soapHeaders defaults first so that
+      // explicit GraphQL arg values take priority: the args loop below calls
+      // Object.assign(headerContent, chunk), which overwrites any same-key
+      // entry written here. This gives query args higher precedence than the
+      // static loader configuration on key collision.
       if (soapAnnotations.soapHeaders?.headers) {
-        // Route through getOrAssignPrefix when a namespace is given so collisions
-        // with an arg-namespace prefix (already bound during buildArgXml) get a
-        // numeric suffix instead of overwriting the existing xmlns binding. The
-        // user's preferred alias is honored via the pre-seed above when free.
+        // Route through getOrAssignPrefix when a namespace is given so the alias
+        // is shared with any arg that uses the same namespace (pre-seeded above),
+        // and a numeric suffix is appended instead of clobbering another binding.
         const cfgAlias = soapAnnotations.soapHeaders.namespace
           ? getOrAssignPrefix(soapAnnotations.soapHeaders.namespace, assigned, envelopeAttributes)
           : (soapAnnotations.soapHeaders.alias ?? 'header');
@@ -440,6 +425,29 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
             resolverData,
           }),
         );
+      }
+
+      for (const [argName, argValue] of Object.entries(args ?? {})) {
+        const chunk = buildArgXml(
+          argName,
+          argValue,
+          argNsMap[argName],
+          argTypeMap[argName],
+          typeNamespaceMap,
+          assigned,
+          envelopeAttributes,
+          resolverData,
+        );
+        if (headerArgSet.has(argName)) {
+          // Only overwrite soapHeaders defaults when the arg carries a real value.
+          // GraphQL may coerce an absent INPUT_OBJECT arg to null, undefined, or "".
+          // None of those represent an intentional caller-supplied override.
+          if (argValue != null && argValue !== '' && (typeof argValue !== 'object' || Object.keys(argValue as object).length > 0)) {
+            Object.assign(headerContent, chunk);
+          }
+        } else {
+          Object.assign(bodyContent, chunk);
+        }
       }
 
       if (Object.keys(headerContent).length > 0) {
