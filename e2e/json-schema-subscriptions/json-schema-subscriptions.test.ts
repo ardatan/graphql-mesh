@@ -105,7 +105,7 @@ it('should subscribe to todoUpdatedFromExtensions', async () => {
 
   // Add a todo to update and get the id
   let result;
-  for (let attempt = 0; attempt < MAX_RETRY_ATTEMPTS; attempt++) {
+  for (let retryAttempt = 0; retryAttempt < MAX_RETRY_ATTEMPTS; retryAttempt++) {
     result = await execute({
       query: /* GraphQL */ `
         mutation AddTodo {
@@ -124,7 +124,9 @@ it('should subscribe to todoUpdatedFromExtensions', async () => {
   }
   expect(result.errors).toBeFalsy();
   const todoId = result.data?.addTodo?.id;
-  expect(todoId).toBeTruthy();
+  if (!todoId) {
+    throw new Error('Failed to create todo id in todoUpdatedFromExtensions test');
+  }
 
   const sse = createClient({
     url: `http://${hostname}:${port}/graphql`,
