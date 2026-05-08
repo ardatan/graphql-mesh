@@ -14,14 +14,14 @@
     "@graphql-mesh/grpc": "0.108.42",
     "@graphql-mesh/transform-naming-convention": "0.105.37",
     "@grpc/grpc-js": "1.14.3",
-    "@grpc/proto-loader": "0.8.0",
+    "@grpc/proto-loader": "0.8.1",
     "google-protobuf": "4.0.2",
     "graphql": "16.14.0"
   },
   "devDependencies": {
-    "@types/node": "^25.6.1",
+    "@types/node": "^25.6.2",
     "concurrently": "9.2.1",
-    "jest": "30.3.0",
+    "jest": "30.4.1",
     "ts-jest": "29.4.9",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"

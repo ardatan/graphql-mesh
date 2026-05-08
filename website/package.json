@@ -20,11 +20,11 @@
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@theguild/tailwind-config": "0.6.4",
-    "@types/node": "^25.6.1",
+    "@types/node": "^25.6.2",
     "@types/react": "19.2.14",
     "cross-env": "10.1.0",
     "eslint": "10.3.0",
-    "eslint-config-next": "16.2.5",
+    "eslint-config-next": "16.2.6",
     "postcss": "8.5.14",
     "postcss-import": "16.1.1",
     "postcss-lightningcss": "1.1.0",
