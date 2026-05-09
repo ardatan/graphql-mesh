@@ -36,6 +36,25 @@ test('switches and loads StackExchange example', async ({ page }) => {
       .frameLocator(`iframe[title="${SELECTED_EXAMPLE}"]`)
       .frameLocator('iframe');
     const title = innerIframe.getByText('@examples/openapi-stackexchange');
-    await title.waitFor({ state: 'visible', timeout: 60_000 }); // this takes like 4 to 11 seconds but can be slower
+    const outageIndicators = [
+      innerIframe.getByText('Unable to start the microVM').first(),
+      innerIframe.getByText('Service Disruption in Progress').first(),
+    ];
+    const timeout = 120_000;
+    const startedAt = Date.now();
+
+    while (Date.now() - startedAt < timeout) {
+      if (await title.isVisible().catch(() => false)) {
+        return;
+      }
+      for (const outageIndicator of outageIndicators) {
+        if (await outageIndicator.isVisible().catch(() => false)) {
+          test.skip(true, 'CodeSandbox is temporarily unavailable');
+        }
+      }
+      await page.waitForTimeout(1_000);
+    }
+
+    await expect(title).toBeVisible({ timeout: 1 });
   }
 });
