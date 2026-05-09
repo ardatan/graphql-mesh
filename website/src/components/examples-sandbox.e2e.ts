@@ -55,6 +55,8 @@ test('switches and loads StackExchange example', async ({ page }) => {
       await page.waitForTimeout(1_000);
     }
 
-    await expect(title).toBeVisible({ timeout: 1 });
+    throw new Error(
+      'CodeSandbox example did not load expected content within 120 seconds and no outage banner was detected',
+    );
   }
 });
