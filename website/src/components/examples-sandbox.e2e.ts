@@ -59,9 +59,12 @@ test('switches and loads StackExchange example', async ({ page }) => {
     }
     if (result === 'outage') {
       test.skip(true, 'CodeSandbox is temporarily unavailable');
+      return;
     }
-    throw new Error(
-      'Neither expected CodeSandbox content nor known outage banners appeared within 120 seconds',
-    );
+    if (result === 'ready-timeout' || result === 'outage-timeout') {
+      throw new Error(
+        'Neither expected CodeSandbox content nor known outage banners appeared within 120 seconds',
+      );
+    }
   }
 });
