@@ -40,6 +40,7 @@ test('switches and loads StackExchange example', async ({ page }) => {
       innerIframe.getByText('Unable to start the microVM').first(),
       innerIframe.getByText('Service Disruption in Progress').first(),
     ];
+    // CodeSandbox microVM cold starts and incident recovery can exceed 60s on prod.
     const timeout = 120_000;
     const readyPromise = title
       .waitFor({ state: 'visible', timeout })
