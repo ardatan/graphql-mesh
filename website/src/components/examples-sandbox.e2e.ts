@@ -60,12 +60,8 @@ test('switches and loads StackExchange example', async ({ page }) => {
     if (result === 'outage') {
       test.skip(true, 'CodeSandbox is temporarily unavailable');
     }
-    if (result === 'ready-timeout' || result === 'outage-timeout') {
-      throw new Error(
-        'Neither expected CodeSandbox content nor known outage banners appeared within 120 seconds',
-      );
-    }
-
-    throw new Error(`Unexpected wait result: ${result}`);
+    throw new Error(
+      'Neither expected CodeSandbox content nor known outage banners appeared within 120 seconds',
+    );
   }
 });
