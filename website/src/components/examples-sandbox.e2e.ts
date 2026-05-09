@@ -41,22 +41,25 @@ test('switches and loads StackExchange example', async ({ page }) => {
       innerIframe.getByText('Service Disruption in Progress').first(),
     ];
     const timeout = 120_000;
-    const startedAt = Date.now();
-
-    while (Date.now() - startedAt < timeout) {
-      if (await title.isVisible().catch(() => false)) {
-        return;
-      }
-      for (const outageIndicator of outageIndicators) {
-        if (await outageIndicator.isVisible().catch(() => false)) {
-          test.skip(true, 'CodeSandbox is temporarily unavailable');
-        }
-      }
-      await page.waitForTimeout(1_000);
-    }
-
-    throw new Error(
-      'CodeSandbox example did not load expected content within 120 seconds and no outage banner was detected',
+    const readyPromise = title
+      .waitFor({ state: 'visible', timeout })
+      .then(() => 'ready' as const)
+      .catch(() => 'ready-timeout' as const);
+    const outagePromises = outageIndicators.map(outageIndicator =>
+      outageIndicator
+        .waitFor({ state: 'visible', timeout })
+        .then(() => 'outage' as const)
+        .catch(() => 'outage-timeout' as const),
     );
+    const result = await Promise.race([readyPromise, ...outagePromises]);
+
+    if (result === 'outage') {
+      test.skip(true, 'CodeSandbox is temporarily unavailable');
+    }
+    if (result !== 'ready') {
+      throw new Error(
+        'CodeSandbox example did not load expected content within 120 seconds and no outage banner was detected',
+      );
+    }
   }
 });
