@@ -54,13 +54,18 @@ test('switches and loads StackExchange example', async ({ page }) => {
     );
     const result = await Promise.race([readyPromise, ...outagePromises]);
 
+    if (result === 'ready') {
+      return;
+    }
     if (result === 'outage') {
       test.skip(true, 'CodeSandbox is temporarily unavailable');
     }
-    if (result !== 'ready') {
+    if (result === 'ready-timeout' || result === 'outage-timeout') {
       throw new Error(
-        'CodeSandbox example did not load expected content within 120 seconds and no outage banner was detected',
+        'Neither expected CodeSandbox content nor known outage banners appeared within 120 seconds',
       );
     }
+
+    throw new Error(`Unexpected wait result: ${result}`);
   }
 });
