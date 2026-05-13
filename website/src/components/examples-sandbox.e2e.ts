@@ -36,6 +36,35 @@ test('switches and loads StackExchange example', async ({ page }) => {
       .frameLocator(`iframe[title="${SELECTED_EXAMPLE}"]`)
       .frameLocator('iframe');
     const title = innerIframe.getByText('@examples/openapi-stackexchange');
-    await title.waitFor({ state: 'visible', timeout: 60_000 }); // this takes like 4 to 11 seconds but can be slower
+    const outageIndicators = [
+      innerIframe.getByText('Unable to start the microVM').first(),
+      innerIframe.getByText('Service Disruption in Progress').first(),
+    ];
+    // CodeSandbox microVM cold starts and incident recovery can exceed 60s on prod.
+    const timeout = 120_000;
+    const readyPromise = title
+      .waitFor({ state: 'visible', timeout })
+      .then(() => 'ready' as const)
+      .catch(() => 'ready-timeout' as const);
+    const outagePromises = outageIndicators.map(outageIndicator =>
+      outageIndicator
+        .waitFor({ state: 'visible', timeout })
+        .then(() => 'outage' as const)
+        .catch(() => 'outage-timeout' as const),
+    );
+    const result = await Promise.race([readyPromise, ...outagePromises]);
+
+    if (result === 'ready') {
+      return;
+    }
+    if (result === 'outage') {
+      test.skip(true, 'CodeSandbox is temporarily unavailable');
+      return;
+    }
+    if (result === 'ready-timeout' || result === 'outage-timeout') {
+      throw new Error(
+        'Neither expected CodeSandbox content nor known outage banners appeared within 120 seconds',
+      );
+    }
   }
 });
