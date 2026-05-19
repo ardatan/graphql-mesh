@@ -83,11 +83,11 @@
     "@tsconfig/node24": "^24.0.0",
     "@tsconfig/recommended": "^1.0.5",
     "@types/jest": "30.0.0",
-    "@types/node": "25.8.0",
+    "@types/node": "25.9.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "@typescript-eslint/eslint-plugin": "8.59.3",
-    "@typescript-eslint/parser": "8.59.3",
+    "@typescript-eslint/eslint-plugin": "8.59.4",
+    "@typescript-eslint/parser": "8.59.4",
     "@typescript/native-preview": "7.0.0-dev.20260427.1",
     "babel-jest": "30.4.1",
     "bob-the-bundler": "patch:bob-the-bundler@npm%3A7.0.1#~/.yarn/patches/bob-the-bundler-npm-7.0.1-ed23c34cf8.patch",
@@ -111,7 +111,7 @@
     "prettier": "3.8.3",
     "threads": "^1.7.0",
     "ts-jest": "29.4.9",
-    "tsx": "^4.22.0",
+    "tsx": "^4.22.2",
     "typescript": "^6.0.3"
   },
   "resolutions": {
