@@ -83,8 +83,8 @@
     "@tsconfig/node24": "^24.0.0",
     "@tsconfig/recommended": "^1.0.5",
     "@types/jest": "30.0.0",
-    "@types/node": "25.9.0",
-    "@types/react": "19.2.14",
+    "@types/node": "25.9.1",
+    "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3",
     "@typescript-eslint/eslint-plugin": "8.59.4",
     "@typescript-eslint/parser": "8.59.4",
@@ -110,8 +110,8 @@
     "node-gyp": "^12.3.0",
     "prettier": "3.8.3",
     "threads": "^1.7.0",
-    "ts-jest": "29.4.9",
-    "tsx": "^4.22.2",
+    "ts-jest": "29.4.10",
+    "tsx": "^4.22.3",
     "typescript": "^6.0.3"
   },
   "resolutions": {
