@@ -72,7 +72,11 @@ if (process.env.E2E_TEST && process.env.CI && !isLinux) {
   }
 }
 
-const ESM_PACKAGES = ['@neo4j/cypher-builder'];
+const ESM_PACKAGES = [
+  '@neo4j/cypher-builder',
+  '@graphql-codegen/typescript/node_modules/auto-bind',
+  'auto-bind',
+];
 
 /** @type {import('jest').Config} */
 module.exports = {
