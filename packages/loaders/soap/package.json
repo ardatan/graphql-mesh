@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "graphql": "16.14.0",
-    "soap": "1.9.2"
+    "soap": "1.9.3"
   },
   "publishConfig": {
     "access": "public",
