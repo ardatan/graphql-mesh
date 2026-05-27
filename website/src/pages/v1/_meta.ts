@@ -7,6 +7,7 @@ export default {
   'type-merging': 'Type Merging',
   'response-caching': 'Response Caching',
   'rate-limit': 'Rate Limit',
+  'error-handling': 'Error Handling',
   auth: 'Authentication',
   'subscriptions-webhooks': 'Subscriptions & Webhooks',
   'consume-in-other-gateways': 'Consume in Other Gateways',
