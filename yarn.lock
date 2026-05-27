@@ -774,16 +774,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@as-integrations/express4@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@as-integrations/express4@npm:1.1.2"
-  peerDependencies:
-    "@apollo/server": ^4.0.0 || ^5.0.0
-    express: ^4.0.0
-  checksum: 10c0/6934b4b878f71894f85dc0003eb404a4b701468693bf6cf686b4adf56709532f75f118b63abccc5daaf5ba3e961e541430664e21b9bfb84d7a28e6e248052e92
-  languageName: node
-  linkType: hard
-
 "@aws-crypto/crc32@npm:3.0.0":
   version: 3.0.0
   resolution: "@aws-crypto/crc32@npm:3.0.0"
@@ -9071,7 +9061,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.104.36"
     "@graphql-tools/delegate": "npm:^12.0.16"
     "@graphql-tools/utils": "npm:^11.1.0"
-    "@neo4j/graphql": "npm:^7.5.2"
+    "@neo4j/graphql": "npm:^7.5.3"
     graphql: "npm:16.14.0"
     neo4j-driver: "npm:^6.0.1"
     tslib: "npm:^2.4.0"
@@ -12405,24 +12395,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neo4j/cypher-builder@npm:3.0.1":
-  version: 3.0.1
-  resolution: "@neo4j/cypher-builder@npm:3.0.1"
-  checksum: 10c0/36d2f9c2b075aa6f89435ba512c9b9281084c154406fb368ab71bccb31a2738aef276afaaee053356cbd964fcbf919bf38b4c52ddb347c5bee895e2bfa3f358c
+"@neo4j/cypher-builder@npm:3.2.2":
+  version: 3.2.2
+  resolution: "@neo4j/cypher-builder@npm:3.2.2"
+  checksum: 10c0/8c38e7d96ec13dc6b6c1bcec69cd172a1c87a1700b7971ad0010cd6c90a2cf7b69d364a3d7b41664a163eb407a57236c03885ebef6198d21d18d63ae80a00399
   languageName: node
   linkType: hard
 
-"@neo4j/graphql@npm:^7.5.2":
-  version: 7.5.2
-  resolution: "@neo4j/graphql@npm:7.5.2"
+"@neo4j/graphql@npm:^7.5.3":
+  version: 7.5.3
+  resolution: "@neo4j/graphql@npm:7.5.3"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
-    "@as-integrations/express4": "npm:^1.1.2"
     "@graphql-tools/merge": "npm:^9.0.0"
     "@graphql-tools/resolvers-composition": "npm:^7.0.0"
     "@graphql-tools/schema": "npm:^10.0.0"
     "@graphql-tools/utils": "npm:^11.0.0"
-    "@neo4j/cypher-builder": "npm:3.0.1"
+    "@neo4j/cypher-builder": "npm:3.2.2"
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
     dot-prop: "npm:^6.0.1"
@@ -12437,7 +12426,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0 || ^6.0.0
-  checksum: 10c0/02af3d216813c483bfa98c6b12c3d05aba623a723c8cc54f9856fe33ddf5bdc420b33dfd5c21b6e7932070310547fbf85e01c5eebe1c8dbaa25c5174b33239ab
+  checksum: 10c0/285c78132263172faa930093608fb7465100cf016fbb0be5f50f12587813c9e899640b03a6894d2158349d2deb847245ce8d937ad448345fb915d61fc2157059
   languageName: node
   linkType: hard
 
