@@ -1,4 +1,5 @@
-import { parse } from 'graphql';
+/* eslint-disable import/no-extraneous-dependencies */
+import { parse, type ExecutionResult } from 'graphql';
 import { MemPubSub } from '@graphql-hive/pubsub';
 import type { RawSourceOutput } from '@graphql-mesh/types';
 import {
@@ -569,7 +570,7 @@ describe('key-based (batch) additional resolver with a null parent key', () => {
   it('resolves the relation to null without delegating or a non-null error', async () => {
     const { stitched, contextValue, users } = buildScenario(null);
 
-    const result = await execute({
+    const result = (await execute({
       schema: stitched,
       document: parse(/* GraphQL */ `
         {
@@ -582,7 +583,7 @@ describe('key-based (batch) additional resolver with a null parent key', () => {
         }
       `),
       contextValue,
-    });
+    })) as ExecutionResult;
 
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({ posts: [{ id: 'post-1', author: null }] });
@@ -593,7 +594,7 @@ describe('key-based (batch) additional resolver with a null parent key', () => {
   it('still resolves the relation via batch delegation when the key is present', async () => {
     const { stitched, contextValue, users } = buildScenario('user-1');
 
-    const result = await execute({
+    const result = (await execute({
       schema: stitched,
       document: parse(/* GraphQL */ `
         {
@@ -607,7 +608,7 @@ describe('key-based (batch) additional resolver with a null parent key', () => {
         }
       `),
       contextValue,
-    });
+    })) as ExecutionResult;
 
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
