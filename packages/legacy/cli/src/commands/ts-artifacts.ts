@@ -3,7 +3,6 @@ import JSON5 from 'json5';
 import ts from 'typescript';
 import { codegen } from '@graphql-codegen/core';
 import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
-import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
