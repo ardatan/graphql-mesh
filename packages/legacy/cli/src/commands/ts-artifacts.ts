@@ -27,7 +27,7 @@ import { generateOperations } from './generate-operations.js';
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
 
 async function loadTypeScriptCodegenPlugin() {
-  return defaultImportFn('@graphql-codegen/typescript') as Promise<typeof import('@graphql-codegen/typescript')>;
+  return defaultImportFn('@graphql-codegen/typescript');
 }
 
 export async function generateTsArtifacts(
