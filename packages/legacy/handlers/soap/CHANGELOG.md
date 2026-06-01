@@ -1,5 +1,28 @@
 # @graphql-mesh/soap
 
+## 0.107.47
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0b0b74c`](https://github.com/ardatan/graphql-mesh/commit/0b0b74cf7691315aa86d16b644c5a523c147d44c),
+  [`06c0dee`](https://github.com/ardatan/graphql-mesh/commit/06c0deed78c53a092b423a8ca360515105127d10),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`b2d2384`](https://github.com/ardatan/graphql-mesh/commit/b2d23842a1a21e3f0cce1beb0f082ffbb4d58d74),
+  [`899de24`](https://github.com/ardatan/graphql-mesh/commit/899de247383fdc0712286c1db3f4cb17afcf052c),
+  [`d7757fa`](https://github.com/ardatan/graphql-mesh/commit/d7757fab6c390a88076409da624e2524d91261a5),
+  [`f66010a`](https://github.com/ardatan/graphql-mesh/commit/f66010a83d75f83bf28dadf4d4d029bbdd47ad20),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3),
+  [`9d3f4ae`](https://github.com/ardatan/graphql-mesh/commit/9d3f4ae9516cf04a3fca9e57afe3f4a043cd4b44)]:
+  - @graphql-mesh/store@0.104.39
+  - @graphql-mesh/string-interpolation@0.5.17
+  - @graphql-mesh/types@0.104.29
+  - @graphql-mesh/utils@0.104.37
+  - @omnigraph/soap@0.107.46
+
 ## 0.107.46
 
 ### Patch Changes

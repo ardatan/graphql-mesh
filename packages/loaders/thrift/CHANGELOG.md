@@ -1,5 +1,24 @@
 # @omnigraph/thrift
 
+## 0.9.39
+
+### Patch Changes
+
+- [#9457](https://github.com/ardatan/graphql-mesh/pull/9457)
+  [`b2d2384`](https://github.com/ardatan/graphql-mesh/commit/b2d23842a1a21e3f0cce1beb0f082ffbb4d58d74)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`thrift@^0.23.0` ↗︎](https://www.npmjs.com/package/thrift/v/0.23.0) (from
+    `^0.22.0`, in `dependencies`)
+- Updated dependencies
+  [[`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3)]:
+  - @graphql-mesh/types@0.104.29
+  - @graphql-mesh/utils@0.104.37
+  - @graphql-mesh/transport-thrift@0.9.38
+
 ## 0.9.38
 
 ### Patch Changes

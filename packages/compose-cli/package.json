@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/compose-cli",
-  "version": "1.5.32",
+  "version": "1.5.33",
   "type": "module",
   "repository": {
     "type": "git",
@@ -39,11 +39,11 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "^14.0.0",
-    "@graphql-mesh/fusion-composition": "^0.8.48",
-    "@graphql-mesh/include": "^0.3.39",
-    "@graphql-mesh/string-interpolation": "^0.5.16",
-    "@graphql-mesh/types": "^0.104.28",
-    "@graphql-mesh/utils": "^0.104.36",
+    "@graphql-mesh/fusion-composition": "^0.8.49",
+    "@graphql-mesh/include": "^0.3.40",
+    "@graphql-mesh/string-interpolation": "^0.5.17",
+    "@graphql-mesh/types": "^0.104.29",
+    "@graphql-mesh/utils": "^0.104.37",
     "@graphql-tools/code-file-loader": "^8.1.32",
     "@graphql-tools/graphql-file-loader": "^8.1.14",
     "@graphql-tools/load": "^8.1.10",

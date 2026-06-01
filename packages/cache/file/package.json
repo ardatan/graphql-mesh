@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cache-file",
-  "version": "0.104.36",
+  "version": "0.104.37",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,8 +36,8 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.14",
-    "@graphql-mesh/types": "^0.104.28",
-    "@graphql-mesh/utils": "^0.104.36",
+    "@graphql-mesh/types": "^0.104.29",
+    "@graphql-mesh/utils": "^0.104.37",
     "dataloader": "2.2.3",
     "tslib": "^2.4.0"
   },
