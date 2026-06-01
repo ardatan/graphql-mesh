@@ -6,13 +6,13 @@ import { getCachedDocumentNodeFromSchema } from '@graphql-codegen/plugin-helpers
 import type { Maybe } from '@graphql-mesh/types';
 import { defaultImportFn } from '@graphql-mesh/utils';
 
-type TypeScriptCodegenPlugin = typeof import('@graphql-codegen/typescript');
-
 async function loadTypeScriptCodegenPlugin() {
-  return defaultImportFn('@graphql-codegen/typescript') as Promise<TypeScriptCodegenPlugin>;
+  return defaultImportFn('@graphql-codegen/typescript');
 }
 
-function createCodegenHelpers(tsBasePlugin: TypeScriptCodegenPlugin) {
+function createCodegenHelpers(
+  tsBasePlugin: Awaited<ReturnType<typeof loadTypeScriptCodegenPlugin>>,
+) {
   return class CodegenHelpers extends tsBasePlugin.TsVisitor {
     public getTypeToUse(namedType: NamedTypeNode, isVisitingInputType: boolean): string {
       if (this.scalars[namedType.name.value]) {
