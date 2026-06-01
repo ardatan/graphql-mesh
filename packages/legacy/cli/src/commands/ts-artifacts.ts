@@ -14,12 +14,22 @@ import {
   generateUnifiedContextTypeFromIdentifiers,
 } from '@graphql-mesh/incontext-sdk-codegen';
 import type { Logger, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
-import { pathExists, printWithCache, writeFile, writeJSON } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  pathExists,
+  printWithCache,
+  writeFile,
+  writeJSON,
+} from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
 
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
+
+async function loadTypeScriptCodegenPlugin() {
+  return defaultImportFn('@graphql-codegen/typescript') as Promise<typeof import('@graphql-codegen/typescript')>;
+}
 
 export async function generateTsArtifacts(
   {
@@ -102,6 +112,7 @@ export async function generateTsArtifacts(
       JSON.stringify(documentHashMap, null, 2),
     );
   }
+  const tsBasePlugin = await loadTypeScriptCodegenPlugin();
   const codegenOutput =
     '// @ts-nocheck\n' +
     (

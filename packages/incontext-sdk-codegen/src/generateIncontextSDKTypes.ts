@@ -3,21 +3,29 @@ import { getNamedType, isAbstractType, Kind } from 'graphql';
 import { pascalCase } from 'pascal-case';
 import { codegen } from '@graphql-codegen/core';
 import { getCachedDocumentNodeFromSchema } from '@graphql-codegen/plugin-helpers';
-import * as tsBasePlugin from '@graphql-codegen/typescript';
 import type { Maybe } from '@graphql-mesh/types';
+import { defaultImportFn } from '@graphql-mesh/utils';
 
-class CodegenHelpers extends tsBasePlugin.TsVisitor {
-  public getTypeToUse(namedType: NamedTypeNode, isVisitingInputType: boolean): string {
-    if (this.scalars[namedType.name.value]) {
-      return this._getScalar(namedType.name.value, isVisitingInputType ? 'input' : 'output');
+type TypeScriptCodegenPlugin = typeof import('@graphql-codegen/typescript');
+
+async function loadTypeScriptCodegenPlugin() {
+  return defaultImportFn('@graphql-codegen/typescript') as Promise<TypeScriptCodegenPlugin>;
+}
+
+function createCodegenHelpers(tsBasePlugin: TypeScriptCodegenPlugin) {
+  return class CodegenHelpers extends tsBasePlugin.TsVisitor {
+    public getTypeToUse(namedType: NamedTypeNode, isVisitingInputType: boolean): string {
+      if (this.scalars[namedType.name.value]) {
+        return this._getScalar(namedType.name.value, isVisitingInputType ? 'input' : 'output');
+      }
+
+      return this._getTypeForNode(namedType, isVisitingInputType);
     }
-
-    return this._getTypeForNode(namedType, isVisitingInputType);
-  }
+  };
 }
 
 function buildSignatureBasedOnRootFields(
-  codegenHelpers: CodegenHelpers,
+  codegenHelpers: { getTypeToUse(namedType: NamedTypeNode, isVisitingInputType: boolean): string },
   type: Maybe<GraphQLObjectType>,
   schema: GraphQLSchema,
   unifiedContextIdentifier: string,
@@ -96,6 +104,7 @@ export async function generateIncontextSDKTypes(options: {
     useIndexSignature: true,
     ...options.codegenConfig,
   };
+  const tsBasePlugin = await loadTypeScriptCodegenPlugin();
   const baseTypes = await codegen({
     filename: options.name + '_types.ts',
     documents: [],
@@ -112,6 +121,7 @@ export async function generateIncontextSDKTypes(options: {
       typescript: tsBasePlugin,
     },
   });
+  const CodegenHelpers = createCodegenHelpers(tsBasePlugin);
   const codegenHelpers = new CodegenHelpers(options.schema, config, {});
   const namespace = pascalCase(`${options.name}Types`);
   const queryOperationMap = buildSignatureBasedOnRootFields(
