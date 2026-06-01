@@ -100,7 +100,7 @@
     "eslint-plugin-n": "17.24.0",
     "eslint-plugin-promise": "7.3.0",
     "eslint-plugin-standard": "5.0.0",
-    "globby": "11.1.0",
+    "globby": "16.2.0",
     "graphql": "16.14.0",
     "husky": "9.1.7",
     "jest": "30.4.2",
