@@ -3,15 +3,16 @@ import { getNamedType, isAbstractType, Kind } from 'graphql';
 import { pascalCase } from 'pascal-case';
 import { codegen } from '@graphql-codegen/core';
 import { getCachedDocumentNodeFromSchema } from '@graphql-codegen/plugin-helpers';
+import type * as GraphQLCodegenTypeScript from '@graphql-codegen/typescript';
 import type { Maybe } from '@graphql-mesh/types';
 import { defaultImportFn } from '@graphql-mesh/utils';
 
-async function loadTypeScriptCodegenPlugin() {
+async function loadTypeScriptCodegenPlugin(): Promise<typeof GraphQLCodegenTypeScript> {
   return defaultImportFn('@graphql-codegen/typescript');
 }
 
 function createCodegenHelpers(
-  tsBasePlugin: Awaited<ReturnType<typeof loadTypeScriptCodegenPlugin>>,
+  tsBasePlugin: typeof GraphQLCodegenTypeScript,
 ) {
   return class CodegenHelpers extends tsBasePlugin.TsVisitor {
     public getTypeToUse(namedType: NamedTypeNode, isVisitingInputType: boolean): string {
