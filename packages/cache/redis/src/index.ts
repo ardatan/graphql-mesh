@@ -24,6 +24,8 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   private client: Redis | Cluster;
   private tracer: Tracer;
   private iamRefreshTimer?: ReturnType<typeof setInterval>;
+  // resolves once the initial IAM token is ready and cluster.connect() has been called
+  private iamInitPromise?: Promise<void>;
 
   constructor(
     options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub | HivePubSub; logger: Logger },
@@ -64,13 +66,25 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
             },
           );
           if (options.iamAuth) {
-            this.iamRefreshTimer = setupIamAuthForCluster(
-              this.client,
+            const clusterRef = this.client;
+            this.iamInitPromise = setupIamAuthForCluster(
+              clusterRef,
               redisOptions,
               options.iamAuth,
               parsedUsername,
               options.logger,
-            );
+            )
+              .then(timer => {
+                this.iamRefreshTimer = timer;
+                // connect only after the token is populated so slot discovery authenticates correctly
+                return clusterRef.connect();
+              })
+              .then(() => {
+                // no need to keep this promise around after init is complete
+                // it will speed up subsequent get/set calls that would otherwise
+                // await it unnecessarily
+                this.iamInitPromise = undefined;
+              });
           }
         } else if ('sentinels' in options) {
           this.client = new Redis({
@@ -184,6 +198,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {
     return this.tracer.startActiveSpan('hive.cache.set', async span => {
       try {
+        if (this.iamInitPromise) await this.iamInitPromise;
         const stringifiedValue = JSON.stringify(value);
         if (options?.ttl && options.ttl > 0) {
           await this.client.set(key, stringifiedValue, 'PX', options.ttl * 1000);
@@ -197,28 +212,35 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   }
 
   get(key: string): Promise<V | undefined> {
-    return this.tracer.startActiveSpan('hive.cache.get', span =>
-      this.client
-        .get(key)
-        .then(value => (value != null ? JSON.parse(value) : undefined))
-        .finally(() => span.end()),
-    );
+    return this.tracer.startActiveSpan('hive.cache.get', async span => {
+      try {
+        if (this.iamInitPromise) await this.iamInitPromise;
+        const value = await this.client.get(key);
+        return value != null ? JSON.parse(value) : undefined;
+      } finally {
+        span.end();
+      }
+    });
   }
 
   getKeysByPrefix(prefix: string): Promise<string[]> {
-    return scanPatterns(this.client, `${prefix}*`);
+    return this.iamInitPromise
+      ? this.iamInitPromise.then(() => scanPatterns(this.client, `${prefix}*`))
+      : scanPatterns(this.client, `${prefix}*`);
   }
 
   delete(key: string): Promise<boolean> {
-    return this.tracer.startActiveSpan('hive.cache.delete', span =>
-      this.client
-        .del(key)
-        .then(
-          value => value > 0,
-          () => false,
-        )
-        .finally(() => span.end()),
-    );
+    return this.tracer.startActiveSpan('hive.cache.delete', async span => {
+      try {
+        if (this.iamInitPromise) await this.iamInitPromise;
+        const value = await this.client.del(key);
+        return value > 0;
+      } catch {
+        return false;
+      } finally {
+        span.end();
+      }
+    });
   }
 }
 

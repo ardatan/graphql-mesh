@@ -778,6 +778,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-crypto/crc32@npm:5.2.0":
+  version: 5.2.0
+  resolution: "@aws-crypto/crc32@npm:5.2.0"
+  dependencies:
+    "@aws-crypto/util": "npm:^5.2.0"
+    "@aws-sdk/types": "npm:^3.222.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/eab9581d3363af5ea498ae0e72de792f54d8890360e14a9d8261b7b5c55ebe080279fb2556e07994d785341cdaa99ab0b1ccf137832b53b5904cd6928f2b094b
+  languageName: node
+  linkType: hard
+
 "@aws-crypto/sha256-browser@npm:5.2.0":
   version: 5.2.0
   resolution: "@aws-crypto/sha256-browser@npm:5.2.0"
@@ -947,6 +958,22 @@ __metadata:
     "@smithy/util-utf8": "npm:^4.2.1"
     tslib: "npm:^2.6.2"
   checksum: 10c0/06a935f0f3ba0f5d5108371cb9df7c54857700b853aab67c51cb1a5dffc36a5d95b478271da8a7875452344ef85a4826bc88ddb07285408703ac88c2db31aa10
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/core@npm:^3.974.17":
+  version: 3.974.17
+  resolution: "@aws-sdk/core@npm:3.974.17"
+  dependencies:
+    "@aws-sdk/types": "npm:^3.973.10"
+    "@aws-sdk/xml-builder": "npm:^3.972.27"
+    "@aws/lambda-invoke-store": "npm:^0.2.2"
+    "@smithy/core": "npm:^3.24.6"
+    "@smithy/signature-v4": "npm:^5.4.6"
+    "@smithy/types": "npm:^4.14.3"
+    bowser: "npm:^2.11.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/beec8841b27a88c8c54df66ba2593668eb400ab7df0507ee6de03999077d01de79d2a0454005ec85953f2c90fa735060c99465a618f11e5b443c236880597512
   languageName: node
   linkType: hard
 
@@ -1579,6 +1606,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/types@npm:^3.973.10":
+  version: 3.973.10
+  resolution: "@aws-sdk/types@npm:3.973.10"
+  dependencies:
+    "@smithy/types": "npm:^4.14.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/39925f52641effda9722093bb204818552c0504190e920945a4dd5da2dd1c7245d805a50595ae5a01353e0274e999566a9ad0f50af07db245ff2e3d7bcfd66a2
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/types@npm:^3.973.8":
   version: 3.973.8
   resolution: "@aws-sdk/types@npm:3.973.8"
@@ -1621,6 +1658,16 @@ __metadata:
     "@smithy/util-endpoints": "npm:^3.4.2"
     tslib: "npm:^2.6.2"
   checksum: 10c0/66f17e85357ab8e265ab7d1c9a69a064ad3bea99420c786be9ef1f92bc71dca22d328bbceeaf6c64b4a3c37161b78318a3e4a424bf247dcb211d7ae29344db2f
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-format-url@npm:^3.972.0":
+  version: 3.972.19
+  resolution: "@aws-sdk/util-format-url@npm:3.972.19"
+  dependencies:
+    "@aws-sdk/core": "npm:^3.974.17"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/de09b8b6aec56cfae2e8e8002f4ae9c4e4b071ccd1639ecc76837e3dd5dd9ad7e872aadbac14b74292f23a1e10cda2184b1f64128fa56e11f8a5cba7b18a9e72
   languageName: node
   linkType: hard
 
@@ -1711,6 +1758,17 @@ __metadata:
     fast-xml-parser: "npm:5.5.8"
     tslib: "npm:^2.6.2"
   checksum: 10c0/b053d2e4ece8afd51718fa28b7a4ac9fbbb634532aa736fbdbd33b16389b32a02eee3cfdb625eae48c8d6dbdd93f2fa12831f9d388ca202edad76adb8dd24a35
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/xml-builder@npm:^3.972.27":
+  version: 3.972.27
+  resolution: "@aws-sdk/xml-builder@npm:3.972.27"
+  dependencies:
+    "@smithy/types": "npm:^4.14.3"
+    fast-xml-parser: "npm:5.7.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/6544aee8bd653252da337dd83482309a5fd46159a8e50280795708c7cf9194c19bf63a75e086ad764ec52fbc239857a03e7ae238a213f5dfa4aa496cbf938f1d
   languageName: node
   linkType: hard
 
@@ -8278,11 +8336,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-redis@workspace:packages/cache/redis"
   dependencies:
+    "@aws-crypto/sha256-js": "npm:^5.2.0"
     "@aws-sdk/credential-providers": "npm:^3.1034.0"
+    "@aws-sdk/util-format-url": "npm:^3.972.0"
     "@graphql-mesh/cross-helpers": "npm:^0.4.15"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.104.30"
     "@opentelemetry/api": "npm:^1.9.1"
+    "@smithy/protocol-http": "npm:^5.3.14"
     "@smithy/signature-v4": "npm:^5.3.14"
     "@types/ioredis-mock": "npm:8.2.7"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
@@ -8291,11 +8352,20 @@ __metadata:
     ioredis-mock: "npm:^8.13.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
+    "@aws-crypto/sha256-js": ">=3.0.0"
     "@aws-sdk/credential-providers": ">=3.0.0"
+    "@aws-sdk/util-format-url": ">=3.0.0"
+    "@smithy/protocol-http": ">=3.0.0"
     "@smithy/signature-v4": ">=2.0.0"
     graphql: "*"
   peerDependenciesMeta:
+    "@aws-crypto/sha256-js":
+      optional: true
     "@aws-sdk/credential-providers":
+      optional: true
+    "@aws-sdk/util-format-url":
+      optional: true
+    "@smithy/protocol-http":
       optional: true
     "@smithy/signature-v4":
       optional: true
@@ -17829,6 +17899,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@smithy/core@npm:^3.24.6":
+  version: 3.24.6
+  resolution: "@smithy/core@npm:3.24.6"
+  dependencies:
+    "@aws-crypto/crc32": "npm:5.2.0"
+    "@smithy/types": "npm:^4.14.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/4d3db2296a99a4bcb17007b8276a243930f63c3169b9b86b973a2d1422e8dee7e95e3b98eea115e2759b989b23db1ff89ca505bddbacb7391ca3fe4e222b84ff
+  languageName: node
+  linkType: hard
+
 "@smithy/credential-provider-imds@npm:^4.2.10":
   version: 4.2.10
   resolution: "@smithy/credential-provider-imds@npm:4.2.10"
@@ -18297,6 +18378,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@smithy/signature-v4@npm:^5.4.6":
+  version: 5.4.6
+  resolution: "@smithy/signature-v4@npm:5.4.6"
+  dependencies:
+    "@smithy/core": "npm:^3.24.6"
+    "@smithy/types": "npm:^4.14.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/7d7db13f4ddb09cca0a902dd760d83ff9770c085657e577153e4a93c0cd0314a36cbafaaae58c7be1aa1162e81ecab8b1395b0b0e488b20c22eb0dd9714b2b25
+  languageName: node
+  linkType: hard
+
 "@smithy/smithy-client@npm:^4.12.0":
   version: 4.12.0
   resolution: "@smithy/smithy-client@npm:4.12.0"
@@ -18351,6 +18443,15 @@ __metadata:
   dependencies:
     tslib: "npm:^2.6.2"
   checksum: 10c0/9e6209770a25582a11ca67d4750865de0b7732bf3f353ba9260f49e9c4b2adf3274d64057a2bda93da7025e33a54e51bd78c529307efc2b75b429bc45a6ad64c
+  languageName: node
+  linkType: hard
+
+"@smithy/types@npm:^4.14.3":
+  version: 4.14.3
+  resolution: "@smithy/types@npm:4.14.3"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/c80244d5ca88992e5609e372eaf2441497d36063688af44e9f0e81ab0ee8d5a4cbdb644822243e4cdfad2dd6484c6274e618dc2a9e91b3b9befe7c7b55e09ddc
   languageName: node
   linkType: hard
 

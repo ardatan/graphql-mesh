@@ -40,6 +40,20 @@ jest.mock('@aws-sdk/credential-providers', () => ({
     ),
 }));
 
+jest.mock('@aws-crypto/sha256-js', () => ({
+  Sha256: jest.fn(),
+}));
+
+jest.mock('@aws-sdk/util-format-url', () => ({
+  formatUrl: jest
+    .fn()
+    .mockReturnValue('http://my-cluster/?Action=connect&User=iam-user-01&X-Amz-Signature=abc123'),
+}));
+
+jest.mock('@smithy/protocol-http', () => ({
+  HttpRequest: jest.fn().mockImplementation((opts: object) => opts),
+}));
+
 describe('redis', () => {
   beforeEach(() => jest.clearAllMocks());
 
@@ -264,11 +278,61 @@ describe('redis', () => {
         tokenExpirySeconds: 900,
       };
 
-      const timer = setupIamAuthForCluster(mockCluster, redisOptions, cfg, undefined);
+      const timer = await setupIamAuthForCluster(mockCluster, redisOptions, cfg, undefined);
 
       const descriptor = Object.getOwnPropertyDescriptor(redisOptions, 'password');
       expect(typeof descriptor?.get).toBe('function');
       expect(typeof descriptor?.set).toBe('function');
+
+      clearInterval(timer);
+    });
+
+    it('token is populated before setupIamAuthForCluster resolves', async () => {
+      // simulates a slow token generation - if the old fire-and-forget approach were used,
+      // the password getter would still return '' when the caller tries to connect
+      const tokenDelay = 50;
+      let generateIamTokenCallCount = 0;
+
+      const { SignatureV4 } = await import('@smithy/signature-v4');
+      (SignatureV4 as jest.Mock).mockImplementationOnce(() => ({
+        presign: jest.fn().mockImplementation(
+          () =>
+            new Promise(resolve =>
+              setTimeout(() => {
+                generateIamTokenCallCount++;
+                resolve({
+                  protocol: 'http:',
+                  hostname: 'my-cluster',
+                  path: '/',
+                  query: { Action: 'connect', User: 'redis', 'X-Amz-Signature': 'delayed123' },
+                });
+              }, tokenDelay),
+            ),
+        ),
+      }));
+
+      const { formatUrl } = await import('@aws-sdk/util-format-url');
+      (formatUrl as jest.Mock).mockReturnValueOnce(
+        'http://my-cluster/?Action=connect&User=redis&X-Amz-Signature=delayed123',
+      );
+
+      const redisOptions: Record<string, unknown> = { enableAutoPipelining: true };
+      const mockCluster = { nodes: () => [] } as any;
+      const cfg = {
+        region: 'us-east-1',
+        clusterName: 'my-cluster',
+        userId: 'redis',
+        tokenExpirySeconds: 900,
+      };
+
+      // await ensures the token is ready before this line returns
+      const timer = await setupIamAuthForCluster(mockCluster, redisOptions, cfg, 'redis');
+
+      // password getter must already return the generated token, not ''
+      expect(generateIamTokenCallCount).toBe(1);
+      expect(redisOptions['password']).toBe(
+        'my-cluster/?Action=connect&User=redis&X-Amz-Signature=delayed123',
+      );
 
       clearInterval(timer);
     });

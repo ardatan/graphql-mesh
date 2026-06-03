@@ -1,7 +1,5 @@
 // inspired by https://github.com/redis/ioredis/issues/1738#issuecomment-1969925020
 
-// eslint-disable-next-line import/no-nodejs-modules
-import { createHash, createHmac } from 'node:crypto';
 import { AbstractConnector } from 'ioredis';
 import type { Cluster, Redis, RedisOptions, StandaloneConnectionOptions } from 'ioredis';
 import type { Logger, YamlConfig } from '@graphql-mesh/types';
@@ -122,71 +120,56 @@ export async function generateIamToken(cfg: IamAuthConfig): Promise<string> {
     );
   });
 
+  // @aws-crypto/sha256-js is required - the hand-rolled node:crypto impl produces
+  // tokens that fail AUTH on subsequent connections (WRONGPASS) due to subtle
+  // differences in how Smithy feeds HMAC keys as Uint8Array vs Buffer
+  const { Sha256 } = await import('@aws-crypto/sha256-js').catch(() => {
+    throw new Error(
+      'Missing dependency: install @aws-crypto/sha256-js to use Redis IAM authentication',
+    );
+  });
+
+  const { formatUrl } = await import('@aws-sdk/util-format-url').catch(() => {
+    throw new Error(
+      'Missing dependency: install @aws-sdk/util-format-url to use Redis IAM authentication',
+    );
+  });
+
+  const { HttpRequest } = await import('@smithy/protocol-http').catch(() => {
+    throw new Error(
+      'Missing dependency: install @smithy/protocol-http to use Redis IAM authentication',
+    );
+  });
+
   const service = cfg.serviceName ?? 'elasticache';
   const expirySeconds = cfg.tokenExpirySeconds ?? 900;
-
-  // HashConstructor impl using Node crypto - satisfies @smithy/types HashConstructor contract
-  const sha256 = class {
-    private hash: ReturnType<typeof createHash> | ReturnType<typeof createHmac>;
-
-    constructor(secret?: string | ArrayBuffer | ArrayBufferView) {
-      if (secret != null) {
-        const key = ArrayBuffer.isView(secret)
-          ? Buffer.from(secret.buffer, secret.byteOffset, secret.byteLength)
-          : secret instanceof ArrayBuffer
-            ? Buffer.from(secret)
-            : secret;
-        this.hash = createHmac('sha256', key);
-      } else {
-        this.hash = createHash('sha256');
-      }
-    }
-
-    update(data: string | ArrayBuffer | ArrayBufferView) {
-      this.hash.update(
-        typeof data === 'string'
-          ? data
-          : ArrayBuffer.isView(data)
-            ? Buffer.from(data.buffer, data.byteOffset, data.byteLength)
-            : Buffer.from(data),
-      );
-    }
-
-    digest(): Promise<Uint8Array> {
-      return Promise.resolve(new Uint8Array(this.hash.digest()));
-    }
-  };
 
   const signer = new SignatureV4({
     credentials: fromNodeProviderChain(),
     region: cfg.region,
     service,
-    sha256,
+    sha256: Sha256,
   });
 
-  const signed = await signer.presign(
-    {
-      method: 'GET',
-      protocol: 'http:',
-      hostname: cfg.clusterName,
-      path: '/',
-      headers: { host: cfg.clusterName },
-      query: {
-        Action: 'connect',
-        User: cfg.userId,
-      },
+  const request = new HttpRequest({
+    method: 'GET',
+    protocol: 'http:',
+    hostname: cfg.clusterName,
+    path: '/',
+    headers: { host: cfg.clusterName },
+    query: {
+      Action: 'connect',
+      User: cfg.userId,
     },
-    {
-      expiresIn: expirySeconds,
-      signingDate: new Date(),
-    },
-  );
+  });
 
-  const qs = new URLSearchParams(signed.query as Record<string, string>).toString();
-  const url = `${signed.protocol}//${signed.hostname}${signed.path}?${qs}`;
+  const signed = await signer.presign(request, {
+    expiresIn: expirySeconds,
+    signingDate: new Date(),
+  });
 
-  // strip protocol - the rest is the token
-  return url.replace(/^https?:\/\//, '');
+  // formatUrl encodes query values exactly once (important for X-Amz-Security-Token)
+  return formatUrl(signed).replace(/^https?:\/\//, '');
 }
 
 export function buildIamRedisOptions(
@@ -208,16 +191,17 @@ export function buildIamRedisOptions(
 // strategy. we install a password getter on redisOptions so every new node connection reads
 // the latest token. we also refresh via setInterval at 80% of token expiry.
 //
-// initial token is generated in a fire-and-forget promise. with lazyConnect (the default),
-// the cluster only connects on first command, so the token will be ready in time.
-// commands issued before it resolves sit in the offline queue (enableOfflineQueue: true).
-export function setupIamAuthForCluster(
+// lazyConnect on a Redis.Cluster only defers user commands - ioredis still performs slot
+// discovery (connects to startup nodes) immediately on construction. the token must therefore
+// be ready before cluster.connect() is called, which is why this function is async and the
+// caller must await it before issuing any commands.
+export async function setupIamAuthForCluster(
   cluster: Cluster,
   redisOptions: RedisOptions,
   cfg: IamAuthConfig,
   username: string | undefined,
   logger?: Logger,
-): ReturnType<typeof setInterval> {
+): Promise<ReturnType<typeof setInterval>> {
   const expiryMs = (cfg.tokenExpirySeconds ?? 900) * 1000;
   const refreshIntervalMs = expiryMs * 0.8;
   let currentToken = '';
@@ -243,10 +227,8 @@ export function setupIamAuthForCluster(
     }
   };
 
-  // kick off initial token generation - commands queue up until this resolves
-  refreshToken().catch(err => {
-    logger?.error('Failed to generate initial IAM token for Redis cluster:', err);
-  });
+  // await the initial token so it is set before cluster.connect() triggers slot discovery
+  await refreshToken();
 
   const timer = setInterval(() => {
     refreshToken().catch(err => {
