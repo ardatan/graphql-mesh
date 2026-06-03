@@ -1,8 +1,20 @@
 // inspired by https://github.com/redis/ioredis/issues/1738#issuecomment-1969925020
 
-import { AbstractConnector } from 'ioredis';
-import type { Cluster, Redis, RedisOptions, StandaloneConnectionOptions } from 'ioredis';
+import * as ioredis from 'ioredis';
+import type {
+  AbstractConnector,
+  Cluster,
+  Redis,
+  RedisOptions,
+  StandaloneConnectionOptions,
+} from 'ioredis';
 import type { Logger, YamlConfig } from '@graphql-mesh/types';
+
+const AbstractConnectorClass =
+  // @ts-expect-error ioredis is CJS-only and reassigns module.exports, which breaks Node.js static
+  // named export analysis for ESM interop - AbstractConnector named import resolves to undefined
+  // at runtime; access it via the default import (which is the CJS module.exports object) instead
+  (ioredis.AbstractConnector ?? ioredis.default.AbstractConnector) as typeof AbstractConnector;
 
 export type IamAuthConfig = NonNullable<YamlConfig.RedisIamAuthConfig>;
 
@@ -26,7 +38,7 @@ export interface IamRedisOptions extends RedisOptions {
 // IamTokenConnector extends the public AbstractConnector and replicates StandaloneConnector's
 // TCP/TLS connection logic so we avoid importing the non-exported deep internal path
 // ioredis/built/connectors/StandaloneConnector which is not resolvable in strict ESM.
-class IamTokenConnector extends AbstractConnector {
+class IamTokenConnector extends AbstractConnectorClass {
   private redisRef: { current: Redis | null };
   private getToken: () => Promise<string>;
   private options: IamTokenConnectorOptions;
