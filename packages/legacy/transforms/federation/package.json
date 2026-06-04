@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@apollo/subgraph": "^2.14.0",
+    "@apollo/subgraph": "^2.14.1",
     "@graphql-mesh/string-interpolation": "^0.5.16",
     "@graphql-mesh/types": "^0.104.28",
     "@graphql-mesh/utils": "^0.104.36",
@@ -46,7 +46,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "graphql": "16.14.0"
+    "graphql": "16.14.1"
   },
   "publishConfig": {
     "access": "public",

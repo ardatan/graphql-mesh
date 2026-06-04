@@ -18,7 +18,7 @@
     "@types/express": "5.0.6",
     "@types/node": "^25.9.1",
     "express": "5.2.1",
-    "graphql": "16.14.0",
+    "graphql": "16.14.1",
     "thrift": "0.23.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"

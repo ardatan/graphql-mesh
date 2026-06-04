@@ -51,7 +51,7 @@
     "@envelop/core": "^5.5.1",
     "@graphql-mesh/cache-localforage": "0.105.37",
     "@types/faker": "5.5.9",
-    "graphql": "16.14.0"
+    "graphql": "16.14.1"
   },
   "publishConfig": {
     "access": "public",

@@ -8,6 +8,6 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.100.52",
     "@graphql-mesh/openapi": "0.109.53",
-    "graphql": "16.14.0"
+    "graphql": "16.14.1"
   }
 }
