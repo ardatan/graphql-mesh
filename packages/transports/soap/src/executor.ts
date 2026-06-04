@@ -1,11 +1,13 @@
 import { XMLBuilder as JSONToXMLConverter, XMLParser } from 'fast-xml-parser';
 import type {
   GraphQLFieldResolver,
+  GraphQLInputObjectType,
   GraphQLOutputType,
   GraphQLResolveInfo,
   GraphQLSchema,
+  GraphQLType,
 } from 'graphql';
-import { isListType, isNonNullType } from 'graphql';
+import { getNamedType, isInputObjectType, isListType, isNonNullType } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverData, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import {
@@ -55,6 +57,9 @@ const defaultFieldResolver: GraphQLFieldResolver<any, any> = function soapDefaul
 
 function normalizeArgsForConverter(args: any): any {
   if (args != null) {
+    if (Array.isArray(args)) {
+      return args.map(normalizeArgsForConverter);
+    }
     if (typeof args === 'object') {
       for (const key in args) {
         args[key] = normalizeArgsForConverter(args[key]);
@@ -98,6 +103,8 @@ interface SoapAnnotations {
     headers: Record<string, string>;
   };
   soapAction?: string;
+  headerArgNames?: string[];
+  argNamespacesJson?: string;
 }
 
 interface CreateRootValueMethodOpts {
@@ -109,6 +116,10 @@ interface CreateRootValueMethodOpts {
   logger: Logger;
 }
 
+// Recursive: returns an array for array inputs, an object with prefixed keys
+// for object inputs, an interpolated string for string inputs, or the value
+// unchanged for other primitives. Typed as `any` because the shape mirrors
+// whatever the caller passed in.
 function prefixWithAlias({
   alias,
   obj,
@@ -117,14 +128,17 @@ function prefixWithAlias({
   alias: string;
   obj: unknown;
   resolverData?: ResolverData;
-}): Record<string, any> {
+}): any {
+  if (Array.isArray(obj)) {
+    return obj.map(item => prefixWithAlias({ alias, obj: item, resolverData }));
+  }
   if (typeof obj === 'object' && obj !== null) {
     const prefixedHeaderObj: Record<string, any> = {};
     for (const key in obj) {
       const aliasedKey = key === 'innerText' ? key : `${alias}:${key}`;
       prefixedHeaderObj[aliasedKey] = prefixWithAlias({
         alias,
-        obj: obj[key],
+        obj: (obj as Record<string, unknown>)[key],
         resolverData,
       });
     }
@@ -134,6 +148,179 @@ function prefixWithAlias({
     return stringInterpolator.parse(obj, resolverData);
   }
   return obj;
+}
+
+// Prefixes reserved by the XML/XML Namespaces specs — must never be bound.
+const RESERVED_XML_PREFIXES = new Set(['xml', 'xmlns']);
+
+/**
+ * Derive a short, readable XML namespace prefix from a namespace URI.
+ * Traverses path segments right-to-left, skipping version tokens (e.g. "v1"),
+ * dotted hostnames (e.g. "www.example.com"), and reserved XML prefixes.
+ * e.g. "http://www.tmforum.org/mtop/fmw/xsd/hdr/v1" → "hdr"
+ *
+ * Falls back to "body" so that schemas with a single XSD namespace and no
+ * bodyAlias produce envelopes byte-compatible with the legacy code path.
+ */
+function deriveXmlPrefix(nsUri: string): string {
+  const path = nsUri.replace(/^https?:\/\//, '');
+  const segments = path.split(/[/-]/).filter(Boolean);
+  for (let i = segments.length - 1; i >= 0; i--) {
+    const seg = segments[i];
+    if (/^v\d/.test(seg)) continue;
+    if (!/^[a-zA-Z][a-zA-Z0-9]*$/.test(seg)) continue;
+    if (seg.length <= 1) continue;
+    const candidate = seg.toLowerCase().substring(0, 20);
+    if (RESERVED_XML_PREFIXES.has(candidate)) continue;
+    return candidate;
+  }
+  return 'body';
+}
+
+/**
+ * Return (or lazily assign) a unique XML namespace prefix for nsUri.
+ * Collision-free: appends a numeric suffix if the derived base name is taken.
+ */
+function getOrAssignPrefix(
+  nsUri: string,
+  assigned: Map<string, string>,
+  envelopeAttrs: Record<string, string>,
+): string {
+  const existing = assigned.get(nsUri);
+  if (existing) {
+    // Pre-assigned prefixes (e.g. body → bindingNamespace) don't get an xmlns
+    // declaration until first use, so unused pre-assignments don't pollute the
+    // envelope. Set it here on first lookup.
+    if (envelopeAttrs[`xmlns:${existing}`] === undefined) {
+      envelopeAttrs[`xmlns:${existing}`] = nsUri;
+    }
+    return existing;
+  }
+  const base = deriveXmlPrefix(nsUri);
+  let prefix = base;
+  let i = 2;
+  // Check both the envelope (already-declared xmlns) AND the `assigned` map
+  // (lazily-pre-assigned prefixes whose xmlns hasn't been emitted yet, e.g.
+  // body → bindingNamespace) so two namespaces can never silently land on the
+  // same prefix and overwrite each other's xmlns binding.
+  const taken = new Set(assigned.values());
+  while (envelopeAttrs[`xmlns:${prefix}`] !== undefined || taken.has(prefix)) {
+    prefix = `${base}${i++}`;
+  }
+  assigned.set(nsUri, prefix);
+  envelopeAttrs[`xmlns:${prefix}`] = nsUri;
+  return prefix;
+}
+
+/**
+ * Recursively build an XML-ready object from a GraphQL arg value.
+ * Uses the parent GraphQL type's XSD namespace (from typeNamespaceMap) to qualify
+ * child element names, so each field gets the prefix of the schema where it is declared.
+ *
+ * `fallbackPrefix` is used when the GraphQL type can't resolve a namespace
+ * (e.g. arg typed as GraphQLJSON for empty complex types or xs:any) — the
+ * children inherit the parent arg's prefix instead of being unprefixed.
+ */
+function buildValueXml(
+  value: unknown,
+  graphqlType: GraphQLType | undefined,
+  typeNamespaceMap: Map<string, string>,
+  assigned: Map<string, string>,
+  envelopeAttrs: Record<string, string>,
+  resolverData: ResolverData,
+  fallbackPrefix?: string,
+): unknown {
+  if (value == null) return value;
+
+  if (Array.isArray(value)) {
+    return value.map(item =>
+      buildValueXml(
+        item,
+        graphqlType,
+        typeNamespaceMap,
+        assigned,
+        envelopeAttrs,
+        resolverData,
+        fallbackPrefix,
+      ),
+    );
+  }
+
+  if (typeof value === 'object') {
+    const namedType = graphqlType ? getNamedType(graphqlType) : null;
+    const typeNsUri = namedType ? typeNamespaceMap.get(namedType.name) : null;
+    const resolvedPrefix = typeNsUri ? getOrAssignPrefix(typeNsUri, assigned, envelopeAttrs) : null;
+    const nsPrefix = resolvedPrefix ?? fallbackPrefix ?? null;
+
+    const result: Record<string, unknown> = {};
+    if (namedType && isInputObjectType(namedType)) {
+      const fields = (namedType as GraphQLInputObjectType).getFields();
+      for (const key of Object.keys(value as object)) {
+        const fieldType = fields[key]?.type;
+        const xmlKey = nsPrefix ? `${nsPrefix}:${key}` : key;
+        result[xmlKey] = buildValueXml(
+          (value as any)[key],
+          fieldType,
+          typeNamespaceMap,
+          assigned,
+          envelopeAttrs,
+          resolverData,
+          nsPrefix ?? undefined,
+        );
+      }
+    } else {
+      // Scalar / GraphQLJSON / unknown type: keys aren't typed, so use the
+      // current namespace prefix (possibly inherited from above) for children.
+      for (const key of Object.keys(value as object)) {
+        const xmlKey = nsPrefix ? `${nsPrefix}:${key}` : key;
+        result[xmlKey] = buildValueXml(
+          (value as any)[key],
+          undefined,
+          typeNamespaceMap,
+          assigned,
+          envelopeAttrs,
+          resolverData,
+          nsPrefix ?? undefined,
+        );
+      }
+    }
+    return result;
+  }
+
+  return {
+    innerText:
+      typeof value === 'string' ? stringInterpolator.parse(value, resolverData) : String(value),
+  };
+}
+
+/**
+ * Wrap a single top-level arg in its namespace-qualified element name and build its content.
+ */
+function buildArgXml(
+  argName: string,
+  argValue: unknown,
+  nsUri: string | undefined,
+  argType: GraphQLType | undefined,
+  typeNamespaceMap: Map<string, string>,
+  assigned: Map<string, string>,
+  envelopeAttrs: Record<string, string>,
+  resolverData: ResolverData,
+): Record<string, unknown> {
+  const prefix = nsUri ? getOrAssignPrefix(nsUri, assigned, envelopeAttrs) : null;
+  const xmlKey = prefix ? `${prefix}:${argName}` : argName;
+  return {
+    // Pass the arg's prefix as fallback so JSON-typed / unknown-typed children
+    // inherit the parent's namespace instead of being emitted unqualified.
+    [xmlKey]: buildValueXml(
+      argValue,
+      argType,
+      typeNamespaceMap,
+      assigned,
+      envelopeAttrs,
+      resolverData,
+      prefix ?? undefined,
+    ),
+  };
 }
 
 function createRootValueMethod({
@@ -164,32 +351,129 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       env: process.env,
     };
 
-    const bodyPrefix = soapAnnotations.bodyAlias || 'body';
-    envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
+    // Read typeNamespacesJson from the transport definition (which survives
+    // SDL roundtrip via @extraSchemaDefinitionDirective), not directly from
+    // schema.extensions which is dropped on serialization.
+    const directives = (info.schema.extensions as any)?.directives;
+    const transport = Array.isArray(directives?.transport)
+      ? directives.transport[0]
+      : directives?.transport;
+    const typeNamespacesJson: string | undefined = transport?.typeNamespacesJson;
+    const typeNamespaceMap: Map<string, string> | undefined = typeNamespacesJson
+      ? new Map(Object.entries(JSON.parse(typeNamespacesJson) as Record<string, string>))
+      : undefined;
 
-    const headerPrefix =
-      soapAnnotations.soapHeaders?.alias || soapAnnotations.bodyAlias || 'header';
-    if (soapAnnotations.soapHeaders?.headers) {
-      envelope['soap:Header'] = prefixWithAlias({
-        alias: headerPrefix,
-        obj: normalizeArgsForConverter(
-          typeof soapAnnotations.soapHeaders.headers === 'string'
-            ? JSON.parse(soapAnnotations.soapHeaders.headers)
-            : soapAnnotations.soapHeaders.headers,
-        ),
+    if (soapAnnotations.argNamespacesJson && !soapAnnotations.bodyAlias && typeNamespaceMap) {
+      // Namespace-aware mode: each arg/field gets the XSD namespace of its declaring schema.
+      // WSDL-declared soap:header parts are routed to soap:Header; the rest go to soap:Body.
+      const argNsMap: Record<string, string> = JSON.parse(soapAnnotations.argNamespacesJson);
+      const headerArgSet = new Set(soapAnnotations.headerArgNames ?? []);
+      const fieldDef = info.parentType.getFields()[info.fieldName];
+      const argTypeMap = Object.fromEntries(fieldDef.args.map(a => [a.name, a.type]));
+      const assigned = new Map<string, string>();
+      // Pre-assign 'body' to the binding namespace so single-namespace WSDLs
+      // keep their legacy 'body:' prefix even when deriveXmlPrefix would have
+      // produced a different name. The xmlns declaration is added lazily by
+      // getOrAssignPrefix on first use, so multi-namespace WSDLs that don't
+      // actually use the binding namespace don't end up with a stray
+      // xmlns:body attribute on the envelope.
+      if (soapAnnotations.bindingNamespace) {
+        assigned.set(soapAnnotations.bindingNamespace, 'body');
+      }
+      // Pre-seed the user-configured soapHeaders alias (default 'header') so
+      // arg namespaces whose deriveXmlPrefix would land on the same name —
+      // e.g. a URI ending in /header/v1 — get a numeric suffix from
+      // getOrAssignPrefix instead of silently clobbering this xmlns binding.
+      // Honored only when free; if the alias is already bound to another
+      // namespace (e.g. equals 'body'), we let getOrAssignPrefix fall back to
+      // a derived prefix below.
+      if (soapAnnotations.soapHeaders?.headers && soapAnnotations.soapHeaders.namespace) {
+        const userAlias = soapAnnotations.soapHeaders.alias ?? 'header';
+        const nsUri = soapAnnotations.soapHeaders.namespace;
+        if (
+          !assigned.has(nsUri) &&
+          envelopeAttributes[`xmlns:${userAlias}`] === undefined &&
+          ![...assigned.values()].includes(userAlias)
+        ) {
+          assigned.set(nsUri, userAlias);
+        }
+      }
+      const headerContent: Record<string, unknown> = {};
+      const bodyContent: Record<string, unknown> = {};
+
+      for (const [argName, argValue] of Object.entries(args ?? {})) {
+        const chunk = buildArgXml(
+          argName,
+          argValue,
+          argNsMap[argName],
+          argTypeMap[argName],
+          typeNamespaceMap,
+          assigned,
+          envelopeAttributes,
+          resolverData,
+        );
+        if (headerArgSet.has(argName)) {
+          Object.assign(headerContent, chunk);
+        } else {
+          Object.assign(bodyContent, chunk);
+        }
+      }
+
+      // User-configured soapHeaders (from YAML/config) are merged into soap:Header.
+      if (soapAnnotations.soapHeaders?.headers) {
+        // Route through getOrAssignPrefix when a namespace is given so collisions
+        // with an arg-namespace prefix (already bound during buildArgXml) get a
+        // numeric suffix instead of overwriting the existing xmlns binding. The
+        // user's preferred alias is honored via the pre-seed above when free.
+        const cfgAlias = soapAnnotations.soapHeaders.namespace
+          ? getOrAssignPrefix(soapAnnotations.soapHeaders.namespace, assigned, envelopeAttributes)
+          : (soapAnnotations.soapHeaders.alias ?? 'header');
+        Object.assign(
+          headerContent,
+          prefixWithAlias({
+            alias: cfgAlias,
+            obj: normalizeArgsForConverter(
+              typeof soapAnnotations.soapHeaders.headers === 'string'
+                ? JSON.parse(soapAnnotations.soapHeaders.headers)
+                : soapAnnotations.soapHeaders.headers,
+            ),
+            resolverData,
+          }),
+        );
+      }
+
+      if (Object.keys(headerContent).length > 0) {
+        envelope['soap:Header'] = headerContent;
+      }
+      envelope['soap:Body'] = bodyContent;
+    } else {
+      // Legacy mode: single alias prefix for all args (preserves existing behavior exactly).
+      const bodyPrefix = soapAnnotations.bodyAlias ?? 'body';
+      envelopeAttributes[`xmlns:${bodyPrefix}`] = soapAnnotations.bindingNamespace;
+
+      const headerPrefix =
+        soapAnnotations.soapHeaders?.alias ?? soapAnnotations.bodyAlias ?? 'header';
+      if (soapAnnotations.soapHeaders?.headers) {
+        envelope['soap:Header'] = prefixWithAlias({
+          alias: headerPrefix,
+          obj: normalizeArgsForConverter(
+            typeof soapAnnotations.soapHeaders.headers === 'string'
+              ? JSON.parse(soapAnnotations.soapHeaders.headers)
+              : soapAnnotations.soapHeaders.headers,
+          ),
+          resolverData,
+        });
+        if (soapAnnotations.soapHeaders?.namespace) {
+          envelopeAttributes[`xmlns:${headerPrefix}`] = soapAnnotations.soapHeaders.namespace;
+        }
+      }
+
+      envelope['soap:Body'] = prefixWithAlias({
+        alias: bodyPrefix,
+        obj: normalizeArgsForConverter(args),
         resolverData,
       });
-      if (soapAnnotations.soapHeaders?.namespace) {
-        envelopeAttributes[`xmlns:${headerPrefix}`] = soapAnnotations.soapHeaders.namespace;
-      }
     }
-
-    const body = prefixWithAlias({
-      alias: bodyPrefix,
-      obj: normalizeArgsForConverter(args),
-      resolverData,
-    });
-    envelope['soap:Body'] = body;
 
     const requestJson = {
       'soap:Envelope': envelope,
