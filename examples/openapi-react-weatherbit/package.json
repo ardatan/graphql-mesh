@@ -10,17 +10,17 @@
     "start": "vite"
   },
   "dependencies": {
-    "graphql": "16.14.0",
-    "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "graphql": "16.14.1",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   },
   "devDependencies": {
     "@graphql-mesh/cli": "0.100.52",
-    "@types/react": "19.2.15",
+    "@types/react": "19.2.16",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
     "typescript": "^6.0.3",
-    "vite": "8.0.14"
+    "vite": "8.0.16"
   },
   "browserslist": {
     "production": [

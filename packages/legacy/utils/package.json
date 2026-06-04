@@ -47,7 +47,7 @@
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.2.0",
     "dset": "^3.1.2",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.2.0",
     "lodash.get": "^4.4.2",
     "lodash.topath": "^4.5.2",
     "tiny-lru": "^13.0.0",
@@ -58,7 +58,7 @@
     "@types/js-yaml": "4.0.9",
     "@types/lodash.topath": "4.5.9",
     "@types/object-hash": "3.0.6",
-    "graphql": "16.14.0"
+    "graphql": "16.14.1"
   },
   "publishConfig": {
     "access": "public",

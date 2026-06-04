@@ -5,6 +5,6 @@
   "dependencies": {
     "@graphql-hive/gateway": "^2.7.2",
     "@graphql-tools/schema": "^10.0.33",
-    "graphql": "16.14.0"
+    "graphql": "16.14.1"
   }
 }

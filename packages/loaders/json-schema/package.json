@@ -62,7 +62,7 @@
     "@types/qs": "6.15.1",
     "@types/to-json-schema": "0.2.4",
     "@types/url-join": "4.0.3",
-    "graphql": "16.14.0"
+    "graphql": "16.14.1"
   },
   "publishConfig": {
     "access": "public",
