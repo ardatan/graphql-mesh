@@ -2,7 +2,7 @@
   "name": "@e2e/openapi-naming-convention",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.7.2",
+    "@graphql-hive/gateway": "^2.8.2",
     "graphql": "16.14.0",
     "moment": "2.30.1"
   }
