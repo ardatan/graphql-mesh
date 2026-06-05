@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This XSD lives one directory below the WSDL. Its sibling import
+  ("names.xsd") must resolve relative to THIS file's location. With the
+  loader's old fixed-cwd resolution, the path would resolve relative to
+  the WSDL directory and ENOENT.
+-->
+<xsd:schema
+  targetNamespace="http://example.com/hello/types"
+  xmlns:tns="http://example.com/hello/types"
+  xmlns:names="http://example.com/hello/names"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified">
+
+  <xsd:import namespace="http://example.com/hello/names" schemaLocation="names.xsd"/>
+
+  <xsd:element name="Hello">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="who" type="names:Name"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="HelloResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="greeting" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
