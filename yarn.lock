@@ -8347,7 +8347,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.104.36"
     "@graphql-tools/utils": "npm:^11.1.0"
     graphql: "npm:16.14.0"
-    graphql-jit: "npm:^0.8.7"
+    graphql-jit: "npm:^0.8.8"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -8615,7 +8615,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.10.6"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     graphql: "npm:16.14.0"
-    graphql-jit: "npm:^0.8.7"
+    graphql-jit: "npm:^0.8.8"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -27746,9 +27746,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-jit@npm:0.8.7":
-  version: 0.8.7
-  resolution: "graphql-jit@npm:0.8.7"
+"graphql-jit@npm:0.8.8":
+  version: 0.8.8
+  resolution: "graphql-jit@npm:0.8.8"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.2.0"
     fast-json-stringify: "npm:^5.16.1"
@@ -27758,13 +27758,13 @@ __metadata:
     lodash.mergewith: "npm:4.6.2"
   peerDependencies:
     graphql: ">=15"
-  checksum: 10c0/b261c259ec5db6c1291d002fba87a3b99faf4104b5c7dd90d35904eedaa2fe7e6b1a56c20e46a05211a7029f92304105f68af739d341637fdb9234e12466a611
+  checksum: 10c0/a7b92f4eb1ce74a4486fac74b6e583b12a9ebe6f341822e8017c81772519e3529806149346c01077ad09e94ecb04aab7438f67b9374a239bf93d210be588d3ca
   languageName: node
   linkType: hard
 
-"graphql-jit@patch:graphql-jit@npm%3A0.8.7#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch":
-  version: 0.8.7
-  resolution: "graphql-jit@patch:graphql-jit@npm%3A0.8.7#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch::version=0.8.7&hash=90c32e"
+"graphql-jit@patch:graphql-jit@npm%3A0.8.8#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch":
+  version: 0.8.8
+  resolution: "graphql-jit@patch:graphql-jit@npm%3A0.8.8#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch::version=0.8.8&hash=90c32e"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.2.0"
     fast-json-stringify: "npm:^5.16.1"
@@ -27774,7 +27774,7 @@ __metadata:
     lodash.mergewith: "npm:4.6.2"
   peerDependencies:
     graphql: ">=15"
-  checksum: 10c0/6c87905c9139e0421db59dc0a25006c0fb4598d15cf324719492a43f3d7bb01032e5290567a8f6484cc2d8d41c57cba90985306bf28a11c85f03fe124c4ee6ab
+  checksum: 10c0/6153213616cef1534c2be0ee9c1a6cd618339f568bc50be3a278767925bf934fe6dd7acc00e52be5a3a427eee220b27710c04c14c13ff70b677ed658300046fe
   languageName: node
   linkType: hard
 
