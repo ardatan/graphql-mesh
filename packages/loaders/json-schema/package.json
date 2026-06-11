@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/json-schema",
-  "version": "0.109.41",
+  "version": "0.109.42",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,11 +36,11 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.14",
-    "@graphql-mesh/string-interpolation": "^0.5.16",
+    "@graphql-mesh/string-interpolation": "^0.5.17",
     "@graphql-mesh/transport-common": "^1.0.16",
-    "@graphql-mesh/transport-rest": "^0.9.39",
-    "@graphql-mesh/types": "^0.104.28",
-    "@graphql-mesh/utils": "^0.104.36",
+    "@graphql-mesh/transport-rest": "^0.9.40",
+    "@graphql-mesh/types": "^0.104.29",
+    "@graphql-mesh/utils": "^0.104.37",
     "@graphql-tools/delegate": "^12.0.16",
     "@graphql-tools/utils": "^11.1.0",
     "@json-schema-tools/meta-schema": "^1.7.5",

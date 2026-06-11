@@ -1,5 +1,25 @@
 # @omnigraph/grpc
 
+## 0.2.24
+
+### Patch Changes
+
+- [#9502](https://github.com/ardatan/graphql-mesh/pull/9502)
+  [`679ee60`](https://github.com/ardatan/graphql-mesh/commit/679ee60c2b09f85655c9a58344e2544c5137c75a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@grpc/grpc-js@^1.14.4` ↗︎](https://www.npmjs.com/package/@grpc/grpc-js/v/1.14.4) (from
+    `^1.14.3`, in `dependencies`)
+
+- [#9503](https://github.com/ardatan/graphql-mesh/pull/9503)
+  [`69a8aac`](https://github.com/ardatan/graphql-mesh/commit/69a8aacd0566879cbd6fe806de3dfd43635f43d6)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`protobufjs@^7.5.8` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.5.8)
+    (from `^8.0.2`, in `dependencies`)
+- Updated dependencies
+  [[`06c0dee`](https://github.com/ardatan/graphql-mesh/commit/06c0deed78c53a092b423a8ca360515105127d10)]:
+  - @graphql-mesh/string-interpolation@0.5.17
+
 ## 0.2.23
 
 ### Patch Changes
