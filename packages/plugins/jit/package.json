@@ -38,7 +38,7 @@
     "@envelop/core": "^5.5.1",
     "@graphql-mesh/utils": "^0.104.37",
     "@graphql-tools/utils": "^11.1.0",
-    "graphql-jit": "^0.8.7",
+    "graphql-jit": "^0.8.8",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
