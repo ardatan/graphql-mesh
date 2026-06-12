@@ -5932,7 +5932,7 @@ __metadata:
   resolution: "@examples-v1-next/openwhisk-example@workspace:examples/v1-next/integrations/openwhisk-example"
   dependencies:
     "@graphql-hive/gateway": "npm:^2.7.2"
-    esbuild: "npm:^0.28.0"
+    esbuild: "npm:^0.28.1"
     graphql: "npm:16.14.0"
     typescript: "npm:^6.0.3"
   languageName: unknown
@@ -6580,7 +6580,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cli": "npm:0.100.53"
     "@graphql-mesh/graphql": "npm:0.104.40"
-    esbuild: "npm:^0.28.0"
+    esbuild: "npm:^0.28.1"
     graphql: "npm:16.14.0"
     typescript: "npm:^6.0.3"
   languageName: unknown
@@ -26008,7 +26008,7 @@ __metadata:
     "@graphql-yoga/plugin-apollo-inline-trace": "npm:3.21.0"
     "@types/node": "npm:^25.9.1"
     concurrently: "npm:9.2.1"
-    esbuild: "npm:^0.28.0"
+    esbuild: "npm:^0.28.1"
     graphql: "npm:16.14.0"
     graphql-yoga: "npm:^5.21.0"
     lru-cache: "patch:lru-cache@npm%3A11.2.6#~/.yarn/patches/lru-cache-npm-11.2.6-acb7d4323e.patch"
