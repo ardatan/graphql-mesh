@@ -89,10 +89,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
         mutation {
           OrderService_OrderService_OrderPort_submitOrder(
             AuthHeader: { token: "gql-tok" }
-            SubmitOrder: {
-              customerId: "cust-1"
-              items: [{ productId: "p1", quantity: 1 }]
-            }
+            SubmitOrder: { customerId: "cust-1", items: [{ productId: "p1", quantity: 1 }] }
           ) {
             orderId
           }
@@ -130,10 +127,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
         mutation {
           OrderService_OrderService_OrderPort_submitOrder(
             AuthHeader: { token: "arg-tok" }
-            SubmitOrder: {
-              customerId: "cust-1"
-              items: [{ productId: "p1", quantity: 1 }]
-            }
+            SubmitOrder: { customerId: "cust-1", items: [{ productId: "p1", quantity: 1 }] }
           ) {
             orderId
           }
@@ -172,10 +166,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
       document: parse(/* GraphQL */ `
         mutation {
           OrderService_OrderService_OrderPort_submitOrder(
-            SubmitOrder: {
-              customerId: "cust-1"
-              items: [{ productId: "p1", quantity: 1 }]
-            }
+            SubmitOrder: { customerId: "cust-1", items: [{ productId: "p1", quantity: 1 }] }
           ) {
             orderId
           }

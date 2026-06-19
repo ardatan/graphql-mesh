@@ -442,7 +442,11 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
           // Only overwrite soapHeaders defaults when the arg carries a real value.
           // GraphQL may coerce an absent INPUT_OBJECT arg to null, undefined, or "".
           // None of those represent an intentional caller-supplied override.
-          if (argValue != null && argValue !== '' && (typeof argValue !== 'object' || Object.keys(argValue as object).length > 0)) {
+          if (
+            argValue != null &&
+            argValue !== '' &&
+            (typeof argValue !== 'object' || Object.keys(argValue as object).length > 0)
+          ) {
             Object.assign(headerContent, chunk);
           }
         } else {
