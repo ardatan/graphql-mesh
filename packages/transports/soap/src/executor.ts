@@ -116,10 +116,11 @@ interface CreateRootValueMethodOpts {
   logger: Logger;
 }
 
-// Recursive: returns an array for array inputs, an object with prefixed keys
-// for object inputs, an interpolated string for string inputs, or the value
-// unchanged for other primitives. Typed as `any` because the shape mirrors
-// whatever the caller passed in.
+/**
+ * Recursively prefix every object key with `alias:`, leaving `innerText` unprefixed
+ * so fast-xml-parser emits it as a text node rather than an element. String values
+ * are passed through the string interpolator; arrays are mapped recursively.
+ */
 function prefixWithAlias({
   alias,
   obj,
@@ -257,7 +258,7 @@ function buildValueXml(
       const fields = (namedType as GraphQLInputObjectType).getFields();
       for (const key of Object.keys(value as object)) {
         const fieldType = fields[key]?.type;
-        const xmlKey = nsPrefix ? `${nsPrefix}:${key}` : key;
+        const xmlKey = nsPrefix && key !== 'innerText' ? `${nsPrefix}:${key}` : key;
         result[xmlKey] = buildValueXml(
           (value as any)[key],
           fieldType,
@@ -272,7 +273,7 @@ function buildValueXml(
       // Scalar / GraphQLJSON / unknown type: keys aren't typed, so use the
       // current namespace prefix (possibly inherited from above) for children.
       for (const key of Object.keys(value as object)) {
-        const xmlKey = nsPrefix ? `${nsPrefix}:${key}` : key;
+        const xmlKey = nsPrefix && key !== 'innerText' ? `${nsPrefix}:${key}` : key;
         result[xmlKey] = buildValueXml(
           (value as any)[key],
           undefined,
@@ -323,6 +324,13 @@ function buildArgXml(
   };
 }
 
+/**
+ * Build the async resolver for a single SOAP operation. In namespace-aware mode
+ * (when `argNamespacesJson` is present and `bodyAlias` is absent) it splits args
+ * across `soap:Header` / `soap:Body` using WSDL-derived metadata and qualifies
+ * each element with its XSD namespace prefix. Falls back to the legacy single-alias
+ * path when that metadata is unavailable.
+ */
 function createRootValueMethod({
   soapAnnotations,
   fetchFn,
