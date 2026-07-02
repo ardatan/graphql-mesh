@@ -24,7 +24,7 @@ jobs:
     with:
       node-version-file: .node-version
     secrets:
-      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   alpha:
     if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
@@ -38,7 +38,7 @@ jobs:
       npmTag: alpha
       buildScript: build
     secrets:
-      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
   stable:
