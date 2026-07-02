@@ -199,6 +199,34 @@ export function buildIamRedisOptions(
   };
 }
 
+// standalone mode has no periodic refresh like the cluster path below, so condition.auth can
+// go stale (>tokenExpirySeconds old) across a long idle period and get replayed verbatim on the
+// next reconnect before IamTokenConnector.connect() regenerates it, causing a one-time WRONGPASS.
+// mirror the cluster strategy: refresh on an interval and push the new token onto the live
+// connection's condition.auth so a stale token is never sitting there waiting to be reused.
+export function setupIamAuthRefreshForStandalone(
+  redisRef: { current: Redis | null },
+  cfg: IamAuthConfig,
+  username: string | undefined,
+  logger?: Logger,
+): ReturnType<typeof setInterval> {
+  const expiryMs = (cfg.tokenExpirySeconds ?? 900) * 1000;
+  const refreshIntervalMs = expiryMs * 0.8;
+
+  return setInterval(() => {
+    generateIamToken(cfg)
+      .then(token => {
+        const condition = redisRef.current?.condition;
+        if (condition != null) {
+          condition.auth = username ? [username, token] : token;
+        }
+      })
+      .catch(err => {
+        logger?.error('Failed to refresh IAM token for Redis:', err);
+      });
+  }, refreshIntervalMs);
+}
+
 // cluster mode: ioredis does not support per-node credential providers, so we use a different
 // strategy. we install a password getter on redisOptions so every new node connection reads
 // the latest token. we also refresh via setInterval at 80% of token expiry.

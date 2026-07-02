@@ -14,7 +14,11 @@ import {
 } from '@graphql-mesh/types';
 import { trace, type Tracer } from '@opentelemetry/api';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import { buildIamRedisOptions, setupIamAuthForCluster } from './iam.js';
+import {
+  buildIamRedisOptions,
+  setupIamAuthForCluster,
+  setupIamAuthRefreshForStandalone,
+} from './iam.js';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
@@ -134,6 +138,12 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
             this.client = new Redis(urlStr, iamOpts);
             // if you do not set redisRef.current you get an error when connecting
             redisRef.current = this.client;
+            this.iamRefreshTimer = setupIamAuthRefreshForStandalone(
+              redisRef,
+              options.iamAuth,
+              connectorUsername,
+              options.logger,
+            );
           } else {
             this.client = new Redis(urlStr);
           }
@@ -168,6 +178,12 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
               const redisRef: { current: Redis | null } = { current: null };
               this.client = new Redis(buildIamRedisOptions(baseOpts, options.iamAuth, redisRef));
               redisRef.current = this.client;
+              this.iamRefreshTimer = setupIamAuthRefreshForStandalone(
+                redisRef,
+                options.iamAuth,
+                parsedUsername,
+                options.logger,
+              );
             } else {
               this.client = new Redis(baseOpts);
             }
