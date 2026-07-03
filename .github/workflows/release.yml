@@ -15,6 +15,8 @@ env:
   NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
   NPM_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
+permissions: write-all
+
 jobs:
   dependencies:
     if:
@@ -27,7 +29,10 @@ jobs:
       githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   alpha:
-    if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
+    # Skip for forks, release PR and dependabot PRs
+    if:
+      ${{ github.event.pull_request.head.repo.fork != true && github.event.pull_request.title !=
+      'Upcoming Release Changes' && github.actor != 'dependabot[bot]' }}
     permissions:
       contents: write
       id-token: write
