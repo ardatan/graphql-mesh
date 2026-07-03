@@ -90,19 +90,20 @@ jobs:
       - name: Prepare for build
         run: yarn prebuild
 
-      - name: Run Tests
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: yarn test
+      - parallel:
+          - name: Run Tests
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test
 
-      - name: Run Leak Tests
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: yarn test:leak
+          - name: Run Leak Tests
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test:leak
 
   integration:
     name: integration / node ${{matrix.node-version}}
@@ -186,19 +187,20 @@ jobs:
         run: yarn build
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
-      - name: Run Integration Tests
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: yarn test:integration
-      - name: Run Leak Tests
-        if: matrix.node-version == 18
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: yarn test:integration:leak
+      - parallel:
+          - name: Run Integration Tests
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test:integration
+          - name: Run Leak Tests
+            if: matrix.node-version == 18
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test:integration:leak
 
   e2e:
     name: e2e / node v${{matrix.node-version}}

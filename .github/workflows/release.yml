@@ -16,6 +16,8 @@ env:
   NPM_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
+permissions: write-all
+
 jobs:
   dependencies:
     if:
@@ -25,10 +27,13 @@ jobs:
     with:
       node-version-file: .node-version
     secrets:
-      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   alpha:
-    if: ${{ github.event.pull_request.title != 'Upcoming Release Changes' }}
+    # Skip for forks, release PR and dependabot PRs
+    if:
+      ${{ github.event.pull_request.head.repo.fork != true && github.event.pull_request.title !=
+      'Upcoming Release Changes' && github.actor != 'dependabot[bot]' }}
     permissions:
       contents: write
       id-token: write
@@ -39,7 +44,7 @@ jobs:
       npmTag: alpha
       buildScript: build
     secrets:
-      githubToken: ${{ secrets.GUILD_BOT_TOKEN }}
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
 
   stable:
