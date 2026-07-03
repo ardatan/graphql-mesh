@@ -1,5 +1,35 @@
 # @graphql-mesh/transform-cache
 
+## 0.105.38
+
+### Patch Changes
+
+- [#9470](https://github.com/ardatan/graphql-mesh/pull/9470)
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/resolvers-composition@^7.0.31` ↗︎](https://www.npmjs.com/package/@graphql-tools/resolvers-composition/v/7.0.31)
+    (from `^7.0.30`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.33` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.33)
+    (from `^10.0.32`, in `dependencies`)
+
+- [#9512](https://github.com/ardatan/graphql-mesh/pull/9512)
+  [`06c0dee`](https://github.com/ardatan/graphql-mesh/commit/06c0deed78c53a092b423a8ca360515105127d10)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`dayjs@^1.11.21` ↗︎](https://www.npmjs.com/package/dayjs/v/1.11.21) (from
+    `^1.11.20`, in `dependencies`)
+- Updated dependencies
+  [[`06c0dee`](https://github.com/ardatan/graphql-mesh/commit/06c0deed78c53a092b423a8ca360515105127d10),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3)]:
+  - @graphql-mesh/string-interpolation@0.5.17
+  - @graphql-mesh/types@0.104.29
+  - @graphql-mesh/utils@0.104.37
+
 ## 0.105.37
 
 ### Patch Changes

@@ -6,10 +6,10 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.52",
-    "@graphql-mesh/mongoose": "0.104.37",
+    "@graphql-mesh/cli": "0.100.53",
+    "@graphql-mesh/mongoose": "0.104.38",
     "graphql": "16.14.0",
-    "mongoose": "9.6.3"
+    "mongoose": "9.7.2"
   },
   "devDependencies": {
     "jest": "30.4.2"

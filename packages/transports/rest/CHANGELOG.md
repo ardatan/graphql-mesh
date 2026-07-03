@@ -1,5 +1,25 @@
 # @graphql-mesh/transport-rest
 
+## 0.9.40
+
+### Patch Changes
+
+- [#9497](https://github.com/ardatan/graphql-mesh/pull/9497)
+  [`c5aff34`](https://github.com/ardatan/graphql-mesh/commit/c5aff3416044c8deffb797edd37e079a3aa804ce)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`qs@^6.15.2` ↗︎](https://www.npmjs.com/package/qs/v/6.15.2) (from `^6.15.1`,
+    in `dependencies`)
+- Updated dependencies
+  [[`06c0dee`](https://github.com/ardatan/graphql-mesh/commit/06c0deed78c53a092b423a8ca360515105127d10),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3)]:
+  - @graphql-mesh/string-interpolation@0.5.17
+  - @graphql-mesh/types@0.104.29
+  - @graphql-mesh/utils@0.104.37
+
 ## 0.9.39
 
 ### Patch Changes

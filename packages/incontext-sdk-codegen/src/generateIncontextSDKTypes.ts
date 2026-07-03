@@ -11,9 +11,7 @@ async function loadTypeScriptCodegenPlugin(): Promise<typeof GraphQLCodegenTypeS
   return defaultImportFn('@graphql-codegen/typescript');
 }
 
-function createCodegenHelpers(
-  tsBasePlugin: typeof GraphQLCodegenTypeScript,
-) {
+function createCodegenHelpers(tsBasePlugin: typeof GraphQLCodegenTypeScript) {
   return class CodegenHelpers extends tsBasePlugin.TsVisitor {
     public getTypeToUse(namedType: NamedTypeNode, isVisitingInputType: boolean): string {
       if (this.scalars[namedType.name.value]) {
