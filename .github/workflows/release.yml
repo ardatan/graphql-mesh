@@ -14,6 +14,7 @@ env:
   YARN_ENABLE_HARDENED_MODE: 0
   NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
   NPM_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 permissions: write-all
 

@@ -40,7 +40,7 @@
     "@graphql-tools/delegate": "^12.0.16",
     "@graphql-tools/utils": "^11.1.0",
     "@graphql-typed-document-node/core": "^3.2.0",
-    "@repeaterjs/repeater": "^3.0.6",
+    "@repeaterjs/repeater": "^3.1.0",
     "@whatwg-node/disposablestack": "^0.0.6",
     "tslib": "^2.4.0"
   },
