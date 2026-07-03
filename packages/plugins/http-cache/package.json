@@ -43,10 +43,10 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway": "^2.7.2",
+    "@graphql-hive/gateway": "^2.10.0",
     "@graphql-mesh/runtime": "^0.106.39",
     "@types/http-cache-semantics": "4.2.0",
-    "@whatwg-node/server": "^0.10.18",
+    "@whatwg-node/server": "^0.11.0",
     "graphql": "16.14.0"
   },
   "publishConfig": {

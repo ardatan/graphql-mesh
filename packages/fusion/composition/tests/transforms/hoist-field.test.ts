@@ -1,7 +1,7 @@
-import { GraphQLObjectType, GraphQLSchema, printSchema, type GraphQLField } from 'graphql';
+import { GraphQLObjectType, GraphQLSchema, type GraphQLField } from 'graphql';
 import { createFilterTransform, createHoistFieldTransform } from '@graphql-mesh/fusion-composition';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { composeAndGetExecutor, composeAndGetPublicSchema } from './utils';
+import { composeAndGetExecutor, composeAndGetPublicSchema, printSortedSchema } from './utils';
 
 describe('Hoist Field', () => {
   let schema: GraphQLSchema;
@@ -62,10 +62,10 @@ describe('Hoist Field', () => {
     const fields = queryType.getFields();
     expect(fields.users).toBeDefined();
 
-    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+    expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
+"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(limit: Int!, page: Int): [User!]!
@@ -110,10 +110,10 @@ input _HoistConfig {
     const fields = queryType.getFields();
     expect(fields.users).toBeDefined();
 
-    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+    expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
+"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(limit: Int!, page: Int): [User!]!
@@ -156,10 +156,10 @@ input _HoistConfig {
     const args = (fields.users as GraphQLField<any, any>).args;
     expect(args.length).toEqual(0);
 
-    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+    expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
+"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users: [User!]!
@@ -208,10 +208,10 @@ input _HoistConfig {
     expect(args.length).toEqual(1);
     expect(args[0].name).toEqual('page');
 
-    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+    expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
+"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(page: Int): [User!]!
@@ -263,10 +263,10 @@ input _HoistConfig {
     expect(args.length).toEqual(1);
     expect(args[0].name).toEqual('page');
 
-    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+    expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
+"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(page: Int): [User!]!
@@ -346,23 +346,23 @@ input _HoistConfig {
     const fields = queryType.getFields();
     expect(fields.users).toBeDefined();
 
-    expect(printSchema(newSchema)).toMatchInlineSnapshot(`
-"directive @hoist(subgraph: String, pathConfig: _HoistConfig) on FIELD_DEFINITION
+    expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
+"directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, type: String, subgraph: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(limit: Int!, page: Int): UserSearchResult
   usersResults(limit: Int!, page: Int): [User!]!
 }
 
-type UserSearchResult {
-  page: Int!
-}
-
 type User {
   id: ID!
   name: String!
+}
+
+type UserSearchResult {
+  page: Int!
 }
 
 input _HoistConfig {
