@@ -49,7 +49,7 @@
     "@graphql-tools/wrap": "^11.1.16",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
-    "graphql-jit": "^0.8.7",
+    "graphql-jit": "^0.8.8",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
