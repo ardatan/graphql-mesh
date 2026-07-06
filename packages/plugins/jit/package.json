@@ -37,12 +37,12 @@
   "dependencies": {
     "@envelop/core": "^5.5.1",
     "@graphql-mesh/utils": "^0.104.37",
-    "@graphql-tools/utils": "^11.1.0",
+    "@graphql-tools/utils": "^11.1.1",
     "graphql-jit": "^0.8.7",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "^2.9.3",
+    "@graphql-hive/gateway-runtime": "^2.9.7",
     "graphql": "16.14.0"
   },
   "publishConfig": {

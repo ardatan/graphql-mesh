@@ -1,14 +1,18 @@
 import { parse, type GraphQLSchema } from 'graphql';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { isAsyncIterable } from '@graphql-tools/utils';
 import { Repeater } from '@repeaterjs/repeater';
 import {
   createEncapsulateTransform,
   createFederationTransform,
   createRenameTypeTransform,
 } from '../../src/transforms';
-import { composeAndGetExecutor, composeAndGetPublicSchema } from './utils';
+import {
+  composeAndGetExecutor,
+  composeAndGetPublicSchema,
+  printSortedSchemaWithDirectives,
+} from './utils';
 
 describe('encapsulate', () => {
   let schema: GraphQLSchema;
@@ -153,7 +157,7 @@ describe('encapsulate', () => {
         name: 'TEST',
       },
     ]);
-    expect(printSchemaWithDirectives(newSchema)).toMatchSnapshot();
+    expect(printSortedSchemaWithDirectives(newSchema)).toMatchSnapshot();
   });
   it('forwards field arguments via sourceArgs', async () => {
     const schemaWithArgs = makeExecutableSchema({

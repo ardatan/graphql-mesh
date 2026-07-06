@@ -35,11 +35,11 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-hive/yoga": "^0.48.0",
+    "@graphql-hive/yoga": "^0.48.1",
     "@graphql-mesh/cross-helpers": "^0.4.14",
     "@graphql-mesh/string-interpolation": "^0.5.17",
     "@graphql-mesh/types": "^0.104.29",
-    "graphql-yoga": "^5.21.0",
+    "graphql-yoga": "^5.21.2",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
