@@ -153,6 +153,9 @@ const soapDirective = new GraphQLDirective({
     argNamespaces: {
       type: ObjMapScalar,
     },
+    typeNamespaces: {
+      type: ObjMapScalar,
+    },
   },
 });
 
@@ -1542,7 +1545,7 @@ export class SOAPLoader {
     schemaExts.directives.transport = {
       kind: 'soap',
       subgraph: this.subgraphName,
-      typeNamespacesJson: JSON.stringify(Object.fromEntries(this.typeNamespaceMap)),
+      typeNamespacesJson: Object.fromEntries(this.typeNamespaceMap),
     };
     return schema;
   }

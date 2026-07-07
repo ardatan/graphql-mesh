@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SOAP Loader should create executor for a service with mutations and query placeholder 1`] = `
-"schema @transport(kind: "soap", subgraph: "Test", typeNamespacesJson: "{\\"NumberConversion_NumberToWords_Input\\":\\"http://www.dataaccess.com/webservicesserver/\\",\\"NumberConversion_NumberToDollars_Input\\":\\"http://www.dataaccess.com/webservicesserver/\\"}") {
+"schema @transport(kind: "soap", subgraph: "Test", typeNamespacesJson: {NumberConversion_NumberToWords_Input: "http://www.dataaccess.com/webservicesserver/", NumberConversion_NumberToDollars_Input: "http://www.dataaccess.com/webservicesserver/"}) {
   query: Query
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap) on FIELD_DEFINITION
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void

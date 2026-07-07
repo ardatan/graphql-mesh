@@ -366,9 +366,12 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
     const transport = Array.isArray(directives?.transport)
       ? directives.transport[0]
       : directives?.transport;
-    const typeNamespacesJson: string | undefined = transport?.typeNamespacesJson;
+    const typeNamespacesJson: Record<string, string> | undefined =
+      typeof transport?.typeNamespacesJson === 'string'
+        ? JSON.parse(transport.typeNamespacesJson)
+        : transport?.typeNamespacesJson;
     const typeNamespaceMap: Map<string, string> | undefined = typeNamespacesJson
-      ? new Map(Object.entries(JSON.parse(typeNamespacesJson) as Record<string, string>))
+      ? new Map(Object.entries(typeNamespacesJson))
       : undefined;
 
     if (soapAnnotations.argNamespaces && !soapAnnotations.bodyAlias && typeNamespaceMap) {
