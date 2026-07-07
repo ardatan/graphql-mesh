@@ -1447,7 +1447,7 @@ ${printType(GraphQLString)}
       },
       oneOf: [
         // Both oneOf variants resolve to the same input type (String scalar), which
-        // triggers the unionInputFields.length === 1 assignment path in getUnionTypeComposers.
+        // triggers the Object.keys(unionInputFields).length === 1 assignment path in getUnionTypeComposers.
         { type: 'array', items: { type: 'string' } },
         { type: 'string' },
       ],
