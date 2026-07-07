@@ -6,6 +6,14 @@ import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
 import { fetch, Response } from '@whatwg-node/fetch';
 import { dummyLogger as logger } from '../../../testing/dummyLogger';
 
+function getRequestBodyFromFetchSpy(fetchSpy: jest.Mock): string {
+  const firstCall = fetchSpy.mock.calls[0];
+  expect(firstCall).toBeDefined();
+  const init = firstCall?.[1] as RequestInit | undefined;
+  expect(init?.body).toBeDefined();
+  return init?.body as string;
+}
+
 describe('SOAP multi-namespace, headers, and arrays', () => {
   it('routes header parts, qualifies per-schema namespaces, and serializes arrays as repeated siblings', async () => {
     const soapLoader = new SOAPLoader({ subgraphName: 'Test', fetch, logger });
@@ -60,6 +68,122 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
         '</soap:Envelope>',
       ].join(''),
     );
+  });
+
+  it('query args take priority over soapHeaders config on the same header element', async () => {
+    // Regression guard for the ordering bug: when both the soapHeaders config and a
+    // WSDL-declared soap:header arg map to the same XML element, the explicit
+    // GraphQL arg must win. The loader-level config is seeded first; the args loop
+    // runs second and overwrites the matching key.
+    const soapLoader = new SOAPLoader({
+      subgraphName: 'Test',
+      fetch,
+      logger,
+      soapHeaders: {
+        namespace: 'http://example.com/auth',
+        headers: { AuthHeader: { token: 'cfg-tok' } },
+      },
+    });
+    await soapLoader.loadWSDL(
+      readFileSync(join(__dirname, './fixtures/multi-namespace-headers.wsdl'), 'utf-8'),
+    );
+    const schema = soapLoader.buildSchema();
+
+    const fetchSpy = jest.fn(() => Promise.resolve(Response.error()));
+    const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
+
+    await executor({
+      document: parse(/* GraphQL */ `
+        mutation {
+          OrderService_OrderService_OrderPort_submitOrder(
+            AuthHeader: { token: "gql-tok" }
+            SubmitOrder: { customerId: "cust-1", items: [{ productId: "p1", quantity: 1 }] }
+          ) {
+            orderId
+          }
+        }
+      `),
+    });
+
+    const body = getRequestBodyFromFetchSpy(fetchSpy);
+    expect(body).toContain('gql-tok');
+    expect(body).not.toContain('cfg-tok');
+  });
+
+  it('soapHeaders config entries appear alongside WSDL header args when keys do not collide', async () => {
+    // When the soapHeaders config contributes a different element than the GraphQL arg,
+    // both elements must appear in soap:Header.
+    const soapLoader = new SOAPLoader({
+      subgraphName: 'Test',
+      fetch,
+      logger,
+      soapHeaders: {
+        namespace: 'http://example.com/auth',
+        headers: { SecurityToken: { value: 'sec-1' } },
+      },
+    });
+    await soapLoader.loadWSDL(
+      readFileSync(join(__dirname, './fixtures/multi-namespace-headers.wsdl'), 'utf-8'),
+    );
+    const schema = soapLoader.buildSchema();
+
+    const fetchSpy = jest.fn(() => Promise.resolve(Response.error()));
+    const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
+
+    await executor({
+      document: parse(/* GraphQL */ `
+        mutation {
+          OrderService_OrderService_OrderPort_submitOrder(
+            AuthHeader: { token: "arg-tok" }
+            SubmitOrder: { customerId: "cust-1", items: [{ productId: "p1", quantity: 1 }] }
+          ) {
+            orderId
+          }
+        }
+      `),
+    });
+
+    const body = getRequestBodyFromFetchSpy(fetchSpy);
+    // Both the config-supplied SecurityToken and the arg-supplied AuthHeader must be present.
+    expect(body).toContain('sec-1');
+    expect(body).toContain('arg-tok');
+    expect(body).toContain('soap:Header');
+  });
+
+  it('soapHeaders config appears in soap:Header when the WSDL header arg is omitted', async () => {
+    // soapHeaders config must still populate soap:Header by itself.
+    const soapLoader = new SOAPLoader({
+      subgraphName: 'Test',
+      fetch,
+      logger,
+      soapHeaders: {
+        namespace: 'http://example.com/auth',
+        headers: { AuthHeader: { token: 'cfg-tok' } },
+      },
+    });
+    await soapLoader.loadWSDL(
+      readFileSync(join(__dirname, './fixtures/multi-namespace-headers.wsdl'), 'utf-8'),
+    );
+    const schema = soapLoader.buildSchema();
+
+    const fetchSpy = jest.fn(() => Promise.resolve(Response.error()));
+    const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
+
+    await executor({
+      document: parse(/* GraphQL */ `
+        mutation {
+          OrderService_OrderService_OrderPort_submitOrder(
+            SubmitOrder: { customerId: "cust-1", items: [{ productId: "p1", quantity: 1 }] }
+          ) {
+            orderId
+          }
+        }
+      `),
+    });
+
+    const body = getRequestBodyFromFetchSpy(fetchSpy);
+    expect(body).toContain('cfg-tok');
+    expect(body).toContain('soap:Header');
   });
 
   it('preserves legacy wire format for single-namespace WSDLs without bodyAlias', async () => {
