@@ -150,8 +150,8 @@ const soapDirective = new GraphQLDirective({
     headerArgNames: {
       type: new GraphQLList(GraphQLString),
     },
-    argNamespacesJson: {
-      type: GraphQLString,
+    argNamespaces: {
+      type: ObjMapScalar,
     },
   },
 });
@@ -753,7 +753,7 @@ export class SOAPLoader {
               soapAnnotations.headerArgNames = headerArgNames;
             }
             if (Object.keys(argNamespaceMap).length > 0) {
-              soapAnnotations.argNamespacesJson = JSON.stringify(argNamespaceMap);
+              soapAnnotations.argNamespaces = argNamespaceMap;
             }
           }
         }

@@ -16,7 +16,7 @@ export interface SoapAnnotations {
   /** Names of GraphQL args that map to soap:Header parts (detected from WSDL binding). */
   headerArgNames?: string[];
   /** JSON-serialised map of GraphQL arg name → XSD namespace URI for each message part. */
-  argNamespacesJson?: string;
+  argNamespaces?: Record<string, string>;
 }
 
 export const PARSE_XML_OPTIONS: Partial<X2jOptions> = {

@@ -104,7 +104,7 @@ interface SoapAnnotations {
   };
   soapAction?: string;
   headerArgNames?: string[];
-  argNamespacesJson?: string;
+  argNamespaces?: Record<string, string>;
 }
 
 interface CreateRootValueMethodOpts {
@@ -326,7 +326,7 @@ function buildArgXml(
 
 /**
  * Build the async resolver for a single SOAP operation. In namespace-aware mode
- * (when `argNamespacesJson` is present and `bodyAlias` is absent) it splits args
+ * (when `argNamespaces` is present and `bodyAlias` is absent) it splits args
  * across `soap:Header` / `soap:Body` using WSDL-derived metadata and qualifies
  * each element with its XSD namespace prefix. Falls back to the legacy single-alias
  * path when that metadata is unavailable.
@@ -371,10 +371,12 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       ? new Map(Object.entries(JSON.parse(typeNamespacesJson) as Record<string, string>))
       : undefined;
 
-    if (soapAnnotations.argNamespacesJson && !soapAnnotations.bodyAlias && typeNamespaceMap) {
+    if (soapAnnotations.argNamespaces && !soapAnnotations.bodyAlias && typeNamespaceMap) {
       // Namespace-aware mode: each arg/field gets the XSD namespace of its declaring schema.
       // WSDL-declared soap:header parts are routed to soap:Header; the rest go to soap:Body.
-      const argNsMap: Record<string, string> = JSON.parse(soapAnnotations.argNamespacesJson);
+      const argNamespacesJson = soapAnnotations.argNamespaces;
+      const argNamespaces =
+        typeof argNamespacesJson === 'string' ? JSON.parse(argNamespacesJson) : argNamespacesJson;
       const headerArgSet = new Set(soapAnnotations.headerArgNames ?? []);
       const fieldDef = info.parentType.getFields()[info.fieldName];
       const argTypeMap = Object.fromEntries(fieldDef.args.map(a => [a.name, a.type]));
@@ -413,7 +415,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
         const chunk = buildArgXml(
           argName,
           argValue,
-          argNsMap[argName],
+          argNamespaces[argName],
           argTypeMap[argName],
           typeNamespaceMap,
           assigned,
