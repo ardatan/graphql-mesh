@@ -25,7 +25,7 @@
     "@apollo/server": "5.5.1",
     "@types/node": "^25.9.1",
     "apollo-server-caching": "3.3.0",
-    "concurrently": "9.2.1",
+    "concurrently": "10.0.3",
     "delay-cli": "3.0.0",
     "graphql": "^16.14.0",
     "jest": "30.4.2",
