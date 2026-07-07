@@ -144,28 +144,28 @@ export const composeConfig = defineConfig({
 ### OpenAPI / Swagger sources
 
 If your OpenAPI spec already defines response schemas per status code, GraphQL Mesh will use them
-automatically. You can also add or override them using `responseByStatusCode`:
+automatically. To add or override typed error responses, update your OpenAPI document to include the
+desired response schema (or example) for the relevant status code.
 
-```ts filename="mesh.config.ts"
-import { defineConfig } from '@graphql-mesh/compose-cli'
-import { loadOpenAPISubgraph } from '@omnigraph/openapi'
-
-export const composeConfig = defineConfig({
-  subgraphs: [
-    {
-      sourceHandler: loadOpenAPISubgraph('PetStore', {
-        source: './petstore.yaml',
-        responseByStatusCode: {
-          404: {
-            responseSample: './samples/pet-not-found.json',
-            responseTypeName: 'PetNotFound'
-          }
-        }
-      })
-    }
-  ]
-})
-```
+~~~yaml filename="openapi.yaml"
+paths:
+  /pets/{id}:
+    get:
+      operationId: getPetById
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '404':
+          description: Pet not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetNotFound'
+~~~
 
 ## Authentication errors
 
