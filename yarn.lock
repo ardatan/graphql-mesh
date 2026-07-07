@@ -18310,7 +18310,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript/vfs@npm:^1.6.0":
+"@typescript/vfs@npm:1.6.1":
   version: 1.6.1
   resolution: "@typescript/vfs@npm:1.6.1"
   dependencies:
@@ -18318,6 +18318,17 @@ __metadata:
   peerDependencies:
     typescript: "*"
   checksum: 10c0/3878686aff4bf26813dad9242aa8e01c5c9734f4d37f31035f93e9c8b850f15ec6a4480f04cf3a3a1cbf78a4e796ae1be5d6c54f7f7c91556eafee913a8d0da4
+  languageName: node
+  linkType: hard
+
+"@typescript/vfs@patch:@typescript/vfs@npm%3A1.6.1#~/.yarn/patches/@typescript-vfs-npm-1.6.1-ef0e2d6cf2.patch":
+  version: 1.6.1
+  resolution: "@typescript/vfs@patch:@typescript/vfs@npm%3A1.6.1#~/.yarn/patches/@typescript-vfs-npm-1.6.1-ef0e2d6cf2.patch::version=1.6.1&hash=8f2d30"
+  dependencies:
+    debug: "npm:^4.1.1"
+  peerDependencies:
+    typescript: "*"
+  checksum: 10c0/e7a09280ff5b386845eaf521bb46a2e390041cf703b9f77a62f04d1b907b1d7d21ff63e028bdb9141bde95fcbc86a1d749a33f00a67dc8ed8165f03db64d28b9
   languageName: node
   linkType: hard
 
@@ -26386,7 +26397,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gray-matter@npm:^4.0.3":
+"gray-matter@npm:4.0.3":
   version: 4.0.3
   resolution: "gray-matter@npm:4.0.3"
   dependencies:
@@ -26395,6 +26406,18 @@ __metadata:
     section-matter: "npm:^1.0.0"
     strip-bom-string: "npm:^1.0.0"
   checksum: 10c0/e38489906dad4f162ca01e0dcbdbed96d1a53740cef446b9bf76d80bec66fa799af07776a18077aee642346c5e1365ed95e4c91854a12bf40ba0d4fb43a625a6
+  languageName: node
+  linkType: hard
+
+"gray-matter@patch:gray-matter@npm%3A4.0.3#~/.yarn/patches/gray-matter-npm-4.0.3-852ae4f34c.patch":
+  version: 4.0.3
+  resolution: "gray-matter@patch:gray-matter@npm%3A4.0.3#~/.yarn/patches/gray-matter-npm-4.0.3-852ae4f34c.patch::version=4.0.3&hash=e35e6a"
+  dependencies:
+    js-yaml: "npm:^3.13.1"
+    kind-of: "npm:^6.0.2"
+    section-matter: "npm:^1.0.0"
+    strip-bom-string: "npm:^1.0.0"
+  checksum: 10c0/fe36011acc9ad54c8e49c0c2b3ebe5cdeafc63b2243a0006abab1960a7ef804140eee5c702ae05a7911da339f6d2ff5a96c84f18a33921bfaab222313c3cbbd2
   languageName: node
   linkType: hard
 
