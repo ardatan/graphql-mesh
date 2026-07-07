@@ -143,7 +143,6 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
   });
 
   it('soapHeaders config appears in soap:Header when the WSDL header arg is omitted', async () => {
-    // If the caller does not pass the WSDL-declared header arg, the loader-level
     // soapHeaders config must still populate soap:Header by itself.
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',

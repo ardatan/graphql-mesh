@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
         with:
@@ -66,7 +66,7 @@ jobs:
           - 25
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
 
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
@@ -74,7 +74,7 @@ jobs:
           node-version: ${{matrix.node-version}}
 
       - name: Cache Jest
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .cache/jest
           key: jest-unit-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
@@ -90,19 +90,20 @@ jobs:
       - name: Prepare for build
         run: yarn prebuild
 
-      - name: Run Tests
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: yarn test
+      - parallel:
+          - name: Run Tests
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test
 
-      - name: Run Leak Tests
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: yarn test:leak
+          - name: Run Leak Tests
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test:leak
 
   integration:
     name: integration / node ${{matrix.node-version}}
@@ -153,7 +154,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
 
       - uses: the-guild-org/shared-config/setup@v1
         name: set up env
@@ -161,7 +162,7 @@ jobs:
           node-version: ${{matrix.node-version}}
 
       - name: Cache Jest
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .cache/jest
           key:
@@ -186,19 +187,20 @@ jobs:
         run: yarn build
       - name: Build Test Artifacts
         run: yarn build-test-artifacts
-      - name: Run Integration Tests
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: yarn test:integration
-      - name: Run Leak Tests
-        if: matrix.node-version == 18
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: yarn test:integration:leak
+      - parallel:
+          - name: Run Integration Tests
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test:integration
+          - name: Run Leak Tests
+            if: matrix.node-version == 18
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test:integration:leak
 
   e2e:
     name: e2e / node v${{matrix.node-version}}
@@ -209,7 +211,7 @@ jobs:
         node-version: [18, 20, 22, 25]
     steps:
       - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
       - name: hash docker images
         if: runner.os == 'Linux'
         id: hash-docker-images
@@ -228,7 +230,7 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
       - name: Cache Jest
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .cache/jest
           key: jest-e2e-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
@@ -253,7 +255,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
       - uses: the-guild-org/shared-config/setup@v1
         name: setup env
         with:

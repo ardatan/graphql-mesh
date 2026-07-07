@@ -1,9 +1,12 @@
+import { setTimeout } from 'node:timers/promises';
 import { createClient } from 'graphql-sse';
 import { createTenv } from '@e2e/tenv';
 import { fetch } from '@whatwg-node/fetch';
 import { getAvailablePort } from '../../packages/testing/getAvailablePort';
 
 const { compose, serve, service } = createTenv(__dirname);
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 250;
 
 it('should compose the appropriate schema', async () => {
   const api = await service('api');
@@ -101,18 +104,29 @@ it('should subscribe to todoUpdatedFromExtensions', async () => {
   const { hostname, port, execute } = await serve({ supergraph: output, port: servePort });
 
   // Add a todo to update and get the id
-  const result = await execute({
-    query: /* GraphQL */ `
-      mutation AddTodo {
-        addTodo(input: { name: "Shopping", content: "Buy Milk" }) {
-          id
-          name
-          content
+  let result;
+  for (let retryAttempt = 0; retryAttempt < MAX_RETRY_ATTEMPTS; retryAttempt++) {
+    result = await execute({
+      query: /* GraphQL */ `
+        mutation AddTodo {
+          addTodo(input: { name: "Shopping", content: "Buy Milk" }) {
+            id
+            name
+            content
+          }
         }
-      }
-    `,
-  });
-  const todoId = result.data.addTodo.id;
+      `,
+    });
+    if (result.data?.addTodo?.id) {
+      break;
+    }
+    await setTimeout(RETRY_DELAY_MS);
+  }
+  expect(result.errors).toBeFalsy();
+  const todoId = result.data?.addTodo?.id;
+  if (!todoId) {
+    throw new Error('Failed to create todo id in todoUpdatedFromExtensions test');
+  }
 
   const sse = createClient({
     url: `http://${hostname}:${port}/graphql`,

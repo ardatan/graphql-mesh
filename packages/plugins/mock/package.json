@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-mock",
-  "version": "0.105.38",
+  "version": "0.105.39",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,22 +36,22 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.14",
-    "@graphql-mesh/string-interpolation": "^0.5.16",
-    "@graphql-mesh/types": "^0.104.28",
-    "@graphql-mesh/utils": "^0.104.36",
-    "@graphql-tools/executor": "^1.5.2",
-    "@graphql-tools/mock": "^9.1.6",
-    "@graphql-tools/schema": "^10.0.32",
-    "@graphql-tools/utils": "^11.1.0",
+    "@graphql-mesh/string-interpolation": "^0.5.17",
+    "@graphql-mesh/types": "^0.104.29",
+    "@graphql-mesh/utils": "^0.104.37",
+    "@graphql-tools/executor": "^1.5.4",
+    "@graphql-tools/mock": "^9.1.8",
+    "@graphql-tools/schema": "^10.0.34",
+    "@graphql-tools/utils": "^11.1.1",
     "faker": "5.5.3",
     "graphql-scalars": "^1.22.4",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@envelop/core": "^5.5.1",
-    "@graphql-mesh/cache-localforage": "0.105.37",
+    "@graphql-mesh/cache-localforage": "0.105.38",
     "@types/faker": "5.5.9",
-    "graphql": "16.13.2"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",

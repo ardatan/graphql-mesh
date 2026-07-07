@@ -202,6 +202,11 @@ export function getInContextSDK(
                 };
               }
             }
+            // A null/undefined key has no entity to look up: resolve to null
+            // instead of falling through to the keyless arg-less delegation below.
+            if (key == null && argsFromKeys) {
+              return null;
+            }
             if (key && argsFromKeys) {
               const batchDelegationOptions = {
                 ...commonDelegateOptions,
