@@ -8,18 +8,18 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.52",
-    "@graphql-mesh/graphql": "0.104.39",
+    "@graphql-mesh/cli": "0.100.53",
+    "@graphql-mesh/graphql": "0.104.40",
     "concurrently": "9.2.1",
-    "graphql": "16.13.2",
-    "graphql-yoga": "^5.21.0",
-    "sharp": "0.34.5"
+    "graphql": "16.14.0",
+    "graphql-yoga": "^5.21.2",
+    "sharp": "0.35.2"
   },
   "devDependencies": {
-    "@types/node": "^25.6.0",
-    "jest": "30.3.0",
-    "ts-jest": "29.4.9",
+    "@types/node": "^25.9.1",
+    "jest": "30.4.2",
+    "ts-jest": "29.4.11",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }

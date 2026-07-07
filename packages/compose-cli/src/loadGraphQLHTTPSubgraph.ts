@@ -242,9 +242,11 @@ export const DEFAULT_INTROSPECTION_OPTIONS: Required<IntrospectionOptions> = {
   descriptions: true,
   specifiedByUrl: false,
   directiveIsRepeatable: false,
+  experimentalDirectiveDeprecation: false,
   schemaDescription: false,
   inputValueDeprecation: true,
   oneOf: false,
+  typeDepth: 7,
 };
 
 export function loadGraphQLHTTPSubgraph(

@@ -4,6 +4,8 @@ import { findAndParseConfig } from '@graphql-mesh/cli';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
 import { ProcessedConfig } from '../../../packages/legacy/config/dist/typings/process';
 
+jest.setTimeout(30000);
+
 describe('OData TripPin', () => {
   let config: ProcessedConfig;
   let mesh: MeshInstance;
@@ -17,6 +19,8 @@ describe('OData TripPin', () => {
     expect(
       introspectionFromSchema(lexicographicSortSchema(mesh.schema), {
         descriptions: false,
+        experimentalDirectiveDeprecation: false,
+        typeDepth: 7,
       }),
     ).toMatchSnapshot('odata-trippin-schema');
   });

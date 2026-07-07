@@ -1,5 +1,39 @@
 # @graphql-mesh/transport-grpc
 
+## 0.3.41
+
+### Patch Changes
+
+- [#9480](https://github.com/ardatan/graphql-mesh/pull/9480)
+  [`3d719d2`](https://github.com/ardatan/graphql-mesh/commit/3d719d243bea0b4fa1b32e8c9a6a5caa929ca93b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@grpc/proto-loader@^0.8.1` ↗︎](https://www.npmjs.com/package/@grpc/proto-loader/v/0.8.1) (from
+    `^0.8.0`, in `dependencies`)
+
+- [#9502](https://github.com/ardatan/graphql-mesh/pull/9502)
+  [`679ee60`](https://github.com/ardatan/graphql-mesh/commit/679ee60c2b09f85655c9a58344e2544c5137c75a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@grpc/grpc-js@^1.14.4` ↗︎](https://www.npmjs.com/package/@grpc/grpc-js/v/1.14.4) (from
+    `^1.14.3`, in `dependencies`)
+
+- [#9503](https://github.com/ardatan/graphql-mesh/pull/9503)
+  [`69a8aac`](https://github.com/ardatan/graphql-mesh/commit/69a8aacd0566879cbd6fe806de3dfd43635f43d6)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`protobufjs@^7.5.8` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.5.8)
+    (from `^8.0.2`, in `dependencies`)
+- Updated dependencies
+  [[`06c0dee`](https://github.com/ardatan/graphql-mesh/commit/06c0deed78c53a092b423a8ca360515105127d10),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3)]:
+  - @graphql-mesh/string-interpolation@0.5.17
+  - @graphql-mesh/types@0.104.29
+  - @graphql-mesh/utils@0.104.37
+
 ## 0.3.40
 
 ### Patch Changes

@@ -1,5 +1,60 @@
 # @omnigraph/soap
 
+## 0.107.46
+
+### Patch Changes
+
+- [#9457](https://github.com/ardatan/graphql-mesh/pull/9457)
+  [`b2d2384`](https://github.com/ardatan/graphql-mesh/commit/b2d23842a1a21e3f0cce1beb0f082ffbb4d58d74)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.7.2` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.7.2) (from
+    `^5.7.1`, in `dependencies`)
+
+- [#9460](https://github.com/ardatan/graphql-mesh/pull/9460)
+  [`899de24`](https://github.com/ardatan/graphql-mesh/commit/899de247383fdc0712286c1db3f4cb17afcf052c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.7.0` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.7.0) (from
+    `^5.7.2`, in `dependencies`)
+
+- [#9472](https://github.com/ardatan/graphql-mesh/pull/9472)
+  [`d7757fa`](https://github.com/ardatan/graphql-mesh/commit/d7757fab6c390a88076409da624e2524d91261a5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.7.3` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.7.3) (from
+    `^5.7.0`, in `dependencies`)
+
+- [#9488](https://github.com/ardatan/graphql-mesh/pull/9488)
+  [`f66010a`](https://github.com/ardatan/graphql-mesh/commit/f66010a83d75f83bf28dadf4d4d029bbdd47ad20)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.8.0` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.8.0) (from
+    `^5.7.3`, in `dependencies`)
+
+- [#9459](https://github.com/ardatan/graphql-mesh/pull/9459)
+  [`9d3f4ae`](https://github.com/ardatan/graphql-mesh/commit/9d3f4ae9516cf04a3fca9e57afe3f4a043cd4b44)
+  Thanks [@copilot-swe-agent](https://github.com/apps/copilot-swe-agent)! - Fix CodeQL polynomial
+  ReDoS warning in SOAPLoader by replacing regex chain on namespace URIs with a linear
+  character-by-character slug helper
+
+- Updated dependencies
+  [[`06c0dee`](https://github.com/ardatan/graphql-mesh/commit/06c0deed78c53a092b423a8ca360515105127d10),
+  [`b2d2384`](https://github.com/ardatan/graphql-mesh/commit/b2d23842a1a21e3f0cce1beb0f082ffbb4d58d74),
+  [`899de24`](https://github.com/ardatan/graphql-mesh/commit/899de247383fdc0712286c1db3f4cb17afcf052c),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`d7757fa`](https://github.com/ardatan/graphql-mesh/commit/d7757fab6c390a88076409da624e2524d91261a5),
+  [`f66010a`](https://github.com/ardatan/graphql-mesh/commit/f66010a83d75f83bf28dadf4d4d029bbdd47ad20),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3)]:
+  - @graphql-mesh/string-interpolation@0.5.17
+  - @graphql-mesh/transport-soap@0.10.46
+  - @graphql-mesh/types@0.104.29
+  - @graphql-mesh/utils@0.104.37
+
 ## 0.107.45
 
 ### Patch Changes

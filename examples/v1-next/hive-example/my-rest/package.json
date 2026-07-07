@@ -7,10 +7,10 @@
     "start": "node --import tsx index.ts"
   },
   "dependencies": {
-    "@graphql-hive/cli": "0.59.0",
+    "@graphql-hive/cli": "0.60.2",
     "@graphql-mesh/compose-cli": "workspace:*",
     "@omnigraph/openapi": "workspace:*",
-    "fets": "0.8.6",
-    "graphql": "16.13.2"
+    "fets": "0.8.7",
+    "graphql": "16.14.0"
   }
 }

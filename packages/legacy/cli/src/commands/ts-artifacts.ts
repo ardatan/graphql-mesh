@@ -3,7 +3,6 @@ import JSON5 from 'json5';
 import ts from 'typescript';
 import { codegen } from '@graphql-codegen/core';
 import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
-import * as tsBasePlugin from '@graphql-codegen/typescript';
 import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
@@ -14,12 +13,22 @@ import {
   generateUnifiedContextTypeFromIdentifiers,
 } from '@graphql-mesh/incontext-sdk-codegen';
 import type { Logger, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
-import { pathExists, printWithCache, writeFile, writeJSON } from '@graphql-mesh/utils';
+import {
+  defaultImportFn,
+  pathExists,
+  printWithCache,
+  writeFile,
+  writeJSON,
+} from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
 
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
+
+async function loadTypeScriptCodegenPlugin() {
+  return defaultImportFn('@graphql-codegen/typescript');
+}
 
 export async function generateTsArtifacts(
   {
@@ -102,6 +111,7 @@ export async function generateTsArtifacts(
       JSON.stringify(documentHashMap, null, 2),
     );
   }
+  const tsBasePlugin = await loadTypeScriptCodegenPlugin();
   const codegenOutput =
     '// @ts-nocheck\n' +
     (

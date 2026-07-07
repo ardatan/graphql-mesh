@@ -7,6 +7,7 @@ import {
   lexicographicSortSchema,
   parse,
   print,
+  printSchema,
   validate,
   visit,
   type GraphQLSchema,
@@ -108,4 +109,12 @@ export function expectTheSchemaSDLToBe(schema: GraphQLSchema, sdl: string) {
   });
   const sortedGivenSchema = print(astFromGivenSchema);
   expect(sortedGivenSchema).toBe(sortedSchemaFromSdl);
+}
+
+export function printSortedSchema(schema: GraphQLSchema) {
+  return printSchema(lexicographicSortSchema(schema));
+}
+
+export function printSortedSchemaWithDirectives(schema: GraphQLSchema) {
+  return printSchemaWithDirectives(lexicographicSortSchema(schema));
 }

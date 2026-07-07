@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-extend",
-  "version": "0.104.37",
+  "version": "0.104.38",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,17 +36,17 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.14",
-    "@graphql-mesh/types": "^0.104.28",
-    "@graphql-mesh/utils": "^0.104.36",
-    "@graphql-tools/code-file-loader": "^8.1.31",
-    "@graphql-tools/graphql-file-loader": "^8.1.13",
-    "@graphql-tools/load": "^8.1.9",
-    "@graphql-tools/schema": "^10.0.32",
-    "@graphql-tools/utils": "^11.1.0",
+    "@graphql-mesh/types": "^0.104.29",
+    "@graphql-mesh/utils": "^0.104.37",
+    "@graphql-tools/code-file-loader": "^8.1.33",
+    "@graphql-tools/graphql-file-loader": "^8.1.15",
+    "@graphql-tools/load": "^8.1.11",
+    "@graphql-tools/schema": "^10.0.34",
+    "@graphql-tools/utils": "^11.1.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "graphql": "16.13.2"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",
