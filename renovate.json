@@ -30,8 +30,7 @@
         "!/@graphql-hive/*/",
         "!/@graphql-mesh/*/",
         "!/@graphql-tools/*/",
-        "!/@neo4j/*/",
-        "*"
+        "!/@neo4j/*/"
       ]
     },
     {
