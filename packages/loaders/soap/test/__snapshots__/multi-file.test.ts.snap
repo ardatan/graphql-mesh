@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Multi-file WSDL resolves nested <wsdl:import> / <xsd:import> against each document's own location 1`] = `
-"schema @transport(kind: "soap", subgraph: "multi-file") {
+"schema @transport(kind: "soap", subgraph: "multi-file", typeNamespacesJson: {tns_Hello_Input: "http://example.com/hello/types", tns_Name_Input: "http://example.com/hello/names"}) {
   query: Query
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -16,7 +16,7 @@ type Query {
 scalar Void
 
 type Mutation {
-  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @soap(elementName: "HelloResponse", bindingNamespace: "http://example.com/hello/wsdl", endpoint: "http://example.com/hello", subgraph: "multi-file", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "hello")
+  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @soap(elementName: "HelloResponse", bindingNamespace: "http://example.com/hello/wsdl", endpoint: "http://example.com/hello", subgraph: "multi-file", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "hello", argNamespaces: "{\\"Hello\\":\\"http://example.com/hello/types\\"}")
 }
 
 type tns_HelloResponse {
@@ -42,12 +42,12 @@ scalar ObjMap"
 `;
 
 exports[`Multi-file WSDL resolves relative source against the loader cwd, not process.cwd() 1`] = `
-"schema @transport(kind: "soap", subgraph: "multi-file") {
+"schema @transport(kind: "soap", subgraph: "multi-file", typeNamespacesJson: {tns_Hello_Input: "http://example.com/hello/types", tns_Name_Input: "http://example.com/hello/names"}) {
   query: Query
   mutation: Mutation
 }
 
-directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String) on FIELD_DEFINITION
+directive @soap(elementName: String, bindingNamespace: String, endpoint: String, subgraph: String, bodyAlias: String, soapHeaders: SOAPHeaders, soapAction: String, soapNamespace: String, headerArgNames: [String], argNamespaces: ObjMap, typeNamespaces: ObjMap) on FIELD_DEFINITION
 
 type Query {
   placeholder: Void
@@ -57,7 +57,7 @@ type Query {
 scalar Void
 
 type Mutation {
-  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @soap(elementName: "HelloResponse", bindingNamespace: "http://example.com/hello/wsdl", endpoint: "http://example.com/hello", subgraph: "multi-file", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "hello")
+  HelloService_HelloService_HelloPort_hello(Hello: tns_Hello_Input): tns_HelloResponse @soap(elementName: "HelloResponse", bindingNamespace: "http://example.com/hello/wsdl", endpoint: "http://example.com/hello", subgraph: "multi-file", soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/", soapAction: "hello", argNamespaces: "{\\"Hello\\":\\"http://example.com/hello/types\\"}")
 }
 
 type tns_HelloResponse {
