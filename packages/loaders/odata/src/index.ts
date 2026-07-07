@@ -646,8 +646,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       });
 
       const entityOutputTC = getTCByTypeNames('I' + boundEntityTypeName, boundEntityTypeName) as
-        | InterfaceTypeComposer
-        | ObjectTypeComposer;
+        InterfaceTypeComposer | ObjectTypeComposer;
       const entityTypeExtensions = entityOutputTC.getExtensions() as any as EntityTypeExtensions;
       const argName = entityTypeExtensions.directives.entityInfo.identifierFieldName;
       const argType = entityOutputTC.getFieldTypeName(argName);
@@ -827,8 +826,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           isEnumType: typeName => schemaComposer.isEnumType(typeName),
         });
         const entityOutputTC = getTCByTypeNames('I' + entityTypeName, entityTypeName) as
-          | InterfaceTypeComposer
-          | ObjectTypeComposer;
+          InterfaceTypeComposer | ObjectTypeComposer;
         const {
           directives: { entityInfo },
         } = entityOutputTC.getExtensions() as any as EntityTypeExtensions;

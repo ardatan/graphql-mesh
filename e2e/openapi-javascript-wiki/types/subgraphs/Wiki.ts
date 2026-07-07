@@ -12,8 +12,7 @@ export namespace WikiTypes {
     [_ in K]?: never;
   };
   export type Incremental<T> =
-    | T
-    | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+    T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
   /** All built-in and custom scalars, mapped to their actual values */
   export type Scalars = {
     ID: { input: string; output: string };
@@ -33,15 +32,7 @@ export namespace WikiTypes {
   };
 
   export type HTTPMethod =
-    | 'CONNECT'
-    | 'DELETE'
-    | 'GET'
-    | 'HEAD'
-    | 'OPTIONS'
-    | 'PATCH'
-    | 'POST'
-    | 'PUT'
-    | 'TRACE';
+    'CONNECT' | 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'TRACE';
 
   export type Mutation = {
     /**
@@ -1214,10 +1205,7 @@ export namespace WikiTypes {
    * If you are interested in pageviews regardless of access method, use all-access.
    */
   export type queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access =
-    | 'all_access'
-    | 'desktop'
-    | 'mobile_app'
-    | 'mobile_web';
+    'all_access' | 'desktop' | 'mobile_app' | 'mobile_web';
 
   /**
    * The time unit for the response data. As of today, supported values are

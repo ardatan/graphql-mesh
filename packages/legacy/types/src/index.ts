@@ -211,8 +211,7 @@ export type Logger = {
 
 export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;
 export type SelectionSetParamOrFactory =
-  | ((subtree: SelectionSetNode) => SelectionSetParam)
-  | SelectionSetParam;
+  ((subtree: SelectionSetNode) => SelectionSetParam) | SelectionSetParam;
 
 export type InContextSdkMethodBatchingParams<TDefaultReturn, TArgs, TKey, TReturn> = {
   key: TKey;

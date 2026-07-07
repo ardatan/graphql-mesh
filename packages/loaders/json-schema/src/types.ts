@@ -59,15 +59,7 @@ export type JSONSchemaBaseOperationConfigWithJSONRequest = JSONSchemaBaseOperati
 };
 
 export type HTTPMethod =
-  | 'GET'
-  | 'HEAD'
-  | 'POST'
-  | 'PUT'
-  | 'DELETE'
-  | 'CONNECT'
-  | 'OPTIONS'
-  | 'TRACE'
-  | 'PATCH';
+  'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
 
 export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & {
   path: string;
@@ -99,9 +91,7 @@ export type JSONSchemaHTTPBinaryConfig = JSONSchemaHTTPBaseOperationConfig & {
 };
 
 export type JSONSchemaOperationConfig =
-  | JSONSchemaHTTPJSONOperationConfig
-  | JSONSchemaHTTPBinaryConfig
-  | JSONSchemaPubSubOperationConfig;
+  JSONSchemaHTTPJSONOperationConfig | JSONSchemaHTTPBinaryConfig | JSONSchemaPubSubOperationConfig;
 
 export type OperationHeadersConfiguration = Record<string, string> | OperationHeadersFactory;
 
