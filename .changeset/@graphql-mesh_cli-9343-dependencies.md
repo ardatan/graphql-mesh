@@ -1,0 +1,26 @@
+---
+"@graphql-mesh/cli": patch
+---
+dependencies updates:
+  - Updated dependency [`@graphql-codegen/core@^5.0.2` ↗︎](https://www.npmjs.com/package/@graphql-codegen/core/v/5.0.2) (from `^5.0.1`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typed-document-node@^6.1.8` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typed-document-node/v/6.1.8) (from `^6.1.7`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typescript@^6.0.2` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript/v/6.0.2) (from `^5.0.9`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typescript-generic-sdk@^5.0.1` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-generic-sdk/v/5.0.1) (from `^5.0.0`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typescript-operations@^5.1.0` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-operations/v/5.1.0) (from `^5.0.9`, in `dependencies`)
+  - Updated dependency [`@graphql-codegen/typescript-resolvers@^5.1.8` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript-resolvers/v/5.1.8) (from `^5.1.7`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/config@^0.108.45` ↗︎](https://www.npmjs.com/package/@graphql-mesh/config/v/0.108.45) (from `^0.108.41`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/cross-helpers@^0.4.14` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.14) (from `^0.4.12`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/http@^0.106.43` ↗︎](https://www.npmjs.com/package/@graphql-mesh/http/v/0.106.43) (from `^0.106.39`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/include@^0.3.40` ↗︎](https://www.npmjs.com/package/@graphql-mesh/include/v/0.3.40) (from `^0.3.35`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/incontext-sdk-codegen@^0.0.18` ↗︎](https://www.npmjs.com/package/@graphql-mesh/incontext-sdk-codegen/v/0.0.18) (from `^0.0.13`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/runtime@^0.106.39` ↗︎](https://www.npmjs.com/package/@graphql-mesh/runtime/v/0.106.39) (from `^0.106.36`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/store@^0.104.39` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.104.39) (from `^0.104.36`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/types@^0.104.29` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.104.29) (from `^0.104.26`, in `dependencies`)
+  - Updated dependency [`@graphql-mesh/utils@^0.104.37` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.104.37) (from `^0.104.34`, in `dependencies`)
+  - Updated dependency [`@graphql-tools/utils@^11.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.1.1) (from `^11.0.0`, in `dependencies`)
+  - Updated dependency [`ajv@^8.20.0` ↗︎](https://www.npmjs.com/package/ajv/v/8.20.0) (from `^8.18.0`, in `dependencies`)
+  - Updated dependency [`cosmiconfig@^9.0.2` ↗︎](https://www.npmjs.com/package/cosmiconfig/v/9.0.2) (from `^9.0.1`, in `dependencies`)
+  - Updated dependency [`dotenv@^17.4.2` ↗︎](https://www.npmjs.com/package/dotenv/v/17.4.2) (from `^17.4.1`, in `dependencies`)
+  - Updated dependency [`graphql-tag@^2.12.7` ↗︎](https://www.npmjs.com/package/graphql-tag/v/2.12.7) (from `^2.12.6`, in `dependencies`)
+  - Updated dependency [`typescript@^6.0.3` ↗︎](https://www.npmjs.com/package/typescript/v/6.0.3) (from `^6.0.2`, in `dependencies`)
+  - Updated dependency [`ws@^8.21.0` ↗︎](https://www.npmjs.com/package/ws/v/8.21.0) (from `^8.20.0`, in `dependencies`)
