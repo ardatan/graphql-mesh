@@ -1,0 +1,24 @@
+components:
+  schemas:
+    Cat:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
+        externalOnly:
+          type: string
+    Dog:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
+        externalOnly:
+          type: string

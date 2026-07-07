@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-deduplicate-request",
-  "version": "0.104.36",
+  "version": "0.104.37",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,15 +35,15 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "^0.104.28",
-    "@graphql-mesh/utils": "^0.104.36",
-    "@graphql-tools/utils": "^11.1.0",
+    "@graphql-mesh/types": "^0.104.29",
+    "@graphql-mesh/utils": "^0.104.37",
+    "@graphql-tools/utils": "^11.1.1",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@whatwg-node/fetch": "^0.10.6",
-    "graphql": "16.13.2"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",

@@ -1,5 +1,29 @@
 # example-response-cache
 
+## 0.6.55
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dbb27e6`](https://github.com/ardatan/graphql-mesh/commit/dbb27e635efbc621a3e07d594ad716f4cec1902f),
+  [`f66010a`](https://github.com/ardatan/graphql-mesh/commit/f66010a83d75f83bf28dadf4d4d029bbdd47ad20),
+  [`d957a64`](https://github.com/ardatan/graphql-mesh/commit/d957a64df17a7d27ffc2cef57c6cc8853544165c),
+  [`69a8aac`](https://github.com/ardatan/graphql-mesh/commit/69a8aacd0566879cbd6fe806de3dfd43635f43d6),
+  [`df3ebd7`](https://github.com/ardatan/graphql-mesh/commit/df3ebd703390658c879c3fab2184f1f0de205a0c),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f)]:
+  - @graphql-mesh/cli@0.100.53
+  - @graphql-mesh/plugin-mock@0.105.39
+  - @graphql-mesh/json-schema@0.109.43
+
+## 0.6.54
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3aabd36`](https://github.com/ardatan/graphql-mesh/commit/3aabd36e7a6b5573e985e2836c624e0ab3a6b08c)]:
+  - @graphql-mesh/cli@0.100.52
+  - @graphql-mesh/json-schema@0.109.42
+
 ## 0.6.53
 
 ### Patch Changes

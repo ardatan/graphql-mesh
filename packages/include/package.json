@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/include",
-  "version": "0.3.39",
+  "version": "0.3.40",
   "type": "module",
   "repository": {
     "type": "git",
@@ -49,15 +49,15 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/utils": "^0.104.36",
+    "@graphql-mesh/utils": "^0.104.37",
     "dotenv": "^17.4.2",
     "get-tsconfig": "^4.14.0",
-    "jiti": "^2.0.0",
+    "jiti": "^2.7.0",
     "sucrase": "^3.35.1"
   },
   "devDependencies": {
     "glob": "^13.0.6",
-    "graphql": "16.13.2"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",

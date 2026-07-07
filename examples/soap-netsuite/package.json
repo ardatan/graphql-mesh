@@ -10,9 +10,9 @@
     "start:prod": "mesh start"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.51",
-    "@graphql-mesh/soap": "0.107.45",
-    "graphql": "16.13.2"
+    "@graphql-mesh/cli": "0.100.53",
+    "@graphql-mesh/soap": "0.107.47",
+    "graphql": "16.14.0"
   },
   "devDependencies": {
     "cross-env": "10.1.0"

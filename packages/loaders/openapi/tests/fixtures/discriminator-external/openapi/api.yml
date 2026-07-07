@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: External Discriminator Mapping Test
+paths:
+  /things:
+    get:
+      operationId: externalThings
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '../common.yml#/components/schemas/Cat'
+                    - $ref: '../common.yml#/components/schemas/Dog'
+                  discriminator:
+                    propertyName: type
+                    mapping:
+                      cat: '../common.yml#/components/schemas/Cat'
+                      dog: '../common.yml#/components/schemas/Dog'
+components:
+  schemas:
+    Cat:
+      type: object
+      properties:
+        localOnly:
+          type: string
+    Dog:
+      type: object
+      properties:
+        localOnly:
+          type: string

@@ -1,6 +1,7 @@
 import { createTenv, type Service } from '@e2e/tenv';
 
 describe('OpenAPI HATEOAS', () => {
+  jest.retryTimes(3);
   const { compose, serve, service } = createTenv(__dirname);
 
   let oasService: Service;

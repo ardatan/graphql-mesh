@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-jit",
-  "version": "0.2.36",
+  "version": "0.2.37",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,14 +36,14 @@
   },
   "dependencies": {
     "@envelop/core": "^5.5.1",
-    "@graphql-mesh/utils": "^0.104.36",
-    "@graphql-tools/utils": "^11.1.0",
-    "graphql-jit": "^0.8.7",
+    "@graphql-mesh/utils": "^0.104.37",
+    "@graphql-tools/utils": "^11.1.1",
+    "graphql-jit": "^0.8.8",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "^2.8.8",
-    "graphql": "16.13.2"
+    "@graphql-hive/gateway-runtime": "^2.9.7",
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",

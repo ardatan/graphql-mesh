@@ -10,19 +10,19 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.51",
-    "@graphql-mesh/grpc": "0.108.41",
-    "@graphql-mesh/transform-naming-convention": "0.105.37",
-    "@grpc/grpc-js": "1.14.3",
-    "@grpc/proto-loader": "0.8.0",
+    "@graphql-mesh/cli": "0.100.53",
+    "@graphql-mesh/grpc": "0.108.43",
+    "@graphql-mesh/transform-naming-convention": "0.105.38",
+    "@grpc/grpc-js": "1.14.4",
+    "@grpc/proto-loader": "0.8.1",
     "google-protobuf": "4.0.2",
-    "graphql": "16.13.2",
+    "graphql": "16.14.0",
     "grpc-node-server-reflection": "1.0.2"
   },
   "devDependencies": {
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.9.1",
     "concurrently": "9.2.1",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }

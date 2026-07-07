@@ -1,5 +1,40 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.49
+
+### Patch Changes
+
+- [#9470](https://github.com/ardatan/graphql-mesh/pull/9470)
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.33` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.33)
+    (from `^10.0.32`, in `dependencies`)
+
+- [#9490](https://github.com/ardatan/graphql-mesh/pull/9490)
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.21` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.21)
+    (from `^4.0.20`, in `dependencies`)
+- Updated dependencies
+  [[`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3)]:
+  - @graphql-mesh/utils@0.104.37
+
+## 0.8.48
+
+### Patch Changes
+
+- [#9454](https://github.com/ardatan/graphql-mesh/pull/9454)
+  [`9e23b1f`](https://github.com/ardatan/graphql-mesh/commit/9e23b1f3db8912018f601ed2a8ac9c9cd33b8a27)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not mark root types inaccessible solely
+  because all of their fields were filtered out. Previously, filtering all `Mutation` fields also
+  made the `Mutation` type inaccessible, which was unintended. Now, root types are only marked
+  inaccessible when explicitly marked as such. If all `Mutation` fields are filtered, the `Mutation`
+  type remains accessible while those fields are marked inaccessible.
+
 ## 0.8.47
 
 ### Patch Changes

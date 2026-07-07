@@ -20,11 +20,11 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-tools/utils": "^11.1.0",
+    "@graphql-tools/utils": "^11.1.1",
     "path-browserify": "1.0.1"
   },
   "devDependencies": {
-    "graphql": "16.13.2"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public"

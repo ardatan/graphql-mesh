@@ -1,0 +1,40 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Inline Discriminator Schema Keywords Test
+paths:
+  /pets:
+    get:
+      operationId: petsWithContains
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                contains:
+                  oneOf:
+                    - $ref: '#/components/schemas/Cat'
+                    - $ref: '#/components/schemas/Dog'
+                  discriminator:
+                    propertyName: type
+                    mapping:
+                      cat: '#/components/schemas/Cat'
+                      dog: '#/components/schemas/Dog'
+components:
+  schemas:
+    Cat:
+      type: object
+      properties:
+        type:
+          type: string
+        meow:
+          type: string
+    Dog:
+      type: object
+      properties:
+        type:
+          type: string
+        bark:
+          type: string

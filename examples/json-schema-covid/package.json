@@ -11,12 +11,12 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.51",
-    "@graphql-mesh/graphql": "0.104.39",
-    "@graphql-mesh/json-schema": "0.109.41",
-    "graphql": "16.13.2"
+    "@graphql-mesh/cli": "0.100.53",
+    "@graphql-mesh/graphql": "0.104.40",
+    "@graphql-mesh/json-schema": "0.109.43",
+    "graphql": "16.14.0"
   },
   "devDependencies": {
-    "jest": "30.3.0"
+    "jest": "30.4.2"
   }
 }

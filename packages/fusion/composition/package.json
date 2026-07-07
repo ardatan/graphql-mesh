@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/fusion-composition",
-  "version": "0.8.47",
+  "version": "0.8.49",
   "type": "module",
   "description": "Basic composition utility for Fusion spec",
   "repository": {
@@ -50,10 +50,10 @@
     "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/utils": "^0.104.36",
-    "@graphql-tools/schema": "^10.0.32",
-    "@graphql-tools/stitching-directives": "^4.0.20",
-    "@graphql-tools/utils": "^11.1.0",
+    "@graphql-mesh/utils": "^0.104.37",
+    "@graphql-tools/schema": "^10.0.34",
+    "@graphql-tools/stitching-directives": "^4.0.22",
+    "@graphql-tools/utils": "^11.1.1",
     "@theguild/federation-composition": "^0.22.2",
     "change-case": "^4.1.2",
     "graphql-scalars": "^1.23.0",
@@ -63,15 +63,15 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "^2.8.8",
-    "@graphql-mesh/fusion-runtime": "^1.8.9",
-    "@graphql-tools/delegate": "^12.0.14",
-    "@graphql-tools/executor": "1.5.2",
-    "@repeaterjs/repeater": "3.0.6",
+    "@graphql-hive/gateway-runtime": "^2.9.7",
+    "@graphql-mesh/fusion-runtime": "^1.10.7",
+    "@graphql-tools/delegate": "^12.0.17",
+    "@graphql-tools/executor": "1.5.4",
+    "@repeaterjs/repeater": "3.1.0",
     "@types/minimatch": "6.0.0",
     "@types/pluralize": "^0.0.33",
     "@whatwg-node/promise-helpers": "^1.0.0",
-    "graphql": "16.13.2"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "directory": "dist",

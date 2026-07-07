@@ -1,5 +1,54 @@
 # @graphql-mesh/compose-cli
 
+## 1.5.33
+
+### Patch Changes
+
+- [#9470](https://github.com/ardatan/graphql-mesh/pull/9470)
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/code-file-loader@^8.1.32` ↗︎](https://www.npmjs.com/package/@graphql-tools/code-file-loader/v/8.1.32)
+    (from `^8.1.31`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/graphql-file-loader@^8.1.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/graphql-file-loader/v/8.1.14)
+    (from `^8.1.13`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/load@^8.1.10` ↗︎](https://www.npmjs.com/package/@graphql-tools/load/v/8.1.10)
+    (from `^8.1.9`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.33` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.33)
+    (from `^10.0.32`, in `dependencies`)
+
+- [#9473](https://github.com/ardatan/graphql-mesh/pull/9473)
+  [`b94f803`](https://github.com/ardatan/graphql-mesh/commit/b94f803b02c8b3f3bb0dd83c2a4746a196a255f2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - Fix GraphQL 16.14 introspection
+  compatibility by aligning compose introspection defaults and tests.
+
+- Updated dependencies
+  [[`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`b94f803`](https://github.com/ardatan/graphql-mesh/commit/b94f803b02c8b3f3bb0dd83c2a4746a196a255f2),
+  [`06c0dee`](https://github.com/ardatan/graphql-mesh/commit/06c0deed78c53a092b423a8ca360515105127d10),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3)]:
+  - @graphql-mesh/fusion-composition@0.8.49
+  - @graphql-mesh/include@0.3.40
+  - @graphql-mesh/string-interpolation@0.5.17
+  - @graphql-mesh/types@0.104.29
+  - @graphql-mesh/utils@0.104.37
+
+## 1.5.32
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9e23b1f`](https://github.com/ardatan/graphql-mesh/commit/9e23b1f3db8912018f601ed2a8ac9c9cd33b8a27)]:
+  - @graphql-mesh/fusion-composition@0.8.48
+
 ## 1.5.31
 
 ### Patch Changes

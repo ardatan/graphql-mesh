@@ -37,7 +37,7 @@ import {
   GraphQLVoid,
   RegularExpression,
 } from 'graphql-scalars';
-import { process } from '@graphql-mesh/cross-helpers';
+import { path, process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
@@ -164,6 +164,89 @@ const QUERY_PREFIXES = [
 
 function isQueryOperationName(operationName: string) {
   return QUERY_PREFIXES.some(prefix => operationName.toLowerCase().startsWith(prefix));
+}
+
+// Matches any RFC-3986 scheme (2+ chars to avoid mistaking Windows drive
+// letters like "C:" for URI schemes). The scheme isn't required to be
+// followed by "//" — `file:/tmp/x`, `urn:isbn:1234`, etc. are valid
+// absolute URIs.
+const URI_SCHEME_RE = /^[a-zA-Z][a-zA-Z0-9+.-]+:/;
+
+/**
+ * Resolve a (possibly relative) WSDL/XSD location against the location of the
+ * document doing the import. Mirrors XML Schema's xml:base resolution rules:
+ * relative `schemaLocation` / `wsdl:import location` is resolved against the
+ * importing document's own URI, not against a fixed root.
+ *
+ * Handles both URIs (http, https, file, urn, …) and filesystem paths uniformly.
+ */
+function resolveLocation(base: string | undefined, location: string): string {
+  // Already-absolute URIs (any scheme) pass through.
+  if (URI_SCHEME_RE.test(location)) return location;
+  if (!base) return location;
+  if (URI_SCHEME_RE.test(base)) {
+    // base is a URI — let URL handle "../" and root-relative ("/foo") paths.
+    return new URL(location, base).href;
+  }
+  // base is a filesystem path. A filesystem-absolute location passes through;
+  // anything else is resolved relative to base's containing directory.
+  if (path.isAbsolute(location)) return location;
+  return path.resolve(path.dirname(base), location);
+}
+
+/**
+ * Convert a namespace URI to a GraphQL-safe identifier slug.
+ * Uses a single linear pass to avoid polynomial regex backtracking on
+ * user-controlled input (CodeQL js/polynomial-redos).
+ */
+function namespaceToSlug(namespace: string): string {
+  // Determine start index after optional protocol prefix
+  let start = 0;
+  if (namespace.startsWith('https://')) {
+    start = 8;
+  } else if (namespace.startsWith('http://')) {
+    start = 7;
+  }
+
+  // Build slug in one pass:
+  // - keep alphanumeric characters as-is
+  // - collapse any run of non-alphanumeric characters into a single '_'
+  // - skip leading and trailing '_' (pendingUnderscore is only flushed when
+  //   a subsequent alphanumeric character is found)
+  // Use an array of chunks to avoid O(n^2) repeated string concatenation.
+  const chunks: string[] = [];
+  let pendingUnderscore = false;
+  for (let i = start; i < namespace.length; i++) {
+    const code = namespace.charCodeAt(i);
+    if (
+      (code >= 0x30 && code <= 0x39) || // 0-9
+      (code >= 0x41 && code <= 0x5a) || // A-Z
+      (code >= 0x61 && code <= 0x7a) // a-z
+    ) {
+      if (pendingUnderscore && chunks.length > 0) {
+        chunks.push('_');
+      }
+      pendingUnderscore = false;
+      chunks.push(namespace[i]);
+    } else {
+      pendingUnderscore = true;
+    }
+  }
+
+  // If nothing was accumulated (e.g. namespace is symbols-only or empty after
+  // stripping the protocol prefix), return a safe sentinel so callers always
+  // receive a non-empty, GraphQL-Name-compatible string.
+  if (chunks.length === 0) {
+    return '_';
+  }
+
+  // Prefix a leading digit so the result is a valid GraphQL identifier
+  const firstCode = chunks[0].charCodeAt(0);
+  if (firstCode >= 0x30 && firstCode <= 0x39) {
+    chunks.unshift('_');
+  }
+
+  return chunks.join('');
 }
 
 export class SOAPLoader {
@@ -330,7 +413,34 @@ export class SOAPLoader {
     return namespaceMessageMap;
   }
 
-  async loadSchema(schemaObj: XSSchema, parentAliasMap: Map<string, string> = new Map()) {
+  async loadSchema(
+    schemaObj: XSSchema,
+    parentAliasMap: Map<string, string> = new Map(),
+    baseUrl?: string,
+  ) {
+    // A bare <xsd:schema> wrapper that only contains imports (no targetNamespace,
+    // no type definitions) is a valid pattern — it lets a WSDL pull external
+    // schemas into its <wsdl:types> without redefining anything itself. Process
+    // its imports here. A "chameleon" schema (no targetNamespace + own type
+    // definitions) is a different, larger case the loader doesn't yet support;
+    // surface it loudly rather than silently dropping the definitions.
+    if (!schemaObj.attributes || !schemaObj.attributes.targetNamespace) {
+      if (schemaObj.import) {
+        for (const importObj of schemaObj.import) {
+          const importLocation = importObj.attributes.schemaLocation;
+          if (importLocation) {
+            await this.fetchXSD(importLocation, parentAliasMap, baseUrl);
+          }
+        }
+      }
+      if (schemaObj.complexType || schemaObj.simpleType || schemaObj.element) {
+        throw new Error(
+          '<xsd:schema> without targetNamespace but with type definitions ' +
+            '(chameleon schemas) is not yet supported by the SOAP loader.',
+        );
+      }
+      return;
+    }
     const schemaNamespace = schemaObj.attributes.targetNamespace;
     const aliasMap = this.getAliasMapFromAttributes(schemaObj.attributes);
     let typePrefix = this.namespaceTypePrefixMap.get(schemaNamespace);
@@ -348,8 +458,8 @@ export class SOAPLoader {
     if (schemaObj.import) {
       for (const importObj of schemaObj.import) {
         const importLocation = importObj.attributes.schemaLocation;
-        if (importLocation && !this.loadedLocations.has(importLocation)) {
-          await this.fetchXSD(importLocation);
+        if (importLocation) {
+          await this.fetchXSD(importLocation, parentAliasMap, baseUrl);
         }
       }
     }
@@ -426,7 +536,7 @@ export class SOAPLoader {
     }
   }
 
-  async loadDefinition(definition: WSDLDefinition) {
+  async loadDefinition(definition: WSDLDefinition, baseUrl?: string) {
     this.getNamespaceDefinitions(definition.attributes.targetNamespace).push(definition);
     if (definition.attributes.soap12) {
       this.soapNamespace = 'http://www.w3.org/2003/05/soap-envelope';
@@ -443,15 +553,15 @@ export class SOAPLoader {
     if (definition.import) {
       for (const importObj of definition.import) {
         const importLocation = importObj.attributes.location;
-        if (importLocation && !this.loadedLocations.has(importLocation)) {
-          await this.fetchWSDL(importLocation);
+        if (importLocation) {
+          await this.fetchWSDL(importLocation, baseUrl);
         }
       }
     }
     if (definition.types) {
       for (const typesObj of definition.types) {
         for (const schemaObj of typesObj.schema) {
-          await this.loadSchema(schemaObj, definitionAliasMap);
+          await this.loadSchema(schemaObj, definitionAliasMap, baseUrl);
         }
       }
     }
@@ -655,8 +765,10 @@ export class SOAPLoader {
 
   private xmlParser = new XMLParser(PARSE_XML_OPTIONS);
 
-  async fetchXSD(location: string, parentAliasMap = new Map<string, string>()) {
-    let xsdText = await readFileOrUrl<string>(location, {
+  async fetchXSD(location: string, parentAliasMap = new Map<string, string>(), baseUrl?: string) {
+    const resolved = resolveLocation(baseUrl ?? this.cwd, location);
+    if (this.loadedLocations.has(resolved)) return;
+    let xsdText = await readFileOrUrl<string>(resolved, {
       allowUnknownExtensions: true,
       cwd: this.cwd,
       fetch: this.fetchFn,
@@ -667,13 +779,14 @@ export class SOAPLoader {
     xsdText = xsdText.split('xmlns:').join('namespace:');
     // WSDL Import is different than XS Import
     const xsdObj: XSDObject = this.xmlParser.parse(xsdText, PARSE_XML_OPTIONS);
+    // Pre-register before recursing so circular imports terminate.
+    this.loadedLocations.set(resolved, xsdObj);
     for (const schemaObj of xsdObj.schema) {
-      await this.loadSchema(schemaObj, parentAliasMap);
+      await this.loadSchema(schemaObj, parentAliasMap, resolved);
     }
-    this.loadedLocations.set(location, xsdObj);
   }
 
-  async loadWSDL(wsdlText: string) {
+  async loadWSDL(wsdlText: string, baseUrl?: string) {
     wsdlText = wsdlText.split('xmlns:').join('namespace:');
     let wsdlObject: WSDLObject;
     try {
@@ -686,19 +799,42 @@ export class SOAPLoader {
         `WSDL definitions not found! Please make sure if your WSDL source is correct, and it contains <definitions> tag.\nReturned response;\n${wsdlText}`,
       );
     }
+    // Anchor a relative filesystem baseUrl against this.cwd. Without this, a
+    // caller passing a relative source (e.g. "./wsdl/foo.wsdl") would have
+    // path.resolve fall back to process.cwd() — which can differ from the
+    // loader's working directory in monorepos / containers, sending nested
+    // imports to the wrong absolute paths.
+    let resolvedBase = baseUrl;
+    if (
+      resolvedBase &&
+      !URI_SCHEME_RE.test(resolvedBase) &&
+      !path.isAbsolute(resolvedBase) &&
+      this.cwd
+    ) {
+      resolvedBase = path.resolve(this.cwd, resolvedBase);
+    }
+    // Pre-register before recursing so circular imports terminate.
+    if (resolvedBase) {
+      this.loadedLocations.set(resolvedBase, wsdlObject);
+    }
     for (const definition of wsdlObject.definitions) {
-      await this.loadDefinition(definition);
+      await this.loadDefinition(definition, resolvedBase);
     }
     return wsdlObject;
   }
 
-  async fetchWSDL(location: string) {
-    const response = await this.fetchFn(location, {
+  async fetchWSDL(location: string, baseUrl?: string) {
+    const resolved = resolveLocation(baseUrl ?? this.cwd, location);
+    if (this.loadedLocations.has(resolved)) return;
+    const wsdlText = await readFileOrUrl<string>(resolved, {
+      allowUnknownExtensions: true,
+      cwd: this.cwd,
+      fetch: this.fetchFn,
+      importFn: defaultImportFn,
+      logger: this.logger,
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
-    const wsdlText = await response.text();
-    const wsdlObject = await this.loadWSDL(wsdlText);
-    this.loadedLocations.set(location, wsdlObject);
+    await this.loadWSDL(wsdlText, resolved);
   }
 
   getAliasMapFromAttributes(attributes: XSSchema['attributes'] | WSDLDefinition['attributes']) {
@@ -1000,11 +1136,7 @@ export class SOAPLoader {
         const candidateName = `${prefix}_${complexTypeName}_Input`;
         let inputTypeName = candidateName;
         if (this.schemaComposer.has(candidateName)) {
-          const nsSlug = complexTypeNamespace
-            .replace(/^https?:\/\//, '')
-            .replace(/[^a-zA-Z0-9]+/g, '_')
-            .replace(/^_+|_+$/g, '')
-            .replace(/^\d/, '_$&');
+          const nsSlug = namespaceToSlug(complexTypeNamespace);
           inputTypeName = `${nsSlug}_${complexTypeName}_Input`;
           let i = 2;
           while (this.schemaComposer.has(inputTypeName)) {
@@ -1253,11 +1385,7 @@ export class SOAPLoader {
         const candidateName = `${prefix}_${complexTypeName}`;
         let outputTypeName = candidateName;
         if (this.schemaComposer.has(candidateName)) {
-          const nsSlug = complexTypeNamespace
-            .replace(/^https?:\/\//, '')
-            .replace(/[^a-zA-Z0-9]+/g, '_')
-            .replace(/^_+|_+$/g, '')
-            .replace(/^\d/, '_$&');
+          const nsSlug = namespaceToSlug(complexTypeNamespace);
           outputTypeName = `${nsSlug}_${complexTypeName}`;
           let i = 2;
           while (this.schemaComposer.has(outputTypeName)) {
