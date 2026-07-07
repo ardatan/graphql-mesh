@@ -1,5 +1,136 @@
 # @graphql-mesh/odata
 
+## 0.106.46
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0b0b74c`](https://github.com/ardatan/graphql-mesh/commit/0b0b74cf7691315aa86d16b644c5a523c147d44c),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`b2d2384`](https://github.com/ardatan/graphql-mesh/commit/b2d23842a1a21e3f0cce1beb0f082ffbb4d58d74),
+  [`899de24`](https://github.com/ardatan/graphql-mesh/commit/899de247383fdc0712286c1db3f4cb17afcf052c),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`d7757fa`](https://github.com/ardatan/graphql-mesh/commit/d7757fab6c390a88076409da624e2524d91261a5),
+  [`f66010a`](https://github.com/ardatan/graphql-mesh/commit/f66010a83d75f83bf28dadf4d4d029bbdd47ad20),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa)]:
+  - @graphql-mesh/store@0.104.39
+  - @graphql-mesh/types@0.104.29
+  - @omnigraph/odata@0.2.46
+
+## 0.106.45
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3aabd36`](https://github.com/ardatan/graphql-mesh/commit/3aabd36e7a6b5573e985e2836c624e0ab3a6b08c)]:
+  - @omnigraph/odata@0.2.45
+
+## 0.106.44
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`fa6f8ee`](https://github.com/ardatan/graphql-mesh/commit/fa6f8ee58af8b4203cc5fe1f9c79b7c266d25257),
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4)]:
+  - @graphql-mesh/store@0.104.38
+  - @graphql-mesh/types@0.104.28
+  - @omnigraph/odata@0.2.44
+
+## 0.106.43
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3acfd01`](https://github.com/ardatan/graphql-mesh/commit/3acfd01f0b4190717dcc223e8dcdeb04945c1eeb)]:
+  - @omnigraph/odata@0.2.43
+
+## 0.106.42
+
+### Patch Changes
+
+- Updated dependencies
+  [[`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)]:
+  - @graphql-mesh/store@0.104.37
+  - @graphql-mesh/types@0.104.27
+  - @omnigraph/odata@0.2.42
+
+## 0.106.41
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fd8f4c3`](https://github.com/ardatan/graphql-mesh/commit/fd8f4c39d598563e6446a028664a5a8704ed6ca8)]:
+  - @omnigraph/odata@0.2.41
+
+## 0.106.40
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d874091`](https://github.com/ardatan/graphql-mesh/commit/d874091f0711ef7cb376b3f121d891911a2ca52b)]:
+  - @omnigraph/odata@0.2.40
+
+## 0.106.39
+
+### Patch Changes
+
+- Updated dependencies
+  [[`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2),
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)]:
+  - @graphql-mesh/types@0.104.26
+  - @omnigraph/odata@0.2.39
+  - @graphql-mesh/store@0.104.36
+
+## 0.106.38
+
+### Patch Changes
+
+- Updated dependencies
+  [[`45bb6de`](https://github.com/ardatan/graphql-mesh/commit/45bb6dec17b81e9048945e4d3a3dd741a6f4824b)]:
+  - @omnigraph/odata@0.2.38
+  - @graphql-mesh/store@0.104.35
+
+## 0.106.37
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/odata@0.2.37
+  - @graphql-mesh/store@0.104.34
+
+## 0.106.36
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/odata@0.2.36
+  - @graphql-mesh/store@0.104.33
+
+## 0.106.35
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @omnigraph/odata@0.2.35
+  - @graphql-mesh/store@0.104.32
+
+## 0.106.34
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ea2203c`](https://github.com/ardatan/graphql-mesh/commit/ea2203c414c797750161c610ebaadde7560c019c),
+  [`e1db67c`](https://github.com/ardatan/graphql-mesh/commit/e1db67c745d5c559a07460142f549c9b3b1dd618)]:
+  - @omnigraph/odata@0.2.34
+  - @graphql-mesh/store@0.104.31
+
 ## 0.106.33
 
 ### Patch Changes

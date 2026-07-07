@@ -1,5 +1,62 @@
 # @graphql-mesh/string-interpolation
 
+## 0.5.17
+
+### Patch Changes
+
+- [#9512](https://github.com/ardatan/graphql-mesh/pull/9512)
+  [`06c0dee`](https://github.com/ardatan/graphql-mesh/commit/06c0deed78c53a092b423a8ca360515105127d10)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`dayjs@^1.11.21` ↗︎](https://www.npmjs.com/package/dayjs/v/1.11.21) (from
+    `^1.11.20`, in `dependencies`)
+
+## 0.5.16
+
+### Patch Changes
+
+- [`94fbfbd`](https://github.com/ardatan/graphql-mesh/commit/94fbfbd41d56cfba3d11a7c3dc21b200a1f89069)
+  Thanks [@ardatan](https://github.com/ardatan)! - When `{missing}` tries to interpolate `missing`
+  key from the context, it returns `undefined`. If the entire string is just the placeholder, it
+  should return `undefined` instead of the string with `undefined` in it. This change adds a check
+  for this case and returns `undefined` when the entire string is a placeholder for an undefined
+  value.
+
+## 0.5.15
+
+### Patch Changes
+
+- [`339c32c`](https://github.com/ardatan/graphql-mesh/commit/339c32c44b5dfbc810c0cf3455b2ff068b5c5b00)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not treat empty strings as undefined
+
+## 0.5.14
+
+### Patch Changes
+
+- [#9348](https://github.com/ardatan/graphql-mesh/pull/9348)
+  [`3ad6a00`](https://github.com/ardatan/graphql-mesh/commit/3ad6a005a9daa1f93a4286dc3d240acd1059f53f)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency [`dayjs@^1.11.20` ↗︎](https://www.npmjs.com/package/dayjs/v/1.11.20) (from
+    `1.11.20`, in `dependencies`)
+  - Updated dependency [`json-pointer@^0.6.2` ↗︎](https://www.npmjs.com/package/json-pointer/v/0.6.2)
+    (from `0.6.2`, in `dependencies`)
+  - Updated dependency [`lodash.get@^4.4.2` ↗︎](https://www.npmjs.com/package/lodash.get/v/4.4.2)
+    (from `4.4.2`, in `dependencies`)
+
+## 0.5.13
+
+### Patch Changes
+
+- [#9347](https://github.com/ardatan/graphql-mesh/pull/9347)
+  [`13af2ff`](https://github.com/ardatan/graphql-mesh/commit/13af2ff997cc63953ff50198d1851f8b7101c292)
+  Thanks [@ardatan](https://github.com/ardatan)! - If the entire interpolation string is a
+  placeholder for a value, then return that value;
+
+  If `{ args: { n: 1, flag: true, name: 'test' } }` is passed as data,
+  - `{args}` will return `{ n: 1, flag: true, name: 'test' }`
+  - `{args.name}` will return `"test"`
+  - `{args.n}` will return `1`
+  - `{args.flag}` will return `true`
+
 ## 0.5.12
 
 ### Patch Changes

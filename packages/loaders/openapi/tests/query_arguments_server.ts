@@ -9,11 +9,19 @@ import { createRouter, Response } from 'fets';
 
 const data = [{ id: 1 }, { id: 2 }, { id: 3 }];
 
-export const queryArgumentsApi = createRouter().route({
-  method: 'GET',
-  path: '/todos',
-  handler: req => {
-    const ids = (req.query?.id__in ?? []) as unknown as Array<number>;
-    return Response.json(data.filter(x => ids.includes(x.id)));
-  },
-});
+export const queryArgumentsApi = createRouter()
+  .route({
+    method: 'GET',
+    path: '/todos',
+    handler: req => {
+      const ids = (req.query?.id__in ?? []) as unknown as Array<number>;
+      return Response.json(data.filter(x => ids.includes(x.id)));
+    },
+  })
+  .route({
+    method: 'GET',
+    path: '/query',
+    handler: req => {
+      return Response.json({ url: req.url });
+    },
+  });

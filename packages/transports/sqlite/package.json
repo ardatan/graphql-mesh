@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-sqlite",
-  "version": "0.9.27",
+  "version": "0.9.31",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,14 +35,14 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/transport-common": "^1.0.15",
-    "@graphql-tools/utils": "^11.0.0",
-    "@omnigraph/sqlite": "^0.8.25",
+    "@graphql-mesh/transport-common": "^1.0.16",
+    "@graphql-tools/utils": "^11.1.1",
+    "@omnigraph/sqlite": "^0.8.29",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "graphql": "16.13.1"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",

@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/raml",
-  "version": "0.109.33",
+  "version": "0.109.43",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,25 +35,20 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/store": "^0.104.30",
-    "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.28",
-    "@omnigraph/raml": "0.109.32",
+    "@graphql-mesh/store": "^0.104.39",
+    "@graphql-mesh/types": "^0.104.29",
+    "@graphql-mesh/utils": "^0.104.37",
+    "@omnigraph/raml": "^0.109.42",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "graphql": "16.13.1"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
   },
   "sideEffects": false,
-  "buildOptions": {
-    "external": [
-      "cross-fetch"
-    ]
-  },
   "typescript": {
     "definition": "dist/typings/index.d.ts"
   }

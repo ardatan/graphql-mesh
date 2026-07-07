@@ -111,19 +111,12 @@ export class Interpolator {
   }
 
   parse(str, data = {}) {
-    const strOrEmptyStr = str || '';
-    const rules = this.parseRules(strOrEmptyStr);
+    if (str == null) {
+      return str;
+    }
+    const rules = this.parseRules(str);
     if (rules && rules.length > 0) {
-      const result = this.parseFromRules(strOrEmptyStr, data, rules);
-      if (
-        rules.length === 1 &&
-        result === '' &&
-        strOrEmptyStr.startsWith('{') &&
-        strOrEmptyStr.endsWith('}')
-      ) {
-        return undefined;
-      }
-      return result;
+      return this.parseFromRules(str, data, rules);
     }
     return str;
   }
@@ -134,11 +127,13 @@ export class Interpolator {
 
   applyRule(str, rule, data = {}) {
     const dataToReplace = this.applyData(rule.key, data);
+    if (dataToReplace == null && str === rule.replace) {
+      return dataToReplace;
+    }
     if (dataToReplace !== undefined) {
       const modifiedData = this.applyModifiers(rule.modifiers, dataToReplace, data);
-      // If the entire string is just the placeholder and the replacement is an object,
-      // return the object directly instead of converting to "[object Object]"
-      if (str === rule.replace && typeof modifiedData === 'object' && modifiedData !== null) {
+      // If the entire string is just the placeholder, return the value
+      if (str === rule.replace) {
         return modifiedData;
       }
       // For objects embedded in a larger string, JSON stringify them

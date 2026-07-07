@@ -1,0 +1,112 @@
+# fixes https://github.com/ardatan/graphql-mesh/actions/runs/24841015636/job/72714895361
+# the problem is that when we have a lot of commits/PRs, the GitHub GraphQL API times out
+# and doesn't return any data, breaking the release flow. this change splits the requests
+# into chunks of 20 items per request
+diff --git a/dist/changesets-get-github-info.cjs.js b/dist/changesets-get-github-info.cjs.js
+index 6c37428da9589f0ab80b5c628cfabe3d5f3b06f5..440a0457a348be8ee7916bf52856ab42da3942ea 100644
+--- a/dist/changesets-get-github-info.cjs.js
++++ b/dist/changesets-get-github-info.cjs.js
+@@ -164,51 +164,63 @@ const GHDataLoader = new DataLoader__default["default"](async requests => {
+     }
+     repos[repo].push(data);
+   });
+-  let fetchResponse;
+-  try {
+-    fetchResponse = await fetch__default["default"](GITHUB_GRAPHQL_URL, {
+-      method: "POST",
+-      headers: {
+-        Authorization: `Token ${GITHUB_TOKEN}`
+-      },
+-      body: JSON.stringify({
+-        query: makeQuery(repos)
+-      })
+-    });
+-  } catch (e) {
+-    throw new Error(`An error occurred when fetching data from GitHub\n${e.message}`);
+-  }
+-  let data;
+-  try {
+-    data = await fetchResponse.json();
+-  } catch (e) {
+-    throw new Error(`Failed to parse data from GitHub\n${e.message}`);
+-  }
+-  if (data.errors) {
+-    throw new Error(`Fetched data from GitHub returned errors\n${JSON.stringify(data.errors, null, 2)}`);
+-  }
+
+-  // this is mainly for the case where there's an authentication problem
+-  if (!data.data) {
+-    throw new Error(`Fetched data from GitHub has missing data\n${JSON.stringify(data)}`);
++  // split into chunks of 20 items per request to avoid github query timeouts
++  const chunks = [];
++  for (const repo of Object.keys(repos)) {
++    const items = repos[repo];
++    for (let i = 0; i < items.length; i += 20) {
++      chunks.push({ [repo]: items.slice(i, i + 20) });
++    }
+   }
++
+   let cleanedData = {};
+-  Object.keys(repos).forEach((repo, index) => {
+-    let output = {
+-      commit: {},
+-      pull: {}
+-    };
+-    cleanedData[repo] = output;
+-    Object.entries(data.data[`a${index}`]).forEach(([field, value]) => {
+-      // this is "a" because that's how it was when it was first written, "a" means it's a commit not a pr
+-      // we could change it to commit__ but then we have to get new GraphQL results from the GH API to put in the tests
+-      if (field[0] === "a") {
+-        output.commit[field.substring(1)] = value;
+-      } else {
+-        output.pull[field.replace("pr__", "")] = value;
++
++  for (const chunk of chunks) {
++    let fetchResponse;
++    try {
++      fetchResponse = await fetch__default["default"](GITHUB_GRAPHQL_URL, {
++        method: "POST",
++        headers: {
++          Authorization: `Token ${GITHUB_TOKEN}`
++        },
++        body: JSON.stringify({
++          query: makeQuery(chunk)
++        })
++      });
++    } catch (e) {
++      throw new Error(`An error occurred when fetching data from GitHub\n${e.message}`);
++    }
++    let data;
++    try {
++      data = await fetchResponse.json();
++    } catch (e) {
++      throw new Error(`Failed to parse data from GitHub\n${e.message}`);
++    }
++    if (data.errors) {
++      throw new Error(`Fetched data from GitHub returned errors\n${JSON.stringify(data.errors, null, 2)}\nFor the following query\n${makeQuery(chunk)}`);
++    }
++
++    // this is mainly for the case where there's an authentication problem
++    if (!data.data) {
++      throw new Error(`Fetched data from GitHub has missing data\n${JSON.stringify(data)}`);
++    }
++    Object.keys(chunk).forEach((repo, index) => {
++      if (!cleanedData[repo]) {
++        cleanedData[repo] = { commit: {}, pull: {} };
+       }
++      const output = cleanedData[repo];
++      Object.entries(data.data[`a${index}`]).forEach(([field, value]) => {
++        // this is "a" because that's how it was when it was first written, "a" means it's a commit not a pr
++        // we could change it to commit__ but then we have to get new GraphQL results from the GH API to put in the tests
++        if (field[0] === "a") {
++          output.commit[field.substring(1)] = value;
++        } else {
++          output.pull[field.replace("pr__", "")] = value;
++        }
++      });
+     });
+-  });
++  }
+   return requests.map(_ref2 => {
+     let {
+         repo

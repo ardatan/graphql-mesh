@@ -197,36 +197,339 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     );
   }
 
-  for (const [_name, schema] of Object.entries(
-    (oasOrSwagger as OpenAPIV3.Document).components?.schemas ||
-      (oasOrSwagger as OpenAPIV2.Document).definitions ||
-      {},
-  )) {
-    const mapping = (schema as any).discriminator?.mapping as Record<string, string>;
-    if (mapping) {
-      for (const [key, value] of Object.entries(mapping)) {
-        if (typeof value === 'string') {
-          const docIdentifier = value.startsWith('#') ? '#' : value.startsWith('..') ? '..' : null;
-          if (docIdentifier) {
-            const [, ref] = value.split(docIdentifier);
-            (schema as any).discriminatorMapping = (schema as any).discriminatorMapping || {};
-            (schema as any).discriminatorMapping[key] = resolvePath(ref, oasOrSwagger);
-          } else if (value.includes('/')) {
-            logger.warn(`Unsupported discriminator mapping: ${value}`);
-            continue;
-          } else {
-            const schemaObj = lookFromMaps(oasOrSwagger, value);
-            if (!schemaObj) {
-              logger.warn(`Invalid discriminator mapping: ${value}`);
-              continue;
-            }
-            (schema as any).discriminatorMapping = (schema as any).discriminatorMapping || {};
-            (schema as any).discriminatorMapping[key] = schemaObj;
+  function isObjectRecord(value: unknown): value is Record<string, unknown> {
+    return value != null && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function ensureDiscriminatorMapping(schema: Record<string, unknown>): Record<string, unknown> {
+    const discriminatorMapping = schema.discriminatorMapping;
+    if (isObjectRecord(discriminatorMapping)) {
+      return discriminatorMapping;
+    }
+    const newDiscriminatorMapping: Record<string, unknown> = {};
+    schema.discriminatorMapping = newDiscriminatorMapping;
+    return newDiscriminatorMapping;
+  }
+
+  function getRefPathFromMappingValue(value: string): {
+    refPath: string;
+    isExternalFileRef: boolean;
+  } | null {
+    if (value.startsWith('#')) {
+      return {
+        refPath: value.slice(1),
+        isExternalFileRef: false,
+      };
+    }
+    if (value.startsWith('..')) {
+      const hashIndex = value.indexOf('#');
+      if (hashIndex === -1) {
+        const refPath = value.slice(2);
+        const firstSegment = refPath.split('/').find(Boolean);
+        if (!refPath.startsWith('/') || firstSegment?.includes('.')) {
+          return null;
+        }
+        return {
+          refPath,
+          isExternalFileRef: false,
+        };
+      }
+      return {
+        refPath: value.slice(hashIndex + 1),
+        isExternalFileRef: true,
+      };
+    }
+    return null;
+  }
+
+  function lookInUnionBranchesByResolvedRef(
+    schema: Record<string, unknown>,
+    refPath: string,
+  ): unknown {
+    for (const combinator of ['oneOf', 'anyOf', 'allOf'] as const) {
+      const list = schema[combinator];
+      if (Array.isArray(list)) {
+        for (const subSchema of list) {
+          if (isObjectRecord(subSchema) && subSchema.$resolvedRef === refPath) {
+            return subSchema;
           }
         }
       }
     }
   }
+
+  function tryApplyDiscriminatorMapping(schema: Record<string, unknown>) {
+    const discriminator = schema.discriminator;
+    if (!isObjectRecord(discriminator)) {
+      return;
+    }
+
+    const mapping = discriminator.mapping;
+    if (!isObjectRecord(mapping)) {
+      return;
+    }
+
+    for (const [key, value] of Object.entries(mapping)) {
+      if (typeof value !== 'string') {
+        continue;
+      }
+
+      const ref = getRefPathFromMappingValue(value);
+      if (ref != null) {
+        const resolvedSchema = ref.isExternalFileRef
+          ? lookInUnionBranchesByResolvedRef(schema, ref.refPath) ||
+            resolvePath(ref.refPath, oasOrSwagger)
+          : resolvePath(ref.refPath, oasOrSwagger) ||
+            lookInUnionBranchesByResolvedRef(schema, ref.refPath);
+        if (!resolvedSchema) {
+          logger.warn(`Invalid discriminator mapping: ${value}`);
+          continue;
+        }
+        ensureDiscriminatorMapping(schema)[key] = resolvedSchema;
+      } else if (value.includes('/')) {
+        logger.warn(`Unsupported discriminator mapping: ${value}`);
+      } else {
+        const schemaObj = lookFromMaps(oasOrSwagger, value);
+        if (!schemaObj) {
+          logger.warn(`Invalid discriminator mapping: ${value}`);
+          continue;
+        }
+        ensureDiscriminatorMapping(schema)[key] = schemaObj;
+      }
+    }
+  }
+
+  const visitedSchemas = new WeakSet<object>();
+
+  function visitSchemaOrSchemas(schemaOrSchemas: unknown) {
+    if (Array.isArray(schemaOrSchemas)) {
+      for (const schema of schemaOrSchemas) {
+        visitSchema(schema);
+      }
+    } else {
+      visitSchema(schemaOrSchemas);
+    }
+  }
+
+  function visitSchema(schema: unknown) {
+    if (!isObjectRecord(schema)) {
+      return;
+    }
+    if (visitedSchemas.has(schema)) {
+      return;
+    }
+    visitedSchemas.add(schema);
+
+    tryApplyDiscriminatorMapping(schema);
+
+    for (const combinator of ['oneOf', 'anyOf', 'allOf'] as const) {
+      const list = schema[combinator];
+      if (Array.isArray(list)) {
+        for (const sub of list) {
+          visitSchema(sub);
+        }
+      }
+    }
+
+    for (const schemaKey of [
+      'additionalItems',
+      'additionalProperties',
+      'contains',
+      'else',
+      'if',
+      'items',
+      'not',
+      'then',
+    ] as const) {
+      visitSchemaOrSchemas(schema[schemaKey]);
+    }
+
+    for (const propsKey of ['definitions', 'properties', 'patternProperties'] as const) {
+      const props = schema[propsKey];
+      if (isObjectRecord(props)) {
+        for (const sub of Object.values(props)) {
+          visitSchema(sub);
+        }
+      }
+    }
+
+    // Freshly-resolved mapping targets may themselves contain inline discriminators
+    const resolvedMapping = schema.discriminatorMapping;
+    if (isObjectRecord(resolvedMapping)) {
+      for (const sub of Object.values(resolvedMapping)) {
+        visitSchema(sub);
+      }
+    }
+  }
+
+  function visitContent(content: unknown) {
+    if (!isObjectRecord(content)) {
+      return;
+    }
+    for (const media of Object.values(content)) {
+      if (isObjectRecord(media)) {
+        visitSchema(media.schema);
+      }
+    }
+  }
+
+  function visitParameters(parameters: unknown) {
+    if (!Array.isArray(parameters)) {
+      return;
+    }
+    for (const parameter of parameters) {
+      if (!isObjectRecord(parameter)) {
+        continue;
+      }
+      // OpenAPI v3 / Swagger v2 body parameter
+      visitSchema(parameter.schema);
+      // OpenAPI v3 parameter content variant
+      visitContent(parameter.content);
+    }
+  }
+
+  function visitRequestBody(requestBody: unknown) {
+    if (!isObjectRecord(requestBody)) {
+      return;
+    }
+    visitContent(requestBody.content);
+  }
+
+  function visitResponses(responses: unknown) {
+    if (!isObjectRecord(responses)) {
+      return;
+    }
+    for (const response of Object.values(responses)) {
+      if (!isObjectRecord(response)) {
+        continue;
+      }
+      // OpenAPI v3
+      visitContent(response.content);
+      // Swagger v2
+      visitSchema(response.schema);
+      const headers = response.headers;
+      if (isObjectRecord(headers)) {
+        for (const header of Object.values(headers)) {
+          if (isObjectRecord(header)) {
+            visitSchema(header.schema);
+          }
+        }
+      }
+    }
+  }
+
+  const operationMethodNames = new Set([
+    'get',
+    'post',
+    'put',
+    'delete',
+    'patch',
+    'options',
+    'head',
+    'trace',
+  ]);
+  const visitedPathItems = new WeakSet<object>();
+
+  function visitOperation(operation: unknown) {
+    if (!isObjectRecord(operation)) {
+      return;
+    }
+    visitParameters(operation.parameters);
+    visitRequestBody(operation.requestBody);
+    visitResponses(operation.responses);
+    visitCallbacks(operation.callbacks);
+  }
+
+  function visitPathItem(pathItem: unknown) {
+    if (!isObjectRecord(pathItem)) {
+      return;
+    }
+    if (visitedPathItems.has(pathItem)) {
+      return;
+    }
+    visitedPathItems.add(pathItem);
+
+    visitParameters(pathItem.parameters);
+    for (const [key, operation] of Object.entries(pathItem)) {
+      if (!operationMethodNames.has(key.toLowerCase())) {
+        continue;
+      }
+      visitOperation(operation);
+    }
+  }
+
+  function visitCallbacks(callbacks: unknown) {
+    if (!isObjectRecord(callbacks)) {
+      return;
+    }
+    for (const callback of Object.values(callbacks)) {
+      if (!isObjectRecord(callback)) {
+        continue;
+      }
+      for (const pathItem of Object.values(callback)) {
+        visitPathItem(pathItem);
+      }
+    }
+  }
+
+  function visitOpenAPIDocument(oas: OpenAPIV3.Document | OpenAPIV2.Document) {
+    const v3Components = (oas as OpenAPIV3.Document).components;
+    if (isObjectRecord(v3Components)) {
+      const schemas = v3Components.schemas;
+      if (isObjectRecord(schemas)) {
+        for (const schema of Object.values(schemas)) {
+          visitSchema(schema);
+        }
+      }
+      const parameters = v3Components.parameters;
+      if (isObjectRecord(parameters)) {
+        visitParameters(Object.values(parameters));
+      }
+      const requestBodies = v3Components.requestBodies;
+      if (isObjectRecord(requestBodies)) {
+        for (const requestBody of Object.values(requestBodies)) {
+          visitRequestBody(requestBody);
+        }
+      }
+      const componentResponses = v3Components.responses;
+      if (isObjectRecord(componentResponses)) {
+        visitResponses(componentResponses);
+      }
+      const headers = v3Components.headers;
+      if (isObjectRecord(headers)) {
+        for (const header of Object.values(headers)) {
+          if (isObjectRecord(header)) {
+            visitSchema(header.schema);
+          }
+        }
+      }
+      visitCallbacks(v3Components.callbacks);
+    }
+
+    const v2Definitions = (oas as OpenAPIV2.Document).definitions;
+    if (isObjectRecord(v2Definitions)) {
+      for (const schema of Object.values(v2Definitions)) {
+        visitSchema(schema);
+      }
+    }
+    const v2Parameters = (oas as OpenAPIV2.Document).parameters;
+    if (isObjectRecord(v2Parameters)) {
+      visitParameters(Object.values(v2Parameters));
+    }
+    const v2Responses = (oas as OpenAPIV2.Document).responses;
+    if (isObjectRecord(v2Responses)) {
+      visitResponses(v2Responses);
+    }
+
+    const paths = oas.paths;
+    if (isObjectRecord(paths)) {
+      for (const pathItem of Object.values(paths)) {
+        visitPathItem(pathItem);
+      }
+    }
+  }
+
+  visitOpenAPIDocument(oasOrSwagger);
 
   const operations: JSONSchemaOperationConfig[] = [];
   let baseOperationArgTypeMap: Record<string, JSONSchemaObject>;

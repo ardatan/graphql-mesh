@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+  targetNamespace="http://example.com/hello/names"
+  xmlns:tns="http://example.com/hello/names"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified">
+
+  <xsd:complexType name="Name">
+    <xsd:sequence>
+      <xsd:element name="first" type="xsd:string"/>
+      <xsd:element name="last" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

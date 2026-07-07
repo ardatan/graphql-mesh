@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/utils",
-  "version": "0.104.28",
+  "version": "0.104.37",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,29 +36,29 @@
   },
   "dependencies": {
     "@envelop/instrumentation": "^1.0.0",
-    "@graphql-mesh/cross-helpers": "^0.4.12",
-    "@graphql-mesh/string-interpolation": "^0.5.12",
-    "@graphql-mesh/types": "^0.104.25",
-    "@graphql-tools/batch-delegate": "^10.0.18",
-    "@graphql-tools/delegate": "^12.0.12",
-    "@graphql-tools/utils": "^11.0.0",
-    "@graphql-tools/wrap": "^11.1.12",
+    "@graphql-mesh/cross-helpers": "^0.4.14",
+    "@graphql-mesh/string-interpolation": "^0.5.17",
+    "@graphql-mesh/types": "^0.104.29",
+    "@graphql-tools/batch-delegate": "^10.0.24",
+    "@graphql-tools/delegate": "^12.0.17",
+    "@graphql-tools/utils": "^11.1.1",
+    "@graphql-tools/wrap": "^11.1.16",
     "@whatwg-node/disposablestack": "^0.0.6",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.2.0",
     "dset": "^3.1.2",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.3.0",
     "lodash.get": "^4.4.2",
     "lodash.topath": "^4.5.2",
-    "tiny-lru": "^11.4.7",
+    "tiny-lru": "^13.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@apollo/server": "5.4.0",
+    "@apollo/server": "5.5.1",
     "@types/js-yaml": "4.0.9",
     "@types/lodash.topath": "4.5.9",
     "@types/object-hash": "3.0.6",
-    "graphql": "16.13.1"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",

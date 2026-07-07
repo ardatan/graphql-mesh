@@ -72,6 +72,12 @@ if (process.env.E2E_TEST && process.env.CI && !isLinux) {
   }
 }
 
+const ESM_PACKAGES = [
+  '@neo4j/cypher-builder',
+  '@graphql-codegen/typescript/node_modules/auto-bind',
+  'auto-bind',
+];
+
 /** @type {import('jest').Config} */
 module.exports = {
   displayName,
@@ -117,6 +123,7 @@ module.exports = {
   transform: {
     '^.+\\.m?(t|j)s?$': 'babel-jest',
   },
+  transformIgnorePatterns: [`node_modules/(?!(${ESM_PACKAGES.join('|')})/)`],
   resolver: 'bob-the-bundler/jest-resolver',
   testMatch,
   setupFilesAfterEnv: ['<rootDir>/setup-jest.js'],

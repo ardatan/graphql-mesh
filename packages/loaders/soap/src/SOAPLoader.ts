@@ -7,6 +7,7 @@ import {
   GraphQLFloat,
   GraphQLInputObjectType,
   GraphQLInt,
+  GraphQLList,
   GraphQLString,
 } from 'graphql';
 import type {
@@ -37,7 +38,7 @@ import {
   GraphQLVoid,
   RegularExpression,
 } from 'graphql-scalars';
-import { process } from '@graphql-mesh/cross-helpers';
+import { path, process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
@@ -146,6 +147,15 @@ const soapDirective = new GraphQLDirective({
     soapNamespace: {
       type: GraphQLString,
     },
+    headerArgNames: {
+      type: new GraphQLList(GraphQLString),
+    },
+    argNamespaces: {
+      type: ObjMapScalar,
+    },
+    typeNamespaces: {
+      type: ObjMapScalar,
+    },
   },
 });
 
@@ -166,6 +176,89 @@ function isQueryOperationName(operationName: string) {
   return QUERY_PREFIXES.some(prefix => operationName.toLowerCase().startsWith(prefix));
 }
 
+// Matches any RFC-3986 scheme (2+ chars to avoid mistaking Windows drive
+// letters like "C:" for URI schemes). The scheme isn't required to be
+// followed by "//" — `file:/tmp/x`, `urn:isbn:1234`, etc. are valid
+// absolute URIs.
+const URI_SCHEME_RE = /^[a-zA-Z][a-zA-Z0-9+.-]+:/;
+
+/**
+ * Resolve a (possibly relative) WSDL/XSD location against the location of the
+ * document doing the import. Mirrors XML Schema's xml:base resolution rules:
+ * relative `schemaLocation` / `wsdl:import location` is resolved against the
+ * importing document's own URI, not against a fixed root.
+ *
+ * Handles both URIs (http, https, file, urn, …) and filesystem paths uniformly.
+ */
+function resolveLocation(base: string | undefined, location: string): string {
+  // Already-absolute URIs (any scheme) pass through.
+  if (URI_SCHEME_RE.test(location)) return location;
+  if (!base) return location;
+  if (URI_SCHEME_RE.test(base)) {
+    // base is a URI — let URL handle "../" and root-relative ("/foo") paths.
+    return new URL(location, base).href;
+  }
+  // base is a filesystem path. A filesystem-absolute location passes through;
+  // anything else is resolved relative to base's containing directory.
+  if (path.isAbsolute(location)) return location;
+  return path.resolve(path.dirname(base), location);
+}
+
+/**
+ * Convert a namespace URI to a GraphQL-safe identifier slug.
+ * Uses a single linear pass to avoid polynomial regex backtracking on
+ * user-controlled input (CodeQL js/polynomial-redos).
+ */
+function namespaceToSlug(namespace: string): string {
+  // Determine start index after optional protocol prefix
+  let start = 0;
+  if (namespace.startsWith('https://')) {
+    start = 8;
+  } else if (namespace.startsWith('http://')) {
+    start = 7;
+  }
+
+  // Build slug in one pass:
+  // - keep alphanumeric characters as-is
+  // - collapse any run of non-alphanumeric characters into a single '_'
+  // - skip leading and trailing '_' (pendingUnderscore is only flushed when
+  //   a subsequent alphanumeric character is found)
+  // Use an array of chunks to avoid O(n^2) repeated string concatenation.
+  const chunks: string[] = [];
+  let pendingUnderscore = false;
+  for (let i = start; i < namespace.length; i++) {
+    const code = namespace.charCodeAt(i);
+    if (
+      (code >= 0x30 && code <= 0x39) || // 0-9
+      (code >= 0x41 && code <= 0x5a) || // A-Z
+      (code >= 0x61 && code <= 0x7a) // a-z
+    ) {
+      if (pendingUnderscore && chunks.length > 0) {
+        chunks.push('_');
+      }
+      pendingUnderscore = false;
+      chunks.push(namespace[i]);
+    } else {
+      pendingUnderscore = true;
+    }
+  }
+
+  // If nothing was accumulated (e.g. namespace is symbols-only or empty after
+  // stripping the protocol prefix), return a safe sentinel so callers always
+  // receive a non-empty, GraphQL-Name-compatible string.
+  if (chunks.length === 0) {
+    return '_';
+  }
+
+  // Prefix a leading digit so the result is a valid GraphQL identifier
+  const firstCode = chunks[0].charCodeAt(0);
+  if (firstCode >= 0x30 && firstCode <= 0x39) {
+    chunks.unshift('_');
+  }
+
+  return chunks.join('');
+}
+
 export class SOAPLoader {
   private schemaComposer = new SchemaComposer();
   private namespaceDefinitionsMap = new Map<string, WSDLDefinition[]>();
@@ -183,7 +276,11 @@ export class SOAPLoader {
     }
   >();
 
-  private complexTypeInputTCMap = new WeakMap<XSComplexType, InputTypeComposer>();
+  private complexTypeInputTCMap = new WeakMap<
+    XSComplexType,
+    InputTypeComposer | ScalarTypeComposer
+  >();
+
   private complexTypeOutputTCMap = new WeakMap<
     XSComplexType,
     ObjectTypeComposer | ScalarTypeComposer
@@ -191,6 +288,13 @@ export class SOAPLoader {
 
   private simpleTypeTCMap = new WeakMap<XSSimpleType, EnumTypeComposer | ScalarTypeComposer>();
   private namespaceTypePrefixMap = new Map<string, string>();
+  /** Maps GraphQL input type name → the XSD namespace URI where that type is defined. */
+  private typeNamespaceMap = new Map<string, string>();
+  private namespaceElementRefMap = new Map<
+    string,
+    Map<string, { typeName: string; typeNamespace: string }>
+  >();
+
   public loadedLocations = new Map<string, WSDLObject | XSDObject>();
   private schemaHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
   private fetchFn: MeshFetch;
@@ -220,6 +324,7 @@ export class SOAPLoader {
     const namespace = 'http://www.w3.org/2001/XMLSchema';
     const simpleTypeGraphQLScalarMap = new Map<string, GraphQLScalarType>([
       ['anyType', GraphQLJSON],
+      ['anySimpleType', GraphQLString],
       ['anyURI', GraphQLURL],
       ['base64Binary', GraphQLByte],
       ['byte', GraphQLByte],
@@ -320,7 +425,34 @@ export class SOAPLoader {
     return namespaceMessageMap;
   }
 
-  async loadSchema(schemaObj: XSSchema, parentAliasMap: Map<string, string> = new Map()) {
+  async loadSchema(
+    schemaObj: XSSchema,
+    parentAliasMap: Map<string, string> = new Map(),
+    baseUrl?: string,
+  ) {
+    // A bare <xsd:schema> wrapper that only contains imports (no targetNamespace,
+    // no type definitions) is a valid pattern — it lets a WSDL pull external
+    // schemas into its <wsdl:types> without redefining anything itself. Process
+    // its imports here. A "chameleon" schema (no targetNamespace + own type
+    // definitions) is a different, larger case the loader doesn't yet support;
+    // surface it loudly rather than silently dropping the definitions.
+    if (!schemaObj.attributes || !schemaObj.attributes.targetNamespace) {
+      if (schemaObj.import) {
+        for (const importObj of schemaObj.import) {
+          const importLocation = importObj.attributes.schemaLocation;
+          if (importLocation) {
+            await this.fetchXSD(importLocation, parentAliasMap, baseUrl);
+          }
+        }
+      }
+      if (schemaObj.complexType || schemaObj.simpleType || schemaObj.element) {
+        throw new Error(
+          '<xsd:schema> without targetNamespace but with type definitions ' +
+            '(chameleon schemas) is not yet supported by the SOAP loader.',
+        );
+      }
+      return;
+    }
     const schemaNamespace = schemaObj.attributes.targetNamespace;
     const aliasMap = this.getAliasMapFromAttributes(schemaObj.attributes);
     let typePrefix = this.namespaceTypePrefixMap.get(schemaNamespace);
@@ -338,8 +470,8 @@ export class SOAPLoader {
     if (schemaObj.import) {
       for (const importObj of schemaObj.import) {
         const importLocation = importObj.attributes.schemaLocation;
-        if (importLocation && !this.loadedLocations.has(importLocation)) {
-          await this.fetchXSD(importLocation);
+        if (importLocation) {
+          await this.fetchXSD(importLocation, parentAliasMap, baseUrl);
         }
       }
     }
@@ -399,12 +531,24 @@ export class SOAPLoader {
               refSimpleType,
             );
           }
+          if (!refComplexType && !refSimpleType) {
+            // Forward reference: referenced type not yet loaded. Store for lazy lookup.
+            let elementRefs = this.namespaceElementRefMap.get(schemaNamespace);
+            if (!elementRefs) {
+              elementRefs = new Map();
+              this.namespaceElementRefMap.set(schemaNamespace, elementRefs);
+            }
+            elementRefs.set(elementObj.attributes.name, {
+              typeName: refTypeName,
+              typeNamespace: refTypeNamespace,
+            });
+          }
         }
       }
     }
   }
 
-  async loadDefinition(definition: WSDLDefinition) {
+  async loadDefinition(definition: WSDLDefinition, baseUrl?: string) {
     this.getNamespaceDefinitions(definition.attributes.targetNamespace).push(definition);
     if (definition.attributes.soap12) {
       this.soapNamespace = 'http://www.w3.org/2003/05/soap-envelope';
@@ -421,15 +565,15 @@ export class SOAPLoader {
     if (definition.import) {
       for (const importObj of definition.import) {
         const importLocation = importObj.attributes.location;
-        if (importLocation && !this.loadedLocations.has(importLocation)) {
-          await this.fetchWSDL(importLocation);
+        if (importLocation) {
+          await this.fetchWSDL(importLocation, baseUrl);
         }
       }
     }
     if (definition.types) {
       for (const typesObj of definition.types) {
         for (const schemaObj of typesObj.schema) {
-          await this.loadSchema(schemaObj, definitionAliasMap);
+          await this.loadSchema(schemaObj, definitionAliasMap, baseUrl);
         }
       }
     }
@@ -578,11 +722,36 @@ export class SOAPLoader {
               );
             }
             const aliasMap = this.aliasMap.get(inputMessageObj);
+
+            // Collect which message part names the binding routes to soap:Header
+            const headerPartNames = new Set<string>();
+            for (const inputBinding of bindingOperationObject?.input ?? []) {
+              for (const headerElem of inputBinding.header ?? []) {
+                if (headerElem.attributes?.part) {
+                  headerPartNames.add(headerElem.attributes.part);
+                }
+              }
+            }
+
+            // Build per-arg namespace map and header arg list alongside the existing arg registration
+            const argNamespaceMap: Record<string, string> = {};
+            const headerArgNames: string[] = [];
+
             for (const part of inputMessageObj.part) {
               if (part.attributes.element) {
                 const [elementNamespaceAlias, elementName] = part.attributes.element.split(':');
+                const argName = sanitizeNameForGraphQL(elementName);
+                const elementNs =
+                  aliasMap.get(elementNamespaceAlias) ||
+                  part.attributes[elementNamespaceAlias as keyof WSDLPartAttributes];
+                if (elementNs) {
+                  argNamespaceMap[argName] = elementNs;
+                }
+                if (headerPartNames.has(part.attributes.name || elementName)) {
+                  headerArgNames.push(argName);
+                }
                 rootTC.addFieldArgs(operationFieldName, {
-                  [elementName]: {
+                  [argName]: {
                     type: () => {
                       const elementNamespace =
                         aliasMap.get(elementNamespaceAlias) ||
@@ -602,8 +771,20 @@ export class SOAPLoader {
                 });
               } else if (part.attributes.name) {
                 const partName = part.attributes.name;
+                const argName = sanitizeNameForGraphQL(partName);
+                // For RPC-style <wsdl:part name="X" type="ns:T"/>, the element
+                // wrapper QName is the part name in the binding's namespace —
+                // the type's namespace describes the value type, not the
+                // accessor element. Always use bindingNamespace here, never
+                // part@type's namespace.
+                if (bindingNamespace) {
+                  argNamespaceMap[argName] = bindingNamespace;
+                }
+                if (headerPartNames.has(partName)) {
+                  headerArgNames.push(argName);
+                }
                 rootTC.addFieldArgs(operationFieldName, {
-                  [partName]: {
+                  [argName]: {
                     type: () => {
                       const typeRef = part.attributes.type;
                       const [typeNamespaceAlias, typeName] = typeRef.split(':');
@@ -625,6 +806,13 @@ export class SOAPLoader {
                 });
               }
             }
+
+            if (headerArgNames.length > 0) {
+              soapAnnotations.headerArgNames = headerArgNames;
+            }
+            if (Object.keys(argNamespaceMap).length > 0) {
+              soapAnnotations.argNamespaces = argNamespaceMap;
+            }
           }
         }
       }
@@ -633,8 +821,10 @@ export class SOAPLoader {
 
   private xmlParser = new XMLParser(PARSE_XML_OPTIONS);
 
-  async fetchXSD(location: string, parentAliasMap = new Map<string, string>()) {
-    let xsdText = await readFileOrUrl<string>(location, {
+  async fetchXSD(location: string, parentAliasMap = new Map<string, string>(), baseUrl?: string) {
+    const resolved = resolveLocation(baseUrl ?? this.cwd, location);
+    if (this.loadedLocations.has(resolved)) return;
+    let xsdText = await readFileOrUrl<string>(resolved, {
       allowUnknownExtensions: true,
       cwd: this.cwd,
       fetch: this.fetchFn,
@@ -645,13 +835,14 @@ export class SOAPLoader {
     xsdText = xsdText.split('xmlns:').join('namespace:');
     // WSDL Import is different than XS Import
     const xsdObj: XSDObject = this.xmlParser.parse(xsdText, PARSE_XML_OPTIONS);
+    // Pre-register before recursing so circular imports terminate.
+    this.loadedLocations.set(resolved, xsdObj);
     for (const schemaObj of xsdObj.schema) {
-      await this.loadSchema(schemaObj, parentAliasMap);
+      await this.loadSchema(schemaObj, parentAliasMap, resolved);
     }
-    this.loadedLocations.set(location, xsdObj);
   }
 
-  async loadWSDL(wsdlText: string) {
+  async loadWSDL(wsdlText: string, baseUrl?: string) {
     wsdlText = wsdlText.split('xmlns:').join('namespace:');
     let wsdlObject: WSDLObject;
     try {
@@ -664,19 +855,42 @@ export class SOAPLoader {
         `WSDL definitions not found! Please make sure if your WSDL source is correct, and it contains <definitions> tag.\nReturned response;\n${wsdlText}`,
       );
     }
+    // Anchor a relative filesystem baseUrl against this.cwd. Without this, a
+    // caller passing a relative source (e.g. "./wsdl/foo.wsdl") would have
+    // path.resolve fall back to process.cwd() — which can differ from the
+    // loader's working directory in monorepos / containers, sending nested
+    // imports to the wrong absolute paths.
+    let resolvedBase = baseUrl;
+    if (
+      resolvedBase &&
+      !URI_SCHEME_RE.test(resolvedBase) &&
+      !path.isAbsolute(resolvedBase) &&
+      this.cwd
+    ) {
+      resolvedBase = path.resolve(this.cwd, resolvedBase);
+    }
+    // Pre-register before recursing so circular imports terminate.
+    if (resolvedBase) {
+      this.loadedLocations.set(resolvedBase, wsdlObject);
+    }
     for (const definition of wsdlObject.definitions) {
-      await this.loadDefinition(definition);
+      await this.loadDefinition(definition, resolvedBase);
     }
     return wsdlObject;
   }
 
-  async fetchWSDL(location: string) {
-    const response = await this.fetchFn(location, {
+  async fetchWSDL(location: string, baseUrl?: string) {
+    const resolved = resolveLocation(baseUrl ?? this.cwd, location);
+    if (this.loadedLocations.has(resolved)) return;
+    const wsdlText = await readFileOrUrl<string>(resolved, {
+      allowUnknownExtensions: true,
+      cwd: this.cwd,
+      fetch: this.fetchFn,
+      importFn: defaultImportFn,
+      logger: this.logger,
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
-    const wsdlText = await response.text();
-    const wsdlObject = await this.loadWSDL(wsdlText);
-    this.loadedLocations.set(location, wsdlObject);
+    await this.loadWSDL(wsdlText, resolved);
   }
 
   getAliasMapFromAttributes(attributes: XSSchema['attributes'] | WSDLDefinition['attributes']) {
@@ -696,7 +910,7 @@ export class SOAPLoader {
   ): EnumTypeComposer | ScalarTypeComposer {
     let simpleTypeTC = this.simpleTypeTCMap.get(simpleType);
     if (!simpleTypeTC) {
-      const simpleTypeName = simpleType.attributes.name;
+      const simpleTypeName = sanitizeNameForGraphQL(simpleType.attributes.name);
       const restrictionObj = simpleType.restriction[0];
       const prefix = this.namespaceTypePrefixMap.get(simpleTypeNamespace);
       if (restrictionObj.enumeration) {
@@ -748,6 +962,11 @@ export class SOAPLoader {
     typeName: string;
     typeNamespace: string;
   }) {
+    // Check element aliases first — consistent with the eager path that overwrites the type map
+    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
+    if (elementRef) {
+      return this.getInputTypeForTypeNameInNamespace(elementRef);
+    }
     const complexType = this.getNamespaceComplexTypeMap(typeNamespace)?.get(typeName);
     if (complexType) {
       return this.getInputTypeForComplexType(complexType, typeNamespace);
@@ -762,7 +981,7 @@ export class SOAPLoader {
   getInputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeInputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = complexType.attributes.name;
+      const complexTypeName = sanitizeNameForGraphQL(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: InputTypeComposerFieldConfigMapDefinition = {};
@@ -773,8 +992,8 @@ export class SOAPLoader {
       for (const sequenceOrChoiceObj of choiceOrSequenceObjects) {
         if (sequenceOrChoiceObj.element) {
           for (const elementObj of sequenceOrChoiceObj.element) {
-            const fieldName = elementObj.attributes.name;
-            if (fieldName) {
+            if (elementObj.attributes?.name) {
+              const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
               fieldMap[fieldName] = {
                 type: () => {
                   const maxOccurs =
@@ -824,10 +1043,17 @@ export class SOAPLoader {
                       // Dynamically defined simple type
                       // So we need to define alias map for this type
                       this.aliasMap.set(simpleTypeObj, aliasMap);
-                      // Inherit the name from elementObj
+                      // Inherit the name from elementObj, scoped to the parent type name
+                      // to avoid collisions when sibling types share an inline field name.
+                      // Skip scoping when complexTypeName already equals the namespace prefix
+                      // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing
+                      // like ByNameDataSet_ByNameDataSet_ByName.
                       simpleTypeObj.attributes = simpleTypeObj.attributes || ({} as any);
                       simpleTypeObj.attributes.name =
-                        simpleTypeObj.attributes.name || elementObj.attributes.name;
+                        simpleTypeObj.attributes.name ||
+                        (complexTypeName !== prefix
+                          ? `${complexTypeName}_${elementObj.attributes.name}`
+                          : elementObj.attributes.name);
                       let finalTC: AnyTypeComposer<any> = this.getTypeForSimpleType(
                         simpleTypeObj,
                         complexTypeNamespace,
@@ -846,10 +1072,16 @@ export class SOAPLoader {
                       // Dynamically defined type
                       // So we need to define alias map for this type
                       this.aliasMap.set(complexTypeObj, aliasMap);
-                      // Inherit the name from elementObj
+                      // Inherit the name from elementObj, scoped to the parent type name
+                      // to avoid collisions when sibling types share an inline field name.
+                      // Skip scoping when complexTypeName already equals the namespace prefix
+                      // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
                       complexTypeObj.attributes = complexTypeObj.attributes || ({} as any);
                       complexTypeObj.attributes.name =
-                        complexTypeObj.attributes.name || elementObj.attributes.name;
+                        complexTypeObj.attributes.name ||
+                        (complexTypeName !== prefix
+                          ? `${complexTypeName}_${elementObj.attributes.name}`
+                          : elementObj.attributes.name);
                       let finalTC: AnyTypeComposer<any> = this.getInputTypeForComplexType(
                         complexTypeObj,
                         complexTypeNamespace,
@@ -867,7 +1099,7 @@ export class SOAPLoader {
                     `Invalid element type definition: ${complexTypeName}->${fieldName}`,
                   );
                 },
-              };
+              } as any;
             } else {
               if (elementObj.attributes?.ref) {
                 this.logger.warn(`element.ref isn't supported yet.`);
@@ -879,10 +1111,14 @@ export class SOAPLoader {
         }
         if (sequenceOrChoiceObj.any) {
           for (const anyObj of sequenceOrChoiceObj.any) {
-            const anyNamespace = anyObj.attributes?.namespace;
-            if (anyNamespace) {
+            // namespace may be a space-delimited list; trim each token and skip XSD wildcards
+            const anyNamespaces = (anyObj.attributes?.namespace ?? '')
+              .split(/\s+/)
+              .map((s: string) => s.trim())
+              .filter((ns: string) => ns && !ns.startsWith('##'));
+            for (const anyNamespace of anyNamespaces) {
               const anyTypeTC = this.getInputTypeForTypeNameInNamespace({
-                typeName: complexTypeName,
+                typeName: complexType.attributes.name,
                 typeNamespace: anyNamespace,
               });
               if ('getFields' in anyTypeTC) {
@@ -916,12 +1152,14 @@ export class SOAPLoader {
               );
             }
             const baseTypeTC = this.getInputTypeForComplexType(baseType, baseTypeNamespace);
-            for (const fieldName in baseTypeTC.getFields()) {
-              fieldMap[fieldName] = baseTypeTC.getField(fieldName);
+            if ('getFields' in baseTypeTC) {
+              for (const fieldName in baseTypeTC.getFields()) {
+                fieldMap[fieldName] = baseTypeTC.getField(fieldName);
+              }
             }
             for (const sequenceObj of extensionObj.sequence) {
               for (const elementObj of sequenceObj.element) {
-                fieldMap[elementObj.attributes.name] = {
+                fieldMap[sanitizeNameForGraphQL(elementObj.attributes.name)] = {
                   type: () => {
                     const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(
                       ':',
@@ -944,12 +1182,28 @@ export class SOAPLoader {
         }
       }
       if (Object.keys(fieldMap).length === 0) {
-        complexTypeTC = GraphQLJSON as any;
+        complexTypeTC = this.schemaComposer.createScalarTC(GraphQLJSON);
       } else {
+        // When two schemas share the same alias-derived prefix (e.g. both declare
+        // xmlns:tns="<own namespace>"), types with the same name from different
+        // namespaces collide. Detect the collision and fall back to a slug derived
+        // from the namespace URI. Loop until unique in case two URIs produce the
+        // same slug after normalization.
+        const candidateName = `${prefix}_${complexTypeName}_Input`;
+        let inputTypeName = candidateName;
+        if (this.schemaComposer.has(candidateName)) {
+          const nsSlug = namespaceToSlug(complexTypeNamespace);
+          inputTypeName = `${nsSlug}_${complexTypeName}_Input`;
+          let i = 2;
+          while (this.schemaComposer.has(inputTypeName)) {
+            inputTypeName = `${nsSlug}_${complexTypeName}_Input_${i++}`;
+          }
+        }
         complexTypeTC = this.schemaComposer.createInputTC({
-          name: `${prefix}_${complexTypeName}_Input`,
+          name: inputTypeName,
           fields: fieldMap,
         });
+        this.typeNamespaceMap.set(inputTypeName, complexTypeNamespace);
       }
       this.complexTypeInputTCMap.set(complexType, complexTypeTC);
     }
@@ -960,6 +1214,7 @@ export class SOAPLoader {
     elementObj: XSElement,
     aliasMap: Map<string, string>,
     namespace: string,
+    parentTypeName?: string,
   ) {
     if (elementObj.attributes?.type) {
       const [typeNamespaceAlias, typeName] = elementObj.attributes.type.split(':') as [
@@ -983,9 +1238,19 @@ export class SOAPLoader {
         // Dynamically defined simple type
         // So we need to define alias map for this type
         this.aliasMap.set(simpleTypeObj, aliasMap);
-        // Inherit the name from elementObj
+        // Inherit the name from elementObj, scoped to the parent type name
+        // to avoid collisions when sibling types share an inline field name.
+        // Skip scoping when parentTypeName already equals the namespace prefix
+        // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
+        const nsPrefix = this.namespaceTypePrefixMap.get(namespace);
+        const effectiveParentName =
+          parentTypeName && parentTypeName !== nsPrefix ? parentTypeName : null;
         simpleTypeObj.attributes = simpleTypeObj.attributes || ({} as any);
-        simpleTypeObj.attributes.name = simpleTypeObj.attributes.name || elementObj.attributes.name;
+        simpleTypeObj.attributes.name =
+          simpleTypeObj.attributes.name ||
+          (effectiveParentName
+            ? `${effectiveParentName}_${elementObj.attributes.name}`
+            : elementObj.attributes.name);
         const outputTC = this.getTypeForSimpleType(simpleTypeObj, namespace);
         return outputTC;
       }
@@ -995,10 +1260,19 @@ export class SOAPLoader {
         // Dynamically defined type
         // So we need to define alias map for this type
         this.aliasMap.set(complexTypeObj, aliasMap);
-        // Inherit the name from elementObj
+        // Inherit the name from elementObj, scoped to the parent type name
+        // to avoid collisions when sibling types share an inline field name.
+        // Skip scoping when parentTypeName already equals the namespace prefix
+        // (i.e. it is a top-level-element anonymous type) to avoid double-prefixing.
+        const nsPrefix = this.namespaceTypePrefixMap.get(namespace);
+        const effectiveParentName =
+          parentTypeName && parentTypeName !== nsPrefix ? parentTypeName : null;
         complexTypeObj.attributes = complexTypeObj.attributes || ({} as any);
         complexTypeObj.attributes.name =
-          complexTypeObj.attributes.name || elementObj.attributes.name;
+          complexTypeObj.attributes.name ||
+          (effectiveParentName
+            ? `${effectiveParentName}_${elementObj.attributes.name}`
+            : elementObj.attributes.name);
         const outputTC = this.getOutputTypeForComplexType(complexTypeObj, namespace);
         return outputTC;
       }
@@ -1009,7 +1283,7 @@ export class SOAPLoader {
   getOutputTypeForComplexType(complexType: XSComplexType, complexTypeNamespace: string) {
     let complexTypeTC = this.complexTypeOutputTCMap.get(complexType);
     if (!complexTypeTC) {
-      const complexTypeName = complexType.attributes.name;
+      const complexTypeName = sanitizeNameForGraphQL(complexType.attributes.name);
       const prefix = this.namespaceTypePrefixMap.get(complexTypeNamespace);
       const aliasMap = this.aliasMap.get(complexType);
       const fieldMap: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {};
@@ -1020,8 +1294,8 @@ export class SOAPLoader {
       for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
         if (choiceOrSequenceObj.element) {
           for (const elementObj of choiceOrSequenceObj.element) {
-            const fieldName = elementObj.attributes.name;
-            if (fieldName) {
+            if (elementObj.attributes?.name) {
+              const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
               const maxOccurs =
                 choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
               const minOccurs =
@@ -1045,6 +1319,7 @@ export class SOAPLoader {
                     elementObj,
                     aliasMap,
                     complexTypeNamespace,
+                    complexTypeName,
                   );
                   if (isPlural) {
                     outputTC = outputTC.getTypePlural();
@@ -1054,7 +1329,7 @@ export class SOAPLoader {
                   }
                   return outputTC;
                 },
-              };
+              } as any;
             } else {
               if (elementObj.attributes?.ref) {
                 this.logger.warn(`element.ref isn't supported yet.`, elementObj.attributes?.ref);
@@ -1066,10 +1341,14 @@ export class SOAPLoader {
         }
         if (choiceOrSequenceObj.any) {
           for (const anyObj of choiceOrSequenceObj.any) {
-            const anyNamespace = anyObj.attributes?.namespace;
-            if (anyNamespace) {
+            // namespace may be a space-delimited list; trim each token and skip XSD wildcards
+            const anyNamespaces = (anyObj.attributes?.namespace ?? '')
+              .split(/\s+/)
+              .map((s: string) => s.trim())
+              .filter((ns: string) => ns && !ns.startsWith('##'));
+            for (const anyNamespace of anyNamespaces) {
               const anyTypeTC = this.getOutputTypeForTypeNameInNamespace({
-                typeName: complexTypeName,
+                typeName: complexType.attributes.name,
                 typeNamespace: anyNamespace,
               });
               if ('getFields' in anyTypeTC) {
@@ -1111,7 +1390,8 @@ export class SOAPLoader {
             ];
             for (const choiceOrSequenceObj of choiceOrSequenceObjects) {
               for (const elementObj of choiceOrSequenceObj.element) {
-                const fieldName = elementObj.attributes.name;
+                if (!elementObj.attributes?.name) continue;
+                const fieldName = sanitizeNameForGraphQL(elementObj.attributes.name);
                 const maxOccurs =
                   choiceOrSequenceObj.attributes?.maxOccurs || elementObj.attributes?.maxOccurs;
                 const minOccurs =
@@ -1135,6 +1415,7 @@ export class SOAPLoader {
                       elementObj,
                       aliasMap,
                       complexTypeNamespace,
+                      complexTypeName,
                     );
                     if (isPlural) {
                       outputTC = outputTC.getTypePlural();
@@ -1144,7 +1425,7 @@ export class SOAPLoader {
                     }
                     return outputTC;
                   },
-                };
+                } as any;
               }
             }
           }
@@ -1153,8 +1434,23 @@ export class SOAPLoader {
       if (Object.keys(fieldMap).length === 0) {
         complexTypeTC = this.schemaComposer.createScalarTC(GraphQLJSON);
       } else {
+        // When two schemas share the same alias-derived prefix (e.g. both declare
+        // xmlns:tns="<own namespace>"), types with the same name from different
+        // namespaces collide. Detect the collision and fall back to a slug derived
+        // from the namespace URI. Loop until unique in case two URIs produce the
+        // same slug after normalization.
+        const candidateName = `${prefix}_${complexTypeName}`;
+        let outputTypeName = candidateName;
+        if (this.schemaComposer.has(candidateName)) {
+          const nsSlug = namespaceToSlug(complexTypeNamespace);
+          outputTypeName = `${nsSlug}_${complexTypeName}`;
+          let i = 2;
+          while (this.schemaComposer.has(outputTypeName)) {
+            outputTypeName = `${nsSlug}_${complexTypeName}_${i++}`;
+          }
+        }
         complexTypeTC = this.schemaComposer.createObjectTC({
-          name: `${prefix}_${complexTypeName}`,
+          name: outputTypeName,
           fields: fieldMap,
         });
       }
@@ -1170,6 +1466,11 @@ export class SOAPLoader {
     typeName: string;
     typeNamespace: string;
   }) {
+    // Check element aliases first — consistent with the eager path that overwrites the type map
+    const elementRef = this.namespaceElementRefMap.get(typeNamespace)?.get(typeName);
+    if (elementRef) {
+      return this.getOutputTypeForTypeNameInNamespace(elementRef);
+    }
     const complexType = this.getNamespaceComplexTypeMap(typeNamespace)?.get(typeName);
     if (complexType) {
       return this.getOutputTypeForComplexType(complexType, typeNamespace);
@@ -1236,9 +1537,15 @@ export class SOAPLoader {
     const schema = this.schemaComposer.buildSchema();
     const schemaExts: any = (schema.extensions ||= {});
     schemaExts.directives ||= {};
+    // The transport definition survives SDL roundtrip via
+    // @extraSchemaDefinitionDirective, so subgraph routers that reconstruct
+    // the schema from SDL still see this metadata. typeNamespacesJson is
+    // included here (rather than on schema.extensions directly) so the
+    // namespace-aware envelope path also works after federation composition.
     schemaExts.directives.transport = {
       kind: 'soap',
       subgraph: this.subgraphName,
+      typeNamespacesJson: Object.fromEntries(this.typeNamespaceMap),
     };
     return schema;
   }

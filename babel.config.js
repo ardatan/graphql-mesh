@@ -7,5 +7,6 @@ module.exports = {
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-proposal-explicit-resource-management',
     '@babel/plugin-syntax-top-level-await',
+    '@babel/plugin-transform-class-static-block',
   ],
 };

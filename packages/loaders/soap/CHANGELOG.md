@@ -1,5 +1,293 @@
 # @omnigraph/soap
 
+## 0.107.46
+
+### Patch Changes
+
+- [#9457](https://github.com/ardatan/graphql-mesh/pull/9457)
+  [`b2d2384`](https://github.com/ardatan/graphql-mesh/commit/b2d23842a1a21e3f0cce1beb0f082ffbb4d58d74)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.7.2` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.7.2) (from
+    `^5.7.1`, in `dependencies`)
+
+- [#9460](https://github.com/ardatan/graphql-mesh/pull/9460)
+  [`899de24`](https://github.com/ardatan/graphql-mesh/commit/899de247383fdc0712286c1db3f4cb17afcf052c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.7.0` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.7.0) (from
+    `^5.7.2`, in `dependencies`)
+
+- [#9472](https://github.com/ardatan/graphql-mesh/pull/9472)
+  [`d7757fa`](https://github.com/ardatan/graphql-mesh/commit/d7757fab6c390a88076409da624e2524d91261a5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.7.3` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.7.3) (from
+    `^5.7.0`, in `dependencies`)
+
+- [#9488](https://github.com/ardatan/graphql-mesh/pull/9488)
+  [`f66010a`](https://github.com/ardatan/graphql-mesh/commit/f66010a83d75f83bf28dadf4d4d029bbdd47ad20)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.8.0` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.8.0) (from
+    `^5.7.3`, in `dependencies`)
+
+- [#9459](https://github.com/ardatan/graphql-mesh/pull/9459)
+  [`9d3f4ae`](https://github.com/ardatan/graphql-mesh/commit/9d3f4ae9516cf04a3fca9e57afe3f4a043cd4b44)
+  Thanks [@copilot-swe-agent](https://github.com/apps/copilot-swe-agent)! - Fix CodeQL polynomial
+  ReDoS warning in SOAPLoader by replacing regex chain on namespace URIs with a linear
+  character-by-character slug helper
+
+- Updated dependencies
+  [[`06c0dee`](https://github.com/ardatan/graphql-mesh/commit/06c0deed78c53a092b423a8ca360515105127d10),
+  [`b2d2384`](https://github.com/ardatan/graphql-mesh/commit/b2d23842a1a21e3f0cce1beb0f082ffbb4d58d74),
+  [`899de24`](https://github.com/ardatan/graphql-mesh/commit/899de247383fdc0712286c1db3f4cb17afcf052c),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`d7757fa`](https://github.com/ardatan/graphql-mesh/commit/d7757fab6c390a88076409da624e2524d91261a5),
+  [`f66010a`](https://github.com/ardatan/graphql-mesh/commit/f66010a83d75f83bf28dadf4d4d029bbdd47ad20),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3)]:
+  - @graphql-mesh/string-interpolation@0.5.17
+  - @graphql-mesh/transport-soap@0.10.46
+  - @graphql-mesh/types@0.104.29
+  - @graphql-mesh/utils@0.104.37
+
+## 0.107.45
+
+### Patch Changes
+
+- [#9449](https://github.com/ardatan/graphql-mesh/pull/9449)
+  [`3aabd36`](https://github.com/ardatan/graphql-mesh/commit/3aabd36e7a6b5573e985e2836c624e0ab3a6b08c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.7.1` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.7.1) (from
+    `^5.6.0`, in `dependencies`)
+- Updated dependencies
+  [[`3aabd36`](https://github.com/ardatan/graphql-mesh/commit/3aabd36e7a6b5573e985e2836c624e0ab3a6b08c)]:
+  - @graphql-mesh/transport-soap@0.10.45
+
+## 0.107.44
+
+### Patch Changes
+
+- [#9429](https://github.com/ardatan/graphql-mesh/pull/9429)
+  [`fa6f8ee`](https://github.com/ardatan/graphql-mesh/commit/fa6f8ee58af8b4203cc5fe1f9c79b7c266d25257)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.6.0` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.6.0) (from
+    `^5.5.12`, in `dependencies`)
+
+- [#9430](https://github.com/ardatan/graphql-mesh/pull/9430)
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/transport-common@^1.0.16` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/1.0.16)
+    (from `^1.0.15`, in `dependencies`)
+
+- [#9446](https://github.com/ardatan/graphql-mesh/pull/9446)
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^11.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.1.0)
+    (from `^11.0.1`, in `dependencies`)
+- Updated dependencies
+  [[`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`fa6f8ee`](https://github.com/ardatan/graphql-mesh/commit/fa6f8ee58af8b4203cc5fe1f9c79b7c266d25257),
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4)]:
+  - @graphql-mesh/cross-helpers@0.4.14
+  - @graphql-mesh/transport-soap@0.10.44
+  - @graphql-mesh/types@0.104.28
+  - @graphql-mesh/utils@0.104.36
+
+## 0.107.43
+
+### Patch Changes
+
+- [#9424](https://github.com/ardatan/graphql-mesh/pull/9424)
+  [`3acfd01`](https://github.com/ardatan/graphql-mesh/commit/3acfd01f0b4190717dcc223e8dcdeb04945c1eeb)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.5.12` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.5.12) (from
+    `^5.5.11`, in `dependencies`)
+- Updated dependencies
+  [[`3acfd01`](https://github.com/ardatan/graphql-mesh/commit/3acfd01f0b4190717dcc223e8dcdeb04945c1eeb)]:
+  - @graphql-mesh/transport-soap@0.10.43
+
+## 0.107.42
+
+### Patch Changes
+
+- [#9406](https://github.com/ardatan/graphql-mesh/pull/9406)
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^11.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.1)
+    (from `^11.0.0`, in `dependencies`)
+
+- [#9414](https://github.com/ardatan/graphql-mesh/pull/9414)
+  [`136ebb7`](https://github.com/ardatan/graphql-mesh/commit/136ebb7f000b68e7a3c2543d66353ee91b622c9e)
+  Thanks [@zcag](https://github.com/zcag)! - Fix anonymous inline complex type name collisions when
+  multiple parent types define same-named inline fields
+
+- [#9420](https://github.com/ardatan/graphql-mesh/pull/9420)
+  [`9944c5b`](https://github.com/ardatan/graphql-mesh/commit/9944c5b1320a1e8c4aeeb1ebbb2cfd063d619f54)
+  Thanks [@zcag](https://github.com/zcag)! - fix(soap): skip xs:any wildcard namespace tokens
+  (##other, ##any, etc.) instead of treating them as namespace URIs
+
+- [#9416](https://github.com/ardatan/graphql-mesh/pull/9416)
+  [`4c604bf`](https://github.com/ardatan/graphql-mesh/commit/4c604bf4ac40ff2b7755cf1363b9ce2d41c02130)
+  Thanks [@zcag](https://github.com/zcag)! - Add missing xs:anySimpleType to built-in XSD type map,
+  mapping it to GraphQLString
+
+- [#9415](https://github.com/ardatan/graphql-mesh/pull/9415)
+  [`f86dfe1`](https://github.com/ardatan/graphql-mesh/commit/f86dfe18b3d2ab331a288c4ea47d70bcf8bd0800)
+  Thanks [@zcag](https://github.com/zcag)! - Fix crash when empty complex type used in repeated
+  element (getTypePlural called on raw GraphQLJSON scalar)
+
+- [#9422](https://github.com/ardatan/graphql-mesh/pull/9422)
+  [`a4b4cfd`](https://github.com/ardatan/graphql-mesh/commit/a4b4cfd1586e7625d06d6d41152ed8ae0c71ab24)
+  Thanks [@zcag](https://github.com/zcag)! - fix(soap): resolve element type aliases that
+  forward-reference types from later schemas
+
+- [#9421](https://github.com/ardatan/graphql-mesh/pull/9421)
+  [`46d314a`](https://github.com/ardatan/graphql-mesh/commit/46d314a1803456c2ca3ad367002cdc9fc4081944)
+  Thanks [@zcag](https://github.com/zcag)! - fix(soap): sanitize XSD type and field names containing
+  illegal GraphQL characters (dots, hyphens, etc.)
+
+- [#9417](https://github.com/ardatan/graphql-mesh/pull/9417)
+  [`5065c46`](https://github.com/ardatan/graphql-mesh/commit/5065c46e22b610f17fdb6d09c66a39fe8c99589e)
+  Thanks [@zcag](https://github.com/zcag)! - Fix GraphQL type name collisions when multiple embedded
+  schemas share the same namespace alias (e.g. tns)
+
+- Updated dependencies
+  [[`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)]:
+  - @graphql-mesh/cross-helpers@0.4.13
+  - @graphql-mesh/transport-soap@0.10.42
+  - @graphql-mesh/types@0.104.27
+  - @graphql-mesh/utils@0.104.35
+
+## 0.107.41
+
+### Patch Changes
+
+- [#9400](https://github.com/ardatan/graphql-mesh/pull/9400)
+  [`fd8f4c3`](https://github.com/ardatan/graphql-mesh/commit/fd8f4c39d598563e6446a028664a5a8704ed6ca8)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.5.11` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.5.11) (from
+    `^5.5.10`, in `dependencies`)
+- Updated dependencies
+  [[`fd8f4c3`](https://github.com/ardatan/graphql-mesh/commit/fd8f4c39d598563e6446a028664a5a8704ed6ca8)]:
+  - @graphql-mesh/transport-soap@0.10.41
+
+## 0.107.40
+
+### Patch Changes
+
+- [#9390](https://github.com/ardatan/graphql-mesh/pull/9390)
+  [`d874091`](https://github.com/ardatan/graphql-mesh/commit/d874091f0711ef7cb376b3f121d891911a2ca52b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.5.10` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.5.10) (from
+    `^5.5.9`, in `dependencies`)
+- Updated dependencies
+  [[`d874091`](https://github.com/ardatan/graphql-mesh/commit/d874091f0711ef7cb376b3f121d891911a2ca52b)]:
+  - @graphql-mesh/transport-soap@0.10.40
+
+## 0.107.39
+
+### Patch Changes
+
+- Updated dependencies
+  [[`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2),
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)]:
+  - @graphql-mesh/types@0.104.26
+  - @graphql-mesh/utils@0.104.34
+  - @graphql-mesh/transport-soap@0.10.39
+
+## 0.107.38
+
+### Patch Changes
+
+- [#9360](https://github.com/ardatan/graphql-mesh/pull/9360)
+  [`45bb6de`](https://github.com/ardatan/graphql-mesh/commit/45bb6dec17b81e9048945e4d3a3dd741a6f4824b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.5.9` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.5.9) (from
+    `^5.5.8`, in `dependencies`)
+- Updated dependencies
+  [[`45bb6de`](https://github.com/ardatan/graphql-mesh/commit/45bb6dec17b81e9048945e4d3a3dd741a6f4824b),
+  [`46d8eed`](https://github.com/ardatan/graphql-mesh/commit/46d8eed3af7a7531e744da1d6b3449c332e3abb1)]:
+  - @graphql-mesh/transport-soap@0.10.38
+  - @graphql-mesh/utils@0.104.33
+
+## 0.107.37
+
+### Patch Changes
+
+- Updated dependencies
+  [[`94fbfbd`](https://github.com/ardatan/graphql-mesh/commit/94fbfbd41d56cfba3d11a7c3dc21b200a1f89069)]:
+  - @graphql-mesh/string-interpolation@0.5.16
+  - @graphql-mesh/utils@0.104.32
+  - @graphql-mesh/transport-soap@0.10.37
+
+## 0.107.36
+
+### Patch Changes
+
+- Updated dependencies
+  [[`339c32c`](https://github.com/ardatan/graphql-mesh/commit/339c32c44b5dfbc810c0cf3455b2ff068b5c5b00)]:
+  - @graphql-mesh/string-interpolation@0.5.15
+  - @graphql-mesh/utils@0.104.31
+  - @graphql-mesh/transport-soap@0.10.36
+
+## 0.107.35
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3ad6a00`](https://github.com/ardatan/graphql-mesh/commit/3ad6a005a9daa1f93a4286dc3d240acd1059f53f)]:
+  - @graphql-mesh/string-interpolation@0.5.14
+  - @graphql-mesh/utils@0.104.30
+  - @graphql-mesh/transport-soap@0.10.35
+
+## 0.107.34
+
+### Patch Changes
+
+- [#9337](https://github.com/ardatan/graphql-mesh/pull/9337)
+  [`ea2203c`](https://github.com/ardatan/graphql-mesh/commit/ea2203c414c797750161c610ebaadde7560c019c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.5.7` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.5.7) (from
+    `^5.5.6`, in `dependencies`)
+
+- [#9346](https://github.com/ardatan/graphql-mesh/pull/9346)
+  [`e1db67c`](https://github.com/ardatan/graphql-mesh/commit/e1db67c745d5c559a07460142f549c9b3b1dd618)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.5.8` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.5.8) (from
+    `^5.5.7`, in `dependencies`)
+- Updated dependencies
+  [[`ea2203c`](https://github.com/ardatan/graphql-mesh/commit/ea2203c414c797750161c610ebaadde7560c019c),
+  [`e1db67c`](https://github.com/ardatan/graphql-mesh/commit/e1db67c745d5c559a07460142f549c9b3b1dd618),
+  [`13af2ff`](https://github.com/ardatan/graphql-mesh/commit/13af2ff997cc63953ff50198d1851f8b7101c292)]:
+  - @graphql-mesh/transport-soap@0.10.34
+  - @graphql-mesh/string-interpolation@0.5.13
+  - @graphql-mesh/utils@0.104.29
+
 ## 0.107.33
 
 ### Patch Changes

@@ -8,14 +8,14 @@
     "test": "mesh build && jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.39",
-    "@graphql-mesh/json-schema": "0.109.33",
-    "@graphql-mesh/plugin-mock": "0.105.30",
-    "@graphql-yoga/plugin-sofa": "3.18.1",
-    "graphql": "16.13.1",
-    "graphql-yoga": "^5.18.1"
+    "@graphql-mesh/cli": "0.100.53",
+    "@graphql-mesh/json-schema": "0.109.43",
+    "@graphql-mesh/plugin-mock": "0.105.39",
+    "@graphql-yoga/plugin-sofa": "3.21.2",
+    "graphql": "16.14.0",
+    "graphql-yoga": "^5.21.2"
   },
   "devDependencies": {
-    "jest": "30.3.0"
+    "jest": "30.4.2"
   }
 }

@@ -13,15 +13,19 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: write-all
+
 jobs:
   deployment:
     runs-on: ubuntu-latest
+    # Skip for forks, dependabot PRs and the release PR
     if:
       github.event.pull_request.head.repo.full_name == github.repository || github.event_name ==
-      'push'
+      'push' && github.event.pull_request.head.repo.fork != true && github.actor !=
+      'dependabot[bot]'
     steps:
       - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
         with:
           fetch-depth: 0
 
@@ -62,7 +66,7 @@ jobs:
           AGAINST_PROD: '1'
 
       - name: upload playwright report
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         if: ${{ !cancelled() }}
         with:
           name: playwright-report

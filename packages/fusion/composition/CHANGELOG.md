@@ -1,5 +1,171 @@
 # @graphql-mesh/fusion-composition
 
+## 0.8.49
+
+### Patch Changes
+
+- [#9470](https://github.com/ardatan/graphql-mesh/pull/9470)
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.33` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.33)
+    (from `^10.0.32`, in `dependencies`)
+
+- [#9490](https://github.com/ardatan/graphql-mesh/pull/9490)
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.21` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.21)
+    (from `^4.0.20`, in `dependencies`)
+- Updated dependencies
+  [[`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3)]:
+  - @graphql-mesh/utils@0.104.37
+
+## 0.8.48
+
+### Patch Changes
+
+- [#9454](https://github.com/ardatan/graphql-mesh/pull/9454)
+  [`9e23b1f`](https://github.com/ardatan/graphql-mesh/commit/9e23b1f3db8912018f601ed2a8ac9c9cd33b8a27)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not mark root types inaccessible solely
+  because all of their fields were filtered out. Previously, filtering all `Mutation` fields also
+  made the `Mutation` type inaccessible, which was unintended. Now, root types are only marked
+  inaccessible when explicitly marked as such. If all `Mutation` fields are filtered, the `Mutation`
+  type remains accessible while those fields are marked inaccessible.
+
+## 0.8.47
+
+### Patch Changes
+
+- [#9430](https://github.com/ardatan/graphql-mesh/pull/9430)
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.20` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.20)
+    (from `^4.0.19`, in `dependencies`)
+
+- [#9446](https://github.com/ardatan/graphql-mesh/pull/9446)
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^11.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.1.0)
+    (from `^11.0.1`, in `dependencies`)
+- Updated dependencies
+  [[`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4)]:
+  - @graphql-mesh/utils@0.104.36
+
+## 0.8.46
+
+### Patch Changes
+
+- [`d62f684`](https://github.com/ardatan/graphql-mesh/commit/d62f684e77ff8e69af687cd044d563aad662465a)
+  Thanks [@ardatan](https://github.com/ardatan)! - Remove broken `graphql/suggestionList` import
+
+## 0.8.45
+
+### Patch Changes
+
+- [#9406](https://github.com/ardatan/graphql-mesh/pull/9406)
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.32` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.32)
+    (from `^10.0.31`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^11.0.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.0.1)
+    (from `^11.0.0`, in `dependencies`)
+
+- [#9407](https://github.com/ardatan/graphql-mesh/pull/9407)
+  [`6449161`](https://github.com/ardatan/graphql-mesh/commit/644916156aa92a866a59a249ea193ebaa5cf5ceb)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@theguild/federation-composition@^0.22.2` ↗︎](https://www.npmjs.com/package/@theguild/federation-composition/v/0.22.2)
+    (from `^0.22.1`, in `dependencies`)
+- Updated dependencies
+  [[`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)]:
+  - @graphql-mesh/utils@0.104.35
+
+## 0.8.44
+
+### Patch Changes
+
+- [`d745894`](https://github.com/ardatan/graphql-mesh/commit/d7458941ea51f1e5af5c850ab9c051ac1fc6719b)
+  Thanks [@ardatan](https://github.com/ardatan)! - Copy the implementation instead of importing it
+  from graphql-js
+
+## 0.8.43
+
+### Patch Changes
+
+- [#9398](https://github.com/ardatan/graphql-mesh/pull/9398)
+  [`bc4b5d0`](https://github.com/ardatan/graphql-mesh/commit/bc4b5d05a92038cb5c0367e4e3c86330811f8065)
+  Thanks [@ardatan](https://github.com/ardatan)! - Add validation for transforms such as Federation
+  Transform to provide better error messages when the configuration is incorrect. This includes
+  suggestions for field names and argument names when they are not found in the schema.
+  Additionally, improve error messages when applying transforms to subgraphs.
+
+  This also adds validation for `@merge` and `@resolveTo` directives to ensure that the referenced
+  fields and arguments exist in the subgraph schemas, providing suggestions when they do not.
+
+## 0.8.42
+
+### Patch Changes
+
+- [#9389](https://github.com/ardatan/graphql-mesh/pull/9389)
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.19` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.19)
+    (from `^4.0.18`, in `dependencies`)
+- Updated dependencies
+  [[`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)]:
+  - @graphql-mesh/utils@0.104.34
+
+## 0.8.41
+
+### Patch Changes
+
+- [#9375](https://github.com/ardatan/graphql-mesh/pull/9375)
+  [`5c4b93b`](https://github.com/ardatan/graphql-mesh/commit/5c4b93b74a7c16fa5f5fae51d90118694b06a8b2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`minimatch@^10.2.5` ↗︎](https://www.npmjs.com/package/minimatch/v/10.2.5)
+    (from `^10.2.4`, in `dependencies`)
+- Updated dependencies
+  [[`46d8eed`](https://github.com/ardatan/graphql-mesh/commit/46d8eed3af7a7531e744da1d6b3449c332e3abb1)]:
+  - @graphql-mesh/utils@0.104.33
+
+## 0.8.40
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.32
+
+## 0.8.39
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.31
+
+## 0.8.38
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.30
+
+## 0.8.37
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.29
+
 ## 0.8.36
 
 ### Patch Changes

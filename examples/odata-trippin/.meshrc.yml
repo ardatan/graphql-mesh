@@ -2,7 +2,7 @@ sources:
   - name: TripPin
     handler:
       odata:
-        endpoint: https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/
+        endpoint: https://services.odata.org/TripPinRESTierService/
         batch: multipart
         expandNavProps: true
 

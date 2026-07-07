@@ -68,6 +68,7 @@ export interface Server extends Proc {
 export interface ServeOptions extends ProcOptions {
   port?: number;
   supergraph?: string;
+  subgraph?: string;
   /** {@link serveRunner Serve runner} specific options. */
   runner?: {
     /** "docker" specific options. */
@@ -110,6 +111,10 @@ export interface ComposeOptions extends ProcOptions {
    * The file will be deleted after the tests complete.
    */
   output?: 'graphql' | 'json' | 'js' | 'ts';
+  /**
+   * Service to generate a subgraph SDL only
+   */
+  subgraph?: string;
   /**
    * Services relevant to the compose process.
    * It will supply `--<service.name>_port=<service.port>` arguments to the process.
@@ -238,9 +243,10 @@ export function createTenv(cwd: string): Tenv {
       return spawn({ ...opts, cwd }, String(cmd), ...args, ...extraArgs);
     },
     async serve(opts) {
-      let {
+      const {
         port = await getAvailablePort(),
         supergraph,
+        subgraph,
         pipeLogs = boolEnv('DEBUG'),
         env,
         args = [],
@@ -251,6 +257,7 @@ export function createTenv(cwd: string): Tenv {
         'node', // TODO: using yarn does not work on Windows in the CI
         path.join(__project, 'node_modules', '@graphql-hive', 'gateway', 'dist', 'bin.js'),
         ...(supergraph ? ['supergraph', supergraph] : []),
+        ...(subgraph ? ['subgraph', subgraph] : []),
         ...args,
         createPortOpt(port),
       );
@@ -303,6 +310,7 @@ export function createTenv(cwd: string): Tenv {
     async compose(opts) {
       const {
         services = [],
+        subgraph,
         trimHostPaths,
         maskServicePorts,
         pipeLogs = boolEnv('DEBUG'),
@@ -323,6 +331,7 @@ export function createTenv(cwd: string): Tenv {
         path.resolve(__project, 'packages', 'compose-cli', 'src', 'bin.ts'),
         output && createOpt('output', output),
         ...services.map(({ name, port }) => createServicePortOpt(name, port)),
+        ...(subgraph ? ['--subgraph', subgraph] : []),
         ...args,
       );
       await waitForExit;

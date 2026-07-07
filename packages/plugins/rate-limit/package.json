@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-rate-limit",
-  "version": "0.106.7",
+  "version": "0.106.16",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,18 +35,18 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@envelop/rate-limiter": "^10.0.1",
-    "@graphql-mesh/cross-helpers": "^0.4.12",
-    "@graphql-mesh/string-interpolation": "0.5.12",
-    "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.28",
-    "@graphql-tools/utils": "^11.0.0",
+    "@envelop/rate-limiter": "^10.1.0",
+    "@graphql-mesh/cross-helpers": "^0.4.14",
+    "@graphql-mesh/string-interpolation": "^0.5.17",
+    "@graphql-mesh/types": "^0.104.29",
+    "@graphql-mesh/utils": "^0.104.37",
+    "@graphql-tools/utils": "^11.1.1",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@envelop/core": "^5.5.1",
-    "graphql": "16.13.1"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",

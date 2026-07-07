@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/cross-helpers",
-  "version": "0.4.12",
+  "version": "0.4.14",
   "description": "Cross Platform Helpers for GraphQL Mesh",
   "repository": {
     "type": "git",
@@ -20,11 +20,11 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-tools/utils": "^11.0.0",
+    "@graphql-tools/utils": "^11.1.1",
     "path-browserify": "1.0.1"
   },
   "devDependencies": {
-    "graphql": "16.13.1"
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public"

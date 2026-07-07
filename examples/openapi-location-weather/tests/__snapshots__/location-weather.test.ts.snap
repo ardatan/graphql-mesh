@@ -17,6 +17,12 @@ type AQCurrent {
   """Cloud cover as a percentage (%)"""
   aqi: Int
 
+  """Concentration of CO (µg/m³)"""
+  co: Float
+
+  """Mold level category"""
+  mold_level: Int
+
   """Concentration of NO2 (µg/m³)"""
   no2: Float
 
@@ -29,12 +35,24 @@ type AQCurrent {
   """Concentration of PM 2.5 (µg/m³)"""
   pm25: Float
 
+  """Grass pollen level category"""
+  pollen_level_grass: Int
+
+  """Tree pollen level category"""
+  pollen_level_tree: Int
+
+  """Weed pollen level category"""
+  pollen_level_weed: Int
+
+  """Predominant pollen type"""
+  predominant_pollen_type: String
+
   """Concentration of SO2 (µg/m³)"""
   so2: Float
 }
 
 type AQCurrentGroup {
-  """City Name"""
+  """Nearest city name"""
   city_name: String
 
   """Country Abbreviation"""
@@ -57,6 +75,12 @@ type AQCurrentGroup {
 type AQHour {
   """Cloud cover as a percentage (%)"""
   aqi: Int
+
+  """Concentration of CO (µg/m³)"""
+  co: Float
+
+  """[DEPRECATED] Deprecated - use 'timestamp_utc'"""
+  datetime: String
 
   """Concentration of NO2 (µg/m³)"""
   no2: Float
@@ -84,7 +108,7 @@ type AQHour {
 }
 
 type AQHourly {
-  """City Name"""
+  """Nearest city name"""
   city_name: String
 
   """Country Abbreviation"""
@@ -246,13 +270,15 @@ type Currency {
 }
 
 type CurrentObs {
-  """Apparent temperature - Default (C)"""
+  """
+  Apparent temperature- Same as Feels-Like or Heat + Wind Chill Indices - Default (C)
+  """
   app_temp: Float
 
   """Air quality index (US EPA standard 0 to +500)"""
   aqi: Float
 
-  """City name (closest)"""
+  """Nearest city name"""
   city_name: String
 
   """Cloud cover (%)"""
@@ -261,7 +287,7 @@ type CurrentObs {
   """Country abbreviation"""
   country_code: String
 
-  """[DEPRECATED - use 'ob_time'] Cycle Hour (UTC) of observation"""
+  """[DEPRECATED] Deprecated - use 'ob_time'"""
   datetime: String
 
   """Dew point temperature - default (C)"""
@@ -282,7 +308,10 @@ type CurrentObs {
   """Wind gust speed - Default (m/s)"""
   gust: Float
 
-  """Current solar hour angle (Degrees)"""
+  """[DEPRECATED] Deprecated - use 'hour_angle'"""
+  h_angle: Float
+
+  """[DEPRECATED] Current solar hour angle (Degrees)"""
   hour_angle: Float
 
   """Latitude"""
@@ -297,7 +326,7 @@ type CurrentObs {
   """Part of the day (d = day, n = night)"""
   pod: String
 
-  """Precipitation in last hour - Default (mm)"""
+  """Precipitation rate - Default (mm/hr)"""
   precip: Float
 
   """Pressure (mb)"""
@@ -309,10 +338,12 @@ type CurrentObs {
   """Mean sea level pressure in millibars (mb)"""
   slp: Float
 
-  """Snowfall in last hour - Default (mm)"""
+  """Snowfall rate - Default (mm/hr)"""
   snow: Float
 
-  """Estimated solar radiation (W/m^2)"""
+  """
+  Estimated solar radiation (W/m^2) - <a href='https://help.weatherbit.io/what-is-the-solar_rad-field/'>Accounts for cloud cover, and other factors.</a>
+  """
   solar_rad: Float
 
   """List of data sources used in response"""
@@ -321,7 +352,7 @@ type CurrentObs {
   """State abbreviation"""
   state_code: String
 
-  """Source Station ID"""
+  """[DEPRECATED] Deprecated -  Deprecated - 'sources'"""
   station: String
 
   """Time (UTC) of Sunrise (HH:MM)"""
@@ -339,7 +370,7 @@ type CurrentObs {
   """Unix Timestamp"""
   ts: Float
 
-  """UV Index"""
+  """UV Index (0-11+)"""
   uv: Float
 
   """Visibility - default (KM)"""
@@ -352,17 +383,22 @@ type CurrentObs {
   """Cardinal wind direction (text)"""
   wind_cdir_full: String
 
-  """Wind direction (degrees)"""
+  """Wind direction (degrees) - Degrees clockwise from 0 = North"""
   wind_dir: Int
 
-  """Wind speed - Default (m/s)"""
-  wind_speed: Float
+  """10m wind speed - Default (m/s)"""
+  wind_spd: Float
 }
 
 type CurrentObsGroup {
   """Count of found observations"""
   count: Int
   data: [CurrentObs]
+
+  """
+  Optional minutely precipitation and temperature series when include=minutely.
+  """
+  minutely: [FCMinutelyOb]
 }
 
 """Represents date values"""
@@ -405,16 +441,20 @@ type EnergyForecastSeries {
   """Heating degree days"""
   hdd: Float
 
-  """Average max wind direction (Degrees)"""
+  """
+  Average max 10m wind direction (Degrees) - Degrees clockwise from 0 = North
+  """
   max_wind_dir: Int
 
-  """Average max wind direction at 100M height (Degrees)"""
+  """
+  Average max wind direction at 100m height (Degrees) - Degrees clockwise from 0 = North
+  """
   max_wind_dir_100m: Int
 
-  """Max wind speed - Default (m/s)"""
+  """Max 10m wind speed - Default (m/s)"""
   max_wind_spd: Float
 
-  """Max wind speed at 100M height - Default (m/s)"""
+  """Max wind speed at 100m height - Default (m/s)"""
   max_wind_spd_100m: Float
 
   """Total precipitation in period - Default (mm)"""
@@ -440,7 +480,9 @@ type EnergyForecastSeries {
   """Total clear sky global horizontal solar irradiance (W/m^2)"""
   t_ghi: Float
 
-  """Total actual solar radiation (W/m^2)"""
+  """
+  Total solar radiation (W/m^2) - <a href='https://help.weatherbit.io/what-is-the-solar_rad-field/'>Accounts for cloud cover, and other factors.</a>
+  """
   t_solar_rad: Float
 
   """Average temperature - Default (C)"""
@@ -455,18 +497,26 @@ type EnergyForecastSeries {
   """Timestamp UTC"""
   timestamp_utc: String
 
-  """Average wind direction (Degrees)"""
+  """Average wind direction (Degrees) - Degrees clockwise from 0 = North"""
   wind_dir: Int
 
-  """Average wind speed at 100M height - Default (m/s)"""
+  """
+  Average wind direction at 100m height (Degrees) - Degrees clockwise from 0 = North
+  """
+  wind_dir_100m: Int
+
+  """Average wind speed at 10m height - Default (m/s)"""
   wind_spd: Float
+
+  """Average wind speed at 100m height - Default (m/s)"""
+  wind_spd_100m: Float
 }
 
 type EnergyObsGroup {
-  """City ID (closest)"""
+  """Nearest city ID"""
   city_id: Float
 
-  """City name (closest)"""
+  """Nearest city name"""
   city_name: String
 
   """Count of found observations"""
@@ -494,7 +544,7 @@ type EnergyObsGroup {
   """State abbreviation"""
   state_code: String
 
-  """Nearest Station ID [DEPRECATED - use 'sources']"""
+  """[DEPRECATED] Deprecated - use 'sources'"""
   station_id: String
 
   """Degree day threshold units"""
@@ -508,7 +558,7 @@ type EnergyObsGroup {
 }
 
 type EnergyObsGroupForecast {
-  """City name (closest)"""
+  """Nearest city name"""
   city_name: String
 
   """Country abbreviation"""
@@ -550,16 +600,20 @@ type EnergyObsSeries {
   """Heating degree days"""
   hdd: Float
 
-  """Average max wind direction (Degrees)"""
+  """
+  Average max wind direction (Degrees) - Degrees clockwise from 0 = North
+  """
   max_wind_dir: Int
 
-  """Max wind speed - Default (m/s)"""
+  """Max 10m wind speed - Default (m/s)"""
   max_wind_spd: Float
 
   """Total precipitation in period - Default (mm)"""
   precip: Float
 
-  """Data revision status (interim or final)"""
+  """
+  Data revision status (interim or final). interim = Data subject to change.
+  """
   revision_status: String
 
   """Final data revision version."""
@@ -585,7 +639,9 @@ type EnergyObsSeries {
   """Total clear sky global horizontal solar irradiance (W/m^2)"""
   t_ghi: Float
 
-  """Total actual solar radiation (W/m^2)"""
+  """
+  Total solar radiation (W/m^2) - <a href='https://help.weatherbit.io/what-is-the-solar_rad-field/'>Accounts for cloud cover, and other factors.</a>
+  """
   t_solar_rad: Float
 
   """Average temperature - Default (C)"""
@@ -600,10 +656,12 @@ type EnergyObsSeries {
   """Timestamp UTC"""
   timestamp_utc: String
 
-  """Average wind direction (Degrees)"""
+  """
+  Average 10m wind direction (Degrees) - Degrees clockwise from 0 = North
+  """
   wind_dir: Int
 
-  """Average wind speed - Default (m/s)"""
+  """Average 10m wind speed - Default (m/s)"""
   wind_spd: Float
 }
 
@@ -621,7 +679,7 @@ enum ErrorCode {
 }
 
 type FCMinutely {
-  """City Name"""
+  """Nearest city name"""
   city_name: String
 
   """Country Abbreviation"""
@@ -662,34 +720,64 @@ type FCMinutelyOb {
 }
 
 type Forecast {
-  """Apparent Maximum daily Temperature - default (C)"""
+  """
+  Apparent Maximum daily Temperature (Same as Feels-Like or Heat Index + Wind Chill)  - default (C)
+  """
   app_max_temp: Float
 
-  """Apparent Minimum daily Temperature - default (C)"""
+  """
+  Apparent Minimum daily Temperature (Same as Feels-Like or Heat Index + Wind Chill) - default (C)
+  """
   app_min_temp: Float
 
   """Cloud cover as a percentage (%)"""
   clouds: Int
 
-  """
-  [DEPRECATED - use 'valid_date'] Date in format "YYYY-MM-DD:HH". All datetime is in (UTC)
-  """
+  """High-level (>5km AGL) cloud coverage (%)"""
+  clouds_hi: Int
+
+  """Low-level (~0-3km AGL) cloud coverage (%)"""
+  clouds_low: Int
+
+  """Mid-level (~3-5km AGL) cloud coverage (%)"""
+  clouds_mid: Int
+
+  """[DEPRECATED] Deprecated - use 'valid_date'"""
   datetime: String
 
   """Dewpoint (Average) - default (C)"""
   dewpt: Float
 
+  """
+  High Temperature or Day-time High - Calculated from 7 AM to 7 PM local time (default Celsius)
+  """
+  high_temp: Float
+
+  """
+  Low Temperature or Night-time Low - Calculated from 7 PM to 7 AM local time (default Celsius)
+  """
+  low_temp: Float
+
   """[DEPRECATED] Max direct component of solar insolation (W/m^2)"""
   max_dhi: Float
 
-  """Maximum daily Temperature - default (C)"""
+  """
+  Maximum Temperature - Calculated from Midnight to Midnight local time (default Celsius)
+  """
   max_temp: Float
 
-  """Minimum daily Temperature - default (C)"""
+  """
+  Minimum Temperature - Calculated from Midnight to Midnight local time (default Celsius)
+  """
   min_temp: Float
 
-  """Moon phase"""
+  """Moon phase illumination fraction (0-1)"""
   moon_phase: Float
+
+  """
+  Moon lunation fraction (0 = New moon, 0.50 = Full Moon, 0.75 = Last quarter moon)
+  """
+  moon_phase_lunation: Float
 
   """Moonrise unix timestamp"""
   moonrise_ts: Int
@@ -697,13 +785,18 @@ type Forecast {
   """Moonset unix timestamp"""
   moonset_ts: Int
 
+  """Total column ozone (Dobson units)"""
+  ozone: Float
+
   """Part of the day (d = day, n = night)"""
   pod: String
 
   """Chance of Precipitation as a percentage (%)"""
   pop: Float
 
-  """Accumulated precipitation since last forecast point - default (mm)"""
+  """
+  Accumulated liquid equivalent precipitation since last forecast point - default (mm)
+  """
   precip: Float
 
   """Pressure (mb)"""
@@ -733,7 +826,7 @@ type Forecast {
   """Unix Timestamp"""
   ts: Float
 
-  """UV Index"""
+  """UV Index (0-11+)"""
   uv: Float
 
   """Valid Date"""
@@ -749,10 +842,13 @@ type Forecast {
   """Cardinal wind direction (text)"""
   wind_cdir_full: String
 
-  """Wind direction"""
+  """10m wind direction - Degrees clockwise from 0 = North"""
   wind_dir: Int
 
-  """Wind Speed (default m/s)"""
+  """Wind Gust Speed (default m/s)"""
+  wind_gust_spd: Float
+
+  """10m wind Speed (default m/s)"""
   wind_spd: Float
 }
 
@@ -770,102 +866,104 @@ type ForecastAGObj {
   """Bulk Soil Density"""
   bulk_soil_density: Float
 
-  """Average Downward Longwave Radiation Flux"""
+  """Average Downward Longwave Radiation Flux (W/m^2)"""
   dlwrf_avg: Float
 
-  """Maximum Downward Longwave Radiation Flux"""
+  """Maximum Downward Longwave Radiation Flux (W/m^2)"""
   dlwrf_max: Float
 
-  """Net Downward Longwave Radiation Flux"""
+  """Net Downward Longwave Radiation Flux (W/m^2)"""
   dlwrf_net: Float
 
-  """Average Downward Shortwave Radiation Flux"""
+  """Average Downward Shortwave Radiation Flux (W/m^2)"""
   dswrf_avg: Float
 
-  """Maximum Downward Shortwave Radiation Flux"""
+  """Maximum Downward Shortwave Radiation Flux (W/m^2)"""
   dswrf_max: Float
 
-  """Net Downward Shortwave Radiation Flux"""
+  """Net Downward Shortwave Radiation Flux (W/m^2)"""
   dswrf_net: Float
 
-  """Evapotranspiration"""
+  """Evapotranspiration (default mm)"""
   evapotranspiration: Float
 
-  """Probability of Precipitation"""
+  """Probability of Precipitation (%)"""
   pop: Float
 
-  """Precipitation"""
+  """Accumulated liquid equivalent precipitation (default mm)"""
   precip: Float
 
-  """Average Pressure"""
+  """Average Pressure (default mb)"""
   pres_avg: Float
 
-  """Data revision status"""
+  """
+  Data revision status (interim or final). interim = Data subject to change.
+  """
   revision_status: String
 
   """Final data revision version."""
   revision_version: String
 
-  """Average Skin Temperature"""
+  """Average Skin (Surface) Temperature (default Celsius)"""
   skin_temp_avg: Float
 
-  """Maximum Skin Temperature"""
+  """Maximum Skin (Surface) Temperature (default Celsius)"""
   skin_temp_max: Float
 
-  """Minimum Skin Temperature"""
+  """Minimum Skin (Surface) Temperature (default Celsius)"""
   skin_temp_min: Float
 
-  """Soil Moisture (0-10cm depth)"""
+  """Soil Moisture (0-10cm depth) (default mm)"""
   soilm_0_10cm: Float
 
-  """Soil Moisture (10-40cm depth)"""
+  """Soil Moisture (10-40cm depth) (default mm)"""
   soilm_10_40cm: Float
 
-  """Soil Moisture (40-100cm depth)"""
+  """Soil Moisture (40-100cm depth) (default mm)"""
   soilm_40_100cm: Float
 
-  """Soil Moisture (100-200cm depth)"""
+  """Soil Moisture (100-200cm depth) (default mm)"""
   soilm_100_200cm: Float
 
-  """Soil Temperature (0-10cm depth)"""
+  """Soil Temperature (0-10cm depth) (default Celsius)"""
   soilt_0_10cm: Float
 
-  """Soil Temperature (10-40cm depth)"""
+  """Soil Temperature (10-40cm depth) (default Celsius)"""
   soilt_10_40cm: Float
 
-  """Soil Temperature (40-100cm depth)"""
+  """Soil Temperature (40-100cm depth) (default Celsius)"""
   soilt_40_100cm: Float
 
-  """Soil Temperature (100-200cm depth)"""
+  """Soil Temperature (100-200cm depth) (default Celsius)"""
   soilt_100_200cm: Float
 
-  """Specific Humidity"""
+  """Specific Humidity (kg/kg)"""
   specific_humidity: Float
 
-  """Average Temperature at 2 meters"""
+  """Average Temperature at 2 meters (default Celsius)"""
   temp_2m_avg: Float
 
-  """Volumetric Soil Moisture (0-10cm depth)"""
+  """Volumetric Soil Moisture (0-10cm depth) (fraction)"""
   v_soilm_0_10cm: Float
 
-  """Volumetric Soil Moisture (10-40cm depth)"""
+  """Volumetric Soil Moisture (10-40cm depth) (fraction)"""
   v_soilm_10_40cm: Float
 
-  """Volumetric Soil Moisture (40-100cm depth)"""
+  """Volumetric Soil Moisture (40-100cm depth) (fraction)"""
   v_soilm_40_100cm: Float
 
-  """Volumetric Soil Moisture (100-200cm depth)"""
+  """Volumetric Soil Moisture (100-200cm depth) (fraction)"""
   v_soilm_100_200cm: Float
 
   """Valid Date"""
   valid_date: Date
 
-  """Average Wind Speed at 10 meters"""
+  """Average Wind Speed at 10 meters (default m/s)"""
   wind_10m_spd_avg: Float
 }
 
 type ForecastDay {
-  """City Name"""
+  """Nearest city name"""
   city_name: String
 
   """Country Abbreviation"""
@@ -886,28 +984,40 @@ type ForecastDay {
 }
 
 type ForecastHour {
-  """Apparent Temperature - Default (C)"""
+  """
+  Apparent Temperature - Same as Feels-Like or Heat + Wind Chill Indices - Default (C)
+  """
   app_temp: Float
 
   """Cloud cover as a percentage (%)"""
   clouds: Int
 
-  """
-  [DEPRECATED - use 'timestamp_utc'] Date in format "YYYY-MM-DD:HH". All datetime is in (UTC)
-  """
+  """High-level (>5km AGL) cloud coverage (%)"""
+  clouds_hi: Int
+
+  """Low-level (~0-3km AGL) cloud coverage (%)"""
+  clouds_low: Int
+
+  """Mid-level (~3-5km AGL) cloud coverage (%)"""
+  clouds_mid: Int
+
+  """[DEPRECATED] Deprecated use 'timestamp_utc'"""
   datetime: String
 
   """Dewpoint - Default (C)"""
   dewpt: Float
 
-  """Diffuse normal solar irradiance (W/m^2)"""
+  """Diffuse Clear-Sky normal solar irradiance (W/m^2)"""
   dhi: Float
 
-  """Direct normal solar irradiance (W/m^2)"""
+  """Direct Clear-Sky normal solar irradiance (W/m^2)"""
   dni: Float
 
-  """Global horizontal solar irradiance (W/m^2)"""
+  """Global Clear-Sky horizontal solar irradiance (W/m^2)"""
   ghi: Float
+
+  """Total column ozone (Dobson units)"""
+  ozone: Float
 
   """Part of day (d = day, n = night)"""
   pod: String
@@ -915,7 +1025,9 @@ type ForecastHour {
   """Chance of Precipitation as a percentage (%)"""
   pop: Float
 
-  """Accumulated precipitation since last forecast point. Default (mm)"""
+  """
+  Accumulated liquid equivalent precipitation since last forecast point. Default (mm)
+  """
   precip: Float
 
   """Pressure (mb)"""
@@ -933,7 +1045,9 @@ type ForecastHour {
   """Snow depth - Default (mm)"""
   snow_depth: Float
 
-  """Estimated solar radiation (W/m^2)"""
+  """
+  Estimated solar radiation (W/m^2) - <a href='https://help.weatherbit.io/what-is-the-solar_rad-field/'>Accounts for cloud cover, and other factors.</a>
+  """
   solar_rad: Float
 
   """Temperature - Default (C)"""
@@ -948,7 +1062,7 @@ type ForecastHour {
   """Unix Timestamp"""
   ts: Float
 
-  """UV Index"""
+  """UV Index (0-11+)"""
   uv: Float
 
   """Visibility - Default (KM)"""
@@ -961,18 +1075,18 @@ type ForecastHour {
   """Cardinal wind direction (text)"""
   wind_cdir_full: String
 
-  """Wind direction"""
+  """10m wind direction - Degrees clockwise from 0 = North"""
   wind_dir: Int
 
-  """Wind Gust Speed - Default (m/s)"""
+  """10m wind Gust Speed - Default (m/s)"""
   wind_gust_spd: Float
 
-  """Wind Speed - Default (m/s)"""
+  """10m wind Speed - Default (m/s)"""
   wind_spd: Float
 }
 
 type ForecastHourly {
-  """City Name"""
+  """Nearest city name"""
   city_name: String
 
   """Country Abbreviation"""
@@ -992,6 +1106,29 @@ type ForecastHourly {
   timezone: String
 }
 
+type GeocodeResult {
+  """2-letter country code"""
+  country_code: String
+
+  """Internal geographic identifier"""
+  geo_id: String
+
+  """Latitude"""
+  lat: Float
+
+  """Longitude"""
+  lon: Float
+
+  """Resolved city, county, or postal area name"""
+  name: String
+
+  """State or province abbreviation when available"""
+  state_code: String
+
+  """Local IANA time zone"""
+  timezone: String
+}
+
 enum HTTPMethod {
   CONNECT
   DELETE
@@ -1005,7 +1142,10 @@ enum HTTPMethod {
 }
 
 type History {
-  """City name (Closest)"""
+  """Nearest city ID"""
+  city_id: String
+
+  """Nearest city name"""
   city_name: String
 
   """Country abbreviation"""
@@ -1023,6 +1163,9 @@ type History {
 
   """State abbreviation"""
   state_code: String
+
+  """[DEPRECATED] Deprecated - use 'sources'"""
+  station_id: String
 
   """Local IANA time zone"""
   timezone: String
@@ -1042,76 +1185,78 @@ type HistoryAGObj {
   """Bulk Soil Density"""
   bulk_soil_density: Float
 
-  """Average Downward Longwave Radiation Flux"""
+  """Average Downward Longwave Radiation Flux (W/m^2)"""
   dlwrf_avg: Float
 
-  """Maximum Downward Longwave Radiation Flux"""
+  """Maximum Downward Longwave Radiation Flux (W/m^2)"""
   dlwrf_max: Float
 
-  """Net Downward Longwave Radiation Flux"""
+  """Net Downward Longwave Radiation Flux (W/m^2)"""
   dlwrf_net: Float
 
-  """Average Downward Shortwave Radiation Flux"""
+  """Average Downward Shortwave Radiation Flux (W/m^2)"""
   dswrf_avg: Float
 
-  """Maximum Downward Shortwave Radiation Flux"""
+  """Maximum Downward Shortwave Radiation Flux (W/m^2)"""
   dswrf_max: Float
 
-  """Net Downward Shortwave Radiation Flux"""
+  """Net Downward Shortwave Radiation Flux (W/m^2)"""
   dswrf_net: Float
 
-  """Evapotranspiration"""
+  """Reference evapotranspiration - ET0 (default mm)"""
   evapotranspiration: Float
 
-  """Precipitation"""
+  """Accumulated liquid equivalent precipitation (default mm)"""
   precip: Float
 
-  """Average Pressure"""
+  """Average Pressure (default mb)"""
   pres_avg: Float
 
-  """Data revision status"""
+  """
+  Data revision status (interim or final). interim = Data subject to change
+  """
   revision_status: String
 
-  """Final data revision version."""
+  """Final data revision version"""
   revision_version: String
 
-  """Average Skin Temperature"""
+  """Average Skin Temperature (Soil surface Temperature) (Default Celsius)"""
   skin_temp_avg: Float
 
-  """Maximum Skin Temperature"""
+  """Maximum Skin Temperature (Soil surface Temperature) (Default Celsius)"""
   skin_temp_max: Float
 
-  """Minimum Skin Temperature"""
+  """Minimum Skin Temperature (Soil surface Temperature) (Default Celsius)"""
   skin_temp_min: Float
 
-  """Soil Moisture (0-10cm depth)"""
+  """Soil Moisture (0-10cm depth) (default mm)"""
   soilm_0_10cm: Float
 
-  """Soil Moisture (10-40cm depth)"""
+  """Soil Moisture (10-40cm depth) (default mm)"""
   soilm_10_40cm: Float
 
-  """Soil Moisture (40-100cm depth)"""
+  """Soil Moisture (40-100cm depth) (default mm)"""
   soilm_40_100cm: Float
 
-  """Soil Moisture (100-200cm depth)"""
+  """Soil Moisture (100-200cm depth) (default mm)"""
   soilm_100_200cm: Float
 
-  """Soil Temperature (0-10cm depth)"""
+  """Soil Temperature (0-10cm depth) (default Celsius)"""
   soilt_0_10cm: Float
 
-  """Soil Temperature (10-40cm depth)"""
+  """Soil Temperature (10-40cm depth) (default Celsius)"""
   soilt_10_40cm: Float
 
-  """Soil Temperature (40-100cm depth)"""
+  """Soil Temperature (40-100cm depth) (default Celsius)"""
   soilt_40_100cm: Float
 
-  """Soil Temperature (100-200cm depth)"""
+  """Soil Temperature (100-200cm depth) (default Celsius)"""
   soilt_100_200cm: Float
 
-  """Specific Humidity"""
+  """Specific Humidity (kg/kg)"""
   specific_humidity: Float
 
-  """Average Temperature at 2 meters"""
+  """Average Temperature at 2 meters (default C)"""
   temp_2m_avg: Float
 
   """Timestamp in local time"""
@@ -1120,16 +1265,16 @@ type HistoryAGObj {
   """Timestamp UTC"""
   timestamp_utc: String
 
-  """Volumetric Soil Moisture (0-10cm depth)"""
+  """Volumetric Soil Moisture (0-10cm depth) (fraction)"""
   v_soilm_0_10cm: Float
 
-  """Volumetric Soil Moisture (10-40cm depth)"""
+  """Volumetric Soil Moisture (10-40cm depth) (fraction)"""
   v_soilm_10_40cm: Float
 
-  """Volumetric Soil Moisture (40-100cm depth)"""
+  """Volumetric Soil Moisture (40-100cm depth) (fraction)"""
   v_soilm_40_100cm: Float
 
-  """Volumetric Soil Moisture (100-200cm depth)"""
+  """Volumetric Soil Moisture (100-200cm depth) (fraction)"""
   v_soilm_100_200cm: Float
 
   """Valid Date"""
@@ -1140,7 +1285,10 @@ type HistoryAGObj {
 }
 
 type HistoryDay {
-  """City name (Closest)"""
+  """Nearest city ID"""
+  city_id: String
+
+  """Nearest city name"""
   city_name: String
 
   """Country abbreviation"""
@@ -1159,18 +1307,24 @@ type HistoryDay {
   """State abbreviation"""
   state_code: String
 
+  """[DEPRECATED] Deprecated - use 'sources'"""
+  station_id: String
+
   """Local IANA time zone"""
   timezone: String
 }
 
 type HistoryDayObj {
+  """Average cloud cover (%)"""
+  clouds: Int
+
   """Date in format "YYYY-MM-DD". All datetime is in (UTC)"""
   datetime: Date
 
   """Average dewpoint - Default (C)"""
   dewpt: Float
 
-  """Average hourly diffuse horizontal solar irradiance (W/m^2)"""
+  """Average diffuse horizontal solar irradiance (W/m^2)"""
   dhi: Int
 
   """Average direct normal solar irradiance (W/m^2)"""
@@ -1179,22 +1333,33 @@ type HistoryDayObj {
   """Average hourly global horizontal solar irradiance (W/m^2)"""
   ghi: Int
 
+  """Maximum diffuse horizontal solar irradiance (W/m^2)"""
+  max_dhi: Int
+
+  """Maximum direct normal solar irradiance (W/m^2)"""
+  max_dni: Int
+
+  """Maximum global horizontal solar irradiance (W/m^2)"""
+  max_ghi: Int
+
   """Max temperature - Default (C)"""
   max_temp: Float
 
   """Time of max memperature - Unix Timestamp"""
   max_temp_ts: Float
 
-  """Max UV Index (1-11+)"""
+  """Max UV Index (0-11+)"""
   max_uv: Float
 
-  """Direction of wind at time of max 2min wind (degrees)"""
+  """
+  Direction of 10m wind at time of max 2min wind (degrees) - Degrees clockwise from 0 = North
+  """
   max_wind_dir: Int
 
-  """Max 2min Wind Speed - default (m/s)"""
+  """Max 2min 10m Wind Speed - default (m/s)"""
   max_wind_spd: Float
 
-  """Time of max 2min wind - unix timestamp"""
+  """Time of max 2min 10m wind - unix timestamp"""
   max_wind_spd_ts: Float
 
   """Min temperature - Default (C)"""
@@ -1206,13 +1371,15 @@ type HistoryDayObj {
   """Liquid equivalent precipitation - default (mm)"""
   precip: Float
 
-  """Satellite estimated liquid equivalent precipitation - default (mm)"""
+  """[DEPRECATED] Deprecated - use 'precip'"""
   precip_gpm: Float
 
   """Average pressure (mb)"""
   pres: Float
 
-  """Data revision status (interim or final)"""
+  """
+  Data revision status (interim or final). interim = Data subject to change.
+  """
   revision_status: String
 
   """Final data revision version."""
@@ -1230,6 +1397,9 @@ type HistoryDayObj {
   """Snow Depth - default (mm)"""
   snow_depth: Float
 
+  """Average solar radiation (W/m^2)"""
+  solar_rad: Int
+
   """Total diffuse horizontal solar irradiance (W/m^2)"""
   t_dhi: Int
 
@@ -1239,24 +1409,31 @@ type HistoryDayObj {
   """Total global horizontal solar irradiance (W/m^2)"""
   t_ghi: Int
 
+  """Total solar radiation (W/m^2)"""
+  t_solar_rad: Int
+
   """Average temperature - Default (C)"""
   temp: Float
 
   """Unix timestamp of datetime (Midnight UTC)"""
   ts: Int
 
-  """Average wind direction (degrees)"""
+  """
+  Average 10m wind direction (degrees) - Degrees clockwise from 0 = North
+  """
   wind_dir: Int
 
-  """Wind gust speed - default (m/s)"""
+  """10m wind gust speed - default (m/s)"""
   wind_gust_spd: Float
 
-  """Average wind speed - default (m/s)"""
+  """Average 10m wind speed - default (m/s)"""
   wind_spd: Float
 }
 
 type HistoryObj {
-  """Apparent Temperature or Wind Chill/Heat Index (Default Celcius)"""
+  """
+  Apparent Temperature - Same as Feels-Like or Heat + Wind Chill Indices (Default Celsius)
+  """
   app_temp: Float
 
   """Azimuth angle (Degrees)"""
@@ -1265,12 +1442,10 @@ type HistoryObj {
   """Cloud Cover 0-100 (%)"""
   clouds: Int
 
-  """
-  [DEPRECATED - use 'timestamp_utc'] Date in format "YYYY-MM-DD:HH". All datetime is in (UTC)
-  """
+  """[DEPRECATED] Deprecated - use 'timestamp_utc'."""
   datetime: String
 
-  """Dew point (Default Celcius)"""
+  """Dew point (Default Celsius)"""
   dewpt: Float
 
   """Diffuse normal solar irradiance (W/m^2)"""
@@ -1291,13 +1466,15 @@ type HistoryObj {
   """Part of the day (d = day, n = night)"""
   pod: String
 
-  """Liquid equivalent precipitation - Default (mm)"""
+  """Accumulated liquid equivalent precipitation - Default (mm)"""
   precip: Float
 
   """Pressure (mb)"""
   pres: Float
 
-  """Data revision status (interim or final)"""
+  """
+  Data revision status (interim or final). interim = Data subject to change.
+  """
   revision_status: String
 
   """Final data revision version."""
@@ -1312,10 +1489,12 @@ type HistoryObj {
   """Snowfall - Default (mm)"""
   snow: Float
 
-  """Estimated solar radiation (W/m^2)"""
+  """
+  Estimated solar radiation (W/m^2) - <a href='https://help.weatherbit.io/what-is-the-solar_rad-field/'>Accounts for cloud cover, and other factors.</a>
+  """
   solar_rad: Float
 
-  """Temperature (Default Celcius)"""
+  """Temperature (Default Celsius)"""
   temp: Float
 
   """Timestamp in local time"""
@@ -1327,30 +1506,33 @@ type HistoryObj {
   """Unix Timestamp"""
   ts: Float
 
-  """UV Index (1-11+)"""
+  """UV Index (0-11+)"""
   uv: Float
 
   """Visibility (KM)"""
   vis: Float
   weather: query_history_hourly_oneOf_0_data_items_weather
 
-  """Wind direction (Degrees)"""
+  """10m wind direction (Degrees) - Degrees clockwise from 0 = North"""
   wind_dir: Int
 
-  """Wind Gust Speed - Default (m/s)"""
+  """10m wind Gust Speed - Default (m/s)"""
   wind_gust_spd: Float
 
-  """Wind Speed (Default m/s)"""
+  """10m wind Speed (Default m/s)"""
   wind_spd: Float
 }
 
 type HistorySubhourly {
-  """City name (Closest)"""
+  """Nearest city ID"""
+  city_id: String
+
+  """Nearest city name"""
   city_name: String
 
   """Country abbreviation"""
   country_code: String
-  data: [HistoryObj]
+  data: [HistorySubhourlyObj]
 
   """Latitude"""
   lat: Float
@@ -1364,8 +1546,98 @@ type HistorySubhourly {
   """State abbreviation"""
   state_code: String
 
+  """[DEPRECATED] Deprecated - use 'sources'"""
+  station_id: String
+
   """Local IANA time zone"""
   timezone: String
+}
+
+type HistorySubhourlyObj {
+  """
+  Apparent Temperature - Same as Feels-Like or Heat + Wind Chill Indices (Default Celsius)
+  """
+  app_temp: Float
+
+  """Solar azimuth angle (Degrees)"""
+  azimuth: Float
+
+  """Cloud Cover 0-100 (%)"""
+  clouds: Int
+
+  """Dew point (Default Celsius)"""
+  dewpt: Float
+
+  """Diffuse normal solar irradiance (W/m^2)"""
+  dhi: Float
+
+  """Direct normal solar irradiance (W/m^2)"""
+  dni: Float
+
+  """Solar elevation angle (Degrees)"""
+  elev_angle: Float
+
+  """Global horizontal solar irradiance (W/m^2)"""
+  ghi: Float
+
+  """Part of the day (d = day, n = night)"""
+  pod: String
+
+  """Liquid equivalent precipitation rate - Default (mm/hr)"""
+  precip_rate: Float
+
+  """Pressure (mb)"""
+  pres: Float
+
+  """
+  Data revision status (interim or final). interim = Data subject to change.
+  """
+  revision_status: String
+
+  """Final data revision version."""
+  revision_version: String
+
+  """Relative Humidity as a percentage (%)"""
+  rh: Int
+
+  """Sea level pressure (mb)"""
+  slp: Float
+
+  """Snowfall Rate - Default (mm/hr)"""
+  snow_rate: Float
+
+  """
+  Estimated solar radiation (W/m^2) - <a href='https://help.weatherbit.io/what-is-the-solar_rad-field/'>Accounts for cloud cover, and other factors.</a>
+  """
+  solar_rad: Float
+
+  """Temperature (Default Celsius)"""
+  temp: Float
+
+  """Timestamp in local time"""
+  timestamp_local: String
+
+  """Timestamp UTC"""
+  timestamp_utc: String
+
+  """Unix Timestamp"""
+  ts: Float
+
+  """UV Index (0-11+)"""
+  uv: Float
+
+  """Visibility (KM)"""
+  vis: Float
+  weather: query_history_subhourly_oneOf_0_data_items_weather
+
+  """10m wind direction (Degrees) - Degrees clockwise from 0 = North"""
+  wind_dir: Int
+
+  """10m wind Gust Speed - Default (m/s)"""
+  wind_gust_spd: Float
+
+  """10m wind Speed (Default m/s)"""
+  wind_spd: Float
 }
 
 """A language supported by the service"""
@@ -1383,37 +1655,37 @@ type Languages_Response {
 }
 
 type LightningObs {
-  """Cardinal direction of lightning relative to point"""
+  """Cardinal direction of lightning event relative to point"""
   bearing_cardinal: String
 
-  """Direction of lightning relative to point in degrees"""
+  """Direction of lightning event relative to point in degrees"""
   bearing_degrees: Int
 
-  """Distance of lightning from point in kilometers"""
+  """Distance of lightning event from point in kilometers"""
   distance_km: Float
 
-  """Distance of lightning from point in miles"""
+  """Distance of lightning event from point in miles"""
   distance_mi: Float
 
-  """Internal identifier of lightning"""
+  """Internal identifier of lightning event"""
   id: Int
 
-  """Latitude of lightning"""
+  """Latitude of lightning event"""
   lat: Float
 
-  """Longitude of lightning"""
+  """Longitude of lightning event"""
   lon: Float
 
-  """Amount of time passed since lightning lightning (in minutes)."""
+  """Amount of time passed since lightning event (in minutes)"""
   past_mins: Float
 
   """Source of lightning data"""
   source: String
 
-  """Timestamp of lightning at local timezone (YYYY-MM-DDTHH:MM:SS)"""
+  """Timestamp of lightning event at local timezone (YYYY-MM-DDTHH:MM:SS)"""
   timestamp_local: String
 
-  """Timestamp of lightning at UTC timezone (YYYY-MM-DDTHH:MM:SS)"""
+  """Timestamp of lightning event at UTC timezone (YYYY-MM-DDTHH:MM:SS)"""
   timestamp_utc: String
 
   """Type of lightning data"""
@@ -1485,6 +1757,12 @@ type Metadata {
 type Normals {
   data: [NormalsObj]
 
+  """Latitude"""
+  lat: Float
+
+  """Longitude"""
+  lon: Float
+
   """List of data sources used in response"""
   sources: [String]
 
@@ -1502,10 +1780,16 @@ type NormalsObj {
   """Hour number"""
   hour: Float
 
-  """Maximum wind speed"""
+  """Maximum temperature"""
+  max_temp: Float
+
+  """Maximum 10m wind speed"""
   max_wind_spd: Float
 
-  """Minimum wind speed"""
+  """Minimum temperature"""
+  min_temp: Float
+
+  """Minimum 10m wind speed"""
   min_wind_spd: Float
 
   """Month number"""
@@ -1520,10 +1804,10 @@ type NormalsObj {
   """Average temperature"""
   temp: Float
 
-  """Average wind direction"""
+  """Average 10m wind direction - Degrees clockwise from 0 = North"""
   wind_dir: Float
 
-  """Average wind speed"""
+  """Average 10m wind speed"""
   wind_spd: Float
 }
 
@@ -1644,9 +1928,6 @@ type Query {
     """
     city: String
 
-    """City ID. Example: 4487042"""
-    city_id: String
-
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
 
@@ -1668,20 +1949,18 @@ type Query {
 
   """Returns a Current Observation - given a lat, and a lon."""
   current(
-    """Comma separated list of City ID's. Example: 4487042, 4494942, 4504871"""
-    cities: String
-
     """
     City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR
     """
     city: String
 
-    """City ID. Example: 4487042"""
-    city_id: String
-
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
-    include: queryInput_current_include
+
+    """
+    Include optional current weather add-ons in the response. Accepts a comma separated list of minutely, lightning, and/or alerts.
+    """
+    include: [queryInput_current_include_items]
 
     """Your registered API key."""
     key: String
@@ -1703,9 +1982,6 @@ type Query {
 
     """Station Call ID."""
     station: String
-
-    """Comma separated list of Station Call ID's. Example: KRDU,KBFI,KVNY"""
-    stations: String
     units: queryInput_current_units
   ): current_response
 
@@ -1715,9 +1991,6 @@ type Query {
     City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR
     """
     city: String
-
-    """City ID. Example: 4487042"""
-    city_id: String
 
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
@@ -2383,20 +2656,14 @@ type Query {
   Returns Agweather Forecast  - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.
   """
   forecast_agweather(
-    """End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
-    end_date: String!
-
     """Your registered API key."""
     key: String
 
     """Latitude component of location."""
-    lat: Float
+    lat: Float!
 
     """Longitude component of location."""
-    lon: Float
-
-    """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
-    start_date: String!
+    lon: Float!
     units: queryInput_forecast_agweather_units
   ): forecast_agweather_response
 
@@ -2409,9 +2676,6 @@ type Query {
     """
     city: String
 
-    """City ID. Example: 4487042"""
-    city_id: String
-
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
 
@@ -2422,10 +2686,10 @@ type Query {
     key: String
 
     """Latitude component of location."""
-    lat: Float
+    lat: Float!
 
     """Longitude component of location."""
-    lon: Float
+    lon: Float!
 
     """Postal Code. Example: 28546"""
     postal_code: String
@@ -2437,9 +2701,6 @@ type Query {
     City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR
     """
     city: String
-
-    """City ID. Example: 4487042"""
-    city_id: String
 
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
@@ -2473,10 +2734,10 @@ type Query {
     key: String
 
     """Latitude component of location."""
-    lat: Float
+    lat: Float!
 
     """Longitude component of location."""
-    lon: Float
+    lon: Float!
 
     """Temperature threshold to use to calculate degree days (default 18 C)"""
     threshold: Float
@@ -2492,9 +2753,6 @@ type Query {
     City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR
     """
     city: String
-
-    """City ID. Example: 4487042"""
-    city_id: String
 
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
@@ -2529,9 +2787,6 @@ type Query {
     """
     city: String
 
-    """City ID. Example: 4487042"""
-    city_id: String
-
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
 
@@ -2551,6 +2806,32 @@ type Query {
     station: String
     units: queryInput_forecast_minutely_units
   ): forecast_minutely_response
+
+  """
+  Returns latitude, longitude, timezone, and related location metadata for Weatherbit geocoding utility lookups.
+  """
+  geocode(
+    """City lookup value (optionally with state/country). Example: Raleigh,NC"""
+    city: String
+
+    """Weatherbit city ID. Example: 4487042"""
+    city_id: String
+
+    """Optional 2-letter country code."""
+    country: String
+
+    """Your registered API key."""
+    key: String
+
+    """Postal code lookup value. Example: 98104"""
+    postal_code: String
+
+    """Optional state or province code used with city lookups."""
+    state: String
+
+    """ICAO or station ID lookup value."""
+    station: String
+  ): geocode_response
 
   "Get the details for a specific administrative division, including location coordinates, population, and\\nelevation above sea-level (if available).\\n"
   getAdminDivisionUsingGET(
@@ -2801,14 +3082,14 @@ type Query {
     key: String
 
     """Latitude component of location."""
-    lat: Float
+    lat: Float!
 
     """Longitude component of location."""
-    lon: Float
+    lon: Float!
 
     """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
     start_date: String!
-    tp: queryInput_history_agweather_tp!
+    tp: queryInput_history_agweather_tp
     units: queryInput_history_agweather_units
   ): history_agweather_response
 
@@ -2821,23 +3102,27 @@ type Query {
     """
     city: String
 
-    """City ID. Example: 4487042"""
-    city_id: String
-
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
+
+    """End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
+    end_date: String
 
     """Your registered API key."""
     key: String
 
     """Latitude component of location."""
-    lat: Float
+    lat: Float!
 
     """Longitude component of location."""
-    lon: Float
+    lon: Float!
 
     """Postal Code. Example: 28546"""
     postal_code: String
+
+    """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
+    start_date: String
+    tz: queryInput_history_airquality_tz
   ): history_airquality_response
 
   """
@@ -2848,9 +3133,6 @@ type Query {
     City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR
     """
     city: String
-
-    """City ID. Example: 4487042"""
-    city_id: String
 
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
@@ -2913,9 +3195,6 @@ type Query {
     """
     city: String
 
-    """City ID. Example: 4487042"""
-    city_id: String
-
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
 
@@ -2972,6 +3251,14 @@ type Query {
   ): history_lightning_response
 
   """
+  Returns the current historical weather final revision version so downstream systems can detect changes to finalized datasets.
+  """
+  history_revision_version(
+    """Your registered API key."""
+    key: String
+  ): RevisionVersion
+
+  """
   Returns Historical Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.
   """
   history_subhourly(
@@ -2979,9 +3266,6 @@ type Query {
     City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR
     """
     city: String
-
-    """City ID. Example: 4487042"""
-    city_id: String
 
     """Country Code (2 letter) - to be used with postal_code."""
     country: String
@@ -3026,18 +3310,49 @@ type Query {
 
     """Longitude component of location."""
     lon: Float!
-
-    """Series year for calculation. 2020 for 1991-2020. 2010 for 1981-2010."""
-    series_year: Float!
+    series_year: queryInput_normals_series_year
 
     """Start Day (MM-DD)."""
     start_day: String!
-    tp: queryInput_normals_tp!
+    tp: queryInput_normals_tp
     units: queryInput_normals_units
   ): normals_response
+
+  """
+  Returns current usage counters, remaining request quotas, and reset timestamps for standard and historical Weatherbit products.
+  """
+  subscription_usage(
+    """Your registered API key."""
+    key: String
+  ): SubscriptionUsage
 }
 
 scalar ResolveToSourceArgs
+
+type RevisionVersion {
+  """Current finalized historical data revision version."""
+  revision_version: String
+}
+
+type SubscriptionUsage {
+  """Current call count for the key/subscription."""
+  calls_count: String
+
+  """Remaining calls before reset."""
+  calls_remaining: Int
+
+  """Usage reset timestamp."""
+  calls_reset_ts: Int
+
+  """Historical product call count when available."""
+  historical_calls_count: String
+
+  """Remaining historical calls before reset."""
+  historical_calls_remaining: Int
+
+  """Historical usage reset timestamp."""
+  historical_calls_reset_ts: Int
+}
 
 """An ISO-8601 time response"""
 type Time_Response {
@@ -3095,35 +3410,58 @@ type Void_container {
 type WeatherAlert {
   alerts: [WeatherAlertGroup]
 
+  """Nearest city name"""
+  city_name: String
+
+  """Country code"""
+  country_code: String
+
   """Latitude"""
   lat: Float
 
   """Longitude"""
   lon: Float
+
+  """State or region code"""
+  state_code: String
+
+  """Timezone for the requested location"""
+  timezone: String
 }
 
 type WeatherAlertGroup {
-  alerts: [String]
-
-  """Full description of weather alert"""
+  """Full description of weather alert (Typically in local language)"""
   description: String
 
-  """Issued time local"""
+  """Alert issued time local"""
   effective_local: String
 
-  """Issued time UTC"""
+  """Alert issued time UTC"""
   effective_utc: String
 
-  """Expiration time local"""
+  """Weather event end time local"""
+  ends_local: String
+
+  """Weather event end time UTC"""
+  ends_utc: String
+
+  """Alert expiration time local"""
   expires_local: String
 
-  """Expiration time UTC"""
+  """Alert expiration time UTC"""
   expires_utc: String
+
+  """Weather event onset time local"""
+  onset_local: String
+
+  """Weather event onset time UTC"""
+  onset_utc: String
+  regions: [String]
 
   """Severity of weather. (Advisory | Watch | Warning)"""
   severity: String
 
-  """Brief description of weather alert"""
+  """Brief description of weather alert (Typically in local language)"""
   title: String
 
   """URI to weather alert"""
@@ -3150,9 +3488,11 @@ union forecast_hourly_response = ForecastHourly | Void_container
 
 union forecast_minutely_response = FCMinutely | Void_container
 
+union geocode_response = GeocodeResult | Void_container
+
 union history_agweather_response = HistoryAG | Void_container
 
-union history_airquality_response = AQCurrentGroup | Void_container
+union history_airquality_response = AQHourly | Void_container
 
 union history_daily_response = HistoryDay | Void_container
 
@@ -3166,11 +3506,9 @@ union history_subhourly_response = HistorySubhourly | Void_container
 
 union normals_response = Normals | Void_container
 
-"""
-Include 1 hour - minutely precip forecast in the response, or severe weather alerts
-"""
-enum queryInput_current_include {
+enum queryInput_current_include_items {
   alerts
+  lightning
   minutely
 }
 
@@ -3228,18 +3566,20 @@ enum queryInput_current_lightning_sort {
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_current_units {
   I
+  M
   S
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_forecast_agweather_units {
   I
+  M
   S
 }
 
@@ -3283,10 +3623,11 @@ enum queryInput_forecast_daily_lang {
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_forecast_daily_units {
   I
+  M
   S
 }
 
@@ -3297,10 +3638,11 @@ enum queryInput_forecast_energy_tp {
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_forecast_energy_units {
   I
+  M
   S
 }
 
@@ -3344,18 +3686,20 @@ enum queryInput_forecast_hourly_lang {
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_forecast_hourly_units {
   I
+  M
   S
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_forecast_minutely_units {
   I
+  M
   S
 }
 
@@ -3366,11 +3710,18 @@ enum queryInput_history_agweather_tp {
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_history_agweather_units {
   I
+  M
   S
+}
+
+"""Assume utc (default) or local time for start_date, end_date"""
+enum queryInput_history_airquality_tz {
+  local
+  utc
 }
 
 """
@@ -3413,10 +3764,11 @@ enum queryInput_history_daily_lang {
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_history_daily_units {
   I
+  M
   S
 }
 
@@ -3428,10 +3780,11 @@ enum queryInput_history_energy_tp {
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_history_energy_units {
   I
+  M
   S
 }
 
@@ -3481,10 +3834,11 @@ enum queryInput_history_hourly_tz {
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_history_hourly_units {
   I
+  M
   S
 }
 
@@ -3554,11 +3908,18 @@ enum queryInput_history_subhourly_tz {
 }
 
 """
-Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>
+Convert to units. Default Metric. Options (I = Imperial, M = Metric, S = Scientific)
 """
 enum queryInput_history_subhourly_units {
   I
+  M
   S
+}
+
+"""Series year for calculation. 2020 for 1991-2020. 2010 for 1981-2010."""
+enum queryInput_normals_series_year {
+  _2010
+  _2020
 }
 
 """Time period of calculation (daily, monthly, or hourly)."""
@@ -3573,6 +3934,7 @@ Convert to units. Default Metric See <a target='blank' href='/api/requests'>unit
 """
 enum queryInput_normals_units {
   I
+  M
   S
 }
 
@@ -3798,6 +4160,17 @@ enum query_getLanguagesUsingGET_allOf_1_data_items_code {
 }
 
 type query_history_hourly_oneOf_0_data_items_weather {
+  """Weather Condition code"""
+  code: Int
+
+  """Weather Condition description"""
+  description: String
+
+  """Icon code for forecast image display"""
+  icon: String
+}
+
+type query_history_subhourly_oneOf_0_data_items_weather {
   """Weather Condition code"""
   code: Int
 

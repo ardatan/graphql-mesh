@@ -69,9 +69,9 @@ const memoizedGetEnvelopedFactory = memoize1(function getEnvelopedFactory(
   });
 });
 
-export function wrapFetchWithPlugins(plugins: MeshPlugin<any>[]): MeshFetch {
-  const onFetchHooks: OnFetchHook<any>[] = [];
-  for (const plugin of plugins as MeshPlugin<any>[]) {
+export function wrapFetchWithPlugins<TContext = any>(plugins: MeshPlugin<TContext>[]): MeshFetch {
+  const onFetchHooks: OnFetchHook<TContext>[] = [];
+  for (const plugin of plugins) {
     if (plugin?.onFetch != null) {
       onFetchHooks.push(plugin.onFetch);
     }

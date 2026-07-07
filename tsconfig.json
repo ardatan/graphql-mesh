@@ -12,7 +12,6 @@
 
     "outDir": "dist",
 
-    "baseUrl": ".",
     "allowJs": true,
 
     "target": "es2021", // TODO: remove once bob supports building cjs from node16 modules
@@ -27,32 +26,36 @@
     "verbatimModuleSyntax": true,
 
     "paths": {
-      "@graphql-mesh/migrate-config-cli": ["packages/legacy/migrate-config-cli/src/index.ts"],
-      "@graphql-mesh/include": ["packages/include/src/index.ts"],
-      "@graphql-mesh/include/*": ["packages/include/src/*"],
-      "@graphql-mesh/cli": ["packages/legacy/cli/src/index.ts"],
-      "@graphql-mesh/runtime": ["packages/legacy/runtime/src/index.ts"],
-      "@graphql-mesh/config": ["packages/legacy/config/src/index.ts"],
-      "@graphql-mesh/types": ["packages/legacy/types/src/index.ts"],
-      "@graphql-mesh/utils": ["packages/legacy/utils/src/index.ts"],
-      "@graphql-mesh/store": ["packages/legacy/store/src/index.ts"],
-      "@graphql-mesh/http": ["packages/legacy/http/src/index.ts"],
-      "@graphql-mesh/incontext-sdk-codegen": ["packages/incontext-sdk-codegen/src/index.ts"],
-      "@graphql-mesh/cache-*": ["packages/cache/*/src/index.ts"],
-      "@graphql-mesh/transform-*": ["packages/legacy/transforms/*/src/index.ts"],
-      "@graphql-mesh/merger-*": ["packages/legacy/mergers/*/src/index.ts"],
-      "@graphql-mesh/plugin-*": ["packages/plugins/*/src/index.ts"],
-      "@graphql-mesh/cross-helpers": ["packages/cross-helpers/node.js"],
-      "@graphql-mesh/string-interpolation": ["packages/string-interpolation/src/index.ts"],
-      "@graphql-mesh/fusion-composition": ["packages/fusion/composition/src/index.ts"],
-      "@graphql-mesh/compose-cli": ["packages/compose-cli/src/index.ts"],
-      "@graphql-mesh/transport-*": ["packages/transports/*/src/index.ts"],
-      "@graphql-mesh/*": ["packages/legacy/handlers/*/src/index.ts"],
-      "json-machete": ["packages/json-machete/src/index.ts"],
-      "@omnigraph/*": ["packages/loaders/*/src/index.ts"],
-      "@e2e/opts": ["e2e/utils/opts.ts"],
-      "@e2e/tenv": ["e2e/utils/tenv.ts"]
-    }
+      "@graphql-mesh/migrate-config-cli": ["./packages/legacy/migrate-config-cli/src/index.ts"],
+      "@graphql-mesh/include": ["./packages/include/src/index.ts"],
+      "@graphql-mesh/include/*": ["./packages/include/src/*"],
+      "@graphql-mesh/cli": ["./packages/legacy/cli/src/index.ts"],
+      "@graphql-mesh/runtime": ["./packages/legacy/runtime/src/index.ts"],
+      "@graphql-mesh/config": ["./packages/legacy/config/src/index.ts"],
+      "@graphql-mesh/types": ["./packages/legacy/types/src/index.ts"],
+      "@graphql-mesh/utils": ["./packages/legacy/utils/src/index.ts"],
+      "@graphql-mesh/store": ["./packages/legacy/store/src/index.ts"],
+      "@graphql-mesh/http": ["./packages/legacy/http/src/index.ts"],
+      "@graphql-mesh/incontext-sdk-codegen": ["./packages/incontext-sdk-codegen/src/index.ts"],
+      "@graphql-mesh/cache-*": ["./packages/cache/*/src/index.ts"],
+      "@graphql-mesh/transform-*": ["./packages/legacy/transforms/*/src/index.ts"],
+      "@graphql-mesh/merger-*": ["./packages/legacy/mergers/*/src/index.ts"],
+      "@graphql-mesh/plugin-*": ["./packages/plugins/*/src/index.ts"],
+      "@graphql-mesh/cross-helpers": ["./packages/cross-helpers/node.js"],
+      "@graphql-mesh/string-interpolation": ["./packages/string-interpolation/src/index.ts"],
+      "@graphql-mesh/fusion-composition": ["./packages/fusion/composition/src/index.ts"],
+      "@graphql-mesh/compose-cli": ["./packages/compose-cli/src/index.ts"],
+      "@graphql-mesh/transport-*": ["./packages/transports/*/src/index.ts"],
+      "@graphql-mesh/*": ["./packages/legacy/handlers/*/src/index.ts"],
+      "json-machete": ["./packages/json-machete/src/index.ts"],
+      "@omnigraph/*": ["./packages/loaders/*/src/index.ts"],
+      "@e2e/opts": ["./e2e/utils/opts.ts"],
+      "@e2e/tenv": ["./e2e/utils/tenv.ts"]
+    },
+
+    "ignoreDeprecations": "6.0",
+    "rootDir": ".",
+    "types": ["node", "jest"]
   },
   "include": ["declarations.d.ts", "packages", "e2e"],
   "exclude": ["**/node_modules", "**/dist", "**/bundle"]

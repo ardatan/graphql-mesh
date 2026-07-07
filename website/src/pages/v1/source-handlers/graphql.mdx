@@ -27,13 +27,16 @@ export const composeConfig = defineConfig({
 })
 ```
 
-### Load the schema via URL or local file (Hive CDN etc)
+### Load the schema via URL or local file
 
-If you want to load a remote GraphQL subgraph from a CDN, you can provide `source` in the
+If you want to load a remote GraphQL subgraph from a URL, you can provide `source` in the
 configuration like below;
 
 In this case, Mesh will take the schema from `source`, but execute the operations against the
 `endpoint`.
+
+In this case, Mesh won't introspect the endpoint, and use `source` as a source schema before
+applying any transformations etc.
 
 ```ts filename="mesh-config.ts" {9}
 import { defineConfig, loadGraphQLHTTPSubgraph } from '@graphql-mesh/compose-cli'

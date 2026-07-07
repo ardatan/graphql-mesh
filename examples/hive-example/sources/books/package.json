@@ -8,15 +8,15 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "fets": "^0.8.0",
+    "fets": "^0.8.7",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.2"
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@graphql-hive/cli": "0.59.0",
-    "@graphql-mesh/cli": "0.100.39",
-    "@graphql-mesh/openapi": "0.109.41",
-    "@types/node": "^25.5.0",
-    "graphql": "16.13.1"
+    "@graphql-hive/cli": "0.60.2",
+    "@graphql-mesh/cli": "0.100.53",
+    "@graphql-mesh/openapi": "0.109.54",
+    "@types/node": "^25.9.1",
+    "graphql": "16.14.0"
   }
 }

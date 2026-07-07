@@ -103,6 +103,9 @@ directive @soap(
   soapHeaders: SOAPHeaders
   soapAction: String
   soapNamespace: String
+  headerArgNames: [String]
+  argNamespaces: ObjMap
+  typeNamespaces: ObjMap
 ) repeatable on FIELD_DEFINITION
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
@@ -126,7 +129,9 @@ scalar ObjMap @join__type(graph: SOAP_DEMO)
 
 scalar _DirectiveExtensions @join__type(graph: SOAP_DEMO) 
 
-type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "soap", subgraph: "soap-demo"}]})  @join__type(graph: SOAP_DEMO)  {
+type Query @extraSchemaDefinitionDirective(
+  directives: {transport: [{kind: "soap", subgraph: "soap-demo", typeNamespacesJson: {s0_FindPerson_Input: "http://tempuri.org", s0_GetByName_Input: "http://tempuri.org", s0_GetDataSetByName_Input: "http://tempuri.org", s0_GetListByName_Input: "http://tempuri.org", s0_QueryByName_Input: "http://tempuri.org", s0_AddInteger_Input: "http://tempuri.org", s0_DivideInteger_Input: "http://tempuri.org", s0_LookupCity_Input: "http://tempuri.org"}}]}
+) @join__type(graph: SOAP_DEMO)  {
   s0_SOAPDemo_SOAPDemoSoap_FindPerson(FindPerson: s0_FindPerson_Input = {}) : s0_FindPersonResponse @soap(
     elementName: "FindPersonResponse"
     bindingNamespace: "http://tempuri.org"
@@ -134,6 +139,7 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "soap
     subgraph: "soap-demo"
     soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/"
     soapAction: "http://tempuri.org/SOAP.Demo.FindPerson"
+    argNamespaces: "{\\"FindPerson\\":\\"http://tempuri.org\\"}"
   )
   s0_SOAPDemo_SOAPDemoSoap_GetByName(GetByName: s0_GetByName_Input = {}) : s0_GetByNameResponse @soap(
     elementName: "GetByNameResponse"
@@ -142,6 +148,7 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "soap
     subgraph: "soap-demo"
     soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/"
     soapAction: "http://tempuri.org/SOAP.Demo.GetByName"
+    argNamespaces: "{\\"GetByName\\":\\"http://tempuri.org\\"}"
   )
   s0_SOAPDemo_SOAPDemoSoap_GetDataSetByName(GetDataSetByName: s0_GetDataSetByName_Input = {}) : s0_GetDataSetByNameResponse @soap(
     elementName: "GetDataSetByNameResponse"
@@ -150,6 +157,7 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "soap
     subgraph: "soap-demo"
     soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/"
     soapAction: "http://tempuri.org/SOAP.Demo.GetDataSetByName"
+    argNamespaces: "{\\"GetDataSetByName\\":\\"http://tempuri.org\\"}"
   )
   s0_SOAPDemo_SOAPDemoSoap_GetListByName(GetListByName: s0_GetListByName_Input = {}) : s0_GetListByNameResponse @soap(
     elementName: "GetListByNameResponse"
@@ -158,6 +166,7 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "soap
     subgraph: "soap-demo"
     soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/"
     soapAction: "http://tempuri.org/SOAP.Demo.GetListByName"
+    argNamespaces: "{\\"GetListByName\\":\\"http://tempuri.org\\"}"
   )
   s0_SOAPDemo_SOAPDemoSoap_QueryByName(QueryByName: s0_QueryByName_Input = {}) : s0_QueryByNameResponse @soap(
     elementName: "QueryByNameResponse"
@@ -166,6 +175,7 @@ type Query @extraSchemaDefinitionDirective(directives: {transport: [{kind: "soap
     subgraph: "soap-demo"
     soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/"
     soapAction: "http://tempuri.org/SOAP.Demo.QueryByName"
+    argNamespaces: "{\\"QueryByName\\":\\"http://tempuri.org\\"}"
   )
 }
 
@@ -252,6 +262,7 @@ type Mutation @join__type(graph: SOAP_DEMO)  {
     subgraph: "soap-demo"
     soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/"
     soapAction: "http://tempuri.org/SOAP.Demo.AddInteger"
+    argNamespaces: "{\\"AddInteger\\":\\"http://tempuri.org\\"}"
   )
   s0_SOAPDemo_SOAPDemoSoap_DivideInteger(DivideInteger: s0_DivideInteger_Input = {}) : s0_DivideIntegerResponse @soap(
     elementName: "DivideIntegerResponse"
@@ -260,6 +271,7 @@ type Mutation @join__type(graph: SOAP_DEMO)  {
     subgraph: "soap-demo"
     soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/"
     soapAction: "http://tempuri.org/SOAP.Demo.DivideInteger"
+    argNamespaces: "{\\"DivideInteger\\":\\"http://tempuri.org\\"}"
   )
   s0_SOAPDemo_SOAPDemoSoap_LookupCity(LookupCity: s0_LookupCity_Input = {}) : s0_LookupCityResponse @soap(
     elementName: "LookupCityResponse"
@@ -268,6 +280,7 @@ type Mutation @join__type(graph: SOAP_DEMO)  {
     subgraph: "soap-demo"
     soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/"
     soapAction: "http://tempuri.org/SOAP.Demo.LookupCity"
+    argNamespaces: "{\\"LookupCity\\":\\"http://tempuri.org\\"}"
   )
   s0_SOAPDemo_SOAPDemoSoap_Mission(Mission: JSON = "") : s0_MissionResponse @soap(
     elementName: "MissionResponse"
@@ -276,6 +289,7 @@ type Mutation @join__type(graph: SOAP_DEMO)  {
     subgraph: "soap-demo"
     soapNamespace: "http://schemas.xmlsoap.org/soap/envelope/"
     soapAction: "http://tempuri.org/SOAP.Demo.Mission"
+    argNamespaces: "{\\"Mission\\":\\"http://tempuri.org\\"}"
   )
 }
 

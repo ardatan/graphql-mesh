@@ -2,8 +2,8 @@
   "name": "@e2e/openapi-min-length",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.5.11",
-    "graphql": "16.13.1",
+    "@graphql-hive/gateway": "^2.10.0",
+    "graphql": "16.14.0",
     "moment": "2.30.1"
   }
 }

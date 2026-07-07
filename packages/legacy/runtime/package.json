@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/runtime",
-  "version": "0.106.30",
+  "version": "0.106.39",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,23 +38,23 @@
     "@envelop/core": "^5.5.1",
     "@envelop/extended-validation": "^7.1.1",
     "@envelop/graphql-jit": "^11.1.1",
-    "@graphql-mesh/cross-helpers": "^0.4.12",
-    "@graphql-mesh/string-interpolation": "^0.5.12",
-    "@graphql-mesh/types": "^0.104.25",
-    "@graphql-mesh/utils": "^0.104.28",
-    "@graphql-tools/batch-delegate": "^10.0.18",
-    "@graphql-tools/delegate": "^12.0.12",
-    "@graphql-tools/executor": "^1.5.1",
-    "@graphql-tools/utils": "^11.0.0",
-    "@graphql-tools/wrap": "^11.1.12",
+    "@graphql-mesh/cross-helpers": "^0.4.14",
+    "@graphql-mesh/string-interpolation": "^0.5.17",
+    "@graphql-mesh/types": "^0.104.29",
+    "@graphql-mesh/utils": "^0.104.37",
+    "@graphql-tools/batch-delegate": "^10.0.24",
+    "@graphql-tools/delegate": "^12.0.17",
+    "@graphql-tools/executor": "^1.5.4",
+    "@graphql-tools/utils": "^11.1.1",
+    "@graphql-tools/wrap": "^11.1.16",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
-    "graphql-jit": "^0.8.7",
+    "graphql-jit": "^0.8.8",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-tools/schema": "10.0.31",
-    "graphql": "16.13.1"
+    "@graphql-tools/schema": "10.0.34",
+    "graphql": "16.14.0"
   },
   "publishConfig": {
     "access": "public",
