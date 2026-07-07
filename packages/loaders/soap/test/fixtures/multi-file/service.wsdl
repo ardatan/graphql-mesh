@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Minimal multi-file WSDL fixture.
+
+  - <wsdl:types> contains a bare <xsd:schema> wrapper (no targetNamespace,
+    no type definitions of its own — just an import). Real-world WSDLs
+    (TMForum MTOP, OASIS, others) use this pattern to bring an external
+    schema into <wsdl:types> without redefining anything.
+
+  - The schema imports xsd/types.xsd, which itself imports xsd/names.xsd
+    (sibling). The nested import is resolved relative to types.xsd's own
+    location — not relative to this WSDL's directory — matching standard
+    XML Schema xml:base resolution.
+-->
+<wsdl:definitions
+  name="HelloService"
+  targetNamespace="http://example.com/hello/wsdl"
+  xmlns:tns="http://example.com/hello/wsdl"
+  xmlns:msg="http://example.com/hello/types"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <wsdl:types>
+    <xsd:schema>
+      <xsd:import namespace="http://example.com/hello/types"
+                  schemaLocation="xsd/types.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="HelloRequest">
+    <wsdl:part name="parameters" element="msg:Hello"/>
+  </wsdl:message>
+  <wsdl:message name="HelloResponse">
+    <wsdl:part name="parameters" element="msg:HelloResponse"/>
+  </wsdl:message>
+
+  <wsdl:portType name="HelloPort">
+    <wsdl:operation name="hello">
+      <wsdl:input message="tns:HelloRequest"/>
+      <wsdl:output message="tns:HelloResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="HelloBinding" type="tns:HelloPort">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="hello">
+      <soap:operation soapAction="hello"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="HelloService">
+    <wsdl:port name="HelloPort" binding="tns:HelloBinding">
+      <soap:address location="http://example.com/hello"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

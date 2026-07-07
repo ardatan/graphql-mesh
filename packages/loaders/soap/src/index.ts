@@ -69,13 +69,12 @@ export function loadSOAPSubgraph(subgraphName: string, options: SOAPSubgraphLoad
             importFn: defaultImportFn,
             logger,
           }),
+        // Pass source as the base URL so nested <wsdl:import> / <xsd:import>
+        // locations resolve relative to the importing document.
         wsdl =>
           handleMaybePromise(
-            () => soapLoader.loadWSDL(wsdl),
-            object => {
-              soapLoader.loadedLocations.set(options.source, object);
-              return soapLoader.buildSchema();
-            },
+            () => soapLoader.loadWSDL(wsdl, options.source),
+            () => soapLoader.buildSchema(),
           ),
       ),
     };
