@@ -1,5 +1,3 @@
-// eslint-disable-next-line import/no-nodejs-modules
-import { dirname, isAbsolute, resolve as resolvePath } from 'node:path';
 import { XMLParser } from 'fast-xml-parser';
 import type { GraphQLScalarType } from 'graphql';
 import {
@@ -39,7 +37,7 @@ import {
   GraphQLVoid,
   RegularExpression,
 } from 'graphql-scalars';
-import { process } from '@graphql-mesh/cross-helpers';
+import { path, process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
@@ -192,8 +190,8 @@ function resolveLocation(base: string | undefined, location: string): string {
   }
   // base is a filesystem path. A filesystem-absolute location passes through;
   // anything else is resolved relative to base's containing directory.
-  if (isAbsolute(location)) return location;
-  return resolvePath(dirname(base), location);
+  if (path.isAbsolute(location)) return location;
+  return path.resolve(path.dirname(base), location);
 }
 
 /**
@@ -810,10 +808,10 @@ export class SOAPLoader {
     if (
       resolvedBase &&
       !URI_SCHEME_RE.test(resolvedBase) &&
-      !isAbsolute(resolvedBase) &&
+      !path.isAbsolute(resolvedBase) &&
       this.cwd
     ) {
-      resolvedBase = resolvePath(this.cwd, resolvedBase);
+      resolvedBase = path.resolve(this.cwd, resolvedBase);
     }
     // Pre-register before recursing so circular imports terminate.
     if (resolvedBase) {
