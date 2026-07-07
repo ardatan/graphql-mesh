@@ -100,9 +100,10 @@ export function getUnionTypeComposers({
   } else {
     // For array+oneOf schemas, resolvedInput may be a ListComposer (getter-only); unwrap it
     // so addFields is called on the underlying InputObjectTypeComposer.
-    const inputTC = resolvedInput instanceof ListComposer
-      ? (resolvedInput.getUnwrappedTC() as InputTypeComposer)
-      : (resolvedInput as InputTypeComposer);
+    const inputTC =
+      resolvedInput instanceof ListComposer
+        ? (resolvedInput.getUnwrappedTC() as InputTypeComposer)
+        : (resolvedInput as InputTypeComposer);
     inputTC.addFields(unionInputFields);
     resolvedInput = inputTC;
   }
@@ -115,16 +116,15 @@ export function getUnionTypeComposers({
     let unionOutputTC: UnionTypeComposer<any>;
     if (resolvedOutput instanceof ListComposer) {
       const innerTC = resolvedOutput.getUnwrappedTC();
-      unionOutputTC = innerTC instanceof UnionTypeComposer
-        ? innerTC
-        : schemaComposer.createUnionTC({ name: innerTC.getTypeName() + '_union', types: [] });
+      unionOutputTC =
+        innerTC instanceof UnionTypeComposer
+          ? innerTC
+          : schemaComposer.createUnionTC({ name: innerTC.getTypeName() + '_union', types: [] });
     } else {
       unionOutputTC = resolvedOutput as UnionTypeComposer;
     }
     const directives: Directive[] = unionOutputTC.getDirectives() || [];
-    const statusCodeOneOfIndexMap = unionOutputTC.getExtension(
-      'statusCodeOneOfIndexMap',
-    );
+    const statusCodeOneOfIndexMap = unionOutputTC.getExtension('statusCodeOneOfIndexMap');
     const statusCodeOneOfIndexMapEntries = Object.entries(statusCodeOneOfIndexMap || {});
     for (const outputTypeComposerIndex in outputTypeComposers) {
       const outputTypeComposer = outputTypeComposers[outputTypeComposerIndex];
