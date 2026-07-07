@@ -6,6 +6,14 @@ import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
 import { fetch, Response } from '@whatwg-node/fetch';
 import { dummyLogger as logger } from '../../../testing/dummyLogger';
 
+function getRequestBodyFromFetchSpy(fetchSpy: jest.Mock): string {
+  const firstCall = fetchSpy.mock.calls[0];
+  expect(firstCall).toBeDefined();
+  const init = firstCall?.[1] as RequestInit | undefined;
+  expect(init?.body).toBeDefined();
+  return init?.body as string;
+}
+
 describe('SOAP multi-namespace, headers, and arrays', () => {
   it('routes header parts, qualifies per-schema namespaces, and serializes arrays as repeated siblings', async () => {
     const soapLoader = new SOAPLoader({ subgraphName: 'Test', fetch, logger });
@@ -97,7 +105,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
       `),
     });
 
-    const body = fetchSpy.mock.calls[0][1].body as string;
+    const body = getRequestBodyFromFetchSpy(fetchSpy);
     expect(body).toContain('gql-tok');
     expect(body).not.toContain('cfg-tok');
   });
@@ -135,7 +143,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
       `),
     });
 
-    const body = fetchSpy.mock.calls[0][1].body as string;
+    const body = getRequestBodyFromFetchSpy(fetchSpy);
     // Both the config-supplied SecurityToken and the arg-supplied AuthHeader must be present.
     expect(body).toContain('sec-1');
     expect(body).toContain('arg-tok');
@@ -173,7 +181,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
       `),
     });
 
-    const body = fetchSpy.mock.calls[0][1].body as string;
+    const body = getRequestBodyFromFetchSpy(fetchSpy);
     expect(body).toContain('cfg-tok');
     expect(body).toContain('soap:Header');
   });
