@@ -147,7 +147,7 @@ If your OpenAPI spec already defines response schemas per status code, GraphQL M
 automatically. To add or override typed error responses, update your OpenAPI document to include the
 desired response schema (or example) for the relevant status code.
 
-~~~yaml filename="openapi.yaml"
+```yaml filename="openapi.yaml"
 paths:
   /pets/{id}:
     get:
@@ -165,7 +165,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PetNotFound'
-~~~
+```
 
 ## Authentication errors
 
