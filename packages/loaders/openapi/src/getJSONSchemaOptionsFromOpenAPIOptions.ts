@@ -604,8 +604,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         continue;
       }
       const methodObj = pathObj[method as OpenAPIV2.HttpMethods] as
-        | OpenAPIV2.OperationObject
-        | OpenAPIV3.OperationObject;
+        OpenAPIV2.OperationObject | OpenAPIV3.OperationObject;
       const operationConfig: OperationConfig = {
         method: method.toUpperCase() as HTTPMethod,
         path: relativePath,
@@ -638,8 +637,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       }
       for (const paramObjIndex in allParams) {
         const paramObj = allParams[paramObjIndex] as
-          | OpenAPIV2.ParameterObject
-          | OpenAPIV3.ParameterObject;
+          OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject;
         const argName = sanitizeNameForGraphQL(paramObj.name);
         const operationArgTypeMap = (operationConfig.argTypeMap =
           operationConfig.argTypeMap || {}) as Record<string, JSONSchemaObject>;
@@ -814,8 +812,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         }
 
         const responseObj = methodObj.responses[responseKey] as
-          | OpenAPIV3.ResponseObject
-          | OpenAPIV2.ResponseObject;
+          OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
 
         let schemaObj: JSONSchemaObject;
 
