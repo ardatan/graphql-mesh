@@ -41,7 +41,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-codegen/core": "^5.0.2",
+    "@graphql-codegen/core": "^6.2.0",
     "@graphql-codegen/typed-document-node": "^6.1.8",
     "@graphql-codegen/typescript": "^6.0.2",
     "@graphql-codegen/typescript-generic-sdk": "^5.0.1",
@@ -56,7 +56,7 @@
     "@graphql-mesh/store": "^0.104.39",
     "@graphql-mesh/types": "^0.104.29",
     "@graphql-mesh/utils": "^0.104.37",
-    "@graphql-tools/utils": "^11.1.1",
+    "@graphql-tools/utils": "^11.2.0",
     "@whatwg-node/promise-helpers": "^1.0.0",
     "ajv": "^8.20.0",
     "change-case": "^4.1.2",

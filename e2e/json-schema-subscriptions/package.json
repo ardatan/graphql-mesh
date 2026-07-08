@@ -2,7 +2,7 @@
   "name": "@e2e/json-schema-subscriptions",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.10.0",
+    "@graphql-hive/gateway": "^2.10.3",
     "fets": "^0.8.7",
     "graphql": "16.14.0",
     "graphql-sse": "^2.5.3"
