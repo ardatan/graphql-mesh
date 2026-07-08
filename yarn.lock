@@ -5841,20 +5841,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/core@npm:^5.0.2":
-  version: 5.0.2
-  resolution: "@graphql-codegen/core@npm:5.0.2"
-  dependencies:
-    "@graphql-codegen/plugin-helpers": "npm:^6.3.0"
-    "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-tools/utils": "npm:^11.0.0"
-    tslib: "npm:^2.8.0"
-  peerDependencies:
-    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/f0ba3b81f1c247dcf57701cf0bbac6c4ac5bdf4cc2aaf4a1d27ec2e52cc91eb7a9395d87e59e9413f71088c0eceddb70b8f4974a01a38805daab1b51d5c45b81
-  languageName: node
-  linkType: hard
-
 "@graphql-codegen/core@npm:^6.2.0":
   version: 6.2.0
   resolution: "@graphql-codegen/core@npm:6.2.0"
@@ -6596,7 +6582,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cli@workspace:packages/legacy/cli"
   dependencies:
-    "@graphql-codegen/core": "npm:^5.0.2"
+    "@graphql-codegen/core": "npm:^6.2.0"
     "@graphql-codegen/typed-document-node": "npm:^6.1.8"
     "@graphql-codegen/typescript": "npm:^6.0.2"
     "@graphql-codegen/typescript-generic-sdk": "npm:^5.0.1"
@@ -6874,7 +6860,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/incontext-sdk-codegen@workspace:packages/incontext-sdk-codegen"
   dependencies:
-    "@graphql-codegen/core": "npm:^5.0.2"
+    "@graphql-codegen/core": "npm:^6.2.0"
     "@graphql-codegen/plugin-helpers": "npm:^6.3.0"
     "@graphql-codegen/typescript": "npm:^6.0.2"
     "@graphql-mesh/cross-helpers": "npm:^0.4.14"
