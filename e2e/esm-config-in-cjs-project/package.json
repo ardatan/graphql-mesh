@@ -3,7 +3,7 @@
   "type": "commonjs",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.10.0",
+    "@graphql-hive/gateway": "^2.10.3",
     "graphql": "16.14.0"
   }
 }

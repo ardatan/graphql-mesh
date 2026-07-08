@@ -51,9 +51,9 @@
   },
   "dependencies": {
     "@graphql-mesh/utils": "^0.104.37",
-    "@graphql-tools/schema": "^10.0.34",
-    "@graphql-tools/stitching-directives": "^4.0.22",
-    "@graphql-tools/utils": "^11.1.1",
+    "@graphql-tools/schema": "^10.0.36",
+    "@graphql-tools/stitching-directives": "^4.0.23",
+    "@graphql-tools/utils": "^11.2.0",
     "@theguild/federation-composition": "^0.22.2",
     "change-case": "^4.1.2",
     "graphql-scalars": "^1.23.0",
@@ -63,10 +63,10 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "^2.9.7",
-    "@graphql-mesh/fusion-runtime": "^1.10.7",
-    "@graphql-tools/delegate": "^12.0.17",
-    "@graphql-tools/executor": "1.5.4",
+    "@graphql-hive/gateway-runtime": "^2.9.9",
+    "@graphql-mesh/fusion-runtime": "^1.10.9",
+    "@graphql-tools/delegate": "^12.0.18",
+    "@graphql-tools/executor": "1.5.5",
     "@repeaterjs/repeater": "3.1.0",
     "@types/minimatch": "6.0.0",
     "@types/pluralize": "^0.0.33",
