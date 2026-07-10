@@ -3319,7 +3319,7 @@ type Query {
   ): normals_response
 
   """
-  Returns current usage counters, remaining request quotas, and reset timestamps for standard and historical Weatherbit products.
+  Returns current usage counters, remaining request quotas, and reset timestamps for standard and historical Weatherbit products. Daily request limits reset at 00:00 UTC.
   """
   subscription_usage(
     """Your registered API key."""
