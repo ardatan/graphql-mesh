@@ -108,7 +108,7 @@
     "lru-cache": "11.2.6",
     "minimatch": "10.2.5",
     "node-gyp": "^12.3.0",
-    "prettier": "3.9.4",
+    "prettier": "3.9.5",
     "threads": "^1.7.0",
     "ts-jest": "29.4.11",
     "tsx": "^4.23.0",
