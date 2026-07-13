@@ -20,7 +20,7 @@
     "grpc-node-server-reflection": "1.0.2"
   },
   "devDependencies": {
-    "@types/node": "^25.9.1",
+    "@types/node": "^26.1.1",
     "concurrently": "10.0.3",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
