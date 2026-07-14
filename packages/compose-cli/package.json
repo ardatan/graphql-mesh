@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=16.0.0"
   },
   "bin": {
     "mesh-compose": "dist/esm/bin.js"
