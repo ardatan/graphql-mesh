@@ -76,6 +76,8 @@ const ESM_PACKAGES = [
   '@neo4j/cypher-builder',
   '@graphql-codegen/typescript/node_modules/auto-bind',
   'auto-bind',
+  'commander',
+  '@commander-js/extra-typings',
 ];
 
 /** @type {import('jest').Config} */
