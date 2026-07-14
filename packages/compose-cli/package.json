@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=22.12.0"
   },
   "bin": {
     "mesh-compose": "dist/esm/bin.js"
@@ -38,7 +38,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@commander-js/extra-typings": "^14.0.0",
+    "@commander-js/extra-typings": "^15.0.0",
     "@graphql-mesh/fusion-composition": "^0.8.49",
     "@graphql-mesh/include": "^0.3.40",
     "@graphql-mesh/string-interpolation": "^0.5.17",

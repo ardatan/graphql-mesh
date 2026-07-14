@@ -3315,6 +3315,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@commander-js/extra-typings@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "@commander-js/extra-typings@npm:15.0.0"
+  peerDependencies:
+    commander: ~15.0.0
+  checksum: 10c0/4282857c0acb2da1b893fe8c39a939bdfae2d7cbb43a22c1fe8ef5bef4cf615ddb34d96239f7603294ef5014728799c8212f4451fa9d2e469cce087eb89f0218
+  languageName: node
+  linkType: hard
+
 "@corex/deepmerge@npm:^4.0.43":
   version: 4.0.43
   resolution: "@corex/deepmerge@npm:4.0.43"
@@ -6688,7 +6697,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/compose-cli@workspace:packages/compose-cli"
   dependencies:
-    "@commander-js/extra-typings": "npm:^14.0.0"
+    "@commander-js/extra-typings": "npm:^15.0.0"
     "@graphql-mesh/fusion-composition": "npm:^0.8.49"
     "@graphql-mesh/include": "npm:^0.3.40"
     "@graphql-mesh/string-interpolation": "npm:^0.5.17"
