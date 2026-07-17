@@ -23,7 +23,7 @@ import {
 import { resolveMergedTypeReference } from '@graphql-tools/delegate';
 import type { IResolvers, MaybePromise } from '@graphql-tools/utils';
 import { mergeDeep, parseSelectionSet } from '@graphql-tools/utils';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { handleMaybePromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { withFilter } from './with-filter.js';
 
@@ -195,13 +195,22 @@ export function getResolverForPubSubOperation(
   }
 
   return {
-    subscribe: subscribeFn,
+    subscribe: (...args: Parameters<typeof subscribeFn>) => {
+      // pubsub emits the raw value, but graphql-js passes each subscription event through the root
+      // field resolver and expects the event to be shaped like { [fieldName]: value }
+      const fieldName = args[3].fieldName;
+      return handleMaybePromise(
+        () => subscribeFn(...args),
+        iterator => mapAsyncIterator(iterator, payload => ({ [fieldName]: payload })),
+      );
+    },
     resolve: (payload: any, _: any, ctx, info: GraphQLResolveInfo) => {
       function resolvePayload(payload: any) {
+        const data = payload[info.fieldName];
         if (valuesFromResults) {
-          return valuesFromResults(payload);
+          return valuesFromResults(data);
         }
-        return payload;
+        return data;
       }
       const data = resolvePayload(payload);
       return handleMaybePromise(
@@ -217,7 +226,9 @@ export function getResolverForPubSubOperation(
           // object and the stitched executor would fall back to defaultFieldResolver, skipping entity merging
           // for nested types (e.g. Review.content from a reviews subschema when the product subschema only
           // knows Review.id)
-          return resolvePayload(mergeDeep([payload, resolved], false, false, false, true));
+          return resolvePayload(
+            mergeDeep([payload, { [info.fieldName]: resolved }], false, false, false, true),
+          );
         },
       );
     },
