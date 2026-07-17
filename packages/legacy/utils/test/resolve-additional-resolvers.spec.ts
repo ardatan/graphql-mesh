@@ -417,7 +417,7 @@ it('should not resolve from subgraphs when all fields are in the subscription ev
   expect(products.productPriceResolver).toHaveBeenCalledTimes(0);
 });
 
-it('should resolve from subgraph when fragments are present even if all fields are in the subscription event', async () => {
+it('should not resolve from subgraphs with fragments when all fields are in the subscription event', async () => {
   await using pubsub = new MemPubSub();
   const additionalTypeDefs = parse(/* GraphQL */ `
     extend schema {
@@ -469,14 +469,14 @@ it('should resolve from subgraph when fragments are present even if all fields a
   "value": {
     "data": {
       "newProduct": {
-        "price": 300,
+        "price": 999,
       },
     },
   },
 }
 `);
 
-  expect(products.productPriceResolver).toHaveBeenCalled();
+  expect(products.productPriceResolver).toHaveBeenCalledTimes(0);
 });
 
 // End-to-end regression for a key-based (batch) additional resolver whose parent
