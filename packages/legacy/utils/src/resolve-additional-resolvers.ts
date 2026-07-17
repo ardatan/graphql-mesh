@@ -5,12 +5,10 @@ import type {
   GraphQLResolveInfo,
   GraphQLSchema,
   GraphQLType,
-  OperationTypeNode,
   SelectionSetNode,
 } from 'graphql';
 import {
   getNamedType,
-  GraphQLList,
   isAbstractType,
   isInterfaceType,
   isObjectType,
@@ -28,19 +26,11 @@ import {
   type MeshPubSub,
   type YamlConfig,
 } from '@graphql-mesh/types';
-import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
-import {
-  delegateToSchema,
-  subtractSelectionSets,
-  type MergedTypeConfig,
-  type StitchingInfo,
-  type Subschema,
-} from '@graphql-tools/delegate';
-import type { IResolvers, Maybe, MaybePromise } from '@graphql-tools/utils';
+import { resolveMergedTypeReference } from '@graphql-tools/delegate';
+import type { IResolvers, MaybePromise } from '@graphql-tools/utils';
 import { mergeDeep, parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
-import { selectionSetOfData } from './selectionSet.js';
 import { withFilter } from './with-filter.js';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
@@ -219,97 +209,22 @@ export function getResolverForPubSubOperation(
         }
         return payload;
       }
-      const stitchingInfo = info?.schema.extensions?.stitchingInfo as Maybe<StitchingInfo<any>>;
-      if (!stitchingInfo) {
-        return resolvePayload(payload); // no stitching, cannot be resolved anywhere else
-      }
-      const returnTypeName = getNamedType(info.returnType).name;
-      const mergedTypeInfo = stitchingInfo.mergedTypes[returnTypeName];
-      if (!mergedTypeInfo) {
-        return resolvePayload(payload); // this type is not merged or resolvable
-      }
-
-      // we dont compare fragment definitions because they mean there are type-conditions
-      // more advanced behavior. if we encounter such a case, the missing selection set
-      // will have fields and we will perform a call to the subschema
-      const requestedSelSet = info.fieldNodes[0]?.selectionSet;
-      if (!requestedSelSet) {
-        return resolvePayload(payload); // should never happen, but hey 🤷‍♂️
-      }
-
-      const availableSelSet = selectionSetOfData(resolvePayload(payload));
-      const missingSelectionSet = subtractSelectionSets(requestedSelSet, availableSelSet);
-      if (!missingSelectionSet.selections.length) {
-        // all of the fields are already in the payload
-        return resolvePayload(payload);
-      }
-
-      // find the best subgraph by diffing the selection sets
-      let subschema: Subschema | null = null;
-      let mergedTypeConfig: MergedTypeConfig | null = null;
-      for (const [requiredSubschema, requiredSelSet] of mergedTypeInfo.selectionSets) {
-        const tentativeMergedTypeConfig = requiredSubschema.merge?.[returnTypeName];
-        if (tentativeMergedTypeConfig?.fields) {
-          // this resolver requires additional fields (think `@requires(fields: "x")`)
-          // TODO: actually implement whether the payload already contains those fields
-          // TODO: is there a better way for finding a match?
-          continue;
-        }
-        const diff = subtractSelectionSets(requiredSelSet, availableSelSet);
-        if (!diff.selections.length) {
-          // all of the fields of the requesting (available) selection set is exist in the required selection set
-          subschema = requiredSubschema;
-          mergedTypeConfig = tentativeMergedTypeConfig;
-          break;
-        }
-      }
-      if (!subschema || !mergedTypeConfig) {
-        // the type cannot be resolved
-        return resolvePayload(payload);
-      }
-
+      const data = resolvePayload(payload);
       return handleMaybePromise(
-        () => {
-          if (mergedTypeConfig.argsFromKeys) {
-            return batchDelegateToSchema({
-              schema: subschema,
-              operation: 'query' as OperationTypeNode,
-              fieldName: mergedTypeConfig.fieldName,
-              returnType: new GraphQLList(info.returnType),
-              key: mergedTypeConfig.key?.(payload) || payload, // TODO: should use valueFromResults on the args too?
-              argsFromKeys: mergedTypeConfig.argsFromKeys,
-              valuesFromResults: mergedTypeConfig.valuesFromResults,
-              selectionSet: missingSelectionSet,
-              context: ctx,
-              info,
-              dataLoaderOptions: mergedTypeConfig.dataLoaderOptions,
-              skipTypeMerging: false, // important to be false so that fields outside this subgraph can be resolved properly
-            });
+        () => resolveMergedTypeReference(data, ctx, info),
+        resolved => {
+          if (resolved === data) {
+            // not stitchable or the payload already has everything requested
+            return data;
           }
-          if (mergedTypeConfig.args) {
-            return delegateToSchema({
-              schema: subschema,
-              operation: 'query' as OperationTypeNode,
-              fieldName: mergedTypeConfig.fieldName,
-              returnType: info.returnType,
-              args: mergedTypeConfig.args(payload), // TODO: should use valueFromResults on the args too?
-              selectionSet: missingSelectionSet,
-              context: ctx,
-              info,
-              skipTypeMerging: false, // important to be false so that fields outside this subgraph can be resolved properly
-            });
-          }
-          // no way to delegate to anything, return empty - i.e. resolve just payload
-          // should not happen though, there'll be something to use
-          return {};
+          // payload comes first so resolved wins on conflicting keys (subschema is authoritative).
+          // respectNonEnumerableSymbols preserves the external object annotation that delegation
+          // sets on resolved with non-enumerable symbol keys - without it, mergeDeep would return a plain
+          // object and the stitched executor would fall back to defaultFieldResolver, skipping entity merging
+          // for nested types (e.g. Review.content from a reviews subschema when the product subschema only
+          // knows Review.id)
+          return resolvePayload(mergeDeep([payload, resolved], false, false, false, true));
         },
-        // payload comes first so resolved wins on conflicting keys (subschema is authoritative).
-        // respectNonEnumerableSymbols preserves the external object annotation that delegateToSchema
-        // sets on resolved with non-enumerable symbol keys - without it, mergeDeep would return a plain
-        // object and the stitched executor would fall back to defaultFieldResolver, skipping entity merging
-        // for nested types (e.g. Review.content from a reviews subschema when the product subschema only
-        // knows Review.id)
-        resolved => resolvePayload(mergeDeep([payload, resolved], false, false, false, true)),
       );
     },
   };
