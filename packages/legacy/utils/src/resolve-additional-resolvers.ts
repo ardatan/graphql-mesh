@@ -7,13 +7,7 @@ import type {
   GraphQLType,
   SelectionSetNode,
 } from 'graphql';
-import {
-  getNamedType,
-  isAbstractType,
-  isInterfaceType,
-  isObjectType,
-  Kind,
-} from 'graphql';
+import { getNamedType, isAbstractType, isInterfaceType, isObjectType, Kind } from 'graphql';
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
 import { process } from '@graphql-mesh/cross-helpers';
