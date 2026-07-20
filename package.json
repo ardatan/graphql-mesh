@@ -117,6 +117,7 @@
   "resolutions": {
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
     "@changesets/get-github-info@npm:^0.8.0": "patch:@changesets/get-github-info@npm%3A0.8.0#~/.yarn/patches/@changesets-get-github-info-npm-0.8.0-cf3918dc5a.patch",
+    "@graphql-tools/stitch": "10.2.0-alpha-a07259cad118c77ca89c14dd26de54ac51cb8ec4",
     "@opentelemetry/core": "^2.8.0",
     "@tootallnate/once": "3.0.1",
     "@typescript/vfs@npm:^1.6.0": "patch:@typescript/vfs@npm%3A1.6.1#~/.yarn/patches/@typescript-vfs-npm-1.6.1-ef0e2d6cf2.patch",
