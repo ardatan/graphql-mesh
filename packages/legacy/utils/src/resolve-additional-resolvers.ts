@@ -195,22 +195,13 @@ export function getResolverForPubSubOperation(
   }
 
   return {
-    subscribe: (...args: Parameters<typeof subscribeFn>) => {
-      // pubsub emits the raw value, but graphql-js passes each subscription event through the root
-      // field resolver and expects the event to be shaped like { [fieldName]: value }
-      const fieldName = args[3].fieldName;
-      return handleMaybePromise(
-        () => subscribeFn(...args),
-        iterator => mapAsyncIterator(iterator, payload => ({ [fieldName]: payload })),
-      );
-    },
+    subscribe: subscribeFn,
     resolve: (payload: any, _: any, ctx, info: GraphQLResolveInfo) => {
       function resolvePayload(payload: any) {
-        const data = payload[info.fieldName];
         if (valuesFromResults) {
-          return valuesFromResults(data);
+          return valuesFromResults(payload);
         }
-        return data;
+        return payload;
       }
       const data = resolvePayload(payload);
       return handleMaybePromise(
@@ -226,9 +217,7 @@ export function getResolverForPubSubOperation(
           // object and the stitched executor would fall back to defaultFieldResolver, skipping entity merging
           // for nested types (e.g. Review.content from a reviews subschema when the product subschema only
           // knows Review.id)
-          return resolvePayload(
-            mergeDeep([payload, { [info.fieldName]: resolved }], false, false, false, true),
-          );
+          return resolvePayload(mergeDeep([payload, resolved], false, false, false, true));
         },
       );
     },
@@ -260,8 +249,19 @@ export function resolveAdditionalResolversWithoutImport(
     return {
       [additionalResolver.targetTypeName]: {
         [additionalResolver.targetFieldName]: {
-          subscribe,
-          resolve,
+          subscribe: (...args: Parameters<typeof subscribe>) => {
+            // pubsub emits the raw value, but graphql-js passes each subscription event through the root
+            // field resolver and expects the event to be shaped like { [fieldName]: value }
+            return handleMaybePromise(
+              () => subscribe(...args),
+              iterator =>
+                mapAsyncIterator(iterator, payload => ({
+                  [additionalResolver.targetFieldName]: payload,
+                })),
+            );
+          },
+          resolve: (payload, ...args) =>
+            resolve(payload[additionalResolver.targetFieldName], ...args),
         },
       },
     };
