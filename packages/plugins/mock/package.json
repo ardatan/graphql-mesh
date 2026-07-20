@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-mock",
-  "version": "0.105.39",
+  "version": "0.105.40",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,10 +35,10 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.14",
-    "@graphql-mesh/string-interpolation": "^0.5.17",
-    "@graphql-mesh/types": "^0.104.29",
-    "@graphql-mesh/utils": "^0.104.37",
+    "@graphql-mesh/cross-helpers": "^0.4.15",
+    "@graphql-mesh/string-interpolation": "^0.5.18",
+    "@graphql-mesh/types": "^0.104.30",
+    "@graphql-mesh/utils": "^0.104.38",
     "@graphql-tools/executor": "^1.5.5",
     "@graphql-tools/mock": "^9.1.10",
     "@graphql-tools/schema": "^10.0.36",
@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@envelop/core": "^5.5.1",
-    "@graphql-mesh/cache-localforage": "0.105.38",
+    "@graphql-mesh/cache-localforage": "0.105.39",
     "@types/faker": "5.5.9",
     "graphql": "16.14.0"
   },

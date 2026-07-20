@@ -1,5 +1,70 @@
 # @graphql-mesh/transform-type-merging
 
+## 0.104.38
+
+### Patch Changes
+
+- [#9465](https://github.com/ardatan/graphql-mesh/pull/9465)
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9)
+  Thanks [@zcag](https://github.com/zcag)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/types@^0.104.29` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.104.29)
+    (from `^0.104.28`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@^0.104.37` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.104.37)
+    (from `^0.104.36`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.17)
+    (from `^12.0.14`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.22` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.22)
+    (from `^4.0.20`, in `dependencies`)
+
+- [#9530](https://github.com/ardatan/graphql-mesh/pull/9530)
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.17)
+    (from `^12.0.16`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.22` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.22)
+    (from `^4.0.21`, in `dependencies`)
+
+- [#9547](https://github.com/ardatan/graphql-mesh/pull/9547)
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.18` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.18)
+    (from `^12.0.17`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.23` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.23)
+    (from `^4.0.22`, in `dependencies`)
+
+- [#9560](https://github.com/ardatan/graphql-mesh/pull/9560)
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.19` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.19)
+    (from `^12.0.18`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/stitching-directives@^4.0.24` ↗︎](https://www.npmjs.com/package/@graphql-tools/stitching-directives/v/4.0.24)
+    (from `^4.0.23`, in `dependencies`)
+- Updated dependencies
+  [[`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`444fbbe`](https://github.com/ardatan/graphql-mesh/commit/444fbbe4c6d17a37d2f8eb0107408e508e86ac79),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`2c347d5`](https://github.com/ardatan/graphql-mesh/commit/2c347d50c64f76cc61ba8d70184b45f1c14ba809),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`4c56adc`](https://github.com/ardatan/graphql-mesh/commit/4c56adc1bcc5d4179444b56d9ce2d46de6b81c91)]:
+  - @graphql-mesh/types@0.104.30
+  - @graphql-mesh/utils@0.104.38
+
 ## 0.104.37
 
 ### Patch Changes

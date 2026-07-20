@@ -1,5 +1,81 @@
 # @graphql-mesh/migrate-config-cli
 
+## 1.7.42
+
+### Patch Changes
+
+- [#9465](https://github.com/ardatan/graphql-mesh/pull/9465)
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9)
+  Thanks [@zcag](https://github.com/zcag)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/cli@^0.100.53` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cli/v/0.100.53)
+    (from `^0.100.52`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/compose-cli@^1.5.33` ↗︎](https://www.npmjs.com/package/@graphql-mesh/compose-cli/v/1.5.33)
+    (from `^1.5.32`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/config@^0.108.45` ↗︎](https://www.npmjs.com/package/@graphql-mesh/config/v/0.108.45)
+    (from `^0.108.44`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/types@^0.104.29` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.104.29)
+    (from `^0.104.28`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@^0.104.37` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.104.37)
+    (from `^0.104.36`, in `dependencies`)
+  - Updated dependency [`prettier@^3.8.4` ↗︎](https://www.npmjs.com/package/prettier/v/3.8.4) (from
+    `^3.8.3`, in `dependencies`)
+
+- [#9527](https://github.com/ardatan/graphql-mesh/pull/9527)
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`prettier@^3.8.4` ↗︎](https://www.npmjs.com/package/prettier/v/3.8.4) (from
+    `^3.8.3`, in `dependencies`)
+
+- [#9545](https://github.com/ardatan/graphql-mesh/pull/9545)
+  [`561db64`](https://github.com/ardatan/graphql-mesh/commit/561db645201e5e054f359c871a6b5a52e4c6fb71)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`prettier@^3.9.4` ↗︎](https://www.npmjs.com/package/prettier/v/3.9.4) (from
+    `^3.8.4`, in `dependencies`)
+
+- [#9551](https://github.com/ardatan/graphql-mesh/pull/9551)
+  [`f27fa63`](https://github.com/ardatan/graphql-mesh/commit/f27fa635385fcbe2afdbe65831e415dfeba310b3)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`prettier@^3.9.5` ↗︎](https://www.npmjs.com/package/prettier/v/3.9.5) (from
+    `^3.9.4`, in `dependencies`)
+- Updated dependencies
+  [[`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`9aea3e9`](https://github.com/ardatan/graphql-mesh/commit/9aea3e9ad64deabc7ffd1e5855bff7e101ddff7f),
+  [`cfa9cd9`](https://github.com/ardatan/graphql-mesh/commit/cfa9cd9fbd8df765218c280683cc694148d6fe39),
+  [`d205b62`](https://github.com/ardatan/graphql-mesh/commit/d205b62d84ab20c04f2d1efe6cfd488019f27ca0),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`d3812f6`](https://github.com/ardatan/graphql-mesh/commit/d3812f60f0285b10af52104ac89c1f21de44ec8a),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`444fbbe`](https://github.com/ardatan/graphql-mesh/commit/444fbbe4c6d17a37d2f8eb0107408e508e86ac79),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`2c347d5`](https://github.com/ardatan/graphql-mesh/commit/2c347d50c64f76cc61ba8d70184b45f1c14ba809),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`4c56adc`](https://github.com/ardatan/graphql-mesh/commit/4c56adc1bcc5d4179444b56d9ce2d46de6b81c91)]:
+  - @graphql-mesh/cli@0.100.54
+  - @graphql-mesh/compose-cli@1.5.34
+  - @graphql-mesh/config@0.108.46
+  - @graphql-mesh/types@0.104.30
+  - @graphql-mesh/utils@0.104.38
+
 ## 1.7.41
 
 ### Patch Changes
