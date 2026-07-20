@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-resolvers-composition",
-  "version": "0.104.37",
+  "version": "0.104.38",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,8 +35,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "^0.104.29",
-    "@graphql-mesh/utils": "^0.104.37",
+    "@graphql-mesh/types": "^0.104.30",
+    "@graphql-mesh/utils": "^0.104.38",
     "@graphql-tools/resolvers-composition": "^7.0.33",
     "@graphql-tools/schema": "^10.0.36",
     "tslib": "^2.4.0"

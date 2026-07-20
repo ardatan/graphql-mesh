@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-response-cache",
-  "version": "0.104.44",
+  "version": "0.104.45",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,10 +37,10 @@
   "dependencies": {
     "@envelop/core": "^5.5.1",
     "@envelop/response-cache": "^9.1.1",
-    "@graphql-mesh/cross-helpers": "^0.4.14",
-    "@graphql-mesh/string-interpolation": "^0.5.17",
-    "@graphql-mesh/types": "^0.104.29",
-    "@graphql-mesh/utils": "^0.104.37",
+    "@graphql-mesh/cross-helpers": "^0.4.15",
+    "@graphql-mesh/string-interpolation": "^0.5.18",
+    "@graphql-mesh/types": "^0.104.30",
+    "@graphql-mesh/utils": "^0.104.38",
     "@graphql-tools/utils": "^11.2.0",
     "@graphql-yoga/plugin-response-cache": "^3.23.2",
     "@whatwg-node/promise-helpers": "^1.0.0",

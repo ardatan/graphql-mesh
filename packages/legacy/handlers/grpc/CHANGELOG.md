@@ -1,5 +1,57 @@
 # @graphql-mesh/grpc
 
+## 0.108.44
+
+### Patch Changes
+
+- [#9465](https://github.com/ardatan/graphql-mesh/pull/9465)
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9)
+  Thanks [@zcag](https://github.com/zcag)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/store@^0.104.39` ↗︎](https://www.npmjs.com/package/@graphql-mesh/store/v/0.104.39)
+    (from `^0.104.38`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/transport-grpc@^0.3.41` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-grpc/v/0.3.41)
+    (from `^0.3.40`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/types@^0.104.29` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.104.29)
+    (from `^0.104.28`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@^0.104.37` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.104.37)
+    (from `^0.104.36`, in `dependencies`)
+  - Updated dependency
+    [`@omnigraph/grpc@^0.2.24` ↗︎](https://www.npmjs.com/package/@omnigraph/grpc/v/0.2.24) (from
+    `^0.2.23`, in `dependencies`)
+- Updated dependencies
+  [[`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`f0036d4`](https://github.com/ardatan/graphql-mesh/commit/f0036d45ebbb4bd9efe53a9e326a45ae676f9b29),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`444fbbe`](https://github.com/ardatan/graphql-mesh/commit/444fbbe4c6d17a37d2f8eb0107408e508e86ac79),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`2c347d5`](https://github.com/ardatan/graphql-mesh/commit/2c347d50c64f76cc61ba8d70184b45f1c14ba809),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`f0036d4`](https://github.com/ardatan/graphql-mesh/commit/f0036d45ebbb4bd9efe53a9e326a45ae676f9b29),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`4c56adc`](https://github.com/ardatan/graphql-mesh/commit/4c56adc1bcc5d4179444b56d9ce2d46de6b81c91)]:
+  - @graphql-mesh/store@0.104.40
+  - @graphql-mesh/transport-grpc@0.3.42
+  - @graphql-mesh/types@0.104.30
+  - @graphql-mesh/utils@0.104.38
+  - @omnigraph/grpc@0.2.25
+
 ## 0.108.43
 
 ### Patch Changes

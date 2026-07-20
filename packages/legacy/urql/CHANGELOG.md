@@ -1,5 +1,40 @@
 # @graphql-mesh/urql-exchange
 
+## 0.106.40
+
+### Patch Changes
+
+- [#9465](https://github.com/ardatan/graphql-mesh/pull/9465)
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9)
+  Thanks [@zcag](https://github.com/zcag)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/runtime@^0.106.39` ↗︎](https://www.npmjs.com/package/@graphql-mesh/runtime/v/0.106.39)
+    (from `^0.106.38`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^11.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.1.1)
+    (from `^11.1.0`, in `dependencies`)
+
+- [#9530](https://github.com/ardatan/graphql-mesh/pull/9530)
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^11.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.1.1)
+    (from `^11.1.0`, in `dependencies`)
+
+- [#9547](https://github.com/ardatan/graphql-mesh/pull/9547)
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^11.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.2.0)
+    (from `^11.1.1`, in `dependencies`)
+- Updated dependencies
+  [[`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`4c9c526`](https://github.com/ardatan/graphql-mesh/commit/4c9c52628b34cd3fa276366d5b7498e7d51fb4ed),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a)]:
+  - @graphql-mesh/runtime@0.106.40
+
 ## 0.106.39
 
 ### Patch Changes

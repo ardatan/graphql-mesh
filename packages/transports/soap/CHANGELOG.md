@@ -1,5 +1,128 @@
 # @graphql-mesh/transport-soap
 
+## 0.10.47
+
+### Patch Changes
+
+- [#9465](https://github.com/ardatan/graphql-mesh/pull/9465)
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9)
+  Thanks [@zcag](https://github.com/zcag)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/string-interpolation@^0.5.17` ↗︎](https://www.npmjs.com/package/@graphql-mesh/string-interpolation/v/0.5.17)
+    (from `^0.5.16`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/types@^0.104.29` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.104.29)
+    (from `^0.104.28`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@^0.104.37` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.104.37)
+    (from `^0.104.36`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/executor@^1.5.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.5.4)
+    (from `^1.5.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^11.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.1.1)
+    (from `^11.1.0`, in `dependencies`)
+  - Updated dependency
+    [`fast-xml-parser@^5.9.3` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.9.3) (from
+    `^5.7.0`, in `dependencies`)
+
+- [#9527](https://github.com/ardatan/graphql-mesh/pull/9527)
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.9.3` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.9.3) (from
+    `^5.8.0`, in `dependencies`)
+
+- [#9530](https://github.com/ardatan/graphql-mesh/pull/9530)
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/executor@^1.5.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.5.4)
+    (from `^1.5.3`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^11.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.1.1)
+    (from `^11.1.0`, in `dependencies`)
+
+- [#9547](https://github.com/ardatan/graphql-mesh/pull/9547)
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/transport-common@^1.0.17` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/1.0.17)
+    (from `^1.0.16`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/executor@^1.5.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.5.5)
+    (from `^1.5.4`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^11.2.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.2.0)
+    (from `^11.1.1`, in `dependencies`)
+
+- [#9558](https://github.com/ardatan/graphql-mesh/pull/9558)
+  [`cfa9cd9`](https://github.com/ardatan/graphql-mesh/commit/cfa9cd9fbd8df765218c280683cc694148d6fe39)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`fast-xml-parser@^5.10.0` ↗︎](https://www.npmjs.com/package/fast-xml-parser/v/5.10.0) (from
+    `^5.9.3`, in `dependencies`)
+
+- [#9477](https://github.com/ardatan/graphql-mesh/pull/9477)
+  [`cd30910`](https://github.com/ardatan/graphql-mesh/commit/cd30910ee1ce2c4bb6ad8f3c7cd051dec5493c3c)
+  Thanks [@zcag](https://github.com/zcag)! - Fix query args taking priority over `soapHeaders`
+  loader config in namespace-aware SOAP executor.
+
+  When both a WSDL-declared `<soap:header>` arg and the loader-level `soapHeaders` config contribute
+  content to the same XML header element, the config entry previously ran last and silently
+  overwrote the value supplied by the caller.
+
+  The fix seeds `soap:Header` from the `soapHeaders` config first, then lets the args loop overwrite
+  on key collision — so explicit query arguments always take priority over static loader defaults.
+  Args that GraphQL coerces to an empty/absent value (null, undefined, `""`, or `{}`) are not
+  treated as intentional overrides and leave the config-supplied default in place.
+
+- [#9465](https://github.com/ardatan/graphql-mesh/pull/9465)
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9)
+  Thanks [@zcag](https://github.com/zcag)! - Correct SOAP envelope generation for WSDLs with
+  multiple XSD namespaces and `<soap:header>` bindings, and fix array serialization.
+
+  Three issues are addressed together because they all surface on the same class of WSDL (one
+  operation, multiple XSD schemas, header binding, array-typed parts):
+
+  - **XML namespace** — every body element used to be qualified with the WSDL `bindingNamespace`.
+    Now each element gets the namespace of the schema where it is declared, so types that come from
+    a different XSD render under their own prefix.
+  - **`<soap:header>` binding** — message parts the WSDL routes to `<soap:Header>` were being placed
+    inside `<soap:Body>`. The loader now records header parts on the `@soap` directive and the
+    executor splits them into `<soap:Header>` at request time.
+  - **Arrays** — array-valued args were iterated with `for..in`, producing numeric child elements
+    (`<prefix:0>`, `<prefix:1>`). They now serialize as repeated sibling elements.
+
+  The new namespace-aware path activates only when the schema was built by the updated loader (it
+  now exposes a `typeNamespaceMap` on `schema.extensions` and a per-arg namespace map on the `@soap`
+  directive) and `bodyAlias` is not configured. Schemas built by older loader versions, and any
+  usage that sets `bodyAlias`, continue to use the legacy code path unchanged. For single-namespace
+  WSDLs without `bodyAlias` the new path falls back to the same `body` prefix the legacy path used,
+  preserving byte-for-byte compatibility (covered by a regression test against `tempconvert.wsdl`).
+
+- Updated dependencies
+  [[`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`444fbbe`](https://github.com/ardatan/graphql-mesh/commit/444fbbe4c6d17a37d2f8eb0107408e508e86ac79),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`2c347d5`](https://github.com/ardatan/graphql-mesh/commit/2c347d50c64f76cc61ba8d70184b45f1c14ba809),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`4c56adc`](https://github.com/ardatan/graphql-mesh/commit/4c56adc1bcc5d4179444b56d9ce2d46de6b81c91)]:
+  - @graphql-mesh/cross-helpers@0.4.15
+  - @graphql-mesh/string-interpolation@0.5.18
+  - @graphql-mesh/types@0.104.30
+  - @graphql-mesh/utils@0.104.38
+
 ## 0.10.46
 
 ### Patch Changes
