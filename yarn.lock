@@ -3981,18 +3981,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/subscriptions-type-merging@workspace:e2e/subscriptions-type-merging":
-  version: 0.0.0-use.local
-  resolution: "@e2e/subscriptions-type-merging@workspace:e2e/subscriptions-type-merging"
-  dependencies:
-    "@graphql-hive/gateway": "npm:^2.10.4"
-    "@graphql-hive/pubsub": "npm:next"
-    graphql: "npm:^16.14.0"
-    graphql-sse: "npm:^2.5.4"
-    ioredis: "npm:^5.11.1"
-  languageName: unknown
-  linkType: soft
-
 "@e2e/supergraph-url@workspace:e2e/supergraph-url":
   version: 0.0.0-use.local
   resolution: "@e2e/supergraph-url@workspace:e2e/supergraph-url"
@@ -6455,25 +6443,6 @@ __metadata:
     ioredis:
       optional: true
   checksum: 10c0/9e1cf867f457292c053c5ce0065c39537ffe6bb6e1c18b87afab262890de5f4b2f4332294981d2d5eb3bf9c4986c4593ae7b8084c6dfe68729b54970196219ec
-  languageName: node
-  linkType: hard
-
-"@graphql-hive/pubsub@npm:next":
-  version: 2.0.0-next-38d601a82253147a4bfe657c7eee418d25c183b6
-  resolution: "@graphql-hive/pubsub@npm:2.0.0-next-38d601a82253147a4bfe657c7eee418d25c183b6"
-  dependencies:
-    "@repeaterjs/repeater": "npm:^3.0.6"
-    "@whatwg-node/disposablestack": "npm:^0.0.6"
-    "@whatwg-node/promise-helpers": "npm:^1.3.0"
-  peerDependencies:
-    "@nats-io/nats-core": ^3
-    ioredis: ^5
-  peerDependenciesMeta:
-    "@nats-io/nats-core":
-      optional: true
-    ioredis:
-      optional: true
-  checksum: 10c0/ca4dc638e780719aa5b6f4927740ffeba17fe9d432ce06c1985a91d503f602a29b94189119104e19dd3ff7f4186be446e3b3f6c851f569cedea91549a175f462
   languageName: node
   linkType: hard
 
@@ -26733,7 +26702,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-sse@npm:^2.5.3, graphql-sse@npm:^2.5.4":
+"graphql-sse@npm:^2.5.3":
   version: 2.6.0
   resolution: "graphql-sse@npm:2.6.0"
   peerDependencies:
