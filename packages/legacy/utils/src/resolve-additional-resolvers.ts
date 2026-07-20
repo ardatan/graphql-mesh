@@ -20,9 +20,8 @@ import {
   type MeshPubSub,
   type YamlConfig,
 } from '@graphql-mesh/types';
-import { resolveMergedTypeReference } from '@graphql-tools/delegate';
 import type { IResolvers, MaybePromise } from '@graphql-tools/utils';
-import { mergeDeep, parseSelectionSet } from '@graphql-tools/utils';
+import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { withFilter } from './with-filter.js';
@@ -196,31 +195,7 @@ export function getResolverForPubSubOperation(
 
   return {
     subscribe: subscribeFn,
-    resolve: (payload: any, _: any, ctx, info: GraphQLResolveInfo) => {
-      function resolvePayload(payload: any) {
-        if (valuesFromResults) {
-          return valuesFromResults(payload);
-        }
-        return payload;
-      }
-      const data = resolvePayload(payload);
-      return handleMaybePromise(
-        () => resolveMergedTypeReference(data, ctx, info),
-        resolved => {
-          if (resolved === data) {
-            // not stitchable or the payload already has everything requested
-            return data;
-          }
-          // payload comes first so resolved wins on conflicting keys (subschema is authoritative).
-          // respectNonEnumerableSymbols preserves the external object annotation that delegation
-          // sets on resolved with non-enumerable symbol keys - without it, mergeDeep would return a plain
-          // object and the stitched executor would fall back to defaultFieldResolver, skipping entity merging
-          // for nested types (e.g. Review.content from a reviews subschema when the product subschema only
-          // knows Review.id)
-          return resolvePayload(mergeDeep([payload, resolved], false, false, false, true));
-        },
-      );
-    },
+    resolve: (payload: any) => (valuesFromResults ? valuesFromResults(payload) : payload),
   };
 }
 
@@ -261,7 +236,11 @@ export function resolveAdditionalResolversWithoutImport(
             );
           },
           resolve: (payload, ...args) =>
-            resolve(payload[additionalResolver.targetFieldName], ...args),
+            resolve(
+              payload[additionalResolver.targetFieldName],
+              // @ts-expect-error in case the resolver args expand, we're ready to pass
+              ...args,
+            ),
         },
       },
     };
