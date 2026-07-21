@@ -337,33 +337,38 @@ describe('redis', () => {
       clearInterval(timer);
     });
 
-    it('updates cluster node options and condition when refreshing the token', async () => {
+    it('updates cluster node options so reconnects use the refreshed token', async () => {
       jest.useFakeTimers();
+      const { formatUrl } = await import('@aws-sdk/util-format-url');
+      (formatUrl as jest.Mock)
+        .mockReturnValueOnce('http://my-cluster/?token=initial')
+        .mockReturnValueOnce('http://my-cluster/?token=refreshed');
       const node = {
-        options: { password: 'old-token' },
+        options: { username: 'redis', password: 'old-token' },
         condition: { auth: ['redis', 'old-token'] },
       };
       const mockCluster = { nodes: () => [node] } as any;
-      const cfg = {
-        region: 'us-east-1',
-        clusterName: 'my-cluster',
-        userId: 'redis',
-        tokenExpirySeconds: 60,
-      };
 
-      const timer = await setupIamAuthForCluster(mockCluster, {}, cfg, 'redis');
-      node.options.password = 'stale-token';
-      node.condition.auth = ['redis', 'stale-token'];
+      const timer = await setupIamAuthForCluster(
+        mockCluster,
+        {},
+        {
+          region: 'us-east-1',
+          clusterName: 'my-cluster',
+          userId: 'redis',
+          tokenExpirySeconds: 60,
+        },
+        'redis',
+      );
 
       await jest.advanceTimersByTimeAsync(48_000);
 
-      expect(node.options.password).toBe(
-        'my-cluster/?Action=connect&User=iam-user-01&X-Amz-Signature=abc123',
-      );
-      expect(node.condition.auth).toEqual([
-        'redis',
-        'my-cluster/?Action=connect&User=iam-user-01&X-Amz-Signature=abc123',
-      ]);
+      expect(node.options.password).toBe('my-cluster/?token=refreshed');
+      expect(node.condition.auth).toEqual(['redis', 'my-cluster/?token=refreshed']);
+
+      // mirrors Redis._connect rebuilding condition.auth from node.options
+      node.condition.auth = [node.options.username, node.options.password];
+      expect(node.condition.auth).toEqual(['redis', 'my-cluster/?token=refreshed']);
 
       clearInterval(timer);
       jest.useRealTimers();

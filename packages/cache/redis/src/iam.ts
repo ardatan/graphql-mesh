@@ -258,8 +258,8 @@ export async function setupIamAuthForCluster(
 
   const refreshToken = async () => {
     currentToken = await generateIamToken(cfg);
-    // also push to already-connected nodes so their next AUTH (e.g. after a server-side
-    // disconnect at 12h) uses the updated token
+    // also update existing nodes because ioredis rebuilds condition.auth from options.password
+    // before reconnecting
     for (const node of cluster.nodes()) {
       node.options.password = currentToken;
       if (node.condition != null) {
