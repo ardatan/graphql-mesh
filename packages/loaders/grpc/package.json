@@ -47,7 +47,7 @@
     "graphql-scalars": "^1.23.0",
     "lodash.has": "^4.5.2",
     "micromatch": "^4.0.8",
-    "protobufjs": "^7.6.3"
+    "protobufjs": "^7.6.5"
   },
   "devDependencies": {
     "graphql": "16.14.0"
