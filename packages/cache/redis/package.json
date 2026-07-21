@@ -32,7 +32,29 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
+    "@aws-crypto/sha256-js": ">=3.0.0",
+    "@aws-sdk/credential-providers": ">=3.0.0",
+    "@aws-sdk/util-format-url": ">=3.0.0",
+    "@smithy/protocol-http": ">=3.0.0",
+    "@smithy/signature-v4": ">=2.0.0",
     "graphql": "*"
+  },
+  "peerDependenciesMeta": {
+    "@aws-crypto/sha256-js": {
+      "optional": true
+    },
+    "@aws-sdk/credential-providers": {
+      "optional": true
+    },
+    "@aws-sdk/util-format-url": {
+      "optional": true
+    },
+    "@smithy/protocol-http": {
+      "optional": true
+    },
+    "@smithy/signature-v4": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.15",
@@ -45,6 +67,11 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
+    "@aws-crypto/sha256-js": "^5.2.0",
+    "@aws-sdk/credential-providers": "^3.1034.0",
+    "@aws-sdk/util-format-url": "^3.972.0",
+    "@smithy/protocol-http": "^5.3.14",
+    "@smithy/signature-v4": "^5.3.14",
     "@types/ioredis-mock": "8.2.7",
     "graphql": "16.14.0"
   },

@@ -1884,6 +1884,40 @@ export interface RedisConfigSingle {
    * @default: true
    */
   lazyConnect?: boolean;
+  iamAuth?: RedisIamAuthConfig;
+}
+/**
+ * AWS IAM authentication for ElastiCache or MemoryDB. Requires Redis 7+ with an IAM-enabled user.
+ * When configured, a short-lived SigV4 token is used as the Redis password and is automatically refreshed.
+ * Requires `@smithy/signature-v4` and `@aws-sdk/credential-providers` to be installed.
+ *
+ * @see https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/auth-iam.html
+ */
+export interface RedisIamAuthConfig {
+  /**
+   * AWS region where the ElastiCache or MemoryDB cluster is deployed.
+   */
+  region: string;
+  /**
+   * The ElastiCache or MemoryDB cluster name (used as the host in the SigV4 presigned URL).
+   */
+  clusterName: string;
+  /**
+   * The IAM-enabled Redis username. Must match the ElastiCache or MemoryDB user id exactly.
+   */
+  userId: string;
+  /**
+   * The AWS service name to sign for. Use "elasticache" for ElastiCache, "memorydb" for MemoryDB.
+   *
+   * @default: elasticache
+   */
+  serviceName?: string;
+  /**
+   * Token expiry in seconds. Maximum is 900 (15 minutes).
+   *
+   * @default: 900
+   */
+  tokenExpirySeconds?: number;
 }
 export interface RedisConfigCluster {
   startupNodes: RedisSentinelConfig[];
@@ -1908,6 +1942,40 @@ export interface RedisConfigCluster {
    * @see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls
    */
   tls?: boolean;
+  iamAuth?: RedisIamAuthConfig1;
+}
+/**
+ * AWS IAM authentication for ElastiCache or MemoryDB. Requires Redis 7+ with an IAM-enabled user.
+ * When configured, a short-lived SigV4 token is used as the Redis password and is automatically refreshed.
+ * Requires `@smithy/signature-v4` and `@aws-sdk/credential-providers` to be installed.
+ *
+ * @see https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/auth-iam.html
+ */
+export interface RedisIamAuthConfig1 {
+  /**
+   * AWS region where the ElastiCache or MemoryDB cluster is deployed.
+   */
+  region: string;
+  /**
+   * The ElastiCache or MemoryDB cluster name (used as the host in the SigV4 presigned URL).
+   */
+  clusterName: string;
+  /**
+   * The IAM-enabled Redis username. Must match the ElastiCache or MemoryDB user id exactly.
+   */
+  userId: string;
+  /**
+   * The AWS service name to sign for. Use "elasticache" for ElastiCache, "memorydb" for MemoryDB.
+   *
+   * @default: elasticache
+   */
+  serviceName?: string;
+  /**
+   * Token expiry in seconds. Maximum is 900 (15 minutes).
+   *
+   * @default: 900
+   */
+  tokenExpirySeconds?: number;
 }
 export interface PubSubConfig {
   name: string;
