@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "graphql": "16.14.0",
-    "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@graphql-mesh/cli": "0.100.54",
@@ -20,7 +20,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.3",
     "typescript": "^6.0.3",
-    "vite": "8.1.4"
+    "vite": "8.1.5"
   },
   "browserslist": {
     "production": [

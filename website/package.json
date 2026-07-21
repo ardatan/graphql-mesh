@@ -13,8 +13,8 @@
     "@theguild/components": "^7.6.5",
     "next": "16.2.10",
     "next-sitemap": "^4.2.3",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "react-icons": "^5.7.0"
   },
   "devDependencies": {
@@ -24,8 +24,8 @@
     "@types/react": "19.2.17",
     "cross-env": "10.1.0",
     "eslint": "10.7.0",
-    "eslint-config-next": "16.2.10",
-    "postcss": "8.5.19",
+    "eslint-config-next": "16.2.11",
+    "postcss": "8.5.21",
     "postcss-import": "16.1.1",
     "postcss-lightningcss": "1.1.0",
     "tailwindcss": "3.4.19",
