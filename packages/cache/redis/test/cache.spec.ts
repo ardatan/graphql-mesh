@@ -337,6 +337,38 @@ describe('redis', () => {
       clearInterval(timer);
     });
 
+    it('updates cluster node options and condition when refreshing the token', async () => {
+      jest.useFakeTimers();
+      const node = {
+        options: { password: 'old-token' },
+        condition: { auth: ['redis', 'old-token'] },
+      };
+      const mockCluster = { nodes: () => [node] } as any;
+      const cfg = {
+        region: 'us-east-1',
+        clusterName: 'my-cluster',
+        userId: 'redis',
+        tokenExpirySeconds: 60,
+      };
+
+      const timer = await setupIamAuthForCluster(mockCluster, {}, cfg, 'redis');
+      node.options.password = 'stale-token';
+      node.condition.auth = ['redis', 'stale-token'];
+
+      await jest.advanceTimersByTimeAsync(48_000);
+
+      expect(node.options.password).toBe(
+        'my-cluster/?Action=connect&User=iam-user-01&X-Amz-Signature=abc123',
+      );
+      expect(node.condition.auth).toEqual([
+        'redis',
+        'my-cluster/?Action=connect&User=iam-user-01&X-Amz-Signature=abc123',
+      ]);
+
+      clearInterval(timer);
+      jest.useRealTimers();
+    });
+
     it('IamTokenConnector.connect injects token into condition.auth (password-only)', async () => {
       const token = 'test-iam-token';
       const mockRedis = { condition: { auth: undefined, select: 0, subscriber: false } } as any;

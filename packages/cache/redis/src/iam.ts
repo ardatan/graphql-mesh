@@ -261,6 +261,7 @@ export async function setupIamAuthForCluster(
     // also push to already-connected nodes so their next AUTH (e.g. after a server-side
     // disconnect at 12h) uses the updated token
     for (const node of cluster.nodes()) {
+      node.options.password = currentToken;
       if (node.condition != null) {
         node.condition.auth = username ? [username, currentToken] : currentToken;
       }
