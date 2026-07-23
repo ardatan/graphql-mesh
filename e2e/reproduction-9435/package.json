@@ -1,0 +1,9 @@
+{
+  "name": "@e2e/reproduction-9435",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "graphql": "^16.13.2",
+    "graphql-yoga": "^5.21.0"
+  }
+}
