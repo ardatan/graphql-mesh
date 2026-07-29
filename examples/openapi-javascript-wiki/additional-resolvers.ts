@@ -11,7 +11,8 @@ export const resolvers: Resolvers = {
             args: {
               access: 'all_access',
               agent: 'user',
-              end: moment().format('YYYYMMDD'),
+              // Wikimedia pageview data usually lags; avoid requesting "today".
+              end: moment().subtract(2, 'days').format('YYYYMMDD'),
               start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
               project,
               granularity: 'daily',
