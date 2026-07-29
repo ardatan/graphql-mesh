@@ -10,15 +10,15 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.100.54",
     "@graphql-mesh/graphql": "0.104.41",
-    "concurrently": "10.0.3",
+    "concurrently": "10.0.4",
     "graphql": "16.14.0",
     "graphql-yoga": "^5.21.2",
     "sharp": "0.35.3"
   },
   "devDependencies": {
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.1.2",
     "jest": "30.4.2",
-    "ts-jest": "29.4.11",
+    "ts-jest": "29.4.12",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   }

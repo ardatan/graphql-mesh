@@ -5,7 +5,8 @@ sources:
         source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
         endpoint: https://wikimedia.org/api/rest_v1
         operationHeaders:
-          User-Agent: my-app
+          # Descriptive UA required by Wikimedia; generic values are often blocked.
+          User-Agent: graphql-mesh-javascript-wiki-example (https://github.com/ardatan/graphql-mesh)
 
 additionalTypeDefs: |
   extend type Query {
