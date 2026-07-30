@@ -5233,7 +5233,7 @@ __metadata:
     "@graphql-mesh/mongoose": "npm:0.104.39"
     graphql: "npm:16.14.0"
     jest: "npm:30.4.2"
-    mongoose: "npm:9.8.0"
+    mongoose: "npm:9.8.1"
   languageName: unknown
   linkType: soft
 
@@ -6996,7 +6996,7 @@ __metadata:
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.1.0"
     graphql-compose-pagination: "npm:^8.3.0"
-    mongoose: "npm:9.8.0"
+    mongoose: "npm:9.8.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -7172,7 +7172,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.104.30"
     "@graphql-mesh/utils": "npm:^0.104.38"
-    "@n1ru4l/in-memory-live-query-store": "npm:^0.10.0"
+    "@n1ru4l/in-memory-live-query-store": "npm:^0.11.0"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     graphql: "npm:16.14.0"
     tslib: "npm:^2.4.0"
@@ -11462,6 +11462,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@n1ru4l/graphql-live-query@npm:0.11.0":
+  version: 0.11.0
+  resolution: "@n1ru4l/graphql-live-query@npm:0.11.0"
+  peerDependencies:
+    graphql: ^15.4.0 || ^16.0.0
+  checksum: 10c0/e0198bab4f83bd6a83c32abff926fb0c37f34f8e481b15d92239604dadac25f20b0f2a0fe6d3da5cc9913b951b1ac85756bf5d6a36695805b268b02a4c726d30
+  languageName: node
+  linkType: hard
+
 "@n1ru4l/in-memory-live-query-store@npm:^0.10.0":
   version: 0.10.0
   resolution: "@n1ru4l/in-memory-live-query-store@npm:0.10.0"
@@ -11472,6 +11481,19 @@ __metadata:
   peerDependencies:
     graphql: ^15.4.0 || ^16.0.0
   checksum: 10c0/c2b4c1c09fa68ac7bd776166a86d361ac6e2659028391e7c3cca25943e966d1d035271141e28d0a519d50409cc07728df163d01ee26cacf403f59a6dcf2d4243
+  languageName: node
+  linkType: hard
+
+"@n1ru4l/in-memory-live-query-store@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@n1ru4l/in-memory-live-query-store@npm:0.11.0"
+  dependencies:
+    "@graphql-tools/utils": "npm:^8.5.2"
+    "@n1ru4l/graphql-live-query": "npm:0.11.0"
+    "@repeaterjs/repeater": "npm:^3.0.4"
+  peerDependencies:
+    graphql: ^15.4.0 || ^16.0.0
+  checksum: 10c0/0ddc46507278810cf286acaf68b0a0f84400d8f8bfc9addb8eabbd9f04282b7bfd470980fff43120588cf95e4d2697690ec2be37d24439f43e1a7ec079bbaea9
   languageName: node
   linkType: hard
 
@@ -32776,9 +32798,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:9.8.0":
-  version: 9.8.0
-  resolution: "mongoose@npm:9.8.0"
+"mongoose@npm:9.8.1":
+  version: 9.8.1
+  resolution: "mongoose@npm:9.8.1"
   dependencies:
     "@standard-schema/spec": "npm:^1.1.0"
     kareem: "npm:3.3.0"
@@ -32787,7 +32809,7 @@ __metadata:
     mquery: "npm:6.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10c0/2bed0be3740512087c42d9d176c0230e457689d6a61f3e3b80d47466929521410b00ecd5474b705dde1d63f56a483930962dc24f5429768058894bb0a3ccecd0
+  checksum: 10c0/c72bc388bb63afd23a3359f4f33d217c43c0885826b0422a3e8962950be18207f63a0e2a821f0aeccda1a3938ee38e465cbbcf75074ddefc7fe6dca4b909ebc0
   languageName: node
   linkType: hard
 
@@ -32907,12 +32929,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.3.12":
-  version: 3.3.15
-  resolution: "nanoid@npm:3.3.15"
+"nanoid@npm:^3.3.16":
+  version: 3.3.16
+  resolution: "nanoid@npm:3.3.16"
   bin:
     nanoid: bin/nanoid.cjs
-  checksum: 10c0/e0b12e3a1d361f74150fa4b25631d0ae29f7162dab01a12f0f1be1f53b7a2a219f9b729504e474d4821207d0fe349bd3c97569ab5cf7ec2fff6aa94711956c93
+  checksum: 10c0/bbf2dcffe22d2b62d16de2711752070b539c0f644c7916f823ad6521986b2078cbe524f2d6240f58c46e9141ea0c7b87a029e100c0f7f175228cacaf30e41bba
   languageName: node
   linkType: hard
 
@@ -35514,13 +35536,13 @@ __metadata:
   linkType: hard
 
 "postcss@npm:^8.4.31":
-  version: 8.5.19
-  resolution: "postcss@npm:8.5.19"
+  version: 8.5.25
+  resolution: "postcss@npm:8.5.25"
   dependencies:
-    nanoid: "npm:^3.3.12"
+    nanoid: "npm:^3.3.16"
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.1"
-  checksum: 10c0/302af9e4dfa8cce4f43af1798576b3a77ab7b23abac5522328c6c7a830d49b31281cba9d6071e478e6970a05ef82346d1570b8fbffae912f26a4f1a1a07f0a44
+  checksum: 10c0/0a12c1e74b456c57122e81f684e02fd98ff4d57526f794d10c996df1147158808f5ae373ac82b988c8de6cbbaa82dbd7b13803b14f5dd3cf7cc6a42ccad5c9f2
   languageName: node
   linkType: hard
 
