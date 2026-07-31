@@ -5,10 +5,10 @@
     "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.54",
-    "@graphql-mesh/graphql": "0.104.41",
-    "@graphql-mesh/transform-rename": "0.105.39",
-    "@graphql-mesh/transform-type-merging": "0.104.38",
+    "@graphql-mesh/cli": "0.101.0",
+    "@graphql-mesh/graphql": "0.105.0",
+    "@graphql-mesh/transform-rename": "0.106.0",
+    "@graphql-mesh/transform-type-merging": "0.105.0",
     "graphql": "16.14.0"
   }
 }

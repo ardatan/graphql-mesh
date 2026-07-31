@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/postgraphile",
-  "version": "0.104.41",
+  "version": "0.105.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,10 +36,10 @@
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.15",
-    "@graphql-mesh/store": "^0.104.40",
+    "@graphql-mesh/store": "^0.105.0",
     "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/types": "^0.104.30",
-    "@graphql-mesh/utils": "^0.104.38",
+    "@graphql-mesh/types": "^0.105.0",
+    "@graphql-mesh/utils": "^0.105.0",
     "@graphql-tools/delegate": "^12.0.19",
     "pg": "^8.22.0",
     "postgraphile": "^4.13.0",
