@@ -18,9 +18,9 @@
     "apollo-server-micro": "3.13.0",
     "graphql": "16.14.0",
     "micro": "10.0.1",
-    "next": "16.2.10",
-    "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "next": "16.2.11",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@types/react": "19.2.17",
