@@ -1,5 +1,31 @@
 # @graphql-mesh/cli
 
+## 0.101.0
+
+### Patch Changes
+
+- [#9583](https://github.com/ardatan/graphql-mesh/pull/9583)
+  [`478676c`](https://github.com/ardatan/graphql-mesh/commit/478676c5f97caad1b11bec1a4a0270cf76736623)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency [`graphql-ws@^6.2.0` ↗︎](https://www.npmjs.com/package/graphql-ws/v/6.2.0)
+    (from `^6.1.0`, in `dependencies`)
+
+- [#9583](https://github.com/ardatan/graphql-mesh/pull/9583)
+  [`478676c`](https://github.com/ardatan/graphql-mesh/commit/478676c5f97caad1b11bec1a4a0270cf76736623)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency [`graphql-ws@^6.2.0` ↗︎](https://www.npmjs.com/package/graphql-ws/v/6.2.0)
+    (from `^6.1.0`, in `dependencies`)
+- Updated dependencies
+  [[`b7def27`](https://github.com/ardatan/graphql-mesh/commit/b7def2769c68ce62b3c54c1b7282c3941715f94f)]:
+  - @graphql-mesh/types@0.105.0
+  - @graphql-mesh/incontext-sdk-codegen@0.1.0
+  - @graphql-mesh/config@0.109.0
+  - @graphql-mesh/http@0.107.0
+  - @graphql-mesh/runtime@0.107.0
+  - @graphql-mesh/store@0.105.0
+  - @graphql-mesh/utils@0.105.0
+  - @graphql-mesh/include@0.4.0
+
 ## 0.100.54
 
 ### Patch Changes

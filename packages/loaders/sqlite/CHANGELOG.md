@@ -1,5 +1,13 @@
 # @omnigraph/sqlite
 
+## 0.9.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b7def27`](https://github.com/ardatan/graphql-mesh/commit/b7def2769c68ce62b3c54c1b7282c3941715f94f)]:
+  - @graphql-mesh/types@0.105.0
+
 ## 0.8.30
 
 ### Patch Changes

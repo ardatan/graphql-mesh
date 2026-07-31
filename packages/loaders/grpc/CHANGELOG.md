@@ -1,5 +1,21 @@
 # @omnigraph/grpc
 
+## 0.2.26
+
+### Patch Changes
+
+- [#9583](https://github.com/ardatan/graphql-mesh/pull/9583)
+  [`478676c`](https://github.com/ardatan/graphql-mesh/commit/478676c5f97caad1b11bec1a4a0270cf76736623)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency [`protobufjs@^7.6.5` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.6.5)
+    (from `^7.6.3`, in `dependencies`)
+
+- [#9583](https://github.com/ardatan/graphql-mesh/pull/9583)
+  [`478676c`](https://github.com/ardatan/graphql-mesh/commit/478676c5f97caad1b11bec1a4a0270cf76736623)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency [`protobufjs@^7.6.5` ↗︎](https://www.npmjs.com/package/protobufjs/v/7.6.5)
+    (from `^7.6.3`, in `dependencies`)
+
 ## 0.2.25
 
 ### Patch Changes
