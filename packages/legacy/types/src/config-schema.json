@@ -84,6 +84,34 @@
         }
       }
     },
+    "RedisIamAuthConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "RedisIamAuthConfig",
+      "properties": {
+        "region": {
+          "type": "string",
+          "description": "AWS region where the ElastiCache or MemoryDB cluster is deployed."
+        },
+        "clusterName": {
+          "type": "string",
+          "description": "The ElastiCache or MemoryDB cluster name (used as the host in the SigV4 presigned URL)."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The IAM-enabled Redis username. Must match the ElastiCache or MemoryDB user id exactly."
+        },
+        "serviceName": {
+          "type": "string",
+          "description": "The AWS service name to sign for. Use \"elasticache\" for ElastiCache, \"memorydb\" for MemoryDB.\n\n@default: elasticache"
+        },
+        "tokenExpirySeconds": {
+          "type": "integer",
+          "description": "Token expiry in seconds. Maximum is 900 (15 minutes).\n\n@default: 900"
+        }
+      },
+      "required": ["region", "clusterName", "userId"]
+    },
     "RedisConfigCluster": {
       "additionalProperties": false,
       "type": "object",
@@ -116,6 +144,10 @@
         "tls": {
           "type": "boolean",
           "description": "Enable TLS for Redis Cluster connections. Required for AWS Elasticache Clusters with TLS.\n\n@see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls"
+        },
+        "iamAuth": {
+          "$ref": "#/definitions/RedisIamAuthConfig",
+          "description": "AWS IAM authentication for ElastiCache or MemoryDB. Requires Redis 7+ with an IAM-enabled user.\nWhen configured, a short-lived SigV4 token is used as the Redis password and is automatically refreshed.\nRequires `@smithy/signature-v4` and `@aws-sdk/credential-providers` to be installed.\n\n@see https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/auth-iam.html"
         }
       },
       "required": ["startupNodes"]
@@ -203,6 +235,10 @@
         "lazyConnect": {
           "type": "boolean",
           "description": "Flag to indicate lazyConnect value for Redis client.\n\n@default: true"
+        },
+        "iamAuth": {
+          "$ref": "#/definitions/RedisIamAuthConfig",
+          "description": "AWS IAM authentication for ElastiCache or MemoryDB. Requires Redis 7+ with an IAM-enabled user.\nWhen configured, a short-lived SigV4 token is used as the Redis password and is automatically refreshed.\nRequires `@smithy/signature-v4` and `@aws-sdk/credential-providers` to be installed.\n\n@see https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/auth-iam.html"
         }
       }
     },
