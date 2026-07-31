@@ -9,9 +9,9 @@
   "dependencies": {
     "@graphql-mesh/cli": "0.100.54",
     "@graphql-mesh/openapi": "0.109.55",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.1.2",
     "@whatwg-node/fetch": "^0.10.6",
-    "concurrently": "10.0.3",
+    "concurrently": "10.0.4",
     "fets": "^0.8.7",
     "graphql": "16.14.0",
     "ts-node": "^10.9.2",
