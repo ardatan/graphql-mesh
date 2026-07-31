@@ -37,7 +37,7 @@
   "dependencies": {
     "@graphql-codegen/core": "^6.2.0",
     "@graphql-codegen/plugin-helpers": "^6.3.0",
-    "@graphql-codegen/typescript": "^6.0.2",
+    "@graphql-codegen/typescript": "^6.1.0",
     "@graphql-mesh/cross-helpers": "^0.4.15",
     "@graphql-mesh/fusion-runtime": "^1.10.10",
     "@graphql-mesh/transport-common": "^1.0.17",
