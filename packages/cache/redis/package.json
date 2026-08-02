@@ -68,10 +68,10 @@
   },
   "devDependencies": {
     "@aws-crypto/sha256-js": "^5.2.0",
-    "@aws-sdk/credential-providers": "^3.1034.0",
-    "@aws-sdk/util-format-url": "^3.972.0",
-    "@smithy/protocol-http": "^5.3.14",
-    "@smithy/signature-v4": "^5.3.14",
+    "@aws-sdk/credential-providers": "^3.1096.0",
+    "@aws-sdk/util-format-url": "^3.972.38",
+    "@smithy/protocol-http": "^5.5.15",
+    "@smithy/signature-v4": "^5.6.11",
     "@types/ioredis-mock": "8.2.7",
     "graphql": "16.14.0"
   },

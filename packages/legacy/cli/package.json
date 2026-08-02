@@ -43,7 +43,7 @@
   "dependencies": {
     "@graphql-codegen/core": "^6.2.0",
     "@graphql-codegen/typed-document-node": "^6.1.8",
-    "@graphql-codegen/typescript": "^6.0.2",
+    "@graphql-codegen/typescript": "^6.1.0",
     "@graphql-codegen/typescript-generic-sdk": "^5.0.1",
     "@graphql-codegen/typescript-operations": "^5.1.0",
     "@graphql-codegen/typescript-resolvers": "^5.1.8",
