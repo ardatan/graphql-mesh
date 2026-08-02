@@ -13252,15 +13252,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@n1ru4l/graphql-live-query@npm:0.10.0, @n1ru4l/graphql-live-query@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "@n1ru4l/graphql-live-query@npm:0.10.0"
-  peerDependencies:
-    graphql: ^15.4.0 || ^16.0.0
-  checksum: 10c0/972bea6d6e4dcc443e15c19f2da373fc01f7e6c8d366569075dc89dc94e55da5a4029d0e8cff289d208c43edcca5e112fe286c6601717ab42d428fc3d5c2dfae
-  languageName: node
-  linkType: hard
-
 "@n1ru4l/graphql-live-query@npm:0.11.0":
   version: 0.11.0
   resolution: "@n1ru4l/graphql-live-query@npm:0.11.0"
@@ -13270,20 +13261,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@n1ru4l/in-memory-live-query-store@npm:^0.10.0":
+"@n1ru4l/graphql-live-query@npm:^0.10.0":
   version: 0.10.0
-  resolution: "@n1ru4l/in-memory-live-query-store@npm:0.10.0"
-  dependencies:
-    "@graphql-tools/utils": "npm:^8.5.2"
-    "@n1ru4l/graphql-live-query": "npm:0.10.0"
-    "@repeaterjs/repeater": "npm:^3.0.4"
+  resolution: "@n1ru4l/graphql-live-query@npm:0.10.0"
   peerDependencies:
     graphql: ^15.4.0 || ^16.0.0
-  checksum: 10c0/c2b4c1c09fa68ac7bd776166a86d361ac6e2659028391e7c3cca25943e966d1d035271141e28d0a519d50409cc07728df163d01ee26cacf403f59a6dcf2d4243
+  checksum: 10c0/972bea6d6e4dcc443e15c19f2da373fc01f7e6c8d366569075dc89dc94e55da5a4029d0e8cff289d208c43edcca5e112fe286c6601717ab42d428fc3d5c2dfae
   languageName: node
   linkType: hard
 
-"@n1ru4l/in-memory-live-query-store@npm:^0.11.0":
+"@n1ru4l/in-memory-live-query-store@npm:0.11.0":
   version: 0.11.0
   resolution: "@n1ru4l/in-memory-live-query-store@npm:0.11.0"
   dependencies:
