@@ -37,7 +37,7 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.15",
     "@graphql-mesh/types": "^0.105.0",
-    "@graphql-tools/delegate": "^12.0.19",
+    "@graphql-tools/delegate": "^12.1.1",
     "tslib": "^2.4.0"
   },
   "optionalDependencies": {

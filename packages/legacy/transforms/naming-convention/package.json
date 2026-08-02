@@ -37,9 +37,9 @@
   "dependencies": {
     "@graphql-mesh/types": "^0.105.0",
     "@graphql-mesh/utils": "^0.105.0",
-    "@graphql-tools/delegate": "^12.0.19",
-    "@graphql-tools/utils": "^11.2.0",
-    "@graphql-tools/wrap": "^11.1.18",
+    "@graphql-tools/delegate": "^12.1.1",
+    "@graphql-tools/utils": "^11.2.2",
+    "@graphql-tools/wrap": "^11.1.21",
     "change-case": "^4.1.2",
     "graphql-scalars": "^1.22.4",
     "lower-case": "^2.0.2",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@graphql-mesh/cache-localforage": "^0.106.0",
-    "@graphql-tools/schema": "10.0.36",
+    "@graphql-tools/schema": "10.0.38",
     "graphql": "16.14.0"
   },
   "publishConfig": {

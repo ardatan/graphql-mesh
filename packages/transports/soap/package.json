@@ -37,11 +37,11 @@
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.15",
     "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/transport-common": "^1.0.17",
+    "@graphql-mesh/transport-common": "^1.0.19",
     "@graphql-mesh/types": "^0.105.0",
     "@graphql-mesh/utils": "^0.105.0",
-    "@graphql-tools/executor": "^1.5.5",
-    "@graphql-tools/utils": "^11.2.0",
+    "@graphql-tools/executor": "^1.5.7",
+    "@graphql-tools/utils": "^11.2.2",
     "@whatwg-node/fetch": "^0.10.6",
     "fast-xml-parser": "^5.10.1",
     "tslib": "^2.4.0"
