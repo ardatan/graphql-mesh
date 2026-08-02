@@ -1,9 +1,0 @@
----
-"@graphql-mesh/runtime": patch
----
-dependencies updates:
-  - Updated dependency [`@graphql-tools/batch-delegate@^10.0.29` ↗︎](https://www.npmjs.com/package/@graphql-tools/batch-delegate/v/10.0.29) (from `^10.0.26`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/delegate@^12.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.1.1) (from `^12.0.19`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/executor@^1.5.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/executor/v/1.5.7) (from `^1.5.5`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/utils@^11.2.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.2.2) (from `^11.2.0`, in `dependencies`)
-  - Updated dependency [`@graphql-tools/wrap@^11.1.21` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/11.1.21) (from `^11.1.18`, in `dependencies`)

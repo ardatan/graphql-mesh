@@ -1,5 +1,31 @@
 # @graphql-mesh/supergraph
 
+## 0.11.1
+
+### Patch Changes
+
+- [#9586](https://github.com/ardatan/graphql-mesh/pull/9586)
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/federation@^4.4.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/federation/v/4.4.12)
+    (from `^4.4.8`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/url-loader@^9.1.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/url-loader/v/9.1.6)
+    (from `^9.1.4`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^11.2.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.2.2)
+    (from `^11.2.0`, in `dependencies`)
+- Updated dependencies
+  [[`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)]:
+  - @graphql-mesh/cross-helpers@0.4.16
+  - @graphql-mesh/store@0.105.1
+  - @graphql-mesh/types@0.105.1
+  - @graphql-mesh/utils@0.105.1
+
 ## 0.11.0
 
 ### Patch Changes

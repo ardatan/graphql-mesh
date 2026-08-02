@@ -1,5 +1,28 @@
 # @omnigraph/openapi
 
+## 0.110.1
+
+### Patch Changes
+
+- [#9586](https://github.com/ardatan/graphql-mesh/pull/9586)
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^11.2.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.2.2)
+    (from `^11.2.0`, in `dependencies`)
+- Updated dependencies
+  [[`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`7383889`](https://github.com/ardatan/graphql-mesh/commit/738388968fcb0701dbdd2a6dcb9791e8d43c02ec),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)]:
+  - @graphql-mesh/cross-helpers@0.4.16
+  - @graphql-mesh/fusion-composition@0.9.1
+  - @graphql-mesh/types@0.105.1
+  - @graphql-mesh/utils@0.105.1
+  - @omnigraph/json-schema@0.110.1
+
 ## 0.110.0
 
 ### Patch Changes
