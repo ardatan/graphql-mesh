@@ -1,5 +1,24 @@
 # @graphql-mesh/transform-hive
 
+## 0.105.1
+
+### Patch Changes
+
+- [#9586](https://github.com/ardatan/graphql-mesh/pull/9586)
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.1.1)
+    (from `^12.0.19`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^11.2.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/11.2.2)
+    (from `^11.2.0`, in `dependencies`)
+- Updated dependencies
+  [[`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)]:
+  - @graphql-mesh/cross-helpers@0.4.16
+  - @graphql-mesh/types@0.105.1
+
 ## 0.105.0
 
 ### Patch Changes

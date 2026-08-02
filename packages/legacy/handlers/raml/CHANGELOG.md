@@ -1,5 +1,19 @@
 # @graphql-mesh/raml
 
+## 0.110.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)]:
+  - @graphql-mesh/store@0.105.1
+  - @graphql-mesh/types@0.105.1
+  - @graphql-mesh/utils@0.105.1
+  - @omnigraph/raml@0.110.1
+
 ## 0.110.0
 
 ### Patch Changes
