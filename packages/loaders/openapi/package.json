@@ -40,7 +40,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.105.0",
     "@graphql-mesh/utils": "^0.105.0",
-    "@graphql-tools/utils": "^11.2.0",
+    "@graphql-tools/utils": "^11.2.2",
     "@omnigraph/json-schema": "^0.110.0",
     "change-case": "^4.1.2",
     "json-machete": "^0.97.7",
