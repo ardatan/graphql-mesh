@@ -10,7 +10,7 @@
     "@graphql-mesh/compose-cli": "workspace:^",
     "@omnigraph/openapi": "workspace:^",
     "@types/node": "^26.1.2",
-    "fastify": "^5.10.0",
+    "fastify": "^5.11.0",
     "graphql": "16.14.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "2.0.0",
