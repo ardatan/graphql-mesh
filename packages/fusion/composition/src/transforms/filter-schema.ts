@@ -12,6 +12,7 @@ import {
   MapperKind,
   mapSchema,
   pruneSchema,
+  type PruneSchemaOptions,
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
@@ -269,14 +270,21 @@ export function createFilterTransform({
 
   return function filterTransform(schema) {
     const rootTypeNames = getRootTypeNames(schema);
-    const pruneOptions = { skipPruning: type => rootTypeNames.has(type.name) };
+    // keep empty root types around since composition handles their inaccessible fields
+    const pruneOptions: PruneSchemaOptions = {
+      skipPruning: type => rootTypeNames.has(type.name),
+    };
+    // apply the requested filters structurally in a temporary schema
     const filteredSchema = mapSchema(schema, schemaMapper);
+    // prune both versions to find types disconnected specifically by those filters
+    const reachableOriginalSchema = pruneSchema(schema, pruneOptions);
     const reachableFilteredSchema = pruneSchema(filteredSchema, pruneOptions);
     const typesMadeUnreachable = new Set(
-      Object.keys(pruneSchema(schema, pruneOptions).getTypeMap()).filter(
-        typeName => !reachableFilteredSchema.getType(typeName),
-      ),
+      Object.values(reachableOriginalSchema.getTypeMap())
+        .filter(type => !reachableFilteredSchema.getType(type.name))
+        .map(type => type.name),
     );
+    // preserve the executable schema and hide filtered fields and newly orphaned types from clients
     return compareAndAddInaccessibleDirective(schema, filteredSchema, typesMadeUnreachable);
   };
 }
