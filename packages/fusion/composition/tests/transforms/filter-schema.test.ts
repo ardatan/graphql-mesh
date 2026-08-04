@@ -1,4 +1,5 @@
 import { buildSchema } from 'graphql';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { createFilterTransform, createPruneTransform } from '../../src/index.js';
 import { composeAndGetPublicSchema, expectTheSchemaSDLToBe } from './utils.js';
 
@@ -800,13 +801,26 @@ type Query {
     const filterTransform = createFilterTransform({
       fieldFilter: (typeName, fieldName) => typeName !== 'Query' || fieldName !== 'customer',
     });
+    let inaccessibleTypes: string[] = [];
     schema = await composeAndGetPublicSchema([
       {
         name: 'TEST',
         schema,
-        transforms: [filterTransform, createPruneTransform()],
+        transforms: [
+          filterTransform,
+          // check that the filter transform has marked the types as inaccessible
+          transformedSchema => {
+            inaccessibleTypes = ['CustomerResponse', 'Customer', 'ApiError'].filter(
+              typeName =>
+                getDirectiveExtensions(transformedSchema.getType(typeName))?.inaccessible?.length,
+            );
+            return transformedSchema;
+          },
+          createPruneTransform(),
+        ],
       },
     ]);
+    expect(inaccessibleTypes).toEqual(['CustomerResponse', 'Customer', 'ApiError']);
     expectTheSchemaSDLToBe(
       schema,
       /* GraphQL */ `
