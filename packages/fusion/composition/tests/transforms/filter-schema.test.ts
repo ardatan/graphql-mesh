@@ -780,6 +780,43 @@ type Query {
     );
   });
 
+  it('marks types only referenced by filtered fields as inaccessible', async () => {
+    let schema = buildSchema(/* GraphQL */ `
+      type Query {
+        health: String
+        customer: CustomerResponse
+      }
+
+      union CustomerResponse = Customer | ApiError
+
+      type Customer {
+        id: ID!
+      }
+
+      type ApiError {
+        message: String!
+      }
+    `);
+    const filterTransform = createFilterTransform({
+      fieldFilter: (typeName, fieldName) => typeName !== 'Query' || fieldName !== 'customer',
+    });
+    schema = await composeAndGetPublicSchema([
+      {
+        name: 'TEST',
+        schema,
+        transforms: [filterTransform, createPruneTransform()],
+      },
+    ]);
+    expectTheSchemaSDLToBe(
+      schema,
+      /* GraphQL */ `
+type Query {
+  health: String
+}
+`.trim(),
+    );
+  });
+
   it('should filter out fields of interfaces', async () => {
     let schema = buildSchema(/* GraphQL */ `
       interface ITest {

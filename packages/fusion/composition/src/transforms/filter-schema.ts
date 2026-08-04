@@ -11,6 +11,7 @@ import {
   getRootTypeNames,
   MapperKind,
   mapSchema,
+  pruneSchema,
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
@@ -30,12 +31,13 @@ export function addInaccessibleDirective(
 function compareAndAddInaccessibleDirective(
   originalSchema: GraphQLSchema,
   filteredSchema: GraphQLSchema,
+  typesMadeUnreachable: Set<string>,
 ) {
   const rootTypeNames = getRootTypeNames(originalSchema);
   return mapSchema(originalSchema, {
     [MapperKind.TYPE]: type => {
       const typeInFiltered = filteredSchema.getType(type.name);
-      if (!typeInFiltered) {
+      if (!typeInFiltered || typesMadeUnreachable.has(type.name)) {
         addInaccessibleDirective(type);
       } else if ('getFields' in type) {
         if (!('getFields' in typeInFiltered)) {
@@ -266,6 +268,15 @@ export function createFilterTransform({
   }
 
   return function filterTransform(schema) {
-    return compareAndAddInaccessibleDirective(schema, mapSchema(schema, schemaMapper));
+    const rootTypeNames = getRootTypeNames(schema);
+    const pruneOptions = { skipPruning: type => rootTypeNames.has(type.name) };
+    const filteredSchema = mapSchema(schema, schemaMapper);
+    const reachableFilteredSchema = pruneSchema(filteredSchema, pruneOptions);
+    const typesMadeUnreachable = new Set(
+      Object.keys(pruneSchema(schema, pruneOptions).getTypeMap()).filter(
+        typeName => !reachableFilteredSchema.getType(typeName),
+      ),
+    );
+    return compareAndAddInaccessibleDirective(schema, filteredSchema, typesMadeUnreachable);
   };
 }
