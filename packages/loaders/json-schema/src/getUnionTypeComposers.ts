@@ -3,12 +3,12 @@ import {
   isSomeInputTypeComposer,
   ListComposer,
   ObjectTypeComposer,
+  UnionTypeComposer,
   type AnyTypeComposer,
   type ComposeInputType,
   type Directive,
   type InputTypeComposer,
   type SchemaComposer,
-  type UnionTypeComposer,
 } from 'graphql-compose';
 import type { Logger } from '@graphql-mesh/types';
 import type { JSONSchemaObject } from '@json-schema-tools/meta-schema';
@@ -88,20 +88,43 @@ export function getUnionTypeComposers({
     }
   });
 
+  // Use local variables to avoid direct property assignment on subSchemaAndTypeComposers,
+  // which may have getter-only input/output properties (e.g. when it originates from an
+  // array schema processed by the enter visitor). Assigning to a getter-only property
+  // throws a TypeError in strict mode (Node.js 25+).
+  let resolvedInput = subSchemaAndTypeComposers.input;
+  let resolvedOutput = subSchemaAndTypeComposers.output;
+
   if (Object.keys(unionInputFields).length === 1) {
-    subSchemaAndTypeComposers.input = Object.values(unionInputFields)[0].type;
+    resolvedInput = Object.values(unionInputFields)[0].type;
   } else {
-    (subSchemaAndTypeComposers.input as InputTypeComposer).addFields(unionInputFields);
+    // For array+oneOf schemas, resolvedInput may be a ListComposer (getter-only); unwrap it
+    // so addFields is called on the underlying InputObjectTypeComposer.
+    const inputTC =
+      resolvedInput instanceof ListComposer
+        ? (resolvedInput.getUnwrappedTC() as InputTypeComposer)
+        : (resolvedInput as InputTypeComposer);
+    inputTC.addFields(unionInputFields);
+    resolvedInput = inputTC;
   }
 
   if (new Set(outputTypeComposers).size === 1) {
-    subSchemaAndTypeComposers.output = outputTypeComposers[0];
+    resolvedOutput = outputTypeComposers[0];
   } else {
-    const directives: Directive[] =
-      (subSchemaAndTypeComposers.output as UnionTypeComposer).getDirectives() || [];
-    const statusCodeOneOfIndexMap = (
-      subSchemaAndTypeComposers.output as UnionTypeComposer
-    ).getExtension('statusCodeOneOfIndexMap');
+    // For array+oneOf schemas, resolvedOutput may be a ListComposer (getter-only). Unwrap it
+    // to find the underlying UnionTypeComposer, or create one if the inner type is not a union.
+    let unionOutputTC: UnionTypeComposer<any>;
+    if (resolvedOutput instanceof ListComposer) {
+      const innerTC = resolvedOutput.getUnwrappedTC();
+      unionOutputTC =
+        innerTC instanceof UnionTypeComposer
+          ? innerTC
+          : schemaComposer.createUnionTC({ name: innerTC.getTypeName() + '_union', types: [] });
+    } else {
+      unionOutputTC = resolvedOutput as UnionTypeComposer;
+    }
+    const directives: Directive[] = unionOutputTC.getDirectives() || [];
+    const statusCodeOneOfIndexMap = unionOutputTC.getExtension('statusCodeOneOfIndexMap');
     const statusCodeOneOfIndexMapEntries = Object.entries(statusCodeOneOfIndexMap || {});
     for (const outputTypeComposerIndex in outputTypeComposers) {
       const outputTypeComposer = outputTypeComposers[outputTypeComposerIndex];
@@ -124,39 +147,38 @@ export function getUnionTypeComposers({
         if (outputTypeComposer instanceof InterfaceTypeComposer) {
           schemaComposer.forEach(tc => {
             if (tc instanceof ObjectTypeComposer && tc.hasInterface(a)) {
-              (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(tc);
+              unionOutputTC.addType(tc);
             }
           });
         } else {
-          (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(outputTypeComposer);
+          unionOutputTC.addType(outputTypeComposer);
         }
       } else {
         for (const possibleType of outputTypeComposer.getTypes()) {
-          (subSchemaAndTypeComposers.output as UnionTypeComposer).addType(possibleType);
+          unionOutputTC.addType(possibleType);
         }
       }
     }
-    (subSchemaAndTypeComposers.output as UnionTypeComposer).setDirectives(directives);
+    unionOutputTC.setDirectives(directives);
+    resolvedOutput = unionOutputTC;
   }
 
   let flatten = false;
   // TODO: container suffix might not be coming from us
-  if (
-    (subSchemaAndTypeComposers.output as ObjectTypeComposer).getTypeName().endsWith('_container')
-  ) {
-    const fields = (subSchemaAndTypeComposers.output as ObjectTypeComposer).getFields();
+  if ((resolvedOutput as ObjectTypeComposer).getTypeName().endsWith('_container')) {
+    const fields = (resolvedOutput as ObjectTypeComposer).getFields();
     const fieldKeys = Object.keys(fields);
     if (fieldKeys.length === 1) {
-      subSchemaAndTypeComposers.output = fields[fieldKeys[0]].type;
+      resolvedOutput = fields[fieldKeys[0]].type;
       flatten = isOutputPlural;
     }
   }
 
   return {
-    input: subSchemaAndTypeComposers.input as InputTypeComposer,
+    input: resolvedInput as InputTypeComposer,
     output: isOutputPlural
-      ? ((subSchemaAndTypeComposers.output as UnionTypeComposer).List as ListComposer)
-      : (subSchemaAndTypeComposers.output as UnionTypeComposer),
+      ? ((resolvedOutput as UnionTypeComposer).List as ListComposer)
+      : (resolvedOutput as UnionTypeComposer),
     nullable: subSchemaAndTypeComposers.nullable,
     readOnly: subSchemaAndTypeComposers.readOnly,
     writeOnly: subSchemaAndTypeComposers.writeOnly,
