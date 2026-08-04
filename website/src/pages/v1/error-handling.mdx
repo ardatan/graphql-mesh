@@ -1,0 +1,277 @@
+---
+description:
+  Learn how to handle errors in GraphQL Mesh v1, including REST API errors by status code and
+  authentication errors.
+---
+
+import { Callout } from '@theguild/components'
+
+# Error Handling
+
+GraphQL Mesh forwards errors from downstream REST/HTTP sources to the GraphQL client by default.
+This guide explains how to map HTTP error responses (such as `404 Not Found` or `401 Unauthorized`)
+to proper GraphQL types and how to handle authentication errors.
+
+## REST API errors
+
+When GraphQL Mesh calls an upstream REST API and receives a non-`2xx` HTTP status code for which no
+mapping is configured, it returns a GraphQL error with the `DOWNSTREAM_SERVICE_ERROR` extension code
+and the full HTTP response details.
+
+### Mapping responses by status code
+
+Both the [JSON Schema handler](/v1/source-handlers/json-schema) and the
+[OpenAPI handler](/v1/source-handlers/openapi) support the `responseByStatusCode` operation option.
+It lets you define a distinct response schema (or sample) for every HTTP status code that the
+upstream API can return, so that error payloads become typed GraphQL fields instead of generic error
+messages.
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadJSONSchemaSubgraph('MyApi', {
+        endpoint: 'https://api.example.com',
+        operations: [
+          {
+            type: 'Query',
+            field: 'book',
+            path: '/books/{args.id}',
+            method: 'GET',
+            // Default (2xx) response schema
+            responseSchema: './schemas/book.json',
+            responseByStatusCode: {
+              // Provide a typed response for 404
+              404: {
+                responseSample: './samples/book-not-found.json',
+                responseTypeName: 'BookNotFound'
+              },
+              // Provide a typed response for 500
+              500: {
+                responseSample: './samples/internal-error.json',
+                responseTypeName: 'InternalError'
+              }
+            }
+          }
+        ]
+      })
+    }
+  ]
+})
+```
+
+GraphQL Mesh will generate a union type that includes all the mapped response types:
+
+```graphql
+type Query {
+  book(id: ID): BookResult
+}
+
+union BookResult = Book | BookNotFound | InternalError
+
+type Book {
+  id: ID!
+  title: String
+}
+
+type BookNotFound {
+  message: String!
+}
+
+type InternalError {
+  message: String!
+}
+```
+
+Clients can then use inline fragments to handle each case:
+
+```graphql
+query GetBook($id: ID!) {
+  book(id: $id) {
+    ... on Book {
+      title
+    }
+    ... on BookNotFound {
+      message
+    }
+    ... on InternalError {
+      message
+    }
+  }
+}
+```
+
+### Using a JSON Schema instead of a sample
+
+You can point `responseSchema` at a JSON Schema file (or a `$ref` path within one) rather than
+providing a sample:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadJSONSchemaSubgraph('MyApi', {
+        endpoint: 'https://api.example.com',
+        operations: [
+          {
+            type: 'Query',
+            field: 'book',
+            path: '/books/{args.id}',
+            method: 'GET',
+            responseSchema: './schemas/book.json',
+            responseByStatusCode: {
+              404: {
+                responseSchema: './schemas/errors.json#/definitions/NotFoundError'
+              },
+              422: {
+                responseSchema: './schemas/errors.json#/definitions/ValidationError'
+              }
+            }
+          }
+        ]
+      })
+    }
+  ]
+})
+```
+
+### OpenAPI / Swagger sources
+
+If your OpenAPI spec already defines response schemas per status code, GraphQL Mesh will use them
+automatically. To add or override typed error responses, update your OpenAPI document to include the
+desired response schema (or example) for the relevant status code.
+
+```yaml filename="openapi.yaml"
+paths:
+  /pets/{id}:
+    get:
+      operationId: getPetById
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '404':
+          description: Pet not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetNotFound'
+```
+
+## Authentication errors
+
+### Mapping 401 / 403 to typed GraphQL responses
+
+Authentication (`401 Unauthorized`) and authorization (`403 Forbidden`) errors returned by upstream
+APIs can be mapped with `responseByStatusCode` just like any other status code:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadJSONSchemaSubgraph('MyApi', {
+        endpoint: 'https://api.example.com',
+        operations: [
+          {
+            type: 'Mutation',
+            field: 'createPost',
+            path: '/posts',
+            method: 'POST',
+            requestSample: './samples/create-post-request.json',
+            responseSample: './samples/create-post-response.json',
+            responseByStatusCode: {
+              401: {
+                responseSample: './samples/unauthorized.json',
+                responseTypeName: 'Unauthorized'
+              },
+              403: {
+                responseSample: './samples/forbidden.json',
+                responseTypeName: 'Forbidden'
+              }
+            }
+          }
+        ]
+      })
+    }
+  ]
+})
+```
+
+This generates a union that lets clients react to auth failures in the type system:
+
+```graphql
+type Mutation {
+  createPost(input: CreatePostInput): CreatePostResult
+}
+
+union CreatePostResult = Post | Unauthorized | Forbidden
+
+type Unauthorized {
+  message: String!
+}
+
+type Forbidden {
+  message: String!
+}
+```
+
+### Forwarding the Authorization header to upstream APIs
+
+To pass the caller's `Authorization` header through to the upstream REST API, use
+`operationHeaders`:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('MyApi', {
+        source: './my-api.yaml',
+        operationHeaders: {
+          // Header names should be lower-case when reading from context
+          Authorization: '{context.headers.authorization}'
+        }
+      })
+    }
+  ]
+})
+```
+
+<Callout>
+  Header names in `operationHeaders` should be lower-case when reading from context. See [Setting
+  Headers](/v1/source-handlers#setting-headers) for more details.
+</Callout>
+
+### Enforcing authentication at the gateway level
+
+For gateway-level authentication and authorization (blocking unauthenticated requests before they
+reach the upstream APIs), use the `@authenticated`, `@requiresScopes`, and `@skipAuth` directives
+described in the [Authentication guide](/v1/auth).
+
+```graphql filename="subgraph.graphql"
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@authenticated"])
+
+type Mutation {
+  createPost(input: CreatePostInput): CreatePostResult @authenticated
+}
+```
+
+<Callout>
+  You need to configure your gateway to support authentication directives. See the [Authentication
+  guide](/v1/auth) and [Hive Gateway authentication
+  docs](https://the-guild.dev/graphql/hive/docs/gateway/authorization-authentication) for details.
+</Callout>

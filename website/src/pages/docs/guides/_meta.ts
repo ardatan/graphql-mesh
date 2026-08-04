@@ -1,6 +1,7 @@
 export default {
   'extending-unified-schema': 'Extending the Unified Schema',
   batching: 'Batching for N+1 Problem',
+  'error-handling': 'Error Handling',
   'error-masking': 'Error Masking',
   'monitoring-and-tracing': 'Monitoring and Tracing',
   auth0: 'Authentication with Auth0',
