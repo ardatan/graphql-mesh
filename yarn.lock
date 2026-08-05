@@ -44140,7 +44140,7 @@ __metadata:
     eslint-config-next: "npm:16.2.12"
     next: "npm:16.2.11"
     next-sitemap: "npm:^4.2.3"
-    postcss: "npm:8.5.25"
+    postcss: "npm:8.5.23"
     postcss-import: "npm:16.1.1"
     postcss-lightningcss: "npm:1.1.0"
     react: "npm:^19.2.8"
