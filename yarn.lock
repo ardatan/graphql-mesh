@@ -5419,7 +5419,7 @@ __metadata:
     dockerode: "npm:^4.0.10"
     glob: "npm:^13.0.6"
     graphql: "npm:^16.14.0"
-    tsx: "npm:^4.23.1"
+    tsx: "npm:^4.23.4"
   languageName: unknown
   linkType: soft
 
@@ -6519,7 +6519,7 @@ __metadata:
     "@types/node": "npm:^26.1.2"
     concurrently: "npm:10.0.4"
     graphql: "npm:16.14.0"
-    tsx: "npm:4.23.1"
+    tsx: "npm:4.23.4"
   languageName: unknown
   linkType: soft
 
@@ -8404,7 +8404,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/utils": "npm:^0.105.1"
     dotenv: "npm:^17.4.2"
-    get-tsconfig: "npm:^4.14.0"
+    get-tsconfig: "npm:^4.14.1"
     glob: "npm:^13.0.6"
     graphql: "npm:16.14.0"
     jiti: "npm:^2.7.0"
@@ -27060,7 +27060,7 @@ __metadata:
     graphql-yoga: "npm:^5.21.2"
     lru-cache: "patch:lru-cache@npm%3A11.2.6#~/.yarn/patches/lru-cache-npm-11.2.6-acb7d4323e.patch"
     tslib: "npm:2.8.1"
-    tsx: "npm:^4.23.1"
+    tsx: "npm:^4.23.4"
   languageName: unknown
   linkType: soft
 
@@ -28324,12 +28324,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-tsconfig@npm:^4.14.0":
-  version: 4.14.0
-  resolution: "get-tsconfig@npm:4.14.0"
+"get-tsconfig@npm:^4.14.1":
+  version: 4.14.1
+  resolution: "get-tsconfig@npm:4.14.1"
   dependencies:
     resolve-pkg-maps: "npm:^1.0.0"
-  checksum: 10c0/abc2b9275468eb589079a0b7a95eb5107c14fdd0ca6dda1bff116fe774ea1f79975421dcb22a0c86b4f820fcc69a7655dddf9b6d6a8a2c06fcb59e19794c0724
+  checksum: 10c0/c5e5d8fd298be9bc554b8ca3708a76732c27f632cd9b902c1d41b23ad1f4b6fefbe4dbdecd2fee84994d1ebf46e8cc50dd575fcff1b7ffafcdf6e2e0809a0337
   languageName: node
   linkType: hard
 
@@ -28872,7 +28872,7 @@ __metadata:
     prettier: "npm:3.9.6"
     threads: "npm:^1.7.0"
     ts-jest: "npm:29.4.12"
-    tsx: "npm:^4.23.1"
+    tsx: "npm:^4.23.4"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
@@ -42722,9 +42722,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:4.23.1, tsx@npm:^4.23.1":
-  version: 4.23.1
-  resolution: "tsx@npm:4.23.1"
+"tsx@npm:4.23.4":
+  version: 4.23.4
+  resolution: "tsx@npm:4.23.4"
   dependencies:
     esbuild: "npm:~0.28.0"
     fsevents: "npm:~2.3.3"
@@ -42733,7 +42733,22 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/2f7393c09ffd161701342c87141c6158945967c0fdb6476f157a72e53554cbc983b8e516b441beafde27c9840d8ffd619802acce6b6be5e9e197d693e111a55d
+  checksum: 10c0/eee7b64c3e39ef6e4adf0d6a8018ce0d0410c93bd24bf68ccb90d0c89d07a5f760f0cf5e762c951ba87968944903c192e947558384d0181ba841dc6a3f8956df
+  languageName: node
+  linkType: hard
+
+"tsx@npm:^4.23.4":
+  version: 4.23.8
+  resolution: "tsx@npm:4.23.8"
+  dependencies:
+    esbuild: "npm:~0.28.0"
+    fsevents: "npm:~2.3.3"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    tsx: dist/cli.mjs
+  checksum: 10c0/6ac1ca2615b8108512d09c1431a41a2bb836120043da66ffce3669ad45f1c689509e0c21d06147631535b42575e0a2a842ab56819769a413832b8a7cb671f160
   languageName: node
   linkType: hard
 
