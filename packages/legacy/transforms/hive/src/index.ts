@@ -107,8 +107,8 @@ export default class HiveTransform implements MeshTransform {
   ) {
     try {
       const typeInfo = getTypeInfo(this.schema);
-      transformationContext
-        .collectUsageCallback?.(
+      transformationContext.collectUsageCallback
+        ?.finish(
           {
             schema: this.schema,
             document: visit(
