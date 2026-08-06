@@ -1,4 +1,5 @@
 import {
+  isEnumType,
   isNonNullType,
   type GraphQLFieldConfig,
   type GraphQLInputFieldConfig,
@@ -281,7 +282,12 @@ export function createFilterTransform({
     const reachableFilteredSchema = pruneSchema(filteredSchema, pruneOptions);
     const typesMadeUnreachable = new Set(
       Object.values(reachableOriginalSchema.getTypeMap())
-        .filter(type => !reachableFilteredSchema.getType(type.name))
+        .filter(
+          type =>
+            !rootTypeNames.has(type.name) && // do not filter out root types ever
+            !isEnumType(type) && // federation validates enum defaults before removing inaccessible fields, so keep enums public
+            !reachableFilteredSchema.getType(type.name),
+        )
         .map(type => type.name),
     );
     // preserve the executable schema and hide filtered fields and newly orphaned types from clients
