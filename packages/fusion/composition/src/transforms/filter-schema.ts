@@ -1,4 +1,5 @@
 import {
+  isEnumType,
   isNonNullType,
   type GraphQLFieldConfig,
   type GraphQLInputFieldConfig,
@@ -11,6 +12,8 @@ import {
   getRootTypeNames,
   MapperKind,
   mapSchema,
+  pruneSchema,
+  type PruneSchemaOptions,
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
@@ -30,12 +33,13 @@ export function addInaccessibleDirective(
 function compareAndAddInaccessibleDirective(
   originalSchema: GraphQLSchema,
   filteredSchema: GraphQLSchema,
+  typesMadeUnreachable: Set<string>,
 ) {
   const rootTypeNames = getRootTypeNames(originalSchema);
   return mapSchema(originalSchema, {
     [MapperKind.TYPE]: type => {
       const typeInFiltered = filteredSchema.getType(type.name);
-      if (!typeInFiltered) {
+      if (!typeInFiltered || typesMadeUnreachable.has(type.name)) {
         addInaccessibleDirective(type);
       } else if ('getFields' in type) {
         if (!('getFields' in typeInFiltered)) {
@@ -266,6 +270,27 @@ export function createFilterTransform({
   }
 
   return function filterTransform(schema) {
-    return compareAndAddInaccessibleDirective(schema, mapSchema(schema, schemaMapper));
+    const rootTypeNames = getRootTypeNames(schema);
+    // keep empty root types around since composition handles their inaccessible fields
+    const pruneOptions: PruneSchemaOptions = {
+      skipPruning: type => rootTypeNames.has(type.name),
+    };
+    // apply the requested filters structurally in a temporary schema
+    const filteredSchema = mapSchema(schema, schemaMapper);
+    // prune both versions to find types disconnected specifically by those filters
+    const reachableOriginalSchema = pruneSchema(schema, pruneOptions);
+    const reachableFilteredSchema = pruneSchema(filteredSchema, pruneOptions);
+    const typesMadeUnreachable = new Set(
+      Object.values(reachableOriginalSchema.getTypeMap())
+        .filter(
+          type =>
+            !rootTypeNames.has(type.name) && // do not filter out root types ever
+            !isEnumType(type) && // federation validates enum defaults before removing inaccessible fields, so keep enums public
+            !reachableFilteredSchema.getType(type.name),
+        )
+        .map(type => type.name),
+    );
+    // preserve the executable schema and hide filtered fields and newly orphaned types from clients
+    return compareAndAddInaccessibleDirective(schema, filteredSchema, typesMadeUnreachable);
   };
 }

@@ -142,24 +142,24 @@ scalar BigInt @join__type(graph: PETSTORE)  @join__type(graph: VACCINATION)
 """
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
-scalar JSON @join__type(graph: PETSTORE)  @specifiedBy(
+scalar JSON @join__type(graph: PETSTORE)  @inaccessible @specifiedBy(
   url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf"
 )
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar DateTime @join__type(graph: PETSTORE) 
+scalar DateTime @join__type(graph: PETSTORE)  @inaccessible
 
 """
 A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
 """
-scalar EmailAddress @join__type(graph: PETSTORE)  @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address") 
+scalar EmailAddress @join__type(graph: PETSTORE)  @inaccessible @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address") 
 
 """
 The \`File\` scalar type represents a file upload.
 """
-scalar File @join__type(graph: PETSTORE) 
+scalar File @join__type(graph: PETSTORE)  @inaccessible
 
 scalar ObjMap @join__type(graph: PETSTORE) 
 
@@ -291,7 +291,7 @@ type Tag @join__type(graph: PETSTORE)  {
   name: String
 }
 
-type Order @join__type(graph: PETSTORE, key: "id")  {
+type Order @join__type(graph: PETSTORE, key: "id")  @inaccessible {
   id: BigInt
   petId: BigInt
   quantity: Int
@@ -300,7 +300,7 @@ type Order @join__type(graph: PETSTORE, key: "id")  {
   complete: Boolean
 }
 
-type User @join__type(graph: PETSTORE)  {
+type User @join__type(graph: PETSTORE)  @inaccessible {
   id: BigInt
   username: String
   firstName: String
@@ -442,7 +442,7 @@ type Mutation @join__type(graph: PETSTORE)  @inaccessible {
   username: String!) : JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE)  @inaccessible
 }
 
-type ApiResponse @join__type(graph: PETSTORE)  {
+type ApiResponse @join__type(graph: PETSTORE)  @inaccessible {
   code: Int
   type: String
   message: String
@@ -490,7 +490,7 @@ enum HTTPMethod @join__type(graph: PETSTORE)  {
 """
 Pet object that needs to be added to the store
 """
-input Pet_Input @join__type(graph: PETSTORE)  {
+input Pet_Input @join__type(graph: PETSTORE)  @inaccessible {
   id: BigInt
   name: String!
   category: Category_Input
@@ -499,17 +499,17 @@ input Pet_Input @join__type(graph: PETSTORE)  {
   status: mutation_updatePet_status
 }
 
-input Category_Input @join__type(graph: PETSTORE)  {
+input Category_Input @join__type(graph: PETSTORE)  @inaccessible {
   id: BigInt
   name: String
 }
 
-input Tag_Input @join__type(graph: PETSTORE)  {
+input Tag_Input @join__type(graph: PETSTORE)  @inaccessible {
   id: BigInt
   name: String
 }
 
-input Order_Input @join__type(graph: PETSTORE)  {
+input Order_Input @join__type(graph: PETSTORE)  @inaccessible {
   id: BigInt
   petId: BigInt
   quantity: Int
@@ -518,7 +518,7 @@ input Order_Input @join__type(graph: PETSTORE)  {
   complete: Boolean
 }
 
-input User_Input @join__type(graph: PETSTORE)  {
+input User_Input @join__type(graph: PETSTORE)  @inaccessible {
   id: BigInt
   username: String
   firstName: String
