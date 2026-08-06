@@ -1,5 +1,23 @@
 # @graphql-mesh/include
 
+## 0.4.2
+
+### Patch Changes
+
+- [#9601](https://github.com/ardatan/graphql-mesh/pull/9601)
+  [`969a1da`](https://github.com/ardatan/graphql-mesh/commit/969a1dacc3b5bb39380bd9495b25d3a2e01f0994)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`get-tsconfig@^4.14.1` ↗︎](https://www.npmjs.com/package/get-tsconfig/v/4.14.1) (from `^4.14.0`,
+    in `dependencies`)
+
+- [#9602](https://github.com/ardatan/graphql-mesh/pull/9602)
+  [`29d4acf`](https://github.com/ardatan/graphql-mesh/commit/29d4acf51063661b5913034e5efb5cdc2bc5d994)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`get-tsconfig@^4.14.1` ↗︎](https://www.npmjs.com/package/get-tsconfig/v/4.14.1) (from `^4.14.0`,
+    in `dependencies`)
+
 ## 0.4.1
 
 ### Patch Changes
