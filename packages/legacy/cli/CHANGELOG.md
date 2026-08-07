@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.101.3
+
+### Patch Changes
+
+- [#9604](https://github.com/ardatan/graphql-mesh/pull/9604)
+  [`11567cd`](https://github.com/ardatan/graphql-mesh/commit/11567cd6dbbbf59d15ee4702bd761cf758bd899b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`ws@^8.21.2` ↗︎](https://www.npmjs.com/package/ws/v/8.21.2) (from `^8.21.1`,
+    in `dependencies`)
+
 ## 0.101.2
 
 ### Patch Changes
