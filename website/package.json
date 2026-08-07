@@ -24,7 +24,7 @@
     "@types/react": "19.2.18",
     "cross-env": "10.1.0",
     "eslint": "10.8.0",
-    "eslint-config-next": "16.2.12",
+    "eslint-config-next": "16.3.0",
     "postcss": "8.5.23",
     "postcss-import": "16.1.1",
     "postcss-lightningcss": "1.1.0",
