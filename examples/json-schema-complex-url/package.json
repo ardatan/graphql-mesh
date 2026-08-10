@@ -14,8 +14,8 @@
     "graphql": "16.14.0"
   },
   "devDependencies": {
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.2.0",
     "concurrently": "10.0.4",
-    "tsx": "4.23.5"
+    "tsx": "4.23.11"
   }
 }

@@ -83,7 +83,7 @@
     "@tsconfig/node24": "^24.0.0",
     "@tsconfig/recommended": "^1.0.5",
     "@types/jest": "30.0.0",
-    "@types/node": "26.1.2",
+    "@types/node": "26.2.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "@typescript-eslint/eslint-plugin": "8.66.0",
@@ -111,7 +111,7 @@
     "prettier": "3.9.6",
     "threads": "^1.7.0",
     "ts-jest": "29.4.12",
-    "tsx": "^4.23.5",
+    "tsx": "^4.23.11",
     "typescript": "^6.0.3"
   },
   "resolutions": {
