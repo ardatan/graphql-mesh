@@ -371,10 +371,9 @@ export const composeConfig = defineConfig({
 - List fields get `[]` for missing keys (and all matches when several share a key); singular fields
   get `null` / the first match
 
-If the delegated query does not conform to these expectations and `valueKeyField` is not
-enough, you can provide a custom resolver function in `additionalResolvers` to the Hive Gateway
-runtime configuration.
-{/* `TODO: Add example for custom resolver function programmatically` */}
+If the delegated query does not conform to these expectations and `valueKeyField` is not enough, you
+can provide a custom resolver function in `additionalResolvers` to the Hive Gateway runtime
+configuration. {/* `TODO: Add example for custom resolver function programmatically` */}
 
 Batch delegation is generally preferable over plain delegation because it eliminates the redundancy
 of requesting the same field across an array of parent objects. Even so, delegation costs can add up

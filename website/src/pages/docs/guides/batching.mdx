@@ -141,7 +141,8 @@ additionalTypeDefs: |
 By default, batched results are mapped back to keys **by array position**: the upstream must return
 one result per key in key order. Collection-style sources that return rows in their own order (or
 with gaps / multiples) should also set `valueKeyField` to the field on each result used for
-correlation — see [Schema Extensions → valueKeyField](/v1/schema-extensions#matching-results-by-a-field-valuekeyfield).
+correlation — see
+[Schema Extensions → valueKeyField](/v1/schema-extensions#matching-results-by-a-field-valuekeyfield).
 
 Now, our Mesh Gateway will try to batch calls to the "Authors" API when resolving `Book.author`:
 
