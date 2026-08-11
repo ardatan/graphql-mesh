@@ -7,7 +7,7 @@ directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, jsonApiField
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String) on FIELD_DEFINITION
+directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
 
 directive @statusCodeTypeName(statusCode: String, subgraph: String, typeName: String) repeatable on UNION
 
