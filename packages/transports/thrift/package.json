@@ -38,7 +38,7 @@
     "@creditkarma/thrift-client": "^1.0.4",
     "@creditkarma/thrift-server-core": "^1.0.4",
     "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/transport-common": "^1.0.19",
+    "@graphql-mesh/transport-common": "^1.0.20",
     "@graphql-mesh/utils": "^0.105.1",
     "@graphql-tools/utils": "^11.2.2",
     "pascal-case": "^3.1.2",
