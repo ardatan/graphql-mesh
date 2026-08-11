@@ -393,3 +393,233 @@ describe('key-based (batch) additional resolver with a null parent key', () => {
     expect(users.usersByIds.mock.calls[0][1]).toEqual({ ids: ['user-1'] });
   });
 });
+
+// Collection-style batched sources (Strapi/Hasura/SQL IN (...)) do not guarantee
+// result order or one-row-per-key. valueKeyField matches results back by a field
+// on each result instead of by array position.
+describe('key-based (batch) additional resolver with valueKeyField', () => {
+  function makeProductsBySku() {
+    const products = [
+      { id: 'p-2', sku: 'sku-b', title: 'Product B' },
+      { id: 'p-1', sku: 'sku-a', title: 'Product A' },
+      { id: 'p-3', sku: 'sku-a', title: 'Product A variant' },
+    ];
+    const productsBySkus = jest.fn((_root: unknown, { skus }: { skus?: string[] }) => {
+      const requested = new Set(skus || []);
+      // Intentionally return matches in collection order, not request order, and
+      // allow gaps / multiples — the failure mode without valueKeyField.
+      return products.filter(product => requested.has(product.sku));
+    });
+    const schema = makeExecutableSchema({
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          productsBySkus(skus: [String!]): [Product!]!
+        }
+        type Product {
+          id: ID!
+          sku: String!
+          title: String!
+        }
+      `),
+      resolvers: { Query: { productsBySkus } },
+    });
+    return { schema, productsBySkus };
+  }
+
+  function makeSearchResults() {
+    return makeExecutableSchema({
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          searchResults: [SearchResult!]!
+        }
+        type SearchResult {
+          id: ID!
+          sku: String!
+        }
+      `),
+      resolvers: {
+        Query: {
+          searchResults: () => [
+            { id: 's-1', sku: 'sku-a' },
+            { id: 's-2', sku: 'sku-missing' },
+            { id: 's-3', sku: 'sku-b' },
+          ],
+        },
+      },
+    });
+  }
+
+  function buildScenario(fieldType: '[Product!]!' | 'Product') {
+    const products = makeProductsBySku();
+    const searchSchema = makeSearchResults();
+
+    const productsRawSource: RawSourceOutput = {
+      name: 'products',
+      schema: products.schema,
+      transforms: [],
+      contextVariables: {},
+      handler: {} as RawSourceOutput['handler'],
+      batch: true,
+      createProxyingResolver: () => undefined as any,
+    };
+    const inContextSDK = getInContextSDK(
+      products.schema,
+      [productsRawSource],
+      new DefaultLogger('test'),
+      [],
+    );
+
+    const additionalResolvers = resolveAdditionalResolversWithoutImport({
+      targetTypeName: 'SearchResult',
+      targetFieldName: 'products',
+      requiredSelectionSet: '{ sku }',
+      keyField: 'sku',
+      keysArg: 'skus',
+      valueKeyField: 'sku',
+      sourceName: 'products',
+      sourceTypeName: 'Query',
+      sourceFieldName: 'productsBySkus',
+    } as any);
+
+    const stitched = stitchSchemas({
+      subschemas: [{ schema: searchSchema }, { schema: products.schema }] as SubschemaConfig[],
+      typeDefs: parse(/* GraphQL */ `
+        extend type SearchResult {
+          products: ${fieldType}
+        }
+      `),
+      resolvers: additionalResolvers,
+      typeMergingOptions: {
+        validationSettings: { validationLevel: ValidationLevel.Off },
+      },
+    });
+
+    return { stitched, contextValue: { ...inContextSDK }, products };
+  }
+
+  it('matches unordered collection results back to keys for list fields', async () => {
+    const { stitched, contextValue, products } = buildScenario('[Product!]!');
+
+    const result = (await execute({
+      schema: stitched,
+      document: parse(/* GraphQL */ `
+        {
+          searchResults {
+            id
+            products {
+              id
+              sku
+              title
+            }
+          }
+        }
+      `),
+      contextValue,
+    })) as ExecutionResult;
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      searchResults: [
+        {
+          id: 's-1',
+          products: [
+            { id: 'p-1', sku: 'sku-a', title: 'Product A' },
+            { id: 'p-3', sku: 'sku-a', title: 'Product A variant' },
+          ],
+        },
+        {
+          id: 's-2',
+          products: [],
+        },
+        {
+          id: 's-3',
+          products: [{ id: 'p-2', sku: 'sku-b', title: 'Product B' }],
+        },
+      ],
+    });
+    expect(products.productsBySkus).toHaveBeenCalledTimes(1);
+    expect(products.productsBySkus.mock.calls[0][1].skus).toEqual([
+      'sku-a',
+      'sku-missing',
+      'sku-b',
+    ]);
+  });
+
+  it('matches unordered collection results back to keys for singular fields', async () => {
+    const { stitched, contextValue } = buildScenario('Product');
+
+    const result = (await execute({
+      schema: stitched,
+      document: parse(/* GraphQL */ `
+        {
+          searchResults {
+            id
+            products {
+              id
+              sku
+              title
+            }
+          }
+        }
+      `),
+      contextValue,
+    })) as ExecutionResult;
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      searchResults: [
+        {
+          id: 's-1',
+          products: { id: 'p-1', sku: 'sku-a', title: 'Product A' },
+        },
+        {
+          id: 's-2',
+          products: null,
+        },
+        {
+          id: 's-3',
+          products: { id: 'p-2', sku: 'sku-b', title: 'Product B' },
+        },
+      ],
+    });
+  });
+
+  it('requests valueKeyField even when the client selection omits it', async () => {
+    const { stitched, contextValue, products } = buildScenario('[Product!]!');
+
+    const result = (await execute({
+      schema: stitched,
+      document: parse(/* GraphQL */ `
+        {
+          searchResults {
+            id
+            products {
+              title
+            }
+          }
+        }
+      `),
+      contextValue,
+    })) as ExecutionResult;
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      searchResults: [
+        {
+          id: 's-1',
+          products: [{ title: 'Product A' }, { title: 'Product A variant' }],
+        },
+        {
+          id: 's-2',
+          products: [],
+        },
+        {
+          id: 's-3',
+          products: [{ title: 'Product B' }],
+        },
+      ],
+    });
+    // Matching still works, which means sku was fetched for correlation.
+    expect(products.productsBySkus).toHaveBeenCalledTimes(1);
+  });
+});

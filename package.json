@@ -122,6 +122,7 @@
     "@opentelemetry/propagator-jaeger": "2.9.0",
     "@tootallnate/once": "3.0.1",
     "@typescript/vfs@npm:^1.6.0": "patch:@typescript/vfs@npm%3A1.6.1#~/.yarn/patches/@typescript-vfs-npm-1.6.1-ef0e2d6cf2.patch",
+    "@graphql-mesh/utils": "workspace:*",
     "@whatwg-node/fetch": "0.10.13",
     "@whatwg-node/node-fetch": "0.8.5",
     "@whatwg-node/server": "0.11.0",

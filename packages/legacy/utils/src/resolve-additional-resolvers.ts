@@ -7,7 +7,15 @@ import type {
   GraphQLType,
   SelectionSetNode,
 } from 'graphql';
-import { getNamedType, isAbstractType, isInterfaceType, isObjectType, Kind } from 'graphql';
+import {
+  getNamedType,
+  getNullableType,
+  isAbstractType,
+  isInterfaceType,
+  isListType,
+  isObjectType,
+  Kind,
+} from 'graphql';
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
 import { process } from '@graphql-mesh/cross-helpers';
@@ -49,14 +57,98 @@ function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
   return getTypeByPath(field.type, path.slice(1));
 }
 
+function ensurePathInSelectionSet(
+  selectionSet: SelectionSetNode | undefined,
+  path: string[],
+): SelectionSetNode {
+  if (path.length === 0) {
+    return (
+      selectionSet ?? {
+        kind: Kind.SELECTION_SET,
+        selections: [],
+      }
+    );
+  }
+
+  const [head, ...rest] = path;
+  const selections = selectionSet?.selections ? [...selectionSet.selections] : [];
+  const existingField = selections.find(
+    selection =>
+      selection.kind === Kind.FIELD &&
+      !selection.alias &&
+      selection.name.value === head &&
+      (!selection.directives || selection.directives.length === 0),
+  );
+
+  if (existingField && existingField.kind === Kind.FIELD) {
+    if (rest.length === 0) {
+      return {
+        kind: Kind.SELECTION_SET,
+        selections,
+      };
+    }
+    const nestedSelectionSet = ensurePathInSelectionSet(existingField.selectionSet, rest);
+    return {
+      kind: Kind.SELECTION_SET,
+      selections: selections.map(selection =>
+        selection === existingField
+          ? {
+              ...existingField,
+              selectionSet: nestedSelectionSet,
+            }
+          : selection,
+      ),
+    };
+  }
+
+  const newField =
+    rest.length === 0
+      ? {
+          kind: Kind.FIELD as const,
+          name: {
+            kind: Kind.NAME as const,
+            value: head,
+          },
+        }
+      : {
+          kind: Kind.FIELD as const,
+          name: {
+            kind: Kind.NAME as const,
+            value: head,
+          },
+          selectionSet: ensurePathInSelectionSet(undefined, rest),
+        };
+
+  return {
+    kind: Kind.SELECTION_SET,
+    selections: [...selections, newField],
+  };
+}
+
 function generateSelectionSetFactory(
   schema: GraphQLSchema,
   additionalResolver:
     | YamlConfig.AdditionalStitchingBatchResolverObject
     | YamlConfig.AdditionalStitchingResolverObject,
 ) {
+  const valueKeyField =
+    'valueKeyField' in additionalResolver ? additionalResolver.valueKeyField : undefined;
+  const valueKeyPath = valueKeyField ? toPath(valueKeyField) : undefined;
+
+  const ensureValueKeyField = (subtree: SelectionSetNode | undefined): SelectionSetNode => {
+    if (!valueKeyPath?.length) {
+      return (
+        subtree ?? {
+          kind: Kind.SELECTION_SET,
+          selections: [],
+        }
+      );
+    }
+    return ensurePathInSelectionSet(subtree, valueKeyPath);
+  };
+
   if (additionalResolver.sourceSelectionSet) {
-    return () => parseSelectionSet(additionalResolver.sourceSelectionSet);
+    return () => ensureValueKeyField(parseSelectionSet(additionalResolver.sourceSelectionSet));
     // If result path provided without a selectionSet
   } else if (additionalResolver.result) {
     const resultPath = toPath(additionalResolver.result);
@@ -93,7 +185,7 @@ function generateSelectionSetFactory(
     }
 
     return (subtree: SelectionSetNode) => {
-      let finalSelectionSet = subtree;
+      let finalSelectionSet = ensureValueKeyField(subtree);
       let isLastResult = true;
       const resultPathReversed = [...resultPath].reverse();
       for (const pathElem of resultPathReversed) {
@@ -141,6 +233,8 @@ function generateSelectionSetFactory(
       }
       return finalSelectionSet;
     };
+  } else if (valueKeyPath?.length) {
+    return (subtree: SelectionSetNode) => ensureValueKeyField(subtree);
   }
   return undefined;
 }
@@ -151,6 +245,44 @@ function generateValuesFromResults(resultExpression: string): (result: any) => a
       return result.map(valuesFromResults);
     }
     return lodashGet(result, resultExpression);
+  };
+}
+
+function generateValuesFromResultsByKey(
+  valueKeyField: string,
+  resultExpression: string | undefined,
+  isListReturnType: boolean,
+): (results: any, keys?: readonly any[]) => any {
+  const extractResult = resultExpression ? generateValuesFromResults(resultExpression) : undefined;
+
+  return function valuesFromResults(results: any, keys: readonly any[] = []): any[] {
+    const extracted = extractResult ? extractResult(results) : results;
+    const items = Array.isArray(extracted) ? extracted : extracted == null ? [] : [extracted];
+
+    const matchesByKey = new Map<any, any[]>();
+    for (const item of items) {
+      if (item == null) {
+        continue;
+      }
+      const resultKey = lodashGet(item, valueKeyField);
+      if (resultKey == null) {
+        continue;
+      }
+      const bucket = matchesByKey.get(resultKey);
+      if (bucket) {
+        bucket.push(item);
+      } else {
+        matchesByKey.set(resultKey, [item]);
+      }
+    }
+
+    return keys.map(key => {
+      const matches = matchesByKey.get(key);
+      if (isListReturnType) {
+        return matches ?? [];
+      }
+      return matches?.[0] ?? null;
+    });
   };
 }
 
@@ -257,6 +389,17 @@ export function resolveAdditionalResolversWithoutImport(
                 additionalResolver,
               );
             }
+            if (
+              additionalResolver.valueKeyField &&
+              baseOptions.valuesFromResultsByKeyReturnType !== info.returnType
+            ) {
+              baseOptions.valuesFromResults = generateValuesFromResultsByKey(
+                additionalResolver.valueKeyField,
+                additionalResolver.result,
+                isListType(getNullableType(info.returnType)),
+              );
+              baseOptions.valuesFromResultsByKeyReturnType = info.returnType;
+            }
             const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
             for (const argPath in additionalResolver.additionalArgs || {}) {
@@ -268,7 +411,8 @@ export function resolveAdditionalResolversWithoutImport(
               );
             }
             const options: any = {
-              ...baseOptions,
+              selectionSet: baseOptions.selectionSet,
+              valuesFromResults: baseOptions.valuesFromResults,
               root,
               context,
               info,

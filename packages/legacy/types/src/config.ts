@@ -1779,6 +1779,12 @@ export interface AdditionalStitchingBatchResolverObject {
   requiredSelectionSet?: string;
   keyField: string;
   keysArg: string;
+  /**
+   * Field path on each batched result used to match it back to a key.
+   * When set, results are correlated by this field instead of by array position
+   * (required for collection sources that do not preserve input-key order).
+   */
+  valueKeyField?: string;
   additionalArgs?: {
     [k: string]: any;
   };

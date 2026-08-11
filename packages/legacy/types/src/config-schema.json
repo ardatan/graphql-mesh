@@ -798,6 +798,10 @@
         "keysArg": {
           "type": "string"
         },
+        "valueKeyField": {
+          "type": "string",
+          "description": "Field path on each batched result used to match it back to a key.\nWhen set, results are correlated by this field instead of by array position\n(required for collection sources that do not preserve input-key order)."
+        },
         "additionalArgs": {
           "type": "object",
           "properties": {}
