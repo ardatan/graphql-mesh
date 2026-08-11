@@ -371,7 +371,7 @@ export const composeConfig = defineConfig({
 - List fields get `[]` for missing keys (and all matches when several share a key); singular fields
   get `null` / the first match
 
-If the query you’re delegating to don’t conform to these expectations and `valueKeyField` is not
+If the delegated query does not conform to these expectations and `valueKeyField` is not
 enough, you can provide a custom resolver function in `additionalResolvers` to the Hive Gateway
 runtime configuration.
 {/* `TODO: Add example for custom resolver function programmatically` */}

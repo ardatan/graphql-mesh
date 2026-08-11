@@ -622,4 +622,46 @@ describe('key-based (batch) additional resolver with valueKeyField', () => {
     // Matching still works, which means sku was fetched for correlation.
     expect(products.productsBySkus).toHaveBeenCalledTimes(1);
   });
+
+  it('does not duplicate valueKeyField when the client already selects it with directives', async () => {
+    const { stitched, contextValue } = buildScenario('[Product!]!');
+
+    const result = (await execute({
+      schema: stitched,
+      document: parse(/* GraphQL */ `
+        query ($includeSku: Boolean!) {
+          searchResults {
+            id
+            products {
+              sku @include(if: $includeSku)
+              title
+            }
+          }
+        }
+      `),
+      variableValues: { includeSku: true },
+      contextValue,
+    })) as ExecutionResult;
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      searchResults: [
+        {
+          id: 's-1',
+          products: [
+            { sku: 'sku-a', title: 'Product A' },
+            { sku: 'sku-a', title: 'Product A variant' },
+          ],
+        },
+        {
+          id: 's-2',
+          products: [],
+        },
+        {
+          id: 's-3',
+          products: [{ sku: 'sku-b', title: 'Product B' }],
+        },
+      ],
+    });
+  });
 });

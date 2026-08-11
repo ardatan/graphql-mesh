@@ -72,12 +72,10 @@ function ensurePathInSelectionSet(
 
   const [head, ...rest] = path;
   const selections = selectionSet?.selections ? [...selectionSet.selections] : [];
+  // Reuse an existing field even if it has @skip/@include (or other directives).
+  // Appending a second bare field with the same name would violate GraphQL field merging.
   const existingField = selections.find(
-    selection =>
-      selection.kind === Kind.FIELD &&
-      !selection.alias &&
-      selection.name.value === head &&
-      (!selection.directives || selection.directives.length === 0),
+    selection => selection.kind === Kind.FIELD && !selection.alias && selection.name.value === head,
   );
 
   if (existingField && existingField.kind === Kind.FIELD) {

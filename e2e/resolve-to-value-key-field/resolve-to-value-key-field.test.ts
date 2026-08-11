@@ -18,14 +18,14 @@ it('should match unordered Strapi collection results back to Vendure search keys
 
   const { execute } = await serve({ supergraph: output });
 
-  // Client omits SKU on purpose — valueKeyField must still be fetched for correlation.
+  // Client omits parent `sku` and product `SKU` — requiredSelectionSet / valueKeyField
+  // must still fetch them for the join and correlation.
   await expect(
     execute({
       query: /* GraphQL */ `
         {
           search {
             id
-            sku
             strapi_products {
               id
               title
@@ -39,7 +39,6 @@ it('should match unordered Strapi collection results back to Vendure search keys
       search: [
         {
           id: 's-1',
-          sku: 'sku-a',
           strapi_products: [
             { id: 'p-1', title: 'Product A' },
             { id: 'p-3', title: 'Product A variant' },
@@ -47,12 +46,10 @@ it('should match unordered Strapi collection results back to Vendure search keys
         },
         {
           id: 's-2',
-          sku: 'sku-missing',
           strapi_products: [],
         },
         {
           id: 's-3',
-          sku: 'sku-b',
           strapi_products: [{ id: 'p-2', title: 'Product B' }],
         },
       ],
