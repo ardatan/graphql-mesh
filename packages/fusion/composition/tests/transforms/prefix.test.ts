@@ -113,6 +113,84 @@ describe('Prefix', () => {
     expect(postFields.id.type.toString()).toBe('ID!');
     expect(postFields.title.type.toString()).toBe('String!');
   });
+  it('does not prefix protected custom scalars by default', async () => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        scalar DateTime
+
+        type Query {
+          now: DateTime
+        }
+      `,
+    });
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        name: 'TEST',
+        schema,
+        transforms: [
+          createPrefixTransform({
+            value: 'T_',
+          }),
+        ],
+      },
+    ]);
+    expect(newSchema.getType('DateTime')).toBeDefined();
+    expect(newSchema.getType('T_DateTime')).toBeUndefined();
+  });
+  it('prefixes protected custom scalars listed in force', async () => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        scalar DateTime
+
+        type Query {
+          now: DateTime
+        }
+      `,
+    });
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        name: 'TEST',
+        schema,
+        transforms: [
+          createPrefixTransform({
+            value: 'T_',
+            force: ['DateTime'],
+          }),
+        ],
+      },
+    ]);
+    expect(newSchema.getType('DateTime')).toBeUndefined();
+    expect(newSchema.getType('T_DateTime')).toBeDefined();
+    expect((newSchema.getType('Query') as GraphQLObjectType).getFields().now.type.toString()).toBe(
+      'T_DateTime',
+    );
+  });
+  it('does not prefix GraphQL specified scalars even when listed in force', async () => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          name: String
+        }
+      `,
+    });
+    const newSchema = await composeAndGetPublicSchema([
+      {
+        name: 'TEST',
+        schema,
+        transforms: [
+          createPrefixTransform({
+            value: 'T_',
+            force: ['String'],
+          }),
+        ],
+      },
+    ]);
+    expect(newSchema.getType('String')).toBeDefined();
+    expect(newSchema.getType('T_String')).toBeUndefined();
+    expect((newSchema.getType('Query') as GraphQLObjectType).getFields().name.type.toString()).toBe(
+      'String',
+    );
+  });
   it('uses the name of the subgraph when it is available', async () => {
     const newSchema = await composeAndGetPublicSchema([
       {

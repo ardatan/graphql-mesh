@@ -1,11 +1,9 @@
 import { resolvers as scalarsResolversMap } from 'graphql-scalars';
 
+export const specifiedScalarNames = new Set(['Int', 'Float', 'String', 'Boolean', 'ID']);
+
 export const ignoreList = [
-  'Int',
-  'Float',
-  'String',
-  'Boolean',
-  'ID',
+  ...specifiedScalarNames,
   'date',
   'hostname',
   'regex',

@@ -133,11 +133,11 @@ directive @httpOperation(
   operationSpecificHeaders: [[String]]
   httpMethod: SubgraphBHTTPMethod
   isBinary: Boolean
-  requestBaseBody: SubgraphBObjMap
-  queryParamArgMap: SubgraphBObjMap
-  queryStringOptionsByParam: SubgraphBObjMap
+  requestBaseBody: ObjMap
+  queryParamArgMap: ObjMap
+  queryStringOptionsByParam: ObjMap
   jsonApiFields: Boolean
-  queryStringOptions: SubgraphBObjMap
+  queryStringOptions: ObjMap
 ) repeatable on FIELD_DEFINITION
 
 directive @transport(
@@ -145,7 +145,7 @@ directive @transport(
   kind: String
   location: String
   headers: [[String]]
-  queryStringOptions: SubgraphBObjMap
+  queryStringOptions: ObjMap
   queryParams: [[String]]
 ) repeatable on SCHEMA
 
@@ -153,7 +153,7 @@ directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  rep
 
 scalar SubgraphAResolveToSourceArgs @join__type(graph: SUBGRAPH_A) 
 
-scalar SubgraphBObjMap @source(name: "ObjMap", subgraph: "subgraph-b")  @join__type(graph: SUBGRAPH_B) 
+scalar ObjMap @join__type(graph: SUBGRAPH_B) 
 
 scalar SubgraphBResolveToSourceArgs @join__type(graph: SUBGRAPH_B) 
 

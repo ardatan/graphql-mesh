@@ -16,6 +16,6 @@
   "devDependencies": {
     "@types/node": "^26.2.0",
     "concurrently": "10.0.4",
-    "tsx": "4.23.11"
+    "tsx": "4.23.12"
   }
 }

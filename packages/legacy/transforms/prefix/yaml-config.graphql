@@ -26,6 +26,11 @@ type PrefixTransformConfig @md {
   Changes types (default: true)
   """
   includeTypes: Boolean
+  """
+  Protected custom scalars (e.g. from graphql-scalars) to still prefix.
+  GraphQL specified scalars (Int, Float, String, Boolean, ID) always stay unprefixed.
+  """
+  force: [String!]
 }
 
 enum PrefixTransformMode {
