@@ -6822,6 +6822,7 @@ __metadata:
     "@graphql-mesh/runtime": "npm:0.107.1"
     "@graphql-mesh/transform-extend": "npm:0.105.1"
     "@graphql-tools/utils": "npm:^11.2.2"
+    cross-env: "npm:10.1.0"
     graphql: "npm:16.14.0"
     jest: "npm:30.4.2"
   languageName: unknown

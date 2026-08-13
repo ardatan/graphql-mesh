@@ -19,7 +19,10 @@ describe('OpenAPI nested resolver selectionSet', () => {
       res.writeHead(404);
       res.end();
     });
-    await new Promise<void>(resolve => upstream.listen(4011, '127.0.0.1', resolve));
+    await new Promise<void>((resolve, reject) => {
+      upstream.once('error', reject);
+      upstream.listen(4011, '127.0.0.1', resolve);
+    });
 
     const config = await findAndParseConfig({
       dir: join(__dirname, '..'),
@@ -29,9 +32,11 @@ describe('OpenAPI nested resolver selectionSet', () => {
 
   afterAll(async () => {
     mesh?.destroy();
-    await new Promise<void>((resolve, reject) =>
-      upstream.close(err => (err ? reject(err) : resolve())),
-    );
+    if (upstream?.listening) {
+      await new Promise<void>((resolve, reject) =>
+        upstream.close(err => (err ? reject(err) : resolve())),
+      );
+    }
   });
 
   it('fetches nested Pet fields when selectionSet is provided', async () => {
