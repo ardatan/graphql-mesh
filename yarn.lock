@@ -1543,7 +1543,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.29.7, @babel/core@npm:^7.29.7":
+"@babel/core@npm:7.29.7":
   version: 7.29.7
   resolution: "@babel/core@npm:7.29.7"
   dependencies:
@@ -1563,29 +1563,6 @@ __metadata:
     json5: "npm:^2.2.3"
     semver: "npm:^6.3.1"
   checksum: 10c0/112fb09c24de7a1de64d1de2c31fe65c4e6af4cb2fb6e6d99ea5373e6fc51e75b88581c0efae4c4c68f119a02a988c7106e95011a41530a2fb8ed793c7eaa07b
-  languageName: node
-  linkType: hard
-
-"@babel/core@npm:^7.1.0, @babel/core@npm:^7.11.1, @babel/core@npm:^7.12.3, @babel/core@npm:^7.16.0, @babel/core@npm:^7.23.9, @babel/core@npm:^7.24.4, @babel/core@npm:^7.27.4, @babel/core@npm:^7.28.6, @babel/core@npm:^7.7.2, @babel/core@npm:^7.8.0":
-  version: 7.29.0
-  resolution: "@babel/core@npm:7.29.0"
-  dependencies:
-    "@babel/code-frame": "npm:^7.29.0"
-    "@babel/generator": "npm:^7.29.0"
-    "@babel/helper-compilation-targets": "npm:^7.28.6"
-    "@babel/helper-module-transforms": "npm:^7.28.6"
-    "@babel/helpers": "npm:^7.28.6"
-    "@babel/parser": "npm:^7.29.0"
-    "@babel/template": "npm:^7.28.6"
-    "@babel/traverse": "npm:^7.29.0"
-    "@babel/types": "npm:^7.29.0"
-    "@jridgewell/remapping": "npm:^2.3.5"
-    convert-source-map: "npm:^2.0.0"
-    debug: "npm:^4.1.0"
-    gensync: "npm:^1.0.0-beta.2"
-    json5: "npm:^2.2.3"
-    semver: "npm:^6.3.1"
-  checksum: 10c0/5127d2e8e842ae409e11bcbb5c2dff9874abf5415e8026925af7308e903f4f43397341467a130490d1a39884f461bc2b67f3063bce0be44340db89687fd852aa
   languageName: node
   linkType: hard
 
@@ -2000,16 +1977,6 @@ __metadata:
     "@babel/traverse": "npm:^7.29.7"
     "@babel/types": "npm:^7.29.7"
   checksum: 10c0/d765b341863ede049eb6923b9c20fc79fb6c64995a906b60a70c22fbffb21eef5d5a5cf15948c843047d31e8c902a85fa94ccfe5d30d0631a7b1e40e4d667c70
-  languageName: node
-  linkType: hard
-
-"@babel/helpers@npm:^7.28.6":
-  version: 7.28.6
-  resolution: "@babel/helpers@npm:7.28.6"
-  dependencies:
-    "@babel/template": "npm:^7.28.6"
-    "@babel/types": "npm:^7.28.6"
-  checksum: 10c0/c4a779c66396bb0cf619402d92f1610601ff3832db2d3b86b9c9dd10983bf79502270e97ac6d5280cea1b1a37de2f06ecbac561bd2271545270407fbe64027cb
   languageName: node
   linkType: hard
 
@@ -4255,10 +4222,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@braintree/sanitize-url@npm:^7.1.1":
-  version: 7.1.1
-  resolution: "@braintree/sanitize-url@npm:7.1.1"
-  checksum: 10c0/fdfc1759c4244e287693ce1e9d42d649423e7c203fdccf27a571f8951ddfe34baa5273b7e6a8dd3007d7676859c7a0a9819be0ab42a3505f8505ad0eefecf7c1
+"@braintree/sanitize-url@npm:^7.1.2":
+  version: 7.1.2
+  resolution: "@braintree/sanitize-url@npm:7.1.2"
+  checksum: 10c0/62f2aa0cf58626e3880b2dc1025c42064b4639abd157ae4e1c35f4c2f5031e9273772046a423979845069c814e27ff818e8e669280dc53585e6f033d5b7a59cb
   languageName: node
   linkType: hard
 
@@ -11142,23 +11109,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.14.4, @grpc/grpc-js@npm:^1.14.4":
+"@grpc/grpc-js@npm:1.14.4":
   version: 1.14.4
   resolution: "@grpc/grpc-js@npm:1.14.4"
   dependencies:
     "@grpc/proto-loader": "npm:^0.8.0"
     "@js-sdsl/ordered-map": "npm:^4.4.2"
   checksum: 10c0/0ff6395e8112ad30e8f99dbb684b997ebc3264e770b8e354f23effeedf181a380e0ecef8bca466cbbf3e9141968656144851de1da50f840a1efd9314c9812449
-  languageName: node
-  linkType: hard
-
-"@grpc/grpc-js@npm:^1.11.1, @grpc/grpc-js@npm:^1.13.2, @grpc/grpc-js@npm:^1.14.3, @grpc/grpc-js@npm:^1.2.8":
-  version: 1.14.3
-  resolution: "@grpc/grpc-js@npm:1.14.3"
-  dependencies:
-    "@grpc/proto-loader": "npm:^0.8.0"
-    "@js-sdsl/ordered-map": "npm:^4.4.2"
-  checksum: 10c0/f41f06a311b93cca8c472d56e21387e0f7b57bb2337a91d15ea4279bac8ec4fa0de6bd0d881201229ab800c0f0c55277911ecb850e057f20a828d0ddd623551d
   languageName: node
   linkType: hard
 
@@ -13257,7 +13214,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mermaid-js/parser@npm:^1.1.1":
+"@mermaid-js/parser@npm:^1.2.0":
   version: 1.2.0
   resolution: "@mermaid-js/parser@npm:1.2.0"
   dependencies:
@@ -22918,12 +22875,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"brace-expansion@npm:5.0.8":
-  version: 5.0.8
-  resolution: "brace-expansion@npm:5.0.8"
+"brace-expansion@npm:5.0.9":
+  version: 5.0.9
+  resolution: "brace-expansion@npm:5.0.9"
   dependencies:
     balanced-match: "npm:^4.0.2"
-  checksum: 10c0/73304caafd00fdc5b0168e693ac15bf25b6357dec76d1195fcd628fe2cf99c46f9c889a7ecfa3cfe236dbd2d5ce3e27a6ccc4370b46d475d0d19081e11f86019
+  checksum: 10c0/3dea38884a1c3c8b1c9c44a7402a0c76fca460f70cffb3127242b0b4cbf4472019e022ade021eec44838ff19f1dac2625dfd11dd459d7e1e055b0698a8d52fec
   languageName: node
   linkType: hard
 
@@ -24623,10 +24580,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cytoscape@npm:^3.33.1":
-  version: 3.34.0
-  resolution: "cytoscape@npm:3.34.0"
-  checksum: 10c0/cb17b3dcacb9492f058cff653debf7b5a713e7532a9866cc72ae79d207757e8a9b68430874fe986f2a6404a8161b4fb5c1a2f1ca9ac5b1a21e316f57ed9d1243
+"cytoscape@npm:^3.33.3":
+  version: 3.34.1
+  resolution: "cytoscape@npm:3.34.1"
+  checksum: 10c0/1fefc274d8fbbb59273606d71e7875bfe6d7b7f3cafbd5af0083b1b19a431af93440c7273c0896ce5002ccdd54e28cfa4b0d54638017c69ebba0c1860a1c282b
   languageName: node
   linkType: hard
 
@@ -25089,7 +25046,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.11.19, dayjs@npm:^1.11.21":
+"dayjs@npm:^1.11.20, dayjs@npm:^1.11.21":
   version: 1.11.21
   resolution: "dayjs@npm:1.11.21"
   checksum: 10c0/bd97dfdc4bfea3c66268635690313828b386faa040fbc1f829ff42a2bd748b72c9d9b3c8f9616ce9e61fcb78923f1461a462c969c54b1084458ae1b715898fb0
@@ -25604,7 +25561,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.3.1":
+"dompurify@npm:^3.3.3":
   version: 3.4.13
   resolution: "dompurify@npm:3.4.13"
   dependencies:
@@ -32639,7 +32596,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"katex@npm:^0.16.0, katex@npm:^0.16.25, katex@npm:^0.16.9":
+"katex@npm:^0.16.0, katex@npm:^0.16.45, katex@npm:^0.16.9":
   version: 0.16.47
   resolution: "katex@npm:0.16.47"
   dependencies:
@@ -34093,32 +34050,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mermaid@npm:11.15.0":
-  version: 11.15.0
-  resolution: "mermaid@npm:11.15.0"
+"mermaid@npm:11.16.1":
+  version: 11.16.1
+  resolution: "mermaid@npm:11.16.1"
   dependencies:
-    "@braintree/sanitize-url": "npm:^7.1.1"
+    "@braintree/sanitize-url": "npm:^7.1.2"
     "@iconify/utils": "npm:^3.0.2"
-    "@mermaid-js/parser": "npm:^1.1.1"
+    "@mermaid-js/parser": "npm:^1.2.0"
     "@types/d3": "npm:^7.4.3"
     "@upsetjs/venn.js": "npm:^2.0.0"
-    cytoscape: "npm:^3.33.1"
+    cytoscape: "npm:^3.33.3"
     cytoscape-cose-bilkent: "npm:^4.1.0"
     cytoscape-fcose: "npm:^2.2.0"
     d3: "npm:^7.9.0"
     d3-sankey: "npm:^0.12.3"
     dagre-d3-es: "npm:7.0.14"
-    dayjs: "npm:^1.11.19"
-    dompurify: "npm:^3.3.1"
+    dayjs: "npm:^1.11.20"
+    dompurify: "npm:^3.3.3"
     es-toolkit: "npm:^1.45.1"
-    katex: "npm:^0.16.25"
+    katex: "npm:^0.16.45"
     khroma: "npm:^2.1.0"
     marked: "npm:^16.3.0"
     roughjs: "npm:^4.6.6"
     stylis: "npm:^4.3.6"
     ts-dedent: "npm:^2.2.0"
     uuid: "npm:^11.1.0 || ^12 || ^13 || ^14.0.0"
-  checksum: 10c0/9085b47c30b66a1e94e07c93951d9e53e5c89ec8c9fff8814233bddeecf6b8eaf9036d3168e4d1360c3f5d07cd051c666da96860eb0f22f064bd749499a0c83f
+  checksum: 10c0/a905627d5ad372914bf7c67cb9e491d50f248d3a8458e4ec920033f5ce7387bf419423909ed71d88f54a035ec42987746d64a46055bd2b2a4dc1bc4ceed38c44
   languageName: node
   linkType: hard
 
@@ -43142,10 +43099,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:7.28.0":
-  version: 7.28.0
-  resolution: "undici@npm:7.28.0"
-  checksum: 10c0/fe781983a26098795e99bb1f64906cbb7d0bcaa029a26baade007b53ea67f2631d189b8f9671a31f4c8d0cb3773b7559608628ba54452fef51fec90e7c78bb0d
+"undici@npm:7.29.0":
+  version: 7.29.0
+  resolution: "undici@npm:7.29.0"
+  checksum: 10c0/85ea96e91e7f3de24de678cbbc54230fdd641a3b0643005f2aef044af1f1a2db8fbecb88b28e6fa78bb41ffeafda4479b57075b6b6ab92beac4b7b5ab53f9b10
   languageName: node
   linkType: hard
 
