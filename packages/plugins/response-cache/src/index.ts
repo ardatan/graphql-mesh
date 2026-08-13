@@ -4,29 +4,45 @@ import type { GatewayContext, GatewayPlugin } from '@graphql-hive/gateway-runtim
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
+import { getHeadersObj } from '@graphql-mesh/utils';
 import { isPromise, mapMaybePromise } from '@graphql-tools/utils';
 import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
-function generateSessionIdFactory(sessionIdDef: string) {
+/**
+ * Yoga calls session/enabled as `(request, context)`.
+ * `request.headers` is a Fetch `Headers` instance which string interpolation cannot read
+ * with `{context.headers.foo}` — convert to a plain/lookup object first.
+ */
+function getContextWithHeaders(request?: Request, context?: Record<string, any>) {
+  const headersSource = context?.headers ?? request?.headers;
+  const headers = headersSource != null ? getHeadersObj(headersSource) : {};
+  return {
+    ...context,
+    headers,
+    request,
+  };
+}
+
+function generateSessionIdFactory(sessionIdDef?: string | null) {
   if (sessionIdDef == null) {
     return function voidSession(): null {
       return null;
     };
   }
-  return function session(context: any) {
+  return function session(request: Request, context?: Record<string, any>) {
     return stringInterpolator.parse(sessionIdDef, {
-      context,
+      context: getContextWithHeaders(request, context),
       env: process.env,
     });
   };
 }
 
 function generateEnabledFactory(ifDef: string) {
-  return function enabled(context: any) {
+  return function enabled(request: Request, context?: Record<string, any>) {
     // eslint-disable-next-line no-new-func
-    return new Function('context', `return ${ifDef}`)(context);
+    return new Function('context', `return ${ifDef}`)(getContextWithHeaders(request, context));
   };
 }
 
@@ -34,8 +50,14 @@ function getBuildResponseCacheKey(
   cacheKeyDef: string,
 ): UseResponseCacheParameter['buildResponseCacheKey'] {
   return function buildResponseCacheKey(cacheKeyParameters) {
+    const { request, context, ...rest } = cacheKeyParameters;
+    const contextWithHeaders = getContextWithHeaders(request, context as Record<string, any>);
     let cacheKey = stringInterpolator.parse(cacheKeyDef, {
-      ...cacheKeyParameters,
+      ...rest,
+      request,
+      context: contextWithHeaders,
+      // Docs historically used `contextValue` (Envelop naming)
+      contextValue: contextWithHeaders,
       env: process.env,
     });
     if (!cacheKey) {

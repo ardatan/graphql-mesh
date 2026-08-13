@@ -40,7 +40,9 @@ describe('Response Cache', () => {
           }
         }
       `;
-      expect(await query(gqlQuery)).toEqual({
+      // Stable session header so entries are shared within this test
+      const headers = { test: 'simple' };
+      expect(await query(gqlQuery, headers)).toEqual({
         data: { greeting: { hello: 'world' } },
         extensions: {
           responseCache: {
@@ -50,7 +52,7 @@ describe('Response Cache', () => {
           },
         },
       });
-      expect(await query(gqlQuery)).toEqual({
+      expect(await query(gqlQuery, headers)).toEqual({
         data: { greeting: { hello: 'world' } },
         extensions: {
           responseCache: {
@@ -68,7 +70,8 @@ describe('Response Cache', () => {
           }
         }
       `;
-      expect(await query(gqlQuery)).toEqual({
+      const headers = { test: 'ttl' };
+      expect(await query(gqlQuery, headers)).toEqual({
         data: { withTTL: { hello: 'world' } },
         extensions: {
           responseCache: {
@@ -78,7 +81,7 @@ describe('Response Cache', () => {
           },
         },
       });
-      expect(await query(gqlQuery)).toEqual({
+      expect(await query(gqlQuery, headers)).toEqual({
         data: { withTTL: { hello: 'world' } },
         extensions: {
           responseCache: {
@@ -88,10 +91,62 @@ describe('Response Cache', () => {
       });
     });
 
-    async function query(graphqlQuery: string): Promise<ExecutionResult> {
+    it('should not share cache across different session header values (#5102)', async () => {
+      const gqlQuery = /* GraphQL */ `
+        query HelloWorld {
+          greeting {
+            hello
+          }
+        }
+      `;
+
+      expect(await query(gqlQuery, { test: 'a' })).toMatchObject({
+        data: { greeting: { hello: 'world' } },
+        extensions: {
+          responseCache: {
+            didCache: true,
+            hit: false,
+          },
+        },
+      });
+
+      expect(await query(gqlQuery, { test: 'a' })).toMatchObject({
+        data: { greeting: { hello: 'world' } },
+        extensions: {
+          responseCache: {
+            hit: true,
+          },
+        },
+      });
+
+      // Changing `test` must miss — reproduces codesandbox clever-williams-j8m76t
+      expect(await query(gqlQuery, { test: 'b' })).toMatchObject({
+        data: { greeting: { hello: 'world' } },
+        extensions: {
+          responseCache: {
+            didCache: true,
+            hit: false,
+          },
+        },
+      });
+
+      expect(await query(gqlQuery, { test: 'b' })).toMatchObject({
+        data: { greeting: { hello: 'world' } },
+        extensions: {
+          responseCache: {
+            hit: true,
+          },
+        },
+      });
+    });
+
+    async function query(
+      graphqlQuery: string,
+      extraHeaders: Record<string, string> = {},
+    ): Promise<ExecutionResult> {
       const response = await meshHttp.fetch('/graphql', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...extraHeaders },
         body: JSON.stringify({ query: graphqlQuery }),
       });
       expect(response.status).toBe(200);

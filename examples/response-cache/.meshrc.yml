@@ -21,6 +21,9 @@ plugins:
         - apply: Query.greeting
   - responseCache:
       ttl: 100
+      # Same shape as https://codesandbox.io/p/sandbox/clever-williams-j8m76t (#5102)
+      sessionId: '{context.headers.test}'
+      cacheKey: '{sessionId}'
       includeExtensionMetadata: true
       ttlPerCoordinate:
         - coordinate: Query.withTTL
