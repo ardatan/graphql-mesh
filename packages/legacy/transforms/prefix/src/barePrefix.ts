@@ -7,7 +7,7 @@ import type {
 import { isSpecifiedScalarType } from 'graphql';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema, renameType } from '@graphql-tools/utils';
-import { ignoreList as defaultIgnoreList } from './shared.js';
+import { ignoreList as defaultIgnoreList, specifiedScalarNames } from './shared.js';
 
 const rootOperations = new Set(['Query', 'Mutation', 'Subscription']);
 
@@ -20,7 +20,14 @@ export default class BarePrefix implements MeshTransform {
 
   constructor(options: MeshTransformOptions<YamlConfig.PrefixTransformConfig>) {
     const { apiName, config } = options;
-    this.ignoreList = [...(config.ignore || []), ...defaultIgnoreList];
+    const force = new Set(config.force ?? []);
+    this.ignoreList = [
+      ...(config.ignore || []),
+      // GraphQL specified scalars stay protected even when listed in `force`
+      ...defaultIgnoreList.filter(
+        typeName => specifiedScalarNames.has(typeName) || !force.has(typeName),
+      ),
+    ];
     this.includeRootOperations = config.includeRootOperations === true;
     this.includeTypes = config.includeTypes !== false;
     this.prefix = null;

@@ -3895,6 +3895,14 @@
         "includeTypes": {
           "type": "boolean",
           "description": "Changes types (default: true)"
+        },
+        "force": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false,
+          "description": "Protected custom scalars (e.g. from graphql-scalars) to still prefix.\nGraphQL specified scalars (Int, Float, String, Boolean, ID) always stay unprefixed."
         }
       }
     },

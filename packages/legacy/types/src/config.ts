@@ -1506,6 +1506,11 @@ export interface PrefixTransformConfig {
    * Changes types (default: true)
    */
   includeTypes?: boolean;
+  /**
+   * Protected custom scalars (e.g. from graphql-scalars) to still prefix.
+   * GraphQL specified scalars (Int, Float, String, Boolean, ID) always stay unprefixed.
+   */
+  force?: string[];
 }
 /**
  * Prune transform

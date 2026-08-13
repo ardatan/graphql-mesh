@@ -5284,6 +5284,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/prefix-force-protected-types@workspace:e2e/prefix-force-protected-types":
+  version: 0.0.0-use.local
+  resolution: "@e2e/prefix-force-protected-types@workspace:e2e/prefix-force-protected-types"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^2.11.2"
+    "@graphql-mesh/compose-cli": "npm:^1.6.2"
+    graphql: "npm:16.14.0"
+    graphql-yoga: "npm:^5.21.2"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/programmatic-batching-example@workspace:e2e/programmatic-batching":
   version: 0.0.0-use.local
   resolution: "@e2e/programmatic-batching-example@workspace:e2e/programmatic-batching"
