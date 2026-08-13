@@ -6,11 +6,11 @@
     "start": "ts-node-dev src/index.ts"
   },
   "dependencies": {
-    "@graphql-hive/gateway": "^2.10.10",
+    "@graphql-hive/gateway": "^2.11.2",
     "@graphql-mesh/compose-cli": "workspace:^",
     "@omnigraph/openapi": "workspace:^",
     "@types/node": "^26.2.0",
-    "fastify": "^5.11.2",
+    "fastify": "^5.11.3",
     "graphql": "16.14.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "2.0.0",
