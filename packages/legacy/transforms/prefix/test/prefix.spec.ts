@@ -279,6 +279,113 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
     expect(newSchema.getType('User')).toBeDefined();
   });
 
+  it('should not prefix protected scalars by default', () => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        scalar DateTime
+
+        type Query {
+          now: DateTime
+        }
+      `,
+    });
+    const newSchema = transformSchema(
+      schema,
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger,
+      }),
+    );
+    expect(newSchema.getType('DateTime')).toBeDefined();
+    expect(newSchema.getType('T_DateTime')).toBeUndefined();
+  });
+
+  it('should prefix protected scalars listed in force', () => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        scalar DateTime
+
+        type Query {
+          now: DateTime
+        }
+      `,
+    });
+    const newSchema = transformSchema(
+      schema,
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+          force: ['DateTime'],
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger,
+      }),
+    );
+    expect(newSchema.getType('DateTime')).toBeUndefined();
+    expect(newSchema.getType('T_DateTime')).toBeDefined();
+    expect((newSchema.getType('Query') as GraphQLObjectType).getFields().now.type.toString()).toBe(
+      'T_DateTime',
+    );
+  });
+
+  it('should not mutate shared ignore list across transform instances', () => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        scalar DateTime
+
+        type Query {
+          now: DateTime
+        }
+      `,
+    });
+    transformSchema(
+      schema,
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+          force: ['DateTime'],
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger,
+      }),
+    );
+    const withoutForce = transformSchema(
+      schema,
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger,
+      }),
+    );
+    expect(withoutForce.getType('DateTime')).toBeDefined();
+    expect(withoutForce.getType('T_DateTime')).toBeUndefined();
+  });
+
   it('should handle union type resolution', async () => {
     const newSchema = transformSchema(
       schema,

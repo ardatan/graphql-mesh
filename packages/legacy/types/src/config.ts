@@ -1507,7 +1507,7 @@ export interface PrefixTransformConfig {
    */
   includeTypes?: boolean;
   /**
-   * List of protected types you want to force prefix on
+   * Protected types (e.g. GraphQL Scalars) to still prefix. By default these stay unprefixed.
    */
   force?: string[];
 }
