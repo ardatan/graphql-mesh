@@ -63,8 +63,6 @@ export const composeConfig = defineConfig({
         createPrefixTransform({
           value: 'SubgraphB',
           includeRootOperations: false,
-          // Keep OpenAPI helper scalars namespaced with the subgraph prefix
-          force: ['ObjMap'],
         }),
       ],
     },
