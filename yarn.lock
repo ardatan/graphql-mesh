@@ -6746,6 +6746,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@examples/openapi-filter-extend@workspace:examples/openapi-filter-extend":
+  version: 0.0.0-use.local
+  resolution: "@examples/openapi-filter-extend@workspace:examples/openapi-filter-extend"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.101.2"
+    "@graphql-mesh/openapi": "npm:0.110.2"
+    "@graphql-mesh/runtime": "npm:0.107.1"
+    "@graphql-mesh/transform-extend": "npm:0.105.1"
+    "@graphql-mesh/transform-filter-schema": "npm:0.105.1"
+    "@graphql-tools/utils": "npm:^11.2.2"
+    graphql: "npm:16.14.0"
+    jest: "npm:30.4.2"
+  languageName: unknown
+  linkType: soft
+
 "@examples/openapi-javascript-wiki@workspace:examples/openapi-javascript-wiki":
   version: 0.0.0-use.local
   resolution: "@examples/openapi-javascript-wiki@workspace:examples/openapi-javascript-wiki"
@@ -9175,7 +9190,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transform-extend@workspace:packages/legacy/transforms/extend":
+"@graphql-mesh/transform-extend@npm:0.105.1, @graphql-mesh/transform-extend@workspace:packages/legacy/transforms/extend":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-extend@workspace:packages/legacy/transforms/extend"
   dependencies:
@@ -9213,7 +9228,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transform-filter-schema@workspace:packages/legacy/transforms/filter-schema":
+"@graphql-mesh/transform-filter-schema@npm:0.105.1, @graphql-mesh/transform-filter-schema@workspace:packages/legacy/transforms/filter-schema":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-filter-schema@workspace:packages/legacy/transforms/filter-schema"
   dependencies:

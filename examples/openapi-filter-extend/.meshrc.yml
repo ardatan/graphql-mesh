@@ -1,0 +1,18 @@
+merger: bare
+sources:
+  - name: Pets
+    handler:
+      openapi:
+        source: ./openapi.json
+        endpoint: http://localhost:4010
+        selectQueryOrMutationField:
+          - fieldName: post_pet_by_petId
+            type: query
+    transforms:
+      - filterSchema:
+          mode: bare
+          filters:
+            - Mutation.!*
+      - extend:
+          typeDefs: ./extensions/typeDefs.graphql
+          resolvers: ./extensions/resolvers.ts
