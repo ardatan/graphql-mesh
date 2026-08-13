@@ -367,9 +367,9 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
     );
     expect(newSchema.getType('String')).toBeDefined();
     expect(newSchema.getType('T_String')).toBeUndefined();
-    expect(
-      (newSchema.getType('Query') as GraphQLObjectType).getFields().name.type.toString(),
-    ).toBe('String');
+    expect((newSchema.getType('Query') as GraphQLObjectType).getFields().name.type.toString()).toBe(
+      'String',
+    );
   });
 
   it('should not mutate shared ignore list across transform instances', () => {

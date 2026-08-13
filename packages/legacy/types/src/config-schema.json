@@ -3902,7 +3902,7 @@
             "type": "string"
           },
           "additionalItems": false,
-          "description": "Protected custom scalars (e.g. from graphql-scalars) to still prefix. GraphQL specified scalars (Int, Float, String, Boolean, ID) always stay unprefixed."
+          "description": "Protected custom scalars (e.g. from graphql-scalars) to still prefix.\nGraphQL specified scalars (Int, Float, String, Boolean, ID) always stay unprefixed."
         }
       }
     },

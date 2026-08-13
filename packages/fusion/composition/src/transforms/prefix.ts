@@ -1,7 +1,13 @@
 import type { GraphQLSchema } from 'graphql';
-import { getRootTypeNames, getRootTypes, MapperKind } from '@graphql-tools/utils';
+import { getRootTypeNames, MapperKind } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
-import { createRenameFieldTransform, createRenameTypeTransform } from './rename.js';
+import {
+  createRenameFieldTransform,
+  createRenameTypeTransform,
+  ignoreList as defaultIgnoreList,
+} from './rename.js';
+
+const specifiedScalarNames = new Set(['Int', 'Float', 'String', 'Boolean', 'ID']);
 
 export interface PrefixTransformConfig {
   /**
@@ -12,6 +18,11 @@ export interface PrefixTransformConfig {
    * List of ignored types
    */
   ignore?: string[];
+  /**
+   * Protected custom scalars (e.g. from graphql-scalars) to still prefix.
+   * GraphQL specified scalars (Int, Float, String, Boolean, ID) always stay unprefixed.
+   */
+  force?: string[];
   /**
    * Changes root types and changes the field names (default: false)
    */
@@ -25,19 +36,28 @@ export interface PrefixTransformConfig {
 export function createPrefixTransform({
   value,
   ignore = [],
+  force = [],
   includeRootOperations = false,
   includeTypes = true,
 }: PrefixTransformConfig = {}) {
   return function prefixTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
     value = value || `${subgraphConfig.name}_`;
+    const forceSet = new Set(force);
+    const ignoreList = [
+      ...ignore,
+      // GraphQL specified scalars stay protected even when listed in `force`
+      ...defaultIgnoreList.filter(
+        typeName => specifiedScalarNames.has(typeName) || !forceSet.has(typeName),
+      ),
+    ];
     const transforms: SubgraphTransform[] = [];
     const rootTypes = getRootTypeNames(schema);
     if (includeRootOperations) {
       transforms.push(
         createRenameFieldTransform(({ typeName, fieldName }) => {
           if (
-            ignore.includes(typeName) ||
-            ignore.includes(`${typeName}.${fieldName}`) ||
+            ignoreList.includes(typeName) ||
+            ignoreList.includes(`${typeName}.${fieldName}`) ||
             fieldName.startsWith('_encapsulated')
           ) {
             return fieldName;
@@ -49,7 +69,7 @@ export function createPrefixTransform({
     if (includeTypes) {
       transforms.push(
         createRenameTypeTransform(({ typeName }) => {
-          if (rootTypes.has(typeName) || ignore.includes(typeName)) {
+          if (rootTypes.has(typeName) || ignoreList.includes(typeName)) {
             return typeName;
           }
           return `${value}${typeName}`;

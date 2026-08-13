@@ -17,6 +17,11 @@ only allows you to append a **prefix** to the existing name.
 
 You can use it to easily "namespace" APIs in your unified API and avoid conflicts.
 
+By default, GraphQL specified scalars and protected custom scalars (for example from
+`graphql-scalars`) are not prefixed. Use `force` to opt into prefixing those protected custom
+scalars when migrating schemas that already prefix them. Specified scalars
+(`Int`/`Float`/`String`/`Boolean`/`ID`) always stay unprefixed.
+
 ## How to use?
 
 You can import `createPrefixTransform` to create an instance of the transform. The `value` option is
@@ -38,7 +43,9 @@ export const composeConfig = defineConfig({
       }),
       transforms: [
         createPrefixTransform({
-          value: 'Countries_'
+          value: 'Countries_',
+          // Opt into prefixing protected custom scalars such as DateTime
+          force: ['DateTime']
         })
       ]
     }
