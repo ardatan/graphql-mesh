@@ -1,0 +1,7 @@
+type NewPetResponse {
+  foo: String
+}
+
+extend type Query {
+  newPet(petId: String!): NewPetResponse
+}

@@ -1,12 +1,6 @@
-merger: bare
 sources:
   - name: Swapi
     handler:
       openapi:
         source: ./swagger/pets.json
-        endpoint: >-
-          http://localhost:4001
-    transforms:
-      - extend:
-          typeDefs: ./src/extensions/typeDefs.graphql
-          resolvers: ./src/extensions/resolvers
+        endpoint: http://localhost:{context.headers['x-upstream-port']:4001}

@@ -1,0 +1,11 @@
+merger: bare
+sources:
+  - name: Pets
+    handler:
+      openapi:
+        source: ./openapi.json
+        endpoint: http://localhost:4011
+    transforms:
+      - extend:
+          typeDefs: ./extensions/typeDefs.graphql
+          resolvers: ./extensions/resolvers.ts
