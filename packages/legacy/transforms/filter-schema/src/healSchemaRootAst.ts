@@ -33,8 +33,8 @@ export function healSchemaRootAst(schema: GraphQLSchema): GraphQLSchema {
   };
 
   const astNode = filterOperationTypes(config.astNode);
-  const extensionASTNodes = (config.extensionASTNodes ?? []).map(
-    node => filterOperationTypes(node)!,
+  const extensionASTNodes = (config.extensionASTNodes ?? []).map(node =>
+    filterOperationTypes(node)!,
   );
 
   return new GraphQLSchemaClass({

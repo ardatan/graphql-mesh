@@ -1,6 +1,6 @@
 import { buildSchema, printSchema } from 'graphql';
-import { printSchemaWithDirectives, pruneSchema } from '@graphql-tools/utils';
 import { mergeSchemas } from '@graphql-tools/schema';
+import { printSchemaWithDirectives, pruneSchema } from '@graphql-tools/utils';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import FilterSchemaTransform from '../src/index.js';
 
