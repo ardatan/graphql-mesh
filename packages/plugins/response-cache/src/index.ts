@@ -25,7 +25,7 @@ function getContextWithHeaders(request?: Request, context?: Record<string, any>)
   };
 }
 
-function generateSessionIdFactory(sessionIdDef: string) {
+function generateSessionIdFactory(sessionIdDef?: string | null) {
   if (sessionIdDef == null) {
     return function voidSession(): null {
       return null;

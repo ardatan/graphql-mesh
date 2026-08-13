@@ -215,4 +215,100 @@ describe('response-cache sessionId headers', () => {
       },
     });
   });
+
+  it('uses Fetch Request headers in cacheKey independently of sessionId', async () => {
+    const upstreamSchema = createSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          greeting: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          greeting: () => 'hello',
+        },
+      },
+    });
+    await using upstreamServer = createYoga({
+      schema: upstreamSchema,
+    });
+    const cache = createMemoryCache();
+    await using gw = createGatewayRuntime({
+      supergraph: () =>
+        getUnifiedGraphGracefully([
+          {
+            name: 'upstream',
+            schema: upstreamSchema,
+            url: 'http://localhost:4001/graphql',
+          },
+        ]),
+      plugins: ctx => [
+        useCustomFetch(function (url, options) {
+          if (String(url) === 'http://localhost:4001/graphql') {
+            return upstreamServer.fetch(url, options);
+          }
+          return Response.error();
+        }),
+        useMeshResponseCache({
+          ...ctx,
+          cache,
+          ttl: 60_000,
+          includeExtensionMetadata: true,
+          sessionId: 'shared',
+          cacheKey: '{context.headers.test}',
+        }),
+      ],
+    });
+
+    async function query(testHeader: string) {
+      const res = await gw.fetch('http://localhost:4000/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          test: testHeader,
+        },
+        body: JSON.stringify({
+          query: /* GraphQL */ `
+            query {
+              greeting
+            }
+          `,
+        }),
+      });
+      expect(res.status).toBe(200);
+      return (await res.json()) as ExecutionResult;
+    }
+
+    await expect(query('a')).resolves.toMatchObject({
+      data: { greeting: 'hello' },
+      extensions: {
+        responseCache: {
+          didCache: true,
+          hit: false,
+        },
+      },
+    });
+    await expect(query('a')).resolves.toMatchObject({
+      extensions: {
+        responseCache: {
+          hit: true,
+        },
+      },
+    });
+    await expect(query('b')).resolves.toMatchObject({
+      extensions: {
+        responseCache: {
+          didCache: true,
+          hit: false,
+        },
+      },
+    });
+    await expect(query('b')).resolves.toMatchObject({
+      extensions: {
+        responseCache: {
+          hit: true,
+        },
+      },
+    });
+  });
 });
