@@ -1,0 +1,21 @@
+{
+  "name": "@examples/openapi-resolver-selection-set",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "mesh dev",
+    "test": "cross-env INTEGRATION_TEST=true jest"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "0.101.2",
+    "@graphql-mesh/openapi": "0.110.2",
+    "@graphql-mesh/runtime": "0.107.1",
+    "@graphql-mesh/transform-extend": "0.105.1",
+    "@graphql-tools/utils": "^11.2.2",
+    "graphql": "16.14.0"
+  },
+  "devDependencies": {
+    "cross-env": "10.1.0",
+    "jest": "30.4.2"
+  }
+}

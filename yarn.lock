@@ -6813,6 +6813,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@examples/openapi-resolver-selection-set@workspace:examples/openapi-resolver-selection-set":
+  version: 0.0.0-use.local
+  resolution: "@examples/openapi-resolver-selection-set@workspace:examples/openapi-resolver-selection-set"
+  dependencies:
+    "@graphql-mesh/cli": "npm:0.101.2"
+    "@graphql-mesh/openapi": "npm:0.110.2"
+    "@graphql-mesh/runtime": "npm:0.107.1"
+    "@graphql-mesh/transform-extend": "npm:0.105.1"
+    "@graphql-tools/utils": "npm:^11.2.2"
+    cross-env: "npm:10.1.0"
+    graphql: "npm:16.14.0"
+    jest: "npm:30.4.2"
+  languageName: unknown
+  linkType: soft
+
 "@examples/openapi-stackexchange@workspace:examples/openapi-stackexchange":
   version: 0.0.0-use.local
   resolution: "@examples/openapi-stackexchange@workspace:examples/openapi-stackexchange"
