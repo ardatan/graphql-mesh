@@ -21,7 +21,15 @@ describe('OpenAPI nested resolver selectionSet', () => {
     });
     await new Promise<void>((resolve, reject) => {
       upstream.once('error', reject);
-      upstream.listen(4011, '127.0.0.1', resolve);
+      upstream.listen(0, '127.0.0.1', () => {
+        const address = upstream.address();
+        if (address == null || typeof address === 'string') {
+          reject(new Error('Failed to bind upstream server'));
+          return;
+        }
+        process.env.PETS_UPSTREAM_PORT = String(address.port);
+        resolve();
+      });
     });
 
     const config = await findAndParseConfig({
