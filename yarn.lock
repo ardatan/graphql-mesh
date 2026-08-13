@@ -28840,7 +28840,7 @@ __metadata:
     lint-staged: "npm:16.4.0"
     lru-cache: "npm:11.2.6"
     minimatch: "npm:10.2.6"
-    node-gyp: "npm:^12.3.0"
+    node-gyp: "npm:^13.0.1"
     prettier: "npm:3.9.6"
     threads: "npm:^1.7.0"
     ts-jest: "npm:29.4.12"

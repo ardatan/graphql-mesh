@@ -107,7 +107,7 @@
     "lint-staged": "16.4.0",
     "lru-cache": "11.2.6",
     "minimatch": "10.2.6",
-    "node-gyp": "^12.3.0",
+    "node-gyp": "^13.0.1",
     "prettier": "3.9.6",
     "threads": "^1.7.0",
     "ts-jest": "29.4.12",
