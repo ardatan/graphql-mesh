@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`should compose the appropriate schema 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) {
+  query: Query
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+directive @additionalField on FIELD_DEFINITION
+
+scalar join__FieldSet
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  STRAPI @join__graph(name: "strapi", url: "http://localhost:<strapi_port>/graphql")
+  VENDURE @join__graph(name: "vendure", url: "http://localhost:<vendure_port>/graphql")
+}
+
+scalar TransportOptions @join__type(graph: STRAPI) @join__type(graph: VENDURE)
+
+type Query @join__type(graph: STRAPI) @join__type(graph: VENDURE) {
+  products(filters: ProductFiltersInput): [Product!]! @join__field(graph: STRAPI)
+  search: [SearchResult!]! @join__field(graph: VENDURE)
+}
+
+type Product @join__type(graph: STRAPI) {
+  id: ID!
+  SKU: String!
+  title: String!
+}
+
+type SearchResult @join__type(graph: VENDURE) {
+  id: ID!
+  sku: String!
+  strapi_products: [Product!]! @resolveTo(sourceName: "strapi", sourceTypeName: "Query", sourceFieldName: "products", keyField: "sku", keysArg: "filters.SKU.in", valueKeyField: "SKU") @additionalField
+}
+
+input ProductFiltersInput @join__type(graph: STRAPI) {
+  SKU: StringFilterInput
+}
+
+input StringFilterInput @join__type(graph: STRAPI) {
+  in: [String!]
+}
+"
+`;

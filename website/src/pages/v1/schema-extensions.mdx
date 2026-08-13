@@ -326,16 +326,54 @@ export const composeConfig = defineConfig({
 ```
 
 <Callout>
-Internally, `resolveTo` wraps a single `resolveTo` call in a `DataLoader` scoped by context, field, arguments, and query selection. It assumes that the delegated operation will return an array of objects matching the gateway field’s named GraphQL type (ex: a `User` field delegates to a `[User]` query). If this is not the case, then you should manually provide a `returnType` option citing the expected GraphQL return type. Since it is a thin wrapper around DataLoader, it also makes the following assumptions on the results:
+Internally, `resolveTo` wraps a single `resolveTo` call in a `DataLoader` scoped by context, field, arguments, and query selection. It assumes that the delegated operation will return an array of objects matching the gateway field’s named GraphQL type (ex: a `User` field delegates to a `[User]` query). If this is not the case, then you should manually provide a `returnType` option citing the expected GraphQL return type. Since it is a thin wrapper around DataLoader, it also makes the following assumptions on the results **unless `valueKeyField` is set**:
 
 The Array of values must be the same length as the Array of keys, and each index in the Array of
 values must correspond to the same index in the Array of keys.
 
 </Callout>
 
-If the query you’re delegating to don’t conform to these expectations, you can provide a custom
-resolver function in `additionalResolvers` to the Hive Gateway runtime configuration.
-{/* `TODO: Add example for custom resolver function programmatically` */}
+### Matching results by a field (`valueKeyField`)
+
+Many GraphQL/REST/SQL collection endpoints (`WHERE id IN (...)`, Strapi filters, Hasura `where`, …)
+return rows in their own order and may omit missing keys or return multiple rows per key. For those
+sources, positional mapping is unsafe. Set `valueKeyField` to the field on each **result** used to
+correlate it back to a batched key:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadGraphQLHTTPSubgraph } from '@graphql-mesh/graphql'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    // …
+  ],
+  additionalTypeDefs: /* GraphQL */ `
+    extend type SearchResult {
+      products: [Product!]!
+        @resolveTo(
+          sourceName: "Products"
+          sourceTypeName: "Query"
+          sourceFieldName: "productsBySkus"
+          keyField: "sku"
+          keysArg: "skus"
+          valueKeyField: "sku"
+        )
+    }
+  `
+})
+```
+
+- `keyField` is still read from the **parent**
+- `keysArg` still receives the batched key array
+- `valueKeyField` is read from each **result** and used to build a key → result(s) map
+- Mesh includes `valueKeyField` in the delegated selection automatically
+- List fields get `[]` for missing keys (and all matches when several share a key); singular fields
+  get `null` / the first match
+
+If the delegated query does not conform to these expectations and `valueKeyField` is not enough, you
+can provide a custom resolver function in `additionalResolvers` to the Hive Gateway runtime
+configuration. {/* `TODO: Add example for custom resolver function programmatically` */}
 
 Batch delegation is generally preferable over plain delegation because it eliminates the redundancy
 of requesting the same field across an array of parent objects. Even so, delegation costs can add up

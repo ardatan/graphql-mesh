@@ -156,5 +156,6 @@ export const resolveToDirective = new GraphQLDirective({
     sourceName: { type: GraphQLString },
     sourceSelectionSet: { type: GraphQLString },
     sourceTypeName: { type: GraphQLString },
+    valueKeyField: { type: GraphQLString },
   },
 });
