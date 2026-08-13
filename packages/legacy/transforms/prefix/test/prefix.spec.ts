@@ -341,6 +341,37 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
     );
   });
 
+  it('should not prefix GraphQL specified scalars even when listed in force', () => {
+    schema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          name: String
+        }
+      `,
+    });
+    const newSchema = transformSchema(
+      schema,
+      new PrefixTransform({
+        config: {
+          mode,
+          value: 'T_',
+          force: ['String'],
+        },
+        apiName: '',
+        baseDir,
+        cache,
+        pubsub,
+        importFn: m => import(m),
+        logger,
+      }),
+    );
+    expect(newSchema.getType('String')).toBeDefined();
+    expect(newSchema.getType('T_String')).toBeUndefined();
+    expect(
+      (newSchema.getType('Query') as GraphQLObjectType).getFields().name.type.toString(),
+    ).toBe('String');
+  });
+
   it('should not mutate shared ignore list across transform instances', () => {
     schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

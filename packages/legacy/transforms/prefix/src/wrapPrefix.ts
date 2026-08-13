@@ -8,7 +8,7 @@ import {
 import type { DelegationContext, SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import type { ExecutionRequest, ExecutionResult } from '@graphql-tools/utils';
 import { RenameRootFields, RenameTypes } from '@graphql-tools/wrap';
-import { ignoreList as defaultIgnoreList } from './shared.js';
+import { ignoreList as defaultIgnoreList, specifiedScalarNames } from './shared.js';
 
 export default class WrapPrefix implements MeshTransform {
   private transforms: Transform[] = [];
@@ -27,10 +27,13 @@ export default class WrapPrefix implements MeshTransform {
       throw new Error(`Transform 'prefix' has missing config: prefix`);
     }
 
-    const force = config.force ?? [];
+    const force = new Set(config.force ?? []);
     const ignoreList = [
       ...(config.ignore || []),
-      ...defaultIgnoreList.filter(typeName => !force.includes(typeName)),
+      // GraphQL specified scalars stay protected even when listed in `force`
+      ...defaultIgnoreList.filter(
+        typeName => specifiedScalarNames.has(typeName) || !force.has(typeName),
+      ),
     ];
 
     const includeTypes = config.includeTypes !== false;
