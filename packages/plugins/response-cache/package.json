@@ -49,6 +49,8 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
+    "@graphql-hive/gateway-runtime": "^2.10.7",
+    "@graphql-mesh/fusion-composition": "^0.9.2",
     "graphql": "16.14.0"
   },
   "publishConfig": {
