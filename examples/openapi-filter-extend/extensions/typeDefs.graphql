@@ -1,0 +1,3 @@
+extend type Pet {
+  fullName: String
+}

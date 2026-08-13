@@ -1,5 +1,6 @@
 import { buildSchema, printSchema } from 'graphql';
-import { pruneSchema } from '@graphql-tools/utils';
+import { printSchemaWithDirectives, pruneSchema } from '@graphql-tools/utils';
+import { mergeSchemas } from '@graphql-tools/schema';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import FilterSchemaTransform from '../src/index.js';
 
@@ -853,5 +854,48 @@ type Query {
 }
 `.trim(),
     );
+  });
+
+  it('should keep schema AST valid for mergeSchemas after removing empty Mutation', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      schema {
+        query: Query
+        mutation: Mutation
+      }
+
+      type Pet {
+        name: String
+      }
+
+      type Query {
+        pet: Pet
+      }
+
+      type Mutation {
+        createPet: Pet
+      }
+    `);
+    const filteredSchema = transformSchema(
+      schema,
+      new FilterSchemaTransform({
+        config: {
+          mode,
+          filters: ['Mutation.!*'],
+        },
+      }),
+    );
+
+    expect(filteredSchema.getMutationType()).toBeUndefined();
+    expect(() => printSchemaWithDirectives(filteredSchema)).not.toThrow();
+    expect(() =>
+      mergeSchemas({
+        schemas: [filteredSchema],
+        typeDefs: /* GraphQL */ `
+          extend type Pet {
+            fullName: String
+          }
+        `,
+      }),
+    ).not.toThrow();
   });
 });

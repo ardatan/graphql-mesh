@@ -17,6 +17,7 @@ import {
   FilterTypes,
   TransformCompositeFields,
 } from '@graphql-tools/wrap';
+import { healSchemaRootAst } from './healSchemaRootAst.js';
 
 export default class WrapFilter implements Transform {
   private transforms: Transform[] = [];
@@ -162,7 +163,7 @@ export default class WrapFilter implements Transform {
         if (Object.keys(type.getFields()).length === 0) return null;
       },
     });
-    return finalSchema;
+    return healSchemaRootAst(finalSchema);
   }
 
   transformRequest(

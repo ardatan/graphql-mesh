@@ -2,6 +2,7 @@ import type { GraphQLSchema } from 'graphql';
 import { Minimatch } from 'minimatch';
 import type { MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
+import { healSchemaRootAst } from './healSchemaRootAst.js';
 
 export default class BareFilter implements MeshTransform {
   noWrap = true;
@@ -97,6 +98,6 @@ export default class BareFilter implements MeshTransform {
       },
     });
 
-    return transformedSchema;
+    return healSchemaRootAst(transformedSchema);
   }
 }
