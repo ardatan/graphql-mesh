@@ -68,7 +68,7 @@
   },
   "devDependencies": {
     "@aws-crypto/sha256-js": "^5.2.0",
-    "@aws-sdk/credential-providers": "^3.1106.0",
+    "@aws-sdk/credential-providers": "^3.1107.0",
     "@aws-sdk/util-format-url": "^3.972.43",
     "@smithy/protocol-http": "^5.5.16",
     "@smithy/signature-v4": "^5.6.12",
