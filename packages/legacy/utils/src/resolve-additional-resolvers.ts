@@ -159,8 +159,8 @@ function generateSelectionSetFactory(
     // field; we only need its type when the projected path is abstract.
     const sourceType = schema.getType(additionalResolver.sourceTypeName);
     const sourceField =
-      sourceType && 'getFields' in sourceType
-        ? (sourceType as GraphQLObjectType).getFields()[additionalResolver.sourceFieldName]
+      sourceType && (isObjectType(sourceType) || isInterfaceType(sourceType))
+        ? sourceType.getFields()[additionalResolver.sourceFieldName]
         : undefined;
     const resultFieldType = sourceField?.type
       ? getTypeByPath(sourceField.type, resultPath)
