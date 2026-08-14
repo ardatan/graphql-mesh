@@ -2,6 +2,7 @@ import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
+import { resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { getMesh } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
@@ -150,6 +151,9 @@ export async function graphqlMesh(
                   meshConfigImportCodes: new Set([
                     `import { findAndParseConfig } from '@graphql-mesh/cli';`,
                     `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
+                    ...(resolvePlaygroundConfig(meshConfig.config.serve?.playground, false).offline
+                      ? [`import { renderGraphiQL } from '@graphql-yoga/render-graphiql';`]
+                      : []),
                   ]),
                   meshConfigCodes: new Set([
                     `
@@ -170,7 +174,11 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
   return createMeshHTTPHandler<TServerContext>({
     baseDir,
     getBuiltMesh: ${cliParams.builtMeshFactoryName},
-    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
+    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},${
+      resolvePlaygroundConfig(meshConfig.config.serve?.playground, false).offline
+        ? '\n    renderGraphiQL,'
+        : ''
+    }
   })
 }
               `.trim(),
@@ -401,12 +409,21 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           meshConfig.importCodes.add(
             `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
           );
+          if (resolvePlaygroundConfig(meshConfig.config.serve?.playground, false).offline) {
+            meshConfig.importCodes.add(
+              `import { renderGraphiQL } from '@graphql-yoga/render-graphiql';`,
+            );
+          }
           meshConfig.codes.add(`
 export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandler<TServerContext> {
   return createMeshHTTPHandler<TServerContext>({
     baseDir,
     getBuiltMesh: ${cliParams.builtMeshFactoryName},
-    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
+    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},${
+      resolvePlaygroundConfig(meshConfig.config.serve?.playground, false).offline
+        ? '\n    renderGraphiQL,'
+        : ''
+    }
   })
 }
 `);

@@ -8265,6 +8265,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.106.0"
     "@graphql-mesh/utils": "npm:^0.106.0"
     "@graphql-tools/utils": "npm:^11.2.2"
+    "@graphql-yoga/render-graphiql": "npm:^5.21.2"
     "@types/lodash.get": "npm:4.4.9"
     "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:4.0.5"
@@ -11177,6 +11178,15 @@ __metadata:
   peerDependencies:
     graphql-yoga: ^5.16.2
   checksum: 10c0/6e0c51e0edebf7d1b205b70f9bbb53eb22d5691d295129b848033a9fa8df928f501edbc6de6ee23a332fe9e850e4ccaf99172a8cffd7201e026e6bb881787278
+  languageName: node
+  linkType: hard
+
+"@graphql-yoga/render-graphiql@npm:^5.21.2":
+  version: 5.21.3
+  resolution: "@graphql-yoga/render-graphiql@npm:5.21.3"
+  peerDependencies:
+    graphql-yoga: ^5.21.3
+  checksum: 10c0/a202ce365cc27129fdc13c90f1a04c354b048b58fcadff4abce6839e2641c1357bc29c9849940bf11304c397e6fced90e44df4b3517e883780584ff4a738b454
   languageName: node
   linkType: hard
 

@@ -13,6 +13,7 @@ export const graphqlHandler = ({
   batchingLimit,
   healthCheckEndpoint = '/healthcheck',
   extraParamNames,
+  renderGraphiQL: renderGraphiQLFn,
 }: {
   getBuiltMesh: () => Promise<MeshInstance>;
   playgroundTitle: string;
@@ -22,9 +23,10 @@ export const graphqlHandler = ({
   batchingLimit?: number;
   healthCheckEndpoint?: string;
   extraParamNames?: string[];
+  renderGraphiQL?: (options?: any) => string | Promise<string>;
 }) => {
   const getYogaForMesh = memoize1(function getYogaForMesh(mesh: MeshInstance) {
-    const yoga = createYoga({
+    const yogaOptions: Parameters<typeof createYoga>[0] = {
       plugins: [
         ...mesh.plugins,
         useLogger({
@@ -48,7 +50,13 @@ export const graphqlHandler = ({
       batching: batchingLimit ? { limit: batchingLimit } : false,
       healthCheckEndpoint,
       disposeOnProcessTerminate: true,
-    });
+    };
+
+    if (playgroundEnabled && renderGraphiQLFn) {
+      yogaOptions.renderGraphiQL = renderGraphiQLFn;
+    }
+
+    const yoga = createYoga(yogaOptions);
     // Dispose Yoga instance when the Mesh instance is destroyed
     const id = mesh.pubsub.subscribe('destroy', () => {
       const unsubscribe = () => {

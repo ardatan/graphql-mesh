@@ -1,9 +1,12 @@
-import { fs, path, process } from '@graphql-mesh/cross-helpers';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import type { Logger, YamlConfig } from '@graphql-mesh/types';
 import { DefaultLogger, pathExists, withCookies } from '@graphql-mesh/utils';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';
+import { resolvePlaygroundConfig } from './playground.js';
+
+export { resolvePlaygroundConfig } from './playground.js';
 
 export type MeshHTTPHandler = ReturnType<typeof createMeshHTTPHandler>;
 
@@ -12,11 +15,13 @@ export function createMeshHTTPHandler<TServerContext>({
   getBuiltMesh,
   rawServeConfig = {},
   playgroundTitle,
+  renderGraphiQL,
 }: {
   baseDir: string;
   getBuiltMesh: () => Promise<MeshInstance>;
   rawServeConfig?: YamlConfig.Config['serve'];
   playgroundTitle?: string;
+  renderGraphiQL?: (options?: any) => string | Promise<string>;
 }) {
   let readyFlag = false;
   let logger: Logger = new DefaultLogger('Mesh HTTP');
@@ -24,12 +29,14 @@ export function createMeshHTTPHandler<TServerContext>({
   const {
     cors: corsConfig,
     staticFiles,
-    playground: playgroundEnabled = process.env.NODE_ENV !== 'production',
+    playground: playgroundConfig,
     endpoint: graphqlPath = '/graphql',
     batchingLimit,
     healthCheckEndpoint = '/healthcheck',
     extraParamNames,
   } = rawServeConfig;
+  const { enabled: playgroundEnabled, offline: playgroundOffline } =
+    resolvePlaygroundConfig(playgroundConfig);
 
   getBuiltMesh()
     .then(mesh => {
@@ -49,6 +56,7 @@ export function createMeshHTTPHandler<TServerContext>({
       corsConfig,
       batchingLimit,
       extraParamNames,
+      renderGraphiQL: playgroundOffline ? renderGraphiQL : undefined,
     }),
     {
       plugins: [
