@@ -6,6 +6,7 @@ import {
   GraphQLString,
   isEnumType,
   isListType,
+  isNonNullType,
   isObjectType,
   isScalarType,
   parse,
@@ -13,6 +14,7 @@ import {
 } from 'graphql';
 import {
   EnumTypeComposer,
+  NonNullComposer,
   ObjectTypeComposer,
   SchemaComposer,
   type InputTypeComposer,
@@ -1458,5 +1460,153 @@ ${printType(GraphQLString)}
     // [[ArrayItemInput]] that would result from the getter silently not being updated.
     expect(result.input?.getType().toString()).toBe('[String]');
     expect((result.output as ListComposer).getType().toString()).toBe('[String]');
+  });
+  it('should treat anyOf with a null type as a nullable version of the other type (issue #8719)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'NullableString',
+      anyOf: [{ type: 'string' }, { type: 'null' }],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    // Should be a nullable String scalar, not an object type with String/Void fields
+    expect((result.output as ScalarTypeComposer<any>).getType()).toBe(GraphQLString);
+    expect(result.nullable).toBe(true);
+  });
+  it('should treat anyOf[X, null] as nullable X even for object types (issue #8719)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'NullableObject',
+      anyOf: [
+        {
+          type: 'object',
+          title: 'MyObj',
+          properties: { id: { type: 'string' } },
+        },
+        { type: 'null' },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    expect(result.nullable).toBe(true);
+    const output = result.output as ObjectTypeComposer;
+    expect(isObjectType(output.getType())).toBe(true);
+    expect(output.getFieldNames()).toContain('id');
+    // Must NOT have a "Void" field
+    expect(output.getFieldNames()).not.toContain('Void');
+    expect(output.getTypeName()).toBe('MyObj');
+  });
+  it('should not clone a shared object schema as Title2 when wrapping anyOf[X, null]', async () => {
+    const lightningObsGroup: JSONSchemaObject = {
+      type: 'object',
+      title: 'LightningObsGroup',
+      properties: {
+        count: { type: 'integer' },
+      },
+    };
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Root',
+      properties: {
+        group: lightningObsGroup,
+        maybeGroup: {
+          title: 'current_lightning_response',
+          anyOf: [lightningObsGroup, { type: 'null' }],
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    const output = result.output as ObjectTypeComposer;
+    const groupType = (output.getField('group').type as any).getUnwrappedTC() as ObjectTypeComposer;
+    const maybeGroupType = (
+      output.getField('maybeGroup').type as any
+    ).getUnwrappedTC() as ObjectTypeComposer;
+    expect(groupType.getTypeName()).toBe('LightningObsGroup');
+    expect(maybeGroupType.getTypeName()).toBe('LightningObsGroup');
+    expect(groupType).toBe(maybeGroupType);
+    expect(output.getFieldNames()).not.toContain('LightningObsGroup2');
+    expect(output.schemaComposer.has('LightningObsGroup2')).toBe(false);
+  });
+  it('should treat oneOf[X, null] as nullable X (issue #8719)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'NullableString',
+      oneOf: [{ type: 'string' }, { type: 'null' }],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    expect((result.output as ScalarTypeComposer<any>).getType()).toBe(GraphQLString);
+    expect(result.nullable).toBe(true);
+  });
+  it('should deep-merge allOf nested NonNull object fields (issue #8607)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'Movie',
+      allOf: [
+        {
+          type: 'object',
+          title: 'MovieBase',
+          properties: {
+            info: {
+              type: 'object',
+              title: 'MovieInfo',
+              properties: {
+                id: { type: 'string' },
+                title: { type: 'string' },
+              },
+              required: ['id', 'title'],
+            },
+          },
+          required: ['info'],
+        },
+        {
+          type: 'object',
+          title: 'MovieExtra',
+          properties: {
+            info: {
+              type: 'object',
+              title: 'MovieInfo',
+              properties: {
+                rating: { type: 'number' },
+              },
+            },
+          },
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    const output = result.output as ObjectTypeComposer;
+    expect(isObjectType(output.getType())).toBe(true);
+    const infoField = output.getField('info');
+    expect(infoField).toBeDefined();
+    let infoType: any = infoField.type;
+    if (typeof infoType === 'function') {
+      infoType = infoType();
+    }
+    const infoGraphQLType = typeof infoType.getType === 'function' ? infoType.getType() : infoType;
+    expect(isNonNullType(infoGraphQLType)).toBe(true);
+    let infoTC =
+      typeof infoType.getUnwrappedTC === 'function' ? infoType.getUnwrappedTC() : infoType;
+    if (infoTC instanceof NonNullComposer) {
+      infoTC = infoTC.ofType;
+    }
+    expect(isObjectType(infoTC.getType())).toBe(true);
+    // All three fields should be present after deep merge
+    expect(infoTC.getFieldNames()).toContain('id');
+    expect(infoTC.getFieldNames()).toContain('title');
+    expect(infoTC.getFieldNames()).toContain('rating');
   });
 });

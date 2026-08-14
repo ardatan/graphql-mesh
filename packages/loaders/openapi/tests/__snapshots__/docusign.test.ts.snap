@@ -956,7 +956,7 @@ type Query {
     envelopeId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-    langCode: String
+    langCode: String!
   ): EnvelopeConsumerDisclosures @httpOperation(subgraph: "test", path: "/v2/accounts/{args.accountId}/envelopes/{args.envelopeId}/recipients/{args.recipientId}/consumer_disclosure/{args.langCode}", operationSpecificHeaders: [["Content-Type", ""]], httpMethod: GET, queryParamArgMap: "{\\"langCode\\":\\"langCode\\"}")
   """Returns document visibility for the recipients"""
   Recipients_GetRecipientDocumentVisibility(

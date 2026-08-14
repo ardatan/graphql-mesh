@@ -761,7 +761,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           operationArgTypeMap[argName].description = paramObj.description;
         }
         if (paramObj.required) {
-          operationArgTypeMap[argName].nullable = false;
+          operationConfig.requiredArgs = operationConfig.requiredArgs || [];
+          operationConfig.requiredArgs.push(argName);
         }
         if (
           !('type' in paramObj) &&
