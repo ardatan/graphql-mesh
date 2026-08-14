@@ -42,7 +42,7 @@ export async function migrateLegacyConfig(
 
   const subgraphConfigList: string[] = [];
   for (const legacySource of legacyConfig.sources ?? []) {
-    const handlerName = Object.keys(legacySource.handler)[0];
+    const handlerName = String(Object.keys(legacySource.handler)[0]);
     if (handlerName === 'supergraph') {
       messages.push({
         level: 'error',
@@ -134,7 +134,7 @@ export async function migrateLegacyConfig(
 
   addImport(importMap, '@graphql-mesh/compose-cli', 'defineConfig as defineComposeConfig');
 
-  const configList: string[] = [];
+  const sideEffectStatements: string[] = [];
   const composeConfig = `export const composeConfig = defineComposeConfig({
 ${composeConfigList.join(',\n')}
 });`;
@@ -260,10 +260,13 @@ ${additionalResolversNewConfig.join(',\n')}
         }
         addImport(importMap, resolved.moduleName, resolved.importName);
         addedPackages.add(resolved.moduleName);
-        const pluginOpts = JSON.stringify(legacyPluginConfig[legacyPluginName]).slice(1, -1);
+        const pluginConfig = legacyPluginConfig[legacyPluginName];
+        const pluginOpts =
+          pluginConfig != null && typeof pluginConfig === 'object' && !Array.isArray(pluginConfig)
+            ? `,\n...${JSON.stringify(pluginConfig)}`
+            : '';
         pluginList.push(`${resolved.factoryName}({
-          ...ctx,
-          ${pluginOpts}
+          ...ctx${pluginOpts}
         })`);
       } else {
         messages.push({
@@ -278,7 +281,7 @@ ${additionalResolversNewConfig.join(',\n')}
   }
   if (legacyConfig.require) {
     for (const requiredPackage of legacyConfig.require) {
-      configList.push(`import '${requiredPackage}';`);
+      sideEffectStatements.push(`import '${requiredPackage}';`);
     }
   }
   if (legacyConfig.sdk) {
@@ -345,7 +348,7 @@ ${additionalResolversNewConfig.join(',\n')}
     }
   }
   if (legacyConfig.skipSSLValidation) {
-    configList.push(`process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';`);
+    sideEffectStatements.push(`process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';`);
   }
   if (pluginList.length) {
     serveConfigList.push(`plugins: ctx => ([
@@ -355,11 +358,19 @@ ${pluginList.join(',\n')}
   addImport(importMap, '@graphql-hive/gateway', 'defineConfig as defineGatewayConfig');
   const serveInner = serveConfigList.length ? `\n${serveConfigList.join(',\n')}\n` : '';
   const serveConfig = `export const gatewayConfig = defineGatewayConfig({${serveInner}});`;
+  const namedImports: string[] = [];
   for (const [packageName, imports] of importMap) {
-    configList.push(`import { ${Array.from(imports).join(', ')} } from '${packageName}';`);
+    namedImports.push(`import { ${Array.from(imports).join(', ')} } from '${packageName}';`);
   }
-  configList.push(composeConfig);
-  configList.push(serveConfig);
+  const tlsSideEffects = sideEffectStatements.filter(s => s.startsWith('process.env.'));
+  const requireImports = sideEffectStatements.filter(s => s.startsWith('import '));
+  const configList = [
+    ...requireImports,
+    ...namedImports,
+    ...tlsSideEffects,
+    composeConfig,
+    serveConfig,
+  ];
 
   return {
     code: configList.join('\n'),
@@ -590,9 +601,6 @@ function handleTransformConfiguration(
   }
   if (mapped === undefined || mapped === null) {
     return `${transformInfo.fnName}()`;
-  }
-  if (transformName === 'extend' && typeof mapped === 'string') {
-    return `${transformInfo.fnName}(${JSON.stringify(mapped)})`;
   }
   return `${transformInfo.fnName}(${JSON.stringify(mapped)})`;
 }

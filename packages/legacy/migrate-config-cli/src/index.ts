@@ -21,6 +21,11 @@ export type {
   ResolveLegacyPlugin,
 } from './migrate.js';
 
+function pluginFactoryName(pluginName: string): string {
+  const cleaned = pluginName.replace(/^@/, '').replace(/[^a-zA-Z0-9]+/g, '_');
+  return camelCase(`use_${cleaned}`);
+}
+
 function camelCase(value: string): string {
   return value.replace(/[-_]+(\w)/g, (_, char: string) => char.toUpperCase());
 }
@@ -37,7 +42,7 @@ export const createDefaultPluginResolver =
         additionalPrefixes: ['@envelop/', '@graphql-yoga/plugin-', '@escape.tech/graphql-armor-'],
       });
       if (typeof possiblePluginFactory === 'function') {
-        const fnName = camelCase(`use_${name}`);
+        const fnName = pluginFactoryName(name);
         return {
           moduleName,
           importName: `default as ${fnName}`,
@@ -57,7 +62,10 @@ export const createDefaultPluginResolver =
         importName: importName.toString(),
         factoryName: importName.toString(),
       };
-    } catch {
+    } catch (error) {
+      console.warn(
+        `Plugin "${name}" could not be loaded: ${error instanceof Error ? error.message : String(error)}`,
+      );
       return undefined;
     }
   };
@@ -81,6 +89,10 @@ export async function run(argv = process.argv): Promise<MigrateLegacyConfigResul
     initialLoggerPrefix: 'Mesh Config Migrate',
     dir: cwd,
   });
+  const log = (...parts: string[]) => {
+    (dryRun ? console.error : console.log)(...parts);
+  };
+
   if (isEmpty || !legacyConfig) {
     console.error('No config file found');
     process.exitCode = 1;
@@ -92,13 +104,19 @@ export async function run(argv = process.argv): Promise<MigrateLegacyConfigResul
       fatal: true,
     };
   }
-  console.log(`Found config at ${filepath}`);
+  log(`Found config at ${filepath}`);
 
   const result = await migrateLegacyConfig(legacyConfig, {
     cwd,
     resolvePlugin: createDefaultPluginResolver(cwd),
   });
-  result.code = await format(result.code, { parser: 'typescript' });
+  try {
+    result.code = await format(result.code, { parser: 'typescript' });
+  } catch (error) {
+    console.warn(
+      `Could not format the generated config: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
 
   for (const message of result.messages) {
     if (message.level === 'error') {
@@ -128,25 +146,23 @@ export async function run(argv = process.argv): Promise<MigrateLegacyConfigResul
     process.stdout.write(result.code);
   }
 
-  console.log('Migration successful!');
-  console.log(' ');
+  log('Migration successful!');
+  log(' ');
   if (!dryRun) {
-    console.log(`New config file created at ${newConfigPath}`);
-    console.log(' ');
+    log(`New config file created at ${newConfigPath}`);
+    log(' ');
   }
-  console.log('Please make sure to install the following packages in package.json:');
+  log('Please make sure to install the following packages in package.json:');
   for (const packageName of result.addedPackages) {
-    console.log(`- ${packageName}`);
+    log(`- ${packageName}`);
   }
-  console.log(' ');
-  console.log('Please make sure to remove the following packages in package.json:');
+  log(' ');
+  log('Please make sure to remove the following packages in package.json:');
   for (const packageName of result.removedPackages) {
-    console.log(`- ${packageName}`);
+    log(`- ${packageName}`);
   }
-  console.log(' ');
-  console.log(
-    `Then run "npx mesh-compose -o supergraph.graphql" to generate the supergraph schema!`,
-  );
-  console.log(`Finally, run "npx hive-gateway supergraph" to start the gateway server!`);
+  log(' ');
+  log(`Then run "npx mesh-compose -o supergraph.graphql" to generate the supergraph schema!`);
+  log(`Finally, run "npx hive-gateway supergraph" to start the gateway server!`);
   return result;
 }

@@ -392,5 +392,51 @@ describe('migrateLegacyConfig', () => {
     expect(result.code).toContain("from '@graphql-mesh/plugin-mock'");
     expect(result.code).toContain('useMock({');
     expect(result.code).toContain('...ctx');
+    expect(result.code).toContain('...{"mocks":true}');
+  });
+
+  it('does not slice non-object plugin config', async () => {
+    const result = await migrateLegacyConfig(
+      {
+        sources: [
+          {
+            name: 'API',
+            handler: { graphql: { endpoint: 'https://example.com/graphql' } },
+          },
+        ],
+        plugins: [{ mock: true as any }],
+      },
+      {
+        resolvePlugin: async () => ({
+          moduleName: '@graphql-mesh/plugin-mock',
+          importName: 'useMock',
+          factoryName: 'useMock',
+        }),
+      },
+    );
+
+    expect(result.fatal).toBe(false);
+    expect(result.code).toContain('useMock({\n          ...ctx\n        })');
+    expect(result.code).not.toContain('ru');
+  });
+
+  it('emits named imports before skipSSLValidation assignment', async () => {
+    const result = await migrate({
+      sources: [
+        {
+          name: 'API',
+          handler: { graphql: { endpoint: 'https://example.com/graphql' } },
+        },
+      ],
+      require: ['dotenv/config'],
+      skipSSLValidation: true,
+    });
+
+    const tlsIndex = result.code.indexOf("process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'");
+    const namedImportIndex = result.code.indexOf('defineConfig as defineComposeConfig');
+    const requireIndex = result.code.indexOf("import 'dotenv/config'");
+    expect(requireIndex).toBeGreaterThanOrEqual(0);
+    expect(namedImportIndex).toBeGreaterThan(requireIndex);
+    expect(tlsIndex).toBeGreaterThan(namedImportIndex);
   });
 });
