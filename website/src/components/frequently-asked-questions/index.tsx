@@ -4,7 +4,6 @@
 import { Children, ComponentPropsWithoutRef, ReactElement, ReactNode } from 'react';
 import * as RadixAccordion from '@radix-ui/react-accordion';
 import { Anchor, CaretSlimIcon, cn, Heading } from '@theguild/components';
-import { AttachPageFAQSchema } from './attach-page-faq-schema';
 import MeshFAQ from './mesh-faq.mdx';
 
 const a = (props: ComponentPropsWithoutRef<'a'>) => (
@@ -88,24 +87,23 @@ const AccordionItem = (props: ComponentPropsWithoutRef<'li'>) => {
 
 export function FrequentlyAskedQuestions({ className }: { className?: string }) {
   return (
-    <>
-      <AttachPageFAQSchema />
-      <section
-        className={cn(
-          className,
-          'text-green-1000 flex flex-col gap-x-6 gap-y-2 px-4 py-6 md:flex-row md:px-10 lg:gap-x-24 lg:px-[120px] lg:py-24',
-        )}
-      >
-        <MeshFAQ
-          components={{
-            a,
-            h2,
-            p: UnwrapChild,
-            ul: Accordion,
-            li: AccordionItem,
-          }}
-        />
-      </section>
-    </>
+    <section
+      itemScope
+      itemType="https://schema.org/FAQPage"
+      className={cn(
+        className,
+        'text-green-1000 flex flex-col gap-x-6 gap-y-2 px-4 py-6 md:flex-row md:px-10 lg:gap-x-24 lg:px-[120px] lg:py-24',
+      )}
+    >
+      <MeshFAQ
+        components={{
+          a,
+          h2,
+          p: UnwrapChild,
+          ul: Accordion,
+          li: AccordionItem,
+        }}
+      />
+    </section>
   );
 }
