@@ -12,9 +12,11 @@ composes a supergraph with Mesh Compose, generates `getSdk` with GraphQL Codegen
 / mutations / subscriptions through `createGatewayRuntime` + `runtime.sdkRequester`.
 
 <Callout>
-  Coming from Mesh v0 `getMeshSDK()` / `.mesh`? See [Type-safe SDK in the v0 migration
-  guide](/v1/migration-from-v0#type-safe-sdk). Mesh Compose no longer writes an SDK; Hive Gateway +
-  Codegen do.
+  Mesh v0 `.mesh` contained **two** SDKs. Operation-style `getMeshSDK()` → this page + [typed-sdk
+  example](https://github.com/graphql-hive/gateway/tree/main/examples/typed-sdk). Resolver
+  `context.Source.Query.field` →
+  [`@graphql-mesh/incontext-sdk-codegen`](/v1/schema-extensions#in-context-sdk-typed-additionalresolvers).
+  Full v0 mapping: [Type-safe SDKs](/v1/migration-from-v0#type-safe-sdks).
 </Callout>
 
 ## Supergraph as a file
@@ -136,6 +138,29 @@ const sdk = getSdk(sdkRequester)
 const result = await sdk.myQuery({ someVar: 'SOME_VALUE' })
 ```
 
+## In-context SDK (for `additionalResolvers`)
+
+If you used v0 `MeshContext` inside resolvers (`context.Wiki.Query.…`), that is **not** `getSdk`.
+Generate types with
+[`@graphql-mesh/incontext-sdk-codegen`](https://github.com/ardatan/graphql-mesh/tree/master/packages/incontext-sdk-codegen)
+from the supergraph. Mesh example:
+[`e2e/openapi-javascript-wiki`](https://github.com/ardatan/graphql-mesh/tree/master/e2e/openapi-javascript-wiki).
+
+```ts filename="codegen.ts"
+import type { CodegenConfig } from '@graphql-codegen/cli'
+
+export default {
+  schema: './supergraph.graphql',
+  generates: {
+    './types/incontext-sdk.ts': {
+      plugins: ['@graphql-mesh/incontext-sdk-codegen']
+    }
+  }
+} satisfies CodegenConfig
+```
+
+See [In-context SDK](/v1/schema-extensions#in-context-sdk-typed-additionalresolvers).
+
 <Cards>
   <Cards.Card
     arrow
@@ -144,7 +169,8 @@ const result = await sdk.myQuery({ someVar: 'SOME_VALUE' })
   />
   <Cards.Card
     arrow
-    title="Migrate from Mesh v0 getMeshSDK()"
-    href="/v1/migration-from-v0#type-safe-sdk"
+    title="In-context SDK (additionalResolvers)"
+    href="/v1/schema-extensions#in-context-sdk-typed-additionalresolvers"
   />
+  <Cards.Card arrow title="Migrate from Mesh v0 SDKs" href="/v1/migration-from-v0#type-safe-sdks" />
 </Cards>
