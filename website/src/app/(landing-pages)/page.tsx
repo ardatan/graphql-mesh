@@ -1,5 +1,7 @@
+import { FrequentlyAskedQuestions } from '@theguild/components';
 import { IndexPage } from '../../components/index-page';
 import { rootMetadata } from '../metadata';
+import MeshFAQ from './faq.mdx';
 
 export const metadata = {
   title: 'GraphQL Mesh',
@@ -14,5 +16,13 @@ export const metadata = {
 };
 
 export default function HomePage() {
-  return <IndexPage />;
+  return (
+    <IndexPage
+      faq={
+        <FrequentlyAskedQuestions className="mx-4 mt-6 md:mx-6" faqPages={['/']}>
+          <MeshFAQ />
+        </FrequentlyAskedQuestions>
+      }
+    />
+  );
 }

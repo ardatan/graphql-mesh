@@ -6,7 +6,7 @@
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
     "build": "next build --webpack && next-sitemap && yarn pagefind",
-    "dev": "next --turbopack",
+    "dev": "next dev --webpack",
     "pagefind": "pagefind --site .next/server/app --output-path out/_pagefind",
     "start": "next start --webpack"
   },

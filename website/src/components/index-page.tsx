@@ -1,18 +1,17 @@
-import { ReactElement } from 'react';
-import { FrequentlyAskedQuestions, ToolsAndLibrariesCards } from '@theguild/components';
+import { ReactElement, ReactNode } from 'react';
+import { ToolsAndLibrariesCards } from '@theguild/components';
 import { CapabilitiesSection } from './capabilities-section';
 import { ComparisonTable } from './comparison-table';
 import { DatasourcesIllustration } from './datasources-illustration';
 import { DatasourcesListSection } from './datasources-list-section';
 import { ExamplesSection } from './examples-section';
-import MeshFAQ from './frequently-asked-questions/mesh-faq.mdx';
 import { InfoCardsSection } from './info-cards-section';
 import { LandingPageContainer } from './landing-page-container';
 import { ManipulateDataSection } from './manipulate-data-section';
 import { MeshHero } from './mesh-hero';
 import { RunAnywhereSection } from './run-anywhere-section';
 
-export function IndexPage(): ReactElement {
+export function IndexPage({ faq }: { faq?: ReactNode } = {}): ReactElement {
   return (
     <LandingPageContainer>
       <MeshHero className="mx-4 max-sm:mt-2 md:mx-6" />
@@ -25,9 +24,7 @@ export function IndexPage(): ReactElement {
       <RunAnywhereSection className="mx-4 mt-6 md:mx-6" />
       <CapabilitiesSection className="mx-4 mt-6 md:mx-6" />
       <ToolsAndLibrariesCards className="mx-4 md:mx-6" />
-      <FrequentlyAskedQuestions className="mx-4 mt-6 md:mx-6" faqPages={['/']}>
-        <MeshFAQ />
-      </FrequentlyAskedQuestions>
+      {faq}
     </LandingPageContainer>
   );
 }
