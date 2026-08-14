@@ -1,4 +1,4 @@
-import { GraphQLSchema, isNonNullType, isNullableType, parse } from 'graphql';
+import { GraphQLSchema, isNonNullType, isNullableType } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 

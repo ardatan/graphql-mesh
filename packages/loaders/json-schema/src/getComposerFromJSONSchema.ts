@@ -175,20 +175,8 @@ function deepMergeObjectTypeComposerFields(
         typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
           ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
           : undefined;
-      const existingOTC =
-        existingFieldUnwrappedTC instanceof ObjectTypeComposer
-          ? existingFieldUnwrappedTC
-          : existingFieldUnwrappedTC instanceof NonNullComposer &&
-              existingFieldUnwrappedTC.ofType instanceof ObjectTypeComposer
-            ? existingFieldUnwrappedTC.ofType
-            : undefined;
-      const newOTC =
-        newFieldUnwrappedTC instanceof ObjectTypeComposer
-          ? newFieldUnwrappedTC
-          : newFieldUnwrappedTC instanceof NonNullComposer &&
-              newFieldUnwrappedTC.ofType instanceof ObjectTypeComposer
-            ? newFieldUnwrappedTC.ofType
-            : undefined;
+      const existingOTC = asObjectTypeComposer(existingFieldUnwrappedTC);
+      const newOTC = asObjectTypeComposer(newFieldUnwrappedTC);
       if (existingOTC && newOTC) {
         deepMergeObjectTypeComposerFields(existingOTC, newOTC);
       } else {
@@ -204,6 +192,14 @@ function deepMergeObjectTypeComposerFields(
       }
     }
   }
+}
+
+function asObjectTypeComposer(tc: unknown): ObjectTypeComposer | undefined {
+  let current = tc;
+  while (current instanceof NonNullComposer || current instanceof ListComposer) {
+    current = current.ofType;
+  }
+  return current instanceof ObjectTypeComposer ? current : undefined;
 }
 
 export function getComposerFromJSONSchema({
@@ -576,19 +572,21 @@ export function getComposerFromJSONSchema({
         };
       }
 
-      // Handle anyOf/oneOf patterns where one branch is null (nullable wrapper from OpenAPI/JSON Schema)
-      // This must run before the switch so that after stripping null, the remaining type
-      // is handled by the correct branch of the switch or by the allOf/anyOf/properties path.
-      if (
-        subSchema.anyOf &&
-        !subSchema.properties &&
-        !subSchema.allOf &&
-        !subSchema.additionalProperties
-      ) {
-        const anyOfArr = subSchema.anyOf as JSONSchemaObject[];
-        const nonNullAnyOf = anyOfArr.filter(s => s.type !== 'null');
-        if (nonNullAnyOf.length < anyOfArr.length) {
-          if (nonNullAnyOf.length === 0) {
+      // OpenAPI 3.1 / JSON Schema: `anyOf`/`oneOf` with a `{ type: 'null' }` branch means nullable.
+      // This must run before `switch (subSchema.type)` so the remaining type is handled normally.
+      for (const unionKey of ['anyOf', 'oneOf'] as const) {
+        if (
+          subSchema[unionKey] &&
+          !subSchema.properties &&
+          !subSchema.allOf &&
+          !subSchema.additionalProperties
+        ) {
+          const unionArr = subSchema[unionKey] as JSONSchemaObject[];
+          const nonNullUnion = unionArr.filter(s => s.type !== 'null');
+          if (nonNullUnion.length === unionArr.length) {
+            continue;
+          }
+          if (nonNullUnion.length === 0) {
             const typeComposer = schemaComposer.getAnyTC(GraphQLVoid);
             return {
               input: typeComposer,
@@ -601,16 +599,14 @@ export function getComposerFromJSONSchema({
               deprecated: subSchema.deprecated,
             };
           }
-          // Mark nullable and strip null entries from anyOf
           subSchema.nullable = true;
-          (subSchema as any).anyOf = nonNullAnyOf;
-          if (nonNullAnyOf.length === 1) {
-            // Single non-null type: inline its properties onto the parent schema so
-            // the type-based switch (or the properties/allOf path) handles it correctly.
-            const nonNull = nonNullAnyOf[0];
+          (subSchema as any)[unionKey] = nonNullUnion;
+          if (nonNullUnion.length === 1) {
+            const nonNull = nonNullUnion[0];
             Object.assign(subSchema, nonNull);
-            delete (subSchema as any).anyOf;
+            delete (subSchema as any)[unionKey];
           }
+          break;
         }
       }
 

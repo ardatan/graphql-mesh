@@ -1497,6 +1497,19 @@ ${printType(GraphQLString)}
     // Must NOT have a "Void" field
     expect(output.getFieldNames()).not.toContain('Void');
   });
+  it('should treat oneOf[X, null] as nullable X (issue #8719)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'NullableString',
+      oneOf: [{ type: 'string' }, { type: 'null' }],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    expect((result.output as ScalarTypeComposer<any>).getType()).toBe(GraphQLString);
+    expect(result.nullable).toBe(true);
+  });
   it('should deep-merge allOf nested NonNull object fields (issue #8607)', async () => {
     const inputSchema: JSONSchema = {
       title: 'Movie',
