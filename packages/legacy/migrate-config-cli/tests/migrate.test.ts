@@ -154,7 +154,12 @@ describe('migrateLegacyConfig', () => {
         {
           hive: {
             token: 'token',
-            persistedDocuments: { token: 'cdn' },
+            persistedDocuments: {
+              cdn: {
+                endpoint: 'https://cdn.graphql-hive.com',
+                accessToken: 'cdn',
+              },
+            },
           },
         },
         {

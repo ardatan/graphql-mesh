@@ -35,7 +35,7 @@ sourceHandler: loadGraphQLHTTPSubgraph("API", {"endpoint":"https://example.com/g
 });
 export const gatewayConfig = defineGatewayConfig({
 reporting: {"type":"hive","token":"token"},
-persistedDocuments: {"type":"hive","token":"cdn"},
+persistedDocuments: {"type":"hive","cdn":{"endpoint":"https://cdn.graphql-hive.com","accessToken":"cdn"}},
 responseCaching: {"ttl":1000},
 prometheus: {"skipIntrospection":true},
 rateLimiting: {"max":10,"window":"1s"},
