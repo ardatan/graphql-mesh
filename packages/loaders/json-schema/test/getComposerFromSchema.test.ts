@@ -1530,6 +1530,8 @@ ${printType(GraphQLString)}
     expect(groupType.getTypeName()).toBe('LightningObsGroup');
     expect(maybeGroupType.getTypeName()).toBe('LightningObsGroup');
     expect(groupType).toBe(maybeGroupType);
+    expect(output.getFieldNames()).not.toContain('LightningObsGroup2');
+    expect(output.schemaComposer.has('LightningObsGroup2')).toBe(false);
   });
   it('should treat oneOf[X, null] as nullable X (issue #8719)', async () => {
     const inputSchema: JSONSchema = {
