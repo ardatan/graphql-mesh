@@ -6,6 +6,7 @@ import {
   GraphQLString,
   isEnumType,
   isListType,
+  isNonNullType,
   isObjectType,
   isScalarType,
   parse,
@@ -13,6 +14,7 @@ import {
 } from 'graphql';
 import {
   EnumTypeComposer,
+  NonNullComposer,
   ObjectTypeComposer,
   SchemaComposer,
   type InputTypeComposer,
@@ -1564,6 +1566,7 @@ ${printType(GraphQLString)}
               required: ['id', 'title'],
             },
           },
+          required: ['info'],
         },
         {
           type: 'object',
@@ -1589,7 +1592,17 @@ ${printType(GraphQLString)}
     expect(isObjectType(output.getType())).toBe(true);
     const infoField = output.getField('info');
     expect(infoField).toBeDefined();
-    const infoTC = (infoField.type as any).getUnwrappedTC() as ObjectTypeComposer;
+    let infoType: any = infoField.type;
+    if (typeof infoType === 'function') {
+      infoType = infoType();
+    }
+    const infoGraphQLType = typeof infoType.getType === 'function' ? infoType.getType() : infoType;
+    expect(isNonNullType(infoGraphQLType)).toBe(true);
+    let infoTC =
+      typeof infoType.getUnwrappedTC === 'function' ? infoType.getUnwrappedTC() : infoType;
+    if (infoTC instanceof NonNullComposer) {
+      infoTC = infoTC.ofType;
+    }
     expect(isObjectType(infoTC.getType())).toBe(true);
     // All three fields should be present after deep merge
     expect(infoTC.getFieldNames()).toContain('id');

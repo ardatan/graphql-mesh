@@ -1144,11 +1144,10 @@ export function getComposerFromJSONSchema({
                   typeof newField.type?.getUnwrappedTC === 'function'
                     ? newField.type.getUnwrappedTC()
                     : undefined;
-                if (
-                  existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
-                  newFieldUnwrappedTC instanceof ObjectTypeComposer
-                ) {
-                  deepMergeObjectTypeComposerFields(existingFieldUnwrappedTC, newFieldUnwrappedTC);
+                const existingOTC = asObjectTypeComposer(existingFieldUnwrappedTC);
+                const newOTC = asObjectTypeComposer(newFieldUnwrappedTC);
+                if (existingOTC && newOTC) {
+                  deepMergeObjectTypeComposerFields(existingOTC, newOTC);
                 } else {
                   if (
                     newFieldUnwrappedTC &&
