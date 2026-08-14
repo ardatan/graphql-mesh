@@ -12,6 +12,32 @@ import type { GraphQLMeshCLIParams } from '../../index.js';
 import { getMaxConcurrency } from './getMaxConcurency.js';
 import { startNodeHttpServer } from './node-http.js';
 
+type RenderGraphiQL = (options?: any) => string | Promise<string>;
+
+function isModuleNotFoundError(error: unknown): boolean {
+  const err = error as { code?: string; message?: string };
+  return (
+    err?.code === 'ERR_MODULE_NOT_FOUND' ||
+    err?.code === 'MODULE_NOT_FOUND' ||
+    (typeof err?.message === 'string' &&
+      err.message.includes("Cannot find package '@graphql-yoga/render-graphiql'"))
+  );
+}
+
+async function loadOfflineRenderGraphiQL(): Promise<RenderGraphiQL> {
+  try {
+    const { renderGraphiQL } = await import('@graphql-yoga/render-graphiql');
+    return renderGraphiQL;
+  } catch (error) {
+    if (isModuleNotFoundError(error)) {
+      throw new Error(
+        'serve.playground.offline requires `@graphql-yoga/render-graphiql`. Install it as a direct dependency of this project.',
+      );
+    }
+    throw error;
+  }
+}
+
 function portSelectorFn(sources: [number, number, number], logger: Logger) {
   const port = sources.find(source => Boolean(source)) || 4000;
   if (sources.filter(source => Boolean(source)).length > 1) {
@@ -90,6 +116,11 @@ export async function serveMesh(
   if (!playgroundTitle) {
     playgroundTitle = rawServeConfig?.playgroundTitle || cliParams.playgroundTitle;
   }
+  const playgroundOffline = resolvePlaygroundConfig(rawServeConfig.playground, false).offline;
+  let renderGraphiQL: RenderGraphiQL | undefined;
+  if (playgroundOffline) {
+    renderGraphiQL = await loadOfflineRenderGraphiQL();
+  }
   if (!cluster.isWorker && forkNum > 1) {
     let mainProcessKilled = false;
     registerTerminateHandler(eventName => {
@@ -133,16 +164,6 @@ export async function serveMesh(
         .catch(e => eventLogger.error(e));
     });
 
-    let renderGraphiQL;
-    if (resolvePlaygroundConfig(rawServeConfig.playground, false).offline) {
-      try {
-        ({ renderGraphiQL } = await import('@graphql-yoga/render-graphiql'));
-      } catch {
-        throw new Error(
-          'serve.playground.offline requires `@graphql-yoga/render-graphiql`. Install it in this project: `yarn add @graphql-yoga/render-graphiql`.',
-        );
-      }
-    }
     const meshHTTPHandler = createMeshHTTPHandler({
       baseDir,
       getBuiltMesh,
