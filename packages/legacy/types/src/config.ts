@@ -150,7 +150,7 @@ export interface PlaygroundConfig {
    * Use an offline GraphiQL that bundles JS, CSS and fonts inline instead of loading them from a CDN.
    * Useful for air-gapped or on-premise environments with no internet access.
    *
-   * Requires `@graphql-yoga/render-graphiql`. Mesh CLI installs it; generated `createBuiltMeshHTTPHandler` artifacts import it.
+   * Requires `@graphql-yoga/render-graphiql` in the same project (install it yourself; `mesh serve` and generated `createBuiltMeshHTTPHandler` artifacts import it directly).
    */
   offline?: boolean;
 }

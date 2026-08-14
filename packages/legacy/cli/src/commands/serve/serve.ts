@@ -133,14 +133,22 @@ export async function serveMesh(
         .catch(e => eventLogger.error(e));
     });
 
+    let renderGraphiQL;
+    if (resolvePlaygroundConfig(rawServeConfig.playground, false).offline) {
+      try {
+        ({ renderGraphiQL } = await import('@graphql-yoga/render-graphiql'));
+      } catch {
+        throw new Error(
+          'serve.playground.offline requires `@graphql-yoga/render-graphiql`. Install it in this project: `yarn add @graphql-yoga/render-graphiql`.',
+        );
+      }
+    }
     const meshHTTPHandler = createMeshHTTPHandler({
       baseDir,
       getBuiltMesh,
       rawServeConfig,
       playgroundTitle,
-      ...(resolvePlaygroundConfig(rawServeConfig.playground, false).offline
-        ? { renderGraphiQL: (await import('@graphql-yoga/render-graphiql')).renderGraphiQL }
-        : {}),
+      ...(renderGraphiQL ? { renderGraphiQL } : {}),
     });
 
     const { stop } = await startNodeHttpServer({
