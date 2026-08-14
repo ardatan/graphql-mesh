@@ -665,3 +665,136 @@ describe('key-based (batch) additional resolver with valueKeyField', () => {
     });
   });
 });
+
+// Encapsulate hides the real source field as `_encapsulated_<name>_<field>` with
+// @inaccessible; federation then strips it from the supergraph (`info.schema`).
+// `@resolveTo` with a `result` path must still wrap the client selection set
+// (e.g. `items[0]` → `{ items { ... } }`) without looking that field up.
+describe('@resolveTo result path when the source field is missing from the gateway schema', () => {
+  it('infers sourceSelectionSet from result without crashing', async () => {
+    const variants: Record<
+      string,
+      { count: number; items: { key: string; value: string }[] } | null
+    > = {
+      nullish: null,
+      empty: { count: 0, items: [] },
+      full: {
+        count: 3,
+        items: [
+          { key: 'key1', value: 'value1' },
+          { key: 'key2', value: 'value2' },
+          { key: 'key3', value: 'value3' },
+        ],
+      },
+    };
+
+    const sourceSchema = makeExecutableSchema({
+      typeDefs: parse(/* GraphQL */ `
+        type SubComplexDataFieldType {
+          key: String
+          value: String
+        }
+        type ComplexDataType {
+          count: Int!
+          items: [SubComplexDataFieldType!]!
+        }
+        type Query {
+          _encapsulated_Subgraph1_complexData(id: String!): ComplexDataType
+        }
+      `),
+      resolvers: {
+        Query: {
+          _encapsulated_Subgraph1_complexData: (_: unknown, { id }: { id: string }) => variants[id],
+        },
+      },
+    });
+
+    const parentSchema = makeExecutableSchema({
+      typeDefs: parse(/* GraphQL */ `
+        type TargetType {
+          id: String
+        }
+        type TargetQuery {
+          targets: [TargetType]
+        }
+        type Query {
+          targetQuery: TargetQuery
+        }
+      `),
+      resolvers: {
+        Query: {
+          targetQuery: () => ({}),
+        },
+        TargetQuery: {
+          targets: () => [{ id: 'nullish' }, { id: 'empty' }, { id: 'full' }],
+        },
+      },
+    });
+
+    const sourceRaw: RawSourceOutput = {
+      name: 'Subgraph1',
+      schema: sourceSchema,
+      transforms: [],
+      contextVariables: {},
+      handler: {} as RawSourceOutput['handler'],
+      batch: true,
+      createProxyingResolver: () => undefined as any,
+    };
+    const inContextSDK = getInContextSDK(sourceSchema, [sourceRaw], new DefaultLogger('test'), []);
+
+    const additionalResolvers = resolveAdditionalResolversWithoutImport({
+      targetTypeName: 'TargetType',
+      targetFieldName: 'complexDataItem',
+      requiredSelectionSet: '{ id }',
+      sourceName: 'Subgraph1',
+      sourceTypeName: 'Query',
+      sourceFieldName: '_encapsulated_Subgraph1_complexData',
+      sourceArgs: { id: '{root.id}' },
+      result: 'items[0]',
+    });
+
+    // Supergraph does not expose the inaccessible encapsulated field.
+    const stitched = stitchSchemas({
+      subschemas: [{ schema: parentSchema }] as SubschemaConfig[],
+      typeDefs: parse(/* GraphQL */ `
+        type SubComplexDataFieldType {
+          key: String
+          value: String
+        }
+        extend type TargetType {
+          complexDataItem: SubComplexDataFieldType
+        }
+      `),
+      resolvers: additionalResolvers,
+    });
+
+    const result = (await execute({
+      schema: stitched,
+      document: parse(/* GraphQL */ `
+        {
+          targetQuery {
+            targets {
+              id
+              complexDataItem {
+                key
+                value
+              }
+            }
+          }
+        }
+      `),
+      contextValue: { ...inContextSDK },
+    })) as ExecutionResult;
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      targetQuery: {
+        targets: [
+          { id: 'nullish', complexDataItem: null },
+          { id: 'empty', complexDataItem: null },
+          { id: 'full', complexDataItem: { key: 'key1', value: 'value1' } },
+        ],
+      },
+    });
+  });
+});

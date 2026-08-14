@@ -150,14 +150,23 @@ function generateSelectionSetFactory(
     // If result path provided without a selectionSet
   } else if (additionalResolver.result) {
     const resultPath = toPath(additionalResolver.result);
-    let abstractResultTypeName: string;
+    let abstractResultTypeName: string | undefined;
 
-    const sourceType = schema.getType(additionalResolver.sourceTypeName) as GraphQLObjectType;
-    const sourceTypeFields = sourceType.getFields();
-    const sourceField = sourceTypeFields[additionalResolver.sourceFieldName];
-    const resultFieldType = getTypeByPath(sourceField.type, resultPath);
+    // `info.schema` is the gateway/supergraph schema. Encapsulate (and similar
+    // transforms) keep the real source field as an @inaccessible copy such as
+    // `_encapsulated_<name>_<field>`, which federation then strips from the
+    // supergraph. Selection-set wrapping from `result` still works without that
+    // field; we only need its type when the projected path is abstract.
+    const sourceType = schema.getType(additionalResolver.sourceTypeName);
+    const sourceField =
+      sourceType && 'getFields' in sourceType
+        ? (sourceType as GraphQLObjectType).getFields()[additionalResolver.sourceFieldName]
+        : undefined;
+    const resultFieldType = sourceField?.type
+      ? getTypeByPath(sourceField.type, resultPath)
+      : undefined;
 
-    if (isAbstractType(resultFieldType)) {
+    if (resultFieldType && isAbstractType(resultFieldType)) {
       if (additionalResolver.resultType) {
         abstractResultTypeName = additionalResolver.resultType;
       } else {
@@ -192,6 +201,7 @@ function generateSelectionSetFactory(
           if (
             isLastResult &&
             abstractResultTypeName &&
+            resultFieldType &&
             abstractResultTypeName !== resultFieldType.name
           ) {
             finalSelectionSet = {
