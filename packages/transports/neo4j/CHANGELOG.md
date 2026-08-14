@@ -1,5 +1,36 @@
 # @graphql-mesh/transport-neo4j
 
+## 0.12.0
+
+### Patch Changes
+
+- [#9611](https://github.com/ardatan/graphql-mesh/pull/9611)
+  [`cb846cb`](https://github.com/ardatan/graphql-mesh/commit/cb846cb178c7c5b8f8600ad9f23d12cb5092701c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/transport-common@^1.0.20` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/1.0.20)
+    (from `^1.0.19`, in `dependencies`)
+
+- [#9612](https://github.com/ardatan/graphql-mesh/pull/9612)
+  [`64edb30`](https://github.com/ardatan/graphql-mesh/commit/64edb30895577c4d4ef7a07ef8aea614bd71e1e3)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@^7.5.6` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/7.5.6) (from
+    `^7.5.4`, in `dependencies`)
+
+- [#9613](https://github.com/ardatan/graphql-mesh/pull/9613)
+  [`57c30b6`](https://github.com/ardatan/graphql-mesh/commit/57c30b668972c504e6fdd7998bd685d21036d4ba)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/graphql@^7.5.6` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/7.5.6) (from
+    `^7.5.4`, in `dependencies`)
+- Updated dependencies
+  [[`a7cbeef`](https://github.com/ardatan/graphql-mesh/commit/a7cbeef58ddea00c8f55630f943bbe8ea19bba26),
+  [`e148b13`](https://github.com/ardatan/graphql-mesh/commit/e148b13d083683ed0f2589b23b8174b87a48d78e),
+  [`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)]:
+  - @graphql-mesh/utils@0.106.0
+  - @graphql-mesh/types@0.106.0
+
 ## 0.11.1
 
 ### Patch Changes

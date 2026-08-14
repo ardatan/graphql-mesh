@@ -1,5 +1,18 @@
 # @graphql-mesh/transport-odata
 
+## 0.4.0
+
+### Patch Changes
+
+- [#9611](https://github.com/ardatan/graphql-mesh/pull/9611)
+  [`cb846cb`](https://github.com/ardatan/graphql-mesh/commit/cb846cb178c7c5b8f8600ad9f23d12cb5092701c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/transport-common@^1.0.20` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-common/v/1.0.20)
+    (from `^1.0.19`, in `dependencies`)
+- Updated dependencies []:
+  - @omnigraph/odata@0.4.0
+
 ## 0.3.1
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @graphql-mesh/odata
 
+## 0.108.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)]:
+  - @graphql-mesh/types@0.106.0
+  - @graphql-mesh/store@0.106.0
+  - @omnigraph/odata@0.4.0
+
 ## 0.107.1
 
 ### Patch Changes
