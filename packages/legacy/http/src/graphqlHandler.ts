@@ -8,7 +8,6 @@ export const graphqlHandler = ({
   getBuiltMesh,
   playgroundTitle,
   playgroundEnabled,
-  playgroundOffline,
   graphqlEndpoint,
   corsConfig,
   batchingLimit,
@@ -19,7 +18,6 @@ export const graphqlHandler = ({
   getBuiltMesh: () => Promise<MeshInstance>;
   playgroundTitle: string;
   playgroundEnabled: boolean;
-  playgroundOffline?: boolean;
   graphqlEndpoint: string;
   corsConfig: CORSOptions;
   batchingLimit?: number;
@@ -54,7 +52,7 @@ export const graphqlHandler = ({
       disposeOnProcessTerminate: true,
     };
 
-    if (playgroundEnabled && playgroundOffline && renderGraphiQLFn) {
+    if (playgroundEnabled && renderGraphiQLFn) {
       yogaOptions.renderGraphiQL = renderGraphiQLFn;
     }
 

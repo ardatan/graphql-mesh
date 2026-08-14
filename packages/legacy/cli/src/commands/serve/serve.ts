@@ -4,7 +4,7 @@ import cluster from 'cluster';
 import os from 'os';
 import open from 'open';
 import { process } from '@graphql-mesh/cross-helpers';
-import { createMeshHTTPHandler } from '@graphql-mesh/http';
+import { createMeshHTTPHandler, resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 import type { Logger } from '@graphql-mesh/types';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
@@ -138,6 +138,9 @@ export async function serveMesh(
       getBuiltMesh,
       rawServeConfig,
       playgroundTitle,
+      ...(resolvePlaygroundConfig(rawServeConfig.playground, false).offline
+        ? { renderGraphiQL: (await import('@graphql-yoga/render-graphiql')).renderGraphiQL }
+        : {}),
     });
 
     const { stop } = await startNodeHttpServer({

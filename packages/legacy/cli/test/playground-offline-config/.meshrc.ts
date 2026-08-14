@@ -10,7 +10,8 @@ export default {
     },
   ],
   serve: {
-    playground: true,
-    playgroundOffline: true,
+    playground: {
+      offline: true,
+    },
   },
 };

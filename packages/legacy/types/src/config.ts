@@ -95,14 +95,11 @@ export interface ServeConfig {
    */
   staticFiles?: string;
   /**
-   * Show GraphiQL Playground
+   * Show GraphiQL Playground.
+   *
+   * Pass `true` or `false` to toggle GraphiQL. Pass an object (`playground.offline: true`) to enable GraphiQL with assets bundled inline for air-gapped environments. (Any of: Boolean, PlaygroundConfig)
    */
-  playground?: boolean;
-  /**
-   * Use an offline version of GraphiQL Playground that bundles all assets inline, without loading resources from CDN.
-   * This is useful for air-gapped or on-premise environments with no internet access.
-   */
-  playgroundOffline?: boolean;
+  playground?: boolean | PlaygroundConfig;
   sslCredentials?: HTTPSConfig;
   /**
    * Path to GraphQL Endpoint (default: /graphql)
@@ -147,6 +144,15 @@ export interface CorsConfig {
   maxAge?: number;
   preflightContinue?: boolean;
   optionsSuccessStatus?: number;
+}
+export interface PlaygroundConfig {
+  /**
+   * Use an offline GraphiQL that bundles JS, CSS and fonts inline instead of loading them from a CDN.
+   * Useful for air-gapped or on-premise environments with no internet access.
+   *
+   * Requires `@graphql-yoga/render-graphiql`. Mesh CLI installs it; generated `createBuiltMeshHTTPHandler` artifacts import it.
+   */
+  offline?: boolean;
 }
 /**
  * SSL Credentials for HTTPS Server

@@ -282,12 +282,15 @@
           "description": "Path to your static files you want to be served with GraphQL Mesh HTTP Server"
         },
         "playground": {
-          "type": "boolean",
-          "description": "Show GraphiQL Playground"
-        },
-        "playgroundOffline": {
-          "type": "boolean",
-          "description": "Use an offline version of GraphiQL Playground that bundles all assets inline, without loading resources from CDN.\nThis is useful for air-gapped or on-premise environments with no internet access."
+          "description": "Show GraphiQL Playground.\n\nPass `true` or `false` to toggle GraphiQL. Pass an object (`playground.offline: true`) to enable GraphiQL with assets bundled inline for air-gapped environments. (Any of: Boolean, PlaygroundConfig)",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/PlaygroundConfig"
+            }
+          ]
         },
         "sslCredentials": {
           "$ref": "#/definitions/HTTPSConfig",
@@ -327,6 +330,17 @@
           },
           "additionalItems": false,
           "description": "By default, GraphQL Mesh does not allow parameters in the request body except `query`, `variables`, `extensions`, and `operationName`.\n\nThis option allows you to specify additional parameters that are allowed in the request body.\n\n@default []\n\n@example ['doc_id', 'id']"
+        }
+      }
+    },
+    "PlaygroundConfig": {
+      "additionalProperties": false,
+      "type": "object",
+      "title": "PlaygroundConfig",
+      "properties": {
+        "offline": {
+          "type": "boolean",
+          "description": "Use an offline GraphiQL that bundles JS, CSS and fonts inline instead of loading them from a CDN.\nUseful for air-gapped or on-premise environments with no internet access.\n\nRequires `@graphql-yoga/render-graphiql`. Mesh CLI installs it; generated `createBuiltMeshHTTPHandler` artifacts import it."
         }
       }
     },

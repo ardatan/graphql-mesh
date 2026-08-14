@@ -210,7 +210,7 @@ describe('http', () => {
   });
 
   describe('renderGraphiQL', () => {
-    it('uses the provided renderGraphiQL function when playgroundOffline is set', async () => {
+    it('uses the provided renderGraphiQL function when playground.offline is set', async () => {
       await using mesh = await getTestMesh();
       const customHtml = '<html><body>custom graphiql</body></html>';
       const renderGraphiQL = jest.fn().mockReturnValue(customHtml);
@@ -218,8 +218,9 @@ describe('http', () => {
         baseDir: __dirname,
         getBuiltMesh: async () => mesh,
         rawServeConfig: {
-          playground: true,
-          playgroundOffline: true,
+          playground: {
+            offline: true,
+          },
         },
         renderGraphiQL,
       });
@@ -232,7 +233,7 @@ describe('http', () => {
       expect(renderGraphiQL).toHaveBeenCalled();
     });
 
-    it('does not call renderGraphiQL when playgroundOffline is not set', async () => {
+    it('does not call renderGraphiQL when playground.offline is not set', async () => {
       await using mesh = await getTestMesh();
       const renderGraphiQL = jest.fn().mockReturnValue('<html>custom</html>');
       const httpHandler = createMeshHTTPHandler({
@@ -240,7 +241,6 @@ describe('http', () => {
         getBuiltMesh: async () => mesh,
         rawServeConfig: {
           playground: true,
-          playgroundOffline: false,
         },
         renderGraphiQL,
       });

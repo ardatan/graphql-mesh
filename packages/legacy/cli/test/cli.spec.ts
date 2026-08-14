@@ -69,7 +69,7 @@ describe('runtime', () => {
       expect(builtMesh).toMatch(/case "\.meshrc.js":/);
     });
 
-    it('should include renderGraphiQL import and usage in generated artifacts when playgroundOffline is true', async () => {
+    it('should include renderGraphiQL import and usage in generated artifacts when playground.offline is true', async () => {
       const configFolder = 'playground-offline-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
         'build',
@@ -92,7 +92,7 @@ describe('runtime', () => {
       expect(builtMesh).toMatch(/renderGraphiQL,/);
     });
 
-    it('should not include renderGraphiQL import in generated artifacts when playgroundOffline is not set', async () => {
+    it('should not include renderGraphiQL import in generated artifacts when playground.offline is not set', async () => {
       const tsConfigFolder = 'ts-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
         'build',
