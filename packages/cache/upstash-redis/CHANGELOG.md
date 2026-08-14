@@ -1,5 +1,19 @@
 # @graphql-mesh/cache-upstash-redis
 
+## 0.3.0
+
+### Patch Changes
+
+- [#9604](https://github.com/ardatan/graphql-mesh/pull/9604)
+  [`11567cd`](https://github.com/ardatan/graphql-mesh/commit/11567cd6dbbbf59d15ee4702bd761cf758bd899b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@upstash/redis@^1.38.2` ↗︎](https://www.npmjs.com/package/@upstash/redis/v/1.38.2) (from
+    `^1.38.1`, in `dependencies`)
+- Updated dependencies
+  [[`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)]:
+  - @graphql-mesh/types@0.106.0
+
 ## 0.2.2
 
 ### Patch Changes

@@ -1,5 +1,48 @@
 # @graphql-mesh/config
 
+## 0.110.0
+
+### Patch Changes
+
+- [#9609](https://github.com/ardatan/graphql-mesh/pull/9609)
+  [`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)
+  Thanks [@ardatan](https://github.com/ardatan)! - Batched `@resolveTo` joins can now match results
+  to keys by a field on each result (`valueKeyField`), instead of assuming the upstream returns one
+  row per key in request order. Use this for collection-style sources (Strapi filters, Hasura
+  `where`, SQL `IN (...)`, and similar) that return rows in their own order, skip missing keys, or
+  return multiple rows per key.
+
+  Example:
+
+  ```graphql
+  extend type SearchResult {
+    products: [Product!]!
+      @resolveTo(
+        sourceName: "Products"
+        sourceTypeName: "Query"
+        sourceFieldName: "productsBySkus"
+        keyField: "sku"
+        keysArg: "skus"
+        valueKeyField: "sku"
+      )
+  }
+  ```
+
+  Docs:
+  [Schema Extensions → Matching results by a field (`valueKeyField`)](https://the-guild.dev/graphql/mesh/v1/schema-extensions#matching-results-by-a-field-valuekeyfield)
+
+- Updated dependencies
+  [[`a7cbeef`](https://github.com/ardatan/graphql-mesh/commit/a7cbeef58ddea00c8f55630f943bbe8ea19bba26),
+  [`e148b13`](https://github.com/ardatan/graphql-mesh/commit/e148b13d083683ed0f2589b23b8174b87a48d78e),
+  [`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)]:
+  - @graphql-mesh/utils@0.106.0
+  - @graphql-mesh/types@0.106.0
+  - @graphql-mesh/cache-localforage@0.107.0
+  - @graphql-mesh/merger-bare@0.107.0
+  - @graphql-mesh/merger-stitching@0.107.0
+  - @graphql-mesh/runtime@0.108.0
+  - @graphql-mesh/store@0.106.0
+
 ## 0.109.1
 
 ### Patch Changes

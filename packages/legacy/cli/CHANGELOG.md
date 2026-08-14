@@ -1,5 +1,52 @@
 # @graphql-mesh/cli
 
+## 0.102.0
+
+### Patch Changes
+
+- [#8280](https://github.com/ardatan/graphql-mesh/pull/8280)
+  [`b14fe65`](https://github.com/ardatan/graphql-mesh/commit/b14fe65bb198357064ba5dd1a804fd39f3e3ed74)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Added dependency [`get-tsconfig@^4.14.1` ↗︎](https://www.npmjs.com/package/get-tsconfig/v/4.14.1)
+    (to `dependencies`)
+  - Added dependency [`jiti@^2.7.0` ↗︎](https://www.npmjs.com/package/jiti/v/2.7.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/include@^0.4.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/include/v/0.4.2)
+    (from `dependencies`)
+
+- [#9604](https://github.com/ardatan/graphql-mesh/pull/9604)
+  [`11567cd`](https://github.com/ardatan/graphql-mesh/commit/11567cd6dbbbf59d15ee4702bd761cf758bd899b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`ws@^8.21.2` ↗︎](https://www.npmjs.com/package/ws/v/8.21.2) (from `^8.21.1`,
+    in `dependencies`)
+
+- [#9608](https://github.com/ardatan/graphql-mesh/pull/9608)
+  [`c90f5fb`](https://github.com/ardatan/graphql-mesh/commit/c90f5fb1f85c4e0772d48946a8820e991b59551a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`graphql-ws@^6.2.1` ↗︎](https://www.npmjs.com/package/graphql-ws/v/6.2.1)
+    (from `^6.2.0`, in `dependencies`)
+  - Updated dependency [`ws@^8.21.3` ↗︎](https://www.npmjs.com/package/ws/v/8.21.3) (from `^8.21.2`,
+    in `dependencies`)
+
+- [#8280](https://github.com/ardatan/graphql-mesh/pull/8280)
+  [`b14fe65`](https://github.com/ardatan/graphql-mesh/commit/b14fe65bb198357064ba5dd1a804fd39f3e3ed74)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - TypeScript importer and transpiler is now
+  built-in
+
+- Updated dependencies
+  [[`cb846cb`](https://github.com/ardatan/graphql-mesh/commit/cb846cb178c7c5b8f8600ad9f23d12cb5092701c),
+  [`a7cbeef`](https://github.com/ardatan/graphql-mesh/commit/a7cbeef58ddea00c8f55630f943bbe8ea19bba26),
+  [`e148b13`](https://github.com/ardatan/graphql-mesh/commit/e148b13d083683ed0f2589b23b8174b87a48d78e),
+  [`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)]:
+  - @graphql-mesh/incontext-sdk-codegen@0.2.0
+  - @graphql-mesh/utils@0.106.0
+  - @graphql-mesh/types@0.106.0
+  - @graphql-mesh/config@0.110.0
+  - @graphql-mesh/http@0.108.0
+  - @graphql-mesh/runtime@0.108.0
+  - @graphql-mesh/store@0.106.0
+
 ## 0.101.2
 
 ### Patch Changes

@@ -1,5 +1,56 @@
 # @graphql-mesh/utils
 
+## 0.106.0
+
+### Minor Changes
+
+- [#9609](https://github.com/ardatan/graphql-mesh/pull/9609)
+  [`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)
+  Thanks [@ardatan](https://github.com/ardatan)! - Batched `@resolveTo` joins can now match results
+  to keys by a field on each result (`valueKeyField`), instead of assuming the upstream returns one
+  row per key in request order. Use this for collection-style sources (Strapi filters, Hasura
+  `where`, SQL `IN (...)`, and similar) that return rows in their own order, skip missing keys, or
+  return multiple rows per key.
+
+  Example:
+
+  ```graphql
+  extend type SearchResult {
+    products: [Product!]!
+      @resolveTo(
+        sourceName: "Products"
+        sourceTypeName: "Query"
+        sourceFieldName: "productsBySkus"
+        keyField: "sku"
+        keysArg: "skus"
+        valueKeyField: "sku"
+      )
+  }
+  ```
+
+  Docs:
+  [Schema Extensions → Matching results by a field (`valueKeyField`)](https://the-guild.dev/graphql/mesh/v1/schema-extensions#matching-results-by-a-field-valuekeyfield)
+
+### Patch Changes
+
+- [#9606](https://github.com/ardatan/graphql-mesh/pull/9606)
+  [`a7cbeef`](https://github.com/ardatan/graphql-mesh/commit/a7cbeef58ddea00c8f55630f943bbe8ea19bba26)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`js-yaml@^4.3.1` ↗︎](https://www.npmjs.com/package/js-yaml/v/4.3.1) (from
+    `^4.3.0`, in `dependencies`)
+
+- [#9437](https://github.com/ardatan/graphql-mesh/pull/9437)
+  [`e148b13`](https://github.com/ardatan/graphql-mesh/commit/e148b13d083683ed0f2589b23b8174b87a48d78e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Fix `@resolveTo` inferring `sourceSelectionSet`
+  from a `result` path when the source field is missing from the gateway schema. Encapsulate (and
+  similar transforms) keep the real source field as an `@inaccessible` copy such as
+  `_encapsulated_<name>_<field>`, which federation then strips from the supergraph. The client
+  selection set is still wrapped with the `result` path instead of crashing on `sourceField.type`.
+
+- Updated dependencies
+  [[`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)]:
+  - @graphql-mesh/types@0.106.0
+
 ## 0.105.1
 
 ### Patch Changes

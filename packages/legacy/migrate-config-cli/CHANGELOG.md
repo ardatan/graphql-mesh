@@ -1,5 +1,25 @@
 # @graphql-mesh/migrate-config-cli
 
+## 1.9.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b14fe65`](https://github.com/ardatan/graphql-mesh/commit/b14fe65bb198357064ba5dd1a804fd39f3e3ed74),
+  [`11567cd`](https://github.com/ardatan/graphql-mesh/commit/11567cd6dbbbf59d15ee4702bd761cf758bd899b),
+  [`c90f5fb`](https://github.com/ardatan/graphql-mesh/commit/c90f5fb1f85c4e0772d48946a8820e991b59551a),
+  [`b14fe65`](https://github.com/ardatan/graphql-mesh/commit/b14fe65bb198357064ba5dd1a804fd39f3e3ed74),
+  [`a7cbeef`](https://github.com/ardatan/graphql-mesh/commit/a7cbeef58ddea00c8f55630f943bbe8ea19bba26),
+  [`b14fe65`](https://github.com/ardatan/graphql-mesh/commit/b14fe65bb198357064ba5dd1a804fd39f3e3ed74),
+  [`b14fe65`](https://github.com/ardatan/graphql-mesh/commit/b14fe65bb198357064ba5dd1a804fd39f3e3ed74),
+  [`e148b13`](https://github.com/ardatan/graphql-mesh/commit/e148b13d083683ed0f2589b23b8174b87a48d78e),
+  [`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)]:
+  - @graphql-mesh/cli@0.102.0
+  - @graphql-mesh/compose-cli@1.7.0
+  - @graphql-mesh/utils@0.106.0
+  - @graphql-mesh/types@0.106.0
+  - @graphql-mesh/config@0.110.0
+
 ## 1.8.2
 
 ### Patch Changes
