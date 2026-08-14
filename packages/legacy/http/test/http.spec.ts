@@ -233,6 +233,24 @@ describe('http', () => {
       expect(renderGraphiQL).toHaveBeenCalled();
     });
 
+    it('throws instead of using CDN GraphiQL when playground.offline is set without renderGraphiQL', async () => {
+      await using mesh = await getTestMesh();
+      const httpHandler = createMeshHTTPHandler({
+        baseDir: __dirname,
+        getBuiltMesh: async () => mesh,
+        rawServeConfig: {
+          playground: {
+            offline: true,
+          },
+        },
+      });
+      await expect(
+        httpHandler.fetch('http://localhost:4000/graphql', {
+          headers: { Accept: 'text/html' },
+        }),
+      ).rejects.toThrow('@graphql-yoga/render-graphiql');
+    });
+
     it('does not call renderGraphiQL when playground.offline is not set', async () => {
       await using mesh = await getTestMesh();
       const renderGraphiQL = jest.fn().mockReturnValue('<html>custom</html>');

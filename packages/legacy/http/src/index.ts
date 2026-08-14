@@ -52,6 +52,7 @@ export function createMeshHTTPHandler<TServerContext>({
       getBuiltMesh,
       playgroundTitle,
       playgroundEnabled,
+      playgroundOffline,
       graphqlEndpoint: graphqlPath,
       corsConfig,
       batchingLimit,
