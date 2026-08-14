@@ -1,38 +1,53 @@
 import { Callout } from '@theguild/components'
 
-# Migration from GraphQL Mesh v0 (Experimental)
+# Migration from GraphQL Mesh v0 (Experimental - Beta)
+
+<Callout>This feature is still work-in-progress. Please report any issues you encounter.</Callout>
+
+If you are migrating from GraphQL Mesh v0, you should be aware of the following changes:
+
+- GraphQL Mesh no longer comes with a built-in gateway. You should setup Hive Gateway to serve the
+  generated artifacts.
+- GraphQL Mesh no longer generates an executable JavaScript code in `.mesh` folder, but instead it
+  builds a GraphQL SDL (Supergraph or Subgraph) that you can use with Hive Gateway.
+- GraphQL Mesh Transforms no longer have `bare` mode. There is only `wrap` mode now, and all the
+  transforms are using Federation-compatible directives. Any transformed subgraph should be served
+  using Hive Gateway.
+- If you deploy GraphQL Mesh v0 by using the http handler provided in the artifacts under `.mesh`,
+  now you should take a look at
+  [Hive Gateway's Deployment Guide](https://the-guild.dev/graphql/hive/docs/gateway/deployment) to
+  deploy your gateway.
+- GraphQL Mesh no longer runs [GraphQL Code Generator](https://graphql-codegen.com) internally. You
+  should use it separately if you need to generate types or documents.
+- GraphQL Mesh no longer generates a Persisted Operations store. You should setup your gateway based
+  on your needs. [See here](https://the-guild.dev/graphql/hive/docs/gateway/persisted-documents) for
+  more information.
+
+GraphQL Mesh is now only responsible of generating a GraphQL SDL file `supergraph.graphql` or
+`subgraph.graphql` that you can use with Hive Gateway. It is not responsible for serving the
+generated artifacts.
+
+For in-process execution (instead of a standalone gateway process), see
+[Local Execution](/v1/local-execution).
 
 <Callout>
-  The config migrator is still experimental. Run it, then review `mesh.config.ts` and the warnings
-  it prints. Please report anything it gets wrong.
+  Please make sure all of your `@graphql-mesh/` packages are up-to-date. Otherwise, the migration
+  script may not work as expected.
 </Callout>
 
-Mesh v1 is **compose + serve**, not a single runtime that writes `.mesh` artifacts.
+## Configuration Format
 
-- **Compose** (`@graphql-mesh/compose-cli`) builds a Supergraph/Subgraph SDL (`supergraph.graphql`).
-- **Serve** ([Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway)) executes that SDL.
-  Transforms are Federation-compatible wrap transforms; transformed subgraphs must be served by Hive
-  Gateway (or another Federation-aware gateway).
-- Mesh no longer generates executable JS in `.mesh`, does not run GraphQL Code Generator internally,
-  and does not write a persisted-operations store.
+Before, Mesh used a configuration file in `.meshrc.yml`, `.meshrc.yaml`, `.meshrc.json`, or
+`.meshrc.js` format. Now Mesh supports a configuration file in `mesh.config.ts` or `mesh.config.js`
+format, with `composeConfig` (SDL generation) and `gatewayConfig` (Hive Gateway).
 
-If you used `createBuiltMeshHTTPHandler` from `.mesh`, follow
-[Hive Gateway deployment](https://the-guild.dev/graphql/hive/docs/gateway/deployment). For
-in-process execution see [Local Execution](/v1/local-execution).
-
-<Callout>
-  Update every `@graphql-mesh/*` package on v0 first. The migrator reads the current YAML/JSON
-  schema; old handler option names may not parse.
-</Callout>
-
-## 1. Migrate `.meshrc` with the CLI
-
-v0: `.meshrc.yml` / `.meshrc.yaml` / `.meshrc.json` / `.meshrc.js`.  
-v1: `mesh.config.ts` (or `mesh.config.js`) with `composeConfig` and `gatewayConfig`.
+Install `@graphql-mesh/migrate-config-cli` to migrate your configuration file from v0 to v1.
 
 ```sh npm2yarn
 npm install @graphql-mesh/migrate-config-cli
 ```
+
+Then run the following command in your project directory:
 
 ```sh
 npx mesh-migrate-config
@@ -46,22 +61,33 @@ Optional flags:
 | `--force`     | Overwrite an existing `mesh.config.ts`         |
 | `[directory]` | Project root (default: cwd)                    |
 
-The CLI prints packages to add/remove, then:
+During the migration process, you might get some errors or warnings related to the deprecated or
+removed functionalities. Please make sure to update your legacy v0 configuration and setup according
+to those warnings and errors.
 
-```sh
-npx mesh-compose -o supergraph.graphql
-npx hive-gateway supergraph
+- **Errors** mean the CLI **did not write** `mesh.config.ts` (root-level transforms, unknown
+  handler, removed transform such as `typeMerging`).
+- **Warnings** mean it wrote a file, but you still have manual work (codegen, pubsub, merger, …).
+
+<Callout>
+  The config migrator is still experimental. Review `mesh.config.ts` and the messages it prints.
+  Please report anything it gets wrong.
+</Callout>
+
+## Package Changes
+
+Instead of `@graphql-mesh/cli`, you should now use `@graphql-mesh/compose-cli` and
+`@graphql-hive/gateway`.
+
+For example with `npm`:
+
+```sh npm2yarn
+npm uninstall @graphql-mesh/cli
+npm install @graphql-mesh/compose-cli @graphql-hive/gateway
 ```
 
-Errors mean it **did not write** a file (root transforms, unknown handler, removed transform).
-Warnings mean it wrote a file but you still have manual work (codegen, pubsub, merger, …).
-
-## 2. Packages
-
-Uninstall `@graphql-mesh/cli`. Install `@graphql-mesh/compose-cli` and `@graphql-hive/gateway`.
-Source packages moved from `@graphql-mesh/<handler>` to `@omnigraph/<handler>` (see table below).
-
-## 3. Handler mapping
+Source handler packages are also changed: `@omnigraph/*` instead of `@graphql-mesh/*` for most
+handlers. The CLI prints the exact add/remove list for your config. Mapping:
 
 | v0 `handler`   | v0 package                   | v1 loader                                                | v1 package                  |
 | -------------- | ---------------------------- | -------------------------------------------------------- | --------------------------- |
@@ -80,7 +106,7 @@ Source packages moved from `@graphql-mesh/<handler>` to `@omnigraph/<handler>` (
 | `tuql`         | `@graphql-mesh/tuql`         | `loadSQLiteSubgraph`                                     | `@omnigraph/sqlite`         |
 | `supergraph`   | —                            | **Do not compose.** Pass the supergraph to Hive Gateway. | `@graphql-hive/gateway`     |
 
-GraphQL handler notes:
+GraphQL handler notes for the migrator:
 
 - HTTP `{ endpoint }` is copied as-is.
 - Code-first `{ source: './schema.ts' }` becomes `{ endpoint: './schema.ts' }` for
@@ -90,11 +116,13 @@ GraphQL handler notes:
 
 See [Source Handlers](/v1/source-handlers).
 
-## 4. Transform mapping
+## Transforms
 
-Source-level transforms become `create*Transform` from `@graphql-mesh/compose-cli`. `bare` mode is
-gone; `mode: wrap` is dropped. Root-level `transforms:` on the mesh config is **not** supported —
-move them onto a source, or replace stitching with [Federation](/v1/transforms/federation).
+Source-level transforms become `create*Transform` from `@graphql-mesh/compose-cli`. As above, there
+is no `bare` mode; `mode: wrap` is dropped because wrap is the only mode.
+
+Root-level `transforms:` on the mesh config is **not** supported. Move them onto a source, or
+replace stitching with [Federation](/v1/transforms/federation).
 
 | v0 transform           | v1                                | Notes                                                       |
 | ---------------------- | --------------------------------- | ----------------------------------------------------------- |
@@ -113,7 +141,7 @@ move them onto a source, or replace stitching with [Federation](/v1/transforms/f
 | `replaceField`         | **manual**                        | Hoist / rename / `additionalTypeDefs`                       |
 | `resolversComposition` | **manual**                        | `additionalResolvers` or a gateway plugin                   |
 
-## 5. What goes on compose vs gateway
+## What goes on compose vs gateway
 
 | v0                                                                                      | v1                                                                                              |
 | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -134,13 +162,20 @@ Built-in plugin mapping: `hive` → `reporting` (+ `persistedDocuments` when pre
 `maskedErrors`, `immediateIntrospection` → `useImmediateIntrospection()`. Other plugins are resolved
 from `@envelop/*` / `@graphql-yoga/plugin-*` when possible.
 
-## 6. After the CLI
+## Using Artifacts
 
-1. Install the printed packages and remove the old handler/CLI packages.
+GraphQL Mesh no longer generates artifacts with `execute` or `createBuiltMeshHTTPHandler` functions.
+Instead, it generates a GraphQL SDL file that you can use with Hive Gateway.
+
+After a successful config migration:
+
+1. Install the packages the CLI printed and remove the old handler/CLI packages.
 2. Fix every error/warning (especially root transforms and type merging).
-3. `npx mesh-compose -o supergraph.graphql`
-4. `npx hive-gateway supergraph`
-5. Replace `.mesh` HTTP handlers with Hive Gateway in your deployment.
+3. Run `npx mesh-compose -o supergraph.graphql` to generate the supergraph schema.
+4. Run `npx hive-gateway supergraph` to start the gateway server.
 
-More: [Getting Started](/v1/getting-started),
-[Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway).
+Read more about
+[Hive Gateway's Deployment Guide](https://the-guild.dev/graphql/hive/docs/gateway/deployment) to
+setup your gateway with the new artifacts.
+
+If you need local execution, refer to the local execution guide [here](/v1/local-execution).
