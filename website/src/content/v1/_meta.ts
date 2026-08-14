@@ -11,6 +11,6 @@ export default {
   auth: 'Authentication',
   'subscriptions-webhooks': 'Subscriptions & Webhooks',
   'consume-in-other-gateways': 'Consume in Other Gateways',
-  'local-execution': 'Local Execution',
+  'local-execution': 'Local Execution & SDK',
   'migration-from-v0': 'Migration from Mesh v0',
 };

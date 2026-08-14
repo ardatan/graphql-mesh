@@ -372,8 +372,8 @@ export const composeConfig = defineConfig({
   get `null` / the first match
 
 If the delegated query does not conform to these expectations and `valueKeyField` is not enough, you
-can provide a custom resolver function in `additionalResolvers` to the Hive Gateway runtime
-configuration. {/* `TODO: Add example for custom resolver function programmatically` */}
+can provide a custom resolver in `gatewayConfig.additionalResolvers`. Type those resolvers with the
+**in-context SDK** (see below): `context.SourceName.Query.fieldName(...)`.
 
 Batch delegation is generally preferable over plain delegation because it eliminates the redundancy
 of requesting the same field across an array of parent objects. Even so, delegation costs can add up
@@ -423,6 +423,92 @@ export const composeConfig = defineConfig({
   `
 })
 ```
+
+## In-context SDK (typed `additionalResolvers`)
+
+This is a **different** SDK from Hive Gateway’s operation `getSdk()`
+([typed-sdk example](https://github.com/graphql-hive/gateway/tree/main/examples/typed-sdk)).
+
+v0 `mesh build` wrote `MeshContext` into `.mesh` so resolvers could call sources as
+`context.Authors.Query.getAuthor({ root, args, context, info })`. v1 does the same with a Codegen
+plugin:
+[`@graphql-mesh/incontext-sdk-codegen`](https://github.com/ardatan/graphql-mesh/tree/master/packages/incontext-sdk-codegen).
+It reads the **composed supergraph** and emits `MeshInContextSDK` plus per-subgraph types.
+
+Working Mesh example:
+[`e2e/openapi-javascript-wiki`](https://github.com/ardatan/graphql-mesh/tree/master/e2e/openapi-javascript-wiki).
+
+```ts filename="codegen.ts"
+import type { CodegenConfig } from '@graphql-codegen/cli'
+
+const config: CodegenConfig = {
+  schema: './supergraph.graphql',
+  generates: {
+    './types/incontext-sdk.ts': {
+      plugins: ['@graphql-mesh/incontext-sdk-codegen']
+    }
+  }
+}
+
+export default config
+```
+
+```sh
+npx mesh-compose -o supergraph.graphql
+npx graphql-codegen
+```
+
+Then type `context` in `gatewayConfig.additionalResolvers`:
+
+```ts filename="mesh.config.ts"
+import type { GraphQLResolveInfo } from 'graphql'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+import type { MeshInContextSDK } from './types/incontext-sdk'
+
+export const gatewayConfig = defineGatewayConfig({
+  additionalResolvers: {
+    Query: {
+      async viewsInPastMonth(
+        root: never,
+        { project }: { project: string },
+        context: MeshInContextSDK,
+        info: GraphQLResolveInfo
+      ) {
+        const result =
+          await context.Wiki.Query.metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end(
+            {
+              root,
+              args: {
+                access: 'all_access',
+                agent: 'user',
+                start: '20200101',
+                end: '20200226',
+                project,
+                granularity: 'daily'
+              },
+              context,
+              info,
+              selectionSet: /* GraphQL */ `
+                {
+                  ... on pageview_project {
+                    items {
+                      views
+                    }
+                  }
+                }
+              `
+            }
+          )
+        // …
+        return result
+      }
+    }
+  }
+})
+```
+
+The plugin also writes `types/subgraphs/<SourceName>.ts`. Prefer `@resolveTo` when the mapping is
+declarative; use in-context SDK when you need custom TypeScript around the delegated call.
 
 ## Schema Registry / Hive
 
