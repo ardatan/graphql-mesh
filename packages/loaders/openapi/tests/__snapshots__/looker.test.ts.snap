@@ -12,9 +12,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
-
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
+
+directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
@@ -2257,7 +2257,7 @@ type Query {
     project_id: String!
     """Requested fields"""
     fields: String
-  ): project_validation_results_response @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/validate", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): ProjectValidationCache @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/validate", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Get Project Workspace
   
@@ -7453,8 +7453,6 @@ type LocalizationSettings {
   localization_level: String
 }
 
-union project_validation_results_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "ProjectValidationCache") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = ProjectValidationCache | Void_container
-
 type ProjectValidationCache {
   """A list of project errors"""
   errors: [ProjectError]
@@ -7509,13 +7507,6 @@ type ModelsNotValidated {
   """Project file"""
   project_file_id: String
 }
-
-type Void_container {
-  Void: Void @resolveRoot(subgraph: "test")
-}
-
-"""Represents empty values"""
-scalar Void
 
 type ProjectWorkspace {
   """Operations the current user is able to perform on this object"""
@@ -9430,7 +9421,7 @@ type Mutation {
     project_id: String!
     """Requested fields"""
     fields: String
-  ): lock_all_response @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/manifest/lock_all", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): String @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/manifest/lock_all", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Update the setting for enabling/disabling digest emails
   
@@ -10258,7 +10249,7 @@ type Mutation {
     user_id: String!
     """Requested fields."""
     fields: String
-  ): activate_app_user_response @httpOperation(subgraph: "test", path: "/oauth_client_apps/{args.client_guid}/users/{args.user_id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
+  ): String @httpOperation(subgraph: "test", path: "/oauth_client_apps/{args.client_guid}/users/{args.user_id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST, queryParamArgMap: "{\\"fields\\":\\"fields\\"}")
   """
   ### Deactivate an app for a user
   
@@ -10368,7 +10359,7 @@ type Mutation {
     branch: String
     """Ref to deploy to production"""
     ref: String
-  ): deploy_ref_to_production_response @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/deploy_ref_to_production", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST, queryParamArgMap: "{\\"branch\\":\\"branch\\",\\"ref\\":\\"ref\\"}")
+  ): String @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/deploy_ref_to_production", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST, queryParamArgMap: "{\\"branch\\":\\"branch\\",\\"ref\\":\\"ref\\"}")
   """
   ### Deploy LookML from this Development Mode Project to Production
   
@@ -10388,7 +10379,7 @@ type Mutation {
   deploy_to_production(
     """Id of project"""
     project_id: String!
-  ): deploy_to_production_response @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/deploy_to_production", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST)
+  ): String @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/deploy_to_production", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST)
   """
   ### Reset a project to the revision of the project that is in production.
   
@@ -10398,7 +10389,7 @@ type Mutation {
   reset_project_to_production(
     """Id of project"""
     project_id: String!
-  ): reset_project_to_production_response @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/reset_to_production", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST)
+  ): String @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/reset_to_production", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST)
   """
   ### Reset a project development branch to the revision of the project that is on the remote.
   
@@ -10408,7 +10399,7 @@ type Mutation {
   reset_project_to_remote(
     """Id of project"""
     project_id: String!
-  ): reset_project_to_remote_response @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/reset_to_remote", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST)
+  ): String @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/reset_to_remote", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: POST)
   """
   ### Create A Project
   
@@ -10504,7 +10495,7 @@ type Mutation {
     """(Optional): Tag Message"""
     tag_message: String
     input: Project_Input
-  ): tag_ref_response @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/tag", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST, queryParamArgMap: "{\\"commit_sha\\":\\"commit_sha\\",\\"tag_name\\":\\"tag_name\\",\\"tag_message\\":\\"tag_message\\"}")
+  ): Project @httpOperation(subgraph: "test", path: "/projects/{args.project_id}/tag", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST, queryParamArgMap: "{\\"commit_sha\\":\\"commit_sha\\",\\"tag_name\\":\\"tag_name\\",\\"tag_message\\":\\"tag_message\\"}")
   """
   ### Create a new task to render a look to an image.
   
@@ -11686,6 +11677,9 @@ type AccessToken {
   refresh_token: String
 }
 
+"""Represents empty values"""
+scalar Void
+
 input AlertPatch_Input {
   """New owner ID of the alert"""
   owner_id: String
@@ -12859,12 +12853,6 @@ type DBConnectionTestResult {
   status: String
 }
 
-union lock_all_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
-
-type String_container {
-  String: String @resolveRoot(subgraph: "test")
-}
-
 input DigestEmails_Input {
   """Whether or not digest emails are enabled"""
   is_enabled: Boolean!
@@ -14018,8 +14006,6 @@ input UserPublic_Input {
   url: UriReference
 }
 
-union activate_app_user_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
-
 input OIDCConfig_Input {
   """Operations the current user is able to perform on this object"""
   can: JSON
@@ -14174,14 +14160,6 @@ input PasswordConfig_Input {
   require_special: Boolean!
 }
 
-union deploy_ref_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
-
-union deploy_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
-
-union reset_project_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
-
-union reset_project_to_remote_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
-
 input Project_Input {
   """Operations the current user is able to perform on this object"""
   can: JSON
@@ -14256,8 +14234,6 @@ type ProjectValidation {
   """Duration of project validation in seconds"""
   computation_time: Float
 }
-
-union tag_ref_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "Project") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = Project | Void_container
 
 input CreateDashboardRenderTask_Input {
   """Filter values to apply to the dashboard queries, in URL query format"""
@@ -14891,6 +14867,10 @@ input ThemeSettings_Input {
 }
 
 union validate_theme_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "ValidationError") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "String_container") = ValidationError | String_container
+
+type String_container {
+  String: String @resolveRoot(subgraph: "test")
+}
 
 input SshServer_Input {
   """A unique id used to identify this SSH Server"""

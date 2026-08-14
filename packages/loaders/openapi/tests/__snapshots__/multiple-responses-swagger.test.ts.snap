@@ -8,8 +8,6 @@ exports[`Multiple Responses Swagger should create correct response types with 20
 
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
-directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
-
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
 directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
@@ -32,17 +30,8 @@ type Error {
 
 type Mutation {
   """Optional extended description in Markdown."""
-  post: post_response @httpOperation(subgraph: "test", path: "/", operationSpecificHeaders: [["Accept", "application/json"]], httpMethod: POST)
+  post: Error @httpOperation(subgraph: "test", path: "/", operationSpecificHeaders: [["Accept", "application/json"]], httpMethod: POST)
 }
-
-union post_response @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "test", statusCode: "500", typeName: "Error") = Void_container | Error
-
-type Void_container {
-  Void: Void @resolveRoot(subgraph: "test")
-}
-
-"""Represents empty values"""
-scalar Void
 
 enum HTTPMethod {
   GET

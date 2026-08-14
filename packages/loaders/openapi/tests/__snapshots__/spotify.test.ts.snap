@@ -16,8 +16,6 @@ directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
-directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
-
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
 directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
@@ -1184,7 +1182,7 @@ type Query {
     In addition to providing this parameter, make sure that your client properly handles cases of new types in the future by checking against the \`type\` field of each object.
     """
     additional_types: String
-  ): get_information_about_the_users_current_playback_response @httpOperation(subgraph: "test", path: "/me/player", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"market\\":\\"market\\",\\"additional_types\\":\\"additional_types\\"}")
+  ): CurrentlyPlayingContextObject @httpOperation(subgraph: "test", path: "/me/player", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"market\\":\\"market\\",\\"additional_types\\":\\"additional_types\\"}")
   """
   Get information about a user’s available devices.
   
@@ -3232,8 +3230,6 @@ type ManyGenres_response {
   genres: [String]!
 }
 
-union get_information_about_the_users_current_playback_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "CurrentlyPlayingContextObject") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = CurrentlyPlayingContextObject | Void_container
-
 """Information about playback"""
 type CurrentlyPlayingContextObject {
   device: DeviceObject
@@ -3314,13 +3310,6 @@ type DisallowsObject {
   """Transfering playback between devices. Optional field."""
   transferring_playback: Boolean
 }
-
-type Void_container {
-  Void: Void @resolveRoot(subgraph: "test")
-}
-
-"""Represents empty values"""
-scalar Void
 
 """A set of devices"""
 type ManyDevices_response {
@@ -3882,6 +3871,9 @@ input follow_playlist_request_Input {
   """
   public: Boolean
 }
+
+"""Represents empty values"""
+scalar Void
 
 """The ID type."""
 enum mutationInput_follow_artists_users_type {
