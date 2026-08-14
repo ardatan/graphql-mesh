@@ -1997,7 +1997,7 @@ type Mutation {
   Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
   
   """
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!): problem @httpOperation(subgraph: "Wiki", path: "/media/math/check/{args.type}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: POST)
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): problem @httpOperation(subgraph: "Wiki", path: "/media/math/check/{args.type}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: POST)
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -2010,6 +2010,7 @@ type Mutation {
     from_lang: String!
     """The target language code"""
     to_lang: String!
+    html: JSON!
   ): post_transform_html_from_by_from_lang_to_by_to_lang_response @httpOperation(subgraph: "Wiki", path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["Accept", "application/json, application/problem+json"]], httpMethod: POST)
   """
   Fetches the machine translation for the posted content from the source
@@ -2024,6 +2025,7 @@ type Mutation {
     """The target language code"""
     to_lang: String!
     provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
+    html: JSON!
   ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @httpOperation(subgraph: "Wiki", path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}/{args.provider}", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["Accept", "application/json, application/problem+json"]], httpMethod: POST)
 }
 

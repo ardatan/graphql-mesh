@@ -1470,7 +1470,7 @@ ${printType(GraphQLString)}
       logger,
     });
     // Should be a nullable String scalar, not an object type with String/Void fields
-    expect(result.output.getType()).toBe(GraphQLString);
+    expect((result.output as ScalarTypeComposer<any>).getType()).toBe(GraphQLString);
     expect(result.nullable).toBe(true);
   });
   it('should treat anyOf[X, null] as nullable X even for object types (issue #8719)', async () => {
@@ -1540,7 +1540,7 @@ ${printType(GraphQLString)}
     expect(isObjectType(output.getType())).toBe(true);
     const infoField = output.getField('info');
     expect(infoField).toBeDefined();
-    const infoTC = infoField.type.getUnwrappedTC() as ObjectTypeComposer;
+    const infoTC = (infoField.type as any).getUnwrappedTC() as ObjectTypeComposer;
     expect(isObjectType(infoTC.getType())).toBe(true);
     // All three fields should be present after deep merge
     expect(infoTC.getFieldNames()).toContain('id');
