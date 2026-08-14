@@ -1,0 +1,51 @@
+## Frequently Asked Questions
+
+- What is GraphQL Mesh?
+
+  GraphQL Mesh is a framework for building GraphQL gateways over GraphQL and non-GraphQL sources.
+  You can compose REST/OpenAPI, gRPC, SOAP, databases, and GraphQL APIs into one supergraph, then
+  query them with GraphQL. See the [v1 introduction](/v1) for the current architecture.
+
+- What is the difference between Mesh Compose and Hive Gateway?
+
+  [Mesh Compose](/v1/getting-started) turns your sources into a supergraph.
+  [Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway) serves that supergraph (or one
+  from Hive or Apollo GraphOS) with auth, caching, rate limiting, and observability. You can also
+  serve a Mesh supergraph with
+  [other Federation-compatible gateways](/v1/consume-in-other-gateways).
+
+- Should I use Mesh v0 or v1?
+
+  Use [Mesh v1](/v1) for new work. v0 is the legacy runtime still documented under
+  [Mesh v0 docs](/docs). If you are on v0, follow the [migration guide](/v1/migration-from-v0).
+
+- Can I expose REST or OpenAPI as GraphQL?
+
+  Yes. Mesh Compose can load OpenAPI/Swagger and JSON Schema sources and emit GraphQL subgraphs you
+  can query, transform, and merge. Start with [source handlers](/v1/source-handlers) and the
+  [OpenAPI handler](/v1/source-handlers/openapi).
+
+- Does GraphQL Mesh work with Federation?
+
+  Yes. Mesh Compose can produce Federation-compatible subgraphs and supergraphs, including from
+  non-GraphQL services. You can register them in [GraphQL Hive](https://the-guild.dev/graphql/hive)
+  or Apollo GraphOS, or run them with Hive Gateway. See
+  [Federation transforms](/v1/transforms/federation) and [type merging](/v1/type-merging).
+
+- Can I use Mesh without deploying a gateway?
+
+  Yes. You can [execute the composed schema in-process](/v1/local-execution) inside your Node.js
+  app, or run Hive Gateway as a standalone proxy. Same compose output, different serving model.
+
+- How do I combine multiple APIs into one schema?
+
+  Compose each API as a source, then use [transforms](/v1/transforms) (prefix, rename, filter,
+  encapsulate) and [schema extensions](/v1/schema-extensions) such as `@resolveTo` to link types
+  across sources. The [getting started guide](/v1/getting-started) walks through a full compose
+  config.
+
+- How do I migrate from Mesh v0 to v1?
+
+  v1 splits compose (Mesh Compose) from serve (Hive Gateway) and uses a new config format. Follow
+  [Migrate to GraphQL Mesh v1](/v1/migration-from-v0) for a source-by-source mapping from `.meshrc`
+  to `mesh.config.ts`.

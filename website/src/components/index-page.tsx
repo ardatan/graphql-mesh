@@ -5,6 +5,7 @@ import { ComparisonTable } from './comparison-table';
 import { DatasourcesIllustration } from './datasources-illustration';
 import { DatasourcesListSection } from './datasources-list-section';
 import { ExamplesSection } from './examples-section';
+import { FrequentlyAskedQuestions } from './frequently-asked-questions';
 import { InfoCardsSection } from './info-cards-section';
 import { LandingPageContainer } from './landing-page-container';
 import { ManipulateDataSection } from './manipulate-data-section';
@@ -24,7 +25,7 @@ export function IndexPage(): ReactElement {
       <RunAnywhereSection className="mx-4 mt-6 md:mx-6" />
       <CapabilitiesSection className="mx-4 mt-6 md:mx-6" />
       <ToolsAndLibrariesCards className="mx-4 md:mx-6" />
-      {/* TODO: Frequently Asked Questions requires a version bump of @theguild/components */}
+      <FrequentlyAskedQuestions className="mx-4 mt-6 md:mx-6" />
     </LandingPageContainer>
   );
 }
