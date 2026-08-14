@@ -3,7 +3,7 @@ import guildConfig from '@theguild/tailwind-config';
 
 const config: Config = {
   ...guildConfig,
-  content: [...guildConfig.content, 'theme.config.tsx'],
+  content: [...guildConfig.content, './src/**/*.{tsx,ts,mdx}'],
   theme: {
     ...guildConfig.theme,
     extend: {

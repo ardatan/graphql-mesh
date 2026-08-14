@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
+import { addBasePath } from 'next/dist/client/add-base-path';
 import { CaretSlimIcon, cn } from '@theguild/components';
 
 export const EXAMPLES = {
@@ -119,8 +119,6 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
     return () => observer.disconnect();
   }, []);
 
-  const { basePath } = useRouter();
-
   return (
     <div {...rest} className={cn('w-full', rest.className)}>
       <div className="flex items-center justify-center gap-2">
@@ -163,7 +161,7 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
           <iframe
             ref={iframeRef}
             loading={lazy ? 'eager' : 'lazy'}
-            src={`${basePath}/codesandbox-iframe.html`}
+            src={addBasePath('/codesandbox-iframe.html')}
             onLoad={() => {
               // in case the select is interacted with before the iframe loads
               const select = document.getElementById(labelId)
