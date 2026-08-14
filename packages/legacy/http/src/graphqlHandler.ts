@@ -8,6 +8,7 @@ export const graphqlHandler = ({
   getBuiltMesh,
   playgroundTitle,
   playgroundEnabled,
+  playgroundOffline,
   graphqlEndpoint,
   corsConfig,
   batchingLimit,
@@ -17,6 +18,7 @@ export const graphqlHandler = ({
   getBuiltMesh: () => Promise<MeshInstance>;
   playgroundTitle: string;
   playgroundEnabled: boolean;
+  playgroundOffline?: boolean;
   graphqlEndpoint: string;
   corsConfig: CORSOptions;
   batchingLimit?: number;
@@ -24,7 +26,7 @@ export const graphqlHandler = ({
   extraParamNames?: string[];
 }) => {
   const getYogaForMesh = memoize1(function getYogaForMesh(mesh: MeshInstance) {
-    const yoga = createYoga({
+    const yogaOptions: Parameters<typeof createYoga>[0] = {
       plugins: [
         ...mesh.plugins,
         useLogger({
@@ -48,7 +50,21 @@ export const graphqlHandler = ({
       batching: batchingLimit ? { limit: batchingLimit } : false,
       healthCheckEndpoint,
       disposeOnProcessTerminate: true,
-    });
+    };
+
+    if (playgroundEnabled && playgroundOffline) {
+      yogaOptions.renderGraphiQL = opts =>
+        import('@graphql-yoga/render-graphiql').then(
+          ({ renderGraphiQL }) => renderGraphiQL(opts),
+          () => {
+            throw new Error(
+              'To use offline GraphiQL playground, please install the "@graphql-yoga/render-graphiql" package.',
+            );
+          },
+        );
+    }
+
+    const yoga = createYoga(yogaOptions);
     // Dispose Yoga instance when the Mesh instance is destroyed
     const id = mesh.pubsub.subscribe('destroy', () => {
       const unsubscribe = () => {

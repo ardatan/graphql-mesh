@@ -98,6 +98,11 @@ export interface ServeConfig {
    * Show GraphiQL Playground
    */
   playground?: boolean;
+  /**
+   * Use an offline version of GraphiQL Playground that bundles all assets inline, without loading resources from CDN.
+   * This is useful for air-gapped or on-premise environments with no internet access.
+   */
+  playgroundOffline?: boolean;
   sslCredentials?: HTTPSConfig;
   /**
    * Path to GraphQL Endpoint (default: /graphql)

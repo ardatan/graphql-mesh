@@ -285,6 +285,10 @@
           "type": "boolean",
           "description": "Show GraphiQL Playground"
         },
+        "playgroundOffline": {
+          "type": "boolean",
+          "description": "Use an offline version of GraphiQL Playground that bundles all assets inline, without loading resources from CDN.\nThis is useful for air-gapped or on-premise environments with no internet access."
+        },
         "sslCredentials": {
           "$ref": "#/definitions/HTTPSConfig",
           "description": "SSL Credentials for HTTPS Server\nIf this is provided, Mesh will be served via HTTPS"
