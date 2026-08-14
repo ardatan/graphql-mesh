@@ -24,6 +24,7 @@ import {
   InterfaceTypeComposer,
   isSomeInputTypeComposer,
   ListComposer,
+  NonNullComposer,
   ObjectTypeComposer,
   ScalarTypeComposer,
   SchemaComposer,
@@ -174,11 +175,22 @@ function deepMergeObjectTypeComposerFields(
         typeof (newFieldValue.type as ThunkComposer).getUnwrappedTC === 'function'
           ? (newFieldValue.type as ThunkComposer).getUnwrappedTC()
           : undefined;
-      if (
-        existingFieldUnwrappedTC instanceof ObjectTypeComposer &&
+      const existingOTC =
+        existingFieldUnwrappedTC instanceof ObjectTypeComposer
+          ? existingFieldUnwrappedTC
+          : existingFieldUnwrappedTC instanceof NonNullComposer &&
+              existingFieldUnwrappedTC.ofType instanceof ObjectTypeComposer
+            ? existingFieldUnwrappedTC.ofType
+            : undefined;
+      const newOTC =
         newFieldUnwrappedTC instanceof ObjectTypeComposer
-      ) {
-        deepMergeObjectTypeComposerFields(existingFieldUnwrappedTC, newFieldUnwrappedTC);
+          ? newFieldUnwrappedTC
+          : newFieldUnwrappedTC instanceof NonNullComposer &&
+              newFieldUnwrappedTC.ofType instanceof ObjectTypeComposer
+            ? newFieldUnwrappedTC.ofType
+            : undefined;
+      if (existingOTC && newOTC) {
+        deepMergeObjectTypeComposerFields(existingOTC, newOTC);
       } else {
         if (
           newFieldUnwrappedTC &&
@@ -564,6 +576,44 @@ export function getComposerFromJSONSchema({
         };
       }
 
+      // Handle anyOf/oneOf patterns where one branch is null (nullable wrapper from OpenAPI/JSON Schema)
+      // This must run before the switch so that after stripping null, the remaining type
+      // is handled by the correct branch of the switch or by the allOf/anyOf/properties path.
+      if (
+        subSchema.anyOf &&
+        !subSchema.properties &&
+        !subSchema.allOf &&
+        !subSchema.additionalProperties
+      ) {
+        const anyOfArr = subSchema.anyOf as JSONSchemaObject[];
+        const nonNullAnyOf = anyOfArr.filter(s => s.type !== 'null');
+        if (nonNullAnyOf.length < anyOfArr.length) {
+          if (nonNullAnyOf.length === 0) {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLVoid);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              nullable: true,
+              description: subSchema.description,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+              deprecated: subSchema.deprecated,
+            };
+          }
+          // Mark nullable and strip null entries from anyOf
+          subSchema.nullable = true;
+          (subSchema as any).anyOf = nonNullAnyOf;
+          if (nonNullAnyOf.length === 1) {
+            // Single non-null type: inline its properties onto the parent schema so
+            // the type-based switch (or the properties/allOf path) handles it correctly.
+            const nonNull = nonNullAnyOf[0];
+            Object.assign(subSchema, nonNull);
+            delete (subSchema as any).anyOf;
+          }
+        }
+      }
+
       switch (subSchema.type as any) {
         case 'boolean': {
           const typeComposer = schemaComposer.getAnyTC(GraphQLBoolean);
@@ -874,7 +924,7 @@ export function getComposerFromJSONSchema({
           subgraph: subgraphName,
           field: subSchemaOnly.discriminator.propertyName,
         };
-        if (subSchemaOnly.discriminator.mapping) {
+        if (subSchemaOnly.discriminatorMapping) {
           const mappingByName: Record<string, string> = {};
           for (const discriminatorValue in subSchemaOnly.discriminatorMapping) {
             const discType = subSchemaOnly.discriminatorMapping[discriminatorValue];

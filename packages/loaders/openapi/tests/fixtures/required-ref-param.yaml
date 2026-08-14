@@ -1,0 +1,48 @@
+openapi: 3.0.0
+info:
+  title: Required Ref Param Test
+  version: 1.0.0
+paths:
+  /v1/foo:
+    get:
+      operationId: getFoo
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+  /v1/bar:
+    get:
+      operationId: getBar
+      parameters:
+        - name: id
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+components:
+  schemas:
+    UUID:
+      type: string
+      format: uuid

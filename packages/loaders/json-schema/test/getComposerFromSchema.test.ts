@@ -1459,4 +1459,92 @@ ${printType(GraphQLString)}
     expect(result.input?.getType().toString()).toBe('[String]');
     expect((result.output as ListComposer).getType().toString()).toBe('[String]');
   });
+  it('should treat anyOf with a null type as a nullable version of the other type (issue #8719)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'NullableString',
+      anyOf: [{ type: 'string' }, { type: 'null' }],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    // Should be a nullable String scalar, not an object type with String/Void fields
+    expect(result.output.getType()).toBe(GraphQLString);
+    expect(result.nullable).toBe(true);
+  });
+  it('should treat anyOf[X, null] as nullable X even for object types (issue #8719)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'NullableObject',
+      anyOf: [
+        {
+          type: 'object',
+          title: 'MyObj',
+          properties: { id: { type: 'string' } },
+        },
+        { type: 'null' },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    expect(result.nullable).toBe(true);
+    const output = result.output as ObjectTypeComposer;
+    expect(isObjectType(output.getType())).toBe(true);
+    expect(output.getFieldNames()).toContain('id');
+    // Must NOT have a "Void" field
+    expect(output.getFieldNames()).not.toContain('Void');
+  });
+  it('should deep-merge allOf nested NonNull object fields (issue #8607)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'Movie',
+      allOf: [
+        {
+          type: 'object',
+          title: 'MovieBase',
+          properties: {
+            info: {
+              type: 'object',
+              title: 'MovieInfo',
+              properties: {
+                id: { type: 'string' },
+                title: { type: 'string' },
+              },
+              required: ['id', 'title'],
+            },
+          },
+        },
+        {
+          type: 'object',
+          title: 'MovieExtra',
+          properties: {
+            info: {
+              type: 'object',
+              title: 'MovieInfo',
+              properties: {
+                rating: { type: 'number' },
+              },
+            },
+          },
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    const output = result.output as ObjectTypeComposer;
+    expect(isObjectType(output.getType())).toBe(true);
+    const infoField = output.getField('info');
+    expect(infoField).toBeDefined();
+    const infoTC = infoField.type.getUnwrappedTC() as ObjectTypeComposer;
+    expect(isObjectType(infoTC.getType())).toBe(true);
+    // All three fields should be present after deep merge
+    expect(infoTC.getFieldNames()).toContain('id');
+    expect(infoTC.getFieldNames()).toContain('title');
+    expect(infoTC.getFieldNames()).toContain('rating');
+  });
 });

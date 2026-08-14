@@ -251,6 +251,18 @@ export async function getReferencedJSONSchemaFromOperations({
       }
     }
 
+    if (operationConfig.requiredArgs?.length) {
+      const fieldInputDef = rootTypeInputTypeDefinition.properties[fieldName];
+      if (fieldInputDef) {
+        fieldInputDef.required = fieldInputDef.required || [];
+        for (const argName of operationConfig.requiredArgs) {
+          if (!fieldInputDef.required.includes(argName)) {
+            fieldInputDef.required.push(argName);
+          }
+        }
+      }
+    }
+
     if ('binary' in operationConfig) {
       const generatedSchema = {
         type: 'string',
