@@ -159,7 +159,6 @@
     "lru-cache": "patch:lru-cache@npm%3A11.2.6#~/.yarn/patches/lru-cache-npm-11.2.6-acb7d4323e.patch",
     "mermaid": "11.16.1",
     "minimatch": "10.2.6",
-    "nextra": "patch:nextra@npm%3A3.2.5#~/.yarn/patches/nextra-npm-3.2.5-ab823bf5b2.patch",
     "node-fetch": "^2.6.7",
     "node-gyp": "^12.0.0",
     "nth-check": "^2.0.1",

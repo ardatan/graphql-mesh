@@ -2,13 +2,10 @@
 import { withGuildDocs } from '@theguild/components/next.config';
 
 export default withGuildDocs({
+  env: {
+    SITE_URL: process.env.SITE_URL || 'https://the-guild.dev/graphql/mesh',
+  },
   output: 'export',
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  nextraConfig: {
-    autoImportThemeStyle: false,
-  },
   redirects: () =>
     Object.entries({
       '/api': '/docs',

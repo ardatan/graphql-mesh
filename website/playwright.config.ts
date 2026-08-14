@@ -31,5 +31,8 @@ export default defineConfig({
     cwd: import.meta.dirname,
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
 });
