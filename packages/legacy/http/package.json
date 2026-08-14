@@ -32,13 +32,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-yoga/render-graphiql": "^5.16.2",
     "graphql": "*"
-  },
-  "peerDependenciesMeta": {
-    "@graphql-yoga/render-graphiql": {
-      "optional": true
-    }
   },
   "dependencies": {
     "@graphql-mesh/cross-helpers": "^0.4.16",

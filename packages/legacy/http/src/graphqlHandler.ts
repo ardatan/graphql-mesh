@@ -14,6 +14,7 @@ export const graphqlHandler = ({
   batchingLimit,
   healthCheckEndpoint = '/healthcheck',
   extraParamNames,
+  renderGraphiQL: renderGraphiQLFn,
 }: {
   getBuiltMesh: () => Promise<MeshInstance>;
   playgroundTitle: string;
@@ -24,6 +25,7 @@ export const graphqlHandler = ({
   batchingLimit?: number;
   healthCheckEndpoint?: string;
   extraParamNames?: string[];
+  renderGraphiQL?: (options?: any) => string | Promise<string>;
 }) => {
   const getYogaForMesh = memoize1(function getYogaForMesh(mesh: MeshInstance) {
     const yogaOptions: Parameters<typeof createYoga>[0] = {
@@ -52,16 +54,8 @@ export const graphqlHandler = ({
       disposeOnProcessTerminate: true,
     };
 
-    if (playgroundEnabled && playgroundOffline) {
-      yogaOptions.renderGraphiQL = opts =>
-        import('@graphql-yoga/render-graphiql').then(
-          ({ renderGraphiQL }) => renderGraphiQL(opts),
-          () => {
-            throw new Error(
-              'To use offline GraphiQL playground, please install the "@graphql-yoga/render-graphiql" package.',
-            );
-          },
-        );
+    if (playgroundEnabled && playgroundOffline && renderGraphiQLFn) {
+      yogaOptions.renderGraphiQL = renderGraphiQLFn;
     }
 
     const yoga = createYoga(yogaOptions);

@@ -12,11 +12,13 @@ export function createMeshHTTPHandler<TServerContext>({
   getBuiltMesh,
   rawServeConfig = {},
   playgroundTitle,
+  renderGraphiQL,
 }: {
   baseDir: string;
   getBuiltMesh: () => Promise<MeshInstance>;
   rawServeConfig?: YamlConfig.Config['serve'];
   playgroundTitle?: string;
+  renderGraphiQL?: (options?: any) => string | Promise<string>;
 }) {
   let readyFlag = false;
   let logger: Logger = new DefaultLogger('Mesh HTTP');
@@ -51,6 +53,7 @@ export function createMeshHTTPHandler<TServerContext>({
       corsConfig,
       batchingLimit,
       extraParamNames,
+      renderGraphiQL,
     }),
     {
       plugins: [

@@ -150,6 +150,9 @@ export async function graphqlMesh(
                   meshConfigImportCodes: new Set([
                     `import { findAndParseConfig } from '@graphql-mesh/cli';`,
                     `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
+                    ...(meshConfig.config.serve?.playgroundOffline
+                      ? [`import { renderGraphiQL } from '@graphql-yoga/render-graphiql';`]
+                      : []),
                   ]),
                   meshConfigCodes: new Set([
                     `
@@ -170,7 +173,9 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
   return createMeshHTTPHandler<TServerContext>({
     baseDir,
     getBuiltMesh: ${cliParams.builtMeshFactoryName},
-    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
+    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},${
+                      meshConfig.config.serve?.playgroundOffline ? '\n    renderGraphiQL,' : ''
+                    }
   })
 }
               `.trim(),
@@ -401,12 +406,19 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           meshConfig.importCodes.add(
             `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
           );
+          if (meshConfig.config.serve?.playgroundOffline) {
+            meshConfig.importCodes.add(
+              `import { renderGraphiQL } from '@graphql-yoga/render-graphiql';`,
+            );
+          }
           meshConfig.codes.add(`
 export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandler<TServerContext> {
   return createMeshHTTPHandler<TServerContext>({
     baseDir,
     getBuiltMesh: ${cliParams.builtMeshFactoryName},
-    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
+    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},${
+            meshConfig.config.serve?.playgroundOffline ? '\n    renderGraphiQL,' : ''
+          }
   })
 }
 `);
