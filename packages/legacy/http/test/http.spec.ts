@@ -208,4 +208,50 @@ describe('http', () => {
     const result: ExecutionResult = JSON.parse(gunzipSync(finalRes).toString());
     expect(result.data.__typename).toBe('Query');
   });
+
+  describe('renderGraphiQL', () => {
+    it('uses the provided renderGraphiQL function when playgroundOffline is set', async () => {
+      await using mesh = await getTestMesh();
+      const customHtml = '<html><body>custom graphiql</body></html>';
+      const renderGraphiQL = jest.fn().mockReturnValue(customHtml);
+      const httpHandler = createMeshHTTPHandler({
+        baseDir: __dirname,
+        getBuiltMesh: async () => mesh,
+        rawServeConfig: {
+          playground: true,
+          playgroundOffline: true,
+        },
+        renderGraphiQL,
+      });
+      const response = await httpHandler.fetch('http://localhost:4000/graphql', {
+        headers: { Accept: 'text/html' },
+      });
+      expect(response.status).toBe(200);
+      const body = await response.text();
+      expect(body).toBe(customHtml);
+      expect(renderGraphiQL).toHaveBeenCalled();
+    });
+
+    it('does not call renderGraphiQL when playgroundOffline is not set', async () => {
+      await using mesh = await getTestMesh();
+      const renderGraphiQL = jest.fn().mockReturnValue('<html>custom</html>');
+      const httpHandler = createMeshHTTPHandler({
+        baseDir: __dirname,
+        getBuiltMesh: async () => mesh,
+        rawServeConfig: {
+          playground: true,
+          playgroundOffline: false,
+        },
+        renderGraphiQL,
+      });
+      // Perform a normal GraphQL request - renderGraphiQL should not be called
+      const response = await httpHandler.fetch('http://localhost:4000/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: '{ __typename }' }),
+      });
+      expect(response.status).toBe(200);
+      expect(renderGraphiQL).not.toHaveBeenCalled();
+    });
+  });
 });

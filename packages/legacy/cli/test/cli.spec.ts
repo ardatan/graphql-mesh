@@ -68,5 +68,47 @@ describe('runtime', () => {
       // Check that the reference to the relative module in the "importFn" function has kept the file's extension
       expect(builtMesh).toMatch(/case "\.meshrc.js":/);
     });
+
+    it('should include renderGraphiQL import and usage in generated artifacts when playgroundOffline is true', async () => {
+      const configFolder = 'playground-offline-config';
+      await graphqlMesh(DEFAULT_CLI_PARAMS, [
+        'build',
+        `--dir=${pathModule.resolve(__dirname, configFolder)}`,
+      ]);
+
+      const meshConfigPath = pathModule.resolve(
+        __dirname,
+        configFolder,
+        generatedMeshConfiguration,
+        'index.ts',
+      );
+      const builtMesh = (await fs.promises.readFile(meshConfigPath)).toString();
+
+      // The generated artifact must import renderGraphiQL from @graphql-yoga/render-graphiql
+      expect(builtMesh).toMatch(
+        /import\s+\{[^}]*renderGraphiQL[^}]*\}\s+from\s+'@graphql-yoga\/render-graphiql'/,
+      );
+      // And pass it to createMeshHTTPHandler
+      expect(builtMesh).toMatch(/renderGraphiQL,/);
+    });
+
+    it('should not include renderGraphiQL import in generated artifacts when playgroundOffline is not set', async () => {
+      const tsConfigFolder = 'ts-config';
+      await graphqlMesh(DEFAULT_CLI_PARAMS, [
+        'build',
+        `--dir=${pathModule.resolve(__dirname, tsConfigFolder)}`,
+      ]);
+
+      const meshConfigPath = pathModule.resolve(
+        __dirname,
+        tsConfigFolder,
+        generatedMeshConfiguration,
+        'index.ts',
+      );
+      const builtMesh = (await fs.promises.readFile(meshConfigPath)).toString();
+
+      // renderGraphiQL should not be present in regular (non-offline-playground) artifacts
+      expect(builtMesh).not.toMatch(/@graphql-yoga\/render-graphiql/);
+    });
   });
 });
