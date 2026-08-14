@@ -1,5 +1,40 @@
 # @graphql-mesh/http
 
+## 0.109.0
+
+### Minor Changes
+
+- [#9627](https://github.com/ardatan/graphql-mesh/pull/9627)
+  [`51b15f4`](https://github.com/ardatan/graphql-mesh/commit/51b15f445e07c8f8d892e0a21f0ae5b638ada74e)
+  Thanks [@copilot-swe-agent](https://github.com/apps/copilot-swe-agent)! - feat: serve GraphiQL
+  offline via `serve.playground.offline`
+
+  Air-gapped setups can bundle GraphiQL assets inline instead of loading them from a CDN:
+
+  ```yaml
+  serve:
+    playground:
+      offline: true
+  ```
+
+  `playground: true` / `false` is unchanged. Generated artifacts import
+  `@graphql-yoga/render-graphiql` when offline mode is enabled.
+
+### Patch Changes
+
+- [#9631](https://github.com/ardatan/graphql-mesh/pull/9631)
+  [`ab73b38`](https://github.com/ardatan/graphql-mesh/commit/ab73b383c4ef294891dda6c9c8598a9651494762)
+  Thanks [@ardatan](https://github.com/ardatan)! - Do not silently fall back to CDN GraphiQL when
+  `serve.playground.offline` is set without `renderGraphiQL`, and document that
+  `@graphql-yoga/render-graphiql` must be installed in the app.
+
+- Updated dependencies
+  [[`ab73b38`](https://github.com/ardatan/graphql-mesh/commit/ab73b383c4ef294891dda6c9c8598a9651494762),
+  [`51b15f4`](https://github.com/ardatan/graphql-mesh/commit/51b15f445e07c8f8d892e0a21f0ae5b638ada74e)]:
+  - @graphql-mesh/types@0.107.0
+  - @graphql-mesh/runtime@0.109.0
+  - @graphql-mesh/utils@0.107.0
+
 ## 0.108.0
 
 ### Patch Changes

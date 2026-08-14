@@ -1,5 +1,25 @@
 # @graphql-mesh/migrate-config-cli
 
+## 1.10.0
+
+### Patch Changes
+
+- [#9628](https://github.com/ardatan/graphql-mesh/pull/9628)
+  [`7aab706`](https://github.com/ardatan/graphql-mesh/commit/7aab706d9445b80efb56cd11ca47ce5ef5be7a51)
+  Thanks [@ardatan](https://github.com/ardatan)! - Make v0 config migration testable and document
+  handler/transform mappings. The CLI now fails without writing on unsupported config, supports
+  `--dry-run` and `--force`, and maps more GraphQL/transform options instead of dumping YAML as-is.
+
+- Updated dependencies
+  [[`51b15f4`](https://github.com/ardatan/graphql-mesh/commit/51b15f445e07c8f8d892e0a21f0ae5b638ada74e),
+  [`ab73b38`](https://github.com/ardatan/graphql-mesh/commit/ab73b383c4ef294891dda6c9c8598a9651494762),
+  [`51b15f4`](https://github.com/ardatan/graphql-mesh/commit/51b15f445e07c8f8d892e0a21f0ae5b638ada74e)]:
+  - @graphql-mesh/cli@0.103.0
+  - @graphql-mesh/types@0.107.0
+  - @graphql-mesh/compose-cli@1.8.0
+  - @graphql-mesh/config@0.111.0
+  - @graphql-mesh/utils@0.107.0
+
 ## 1.9.0
 
 ### Patch Changes
