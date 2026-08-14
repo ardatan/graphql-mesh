@@ -4,6 +4,17 @@ import { Callout } from '@theguild/components'
 
 <Callout>This feature is still work-in-progress. Please report any issues you encounter.</Callout>
 
+This page is for people coming from Mesh **v0** (`.meshrc.yml`, `@graphql-mesh/cli`, `.mesh`
+artifacts). Mesh **v1** is a different product shape: **Compose** builds a Supergraph SDL, **Hive
+Gateway** serves it. The sections below keep the original v0 concepts and show what they became.
+
+<Callout>
+  Please make sure all of your `@graphql-mesh/` packages are up-to-date on v0 first. Otherwise, the
+  migration script may not parse your config as expected.
+</Callout>
+
+## What changed (v0 vs v1)
+
 If you are migrating from GraphQL Mesh v0, you should be aware of the following changes:
 
 - GraphQL Mesh no longer comes with a built-in gateway. You should setup Hive Gateway to serve the
@@ -27,21 +38,127 @@ GraphQL Mesh is now only responsible of generating a GraphQL SDL file `supergrap
 `subgraph.graphql` that you can use with Hive Gateway. It is not responsible for serving the
 generated artifacts.
 
-For in-process execution (instead of a standalone gateway process), see
-[Local Execution](/v1/local-execution).
+| Topic                | v0                                                                 | v1                                                                                                      |
+| -------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Role of Mesh         | One runtime: load sources, merge, transform, **and** serve GraphQL | **Compose only**: produce Supergraph/Subgraph SDL                                                       |
+| Serving              | Built into `@graphql-mesh/cli` (`mesh dev` / `mesh start`)         | [Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway) (`hive-gateway supergraph`)             |
+| Config               | `.meshrc.yml` / `.meshrc.yaml` / `.meshrc.json` / `.meshrc.js`     | `mesh.config.ts` (or `.js`) with `composeConfig` + `gatewayConfig`                                      |
+| Packages             | `@graphql-mesh/cli` + `@graphql-mesh/<handler>`                    | `@graphql-mesh/compose-cli` + `@omnigraph/*` + `@graphql-hive/gateway`                                  |
+| Output               | `.mesh/` (JS SDK, `execute`, HTTP handler, schema)                 | `supergraph.graphql` (or `.js`) — SDL, not a Node server                                                |
+| Schema merge         | `merger` (stitching / bare / federation)                           | Federation-compatible composition                                                                       |
+| Transforms           | `bare` or `wrap`; can sit on a source **or** on the unified schema | Wrap only; **source-level** in compose; Federation directives                                           |
+| Type merging         | `typeMerging` transform / stitching                                | [Federation transform](/v1/transforms/federation) / [`@resolveTo`](/v1/schema-extensions)               |
+| Codegen / SDK        | `codegen`, `sdk`, `documents` inside Mesh                          | GraphQL Codegen on your side                                                                            |
+| Persisted operations | Mesh-generated store                                               | [Hive Gateway persisted documents](https://the-guild.dev/graphql/hive/docs/gateway/persisted-documents) |
+| In-process execute   | `getBuiltMesh()` / `.mesh` `execute`                               | [Local Execution](/v1/local-execution) via Hive Gateway executor                                        |
 
-<Callout>
-  Please make sure all of your `@graphql-mesh/` packages are up-to-date. Otherwise, the migration
-  script may not work as expected.
-</Callout>
+```mermaid
+flowchart LR
+  subgraph v0["Mesh v0"]
+    S0[Sources] --> C0[".meshrc.yml"]
+    C0 --> CLI0["mesh build / mesh start"]
+    CLI0 --> ART[".mesh JS + HTTP handler"]
+    ART --> Client0[Clients]
+  end
+```
+
+```mermaid
+flowchart LR
+  subgraph v1["Mesh v1"]
+    S1[Sources] --> C1["mesh.config.ts composeConfig"]
+    C1 --> COMPOSE["mesh-compose"]
+    COMPOSE --> SDL["supergraph.graphql"]
+    SDL --> GW["Hive Gateway"]
+    GW --> Client1[Clients]
+  end
+```
+
+## Mental model: sources vs subgraphs
+
+v0 called each upstream a **source** (handler + optional transforms), then merged them into a
+**unified schema**. v1 calls each upstream a **subgraph**. Compose loads it with a `sourceHandler`,
+applies transforms on that subgraph, then composes a **supergraph**.
+
+| v0                                  | v1                                                                                             |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `sources[].name`                    | First argument of `loadOpenAPISubgraph('Wiki', …)` / `loadGraphQLHTTPSubgraph('Countries', …)` |
+| `sources[].handler.openapi`         | `sourceHandler: loadOpenAPISubgraph(...)`                                                      |
+| `sources[].transforms`              | `subgraphs[].transforms: [createPrefixTransform(...)]`                                         |
+| Root `transforms:` (unified schema) | **Not supported** — move onto a subgraph or use Federation                                     |
+| `additionalTypeDefs`                | `composeConfig.additionalTypeDefs` (often with `@resolveTo`)                                   |
+| `additionalResolvers`               | `gatewayConfig.additionalResolvers` (runtime, not compose)                                     |
 
 ## Configuration Format
 
-Before, Mesh used a configuration file in `.meshrc.yml`, `.meshrc.yaml`, `.meshrc.json`, or
-`.meshrc.js` format. Now Mesh supports a configuration file in `mesh.config.ts` or `mesh.config.js`
-format, with `composeConfig` (SDL generation) and `gatewayConfig` (Hive Gateway).
+Before, Mesh used `.meshrc.yml` (or yaml/json/js). Now Mesh uses `mesh.config.ts` / `mesh.config.js`
+with two exports:
 
-Install `@graphql-mesh/migrate-config-cli` to migrate your configuration file from v0 to v1.
+- `composeConfig` — what **Mesh Compose** reads (`mesh-compose`)
+- `gatewayConfig` — what **Hive Gateway** reads (`hive-gateway`)
+
+The same file can hold both so one project still has a single config, but the jobs are split.
+
+### Example: same gateway, two configs
+
+v0 `.meshrc.yml`:
+
+```yaml filename=".meshrc.yml"
+sources:
+  - name: Wiki
+    handler:
+      openapi:
+        source: ./wiki.yaml
+    transforms:
+      - prefix:
+          value: Wiki_
+  - name: Countries
+    handler:
+      graphql:
+        endpoint: https://countries.trevorblades.com
+serve:
+  port: 4000
+  cors:
+    origin: '*'
+plugins:
+  - responseCache:
+      ttl: 1000
+```
+
+v1 `mesh.config.ts` (what the migrator aims to produce):
+
+```ts filename="mesh.config.ts"
+import {
+  createPrefixTransform,
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('Wiki', { source: './wiki.yaml' }),
+      transforms: [createPrefixTransform({ value: 'Wiki_' })]
+    },
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Countries', {
+        endpoint: 'https://countries.trevorblades.com'
+      })
+    }
+  ]
+})
+
+export const gatewayConfig = defineGatewayConfig({
+  port: 4000,
+  cors: { origin: '*' },
+  responseCaching: { ttl: 1000 }
+})
+```
+
+### Run the migrator
+
+Install `@graphql-mesh/migrate-config-cli` to generate `mesh.config.ts` from your v0 file.
 
 ```sh npm2yarn
 npm install @graphql-mesh/migrate-config-cli
@@ -74,98 +191,145 @@ to those warnings and errors.
   Please report anything it gets wrong.
 </Callout>
 
+## CLI and daily workflow
+
+| Goal                                     | v0                           | v1                                                                                                   |
+| ---------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Dev server (rebuild schema from sources) | `mesh dev`                   | `mesh-compose -o supergraph.graphql` then `hive-gateway supergraph` (re-compose when sources change) |
+| Production schema artifacts              | `mesh build` → `.mesh/`      | `mesh-compose -o supergraph.graphql`                                                                 |
+| Production HTTP server                   | `mesh start` (loads `.mesh`) | `hive-gateway supergraph` (loads SDL)                                                                |
+| Validate                                 | `mesh validate`              | Compose + Gateway config / Hive schema checks                                                        |
+| Serve a single source                    | `mesh serve-source`          | Compose one subgraph, or point Hive Gateway at that subgraph SDL                                     |
+
+v0 `package.json` often looked like `"dev": "mesh dev"`, `"build": "mesh build"`,
+`"start": "mesh start"`. v1 splits that into compose (CI / build) and gateway (runtime).
+
 ## Package Changes
 
 Instead of `@graphql-mesh/cli`, you should now use `@graphql-mesh/compose-cli` and
 `@graphql-hive/gateway`.
-
-For example with `npm`:
 
 ```sh npm2yarn
 npm uninstall @graphql-mesh/cli
 npm install @graphql-mesh/compose-cli @graphql-hive/gateway
 ```
 
-Source handler packages are also changed: `@omnigraph/*` instead of `@graphql-mesh/*` for most
-handlers. The CLI prints the exact add/remove list for your config. Mapping:
+Source handler packages moved from `@graphql-mesh/<handler>` to `@omnigraph/*` (GraphQL HTTP stays
+on compose-cli). The migrator prints the exact add/remove list for **your** config.
 
-| v0 `handler`   | v0 package                   | v1 loader                                                | v1 package                  |
-| -------------- | ---------------------------- | -------------------------------------------------------- | --------------------------- |
-| `graphql`      | `@graphql-mesh/graphql`      | `loadGraphQLHTTPSubgraph`                                | `@graphql-mesh/compose-cli` |
-| `openapi`      | `@graphql-mesh/openapi`      | `loadOpenAPISubgraph`                                    | `@omnigraph/openapi`        |
-| `jsonSchema`   | `@graphql-mesh/json-schema`  | `loadJSONSchemaSubgraph`                                 | `@omnigraph/json-schema`    |
-| `grpc`         | `@graphql-mesh/grpc`         | `loadGRPCSubgraph`                                       | `@omnigraph/grpc`           |
-| `soap`         | `@graphql-mesh/soap`         | `loadSOAPSubgraph`                                       | `@omnigraph/soap`           |
-| `raml`         | `@graphql-mesh/raml`         | `loadRAMLSubgraph`                                       | `@omnigraph/raml`           |
-| `mysql`        | `@graphql-mesh/mysql`        | `loadMySQLSubgraph`                                      | `@omnigraph/mysql`          |
-| `postgraphile` | `@graphql-mesh/postgraphile` | `loadPostgreSQLSubgraph`                                 | `@omnigraph/postgresql`     |
-| `mongoose`     | `@graphql-mesh/mongoose`     | `loadMongooseSubgraph`                                   | `@omnigraph/mongoose`       |
-| `neo4j`        | `@graphql-mesh/neo4j`        | `loadNeo4jSubgraph`                                      | `@omnigraph/neo4j`          |
-| `odata`        | `@graphql-mesh/odata`        | `loadODataSubgraph`                                      | `@omnigraph/odata`          |
-| `thrift`       | `@graphql-mesh/thrift`       | `loadThriftSubgraph`                                     | `@omnigraph/thrift`         |
-| `tuql`         | `@graphql-mesh/tuql`         | `loadSQLiteSubgraph`                                     | `@omnigraph/sqlite`         |
-| `supergraph`   | —                            | **Do not compose.** Pass the supergraph to Hive Gateway. | `@graphql-hive/gateway`     |
+| v0 `handler`   | v0 package                                      | v1 loader                                          | v1 package                  |
+| -------------- | ----------------------------------------------- | -------------------------------------------------- | --------------------------- |
+| `graphql`      | `@graphql-mesh/graphql`                         | `loadGraphQLHTTPSubgraph`                          | `@graphql-mesh/compose-cli` |
+| `openapi`      | `@graphql-mesh/openapi`                         | `loadOpenAPISubgraph`                              | `@omnigraph/openapi`        |
+| `jsonSchema`   | `@graphql-mesh/json-schema`                     | `loadJSONSchemaSubgraph`                           | `@omnigraph/json-schema`    |
+| `grpc`         | `@graphql-mesh/grpc`                            | `loadGRPCSubgraph`                                 | `@omnigraph/grpc`           |
+| `soap`         | `@graphql-mesh/soap`                            | `loadSOAPSubgraph`                                 | `@omnigraph/soap`           |
+| `raml`         | `@graphql-mesh/raml`                            | `loadRAMLSubgraph`                                 | `@omnigraph/raml`           |
+| `mysql`        | `@graphql-mesh/mysql`                           | `loadMySQLSubgraph`                                | `@omnigraph/mysql`          |
+| `postgraphile` | `@graphql-mesh/postgraphile`                    | `loadPostgreSQLSubgraph`                           | `@omnigraph/postgresql`     |
+| `mongoose`     | `@graphql-mesh/mongoose`                        | `loadMongooseSubgraph`                             | `@omnigraph/mongoose`       |
+| `neo4j`        | `@graphql-mesh/neo4j`                           | `loadNeo4jSubgraph`                                | `@omnigraph/neo4j`          |
+| `odata`        | `@graphql-mesh/odata`                           | `loadODataSubgraph`                                | `@omnigraph/odata`          |
+| `thrift`       | `@graphql-mesh/thrift`                          | `loadThriftSubgraph`                               | `@omnigraph/thrift`         |
+| `tuql`         | `@graphql-mesh/tuql`                            | `loadSQLiteSubgraph`                               | `@omnigraph/sqlite`         |
+| `supergraph`   | consume an existing supergraph as a Mesh source | **Do not compose.** Give that SDL to Hive Gateway. | `@graphql-hive/gateway`     |
 
-GraphQL handler notes for the migrator:
+GraphQL handler differences the migrator knows about:
 
-- HTTP `{ endpoint }` is copied as-is.
-- Code-first `{ source: './schema.ts' }` becomes `{ endpoint: './schema.ts' }` for
-  `loadGraphQLHTTPSubgraph`.
-- `sources` + `fallback` / `race` / `highestValue` is **not** auto-migrated. Split into subgraphs or
-  keep a single endpoint.
+- v0 HTTP `{ endpoint }` → v1 `loadGraphQLHTTPSubgraph(name, { endpoint })` (copied as-is).
+- v0 code-first `{ source: './schema.ts' }` → v1 `{ endpoint: './schema.ts' }` (the v1 loader uses
+  `endpoint` for URL **or** a local schema file).
+- v0 `sources` + `fallback` / `race` / `highestValue` is **not** auto-migrated. In v0 that was one
+  handler with several HTTP backends. In v1, split them into subgraphs or keep a single endpoint.
 
 See [Source Handlers](/v1/source-handlers).
 
 ## Transforms
 
-Source-level transforms become `create*Transform` from `@graphql-mesh/compose-cli`. As above, there
-is no `bare` mode; `mode: wrap` is dropped because wrap is the only mode.
+v0 transforms could run in `bare` mode (mutate the schema in place) or `wrap` mode (schema
+wrapping). v1 only wraps, and emits Federation-compatible directives, so the result must be served
+by Hive Gateway (or another Federation-aware gateway). `mode: wrap` in YAML is dropped; it is
+implied.
 
-Root-level `transforms:` on the mesh config is **not** supported. Move them onto a source, or
-replace stitching with [Federation](/v1/transforms/federation).
+v0 allowed **root-level** `transforms:` on the unified schema. v1 does **not**. Move them onto the
+relevant source, or replace stitching with [Federation](/v1/transforms/federation).
 
-| v0 transform           | v1                                | Notes                                                       |
-| ---------------------- | --------------------------------- | ----------------------------------------------------------- |
-| `prefix`               | `createPrefixTransform`           | [docs](/v1/transforms/prefix)                               |
-| `rename`               | `createRenameTransform`           | [docs](/v1/transforms/rename)                               |
-| `filterSchema`         | `createFilterTransform`           | Arrays become `{ filters: [...] }`                          |
-| `encapsulate`          | `createEncapsulateTransform`      | [docs](/v1/transforms/encapsulate)                          |
-| `namingConvention`     | `createNamingConventionTransform` | [docs](/v1/transforms/naming-convention)                    |
-| `hoistField`           | `createHoistFieldTransform`       | Arrays become `{ mapping: [...] }`                          |
-| `prune`                | `createPruneTransform`            | [docs](/v1/transforms/prune)                                |
-| `federation`           | `createFederationTransform`       | [docs](/v1/transforms/federation)                           |
-| `extend`               | `createExtendTransform(typeDefs)` | `extend.resolvers` → `gatewayConfig.additionalResolvers`    |
-| `typeMerging`          | **manual**                        | Use Federation transform / [type merging](/v1/type-merging) |
-| `cache`                | **manual**                        | [Response caching](/v1/response-caching) on the gateway     |
-| `rateLimit`            | **manual**                        | [Rate limit](/v1/rate-limit) on the gateway                 |
-| `replaceField`         | **manual**                        | Hoist / rename / `additionalTypeDefs`                       |
-| `resolversComposition` | **manual**                        | `additionalResolvers` or a gateway plugin                   |
+| v0 transform           | v1                                | What is different                                                                    |
+| ---------------------- | --------------------------------- | ------------------------------------------------------------------------------------ |
+| `prefix`               | `createPrefixTransform`           | Same idea; [docs](/v1/transforms/prefix)                                             |
+| `rename`               | `createRenameTransform`           | [docs](/v1/transforms/rename)                                                        |
+| `filterSchema`         | `createFilterTransform`           | Drop `mode`. A YAML list of globs becomes `{ filters: [...] }`                       |
+| `encapsulate`          | `createEncapsulateTransform`      | [docs](/v1/transforms/encapsulate)                                                   |
+| `namingConvention`     | `createNamingConventionTransform` | [docs](/v1/transforms/naming-convention)                                             |
+| `hoistField`           | `createHoistFieldTransform`       | v0 array → `{ mapping: [...] }`                                                      |
+| `prune`                | `createPruneTransform`            | [docs](/v1/transforms/prune)                                                         |
+| `federation`           | `createFederationTransform`       | How you declare keys / `@merge` in v1                                                |
+| `extend`               | `createExtendTransform(typeDefs)` | `typeDefs` stay in compose; `extend.resolvers` → `gatewayConfig.additionalResolvers` |
+| `typeMerging`          | **manual**                        | Stitching-style merge → Federation / [type merging](/v1/type-merging)                |
+| `cache`                | **manual**                        | Was a transform; now a **gateway** plugin — [response caching](/v1/response-caching) |
+| `rateLimit`            | **manual**                        | Was a transform; now gateway / `@rateLimit` — [rate limit](/v1/rate-limit)           |
+| `replaceField`         | **manual**                        | Use hoist, rename, or `additionalTypeDefs`                                           |
+| `resolversComposition` | **manual**                        | `additionalResolvers` or a gateway plugin                                            |
 
-## What goes on compose vs gateway
+## Serve, plugins, and runtime (compose vs gateway)
 
-| v0                                                                                      | v1                                                                                              |
-| --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `sources`, source `transforms`, `additionalTypeDefs`, `customFetch` (compose fetch)     | `composeConfig`                                                                                 |
-| `serve.*`, `plugins`, `cache`, `additionalResolvers`, `logger`, `customFetch` (runtime) | `gatewayConfig`                                                                                 |
-| `codegen`, `sdk`, `documents`                                                           | GraphQL Codegen / your client, not Mesh                                                         |
-| `merger`                                                                                | Federation composition (warning only)                                                           |
-| `pubsub`                                                                                | Hive Gateway subscriptions — [docs](/v1/subscriptions-webhooks)                                 |
-| `persistedOperations`                                                                   | [Hive persisted documents](https://the-guild.dev/graphql/hive/docs/gateway/persisted-documents) |
-| `serve.extraParamNames`, `serve.browser`                                                | not migrated                                                                                    |
+In v0, `serve`, `plugins`, `cache`, and `customFetch` lived next to `sources` in one YAML file. In
+v1, anything that **builds SDL** is compose; anything that **runs requests** is Hive Gateway.
 
-Serve field mapping: `port` → `port`, `hostname` → `host`, `endpoint` → `graphqlEndpoint`,
-`playground: false` → `graphiql: false`, `playgroundTitle` → `graphiql.title`, `cors`,
-`healthCheckEndpoint`, `batchingLimit` → `batching.limit`, `sslCredentials`, `fork`.
+| v0                                                                                           | v1                                                                                              |
+| -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `sources`, source `transforms`, `additionalTypeDefs`, `customFetch` used while introspecting | `composeConfig` (`fetch` on compose)                                                            |
+| `serve.*`, `plugins`, `cache`, `additionalResolvers`, `logger`, runtime `customFetch`        | `gatewayConfig` (`fetchAPI.fetch`)                                                              |
+| `codegen`, `sdk`, `documents`                                                                | GraphQL Codegen / your client — Mesh does not run these                                         |
+| `merger`                                                                                     | No replacement key; composition is Federation-style (migrator warns)                            |
+| `pubsub`                                                                                     | Hive Gateway subscriptions — [docs](/v1/subscriptions-webhooks)                                 |
+| `persistedOperations`                                                                        | [Hive persisted documents](https://the-guild.dev/graphql/hive/docs/gateway/persisted-documents) |
+| `serve.extraParamNames`, `serve.browser`                                                     | not migrated                                                                                    |
 
-Built-in plugin mapping: `hive` → `reporting` (+ `persistedDocuments` when present), `responseCache`
-→ `responseCaching`, `rateLimit` → `rateLimiting`, `prometheus` → `prometheus`, `maskedErrors` →
-`maskedErrors`, `immediateIntrospection` → `useImmediateIntrospection()`. Other plugins are resolved
-from `@envelop/*` / `@graphql-yoga/plugin-*` when possible.
+### `serve` field names
+
+| v0 `serve`                                    | v1 `gatewayConfig`           |
+| --------------------------------------------- | ---------------------------- |
+| `port`                                        | `port`                       |
+| `hostname`                                    | `host`                       |
+| `endpoint` (GraphQL path, default `/graphql`) | `graphqlEndpoint`            |
+| `playground: false`                           | `graphiql: false`            |
+| `playgroundTitle`                             | `graphiql: { title }`        |
+| `cors`                                        | `cors`                       |
+| `healthCheckEndpoint`                         | `healthCheckEndpoint`        |
+| `batchingLimit`                               | `batching: { limit }`        |
+| `sslCredentials`                              | `sslCredentials`             |
+| `fork`                                        | `fork`                       |
+| `staticFiles`                                 | `useStaticFiles(...)` plugin |
+| `browser`                                     | skipped (dev-only auto-open) |
+
+### Plugins
+
+| v0 `plugins`                         | v1                                                                        |
+| ------------------------------------ | ------------------------------------------------------------------------- |
+| `hive`                               | `reporting: { type: 'hive', ... }` and `persistedDocuments` when set      |
+| `responseCache`                      | `responseCaching`                                                         |
+| `rateLimit`                          | `rateLimiting`                                                            |
+| `prometheus`                         | `prometheus`                                                              |
+| `maskedErrors`                       | `maskedErrors`                                                            |
+| `immediateIntrospection`             | `useImmediateIntrospection()` in `plugins`                                |
+| other Envelop / Yoga / Armor plugins | resolved when possible; otherwise add to `gatewayConfig.plugins` yourself |
+
+v0 `cache:` (Redis, Localforage, …) becomes `gatewayConfig.cache: new Cache(...)` with
+`@graphql-mesh/cache-*`. That is **not** the old Cache **transform**.
 
 ## Using Artifacts
 
-GraphQL Mesh no longer generates artifacts with `execute` or `createBuiltMeshHTTPHandler` functions.
-Instead, it generates a GraphQL SDL file that you can use with Hive Gateway.
+GraphQL Mesh no longer generates artifacts with `execute` or `createBuiltMeshHTTPHandler`. v0
+deployment used those from `.mesh` after `mesh build`. v1 deployment uses an SDL file plus Hive
+Gateway.
+
+| v0 artifact                                 | v1                                                                                                                 |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `.mesh/index.js` `getBuiltMesh` / `execute` | Compose SDL + [local execution](/v1/local-execution) (`getExecutorForUnifiedGraph`)                                |
+| `.mesh` `createBuiltMeshHTTPHandler`        | Hive Gateway Node / serverless adapters — [deployment](https://the-guild.dev/graphql/hive/docs/gateway/deployment) |
+| Generated SDK from `sdk:`                   | GraphQL Codegen client-preset (or similar) against the supergraph                                                  |
+| Playground on `mesh dev`                    | GraphiQL on Hive Gateway                                                                                           |
 
 After a successful config migration:
 
@@ -178,4 +342,5 @@ Read more about
 [Hive Gateway's Deployment Guide](https://the-guild.dev/graphql/hive/docs/gateway/deployment) to
 setup your gateway with the new artifacts.
 
-If you need local execution, refer to the local execution guide [here](/v1/local-execution).
+If you need local execution, refer to the local execution guide [here](/v1/local-execution). More
+compose background: [Getting Started](/v1/getting-started).
