@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`migrateLegacyConfig maps OpenAPI and GraphQL HTTP sources with prefix and filterSchema 1`] = `
+"import { loadOpenAPISubgraph } from '@omnigraph/openapi';
+import { createPrefixTransform, loadGraphQLHTTPSubgraph, createFilterTransform, defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
+export const composeConfig = defineComposeConfig({
+subgraphs: [
+{
+sourceHandler: loadOpenAPISubgraph("Wiki", {"source":"./wiki.yaml"}),
+transforms: [
+createPrefixTransform({"value":"Wiki_"})
+]
+},
+{
+sourceHandler: loadGraphQLHTTPSubgraph("Countries", {"endpoint":"https://countries.trevorblades.com/"}),
+transforms: [
+createFilterTransform({"filters":["Query.continents"]})
+]
+}
+]
+});
+export const gatewayConfig = defineGatewayConfig({});"
+`;
+
+exports[`migrateLegacyConfig maps hive, responseCache, prometheus, rateLimit and maskedErrors plugins 1`] = `
+"import { loadGraphQLHTTPSubgraph, defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli';
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
+export const composeConfig = defineComposeConfig({
+subgraphs: [
+{
+sourceHandler: loadGraphQLHTTPSubgraph("API", {"endpoint":"https://example.com/graphql"})
+}
+]
+});
+export const gatewayConfig = defineGatewayConfig({
+reporting: {"type":"hive","token":"token"},
+persistedDocuments: {"type":"hive","token":"cdn"},
+responseCaching: {"ttl":1000},
+prometheus: {"skipIntrospection":true},
+rateLimiting: {"max":10,"window":"1s"},
+maskedErrors: true
+});"
+`;
