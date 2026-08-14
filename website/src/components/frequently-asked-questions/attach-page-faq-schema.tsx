@@ -11,8 +11,6 @@ export function AttachPageFAQSchema() {
       return;
     }
 
-    const path = window.location.pathname.replace('/graphql/hive', '/');
-
     if (!html.hasAttribute('itemscope')) {
       html.setAttribute('itemscope', '');
       html.setAttribute('itemtype', 'https://schema.org/FAQPage');
