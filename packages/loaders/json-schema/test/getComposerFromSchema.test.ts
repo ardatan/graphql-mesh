@@ -1496,6 +1496,40 @@ ${printType(GraphQLString)}
     expect(output.getFieldNames()).toContain('id');
     // Must NOT have a "Void" field
     expect(output.getFieldNames()).not.toContain('Void');
+    expect(output.getTypeName()).toBe('MyObj');
+  });
+  it('should not clone a shared object schema as Title2 when wrapping anyOf[X, null]', async () => {
+    const lightningObsGroup: JSONSchemaObject = {
+      type: 'object',
+      title: 'LightningObsGroup',
+      properties: {
+        count: { type: 'integer' },
+      },
+    };
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Root',
+      properties: {
+        group: lightningObsGroup,
+        maybeGroup: {
+          title: 'current_lightning_response',
+          anyOf: [lightningObsGroup, { type: 'null' }],
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    const output = result.output as ObjectTypeComposer;
+    const groupType = (output.getField('group').type as any).getUnwrappedTC() as ObjectTypeComposer;
+    const maybeGroupType = (
+      output.getField('maybeGroup').type as any
+    ).getUnwrappedTC() as ObjectTypeComposer;
+    expect(groupType.getTypeName()).toBe('LightningObsGroup');
+    expect(maybeGroupType.getTypeName()).toBe('LightningObsGroup');
+    expect(groupType).toBe(maybeGroupType);
   });
   it('should treat oneOf[X, null] as nullable X (issue #8719)', async () => {
     const inputSchema: JSONSchema = {

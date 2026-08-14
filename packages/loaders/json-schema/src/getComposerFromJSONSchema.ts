@@ -202,6 +202,25 @@ function asObjectTypeComposer(tc: unknown): ObjectTypeComposer | undefined {
   return current instanceof ObjectTypeComposer ? current : undefined;
 }
 
+function isJsonPrimitiveSchema(schema: JSONSchemaObject): boolean {
+  if (
+    schema.properties ||
+    schema.allOf ||
+    schema.anyOf ||
+    schema.oneOf ||
+    schema.additionalProperties ||
+    schema.items
+  ) {
+    return false;
+  }
+  return (
+    schema.type === 'string' ||
+    schema.type === 'number' ||
+    schema.type === 'integer' ||
+    schema.type === 'boolean'
+  );
+}
+
 export function getComposerFromJSONSchema({
   subgraphName,
   schema,
@@ -460,6 +479,46 @@ export function getComposerFromJSONSchema({
         };
       }
 
+      // OpenAPI 3.1 / JSON Schema: `anyOf`/`oneOf` with a `{ type: 'null' }` branch means nullable.
+      // Run before format/`switch (type)` so a remaining primitive (e.g. string+format) is handled normally.
+      // Remaining object/$ref members are left as a 1-element union so `leave` can reuse that type
+      // instead of cloning it as `Title2`.
+      for (const unionKey of ['anyOf', 'oneOf'] as const) {
+        if (
+          subSchema[unionKey] &&
+          !subSchema.properties &&
+          !subSchema.allOf &&
+          !subSchema.additionalProperties
+        ) {
+          const unionArr = subSchema[unionKey] as JSONSchemaObject[];
+          const nonNullUnion = unionArr.filter(s => s.type !== 'null');
+          if (nonNullUnion.length === unionArr.length) {
+            continue;
+          }
+          if (nonNullUnion.length === 0) {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLVoid);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              nullable: true,
+              description: subSchema.description,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+              deprecated: subSchema.deprecated,
+            };
+          }
+          subSchema.nullable = true;
+          if (nonNullUnion.length === 1 && isJsonPrimitiveSchema(nonNullUnion[0])) {
+            Object.assign(subSchema, nonNullUnion[0]);
+            delete (subSchema as any)[unionKey];
+          } else {
+            (subSchema as any)[unionKey] = nonNullUnion;
+          }
+          break;
+        }
+      }
+
       if (Array.isArray(subSchema.type)) {
         const validTypes = subSchema.type.filter((typeName: string) => typeName !== 'null');
         if (validTypes.length === 1) {
@@ -570,44 +629,6 @@ export function getComposerFromJSONSchema({
           default: subSchema.default,
           deprecated: subSchema.deprecated,
         };
-      }
-
-      // OpenAPI 3.1 / JSON Schema: `anyOf`/`oneOf` with a `{ type: 'null' }` branch means nullable.
-      // This must run before `switch (subSchema.type)` so the remaining type is handled normally.
-      for (const unionKey of ['anyOf', 'oneOf'] as const) {
-        if (
-          subSchema[unionKey] &&
-          !subSchema.properties &&
-          !subSchema.allOf &&
-          !subSchema.additionalProperties
-        ) {
-          const unionArr = subSchema[unionKey] as JSONSchemaObject[];
-          const nonNullUnion = unionArr.filter(s => s.type !== 'null');
-          if (nonNullUnion.length === unionArr.length) {
-            continue;
-          }
-          if (nonNullUnion.length === 0) {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLVoid);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              nullable: true,
-              description: subSchema.description,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-              deprecated: subSchema.deprecated,
-            };
-          }
-          subSchema.nullable = true;
-          (subSchema as any)[unionKey] = nonNullUnion;
-          if (nonNullUnion.length === 1) {
-            const nonNull = nonNullUnion[0];
-            Object.assign(subSchema, nonNull);
-            delete (subSchema as any)[unionKey];
-          }
-          break;
-        }
       }
 
       switch (subSchema.type as any) {
@@ -811,6 +832,18 @@ export function getComposerFromJSONSchema({
         subSchema.anyOf ||
         subSchema.additionalProperties
       ) {
+        // Nullable wrapper around a single named object: don't mint Title2; leave() reuses the member.
+        if (
+          subSchema.nullable &&
+          !subSchema.properties &&
+          !subSchema.allOf &&
+          ((Array.isArray(subSchema.anyOf) && subSchema.anyOf.length === 1) ||
+            (Array.isArray(subSchema.oneOf) && subSchema.oneOf.length === 1))
+        ) {
+          return {
+            ...subSchema,
+          };
+        }
         if (subSchema.title === 'Any') {
           const typeComposer = schemaComposer.getAnyTC(GraphQLJSON);
           return {
@@ -905,6 +938,27 @@ export function getComposerFromJSONSchema({
     },
     leave(subSchemaAndTypeComposers: JSONSchemaObject & TypeComposers, { path }) {
       // const validateWithJSONSchema = getValidateFnForSchemaPath(ajv, path, schema);
+      for (const unionKey of ['anyOf', 'oneOf'] as const) {
+        const members = subSchemaAndTypeComposers[unionKey] as TypeComposers[] | undefined;
+        if (
+          subSchemaAndTypeComposers.nullable &&
+          Array.isArray(members) &&
+          members.length === 1 &&
+          members[0]?.output &&
+          !subSchemaAndTypeComposers.properties &&
+          !subSchemaAndTypeComposers.allOf
+        ) {
+          return {
+            ...members[0],
+            nullable: true,
+            description: subSchemaAndTypeComposers.description || members[0].description,
+            readOnly: subSchemaAndTypeComposers.readOnly ?? members[0].readOnly,
+            writeOnly: subSchemaAndTypeComposers.writeOnly ?? members[0].writeOnly,
+            default: subSchemaAndTypeComposers.default ?? members[0].default,
+            deprecated: subSchemaAndTypeComposers.deprecated ?? members[0].deprecated,
+          };
+        }
+      }
       const subSchemaOnly: JSONSchemaObject = {
         ...subSchemaAndTypeComposers,
         input: undefined,
