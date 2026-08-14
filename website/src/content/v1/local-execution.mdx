@@ -74,4 +74,8 @@ const result = await sdk.myQuery({
 console.log(result) // { data: { foo: { bar: 'SOME_VALUE' } } }
 ```
 
-{/* TODO: Add a full example with codegen */}
+A full Mesh Compose + Codegen + `createGatewayRuntime` + `runtime.sdkRequester` example (queries,
+mutations, subscriptions) lives in the
+[Hive Gateway `e2e/typed-sdk`](https://github.com/graphql-hive/gateway/tree/main/e2e/typed-sdk)
+fixture. If you are migrating from Mesh v0 `getMeshSDK()`, see
+[Type-safe SDK](/v1/migration-from-v0#type-safe-sdk).

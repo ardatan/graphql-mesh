@@ -28,8 +28,10 @@ If you are migrating from GraphQL Mesh v0, you should be aware of the following 
   now you should take a look at
   [Hive Gateway's Deployment Guide](https://the-guild.dev/graphql/hive/docs/gateway/deployment) to
   deploy your gateway.
-- GraphQL Mesh no longer runs [GraphQL Code Generator](https://graphql-codegen.com) internally. You
-  should use it separately if you need to generate types or documents.
+- GraphQL Mesh no longer runs [GraphQL Code Generator](https://graphql-codegen.com) internally, and
+  it no longer writes a typed SDK into `.mesh`. You still get a type-safe SDK: generate it with
+  Codegen, then execute through Hive Gateway (`sdkRequester`). See [Type-safe SDK](#type-safe-sdk)
+  below.
 - GraphQL Mesh no longer generates a Persisted Operations store. You should setup your gateway based
   on your needs. [See here](https://the-guild.dev/graphql/hive/docs/gateway/persisted-documents) for
   more information.
@@ -38,19 +40,19 @@ GraphQL Mesh is now only responsible of generating a GraphQL SDL file `supergrap
 `subgraph.graphql` that you can use with Hive Gateway. It is not responsible for serving the
 generated artifacts.
 
-| Topic                | v0                                                                 | v1                                                                                                      |
-| -------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| Role of Mesh         | One runtime: load sources, merge, transform, **and** serve GraphQL | **Compose only**: produce Supergraph/Subgraph SDL                                                       |
-| Serving              | Built into `@graphql-mesh/cli` (`mesh dev` / `mesh start`)         | [Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway) (`hive-gateway supergraph`)             |
-| Config               | `.meshrc.yml` / `.meshrc.yaml` / `.meshrc.json` / `.meshrc.js`     | `mesh.config.ts` (or `.js`) with `composeConfig` + `gatewayConfig`                                      |
-| Packages             | `@graphql-mesh/cli` + `@graphql-mesh/<handler>`                    | `@graphql-mesh/compose-cli` + `@omnigraph/*` + `@graphql-hive/gateway`                                  |
-| Output               | `.mesh/` (JS SDK, `execute`, HTTP handler, schema)                 | `supergraph.graphql` (or `.js`) — SDL, not a Node server                                                |
-| Schema merge         | `merger` (stitching / bare / federation)                           | Federation-compatible composition                                                                       |
-| Transforms           | `bare` or `wrap`; can sit on a source **or** on the unified schema | Wrap only; **source-level** in compose; Federation directives                                           |
-| Type merging         | `typeMerging` transform / stitching                                | [Federation transform](/v1/transforms/federation) / [`@resolveTo`](/v1/schema-extensions)               |
-| Codegen / SDK        | `codegen`, `sdk`, `documents` inside Mesh                          | GraphQL Codegen on your side                                                                            |
-| Persisted operations | Mesh-generated store                                               | [Hive Gateway persisted documents](https://the-guild.dev/graphql/hive/docs/gateway/persisted-documents) |
-| In-process execute   | `getBuiltMesh()` / `.mesh` `execute`                               | [Local Execution](/v1/local-execution) via Hive Gateway executor                                        |
+| Topic                | v0                                                                 | v1                                                                                                                                                |
+| -------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Role of Mesh         | One runtime: load sources, merge, transform, **and** serve GraphQL | **Compose only**: produce Supergraph/Subgraph SDL                                                                                                 |
+| Serving              | Built into `@graphql-mesh/cli` (`mesh dev` / `mesh start`)         | [Hive Gateway](https://the-guild.dev/graphql/hive/docs/gateway) (`hive-gateway supergraph`)                                                       |
+| Config               | `.meshrc.yml` / `.meshrc.yaml` / `.meshrc.json` / `.meshrc.js`     | `mesh.config.ts` (or `.js`) with `composeConfig` + `gatewayConfig`                                                                                |
+| Packages             | `@graphql-mesh/cli` + `@graphql-mesh/<handler>`                    | `@graphql-mesh/compose-cli` + `@omnigraph/*` + `@graphql-hive/gateway`                                                                            |
+| Output               | `.mesh/` (JS SDK, `execute`, HTTP handler, schema)                 | `supergraph.graphql` (or `.js`) — SDL, not a Node server                                                                                          |
+| Schema merge         | `merger` (stitching / bare / federation)                           | Federation-compatible composition                                                                                                                 |
+| Transforms           | `bare` or `wrap`; can sit on a source **or** on the unified schema | Wrap only; **source-level** in compose; Federation directives                                                                                     |
+| Type merging         | `typeMerging` transform / stitching                                | [Federation transform](/v1/transforms/federation) / [`@resolveTo`](/v1/schema-extensions)                                                         |
+| Codegen / SDK        | `documents` + `sdk` → `.mesh` `getMeshSDK()`                       | Codegen `typescript-generic-sdk` + Hive Gateway `sdkRequester` ([typed-sdk e2e](https://github.com/graphql-hive/gateway/tree/main/e2e/typed-sdk)) |
+| Persisted operations | Mesh-generated store                                               | [Hive Gateway persisted documents](https://the-guild.dev/graphql/hive/docs/gateway/persisted-documents)                                           |
+| In-process execute   | `getBuiltMesh()` / `.mesh` `execute`                               | [Local Execution](/v1/local-execution) via Hive Gateway executor                                                                                  |
 
 ```mermaid
 flowchart LR
@@ -280,7 +282,7 @@ v1, anything that **builds SDL** is compose; anything that **runs requests** is 
 | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `sources`, source `transforms`, `additionalTypeDefs`, `customFetch` used while introspecting | `composeConfig` (`fetch` on compose)                                                            |
 | `serve.*`, `plugins`, `cache`, `additionalResolvers`, `logger`, runtime `customFetch`        | `gatewayConfig` (`fetchAPI.fetch`)                                                              |
-| `codegen`, `sdk`, `documents`                                                                | GraphQL Codegen / your client — Mesh does not run these                                         |
+| `codegen`, `sdk`, `documents`                                                                | GraphQL Codegen on the **supergraph** + Hive Gateway typed SDK (not Mesh CLI)                   |
 | `merger`                                                                                     | No replacement key; composition is Federation-style (migrator warns)                            |
 | `pubsub`                                                                                     | Hive Gateway subscriptions — [docs](/v1/subscriptions-webhooks)                                 |
 | `persistedOperations`                                                                        | [Hive persisted documents](https://the-guild.dev/graphql/hive/docs/gateway/persisted-documents) |
@@ -318,18 +320,82 @@ v1, anything that **builds SDL** is compose; anything that **runs requests** is 
 v0 `cache:` (Redis, Localforage, …) becomes `gatewayConfig.cache: new Cache(...)` with
 `@graphql-mesh/cache-*`. That is **not** the old Cache **transform**.
 
+## Type-safe SDK
+
+v0 Mesh **was** an SDK generator. `documents` + `sdk` in `.meshrc` plus `mesh build` wrote
+`getMeshSDK()` into `.mesh`. v1 Mesh Compose does **not** do that. The same pattern lives on Hive
+Gateway: Codegen emits `getSdk`, the gateway supplies the requester.
+
+| v0                                                   | v1                                                                              |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `documents: ['./src/**/*.graphql']`                  | Codegen `documents` (e.g. `sdk/operations.graphql`)                             |
+| `sdk: { generateOperations: { selectionSetDepth } }` | You own the `.graphql` operations; Codegen does not invent them from Mesh       |
+| `mesh build` → `.mesh` SDK                           | `graphql-codegen` against `supergraph.graphql`                                  |
+| `import { getMeshSDK } from './.mesh'`               | `import { getSdk } from './sdk/generated'`                                      |
+| `getMeshSDK()`                                       | `getSdk(runtime.sdkRequester)` or `getSdk(getSdkRequesterForUnifiedGraph(...))` |
+
+v0:
+
+```ts
+import { getMeshSDK } from './.mesh'
+
+const sdk = getMeshSDK()
+const { getSomething } = await sdk.myQuery({ someVar: 'foo' })
+```
+
+v1 (same idea as the
+[Hive Gateway typed-sdk e2e](https://github.com/graphql-hive/gateway/tree/main/e2e/typed-sdk)):
+
+```ts filename="codegen.ts"
+import type { CodegenConfig } from '@graphql-codegen/cli'
+
+export default {
+  schema: './supergraph.graphql',
+  documents: 'sdk/operations.graphql',
+  generates: {
+    'sdk/generated.ts': {
+      plugins: ['typescript-operations', 'typescript-generic-sdk']
+    }
+  }
+} satisfies CodegenConfig
+```
+
+```ts
+import { readFileSync } from 'node:fs'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
+import { getSdk } from './sdk/generated'
+
+await using runtime = createGatewayRuntime({
+  supergraph: readFileSync('./supergraph.graphql', 'utf-8')
+})
+
+const sdk = getSdk(runtime.sdkRequester)
+const todos = await sdk.Todos()
+```
+
+That e2e also shows mutations and subscriptions on the same `getSdk` (`sdk.AddTodo(...)`,
+`sdk.TodoAdded()` as an async iterable).
+
+If you only need in-process execution without `createGatewayRuntime`, use
+`getSdkRequesterForUnifiedGraph` as in [Local Execution](/v1/local-execution). Compose the
+supergraph first (`mesh-compose -o supergraph.graphql`); Codegen’s `schema` must point at that file
+(or `supergraph.js`), not at `.mesh`.
+
+The migrator **warns** on `sdk` / `codegen` / `documents` and does not generate `codegen.ts`. Copy
+your v0 `documents` into Codegen yourself.
+
 ## Using Artifacts
 
 GraphQL Mesh no longer generates artifacts with `execute` or `createBuiltMeshHTTPHandler`. v0
 deployment used those from `.mesh` after `mesh build`. v1 deployment uses an SDL file plus Hive
 Gateway.
 
-| v0 artifact                                 | v1                                                                                                                 |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `.mesh/index.js` `getBuiltMesh` / `execute` | Compose SDL + [local execution](/v1/local-execution) (`getExecutorForUnifiedGraph`)                                |
-| `.mesh` `createBuiltMeshHTTPHandler`        | Hive Gateway Node / serverless adapters — [deployment](https://the-guild.dev/graphql/hive/docs/gateway/deployment) |
-| Generated SDK from `sdk:`                   | GraphQL Codegen client-preset (or similar) against the supergraph                                                  |
-| Playground on `mesh dev`                    | GraphiQL on Hive Gateway                                                                                           |
+| v0 artifact                                 | v1                                                                                                                              |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `.mesh/index.js` `getBuiltMesh` / `execute` | Compose SDL + [local execution](/v1/local-execution) (`getExecutorForUnifiedGraph`)                                             |
+| `.mesh` `createBuiltMeshHTTPHandler`        | Hive Gateway Node / serverless adapters — [deployment](https://the-guild.dev/graphql/hive/docs/gateway/deployment)              |
+| Generated SDK from `sdk:` / `getMeshSDK()`  | Codegen generic SDK + `runtime.sdkRequester` — [typed-sdk e2e](https://github.com/graphql-hive/gateway/tree/main/e2e/typed-sdk) |
+| Playground on `mesh dev`                    | GraphiQL on Hive Gateway                                                                                                        |
 
 After a successful config migration:
 
@@ -342,5 +408,5 @@ Read more about
 [Hive Gateway's Deployment Guide](https://the-guild.dev/graphql/hive/docs/gateway/deployment) to
 setup your gateway with the new artifacts.
 
-If you need local execution, refer to the local execution guide [here](/v1/local-execution). More
-compose background: [Getting Started](/v1/getting-started).
+If you need local execution or a typed SDK, see [Local Execution](/v1/local-execution) and
+[Type-safe SDK](#type-safe-sdk). Compose background: [Getting Started](/v1/getting-started).
