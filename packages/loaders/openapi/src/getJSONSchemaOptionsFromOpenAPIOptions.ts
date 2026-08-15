@@ -39,28 +39,26 @@ function mimeType(contentType: string): string {
  * is listed first (OAuth token endpoints, RFC 6749).
  */
 function pickRequestContentKey(
-  contentKeys: string[],
+  contentKeys: readonly (string | number)[],
   preferredContentType?: string,
 ): string | undefined {
-  if (contentKeys.length === 0) {
+  const keys = contentKeys.map(String);
+  if (keys.length === 0) {
     return undefined;
   }
   if (preferredContentType) {
     const preferred = mimeType(preferredContentType);
-    const match = contentKeys.find(key => mimeType(key) === preferred);
+    const match = keys.find(key => mimeType(key) === preferred);
     if (match) {
       return match;
     }
   }
-  const formKey = contentKeys.find(key => mimeType(key) === 'application/x-www-form-urlencoded');
-  const jsonKey = contentKeys.find(key => mimeType(key).includes('json'));
-  if (
-    formKey != null &&
-    (jsonKey == null || contentKeys.indexOf(formKey) < contentKeys.indexOf(jsonKey))
-  ) {
+  const formKey = keys.find(key => mimeType(key) === 'application/x-www-form-urlencoded');
+  const jsonKey = keys.find(key => mimeType(key).includes('json'));
+  if (formKey != null && (jsonKey == null || keys.indexOf(formKey) < keys.indexOf(jsonKey))) {
     return formKey;
   }
-  return jsonKey ?? contentKeys[0];
+  return jsonKey ?? keys[0];
 }
 
 export interface HATEOASConfig {
