@@ -38,6 +38,38 @@ function normalizeUrl(url: string) {
   return new URL(url).toString();
 }
 
+/**
+ * Collapse `.` / `..` segments so the same file reached via different relative
+ * `$ref`s (`utils.json` vs `../../utils.json`) shares one cache key.
+ */
+export function normalizeFsPath(path: string): string {
+  if (isUrl(path)) {
+    return path;
+  }
+  const windowsAbs = /^[a-zA-Z]:/.test(path);
+  const isAbs = path.startsWith('/') || windowsAbs;
+  const parts = path.replace(/\\/g, '/').split('/');
+  const stack: string[] = [];
+  for (const part of parts) {
+    if (part === '.' || part === '') {
+      continue;
+    }
+    if (part === '..') {
+      if (stack.length && stack[stack.length - 1] !== '..' && !(windowsAbs && stack.length === 1)) {
+        stack.pop();
+      } else if (!isAbs) {
+        stack.push('..');
+      }
+      continue;
+    }
+    stack.push(part);
+  }
+  if (windowsAbs) {
+    return stack.join('/');
+  }
+  return (isAbs ? '/' : '') + stack.join('/');
+}
+
 export function getAbsolutePath(path: string, cwd: string) {
   if (isUrl(path)) {
     return path;
@@ -46,9 +78,9 @@ export function getAbsolutePath(path: string, cwd: string) {
     return normalizeUrl(urlJoin(cwd, path));
   }
   if (path.startsWith('/') || path.substring(1).startsWith(':\\')) {
-    return path;
+    return normalizeFsPath(path);
   }
-  return cwd + '/' + path;
+  return normalizeFsPath(cwd + '/' + path);
 }
 
 export function getCwd(path: string) {

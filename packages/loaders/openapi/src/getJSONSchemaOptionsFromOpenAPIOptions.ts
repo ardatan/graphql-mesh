@@ -28,6 +28,41 @@ import type {
 import type { SelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
 
+function mimeType(contentType: string): string {
+  return contentType.split(';')[0].trim().toLowerCase();
+}
+
+/**
+ * Pick a request body content type.
+ * Prefer an explicit Content-Type header when it matches the spec.
+ * Otherwise keep `application/json` unless `application/x-www-form-urlencoded`
+ * is listed first (OAuth token endpoints, RFC 6749).
+ */
+function pickRequestContentKey(
+  contentKeys: string[],
+  preferredContentType?: string,
+): string | undefined {
+  if (contentKeys.length === 0) {
+    return undefined;
+  }
+  if (preferredContentType) {
+    const preferred = mimeType(preferredContentType);
+    const match = contentKeys.find(key => mimeType(key) === preferred);
+    if (match) {
+      return match;
+    }
+  }
+  const formKey = contentKeys.find(key => mimeType(key) === 'application/x-www-form-urlencoded');
+  const jsonKey = contentKeys.find(key => mimeType(key).includes('json'));
+  if (
+    formKey != null &&
+    (jsonKey == null || contentKeys.indexOf(formKey) < contentKeys.indexOf(jsonKey))
+  ) {
+    return formKey;
+  }
+  return jsonKey ?? contentKeys[0];
+}
+
 export interface HATEOASConfig {
   /**
    * @default "rel"
@@ -778,28 +813,30 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       if ('requestBody' in methodObj) {
         const requestBodyObj = methodObj.requestBody;
         if ('content' in requestBodyObj) {
-          // use json if available, otherwise fall back to the first type
+          const preferredContentType =
+            typeof operationHeaders === 'object'
+              ? operationHeaders['Content-Type'] || operationHeaders['content-type']
+              : undefined;
           const contentKeys = Object.keys(requestBodyObj.content);
-          const contentKey =
-            contentKeys.find(
-              contentKey => typeof contentKey === 'string' && contentKey.includes('json'),
-            ) || contentKeys[0];
-          const contentSchema = requestBodyObj.content[contentKey]?.schema;
-          if (contentSchema && Object.keys(contentSchema).length > 0) {
-            operationConfig.requestSchema = contentSchema as JSONSchemaObject;
-          }
-          const examplesObj = requestBodyObj.content[contentKey]?.examples;
-          if (examplesObj) {
-            const firstItem = Object.values(examplesObj)[0];
-            if (typeof firstItem === 'object' && 'value' in firstItem) {
-              operationConfig.requestSample = firstItem.value;
-            } else {
-              operationConfig.requestSample = firstItem;
+          const contentKey = pickRequestContentKey(contentKeys, preferredContentType);
+          if (contentKey) {
+            const contentSchema = requestBodyObj.content[contentKey]?.schema;
+            if (contentSchema && Object.keys(contentSchema).length > 0) {
+              operationConfig.requestSchema = contentSchema as JSONSchemaObject;
             }
-          }
-          if (!operationConfig.headers?.['Content-Type'] && typeof contentKey === 'string') {
-            operationConfig.headers = operationConfig.headers || {};
-            operationConfig.headers['Content-Type'] = contentKey;
+            const examplesObj = requestBodyObj.content[contentKey]?.examples;
+            if (examplesObj) {
+              const firstItem = Object.values(examplesObj)[0];
+              if (typeof firstItem === 'object' && 'value' in firstItem) {
+                operationConfig.requestSample = firstItem.value;
+              } else {
+                operationConfig.requestSample = firstItem;
+              }
+            }
+            if (!operationConfig.headers?.['Content-Type']) {
+              operationConfig.headers = operationConfig.headers || {};
+              operationConfig.headers['Content-Type'] = contentKey;
+            }
           }
         }
       }
@@ -817,9 +854,19 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
 
         let schemaObj: JSONSchemaObject;
 
-        if ('consumes' in methodObj) {
+        if (
+          'consumes' in methodObj &&
+          Array.isArray(methodObj.consumes) &&
+          methodObj.consumes.length
+        ) {
           operationConfig.headers = operationConfig.headers || {};
-          operationConfig.headers['Content-Type'] = methodObj.consumes.join(', ');
+          const preferredContentType =
+            typeof operationHeaders === 'object'
+              ? operationHeaders['Content-Type'] || operationHeaders['content-type']
+              : undefined;
+          operationConfig.headers['Content-Type'] =
+            pickRequestContentKey(methodObj.consumes, preferredContentType) ||
+            methodObj.consumes[0];
         }
 
         if ('produces' in methodObj) {

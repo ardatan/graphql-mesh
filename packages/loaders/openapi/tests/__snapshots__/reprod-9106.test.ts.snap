@@ -75,13 +75,13 @@ type Mutation {
   - **Refresh Token**, see [IETF 6749, section 6](https://datatracker.ietf.org/doc/html/rfc6749#section-6)
   - **Authorization Code Grant**, see [IETF 6749, section 4.1](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
   """
-  post_token(input: post_token_request_Input): post_token_200_response @httpOperation(subgraph: "test", path: "/token", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  post_token(input: post_token_request_Input): post_token_200_response @httpOperation(subgraph: "test", path: "/token", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["accept", "application/json"]], httpMethod: POST)
   """
   Prevent tokens from being further used to access APIs by disposing one or more OAuth tokens that are no longer needed. Basic Authentication is used to access this resource, using the issued client Id and client secret. This resource is based on the *OAuth 2.0 Token Revocation* IETF Draft RFC 7009, August 2013.
   * [IETF 7009](https://datatracker.ietf.org/doc/html/rfc7009).
   
   """
-  post_revoke(input: Token_Revocation_Request_Input): JSON @httpOperation(subgraph: "test", path: "/revoke", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  post_revoke(input: Token_Revocation_Request_Input): JSON @httpOperation(subgraph: "test", path: "/revoke", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["accept", "application/json"]], httpMethod: POST)
 }
 
 union post_token_200_response = Provider_specific_Access_Token_Response | Provider_specific_Tokens_Response

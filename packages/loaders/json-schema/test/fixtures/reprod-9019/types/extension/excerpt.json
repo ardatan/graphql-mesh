@@ -1,0 +1,12 @@
+{
+  "title": "Excerpt",
+  "type": "object",
+  "properties": {
+    "icon": {
+      "type": "array",
+      "items": {
+        "$ref": "../../utils.json#/definitions/SingleMediaSelection"
+      }
+    }
+  }
+}
