@@ -47023,8 +47023,6 @@ exports[`Schemas Dictionary 1`] = `
   query: Query
 }
 
-directive @dictionary(subgraph: String) on FIELD_DEFINITION
-
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
 directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
@@ -47036,23 +47034,13 @@ type Query {
 
 """A user represents a natural person"""
 type user {
-  traits: query_user_traits
+  traits: JSON
 }
 
-type query_user_traits {
-  additionalProperties: [trait_entry] @dictionary(subgraph: "Dictionary")
-}
-
-type trait_entry {
-  key: ID!
-  value: trait
-}
-
-"""A user trait"""
-type trait {
-  """The description of the trait"""
-  description: String
-}
+"""
+The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 enum HTTPMethod {
   GET
@@ -56269,8 +56257,6 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
-directive @dictionary(subgraph: String) on FIELD_DEFINITION
-
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
@@ -63395,42 +63381,10 @@ type IssueTypeIssueCreateMetadata {
   Expand options that include additional issue type metadata details in the response.
   """
   expand: String
-  fields: query_getCreateIssueMeta_projects_items_issuetypes_items_fields
-}
-
-"""
-List of the fields available when creating an issue for the issue type.
-"""
-type query_getCreateIssueMeta_projects_items_issuetypes_items_fields {
-  additionalProperties: [FieldMetadata_entry] @dictionary(subgraph: "Jira")
-}
-
-type FieldMetadata_entry {
-  key: ID!
-  value: FieldMetadata
-}
-
-"""The metadata describing an issue field."""
-type FieldMetadata {
-  """Whether the field is required."""
-  required: Boolean!
-  schema: JsonTypeBean!
-  """The name of the field."""
-  name: String!
-  """The key of the field."""
-  key: String!
-  """The URL that can be used to automatically complete the field."""
-  autoCompleteUrl: String
-  """Whether the field has a default value."""
-  hasDefaultValue: Boolean
-  """The list of operations that can be performed on the field."""
-  operations: [String]!
-  """The list of values allowed in the field."""
-  allowedValues: [JSON]
-  """The default value of the field."""
-  defaultValue: JSON
-  """The configuration properties."""
-  configuration: JSON
+  """
+  List of the fields available when creating an issue for the issue type.
+  """
+  fields: JSON
 }
 
 """A list of issues suggested for use in auto-completion."""
@@ -63493,7 +63447,8 @@ type IssueBean {
   properties: JSON
   """The ID and name of each field present on the issue."""
   names: JSON
-  schema: query_getIssue_schema
+  """The schema describing each field present on the issue."""
+  schema: JSON
   """The transitions that can be performed on the issue."""
   transitions: [IssueTransition]
   operations: Operations
@@ -63503,34 +63458,6 @@ type IssueBean {
   versionedRepresentations: JSON
   fieldsToInclude: IncludedFields
   fields: JSON
-}
-
-"""The schema describing each field present on the issue."""
-type query_getIssue_schema {
-  additionalProperties: [JsonTypeBean2_entry] @dictionary(subgraph: "Jira")
-}
-
-type JsonTypeBean2_entry {
-  key: ID!
-  value: JsonTypeBean2
-}
-
-"""The schema of a field."""
-type JsonTypeBean2 {
-  """The data type of the field."""
-  type: String!
-  """
-  When the data type is an array, the name of the field items within the array.
-  """
-  items: String
-  """If the field is a system field, the name of the field."""
-  system: String
-  """If the field is a custom field, the URI of the field."""
-  custom: String
-  """If the field is a custom field, the custom ID of the field."""
-  customId: BigInt
-  """If the field is a custom field, the configuration of the field."""
-  configuration: JSON
 }
 
 """Details of an issue transition."""
@@ -63556,7 +63483,10 @@ type IssueTransition {
   Whether the issue has to meet criteria before the issue transition is applied.
   """
   isConditional: Boolean
-  fields: query_getIssue_transitions_items_fields
+  """
+  Details of the fields associated with the issue transition screen. Use this information to populate \`fields\` and \`update\` in a transition request.
+  """
+  fields: JSON
   """
   Expand options that include additional transition details in the response.
   """
@@ -63596,41 +63526,6 @@ type StatusCategory {
   additionalProperties: JSON @resolveRoot(subgraph: "Jira")
 }
 
-"""
-Details of the fields associated with the issue transition screen. Use this information to populate \`fields\` and \`update\` in a transition request.
-"""
-type query_getIssue_transitions_items_fields {
-  additionalProperties: [FieldMetadata2_entry] @dictionary(subgraph: "Jira")
-}
-
-type FieldMetadata2_entry {
-  key: ID!
-  value: FieldMetadata2
-}
-
-"""The metadata describing an issue field."""
-type FieldMetadata2 {
-  """Whether the field is required."""
-  required: Boolean!
-  schema: JsonTypeBean!
-  """The name of the field."""
-  name: String!
-  """The key of the field."""
-  key: String!
-  """The URL that can be used to automatically complete the field."""
-  autoCompleteUrl: String
-  """Whether the field has a default value."""
-  hasDefaultValue: Boolean
-  """The list of operations that can be performed on the field."""
-  operations: [String]!
-  """The list of values allowed in the field."""
-  allowedValues: [JSON]
-  """The default value of the field."""
-  defaultValue: JSON
-  """The configuration properties."""
-  configuration: JSON
-}
-
 """Details of the operations that can be performed on the issue."""
 type Operations {
   """Details of the link groups defining issue operations."""
@@ -63650,40 +63545,8 @@ type LinkGroup {
 
 """A list of editable field details."""
 type IssueUpdateMetadata {
-  fields: query_getIssue_editmeta_fields
-}
-
-"""A list of editable field details."""
-type query_getIssue_editmeta_fields {
-  additionalProperties: [FieldMetadata3_entry] @dictionary(subgraph: "Jira")
-}
-
-type FieldMetadata3_entry {
-  key: ID!
-  value: FieldMetadata3
-}
-
-"""The metadata describing an issue field."""
-type FieldMetadata3 {
-  """Whether the field is required."""
-  required: Boolean!
-  schema: JsonTypeBean!
-  """The name of the field."""
-  name: String!
-  """The key of the field."""
-  key: String!
-  """The URL that can be used to automatically complete the field."""
-  autoCompleteUrl: String
-  """Whether the field has a default value."""
-  hasDefaultValue: Boolean
-  """The list of operations that can be performed on the field."""
-  operations: [String]!
-  """The list of values allowed in the field."""
-  allowedValues: [JSON]
-  """The default value of the field."""
-  defaultValue: JSON
-  """The configuration properties."""
-  configuration: JSON
+  """A list of editable field details."""
+  fields: JSON
 }
 
 """A page of changelogs."""
@@ -64557,49 +64420,8 @@ union getMyPermissions_response @statusCodeTypeName(subgraph: "Jira", statusCode
 
 """Details about permissions."""
 type Permissions {
-  permissions: query_getMyPermissions_oneOf_0_permissions
-}
-
-"""List of permissions."""
-type query_getMyPermissions_oneOf_0_permissions {
-  additionalProperties: [UserPermission_entry] @dictionary(subgraph: "Jira")
-}
-
-type UserPermission_entry {
-  key: ID!
-  value: UserPermission
-}
-
-"""Details of a permission and its availability to a user."""
-type UserPermission {
-  """
-  The ID of the permission. Either \`id\` or \`key\` must be specified. Use [Get all permissions](#api-rest-api-3-permissions-get) to get the list of permissions.
-  """
-  id: String
-  """
-  The key of the permission. Either \`id\` or \`key\` must be specified. Use [Get all permissions](#api-rest-api-3-permissions-get) to get the list of permissions.
-  """
-  key: String
-  """The name of the permission."""
-  name: String
-  type: query_getMyPermissions_oneOf_0_permissions_additionalProperties_type
-  """The description of the permission."""
-  description: String
-  """
-  Whether the permission is available to the user in the queried context.
-  """
-  havePermission: Boolean
-  """
-  Indicate whether the permission key is deprecated. Note that deprecated keys cannot be used in the \`permissions parameter of Get my permissions. Deprecated keys are not returned by Get all permissions.\`
-  """
-  deprecatedKey: Boolean
-  additionalProperties: JSON @resolveRoot(subgraph: "Jira")
-}
-
-"""The type of the permission."""
-enum query_getMyPermissions_oneOf_0_permissions_additionalProperties_type {
-  GLOBAL
-  PROJECT
+  """List of permissions."""
+  permissions: JSON
 }
 
 """Details of a locale."""
@@ -65315,35 +65137,8 @@ type SearchResults {
   warningMessages: [String]
   """The ID and name of each field in the search results."""
   names: JSON
-  schema: query_searchForIssuesUsingJql_schema
-}
-
-"""The schema describing the field types in the search results."""
-type query_searchForIssuesUsingJql_schema {
-  additionalProperties: [JsonTypeBean3_entry] @dictionary(subgraph: "Jira")
-}
-
-type JsonTypeBean3_entry {
-  key: ID!
-  value: JsonTypeBean3
-}
-
-"""The schema of a field."""
-type JsonTypeBean3 {
-  """The data type of the field."""
-  type: String!
-  """
-  When the data type is an array, the name of the field items within the array.
-  """
-  items: String
-  """If the field is a system field, the name of the field."""
-  system: String
-  """If the field is a custom field, the URI of the field."""
-  custom: String
-  """If the field is a custom field, the custom ID of the field."""
-  customId: BigInt
-  """If the field is a custom field, the configuration of the field."""
-  configuration: JSON
+  """The schema describing the field types in the search results."""
+  schema: JSON
 }
 
 """
@@ -66286,40 +66081,8 @@ type WorkflowScheme {
   Defaults to \`false\`.
   """
   updateDraftIfNeeded: Boolean
-  issueTypes: query_getAllWorkflowSchemes_values_items_issueTypes
-}
-
-"""The issue types available in Jira."""
-type query_getAllWorkflowSchemes_values_items_issueTypes {
-  additionalProperties: [IssueTypeDetails2_entry] @dictionary(subgraph: "Jira")
-}
-
-type IssueTypeDetails2_entry {
-  key: ID!
-  value: IssueTypeDetails2
-}
-
-"""Details about an issue type."""
-type IssueTypeDetails2 {
-  """The URL of these issue type details."""
-  self: String
-  """The ID of the issue type."""
-  id: String
-  """The description of the issue type."""
-  description: String
-  """The URL of the issue type's avatar."""
-  iconUrl: String
-  """The name of the issue type."""
-  name: String
-  """Whether this issue type is used to create subtasks."""
-  subtask: Boolean
-  """The ID of the issue type's avatar."""
-  avatarId: BigInt
-  """Unique ID for next-gen projects."""
-  entityId: UUID
-  """Hierarchy level of the issue type."""
-  hierarchyLevel: Int
-  scope: Scope
+  """The issue types available in Jira."""
+  issueTypes: JSON
 }
 
 union getWorkflowSchemeProjectAssociations_response @statusCodeTypeName(subgraph: "Jira", statusCode: "200", typeName: "ContainerOfWorkflowSchemeAssociations") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "getWorkflowSchemeProjectAssociations_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "403", typeName: "getWorkflowSchemeProjectAssociations_403_response") = ContainerOfWorkflowSchemeAssociations | getWorkflowSchemeProjectAssociations_400_response | getWorkflowSchemeProjectAssociations_403_response
@@ -73281,6 +73044,9 @@ input IssueTransition_Input {
   Whether the issue has to meet criteria before the issue transition is applied.
   """
   isConditional: Boolean
+  """
+  Details of the fields associated with the issue transition screen. Use this information to populate \`fields\` and \`update\` in a transition request.
+  """
   fields: JSON
   """
   Expand options that include additional transition details in the response.
@@ -73403,6 +73169,7 @@ Lists of issues and entity properties. See [Entity properties](https://developer
 input IssueEntityProperties_Input {
   """A list of entity property IDs."""
   entitiesIds: [BigInt]
+  """A list of entity property keys and values."""
   properties: JSON
 }
 
@@ -73420,6 +73187,9 @@ An issue ID with entity property values. See [Entity properties](https://develop
 input IssueEntityPropertiesForMultiUpdate_Input {
   """The ID of the issue."""
   issueID: BigInt
+  """
+  Entity properties to set on the issue. The maximum length of an issue property value is 32768 characters.
+  """
   properties: JSON
 }
 
@@ -76108,6 +75878,7 @@ input WorkflowScheme_Input {
   Defaults to \`false\`.
   """
   updateDraftIfNeeded: Boolean
+  """The issue types available in Jira."""
   issueTypes: JSON
 }
 
@@ -76362,8 +76133,6 @@ exports[`Schemas Kubernetes 1`] = `
 }
 
 directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
-
-directive @dictionary(subgraph: String) on FIELD_DEFINITION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
@@ -95989,7 +95758,7 @@ type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps {
   JSON represents any valid JSON value. These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.
   """
   default: JSON
-  definitions: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema_definitions
+  definitions: JSON
   dependencies: JSON
   description: String
   enum: [JSON]
@@ -96027,136 +95796,8 @@ type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps {
   nullable: Boolean
   oneOf: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps]
   pattern: String
-  patternProperties: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema_patternProperties
-  properties: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema
-  required: [String]
-  title: String
-  type: String
-  uniqueItems: Boolean
-  """
-  x-kubernetes-embedded-resource defines that the value is an embedded Kubernetes runtime.Object, with TypeMeta and ObjectMeta. The type must be object. It is allowed to further restrict the embedded object. kind, apiVersion and metadata are validated automatically. x-kubernetes-preserve-unknown-fields is allowed to be true, but does not have to be if the object is fully specified (up to kind, apiVersion, metadata).
-  """
-  x_kubernetes_embedded_resource: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-embedded-resource")
-  """
-  x-kubernetes-int-or-string specifies that this value is either an integer or a string. If this is true, an empty type is allowed and type as child of anyOf is permitted if following one of the following patterns:
-  
-  1) anyOf:
-     - type: integer
-     - type: string
-  2) allOf:
-     - anyOf:
-       - type: integer
-       - type: string
-     - ... zero or more
-  """
-  x_kubernetes_int_or_string: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-int-or-string")
-  """
-  x-kubernetes-list-map-keys annotates an array with the x-kubernetes-list-type \`map\` by specifying the keys used as the index of the map.
-  
-  This tag MUST only be used on lists that have the "x-kubernetes-list-type" extension set to "map". Also, the values specified for this attribute must be a scalar typed field of the child structure (no nesting is supported).
-  
-  The properties specified must either be required or have a default value, to ensure those properties are present for all list items.
-  """
-  x_kubernetes_list_map_keys: [String] @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-list-map-keys")
-  """
-  x-kubernetes-list-type annotates an array to further describe its topology. This extension must only be used on lists and may have 3 possible values:
-  
-  1) \`atomic\`: the list is treated as a single entity, like a scalar.
-       Atomic lists will be entirely replaced when updated. This extension
-       may be used on any type of list (struct, scalar, ...).
-  2) \`set\`:
-       Sets are lists that must not have multiple items with the same value. Each
-       value must be a scalar, an object with x-kubernetes-map-type \`atomic\` or an
-       array with x-kubernetes-list-type \`atomic\`.
-  3) \`map\`:
-       These lists are like maps in that their elements have a non-index key
-       used to identify them. Order is preserved upon merge. The map tag
-       must only be used on a list with elements of type object.
-  Defaults to atomic for arrays.
-  """
-  x_kubernetes_list_type: String @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-list-type")
-  """
-  x-kubernetes-map-type annotates an object to further describe its topology. This extension must only be used when type is object and may have 2 possible values:
-  
-  1) \`granular\`:
-       These maps are actual maps (key-value pairs) and each fields are independent
-       from each other (they can each be manipulated by separate actors). This is
-       the default behaviour for all maps.
-  2) \`atomic\`: the list is treated as a single entity, like a scalar.
-       Atomic maps will be entirely replaced when updated.
-  """
-  x_kubernetes_map_type: String @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-map-type")
-  """
-  x-kubernetes-preserve-unknown-fields stops the API server decoding step from pruning fields which are not specified in the validation schema. This affects fields recursively, but switches back to normal pruning behaviour if nested properties or additionalProperties are specified in the schema. This can either be true or undefined. False is forbidden.
-  """
-  x_kubernetes_preserve_unknown_fields: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-preserve-unknown-fields")
-}
-
-type query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema_definitions {
-  additionalProperties: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps2_entry] @dictionary(subgraph: "Kubernetes")
-}
-
-type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps2_entry {
-  key: ID!
-  value: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps2
-}
-
-"""
-JSONSchemaProps is a JSON-Schema following Specification Draft 4 (http://json-schema.org/).
-"""
-type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps2 {
-  _DOLLAR_ref: String @resolveRootField(subgraph: "Kubernetes", field: "$ref")
-  _DOLLAR_schema: String @resolveRootField(subgraph: "Kubernetes", field: "$schema")
-  """
-  JSONSchemaPropsOrBool represents JSONSchemaProps or a boolean value. Defaults to true for the boolean property.
-  """
-  additionalItems: JSON
-  allOf: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps]
-  anyOf: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps]
-  """
-  JSON represents any valid JSON value. These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.
-  """
-  default: JSON
-  definitions: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema_definitions
-  dependencies: JSON
-  description: String
-  enum: [JSON]
-  """
-  JSON represents any valid JSON value. These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.
-  """
-  example: JSON
-  exclusiveMaximum: Boolean
-  exclusiveMinimum: Boolean
-  externalDocs: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ExternalDocumentation
-  """
-  format is an OpenAPI v3 format string. Unknown formats are ignored. The following formats are validated:
-  
-  - bsonobjectid: a bson object ID, i.e. a 24 characters hex string - uri: an URI as parsed by Golang net/url.ParseRequestURI - email: an email address as parsed by Golang net/mail.ParseAddress - hostname: a valid representation for an Internet host name, as defined by RFC 1034, section 3.1 [RFC1034]. - ipv4: an IPv4 IP as parsed by Golang net.ParseIP - ipv6: an IPv6 IP as parsed by Golang net.ParseIP - cidr: a CIDR as parsed by Golang net.ParseCIDR - mac: a MAC address as parsed by Golang net.ParseMAC - uuid: an UUID that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid3: an UUID3 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?3[0-9a-f]{3}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid4: an UUID4 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?4[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - uuid5: an UUID5 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?5[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - isbn: an ISBN10 or ISBN13 number string like "0321751043" or "978-0321751041" - isbn10: an ISBN10 number string like "0321751043" - isbn13: an ISBN13 number string like "978-0321751041" - creditcard: a credit card number defined by the regex ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})$ with any non digit characters mixed in - ssn: a U.S. social security number following the regex ^\\d{3}[- ]?\\d{2}[- ]?\\d{4}$ - hexcolor: an hexadecimal color code like "#FFFFFF: following the regex ^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$ - rgbcolor: an RGB color code like rgb like "rgb(255,255,2559" - byte: base64 encoded binary data - password: any kind of string - date: a date string like "2006-01-02" as defined by full-date in RFC3339 - duration: a duration string like "22 ns" as parsed by Golang time.ParseDuration or compatible with Scala duration format - datetime: a date time string like "2014-12-15T19:30:20.000Z" as defined by date-time in RFC3339.
-  """
-  format: String
-  id: String
-  """
-  JSONSchemaPropsOrArray represents a value that can either be a JSONSchemaProps or an array of JSONSchemaProps. Mainly here for serialization purposes.
-  """
-  items: JSON
-  maxItems: BigInt
-  maxLength: BigInt
-  maxProperties: BigInt
-  maximum: Float
-  minItems: BigInt
-  minLength: BigInt
-  minProperties: BigInt
-  minimum: Float
-  multipleOf: Float
-  """
-  JSONSchemaProps is a JSON-Schema following Specification Draft 4 (http://json-schema.org/).
-  """
-  not: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps
-  nullable: Boolean
-  oneOf: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps]
-  pattern: String
-  patternProperties: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema_patternProperties
-  properties: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema
+  patternProperties: JSON
+  properties: JSON
   required: [String]
   title: String
   type: String
@@ -96226,262 +95867,6 @@ ExternalDocumentation allows referencing an external resource for extended docum
 type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ExternalDocumentation {
   description: String
   url: String
-}
-
-type query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema_patternProperties {
-  additionalProperties: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps3_entry] @dictionary(subgraph: "Kubernetes")
-}
-
-type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps3_entry {
-  key: ID!
-  value: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps3
-}
-
-"""
-JSONSchemaProps is a JSON-Schema following Specification Draft 4 (http://json-schema.org/).
-"""
-type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps3 {
-  _DOLLAR_ref: String @resolveRootField(subgraph: "Kubernetes", field: "$ref")
-  _DOLLAR_schema: String @resolveRootField(subgraph: "Kubernetes", field: "$schema")
-  """
-  JSONSchemaPropsOrBool represents JSONSchemaProps or a boolean value. Defaults to true for the boolean property.
-  """
-  additionalItems: JSON
-  allOf: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps]
-  anyOf: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps]
-  """
-  JSON represents any valid JSON value. These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.
-  """
-  default: JSON
-  definitions: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema_definitions
-  dependencies: JSON
-  description: String
-  enum: [JSON]
-  """
-  JSON represents any valid JSON value. These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.
-  """
-  example: JSON
-  exclusiveMaximum: Boolean
-  exclusiveMinimum: Boolean
-  externalDocs: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ExternalDocumentation
-  """
-  format is an OpenAPI v3 format string. Unknown formats are ignored. The following formats are validated:
-  
-  - bsonobjectid: a bson object ID, i.e. a 24 characters hex string - uri: an URI as parsed by Golang net/url.ParseRequestURI - email: an email address as parsed by Golang net/mail.ParseAddress - hostname: a valid representation for an Internet host name, as defined by RFC 1034, section 3.1 [RFC1034]. - ipv4: an IPv4 IP as parsed by Golang net.ParseIP - ipv6: an IPv6 IP as parsed by Golang net.ParseIP - cidr: a CIDR as parsed by Golang net.ParseCIDR - mac: a MAC address as parsed by Golang net.ParseMAC - uuid: an UUID that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid3: an UUID3 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?3[0-9a-f]{3}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid4: an UUID4 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?4[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - uuid5: an UUID5 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?5[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - isbn: an ISBN10 or ISBN13 number string like "0321751043" or "978-0321751041" - isbn10: an ISBN10 number string like "0321751043" - isbn13: an ISBN13 number string like "978-0321751041" - creditcard: a credit card number defined by the regex ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})$ with any non digit characters mixed in - ssn: a U.S. social security number following the regex ^\\d{3}[- ]?\\d{2}[- ]?\\d{4}$ - hexcolor: an hexadecimal color code like "#FFFFFF: following the regex ^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$ - rgbcolor: an RGB color code like rgb like "rgb(255,255,2559" - byte: base64 encoded binary data - password: any kind of string - date: a date string like "2006-01-02" as defined by full-date in RFC3339 - duration: a duration string like "22 ns" as parsed by Golang time.ParseDuration or compatible with Scala duration format - datetime: a date time string like "2014-12-15T19:30:20.000Z" as defined by date-time in RFC3339.
-  """
-  format: String
-  id: String
-  """
-  JSONSchemaPropsOrArray represents a value that can either be a JSONSchemaProps or an array of JSONSchemaProps. Mainly here for serialization purposes.
-  """
-  items: JSON
-  maxItems: BigInt
-  maxLength: BigInt
-  maxProperties: BigInt
-  maximum: Float
-  minItems: BigInt
-  minLength: BigInt
-  minProperties: BigInt
-  minimum: Float
-  multipleOf: Float
-  """
-  JSONSchemaProps is a JSON-Schema following Specification Draft 4 (http://json-schema.org/).
-  """
-  not: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps
-  nullable: Boolean
-  oneOf: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps]
-  pattern: String
-  patternProperties: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema_patternProperties
-  properties: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema
-  required: [String]
-  title: String
-  type: String
-  uniqueItems: Boolean
-  """
-  x-kubernetes-embedded-resource defines that the value is an embedded Kubernetes runtime.Object, with TypeMeta and ObjectMeta. The type must be object. It is allowed to further restrict the embedded object. kind, apiVersion and metadata are validated automatically. x-kubernetes-preserve-unknown-fields is allowed to be true, but does not have to be if the object is fully specified (up to kind, apiVersion, metadata).
-  """
-  x_kubernetes_embedded_resource: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-embedded-resource")
-  """
-  x-kubernetes-int-or-string specifies that this value is either an integer or a string. If this is true, an empty type is allowed and type as child of anyOf is permitted if following one of the following patterns:
-  
-  1) anyOf:
-     - type: integer
-     - type: string
-  2) allOf:
-     - anyOf:
-       - type: integer
-       - type: string
-     - ... zero or more
-  """
-  x_kubernetes_int_or_string: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-int-or-string")
-  """
-  x-kubernetes-list-map-keys annotates an array with the x-kubernetes-list-type \`map\` by specifying the keys used as the index of the map.
-  
-  This tag MUST only be used on lists that have the "x-kubernetes-list-type" extension set to "map". Also, the values specified for this attribute must be a scalar typed field of the child structure (no nesting is supported).
-  
-  The properties specified must either be required or have a default value, to ensure those properties are present for all list items.
-  """
-  x_kubernetes_list_map_keys: [String] @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-list-map-keys")
-  """
-  x-kubernetes-list-type annotates an array to further describe its topology. This extension must only be used on lists and may have 3 possible values:
-  
-  1) \`atomic\`: the list is treated as a single entity, like a scalar.
-       Atomic lists will be entirely replaced when updated. This extension
-       may be used on any type of list (struct, scalar, ...).
-  2) \`set\`:
-       Sets are lists that must not have multiple items with the same value. Each
-       value must be a scalar, an object with x-kubernetes-map-type \`atomic\` or an
-       array with x-kubernetes-list-type \`atomic\`.
-  3) \`map\`:
-       These lists are like maps in that their elements have a non-index key
-       used to identify them. Order is preserved upon merge. The map tag
-       must only be used on a list with elements of type object.
-  Defaults to atomic for arrays.
-  """
-  x_kubernetes_list_type: String @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-list-type")
-  """
-  x-kubernetes-map-type annotates an object to further describe its topology. This extension must only be used when type is object and may have 2 possible values:
-  
-  1) \`granular\`:
-       These maps are actual maps (key-value pairs) and each fields are independent
-       from each other (they can each be manipulated by separate actors). This is
-       the default behaviour for all maps.
-  2) \`atomic\`: the list is treated as a single entity, like a scalar.
-       Atomic maps will be entirely replaced when updated.
-  """
-  x_kubernetes_map_type: String @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-map-type")
-  """
-  x-kubernetes-preserve-unknown-fields stops the API server decoding step from pruning fields which are not specified in the validation schema. This affects fields recursively, but switches back to normal pruning behaviour if nested properties or additionalProperties are specified in the schema. This can either be true or undefined. False is forbidden.
-  """
-  x_kubernetes_preserve_unknown_fields: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-preserve-unknown-fields")
-}
-
-type query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema {
-  additionalProperties: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps4_entry] @dictionary(subgraph: "Kubernetes")
-}
-
-type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps4_entry {
-  key: ID!
-  value: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps4
-}
-
-"""
-JSONSchemaProps is a JSON-Schema following Specification Draft 4 (http://json-schema.org/).
-"""
-type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps4 {
-  _DOLLAR_ref: String @resolveRootField(subgraph: "Kubernetes", field: "$ref")
-  _DOLLAR_schema: String @resolveRootField(subgraph: "Kubernetes", field: "$schema")
-  """
-  JSONSchemaPropsOrBool represents JSONSchemaProps or a boolean value. Defaults to true for the boolean property.
-  """
-  additionalItems: JSON
-  allOf: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps]
-  anyOf: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps]
-  """
-  JSON represents any valid JSON value. These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.
-  """
-  default: JSON
-  definitions: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema_definitions
-  dependencies: JSON
-  description: String
-  enum: [JSON]
-  """
-  JSON represents any valid JSON value. These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.
-  """
-  example: JSON
-  exclusiveMaximum: Boolean
-  exclusiveMinimum: Boolean
-  externalDocs: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_ExternalDocumentation
-  """
-  format is an OpenAPI v3 format string. Unknown formats are ignored. The following formats are validated:
-  
-  - bsonobjectid: a bson object ID, i.e. a 24 characters hex string - uri: an URI as parsed by Golang net/url.ParseRequestURI - email: an email address as parsed by Golang net/mail.ParseAddress - hostname: a valid representation for an Internet host name, as defined by RFC 1034, section 3.1 [RFC1034]. - ipv4: an IPv4 IP as parsed by Golang net.ParseIP - ipv6: an IPv6 IP as parsed by Golang net.ParseIP - cidr: a CIDR as parsed by Golang net.ParseCIDR - mac: a MAC address as parsed by Golang net.ParseMAC - uuid: an UUID that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid3: an UUID3 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?3[0-9a-f]{3}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid4: an UUID4 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?4[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - uuid5: an UUID5 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?5[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - isbn: an ISBN10 or ISBN13 number string like "0321751043" or "978-0321751041" - isbn10: an ISBN10 number string like "0321751043" - isbn13: an ISBN13 number string like "978-0321751041" - creditcard: a credit card number defined by the regex ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})$ with any non digit characters mixed in - ssn: a U.S. social security number following the regex ^\\d{3}[- ]?\\d{2}[- ]?\\d{4}$ - hexcolor: an hexadecimal color code like "#FFFFFF: following the regex ^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$ - rgbcolor: an RGB color code like rgb like "rgb(255,255,2559" - byte: base64 encoded binary data - password: any kind of string - date: a date string like "2006-01-02" as defined by full-date in RFC3339 - duration: a duration string like "22 ns" as parsed by Golang time.ParseDuration or compatible with Scala duration format - datetime: a date time string like "2014-12-15T19:30:20.000Z" as defined by date-time in RFC3339.
-  """
-  format: String
-  id: String
-  """
-  JSONSchemaPropsOrArray represents a value that can either be a JSONSchemaProps or an array of JSONSchemaProps. Mainly here for serialization purposes.
-  """
-  items: JSON
-  maxItems: BigInt
-  maxLength: BigInt
-  maxProperties: BigInt
-  maximum: Float
-  minItems: BigInt
-  minLength: BigInt
-  minProperties: BigInt
-  minimum: Float
-  multipleOf: Float
-  """
-  JSONSchemaProps is a JSON-Schema following Specification Draft 4 (http://json-schema.org/).
-  """
-  not: io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps
-  nullable: Boolean
-  oneOf: [io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps]
-  pattern: String
-  patternProperties: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema_patternProperties
-  properties: query_listApiextensionsV1CustomResourceDefinition_items_items_spec_versions_items_schema_openAPIV3Schema
-  required: [String]
-  title: String
-  type: String
-  uniqueItems: Boolean
-  """
-  x-kubernetes-embedded-resource defines that the value is an embedded Kubernetes runtime.Object, with TypeMeta and ObjectMeta. The type must be object. It is allowed to further restrict the embedded object. kind, apiVersion and metadata are validated automatically. x-kubernetes-preserve-unknown-fields is allowed to be true, but does not have to be if the object is fully specified (up to kind, apiVersion, metadata).
-  """
-  x_kubernetes_embedded_resource: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-embedded-resource")
-  """
-  x-kubernetes-int-or-string specifies that this value is either an integer or a string. If this is true, an empty type is allowed and type as child of anyOf is permitted if following one of the following patterns:
-  
-  1) anyOf:
-     - type: integer
-     - type: string
-  2) allOf:
-     - anyOf:
-       - type: integer
-       - type: string
-     - ... zero or more
-  """
-  x_kubernetes_int_or_string: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-int-or-string")
-  """
-  x-kubernetes-list-map-keys annotates an array with the x-kubernetes-list-type \`map\` by specifying the keys used as the index of the map.
-  
-  This tag MUST only be used on lists that have the "x-kubernetes-list-type" extension set to "map". Also, the values specified for this attribute must be a scalar typed field of the child structure (no nesting is supported).
-  
-  The properties specified must either be required or have a default value, to ensure those properties are present for all list items.
-  """
-  x_kubernetes_list_map_keys: [String] @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-list-map-keys")
-  """
-  x-kubernetes-list-type annotates an array to further describe its topology. This extension must only be used on lists and may have 3 possible values:
-  
-  1) \`atomic\`: the list is treated as a single entity, like a scalar.
-       Atomic lists will be entirely replaced when updated. This extension
-       may be used on any type of list (struct, scalar, ...).
-  2) \`set\`:
-       Sets are lists that must not have multiple items with the same value. Each
-       value must be a scalar, an object with x-kubernetes-map-type \`atomic\` or an
-       array with x-kubernetes-list-type \`atomic\`.
-  3) \`map\`:
-       These lists are like maps in that their elements have a non-index key
-       used to identify them. Order is preserved upon merge. The map tag
-       must only be used on a list with elements of type object.
-  Defaults to atomic for arrays.
-  """
-  x_kubernetes_list_type: String @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-list-type")
-  """
-  x-kubernetes-map-type annotates an object to further describe its topology. This extension must only be used when type is object and may have 2 possible values:
-  
-  1) \`granular\`:
-       These maps are actual maps (key-value pairs) and each fields are independent
-       from each other (they can each be manipulated by separate actors). This is
-       the default behaviour for all maps.
-  2) \`atomic\`: the list is treated as a single entity, like a scalar.
-       Atomic maps will be entirely replaced when updated.
-  """
-  x_kubernetes_map_type: String @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-map-type")
-  """
-  x-kubernetes-preserve-unknown-fields stops the API server decoding step from pruning fields which are not specified in the validation schema. This affects fields recursively, but switches back to normal pruning behaviour if nested properties or additionalProperties are specified in the schema. This can either be true or undefined. False is forbidden.
-  """
-  x_kubernetes_preserve_unknown_fields: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-preserve-unknown-fields")
 }
 
 """
@@ -131605,8 +130990,6 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR
 
-directive @dictionary(subgraph: String) on FIELD_DEFINITION
-
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
@@ -147776,7 +147159,10 @@ type Coupon {
   If \`amount_off\` has been set, the three-letter [ISO code for the currency](https://stripe.com/docs/currencies) of the amount to take off.
   """
   currency: String
-  currency_options: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_discount_coupon_currency_options
+  """
+  Coupons defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+  """
+  currency_options: JSON
   duration: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_discount_coupon_duration!
   """
   If \`duration\` is \`repeating\`, the number of months the coupon applies. Null if coupon \`duration\` is \`forever\` or \`once\`.
@@ -147821,25 +147207,6 @@ type CouponAppliesTo {
 }
 
 scalar query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_discount_coupon_applies_to_products_items @length(subgraph: "Stripe", max: 5000)
-
-"""
-Coupons defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
-"""
-type query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_discount_coupon_currency_options {
-  additionalProperties: [CouponCurrencyOption_entry] @dictionary(subgraph: "Stripe")
-}
-
-type CouponCurrencyOption_entry {
-  key: ID!
-  value: CouponCurrencyOption
-}
-
-type CouponCurrencyOption {
-  """
-  Amount (in the \`currency\` specified) that will be taken off the subtotal of any invoices for this customer.
-  """
-  amount_off: Int!
-}
 
 """
 One of \`forever\`, \`once\`, and \`repeating\`. Describes how long a customer who applies this coupon will get the discount.
@@ -147958,7 +147325,10 @@ enum promotion_code_const @typescript(subgraph: "Stripe", type: "\\"promotion_co
 }
 
 type PromotionCodesResourceRestrictions {
-  currency_options: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_discount_promotion_code_anyOf_1_restrictions_currency_options
+  """
+  Promotion code restrictions defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+  """
+  currency_options: JSON
   """
   A Boolean indicating if the Promotion Code should only be redeemed for Customers without any successful payments or invoices
   """
@@ -147971,25 +147341,6 @@ type PromotionCodesResourceRestrictions {
   Three-letter [ISO code](https://stripe.com/docs/currencies) for minimum_amount
   """
   minimum_amount_currency: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_discount_promotion_code_anyOf_1_restrictions_minimum_amount_currency
-}
-
-"""
-Promotion code restrictions defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
-"""
-type query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_discount_promotion_code_anyOf_1_restrictions_currency_options {
-  additionalProperties: [PromotionCodeCurrencyOption_entry] @dictionary(subgraph: "Stripe")
-}
-
-type PromotionCodeCurrencyOption_entry {
-  key: ID!
-  value: PromotionCodeCurrencyOption
-}
-
-type PromotionCodeCurrencyOption {
-  """
-  Minimum amount required to redeem this Promotion Code into a Coupon (e.g., a purchase must be $100 or more to work).
-  """
-  minimum_amount: Int!
 }
 
 """
@@ -148437,7 +147788,10 @@ type Price {
   Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
   """
   currency: String!
-  currency_options: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_lines_data_items_invoice_item_anyOf_1_price_currency_options
+  """
+  Prices defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+  """
+  currency_options: JSON
   custom_unit_amount: CustomUnitAmount
   """Unique identifier for the object."""
   id: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_lines_data_items_invoice_item_anyOf_1_price_id!
@@ -148485,35 +147839,6 @@ enum query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyO
   tiered
 }
 
-"""
-Prices defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
-"""
-type query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_lines_data_items_invoice_item_anyOf_1_price_currency_options {
-  additionalProperties: [CurrencyOption_entry] @dictionary(subgraph: "Stripe")
-}
-
-type CurrencyOption_entry {
-  key: ID!
-  value: CurrencyOption
-}
-
-type CurrencyOption {
-  custom_unit_amount: CustomUnitAmount
-  tax_behavior: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_lines_data_items_invoice_item_anyOf_1_price_currency_options_additionalProperties_tax_behavior
-  """
-  Each element represents a pricing tier. This parameter requires \`billing_scheme\` to be set to \`tiered\`. See also the documentation for \`billing_scheme\`.
-  """
-  tiers: [PriceTier]
-  """
-  The unit amount in cents (or local equivalent) to be charged, represented as a whole integer if possible. Only set if \`billing_scheme=per_unit\`.
-  """
-  unit_amount: Int
-  """
-  The unit amount in cents (or local equivalent) to be charged, represented as a decimal string with at most 12 decimal places. Only set if \`billing_scheme=per_unit\`.
-  """
-  unit_amount_decimal: Float
-}
-
 type CustomUnitAmount {
   """The maximum unit amount the customer can specify for this item."""
   maximum: Int
@@ -148523,32 +147848,6 @@ type CustomUnitAmount {
   minimum: Int
   """The starting unit amount which can be updated by the customer."""
   preset: Int
-}
-
-"""
-Only required if a [default tax behavior](https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)) was not provided in the Stripe Tax settings. Specifies whether the price is considered inclusive of taxes or exclusive of taxes. One of \`inclusive\`, \`exclusive\`, or \`unspecified\`. Once specified as either \`inclusive\` or \`exclusive\`, it cannot be changed.
-"""
-enum query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_lines_data_items_invoice_item_anyOf_1_price_currency_options_additionalProperties_tax_behavior {
-  exclusive
-  inclusive
-  unspecified
-}
-
-type PriceTier {
-  """Price for the entire tier."""
-  flat_amount: Int
-  """
-  Same as \`flat_amount\`, but contains a decimal value with at most 12 decimal places.
-  """
-  flat_amount_decimal: Float
-  """Per unit price for units relevant to the tier."""
-  unit_amount: Int
-  """
-  Same as \`unit_amount\`, but contains a decimal value with at most 12 decimal places.
-  """
-  unit_amount_decimal: Float
-  """Up to and including to this quantity will be contained in the tier."""
-  up_to: Int
 }
 
 """Unique identifier for the object."""
@@ -148760,6 +148059,23 @@ enum query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyO
   exclusive
   inclusive
   unspecified
+}
+
+type PriceTier {
+  """Price for the entire tier."""
+  flat_amount: Int
+  """
+  Same as \`flat_amount\`, but contains a decimal value with at most 12 decimal places.
+  """
+  flat_amount_decimal: Float
+  """Per unit price for units relevant to the tier."""
+  unit_amount: Int
+  """
+  Same as \`unit_amount\`, but contains a decimal value with at most 12 decimal places.
+  """
+  unit_amount_decimal: Float
+  """Up to and including to this quantity will be contained in the tier."""
+  up_to: Int
 }
 
 """
@@ -150422,7 +149738,10 @@ type query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyO
   Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
   """
   currency: String!
-  currency_options: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_lines_data_items_invoice_item_anyOf_1_price_currency_options
+  """
+  Prices defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+  """
+  currency_options: JSON
   custom_unit_amount: CustomUnitAmount
   """Unique identifier for the object."""
   id: JSON
@@ -150508,7 +149827,10 @@ type query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyO
   If \`amount_off\` has been set, the three-letter [ISO code for the currency](https://stripe.com/docs/currencies) of the amount to take off.
   """
   currency: String
-  currency_options: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_discount_coupon_currency_options
+  """
+  Coupons defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+  """
+  currency_options: JSON
   duration: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_discount_coupon_duration!
   """
   If \`duration\` is \`repeating\`, the number of months the coupon applies. Null if coupon \`duration\` is \`forever\` or \`once\`.
@@ -150636,7 +149958,10 @@ type query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyO
   Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
   """
   currency: String!
-  currency_options: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_lines_data_items_invoice_item_anyOf_1_price_currency_options
+  """
+  Prices defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+  """
+  currency_options: JSON
   custom_unit_amount: CustomUnitAmount
   """Unique identifier for the object."""
   id: JSON
@@ -152093,34 +151418,10 @@ type ShippingRateFixedAmount {
   Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
   """
   currency: String!
-  currency_options: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_shipping_cost_shipping_rate_anyOf_1_fixed_amount_currency_options
-}
-
-"""
-Shipping rates defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
-"""
-type query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_shipping_cost_shipping_rate_anyOf_1_fixed_amount_currency_options {
-  additionalProperties: [ShippingRateCurrencyOption_entry] @dictionary(subgraph: "Stripe")
-}
-
-type ShippingRateCurrencyOption_entry {
-  key: ID!
-  value: ShippingRateCurrencyOption
-}
-
-type ShippingRateCurrencyOption {
-  """A non-negative integer in cents representing how much to charge."""
-  amount: Int!
-  tax_behavior: query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_shipping_cost_shipping_rate_anyOf_1_fixed_amount_currency_options_additionalProperties_tax_behavior!
-}
-
-"""
-Specifies whether the rate is considered inclusive of taxes or exclusive of taxes. One of \`inclusive\`, \`exclusive\`, or \`unspecified\`.
-"""
-enum query_GetAccount_oneOf_0_external_accounts_data_items_anyOf_0_customer_anyOf_1_invoice_settings_default_payment_method_anyOf_1_card_generated_from_setup_attempt_anyOf_1_setup_error_payment_intent_invoice_anyOf_1_shipping_cost_shipping_rate_anyOf_1_fixed_amount_currency_options_additionalProperties_tax_behavior {
-  exclusive
-  inclusive
-  unspecified
+  """
+  Shipping rates defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+  """
+  currency_options: JSON
 }
 
 """Unique identifier for the object."""
@@ -162421,7 +161722,10 @@ type query_GetClimateOrders_oneOf_0_data_items_product {
   Time at which the object was created. Measured in seconds since the Unix epoch.
   """
   created: Timestamp!
-  current_prices_per_metric_ton: query_GetClimateOrders_oneOf_0_data_items_product_anyOf_1_current_prices_per_metric_ton!
+  """
+  Current prices for a metric ton of carbon removal in a currency's smallest unit.
+  """
+  current_prices_per_metric_ton: JSON!
   """The year in which the carbon removal is expected to be delivered."""
   delivery_year: Int
   """
@@ -162446,33 +161750,6 @@ type query_GetClimateOrders_oneOf_0_data_items_product {
 }
 
 scalar query_GetClimateOrders_oneOf_0_data_items_product_anyOf_0 @length(subgraph: "Stripe", max: 5000)
-
-"""
-Current prices for a metric ton of carbon removal in a currency's smallest unit.
-"""
-type query_GetClimateOrders_oneOf_0_data_items_product_anyOf_1_current_prices_per_metric_ton {
-  additionalProperties: [ClimateRemovalsProductsPrice_entry] @dictionary(subgraph: "Stripe")
-}
-
-type ClimateRemovalsProductsPrice_entry {
-  key: ID!
-  value: ClimateRemovalsProductsPrice
-}
-
-type ClimateRemovalsProductsPrice {
-  """
-  Fees for one metric ton of carbon removal in the currency's smallest unit.
-  """
-  amount_fees: Int!
-  """
-  Subtotal for one metric ton of carbon removal (excluding fees) in the currency's smallest unit.
-  """
-  amount_subtotal: Int!
-  """
-  Total for one metric ton of carbon removal (including fees) in the currency's smallest unit.
-  """
-  amount_total: Int!
-}
 
 """
 Unique identifier for the object. For convenience, Climate product IDs are human-readable strings
@@ -162539,7 +161816,10 @@ type ClimateRemovalsProducts {
   Time at which the object was created. Measured in seconds since the Unix epoch.
   """
   created: Timestamp!
-  current_prices_per_metric_ton: query_GetClimateOrders_oneOf_0_data_items_product_anyOf_1_current_prices_per_metric_ton!
+  """
+  Current prices for a metric ton of carbon removal in a currency's smallest unit.
+  """
+  current_prices_per_metric_ton: JSON!
   """The year in which the carbon removal is expected to be delivered."""
   delivery_year: Int
   """
@@ -184299,6 +183579,9 @@ input PostCoupons_request_Input {
   Three-letter [ISO code for the currency](https://stripe.com/docs/currencies) of the \`amount_off\` parameter (required if \`amount_off\` is passed).
   """
   currency: String
+  """
+  Coupons defined in each available currency option (only supported if \`amount_off\` is passed). Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+  """
   currency_options: JSON
   duration: mutationInput_PostCoupons_input_duration
   """
@@ -184383,6 +183666,9 @@ union PostCouponsCoupon_response @statusCodeTypeName(subgraph: "Stripe", statusC
 scalar mutationInput_PostCouponsCoupon_coupon @length(subgraph: "Stripe", max: 5000)
 
 input PostCouponsCoupon_request_Input {
+  """
+  Coupons defined in each available currency option (only supported if the coupon is amount-based). Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+  """
   currency_options: JSON
   """Specifies which fields in the response should be expanded."""
   expand: [mutationInput_PostCouponsCoupon_input_expand_items]
@@ -196206,6 +195492,9 @@ input PostPrices_request_Input {
   Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
   """
   currency: String!
+  """
+  Prices defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+  """
   currency_options: JSON
   custom_unit_amount: mutationInput_PostPrices_input_custom_unit_amount_Input
   """Specifies which fields in the response should be expanded."""
