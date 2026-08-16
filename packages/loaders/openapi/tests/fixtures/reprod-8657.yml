@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: Reproduction 8657
+  version: 1.0.0
+paths:
+  /post:
+    get:
+      operationId: post
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  additionalPropertiesTrue:
+                    type: object
+                    additionalProperties: true
+                  additionalPropertiesInteger:
+                    type: object
+                    additionalProperties:
+                      type: integer
+                  additionalPropertiesObject:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        text:
+                          type: string
+                  additionalPropertiesObjectWithCustomTitle:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        text:
+                          type: string
+                      title: This is a custom title
+                  additionalPropertiesArrayInteger:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: integer
+                  additionalPropertiesObjectRef:
+                    type: object
+                    additionalProperties:
+                      $ref: '#/components/schemas/ref'
+                  additionalPropertiesObjectRefNested:
+                    type: object
+                    additionalProperties:
+                      $ref: '#/components/schemas/ref-with-ref'
+components:
+  schemas:
+    ref:
+      type: object
+      properties:
+        id:
+          type: integer
+    ref-with-ref:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ref'
