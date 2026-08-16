@@ -190,7 +190,7 @@ type SubgraphAFoo @source(name: "Foo", subgraph: "subgraph-a")  @join__type(grap
 }
 
 type SubgraphASubgraphAQuery @join__type(graph: SUBGRAPH_A)  {
-  foo(id: ID!) : SubgraphAFoo @resolveTo(
+  foo(id: ID!) : SubgraphAFoo @source(name: "foo", type: "Foo", subgraph: "subgraph-a")  @merge(subgraph: "subgraph-a", keyField: "id", argsExpr: "id: $key.id")  @resolveTo(
     sourceName: "subgraph-a"
     sourceTypeName: "Query"
     sourceFieldName: "_encapsulated_SubgraphA_foo"
@@ -221,7 +221,12 @@ type SubgraphBheaders_200_response @source(name: "headers_200_response", subgrap
 }
 
 type SubgraphBSubgraphBQuery @join__type(graph: SUBGRAPH_B)  {
-  headers(xCustomHeader: String) : SubgraphBheaders_200_response @resolveTo(
+  headers(xCustomHeader: String) : SubgraphBheaders_200_response @httpOperation(
+    subgraph: "subgraph-b"
+    path: "/headers"
+    operationSpecificHeaders: [["accept", "application/json"]]
+    httpMethod: GET
+  ) @source(name: "headers", type: "headers_200_response", subgraph: "subgraph-b")  @resolveTo(
     sourceName: "subgraph-b"
     sourceTypeName: "Query"
     sourceFieldName: "_encapsulated_SubgraphB_headers"

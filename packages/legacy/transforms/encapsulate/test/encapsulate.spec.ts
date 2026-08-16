@@ -450,4 +450,77 @@ describe('encapsulate', () => {
       break;
     }
   });
+
+  it('keeps interface implementors queryable', async () => {
+    using cache = new InMemoryLRUCache();
+    const ifaceSchema = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        interface Greeting {
+          message: String!
+        }
+        type HelloGreeting implements Greeting {
+          message: String!
+          iconName: String!
+        }
+        type Query {
+          hello: Greeting
+        }
+      `,
+      resolvers: {
+        Query: {
+          hello: () => ({
+            __typename: 'HelloGreeting',
+            message: 'Hello world!',
+            iconName: 'wave',
+          }),
+        },
+        Greeting: {
+          __resolveType: () => 'HelloGreeting',
+        },
+      },
+    });
+    const newSchema = wrapSchema({
+      schema: ifaceSchema,
+      transforms: [
+        new Transform({
+          config: { name: 'api' },
+          cache,
+          pubsub,
+          baseDir,
+          apiName: 'api',
+          importFn,
+          logger,
+        }),
+      ],
+    });
+    expect(newSchema.getType('HelloGreeting')).toBeDefined();
+    const result = await normalizedExecutor({
+      schema: newSchema,
+      document: parse(/* GraphQL */ `
+        query {
+          api {
+            hello {
+              message
+              __typename
+              ... on HelloGreeting {
+                iconName
+              }
+            }
+          }
+        }
+      `),
+    });
+    if (isAsyncIterable(result)) {
+      throw new Error('Expected a result, but got an async iterable');
+    }
+    expect(result.data).toEqual({
+      api: {
+        hello: {
+          message: 'Hello world!',
+          __typename: 'HelloGreeting',
+          iconName: 'wave',
+        },
+      },
+    });
+  });
 });

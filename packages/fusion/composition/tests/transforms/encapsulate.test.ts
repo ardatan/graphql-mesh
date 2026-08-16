@@ -264,4 +264,197 @@ describe('encapsulate', () => {
       },
     });
   });
+
+  it('keeps interface implementors queryable (#8382)', async () => {
+    const subgraph = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        interface Greeting {
+          message: String!
+        }
+
+        type HelloGreeting implements Greeting {
+          message: String!
+          iconName: String!
+        }
+
+        type Query {
+          hello: Greeting
+        }
+      `,
+      resolvers: {
+        Query: {
+          hello: () => ({
+            __typename: 'HelloGreeting',
+            message: 'Hello world!',
+            iconName: 'wave',
+          }),
+        },
+        Greeting: {
+          __resolveType: () => 'HelloGreeting',
+        },
+      },
+    });
+    const transform = createEncapsulateTransform({ name: 'api' });
+    const publicSchema = await composeAndGetPublicSchema([
+      {
+        schema: subgraph,
+        transforms: [transform],
+        name: 'api',
+      },
+    ]);
+    expect(publicSchema.getType('HelloGreeting')).toBeDefined();
+    expect(publicSchema.getType('Greeting')).toBeDefined();
+
+    const executor = composeAndGetExecutor([
+      {
+        schema: subgraph,
+        transforms: [transform],
+        name: 'api',
+      },
+    ]);
+    const result = await executor({
+      query: /* GraphQL */ `
+        query {
+          api {
+            hello {
+              message
+              __typename
+              ... on HelloGreeting {
+                iconName
+              }
+            }
+          }
+        }
+      `,
+    });
+    expect(result).toEqual({
+      api: {
+        hello: {
+          message: 'Hello world!',
+          __typename: 'HelloGreeting',
+          iconName: 'wave',
+        },
+      },
+    });
+  });
+
+  it('keeps union members queryable after encapsulate', async () => {
+    const subgraph = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Cat {
+          meow: String!
+        }
+        type Dog {
+          bark: String!
+        }
+        union Pet = Cat | Dog
+        type Query {
+          pet: Pet
+        }
+      `,
+      resolvers: {
+        Query: {
+          pet: () => ({ __typename: 'Dog', bark: 'woof' }),
+        },
+        Pet: {
+          __resolveType: obj => obj.__typename,
+        },
+      },
+    });
+    const transform = createEncapsulateTransform({ name: 'api' });
+    const executor = composeAndGetExecutor([
+      {
+        schema: subgraph,
+        transforms: [transform],
+        name: 'api',
+      },
+    ]);
+    const result = await executor({
+      query: /* GraphQL */ `
+        query {
+          api {
+            pet {
+              __typename
+              ... on Dog {
+                bark
+              }
+            }
+          }
+        }
+      `,
+    });
+    expect(result).toEqual({
+      api: {
+        pet: {
+          __typename: 'Dog',
+          bark: 'woof',
+        },
+      },
+    });
+  });
+
+  it('merges two subgraphs encapsulated under the same name (#4962)', async () => {
+    const books = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          heartbeat: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          heartbeat: () => 'books-ok',
+        },
+      },
+    });
+    const animals = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          heartbeat: String!
+        }
+      `,
+      resolvers: {
+        Query: {
+          heartbeat: () => 'animals-ok',
+        },
+      },
+    });
+    const executor = composeAndGetExecutor([
+      {
+        schema: books,
+        transforms: [
+          createEncapsulateTransform({ name: 'library' }),
+          createEncapsulateTransform({ name: 'platform' }),
+        ],
+        name: 'BooksService',
+      },
+      {
+        schema: animals,
+        transforms: [
+          createEncapsulateTransform({ name: 'pets' }),
+          createEncapsulateTransform({ name: 'platform' }),
+        ],
+        name: 'AnimalsService',
+      },
+    ]);
+    const result = await executor({
+      query: /* GraphQL */ `
+        query {
+          platform {
+            library {
+              heartbeat
+            }
+            pets {
+              heartbeat
+            }
+          }
+        }
+      `,
+    });
+    expect(result).toEqual({
+      platform: {
+        library: { heartbeat: 'books-ok' },
+        pets: { heartbeat: 'animals-ok' },
+      },
+    });
+  });
 });

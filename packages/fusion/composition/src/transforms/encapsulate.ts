@@ -7,6 +7,9 @@ import {
   GraphQLScalarType,
   GraphQLSchema,
   GraphQLString,
+  isInterfaceType,
+  isObjectType,
+  isUnionType,
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
@@ -52,6 +55,18 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
         const wrappedFieldMap: GraphQLFieldConfigMap<any, any> = {};
         for (const fieldName in originalTypeConfig.fields) {
           const originalFieldConfig = originalTypeConfig.fields[fieldName];
+          // Already-hidden copies from a previous encapsulate stay on the root type.
+          if (fieldName.startsWith('_encapsulated_')) {
+            originalFieldMapWithHidden[fieldName] = originalFieldConfig;
+            continue;
+          }
+          const originalDirectives = getDirectiveExtensions(originalFieldConfig) || {};
+          // Nested encapsulate: keep existing namespace fields as-is under the new group
+          // instead of re-pointing them at an SDK field that does not exist (#4962).
+          if (originalDirectives.resolveTo?.[0]?.sourceFieldName === '__typename') {
+            wrappedFieldMap[fieldName] = originalFieldConfig;
+            continue;
+          }
           // Generate sourceArgs to forward all arguments
           const sourceArgs: Record<string, string> = {};
           if (originalFieldConfig.args) {
@@ -63,7 +78,9 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
           wrappedFieldMap[fieldName] = {
             ...originalFieldConfig,
             extensions: {
+              ...originalFieldConfig.extensions,
               directives: {
+                ...originalDirectives,
                 resolveTo: [
                   {
                     sourceName: subgraphConfig.name,
@@ -116,9 +133,33 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     if (!newDirectives.some(directive => directive.name === 'resolveTo')) {
       newDirectives.push(resolveToDirective);
     }
-    const newSchema = new GraphQLSchema({
+    // `types: undefined` drops types that are not reachable as field return
+    // types, including interface implementors (#8382). Keep only those extra
+    // types so unused scalars (e.g. transport options) are not re-introduced.
+    const reachableTypeMap = new GraphQLSchema({
       ...schemaConfig,
       types: undefined,
+    }).getTypeMap();
+    const typesToKeep = schemaConfig.types.filter(type => {
+      if (
+        type === schemaConfig.query ||
+        type === schemaConfig.mutation ||
+        type === schemaConfig.subscription ||
+        type.name.startsWith('__')
+      ) {
+        return false;
+      }
+      if (reachableTypeMap[type.name]) {
+        return false;
+      }
+      if (isObjectType(type) || isInterfaceType(type)) {
+        return type.getInterfaces().length > 0;
+      }
+      return isUnionType(type);
+    });
+    const newSchema = new GraphQLSchema({
+      ...schemaConfig,
+      types: typesToKeep,
       directives: newDirectives,
       ...newRootTypes,
     });
