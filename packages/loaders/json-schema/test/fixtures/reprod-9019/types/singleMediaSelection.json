@@ -1,0 +1,23 @@
+{
+  "title": "SingleMediaSelection",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": ["integer", "null"]
+    },
+    "url": {
+      "type": ["string", "null"]
+    },
+    "type": {
+      "type": ["object", "null"],
+      "properties": {
+        "name": {
+          "type": ["string", "null"]
+        },
+        "id": {
+          "type": ["integer", "null"]
+        }
+      }
+    }
+  }
+}
