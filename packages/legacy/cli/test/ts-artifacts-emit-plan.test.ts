@@ -1,6 +1,10 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import {
   getMeshArtifactEmitPlan,
   getMeshArtifactsPackageJson,
+  readResolvedTsConfigModule,
 } from '../src/commands/ts-artifacts.js';
 
 describe('getMeshArtifactEmitPlan', () => {
@@ -175,5 +179,26 @@ describe('getMeshArtifactsPackageJson', () => {
         },
       },
     });
+  });
+});
+
+describe('readResolvedTsConfigModule', () => {
+  it('inherits compilerOptions.module from tsconfig extends', () => {
+    const root = mkdtempSync(join(tmpdir(), 'mesh-tsconfig-'));
+    const projectDir = join(root, 'app');
+    mkdirSync(projectDir);
+    writeFileSync(
+      join(root, 'tsconfig.base.json'),
+      JSON.stringify({ compilerOptions: { module: 'ES2022' } }),
+    );
+    writeFileSync(
+      join(projectDir, 'tsconfig.json'),
+      JSON.stringify({ extends: '../tsconfig.base.json', compilerOptions: { rootDir: './' } }),
+    );
+    try {
+      expect(readResolvedTsConfigModule(projectDir)?.toLowerCase()).toBe('es2022');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });

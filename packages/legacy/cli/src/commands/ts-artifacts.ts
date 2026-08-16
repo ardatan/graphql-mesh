@@ -1,3 +1,4 @@
+import { getTsconfig } from 'get-tsconfig';
 import type { GraphQLSchema } from 'graphql';
 import JSON5 from 'json5';
 import ts from 'typescript';
@@ -117,6 +118,23 @@ export function getMeshArtifactsPackageJson(
           './*': './*.js',
         },
   };
+}
+
+/**
+ * Load `compilerOptions.module` from the project's `tsconfig.json`, including
+ * values inherited via `extends`. Returns `undefined` when there is no
+ * tsconfig in `projectDir` itself (parent configs are ignored).
+ */
+export function readResolvedTsConfigModule(projectDir: string): string | undefined {
+  const tsconfig = getTsconfig(projectDir, 'tsconfig.json');
+  if (!tsconfig) {
+    return undefined;
+  }
+  if (pathModule.resolve(pathModule.dirname(tsconfig.path)) !== pathModule.resolve(projectDir)) {
+    return undefined;
+  }
+  const moduleOption = tsconfig.config.compilerOptions?.module;
+  return typeof moduleOption === 'string' ? moduleOption : undefined;
 }
 
 async function loadTypeScriptCodegenPlugin() {
@@ -473,8 +491,7 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
   let packageJsonType: string | undefined;
   if (hasTsConfig) {
     try {
-      const tsConfig = JSON5.parse(await fs.promises.readFile(tsConfigPath, 'utf-8'));
-      tsConfigModule = tsConfig?.compilerOptions?.module;
+      tsConfigModule = readResolvedTsConfigModule(baseDir);
     } catch {
       // Keep the default emit plan if tsconfig cannot be read.
     }
