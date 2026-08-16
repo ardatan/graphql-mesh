@@ -52,6 +52,18 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
         const wrappedFieldMap: GraphQLFieldConfigMap<any, any> = {};
         for (const fieldName in originalTypeConfig.fields) {
           const originalFieldConfig = originalTypeConfig.fields[fieldName];
+          // Already-hidden copies from a previous encapsulate stay on the root type.
+          if (fieldName.startsWith('_encapsulated_')) {
+            originalFieldMapWithHidden[fieldName] = originalFieldConfig;
+            continue;
+          }
+          const originalDirectives = getDirectiveExtensions(originalFieldConfig) || {};
+          // Nested encapsulate: keep existing namespace fields as-is under the new group
+          // instead of re-pointing them at an SDK field that does not exist (#4962).
+          if (originalDirectives.resolveTo?.[0]?.sourceFieldName === '__typename') {
+            wrappedFieldMap[fieldName] = originalFieldConfig;
+            continue;
+          }
           // Generate sourceArgs to forward all arguments
           const sourceArgs: Record<string, string> = {};
           if (originalFieldConfig.args) {
@@ -63,7 +75,9 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
           wrappedFieldMap[fieldName] = {
             ...originalFieldConfig,
             extensions: {
+              ...originalFieldConfig.extensions,
               directives: {
+                ...originalDirectives,
                 resolveTo: [
                   {
                     sourceName: subgraphConfig.name,
@@ -118,7 +132,16 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     }
     const newSchema = new GraphQLSchema({
       ...schemaConfig,
-      types: undefined,
+      // Keep named types from the original schema (interface implementors, union
+      // members, unused but referenced input types). `types: undefined` would
+      // drop anything not reachable as a field return type, which hides
+      // `implements` types from the supergraph (#8382).
+      types: schemaConfig.types.filter(
+        type =>
+          type !== schemaConfig.query &&
+          type !== schemaConfig.mutation &&
+          type !== schemaConfig.subscription,
+      ),
       directives: newDirectives,
       ...newRootTypes,
     });
