@@ -1513,6 +1513,7 @@ export function getComposerFromJSONSchema({
           if (subSchemaAndTypeComposers.additionalProperties) {
             // Take a look later
             if (
+              Object.keys(fieldMap).length > 0 &&
               typeof subSchemaAndTypeComposers.additionalProperties === 'object' &&
               subSchemaAndTypeComposers.additionalProperties.output instanceof ObjectTypeComposer
             ) {
