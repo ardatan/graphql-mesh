@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { readFileSync } from 'fs';
 import type { JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { dereferenceObject } from '../src/dereferenceObject.js';
+import { dereferenceObject, getAbsolutePath, normalizeFsPath } from '../src/dereferenceObject.js';
 
 describe('dereferenceObject', () => {
   it('should resolve all $ref', async () => {
@@ -79,6 +79,58 @@ describe('dereferenceObject', () => {
     expect(result.title).toBe('PostsResponse');
     expect(result.properties.items.items.title).toBe('Post');
     expect(result.properties.items.items.properties.author.title).toBe('Author');
+  });
+  it('normalizes relative paths so the same file is loaded once', async () => {
+    expect(normalizeFsPath('/api/rest/types/extension/../../utils.json')).toBe(
+      '/api/rest/utils.json',
+    );
+    expect(getAbsolutePath('../../utils.json', '/api/rest/types/extension')).toBe(
+      '/api/rest/utils.json',
+    );
+    expect(getAbsolutePath('utils.json', '/api/rest')).toBe('/api/rest/utils.json');
+  });
+  it('reuses the same object for one definition reached via different relative $refs', async () => {
+    const files: Record<string, any> = {
+      '/api/rest/utils.json': {
+        definitions: {
+          SingleMediaSelection: {
+            $ref: 'types/singleMediaSelection.json',
+          },
+        },
+      },
+      '/api/rest/types/singleMediaSelection.json': {
+        title: 'SingleMediaSelection',
+        type: 'object',
+        properties: {
+          id: { type: 'integer' },
+        },
+      },
+    };
+    const result = await dereferenceObject<JSONSchemaObject>(
+      {
+        title: 'Root',
+        type: 'object',
+        properties: {
+          image: { $ref: 'utils.json#/definitions/SingleMediaSelection' },
+          icon: {
+            type: 'array',
+            items: { $ref: 'types/extension/../../utils.json#/definitions/SingleMediaSelection' },
+          },
+        },
+      },
+      {
+        cwd: '/api/rest',
+        readFileOrUrl: path => {
+          const file = files[path];
+          if (!file) {
+            throw new Error('unexpected path ' + path);
+          }
+          return structuredClone(file);
+        },
+      },
+    );
+    expect(result.properties.image).toBe(result.properties.icon.items);
+    expect(result.properties.image.title).toBe('SingleMediaSelection');
   });
   it('should dereference OpenAPI schemas', async () => {
     const openapiSchema = {

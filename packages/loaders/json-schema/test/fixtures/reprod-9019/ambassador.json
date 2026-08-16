@@ -1,0 +1,22 @@
+{
+  "definitions": {
+    "AmbassadorList": {
+      "title": "AmbassadorList",
+      "type": "object",
+      "properties": {
+        "content": {
+          "title": "AmbassadorListContent",
+          "type": "object",
+          "properties": {
+            "image": {
+              "$ref": "utils.json#/definitions/SingleMediaSelection"
+            }
+          }
+        },
+        "extension": {
+          "$ref": "types/extension.json"
+        }
+      }
+    }
+  }
+}

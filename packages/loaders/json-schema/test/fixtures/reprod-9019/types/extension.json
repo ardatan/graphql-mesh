@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "title": "Extension",
+  "properties": {
+    "excerpt": {
+      "$ref": "extension/excerpt.json"
+    }
+  }
+}

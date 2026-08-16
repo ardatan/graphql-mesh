@@ -1,0 +1,7 @@
+{
+  "definitions": {
+    "SingleMediaSelection": {
+      "$ref": "types/singleMediaSelection.json"
+    }
+  }
+}
