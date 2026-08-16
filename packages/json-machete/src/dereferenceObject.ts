@@ -77,7 +77,7 @@ export function getAbsolutePath(path: string, cwd: string) {
   if (isUrl(cwd)) {
     return normalizeUrl(urlJoin(cwd, path));
   }
-  if (path.startsWith('/') || path.substring(1).startsWith(':\\')) {
+  if (path.startsWith('/') || /^[a-zA-Z]:[\\/]/.test(path)) {
     return normalizeFsPath(path);
   }
   return normalizeFsPath(cwd + '/' + path);

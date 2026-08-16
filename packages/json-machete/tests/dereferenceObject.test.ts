@@ -88,6 +88,8 @@ describe('dereferenceObject', () => {
       '/api/rest/utils.json',
     );
     expect(getAbsolutePath('utils.json', '/api/rest')).toBe('/api/rest/utils.json');
+    expect(getAbsolutePath('C:/api/utils.json', 'C:/other')).toBe('C:/api/utils.json');
+    expect(getAbsolutePath('C:\\api\\utils.json', 'C:\\other')).toBe('C:/api/utils.json');
   });
   it('reuses the same object for one definition reached via different relative $refs', async () => {
     const files: Record<string, any> = {
