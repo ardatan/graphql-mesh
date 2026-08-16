@@ -60,11 +60,21 @@ export function getMeshArtifactEmitPlan({
     artifactsPackageType: fileType === 'ts' ? undefined : 'commonjs',
   });
 
-  const dualCjsPackage = (): ReturnType<typeof getMeshArtifactEmitPlan> => ({
-    esmExt: 'mjs',
-    cjs: fileType !== 'js',
-    artifactsPackageType: fileType === 'js' ? 'module' : 'commonjs',
-  });
+  const dualCjsPackage = (): ReturnType<typeof getMeshArtifactEmitPlan> => {
+    // `fileType: 'ts'` keeps the source artifact only — dual esm+cjs jobs would
+    // both write `index.ts` and package metadata would point at missing JS files.
+    if (fileType === 'ts') {
+      return {
+        cjs: true,
+        artifactsPackageType: undefined,
+      };
+    }
+    return {
+      esmExt: 'mjs',
+      cjs: fileType !== 'js',
+      artifactsPackageType: fileType === 'js' ? 'module' : 'commonjs',
+    };
+  };
 
   if (hasTsConfig) {
     if (tsModule.startsWith('es')) {
@@ -89,13 +99,16 @@ export function getMeshArtifactEmitPlan({
 export function getMeshArtifactsPackageJson(
   moduleType: 'module' | 'commonjs',
   esmEntry?: 'index.js' | 'index.mjs',
+  options: { emitCjs?: boolean } = {},
 ) {
-  const dualPackage = esmEntry === 'index.mjs';
+  const emitCjs = options.emitCjs ?? esmEntry !== 'index.mjs';
+  const dualPackage = esmEntry === 'index.mjs' && emitCjs;
+  const mjsOnly = esmEntry === 'index.mjs' && !emitCjs;
   return {
     name: 'mesh-artifacts',
     private: true,
     type: moduleType,
-    main: 'index.js',
+    main: mjsOnly ? 'index.mjs' : 'index.js',
     ...(esmEntry ? { module: esmEntry } : {}),
     sideEffects: false,
     typings: 'index.d.ts',
@@ -113,10 +126,15 @@ export function getMeshArtifactsPackageJson(
             import: './*.mjs',
           },
         }
-      : {
-          '.': './index.js',
-          './*': './*.js',
-        },
+      : mjsOnly
+        ? {
+            '.': './index.mjs',
+            './*': './*.mjs',
+          }
+        : {
+            '.': './index.js',
+            './*': './*.js',
+          },
   };
 }
 
@@ -477,10 +495,15 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
   };
 
   const packageJsonJob =
-    (moduleType: 'module' | 'commonjs', esmEntry?: 'index.js' | 'index.mjs') => () =>
+    (
+      moduleType: 'module' | 'commonjs',
+      esmEntry?: 'index.js' | 'index.mjs',
+      options?: { emitCjs?: boolean },
+    ) =>
+    () =>
       writeJSON(
         pathModule.join(artifactsDir, 'package.json'),
-        getMeshArtifactsPackageJson(moduleType, esmEntry),
+        getMeshArtifactsPackageJson(moduleType, esmEntry, options),
       );
 
   const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
@@ -522,6 +545,7 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
       packageJsonJob(
         plan.artifactsPackageType,
         plan.esmExt ? (`index.${plan.esmExt}` as 'index.js' | 'index.mjs') : undefined,
+        { emitCjs: plan.cjs },
       ),
     );
   }

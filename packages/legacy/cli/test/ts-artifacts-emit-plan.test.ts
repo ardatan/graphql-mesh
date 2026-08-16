@@ -143,6 +143,19 @@ describe('getMeshArtifactEmitPlan', () => {
       artifactsPackageType: 'commonjs',
     });
   });
+
+  it('keeps a TypeScript-only plan for fileType ts without tsconfig', () => {
+    expect(
+      getMeshArtifactEmitPlan({
+        hasTsConfig: false,
+        hasPackageJson: false,
+        fileType: 'ts',
+      }),
+    ).toEqual({
+      cjs: true,
+      artifactsPackageType: undefined,
+    });
+  });
 });
 
 describe('getMeshArtifactsPackageJson', () => {
@@ -169,14 +182,26 @@ describe('getMeshArtifactsPackageJson', () => {
     expect(getMeshArtifactsPackageJson('commonjs')).not.toHaveProperty('module');
   });
 
-  it('keeps dual-package import paths when .mjs is emitted', () => {
-    expect(getMeshArtifactsPackageJson('commonjs', 'index.mjs')).toMatchObject({
+  it('keeps dual-package import paths when .mjs and CJS are both emitted', () => {
+    expect(getMeshArtifactsPackageJson('commonjs', 'index.mjs', { emitCjs: true })).toMatchObject({
       module: 'index.mjs',
       exports: {
         '.': {
           require: './index.js',
           import: './index.mjs',
         },
+      },
+    });
+  });
+
+  it('does not advertise require→index.js when only .mjs is emitted', () => {
+    expect(getMeshArtifactsPackageJson('module', 'index.mjs', { emitCjs: false })).toMatchObject({
+      type: 'module',
+      main: 'index.mjs',
+      module: 'index.mjs',
+      exports: {
+        '.': './index.mjs',
+        './*': './*.mjs',
       },
     });
   });
