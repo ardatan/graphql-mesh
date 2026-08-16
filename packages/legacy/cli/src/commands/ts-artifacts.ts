@@ -26,6 +26,99 @@ import { generateOperations } from './generate-operations.js';
 
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
 
+export type MeshArtifactEsmExt = 'js' | 'mjs';
+
+export function getMeshArtifactEmitPlan({
+  hasTsConfig,
+  tsConfigModule,
+  hasPackageJson,
+  packageJsonType,
+  fileType,
+}: {
+  hasTsConfig: boolean;
+  tsConfigModule?: string;
+  hasPackageJson: boolean;
+  packageJsonType?: string;
+  fileType: 'ts' | 'json' | 'js';
+}): {
+  esmExt?: MeshArtifactEsmExt;
+  cjs: boolean;
+  artifactsPackageType?: 'module' | 'commonjs';
+} {
+  const tsModule = tsConfigModule?.toLowerCase() ?? '';
+  const isPackageModule = packageJsonType === 'module';
+
+  const esmAsJs = (): ReturnType<typeof getMeshArtifactEmitPlan> => ({
+    esmExt: 'js',
+    cjs: false,
+    artifactsPackageType: fileType === 'ts' ? undefined : 'module',
+  });
+
+  const cjsOnly = (): ReturnType<typeof getMeshArtifactEmitPlan> => ({
+    cjs: true,
+    artifactsPackageType: fileType === 'ts' ? undefined : 'commonjs',
+  });
+
+  const dualCjsPackage = (): ReturnType<typeof getMeshArtifactEmitPlan> => ({
+    esmExt: 'mjs',
+    cjs: fileType !== 'js',
+    artifactsPackageType: fileType === 'js' ? 'module' : 'commonjs',
+  });
+
+  if (hasTsConfig) {
+    if (tsModule.startsWith('es')) {
+      return esmAsJs();
+    }
+    if (tsModule.startsWith('node') && hasPackageJson) {
+      return isPackageModule ? esmAsJs() : cjsOnly();
+    }
+    // `"type": "module"` means Node loads `.js` as ESM; emitting CJS artifacts
+    // into that package (hello-world-esm) makes `exports is not defined`.
+    if (hasPackageJson && isPackageModule) {
+      return esmAsJs();
+    }
+    return cjsOnly();
+  }
+  if (hasPackageJson && isPackageModule) {
+    return esmAsJs();
+  }
+  return dualCjsPackage();
+}
+
+export function getMeshArtifactsPackageJson(
+  moduleType: 'module' | 'commonjs',
+  esmEntry: 'index.js' | 'index.mjs' = 'index.mjs',
+) {
+  const pureEsmJs = moduleType === 'module' && esmEntry === 'index.js';
+  return {
+    name: 'mesh-artifacts',
+    private: true,
+    type: moduleType,
+    main: 'index.js',
+    module: esmEntry,
+    sideEffects: false,
+    typings: 'index.d.ts',
+    typescript: {
+      definition: 'index.d.ts',
+    },
+    exports: pureEsmJs
+      ? {
+          '.': './index.js',
+          './*': './*.js',
+        }
+      : {
+          '.': {
+            require: './index.js',
+            import: './index.mjs',
+          },
+          './*': {
+            require: './*.js',
+            import: './*.mjs',
+          },
+        },
+  };
+}
+
 async function loadTypeScriptCodegenPlugin() {
   return defaultImportFn('@graphql-codegen/typescript');
 }
@@ -365,99 +458,46 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
     }
   };
 
-  const packageJsonJob = (module: string) => () =>
-    writeJSON(pathModule.join(artifactsDir, 'package.json'), {
-      name: 'mesh-artifacts',
-      private: true,
-      type: module,
-      main: 'index.js',
-      module: 'index.mjs',
-      sideEffects: false,
-      typings: 'index.d.ts',
-      typescript: {
-        definition: 'index.d.ts',
-      },
-      exports: {
-        '.': {
-          require: './index.js',
-          import: './index.mjs',
-        },
-        './*': {
-          require: './*.js',
-          import: './*.mjs',
-        },
-      },
-    });
+  const packageJsonJob =
+    (moduleType: 'module' | 'commonjs', esmEntry: 'index.js' | 'index.mjs' = 'index.mjs') =>
+    () =>
+      writeJSON(
+        pathModule.join(artifactsDir, 'package.json'),
+        getMeshArtifactsPackageJson(moduleType, esmEntry),
+      );
 
-  function setTsConfigDefault() {
-    jobs.push(cjsJob);
-    if (fileType !== 'ts') {
-      jobs.push(packageJsonJob('commonjs'));
-    }
-  }
   const rootDir = pathModule.resolve('./');
   const tsConfigPath = pathModule.join(rootDir, 'tsconfig.json');
   const packageJsonPath = pathModule.join(rootDir, 'package.json');
-  if (await pathExists(tsConfigPath)) {
-    // case tsconfig exists
-    const tsConfigStr = await fs.promises.readFile(tsConfigPath, 'utf-8');
-    const tsConfig = JSON5.parse(tsConfigStr);
-    if (tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('es')) {
-      // case tsconfig set to esm
-      jobs.push(esmJob('js'));
-      if (fileType !== 'ts') {
-        jobs.push(packageJsonJob('module'));
-      }
-    } else if (
-      tsConfig?.compilerOptions?.module?.toLowerCase()?.startsWith('node') &&
-      (await pathExists(packageJsonPath))
-    ) {
-      // case tsconfig set to node* and package.json exists
-      const packageJsonStr = await fs.promises.readFile(packageJsonPath, 'utf-8');
-      const packageJson = JSON5.parse(packageJsonStr);
-      if (packageJson?.type === 'module') {
-        // case package.json set to esm
-        jobs.push(esmJob('js'));
-        if (fileType !== 'ts') {
-          jobs.push(packageJsonJob('module'));
-        }
-      } else {
-        // case package.json set to cjs or not set
-        setTsConfigDefault();
-      }
-    } else {
-      // case tsconfig set to cjs or set to node* with no package.json
-      setTsConfigDefault();
-    }
-  } else if (await pathExists(packageJsonPath)) {
-    // case package.json exists
-    const packageJsonStr = await fs.promises.readFile(packageJsonPath, 'utf-8');
-    const packageJson = JSON5.parse(packageJsonStr);
-    if (packageJson?.type === 'module') {
-      // case package.json set to esm
-      jobs.push(esmJob('js'));
-      if (fileType !== 'ts') {
-        jobs.push(packageJsonJob('module'));
-      }
-    } else {
-      // case package.json set to cjs or not set
-      jobs.push(esmJob('mjs'));
-      if (fileType === 'js') {
-        jobs.push(packageJsonJob('module'));
-      } else {
-        jobs.push(cjsJob);
-        jobs.push(packageJsonJob('commonjs'));
-      }
-    }
-  } else {
-    // case no tsconfig and no package.json
-    jobs.push(esmJob('mjs'));
-    if (fileType === 'js') {
-      jobs.push(packageJsonJob('module'));
-    } else {
-      jobs.push(cjsJob);
-      jobs.push(packageJsonJob('commonjs'));
-    }
+  const hasTsConfig = await pathExists(tsConfigPath);
+  const hasPackageJson = await pathExists(packageJsonPath);
+  let tsConfigModule: string | undefined;
+  let packageJsonType: string | undefined;
+  if (hasTsConfig) {
+    const tsConfig = JSON5.parse(await fs.promises.readFile(tsConfigPath, 'utf-8'));
+    tsConfigModule = tsConfig?.compilerOptions?.module;
+  }
+  if (hasPackageJson) {
+    const packageJson = JSON5.parse(await fs.promises.readFile(packageJsonPath, 'utf-8'));
+    packageJsonType = packageJson?.type;
+  }
+  const plan = getMeshArtifactEmitPlan({
+    hasTsConfig,
+    tsConfigModule,
+    hasPackageJson,
+    packageJsonType,
+    fileType,
+  });
+  if (plan.esmExt) {
+    jobs.push(esmJob(plan.esmExt));
+  }
+  if (plan.cjs) {
+    jobs.push(cjsJob);
+  }
+  if (plan.artifactsPackageType) {
+    jobs.push(
+      packageJsonJob(plan.artifactsPackageType, plan.esmExt === 'js' ? 'index.js' : 'index.mjs'),
+    );
   }
 
   for (const job of jobs) {
