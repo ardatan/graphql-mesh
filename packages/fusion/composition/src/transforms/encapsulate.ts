@@ -7,6 +7,9 @@ import {
   GraphQLScalarType,
   GraphQLSchema,
   GraphQLString,
+  isInterfaceType,
+  isObjectType,
+  isUnionType,
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
@@ -130,18 +133,33 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
     if (!newDirectives.some(directive => directive.name === 'resolveTo')) {
       newDirectives.push(resolveToDirective);
     }
+    // `types: undefined` drops types that are not reachable as field return
+    // types, including interface implementors (#8382). Keep only those extra
+    // types so unused scalars (e.g. transport options) are not re-introduced.
+    const reachableTypeMap = new GraphQLSchema({
+      ...schemaConfig,
+      types: undefined,
+    }).getTypeMap();
+    const typesToKeep = schemaConfig.types.filter(type => {
+      if (
+        type === schemaConfig.query ||
+        type === schemaConfig.mutation ||
+        type === schemaConfig.subscription ||
+        type.name.startsWith('__')
+      ) {
+        return false;
+      }
+      if (reachableTypeMap[type.name]) {
+        return false;
+      }
+      if (isObjectType(type) || isInterfaceType(type)) {
+        return type.getInterfaces().length > 0;
+      }
+      return isUnionType(type);
+    });
     const newSchema = new GraphQLSchema({
       ...schemaConfig,
-      // Keep named types from the original schema (interface implementors, union
-      // members, unused but referenced input types). `types: undefined` would
-      // drop anything not reachable as a field return type, which hides
-      // `implements` types from the supergraph (#8382).
-      types: schemaConfig.types.filter(
-        type =>
-          type !== schemaConfig.query &&
-          type !== schemaConfig.mutation &&
-          type !== schemaConfig.subscription,
-      ),
+      types: typesToKeep,
       directives: newDirectives,
       ...newRootTypes,
     });
