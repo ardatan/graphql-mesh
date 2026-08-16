@@ -87,26 +87,22 @@ export function getMeshArtifactEmitPlan({
 
 export function getMeshArtifactsPackageJson(
   moduleType: 'module' | 'commonjs',
-  esmEntry: 'index.js' | 'index.mjs' = 'index.mjs',
+  esmEntry?: 'index.js' | 'index.mjs',
 ) {
-  const pureEsmJs = moduleType === 'module' && esmEntry === 'index.js';
+  const dualPackage = esmEntry === 'index.mjs';
   return {
     name: 'mesh-artifacts',
     private: true,
     type: moduleType,
     main: 'index.js',
-    module: esmEntry,
+    ...(esmEntry ? { module: esmEntry } : {}),
     sideEffects: false,
     typings: 'index.d.ts',
     typescript: {
       definition: 'index.d.ts',
     },
-    exports: pureEsmJs
+    exports: dualPackage
       ? {
-          '.': './index.js',
-          './*': './*.js',
-        }
-      : {
           '.': {
             require: './index.js',
             import: './index.mjs',
@@ -115,6 +111,10 @@ export function getMeshArtifactsPackageJson(
             require: './*.js',
             import: './*.mjs',
           },
+        }
+      : {
+          '.': './index.js',
+          './*': './*.js',
         },
   };
 }
@@ -459,27 +459,33 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
   };
 
   const packageJsonJob =
-    (moduleType: 'module' | 'commonjs', esmEntry: 'index.js' | 'index.mjs' = 'index.mjs') =>
-    () =>
+    (moduleType: 'module' | 'commonjs', esmEntry?: 'index.js' | 'index.mjs') => () =>
       writeJSON(
         pathModule.join(artifactsDir, 'package.json'),
         getMeshArtifactsPackageJson(moduleType, esmEntry),
       );
 
-  const rootDir = pathModule.resolve('./');
-  const tsConfigPath = pathModule.join(rootDir, 'tsconfig.json');
-  const packageJsonPath = pathModule.join(rootDir, 'package.json');
+  const tsConfigPath = pathModule.join(baseDir, 'tsconfig.json');
+  const packageJsonPath = pathModule.join(baseDir, 'package.json');
   const hasTsConfig = await pathExists(tsConfigPath);
   const hasPackageJson = await pathExists(packageJsonPath);
   let tsConfigModule: string | undefined;
   let packageJsonType: string | undefined;
   if (hasTsConfig) {
-    const tsConfig = JSON5.parse(await fs.promises.readFile(tsConfigPath, 'utf-8'));
-    tsConfigModule = tsConfig?.compilerOptions?.module;
+    try {
+      const tsConfig = JSON5.parse(await fs.promises.readFile(tsConfigPath, 'utf-8'));
+      tsConfigModule = tsConfig?.compilerOptions?.module;
+    } catch {
+      // Keep the default emit plan if tsconfig cannot be read.
+    }
   }
   if (hasPackageJson) {
-    const packageJson = JSON5.parse(await fs.promises.readFile(packageJsonPath, 'utf-8'));
-    packageJsonType = packageJson?.type;
+    try {
+      const packageJson = JSON5.parse(await fs.promises.readFile(packageJsonPath, 'utf-8'));
+      packageJsonType = packageJson?.type;
+    } catch {
+      // Keep the default emit plan if package.json cannot be read.
+    }
   }
   const plan = getMeshArtifactEmitPlan({
     hasTsConfig,
@@ -496,7 +502,10 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
   }
   if (plan.artifactsPackageType) {
     jobs.push(
-      packageJsonJob(plan.artifactsPackageType, plan.esmExt === 'js' ? 'index.js' : 'index.mjs'),
+      packageJsonJob(
+        plan.artifactsPackageType,
+        plan.esmExt ? (`index.${plan.esmExt}` as 'index.js' | 'index.mjs') : undefined,
+      ),
     );
   }
 

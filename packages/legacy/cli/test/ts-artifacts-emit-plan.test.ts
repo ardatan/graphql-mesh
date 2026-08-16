@@ -50,6 +50,95 @@ describe('getMeshArtifactEmitPlan', () => {
       artifactsPackageType: 'module',
     });
   });
+
+  it('keeps the historical es* tsconfig plan without package.json type module', () => {
+    expect(
+      getMeshArtifactEmitPlan({
+        hasTsConfig: true,
+        tsConfigModule: 'ESNext',
+        hasPackageJson: true,
+        packageJsonType: undefined,
+        fileType: 'js',
+      }),
+    ).toEqual({
+      esmExt: 'js',
+      cjs: false,
+      artifactsPackageType: 'module',
+    });
+  });
+
+  it('does not write artifacts package.json for fileType ts', () => {
+    expect(
+      getMeshArtifactEmitPlan({
+        hasTsConfig: true,
+        tsConfigModule: 'commonjs',
+        hasPackageJson: true,
+        packageJsonType: undefined,
+        fileType: 'ts',
+      }),
+    ).toEqual({
+      cjs: true,
+      artifactsPackageType: undefined,
+    });
+  });
+
+  it('uses node16 + type module as ESM index.js', () => {
+    expect(
+      getMeshArtifactEmitPlan({
+        hasTsConfig: true,
+        tsConfigModule: 'node16',
+        hasPackageJson: true,
+        packageJsonType: 'module',
+        fileType: 'js',
+      }),
+    ).toEqual({
+      esmExt: 'js',
+      cjs: false,
+      artifactsPackageType: 'module',
+    });
+  });
+
+  it('uses nodenext without type module as CJS', () => {
+    expect(
+      getMeshArtifactEmitPlan({
+        hasTsConfig: true,
+        tsConfigModule: 'nodenext',
+        hasPackageJson: true,
+        packageJsonType: undefined,
+        fileType: 'js',
+      }),
+    ).toEqual({
+      cjs: true,
+      artifactsPackageType: 'commonjs',
+    });
+  });
+
+  it('emits dual CJS + mjs when there is no tsconfig and package.json is not module', () => {
+    expect(
+      getMeshArtifactEmitPlan({
+        hasTsConfig: false,
+        hasPackageJson: true,
+        packageJsonType: undefined,
+        fileType: 'js',
+      }),
+    ).toEqual({
+      esmExt: 'mjs',
+      cjs: false,
+      artifactsPackageType: 'module',
+    });
+    expect(
+      getMeshArtifactEmitPlan({
+        hasTsConfig: false,
+        hasPackageJson: true,
+        packageJsonType: undefined,
+        fileType: 'json',
+      }),
+    ).toEqual({
+      esmExt: 'mjs',
+      cjs: true,
+      artifactsPackageType: 'commonjs',
+    });
+  });
 });
 
 describe('getMeshArtifactsPackageJson', () => {
@@ -60,6 +149,30 @@ describe('getMeshArtifactsPackageJson', () => {
       module: 'index.js',
       exports: {
         '.': './index.js',
+      },
+    });
+  });
+
+  it('does not advertise a missing index.mjs for CJS-only artifacts', () => {
+    expect(getMeshArtifactsPackageJson('commonjs')).toMatchObject({
+      type: 'commonjs',
+      main: 'index.js',
+      exports: {
+        '.': './index.js',
+        './*': './*.js',
+      },
+    });
+    expect(getMeshArtifactsPackageJson('commonjs')).not.toHaveProperty('module');
+  });
+
+  it('keeps dual-package import paths when .mjs is emitted', () => {
+    expect(getMeshArtifactsPackageJson('commonjs', 'index.mjs')).toMatchObject({
+      module: 'index.mjs',
+      exports: {
+        '.': {
+          require: './index.js',
+          import: './index.mjs',
+        },
       },
     });
   });
