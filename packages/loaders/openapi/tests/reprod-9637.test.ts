@@ -1,4 +1,4 @@
-import { assertObjectType, getNamedType, printSchema } from 'graphql';
+import { assertObjectType, getNamedType, isNonNullType, printSchema } from 'graphql';
 import loadGraphQLSchemaFromOpenAPI from '@omnigraph/openapi';
 
 describe('Reproduction #9637', () => {
@@ -12,11 +12,15 @@ describe('Reproduction #9637', () => {
     expect(() => printSchema(schema)).not.toThrow();
     const queryType = assertObjectType(schema.getQueryType());
     const itemType = assertObjectType(getNamedType(queryType.getFields().getItem.type));
-    const idType = getNamedType(itemType.getFields().id.type);
-    const parentIdType = getNamedType(itemType.getFields().parent_id.type);
+    const idField = itemType.getFields().id;
+    const parentIdField = itemType.getFields().parent_id;
+    const idType = getNamedType(idField.type);
+    const parentIdType = getNamedType(parentIdField.type);
     expect(idType.name).toBe('UUID');
     expect(parentIdType.name).toBe('UUID');
     expect(idType).toBe(parentIdType);
+    expect(isNonNullType(idField.type)).toBe(true);
+    expect(isNonNullType(parentIdField.type)).toBe(false);
     expect(schema.getType('UUID2')).toBeUndefined();
   });
 });

@@ -1,5 +1,6 @@
 import {
   execute,
+  getNamedType,
   GraphQLBoolean,
   GraphQLFloat,
   GraphQLInt,
@@ -1542,10 +1543,12 @@ ${printType(GraphQLString)}
       type: 'string',
       format: 'uuid',
       pattern: '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
+      nullable: false,
     };
     const inputSchema: JSONSchema = {
       type: 'object',
       title: 'Item',
+      required: ['id', 'parent_id'],
       properties: {
         id: uuidSchema,
         parent_id: {
@@ -1560,13 +1563,37 @@ ${printType(GraphQLString)}
       logger,
     });
     const output = result.output as ObjectTypeComposer;
-    const idType = (output.getField('id').type as any).getUnwrappedTC() as ScalarTypeComposer;
-    const parentIdType = (
-      output.getField('parent_id').type as any
-    ).getUnwrappedTC() as ScalarTypeComposer;
-    expect(idType.getType()).toBe(GraphQLUUID);
-    expect(parentIdType.getType()).toBe(GraphQLUUID);
+    const idField = output.getField('id');
+    const parentIdField = output.getField('parent_id');
+    expect(getNamedType(idField.type.getType())).toBe(GraphQLUUID);
+    expect(getNamedType(parentIdField.type.getType())).toBe(GraphQLUUID);
+    expect(idField.type.getTypeName()).toBe('UUID!');
+    expect(parentIdField.type.getTypeName()).toBe('UUID');
+    expect(isNonNullType(idField.type.getType())).toBe(true);
+    expect(isNonNullType(parentIdField.type.getType())).toBe(false);
     expect(output.schemaComposer.has('UUID2')).toBe(false);
+  });
+  it('should keep a regexp scalar when format and pattern names do not collide', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Operation',
+      properties: {
+        endpoint: {
+          title: 'endpoint',
+          type: 'string',
+          format: 'uri-template',
+          pattern: '^/.*$',
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    const output = result.output as ObjectTypeComposer;
+    expect(output.getField('endpoint').type.getTypeName()).toBe('endpoint');
+    expect(output.schemaComposer.has('UriTemplate')).toBe(false);
   });
   it('should treat oneOf[X, null] as nullable X (issue #8719)', async () => {
     const inputSchema: JSONSchema = {

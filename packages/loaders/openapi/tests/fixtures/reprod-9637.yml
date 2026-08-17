@@ -23,6 +23,9 @@ components:
       pattern: '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}'
     Item:
       type: object
+      required:
+        - id
+        - parent_id
       properties:
         id:
           $ref: '#/components/schemas/UUID'
