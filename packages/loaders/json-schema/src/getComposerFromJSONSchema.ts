@@ -305,7 +305,30 @@ export function getComposerFromJSONSchema({
           };
         }
       }
+
       if (subSchema.pattern) {
+        // A `$ref` with both `format` and `pattern` takes this branch (named from `title`),
+        // while a nullable `anyOf`/`oneOf` wrapper of the same `$ref` takes the format
+        // branch after collapse. Reuse the format scalar only when those names would
+        // collide (e.g. title `UUID` + `format: uuid` → two types named `UUID`). Other
+        // pairs such as title `endpoint` + `format: uri-template` keep `@regexp`.
+        if (subSchema.format && subSchema.title) {
+          const formatScalar =
+            getScalarForFormat?.(subSchema.format) || getDefaultScalarForFormat(subSchema.format);
+          if (formatScalar && sanitizeNameForGraphQL(subSchema.title) === formatScalar.name) {
+            const typeComposer = schemaComposer.getAnyTC(formatScalar);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+              deprecated: subSchema.deprecated,
+            };
+          }
+        }
         let typeScriptType: string;
         switch (subSchema.type) {
           case 'number':
@@ -482,7 +505,8 @@ export function getComposerFromJSONSchema({
       // OpenAPI 3.1 / JSON Schema: `anyOf`/`oneOf` with a `{ type: 'null' }` branch means nullable.
       // Run before format/`switch (type)` so a remaining primitive (e.g. string+format) is handled normally.
       // Remaining object/$ref members are left as a 1-element union so `leave` can reuse that type
-      // instead of cloning it as `Title2`.
+      // instead of cloning it as `Title2`. Keep this after `pattern` so pattern-only nullable
+      // wrappers do not mint a second regexp scalar (Slack Bot_User_ID / #9637 CI).
       for (const unionKey of ['anyOf', 'oneOf'] as const) {
         if (
           subSchema[unionKey] &&
@@ -512,6 +536,9 @@ export function getComposerFromJSONSchema({
           if (nonNullUnion.length === 1 && isJsonPrimitiveSchema(nonNullUnion[0])) {
             Object.assign(subSchema, nonNullUnion[0]);
             delete (subSchema as any)[unionKey];
+            // The referenced primitive may carry `nullable: false`; the `null` union
+            // member still permits null even when the field is required.
+            subSchema.nullable = true;
           } else {
             (subSchema as any)[unionKey] = nonNullUnion;
           }

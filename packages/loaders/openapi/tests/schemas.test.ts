@@ -30,6 +30,7 @@ const schemas: Record<string, string> = {
   YouTrack: 'youtrack.json',
   DefaultValues: 'default-values.json',
   Slack: 'slack.json',
+  'SmallRye UUID': 'reprod-9637.yml',
 };
 
 describe('Schemas', () => {
