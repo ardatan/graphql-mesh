@@ -1,5 +1,18 @@
 # json-machete
 
+## 0.97.8
+
+### Patch Changes
+
+- [`18cefe7`](https://github.com/ardatan/graphql-mesh/commit/18cefe715ff041633491ed9cdf4b2898f67caef2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Reuse a JSON Schema `$ref` target reached via
+  different relative paths instead of minting `Type2` / `Type3` duplicates.
+
+- [#9633](https://github.com/ardatan/graphql-mesh/pull/9633)
+  [`6f96258`](https://github.com/ardatan/graphql-mesh/commit/6f96258979b0d7181cc62dbb592a424171b90a6a)
+  Thanks [@copilot-swe-agent](https://github.com/apps/copilot-swe-agent)! - Treat `C:/...` as an
+  absolute Windows path in `$ref` resolution, not only `C:\...`.
+
 ## 0.97.7
 
 ### Patch Changes

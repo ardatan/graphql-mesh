@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/migrate-config-cli",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,8 +38,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "^0.103.0",
-    "@graphql-mesh/compose-cli": "^1.8.0",
+    "@graphql-mesh/cli": "^0.103.1",
+    "@graphql-mesh/compose-cli": "^1.8.1",
     "@graphql-mesh/config": "^0.111.0",
     "@graphql-mesh/types": "^0.107.0",
     "@graphql-mesh/utils": "^0.107.0",

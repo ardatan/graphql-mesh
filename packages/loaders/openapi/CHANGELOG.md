@@ -1,5 +1,23 @@
 # @omnigraph/openapi
 
+## 0.112.1
+
+### Patch Changes
+
+- [`18cefe7`](https://github.com/ardatan/graphql-mesh/commit/18cefe715ff041633491ed9cdf4b2898f67caef2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Prefer `application/x-www-form-urlencoded` for
+  request bodies when it is listed before JSON (OAuth token endpoints with `oneOf` + discriminator).
+
+- Updated dependencies
+  [[`6f96258`](https://github.com/ardatan/graphql-mesh/commit/6f96258979b0d7181cc62dbb592a424171b90a6a),
+  [`c47a0c0`](https://github.com/ardatan/graphql-mesh/commit/c47a0c0905b7d303281921b33cf512adc7092bb9),
+  [`5040fe9`](https://github.com/ardatan/graphql-mesh/commit/5040fe9aa856dd8b7e209125b5ca0d83fd311df6),
+  [`18cefe7`](https://github.com/ardatan/graphql-mesh/commit/18cefe715ff041633491ed9cdf4b2898f67caef2),
+  [`6f96258`](https://github.com/ardatan/graphql-mesh/commit/6f96258979b0d7181cc62dbb592a424171b90a6a)]:
+  - @omnigraph/json-schema@0.112.1
+  - @graphql-mesh/fusion-composition@0.11.1
+  - json-machete@0.97.8
+
 ## 0.112.0
 
 ### Patch Changes
