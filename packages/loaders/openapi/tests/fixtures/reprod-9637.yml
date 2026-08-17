@@ -1,0 +1,35 @@
+openapi: 3.1.0
+info:
+  title: repro
+  version: '1'
+servers:
+  - url: https://example.com
+paths:
+  /items:
+    get:
+      operationId: getItem
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+components:
+  schemas:
+    UUID:
+      type: string
+      format: uuid
+      pattern: '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}'
+    Item:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        parent_id:
+          type:
+            - string
+            - 'null'
+          anyOf:
+            - $ref: '#/components/schemas/UUID'
+            - type: 'null'

@@ -31,6 +31,7 @@ import {
   GraphQLJSON,
   GraphQLTime,
   GraphQLURL,
+  GraphQLUUID,
 } from 'graphql-scalars';
 import type { JSONSchemaObject } from 'json-machete';
 import { processDirectives, processScalarType } from '@graphql-mesh/transport-rest';
@@ -1534,6 +1535,38 @@ ${printType(GraphQLString)}
     expect(groupType).toBe(maybeGroupType);
     expect(output.getFieldNames()).not.toContain('LightningObsGroup2');
     expect(output.schemaComposer.has('LightningObsGroup2')).toBe(false);
+  });
+  it('should reuse one UUID scalar for a format+pattern $ref and a nullable anyOf of the same $ref (#9637)', async () => {
+    const uuidSchema: JSONSchemaObject = {
+      title: 'UUID',
+      type: 'string',
+      format: 'uuid',
+      pattern: '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
+    };
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Item',
+      properties: {
+        id: uuidSchema,
+        parent_id: {
+          type: ['string', 'null'],
+          anyOf: [uuidSchema, { type: 'null' }],
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    const output = result.output as ObjectTypeComposer;
+    const idType = (output.getField('id').type as any).getUnwrappedTC() as ScalarTypeComposer;
+    const parentIdType = (
+      output.getField('parent_id').type as any
+    ).getUnwrappedTC() as ScalarTypeComposer;
+    expect(idType.getType()).toBe(GraphQLUUID);
+    expect(parentIdType.getType()).toBe(GraphQLUUID);
+    expect(output.schemaComposer.has('UUID2')).toBe(false);
   });
   it('should treat oneOf[X, null] as nullable X (issue #8719)', async () => {
     const inputSchema: JSONSchema = {

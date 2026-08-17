@@ -305,7 +305,67 @@ export function getComposerFromJSONSchema({
           };
         }
       }
+
+      // OpenAPI 3.1 / JSON Schema: `anyOf`/`oneOf` with a `{ type: 'null' }` branch means nullable.
+      // Must run before `pattern`/`format` so a shared `$ref` and a nullable wrapper take the
+      // same scalar path (e.g. UUID with both format and pattern — SmallRye / #9637).
+      for (const unionKey of ['anyOf', 'oneOf'] as const) {
+        if (
+          subSchema[unionKey] &&
+          !subSchema.properties &&
+          !subSchema.allOf &&
+          !subSchema.additionalProperties
+        ) {
+          const unionArr = subSchema[unionKey] as JSONSchemaObject[];
+          const nonNullUnion = unionArr.filter(s => s.type !== 'null');
+          if (nonNullUnion.length === unionArr.length) {
+            continue;
+          }
+          if (nonNullUnion.length === 0) {
+            const typeComposer = schemaComposer.getAnyTC(GraphQLVoid);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              nullable: true,
+              description: subSchema.description,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+              deprecated: subSchema.deprecated,
+            };
+          }
+          subSchema.nullable = true;
+          if (nonNullUnion.length === 1 && isJsonPrimitiveSchema(nonNullUnion[0])) {
+            Object.assign(subSchema, nonNullUnion[0]);
+            delete (subSchema as any)[unionKey];
+          } else {
+            (subSchema as any)[unionKey] = nonNullUnion;
+          }
+          break;
+        }
+      }
+
       if (subSchema.pattern) {
+        // Prefer a known `format` scalar when both are present so a `$ref` usage
+        // (pattern branch) and a collapsed nullable wrapper (format branch) do
+        // not mint two different GraphQL types named e.g. `UUID`.
+        if (subSchema.format) {
+          const formatScalar =
+            getScalarForFormat?.(subSchema.format) || getDefaultScalarForFormat(subSchema.format);
+          if (formatScalar) {
+            const typeComposer = schemaComposer.getAnyTC(formatScalar);
+            return {
+              input: typeComposer,
+              output: typeComposer,
+              description: subSchema.description,
+              nullable: subSchema.nullable,
+              readOnly: subSchema.readOnly,
+              writeOnly: subSchema.writeOnly,
+              default: subSchema.default,
+              deprecated: subSchema.deprecated,
+            };
+          }
+        }
         let typeScriptType: string;
         switch (subSchema.type) {
           case 'number':
@@ -477,46 +537,6 @@ export function getComposerFromJSONSchema({
           default: subSchema.default,
           deprecated: subSchema.deprecated,
         };
-      }
-
-      // OpenAPI 3.1 / JSON Schema: `anyOf`/`oneOf` with a `{ type: 'null' }` branch means nullable.
-      // Run before format/`switch (type)` so a remaining primitive (e.g. string+format) is handled normally.
-      // Remaining object/$ref members are left as a 1-element union so `leave` can reuse that type
-      // instead of cloning it as `Title2`.
-      for (const unionKey of ['anyOf', 'oneOf'] as const) {
-        if (
-          subSchema[unionKey] &&
-          !subSchema.properties &&
-          !subSchema.allOf &&
-          !subSchema.additionalProperties
-        ) {
-          const unionArr = subSchema[unionKey] as JSONSchemaObject[];
-          const nonNullUnion = unionArr.filter(s => s.type !== 'null');
-          if (nonNullUnion.length === unionArr.length) {
-            continue;
-          }
-          if (nonNullUnion.length === 0) {
-            const typeComposer = schemaComposer.getAnyTC(GraphQLVoid);
-            return {
-              input: typeComposer,
-              output: typeComposer,
-              nullable: true,
-              description: subSchema.description,
-              readOnly: subSchema.readOnly,
-              writeOnly: subSchema.writeOnly,
-              default: subSchema.default,
-              deprecated: subSchema.deprecated,
-            };
-          }
-          subSchema.nullable = true;
-          if (nonNullUnion.length === 1 && isJsonPrimitiveSchema(nonNullUnion[0])) {
-            Object.assign(subSchema, nonNullUnion[0]);
-            delete (subSchema as any)[unionKey];
-          } else {
-            (subSchema as any)[unionKey] = nonNullUnion;
-          }
-          break;
-        }
       }
 
       if (Array.isArray(subSchema.type)) {
