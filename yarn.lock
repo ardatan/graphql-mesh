@@ -6480,7 +6480,7 @@ __metadata:
     "@types/node": "npm:^26.2.0"
     graphql: "npm:16.14.0"
     jest: "npm:30.4.2"
-    ts-node: "npm:^10.9.2"
+    tsx: "npm:^4.23.12"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft

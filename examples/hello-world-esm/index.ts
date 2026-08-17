@@ -1,4 +1,4 @@
-import { getMeshSDK } from './.mesh/index.mjs';
+import { getMeshSDK } from './.mesh/index.js';
 
 async function main() {
   const sdk = getMeshSDK();
