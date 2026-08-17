@@ -1,5 +1,15 @@
 # @graphql-mesh/cli
 
+## 0.103.1
+
+### Patch Changes
+
+- [#9636](https://github.com/ardatan/graphql-mesh/pull/9636)
+  [`6092e15`](https://github.com/ardatan/graphql-mesh/commit/6092e1539c92a0973569882955ae4bd5754a1b6d)
+  Thanks [@ardatan](https://github.com/ardatan)! - When `package.json` is `"type": "module"`, emit
+  Mesh artifacts as ESM `index.js` (not CJS, and not a missing `index.mjs`) so examples like
+  hello-world-esm can start.
+
 ## 0.103.0
 
 ### Minor Changes

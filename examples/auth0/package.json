@@ -11,8 +11,8 @@
   "dependencies": {
     "@envelop/auth0": "^9.1.1",
     "@envelop/core": "^5.5.1",
-    "@graphql-mesh/cli": "0.103.0",
-    "@graphql-mesh/json-schema": "0.112.0",
+    "@graphql-mesh/cli": "0.103.1",
+    "@graphql-mesh/json-schema": "0.112.1",
     "@graphql-mesh/plugin-operation-field-permissions": "0.107.0",
     "graphql": "16.14.0"
   },

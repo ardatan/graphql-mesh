@@ -7,8 +7,8 @@
     "test": "cross-env INTEGRATION_TEST=true jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.103.0",
-    "@graphql-mesh/openapi": "0.112.0",
+    "@graphql-mesh/cli": "0.103.1",
+    "@graphql-mesh/openapi": "0.112.1",
     "@graphql-mesh/runtime": "0.109.0",
     "@graphql-mesh/transform-extend": "0.107.0",
     "@graphql-tools/utils": "^11.2.2",

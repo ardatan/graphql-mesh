@@ -1,5 +1,30 @@
 # @omnigraph/json-schema
 
+## 0.112.1
+
+### Patch Changes
+
+- [#9633](https://github.com/ardatan/graphql-mesh/pull/9633)
+  [`6f96258`](https://github.com/ardatan/graphql-mesh/commit/6f96258979b0d7181cc62dbb592a424171b90a6a)
+  Thanks [@copilot-swe-agent](https://github.com/apps/copilot-swe-agent)! - Treat object schemas
+  that only have `additionalProperties` as `JSON` instead of generating unused dictionary object
+  types.
+
+- [#9638](https://github.com/ardatan/graphql-mesh/pull/9638)
+  [`5040fe9`](https://github.com/ardatan/graphql-mesh/commit/5040fe9aa856dd8b7e209125b5ca0d83fd311df6)
+  Thanks [@ardatan](https://github.com/ardatan)! - Reuse a single scalar when a shared primitive
+  `$ref` has both `format` and `pattern` whose GraphQL names would collide, including nullable
+  `anyOf`/`oneOf` wrappers. Keep `@regexp` when the names differ.
+
+- [`18cefe7`](https://github.com/ardatan/graphql-mesh/commit/18cefe715ff041633491ed9cdf4b2898f67caef2)
+  Thanks [@ardatan](https://github.com/ardatan)! - Reuse a JSON Schema `$ref` target reached via
+  different relative paths instead of minting `Type2` / `Type3` duplicates.
+
+- Updated dependencies
+  [[`18cefe7`](https://github.com/ardatan/graphql-mesh/commit/18cefe715ff041633491ed9cdf4b2898f67caef2),
+  [`6f96258`](https://github.com/ardatan/graphql-mesh/commit/6f96258979b0d7181cc62dbb592a424171b90a6a)]:
+  - json-machete@0.97.8
+
 ## 0.112.0
 
 ### Patch Changes

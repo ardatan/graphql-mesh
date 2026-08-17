@@ -1,5 +1,15 @@
 # @graphql-mesh/fusion-composition
 
+## 0.11.1
+
+### Patch Changes
+
+- [#9635](https://github.com/ardatan/graphql-mesh/pull/9635)
+  [`c47a0c0`](https://github.com/ardatan/graphql-mesh/commit/c47a0c0905b7d303281921b33cf512adc7092bb9)
+  Thanks [@ardatan](https://github.com/ardatan)! - Preserve interface implementors and union members
+  when encapsulating a subgraph, keep original field directives on wrapped fields, and nest a second
+  encapsulate (same outer name across subgraphs) without dropping inner namespaces.
+
 ## 0.11.0
 
 ### Patch Changes
