@@ -21,6 +21,55 @@ test('switches and loads StackExchange example', async ({ page }) => {
     // this isn't ideal, but should help with some flakiness
     await page.waitForTimeout(500);
   }
+  // CodeSandbox microVM cold starts and incident recovery can exceed 60s on prod.
+  const timeout = 120_000;
+  // Register response/console listeners before triggering the selection so that early
+  // failures (403 or X-Frame-Options errors) are reliably captured even if they occur
+  // before the iframe title is updated.
+  const upstreamBlockPromise =
+    process.env.AGAINST_PROD === '1'
+      ? page
+          .waitForResponse(
+            response => {
+              try {
+                const hostname = new URL(response.url()).hostname;
+                return (
+                  (hostname === 'codesandbox.io' || hostname.endsWith('.codesandbox.io')) &&
+                  response.status() === 403 &&
+                  response.url().includes(SELECTED_EXAMPLE)
+                );
+              } catch {
+                return false;
+              }
+            },
+            { timeout },
+          )
+          .then(() => 'blocked' as const)
+          .catch(() => 'blocked-timeout' as const)
+      : Promise.resolve('blocked-timeout' as const);
+  const xFrameOptionsPromise =
+    process.env.AGAINST_PROD === '1'
+      ? page
+          .waitForEvent('console', {
+            predicate: message => {
+              if (message.type() !== 'error' || !message.text().includes('X-Frame-Options')) {
+                return false;
+              }
+              const urlMatch = message.text().match(/https?:\/\/[^\s)'"]+/);
+              if (!urlMatch) return false;
+              try {
+                const hostname = new URL(urlMatch[0]).hostname;
+                return hostname === 'codesandbox.io' || hostname.endsWith('.codesandbox.io');
+              } catch {
+                return false;
+              }
+            },
+            timeout,
+          })
+          .then(() => 'blocked' as const)
+          .catch(() => 'blocked-timeout' as const)
+      : Promise.resolve('blocked-timeout' as const);
+
   await exampleSelect.selectOption(SELECTED_EXAMPLE);
 
   // After selection the ExamplesSandbox component updates iframe.title to the selected
@@ -40,45 +89,6 @@ test('switches and loads StackExchange example', async ({ page }) => {
       innerIframe.getByText('Unable to start the microVM').first(),
       innerIframe.getByText('Service Disruption in Progress').first(),
     ];
-    // CodeSandbox microVM cold starts and incident recovery can exceed 60s on prod.
-    const timeout = 120_000;
-    const upstreamBlockPromise = page
-      .waitForResponse(
-        response => {
-          try {
-            const hostname = new URL(response.url()).hostname;
-            return (
-              (hostname === 'codesandbox.io' || hostname.endsWith('.codesandbox.io')) &&
-              response.status() === 403 &&
-              response.url().includes(SELECTED_EXAMPLE)
-            );
-          } catch {
-            return false;
-          }
-        },
-        { timeout },
-      )
-      .then(() => 'blocked' as const)
-      .catch(() => 'blocked-timeout' as const);
-    const xFrameOptionsPromise = page
-      .waitForEvent('console', {
-        predicate: message => {
-          if (message.type() !== 'error' || !message.text().includes('X-Frame-Options')) {
-            return false;
-          }
-          const urlMatch = message.text().match(/https?:\/\/[^\s)'"]+/);
-          if (!urlMatch) return false;
-          try {
-            const hostname = new URL(urlMatch[0]).hostname;
-            return hostname === 'codesandbox.io' || hostname.endsWith('.codesandbox.io');
-          } catch {
-            return false;
-          }
-        },
-        timeout,
-      })
-      .then(() => 'blocked' as const)
-      .catch(() => 'blocked-timeout' as const);
     const readyPromise = title
       .waitFor({ state: 'visible', timeout })
       .then(() => 'ready' as const)
