@@ -44,20 +44,37 @@ test('switches and loads StackExchange example', async ({ page }) => {
     const timeout = 120_000;
     const upstreamBlockPromise = page
       .waitForResponse(
-        response =>
-          response.url().includes('codesandbox.io') &&
-          response.status() === 403 &&
-          response.url().includes(SELECTED_EXAMPLE),
+        response => {
+          try {
+            const hostname = new URL(response.url()).hostname;
+            return (
+              (hostname === 'codesandbox.io' || hostname.endsWith('.codesandbox.io')) &&
+              response.status() === 403 &&
+              response.url().includes(SELECTED_EXAMPLE)
+            );
+          } catch {
+            return false;
+          }
+        },
         { timeout },
       )
       .then(() => 'blocked' as const)
       .catch(() => 'blocked-timeout' as const);
     const xFrameOptionsPromise = page
       .waitForEvent('console', {
-        predicate: message =>
-          message.type() === 'error' &&
-          message.text().includes('codesandbox.io') &&
-          message.text().includes('X-Frame-Options'),
+        predicate: message => {
+          if (message.type() !== 'error' || !message.text().includes('X-Frame-Options')) {
+            return false;
+          }
+          const urlMatch = message.text().match(/https?:\/\/[^\s)'"]+/);
+          if (!urlMatch) return false;
+          try {
+            const hostname = new URL(urlMatch[0]).hostname;
+            return hostname === 'codesandbox.io' || hostname.endsWith('.codesandbox.io');
+          } catch {
+            return false;
+          }
+        },
         timeout,
       })
       .then(() => 'blocked' as const)
