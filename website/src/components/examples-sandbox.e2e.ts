@@ -42,6 +42,26 @@ test('switches and loads StackExchange example', async ({ page }) => {
     ];
     // CodeSandbox microVM cold starts and incident recovery can exceed 60s on prod.
     const timeout = 120_000;
+    const upstreamBlockPromise = page
+      .waitForResponse(
+        response =>
+          response.url().includes('codesandbox.io') &&
+          response.status() === 403 &&
+          response.url().includes(SELECTED_EXAMPLE),
+        { timeout },
+      )
+      .then(() => 'blocked' as const)
+      .catch(() => 'blocked-timeout' as const);
+    const xFrameOptionsPromise = page
+      .waitForEvent('console', {
+        predicate: message =>
+          message.type() === 'error' &&
+          message.text().includes('codesandbox.io') &&
+          message.text().includes('X-Frame-Options'),
+        timeout,
+      })
+      .then(() => 'blocked' as const)
+      .catch(() => 'blocked-timeout' as const);
     const readyPromise = title
       .waitFor({ state: 'visible', timeout })
       .then(() => 'ready' as const)
@@ -52,7 +72,12 @@ test('switches and loads StackExchange example', async ({ page }) => {
         .then(() => 'outage' as const)
         .catch(() => 'outage-timeout' as const),
     );
-    const result = await Promise.race([readyPromise, ...outagePromises]);
+    const result = await Promise.race([
+      readyPromise,
+      ...outagePromises,
+      upstreamBlockPromise,
+      xFrameOptionsPromise,
+    ]);
 
     if (result === 'ready') {
       return;
@@ -61,7 +86,11 @@ test('switches and loads StackExchange example', async ({ page }) => {
       test.skip(true, 'CodeSandbox is temporarily unavailable');
       return;
     }
-    if (result === 'ready-timeout' || result === 'outage-timeout') {
+    if (result === 'blocked') {
+      test.skip(true, 'CodeSandbox blocked this embedded GitHub sandbox upstream');
+      return;
+    }
+    if (result === 'ready-timeout' || result === 'outage-timeout' || result === 'blocked-timeout') {
       throw new Error(
         'Neither expected CodeSandbox content nor known outage banners appeared within 120 seconds',
       );
