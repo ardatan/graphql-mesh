@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@graphql-mesh/cli": "0.103.1",
-    "@graphql-mesh/json-schema": "0.112.1",
+    "@graphql-mesh/json-schema": "0.112.2",
     "graphql": "16.14.0"
   }
 }
