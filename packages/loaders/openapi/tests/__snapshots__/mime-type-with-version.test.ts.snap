@@ -14,6 +14,8 @@ directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION
 
 directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
+directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
+
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
@@ -1632,11 +1634,11 @@ type Mutation {
   """Delete a post activity"""
   delete_workspace_slug_members_by_member_slug_activities_by_id(workspace_slug: String!, member_slug: String!, id: String!): Void @httpOperation(subgraph: "test", path: "/{args.workspace_slug}/members/{args.member_slug}/activities/{args.id}", httpMethod: DELETE)
   """Update a custom activity for a member"""
-  put_workspace_slug_members_by_member_slug_activities_by_id(workspace_slug: String!, member_slug: String!, id: String!, input: activity_Input): put_workspace_slug_members_by_member_slug_activities_by_id_422_response @httpOperation(subgraph: "test", path: "/{args.workspace_slug}/members/{args.member_slug}/activities/{args.id}", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json;v=2"]], httpMethod: PUT)
+  put_workspace_slug_members_by_member_slug_activities_by_id(workspace_slug: String!, member_slug: String!, id: String!, input: activity_Input): put_workspace_slug_members_by_member_slug_activities_by_id_response @httpOperation(subgraph: "test", path: "/{args.workspace_slug}/members/{args.member_slug}/activities/{args.id}", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json;v=2"]], httpMethod: PUT)
   """Add identity to a member"""
   post_workspace_slug_members_by_member_slug_identities(workspace_slug: String!, member_slug: String!, input: identity_Input): post_workspace_slug_members_by_member_slug_identities_response @httpOperation(subgraph: "test", path: "/{args.workspace_slug}/members/{args.member_slug}/identities", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json;v=2"]], httpMethod: POST)
   """Remove identity from a member"""
-  delete_workspace_slug_members_by_member_slug_identities(workspace_slug: String!, member_slug: String!, input: identity_Input): delete_workspace_slug_members_by_member_slug_identities_422_response @httpOperation(subgraph: "test", path: "/{args.workspace_slug}/members/{args.member_slug}/identities", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json;v=2"]], httpMethod: DELETE)
+  delete_workspace_slug_members_by_member_slug_identities(workspace_slug: String!, member_slug: String!, input: identity_Input): delete_workspace_slug_members_by_member_slug_identities_response @httpOperation(subgraph: "test", path: "/{args.workspace_slug}/members/{args.member_slug}/identities", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json;v=2"]], httpMethod: DELETE)
   """Create a note"""
   post_workspace_slug_members_by_member_slug_notes(workspace_slug: String!, member_slug: String!, input: note_Input): post_workspace_slug_members_by_member_slug_notes_201_response @httpOperation(subgraph: "test", path: "/{args.workspace_slug}/members/{args.member_slug}/notes", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json;v=2"]], httpMethod: POST)
   """Update a note"""
@@ -1985,6 +1987,12 @@ input post_activity_Input {
   activity_type: content_const!
 }
 
+union put_workspace_slug_members_by_member_slug_activities_by_id_response @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "test", statusCode: "422", typeName: "put_workspace_slug_members_by_member_slug_activities_by_id_422_response") = Void_container | put_workspace_slug_members_by_member_slug_activities_by_id_422_response
+
+type Void_container {
+  Void: Void @resolveRoot(subgraph: "test")
+}
+
 type put_workspace_slug_members_by_member_slug_activities_by_id_422_response @example(subgraph: "test", value: "{\\"errors\\":{\\"custom_title\\":[\\"can't be blank\\"]}}") {
   errors: mutation_put_workspace_slug_members_by_member_slug_activities_by_id_oneOf_1_errors
 }
@@ -2023,6 +2031,8 @@ type post_workspace_slug_members_by_member_slug_identities_422_response @example
 type mutation_post_workspace_slug_members_by_member_slug_identities_oneOf_1_errors {
   identity_id: [String]
 }
+
+union delete_workspace_slug_members_by_member_slug_identities_response @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "test", statusCode: "422", typeName: "delete_workspace_slug_members_by_member_slug_identities_422_response") = Void_container | delete_workspace_slug_members_by_member_slug_identities_422_response
 
 type delete_workspace_slug_members_by_member_slug_identities_422_response @example(subgraph: "test", value: "{\\"errors\\":{\\"identity\\":[\\"is not attached to this member\\"]}}") {
   errors: mutation_delete_workspace_slug_members_by_member_slug_identities_oneOf_1_errors
