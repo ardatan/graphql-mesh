@@ -46474,7 +46474,7 @@ type Mutation {
   deleteGlossary(
     """A unique ID assigned to the glossary."""
     glossary_id: String!
-  ): BadRequestGlossaries_response @httpOperation(subgraph: "DeepL", path: "/glossaries/{args.glossary_id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
+  ): deleteGlossary_response @httpOperation(subgraph: "DeepL", path: "/glossaries/{args.glossary_id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
 }
 
 type translateText_200_response {
@@ -46879,6 +46879,15 @@ enum tsv_const @typescript(subgraph: "DeepL", type: "\\"tsv\\"") @example(subgra
   tsv @enum(subgraph: "DeepL", value: "\\"tsv\\"")
 }
 
+union deleteGlossary_response @statusCodeTypeName(subgraph: "DeepL", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "DeepL", statusCode: "400", typeName: "BadRequestGlossaries_response") = Void_container | BadRequestGlossaries_response
+
+type Void_container {
+  Void: Void @resolveRoot(subgraph: "DeepL")
+}
+
+"""Represents empty values"""
+scalar Void
+
 scalar ObjMap
 
 enum HTTPMethod {
@@ -47141,6 +47150,8 @@ directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
+
+directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
@@ -54161,7 +54172,7 @@ type Mutation {
     teamId: Int!
     """Name of a member."""
     username: String!
-  ): organizationAsTeamMember @httpOperation(subgraph: "GitHub", path: "/teams/{args.teamId}/members/{args.username}", operationSpecificHeaders: [["X-GitHub-Media-Type", "{args.X_GitHub_Media_Type}"], ["Accept", "{args.Accept}"], ["X-RateLimit-Limit", "{args.X_RateLimit_Limit}"], ["X-RateLimit-Remaining", "{args.X_RateLimit_Remaining}"], ["X-RateLimit-Reset", "{args.X_RateLimit_Reset}"], ["X-GitHub-Request-Id", "{args.X_GitHub_Request_Id}"]], httpMethod: PUT)
+  ): put_teams_by_teamId_members_by_username_response @httpOperation(subgraph: "GitHub", path: "/teams/{args.teamId}/members/{args.username}", operationSpecificHeaders: [["X-GitHub-Media-Type", "{args.X_GitHub_Media_Type}"], ["Accept", "{args.Accept}"], ["X-RateLimit-Limit", "{args.X_RateLimit_Limit}"], ["X-RateLimit-Remaining", "{args.X_RateLimit_Remaining}"], ["X-RateLimit-Reset", "{args.X_RateLimit_Reset}"], ["X-GitHub-Request-Id", "{args.X_GitHub_Request_Id}"]], httpMethod: PUT)
   """
   Remove team membership.
   In order to remove a membership between a user and a team, the authenticated user must have 'admin' permissions to the team or be an owner of the organization that the team is associated with. NOTE: This does not delete the user, it just removes their membership from the team.
@@ -54925,7 +54936,7 @@ input user_keys_post_Input {
   title: String
 }
 
-union post_repos_by_owner_by_repo_merges_response @statusCodeTypeName(subgraph: "GitHub", statusCode: "201", typeName: "mergesSuccessful") @statusCodeTypeName(subgraph: "GitHub", statusCode: "204", typeName: "mergesConflict") @statusCodeTypeName(subgraph: "GitHub", statusCode: "404", typeName: "mergesConflict") = mergesSuccessful | mergesConflict
+union post_repos_by_owner_by_repo_merges_response @statusCodeTypeName(subgraph: "GitHub", statusCode: "201", typeName: "mergesSuccessful") @statusCodeTypeName(subgraph: "GitHub", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "GitHub", statusCode: "404", typeName: "mergesConflict") @statusCodeTypeName(subgraph: "GitHub", statusCode: "409", typeName: "mergesConflict") = mergesSuccessful | Void_container | mergesConflict
 
 type mergesSuccessful {
   author: mutation_post_repos_by_owner_by_repo_merges_oneOf_0_author
@@ -55006,6 +55017,10 @@ type mutation_post_repos_by_owner_by_repo_merges_oneOf_0_committer {
 type mutation_post_repos_by_owner_by_repo_merges_oneOf_0_parents_items {
   sha: String
   url: String
+}
+
+type Void_container {
+  Void: Void @resolveRoot(subgraph: "GitHub")
 }
 
 type mergesConflict {
@@ -55097,6 +55112,8 @@ enum mutationInput_patch_teams_by_teamId_input_permission {
   push
   admin
 }
+
+union put_teams_by_teamId_members_by_username_response @statusCodeTypeName(subgraph: "GitHub", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "GitHub", statusCode: "422", typeName: "organizationAsTeamMember") = Void_container | organizationAsTeamMember
 
 type organizationAsTeamMember {
   errors: [mutation_put_teams_by_teamId_members_by_username_oneOf_1_errors_items]
@@ -66553,7 +66570,7 @@ type Mutation {
   deleteDashboard(
     """The ID of the dashboard."""
     id: String!
-  ): ErrorCollection @httpOperation(subgraph: "Jira", path: "/rest/api/3/dashboard/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
+  ): deleteDashboard_response @httpOperation(subgraph: "Jira", path: "/rest/api/3/dashboard/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
   """
   Copies a dashboard. Any values provided in the \`dashboard\` parameter replace those in the copied dashboard.
   
@@ -70686,7 +70703,7 @@ type Mutation {
     addonKey: String!
     """The key of the property."""
     propertyKey: String!
-  ): OperationMessage @httpOperation(subgraph: "Jira", path: "/rest/atlassian-connect/1/addons/{args.addonKey}/properties/{args.propertyKey}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
+  ): AddonPropertiesResource_deleteAddonProperty_delete_response @httpOperation(subgraph: "Jira", path: "/rest/atlassian-connect/1/addons/{args.addonKey}/properties/{args.propertyKey}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
   """
   Registers a list of modules.
   
@@ -70705,7 +70722,7 @@ type Mutation {
     Nonexistent keys are ignored.
     """
     moduleKey: [String]
-  ): ErrorMessage @httpOperation(subgraph: "Jira", path: "/rest/atlassian-connect/1/app/module/dynamic", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE, queryParamArgMap: "{\\"moduleKey\\":\\"moduleKey\\"}")
+  ): DynamicModulesResource_removeModules_delete_response @httpOperation(subgraph: "Jira", path: "/rest/atlassian-connect/1/app/module/dynamic", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE, queryParamArgMap: "{\\"moduleKey\\":\\"moduleKey\\"}")
   """
   Updates the value of a custom field added by Connect apps on one or more issues.
   The values of up to 200 custom fields can be updated.
@@ -71512,6 +71529,12 @@ type setDashboardItemProperty_400_response @example(subgraph: "Jira", value: "{\
 }
 
 union updateDashboard_response @statusCodeTypeName(subgraph: "Jira", statusCode: "200", typeName: "Dashboard") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "ErrorCollection") @statusCodeTypeName(subgraph: "Jira", statusCode: "401", typeName: "ErrorCollection") @statusCodeTypeName(subgraph: "Jira", statusCode: "404", typeName: "ErrorCollection") = Dashboard | ErrorCollection
+
+union deleteDashboard_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "ErrorCollection") @statusCodeTypeName(subgraph: "Jira", statusCode: "401", typeName: "ErrorCollection") = Void_container | ErrorCollection
+
+type Void_container {
+  Void: Void @resolveRoot(subgraph: "Jira")
+}
 
 union copyDashboard_response @statusCodeTypeName(subgraph: "Jira", statusCode: "200", typeName: "Dashboard") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "ErrorCollection") @statusCodeTypeName(subgraph: "Jira", statusCode: "401", typeName: "ErrorCollection") @statusCodeTypeName(subgraph: "Jira", statusCode: "404", typeName: "ErrorCollection") = Dashboard | ErrorCollection
 
@@ -72507,7 +72530,7 @@ enum mutationInput_reorderCustomFieldOptions_input_position {
   Last
 }
 
-union deleteCustomFieldOption_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "deleteCustomFieldOption_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "deleteCustomFieldOption_403_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "403", typeName: "deleteCustomFieldOption_404_response") = deleteCustomFieldOption_400_response | deleteCustomFieldOption_403_response | deleteCustomFieldOption_404_response
+union deleteCustomFieldOption_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "deleteCustomFieldOption_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "403", typeName: "deleteCustomFieldOption_403_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "404", typeName: "deleteCustomFieldOption_404_response") = Void_container | deleteCustomFieldOption_400_response | deleteCustomFieldOption_403_response | deleteCustomFieldOption_404_response
 
 type deleteCustomFieldOption_400_response @example(subgraph: "Jira", value: "{\\"errorMessages\\":[\\"The custom field doesn't support options.\\"],\\"errors\\":{}}") {
   errorMessages: [String]
@@ -74933,7 +74956,7 @@ input UpdateScreenDetails_Input {
   description: String
 }
 
-union deleteScreen_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "deleteScreen_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "deleteScreen_403_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "403", typeName: "deleteScreen_404_response") = deleteScreen_400_response | deleteScreen_403_response | deleteScreen_404_response
+union deleteScreen_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "deleteScreen_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "403", typeName: "deleteScreen_403_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "404", typeName: "deleteScreen_404_response") = Void_container | deleteScreen_400_response | deleteScreen_403_response | deleteScreen_404_response
 
 type deleteScreen_400_response @example(subgraph: "Jira", value: "{\\"errorMessages\\":[\\"The screen is used in a screen scheme.\\"],\\"errors\\":{}}") {
   errorMessages: [String]
@@ -75080,7 +75103,7 @@ input UpdateScreenTypes_Input {
   default: String
 }
 
-union deleteScreenScheme_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "deleteScreenScheme_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "deleteScreenScheme_403_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "403", typeName: "deleteScreenScheme_404_response") = deleteScreenScheme_400_response | deleteScreenScheme_403_response | deleteScreenScheme_404_response
+union deleteScreenScheme_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "deleteScreenScheme_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "403", typeName: "deleteScreenScheme_403_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "404", typeName: "deleteScreenScheme_404_response") = Void_container | deleteScreenScheme_400_response | deleteScreenScheme_403_response | deleteScreenScheme_404_response
 
 type deleteScreenScheme_400_response @example(subgraph: "Jira", value: "{\\"errorMessages\\":[\\"The screen scheme cannot be deleted as it is in use in an issue type screen scheme.\\"],\\"errors\\":{}}") {
   errorMessages: [String]
@@ -75817,7 +75840,7 @@ enum mutationInput_deleteWorkflowTransitionProperty_workflowMode {
   draft
 }
 
-union deleteInactiveWorkflow_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "deleteInactiveWorkflow_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "deleteInactiveWorkflow_403_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "403", typeName: "deleteInactiveWorkflow_404_response") = deleteInactiveWorkflow_400_response | deleteInactiveWorkflow_403_response | deleteInactiveWorkflow_404_response
+union deleteInactiveWorkflow_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "deleteInactiveWorkflow_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "403", typeName: "deleteInactiveWorkflow_403_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "404", typeName: "deleteInactiveWorkflow_404_response") = Void_container | deleteInactiveWorkflow_400_response | deleteInactiveWorkflow_403_response | deleteInactiveWorkflow_404_response
 
 type deleteInactiveWorkflow_400_response @example(subgraph: "Jira", value: "{\\"errorMessages\\":[\\"Cannot delete an active workflow.\\"],\\"errors\\":{}}") {
   errorMessages: [String]
@@ -75933,7 +75956,7 @@ input IssueTypeWorkflowMapping_Input {
   updateDraftIfNeeded: Boolean
 }
 
-union publishDraftWorkflowScheme_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "TaskProgressBeanObject") @statusCodeTypeName(subgraph: "Jira", statusCode: "303", typeName: "publishDraftWorkflowScheme_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "publishDraftWorkflowScheme_404_response") = TaskProgressBeanObject | publishDraftWorkflowScheme_400_response | publishDraftWorkflowScheme_404_response
+union publishDraftWorkflowScheme_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "Jira", statusCode: "303", typeName: "TaskProgressBeanObject") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "publishDraftWorkflowScheme_400_response") @statusCodeTypeName(subgraph: "Jira", statusCode: "404", typeName: "publishDraftWorkflowScheme_404_response") = Void_container | TaskProgressBeanObject | publishDraftWorkflowScheme_400_response | publishDraftWorkflowScheme_404_response
 
 type publishDraftWorkflowScheme_400_response @example(subgraph: "Jira", value: "{\\"errorMessages\\":[\\"Issue type with ID '2','4' is missing the mappings required for statuses with IDs 10004.\\"],\\"errors\\":{}}") {
   errorMessages: [String]
@@ -75986,6 +76009,8 @@ input WorklogIdsRequestBean_Input {
   ids: [BigInt]!
 }
 
+union AddonPropertiesResource_deleteAddonProperty_delete_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "OperationMessage") @statusCodeTypeName(subgraph: "Jira", statusCode: "401", typeName: "OperationMessage") @statusCodeTypeName(subgraph: "Jira", statusCode: "404", typeName: "OperationMessage") = Void_container | OperationMessage
+
 input ConnectModules_Input {
   """
   A list of app modules in the same format as the \`modules\` property in the
@@ -76019,6 +76044,8 @@ input query_DynamicModulesResource_getModules_get_oneOf_0_modules_items_extracti
 input query_DynamicModulesResource_getModules_get_oneOf_0_modules_items_name_Input {
   value: String
 }
+
+union DynamicModulesResource_removeModules_delete_response @statusCodeTypeName(subgraph: "Jira", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "Jira", statusCode: "401", typeName: "ErrorMessage") = Void_container | ErrorMessage
 
 """Details of updates for a custom field."""
 input ConnectCustomFieldValues_Input {
@@ -208172,6 +208199,10 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
+directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
+
+directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
+
 directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
 
 directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
@@ -208443,7 +208474,7 @@ type Mutation {
     X_Correlation_Id: String
     companyId: String!
     resourceId: String!
-  ): Error @httpOperation(subgraph: "Toto", path: "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}", operationSpecificHeaders: [["Accept-Language", "{args.Accept_Language}"], ["X-Correlation-Id", "{args.X_Correlation_Id}"], ["accept", "application/json"]], httpMethod: DELETE)
+  ): delete_resource_at_the_root_folder_v1_response @httpOperation(subgraph: "Toto", path: "/api/v1/companies/{args.companyId}/knowledgecenter/resources/{args.resourceId}", operationSpecificHeaders: [["Accept-Language", "{args.Accept_Language}"], ["X-Correlation-Id", "{args.X_Correlation_Id}"], ["accept", "application/json"]], httpMethod: DELETE)
 }
 
 union create_resource_at_any_folder_v1_201_response = FileGetWithI18nDTO | FolderGetWithI18nDTO
@@ -208542,6 +208573,15 @@ input update_resource_at_the_root_folder_v1_request_Input @oneOf(subgraph: "Toto
   FileUpdateDTO_Input: FileUpdateDTO_Input
   FolderUpdateDTO_Input: FolderUpdateDTO_Input
 }
+
+union delete_resource_at_the_root_folder_v1_response @statusCodeTypeName(subgraph: "Toto", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "Toto", statusCode: "default", typeName: "Error") = Void_container | Error
+
+type Void_container {
+  Void: Void @resolveRoot(subgraph: "Toto")
+}
+
+"""Represents empty values"""
+scalar Void
 
 """Error"""
 type Error {

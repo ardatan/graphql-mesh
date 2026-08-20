@@ -1608,6 +1608,71 @@ ${printType(GraphQLString)}
     expect((result.output as ScalarTypeComposer<any>).getType()).toBe(GraphQLString);
     expect(result.nullable).toBe(true);
   });
+  it('should keep {type:null} arms in status-code response unions (issue #9641)', async () => {
+    const notFound: JSONSchemaObject = {
+      type: 'object',
+      title: 'NotFound',
+      properties: { message: { type: 'string' } },
+    };
+    const conflict: JSONSchemaObject = {
+      type: 'object',
+      title: 'Conflict',
+      properties: { reason: { type: 'string' } },
+    };
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Mutation',
+      properties: {
+        deleteThing: {
+          $comment: 'statusCodeOneOfIndexMap:{"204":0,"404":1,"409":2}',
+          title: 'deleteThing_response',
+          oneOf: [{ type: 'null', title: 'deleteThing_204_response' }, notFound, conflict],
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    const output = result.output as ObjectTypeComposer;
+    const fieldType = (output.getField('deleteThing').type as any).getUnwrappedTC();
+    expect(fieldType.getTypeName()).toBe('deleteThing_response');
+    const members = (fieldType as UnionTypeComposer).getTypes().map(t => t.getTypeName());
+    expect(members).toEqual(
+      expect.arrayContaining(['Void_container', 'NotFound', 'Conflict']),
+    );
+    expect(members).toHaveLength(3);
+  });
+  it('should keep Void arm when status-code union is 204 plus one error (issue #9641)', async () => {
+    const notFound: JSONSchemaObject = {
+      type: 'object',
+      title: 'NotFound',
+      properties: { message: { type: 'string' } },
+    };
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Mutation',
+      properties: {
+        deleteThing: {
+          $comment: 'statusCodeOneOfIndexMap:{"204":0,"404":1}',
+          title: 'deleteThing_response',
+          oneOf: [{ type: 'null', title: 'deleteThing_204_response' }, notFound],
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      logger,
+    });
+    const output = result.output as ObjectTypeComposer;
+    const fieldType = (output.getField('deleteThing').type as any).getUnwrappedTC();
+    expect(fieldType.getTypeName()).toBe('deleteThing_response');
+    const members = (fieldType as UnionTypeComposer).getTypes().map(t => t.getTypeName());
+    expect(members).toEqual(expect.arrayContaining(['Void_container', 'NotFound']));
+    expect(members).toHaveLength(2);
+  });
   it('should deep-merge allOf nested NonNull object fields (issue #8607)', async () => {
     const inputSchema: JSONSchema = {
       title: 'Movie',

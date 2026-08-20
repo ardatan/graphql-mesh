@@ -507,8 +507,15 @@ export function getComposerFromJSONSchema({
       // Remaining object/$ref members are left as a 1-element union so `leave` can reuse that type
       // instead of cloning it as `Title2`. Keep this after `pattern` so pattern-only nullable
       // wrappers do not mint a second regexp scalar (Slack Bot_User_ID / #9637 CI).
+      //
+      // Exception: status-code response unions encode HTTP 204 (no body) as `{ type: 'null' }`.
+      // Those arms are success outcomes (Void), not nullability markers — skip the strip (#9641).
+      const isStatusCodeResponseUnion = subSchema.$comment?.startsWith(
+        'statusCodeOneOfIndexMap:',
+      );
       for (const unionKey of ['anyOf', 'oneOf'] as const) {
         if (
+          !isStatusCodeResponseUnion &&
           subSchema[unionKey] &&
           !subSchema.properties &&
           !subSchema.allOf &&

@@ -1,0 +1,41 @@
+openapi: 3.0.3
+info:
+  title: repro-9641
+  version: 1.0.0
+paths:
+  /thing/{id}:
+    delete:
+      operationId: deleteThing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted.
+        '404':
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '409':
+          description: Conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+components:
+  schemas:
+    NotFound:
+      type: object
+      properties:
+        message:
+          type: string
+    Conflict:
+      type: object
+      properties:
+        reason:
+          type: string
