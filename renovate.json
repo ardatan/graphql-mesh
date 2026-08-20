@@ -3,6 +3,11 @@
   "extends": ["github>the-guild-org/shared-config:renovate"],
   "automerge": true,
   "rebaseWhen": "conflicted",
+  "prConcurrentLimit": 2,
+  "branchConcurrentLimit": 2,
+  "toolSettings": {
+    "nodeMaxMemory": 1536
+  },
   "major": {
     "automerge": false
   },
