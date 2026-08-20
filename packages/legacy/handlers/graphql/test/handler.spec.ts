@@ -123,6 +123,56 @@ describe('graphql', () => {
       introspectionFromSchema(schemaFromFile),
     );
   });
+  it('interpolates connectionParams for subscriptions', async () => {
+    let connectionParamsFromLoader: Record<string, unknown> | undefined;
+    const handler = new GraphQLHandler({
+      name: 'Test',
+      config: {},
+      baseDir: __dirname,
+      cache,
+      pubsub: new PubSub(),
+      store,
+      importFn: defaultImportFn,
+      logger,
+    });
+
+    (handler as any).urlLoader = {
+      getExecutorAsync: (_endpoint: string, options: any) => {
+        return async () => {
+          connectionParamsFromLoader =
+            typeof options.connectionParams === 'function'
+              ? options.connectionParams()
+              : options.connectionParams;
+          return { data: { __typename: 'Subscription' } };
+        };
+      },
+    };
+
+    const executor = await (handler as any).getExecutorForHTTPSourceConfig({
+      endpoint: 'http://localhost:4000/graphql',
+      subscriptionsProtocol: 'WS',
+      connectionParams: {
+        Authorization: "{context.headers['authorization']}",
+      },
+    });
+
+    await executor({
+      document: parse(/* GraphQL */ `
+        subscription {
+          __typename
+        }
+      `),
+      context: {
+        headers: {
+          authorization: '******',
+        },
+      },
+    });
+
+    expect(connectionParamsFromLoader).toEqual({
+      Authorization: '******',
+    });
+  });
   it('should handle fallback, retry and timeout options', async () => {
     let cnt = 0;
     await using server1 = await createDisposableServer((req, res) => {

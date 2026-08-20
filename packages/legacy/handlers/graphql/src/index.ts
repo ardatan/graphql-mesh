@@ -140,15 +140,19 @@ export default class GraphQLHandler implements MeshHandler {
       ? stringInterpolator.parse(httpSourceConfig.subscriptionsEndpoint, { env: process.env })
       : undefined;
     const connectionParamsFactory = getInterpolatedHeadersFactory(connectionParams);
+    let resolverData = {
+      env: process.env,
+    };
     const executor = this.urlLoader.getExecutorAsync(endpoint, {
       ...httpSourceConfig,
+      connectionParams: () => connectionParamsFactory(resolverData),
       subscriptionsEndpoint,
       subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
       customFetch: this.fetchFn,
     });
 
     return function meshExecutor(params) {
-      const resolverData = getResolverData(params);
+      resolverData = getResolverData(params);
       return executor({
         ...params,
         extensions: {
