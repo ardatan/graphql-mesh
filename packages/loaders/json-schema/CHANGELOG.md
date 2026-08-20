@@ -1,5 +1,25 @@
 # @omnigraph/json-schema
 
+## 0.112.2
+
+### Patch Changes
+
+- [#9643](https://github.com/ardatan/graphql-mesh/pull/9643)
+  [`5eab022`](https://github.com/ardatan/graphql-mesh/commit/5eab022d93727898594e3a34060aa1e67a7b43b1)
+  Thanks [@ardatan](https://github.com/ardatan)! - Keep HTTP 204 (No Content) arms in status-code
+  response unions.
+
+  OpenAPI encodes a `204` response as `{ type: 'null' }` inside a `oneOf` that also carries a
+  `statusCodeOneOfIndexMap` comment. The OpenAPI 3.1 nullability strip introduced for
+  `[#8719](https://github.com/ardatan/graphql-mesh/issues/8719)` treated that `{ type: 'null' }`
+  member as a nullability marker and removed it, so success outcomes disappeared from the generated
+  GraphQL union (e.g. `DELETE` + `204`/`404` collapsed to only the error type, or a union of errors
+  without `Void_container`).
+
+  Skip the `{ type: 'null' }` strip when the schema is a status-code response union (`$comment`
+  starts with `statusCodeOneOfIndexMap:`). Data-schema nullability via `anyOf`/`oneOf` with
+  `{ type: 'null' }` is unchanged.
+
 ## 0.112.1
 
 ### Patch Changes
