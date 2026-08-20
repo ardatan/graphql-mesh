@@ -5,7 +5,11 @@ exports[`Location Weather should generate correct schema: location-weather-schem
 
 directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, jsonApiFields: Boolean, operationSpecificHeaders: [[String]], path: String, queryParamArgMap: ObjMap, queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, subgraph: String) on FIELD_DEFINITION
 
+directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
+
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
+
+directive @statusCodeTypeName(statusCode: String, subgraph: String, typeName: String) repeatable on UNION
 
 directive @transport(headers: [[String]], kind: String, location: String, queryParams: [[String]], queryStringOptions: ObjMap, subgraph: String) repeatable on SCHEMA
 
@@ -1941,7 +1945,7 @@ type Query {
 
     """Station Call ID."""
     station: String
-  ): WeatherAlert
+  ): alerts_response
 
   """Returns a Current Observation - given a lat, and a lon."""
   current(
@@ -1979,7 +1983,7 @@ type Query {
     """Station Call ID."""
     station: String
     units: queryInput_current_units
-  ): CurrentObsGroup
+  ): current_response
 
   """Returns current air quality conditions."""
   current_airquality(
@@ -2002,7 +2006,7 @@ type Query {
 
     """Postal Code. Example: 28546"""
     postal_code: String
-  ): AQCurrentGroup
+  ): current_airquality_response
 
   """
   Returns nearest and most recent lightning observations - Given a lat/lon.
@@ -2032,7 +2036,7 @@ type Query {
     """Number of results to skip in response. (Offset)"""
     skip: Int
     sort: queryInput_current_lightning_sort
-  ): LightningObsGroup
+  ): current_lightning_response
 
   "Find administrative divisions, filtering by optional criteria. If no criteria are set, you will get back all\\nknown divisions.\\n"
   findAdminDivisionsUsingGET(
@@ -2661,7 +2665,7 @@ type Query {
     """Longitude component of location."""
     lon: Float!
     units: queryInput_forecast_agweather_units
-  ): ForecastAG
+  ): forecast_agweather_response
 
   """
   Returns 72 hour (hourly) Air Quality forecast, where each point represents a one hour period.
@@ -2689,7 +2693,7 @@ type Query {
 
     """Postal Code. Example: 28546"""
     postal_code: String
-  ): AQHourly
+  ): forecast_airquality_response
 
   "Returns a daily forecast, where each point represents one day (24hr) period. Every point has a valid_date string in the format \\"YYYY-MM-DD\\". One day begins at 00:00 UTC, and ends at 23:59 UTC. \\n"
   forecast_daily(
@@ -2720,7 +2724,7 @@ type Query {
     """Station Call ID."""
     station: String
     units: queryInput_forecast_daily_units
-  ): ForecastDay
+  ): forecast_daily_response
 
   """
   Retrieve an 8 day forecast relevant to te Energy Sector (degree days, solar radiation, precipitation, wind).
@@ -2739,7 +2743,7 @@ type Query {
     threshold: Float
     tp: queryInput_forecast_energy_tp
     units: queryInput_forecast_energy_units
-  ): EnergyObsGroupForecast
+  ): forecast_energy_response
 
   """
   Returns an hourly forecast, where each point represents a one hour period.
@@ -2772,7 +2776,7 @@ type Query {
     """Station Call ID."""
     station: String
     units: queryInput_forecast_hourly_units
-  ): ForecastHourly
+  ): forecast_hourly_response
 
   """
   Returns a 60 minute precipitation forecast, where each point represents one minute (1 min) period.
@@ -2801,7 +2805,7 @@ type Query {
     """Station Call ID."""
     station: String
     units: queryInput_forecast_minutely_units
-  ): FCMinutely
+  ): forecast_minutely_response
 
   """
   Returns latitude, longitude, timezone, and related location metadata for Weatherbit geocoding utility lookups.
@@ -2827,7 +2831,7 @@ type Query {
 
     """ICAO or station ID lookup value."""
     station: String
-  ): GeocodeResult
+  ): geocode_response
 
   "Get the details for a specific administrative division, including location coordinates, population, and\\nelevation above sea-level (if available).\\n"
   getAdminDivisionUsingGET(
@@ -3087,7 +3091,7 @@ type Query {
     start_date: String!
     tp: queryInput_history_agweather_tp
     units: queryInput_history_agweather_units
-  ): HistoryAG
+  ): history_agweather_response
 
   """
   Returns historical air quality conditions. See https://www.weatherbit.io/api for API specific rate limits.
@@ -3119,7 +3123,7 @@ type Query {
     """Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."""
     start_date: String
     tz: queryInput_history_airquality_tz
-  ): AQHourly
+  ): history_airquality_response
 
   """
   Returns Historical Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.
@@ -3155,7 +3159,7 @@ type Query {
     """Station Call ID."""
     station: String
     units: queryInput_history_daily_units
-  ): HistoryDay
+  ): history_daily_response
 
   """
   Returns aggregate energy specific historical weather fields, over a specified time period. See https://www.weatherbit.io/api for API specific rate limits.
@@ -3180,7 +3184,7 @@ type Query {
     threshold: Float
     tp: queryInput_history_energy_tp
     units: queryInput_history_energy_units
-  ): EnergyObsGroup
+  ): history_energy_response
 
   """
   Returns Historical Observations - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.
@@ -3217,7 +3221,7 @@ type Query {
     station: String
     tz: queryInput_history_hourly_tz
     units: queryInput_history_hourly_units
-  ): History
+  ): history_hourly_response
 
   """Returns lightning data by lat/lon from a given date."""
   history_lightning(
@@ -3244,7 +3248,7 @@ type Query {
     skip: Int
     sort: queryInput_history_lightning_sort
     tz: queryInput_history_lightning_tz
-  ): LightningObsGroup
+  ): history_lightning_response
 
   """
   Returns the current historical weather final revision version so downstream systems can detect changes to finalized datasets.
@@ -3289,7 +3293,7 @@ type Query {
     station: String
     tz: queryInput_history_subhourly_tz
     units: queryInput_history_subhourly_units
-  ): HistorySubhourly
+  ): history_subhourly_response
 
   """
   Returns Historical Climate Normals (Averages) - Given a lat, and lon. See https://www.weatherbit.io/api for API specific rate limits.
@@ -3312,7 +3316,7 @@ type Query {
     start_day: String!
     tp: queryInput_normals_tp
     units: queryInput_normals_units
-  ): Normals
+  ): normals_response
 
   """
   Returns current usage counters, remaining request quotas, and reset timestamps for standard and historical Weatherbit products. Daily request limits reset at 00:00 UTC.
@@ -3396,6 +3400,13 @@ A field whose value conforms to the standard URL format as specified in RFC3986:
 """
 scalar URL
 
+"""Represents empty values"""
+scalar Void
+
+type Void_container {
+  Void: Void
+}
+
 type WeatherAlert {
   alerts: [WeatherAlertGroup]
 
@@ -3456,6 +3467,44 @@ type WeatherAlertGroup {
   """URI to weather alert"""
   uri: URL
 }
+
+union alerts_response = Void_container | WeatherAlert
+
+union current_airquality_response = AQCurrentGroup | Void_container
+
+union current_lightning_response = LightningObsGroup | Void_container
+
+union current_response = CurrentObsGroup | Void_container
+
+union forecast_agweather_response = ForecastAG | Void_container
+
+union forecast_airquality_response = AQHourly | Void_container
+
+union forecast_daily_response = ForecastDay | Void_container
+
+union forecast_energy_response = EnergyObsGroupForecast | Void_container
+
+union forecast_hourly_response = ForecastHourly | Void_container
+
+union forecast_minutely_response = FCMinutely | Void_container
+
+union geocode_response = GeocodeResult | Void_container
+
+union history_agweather_response = HistoryAG | Void_container
+
+union history_airquality_response = AQHourly | Void_container
+
+union history_daily_response = HistoryDay | Void_container
+
+union history_energy_response = EnergyObsGroup | Void_container
+
+union history_hourly_response = History | Void_container
+
+union history_lightning_response = LightningObsGroup | Void_container
+
+union history_subhourly_response = HistorySubhourly | Void_container
+
+union normals_response = Normals | Void_container
 
 enum queryInput_current_include_items {
   alerts
