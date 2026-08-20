@@ -1639,9 +1639,7 @@ ${printType(GraphQLString)}
     const fieldType = (output.getField('deleteThing').type as any).getUnwrappedTC();
     expect(fieldType.getTypeName()).toBe('deleteThing_response');
     const members = (fieldType as UnionTypeComposer).getTypes().map(t => t.getTypeName());
-    expect(members).toEqual(
-      expect.arrayContaining(['Void_container', 'NotFound', 'Conflict']),
-    );
+    expect(members).toEqual(expect.arrayContaining(['Void_container', 'NotFound', 'Conflict']));
     expect(members).toHaveLength(3);
   });
   it('should keep Void arm when status-code union is 204 plus one error (issue #9641)', async () => {

@@ -510,9 +510,7 @@ export function getComposerFromJSONSchema({
       //
       // Exception: status-code response unions encode HTTP 204 (no body) as `{ type: 'null' }`.
       // Those arms are success outcomes (Void), not nullability markers — skip the strip (#9641).
-      const isStatusCodeResponseUnion = subSchema.$comment?.startsWith(
-        'statusCodeOneOfIndexMap:',
-      );
+      const isStatusCodeResponseUnion = subSchema.$comment?.startsWith('statusCodeOneOfIndexMap:');
       for (const unionKey of ['anyOf', 'oneOf'] as const) {
         if (
           !isStatusCodeResponseUnion &&
