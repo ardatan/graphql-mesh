@@ -1,11 +1,36 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import { GraphQLError } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
-import { Metadata } from '@grpc/grpc-js';
-import { addMetaDataToCall } from '../src/utils.js';
+import { Metadata, status as GrpcStatus } from '@grpc/grpc-js';
+import { addMetaDataToCall, toGrpcGraphQLError } from '../src/utils.js';
 
 describe('grpc utils', () => {
+  describe('toGrpcGraphQLError', () => {
+    test('maps ServiceError into GraphQLError with extensions.grpc', () => {
+      const grpcError = Object.assign(new Error('Deadline exceeded'), {
+        code: GrpcStatus.DEADLINE_EXCEEDED,
+        details: 'Deadline exceeded',
+        metadata: new Metadata(),
+      });
+      const gqlError = toGrpcGraphQLError(grpcError);
+      expect(gqlError).toBeInstanceOf(GraphQLError);
+      expect(gqlError.message).toBe('Deadline exceeded');
+      expect(gqlError.extensions).toMatchObject({
+        code: 'DOWNSTREAM_SERVICE_ERROR',
+        grpc: {
+          code: GrpcStatus.DEADLINE_EXCEEDED,
+          statusName: 'DEADLINE_EXCEEDED',
+          details: 'Deadline exceeded',
+        },
+      });
+    });
+  });
+
   describe('addMetaDataToCall', () => {
     const grpcClientMethod = jest.fn();
+    beforeEach(() => {
+      grpcClientMethod.mockReset();
+    });
     const input = { sport: 'Baseball' };
     const context = { team: 'Oakland As', players: { pitcher: 'Kershaw' }, number: 42 };
     const binarySportsTeam = Buffer.from([
@@ -23,6 +48,30 @@ describe('grpc utils', () => {
     test(`when no metadata is supplied by the config`, () => {
       addMetaDataToCall(grpcClientMethod, input, { context, env: process.env }, undefined);
       expect(grpcClientMethod).toHaveBeenCalledWith(input, expect.any(Function));
+    });
+
+    test(`rejects with GraphQLError when the gRPC callback returns a ServiceError`, async () => {
+      grpcClientMethod.mockImplementationOnce((_input, cb) => {
+        cb(
+          Object.assign(new Error('too big'), {
+            code: GrpcStatus.RESOURCE_EXHAUSTED,
+            details: 'Received message larger than max',
+            metadata: new Metadata(),
+          }),
+        );
+      });
+      await expect(
+        addMetaDataToCall(grpcClientMethod, input, { context, env: process.env }, undefined),
+      ).rejects.toMatchObject({
+        message: 'Received message larger than max',
+        extensions: {
+          code: 'DOWNSTREAM_SERVICE_ERROR',
+          grpc: {
+            code: GrpcStatus.RESOURCE_EXHAUSTED,
+            statusName: 'RESOURCE_EXHAUSTED',
+          },
+        },
+      });
     });
 
     test(`when requestTimeout is supplied, passes a deadline CallOptions`, () => {

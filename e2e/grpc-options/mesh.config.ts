@@ -38,7 +38,4 @@ export const composeConfig = defineComposeConfig({
   ],
 });
 
-export const gatewayConfig = defineGatewayConfig({
-  // Surface upstream gRPC status messages (DEADLINE_EXCEEDED, RESOURCE_EXHAUSTED, …)
-  maskedErrors: false,
-});
+export const gatewayConfig = defineGatewayConfig({});

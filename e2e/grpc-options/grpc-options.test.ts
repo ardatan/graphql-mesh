@@ -58,9 +58,12 @@ describe('gRPC options (deadline, channelOptions, reflectionMetadata)', () => {
       `,
     });
     expect(result.errors?.length).toBeGreaterThan(0);
-    expect(JSON.stringify(result.errors)).toMatch(
-      /deadline|DEADLINE_EXCEEDED|timed?\s*out|CANCELLED|4 DEADLINE/i,
-    );
+    expect(result.errors?.[0]?.extensions).toMatchObject({
+      code: 'DOWNSTREAM_SERVICE_ERROR',
+      grpc: {
+        statusName: 'DEADLINE_EXCEEDED',
+      },
+    });
   }, 15_000);
 
   it('accepts large responses when channelOptions raise max receive size', async () => {
@@ -107,8 +110,11 @@ describe('gRPC options (deadline, channelOptions, reflectionMetadata)', () => {
       `,
     });
     expect(result.errors?.length).toBeGreaterThan(0);
-    expect(JSON.stringify(result.errors)).toMatch(
-      /RESOURCE_EXHAUSTED|larger than max|max_receive_message_length|8 RESOURCE/i,
-    );
+    expect(result.errors?.[0]?.extensions).toMatchObject({
+      code: 'DOWNSTREAM_SERVICE_ERROR',
+      grpc: {
+        statusName: 'RESOURCE_EXHAUSTED',
+      },
+    });
   });
 });

@@ -12,3 +12,4 @@ gRPC: honor `requestTimeout` as call deadlines, support `channelOptions`, `refle
 - New `reflectionMetadata` is sent on gRPC reflection requests (routing / auth metadata for reflection)
 - Empty `source` (including `{ file: '' }`) correctly falls back to reflection
 - Connection teardown uses `Client.prototype.close` so an RPC named `Close` cannot shadow it
+- Upstream `ServiceError`s are returned as GraphQL errors with `extensions.code: DOWNSTREAM_SERVICE_ERROR` and details under `extensions.grpc` (`code`, `statusName`, `details`, `metadata`)

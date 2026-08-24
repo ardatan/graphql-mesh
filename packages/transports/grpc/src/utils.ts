@@ -3,17 +3,64 @@ import lodashGet from 'lodash.get';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { withCancel } from '@graphql-mesh/utils';
+import { createGraphQLError } from '@graphql-tools/utils';
 import type {
   CallOptions,
   ClientDuplexStream,
   ClientReadableStream,
   ClientUnaryCall,
   MetadataValue,
+  ServiceError,
 } from '@grpc/grpc-js';
-import { Metadata } from '@grpc/grpc-js';
+import { Metadata, status as GrpcStatus } from '@grpc/grpc-js';
 
 function isBlob(input: any): input is Blob {
   return input != null && input.stream instanceof Function;
+}
+
+function isGrpcServiceError(error: unknown): error is ServiceError {
+  return (
+    typeof error === 'object' &&
+    error != null &&
+    typeof (error as ServiceError).code === 'number' &&
+    typeof (error as ServiceError).details === 'string'
+  );
+}
+
+/**
+ * Convert a gRPC `ServiceError` into a GraphQLError so gateways do not mask it.
+ * Upstream details live under `extensions.grpc` (code, status name, details, metadata).
+ */
+export function toGrpcGraphQLError(error: unknown) {
+  if (isGrpcServiceError(error)) {
+    const statusName =
+      GrpcStatus[error.code] != null ? String(GrpcStatus[error.code]) : 'UNKNOWN';
+    // Do not set `originalError` to the raw ServiceError — Envelop's maskedErrors
+    // walks originalError and would treat a non-GraphQLError root as unexpected.
+    return createGraphQLError(error.details || error.message || statusName, {
+      extensions: {
+        code: 'DOWNSTREAM_SERVICE_ERROR',
+        grpc: {
+          code: error.code,
+          statusName,
+          details: error.details,
+          metadata: error.metadata?.getMap?.() ?? {},
+        },
+      },
+    });
+  }
+  if (error instanceof Error) {
+    return createGraphQLError(error.message, {
+      extensions: {
+        code: 'DOWNSTREAM_SERVICE_ERROR',
+      },
+    });
+  }
+  return createGraphQLError(String(error), {
+    extensions: {
+      code: 'DOWNSTREAM_SERVICE_ERROR',
+    },
+  });
 }
 
 export function buildGrpcMetadata(
@@ -50,7 +97,7 @@ export function addMetaDataToCall(
   callFn: any,
   input: any,
   resolverData: ResolverData,
-  metaData: Record<string, string | string[] | Buffer> | [string, string][],
+  metaData?: Record<string, string | string[] | Buffer> | [string, string][],
   isResponseStream = false,
   requestTimeout?: number,
 ) {
@@ -76,7 +123,8 @@ export function addMetaDataToCall(
       ...callFnArguments,
       (error: Error, response: ClientUnaryCall | ClientReadableStream<unknown>) => {
         if (error) {
-          reject(error);
+          reject(toGrpcGraphQLError(error));
+          return;
         }
         resolve(response);
       },
