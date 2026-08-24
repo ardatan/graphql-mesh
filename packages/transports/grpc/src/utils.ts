@@ -12,7 +12,7 @@ import type {
   MetadataValue,
   ServiceError,
 } from '@grpc/grpc-js';
-import { Metadata, status as GrpcStatus } from '@grpc/grpc-js';
+import { status as GrpcStatus, Metadata } from '@grpc/grpc-js';
 
 function isBlob(input: any): input is Blob {
   return input != null && input.stream instanceof Function;
@@ -36,8 +36,7 @@ export function toGrpcGraphQLError(error: unknown) {
   if (!isGrpcServiceError(error)) {
     return error;
   }
-  const status =
-    GrpcStatus[error.code] != null ? String(GrpcStatus[error.code]) : 'UNKNOWN';
+  const status = GrpcStatus[error.code] != null ? String(GrpcStatus[error.code]) : 'UNKNOWN';
   // Do not set `originalError` to the raw ServiceError — Envelop's maskedErrors
   // walks originalError and would treat a non-GraphQLError root as unexpected.
   return createGraphQLError(error.message || status, {

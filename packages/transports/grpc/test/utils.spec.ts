@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { GraphQLError } from 'graphql';
 import { process } from '@graphql-mesh/cross-helpers';
-import { Metadata, status as GrpcStatus } from '@grpc/grpc-js';
+import { status as GrpcStatus, Metadata } from '@grpc/grpc-js';
 import { addMetaDataToCall, toGrpcGraphQLError } from '../src/utils.js';
 
 describe('grpc utils', () => {

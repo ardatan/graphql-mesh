@@ -129,8 +129,8 @@ export const composeConfig = defineConfig({
 
 ## Reflection Metadata (`reflectionMetadata`)
 
-When using gRPC reflection (no `source`), use `reflectionMetadata` to send metadata only on reflection
-requests — for example routing headers required by your infrastructure:
+When using gRPC reflection (no `source`), use `reflectionMetadata` to send metadata only on
+reflection requests — for example routing headers required by your infrastructure:
 
 ```ts filename="mesh.config.ts"
 import { defineConfig } from '@graphql-mesh/compose-cli'
