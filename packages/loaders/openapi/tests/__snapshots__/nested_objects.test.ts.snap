@@ -17,7 +17,7 @@ type Query {
     """The name of the collection to search for the document under"""
     collectionName: String!
     searchParameters: SearchParameters_Input!
-  ): searchCollection_response @httpOperation(subgraph: "example_api", path: "/collections/{args.collectionName}/documents/search", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"searchParameters\\":\\"searchParameters\\"}")
+  ): searchCollection_response @httpOperation(subgraph: "example_api", path: "/collections/{args.collectionName}/documents/search", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"searchParameters\\":\\"searchParameters\\"}", queryStringOptions: "{\\"allowDots\\":true}")
 }
 
 union searchCollection_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "SearchResult") @statusCodeTypeName(subgraph: "example_api", statusCode: "400", typeName: "ApiResponse") @statusCodeTypeName(subgraph: "example_api", statusCode: "404", typeName: "ApiResponse") = SearchResult | ApiResponse
