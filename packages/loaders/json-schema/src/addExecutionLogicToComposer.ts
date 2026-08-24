@@ -123,7 +123,7 @@ ${operationConfig.description || ''}
             queryStringOptions:
               'queryStringOptions' in operationConfig
                 ? operationConfig.queryStringOptions
-                : undefined,
+                : queryStringOptions,
           }),
         ),
       });

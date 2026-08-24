@@ -38,4 +38,41 @@ describe('Query Params', () => {
       },
     });
   });
+
+  it('uses global queryStringOptions in httpOperation directive when operation option is missing', async () => {
+    const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
+      endpoint: 'http://localhost:3000',
+      queryStringOptions: {
+        arrayFormat: 'brackets',
+      },
+      operations: [
+        {
+          type: OperationTypeNode.QUERY,
+          field: 'test',
+          path: '/test',
+          method: 'GET',
+          queryParamArgMap: {
+            foo: 'foo',
+          },
+          argTypeMap: {
+            foo: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+          },
+          responseSample: {
+            url: 'http://localhost:3000/test?foo[]=bar',
+          },
+        },
+      ],
+      async fetch(url) {
+        return Response.json(decodeURIComponent(url.split('?')[1]));
+      },
+    });
+
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toContain('queryStringOptions: "{\\"arrayFormat\\":\\"brackets\\"}"');
+  });
 });
