@@ -349,7 +349,24 @@ export interface GrpcHandler {
    * Allows to explicitly override the default operation (Query or Mutation) for any gRPC operation
    */
   selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
+  /**
+   * HTTP headers when `source` points to a remote `.graphql` SDL
+   */
   schemaHeaders?: {
+    [k: string]: any;
+  };
+  /**
+   * gRPC metadata sent with server-reflection requests (e.g. routing / auth metadata).
+   * Only used when loading the schema via reflection (no `source` / empty `source`).
+   */
+  reflectionMetadata?: {
+    [k: string]: any;
+  };
+  /**
+   * Channel options passed to the gRPC client (e.g. grpc.max_receive_message_length, grpc.keepalive_time_ms).
+   * See https://grpc.github.io/grpc/core/group__grpc__arg__keys.html
+   */
+  channelOptions?: {
     [k: string]: any;
   };
 }

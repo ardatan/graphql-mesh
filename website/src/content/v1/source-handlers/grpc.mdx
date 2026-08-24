@@ -126,3 +126,54 @@ export const composeConfig = defineConfig({
   ]
 })
 ```
+
+## Reflection Metadata (`reflectionMetadata`)
+
+When using gRPC reflection (no `source`), use `reflectionMetadata` to send metadata only on
+reflection requests — for example routing headers required by your infrastructure:
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import loadGrpcSubgraph from '@omnigraph/grpc'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
+        endpoint: 'localhost:50051',
+        reflectionMetadata: {
+          'grpc-service': 'proto.MyGrpcService',
+          authorization: 'Bearer {env.REFLECTION_TOKEN}'
+        }
+      })
+    }
+  ]
+})
+```
+
+## Channel Options & Timeouts
+
+- `requestTimeout` sets a per-call **deadline** (milliseconds from the start of each request).
+- `channelOptions` are passed to the gRPC client constructor (message size limits, keepalive, etc.):
+
+```ts filename="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import loadGrpcSubgraph from '@omnigraph/grpc'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
+        endpoint: 'localhost:50051',
+        requestTimeout: 5000,
+        channelOptions: {
+          'grpc.max_receive_message_length': 10_000_000,
+          'grpc.keepalive_time_ms': 10_000,
+          'grpc.keepalive_timeout_ms': 5_000,
+          'grpc.keepalive_permit_without_calls': 1
+        }
+      })
+    }
+  ]
+})
+```
