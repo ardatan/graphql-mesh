@@ -40,7 +40,7 @@ export function toGrpcGraphQLError(error: unknown) {
     GrpcStatus[error.code] != null ? String(GrpcStatus[error.code]) : 'UNKNOWN';
   // Do not set `originalError` to the raw ServiceError — Envelop's maskedErrors
   // walks originalError and would treat a non-GraphQLError root as unexpected.
-  return createGraphQLError(error.details || error.message || statusName, {
+  return createGraphQLError(error.message || statusName, {
     extensions: {
       code: 'DOWNSTREAM_SERVICE_ERROR',
       grpc: {

@@ -70,7 +70,7 @@ describe('grpc utils', () => {
       await expect(
         addMetaDataToCall(grpcClientMethod, input, { context, env: process.env }, undefined),
       ).rejects.toMatchObject({
-        message: 'Received message larger than max',
+        message: 'too big',
         extensions: {
           code: 'DOWNSTREAM_SERVICE_ERROR',
           grpc: {
