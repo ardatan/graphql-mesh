@@ -7,11 +7,11 @@
     "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.103.1",
-    "@graphql-mesh/openapi": "0.112.2",
-    "@graphql-mesh/runtime": "0.109.0",
-    "@graphql-mesh/transform-extend": "0.107.0",
-    "@graphql-mesh/transform-filter-schema": "0.107.0",
+    "@graphql-mesh/cli": "0.103.2",
+    "@graphql-mesh/openapi": "0.112.3",
+    "@graphql-mesh/runtime": "0.109.1",
+    "@graphql-mesh/transform-extend": "0.107.1",
+    "@graphql-mesh/transform-filter-schema": "0.107.1",
     "@graphql-tools/utils": "^11.2.2",
     "graphql": "16.14.0"
   },

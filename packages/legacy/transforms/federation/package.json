@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-federation",
-  "version": "0.107.0",
+  "version": "0.107.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,8 +37,8 @@
   "dependencies": {
     "@apollo/subgraph": "^2.14.3",
     "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/types": "^0.107.0",
-    "@graphql-mesh/utils": "^0.107.0",
+    "@graphql-mesh/types": "^0.107.1",
+    "@graphql-mesh/utils": "^0.107.1",
     "@graphql-tools/delegate": "^12.1.1",
     "@graphql-tools/stitching-directives": "^4.0.27",
     "@graphql-tools/utils": "^11.2.2",

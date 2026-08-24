@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/soap",
-  "version": "0.110.0",
+  "version": "0.110.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -38,9 +38,9 @@
     "@graphql-mesh/cross-helpers": "^0.4.16",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/transport-common": "^1.0.20",
-    "@graphql-mesh/transport-soap": "^0.13.0",
-    "@graphql-mesh/types": "^0.107.0",
-    "@graphql-mesh/utils": "^0.107.0",
+    "@graphql-mesh/transport-soap": "^0.13.1",
+    "@graphql-mesh/types": "^0.107.1",
+    "@graphql-mesh/utils": "^0.107.1",
     "@graphql-tools/utils": "^11.2.2",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
