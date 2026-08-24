@@ -22,7 +22,7 @@ const REQUIRED_REFLECTION_TOKEN = 'reflect-secret';
 /** ~5 MiB — above the default 4 MiB gRPC max receive size */
 const LARGE_PAYLOAD = Buffer.alloc(5 * 1024 * 1024, 0x61);
 
-const PROTO_PATH = join(_dirname, 'echo.proto');
+const PROTO_PATH = join(_dirname, 'echo', 'echo.proto');
 const packageDefinition = loadSync(PROTO_PATH, {
   keepCase: true,
   longs: String,
@@ -49,8 +49,10 @@ const getLargePayload: handleUnaryCall<{ name: string }, { data: Buffer }> = (_c
   callback(null, { data: LARGE_PAYLOAD });
 };
 
-function wrapReflectionAuth(implementation: Record<string, Function>) {
-  const wrapped: Record<string, Function> = {};
+type ReflectionHandler = (call: any, callback?: any) => unknown;
+
+function wrapReflectionAuth(implementation: Record<string, ReflectionHandler>) {
+  const wrapped: Record<string, ReflectionHandler> = {};
   for (const [methodName, handler] of Object.entries(implementation)) {
     wrapped[methodName] = function reflectionAuthGuard(call: any, callback?: any) {
       const token = call.metadata?.get('x-reflection-token')?.[0];
