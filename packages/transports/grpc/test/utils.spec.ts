@@ -14,15 +14,22 @@ describe('grpc utils', () => {
       });
       const gqlError = toGrpcGraphQLError(grpcError);
       expect(gqlError).toBeInstanceOf(GraphQLError);
-      expect(gqlError.message).toBe('Deadline exceeded');
-      expect(gqlError.extensions).toMatchObject({
+      expect((gqlError as GraphQLError).message).toBe('Deadline exceeded');
+      expect((gqlError as GraphQLError).extensions).toMatchObject({
         code: 'DOWNSTREAM_SERVICE_ERROR',
         grpc: {
           code: GrpcStatus.DEADLINE_EXCEEDED,
           statusName: 'DEADLINE_EXCEEDED',
           details: 'Deadline exceeded',
+          metadata: {},
         },
       });
+    });
+
+    test('passes through non-ServiceError values unchanged', () => {
+      const err = new Error('boom');
+      expect(toGrpcGraphQLError(err)).toBe(err);
+      expect(toGrpcGraphQLError('nope')).toBe('nope');
     });
   });
 
