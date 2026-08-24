@@ -22,8 +22,8 @@ import {
 } from '@graphql-mesh/transport-common';
 import type { Logger } from '@graphql-mesh/types';
 import { getDirective, getDirectives, getRootTypes, type MaybePromise } from '@graphql-tools/utils';
-import type { ChannelCredentials } from '@grpc/grpc-js';
-import { credentials, loadPackageDefinition } from '@grpc/grpc-js';
+import type { ChannelCredentials, ChannelOptions } from '@grpc/grpc-js';
+import { credentials, Client as GrpcClient, loadPackageDefinition } from '@grpc/grpc-js';
 import type { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
 import { fromJSON } from '@grpc/proto-loader';
 import { DisposableStack } from '@whatwg-node/disposablestack';
@@ -60,6 +60,11 @@ export interface gRPCTransportOptions {
         [k: string]: any;
       }
     | [string, string][];
+  /**
+   * Channel options passed to the gRPC client constructor
+   * (e.g. grpc.max_receive_message_length, grpc.keepalive_time_ms)
+   */
+  channelOptions?: ChannelOptions;
 }
 
 interface LoadOptions {
@@ -156,8 +161,10 @@ export class GrpcTransportHelper extends DisposableStack {
       client = new ServiceClient(
         stringInterpolator.parse(this.endpoint, { env: process.env }) ?? this.endpoint,
         creds,
+        this.config.channelOptions,
       );
-      this.defer(() => client.close());
+      // Use Client.prototype.close so an RPC named `Close` cannot shadow connection teardown
+      this.defer(() => GrpcClient.prototype.close.call(client));
       serviceClientByObjPath.set(objPath, client);
     }
     return client;
@@ -174,6 +181,7 @@ export class GrpcTransportHelper extends DisposableStack {
   }): GraphQLFieldResolver<any, any> {
     const clientMethod = client[methodName].bind(client);
     const metaData = this.config.metaData;
+    const requestTimeout = this.config.requestTimeout;
     return function grpcFieldResolver(root, args, context) {
       return addMetaDataToCall(
         clientMethod,
@@ -186,6 +194,7 @@ export class GrpcTransportHelper extends DisposableStack {
         },
         metaData,
         isResponseStream,
+        requestTimeout,
       );
     };
   }

@@ -1138,7 +1138,18 @@
         },
         "schemaHeaders": {
           "type": "object",
-          "properties": {}
+          "properties": {},
+          "description": "HTTP headers when `source` points to a remote `.graphql` SDL"
+        },
+        "reflectionMetadata": {
+          "type": "object",
+          "properties": {},
+          "description": "gRPC metadata sent with server-reflection requests (e.g. routing / auth metadata).\nOnly used when loading the schema via reflection (no `source` / empty `source`)."
+        },
+        "channelOptions": {
+          "type": "object",
+          "properties": {},
+          "description": "Channel options passed to the gRPC client (e.g. grpc.max_receive_message_length, grpc.keepalive_time_ms).\nSee https://grpc.github.io/grpc/core/group__grpc__arg__keys.html"
         }
       },
       "required": ["endpoint"]

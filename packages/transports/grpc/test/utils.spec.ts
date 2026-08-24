@@ -25,6 +25,46 @@ describe('grpc utils', () => {
       expect(grpcClientMethod).toHaveBeenCalledWith(input, expect.any(Function));
     });
 
+    test(`when requestTimeout is supplied, passes a deadline CallOptions`, () => {
+      const now = 1_700_000_000_000;
+      const dateNowSpy = jest.spyOn(Date, 'now').mockReturnValue(now);
+      addMetaDataToCall(
+        grpcClientMethod,
+        input,
+        { context, env: process.env },
+        undefined,
+        false,
+        4000,
+      );
+      expect(grpcClientMethod).toHaveBeenCalledWith(
+        input,
+        expect.any(Metadata),
+        { deadline: now + 4000 },
+        expect.any(Function),
+      );
+      dateNowSpy.mockRestore();
+    });
+
+    test(`when requestTimeout and metadata are supplied, passes both`, () => {
+      const now = 1_700_000_000_000;
+      const dateNowSpy = jest.spyOn(Date, 'now').mockReturnValue(now);
+      addMetaDataToCall(
+        grpcClientMethod,
+        input,
+        { context, env: process.env },
+        { sportsTeam: 'Dodgers' },
+        false,
+        2500,
+      );
+      expect(grpcClientMethod).toHaveBeenCalledWith(
+        input,
+        createExpectedMetadata('sportsTeam', 'Dodgers'),
+        { deadline: now + 2500 },
+        expect.any(Function),
+      );
+      dateNowSpy.mockRestore();
+    });
+
     describe.each<[string, Record<string, string | Buffer | string[]>, Metadata]>([
       ['static', { sportsTeam: 'Dodgers' }, createExpectedMetadata('sportsTeam', 'Dodgers')],
       [

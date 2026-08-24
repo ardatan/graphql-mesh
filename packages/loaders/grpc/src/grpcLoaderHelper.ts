@@ -23,7 +23,12 @@ import { fs, path } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { Logger, YamlConfig } from '@graphql-mesh/types';
 import { GraphQLStreamDirective, type Constructor, type MaybePromise } from '@graphql-tools/utils';
-import { credentials, type ChannelCredentials } from '@grpc/grpc-js';
+import {
+  credentials,
+  Client as GrpcClient,
+  Metadata,
+  type ChannelCredentials,
+} from '@grpc/grpc-js';
 import { DisposableStack } from '@whatwg-node/disposablestack';
 import {
   EnumDirective,
@@ -128,6 +133,7 @@ export class GrpcLoaderHelper extends DisposableStack {
         credentialsSsl: this.config.credentialsSsl,
         useHTTPS: this.config.useHTTPS,
         metaData: this.config.metaData ? Object.entries(this.config.metaData) : undefined,
+        channelOptions: this.config.channelOptions,
         roots,
       },
     };
@@ -138,8 +144,27 @@ export class GrpcLoaderHelper extends DisposableStack {
     this.logger.debug(`Using the reflection`);
     const reflectionEndpoint = stringInterpolator.parse(this.config.endpoint, { env: process.env });
     this.logger.debug(`Creating gRPC Reflection Client`);
-    const reflectionClient = new Client(reflectionEndpoint, creds);
-    this.defer(() => reflectionClient.grpcClient.close());
+    const reflectionClient = new Client(reflectionEndpoint, creds, this.config.channelOptions);
+    // Attach reflectionMetadata to server-reflection calls (routing / auth metadata)
+    if (this.config.reflectionMetadata) {
+      const meta = new Metadata();
+      const resolverData = { env: process.env };
+      for (const [key, value] of Object.entries(this.config.reflectionMetadata)) {
+        const interpolated =
+          typeof value === 'string' ? stringInterpolator.parse(value, resolverData) : value;
+        meta.set(key, String(interpolated));
+      }
+      const grpcClient = reflectionClient.grpcClient as {
+        serverReflectionInfo: (...args: any[]) => any;
+      };
+      const originalServerReflectionInfo = grpcClient.serverReflectionInfo.bind(grpcClient);
+      grpcClient.serverReflectionInfo = (...args: any[]) => {
+        args[0] = meta;
+        return originalServerReflectionInfo(...args);
+      };
+    }
+    // Avoid Close RPC name collisions if present on generated clients
+    this.defer(() => GrpcClient.prototype.close.call(reflectionClient.grpcClient));
     return reflectionClient.listServices().then(services =>
       (services.filter(service => service && !service?.startsWith('grpc.')) as string[]).map(
         service => {
@@ -240,14 +265,16 @@ export class GrpcLoaderHelper extends DisposableStack {
   private async getDescriptorSets(creds: ChannelCredentials) {
     const rootPromises: Promise<protobufjs.Root>[] = [];
     this.logger.debug(`Building Roots`);
-    if (this.config.source) {
-      const filePath =
-        typeof this.config.source === 'string' ? this.config.source : this.config.source.file;
-      if (filePath.endsWith('json')) {
-        rootPromises.push(this.processDescriptorFile());
-      } else if (filePath.endsWith('proto')) {
-        rootPromises.push(this.processProtoFile());
-      }
+    const filePath = this.config.source
+      ? typeof this.config.source === 'string'
+        ? this.config.source
+        : this.config.source.file
+      : undefined;
+    // Missing or empty source means gRPC reflection (also accepts source: { file: '' } workaround)
+    if (filePath?.endsWith('json')) {
+      rootPromises.push(this.processDescriptorFile());
+    } else if (filePath?.endsWith('proto')) {
+      rootPromises.push(this.processProtoFile());
     } else {
       const reflectionPromises = await this.processReflection(creds);
       rootPromises.push(...reflectionPromises);
