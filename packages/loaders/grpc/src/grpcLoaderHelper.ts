@@ -133,7 +133,10 @@ export class GrpcLoaderHelper extends DisposableStack {
         credentialsSsl: this.config.credentialsSsl,
         useHTTPS: this.config.useHTTPS,
         metaData: this.config.metaData ? Object.entries(this.config.metaData) : undefined,
-        channelOptions: this.config.channelOptions,
+        // Serialize as entries so keys like `grpc.max_receive_message_length` are GraphQL-safe
+        channelOptions: this.config.channelOptions
+          ? Object.entries(this.config.channelOptions)
+          : undefined,
         roots,
       },
     };

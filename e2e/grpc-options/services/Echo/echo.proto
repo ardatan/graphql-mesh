@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package echo;
+
+service Echo {
+  // Immediate greeting (Query — "Get" prefix)
+  rpc GetGreeting (GreetingRequest) returns (GreetingReply);
+  // Sleeps before responding — used to assert requestTimeout deadlines
+  rpc GetSlowGreeting (GreetingRequest) returns (GreetingReply);
+  // Returns a large payload — used to assert channelOptions message limits
+  rpc GetLargePayload (GreetingRequest) returns (LargePayloadReply);
+}
+
+message GreetingRequest {
+  string name = 1;
+}
+
+message GreetingReply {
+  string message = 1;
+}
+
+message LargePayloadReply {
+  bytes data = 1;
+}

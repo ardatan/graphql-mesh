@@ -5083,6 +5083,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/grpc-options@workspace:e2e/grpc-options":
+  version: 0.0.0-use.local
+  resolution: "@e2e/grpc-options@workspace:e2e/grpc-options"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^2.11.2"
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@grpc/grpc-js": "npm:^1.14.4"
+    "@grpc/proto-loader": "npm:^0.8.1"
+    "@grpc/reflection": "npm:^1.0.4"
+    "@omnigraph/grpc": "workspace:*"
+    graphql: "npm:16.14.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/grpc@workspace:e2e/grpc-example":
   version: 0.0.0-use.local
   resolution: "@e2e/grpc@workspace:e2e/grpc-example"

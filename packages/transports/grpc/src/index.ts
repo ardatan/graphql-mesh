@@ -62,9 +62,10 @@ export interface gRPCTransportOptions {
     | [string, string][];
   /**
    * Channel options passed to the gRPC client constructor
-   * (e.g. grpc.max_receive_message_length, grpc.keepalive_time_ms)
+   * (e.g. grpc.max_receive_message_length, grpc.keepalive_time_ms).
+   * May be a plain object or an entries array (GraphQL-safe serialization from the loader).
    */
-  channelOptions?: ChannelOptions;
+  channelOptions?: ChannelOptions | [string, string | number][];
 }
 
 interface LoadOptions {
@@ -161,7 +162,9 @@ export class GrpcTransportHelper extends DisposableStack {
       client = new ServiceClient(
         stringInterpolator.parse(this.endpoint, { env: process.env }) ?? this.endpoint,
         creds,
-        this.config.channelOptions,
+        Array.isArray(this.config.channelOptions)
+          ? Object.fromEntries(this.config.channelOptions)
+          : this.config.channelOptions,
       );
       // Use Client.prototype.close so an RPC named `Close` cannot shadow connection teardown
       this.defer(() => GrpcClient.prototype.close.call(client));
