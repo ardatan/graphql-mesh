@@ -20,7 +20,7 @@ type AQCurrent {
   """Concentration of CO (µg/m³)"""
   co: Float
 
-  """Mold level category"""
+  """Mold level category (1 = Low, 2 = Medium, 3 = High, 4 = Very High)"""
   mold_level: Int
 
   """Concentration of NO2 (µg/m³)"""
