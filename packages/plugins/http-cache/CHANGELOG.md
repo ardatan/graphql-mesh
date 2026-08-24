@@ -1,5 +1,15 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.108.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d),
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)]:
+  - @graphql-mesh/types@0.107.1
+  - @graphql-mesh/utils@0.107.1
+
 ## 0.108.0
 
 ### Patch Changes

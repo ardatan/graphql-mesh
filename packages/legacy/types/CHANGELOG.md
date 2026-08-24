@@ -1,5 +1,95 @@
 # @graphql-mesh/types
 
+## 0.107.1
+
+### Patch Changes
+
+- [#9650](https://github.com/ardatan/graphql-mesh/pull/9650)
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)
+  Thanks [@ardatan](https://github.com/ardatan)! - gRPC: pass `channelOptions` through to the gRPC
+  client
+
+  Use this for message size limits, keepalive, and other
+  [channel args](https://grpc.github.io/grpc/core/group__grpc__arg__keys.html). Options are stored
+  as entries so dotted keys like `grpc.max_receive_message_length` stay GraphQL-safe in the composed
+  schema.
+
+  ```ts
+  import { defineConfig } from '@graphql-mesh/compose-cli'
+  import loadGrpcSubgraph from '@omnigraph/grpc'
+
+  export const composeConfig = defineConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
+          endpoint: 'localhost:50051',
+          channelOptions: {
+            'grpc.max_receive_message_length': 10_000_000,
+            'grpc.keepalive_time_ms': 10_000,
+            'grpc.keepalive_timeout_ms': 5_000,
+            'grpc.keepalive_permit_without_calls': 1
+          }
+        })
+      }
+    ]
+  })
+  ```
+
+  Legacy Mesh:
+
+  ```yaml
+  sources:
+    - name: MyGrpcApi
+      handler:
+        grpc:
+          endpoint: localhost:50051
+          channelOptions:
+            grpc.max_receive_message_length: 10000000
+            grpc.keepalive_time_ms: 10000
+  ```
+
+- [#9650](https://github.com/ardatan/graphql-mesh/pull/9650)
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)
+  Thanks [@ardatan](https://github.com/ardatan)! - gRPC: add `reflectionMetadata` for
+  server-reflection requests
+
+  Send routing / auth metadata only when loading the schema via gRPC reflection (no `source`).
+  Runtime RPC metadata remains `metaData`; HTTP headers for a remote `.graphql` SDL remain
+  `schemaHeaders`.
+
+  ```ts
+  import { defineConfig } from '@graphql-mesh/compose-cli'
+  import loadGrpcSubgraph from '@omnigraph/grpc'
+
+  export const composeConfig = defineConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
+          endpoint: 'localhost:50051',
+          // No `source` → schema loaded via reflection
+          reflectionMetadata: {
+            'grpc-service': 'proto.MyGrpcService',
+            authorization: 'Bearer {env.REFLECTION_TOKEN}'
+          }
+        })
+      }
+    ]
+  })
+  ```
+
+  Legacy Mesh:
+
+  ```yaml
+  sources:
+    - name: MyGrpcApi
+      handler:
+        grpc:
+          endpoint: localhost:50051
+          reflectionMetadata:
+            grpc-service: proto.MyGrpcService
+            authorization: 'Bearer {env.REFLECTION_TOKEN}'
+  ```
+
 ## 0.107.0
 
 ### Minor Changes

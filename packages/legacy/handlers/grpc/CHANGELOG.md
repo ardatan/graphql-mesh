@@ -1,5 +1,194 @@
 # @graphql-mesh/grpc
 
+## 0.112.0
+
+### Minor Changes
+
+- [#9650](https://github.com/ardatan/graphql-mesh/pull/9650)
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)
+  Thanks [@ardatan](https://github.com/ardatan)! - gRPC: pass `channelOptions` through to the gRPC
+  client
+
+  Use this for message size limits, keepalive, and other
+  [channel args](https://grpc.github.io/grpc/core/group__grpc__arg__keys.html). Options are stored
+  as entries so dotted keys like `grpc.max_receive_message_length` stay GraphQL-safe in the composed
+  schema.
+
+  ```ts
+  import { defineConfig } from '@graphql-mesh/compose-cli'
+  import loadGrpcSubgraph from '@omnigraph/grpc'
+
+  export const composeConfig = defineConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
+          endpoint: 'localhost:50051',
+          channelOptions: {
+            'grpc.max_receive_message_length': 10_000_000,
+            'grpc.keepalive_time_ms': 10_000,
+            'grpc.keepalive_timeout_ms': 5_000,
+            'grpc.keepalive_permit_without_calls': 1
+          }
+        })
+      }
+    ]
+  })
+  ```
+
+  Legacy Mesh:
+
+  ```yaml
+  sources:
+    - name: MyGrpcApi
+      handler:
+        grpc:
+          endpoint: localhost:50051
+          channelOptions:
+            grpc.max_receive_message_length: 10000000
+            grpc.keepalive_time_ms: 10000
+  ```
+
+- [#9650](https://github.com/ardatan/graphql-mesh/pull/9650)
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)
+  Thanks [@ardatan](https://github.com/ardatan)! - gRPC: add `reflectionMetadata` for
+  server-reflection requests
+
+  Send routing / auth metadata only when loading the schema via gRPC reflection (no `source`).
+  Runtime RPC metadata remains `metaData`; HTTP headers for a remote `.graphql` SDL remain
+  `schemaHeaders`.
+
+  ```ts
+  import { defineConfig } from '@graphql-mesh/compose-cli'
+  import loadGrpcSubgraph from '@omnigraph/grpc'
+
+  export const composeConfig = defineConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
+          endpoint: 'localhost:50051',
+          // No `source` → schema loaded via reflection
+          reflectionMetadata: {
+            'grpc-service': 'proto.MyGrpcService',
+            authorization: 'Bearer {env.REFLECTION_TOKEN}'
+          }
+        })
+      }
+    ]
+  })
+  ```
+
+  Legacy Mesh:
+
+  ```yaml
+  sources:
+    - name: MyGrpcApi
+      handler:
+        grpc:
+          endpoint: localhost:50051
+          reflectionMetadata:
+            grpc-service: proto.MyGrpcService
+            authorization: 'Bearer {env.REFLECTION_TOKEN}'
+  ```
+
+- [#9650](https://github.com/ardatan/graphql-mesh/pull/9650)
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)
+  Thanks [@ardatan](https://github.com/ardatan)! - gRPC: apply `requestTimeout` as a real per-call
+  deadline
+
+  Previously `requestTimeout` was not enforced as a gRPC deadline, so a hung upstream could leave
+  the GraphQL request waiting indefinitely. It is now set on each call via `CallOptions.deadline`
+  (`Date.now() + requestTimeout`).
+
+  ```ts
+  import { defineConfig } from '@graphql-mesh/compose-cli'
+  import loadGrpcSubgraph from '@omnigraph/grpc'
+
+  export const composeConfig = defineConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
+          endpoint: 'localhost:50051',
+          // Fail the call if the server does not respond within 5s
+          requestTimeout: 5000
+        })
+      }
+    ]
+  })
+  ```
+
+  Legacy Mesh:
+
+  ```yaml
+  sources:
+    - name: MyGrpcApi
+      handler:
+        grpc:
+          endpoint: localhost:50051
+          requestTimeout: 5000
+  ```
+
+### Patch Changes
+
+- [#9650](https://github.com/ardatan/graphql-mesh/pull/9650)
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)
+  Thanks [@ardatan](https://github.com/ardatan)! - gRPC: tear down clients via
+  `Client.prototype.close`
+
+  If a service defines an RPC named `Close`, that method was previously shadowing the gRPC client's
+  connection `close()`, so Mesh could not dispose the channel cleanly. Teardown now always calls
+  `Client.prototype.close`.
+
+  No config change is required — services with a `Close` RPC continue to expose that operation in
+  the GraphQL schema, while gateway/Mesh shutdown still closes the underlying connection.
+
+- [#9650](https://github.com/ardatan/graphql-mesh/pull/9650)
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)
+  Thanks [@ardatan](https://github.com/ardatan)! - gRPC: treat missing or empty `source` as
+  reflection
+
+  Omitting `source`, setting it to `''`, or using `{ file: '' }` now correctly falls back to gRPC
+  server reflection instead of failing to load a proto/descriptor.
+
+  ```ts
+  import { defineConfig } from '@graphql-mesh/compose-cli'
+  import loadGrpcSubgraph from '@omnigraph/grpc'
+
+  export const composeConfig = defineConfig({
+    subgraphs: [
+      {
+        sourceHandler: loadGrpcSubgraph('MyGrpcApi', {
+          endpoint: 'localhost:50051'
+          // source omitted → reflection
+        })
+      }
+    ]
+  })
+  ```
+
+  Legacy Mesh (empty file path also reflects):
+
+  ```yaml
+  sources:
+    - name: MyGrpcApi
+      handler:
+        grpc:
+          endpoint: localhost:50051
+          # source omitted or empty → reflection
+  ```
+
+- Updated dependencies
+  [[`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d),
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d),
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d),
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d),
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d),
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)]:
+  - @omnigraph/grpc@0.3.0
+  - @graphql-mesh/transport-grpc@0.7.0
+  - @graphql-mesh/types@0.107.1
+  - @graphql-mesh/store@0.107.1
+  - @graphql-mesh/utils@0.107.1
+
 ## 0.111.0
 
 ### Patch Changes

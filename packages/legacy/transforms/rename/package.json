@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-rename",
-  "version": "0.108.0",
+  "version": "0.108.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,8 +35,8 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "^0.107.0",
-    "@graphql-mesh/utils": "^0.107.0",
+    "@graphql-mesh/types": "^0.107.1",
+    "@graphql-mesh/utils": "^0.107.1",
     "@graphql-tools/delegate": "^12.1.1",
     "@graphql-tools/utils": "^11.2.2",
     "@graphql-tools/wrap": "^11.1.21",
@@ -44,7 +44,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "0.108.0",
+    "@graphql-mesh/cache-localforage": "0.108.1",
     "@graphql-tools/schema": "10.0.38",
     "graphql": "16.14.0"
   },
