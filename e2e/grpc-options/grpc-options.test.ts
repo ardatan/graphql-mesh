@@ -61,7 +61,7 @@ describe('gRPC options (deadline, channelOptions, reflectionMetadata)', () => {
     expect(result.errors?.[0]?.extensions).toMatchObject({
       code: 'DOWNSTREAM_SERVICE_ERROR',
       grpc: {
-        statusName: 'DEADLINE_EXCEEDED',
+        status: 'DEADLINE_EXCEEDED',
       },
     });
   }, 15_000);
@@ -113,7 +113,7 @@ describe('gRPC options (deadline, channelOptions, reflectionMetadata)', () => {
     expect(result.errors?.[0]?.extensions).toMatchObject({
       code: 'DOWNSTREAM_SERVICE_ERROR',
       grpc: {
-        statusName: 'RESOURCE_EXHAUSTED',
+        status: 'RESOURCE_EXHAUSTED',
       },
     });
   });

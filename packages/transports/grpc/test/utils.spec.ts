@@ -19,7 +19,7 @@ describe('grpc utils', () => {
         code: 'DOWNSTREAM_SERVICE_ERROR',
         grpc: {
           code: GrpcStatus.DEADLINE_EXCEEDED,
-          statusName: 'DEADLINE_EXCEEDED',
+          status: 'DEADLINE_EXCEEDED',
           details: 'Deadline exceeded',
           metadata: {},
         },
@@ -75,7 +75,7 @@ describe('grpc utils', () => {
           code: 'DOWNSTREAM_SERVICE_ERROR',
           grpc: {
             code: GrpcStatus.RESOURCE_EXHAUSTED,
-            statusName: 'RESOURCE_EXHAUSTED',
+            status: 'RESOURCE_EXHAUSTED',
           },
         },
       });

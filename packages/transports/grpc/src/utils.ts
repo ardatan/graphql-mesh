@@ -29,23 +29,23 @@ function isGrpcServiceError(error: unknown): error is ServiceError {
 
 /**
  * Convert a gRPC `ServiceError` into a GraphQLError so gateways do not mask it.
- * Upstream details live under `extensions.grpc` (code, statusName, details, metadata).
+ * Upstream details live under `extensions.grpc` (code, status, details, metadata).
  * Non-ServiceError values are returned unchanged.
  */
 export function toGrpcGraphQLError(error: unknown) {
   if (!isGrpcServiceError(error)) {
     return error;
   }
-  const statusName =
+  const status =
     GrpcStatus[error.code] != null ? String(GrpcStatus[error.code]) : 'UNKNOWN';
   // Do not set `originalError` to the raw ServiceError — Envelop's maskedErrors
   // walks originalError and would treat a non-GraphQLError root as unexpected.
-  return createGraphQLError(error.message || statusName, {
+  return createGraphQLError(error.message || status, {
     extensions: {
       code: 'DOWNSTREAM_SERVICE_ERROR',
       grpc: {
         code: error.code,
-        statusName,
+        status,
         details: error.details,
         metadata: error.metadata?.getMap?.(),
       },
