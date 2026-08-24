@@ -35,13 +35,19 @@ type AQCurrent {
   """Concentration of PM 2.5 (µg/m³)"""
   pm25: Float
 
-  """Grass pollen level category"""
+  """
+  Grass pollen level category (1 = Low, 2 = Medium, 3 = High, 4 = Very High)
+  """
   pollen_level_grass: Int
 
-  """Tree pollen level category"""
+  """
+  Tree pollen level category (1 = Low, 2 = Medium, 3 = High, 4 = Very High)
+  """
   pollen_level_tree: Int
 
-  """Weed pollen level category"""
+  """
+  Weed pollen level category (1 = Low, 2 = Medium, 3 = High, 4 = Very High)
+  """
   pollen_level_weed: Int
 
   """Predominant pollen type"""

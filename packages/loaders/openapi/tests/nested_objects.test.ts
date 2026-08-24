@@ -3,9 +3,7 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import { nestedObjectsApi } from './nested_objects_server.js';
 
-const describeIfNotLeakTest = process.env.LEAK_TEST ? describe.skip : describe;
-
-describeIfNotLeakTest('OpanAPI: nested objects', () => {
+describe('OpanAPI: nested objects', () => {
   /**
    * Set up the schema first and run example API server
    */
