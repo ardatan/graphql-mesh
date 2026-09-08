@@ -29,6 +29,6 @@ fetches this folder at build time. Nothing in this folder is built or deployed o
 
 ## Previewing changes
 
-Every pull request that touches this folder gets a preview at
+Every same-repository pull request that touches this folder gets a preview at
 `https://mesh-pr-<number>.guild-dev-website.pages.dev/graphql/mesh` (linked in a PR comment within
 about ten minutes). Merges to `master` redeploy the live docs automatically.

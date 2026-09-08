@@ -2,6 +2,7 @@
   "pages": [
     "plugins-introduction",
     "mock",
+    "snapshot",
     "live-queries",
     "response-caching",
     "statsd",

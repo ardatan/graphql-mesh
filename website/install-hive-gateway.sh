@@ -2,8 +2,8 @@
 
 set -u
 
-GITHUB_OWNER="ardatan"
-GITHUB_REPO="graphql-mesh"
+GITHUB_OWNER="graphql-hive"
+GITHUB_REPO="gateway"
 BINARY_NAME="hive-gateway"
 
 # Determine the package version
@@ -24,7 +24,7 @@ fetch_and_prepare_binary() {
   architecture="$ARCH_DETECTED"
   check_non_empty "$architecture" "architecture"
 
-  RELEASE_TAG="v$TARGET_VERSION"
+  RELEASE_TAG="$BINARY_NAME@$TARGET_VERSION"
 
   DOWNLOAD_URL="https://github.com/$GITHUB_OWNER/$GITHUB_REPO/releases/download/$RELEASE_TAG/$BINARY_NAME-${architecture}.gz"
 
