@@ -1,0 +1,177 @@
+---
+title: Local Execution
+sidebarTitle: Local Execution & SDK
+---
+
+You can use GraphQL Mesh Compose + Hive Gateway as a type-safe SDK in an existing TypeScript
+project, or execute operations programmatically without standing up an HTTP server.
+
+The runnable example is
+[Hive Gateway `examples/typed-sdk`](https://github.com/graphql-hive/gateway/tree/main/examples/typed-sdk)
+([open in CodeSandbox](https://githubbox.com/graphql-hive/gateway/tree/main/examples/typed-sdk)). It
+composes a supergraph with Mesh Compose, generates `getSdk` with GraphQL Codegen, and calls queries
+/ mutations / subscriptions through `createGatewayRuntime` + `runtime.sdkRequester`.
+
+<Callout>
+  Mesh v0 `.mesh` contained **two** SDKs. Operation-style `getMeshSDK()` → this page + [typed-sdk
+  example](https://github.com/graphql-hive/gateway/tree/main/examples/typed-sdk). Resolver
+  `context.Source.Query.field` →
+  [`@graphql-mesh/incontext-sdk-codegen`](/v1/schema-extensions#in-context-sdk-typed-additionalresolvers).
+  Full v0 mapping: [Type-safe SDKs](/v1/migration-from-v0#type-safe-sdks).
+</Callout>
+
+## Supergraph as a file
+
+Compose to SDL (what the example uses) or to a JS module if you want to `import` the schema:
+
+```sh
+npx mesh-compose -o supergraph.graphql
+```
+
+```ts title="mesh.config.ts"
+import { defineConfig } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  output: 'supergraph.js'
+  /* ... */
+})
+```
+
+In the example, `package.json` runs compose then Codegen:
+
+```json
+{
+  "scripts": {
+    "codegen": "npm run compose && graphql-codegen",
+    "compose": "mesh-compose -o supergraph.graphql"
+  }
+}
+```
+
+## Executing queries programmatically
+
+Use Hive Gateway’s executor against the composed supergraph (this replaces v0 `.mesh` `execute`):
+
+```ts
+import { parse } from 'graphql'
+import { getExecutorForUnifiedGraph } from '@graphql-hive/gateway'
+
+const executor = getExecutorForUnifiedGraph({
+  getUnifiedGraph: () => import('./supergraph.js').then(m => m.default)
+})
+
+const exampleDocument = parse(/* GraphQL */ `
+  query myQuery($someVar: String!) {
+    foo(someArg: $someVar) {
+      bar
+    }
+  }
+`)
+
+const result = await executor({
+  document: exampleDocument,
+  variables: { someVar: 'SOME_VALUE' }
+})
+```
+
+## Generating a fully type-safe SDK
+
+v0 generated this inside `.mesh`. v1 uses the same Codegen plugin Mesh used internally
+([`typescript-generic-sdk`](https://the-guild.dev/graphql/codegen/plugins/typescript/typescript-generic-sdk)),
+with the **supergraph** as `schema` and your operations as `documents`.
+
+```ts title="codegen.ts"
+import type { CodegenConfig } from '@graphql-codegen/cli'
+
+export default {
+  schema: './supergraph.graphql',
+  documents: 'sdk/operations.graphql',
+  generates: {
+    'sdk/generated.ts': {
+      plugins: ['typescript-operations', 'typescript-generic-sdk']
+    }
+  }
+} satisfies CodegenConfig
+```
+
+### With `createGatewayRuntime` (example)
+
+This is what
+[`examples/typed-sdk/example.ts`](https://github.com/graphql-hive/gateway/blob/main/examples/typed-sdk/example.ts)
+does: start an in-process gateway, pass `runtime.sdkRequester` into `getSdk`.
+
+```ts
+import { readFileSync } from 'node:fs'
+import { createGatewayRuntime } from '@graphql-hive/gateway'
+import { getSdk } from './sdk/generated'
+
+await using runtime = createGatewayRuntime({
+  supergraph: readFileSync('./supergraph.graphql', 'utf-8')
+})
+
+const sdk = getSdk(runtime.sdkRequester)
+
+const todos = await sdk.Todos()
+await sdk.AddTodo({ text: 'Write tests' })
+
+const iterable = sdk.TodoAdded()
+const iterator = iterable[Symbol.asyncIterator]()
+```
+
+Run the example locally (from its README): download `example.tar.gz`, `npm i`, `npm run codegen`,
+start the subgraph, compose, then `npm run gateway` — or run `example.ts` for the SDK path. Full
+steps:
+[examples/typed-sdk README](https://github.com/graphql-hive/gateway/blob/main/examples/typed-sdk/README.md).
+
+### With `getSdkRequesterForUnifiedGraph`
+
+If you already import a JS supergraph and do not need `createGatewayRuntime`:
+
+```ts
+import { getSdkRequesterForUnifiedGraph } from '@graphql-hive/gateway'
+import { getSdk } from './sdk/generated'
+
+const sdkRequester = getSdkRequesterForUnifiedGraph({
+  getUnifiedGraph: () => import('./supergraph.js').then(m => m.default)
+})
+
+const sdk = getSdk(sdkRequester)
+const result = await sdk.myQuery({ someVar: 'SOME_VALUE' })
+```
+
+## In-context SDK (for `additionalResolvers`)
+
+If you used v0 `MeshContext` inside resolvers (`context.Wiki.Query.…`), that is **not** `getSdk`.
+Generate types with
+[`@graphql-mesh/incontext-sdk-codegen`](https://github.com/ardatan/graphql-mesh/tree/master/packages/incontext-sdk-codegen)
+from the supergraph. Mesh example:
+[`e2e/openapi-javascript-wiki`](https://github.com/ardatan/graphql-mesh/tree/master/e2e/openapi-javascript-wiki).
+
+```ts title="codegen.ts"
+import type { CodegenConfig } from '@graphql-codegen/cli'
+
+export default {
+  schema: './supergraph.graphql',
+  generates: {
+    './types/incontext-sdk.ts': {
+      plugins: ['@graphql-mesh/incontext-sdk-codegen']
+    }
+  }
+} satisfies CodegenConfig
+```
+
+See [In-context SDK](/v1/schema-extensions#in-context-sdk-typed-additionalresolvers).
+
+<Cards>
+  <Cards.Card
+    arrow
+    title="Hive Gateway typed-sdk example"
+    href="https://github.com/graphql-hive/gateway/tree/main/examples/typed-sdk"
+  />
+  <Cards.Card
+    arrow
+    title="In-context SDK (additionalResolvers)"
+    href="/v1/schema-extensions#in-context-sdk-typed-additionalresolvers"
+  />
+  <Cards.Card arrow title="Migrate from Mesh v0 SDKs" href="/v1/migration-from-v0#type-safe-sdks" />
+</Cards>

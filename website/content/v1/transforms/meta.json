@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "index",
+    "prefix",
+    "rename",
+    "naming-convention",
+    "filter-schema",
+    "hoist-field",
+    "encapsulate",
+    "prune"
+  ],
+  "title": "Transforms"
+}

@@ -1,0 +1,121 @@
+---
+description:
+  Learn how to use the hoist transform from GraphQL Mesh to lift a field from one object type to a
+  'parent' root or object type. Explore the HoistField transform and more.
+title: Hoist Field Transform
+sidebarTitle: Hoist Field
+---
+
+The hoist field transform allows you to lift a field from one object type to a 'parent' root or
+object type.
+
+## How to use?
+
+Given the following schema:
+
+```graphql
+type Query {
+  users(limit: Int!, page: Int): UserSearchResult
+}
+
+type UserSearchResult {
+  page: Int!
+  results: [User!]!
+}
+
+type User {
+  id: ID!
+}
+```
+
+### Simple hoisting
+
+```ts title="mesh.config.ts"
+import {
+  createHoistFieldTransform,
+  defineConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4001/users'
+      }),
+      transforms: [
+        createHoistFieldTransform({
+          mapping: [
+            {
+              typeName: 'Query',
+              pathConfig: ['users', 'results'],
+              newFieldName: 'users'
+            }
+          ]
+        })
+      ]
+    }
+  ]
+})
+```
+
+Will transform the given schema to:
+
+```graphql
+type Query {
+  users(limit: Int!, page: Int): [User!]!
+}
+
+type User {
+  id: ID!
+}
+```
+
+### Filtering args via a default for the entire path
+
+```ts title="mesh-config.ts"
+import {
+  createHoistFieldTransform,
+  defineConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('Users', {
+        endpoint: 'http://localhost:4001/users'
+      }),
+      transforms: [
+        createHoistFieldTransform({
+          mapping: [
+            {
+              typeName: 'Query',
+              pathConfig: [
+                {
+                  fieldName: 'users',
+                  filterArgs: ['limit']
+                },
+                'results'
+              ],
+              newFieldName: 'users'
+            }
+          ]
+        })
+      ]
+    }
+  ]
+})
+```
+
+Will transform the given schema to:
+
+```graphql
+type Query {
+  users(page: Int): [User!]!
+}
+
+type User {
+  id: ID!
+}
+```

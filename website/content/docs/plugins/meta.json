@@ -1,0 +1,21 @@
+{
+  "pages": [
+    "plugins-introduction",
+    "mock",
+    "live-queries",
+    "response-caching",
+    "statsd",
+    "prometheus",
+    "new-relic",
+    "operation-field-permissions",
+    "csrf",
+    "rate-limit",
+    "http-cache",
+    "http-details-extensions",
+    "deduplicate-request",
+    "max-tokens",
+    "max-depth",
+    "block-field-suggestions"
+  ],
+  "title": "Plugins"
+}

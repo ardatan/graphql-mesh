@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "index",
+    "graphql",
+    "openapi",
+    "grpc",
+    "json-schema",
+    "soap",
+    "odata",
+    "thrift",
+    "sqlite",
+    "mysql",
+    "neo4j",
+    "postgres",
+    "mongodb"
+  ],
+  "title": "Source Handlers"
+}

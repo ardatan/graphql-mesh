@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "overview",
+    "installation",
+    "your-first-mesh-gateway",
+    "combine-multiple-sources",
+    "sources-with-no-definition",
+    "customize-mesh-server",
+    "deploy-mesh-gateway",
+    "comparison"
+  ],
+  "title": "Getting Started"
+}

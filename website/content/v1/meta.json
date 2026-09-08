@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "index",
+    "getting-started",
+    "source-handlers",
+    "transforms",
+    "schema-extensions",
+    "type-merging",
+    "response-caching",
+    "rate-limit",
+    "error-handling",
+    "auth",
+    "subscriptions-webhooks",
+    "consume-in-other-gateways",
+    "local-execution",
+    "migration-from-v0"
+  ]
+}

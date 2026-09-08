@@ -1,0 +1,77 @@
+---
+description: Convert non federation subgraphs to federation subgraphs
+title: Federation Transform
+---
+
+If the [GraphQL source](/v1/source-handlers/graphql) is not a
+[Federated Subgraph](https://the-guild.dev/graphql/hive/federation), you may use this Federation
+Transform to provide necessary annotations and directive to convert the GraphQL source to a
+Federated Subgraph conforming to the Federation specification.
+
+<Callout>
+  If you want to add `@key` directive in your subgraph, you need to be aware of [Type
+  Merging](/v1/type-merging)
+</Callout>
+
+## How to use?
+
+Let's say you have the following subgraph;
+
+```graphql
+type Product {
+  id: ID!
+  name: String!
+  price: Float!
+}
+
+type Query {
+  productById(id: ID!): Product
+}
+```
+
+And you want to add `@key` directive to the `Product` type. Then you can add the following
+configuration to your `mesh.config.ts` file. But you need `resolveReference` to be able to resolve
+the reference, which is equivalent of `__resolveReference` resolver in regular Federation.
+
+```ts title="mesh.config.ts"
+import {
+  createFederationTransform,
+  defineConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('myApi', {
+        endpoint: 'http://localhost:4001/my-api'
+      }),
+      transforms: [
+        createFederationTransform({
+          // Schema Coordinates
+          Product: {
+            // Directive name
+            key: {
+              // Directive arguments
+              fields: 'id',
+              // Reference resolver (only for @key directive)
+              resolveReference: {
+                fieldName: 'productById'
+              }
+            }
+          },
+          // You can also add other directives
+          Query: {
+            extends: true
+          }
+        })
+      ]
+    }
+  ]
+})
+```
+
+<Callout type="info">
+  [Learn more](https://www.apollographql.com/docs/federation/federated-types/federated-directives/)
+  about other directives in [Federation](https://the-guild.dev/graphql/hive/federation)
+</Callout>
