@@ -64,7 +64,7 @@ describe('gRPC options (deadline, channelOptions, reflectionMetadata)', () => {
         status: 'DEADLINE_EXCEEDED',
       },
     });
-  }, 15_000);
+  });
 
   it('accepts large responses when channelOptions raise max receive size', async () => {
     const { output } = await compose({
