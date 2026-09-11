@@ -408,7 +408,7 @@ export function createTenv(cwd: string): Tenv {
       image,
       env = {},
       containerPort,
-      hostPort,
+      hostPort: fixedHostPort,
       additionalContainerPorts: containerAdditionalPorts,
       healthcheck,
       pipeLogs = boolEnv('DEBUG'),
@@ -417,22 +417,6 @@ export function createTenv(cwd: string): Tenv {
       args = [],
     }) {
       const containerName = `${name}_${Math.random().toString(32).slice(2)}`;
-
-      if (!hostPort) {
-        hostPort = await getAvailablePort();
-      }
-
-      const additionalPorts: Record<number, number> = {};
-      if (containerAdditionalPorts) {
-        for (const port of containerAdditionalPorts) {
-          if (port === containerPort) {
-            throw new Error(
-              `Additional port ${port} is already specified as the "containerPort", please use a different port or remove it from "additionalPorts"`,
-            );
-          }
-          additionalPorts[port] = await getAvailablePort();
-        }
-      }
 
       function msToNs(ms: number): number {
         return ms * 1000000;
@@ -468,64 +452,110 @@ export function createTenv(cwd: string): Tenv {
         }
       }
 
-      const ctr = await docker.createContainer({
-        name: containerName,
-        Image: image,
-        Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
-        ExposedPorts: {
-          [containerPort + '/tcp']: {},
-          ...Object.keys(additionalPorts).reduce(
-            (acc, containerPort) => ({
-              ...acc,
-              [containerPort + '/tcp']: {},
-            }),
-            {},
-          ),
-        },
-        Cmd: [...cmd, ...args].filter(Boolean).map(String),
-        HostConfig: {
-          AutoRemove: true,
-          PortBindings: {
-            [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
-            ...Object.entries(additionalPorts).reduce(
-              (acc, [containerPort, hostPort]) => ({
-                ...acc,
-                [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
-              }),
-              {},
-            ),
-          },
-          Binds: Object.values(volumes).map(
-            ({ host, container }) => `${path.resolve(cwd, host)}:${container}`,
-          ),
-        },
-        Healthcheck:
-          healthcheck.length > 0
-            ? {
-                Test: healthcheck,
-                Interval: msToNs(interval),
-                Timeout: 0, // dont wait between tests
-                Retries: retries,
-              }
-            : undefined,
-        abortSignal: ctrl.signal,
-      });
-
+      // Allocate ports after image pull — getAvailablePort() is racy with Docker bind.
+      const maxPortBindAttempts = fixedHostPort ? 1 : 5;
+      let hostPort = fixedHostPort;
+      let additionalPorts: Record<number, number> = {};
+      let ctr: Awaited<ReturnType<Dockerode['createContainer']>> | undefined;
       let stdboth = '';
-      const stream = await ctr.attach({
-        stream: true,
-        stdout: true,
-        stderr: true,
-        abortSignal: ctrl.signal,
-      });
-      stream.on('data', data => {
-        stdboth += data.toString();
-        if (pipeLogs) {
-          process.stderr.write(data);
-        }
-      });
+      let lastBindError: unknown;
 
-      await ctr.start();
+      for (let attempt = 0; attempt < maxPortBindAttempts; attempt++) {
+        hostPort = fixedHostPort ?? (await getAvailablePort());
+        additionalPorts = {};
+        if (containerAdditionalPorts) {
+          for (const port of containerAdditionalPorts) {
+            if (port === containerPort) {
+              throw new Error(
+                `Additional port ${port} is already specified as the "containerPort", please use a different port or remove it from "additionalPorts"`,
+              );
+            }
+            additionalPorts[port] = await getAvailablePort();
+          }
+        }
+
+        try {
+          ctr = await docker.createContainer({
+            name: containerName,
+            Image: image,
+            Env: Object.entries(env).map(([name, value]) => `${name}=${value}`),
+            ExposedPorts: {
+              [containerPort + '/tcp']: {},
+              ...Object.keys(additionalPorts).reduce(
+                (acc, containerPort) => ({
+                  ...acc,
+                  [containerPort + '/tcp']: {},
+                }),
+                {},
+              ),
+            },
+            Cmd: [...cmd, ...args].filter(Boolean).map(String),
+            HostConfig: {
+              AutoRemove: true,
+              PortBindings: {
+                [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
+                ...Object.entries(additionalPorts).reduce(
+                  (acc, [containerPort, hostPort]) => ({
+                    ...acc,
+                    [containerPort + '/tcp']: [{ HostPort: hostPort.toString() }],
+                  }),
+                  {},
+                ),
+              },
+              Binds: Object.values(volumes).map(
+                ({ host, container }) => `${path.resolve(cwd, host)}:${container}`,
+              ),
+            },
+            Healthcheck:
+              healthcheck.length > 0
+                ? {
+                    Test: healthcheck,
+                    Interval: msToNs(interval),
+                    Timeout: 0, // dont wait between tests
+                    Retries: retries,
+                  }
+                : undefined,
+            abortSignal: ctrl.signal,
+          });
+
+          stdboth = '';
+          const stream = await ctr.attach({
+            stream: true,
+            stdout: true,
+            stderr: true,
+            abortSignal: ctrl.signal,
+          });
+          stream.on('data', data => {
+            stdboth += data.toString();
+            if (pipeLogs) {
+              process.stderr.write(data);
+            }
+          });
+
+          await ctr.start();
+          lastBindError = undefined;
+          break;
+        } catch (err) {
+          lastBindError = err;
+          if (ctr) {
+            await ctr.remove({ force: true }).catch(() => undefined);
+            ctr = undefined;
+          }
+          const msg = err instanceof Error ? err.message : String(err);
+          if (!/address already in use/i.test(msg) || attempt === maxPortBindAttempts - 1) {
+            throw err;
+          }
+          if (pipeLogs) {
+            process.stderr.write(
+              `Host port bind failed (attempt ${attempt + 1}/${maxPortBindAttempts}), retrying with a new port\n\n`,
+            );
+          }
+        }
+      }
+
+      if (!ctr || hostPort == null) {
+        throw lastBindError ?? new Error('Failed to start container');
+      }
 
       let hostname: string;
 
