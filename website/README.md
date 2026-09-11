@@ -11,7 +11,7 @@ fetches this folder at build time. Nothing in this folder is built or deployed o
 | `content/v1/`             | The Mesh v1 documentation, served under `/v1`. Folder order and titles come from each folder's `meta.json`.                                                                       |
 | `content/docs/`           | The Mesh v0 documentation, kept under `/docs` with an "old version" banner.                                                                                                       |
 | `generated/`              | Config-reference Markdown generated from the packages' `yaml-config.graphql` files by `yarn generate-config-schema`. Pages import these; regenerate after changing a config type. |
-| `assets/`                 | Images referenced from pages as `/assets/...`, the favicon, and the social cover image.                                                                                           |
+| `assets/`                 | Images referenced from pages as `/assets/...`, and the social cover image (`mesh-example.png`).                                                                                  |
 | `install-hive-gateway.sh` | The Hive Gateway binary installer, served at `/graphql/mesh/install-hive-gateway.sh`.                                                                                             |
 
 ## Writing pages
