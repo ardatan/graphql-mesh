@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "index",
+    "getting-started",
+    "guides",
+    "handlers",
+    "transforms",
+    "plugins",
+    "cache",
+    "config-reference",
+    "cli-commands",
+    "migration"
+  ]
+}

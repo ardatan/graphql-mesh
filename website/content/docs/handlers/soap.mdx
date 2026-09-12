@@ -1,0 +1,119 @@
+---
+description:
+  Generate executable schema for SOAP services with GraphQL Mesh SOAP handler. Consume WSDL files
+  and get started easily.
+title: SOAP
+---
+
+![image](https://user-images.githubusercontent.com/20847995/79220083-0a1d3a00-7e5c-11ea-9ac5-855428121143.png)
+
+This handler allows you to consume [SOAP](https://soapui.org) `WSDL` files and generate a remote
+executable schema for those services.
+
+To get started, install the handler library:
+
+```sh npm2yarn
+npm i @graphql-mesh/soap
+```
+
+Now, you can use it directly in your Mesh config file:
+
+```yaml title=".meshrc.yaml" {4-5}
+sources:
+  - name: CountryInfo
+    handler:
+      soap:
+        source: http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL
+```
+
+## Headers
+
+If you want to add SOAP headers to the request body like below;
+
+```xml
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:header="http://foo.com/">
+   <soap:Header>
+      <header:MyHeader>
+         <header:UserName>user</header:UserName>
+         <header:Password>password</header:Password>
+      </header:MyHeader>
+   </soap:Header>
+```
+
+You can add the headers to the configuration like below;
+
+```yaml
+sources:
+  - name: CountryInfo
+    handler:
+      soap:
+        source: ...
+        soapHeaders:
+          namespace: http://foo.com
+          headers:
+            MyHeader:
+              UserName: user
+              Password: password
+```
+
+## Body Alias
+
+You can now choose the name of the alias you want to use for SOAP body;
+
+```yaml title=".meshrc.yaml" {4}
+sources:
+  - name: CountryInfo
+    handler:
+      soap:
+        source: ...
+        bodyAlias: my-body
+```
+
+Then it will generate a body like below by using the alias;
+
+```xml
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:my-body="http://foo.com/">
+   <soap:Body>
+      <my-body:Foo>
+          <my-body:Bar>baz</my-body:Bar>
+      </my-body:Foo>
+   </soap:Body>
+</soap:Envelope>
+```
+
+## Custom SOAP namespace
+
+By default, Mesh detects the namespace from the WSDL file. If you want to use a custom namespace
+based on SOAP version.
+
+For SOAP 1.1, it is set to `http://schemas.xmlsoap.org/soap/envelope/` and for SOAP 1.2, it is set
+to `http://www.w3.org/2003/05/soap-envelope`.
+
+If you want to use a custom namespace, you can set it like below;
+
+```yaml
+sources:
+  - name: CountryInfo
+    handler:
+      soap:
+        source: ...
+        soapNamespace: http://foo.com/schemas/soap/envelope
+```
+
+## CodeSandBox Example
+
+You can check out our example that uses SOAP Handler.
+
+<iframe
+  src="https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/soap-country-info?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  className="mt-6 w-full h-[500px] rounded-md"
+  title="country-info-example"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>
+
+## Config API Reference
+
+import API from '../../../generated/SoapHandler.generated.md'
+
+<API />

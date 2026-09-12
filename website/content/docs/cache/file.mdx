@@ -1,0 +1,29 @@
+---
+description:
+  Use the file system as storage with GraphQL Mesh's file caching strategy. Install
+  `@graphql-mesh/cache-file` and configure your `.meshrc.yaml` with the desired file path.
+title: File Cache
+sidebarTitle: File
+---
+
+This caching strategy will use the file system as the storage.
+
+To get started with this caching strategy, install it:
+
+```sh npm2yarn
+npm i @graphql-mesh/cache-file
+```
+
+## How to use?
+
+```yaml title=".meshrc.yaml"
+cache:
+  file:
+    path: ./my-cache.json # the extension should be .json
+```
+
+## Config API Reference
+
+import API from '../../../generated/FileCacheConfig.generated.md'
+
+<API />

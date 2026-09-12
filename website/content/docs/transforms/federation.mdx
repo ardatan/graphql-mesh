@@ -1,0 +1,73 @@
+---
+description:
+  Conform to the federation specification with GraphQL Mesh federation transform. Reuse source code
+  for compliance and use complex business logic with code file resolvers.
+title: Federation Subgraph Transform
+sidebarTitle: Federation Subgraph
+---
+
+This transform allows to create subgraphs from your regular sources which don't have any federation
+annotations. This transform uses
+[`graphql-transform-federation`](https://github.com/0xR/graphql-transform-federation) package.
+
+```sh npm2yarn
+npm i @graphql-mesh/transform-federation
+```
+
+## How to use?
+
+Add the following configuration to your Mesh config file:
+
+```yaml title=".meshrc.yaml"
+transforms:
+  - federation:
+      types:
+        # Ensure the root queries of this schema show up the combined schema
+        - name: Query
+          config:
+            extends: true
+        - name: Product
+          config:
+            # extend Product {
+            extend: true
+            # Product @key(fields: "id") {
+            key:
+              fields:
+                - id
+            fields:
+              # id: Int! @external
+              - name: id
+                config:
+                  external: true
+            resolveReference:
+              queryFieldName: user
+```
+
+### Add Reference Resolver as a Code File
+
+To add more complex business logic, you can point to a code file that exports a resolver function.
+
+```yaml title=".meshrc.yaml"
+resolveReference: ./userResolveReference.ts
+```
+
+```ts title="userResolveReference.ts"
+// So we can point to an existing query field to resolve that entity
+export default function (root, context, info) {
+  return context.accounts.Query.user({ root, args: { id: root.id }, context, info })
+}
+```
+
+<Callout>You can check out our example that uses Federation as a merging strategy.</Callout>
+
+<iframe
+  src="https://codesandbox.io/embed/github/ardatan/graphql-mesh/tree/master/examples/federation-example?fontsize=14&hidenavigation=1&theme=dark&module=%2F.meshrc.yml"
+  className="mt-6 w-full h-[500px] rounded-md"
+  title="federation-example"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>
+
+import API from '../../../generated/FederationTransform.generated.md'
+
+<API />
