@@ -1,15 +1,26 @@
 import { expect, test } from '@playwright/test';
 
 const SELECTED_EXAMPLE = 'openapi-stackexchange';
+const PROD_EXAMPLES_URL = 'https://the-guild.dev/graphql/mesh/examples';
+const LOCAL_EXAMPLES_URL = '/examples';
+
+function getExamplesSandboxUrl(againstProd = process.env.AGAINST_PROD) {
+  return againstProd === '1' ? PROD_EXAMPLES_URL : LOCAL_EXAMPLES_URL;
+}
+
+test('uses the local examples route by default', () => {
+  expect(getExamplesSandboxUrl(undefined)).toBe(LOCAL_EXAMPLES_URL);
+});
+
+test('uses the prod examples route when AGAINST_PROD=1', () => {
+  expect(getExamplesSandboxUrl('1')).toBe(PROD_EXAMPLES_URL);
+});
 
 test('switches and loads StackExchange example', async ({ page }) => {
   test.setTimeout(120_000);
   // when we're running the CI on master, we run the test against prod to know if the
   // CodeSandbox iframe isn't broken by website-router
-  const url =
-    process.env.AGAINST_PROD === '1'
-      ? 'https://the-guild.dev/graphql/mesh/examples'
-      : '/examples';
+  const url = getExamplesSandboxUrl();
   if (process.env.AGAINST_PROD === '1') {
     test.slow();
   }
