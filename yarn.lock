@@ -32338,25 +32338,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:4.3.2":
-  version: 4.3.2
-  resolution: "js-yaml@npm:4.3.2"
+"js-yaml@npm:4.3.1":
+  version: 4.3.1
+  resolution: "js-yaml@npm:4.3.1"
   dependencies:
     argparse: "npm:^2.0.1"
   bin:
     js-yaml: bin/js-yaml.js
-  checksum: 10c0/dedd34c2e8fef1d504687f1bc94ed0ee1311a1f78770fa2800352c6d59c635ccf555009d74e9afe529ae62199da2b1ccef30e53dc84dcd8d2d8187c22574bc97
+  checksum: 10c0/13c500ca322e0c3f8c81686e6ecda96d2ea37b45247a420c17c7db36932d6965cc27391abc2d1a104501600e7f0d947a5f8b7be6db619c4fefa87901b3512807
   languageName: node
   linkType: hard
 
-"js-yaml@patch:js-yaml@npm%3A4.3.2#~/.yarn/patches/js-yaml-npm-4.3.0-1586601382.patch":
-  version: 4.3.2
-  resolution: "js-yaml@patch:js-yaml@npm%3A4.3.2#~/.yarn/patches/js-yaml-npm-4.3.0-1586601382.patch::version=4.3.2&hash=69b45c"
+"js-yaml@patch:js-yaml@npm%3A4.3.1#~/.yarn/patches/js-yaml-npm-4.3.0-1586601382.patch":
+  version: 4.3.1
+  resolution: "js-yaml@patch:js-yaml@npm%3A4.3.1#~/.yarn/patches/js-yaml-npm-4.3.0-1586601382.patch::version=4.3.1&hash=69b45c"
   dependencies:
     argparse: "npm:^2.0.1"
   bin:
     js-yaml: bin/js-yaml.js
-  checksum: 10c0/deb1c71102110ef0c2eb6ac9a75a3b7c45c5e9f32906ae1f8c982384ff04ca9e6d894fab395703e19a9df01ad62a6bf1b791629bd90a3970841ab177267b85ea
+  checksum: 10c0/fbf9482a2b7d95cfe008e1bea1309ddbd1fda3207e0c36545d1746233324154f7beb4f0d606fcdcb6a6b37fa895aa0309e730cce286963f7b8037528e5fe129d
   languageName: node
   linkType: hard
 
