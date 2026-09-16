@@ -30,6 +30,9 @@ test('switches and loads StackExchange example', async ({ page }) => {
   }
 
   await page.goto(url);
+  expect(new URL(page.url()).pathname).toMatch(
+    process.env.AGAINST_PROD === '1' ? /^\/graphql\/mesh\/examples\/?$/ : /^\/examples\/?$/,
+  );
 
   const exampleSelect = page.getByRole('combobox', { name: 'Choose Live Example' });
   await exampleSelect.scrollIntoViewIfNeeded();
