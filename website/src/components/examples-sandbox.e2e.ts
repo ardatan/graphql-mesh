@@ -16,6 +16,10 @@ test('uses the prod examples route when AGAINST_PROD=1', () => {
   expect(getExamplesSandboxUrl('1')).toBe(PROD_EXAMPLES_URL);
 });
 
+test('keeps using the local examples route for other AGAINST_PROD values', () => {
+  expect(getExamplesSandboxUrl('0')).toBe(LOCAL_EXAMPLES_URL);
+});
+
 test('switches and loads StackExchange example', async ({ page }) => {
   test.setTimeout(120_000);
   // when we're running the CI on master, we run the test against prod to know if the
