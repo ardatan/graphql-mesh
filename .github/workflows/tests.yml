@@ -63,7 +63,7 @@ jobs:
           - 18
           - 20
           - 22
-          - 25
+          - 26
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
@@ -116,7 +116,7 @@ jobs:
           - 18
           - 20
           - 22
-          - 25
+          - 26
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -208,7 +208,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 22, 25]
+        node-version: [18, 20, 22, 26]
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
