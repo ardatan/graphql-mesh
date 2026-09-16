@@ -6,7 +6,10 @@ test('switches and loads StackExchange example', async ({ page }) => {
   test.setTimeout(120_000);
   // when we're running the CI on master, we run the test against prod to know if the
   // CodeSandbox iframe isn't broken by website-router
-  const url = process.env.AGAINST_PROD === '1' ? 'https://the-guild.dev/graphql/mesh/' : '/';
+  const url =
+    process.env.AGAINST_PROD === '1'
+      ? 'https://the-guild.dev/graphql/mesh/examples'
+      : '/examples';
   if (process.env.AGAINST_PROD === '1') {
     test.slow();
   }
