@@ -1,0 +1,20 @@
+{
+  "pages": [
+    "extending-unified-schema",
+    "batching",
+    "error-handling",
+    "error-masking",
+    "monitoring-and-tracing",
+    "auth0",
+    "subscriptions-webhooks",
+    "file-uploads",
+    "hive",
+    "graphql-code-generator",
+    "mesh-sdk",
+    "sofa",
+    "headers",
+    "dynamic-vars",
+    "persisted-operations"
+  ],
+  "title": "Guides"
+}

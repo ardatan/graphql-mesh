@@ -184,19 +184,23 @@ type JsonSchemaHTTPOperation implements JsonSchemaBaseOperation {
   """
   Mapping the JSON Schema and define the arguments of the operation.
 
+  ```yaml
   # Example:
   argTypeMap:
     user_id:
       type: string
+  ```
   """
   argTypeMap: JSON
 
   """
   JSON object representing the mapping of query search parameters (added to the route path) and the matching argument.
 
+  ```yaml
   # Example:
   queryParamArgMap:
     id: user_id
+  ```
   """
   queryParamArgMap: JSON
   path: String!

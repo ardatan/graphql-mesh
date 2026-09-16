@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "transforms-introduction",
+    "rename",
+    "prefix",
+    "encapsulate",
+    "hoist",
+    "filter-schema",
+    "replace-field",
+    "resolvers-composition",
+    "naming-convention",
+    "type-merging",
+    "federation",
+    "extend",
+    "prune"
+  ],
+  "title": "Transforms"
+}

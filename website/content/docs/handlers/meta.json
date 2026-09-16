@@ -1,0 +1,19 @@
+{
+  "pages": [
+    "handlers-introduction",
+    "graphql",
+    "openapi",
+    "supergraph",
+    "grpc",
+    "json-schema",
+    "postgraphile",
+    "soap",
+    "mongoose",
+    "odata",
+    "thrift",
+    "tuql",
+    "mysql",
+    "neo4j"
+  ],
+  "title": "Source Handlers"
+}

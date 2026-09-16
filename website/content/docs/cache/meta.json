@@ -1,0 +1,4 @@
+{
+  "pages": ["cache-introduction", "file", "localforage", "cfwKv", "redis"],
+  "title": "Cache Storages"
+}

@@ -2,7 +2,7 @@ extend type Plugin {
   liveQuery: LiveQueryConfig
 }
 
-type LiveQueryConfig {
+type LiveQueryConfig @md {
   """
   Invalidate a query or queries when a specific operation is done without an error
   """

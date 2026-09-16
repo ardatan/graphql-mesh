@@ -5,6 +5,8 @@ bundle/
 out
 build
 generated
+# The docs site imports these; regenerate with `yarn generate-config-schema`.
+!/website/generated
 yarn-error.log
 *.generated.graphql
 ignored-*
@@ -15,11 +17,8 @@ package-lock.json
 .mesh
 /.idea/
 .next/
-/website/src/pages/docs/api/
 /.husky/_/
 newrelic-agent.log
-website/public/_redirects
-website/playwright/
 packages/legacy/types/src/config-schema.ts
 newrelic_agent.log
 .pnp.*

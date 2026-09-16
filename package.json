@@ -4,7 +4,6 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "website",
       "packages/*",
       "packages/legacy/*",
       "packages/legacy/handlers/*",
@@ -37,15 +36,13 @@
   "scripts": {
     "build": "yarn prebuild && bob build && yarn postbuild",
     "build-test-artifacts": "yarn workspace @examples/json-schema-example build && yarn workspace @examples-v1-next/fastify compose && yarn workspace @examples/fastify build && yarn workspace @examples/persisted-operations build && yarn workspace example-response-cache build && yarn workspace @examples/json-schema-complex-url build",
-    "build:website": "yarn build && cd website && yarn build",
     "changeset": "changeset",
     "changeset-version": "changeset version && yarn postchangeset",
     "ci:lint": "eslint --output-file eslint_report.json --ext .ts --format json \"./packages/**/src/**/*.ts\"",
     "clean": "(rm -rf packages/**/(!node_modules)/**/dist & rm -rf examples/**/node_modules/.bin/*mesh* & rm -rf .bob) || true",
     "copy-config-schema": "cp-cli ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/esm/config-schema.json && cp-cli ./packages/legacy/types/src/config-schema.json ./packages/legacy/types/dist/cjs/config-schema.json",
-    "dev:website": "yarn workspace website run dev",
     "fix-bin": "node scripts/fix-bin.js",
-    "generate-config-schema": "rm -rf ./website/src/generated-markdown && yarn graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/legacy/types/src/config-schema.json --typings ./packages/legacy/types/src/config.ts --markdown ./website/src/generated-markdown && yarn postgenerate-config-schema",
+    "generate-config-schema": "rm -rf ./website/generated && yarn graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/legacy/types/src/config-schema.json --typings ./packages/legacy/types/src/config.ts --markdown ./website/generated && yarn postgenerate-config-schema",
     "inject-version": "yarn workspaces foreach -A run inject-version",
     "lint": "eslint --ext .ts \"./packages/**/src/**/*.ts\"",
     "package-binary": "yarn workspaces foreach -A run package-binary",
@@ -61,7 +58,6 @@
     "test:integration": "cross-env \"JEST=1\" \"INTEGRATION_TEST=true\" jest --forceExit --no-watchman",
     "test:integration:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" \"INTEGRATION_TEST=true\" jest --detectOpenHandles --detectLeaks --no-watchman",
     "test:leak": "cross-env \"JEST=1\" \"LEAK_TEST=1\" jest --detectOpenHandles --detectLeaks --no-watchman",
-    "test:website": "playwright test --config ./website/playwright.config.ts --retries 3",
     "typecheck": "yarn generate-config-schema && tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
