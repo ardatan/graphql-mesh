@@ -5075,7 +5075,7 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway": "npm:^2.11.2"
     "@graphql-mesh/compose-cli": "workspace:*"
-    "@grpc/grpc-js": "npm:^1.14.4"
+    "@grpc/grpc-js": "npm:^1.14.5"
     "@grpc/proto-loader": "npm:^0.8.1"
     "@grpc/reflection": "npm:^1.0.4"
     "@omnigraph/grpc": "workspace:*"
@@ -5089,7 +5089,7 @@ __metadata:
   dependencies:
     "@graphql-hive/gateway": "npm:^2.11.2"
     "@graphql-mesh/compose-cli": "workspace:*"
-    "@grpc/grpc-js": "npm:^1.14.4"
+    "@grpc/grpc-js": "npm:^1.14.5"
     "@grpc/proto-loader": "npm:^0.8.1"
     "@grpc/reflection": "npm:^1.0.4"
     "@omnigraph/grpc": "workspace:*"
@@ -5105,7 +5105,7 @@ __metadata:
     "@graphql-mesh/compose-cli": "workspace:*"
     "@graphql-tools/executor-http": "npm:3.3.0"
     "@graphql-tools/utils": "npm:11.2.2"
-    "@grpc/grpc-js": "npm:^1.14.4"
+    "@grpc/grpc-js": "npm:^1.14.5"
     "@grpc/proto-loader": "npm:^0.8.1"
     "@omnigraph/grpc": "workspace:*"
     graphql: "npm:16.14.0"
@@ -6451,7 +6451,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.103.2"
     "@graphql-mesh/grpc": "npm:0.112.0"
     "@graphql-mesh/transform-naming-convention": "npm:0.108.1"
-    "@grpc/grpc-js": "npm:1.14.4"
+    "@grpc/grpc-js": "npm:1.14.5"
     "@grpc/proto-loader": "npm:0.8.1"
     "@types/node": "npm:^26.2.0"
     concurrently: "npm:10.0.4"
@@ -6471,7 +6471,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.103.2"
     "@graphql-mesh/grpc": "npm:0.112.0"
     "@graphql-mesh/transform-naming-convention": "npm:0.108.1"
-    "@grpc/grpc-js": "npm:1.14.4"
+    "@grpc/grpc-js": "npm:1.14.5"
     "@grpc/proto-loader": "npm:0.8.1"
     "@types/node": "npm:^26.2.0"
     concurrently: "npm:10.0.4"
@@ -9534,7 +9534,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.107.1"
     "@graphql-mesh/utils": "npm:^0.107.1"
     "@graphql-tools/utils": "npm:^11.2.2"
-    "@grpc/grpc-js": "npm:^1.14.4"
+    "@grpc/grpc-js": "npm:^1.14.5"
     "@grpc/proto-loader": "npm:^0.8.1"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
@@ -11235,13 +11235,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:1.14.4":
-  version: 1.14.4
-  resolution: "@grpc/grpc-js@npm:1.14.4"
+"@grpc/grpc-js@npm:1.14.5":
+  version: 1.14.5
+  resolution: "@grpc/grpc-js@npm:1.14.5"
   dependencies:
     "@grpc/proto-loader": "npm:^0.8.0"
     "@js-sdsl/ordered-map": "npm:^4.4.2"
-  checksum: 10c0/0ff6395e8112ad30e8f99dbb684b997ebc3264e770b8e354f23effeedf181a380e0ecef8bca466cbbf3e9141968656144851de1da50f840a1efd9314c9812449
+  checksum: 10c0/25a44d80127ed166181fc3db25d9815a62081e33331938bdae31830296ec94a1c8ed3ade79fae26642ec3158e97a79936145c680f95c19528ffff334cca491e0
   languageName: node
   linkType: hard
 
@@ -13994,7 +13994,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/transport-common": "npm:^1.0.20"
     "@graphql-tools/utils": "npm:^11.2.2"
-    "@grpc/grpc-js": "npm:^1.14.4"
+    "@grpc/grpc-js": "npm:^1.14.5"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     globby: "npm:^11.1.0"
     graphql: "npm:16.14.0"
