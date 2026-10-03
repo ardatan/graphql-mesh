@@ -4,6 +4,6 @@
   "dependencies": {
     "@graphql-hive/gateway": "^2.11.2",
     "graphql": "16.14.0",
-    "moment": "2.30.1"
+    "moment": "2.31.0"
   }
 }
