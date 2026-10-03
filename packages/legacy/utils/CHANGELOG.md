@@ -1,5 +1,15 @@
 # @graphql-mesh/utils
 
+## 0.107.2
+
+### Patch Changes
+
+- [#9660](https://github.com/ardatan/graphql-mesh/pull/9660)
+  [`58d3ab4`](https://github.com/ardatan/graphql-mesh/commit/58d3ab475a455ba4c924e07add6859b388783474)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`js-yaml@^4.3.2` ↗︎](https://www.npmjs.com/package/js-yaml/v/4.3.2) (from
+    `^4.3.1`, in `dependencies`)
+
 ## 0.107.1
 
 ### Patch Changes

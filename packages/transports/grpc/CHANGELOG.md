@@ -1,5 +1,19 @@
 # @graphql-mesh/transport-grpc
 
+## 0.7.1
+
+### Patch Changes
+
+- [#9672](https://github.com/ardatan/graphql-mesh/pull/9672)
+  [`8e55954`](https://github.com/ardatan/graphql-mesh/commit/8e559541eaa17d115fdd1bd18f94c009c07a0030)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@grpc/grpc-js@^1.14.5` ↗︎](https://www.npmjs.com/package/@grpc/grpc-js/v/1.14.5) (from
+    `^1.14.4`, in `dependencies`)
+- Updated dependencies
+  [[`58d3ab4`](https://github.com/ardatan/graphql-mesh/commit/58d3ab475a455ba4c924e07add6859b388783474)]:
+  - @graphql-mesh/utils@0.107.2
+
 ## 0.7.0
 
 ### Minor Changes
