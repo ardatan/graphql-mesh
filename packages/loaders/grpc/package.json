@@ -40,7 +40,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/transport-common": "^1.0.20",
     "@graphql-tools/utils": "^11.2.2",
-    "@grpc/grpc-js": "^1.14.4",
+    "@grpc/grpc-js": "^1.14.5",
     "@whatwg-node/disposablestack": "^0.0.6",
     "globby": "^11.1.0",
     "graphql-compose": "^9.1.0",
