@@ -6140,7 +6140,7 @@ __metadata:
     "@graphql-mesh/compose-cli": "workspace:^"
     "@omnigraph/openapi": "workspace:^"
     "@types/node": "npm:^26.2.0"
-    fastify: "npm:^5.12.3"
+    fastify: "npm:^5.12.5"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
@@ -6279,7 +6279,7 @@ __metadata:
     "@graphql-mesh/cli": "npm:0.103.2"
     "@graphql-mesh/graphql": "npm:0.107.1"
     "@types/node": "npm:^26.2.0"
-    fastify: "npm:5.12.3"
+    fastify: "npm:5.12.5"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
     ts-node-dev: "npm:2.0.0"
@@ -27867,9 +27867,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastify@npm:5.12.3":
-  version: 5.12.3
-  resolution: "fastify@npm:5.12.3"
+"fastify@npm:5.12.5":
+  version: 5.12.5
+  resolution: "fastify@npm:5.12.5"
   dependencies:
     "@fastify/ajv-compiler": "npm:^4.0.5"
     "@fastify/error": "npm:^4.0.0"
@@ -27886,7 +27886,7 @@ __metadata:
     secure-json-parse: "npm:^4.0.0"
     semver: "npm:^7.6.0"
     toad-cache: "npm:^3.7.0"
-  checksum: 10c0/ac46280066006375009ead35210971bfc0088c1efc5526029984cc2d5eb61d4a3721651ac9a0bf3b5b7faa2631cfc77862dc1051495eacc121e7b1a607d60871
+  checksum: 10c0/ed18ec344f8a007fb6aea1ad25924076334fab53f2403178d1db56e1f80a5da0f3db4c3a309ef1ae834fc3f20be2444dcc746ce3944093f95e827f66b1e2fbd5
   languageName: node
   linkType: hard
 
