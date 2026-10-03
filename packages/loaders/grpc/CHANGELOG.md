@@ -1,5 +1,16 @@
 # @omnigraph/grpc
 
+## 0.3.1
+
+### Patch Changes
+
+- [#9672](https://github.com/ardatan/graphql-mesh/pull/9672)
+  [`8e55954`](https://github.com/ardatan/graphql-mesh/commit/8e559541eaa17d115fdd1bd18f94c009c07a0030)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@grpc/grpc-js@^1.14.5` ↗︎](https://www.npmjs.com/package/@grpc/grpc-js/v/1.14.5) (from
+    `^1.14.4`, in `dependencies`)
+
 ## 0.3.0
 
 ### Minor Changes
