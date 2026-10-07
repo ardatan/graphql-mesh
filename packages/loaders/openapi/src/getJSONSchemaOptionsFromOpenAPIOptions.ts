@@ -772,8 +772,11 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             operationConfig.headers.cookie = `${cookieParams.join(' ')}`;
             break;
           }
-          case 'body':
-            if (paramObj.schema && Object.keys(paramObj.schema).length > 0) {
+          case 'body': {
+            // Swagger 2 body parameters are the `input` argument, not a second argument
+            // named after the parameter. A required name with no property becomes `JSON!`.
+            const hasBodySchema = !!(paramObj.schema && Object.keys(paramObj.schema).length > 0);
+            if (hasBodySchema) {
               operationConfig.requestSchema = paramObj.schema;
             }
             if (paramObj.example) {
@@ -782,7 +785,14 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             if (paramObj.examples) {
               operationConfig.requestSample = Object.values(paramObj.examples)[0];
             }
-            break;
+            if (paramObj.required && (hasBodySchema || paramObj.example || paramObj.examples)) {
+              operationConfig.requiredArgs = operationConfig.requiredArgs || [];
+              if (!operationConfig.requiredArgs.includes('input')) {
+                operationConfig.requiredArgs.push('input');
+              }
+            }
+            continue;
+          }
         }
 
         operationArgTypeMap[argName] =

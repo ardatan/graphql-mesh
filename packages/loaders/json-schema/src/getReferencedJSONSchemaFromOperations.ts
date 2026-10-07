@@ -251,18 +251,6 @@ export async function getReferencedJSONSchemaFromOperations({
       }
     }
 
-    if (operationConfig.requiredArgs?.length) {
-      const fieldInputDef = rootTypeInputTypeDefinition.properties[fieldName];
-      if (fieldInputDef) {
-        fieldInputDef.required = fieldInputDef.required || [];
-        for (const argName of operationConfig.requiredArgs) {
-          if (!fieldInputDef.required.includes(argName)) {
-            fieldInputDef.required.push(argName);
-          }
-        }
-      }
-    }
-
     if ('binary' in operationConfig) {
       const generatedSchema = {
         type: 'string',
@@ -334,6 +322,20 @@ export async function getReferencedJSONSchemaFromOperations({
         properties: {},
       };
       rootTypeInputTypeDefinition.properties[fieldName].properties.input = generatedSchema;
+    }
+
+    // Apply after `input` exists. A required request body has no interpolation key,
+    // so the field input object may be created only while attaching requestSchema.
+    if (operationConfig.requiredArgs?.length) {
+      const fieldInputDef = rootTypeInputTypeDefinition.properties[fieldName];
+      if (fieldInputDef) {
+        fieldInputDef.required = fieldInputDef.required || [];
+        for (const argName of operationConfig.requiredArgs) {
+          if (!fieldInputDef.required.includes(argName)) {
+            fieldInputDef.required.push(argName);
+          }
+        }
+      }
     }
   }
   return finalJsonSchema;

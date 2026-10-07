@@ -1,0 +1,26 @@
+openapi: 3.0.3
+info: { title: repro, version: '1' }
+paths:
+  /items/{id}:
+    put:
+      operationId: updateItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema: { type: object, properties: { id: { type: integer } } }
