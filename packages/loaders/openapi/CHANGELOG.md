@@ -1,5 +1,25 @@
 # @omnigraph/openapi
 
+## 0.112.5
+
+### Patch Changes
+
+- [#9677](https://github.com/ardatan/graphql-mesh/pull/9677)
+  [`70ed549`](https://github.com/ardatan/graphql-mesh/commit/70ed549bca35da90d101255dacf7540d97d13a6e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Swagger 2.0 `in: body` parameters are the request
+  payload and should stay on the `input` argument. Since 0.112 a required body was also recorded
+  under the parameter name, usually `body`. That name is not a real field, so it was filled in as a
+  required `body: JSON!` argument and `input` became nullable. Existing operations that pass the
+  payload via `input` then failed validation. Body parameters are now only `input`, and a required
+  body keeps that argument non-null. OpenAPI 3 `requestBody` is unchanged.
+
+- Updated dependencies
+  [[`58d3ab4`](https://github.com/ardatan/graphql-mesh/commit/58d3ab475a455ba4c924e07add6859b388783474),
+  [`70ed549`](https://github.com/ardatan/graphql-mesh/commit/70ed549bca35da90d101255dacf7540d97d13a6e)]:
+  - @graphql-mesh/utils@0.107.2
+  - @omnigraph/json-schema@0.112.5
+  - @graphql-mesh/fusion-composition@0.11.3
+
 ## 0.112.4
 
 ### Patch Changes
