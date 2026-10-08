@@ -1,0 +1,53 @@
+minimumReleaseAge: 4320
+minimumReleaseAgeIgnoreMissingTime: true
+minimumReleaseAgeExclude:
+  - '@graphql-hive/*'
+  - '@graphql-mesh/*'
+  - '@graphql-tools/*'
+  - '@whatwg-node/*'
+  - '@envelop/*'
+packages:
+  [
+    'website',
+    'packages/*',
+    'packages/legacy/*',
+    'packages/legacy/handlers/*',
+    'packages/legacy/transforms/*',
+    'packages/legacy/mergers/*',
+    'packages/cache/*',
+    'packages/plugins/*',
+    'packages/fusion/*',
+    'examples/*',
+    'examples/integrations/*',
+    'examples/federation-example/*',
+    'examples/federation-example/services/*',
+    'examples/graphql-file-upload-example/frontend',
+    'examples/hive-example/gateway',
+    'examples/hive-example/sources/*',
+    'packages/loaders/*',
+    'packages/transports/*',
+    'examples/v1-next/*',
+    'examples/v1-next/integrations/*',
+    'examples/v1-next/federation-example/*',
+    'examples/v1-next/federation-example/services/*',
+    'examples/v1-next/graphql-file-upload-example/frontend',
+    'examples/v1-next/hive-example/gateway',
+    'examples/v1-next/hive-example/my-graphql',
+    'examples/v1-next/hive-example/my-rest',
+    'e2e/*',
+  ]
+allowBuilds:
+  '@apollo/protobufjs': set this to true or false
+  '@newrelic/fn-inspect': set this to true or false
+  '@newrelic/native-metrics': set this to true or false
+  core-js: set this to true or false
+  core-js-pure: set this to true or false
+  cpu-features: set this to true or false
+  esbuild: set this to true or false
+  grpc-node-server-reflection: set this to true or false
+  protobufjs: set this to true or false
+  sqlite3: set this to true or false
+  ssh2: set this to true or false
+  unix-dgram: set this to true or false
+  unrs-resolver: set this to true or false
+  workerd: set this to true or false
