@@ -13,7 +13,7 @@ import {
   type GraphQLSchema,
 } from 'graphql';
 import { UnifiedGraphManager } from '@graphql-mesh/fusion-runtime';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { createDefaultExecutor } from '@graphql-mesh/transport-common';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import {
   getDocumentNodeFromSchema,

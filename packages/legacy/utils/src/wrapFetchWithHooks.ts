@@ -1,8 +1,16 @@
 import { getInstrumented } from '@envelop/instrumentation';
-import type { Logger, MeshFetch, OnFetchHook, OnFetchHookDone } from '@graphql-mesh/types';
-import { type ExecutionRequest, type MaybePromise } from '@graphql-tools/utils';
+import type {
+  Logger,
+  MeshFetch,
+  OnFetchHook,
+  OnFetchHookDone,
+  OnFetchHookPayload,
+} from '@graphql-mesh/types';
+import type { MaybePromise } from '@graphql-tools/utils';
 import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
 import { DefaultLogger } from './logger.js';
+
+type ExecutionRequest = NonNullable<OnFetchHookPayload<any>['executionRequest']>;
 
 export const requestIdByRequest = new WeakMap<Request, string>();
 export const loggerForExecutionRequest = new WeakMap<ExecutionRequest, Logger>();

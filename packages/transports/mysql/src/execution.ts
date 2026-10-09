@@ -4,10 +4,9 @@ import graphqlFields from 'graphql-fields';
 import { createPool, type Pool, type PoolConnection } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { util } from '@graphql-mesh/cross-helpers';
-import type { DisposableExecutor } from '@graphql-mesh/transport-common';
+import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
 import { getDefDirectives, makeAsyncDisposable } from '@graphql-mesh/utils';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { getDirective, MapperKind, mapSchema, type ExecutionRequest } from '@graphql-tools/utils';
+import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
 import type { MySQLContext } from './types.js';
 
@@ -189,8 +188,8 @@ export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): Disp
   const defaultExecutor = createDefaultExecutor(subgraph);
   const getConnection$ = util.promisify(pool.getConnection.bind(pool));
 
-  return makeAsyncDisposable(
-    async function mysqlExecutor(executionRequest: ExecutionRequest) {
+  return makeAsyncDisposable<DisposableExecutor>(
+    async function mysqlExecutor(executionRequest) {
       const mysqlConnection = await getConnection$();
       mysqlConnectionByContext.set(executionRequest.context, mysqlConnection);
       try {
