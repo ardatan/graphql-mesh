@@ -10027,43 +10027,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/delegate@npm:^12.0.17, @graphql-tools/delegate@npm:^12.0.19":
-  version: 12.0.20
-  resolution: "@graphql-tools/delegate@npm:12.0.20"
-  dependencies:
-    "@graphql-tools/batch-execute": "npm:^10.0.9"
-    "@graphql-tools/executor": "npm:^1.4.13"
-    "@graphql-tools/schema": "npm:^10.0.29"
-    "@graphql-tools/utils": "npm:^11.0.0"
-    "@repeaterjs/repeater": "npm:^3.0.6"
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-    dataloader: "npm:^2.2.3"
-    tslib: "npm:^2.8.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/db53c066df4593b7953d1301b0e64462d0d53ff78607c5bd022c4c4fa9fa5aaa208620128146171ffd88d5b29ab52254edb1c16a548340710d1f0061bda9063f
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/delegate@npm:^12.1.1":
-  version: 12.1.1
-  resolution: "@graphql-tools/delegate@npm:12.1.1"
-  dependencies:
-    "@graphql-tools/batch-execute": "npm:^10.0.9"
-    "@graphql-tools/executor": "npm:^1.4.13"
-    "@graphql-tools/schema": "npm:^10.0.29"
-    "@graphql-tools/utils": "npm:^11.0.0"
-    "@repeaterjs/repeater": "npm:^3.0.6"
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-    dataloader: "npm:^2.2.3"
-    tslib: "npm:^2.8.1"
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/9968fe3ea19efd6a5d461d7b956309928fed09c2fe5c4dc0a155f024470b12318a3ae3490791f93be11dd5e7e9e074492746cdfb32daacd301febaaf048abaa6
-  languageName: node
-  linkType: hard
-
-"@graphql-tools/delegate@npm:^12.2.1":
+"@graphql-tools/delegate@npm:^12.0.17, @graphql-tools/delegate@npm:^12.0.19, @graphql-tools/delegate@npm:^12.1.1, @graphql-tools/delegate@npm:^12.2.1":
   version: 12.2.1
   resolution: "@graphql-tools/delegate@npm:12.2.1"
   dependencies:
