@@ -650,7 +650,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
         field: methodObj.operationId && sanitizeNameForGraphQL(methodObj.operationId),
-        description: cleanDescription(methodObj.description || methodObj.summary),
+        description: cleanDescription(methodObj.description) || cleanDescription(methodObj.summary),
         schemaHeaders,
         operationHeaders,
         responseByStatusCode: {},
@@ -1247,7 +1247,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
               callbackOperationConfig.pubsubTopic = `webhook:${method}:${pubsubTopicSuffix}`;
               callbackOperationConfig.field = callbackOperation.operationId;
               callbackOperationConfig.description =
-                callbackOperation.description || callbackOperation.summary;
+                cleanDescription(callbackOperation.description) ||
+                cleanDescription(callbackOperation.summary);
               const requestBodyContents = (
                 callbackOperation.requestBody as OpenAPIV3.RequestBodyObject
               )?.content;
