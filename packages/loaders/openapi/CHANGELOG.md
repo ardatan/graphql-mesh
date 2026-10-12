@@ -1,5 +1,15 @@
 # @omnigraph/openapi
 
+## 0.112.6
+
+### Patch Changes
+
+- [#9679](https://github.com/ardatan/graphql-mesh/pull/9679)
+  [`4227f4b`](https://github.com/ardatan/graphql-mesh/commit/4227f4b3ee0523a28efdbe7a97883cee176d308c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Clean OpenAPI operation/callback `description`
+  before falling back to `summary`, so whitespace-only descriptions do not suppress a non-empty
+  summary.
+
 ## 0.112.5
 
 ### Patch Changes
