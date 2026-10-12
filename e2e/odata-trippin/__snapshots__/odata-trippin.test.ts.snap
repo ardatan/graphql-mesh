@@ -755,9 +755,6 @@ input TripInput @join__type(graph: TRIPPIN)  {
   EndsAt: DateTime!
 }
 
-"""
-
-"""
 input PersonUpdateInput @join__type(graph: TRIPPIN)  {
   UserName: String
   FirstName: String
@@ -777,9 +774,6 @@ input AirlineInput @join__type(graph: TRIPPIN)  {
   Name: String
 }
 
-"""
-
-"""
 input AirlineUpdateInput @join__type(graph: TRIPPIN)  {
   AirlineCode: String
   Name: String
@@ -798,9 +792,6 @@ input AirportLocationInput @join__type(graph: TRIPPIN)  {
   City: CityInput
 }
 
-"""
-
-"""
 input AirportUpdateInput @join__type(graph: TRIPPIN)  {
   Name: String
   IcaoCode: String

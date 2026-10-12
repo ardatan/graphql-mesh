@@ -252,6 +252,10 @@ export function getComposerFromJSONSchema({
       if (!subSchema) {
         throw new Error(`Something is wrong with ${path}`);
       }
+      // OpenAPI/JSON Schema often sets `description: ""`; omit those so printed SDL stays clean.
+      if (typeof subSchema.description === 'string' && subSchema.description.trim() === '') {
+        delete subSchema.description;
+      }
       if (subSchema.type === 'array') {
         if (
           subSchema.items != null &&

@@ -2182,7 +2182,6 @@ type Services {
   serviceVersions: [serviceVersion]
 }
 
-""""""
 type serviceVersion {
   """The version of the rest API."""
   version: String
@@ -2194,7 +2193,6 @@ type Resources {
   resources: [nameValue]
 }
 
-""""""
 type nameValue {
   errorDetails: errorDetails
   """The name or key of a name/value pair."""
@@ -2215,7 +2213,6 @@ type errorDetails {
   message: String
 }
 
-""""""
 type provisioningInformation {
   defaultConnectionId: String
   defaultPlanId: String
@@ -2352,7 +2349,6 @@ type billingCharge {
   usedQuantity: String
 }
 
-""""""
 type billingDiscount {
   """Reserved: TBD"""
   beginQuantity: String
@@ -2360,7 +2356,6 @@ type billingDiscount {
   endQuantity: String
 }
 
-""""""
 type billingPrice {
   """Reserved: TBD"""
   beginQuantity: String
@@ -2420,7 +2415,6 @@ type billingInvoiceItem {
   unitPrice: String
 }
 
-""""""
 type billingInvoicesSummary {
   """Reserved: TBD"""
   billingInvoices: [Invoices]
@@ -2504,7 +2498,6 @@ type accountAddress {
   supportedCountries: [country]
 }
 
-""""""
 type country {
   isoCode: String
   name: String
@@ -2512,7 +2505,6 @@ type country {
   provinces: [province]
 }
 
-""""""
 type province {
   isoCode: String
   name: String
@@ -2599,7 +2591,6 @@ type addOn {
   name: String
 }
 
-""""""
 type featureSet {
   """
   A complex type that contains alternate currency values that are configured for this plan feature set.
@@ -2625,7 +2616,6 @@ type featureSet {
   seatFee: String
 }
 
-""""""
 type currencyFeatureSetPrice {
   """Specifies the alternate ISO currency code for the account."""
   currencyCode: String
@@ -2645,7 +2635,6 @@ type currencyFeatureSetPrice {
   seatFee: String
 }
 
-""""""
 type seatDiscount {
   """Reserved: TBD"""
   beginSeatCount: String
@@ -2654,7 +2643,6 @@ type seatDiscount {
   endSeatCount: String
 }
 
-""""""
 type creditCardInformation {
   address: addressInformation
   """The number on the credit card."""
@@ -2689,7 +2677,6 @@ type addressInformation {
   zip: String
 }
 
-""""""
 type paymentProcessorInformation {
   address: addressInformation
   billingAgreementId: String
@@ -2778,7 +2765,6 @@ type appStoreProduct {
   productId: String
 }
 
-""""""
 type currencyPlanPrice {
   """Specifies the ISO currency code for the account."""
   currencyCode: String
@@ -2792,7 +2778,6 @@ type currencyPlanPrice {
   supportedCardTypes: creditCardTypes
 }
 
-""""""
 type creditCardTypes {
   """An array containing supported credit card types."""
   cardTypes: [String]
@@ -2810,7 +2795,6 @@ type AccountBrands {
   senderBrandIdDefault: String
 }
 
-""""""
 type brand {
   """The name of the company associated with this brand."""
   brandCompany: String
@@ -2830,7 +2814,6 @@ type brand {
   resources: brandResourceUrls
 }
 
-""""""
 type brandEmailContent {
   content: String
   emailContentType: String
@@ -2838,7 +2821,6 @@ type brandEmailContent {
   linkText: String
 }
 
-""""""
 type brandLink {
   linkText: String
   linkType: String
@@ -2846,14 +2828,12 @@ type brandLink {
   urlOrMailTo: String
 }
 
-""""""
 type brandLogos {
   email: String
   primary: String
   secondary: String
 }
 
-""""""
 type brandResourceUrls {
   email: String
   sending: String
@@ -2866,12 +2846,10 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-""""""
 type brandResourcesList {
   resourcesContentTypes: [brandResources]
 }
 
-""""""
 type brandResources {
   createdByUserInfo: userInfo
   createdDate: String
@@ -2882,7 +2860,6 @@ type brandResources {
   resourcesContentUri: String
 }
 
-""""""
 type userInfo {
   activationAccessCode: String
   email: String
@@ -2923,7 +2900,6 @@ type BulkEnvelopes {
   totalSetSize: String
 }
 
-""""""
 type bulkEnvelopeStatus {
   """
   Specifies an identifier which can be used to retrieve a more detailed status of individual bulk recipient batches.
@@ -2962,7 +2938,6 @@ type bulkEnvelopeStatus {
   totalSetSize: String
 }
 
-""""""
 type bulkEnvelope {
   """Reserved: TBD"""
   bulkRecipientRow: String
@@ -2990,7 +2965,6 @@ type bulkEnvelope {
   transactionId: String
 }
 
-""""""
 type ChunkedUploads {
   checksum: String
   chunkedUploadId: String
@@ -3003,14 +2977,12 @@ type ChunkedUploads {
   totalSize: String
 }
 
-""""""
 type chunkedUploadPart {
   sequence: String
   """Reserved: TBD"""
   size: String
 }
 
-""""""
 type connectConfigResults {
   """Array of Connect Configurations"""
   configurations: [ConnectConfigurations]
@@ -3119,7 +3091,6 @@ type ConnectEvents {
   type: String
 }
 
-""""""
 type connectLog {
   """The account ID associated with the envelope."""
   accountId: String
@@ -3169,7 +3140,6 @@ type connectLog {
   userName: String
 }
 
-""""""
 type connectDebugLog {
   connectConfig: String
   errorDetails: errorDetails
@@ -3178,7 +3148,6 @@ type connectDebugLog {
   payload: String
 }
 
-""""""
 type integratedUserInfoList {
   allUsersSelected: String
   """The last position in the result set."""
@@ -3296,7 +3265,6 @@ type AccountConsumerDisclosures {
   withdrawState: String
 }
 
-""""""
 type settingsMetadata {
   """
   When set to **true**, indicates that this module is enabled on the account.
@@ -3309,7 +3277,6 @@ type settingsMetadata {
   uiType: String
 }
 
-""""""
 type contactGetResponse {
   contacts: [Contacts]
   """The last position in the result set."""
@@ -3332,7 +3299,6 @@ type contactGetResponse {
   totalSetSize: String
 }
 
-""""""
 type Contacts {
   """The unique identifier of a person in the contacts address book."""
   contactId: String
@@ -3353,7 +3319,6 @@ type Contacts {
   signingGroupName: String
 }
 
-""""""
 type contactPhoneNumber {
   phoneNumber: String
   phoneType: String
@@ -3367,7 +3332,6 @@ type AccountCustomFields {
   textCustomFields: [textCustomField]
 }
 
-""""""
 type listCustomField {
   """
   If merge field's are being used, specifies the type of the merge field. The only  supported value is **salesforce**.
@@ -3391,7 +3355,6 @@ type listCustomField {
   value: String
 }
 
-""""""
 type textCustomField {
   """
   If merge field's are being used, specifies the type of the merge field. The only  supported value is **salesforce**.
@@ -3436,7 +3399,6 @@ type envelopesInformation {
   totalSetSize: String
 }
 
-""""""
 type envelopeTransactionStatus {
   """The envelope ID of the envelope status that failed to post."""
   envelopeId: String
@@ -3910,7 +3872,6 @@ type agent {
   userId: String
 }
 
-""""""
 type documentVisibility {
   """
   Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.
@@ -3925,7 +3886,6 @@ type documentVisibility {
   visible: String
 }
 
-""""""
 type recipientEmailNotification {
   """
   Specifies the email body of the message sent to the recipient. 
@@ -4020,7 +3980,6 @@ type dobInformationInput {
   receiveInResponse: String
 }
 
-""""""
 type ssn4InformationInput {
   """
   Specifies the display level for the recipient. 
@@ -4039,7 +3998,6 @@ type ssn4InformationInput {
   ssn4: String
 }
 
-""""""
 type ssn9InformationInput {
   """
   Specifies the display level for the recipient. 
@@ -4077,7 +4035,6 @@ type recipientPhoneAuthentication {
   validateRecipProvidedNumber: String
 }
 
-""""""
 type recipientAttachment {
   attachmentId: String
   attachmentType: String
@@ -4109,7 +4066,6 @@ type authenticationStatus {
   yahooResult: eventResult
 }
 
-""""""
 type eventResult {
   eventTimestamp: String
   failureDescription: String
@@ -4135,7 +4091,6 @@ type recipientSAMLAuthentication {
   samlAssertionAttributes: [samlAssertionAttribute]
 }
 
-""""""
 type samlAssertionAttribute {
   errorDetails: errorDetails
   name: String
@@ -4155,13 +4110,11 @@ type recipientSMSAuthentication {
   senderProvidedNumbers: [String]
 }
 
-""""""
 type socialAuthentication {
   """Reserved: TBD"""
   authentication: String
 }
 
-""""""
 type carbonCopy {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -4324,7 +4277,6 @@ type carbonCopy {
   userId: String
 }
 
-""""""
 type certifiedDelivery {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -4477,7 +4429,6 @@ type certifiedDelivery {
   userId: String
 }
 
-""""""
 type editor {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -5035,7 +4986,6 @@ type notaryHost {
   userId: String
 }
 
-""""""
 type propertyMetadata {
   options: [String]
   rights: String
@@ -5401,7 +5351,6 @@ type mergeField {
   writeBack: String
 }
 
-""""""
 type checkbox {
   """
   Reserved for DocuSign.
@@ -5529,7 +5478,6 @@ type checkbox {
   yPosition: String
 }
 
-""""""
 type company {
   """
   Reserved for DocuSign.
@@ -5693,7 +5641,6 @@ type company {
   yPosition: String
 }
 
-""""""
 type dateSigned {
   """
   Reserved for DocuSign.
@@ -5830,7 +5777,6 @@ type dateSigned {
   yPosition: String
 }
 
-""""""
 type date {
   """
   Reserved for DocuSign.
@@ -6017,7 +5963,6 @@ type date {
   yPosition: String
 }
 
-""""""
 type decline {
   """
   Reserved for DocuSign.
@@ -6159,7 +6104,6 @@ type decline {
   yPosition: String
 }
 
-""""""
 type emailAddress {
   """
   Reserved for DocuSign.
@@ -6296,7 +6240,6 @@ type emailAddress {
   yPosition: String
 }
 
-""""""
 type email {
   """
   Reserved for DocuSign.
@@ -6483,7 +6426,6 @@ type email {
   yPosition: String
 }
 
-""""""
 type envelopeId {
   """
   Reserved for DocuSign.
@@ -6618,7 +6560,6 @@ type envelopeId {
   yPosition: String
 }
 
-""""""
 type firstName {
   """
   Reserved for DocuSign.
@@ -7160,7 +7101,6 @@ type money {
   displayAmount: String
 }
 
-""""""
 type fullName {
   """
   Reserved for DocuSign.
@@ -7297,7 +7237,6 @@ type fullName {
   yPosition: String
 }
 
-""""""
 type initialHere {
   """
   Reserved for DocuSign.
@@ -7416,7 +7355,6 @@ type initialHere {
   yPosition: String
 }
 
-""""""
 type lastName {
   """
   Reserved for DocuSign.
@@ -7553,7 +7491,6 @@ type lastName {
   yPosition: String
 }
 
-""""""
 type list {
   """
   Reserved for DocuSign.
@@ -7722,7 +7659,6 @@ type list {
   yPosition: String
 }
 
-""""""
 type listItem {
   """
   When set to **true**, indicates that this item is the default selection shown to a signer. 
@@ -7736,7 +7672,6 @@ type listItem {
   value: String
 }
 
-""""""
 type note {
   """
   Reserved for DocuSign.
@@ -7880,7 +7815,6 @@ type note {
   yPosition: String
 }
 
-""""""
 type number {
   """
   Reserved for DocuSign.
@@ -8103,7 +8037,6 @@ type number {
   yPosition: String
 }
 
-""""""
 type radioGroup {
   """
   For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.
@@ -8141,7 +8074,6 @@ type radioGroup {
   shared: String
 }
 
-""""""
 type radio {
   """
   Reserved for DocuSign.
@@ -8217,7 +8149,6 @@ type radio {
   yPosition: String
 }
 
-""""""
 type signHere {
   """
   Reserved for DocuSign.
@@ -8335,7 +8266,6 @@ type signHere {
   yPosition: String
 }
 
-""""""
 type signerAttachment {
   """
   Reserved for DocuSign.
@@ -8450,7 +8380,6 @@ type signerAttachment {
   yPosition: String
 }
 
-""""""
 type ssn {
   """
   Reserved for DocuSign.
@@ -8638,7 +8567,6 @@ type ssn {
   yPosition: String
 }
 
-""""""
 type text {
   """
   Reserved for DocuSign.
@@ -8863,7 +8791,6 @@ type text {
   yPosition: String
 }
 
-""""""
 type title {
   """
   Reserved for DocuSign.
@@ -9026,7 +8953,6 @@ type title {
   yPosition: String
 }
 
-""""""
 type view {
   """
   Reserved for DocuSign.
@@ -9168,7 +9094,6 @@ type view {
   yPosition: String
 }
 
-""""""
 type zip {
   """
   Reserved for DocuSign.
@@ -9356,7 +9281,6 @@ type zip {
   yPosition: String
 }
 
-""""""
 type intermediary {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -9514,7 +9438,6 @@ type intermediary {
   userId: String
 }
 
-""""""
 type signer {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -9718,12 +9641,10 @@ type signer {
   userId: String
 }
 
-""""""
 type envelopeAttachmentsResult {
   attachments: [EnvelopeAttachments]
 }
 
-""""""
 type EnvelopeAttachments {
   accessControl: String
   attachmentId: String
@@ -9733,18 +9654,15 @@ type EnvelopeAttachments {
   name: String
 }
 
-""""""
 type envelopeAuditEventResponse {
   """Reserved: TBD"""
   auditEvents: [envelopeAuditEvent]
 }
 
-""""""
 type envelopeAuditEvent {
   eventFields: [nameValue]
 }
 
-""""""
 type customFieldsEnvelope {
   """An array of list custom fields."""
   listCustomFields: [listCustomField]
@@ -9759,7 +9677,6 @@ type EnvelopeDocuments {
   envelopeId: String
 }
 
-""""""
 type envelopeDocument {
   attachmentTabId: String
   availableDocumentTypes: [signatureType]
@@ -9829,7 +9746,6 @@ type envelopeDocument {
   uri: String
 }
 
-""""""
 type signatureType {
   isDefault: String
   """Type of the user. Valid values: type_owner, type_participant."""
@@ -9849,7 +9765,6 @@ type EnvelopeDocumentFields {
   documentFields: [nameValue]
 }
 
-""""""
 type pageImages {
   """The last position in the result set."""
   endPosition: String
@@ -9887,7 +9802,6 @@ type page {
   width: String
 }
 
-""""""
 type EnvelopeDocumentTabs {
   """
   A tab that allows the recipient to approve documents
@@ -10037,7 +9951,6 @@ type EnvelopeTemplates {
   templates: [templateSummary]
 }
 
-""""""
 type templateSummary {
   """Reserved: TBD"""
   applied: String
@@ -10055,14 +9968,12 @@ type templateSummary {
   uri: String
 }
 
-""""""
 type templateMatch {
   documentEndPage: String
   documentStartPage: String
   matchPercentage: String
 }
 
-""""""
 type EnvelopeFormData {
   """
   Specifies the subject of the email that is sent to all recipients.
@@ -10085,7 +9996,6 @@ type EnvelopeFormData {
   status: String
 }
 
-""""""
 type recipientFormData {
   declinedTime: String
   deliveredTime: String
@@ -10126,7 +10036,6 @@ type EnvelopeBulkRecipients {
   totalSetSize: String
 }
 
-""""""
 type bulkRecipient {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -10193,14 +10102,12 @@ type bulkRecipient {
   tabLabels: [bulkRecipientTabLabel]
 }
 
-""""""
 type bulkRecipientSignatureProvider {
   name: String
   """Specifies the value of the tab."""
   value: String
 }
 
-""""""
 type bulkRecipientTabLabel {
   name: String
   """Specifies the value of the tab."""
@@ -10301,7 +10208,6 @@ type EnvelopeConsumerDisclosures {
   withdrawState: String
 }
 
-""""""
 type EnvelopeDocumentVisibility {
   documentVisibility: [documentVisibility]
 }
@@ -10350,7 +10256,6 @@ type UserSignatures {
   stampType: String
 }
 
-""""""
 type dateStampProperties {
   dateAreaHeight: String
   dateAreaWidth: String
@@ -10364,7 +10269,6 @@ type Folders {
   folders: [folder]
 }
 
-""""""
 type folder {
   errorDetails: errorDetails
   filter: filter
@@ -10383,7 +10287,6 @@ type folder {
   uri: String
 }
 
-""""""
 type filter {
   """Access token information."""
   actionRequired: String
@@ -10414,7 +10317,6 @@ type filter {
   toDateTime: String
 }
 
-""""""
 type folderItemsResponse {
   """The last position in the result set."""
   endPosition: String
@@ -10438,7 +10340,6 @@ type folderItemsResponse {
   totalSetSize: String
 }
 
-""""""
 type folderItem {
   """Specifies the date and time this item was completed."""
   completedDateTime: String
@@ -10492,7 +10393,6 @@ type folderItem {
   uri: String
 }
 
-""""""
 type customField_v2 {
   """
   If merge field's are being used, specifies the type of the merge field. The only  supported value is **salesforce**.
@@ -10536,7 +10436,6 @@ type Groups {
   totalSetSize: String
 }
 
-""""""
 type group {
   errorDetails: errorDetails
   """The DocuSign group ID for the group."""
@@ -10585,25 +10484,21 @@ type GroupUsers {
   users: [userInfo]
 }
 
-""""""
 type paymentGatewayAccountsInfo {
   paymentGatewayAccounts: [PaymentGatewayAccounts]
 }
 
-""""""
 type PaymentGatewayAccounts {
   displayName: String
   paymentGateway: String
   paymentGatewayAccountId: String
 }
 
-""""""
 type permissionProfileInformation {
   """A complex type containing a collection of permission profiles."""
   permissionProfiles: [AccountPermissionProfiles]
 }
 
-""""""
 type AccountPermissionProfiles {
   modifiedByUsername: String
   modifiedDateTime: String
@@ -10614,7 +10509,6 @@ type AccountPermissionProfiles {
   users: [Users]
 }
 
-""""""
 type accountRoleSettings {
   allowAccountManagement: String
   allowAccountManagementMetadata: settingsMetadata
@@ -10782,7 +10676,6 @@ type Users {
   workAddress: addressInformation_v2
 }
 
-""""""
 type userAccountManagementGranularInformation {
   canManageAdmins: String
   canManageAdminsMetadata: settingsMetadata
@@ -10824,7 +10717,6 @@ type forgottenPasswordInformation {
   forgottenPasswordQuestion4: String
 }
 
-""""""
 type addressInformation_v2 {
   """
   First Line of the address.
@@ -10846,7 +10738,6 @@ type addressInformation_v2 {
   stateOrProvince: String
 }
 
-""""""
 type powerFormsResponse {
   """The last position in the result set."""
   endPosition: String
@@ -10869,7 +10760,6 @@ type powerFormsResponse {
   totalSetSize: String
 }
 
-""""""
 type PowerForms {
   """Indicates the date and time the item was created."""
   createdDateTime: String
@@ -10912,7 +10802,6 @@ type PowerForms {
   usesRemaining: String
 }
 
-""""""
 type powerFormRecipient {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -10947,7 +10836,6 @@ type powerFormRecipient {
   userNameLocked: String
 }
 
-""""""
 type powerFormSendersResponse {
   """The last position in the result set."""
   endPosition: String
@@ -10970,12 +10858,10 @@ type powerFormSendersResponse {
   totalSetSize: String
 }
 
-""""""
 type powerFormsFormDataResponse {
   envelopes: [PowerFormData]
 }
 
-""""""
 type PowerFormData {
   """The envelope ID of the envelope status that failed to post."""
   envelopeId: String
@@ -10983,7 +10869,6 @@ type PowerFormData {
   recipients: [powerFormFormDataRecipient]
 }
 
-""""""
 type powerFormFormDataRecipient {
   email: String
   formData: [nameValue]
@@ -10994,7 +10879,6 @@ type powerFormFormDataRecipient {
   recipientId: String
 }
 
-""""""
 type recipientNamesResponse {
   """Indicates whether email address is used by more than one user."""
   multipleUsers: String
@@ -11002,7 +10886,6 @@ type recipientNamesResponse {
   reservedRecipientEmail: String
 }
 
-""""""
 type folderItemResponse {
   """The last position in the result set."""
   endPosition: String
@@ -11023,7 +10906,6 @@ type folderItemResponse {
   totalRows: String
 }
 
-""""""
 type folderItem_v2 {
   """Specifies the date and time this item was completed."""
   completedDateTime: String
@@ -11084,7 +10966,6 @@ type accountSettingsInformation {
   accountSettings: [nameValue]
 }
 
-""""""
 type ENoteConfigurations {
   connectConfigured: String
   eNoteConfigured: String
@@ -11093,7 +10974,6 @@ type ENoteConfigurations {
   userName: String
 }
 
-""""""
 type AccountPasswordRules {
   expirePassword: String
   expirePasswordDays: String
@@ -11117,41 +10997,34 @@ type AccountPasswordRules {
   questionsRequiredMetadata: accountPasswordQuestionsRequired
 }
 
-""""""
 type accountPasswordExpirePasswordDays {
   maximumDays: String
   minimumDays: String
 }
 
-""""""
 type accountPasswordLockoutDurationMinutes {
   maximumMinutes: String
   minimumMinutes: String
 }
 
-""""""
 type accountPasswordLockoutDurationType {
   options: [String]
 }
 
-""""""
 type accountPasswordMinimumPasswordAgeDays {
   maximumAge: String
   minimumAge: String
 }
 
-""""""
 type accountMinimumPasswordLength {
   maximumLength: String
   minimumLength: String
 }
 
-""""""
 type accountPasswordStrengthType {
   options: [accountPasswordStrengthTypeOption]
 }
 
-""""""
 type accountPasswordStrengthTypeOption {
   minimumLength: String
   name: String
@@ -11162,13 +11035,11 @@ type accountPasswordStrengthTypeOption {
   passwordIncludeUpperCase: String
 }
 
-""""""
 type accountPasswordQuestionsRequired {
   maximumQuestions: String
   minimumQuestions: String
 }
 
-""""""
 type AccountTabSettings {
   allowTabOrder: String
   allowTabOrderMetadata: settingsMetadata
@@ -11239,7 +11110,6 @@ type accountSharedAccess {
   totalSetSize: String
 }
 
-""""""
 type memberSharedItems {
   envelopes: [sharedItem]
   errorDetails: errorDetails
@@ -11247,7 +11117,6 @@ type memberSharedItems {
   user: userInfo
 }
 
-""""""
 type sharedItem {
   errorDetails: errorDetails
   """When set to **true**, this custom tab is shared."""
@@ -11255,7 +11124,6 @@ type sharedItem {
   user: userInfo
 }
 
-""""""
 type templateSharedItem {
   errorDetails: errorDetails
   owner: userInfo
@@ -11270,7 +11138,6 @@ type templateSharedItem {
   templateName: String
 }
 
-""""""
 type memberGroupSharedItem {
   errorDetails: errorDetails
   group: group
@@ -11278,7 +11145,6 @@ type memberGroupSharedItem {
   shared: String
 }
 
-""""""
 type userSharedItem {
   errorDetails: errorDetails
   """When set to **true**, this custom tab is shared."""
@@ -11291,7 +11157,6 @@ type AccountSignatureProviders {
   signatureProviders: [accountSignatureProvider]
 }
 
-""""""
 type accountSignatureProvider {
   isRequired: String
   priority: String
@@ -11305,20 +11170,17 @@ type accountSignatureProvider {
   signatureProviderRequiredOptions: [signatureProviderRequiredOption]
 }
 
-""""""
 type accountSignatureProviderOption {
   signatureProviderOptionDisplayName: String
   signatureProviderOptionId: String
   signatureProviderOptionName: String
 }
 
-""""""
 type signatureProviderRequiredOption {
   requiredSignatureProviderOptionIds: [String]
   signerType: String
 }
 
-""""""
 type signingGroupInformation {
   """
   A collection group objects containing information about the groups returned.
@@ -11346,7 +11208,6 @@ type SigningGroups {
   users: [signingGroupUser]
 }
 
-""""""
 type signingGroupUser {
   email: String
   errorDetails: errorDetails
@@ -11363,12 +11224,10 @@ type SigningGroupUsers {
   users: [signingGroupUser]
 }
 
-""""""
 type supportedLanguages {
   languages: [nameValue]
 }
 
-""""""
 type tabMetadataList {
   tabs: [CustomTabs]
 }
@@ -11519,7 +11378,6 @@ type CustomTabs {
   width: String
 }
 
-""""""
 type envelopeTemplateResults {
   """The last position in the result set."""
   endPosition: String
@@ -11545,7 +11403,6 @@ type envelopeTemplateResults {
   totalSetSize: String
 }
 
-""""""
 type envelopeTemplateResult {
   """
   When set to **true**, Document Markup is enabled for envelope. Account must have Document Markup enabled to use this
@@ -11710,7 +11567,6 @@ type envelopeTemplateResult {
   voidedReason: String
 }
 
-""""""
 type document {
   """Reserved: TBD"""
   applyAnchorTabs: String
@@ -11818,7 +11674,6 @@ type document {
   uri: String
 }
 
-""""""
 type matchBox {
   """Height of the tab in pixels."""
   height: Int
@@ -12071,7 +11926,6 @@ type TemplateDocumentFields {
   documentFields: [nameValue]
 }
 
-""""""
 type TemplateDocumentTabs {
   """
   A tab that allows the recipient to approve documents
@@ -12460,20 +12314,17 @@ type TemplateRecipientTabs {
   zipTabs: [zip]
 }
 
-""""""
 type fileTypeList {
   """A collection of file types."""
   fileTypes: [fileType]
 }
 
-""""""
 type fileType {
   fileExtension: String
   """The mime-type of a file type listed in a fileTypes collection."""
   mimeType: String
 }
 
-""""""
 type userInformationList {
   """The last position in the result set."""
   endPosition: String
@@ -12502,7 +12353,6 @@ type CloudStorageProviders {
   storageProviders: [cloudStorageProvider]
 }
 
-""""""
 type cloudStorageProvider {
   """
   The authentication URL used for the cloud storage provider. This information is only included in the response if the user has not passed authentication for the cloud storage provider. If the redirectUrl query string is provided, the returnUrl is appended to the authenticationUrl.
@@ -12547,7 +12397,6 @@ type CloudStorage {
   totalSetSize: String
 }
 
-""""""
 type externalDocServiceErrorDetails {
   """Reserved: TBD"""
   authenticationUrl: String
@@ -12555,7 +12404,6 @@ type externalDocServiceErrorDetails {
   message: String
 }
 
-""""""
 type externalFile {
   date: String
   id: String
@@ -12643,7 +12491,6 @@ type usageHistory {
   signedCount: Int
 }
 
-""""""
 type userSettingsInformation {
   accountManagementGranular: userAccountManagementGranularInformation
   senderEmailNotifications: senderEmailNotifications
@@ -12651,7 +12498,6 @@ type userSettingsInformation {
   userSettings: [nameValue]
 }
 
-""""""
 type senderEmailNotifications {
   """
   When set to **true**, the sender receives notification if the signer changes.
@@ -12735,12 +12581,10 @@ type signerEmailNotifications {
   whenSigningGroupMember: String
 }
 
-""""""
 type userSignaturesInformation {
   userSignatures: [UserSignatures]
 }
 
-""""""
 type userSocialIdResult {
   """
   Contains properties that map a DocuSign user to a social account (Facebook, Yahoo, etc.)
@@ -12765,7 +12609,6 @@ type UserSocialAccountLogins {
   userName: String
 }
 
-""""""
 type AccountWatermarks {
   displayAngle: String
   enabled: String
@@ -12807,7 +12650,6 @@ type workspaceList {
   workspaces: [Workspaces]
 }
 
-""""""
 type Workspaces {
   billableAccountId: String
   """The UTC DateTime when the workspace user authorization was created."""
@@ -12896,7 +12738,6 @@ type workspaceFolderContents {
   workspaceId: String
 }
 
-""""""
 type WorkspaceItems {
   callerAuthorization: workspaceUserAuthorization
   contentType: String
@@ -12964,7 +12805,6 @@ type billingPlanResponse {
   successorPlans: [billingPlan]
 }
 
-""""""
 type userPasswordRules {
   passwordRules: AccountPasswordRules
   """
@@ -13015,7 +12855,6 @@ type Authentication {
   loginAccounts: [loginAccount]
 }
 
-""""""
 type loginAccount {
   """The account ID associated with the envelope."""
   accountId: String
@@ -15765,7 +15604,6 @@ type Mutation {
   OAuth2_PostToken: oauthAccess @httpOperation(subgraph: "test", path: "/v2/oauth2/token", httpMethod: POST)
 }
 
-""""""
 type newAccountSummary {
   """The account ID associated with the envelope."""
   accountId: String
@@ -15797,7 +15635,6 @@ type billingPlanPreview {
   totalAmount: String
 }
 
-""""""
 input newAccountDefinition_Input {
   PaymentProcessorInformation: paymentProcessorInformation_Input
   """The account name for the new account."""
@@ -15827,7 +15664,6 @@ input newAccountDefinition_Input {
   socialAccountInformation: UserSocialAccountLogins_Input
 }
 
-""""""
 input paymentProcessorInformation_Input {
   address: addressInformation_Input
   billingAgreementId: String
@@ -15854,7 +15690,6 @@ input addressInformation_Input {
   zip: String
 }
 
-""""""
 input nameValue_Input {
   errorDetails: errorDetails_Input
   """The name or key of a name/value pair."""
@@ -15907,7 +15742,6 @@ input accountAddress_Input {
   supportedCountries: [country_Input]
 }
 
-""""""
 input country_Input {
   isoCode: String
   name: String
@@ -15915,13 +15749,11 @@ input country_Input {
   provinces: [province_Input]
 }
 
-""""""
 input province_Input {
   isoCode: String
   name: String
 }
 
-""""""
 input creditCardInformation_Input {
   address: addressInformation_Input
   """The number on the credit card."""
@@ -16036,7 +15868,6 @@ input Users_Input {
   workAddress: addressInformation_v2_Input
 }
 
-""""""
 input userAccountManagementGranularInformation_Input {
   canManageAdmins: String
   canManageAdminsMetadata: settingsMetadata_Input
@@ -16048,7 +15879,6 @@ input userAccountManagementGranularInformation_Input {
   canManageUsersMetadata: settingsMetadata_Input
 }
 
-""""""
 input settingsMetadata_Input {
   """
   When set to **true**, indicates that this module is enabled on the account.
@@ -16091,7 +15921,6 @@ input forgottenPasswordInformation_Input {
   forgottenPasswordQuestion4: String
 }
 
-""""""
 input group_Input {
   errorDetails: errorDetails_Input
   """The DocuSign group ID for the group."""
@@ -16105,7 +15934,6 @@ input group_Input {
   users: [userInfo_Input]
 }
 
-""""""
 input userInfo_Input {
   activationAccessCode: String
   email: String
@@ -16122,7 +15950,6 @@ input userInfo_Input {
   userType: String
 }
 
-""""""
 input addressInformation_v2_Input {
   """
   First Line of the address.
@@ -16172,7 +15999,6 @@ input addOn_Input {
   name: String
 }
 
-""""""
 input featureSet_Input {
   """
   A complex type that contains alternate currency values that are configured for this plan feature set.
@@ -16198,7 +16024,6 @@ input featureSet_Input {
   seatFee: String
 }
 
-""""""
 input currencyFeatureSetPrice_Input {
   """Specifies the alternate ISO currency code for the account."""
   currencyCode: String
@@ -16218,7 +16043,6 @@ input currencyFeatureSetPrice_Input {
   seatFee: String
 }
 
-""""""
 input recipientDomain_Input {
   active: String
   domainCode: String
@@ -16290,7 +16114,6 @@ type billingPayment {
   paymentId: String
 }
 
-""""""
 input billingPaymentRequest_Input {
   """
   The payment amount for the past due invoices. This value must match the pastDueBalance value retrieved using Get Past Due Invoices.
@@ -16313,7 +16136,6 @@ type billingPlanUpdateResponse {
   planName: String
 }
 
-""""""
 input billingPlanInformation_Input {
   appStoreReceipt: appStoreReceipt_Input
   billingAddress: accountAddress_Input
@@ -16351,7 +16173,6 @@ input appStoreReceipt_Input {
   receiptData: String
 }
 
-""""""
 input purchasedEnvelopesInformation_Input {
   """The total amount of the purchase."""
   amount: String
@@ -16375,19 +16196,16 @@ input purchasedEnvelopesInformation_Input {
   transactionId: String
 }
 
-""""""
 input brandsRequest_Input {
   """The list of brands."""
   brands: [brandRequest_Input]
 }
 
-""""""
 input brandRequest_Input {
   """The ID of the brand used in API calls"""
   brandId: String
 }
 
-""""""
 input brand_Input {
   """The name of the company associated with this brand."""
   brandCompany: String
@@ -16407,7 +16225,6 @@ input brand_Input {
   resources: brandResourceUrls_Input
 }
 
-""""""
 input brandEmailContent_Input {
   content: String
   emailContentType: String
@@ -16415,7 +16232,6 @@ input brandEmailContent_Input {
   linkText: String
 }
 
-""""""
 input brandLink_Input {
   linkText: String
   linkType: String
@@ -16423,14 +16239,12 @@ input brandLink_Input {
   urlOrMailTo: String
 }
 
-""""""
 input brandLogos_Input {
   email: String
   primary: String
   secondary: String
 }
 
-""""""
 input brandResourceUrls_Input {
   email: String
   sending: String
@@ -16438,7 +16252,6 @@ input brandResourceUrls_Input {
   signingCaptive: String
 }
 
-""""""
 type captiveRecipientInformation {
   """
   A complex type containing information about one or more captive recipients.
@@ -16446,7 +16259,6 @@ type captiveRecipientInformation {
   captiveRecipients: [captiveRecipient]
 }
 
-""""""
 type captiveRecipient {
   """
   Specifies whether the recipient is embedded or remote. 
@@ -16465,7 +16277,6 @@ type captiveRecipient {
   userName: String
 }
 
-""""""
 input captiveRecipientInformation_Input {
   """
   A complex type containing information about one or more captive recipients.
@@ -16473,7 +16284,6 @@ input captiveRecipientInformation_Input {
   captiveRecipients: [captiveRecipient_Input]
 }
 
-""""""
 input captiveRecipient_Input {
   """
   Specifies whether the recipient is embedded or remote. 
@@ -16492,7 +16302,6 @@ input captiveRecipient_Input {
   userName: String
 }
 
-""""""
 input chunkedUploadRequest_Input {
   chunkedUploadId: String
   data: String
@@ -16583,12 +16392,10 @@ input ConnectConfigurations_Input {
   userIds: String
 }
 
-""""""
 type connectFailureResults {
   retryQueue: [connectFailureResult]
 }
 
-""""""
 type connectFailureResult {
   """Reserved: TBD"""
   configId: String
@@ -16606,7 +16413,6 @@ type connectFailureResult {
   statusMessage: String
 }
 
-""""""
 input connectFailureFilter_Input {
   envelopeIds: [String]
   synchronous: String
@@ -16706,17 +16512,14 @@ input EnvelopeConsumerDisclosures_Input {
   withdrawState: String
 }
 
-""""""
 type contactUpdateResponse {
   contacts: [Contacts]
 }
 
-""""""
 input contactModRequest_Input {
   contacts: [Contacts_Input]
 }
 
-""""""
 input Contacts_Input {
   """The unique identifier of a person in the contacts address book."""
   contactId: String
@@ -16737,13 +16540,11 @@ input Contacts_Input {
   signingGroupName: String
 }
 
-""""""
 input contactPhoneNumber_Input {
   phoneNumber: String
   phoneType: String
 }
 
-""""""
 input customField_Input {
   customFieldType: String
   errorDetails: errorDetails_Input
@@ -16759,13 +16560,11 @@ input customField_Input {
   value: String
 }
 
-""""""
 type postTransactionsResponse {
   documentData: String
   transactionSid: String
 }
 
-""""""
 input EMortgageTransactions_Input {
   documentData: String
   dptName: String
@@ -16773,7 +16572,6 @@ input EMortgageTransactions_Input {
   transactionTypeName: String
 }
 
-""""""
 type envelopeSummary {
   """The envelope ID of the envelope status that failed to post."""
   envelopeId: String
@@ -16791,7 +16589,6 @@ type envelopeSummary {
   uri: String
 }
 
-""""""
 input envelopeDefinition_Input {
   """
   Sets the document reading zones for screen reader applications.  This element can only be used if Document Accessibility is enabled for the account.
@@ -16990,7 +16787,6 @@ input attachment_Input {
   remoteUrl: String
 }
 
-""""""
 input compositeTemplate_Input {
   """
   The identify of this composite template. It is used as a reference when adding document object information. If used, the document's \`content-disposition\` must include the composite template ID to which the document should be added. If a composite template ID is not specified in the content-disposition, the document is applied based on the value of the \`documentId\` property only. If no document object is specified, the composite template inherits the first document.
@@ -17008,7 +16804,6 @@ input compositeTemplate_Input {
   serverTemplates: [serverTemplate_Input]
 }
 
-""""""
 input document_Input {
   """Reserved: TBD"""
   applyAnchorTabs: String
@@ -17116,7 +16911,6 @@ input document_Input {
   uri: String
 }
 
-""""""
 input matchBox_Input {
   """Height of the tab in pixels."""
   height: Int
@@ -17141,7 +16935,6 @@ input matchBox_Input {
   yPosition: Int
 }
 
-""""""
 input inlineTemplate_Input {
   customFields: AccountCustomFields_Input
   """Complex element contains the details on the documents in the envelope."""
@@ -17160,7 +16953,6 @@ input AccountCustomFields_Input {
   textCustomFields: [textCustomField_Input]
 }
 
-""""""
 input listCustomField_Input {
   """
   If merge field's are being used, specifies the type of the merge field. The only  supported value is **salesforce**.
@@ -17184,7 +16976,6 @@ input listCustomField_Input {
   value: String
 }
 
-""""""
 input textCustomField_Input {
   """
   If merge field's are being used, specifies the type of the merge field. The only  supported value is **salesforce**.
@@ -17659,7 +17450,6 @@ input agent_Input {
   userId: String
 }
 
-""""""
 input documentVisibility_Input {
   """
   Specifies the document ID number that the tab is placed on. This must refer to an existing Document's ID attribute.
@@ -17674,7 +17464,6 @@ input documentVisibility_Input {
   visible: String
 }
 
-""""""
 input recipientEmailNotification_Input {
   """
   Specifies the email body of the message sent to the recipient. 
@@ -17769,7 +17558,6 @@ input dobInformationInput_Input {
   receiveInResponse: String
 }
 
-""""""
 input ssn4InformationInput_Input {
   """
   Specifies the display level for the recipient. 
@@ -17788,7 +17576,6 @@ input ssn4InformationInput_Input {
   ssn4: String
 }
 
-""""""
 input ssn9InformationInput_Input {
   """
   Specifies the display level for the recipient. 
@@ -17826,7 +17613,6 @@ input recipientPhoneAuthentication_Input {
   validateRecipProvidedNumber: String
 }
 
-""""""
 input recipientAttachment_Input {
   attachmentId: String
   attachmentType: String
@@ -17858,7 +17644,6 @@ input authenticationStatus_Input {
   yahooResult: eventResult_Input
 }
 
-""""""
 input eventResult_Input {
   eventTimestamp: String
   failureDescription: String
@@ -17884,7 +17669,6 @@ input recipientSAMLAuthentication_Input {
   samlAssertionAttributes: [samlAssertionAttribute_Input]
 }
 
-""""""
 input samlAssertionAttribute_Input {
   errorDetails: errorDetails_Input
   name: String
@@ -17904,13 +17688,11 @@ input recipientSMSAuthentication_Input {
   senderProvidedNumbers: [String]
 }
 
-""""""
 input socialAuthentication_Input {
   """Reserved: TBD"""
   authentication: String
 }
 
-""""""
 input carbonCopy_Input {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -18073,7 +17855,6 @@ input carbonCopy_Input {
   userId: String
 }
 
-""""""
 input certifiedDelivery_Input {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -18226,7 +18007,6 @@ input certifiedDelivery_Input {
   userId: String
 }
 
-""""""
 input editor_Input {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -18784,7 +18564,6 @@ input notaryHost_Input {
   userId: String
 }
 
-""""""
 input propertyMetadata_Input {
   options: [String]
   rights: String
@@ -19150,7 +18929,6 @@ input mergeField_Input {
   writeBack: String
 }
 
-""""""
 input checkbox_Input {
   """
   Reserved for DocuSign.
@@ -19278,7 +19056,6 @@ input checkbox_Input {
   yPosition: String
 }
 
-""""""
 input company_Input {
   """
   Reserved for DocuSign.
@@ -19442,7 +19219,6 @@ input company_Input {
   yPosition: String
 }
 
-""""""
 input dateSigned_Input {
   """
   Reserved for DocuSign.
@@ -19579,7 +19355,6 @@ input dateSigned_Input {
   yPosition: String
 }
 
-""""""
 input date_Input {
   """
   Reserved for DocuSign.
@@ -19766,7 +19541,6 @@ input date_Input {
   yPosition: String
 }
 
-""""""
 input decline_Input {
   """
   Reserved for DocuSign.
@@ -19908,7 +19682,6 @@ input decline_Input {
   yPosition: String
 }
 
-""""""
 input emailAddress_Input {
   """
   Reserved for DocuSign.
@@ -20045,7 +19818,6 @@ input emailAddress_Input {
   yPosition: String
 }
 
-""""""
 input email_Input {
   """
   Reserved for DocuSign.
@@ -20232,7 +20004,6 @@ input email_Input {
   yPosition: String
 }
 
-""""""
 input envelopeId_Input {
   """
   Reserved for DocuSign.
@@ -20367,7 +20138,6 @@ input envelopeId_Input {
   yPosition: String
 }
 
-""""""
 input firstName_Input {
   """
   Reserved for DocuSign.
@@ -20909,7 +20679,6 @@ input money_Input {
   displayAmount: String
 }
 
-""""""
 input fullName_Input {
   """
   Reserved for DocuSign.
@@ -21046,7 +20815,6 @@ input fullName_Input {
   yPosition: String
 }
 
-""""""
 input initialHere_Input {
   """
   Reserved for DocuSign.
@@ -21165,7 +20933,6 @@ input initialHere_Input {
   yPosition: String
 }
 
-""""""
 input lastName_Input {
   """
   Reserved for DocuSign.
@@ -21302,7 +21069,6 @@ input lastName_Input {
   yPosition: String
 }
 
-""""""
 input list_Input {
   """
   Reserved for DocuSign.
@@ -21471,7 +21237,6 @@ input list_Input {
   yPosition: String
 }
 
-""""""
 input listItem_Input {
   """
   When set to **true**, indicates that this item is the default selection shown to a signer. 
@@ -21485,7 +21250,6 @@ input listItem_Input {
   value: String
 }
 
-""""""
 input note_Input {
   """
   Reserved for DocuSign.
@@ -21629,7 +21393,6 @@ input note_Input {
   yPosition: String
 }
 
-""""""
 input number_Input {
   """
   Reserved for DocuSign.
@@ -21852,7 +21615,6 @@ input number_Input {
   yPosition: String
 }
 
-""""""
 input radioGroup_Input {
   """
   For conditional fields this is the TabLabel of the parent tab that controls this tab's visibility.
@@ -21890,7 +21652,6 @@ input radioGroup_Input {
   shared: String
 }
 
-""""""
 input radio_Input {
   """
   Reserved for DocuSign.
@@ -21966,7 +21727,6 @@ input radio_Input {
   yPosition: String
 }
 
-""""""
 input signHere_Input {
   """
   Reserved for DocuSign.
@@ -22084,7 +21844,6 @@ input signHere_Input {
   yPosition: String
 }
 
-""""""
 input signerAttachment_Input {
   """
   Reserved for DocuSign.
@@ -22199,7 +21958,6 @@ input signerAttachment_Input {
   yPosition: String
 }
 
-""""""
 input ssn_Input {
   """
   Reserved for DocuSign.
@@ -22387,7 +22145,6 @@ input ssn_Input {
   yPosition: String
 }
 
-""""""
 input text_Input {
   """
   Reserved for DocuSign.
@@ -22612,7 +22369,6 @@ input text_Input {
   yPosition: String
 }
 
-""""""
 input title_Input {
   """
   Reserved for DocuSign.
@@ -22775,7 +22531,6 @@ input title_Input {
   yPosition: String
 }
 
-""""""
 input view_Input {
   """
   Reserved for DocuSign.
@@ -22917,7 +22672,6 @@ input view_Input {
   yPosition: String
 }
 
-""""""
 input zip_Input {
   """
   Reserved for DocuSign.
@@ -23105,7 +22859,6 @@ input zip_Input {
   yPosition: String
 }
 
-""""""
 input intermediary_Input {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -23263,7 +23016,6 @@ input intermediary_Input {
   userId: String
 }
 
-""""""
 input signer_Input {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -23467,7 +23219,6 @@ input signer_Input {
   userId: String
 }
 
-""""""
 input serverTemplate_Input {
   sequence: String
   """
@@ -23556,7 +23307,6 @@ input envelopeEvent_Input {
   includeDocuments: String
 }
 
-""""""
 input recipientEvent_Input {
   """reserved"""
   includeDocuments: String
@@ -23566,7 +23316,6 @@ input recipientEvent_Input {
   recipientEventStatusCode: String
 }
 
-""""""
 input templateRole_Input {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -23634,7 +23383,6 @@ input templateRole_Input {
   tabs: EnvelopeRecipientTabs_Input
 }
 
-""""""
 input envelopeIdsRequest_Input {
   envelopeIds: [String]
   """
@@ -23643,7 +23391,6 @@ input envelopeIdsRequest_Input {
   transactionIds: [String]
 }
 
-""""""
 type envelopeUpdateSummary {
   bulkEnvelopeStatus: bulkEnvelopeStatus
   """The envelope ID of the envelope status that failed to post."""
@@ -23656,7 +23403,6 @@ type envelopeUpdateSummary {
   textCustomFieldUpdateResults: [textCustomField]
 }
 
-""""""
 type recipientUpdateResponse {
   errorDetails: errorDetails
   """
@@ -23666,7 +23412,6 @@ type recipientUpdateResponse {
   tabs: EnvelopeRecipientTabs
 }
 
-""""""
 input envelopeAttachmentsRequest_Input {
   attachments: [attachment_Input]
 }
@@ -23700,7 +23445,6 @@ input EnvelopeDocumentFields_Input {
   documentFields: [nameValue_Input]
 }
 
-""""""
 input pageRequest_Input {
   password: String
   """
@@ -23709,12 +23453,10 @@ input pageRequest_Input {
   rotate: String
 }
 
-""""""
 type documentTemplateList {
   documentTemplates: [documentTemplate]
 }
 
-""""""
 type documentTemplate {
   documentEndPage: String
   """
@@ -23729,12 +23471,10 @@ type documentTemplate {
   templateId: String
 }
 
-""""""
 input documentTemplateList_Input {
   documentTemplates: [documentTemplate_Input]
 }
 
-""""""
 input documentTemplate_Input {
   documentEndPage: String
   """
@@ -23749,7 +23489,6 @@ input documentTemplate_Input {
   templateId: String
 }
 
-""""""
 input lockRequest_Input {
   """
   The number of seconds to lock the envelope for editing.  Must be greater than 0 seconds.
@@ -23772,7 +23511,6 @@ input lockRequest_Input {
   useScratchPad: String
 }
 
-""""""
 input envelopeNotificationRequest_Input {
   expirations: expirations_Input
   reminders: reminders_Input
@@ -23782,22 +23520,18 @@ input envelopeNotificationRequest_Input {
   useAccountDefaults: String
 }
 
-""""""
 type recipientsUpdateSummary {
   recipientUpdateResults: [recipientUpdateResponse]
 }
 
-""""""
 input EnvelopeDocumentVisibility_Input {
   documentVisibility: [documentVisibility_Input]
 }
 
-""""""
 type bulkRecipientsUpdateResponse {
   signer: signer
 }
 
-""""""
 type bulkRecipientsSummaryResponse {
   """
   A complex type containing information about the bulk recipients in the response.
@@ -23813,7 +23547,6 @@ type bulkRecipientsSummaryResponse {
   errorDetails: [errorDetails]
 }
 
-""""""
 input bulkRecipientsRequest_Input {
   """
   A complex type containing information about the bulk recipients in the request.
@@ -23821,7 +23554,6 @@ input bulkRecipientsRequest_Input {
   bulkRecipients: [bulkRecipient_Input]
 }
 
-""""""
 input bulkRecipient_Input {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -23888,14 +23620,12 @@ input bulkRecipient_Input {
   tabLabels: [bulkRecipientTabLabel_Input]
 }
 
-""""""
 input bulkRecipientSignatureProvider_Input {
   name: String
   """Specifies the value of the tab."""
   value: String
 }
 
-""""""
 input bulkRecipientTabLabel_Input {
   name: String
   """Specifies the value of the tab."""
@@ -23908,7 +23638,6 @@ type EnvelopeViews {
   url: String
 }
 
-""""""
 input correctViewRequest_Input {
   """
   The url used after correct/send view session has ended. DocuSign redirects to the url and includes an event parameter that can be used by your app. The event parameters returned are: 
@@ -23938,7 +23667,6 @@ input returnUrlRequest_Input {
   returnUrl: String
 }
 
-""""""
 input recipientViewRequest_Input {
   """
   A unique identifier of the authentication event executed by the client application.
@@ -24058,7 +23786,6 @@ input recipientViewRequest_Input {
   xFrameOptionsAllowFromUrl: String
 }
 
-""""""
 input foldersRequest_Input {
   envelopeIds: [String]
   """The folder ID the envelope is being moved from."""
@@ -24091,12 +23818,10 @@ input Groups_Input {
   totalSetSize: String
 }
 
-""""""
 input userInfoList_Input {
   users: [userInfo_Input]
 }
 
-""""""
 input AccountPermissionProfiles_Input {
   modifiedByUsername: String
   modifiedDateTime: String
@@ -24107,7 +23832,6 @@ input AccountPermissionProfiles_Input {
   users: [Users_Input]
 }
 
-""""""
 input accountRoleSettings_Input {
   allowAccountManagement: String
   allowAccountManagementMetadata: settingsMetadata_Input
@@ -24175,12 +23899,10 @@ input accountRoleSettings_Input {
   vaultingModeMetadata: settingsMetadata_Input
 }
 
-""""""
 input powerFormsRequest_Input {
   powerForms: [PowerForms_Input]
 }
 
-""""""
 input PowerForms_Input {
   """Indicates the date and time the item was created."""
   createdDateTime: String
@@ -24223,7 +23945,6 @@ input PowerForms_Input {
   usesRemaining: String
 }
 
-""""""
 input powerFormRecipient_Input {
   """
   If a value is provided, the recipient must enter the value as the access code to view and sign the envelope. 
@@ -24273,7 +23994,6 @@ input accountSettingsInformation_Input {
   accountSettings: [nameValue_Input]
 }
 
-""""""
 input ENoteConfigurations_Input {
   connectConfigured: String
   eNoteConfigured: String
@@ -24282,7 +24002,6 @@ input ENoteConfigurations_Input {
   userName: String
 }
 
-""""""
 input AccountPasswordRules_Input {
   expirePassword: String
   expirePasswordDays: String
@@ -24306,41 +24025,34 @@ input AccountPasswordRules_Input {
   questionsRequiredMetadata: accountPasswordQuestionsRequired_Input
 }
 
-""""""
 input accountPasswordExpirePasswordDays_Input {
   maximumDays: String
   minimumDays: String
 }
 
-""""""
 input accountPasswordLockoutDurationMinutes_Input {
   maximumMinutes: String
   minimumMinutes: String
 }
 
-""""""
 input accountPasswordLockoutDurationType_Input {
   options: [String]
 }
 
-""""""
 input accountPasswordMinimumPasswordAgeDays_Input {
   maximumAge: String
   minimumAge: String
 }
 
-""""""
 input accountMinimumPasswordLength_Input {
   maximumLength: String
   minimumLength: String
 }
 
-""""""
 input accountPasswordStrengthType_Input {
   options: [accountPasswordStrengthTypeOption_Input]
 }
 
-""""""
 input accountPasswordStrengthTypeOption_Input {
   minimumLength: String
   name: String
@@ -24351,13 +24063,11 @@ input accountPasswordStrengthTypeOption_Input {
   passwordIncludeUpperCase: String
 }
 
-""""""
 input accountPasswordQuestionsRequired_Input {
   maximumQuestions: String
   minimumQuestions: String
 }
 
-""""""
 input AccountTabSettings_Input {
   allowTabOrder: String
   allowTabOrderMetadata: settingsMetadata_Input
@@ -24428,7 +24138,6 @@ input accountSharedAccess_Input {
   totalSetSize: String
 }
 
-""""""
 input memberSharedItems_Input {
   envelopes: [sharedItem_Input]
   errorDetails: errorDetails_Input
@@ -24436,7 +24145,6 @@ input memberSharedItems_Input {
   user: userInfo_Input
 }
 
-""""""
 input sharedItem_Input {
   errorDetails: errorDetails_Input
   """When set to **true**, this custom tab is shared."""
@@ -24444,7 +24152,6 @@ input sharedItem_Input {
   user: userInfo_Input
 }
 
-""""""
 input templateSharedItem_Input {
   errorDetails: errorDetails_Input
   owner: userInfo_Input
@@ -24459,7 +24166,6 @@ input templateSharedItem_Input {
   templateName: String
 }
 
-""""""
 input memberGroupSharedItem_Input {
   errorDetails: errorDetails_Input
   group: group_Input
@@ -24467,7 +24173,6 @@ input memberGroupSharedItem_Input {
   shared: String
 }
 
-""""""
 input userSharedItem_Input {
   errorDetails: errorDetails_Input
   """When set to **true**, this custom tab is shared."""
@@ -24475,7 +24180,6 @@ input userSharedItem_Input {
   user: userInfo_Input
 }
 
-""""""
 input signingGroupInformation_Input {
   """
   A collection group objects containing information about the groups returned.
@@ -24503,7 +24207,6 @@ input SigningGroups_Input {
   users: [signingGroupUser_Input]
 }
 
-""""""
 input signingGroupUser_Input {
   email: String
   errorDetails: errorDetails_Input
@@ -24864,7 +24567,6 @@ input envelopeTemplateDefinition_Input {
   uri: String
 }
 
-""""""
 type templateUpdateSummary {
   bulkEnvelopeStatus: bulkEnvelopeStatus
   """The envelope ID of the envelope status that failed to post."""
@@ -24877,7 +24579,6 @@ type templateUpdateSummary {
   textCustomFieldUpdateResults: [textCustomField]
 }
 
-""""""
 input templateCustomFields_Input {
   """An array of list custom fields."""
   listCustomFields: [listCustomField_Input]
@@ -24898,7 +24599,6 @@ input TemplateDocumentFields_Input {
   documentFields: [nameValue_Input]
 }
 
-""""""
 input templateNotificationRequest_Input {
   expirations: expirations_Input
   password: String
@@ -24909,7 +24609,6 @@ input templateNotificationRequest_Input {
   useAccountDefaults: String
 }
 
-""""""
 input templateRecipients_Input {
   """
   A complex type defining the management and access rights of a recipient assigned assigned as an agent on the document.
@@ -24945,17 +24644,14 @@ input templateRecipients_Input {
   signers: [signer_Input]
 }
 
-""""""
 type TemplateDocumentVisibility {
   documentVisibility: [documentVisibility]
 }
 
-""""""
 input TemplateDocumentVisibility_Input {
   documentVisibility: [documentVisibility_Input]
 }
 
-""""""
 input templateTabs_Input {
   """
   A tab that allows the recipient to approve documents
@@ -25106,12 +24802,10 @@ type TemplateViews {
   url: String
 }
 
-""""""
 type newUsersSummary {
   newUsers: [newUser]
 }
 
-""""""
 type newUser {
   """
   Contains a token that can be used for authentication in API calls instead of using the user name and password.
@@ -25130,12 +24824,10 @@ type newUser {
   userStatus: String
 }
 
-""""""
 input newUsersDefinition_Input {
   newUsers: [Users_Input]
 }
 
-""""""
 input userInformationList_Input {
   """The last position in the result set."""
   endPosition: String
@@ -25164,7 +24856,6 @@ input CloudStorageProviders_Input {
   storageProviders: [cloudStorageProvider_Input]
 }
 
-""""""
 input cloudStorageProvider_Input {
   """
   The authentication URL used for the cloud storage provider. This information is only included in the response if the user has not passed authentication for the cloud storage provider. If the redirectUrl query string is provided, the returnUrl is appended to the authenticationUrl.
@@ -25257,7 +24948,6 @@ input usageHistory_Input {
   signedCount: Int
 }
 
-""""""
 input userSettingsInformation_Input {
   accountManagementGranular: userAccountManagementGranularInformation_Input
   senderEmailNotifications: senderEmailNotifications_Input
@@ -25265,7 +24955,6 @@ input userSettingsInformation_Input {
   userSettings: [nameValue_Input]
 }
 
-""""""
 input senderEmailNotifications_Input {
   """
   When set to **true**, the sender receives notification if the signer changes.
@@ -25349,7 +25038,6 @@ input signerEmailNotifications_Input {
   whenSigningGroupMember: String
 }
 
-""""""
 input userSignaturesInformation_Input {
   userSignatures: [UserSignatures_Input]
 }
@@ -25398,7 +25086,6 @@ input UserSignatures_Input {
   stampType: String
 }
 
-""""""
 input dateStampProperties_Input {
   dateAreaHeight: String
   dateAreaWidth: String
@@ -25406,7 +25093,6 @@ input dateStampProperties_Input {
   dateAreaY: String
 }
 
-""""""
 input userSignatureDefinition_Input {
   signatureFont: String
   """
@@ -25418,7 +25104,6 @@ input userSignatureDefinition_Input {
   signatureName: String
 }
 
-""""""
 input consoleViewRequest_Input {
   """The envelope ID of the envelope status that failed to post."""
   envelopeId: String
@@ -25426,7 +25111,6 @@ input consoleViewRequest_Input {
   returnUrl: String
 }
 
-""""""
 input AccountWatermarks_Input {
   displayAngle: String
   enabled: String
@@ -25452,7 +25136,6 @@ input AccountWatermarks_Input {
   watermarkText: String
 }
 
-""""""
 input Workspaces_Input {
   billableAccountId: String
   """The UTC DateTime when the workspace user authorization was created."""
@@ -25527,7 +25210,6 @@ input workspaceItemList_Input {
   items: [WorkspaceItems_Input]
 }
 
-""""""
 input WorkspaceItems_Input {
   callerAuthorization: workspaceUserAuthorization_Input
   contentType: String
@@ -25593,7 +25275,6 @@ input RequestLogs_Input {
   apiRequestLogging: String
 }
 
-""""""
 input userPasswordInformation_Input {
   """The user's current password to be changed."""
   currentPassword: String
@@ -25604,7 +25285,6 @@ input userPasswordInformation_Input {
   newPassword: String
 }
 
-""""""
 type oauthAccess {
   """Access token information."""
   access_token: String

@@ -424,6 +424,12 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         });
       }
       const updateInputType = inputType.clone(`${entityTypeName}UpdateInput`);
+      // graphql-compose clone() uses getDescription() which coerces missing descriptions to "".
+      // Clear that so printed SDL does not emit empty `""""""` blocks.
+      const clonedDescription = inputType.getType().description;
+      updateInputType.setDescription(
+        clonedDescription && clonedDescription.trim() !== '' ? clonedDescription : undefined,
+      );
       updateInputType
         .getFieldNames()
         ?.forEach(fieldName => updateInputType.makeOptional(fieldName));

@@ -792,7 +792,6 @@ type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_set
   country_name: String
 }
 
-""""""
 type query_getScheduledEvents_oneOf_0_collection_items_location_oneOf_4_data_extra {
   """Zoom International Dial-in Numbers URL"""
   intl_numbers_url: URL
@@ -1062,7 +1061,6 @@ enum query_getEventTypes_oneOf_0_collection_items_booking_method {
   poll
 }
 
-""""""
 type EventTypeCustomQuestion {
   """The custom question that the host created for the event type."""
   name: String!
