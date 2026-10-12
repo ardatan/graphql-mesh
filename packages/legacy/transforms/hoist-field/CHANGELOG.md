@@ -1,5 +1,28 @@
 # @graphql-mesh/transform-hoist-field
 
+## 0.108.2
+
+### Patch Changes
+
+- [#9678](https://github.com/ardatan/graphql-mesh/pull/9678)
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.2.1)
+    (from `^12.1.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/utils@^12.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.0.3)
+    (from `^11.2.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/wrap@^11.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/wrap/v/11.2.1)
+    (from `^11.1.21`, in `dependencies`)
+- Updated dependencies
+  [[`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c),
+  [`58d3ab4`](https://github.com/ardatan/graphql-mesh/commit/58d3ab475a455ba4c924e07add6859b388783474),
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c)]:
+  - @graphql-mesh/types@0.107.2
+  - @graphql-mesh/utils@0.107.2
+
 ## 0.108.1
 
 ### Patch Changes

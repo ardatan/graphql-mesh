@@ -1,5 +1,46 @@
 # @omnigraph/openapi
 
+## 0.112.5
+
+### Patch Changes
+
+- [#9678](https://github.com/ardatan/graphql-mesh/pull/9678)
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^12.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.0.3)
+    (from `^11.2.2`, in `dependencies`)
+
+- [#9677](https://github.com/ardatan/graphql-mesh/pull/9677)
+  [`70ed549`](https://github.com/ardatan/graphql-mesh/commit/70ed549bca35da90d101255dacf7540d97d13a6e)
+  Thanks [@ardatan](https://github.com/ardatan)! - Swagger 2.0 `in: body` parameters are the request
+  payload and should stay on the `input` argument. Since 0.112 a required body was also recorded
+  under the parameter name, usually `body`. That name is not a real field, so it was filled in as a
+  required `body: JSON!` argument and `input` became nullable. Existing operations that pass the
+  payload via `input` then failed validation. Body parameters are now only `input`, and a required
+  body keeps that argument non-null. OpenAPI 3 `requestBody` is unchanged.
+
+- [#9678](https://github.com/ardatan/graphql-mesh/pull/9678)
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Omit empty and whitespace-only GraphQL
+  descriptions from generated schemas so dependency bumps that print `description: ""` as `""""""`
+  do not churn SDL/introspection metadata.
+
+- Updated dependencies
+  [[`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c),
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c),
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c),
+  [`58d3ab4`](https://github.com/ardatan/graphql-mesh/commit/58d3ab475a455ba4c924e07add6859b388783474),
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c),
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c),
+  [`70ed549`](https://github.com/ardatan/graphql-mesh/commit/70ed549bca35da90d101255dacf7540d97d13a6e),
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c)]:
+  - @graphql-mesh/cross-helpers@0.4.17
+  - @graphql-mesh/fusion-composition@0.11.3
+  - @graphql-mesh/types@0.107.2
+  - @graphql-mesh/utils@0.107.2
+  - @omnigraph/json-schema@0.112.5
+
 ## 0.112.4
 
 ### Patch Changes

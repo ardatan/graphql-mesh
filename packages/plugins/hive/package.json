@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-hive",
-  "version": "0.108.1",
+  "version": "0.108.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,9 +36,9 @@
   },
   "dependencies": {
     "@graphql-hive/yoga": "^0.49.1",
-    "@graphql-mesh/cross-helpers": "^0.4.16",
+    "@graphql-mesh/cross-helpers": "^0.4.17",
     "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/types": "^0.107.1",
+    "@graphql-mesh/types": "^0.107.2",
     "graphql-yoga": "^5.21.2",
     "tslib": "^2.4.0"
   },
