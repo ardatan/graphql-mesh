@@ -650,8 +650,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
         field: methodObj.operationId && sanitizeNameForGraphQL(methodObj.operationId),
-        description:
-          cleanDescription(methodObj.description) || cleanDescription(methodObj.summary),
+        description: cleanDescription(methodObj.description) || cleanDescription(methodObj.summary),
         schemaHeaders,
         operationHeaders,
         responseByStatusCode: {},
