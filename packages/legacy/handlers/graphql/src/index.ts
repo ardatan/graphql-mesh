@@ -1,10 +1,4 @@
-import type {
-  DocumentNode,
-  ExecutionResult,
-  GraphQLResolveInfo,
-  IntrospectionQuery,
-  SelectionNode,
-} from 'graphql';
+import type { DocumentNode, ExecutionResult, IntrospectionQuery, SelectionNode } from 'graphql';
 import {
   buildASTSchema,
   buildClientSchema,
@@ -107,7 +101,7 @@ export default class GraphQLHandler implements MeshHandler {
     const logger = this.logger;
     return function executorWithSourceName(executionRequest: ExecutionRequest) {
       logger.debug(() => `Sending GraphQL Request: `, print(executionRequest.document));
-      executionRequest.info = executionRequest.info || ({} as GraphQLResolveInfo);
+      executionRequest.info = executionRequest.info || ({} as ExecutionRequest['info']);
       (executionRequest.info as any).sourceName = sourceName;
       return handleMaybePromise(
         () => executor(executionRequest),

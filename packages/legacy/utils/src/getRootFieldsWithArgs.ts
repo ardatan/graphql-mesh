@@ -10,7 +10,10 @@ import type { ExecutionRequest } from '@graphql-tools/utils';
 import { getRootTypeMap } from '@graphql-tools/utils';
 import { getOperationsAndFragments } from './getOperationsAndFragments.js';
 
-export function getRootFieldsWithArgs(schema: GraphQLSchema, executionRequest: ExecutionRequest) {
+export function getRootFieldsWithArgs(
+  schema: GraphQLSchema,
+  executionRequest: Pick<ExecutionRequest, 'document' | 'variables' | 'operationName'>,
+) {
   const rootTypeMap = getRootTypeMap(schema);
   const { document, variables, operationName } = executionRequest;
   const { operations, fragments } = getOperationsAndFragments(document);

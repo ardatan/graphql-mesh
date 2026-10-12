@@ -1,17 +1,12 @@
 import type { GraphQLError, GraphQLSchema } from 'graphql';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
+import type { Executor } from '@graphql-mesh/transport-common';
 import {
   getOperationsAndFragments,
   getRootFieldsWithArgs,
   projectResultBySelectionSet,
 } from '@graphql-mesh/utils';
-import {
-  getDirectiveExtensions,
-  getRootTypeMap,
-  type ExecutionRequest,
-  type ExecutionResult,
-  type Executor,
-} from '@graphql-tools/utils';
+import { getDirectiveExtensions, getRootTypeMap, type ExecutionResult } from '@graphql-tools/utils';
 import { createGraphQLThriftClient } from './client.js';
 import type { GraphQLThriftAnnotations } from './types.js';
 
@@ -35,9 +30,7 @@ export function getThriftExecutor(subgraph: GraphQLSchema): Executor {
   const rootTypeMap = getRootTypeMap(subgraph);
   const fieldTypeMapDirectivesByField = new Map<string, any[]>();
 
-  return async function thriftExecutor(
-    executionRequest: ExecutionRequest,
-  ): Promise<ExecutionResult<any, any>> {
+  return async function thriftExecutor(executionRequest): Promise<ExecutionResult<any, any>> {
     const operationsAndFragments = getOperationsAndFragments(executionRequest.document);
     const operationName =
       executionRequest.operationName || Object.keys(operationsAndFragments.operations)[0];

@@ -163,7 +163,7 @@ export interface OnFetchHookPayload<TContext> {
   info: GraphQLResolveInfo;
   fetchFn: MeshFetch;
   setFetchFn: (fetchFn: MeshFetch) => void;
-  executionRequest?: ExecutionRequest;
+  executionRequest?: Omit<ExecutionRequest, 'info'> & { info?: GraphQLResolveInfo };
   logger: Logger;
   requestId?: string;
   endResponse: (response$: MaybePromise<Response>) => void;

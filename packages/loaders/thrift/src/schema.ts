@@ -394,8 +394,9 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
   return schema;
 }
 
-function processComments(comments: Comment[]) {
-  return comments.map(comment => comment.value).join('\n');
+function processComments(comments: Comment[]): string | undefined {
+  const description = comments.map(comment => comment.value).join('\n');
+  return description.trim() === '' ? undefined : description;
 }
 
 interface GetGraphQLFunctionTypeOpts {

@@ -14,15 +14,11 @@ import {
   getInterpolatedHeadersFactory,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
+import type { Executor } from '@graphql-mesh/transport-common';
 import type { Logger, MeshFetch } from '@graphql-mesh/types';
 import { DefaultLogger } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
-import {
-  createGraphQLError,
-  getDirectiveExtensions,
-  getRootTypes,
-  type Executor,
-} from '@graphql-tools/utils';
+import { createGraphQLError, getDirectiveExtensions, getRootTypes } from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { parseXmlOptions } from './parseXmlOptions.js';
 

@@ -32,6 +32,13 @@ function mimeType(contentType: string): string {
   return contentType.split(';')[0].trim().toLowerCase();
 }
 
+function cleanDescription(description?: string | null): string | undefined {
+  if (typeof description !== 'string') {
+    return undefined;
+  }
+  return description.trim() === '' ? undefined : description;
+}
+
 /**
  * Pick a request body content type.
  * Prefer an explicit Content-Type header when it matches the spec.
@@ -643,7 +650,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
         path: relativePath,
         type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
         field: methodObj.operationId && sanitizeNameForGraphQL(methodObj.operationId),
-        description: methodObj.description || methodObj.summary,
+        description: cleanDescription(methodObj.description || methodObj.summary),
         schemaHeaders,
         operationHeaders,
         responseByStatusCode: {},
@@ -993,7 +1000,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
           responseByStatusCode[responseKey].responseSchema = {
             type: 'null',
-            description: responseObj.description,
+            description: cleanDescription(responseObj.description),
           };
         }
 
@@ -1182,14 +1189,14 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                     return linkOperationConfig.field;
                   },
                   args,
-                  description: linkObj.description,
+                  description: cleanDescription(linkObj.description),
                 };
               }
             } else if ('operationId' in linkObj) {
               responseByStatusCode[responseKey].links[sanitizedLinkName] = {
                 fieldName: sanitizeNameForGraphQL(linkObj.operationId),
                 args,
-                description: linkObj.description,
+                description: cleanDescription(linkObj.description),
               };
             }
           }
