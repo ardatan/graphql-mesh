@@ -39,7 +39,7 @@
     "@graphql-mesh/utils": "^0.107.2",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
-    "http-cache-semantics": "^4.1.1",
+    "http-cache-semantics": "^4.3.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
