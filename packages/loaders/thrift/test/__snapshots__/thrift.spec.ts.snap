@@ -8,12 +8,25 @@ exports[`thrift Calc: Calc-schema 1`] = `
 directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
 
 type Query {
-  add(request: AddRequestInput): Int @fieldTypeMap(subgraph: "Calc", fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
-  subtract(left: Int, right: Int): Int @fieldTypeMap(subgraph: "Calc", fieldTypeMap: {left: {name: "calc_types_digit", type: "ref", id: 1}, right: {name: "calc_types_digit", type: "ref", id: 2}})
+  """"""
+  add(
+    """"""
+    request: AddRequestInput
+  ): Int @fieldTypeMap(subgraph: "Calc", fieldTypeMap: {request: {name: "AddRequest", type: "ref", id: 1}})
+  """"""
+  subtract(
+    """"""
+    left: Int
+    """"""
+    right: Int
+  ): Int @fieldTypeMap(subgraph: "Calc", fieldTypeMap: {left: {name: "calc_types_digit", type: "ref", id: 1}, right: {name: "calc_types_digit", type: "ref", id: 2}})
 }
 
+""""""
 input AddRequestInput {
+  """"""
   left: Int!
+  """"""
   right: Int!
 }
 
@@ -28,16 +41,26 @@ exports[`thrift Recursive: Recursive-schema 1`] = `
 directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
 
 type Query {
-  bar(foo: FooInput): Foo @fieldTypeMap(subgraph: "Recursive", fieldTypeMap: {foo: {name: "Foo", type: "ref", id: 1}})
+  """"""
+  bar(
+    """"""
+    foo: FooInput
+  ): Foo @fieldTypeMap(subgraph: "Recursive", fieldTypeMap: {foo: {name: "Foo", type: "ref", id: 1}})
 }
 
+""""""
 type Foo {
+  """"""
   name: String
+  """"""
   foo: Foo
 }
 
+""""""
 input FooInput {
+  """"""
   name: String
+  """"""
   foo: FooInput
 }
 
@@ -52,51 +75,88 @@ exports[`thrift Twitter: Twitter-schema 1`] = `
 directive @fieldTypeMap(subgraph: String, fieldTypeMap: FieldTypeMap) on FIELD_DEFINITION
 
 type Query {
+  """"""
   ping: Void @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {})
-  postTweet(tweet: TweetInput): Boolean @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {tweet: {name: "Tweet", type: "ref", id: 1}})
-  searchTweets(query: String): TweetSearchResult @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {query: {id: 1}})
+  """"""
+  postTweet(
+    """"""
+    tweet: TweetInput
+  ): Boolean @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {tweet: {name: "Tweet", type: "ref", id: 1}})
+  """"""
+  searchTweets(
+    """"""
+    query: String
+  ): TweetSearchResult @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {query: {id: 1}})
+  """"""
   zip: Void @fieldTypeMap(subgraph: "Twitter", fieldTypeMap: {})
 }
 
 """Represents NULL values"""
 scalar Void
 
+""""""
 input TweetInput {
+  """"""
   userId: Int!
+  """"""
   userName: String!
+  """"""
   text: String!
+  """"""
   loc: LocationInput
+  """"""
   tweetType: TweetType
+  """"""
   language: String
 }
 
+""""""
 input LocationInput {
+  """"""
   latitude: Float!
+  """"""
   longitude: Float!
 }
 
+""""""
 enum TweetType {
+  """"""
   TWEET
+  """"""
   RETWEET
+  """"""
   DM
+  """"""
   REPLY
 }
 
+""""""
 type TweetSearchResult {
+  """"""
   tweets: [Tweet]
 }
 
+""""""
 type Tweet {
+  """"""
   userId: Int!
+  """"""
   userName: String!
+  """"""
   text: String!
+  """"""
   loc: Location
+  """"""
   tweetType: TweetType
+  """"""
   language: String
 }
 
+""""""
 type Location {
+  """"""
   latitude: Float!
+  """"""
   longitude: Float!
 }
 
