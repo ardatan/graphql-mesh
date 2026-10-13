@@ -152,7 +152,7 @@
     "graphql-jit": "patch:graphql-jit@npm%3A0.8.8#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch",
     "graphql-rate-limit": "patch:graphql-rate-limit@npm%3A3.3.0#~/.yarn/patches/graphql-rate-limit-npm-3.3.0-3ae882ba75.patch",
     "gray-matter@npm:^4.0.3": "patch:gray-matter@npm%3A4.0.3#~/.yarn/patches/gray-matter-npm-4.0.3-852ae4f34c.patch",
-    "http-cache-semantics": "4.2.0",
+    "http-cache-semantics": "4.3.0",
     "immutable": "5.1.8",
     "ioredis-mock": "patch:ioredis-mock@npm%3A8.13.1#~/.yarn/patches/ioredis-mock-npm-8.13.1-a1a567479e.patch",
     "jest-leak-detector": "patch:jest-leak-detector@npm%3A29.7.0#~/.yarn/patches/jest-leak-detector-npm-29.7.0-3ae882ba75.patch",
