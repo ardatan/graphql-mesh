@@ -5601,20 +5601,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@envelop/graphql-jit@npm:^11.1.1":
-  version: 11.1.1
-  resolution: "@envelop/graphql-jit@npm:11.1.1"
-  dependencies:
-    "@whatwg-node/promise-helpers": "npm:^1.2.3"
-    graphql-jit: "npm:0.8.7"
-    tslib: "npm:^2.5.0"
-  peerDependencies:
-    "@envelop/core": ^5.5.1
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/906a10fe6d1771c4d567a4b46f95875028c5708caa87f53874af76075ede817caf8ef0e361ae847261ec0eb2c04245f2dfb116b546a36d6facc959232e9952de
-  languageName: node
-  linkType: hard
-
 "@envelop/instrumentation@npm:^1.0.0":
   version: 1.0.0
   resolution: "@envelop/instrumentation@npm:1.0.0"
@@ -8826,7 +8812,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.2"
     "@graphql-tools/utils": "npm:^12.0.4"
     graphql: "npm:16.14.0"
-    graphql-jit: "npm:^0.8.8"
+    graphql-jit: "npm:^0.8.10"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -9121,7 +9107,6 @@ __metadata:
   dependencies:
     "@envelop/core": "npm:^5.5.1"
     "@envelop/extended-validation": "npm:^7.1.1"
-    "@envelop/graphql-jit": "npm:^11.1.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.17"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.2"
@@ -9135,7 +9120,6 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.10.6"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     graphql: "npm:16.14.0"
-    graphql-jit: "npm:^0.8.8"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -21654,7 +21638,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/promise-helpers@npm:1.3.2, @whatwg-node/promise-helpers@npm:^1.0.0, @whatwg-node/promise-helpers@npm:^1.2.0, @whatwg-node/promise-helpers@npm:^1.2.1, @whatwg-node/promise-helpers@npm:^1.2.3, @whatwg-node/promise-helpers@npm:^1.2.4, @whatwg-node/promise-helpers@npm:^1.3.0, @whatwg-node/promise-helpers@npm:^1.3.2":
+"@whatwg-node/promise-helpers@npm:1.3.2, @whatwg-node/promise-helpers@npm:^1.0.0, @whatwg-node/promise-helpers@npm:^1.2.0, @whatwg-node/promise-helpers@npm:^1.2.1, @whatwg-node/promise-helpers@npm:^1.2.4, @whatwg-node/promise-helpers@npm:^1.3.0, @whatwg-node/promise-helpers@npm:^1.3.2":
   version: 1.3.2
   resolution: "@whatwg-node/promise-helpers@npm:1.3.2"
   dependencies:
@@ -29138,35 +29122,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-jit@npm:0.8.8":
-  version: 0.8.8
-  resolution: "graphql-jit@npm:0.8.8"
+"graphql-jit@npm:0.8.10":
+  version: 0.8.10
+  resolution: "graphql-jit@npm:0.8.10"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.2.0"
-    fast-json-stringify: "npm:^5.16.1"
+    fast-json-stringify: "npm:^7.0.1"
     generate-function: "npm:^2.3.1"
     lodash.memoize: "npm:^4.1.2"
     lodash.merge: "npm:4.6.2"
     lodash.mergewith: "npm:4.6.2"
   peerDependencies:
     graphql: ">=15"
-  checksum: 10c0/a7b92f4eb1ce74a4486fac74b6e583b12a9ebe6f341822e8017c81772519e3529806149346c01077ad09e94ecb04aab7438f67b9374a239bf93d210be588d3ca
+  checksum: 10c0/0702b24b8bf38219a6436e909c50ef1c68e9947684c7ca3b9e9dc6fd70e7ac54c3e2856b4579223215b0b4e285028b09b080ea8240ab09ecd0f59b7c85f33632
   languageName: node
   linkType: hard
 
-"graphql-jit@patch:graphql-jit@npm%3A0.8.8#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch":
-  version: 0.8.8
-  resolution: "graphql-jit@patch:graphql-jit@npm%3A0.8.8#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch::version=0.8.8&hash=90c32e"
+"graphql-jit@patch:graphql-jit@npm%3A0.8.10#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch":
+  version: 0.8.10
+  resolution: "graphql-jit@patch:graphql-jit@npm%3A0.8.10#~/.yarn/patches/graphql-jit-npm-0.8.7-3ae882ba75.patch::version=0.8.10&hash=90c32e"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.2.0"
-    fast-json-stringify: "npm:^5.16.1"
+    fast-json-stringify: "npm:^7.0.1"
     generate-function: "npm:^2.3.1"
     lodash.memoize: "npm:^4.1.2"
     lodash.merge: "npm:4.6.2"
     lodash.mergewith: "npm:4.6.2"
   peerDependencies:
     graphql: ">=15"
-  checksum: 10c0/6153213616cef1534c2be0ee9c1a6cd618339f568bc50be3a278767925bf934fe6dd7acc00e52be5a3a427eee220b27710c04c14c13ff70b677ed658300046fe
+  checksum: 10c0/7315f6041bca20403039786889156bca8d5a150c9ab42568c3ae332c4dc8822b6ebf0c6a72e0626933f63f60e1f86269b65059394d603e29ec32f372f263782e
   languageName: node
   linkType: hard
 
