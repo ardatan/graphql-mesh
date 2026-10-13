@@ -1,5 +1,21 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.108.3
+
+### Patch Changes
+
+- [#9683](https://github.com/ardatan/graphql-mesh/pull/9683)
+  [`e00c73b`](https://github.com/ardatan/graphql-mesh/commit/e00c73b01007a6d47a932183d59458fc995fd7df)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`http-cache-semantics@^4.3.0` ↗︎](https://www.npmjs.com/package/http-cache-semantics/v/4.3.0)
+    (from `^4.1.1`, in `dependencies`)
+- Updated dependencies
+  [[`4b92af0`](https://github.com/ardatan/graphql-mesh/commit/4b92af01c10d1d746dfb1623491282c169e03248),
+  [`4b92af0`](https://github.com/ardatan/graphql-mesh/commit/4b92af01c10d1d746dfb1623491282c169e03248)]:
+  - @graphql-mesh/types@0.107.3
+  - @graphql-mesh/utils@0.107.3
+
 ## 0.108.2
 
 ### Patch Changes
