@@ -37,7 +37,6 @@
   "dependencies": {
     "@envelop/core": "^5.5.1",
     "@envelop/extended-validation": "^7.1.1",
-    "@envelop/graphql-jit": "^11.1.1",
     "@graphql-mesh/cross-helpers": "^0.4.17",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.2",
@@ -49,7 +48,6 @@
     "@graphql-tools/wrap": "^11.2.1",
     "@whatwg-node/fetch": "^0.10.6",
     "@whatwg-node/promise-helpers": "^1.0.0",
-    "graphql-jit": "^0.8.8",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
