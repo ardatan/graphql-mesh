@@ -25,6 +25,12 @@ export interface BatchMapping {
   /** Keys are interchangeable lookup inputs, not a collection. Full-key args must round-trip. */
   withKeys(keys: string[]): Record<string, unknown>;
 }
+/** #9658: explicit source-specific alias semantics; no generic schema compatibility assumption. */
+export interface EntityProjection {
+  key: unknown;
+  encode(row: unknown): unknown;
+  decode(row: unknown): unknown;
+}
 export interface EntityRule {
   source: string;
   field: string;
@@ -38,8 +44,7 @@ export interface EntityRule {
   scope(request: ExecutionRequest): string | null;
   batch(args: Record<string, unknown>): BatchMapping | null;
   identity(row: unknown): string | null;
-  /** Explicit proof of complete identity groups, including missing keys. Missing proof bypasses caching.
-   * Paginated sources must reject saturated/truncated results, even if every returned key is valid. */
+  /** #9658: explicitly prove every requested identity's complete row group, including absences. Missing proof bypasses. */
   isComplete?(
     rows: readonly unknown[],
     requestedKeys: readonly string[],
@@ -51,6 +56,8 @@ export interface EntityRule {
   selection(field: FieldNode, schema: GraphQLSchema): boolean;
   /** Explicit contract: unique lookup keys, grouped rows, requested-key order. */
   ordering: 'key-grouped';
+  /** Optional proved projection normalization. Original execution/error paths stay unchanged. */
+  projection?(field: FieldNode, schema: GraphQLSchema): EntityProjection | null;
   mutationFields?: string[];
 }
 export interface EntityInvalidation {

@@ -146,9 +146,14 @@ export async function executeMixedEntityBatch({
     }
   };
   if (hits.every(Boolean)) {
-    const joined = plan.keys.flatMap((_, i) => entries[i]!.rows);
-    // #9658: prove the original combined result before omitting the canonical source root.
-    if (!plan.isComplete(joined)) return upstream(request);
+    let entityRows;
+    try {
+      entityRows = plan.keys.flatMap((_, i) => entries[i]!.rows.map(plan.project));
+    } catch {
+      metrics.cacheErrors++;
+      return upstream(request);
+    }
+    if (!plan.isComplete(entityRows, plan.keys)) return upstream(request);
     const live = await upstream(
       withRoots(
         request,
@@ -179,7 +184,6 @@ export async function executeMixedEntityBatch({
       return upstream(request);
     }
     if (!(await freshFences())) return upstream(request);
-    const entityRows = joined.map(plan.project);
     const data: Record<string, unknown> = {};
     for (const field of fields) {
       const key = field.alias?.value ?? field.name.value;
@@ -196,15 +200,19 @@ export async function executeMixedEntityBatch({
     result.errors?.length ||
     result.extensions ||
     !isObject(result.data) ||
-    !Array.isArray(result.data[plan.responseKey]) ||
-    !plan.isComplete(result.data[plan.responseKey])
+    !Array.isArray(result.data[plan.responseKey])
   )
     return result;
+  if (!plan.isComplete(result.data[plan.responseKey], plan.keys)) return result;
   const grouped = new Map(plan.keys.map(identity => [identity, [] as unknown[]]));
   for (const row of result.data[plan.responseKey]) {
     const identity = rule.identity(row);
     if (!identity || !grouped.has(identity)) return result;
-    grouped.get(identity)!.push(row);
+    try {
+      grouped.get(identity)!.push(plan.encode(row));
+    } catch {
+      return result;
+    }
   }
   await Promise.all(
     plan.keys.map(async (identity, i) => {

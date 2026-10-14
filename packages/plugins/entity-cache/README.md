@@ -80,6 +80,24 @@ dependent change adds bounded authenticated source-event invalidation. Raw exter
 never call `cache.invalidate` without authentication. The base API is for trusted in-process
 invalidation; source-specific CDC, retries and event fan-out remain adapters.
 
+## Optional projection normalization
+
+Default entries retain exact selection aliases and order. A trusted rule may optionally provide
+`projection(field, schema): EntityProjection | null`, with a stable logical `key`, `encode(row)` for
+canonical stored/coalesced rows and `decode(row)` for that caller's native response shape. Returning
+null bypasses. Only explicitly proved equivalent projections may share a key; preserve field
+sufficiency, arbitrary aliases, arguments/directives and resolved variable values. Selection
+admission, schema fingerprint, revision, normalized non-key arguments and authorization scope still
+partition entries. Bump the rule revision whenever the projection contract changes.
+
+Executor requests retain original aliases, so source errors, extensions and streams keep their
+native fallback. Callback input/output values are detached. Encoded rows are shared; each caller
+decodes independently, including coalesced misses. Completeness checks see reconstructed caller
+aliases with any injected identity retained; that hidden identity is stripped only for final output.
+Callback exceptions bypass to the original source result/request. This hook does not infer privacy
+or collapse arbitrary aliases. A consumer-owned non-Strapi Equipment fixture demonstrates an
+explicit instrumentation-alias policy; no Strapi adapter is required by this package.
+
 ## Validation
 
 The native Jest suites cover cache admission/isolation, exact shapes, scalar/default coercion,

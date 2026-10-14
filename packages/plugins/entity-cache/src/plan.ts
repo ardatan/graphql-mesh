@@ -73,7 +73,6 @@ export function planEntityBatch(
   schema: GraphQLSchema,
   rule: EntityRule,
 ) {
-  // #9658: a key-batch mapping alone cannot prove that pagination did not truncate identity groups.
   if (typeof rule.isComplete !== 'function') return null;
   const operations = request.document.definitions.filter(d => d.kind === Kind.OPERATION_DEFINITION);
   if (operations.length !== 1) return null;
@@ -90,6 +89,14 @@ export function planEntityBatch(
   if (field.directives?.length || operation.directives?.length) return null;
   // Fragment support requires an explicit authorization walker; conservatively bypass here.
   if (request.document.definitions.length !== 1 || !rule.selection(field, schema)) return null;
+  const projection = rule.projection?.(field, schema);
+  if (
+    rule.projection &&
+    (!projection ||
+      typeof projection.encode !== 'function' ||
+      typeof projection.decode !== 'function')
+  )
+    return null;
   const scope = rule.scope(request);
   if (typeof scope !== 'string' || !scope || scope.length > 256) return null;
   const definition = schema.getQueryType()?.getFields()[rule.field];
@@ -115,25 +122,21 @@ export function planEntityBatch(
     return null;
   }
   if (definition.args.some(arg => !safeInput(arg.type, args[arg.name]))) return null;
+  const mapping = rule.batch(args);
   const maxBatchSize = rule.maxBatchSize ?? 1000;
   if (!Number.isSafeInteger(maxBatchSize) || maxBatchSize <= 0) return null;
-  const mapping = rule.batch(args);
+  // #9658: duplicate inputs may produce duplicate rows; preserve the original source cardinality.
   if (
     !mapping ||
     !mapping.keys.length ||
     mapping.keys.length > maxBatchSize ||
     !mapping.keys.every(k => typeof k === 'string' && k.length > 0 && k.length <= 256) ||
-    // #9658: duplicate-key input may produce duplicate rows; preserve its original source semantics.
     new Set(mapping.keys).size !== mapping.keys.length
   )
     return null;
   const keys = [...new Set(mapping.keys)];
-  // #9658: a full-key rewrite must preserve native arguments, including its original result cap.
-  try {
-    if (stable(mapping.withKeys(keys)) !== stable(args)) return null;
-  } catch {
-    return null;
-  }
+  // #9658: an all-miss rewrite must preserve the original resolved arguments and fallback payload.
+  if (stable(mapping.withKeys(keys)) !== stable(args)) return null;
   const identityField = rule.identityField;
   const selectedIdentity =
     identityField &&
@@ -189,7 +192,7 @@ export function planEntityBatch(
     schema: fingerprint,
     revision: rule.revision,
     field: rule.field,
-    selection: print({ ...field, alias: undefined, arguments: [] }),
+    selection: projection ? projection.key : print({ ...field, alias: undefined, arguments: [] }),
     operationDirectives: operation.directives,
     variables: Object.fromEntries([...used].sort().map(k => [k, variables[k]])),
     args: mapping.withKeys([]),
@@ -243,30 +246,68 @@ export function planEntityBatch(
     // Retain raw selection inputs; re-coercing already coerced values can change enums and scalars.
     return { ...request, document, variables: request.variables };
   };
-  const project = (row: unknown) => {
-    const copy = cloneEntityValue(row);
+  // #9658: projection callbacks cannot discard an internal identity needed by completeness checks.
+  const retainIdentity = (original: unknown, copy: unknown) => {
+    if (!injectedIdentity) return copy;
+    if (
+      !original ||
+      typeof original !== 'object' ||
+      Array.isArray(original) ||
+      !Object.prototype.hasOwnProperty.call(original, injectedIdentity) ||
+      !copy ||
+      typeof copy !== 'object' ||
+      Array.isArray(copy)
+    )
+      throw new Error('missing injected entity identity');
+    const identity = (original as Record<string, unknown>)[injectedIdentity];
+    if (
+      Object.prototype.hasOwnProperty.call(copy, injectedIdentity) &&
+      stable((copy as Record<string, unknown>)[injectedIdentity]) !== stable(identity)
+    )
+      throw new Error('conflicting injected entity identity');
+    Object.defineProperty(copy, injectedIdentity, {
+      value: cloneEntityValue(identity),
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    });
+    return copy;
+  };
+  const encode = (row: unknown) =>
+    retainIdentity(
+      row,
+      cloneEntityValue(projection ? projection.encode(cloneEntityValue(row)) : row),
+    );
+  const decode = (row: unknown) =>
+    retainIdentity(
+      row,
+      cloneEntityValue(projection ? projection.decode(cloneEntityValue(row)) : row),
+    );
+  const finish = (copy: unknown) => {
     if (!injectedIdentity || !copy || typeof copy !== 'object' || Array.isArray(copy)) return copy;
     delete (copy as Record<string, unknown>)[injectedIdentity];
     return copy;
   };
-  const isComplete = (rows: unknown[], requestedKeys?: string[]): boolean => {
+  // #9658: a capped page proves neither missing identities nor the last included identity's full group.
+  const isComplete = (rows: readonly unknown[], requestedKeys: readonly string[]) => {
     try {
-      // A miss subset executes rewritten args; aggregate/original requests keep original args.
-      const effectiveArgs = requestedKeys ? mapping.withKeys(requestedKeys) : args;
-      return rule.isComplete!(rows, requestedKeys ?? keys, effectiveArgs) === true;
+      return rule.isComplete!(rows, requestedKeys, mapping.withKeys([...requestedKeys])) === true;
     } catch {
       return false;
     }
   };
   return {
-    isComplete,
+    encode,
     keys,
     scope,
     partition,
     selection,
     responseKey: field.alias?.value ?? rule.field,
     withKeys,
-    project,
+    decode,
+    finish,
+    project: (row: unknown) => finish(decode(row)),
     injectedIdentity,
+    isComplete,
   };
 }

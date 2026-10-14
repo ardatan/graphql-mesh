@@ -39,7 +39,7 @@ export function createEntityCache({
   maxPending?: number;
   now?: () => number;
 }) {
-  // #9658: reject unbounded coalescing and timer overflow before installing an executor hook.
+  // #9658: reject unbounded coalescing and timer overflow before installing the executor hook.
   if (!Number.isSafeInteger(maxPending) || maxPending < 0)
     throw new Error('invalid entity maxPending');
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || timeoutMs > 2_147_483_647)
@@ -154,12 +154,17 @@ export function createEntityCache({
         await fence();
         try {
           const result = await executor(request);
+          // #9658: an executor can commit eagerly before returning a stream; fence before any iteration.
+          await fence();
           if (iterable(result)) {
-            // #9658: lazy mutation streams commit during iteration, not when the iterator is created.
-            const iterator = result[Symbol.asyncIterator]();
-            // #9658: execution or iterator acquisition may commit eagerly before iteration begins.
-            await fence();
-            // An explicit proxy also forwards return/throw before the first next() call.
+            // #9658: lazy mutations commit during iteration; forward cancellation even before first next.
+            let iterator: AsyncIterator<unknown, unknown, unknown>;
+            // #9658: iterator acquisition itself can commit synchronously, including a throwing factory.
+            try {
+              iterator = result[Symbol.asyncIterator]();
+            } finally {
+              await fence();
+            }
             return {
               [Symbol.asyncIterator]() {
                 return this;
@@ -191,7 +196,6 @@ export function createEntityCache({
               },
             };
           }
-          await fence();
           return result;
         } catch (error) {
           await fence();
@@ -302,24 +306,27 @@ export function createEntityCache({
             !originalResult ||
             originalResult.errors?.length ||
             originalResult.extensions ||
-            !Array.isArray(originalResult.data?.[plan.responseKey]) ||
-            // #9658: saturation can hide missing keys or truncate a positive identity group.
-            !plan.isComplete(
-              originalResult.data[plan.responseKey],
-              owned.map(o => o.identity),
-            )
+            !Array.isArray(originalResult.data?.[plan.responseKey])
           ) {
             owned.forEach(o => o.resolve(FALLBACK));
           } else {
             const grouped = new Map(owned.map(o => [o.identity, [] as unknown[]]));
-            let complete = true;
+            let complete = plan.isComplete(
+              originalResult.data[plan.responseKey],
+              owned.map(o => o.identity),
+            );
             for (const row of originalResult.data[plan.responseKey] as unknown[]) {
               const identity = rule.identity(row);
               if (!identity || !grouped.has(identity)) {
                 complete = false;
                 break;
               }
-              grouped.get(identity)!.push(row);
+              try {
+                grouped.get(identity)!.push(plan.encode(row));
+              } catch {
+                complete = false;
+                break;
+              }
             }
             if (!complete) owned.forEach(o => o.resolve(FALLBACK));
             else {
@@ -377,30 +384,33 @@ export function createEntityCache({
         return pass();
       }
       resolved.forEach(([identity, value]) => rows.set(identity, value as unknown[]));
-      const joined = plan.keys.flatMap(identity => rows.get(identity)!);
-      // #9658: complete per-key entries can collectively exceed the original request's result limit.
-      if (!plan.isComplete(joined)) return pass();
+      let fresh: boolean;
       try {
         const latest = await bounded(() => store.snapshot(plan.partition, plan.keys));
-        if (
-          latest.length !== stamps.length ||
-          latest.some((stamp, i) => typeof stamp !== 'string' || stamp !== stamps[i])
-        )
-          return await pass();
+        fresh =
+          latest.length === stamps.length &&
+          latest.every((stamp, i) => typeof stamp === 'string' && stamp === stamps[i]);
       } catch {
         metrics.cacheErrors++;
         return pass();
       }
-      return {
-        data: {
-          [plan.responseKey]: joined.map(plan.project),
-        },
-      } as ExecutionResult<any>;
+      if (!fresh) return pass();
+      const resultRows = plan.keys.flatMap(identity => rows.get(identity)!);
+      let decodedRows: unknown[];
+      try {
+        // #9658: completeness sees caller aliases with injected identity intact; hide identity only afterward.
+        decodedRows = resultRows.map(plan.decode);
+      } catch {
+        metrics.cacheErrors++;
+        return pass();
+      }
+      // #9658: original executor failures must escape rather than be retried as projection failures.
+      if (!plan.isComplete(decodedRows, plan.keys)) return pass();
+      return { data: { [plan.responseKey]: decodedRows.map(plan.finish) } } as ExecutionResult<any>;
     };
   const plugin: GatewayPlugin = {
     onSubgraphExecute({ subgraphName, subgraph, executor, setExecutor }) {
-      // #9658: Hive may resolve an older GraphQL Tools info type; the cache forwards info
-      // opaquely and does not require newer getAbortSignal/getAsyncHelpers methods.
+      // #9658: Hive's older info type is forwarded opaquely across GraphQL Tools versions.
       setExecutor(wrap(executor, subgraphName, subgraph) as typeof executor);
     },
   };

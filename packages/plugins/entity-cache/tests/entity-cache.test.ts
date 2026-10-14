@@ -469,7 +469,8 @@ describe('generic delegated entity cache', () => {
     const stream: any = await f.wrapped({ document: parse('mutation { updateProduct { sku } }') });
     await stream.return();
     expect(closed).toBe(true);
-    expect(f.cache.metrics.invalidations).toBe(3);
+    // #9658: executor completion and iterator acquisition each fence before per-operation fences.
+    expect(f.cache.metrics.invalidations).toBe(4);
   });
 
   it('fences lazy mutation commits after each payload and preserves cancellation', async () => {
@@ -502,7 +503,8 @@ describe('generic delegated entity cache', () => {
     expect(data(await f.wrapped(request(['a']))).products[0].name).toBe('Committed');
     await stream.return();
     expect(closed).toBe(true);
-    expect(f.cache.metrics.invalidations).toBe(4);
+    // #9658: executor completion and iterator acquisition each fence before per-operation fences.
+    expect(f.cache.metrics.invalidations).toBe(5);
   });
 
   it('fences a lazy mutation iterator that commits and then fails', async () => {
@@ -520,7 +522,8 @@ describe('generic delegated entity cache', () => {
     await f.wrapped(request(['a']));
     await expect(stream.next()).rejects.toThrow('stream failed');
     expect(data(await f.wrapped(request(['a']))).products[0].name).toBe('Committed');
-    expect(f.cache.metrics.invalidations).toBe(3);
+    // #9658: executor completion and iterator acquisition each fence before per-operation fences.
+    expect(f.cache.metrics.invalidations).toBe(4);
   });
 
   it('fences product GraphQL writes before and after in shared storage', async () => {
