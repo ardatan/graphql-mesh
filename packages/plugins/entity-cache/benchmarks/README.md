@@ -12,9 +12,10 @@ node benchmarks/reproduce.cjs
 ```
 
 The development host runs that command through `/home/ltadmin/bin/cpu-slot.sh`. In a normal upstream
-checkout the existing root native-preview compiler is used. No endpoint, credentials, database or
-live application is required. Source code, public canonical operation projections and seeded arrival
-distributions are included. The runner writes its own
+checkout the existing root native-preview compiler is used. The archived legacy fixture carries its
+type-only store contract locally, so no other workspace build is required. No endpoint, credentials,
+database or live application is required. Source code, public canonical operation projections and
+seeded arrival distributions are included. The runner writes its own
 `concurrent-4614-3600-1-upstream-reproduction.json` here.
 
 The workload models 4,614 shared grocery SKUs, 500 vendors with 300 products each, three

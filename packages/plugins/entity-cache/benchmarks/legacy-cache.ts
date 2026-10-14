@@ -1,6 +1,14 @@
 import { createHash } from 'node:crypto';
 import { Kind, print, visit, type DocumentNode, type FieldNode, type ValueNode } from 'graphql';
-import type { KeyValueCache } from '@graphql-mesh/types';
+
+// #9658: mirror the frozen baseline's type-only store contract so this replay needs no unbuilt workspace.
+// This matches upstream packages/legacy/types/src/index.ts; executable legacy behavior is unchanged.
+interface KeyValueCache<V = any> {
+  get(key: string): V | undefined | Promise<V | undefined>;
+  set(key: string, value: V, options?: { ttl?: number | null }): void | Promise<void>;
+  delete(key: string): boolean | Promise<boolean>;
+  getKeysByPrefix(prefix: string): string[] | Promise<string[]>;
+}
 
 /**
  * #1157: per SKU cache for the Strapi product joins (internal gateway only).
