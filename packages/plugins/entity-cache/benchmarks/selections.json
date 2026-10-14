@@ -1,0 +1,50 @@
+{
+  "pin": "44e5bf5336cae28fcc4cfd89402f7c644e214584",
+  "selections": {
+    "shop": {
+      "file": "graphql-operations/VendureShop/SearchProducts.graphql",
+      "originalDelegateSelection": "strapi_products {\n  documentId\n  productId\n  sku\n  name\n  brand\n  size\n  regularPrice\n  department\n  category\n  storage\n  isOrganic\n  isGlutenFree\n  isKosher\n  isHalal\n  isVegetarian\n  isVegan\n  isActive\n  countryOfOrigin\n  description\n  ingredients\n  featuredImage {\n    name\n    alternativeText\n    url\n    size\n    width\n    height\n    formats\n  }\n  images(pagination: {limit: 10}) {\n    documentId\n    url\n    name\n    alternativeText\n    size\n    width\n    height\n    formats\n  }\n}",
+      "effectiveSelection": "{\n  documentId\n  productId\n  sku\n  name\n  brand\n  size\n  regularPrice\n  department\n  category\n  storage\n  isOrganic\n  isGlutenFree\n  isKosher\n  isHalal\n  isVegetarian\n  isVegan\n  isActive\n  countryOfOrigin\n  description\n  ingredients\n  featuredImage {\n    name\n    alternativeText\n    url\n    size\n    width\n    height\n    formats\n  }\n  images(pagination: {limit: 10}) {\n    documentId\n    url\n    name\n    alternativeText\n    size\n    width\n    height\n    formats\n  }\n}",
+      "identityInjected": false,
+      "selectionHash": "2beb3abd001c4c97cc13ab845ada0b2e1c30edc798a484bcd365763af57422f8",
+      "batch": 24,
+      "weight": 0.4
+    },
+    "cart": {
+      "file": "graphql-operations/VendureShop/CartOrder.graphql",
+      "originalDelegateSelection": "strapi_products {\n  documentId\n  sku\n  name\n  brand\n  size\n  department\n  regularPrice\n  featuredImage {\n    name\n    url\n    formats\n  }\n}",
+      "effectiveSelection": "{\n  documentId\n  sku\n  name\n  brand\n  size\n  department\n  regularPrice\n  featuredImage {\n    name\n    url\n    formats\n  }\n}",
+      "identityInjected": false,
+      "selectionHash": "c724992f2da35d6e471ce9fdc9a2b9f53ca7491883b64d5ecdc1d03a3654ed7f",
+      "batch": 6,
+      "weight": 0.2
+    },
+    "order": {
+      "file": "graphql-operations/VendureShop/CustomerOrderDetails.graphql",
+      "originalDelegateSelection": "strapi_products {\n  documentId\n  sku\n  name\n  brand\n  size\n  department\n  regularPrice\n  featuredImage {\n    name\n    url\n    formats\n  }\n}",
+      "effectiveSelection": "{\n  documentId\n  sku\n  name\n  brand\n  size\n  department\n  regularPrice\n  featuredImage {\n    name\n    url\n    formats\n  }\n}",
+      "identityInjected": false,
+      "selectionHash": "c724992f2da35d6e471ce9fdc9a2b9f53ca7491883b64d5ecdc1d03a3654ed7f",
+      "batch": 6,
+      "weight": 0.15
+    },
+    "inventory": {
+      "file": "graphql-operations/VendureAdmin/Inventory2SearchProducts.graphql",
+      "originalDelegateSelection": "strapi_products {\n  documentId\n  sku\n  name\n  brand\n  size\n  regularPrice\n  department\n  category\n  isSnapEligible\n  featuredImage {\n    url\n    formats\n  }\n}",
+      "effectiveSelection": "{\n  documentId\n  sku\n  name\n  brand\n  size\n  regularPrice\n  department\n  category\n  isSnapEligible\n  featuredImage {\n    url\n    formats\n  }\n}",
+      "identityInjected": false,
+      "selectionHash": "0654852020cff08b2b62d0d8b912e1cda8c3e19e74d9ce15fddbb55b02ce422c",
+      "batch": 25,
+      "weight": 0.15
+    },
+    "pos": {
+      "file": "app/services/pos-adapters.server.ts",
+      "originalDelegateSelection": "strapi_products {\n  name\n  brand\n  size\n  department\n  featuredImage {\n    url\n    formats\n  }\n}",
+      "effectiveSelection": "{\n  name\n  brand\n  size\n  department\n  featuredImage {\n    url\n    formats\n  }\n  sku\n}",
+      "identityInjected": true,
+      "selectionHash": "136ec7d68331b3decb1fda34b165847da5e6ed778cef0611689fde3efd1f80b2",
+      "batch": 8,
+      "weight": 0.1
+    }
+  }
+}
