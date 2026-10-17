@@ -207,9 +207,10 @@ export async function executeMixedEntityBatch({
   // #9658: preserve row-array inference under the monorepo's nullable compiler settings.
   const grouped = new Map<string, unknown[]>(plan.keys.map(identity => [identity, []]));
   for (const row of result.data[plan.responseKey]) {
-    const identity = rule.identity(row);
-    if (!identity || !grouped.has(identity)) return result;
     try {
+      // #9658: cache callback errors never replace the complete live/private result.
+      const identity = rule.identity(row);
+      if (!identity || !grouped.has(identity)) return result;
       grouped.get(identity)!.push(plan.encode(row));
     } catch {
       return result;
