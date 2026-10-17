@@ -11,8 +11,7 @@ From this package directory after a Bob build:
 node benchmarks/reproduce.cjs
 ```
 
-The development host runs that command through `/home/ltadmin/bin/cpu-slot.sh`. In a normal upstream
-checkout the existing root native-preview compiler is used. The archived legacy fixture carries its
+The runner uses the repository's native-preview compiler. The archived legacy fixture carries its
 type-only store contract locally, so no other workspace build is required. No endpoint, credentials,
 database or live application is required. Source code, public canonical operation projections and
 seeded arrival distributions are included. The runner writes its own
