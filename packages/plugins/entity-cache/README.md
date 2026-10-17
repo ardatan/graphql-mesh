@@ -157,3 +157,7 @@ connection/sort/direct-ID shapes and unsupported projections bypass until an exp
 exists. Mutation fields must be registered; direct SQL/source writes need the event API or TTL
 recovery. Entity keys are not invalidated across independent regional Redis stores without
 authenticated fan-out.
+
+Webhook authenticators that inspect or verify the body must read `request.clone()`. The original
+Request body belongs to the bounded parser. A consumed or locked original body produces an empty 400
+response and dispatches no invalidation.

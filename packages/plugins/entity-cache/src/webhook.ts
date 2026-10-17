@@ -10,6 +10,7 @@ export function createEntityInvalidationWebhook({
   maxBytes = 64 * 1024,
 }: {
   invalidate(input: EntityInvalidation): Promise<void>;
+  /** #9658: body-reading authenticators must consume request.clone(), preserving the original. */
   authenticate(request: Request): boolean | Promise<boolean>;
   path?: string;
   maxBytes?: number;
@@ -38,7 +39,14 @@ export function createEntityInvalidationWebhook({
         reply(413);
         return;
       }
-      const reader = request.body?.getReader();
+      let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+      try {
+        // #9658: consumed or locked original bodies follow the fixed invalid-input response.
+        reader = request.body?.getReader();
+      } catch {
+        reply(400);
+        return;
+      }
       if (!reader) {
         reply(400);
         return;
