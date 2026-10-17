@@ -60,9 +60,10 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "@graphql-tools/utils": "12.0.4",
-    "graphql": "16.14.0",
-    "ioredis": "5.11.1"
+    "@graphql-hive/gateway-runtime": "^2.10.7",
+    "@graphql-tools/utils": "^12.0.4",
+    "graphql": "^16.0.0",
+    "ioredis": "^5.11.1"
   },
   "peerDependenciesMeta": {
     "ioredis": {
@@ -81,6 +82,7 @@
     "@graphql-tools/schema": "10.1.3",
     "@graphql-tools/stitch": "10.3.2",
     "@graphql-tools/stitching-directives": "4.1.1",
+    "@graphql-tools/utils": "12.0.4",
     "graphql": "16.14.0",
     "ioredis": "5.11.1"
   },

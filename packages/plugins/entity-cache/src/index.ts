@@ -146,9 +146,26 @@ export function createEntityCache({
         const fence = () =>
           Promise.all(
             relevant.map(async rule => {
-              const scope = rule.scope(request);
+              let scope: string | null;
+              try {
+                scope = rule.scope(request);
+              } catch {
+                // #9658: callbacks cannot prevent or obscure the original mutation/error.
+                metrics.cacheErrors++;
+                bypassUntil = Math.max(
+                  bypassUntil,
+                  now() + Math.max(...rules.map(r => r.ttlSeconds)) * 1000,
+                );
+                return;
+              }
               if (scope)
-                await invalidate({ source, entityType: rule.entityType, scope }).catch(() => {});
+                await invalidate({ source, entityType: rule.entityType, scope }).catch(() => {
+                  // #9658: validation can reject before the store's existing failed-fence guard.
+                  bypassUntil = Math.max(
+                    bypassUntil,
+                    now() + Math.max(...rules.map(r => r.ttlSeconds)) * 1000,
+                  );
+                });
             }),
           );
         await fence();
@@ -316,12 +333,13 @@ export function createEntityCache({
               owned.map(o => o.identity),
             );
             for (const row of originalResult.data[plan.responseKey] as unknown[]) {
-              const identity = rule.identity(row);
-              if (!identity || !grouped.has(identity)) {
-                complete = false;
-                break;
-              }
               try {
+                // #9658: preserve successful source results when identity callbacks fail.
+                const identity = rule.identity(row);
+                if (!identity || !grouped.has(identity)) {
+                  complete = false;
+                  break;
+                }
                 grouped.get(identity)!.push(plan.encode(row));
               } catch {
                 complete = false;
