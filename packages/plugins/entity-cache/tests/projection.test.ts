@@ -1,4 +1,5 @@
 import { buildSchema, execute, GraphQLError, Kind, parse } from 'graphql';
+import type { Executor } from '@graphql-tools/utils';
 import { describe, expect, it, jest } from '@jest/globals';
 import { createEntityCache, planEntityBatch } from '../src/index.js';
 import { createMemoryEntityStore } from '../src/memory-store.js';
@@ -49,14 +50,15 @@ function fixture(overrides: any = {}) {
   );
   const a = createEntityCache({ store, rules: [{ ...rule, ...overrides }] }),
     b = createEntityCache({ store, rules: [{ ...rule, ...overrides }] });
+  // #9658: schema-specific mocks retain their call assertions at the generic executor boundary.
   return {
     store,
     writes,
     source,
     a,
     b,
-    first: a.wrap(source, 'Strapi', schema),
-    second: b.wrap(source, 'Strapi', schema),
+    first: a.wrap(source as Executor, 'Strapi', schema),
+    second: b.wrap(source as Executor, 'Strapi', schema),
   };
 }
 
@@ -145,7 +147,8 @@ describe('proved Strapi instrumentation projection reuse', () => {
                   yield { data: { products: [] } };
                 },
               };
-      f.source.mockResolvedValueOnce(result);
+      // #9658: preserve async fallback for a fixture whose normal execution may also be synchronous.
+      f.source.mockImplementationOnce(async () => result);
       expect(await f.first(req)).toBe(result);
       expect(f.writes).not.toHaveBeenCalled();
       expect(f.source).toHaveBeenCalledTimes(1);
@@ -385,7 +388,7 @@ describe('non-Strapi optional projection contract', () => {
         ...(normalized ? { projection: instrumentationProjection } : {}),
       };
       const cache = createEntityCache({ store: createMemoryEntityStore(), rules: [rule] });
-      const wrap = cache.wrap(source, 'Assets', schema);
+      const wrap = cache.wrap(source as Executor, 'Assets', schema);
       const internal = {
         document: parse(
           '{equipmentMetadata(tags:["T23"]){assetTag name __responseCacheTypeName:__typename __responseCacheId:documentId}}',

@@ -1,4 +1,5 @@
 import { buildSchema, execute, parse, type ExecutionResult } from 'graphql';
+import type { Executor } from '@graphql-tools/utils';
 import { describe, expect, it, jest } from '@jest/globals';
 import { createEntityCache, type EntityRule } from '../src/index.js';
 import { createMemoryEntityStore } from '../src/memory-store.js';
@@ -60,7 +61,8 @@ function fixture(
     isComplete: proof,
   };
   const cache = createEntityCache({ store: createMemoryEntityStore(), rules: [rule] });
-  const wrapped = cache.wrap(executor, 'Equipment', schema);
+  // #9658: this schema-backed fixture has a concrete result shape at the generic executor boundary.
+  const wrapped = cache.wrap(executor as Executor, 'Equipment', schema);
   const native = async (request: ReturnType<typeof req>) =>
     execute({
       schema,
