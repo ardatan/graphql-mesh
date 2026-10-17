@@ -2,13 +2,20 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { randomUUID } from 'node:crypto';
 import { hash } from './plan.js';
-import { cloneEntityValue, ENTITY_FENCE_TTL_SECONDS, serializeEntityEntry } from './policy.js';
+import {
+  cloneEntityValue,
+  ENTITY_FENCE_TTL_SECONDS,
+  ENTITY_REPLAY_TTL_SECONDS,
+  serializeEntityEntry,
+} from './policy.js';
 import type { EntityEntry, EntityStore } from './types.js';
 
 interface Fence {
   incarnation: string;
   generation: number;
+  version: number;
   expiresAt: number;
+  events: Map<string, number>;
 }
 
 // #9658: bounded reference store. Expired/evicted fences receive random incarnations, like Redis.
@@ -29,7 +36,13 @@ export function createMemoryEntityStore(
   const fence = (key: string): Fence => {
     let value = fences.get(key);
     if (!value || value.expiresAt <= now())
-      value = { incarnation: randomUUID(), generation: 0, expiresAt: 0 };
+      value = {
+        incarnation: randomUUID(),
+        generation: 0,
+        version: -1,
+        expiresAt: 0,
+        events: new Map(),
+      };
     value.expiresAt = Math.max(value.expiresAt, now() + fenceTtlSeconds * 1000);
     fences.delete(key);
     fences.set(key, value);
@@ -66,9 +79,17 @@ export function createMemoryEntityStore(
       cap(entries);
       return true;
     },
-    async invalidate(partition, identities) {
+    async invalidate(partition, identities, event) {
       for (const identity of identities ?? [null]) {
         const current = fence(identity === null ? partition : `${partition}:${hash(identity)}`);
+        if (event) {
+          for (const [id, expiry] of current.events) if (expiry <= now()) current.events.delete(id);
+          if (current.events.has(event.id)) continue;
+          current.events.set(event.id, now() + ENTITY_REPLAY_TTL_SECONDS * 1000);
+          current.version = Math.max(current.version, event.version);
+          while (current.events.size > 1000)
+            current.events.delete(current.events.keys().next().value!);
+        }
         current.generation++;
       }
     },

@@ -144,5 +144,39 @@ import { createRedisEntityStore, ENTITY_FENCE_TTL_SECONDS } from '../src/redis-s
       ).toBe('rejected');
       expect(await client.exists(`${namespace}:oversize`)).toBe(0);
     });
+    it('suppresses exact event IDs across clients but invalidates equal and older distinct events', async () => {
+      const peer = createRedisEntityStore(other, namespace);
+      await store.invalidate(partition, [identity], { id: 'new', version: 5 });
+      const newer = (await peer.snapshot(partition, [identity]))[0];
+      await peer.invalidate(partition, [identity], { id: 'new', version: 5 });
+      expect((await store.snapshot(partition, [identity]))[0]).toBe(newer);
+      await peer.invalidate(partition, [identity], { id: 'equal', version: 5 });
+      const equal = (await store.snapshot(partition, [identity]))[0];
+      expect(equal).not.toBe(newer);
+      await store.invalidate(partition, [identity], { id: 'older', version: 3 });
+      expect((await peer.snapshot(partition, [identity]))[0]).not.toBe(equal);
+      expect(await client.hget(entityKey, 'version')).toBe('5');
+      expect(
+        await store.write(
+          'event-late',
+          { rows: ['stale'], expiresAt: Date.now() + 60000 },
+          60,
+          partition,
+          identity,
+          newer,
+        ),
+      ).toBe(false);
+    });
+    it('bounds replay markers independently and reaccepts an expired replay safely', async () => {
+      await store.invalidate(partition, [identity], { id: 'expiry', version: 6 });
+      const replay = `${entityKey}:event:${hash('expiry')}`;
+      expect(await client.ttl(replay)).toBeGreaterThan(0);
+      expect(await client.ttl(replay)).toBeLessThanOrEqual(3600);
+      const before = (await store.snapshot(partition, [identity]))[0];
+      await client.pexpire(replay, 1);
+      await new Promise(resolve => setTimeout(resolve, 10));
+      await store.invalidate(partition, [identity], { id: 'expiry', version: 6 });
+      expect((await store.snapshot(partition, [identity]))[0]).not.toBe(before);
+    });
   },
 );

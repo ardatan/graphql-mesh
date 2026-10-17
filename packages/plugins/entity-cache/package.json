@@ -56,6 +56,20 @@
         "types": "./dist/typings/redis-store.d.ts",
         "default": "./dist/esm/redis-store.js"
       }
+    },
+    "./webhook": {
+      "require": {
+        "types": "./dist/typings/webhook.d.cts",
+        "default": "./dist/cjs/webhook.js"
+      },
+      "import": {
+        "types": "./dist/typings/webhook.d.ts",
+        "default": "./dist/esm/webhook.js"
+      },
+      "default": {
+        "types": "./dist/typings/webhook.d.ts",
+        "default": "./dist/esm/webhook.js"
+      }
     }
   },
   "typings": "dist/typings/index.d.ts",

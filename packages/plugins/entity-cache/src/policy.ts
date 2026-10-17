@@ -1,8 +1,9 @@
 import type { EntityEntry } from './types.js';
 
-// #9658: fallback retention is bounded; fence history outlasts every admitted row.
+// #9658: event invalidation permits day-long rows; bounded history outlasts every admitted row.
 export const MAX_ENTITY_TTL_SECONDS = 86400;
 export const ENTITY_FENCE_TTL_SECONDS = MAX_ENTITY_TTL_SECONDS + 3600;
+export const ENTITY_REPLAY_TTL_SECONDS = 3600;
 export const MAX_ENTITY_ENTRY_BYTES = 64 * 1024;
 export function serializeEntityEntry(entry: EntityEntry): string | null {
   const value = JSON.stringify(entry);

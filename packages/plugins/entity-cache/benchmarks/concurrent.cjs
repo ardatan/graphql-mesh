@@ -284,6 +284,7 @@ async function simulate(mode, ttl, f) {
             entityType: 'Product',
             scope: 'public-catalog',
             identities: [e.sku],
+            event: { id: e.id, version: e.version },
           });
     });
   for (let time = 0; time <= DURATION * 1000; time += 10000)

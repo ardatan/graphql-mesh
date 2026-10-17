@@ -7,16 +7,19 @@ import {
 } from 'graphql';
 import type { GatewayPlugin } from '@graphql-hive/gateway-runtime';
 import type { Executor } from '@graphql-tools/utils';
+import { EntityInvalidationInputError, validateEntityInvalidation } from './events.js';
 import { executeMixedEntityBatch } from './mixed.js';
 import { hash, planEntityBatch } from './plan.js';
 import { MAX_ENTITY_TTL_SECONDS } from './policy.js';
 import type { EntityCacheMetrics, EntityInvalidation, EntityRule, EntityStore } from './types.js';
 
+export { EntityInvalidationInputError } from './events.js';
 export type * from './types.js';
 export { planEntityBatch } from './plan.js';
 export {
   MAX_ENTITY_TTL_SECONDS,
   ENTITY_FENCE_TTL_SECONDS,
+  ENTITY_REPLAY_TTL_SECONDS,
   MAX_ENTITY_ENTRY_BYTES,
 } from './policy.js';
 
@@ -93,23 +96,17 @@ export function createEntityCache({
     }
   };
   const invalidate = async (input: EntityInvalidation) => {
+    validateEntityInvalidation(input);
     if (!rules.some(r => r.source === input.source && r.entityType === input.entityType))
-      throw new Error('unknown entity source or type');
-    if (
-      typeof input.scope !== 'string' ||
-      !input.scope ||
-      input.scope.length > 256 ||
-      (input.identities !== undefined &&
-        (!Array.isArray(input.identities) ||
-          !input.identities.length ||
-          input.identities.length > 1000 ||
-          !input.identities.every(k => typeof k === 'string' && k.length > 0 && k.length <= 256)))
-    )
-      throw new Error('invalid entity batch');
+      throw new EntityInvalidationInputError('unknown entity source or type');
     const partition = hash([input.source, input.entityType, input.scope]);
     try {
       await bounded(() =>
-        store.invalidate(partition, input.identities && [...new Set(input.identities)]),
+        store.invalidate(
+          partition,
+          input.identities && [...new Set(input.identities)],
+          input.event,
+        ),
       );
       metrics.invalidations++;
     } catch (error) {

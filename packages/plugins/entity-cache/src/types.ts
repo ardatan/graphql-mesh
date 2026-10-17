@@ -13,12 +13,16 @@ export interface EntityStore {
     identity: string,
     stamp: string,
   ): Promise<boolean | 'rejected'>;
-  invalidate(partition: string, identities?: string[]): Promise<void>;
+  invalidate(partition: string, identities?: string[], event?: EntityEvent): Promise<void>;
 }
 
 export interface EntityEntry {
   rows: unknown[];
   expiresAt: number;
+}
+export interface EntityEvent {
+  id: string;
+  version: number;
 }
 export interface BatchMapping {
   keys: string[];
@@ -65,6 +69,7 @@ export interface EntityInvalidation {
   entityType: string;
   scope: string;
   identities?: string[];
+  event?: EntityEvent;
 }
 export interface EntityCacheMetrics {
   hits: number;

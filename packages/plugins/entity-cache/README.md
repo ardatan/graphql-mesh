@@ -75,10 +75,53 @@ is omitted from the source document and restored in the result. Partial hits and
 results refetch the original full request to preserve error paths, null bubbling and caller-private
 values. The plugin does not cache a complete operation or private roots.
 
-This first change provides read caching, mutation fencing and generic invalidation plumbing. A
-dependent change adds bounded authenticated source-event invalidation. Raw external requests must
-never call `cache.invalidate` without authentication. The base API is for trusted in-process
-invalidation; source-specific CDC, retries and event fan-out remain adapters.
+Source-event invalidation is a separate transport adapter. Events identify the configured source,
+entity type, scope, identities and a stable source event ID. Only an exact event-ID replay is
+ignored; a distinct older or equal-version event still fences the rows. Version is observational
+metadata, not a reason to preserve a possibly stale cache row. Replay markers retain one hour; a
+later replay safely causes an extra invalidation. One event batch is limited to 1,000 identities.
+Global trusted invalidation is available without event metadata.
+
+```ts
+import { createEntityInvalidationWebhook } from '@graphql-mesh/plugin-entity-cache/webhook'
+
+const events = createEntityInvalidationWebhook({
+  invalidate: cache.invalidate,
+  authenticate: request => verifySourceCredentials(request)
+})
+// defineConfig({ plugins: () => [cache.plugin, events] });
+```
+
+The adapter requires an application authentication callback, authenticates before reading a body,
+and accepts POST on `/internal/entity-invalidate`. A body is limited to 64 KiB including streamed
+input. A valid request resembles:
+
+```json
+{
+  "v": 1,
+  "source": "Assets",
+  "entityType": "Equipment",
+  "scope": "public-metadata",
+  "identities": ["T23"],
+  "event": { "id": "source-change-42", "version": 42 }
+}
+```
+
+Success returns 204, malformed/unknown batches 400, failed authentication 401, unsupported methods
+405, oversized bodies 413, and storage failures 503. Applications own credential verification, rate
+limits, delivery retries and fan-out to every independently cached node. A successful authentication
+callback grants authority for all registered scopes in this cache instance. A shared multi-producer
+credential is insufficient for scope isolation. For producer-specific authority, restrict
+authentication to one fixed producer and supply an `invalidate` wrapper with a fixed
+source/type/scope allowlist for that producer, or use separate endpoints/cache instances. The
+wrapper receives no request principal. Sharing mutable authentication state across concurrent
+requests is unsafe. Dynamic per-request target authorization requires an application-owned
+transport. The cache validates configured source/type membership; it does not infer authorization
+from a caller-provided scope. Authentication service exceptions return an empty 503 response.
+
+Missing deliveries can leave a row stale until its remaining TTL expires. Source-specific Vendure
+SQL queues, Strapi hooks and change-data capture remain external adapters; neither framework is a
+runtime dependency.
 
 ## Optional projection normalization
 
@@ -111,6 +154,6 @@ delete that namespace.
 Node 20 or later is required by crypto and the Redis adapter. Redis Cluster scripts spanning hash
 slots and edge-runtime storage are not supported by this adapter. Collection queries,
 connection/sort/direct-ID shapes and unsupported projections bypass until an explicit safe rule
-exists. Mutation fields must be registered; direct SQL/source writes need the dependent event API or
-TTL recovery. Entity keys are not invalidated across independent regional Redis stores without
+exists. Mutation fields must be registered; direct SQL/source writes need the event API or TTL
+recovery. Entity keys are not invalidated across independent regional Redis stores without
 authenticated fan-out.

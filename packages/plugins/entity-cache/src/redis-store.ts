@@ -3,12 +3,16 @@
 import { randomUUID } from 'node:crypto';
 import type Redis from 'ioredis';
 import { hash } from './plan.js';
-import { ENTITY_FENCE_TTL_SECONDS, serializeEntityEntry } from './policy.js';
+import {
+  ENTITY_FENCE_TTL_SECONDS,
+  ENTITY_REPLAY_TTL_SECONDS,
+  serializeEntityEntry,
+} from './policy.js';
 import type { EntityEntry, EntityStore } from './types.js';
 
 // #9658: random incarnations prevent ABA when allkeys-lru evicts a fence while retaining old rows.
 // Fence/version/replay history is bounded. Missing history causes safe extra invalidation, never reuse.
-export { ENTITY_FENCE_TTL_SECONDS } from './policy.js';
+export { ENTITY_FENCE_TTL_SECONDS, ENTITY_REPLAY_TTL_SECONDS } from './policy.js';
 const SNAPSHOT = `local global = redis.call('GET', KEYS[1])
 if not global then global = ARGV[1]; redis.call('SET', KEYS[1], global) end
 redis.call('EXPIRE', KEYS[1], ARGV[#ARGV])
@@ -29,10 +33,18 @@ redis.call('EXPIRE', KEYS[1], ARGV[4])
 redis.call('EXPIRE', KEYS[2], ARGV[4])
 redis.call('SET', KEYS[3], ARGV[2], 'PX', ARGV[3])
 return 1`;
-const INVALIDATE = `for i=1,#KEYS do
-  if not redis.call('HGET', KEYS[i], 'incarnation') then redis.call('HSET', KEYS[i], 'incarnation', ARGV[i + 1]) end
-  redis.call('HINCRBY', KEYS[i], 'generation', 1)
-  redis.call('EXPIRE', KEYS[i], ARGV[1])
+const INVALIDATE = `for i=2,#KEYS,2 do
+  local accepted = true
+  if ARGV[1] ~= '' then
+    local version = tonumber(redis.call('HGET', KEYS[i], 'version') or '-1')
+    if redis.call('EXISTS', KEYS[i+1]) == 1 then accepted = false
+    else redis.call('HSET', KEYS[i], 'version', math.max(version, tonumber(ARGV[2]))); redis.call('SET', KEYS[i+1], '1', 'EX', ARGV[3]) end
+  end
+  if accepted then
+    if not redis.call('HGET', KEYS[i], 'incarnation') then redis.call('HSET', KEYS[i], 'incarnation', ARGV[5 + (i-2)/2]) end
+    redis.call('HINCRBY', KEYS[i], 'generation', 1)
+    redis.call('EXPIRE', KEYS[i], ARGV[4])
+  end
 end
 return 1`;
 
@@ -84,16 +96,23 @@ export function createRedisEntityStore(client: Redis, namespace: string): Entity
         )) === 1
       );
     },
-    async invalidate(partition, identities) {
+    async invalidate(partition, identities, event) {
       if (!identities) {
         await client.set(globalKey(partition), randomUUID(), 'EX', ENTITY_FENCE_TTL_SECONDS);
         return;
       }
-      const keys = identities.map(id => entityKey(partition, id));
+      const keys = identities.flatMap(id => {
+        const key = entityKey(partition, id);
+        return [key, `${key}:event:${hash(event?.id ?? '')}`];
+      });
       await client.eval(
         INVALIDATE,
-        keys.length,
+        keys.length + 1,
+        globalKey(partition),
         ...keys,
+        event?.id ?? '',
+        event?.version ?? '',
+        ENTITY_REPLAY_TTL_SECONDS,
         ENTITY_FENCE_TTL_SECONDS,
         ...identities.map(() => randomUUID()),
       );
