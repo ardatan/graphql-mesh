@@ -204,7 +204,8 @@ export async function executeMixedEntityBatch({
   )
     return result;
   if (!plan.isComplete(result.data[plan.responseKey], plan.keys)) return result;
-  const grouped = new Map(plan.keys.map(identity => [identity, [] as unknown[]]));
+  // #9658: preserve row-array inference under the monorepo's nullable compiler settings.
+  const grouped = new Map<string, unknown[]>(plan.keys.map(identity => [identity, []]));
   for (const row of result.data[plan.responseKey]) {
     const identity = rule.identity(row);
     if (!identity || !grouped.has(identity)) return result;
