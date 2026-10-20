@@ -1,0 +1,97 @@
+{
+  "name": "@graphql-mesh/plugin-entity-cache",
+  "version": "0.0.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/plugins/entity-cache"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json",
+    "./memory": {
+      "require": {
+        "types": "./dist/typings/memory-store.d.cts",
+        "default": "./dist/cjs/memory-store.js"
+      },
+      "import": {
+        "types": "./dist/typings/memory-store.d.ts",
+        "default": "./dist/esm/memory-store.js"
+      },
+      "default": {
+        "types": "./dist/typings/memory-store.d.ts",
+        "default": "./dist/esm/memory-store.js"
+      }
+    },
+    "./redis": {
+      "require": {
+        "types": "./dist/typings/redis-store.d.cts",
+        "default": "./dist/cjs/redis-store.js"
+      },
+      "import": {
+        "types": "./dist/typings/redis-store.d.ts",
+        "default": "./dist/esm/redis-store.js"
+      },
+      "default": {
+        "types": "./dist/typings/redis-store.d.ts",
+        "default": "./dist/esm/redis-store.js"
+      }
+    }
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "@graphql-hive/gateway-runtime": "^2.10.7",
+    "@graphql-tools/utils": "^12.0.4",
+    "graphql": "^16.0.0",
+    "ioredis": "^5.11.1"
+  },
+  "peerDependenciesMeta": {
+    "ioredis": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "tslib": "2.8.1"
+  },
+  "devDependencies": {
+    "@graphql-hive/gateway-runtime": "2.10.7",
+    "@graphql-hive/logger": "1.1.1",
+    "@graphql-mesh/fusion-runtime": "1.11.6",
+    "@graphql-mesh/utils": "0.107.3",
+    "@graphql-tools/batch-execute": "10.2.0",
+    "@graphql-tools/schema": "10.1.3",
+    "@graphql-tools/stitch": "10.3.2",
+    "@graphql-tools/stitching-directives": "4.1.1",
+    "@graphql-tools/utils": "12.0.4",
+    "graphql": "16.14.0",
+    "ioredis": "5.11.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}
