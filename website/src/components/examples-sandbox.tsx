@@ -160,7 +160,7 @@ export function ExamplesSandbox({ lazy = false, border = false, ...rest }: Examp
         {isVisible && (
           <iframe
             ref={iframeRef}
-            loading={lazy ? 'eager' : 'lazy'}
+            loading="eager"
             src={addBasePath('/codesandbox-iframe.html')}
             onLoad={() => {
               // in case the select is interacted with before the iframe loads
