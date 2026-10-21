@@ -91,14 +91,17 @@ test('switches and loads StackExchange example', async ({ page }) => {
           .catch(() => 'blocked-timeout' as const)
       : Promise.resolve('blocked-timeout' as const);
 
-  await exampleSelect.selectOption(SELECTED_EXAMPLE);
+  // Retry the selection, since it can be dispatched before the page is hydrated
+  // (or before the iframe is mounted), in which case it's silently ignored.
+  const sandboxIframe = page.locator(`iframe[title="${SELECTED_EXAMPLE}"]`);
+  await expect(async () => {
+    await exampleSelect.selectOption(SELECTED_EXAMPLE);
+    await expect(sandboxIframe).toBeVisible({ timeout: 2_000 });
+  }).toPass({ timeout: 30_000 });
 
   // After selection the ExamplesSandbox component updates iframe.title to the selected
   // example dir via postExampleDir (either on onChange or on the iframe's onLoad event).
   // Waiting for this title confirms the iframe is visible and the selection was delivered.
-  const sandboxIframe = page.locator(`iframe[title="${SELECTED_EXAMPLE}"]`);
-  await expect(sandboxIframe).toBeVisible({ timeout: 15_000 });
-
   if (process.env.AGAINST_PROD === '1') {
     // Only verify the CodeSandbox content when running against prod, since the external
     // service can't reliably load within the timeout in a local/CI environment.
