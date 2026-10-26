@@ -1,55 +1,29 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
 updates:
-  - package-ecosystem: 'docker' # See documentation for possible values
-    directory: '/' # Location of package manifests
-    schedule:
-      interval: 'daily'
-    groups:
-      docker-deps:
-        patterns:
-          - '*'
-  - package-ecosystem: 'github-actions' # See documentation for possible values
-    directory: '/' # Location of package manifests
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
       interval: 'daily'
     groups:
       actions-deps:
         patterns:
           - '*'
-  - package-ecosystem: 'npm' # See documentation for possible values
-    directory: '/' # Location of package manifests
+
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
       interval: 'daily'
+    # Large Yarn monorepo (~210 package.json). The previous catch-all
+    # `all-minor-patch` group forced Dependabot to apply every eligible update
+    # in one ~55m Actions job, which always hit the runner timeout before
+    # opening a PR. Without that group, Dependabot can open PRs incrementally.
+    open-pull-requests-limit: 10
+    exclude-paths:
+      - 'examples/**'
+      - 'e2e/**'
     groups:
-      all-minor-patch:
-        patterns:
-          - '*'
-        exclude-patterns:
-          - '@changesets/*'
-          - 'typescript'
-          - 'typedoc'
-          - '@theguild/*'
-          - '@graphql-inspector/core'
-          - 'next'
-          - 'tailwindcss'
-          - '@whatwg-node/*'
-          - 'graphql-jit'
-          - 'husky'
-          - '@opentelemetry/*'
-          - '@graphql-hive/*'
-          - '@graphql-mesh/*'
-          - '@graphql-tools/*'
-          - '@neo4j/*'
-          - 'newrelic'
-          - '@newrelic/*'
-        update-types:
-          - 'minor'
-          - 'patch'
       gateway:
         patterns:
           - '@whatwg-node/*'
