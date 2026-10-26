@@ -42,7 +42,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@whatwg-node/promise-helpers": "^1.0.0",
+    "@whatwg-node/promise-helpers": "^2.0.0",
     "graphql-yoga": "^5.21.2",
     "tslib": "^2.4.0"
   },

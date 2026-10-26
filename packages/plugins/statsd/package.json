@@ -39,7 +39,7 @@
     "@envelop/statsd": "^8.1.1",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@whatwg-node/disposablestack": "^0.0.6",
+    "@whatwg-node/disposablestack": "^0.1.0",
     "hot-shots": "^17.1.0",
     "tslib": "^2.4.0"
   },

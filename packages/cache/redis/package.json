@@ -61,7 +61,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@opentelemetry/api": "^1.9.1",
-    "@whatwg-node/disposablestack": "^0.0.6",
+    "@whatwg-node/disposablestack": "^0.1.0",
     "ioredis": "^5.11.1",
     "ioredis-mock": "^8.13.1",
     "tslib": "^2.4.0"

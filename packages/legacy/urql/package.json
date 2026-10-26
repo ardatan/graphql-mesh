@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@graphql-mesh/runtime": "^0.109.3",
-    "@graphql-tools/utils": "^12.0.4",
+    "@graphql-tools/utils": "^13.1.3",
     "tslib": "^2.4.0",
     "value-or-promise": "^1.0.12",
     "wonka": "^6.3.6"

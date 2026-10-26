@@ -37,12 +37,12 @@
   "dependencies": {
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@whatwg-node/promise-helpers": "^1.0.0",
+    "@whatwg-node/promise-helpers": "^2.0.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@graphql-mesh/runtime": "workspace:*",
-    "@whatwg-node/fetch": "^0.10.13",
+    "@whatwg-node/fetch": "^0.12.1",
     "graphql": "16.14.0"
   },
   "publishConfig": {
