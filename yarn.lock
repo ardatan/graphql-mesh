@@ -8194,7 +8194,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@opentelemetry/api": "npm:^1.9.1"
-    "@smithy/protocol-http": "npm:^5.5.16"
+    "@smithy/protocol-http": "npm:^5.6.2"
     "@smithy/signature-v4": "npm:^5.6.12"
     "@types/ioredis-mock": "npm:8.2.8"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
@@ -18032,6 +18032,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@smithy/core@npm:^3.33.2":
+  version: 3.36.2
+  resolution: "@smithy/core@npm:3.36.2"
+  dependencies:
+    "@smithy/types": "npm:^4.19.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/88c3adbbdb1409e0ca93fd19bf6836d34485d7aecd59546cb007e8322cc5306f89807f7918934a691c3482b93adaa3ac7210c6ef33259d2ebee211d674edfdea
+  languageName: node
+  linkType: hard
+
 "@smithy/credential-provider-imds@npm:^4.2.10":
   version: 4.2.10
   resolution: "@smithy/credential-provider-imds@npm:4.2.10"
@@ -18253,13 +18263,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@smithy/protocol-http@npm:^5.5.16":
-  version: 5.5.16
-  resolution: "@smithy/protocol-http@npm:5.5.16"
+"@smithy/protocol-http@npm:^5.6.2":
+  version: 5.6.2
+  resolution: "@smithy/protocol-http@npm:5.6.2"
   dependencies:
-    "@smithy/core": "npm:^3.31.1"
+    "@smithy/core": "npm:^3.33.2"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/055c271add3865cbe849e29cde094c596e426eedbe26634304a867a504c4a2f0a2eb20ef0ee61f8793b6a457abeff0ce23d7913a000d56f2afc0b9ab45bbcf4b
+  checksum: 10c0/9f663b03d6a16d5622d650566798bc0d31eedbf592f767f0e3c424950a12395b4fe80df5aa75d5954d3b03295b0dbb7072de55600a2031eed537c24e178f5ad5
   languageName: node
   linkType: hard
 
@@ -18369,6 +18379,15 @@ __metadata:
   dependencies:
     tslib: "npm:^2.6.2"
   checksum: 10c0/e024d9d148deca7bd21d032a9316db109bbe7cf256ffbb8d3981655b9f4f7695c08ec9b87f5a8cf1442e783ba26cb27e4f09603c5bfa3ba1e526c41b1b3e94d2
+  languageName: node
+  linkType: hard
+
+"@smithy/types@npm:^4.19.0":
+  version: 4.19.0
+  resolution: "@smithy/types@npm:4.19.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/0e9f026e1774aa0089ebd4b67abef7215b09869bd41afc9affdd3382c91e5e3ae4daac54eb2e6b8262c5deaf37019ca7c15e77bcc4be311a69681a40ae047ab0
   languageName: node
   linkType: hard
 
