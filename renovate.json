@@ -37,17 +37,23 @@
         "!/@graphql-tools/*/",
         "!/@neo4j/*/",
         "!/newrelic/",
-        "!/@newrelic/*/"
+        "!/@newrelic/*/",
+        "!/graphql-yoga/",
+        "!/@graphql-yoga/*/",
+        "!/@envelop/*/"
       ]
     },
     {
-      "groupName": "gateway dependencies",
-      "groupSlug": "all-gateway",
+      "groupName": "hive dependencies",
+      "groupSlug": "all-hive",
       "matchPackageNames": [
         "/@whatwg-node/*/",
         "/@graphql-hive/*/",
         "/@graphql-mesh/*/",
-        "/@graphql-tools/*/"
+        "/@graphql-tools/*/",
+        "/@graphql-yoga/*/",
+        "/@envelop/*/",
+        "/graphql-yoga/"
       ]
     },
     {
