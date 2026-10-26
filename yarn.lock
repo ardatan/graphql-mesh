@@ -8287,7 +8287,7 @@ __metadata:
     graphql: "npm:16.14.0"
     graphql-import-node: "npm:^0.0.5"
     graphql-tag: "npm:^2.12.7"
-    graphql-ws: "npm:^6.2.1"
+    graphql-ws: "npm:^6.4.1"
     jiti: "npm:^2.7.0"
     json-bigint-patch: "npm:^0.0.9"
     json5: "npm:^2.2.3"
@@ -29107,12 +29107,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-ws@npm:^6.2.1":
-  version: 6.2.1
-  resolution: "graphql-ws@npm:6.2.1"
+"graphql-ws@npm:^6.4.1":
+  version: 6.4.1
+  resolution: "graphql-ws@npm:6.4.1"
   peerDependencies:
     "@fastify/websocket": ^10 || ^11
-    crossws: ~0.3
+    crossws: ~0.3 || ~0.4
     graphql: ^15.10.1 || ^16 || ^17
     ws: ^8
   peerDependenciesMeta:
@@ -29122,7 +29122,7 @@ __metadata:
       optional: true
     ws:
       optional: true
-  checksum: 10c0/156f8905c1b7020897fa68c093c2e20e64e4b1c12b304e1de414f88a246fb0cf91d612712cdac394e35ba3f24710bd369fd125de9e26e4621e296f3d893905f7
+  checksum: 10c0/bb424b3ad7b94e90e29740b0a11e2f25a631c83eccb01a78dc83a0506407d242448ae23db087554c337a190cb64c3e9277a4458db4bfdd6d038742e1f03f6048
   languageName: node
   linkType: hard
 
