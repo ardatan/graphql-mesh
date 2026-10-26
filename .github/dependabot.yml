@@ -18,9 +18,14 @@ updates:
     # Large Yarn monorepo (~210 package.json). The previous catch-all
     # `all-minor-patch` group forced Dependabot to apply every eligible update
     # in one ~55m Actions job, which always hit the runner timeout before
-    # opening a PR. Without that group, Dependabot can open PRs incrementally
-    # (including examples/ and e2e/).
+    # opening a PR. Without that group, Dependabot can open PRs incrementally.
+    # Skip examples/e2e manifests so the daily job stays within the timeout;
+    # shared lockfile deps still update via root/packages. Renovate still
+    # covers examples/e2e.
     open-pull-requests-limit: 10
+    exclude-paths:
+      - 'examples/**'
+      - 'e2e/**'
     groups:
       gateway:
         patterns:
