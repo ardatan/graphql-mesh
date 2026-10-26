@@ -80,7 +80,7 @@
     "@eslint/eslintrc": "patch:@eslint/eslintrc@npm%3A3.3.3#~/.yarn/patches/@eslint-eslintrc-npm-3.3.3-8ccf6281a3.patch",
     "@repeaterjs/repeater": "^3.1.0",
     "@theguild/prettier-config": "3.0.1",
-    "@tsconfig/node24": "^24.0.0",
+    "@tsconfig/node24": "^24.0.5",
     "@tsconfig/recommended": "^1.0.5",
     "@types/jest": "30.0.0",
     "@types/node": "26.2.0",
