@@ -18997,10 +18997,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node24@npm:^24.0.0":
-  version: 24.0.4
-  resolution: "@tsconfig/node24@npm:24.0.4"
-  checksum: 10c0/9c5d4173204c6935c45d3ff0584fd423bd7d8bc3f6b246e646320ae584e4226b34ea1c66ec67cd16769c73e7e80f4cc562287b0acaa4ec81aa482463972ff83f
+"@tsconfig/node24@npm:^24.0.5":
+  version: 24.0.5
+  resolution: "@tsconfig/node24@npm:24.0.5"
+  checksum: 10c0/cea0c13ac00121e210f69823104d69081c99cf98c801a0772b6df5b51b3412e188084d74b6d2a42b33f29e3cf99298faf02c0baed41d336f5ef8828cc04d458f
   languageName: node
   linkType: hard
 
@@ -28934,7 +28934,7 @@ __metadata:
     "@eslint/eslintrc": "patch:@eslint/eslintrc@npm%3A3.3.3#~/.yarn/patches/@eslint-eslintrc-npm-3.3.3-8ccf6281a3.patch"
     "@repeaterjs/repeater": "npm:^3.1.0"
     "@theguild/prettier-config": "npm:3.0.1"
-    "@tsconfig/node24": "npm:^24.0.0"
+    "@tsconfig/node24": "npm:^24.0.5"
     "@tsconfig/recommended": "npm:^1.0.5"
     "@types/jest": "npm:30.0.0"
     "@types/node": "npm:26.2.0"
