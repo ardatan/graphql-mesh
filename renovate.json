@@ -5,15 +5,6 @@
   "rebaseWhen": "conflicted",
   "prConcurrentLimit": 2,
   "branchConcurrentLimit": 2,
-  "ignorePaths": [
-    "**/node_modules/**",
-    "**/__tests__/**",
-    "**/test/**",
-    "**/tests/**",
-    "**/__fixtures__/**",
-    "examples/**",
-    "e2e/**"
-  ],
   "toolSettings": {
     "nodeMaxMemory": 2048
   },
