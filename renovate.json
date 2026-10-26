@@ -6,7 +6,7 @@
   "prConcurrentLimit": 2,
   "branchConcurrentLimit": 2,
   "toolSettings": {
-    "nodeMaxMemory": 2048
+    "nodeMaxMemory": 1024
   },
   "major": {
     "automerge": false
