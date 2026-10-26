@@ -40,7 +40,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/utils": "^12.0.4",
+    "@graphql-tools/utils": "^12.1.0",
     "@omnigraph/soap": "^0.110.3",
     "tslib": "^2.4.0"
   },
