@@ -21,12 +21,15 @@ updates:
     # opening a PR. Without that group, Dependabot can open PRs incrementally.
     open-pull-requests-limit: 10
     groups:
-      gateway:
+      hive:
         patterns:
           - '@whatwg-node/*'
           - '@graphql-hive/*'
           - '@graphql-mesh/*'
           - '@graphql-tools/*'
+          - '@envelop/*'
+          - 'graphql-yoga'
+          - '@graphql-yoga/*'
         update-types:
           - 'major'
           - 'minor'
