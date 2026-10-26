@@ -6,7 +6,7 @@
   "prConcurrentLimit": 2,
   "branchConcurrentLimit": 2,
   "toolSettings": {
-    "nodeMaxMemory": 1536
+    "nodeMaxMemory": 2048
   },
   "major": {
     "automerge": false
@@ -20,22 +20,25 @@
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch",
-      "excludePackageNames": [
-        "/@changesets/*/",
-        "/typescript/",
-        "/typedoc*/",
-        "/^@theguild//",
-        "/@graphql-inspector/core/",
-        "/next/",
-        "/tailwindcss/",
-        "/@whatwg-node/*/",
-        "/graphql-jit/",
-        "/husky/",
-        "/@opentelemetry/*/",
-        "/@graphql-hive/*/",
-        "/@graphql-mesh/*/",
-        "/@graphql-tools/*/",
-        "/@neo4j/*/"
+      "matchPackageNames": [
+        "!/@changesets/*/",
+        "!/typescript/",
+        "!/typedoc*/",
+        "!/^@theguild//",
+        "!/@graphql-inspector/core/",
+        "!/next/",
+        "!/tailwindcss/",
+        "!/@whatwg-node/*/",
+        "!/graphql-jit/",
+        "!/husky/",
+        "!/@opentelemetry/*/",
+        "!/@graphql-hive/*/",
+        "!/@graphql-mesh/*/",
+        "!/@graphql-tools/*/",
+        "!/@neo4j/*/",
+        "!/newrelic/",
+        "!/@newrelic/*/",
+        "*"
       ]
     },
     {
