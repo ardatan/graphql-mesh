@@ -9,9 +9,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@envelop/auth0": "^9.1.1",
-    "@envelop/core": "^5.5.1",
-    "@graphql-hive/gateway": "^2.11.2",
+    "@envelop/auth0": "^10.0.0",
+    "@envelop/core": "^6.0.0",
+    "@graphql-hive/gateway": "^2.15.3",
     "@graphql-mesh/compose-cli": "workspace:^",
     "@graphql-mesh/plugin-operation-field-permissions": "^0.107.3",
     "@omnigraph/json-schema": "workspace:^",

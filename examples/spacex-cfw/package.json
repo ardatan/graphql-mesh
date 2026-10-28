@@ -2,8 +2,8 @@
   "name": "@examples/spacex-cfw",
   "private": true,
   "dependencies": {
-    "@envelop/core": "^5.5.1",
-    "@envelop/depth-limit": "^7.1.1",
+    "@envelop/core": "^6.0.0",
+    "@envelop/depth-limit": "^8.0.0",
     "@graphql-mesh/cache-cfw-kv": "0.108.3",
     "@graphql-mesh/cli": "0.103.4",
     "@graphql-mesh/graphql": "0.107.3",
