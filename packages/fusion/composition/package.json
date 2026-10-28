@@ -56,7 +56,7 @@
     "@graphql-tools/utils": "^12.0.4",
     "@theguild/federation-composition": "^0.22.2",
     "change-case": "^4.1.2",
-    "graphql-scalars": "^1.23.0",
+    "graphql-scalars": "^2.0.1",
     "minimatch": "^10.2.6",
     "pluralize": "^8.0.0",
     "snake-case": "^3.0.0",

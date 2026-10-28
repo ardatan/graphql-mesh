@@ -50,7 +50,7 @@
     "dset": "^3.1.4",
     "graphql-compose": "^9.1.0",
     "graphql-fields": "^2.0.3",
-    "graphql-scalars": "^1.22.4",
+    "graphql-scalars": "^2.0.1",
     "json-machete": "^0.97.8",
     "pascal-case": "3.1.2",
     "qs": "^6.16.0",
