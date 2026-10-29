@@ -9612,7 +9612,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.2.1"
     "@graphql-tools/utils": "npm:^12.0.4"
-    "@neo4j/graphql": "npm:^7.6.4"
+    "@neo4j/graphql": "npm:^7.6.5"
     graphql: "npm:16.14.0"
     neo4j-driver: "npm:^6.2.0"
     tslib: "npm:^2.4.0"
@@ -11060,6 +11060,20 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 10c0/049389bd14c9c18e99d1443552baeda187c2759635b179b2eb74f008c8ab80637730b2427267dd2a39b7051138cff8f5fd5bc1416d516bf4c7dc3ea50501daf6
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/utils@npm:^12.0.0":
+  version: 12.1.0
+  resolution: "@graphql-tools/utils@npm:12.1.0"
+  dependencies:
+    "@graphql-typed-document-node/core": "npm:^3.1.1"
+    "@whatwg-node/promise-helpers": "npm:^2.0.0"
+    cross-inspect: "npm:1.0.1"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/a781650a9ccc524170ea04e485fb56f6ec357b2372787cd0056bd3bb0d4c38d10ae5bcbea598256353888dd96424b312e842ee47fc1eb3e6ebeb6bc1313203a3
   languageName: node
   linkType: hard
 
@@ -13256,30 +13270,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neo4j/cypher-builder@npm:3.2.2":
-  version: 3.2.2
-  resolution: "@neo4j/cypher-builder@npm:3.2.2"
-  checksum: 10c0/8c38e7d96ec13dc6b6c1bcec69cd172a1c87a1700b7971ad0010cd6c90a2cf7b69d364a3d7b41664a163eb407a57236c03885ebef6198d21d18d63ae80a00399
+"@neo4j/cypher-builder@npm:3.3.0":
+  version: 3.3.0
+  resolution: "@neo4j/cypher-builder@npm:3.3.0"
+  checksum: 10c0/ef89260e04fe966c4ec9b69f7e4dc4e910034e4aada1e9d3b27f4e9aaa1c43bfcfcf21349d0ecaaf6a810b804b2a71098facc603674ed75f46f4b004ef8487d1
   languageName: node
   linkType: hard
 
-"@neo4j/graphql@npm:^7.6.4":
-  version: 7.6.4
-  resolution: "@neo4j/graphql@npm:7.6.4"
+"@neo4j/graphql@npm:^7.6.5":
+  version: 7.6.5
+  resolution: "@neo4j/graphql@npm:7.6.5"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
     "@graphql-tools/resolvers-composition": "npm:^7.0.0"
     "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-tools/utils": "npm:^11.0.0"
-    "@neo4j/cypher-builder": "npm:3.2.2"
+    "@graphql-tools/utils": "npm:^12.0.0"
+    "@neo4j/cypher-builder": "npm:3.3.0"
     camelcase: "npm:^6.3.0"
     debug: "npm:^4.3.4"
     dot-prop: "npm:^6.0.1"
     graphql-compose: "npm:^9.0.8"
     graphql-parse-resolve-info: "npm:^4.12.3"
     graphql-query-complexity: "npm:^1.0.0"
-    graphql-relay: "npm:^0.10.0"
+    graphql-relay: "npm:^0.11.0"
     jose: "npm:^5.0.0"
     pluralize: "npm:^8.0.0"
     semver: "npm:^7.5.4"
@@ -13287,7 +13301,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0 || ^6.0.0
-  checksum: 10c0/3ed4f5b9a2fd779016f5fb98672fc38c7d74604c875606f86fbfe2221867c6ff4802ea15e4f8c6582e50a2a4464a6b320e885859c5262ec2716661b415bd1f29
+  checksum: 10c0/3bc433b3252d4cdc872e9e6d55cee40adb4dadffc2d49c42772acc539da7d3fdf7d790740262f734f7b3da97f58cd03352a8221e68c32e616823134e9c351e51
   languageName: node
   linkType: hard
 
@@ -29026,12 +29040,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-relay@npm:^0.10.0":
-  version: 0.10.2
-  resolution: "graphql-relay@npm:0.10.2"
+"graphql-relay@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "graphql-relay@npm:0.11.0"
   peerDependencies:
-    graphql: ^16.2.0
-  checksum: 10c0/312748377c699c812541551cb2079308be6efef99e5398928dbbeca7596581d1fd8d939f60b2c77d184a185b64717e8c2b62b102a8f85167d379fd49cad39a3d
+    graphql: ^16.2.0 || ^17.0.0
+  checksum: 10c0/4a07fed950a28d04e7d0d4f763e627490f73bb5edb23e26840281ee827dcc6f0101fa2be0bcc7bdf58cd0b5330bf77176cac7f90fc3fc4822af2e63ac5311c65
   languageName: node
   linkType: hard
 
