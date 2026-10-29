@@ -5252,7 +5252,7 @@ __metadata:
     "@graphql-mesh/incontext-sdk-codegen": "npm:^0.3.3"
     "@omnigraph/openapi": "npm:^0.112.7"
     graphql: "npm:16.14.0"
-    graphql-scalars: "npm:^1.25.0"
+    graphql-scalars: "npm:^2.0.1"
     json-bigint-patch: "npm:^0.0.9"
     typescript: "npm:^6.0.3"
   languageName: unknown
@@ -8392,7 +8392,7 @@ __metadata:
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     change-case: "npm:^4.1.2"
     graphql: "npm:16.14.0"
-    graphql-scalars: "npm:^1.23.0"
+    graphql-scalars: "npm:^2.0.1"
     minimatch: "npm:^10.2.6"
     pluralize: "npm:^8.0.0"
     snake-case: "npm:^3.0.0"
@@ -8527,7 +8527,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^12.0.4"
     "@graphql-tools/wrap": "npm:^11.2.1"
     graphql: "npm:16.14.0"
-    graphql-scalars: "npm:^1.25.0"
+    graphql-scalars: "npm:^2.0.1"
     pascal-case: "npm:^3.1.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -8855,7 +8855,7 @@ __metadata:
     "@types/faker": "npm:5.5.9"
     faker: "npm:5.5.3"
     graphql: "npm:16.14.0"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -9338,7 +9338,7 @@ __metadata:
     "@graphql-tools/wrap": "npm:^11.2.1"
     change-case: "npm:^4.1.2"
     graphql: "npm:16.14.0"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     lower-case: "npm:^2.0.2"
     tslib: "npm:^2.5.0"
     upper-case: "npm:^2.0.2"
@@ -9359,7 +9359,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^12.0.4"
     "@graphql-tools/wrap": "npm:^11.2.1"
     graphql: "npm:16.14.0"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -9411,7 +9411,7 @@ __metadata:
     "@graphql-tools/utils": "npm:^12.0.4"
     "@graphql-tools/wrap": "npm:^11.2.1"
     graphql: "npm:16.14.0"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: "*"
@@ -9516,7 +9516,7 @@ __metadata:
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     "@whatwg-node/promise-helpers": "npm:^1.0.0"
     graphql: "npm:16.14.0"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     lodash.get: "npm:^4.4.2"
     long: "npm:4.0.0"
     protobufjs: "npm:^7.6.5"
@@ -9635,7 +9635,7 @@ __metadata:
     dset: "npm:^3.1.3"
     graphql: "npm:16.14.0"
     graphql-fields: "npm:^2.0.3"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     qs: "npm:^6.16.0"
     tslib: "npm:^2.4.0"
     url-join: "npm:4.0.1"
@@ -13643,7 +13643,7 @@ __metadata:
     globby: "npm:^11.1.0"
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.1.0"
-    graphql-scalars: "npm:^1.23.0"
+    graphql-scalars: "npm:^2.0.1"
     lodash.has: "npm:^4.5.2"
     micromatch: "npm:^4.0.8"
     protobufjs: "npm:^7.6.5"
@@ -13675,7 +13675,7 @@ __metadata:
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.1.0"
     graphql-fields: "npm:^2.0.3"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     json-machete: "npm:^0.97.8"
     pascal-case: "npm:3.1.2"
     qs: "npm:^6.16.0"
@@ -13703,7 +13703,7 @@ __metadata:
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.0.11"
     graphql-fields: "npm:^2.0.3"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     mysql: "npm:^2.18.1"
     mysql-utilities: "npm:^1.1.4"
   peerDependencies:
@@ -13748,7 +13748,7 @@ __metadata:
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.0.11"
     graphql-parse-resolve-info: "npm:^4.13.0"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     http-string-parser: "npm:^0.0.6"
     pascal-case: "npm:^3.1.2"
     tslib: "npm:^2.4.0"
@@ -13822,7 +13822,7 @@ __metadata:
     fast-xml-parser: "npm:^5.10.1"
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.0.11"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     soap: "npm:1.10.0"
   peerDependencies:
     graphql: "*"
@@ -13860,7 +13860,7 @@ __metadata:
     "@graphql-tools/utils": "npm:12.0.4"
     "@whatwg-node/fetch": "npm:^0.10.6"
     graphql: "npm:16.14.0"
-    graphql-scalars: "npm:^1.22.4"
+    graphql-scalars: "npm:^2.0.1"
     thrift: "npm:^0.24.0"
   peerDependencies:
     graphql: "*"
@@ -29020,14 +29020,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-scalars@npm:^1.22.4, graphql-scalars@npm:^1.23.0, graphql-scalars@npm:^1.25.0":
-  version: 1.25.0
-  resolution: "graphql-scalars@npm:1.25.0"
+"graphql-scalars@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "graphql-scalars@npm:2.0.1"
   dependencies:
     tslib: "npm:^2.5.0"
   peerDependencies:
-    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/ae7151171dcd4230f4b3d3dff94e29315d2a8ab903a81f9a9f5820974a854373f877ef10d779839c437f29d4e5ef7b13e9b9e0e7f947004fda39c9e72422736a
+    graphql: ^16.0.0 || ^17.0.0
+  checksum: 10c0/69cd83e9bc576a1d59924bfe807113b24f89e82f2701d289490b21468ae5fba461985719b979f5ca01309095db4fd8cb7d62bdaaca80c2e000a563cdc788d97c
   languageName: node
   linkType: hard
 
