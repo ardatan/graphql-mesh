@@ -5153,7 +5153,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^2.11.2"
     fets: "npm:^0.8.8"
     graphql: "npm:16.14.0"
-    graphql-sse: "npm:^2.5.3"
+    graphql-sse: "npm:^2.6.3"
   languageName: unknown
   linkType: soft
 
@@ -5295,7 +5295,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^2.11.2"
     fets: "npm:^0.8.8"
     graphql: "npm:16.14.0"
-    graphql-sse: "npm:^2.5.3"
+    graphql-sse: "npm:^2.6.3"
     url-join: "npm:^5.0.0"
   languageName: unknown
   linkType: soft
@@ -29072,12 +29072,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-sse@npm:^2.5.3":
-  version: 2.6.0
-  resolution: "graphql-sse@npm:2.6.0"
+"graphql-sse@npm:^2.6.3":
+  version: 2.6.3
+  resolution: "graphql-sse@npm:2.6.3"
   peerDependencies:
-    graphql: ">=0.11 <=16"
-  checksum: 10c0/e05f0b5c8539d61e5ce34af8e0bb418c02bf922d6a7f9232a9abd53c77df5654684ca14f674ac771645c8fba9c37ce666c5d06f46eef54ea07e63653468065b0
+    graphql: ">=0.11 <=17"
+  checksum: 10c0/4ea795ee4c19e3c21045feb73e816241ff67bf80436bb571b7217c8673da4cb1bd7630418a95b6e2caf1be8d96e003dcb768b403011337db101e6a42682cb97d
   languageName: node
   linkType: hard
 
