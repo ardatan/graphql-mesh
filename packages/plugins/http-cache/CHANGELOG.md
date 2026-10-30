@@ -1,5 +1,7 @@
 # @graphql-mesh/plugin-http-cache
 
+## 0.108.4
+
 ## 0.108.3
 
 ### Patch Changes

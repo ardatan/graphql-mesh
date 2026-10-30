@@ -1,5 +1,13 @@
 # @graphql-mesh/http
 
+## 0.109.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5022b7f`](https://github.com/ardatan/graphql-mesh/commit/5022b7fe6fda41289593cf23e11995baf5e57e2b)]:
+  - @graphql-mesh/runtime@0.109.4
+
 ## 0.109.3
 
 ### Patch Changes

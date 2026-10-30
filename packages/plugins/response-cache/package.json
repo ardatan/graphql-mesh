@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/plugin-response-cache",
-  "version": "0.107.4",
+  "version": "0.107.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@graphql-hive/gateway-runtime": "^2.10.7",
-    "@graphql-mesh/fusion-composition": "^0.11.4",
+    "@graphql-mesh/fusion-composition": "^0.11.5",
     "graphql": "16.14.0"
   },
   "publishConfig": {

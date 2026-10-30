@@ -1,5 +1,29 @@
 # @graphql-mesh/cli
 
+## 0.103.5
+
+### Patch Changes
+
+- [#9706](https://github.com/ardatan/graphql-mesh/pull/9706)
+  [`569eecc`](https://github.com/ardatan/graphql-mesh/commit/569eeccf753b06f372fc63ede09591772d5ecbfc)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`graphql-ws@^6.4.1` ↗︎](https://www.npmjs.com/package/graphql-ws/v/6.4.1)
+    (from `^6.2.1`, in `dependencies`)
+
+- [#9713](https://github.com/ardatan/graphql-mesh/pull/9713)
+  [`9cb2401`](https://github.com/ardatan/graphql-mesh/commit/9cb24016b4d9164be661eb1074992d04589db86d)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`get-tsconfig@^4.14.3` ↗︎](https://www.npmjs.com/package/get-tsconfig/v/4.14.3) (from `^4.14.1`,
+    in `dependencies`)
+- Updated dependencies
+  [[`a7d4506`](https://github.com/ardatan/graphql-mesh/commit/a7d4506630217bd9e7ab2b594609698e7e5e1649),
+  [`5022b7f`](https://github.com/ardatan/graphql-mesh/commit/5022b7fe6fda41289593cf23e11995baf5e57e2b)]:
+  - @graphql-mesh/incontext-sdk-codegen@0.3.4
+  - @graphql-mesh/runtime@0.109.4
+  - @graphql-mesh/config@0.111.4
+  - @graphql-mesh/http@0.109.4
+
 ## 0.103.4
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @graphql-mesh/transport-grpc
 
+## 0.7.3
+
+### Patch Changes
+
+- [#9731](https://github.com/ardatan/graphql-mesh/pull/9731)
+  [`a7d4506`](https://github.com/ardatan/graphql-mesh/commit/a7d4506630217bd9e7ab2b594609698e7e5e1649)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`graphql-scalars@^2.0.1` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/2.0.1) (from
+    `^1.22.4`, in `dependencies`)
+
 ## 0.7.2
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # @omnigraph/json-schema
 
+## 0.112.7
+
+### Patch Changes
+
+- [#9731](https://github.com/ardatan/graphql-mesh/pull/9731)
+  [`a7d4506`](https://github.com/ardatan/graphql-mesh/commit/a7d4506630217bd9e7ab2b594609698e7e5e1649)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`graphql-scalars@^2.0.1` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/2.0.1) (from
+    `^1.22.4`, in `dependencies`)
+- Updated dependencies
+  [[`a7d4506`](https://github.com/ardatan/graphql-mesh/commit/a7d4506630217bd9e7ab2b594609698e7e5e1649),
+  [`6deb4fd`](https://github.com/ardatan/graphql-mesh/commit/6deb4fdb80465779f0a0c44d26c5810d12d23181)]:
+  - @graphql-mesh/transport-rest@0.12.5
+
 ## 0.112.6
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # example-response-cache
 
+## 0.9.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`569eecc`](https://github.com/ardatan/graphql-mesh/commit/569eeccf753b06f372fc63ede09591772d5ecbfc),
+  [`9cb2401`](https://github.com/ardatan/graphql-mesh/commit/9cb24016b4d9164be661eb1074992d04589db86d),
+  [`a7d4506`](https://github.com/ardatan/graphql-mesh/commit/a7d4506630217bd9e7ab2b594609698e7e5e1649)]:
+  - @graphql-mesh/cli@0.103.5
+  - @graphql-mesh/plugin-mock@0.108.4
+  - @graphql-mesh/plugin-response-cache@0.107.5
+  - @graphql-mesh/json-schema@0.112.7
+
 ## 0.9.6
 
 ### Patch Changes

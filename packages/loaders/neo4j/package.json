@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/neo4j",
-  "version": "0.14.3",
+  "version": "0.14.4",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/transport-neo4j": "^0.13.3",
+    "@graphql-mesh/transport-neo4j": "^0.13.4",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-tools/delegate": "^12.2.1",
     "@graphql-tools/schema": "^10.1.3",
