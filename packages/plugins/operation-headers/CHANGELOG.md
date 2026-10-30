@@ -1,5 +1,7 @@
 # @graphql-mesh/plugin-operation-headers
 
+## 1.7.4
+
 ## 1.7.3
 
 ### Patch Changes
