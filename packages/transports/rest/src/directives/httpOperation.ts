@@ -110,6 +110,11 @@ export function addHTTPRootFieldResolver(
   };
   const returnNamedGraphQLType = getNamedType(field.type);
   field.resolve = async (root, args, context, info) => {
+    // executors may pass a shared frozen object for fields without arguments, but
+    // the resolver writes to args below (fields, input), so work on a copy instead
+    if (!Object.isExtensible(args)) {
+      args = { ...args };
+    }
     if (jsonApiFields) {
       args.fields = undefined;
     }
