@@ -9,12 +9,12 @@ import {
   type FieldNode,
   type OperationDefinitionNode,
 } from 'graphql';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { hashObject } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import { computeCacheKey } from '../src/compute-cache-key.js';
 import CacheTransform from '../src/index.js';
 

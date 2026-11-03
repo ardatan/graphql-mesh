@@ -71,7 +71,7 @@ export const graphqlHandler = ({
     const yoga = createYoga(yogaOptions);
     // Dispose Yoga instance when the Mesh instance is destroyed
     mesh.deferDispose(() =>
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+       
       handleMaybePromise(
         () => yoga.dispose(),
         () => undefined,

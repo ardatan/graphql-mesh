@@ -1,5 +1,10 @@
 import type { GraphQLSchema } from 'graphql';
-import type { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type {
+  ImportFn,
+  MeshTransform,
+  MeshTransformOptions,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import type { SubschemaConfig } from '@graphql-tools/delegate';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 

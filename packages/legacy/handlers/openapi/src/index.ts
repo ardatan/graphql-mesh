@@ -1,13 +1,21 @@
 import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type {
+  GetMeshSourcePayload,
+  ImportFn,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { loadNonExecutableGraphQLSchemaFromOpenAPI, processDirectives } from '@omnigraph/openapi';
-import { Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class OpenAPIHandler implements MeshHandler {
   private name: string;
@@ -46,7 +54,8 @@ export default class OpenAPIHandler implements MeshHandler {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         fetch: this.fetchFn,
-        importFn: this.importFn, log: this.log,
+        importFn: this.importFn,
+        log: this.log,
         headers: this.config.schemaHeaders,
       });
       return buildSchema(sdl, {
@@ -60,7 +69,8 @@ export default class OpenAPIHandler implements MeshHandler {
         ...this.config,
         source: interpolatedSource,
         cwd: this.baseDir,
-        fetch: this.fetchFn, log: this.log,
+        fetch: this.fetchFn,
+        log: this.log,
         selectQueryOrMutationField: this.config.selectQueryOrMutationField?.map(
           ({ type, fieldName }) => ({
             type: type.toLowerCase() as any,
@@ -85,7 +95,8 @@ export default class OpenAPIHandler implements MeshHandler {
     this.log.info(`Processing annotations for the execution layer`);
     const schemaWithDirectives = processDirectives(nonExecutableSchema, {
       ...this.config,
-      pubsub: this.pubsub, log: this.log,
+      pubsub: this.pubsub,
+      log: this.log,
       globalFetch: fetchFn,
     });
     return {

@@ -7,7 +7,8 @@ import type {
   GraphQLSchema,
   GraphQLType,
 } from 'graphql';
-import { GraphQLError, getNamedType, isInputObjectType, isListType, isNonNullType } from 'graphql';
+import { getNamedType, GraphQLError, isInputObjectType, isListType, isNonNullType } from 'graphql';
+import { Logger } from '@graphql-hive/logger';
 import type { ResolverData, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import {
   getInterpolatedHeadersFactory,
@@ -15,12 +16,10 @@ import {
 } from '@graphql-mesh/string-interpolation';
 import type { Executor } from '@graphql-mesh/transport-common';
 import type { MeshFetch } from '@graphql-mesh/types';
-
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { getDirectiveExtensions, getRootTypes } from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { parseXmlOptions } from './parseXmlOptions.js';
-import { Logger } from '@graphql-hive/logger';
 
 function isOriginallyListType(type: GraphQLOutputType): boolean {
   if (isNonNullType(type)) {

@@ -1,9 +1,8 @@
-import { GraphQLError, GraphQLScalarType } from 'graphql';
+import { GraphQLError, type GraphQLScalarType } from 'graphql';
 import lodashGet from 'lodash.get';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { withCancel } from '@graphql-mesh/utils';
-;
 import type {
   CallOptions,
   ClientDuplexStream,

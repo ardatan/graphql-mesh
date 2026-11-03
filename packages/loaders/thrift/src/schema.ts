@@ -30,6 +30,7 @@ import type {
 import { parse, SyntaxType } from '@creditkarma/thrift-parser';
 import type { IMethodAnnotations, IThriftAnnotations } from '@creditkarma/thrift-server-core';
 import { TType } from '@creditkarma/thrift-server-core';
+import { Logger } from '@graphql-hive/logger';
 import type {
   GraphQLThriftAnnotations,
   StructTypeVal,
@@ -39,7 +40,6 @@ import type {
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
-import { Logger } from '@graphql-hive/logger';
 
 const path = process.getBuiltinModule('node:path');
 

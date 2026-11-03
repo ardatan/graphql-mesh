@@ -1,4 +1,4 @@
-import { Logger } from '@graphql-hive/logger';
+import { type Logger } from '@graphql-hive/logger';
 
 export function handleFatalError(e: Error, log: Logger): any {
   log.error(e);

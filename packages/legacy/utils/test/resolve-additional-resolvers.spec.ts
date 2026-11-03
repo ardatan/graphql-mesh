@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { parse, type ExecutionResult } from 'graphql';
+import { Logger } from '@graphql-hive/logger';
 import { MemPubSub } from '@graphql-hive/pubsub';
 import type { RawSourceOutput } from '@graphql-mesh/types';
 import { getInContextSDK, resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
@@ -8,7 +9,6 @@ import { execute, subscribe } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { assertAsyncIterable } from '../../testing/utils';
-import { Logger } from '@graphql-hive/logger';
 
 function makeReviews() {
   const data = [
@@ -737,7 +737,12 @@ describe('@resolveTo result path when the source field is missing from the gatew
       batch: true,
       createProxyingResolver: () => undefined as any,
     };
-    const inContextSDK = getInContextSDK(sourceSchema, [sourceRaw], new Logger({ prefix: 'test' }), []);
+    const inContextSDK = getInContextSDK(
+      sourceSchema,
+      [sourceRaw],
+      new Logger({ prefix: 'test' }),
+      [],
+    );
 
     const additionalResolvers = resolveAdditionalResolversWithoutImport({
       targetTypeName: 'TargetType',

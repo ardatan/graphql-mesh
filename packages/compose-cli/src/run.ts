@@ -12,11 +12,10 @@ import { isAbsolute, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
-
+import { ConsoleLogWriter, Logger } from '@graphql-hive/logger';
 import { getComposedResultFromConfig } from './getComposedSchemaFromConfig.js';
 import type { MeshComposeCLIConfig } from './types.js';
 import { validateSupergraphSdl } from './validate.js';
-import { ConsoleLogWriter, Logger } from '@graphql-hive/logger';
 
 /** Default config paths sorted by priority. */
 const defaultConfigPaths = [

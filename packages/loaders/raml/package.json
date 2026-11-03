@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@ardatan/raml-1-parser": "1.1.69",
+    "@graphql-hive/logger": "^1.1.1",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",

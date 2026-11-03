@@ -1,4 +1,3 @@
-import { GraphQLError } from 'graphql';
 import {
   buildASTSchema,
   buildClientSchema,
@@ -7,6 +6,7 @@ import {
   getIntrospectionQuery,
   getNamedType,
   GraphQLDirective,
+  GraphQLError,
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
@@ -24,8 +24,8 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { isUrl, readFile } from '@graphql-mesh/utils';
 import { isValidPath, type ExecutionResult } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import type { LoaderContext, MeshComposeCLISourceHandlerDef } from './types.js';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import type { LoaderContext, MeshComposeCLISourceHandlerDef } from './types.js';
 
 export interface GraphQLSubgraphLoaderHTTPConfiguration {
   /**
@@ -310,7 +310,8 @@ export function loadGraphQLHTTPSubgraph(
               allowUnknownExtensions: true,
               cwd: ctx.cwd,
               fetch: ctx.fetch,
-              importFn: (p: string) => import(p), log: ctx.log,
+              importFn: (p: string) => import(p),
+              log: ctx.log,
             });
           }
           return source$;

@@ -1,7 +1,7 @@
 import { OperationTypeNode } from 'graphql';
 import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway-runtime';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
-import { dummyLogger as log} from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 import { composeSubgraphs } from '../src/compose';
 
 describe('Loaders', () => {

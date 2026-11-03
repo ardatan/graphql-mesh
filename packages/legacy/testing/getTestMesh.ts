@@ -2,15 +2,15 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSchema, createYoga, Repeater } from 'graphql-yoga';
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { getMesh, type GetMeshOptions } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn } from '@graphql-mesh/utils';
-import { MemPubSub } from '@graphql-hive/pubsub';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
-import { Logger } from '@graphql-hive/logger';
 
 export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
   const yoga = createYoga({

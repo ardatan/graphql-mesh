@@ -1,6 +1,6 @@
+import { type Logger } from '@graphql-hive/logger';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { GrpcLoaderHelper } from './grpcLoaderHelper.js';
-import { Logger } from '@graphql-hive/logger';
 
 interface LoaderContext {
   cwd: string;

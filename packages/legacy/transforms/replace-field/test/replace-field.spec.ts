@@ -1,14 +1,14 @@
 import { join } from 'path';
 import { GraphQLObjectType, parse, printSchema } from 'graphql';
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { ImportFn } from '@graphql-mesh/types';
-import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable, pruneSchema } from '@graphql-tools/utils';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import ReplaceFieldTransform from '../src/index.js';
-import { Logger } from '@graphql-hive/logger';
 
 const importFn: ImportFn = m =>
   import(m).catch(e => {

@@ -10,11 +10,10 @@ import {
   type InputTypeComposer,
   type SchemaComposer,
 } from 'graphql-compose';
-
+import { type Logger } from '@graphql-hive/logger';
 import type { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { ResolveRootDirective, StatusCodeTypeNameDirective } from './directives.js';
 import type { TypeComposers } from './getComposerFromJSONSchema.js';
-import { Logger } from '@graphql-hive/logger';
 
 export interface GetUnionTypeComposersOpts {
   subgraphName: string;

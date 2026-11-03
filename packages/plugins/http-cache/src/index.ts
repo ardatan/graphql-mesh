@@ -1,13 +1,13 @@
-import CachePolicy from 'http-cache-semantics';
 import type { Plugin as YogaPlugin } from 'graphql-yoga';
+import CachePolicy from 'http-cache-semantics';
+import type { Logger } from '@graphql-hive/logger';
 import type { KeyValueCache, MeshPlugin } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import {
   Response as DefaultResponseCtor,
   URLPattern as DefaultURLPatternCtor,
 } from '@whatwg-node/fetch';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { Logger } from '@graphql-hive/logger';
+import { fakePromise, handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 interface CacheEntry {
   policy: CachePolicy.CachePolicyObject;
@@ -29,7 +29,6 @@ export interface HTTPCachePluginOptions {
     | CachePolicy.Options
     | ((request: CachePolicy.Request, response: CachePolicy.Response) => CachePolicy.Options);
 
-  log?: Logger;
   cache?: KeyValueCache<CacheEntry>;
 }
 
@@ -51,7 +50,6 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
   cache,
   matches,
   ignores,
-  log,
 }: HTTPCachePluginOptions): MeshPlugin<TContext> & YogaPlugin<TContext> {
   if (!cache) {
     throw new Error('HTTP Cache plugin requires a cache instance');
@@ -60,6 +58,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
   let ignoresPatterns: URLPattern[];
   let URLPatternCtor: typeof URLPattern = DefaultURLPatternCtor;
   let ResponseCtor: typeof Response = DefaultResponseCtor;
+  let log: Logger | undefined;
   function shouldSkip(url: string) {
     ignoresPatterns ||= ignores?.map(match => new URLPatternCtor(match)) || [];
     if (ignoresPatterns?.length) {
@@ -83,7 +82,6 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
     }
     return false;
   }
-  const pluginLogger = log?.child({ plugin: 'HTTP Cache' });
   return {
     onYogaInit({ yoga }) {
       if (yoga.fetchAPI.URLPattern) {
@@ -92,11 +90,11 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
       if (yoga.fetchAPI.Response) {
         ResponseCtor = yoga.fetchAPI.Response;
       }
-      log ||= yoga.log;
+      log = yoga.log.child({ plugin: 'HTTP Cache' });
     },
     onFetch({ url, options, setOptions, context, endResponse }) {
       if (shouldSkip(url) || typeof options?.body === 'object') {
-        pluginLogger?.debug(`Skipping cache for ${url}`);
+        log?.debug(`Skipping cache for ${url}`);
         return;
       }
       const cacheKey = `http-cache-${url}-${options?.method}-${options?.body}`;
@@ -117,13 +115,13 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
             );
           }
           if (cacheEntry?.policy) {
-            pluginLogger?.debug(`Cache hit for ${url}`);
+            log?.debug(`Cache hit for ${url}`);
             policy = CachePolicy.fromObject(cacheEntry.policy);
             if (policy?.satisfiesWithoutRevalidation(policyRequest)) {
-              pluginLogger?.debug(`Cache hit is fresh for ${url}`);
+              log?.debug(`Cache hit is fresh for ${url}`);
               return returnCachedResponse(endResponse);
             } else if (policy?.revalidationHeaders) {
-              pluginLogger?.debug(`Cache will be revalidated for ${url}`);
+              log?.debug(`Cache will be revalidated for ${url}`);
               setOptions({
                 ...(options || {}),
                 headers: policy.revalidationHeaders(policyRequest) as Record<string, string>,
@@ -151,7 +149,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
                 body => {
                   const ttl = policy.timeToLive();
                   if (ttl) {
-                    pluginLogger?.debug(`TTL: ${ttl}ms`);
+                    log?.debug(`TTL: ${ttl}ms`);
                   }
                   return cache.set(
                     cacheKey,
@@ -174,21 +172,21 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
               const revalidationPolicy = policy.revalidatedPolicy(policyRequest, policyResponse);
               policy = revalidationPolicy.policy;
               if (revalidationPolicy.matches) {
-                pluginLogger?.debug(`Response not modified for ${url}`);
+                log?.debug(`Response not modified for ${url}`);
                 body$ = cacheEntry.body;
                 updateCacheEntry();
                 return returnCachedResponse(setResponse);
               }
-              pluginLogger?.debug(`Updating the cache entry cache for ${url}`);
+              log?.debug(`Updating the cache entry cache for ${url}`);
             } else {
-              pluginLogger?.debug(`Creating the cache entry for ${url}`);
+              log?.debug(`Creating the cache entry for ${url}`);
               policy = new CachePolicy(policyRequest, policyResponse);
             }
             if (policy.storable()) {
-              pluginLogger?.debug(`Storing the cache entry for ${url}`);
+              log?.debug(`Storing the cache entry for ${url}`);
               body$ = response.text();
               updateCacheEntry();
-              return Promise.resolve(body$).then(body =>
+              return fakePromise(body$).then(body =>
                 setResponse(
                   new ResponseCtor(body, {
                     ...response,
@@ -198,7 +196,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
               );
             } else {
               if (cacheEntry) {
-                pluginLogger?.debug(`Deleting the cache entry for ${url}`);
+                log?.debug(`Deleting the cache entry for ${url}`);
                 const delete$ = cache.delete(cacheKey);
                 context?.waitUntil?.(delete$);
               }

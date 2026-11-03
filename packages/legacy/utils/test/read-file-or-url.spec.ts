@@ -2,7 +2,7 @@ import { writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join, relative } from 'path';
 import { fetch } from '@whatwg-node/fetch';
-import { dummyLogger as log} from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 import { readFile } from '../src/read-file-or-url.js';
 
 describe('readFile', () => {

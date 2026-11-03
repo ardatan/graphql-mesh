@@ -11,6 +11,7 @@ import {
   visit,
 } from 'graphql';
 import lodashGet from 'lodash.get';
+import { type Logger } from '@graphql-hive/logger';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions, ValidationError } from '@graphql-mesh/store';
 import {
@@ -19,7 +20,15 @@ import {
   parseInterpolationStrings,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type {
+  GetMeshSourcePayload,
+  ImportFn,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import {
   isUrl,
   loadFromModuleExportExpression,
@@ -41,7 +50,6 @@ import {
 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
-import { Logger } from '@graphql-hive/logger';
 
 const util = process.getBuiltinModule('node:util');
 
@@ -191,7 +199,8 @@ export default class GraphQLHandler implements MeshHandler {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
-        fetch: this.fetchFn, log: this.log,
+        fetch: this.fetchFn,
+        log: this.log,
       };
       if (!isUrl(interpolatedSourcePath)) {
         return this.nonExecutableSchema.getWithSet(async () => {
@@ -262,7 +271,8 @@ export default class GraphQLHandler implements MeshHandler {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
-        fetch: this.fetchFn, log: this.log,
+        fetch: this.fetchFn,
+        log: this.log,
       });
       const schema = buildSchema(rawSDL, {
         assumeValid: true,

@@ -6,10 +6,18 @@ import type {
   GraphQLSchema,
   GraphQLUnionType,
 } from 'graphql';
-import { GraphQLError, getNamedType, isListType, isNonNullType, isScalarType, isUnionType } from 'graphql';
+import {
+  getNamedType,
+  GraphQLError,
+  isListType,
+  isNonNullType,
+  isScalarType,
+  isUnionType,
+} from 'graphql';
 import type { IStringifyOptions } from 'qs';
 import { parse as qsParse, stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
+import { Logger } from '@graphql-hive/logger';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
@@ -19,7 +27,6 @@ import { isFileUpload } from './isFileUpload.js';
 import { getJsonApiFieldsQuery } from './jsonApiFields.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
-import { Logger } from '@graphql-hive/logger';
 
 type HTTPMethod =
   'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';

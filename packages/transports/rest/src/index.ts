@@ -7,7 +7,7 @@ export interface RESTTransportOptions {
 }
 
 const transport: Transport<RESTTransportOptions> = {
-  getSubgraphExecutor({ transportEntry, subgraph, fetch, pubsub, log}) {
+  getSubgraphExecutor({ transportEntry, subgraph, fetch, pubsub, log }) {
     const processDirectiveOpts: ProcessDirectiveArgs = {
       globalFetch: fetch,
       pubsub,

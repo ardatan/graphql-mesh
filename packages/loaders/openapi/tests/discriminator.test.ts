@@ -1,11 +1,10 @@
 import { execute, parse } from 'graphql';
 import type { GraphQLSchema } from 'graphql';
-
+import { Logger } from '@graphql-hive/logger';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
 import { getJSONSchemaOptionsFromOpenAPIOptions } from '../src/getJSONSchemaOptionsFromOpenAPIOptions.js';
 import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
-import { Logger } from '@graphql-hive/logger';
 
 function expectRecord(value: unknown): asserts value is Record<string, unknown> {
   expect(value).toEqual(expect.any(Object));

@@ -3,9 +3,18 @@ import type { DocumentNode } from 'graphql';
 import { parse, print, visit } from 'graphql';
 import { pascalCase } from 'pascal-case';
 import { useMaskedErrors } from '@envelop/core';
+import { type Logger } from '@graphql-hive/logger';
 import type { GetMeshOptions, MeshResolvedSource } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import type { ImportFn, MeshHandlerLibrary, MeshMergerLibrary, MeshPlugin, MeshPluginFactory, MeshTransformLibrary, YamlConfig } from '@graphql-mesh/types';
+import type {
+  ImportFn,
+  MeshHandlerLibrary,
+  MeshMergerLibrary,
+  MeshPlugin,
+  MeshPluginFactory,
+  MeshTransformLibrary,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import {
   defaultImportFn,
   getAdditionalResolversFromTypeDefs,
@@ -14,10 +23,8 @@ import {
   resolveAdditionalResolvers,
 } from '@graphql-mesh/utils';
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';
-import type { Source } from './utils.js';
-import { Logger } from '@graphql-hive/logger';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
-
+import type { Source } from './utils.js';
 import {
   getPackage,
   hashSHA256,
@@ -231,7 +238,8 @@ export async function processConfig(
               cache,
               pubsub,
               disposables,
-              store: sourcesStore.child(source.name), log: log.child({ source: source.name }),
+              store: sourcesStore.child(source.name),
+              log: log.child({ source: source.name }),
               importFn,
             });
           }),
@@ -414,7 +422,8 @@ export async function processConfig(
           }
         }
         return pluginFactory({
-          ...pluginConfig, log: log.child({ plugin: pluginName }),
+          ...pluginConfig,
+          log: log.child({ plugin: pluginName }),
           cache,
           pubsub,
           disposables,
@@ -568,7 +577,9 @@ export async function processConfig(
 
   const merger = new Merger({
     cache,
-    pubsub, disposables, log: log.child({ merger: mergerName }),
+    pubsub,
+    disposables,
+    log: log.child({ merger: mergerName }),
     store: rootStore.child(mergerName),
   });
 

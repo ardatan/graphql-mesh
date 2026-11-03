@@ -1,23 +1,25 @@
 import type { Plugin } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
+import type { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { type YamlConfig } from '@graphql-mesh/types';
-import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import {
   defaultResourceIdentifierNormalizer,
   InMemoryLiveQueryStore,
 } from '@n1ru4l/in-memory-live-query-store';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 import { useInvalidateByResult } from './useInvalidateByResult.js';
-import { Logger } from '@graphql-hive/logger';
 
 export default function useMeshLiveQuery(
-  options: {
-    log?: Logger;
+  options: YamlConfig.LiveQueryConfig & {
+    log: Logger;
     pubsub?: PubSub;
-  } & YamlConfig.LiveQueryConfig,
+  },
 ): Plugin {
-  options.log ||= new Logger();
-  options.pubsub ||= new MemPubSub();
+  if (!options.pubsub) {
+    throw new Error('Live Query plugin requires a pubsub instance from Mesh/Gateway context');
+  }
   options.log.debug(`Creating Live Query Store`);
   const liveQueryStore = new InMemoryLiveQueryStore({
     buildResourceIdentifier:
@@ -38,7 +40,8 @@ export default function useMeshLiveQuery(
     indexBy: options.indexBy,
   });
   const pubsub = options.pubsub;
-  void Promise.resolve(
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  fakePromise(
     pubsub.subscribe('live-query:invalidate', (identifiers: string | string[]) =>
       liveQueryStore.invalidate(identifiers),
     ),
@@ -50,7 +53,8 @@ export default function useMeshLiveQuery(
         addPlugin(
           useInvalidateByResult({
             pubsub,
-            invalidations: options.invalidations, log: options.log,
+            invalidations: options.invalidations,
+            log: options.log,
           }),
         );
       }

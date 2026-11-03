@@ -1,13 +1,12 @@
 import { GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-
+import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import PrefixTransform from '../src/index.js';
-import { Logger } from '@graphql-hive/logger';
 
 describeTransformerTests('prefix', ({ mode, transformSchema }) => {
   let schema: GraphQLSchema;

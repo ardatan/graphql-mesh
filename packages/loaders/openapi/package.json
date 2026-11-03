@@ -35,6 +35,7 @@
     "graphql": "*"
   },
   "dependencies": {
+    "@graphql-hive/logger": "^1.1.1",
     "@graphql-mesh/fusion-composition": "^0.11.4",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",

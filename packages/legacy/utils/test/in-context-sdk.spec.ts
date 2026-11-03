@@ -6,9 +6,9 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
+import { Logger } from '@graphql-hive/logger';
 import type { RawSourceOutput } from '@graphql-mesh/types';
 import { getInContextSDK } from '@graphql-mesh/utils';
-import { Logger } from '@graphql-hive/logger';
 
 describe('getInContextSDK key-based delegation', () => {
   const UserType = new GraphQLObjectType({

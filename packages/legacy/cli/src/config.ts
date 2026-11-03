@@ -1,12 +1,12 @@
 import Ajv from 'ajv';
 import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
+import { Logger } from '@graphql-hive/logger';
 import type { ConfigProcessOptions } from '@graphql-mesh/config';
 import { processConfig } from '@graphql-mesh/config';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { jsonSchema } from '@graphql-mesh/types';
 import { loadYaml } from '@graphql-mesh/utils';
 import { include } from './include.js';
-import { Logger } from '@graphql-hive/logger';
 
 const path = process.getBuiltinModule('node:path');
 

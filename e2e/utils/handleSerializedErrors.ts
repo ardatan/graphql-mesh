@@ -1,5 +1,4 @@
 import { GraphQLError, type ExecutionResult } from 'graphql';
-;
 
 export function handleSerializedErrors(serializedResult: ExecutionResult) {
   if (serializedResult.errors?.length) {

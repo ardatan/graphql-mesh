@@ -2,11 +2,11 @@ import type { GraphQLScalarType, OperationTypeNode } from 'graphql';
 import type { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import type { JSONSchema, JSONSchemaObject } from 'json-machete';
 import type { IStringifyOptions } from 'qs';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import type { BaseLoaderOptions } from '@graphql-tools/utils';
-import { Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   endpoint?: string;

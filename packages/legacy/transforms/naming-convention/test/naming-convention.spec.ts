@@ -6,12 +6,12 @@ import {
   GraphQLUnionType,
   parse,
 } from 'graphql';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { ImportFn } from '@graphql-mesh/types';
-import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import NamingConventionTransform from '../src/index.js';
 

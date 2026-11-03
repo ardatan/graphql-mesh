@@ -38,6 +38,7 @@ import {
   GraphQLVoid,
   RegularExpression,
 } from 'graphql-scalars';
+import { Logger } from '@graphql-hive/logger';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
@@ -61,7 +62,6 @@ import type {
 } from './types.js';
 import type { SoapAnnotations } from './utils.js';
 import { PARSE_XML_OPTIONS } from './utils.js';
-import { Logger } from '@graphql-hive/logger';
 
 const path = process.getBuiltinModule('node:path');
 
@@ -825,7 +825,8 @@ export class SOAPLoader {
       allowUnknownExtensions: true,
       cwd: this.cwd,
       fetch: this.fetchFn,
-      importFn: defaultImportFn, log: this.log,
+      importFn: defaultImportFn,
+      log: this.log,
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
     xsdText = xsdText.split('xmlns:').join('namespace:');
@@ -882,7 +883,8 @@ export class SOAPLoader {
       allowUnknownExtensions: true,
       cwd: this.cwd,
       fetch: this.fetchFn,
-      importFn: defaultImportFn, log: this.log,
+      importFn: defaultImportFn,
+      log: this.log,
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
     await this.loadWSDL(wsdlText, resolved);

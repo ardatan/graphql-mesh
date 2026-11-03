@@ -8,8 +8,8 @@ import type {
   RedisOptions,
   StandaloneConnectionOptions,
 } from 'ioredis';
+import { type Logger } from '@graphql-hive/logger';
 import type { YamlConfig } from '@graphql-mesh/types';
-import { Logger } from '@graphql-hive/logger';
 
 const AbstractConnectorClass =
   // @ts-expect-error ioredis is CJS-only and reassigns module.exports, which breaks Node.js static

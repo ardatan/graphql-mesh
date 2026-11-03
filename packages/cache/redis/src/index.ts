@@ -1,18 +1,21 @@
 import Redis, { type Cluster } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import type { RedisOptions } from 'ioredis/built/redis/RedisOptions';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { type KeyValueCache, type KeyValueCacheSetOptions, type YamlConfig } from '@graphql-mesh/types';
+import {
+  type KeyValueCache,
+  type KeyValueCacheSetOptions,
+  type YamlConfig,
+} from '@graphql-mesh/types';
 import { trace, type Tracer } from '@opentelemetry/api';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import { Logger } from '@graphql-hive/logger';
-
 import {
   buildIamRedisOptions,
   setupIamAuthForCluster,
   setupIamAuthRefreshForStandalone,
 } from './iam.js';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
@@ -26,7 +29,11 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   private iamInitPromise?: Promise<void>;
 
   constructor(
-    options: YamlConfig.Cache['redis'] & { pubsub?: PubSub; log: Logger; disposables?: AsyncDisposableStack },
+    options: YamlConfig.Cache['redis'] & {
+      pubsub?: PubSub;
+      log: Logger;
+      disposables?: AsyncDisposableStack;
+    },
   ) {
     this.tracer = trace.getTracer('hive.cache.redis');
     this.tracer.startActiveSpan('hive.cache.redis.init', span => {

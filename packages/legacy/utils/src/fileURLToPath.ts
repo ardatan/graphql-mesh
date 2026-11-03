@@ -1,4 +1,3 @@
-
 const pathModule = process.getBuiltinModule('node:path');
 function fileUriToPath(uri: string) {
   if (typeof uri !== 'string' || uri.length <= 7 || uri.substring(0, 7) !== 'file://') {

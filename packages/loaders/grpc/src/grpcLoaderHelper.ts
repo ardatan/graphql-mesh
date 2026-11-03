@@ -1,4 +1,3 @@
-import { matchFiles } from '@graphql-tools/load-files';
 import { specifiedDirectives } from 'graphql';
 import {
   SchemaComposer,
@@ -19,8 +18,10 @@ import protobufjs, { type AnyNestedObject, type IParseOptions } from 'protobufjs
 import type { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 import { Client } from '@ardatan/grpc-reflection-js';
+import { type Logger } from '@graphql-hive/logger';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { YamlConfig } from '@graphql-mesh/types';
+import { matchFiles } from '@graphql-tools/load-files';
 import { GraphQLStreamDirective, type Constructor } from '@graphql-tools/utils';
 import {
   credentials,
@@ -29,6 +30,7 @@ import {
   type ChannelCredentials,
 } from '@grpc/grpc-js';
 import { DisposableStack } from '@whatwg-node/disposablestack';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import {
   EnumDirective,
   grpcConnectivityStateDirective,
@@ -36,8 +38,6 @@ import {
   transportDirective,
 } from './directives.js';
 import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils.js';
-import type { MaybePromise } from '@whatwg-node/promise-helpers';
-import { Logger } from '@graphql-hive/logger';
 
 const fs = process.getBuiltinModule('node:fs');
 const path = process.getBuiltinModule('node:path');

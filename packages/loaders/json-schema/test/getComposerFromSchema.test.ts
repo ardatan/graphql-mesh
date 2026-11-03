@@ -35,20 +35,19 @@ import {
   GraphQLUUID,
 } from 'graphql-scalars';
 import type { JSONSchemaObject } from 'json-machete';
-import { processDirectives, processScalarType } from '@graphql-mesh/transport-rest';
-
+import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
+import { processDirectives, processScalarType } from '@graphql-mesh/transport-rest';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { JSONSchema } from '@json-schema-tools/meta-schema';
 import { fetch } from '@whatwg-node/fetch';
-import { dummyLogger as log} from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 import { getComposerFromJSONSchema } from '../src/getComposerFromJSONSchema.js';
-import { Logger } from '@graphql-hive/logger';
 
 describe('getComposerFromJSONSchema', () => {
   const pubsub = new MemPubSub() as PubSub;
   it('should return JSON scalar if given schema is boolean true', async () => {
-    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema: true, log});
+    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema: true, log });
     expect(result.input.getType()).toBe(GraphQLJSON);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLJSON);
   });
@@ -1458,7 +1457,7 @@ ${printType(GraphQLString)}
       ],
     } as JSONSchema;
 
-    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema, log});
+    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema, log });
     // The resolved type must be a list of String, not a spurious double-nested list like
     // [[ArrayItemInput]] that would result from the getter silently not being updated.
     expect(result.input?.getType().toString()).toBe('[String]');

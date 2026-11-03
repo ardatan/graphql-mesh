@@ -1,12 +1,21 @@
 import type { DocumentNode, ExecutionResult } from 'graphql';
-import type { GraphQLOperation, KeyValueCache, MeshFetch, MeshHandler, MeshMerger, MeshPlugin, MeshTransform, YamlConfig } from '@graphql-mesh/types';
-import type { TerminateHandler } from '@graphql-mesh/utils';
-import type { IResolvers, MaybeAsyncIterable, Source } from '@graphql-tools/utils';
-import type { MESH_CONTEXT_SYMBOL } from './constants.js';
-import type { MeshInstance } from './get-mesh.js';
-import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import type { Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
+import type {
+  GraphQLOperation,
+  KeyValueCache,
+  MeshFetch,
+  MeshHandler,
+  MeshMerger,
+  MeshPlugin,
+  MeshTransform,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import type { TerminateHandler } from '@graphql-mesh/utils';
+import type { IResolvers, MaybeAsyncIterable, Source } from '@graphql-tools/utils';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import type { MESH_CONTEXT_SYMBOL } from './constants.js';
+import type { MeshInstance } from './get-mesh.js';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];

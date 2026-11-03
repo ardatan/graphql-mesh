@@ -4,7 +4,7 @@ import { parse } from 'graphql';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
 import { fetch, Response } from '@whatwg-node/fetch';
-import { dummyLogger as log} from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 
 function getRequestBodyFromFetchSpy(fetchSpy: jest.Mock): string {
   const firstCall = fetchSpy.mock.calls[0];
@@ -16,7 +16,7 @@ function getRequestBodyFromFetchSpy(fetchSpy: jest.Mock): string {
 
 describe('SOAP multi-namespace, headers, and arrays', () => {
   it('routes header parts, qualifies per-schema namespaces, and serializes arrays as repeated siblings', async () => {
-    const soapLoader = new SOAPLoader({ subgraphName: 'Test', fetch, log});
+    const soapLoader = new SOAPLoader({ subgraphName: 'Test', fetch, log });
     await soapLoader.loadWSDL(
       readFileSync(join(__dirname, './fixtures/multi-namespace-headers.wsdl'), 'utf-8'),
     );
@@ -190,7 +190,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
     // Regression guard: a WSDL with one XSD namespace and no bodyAlias must produce
     // the same envelope it did before namespace-awareness was introduced — same
     // "body" prefix, same xmlns binding, same element structure.
-    const soapLoader = new SOAPLoader({ subgraphName: 'Test', fetch, log});
+    const soapLoader = new SOAPLoader({ subgraphName: 'Test', fetch, log });
     await soapLoader.loadWSDL(
       readFileSync(
         join(__dirname, '../../../loaders/soap/test/fixtures/tempconvert.wsdl'),

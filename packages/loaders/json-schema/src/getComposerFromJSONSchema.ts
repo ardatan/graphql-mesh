@@ -54,7 +54,7 @@ import {
 } from 'graphql-scalars';
 import type { JSONSchema, JSONSchemaObject } from 'json-machete';
 import { visitJSONSchema } from 'json-machete';
-
+import { type Logger } from '@graphql-hive/logger';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
   DictionaryDirective,
@@ -73,7 +73,6 @@ import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatS
 import { getUnionTypeComposers } from './getUnionTypeComposers.js';
 import { getValidTypeName } from './getValidTypeName.js';
 import { GraphQLFile, GraphQLVoid } from './scalars.js';
-import { Logger } from '@graphql-hive/logger';
 
 export interface TypeComposers {
   input?: AnyTypeComposer<any>;

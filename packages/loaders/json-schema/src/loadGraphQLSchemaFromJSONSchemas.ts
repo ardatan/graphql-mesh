@@ -1,10 +1,9 @@
+import { Logger } from '@graphql-hive/logger';
 import { processDirectives } from '@graphql-mesh/transport-rest';
-
 import { fetch } from '@whatwg-node/fetch';
 import { getDereferencedJSONSchemaFromOperations } from './getDereferencedJSONSchemaFromOperations.js';
 import { getGraphQLSchemaFromDereferencedJSONSchema } from './getGraphQLSchemaFromDereferencedJSONSchema.js';
 import type { JSONSchemaLoaderOptions } from './types.js';
-import { Logger } from '@graphql-hive/logger';
 
 export async function loadNonExecutableGraphQLSchemaFromJSONSchemas(
   name: string,
@@ -17,13 +16,15 @@ export async function loadNonExecutableGraphQLSchemaFromJSONSchemas(
     operationHeaders: typeof options.operationHeaders === 'object' ? options.operationHeaders : {},
     queryParams: options.queryParams,
     endpoint: options.endpoint,
-    cwd: options.cwd, log: options.log,
+    cwd: options.cwd,
+    log: options.log,
     fetchFn: options.fetch,
     schemaHeaders: options.schemaHeaders,
     ignoreErrorResponses: options.ignoreErrorResponses,
   });
   return getGraphQLSchemaFromDereferencedJSONSchema(name, {
-    fullyDeferencedSchema, log: options.log,
+    fullyDeferencedSchema,
+    log: options.log,
     operations: options.operations,
     operationHeaders: options.operationHeaders,
     endpoint: options.endpoint,
@@ -43,6 +44,7 @@ export async function loadGraphQLSchemaFromJSONSchemas(
     ...options,
     operationHeaders: typeof options.operationHeaders === 'object' ? options.operationHeaders : {},
     globalFetch: options.fetch || fetch,
-    pubsub: options.pubsub, log: options.log,
+    pubsub: options.pubsub,
+    log: options.log,
   });
 }

@@ -1,11 +1,11 @@
 import type { JSONSchemaObject } from 'json-machete';
 import { dereferenceObject, healJSONSchema } from 'json-machete';
+import { type Logger } from '@graphql-hive/logger';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { getReferencedJSONSchemaFromOperations } from './getReferencedJSONSchemaFromOperations.js';
 import type { JSONSchemaOperationConfig } from './types.js';
-import { Logger } from '@graphql-hive/logger';
 
 export async function getDereferencedJSONSchemaFromOperations({
   operations,
@@ -45,7 +45,8 @@ export async function getDereferencedJSONSchemaFromOperations({
   const readFileOrUrlForJsonMachete = (path: string, opts: { cwd: string }) =>
     readFileOrUrl(path, {
       cwd: opts.cwd,
-      fetch: fetchFn, log: dereferenceObjectLogger,
+      fetch: fetchFn,
+      log: dereferenceObjectLogger,
       headers: schemaHeadersFactory({ env: process.env }),
       importFn: defaultImportFn,
     });

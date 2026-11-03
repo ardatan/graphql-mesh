@@ -7,6 +7,7 @@ import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
 import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
+import { type Logger } from '@graphql-hive/logger';
 import type { Source } from '@graphql-mesh/config';
 import {
   generateIncontextSDKTypes,
@@ -23,7 +24,6 @@ import {
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
-import { Logger } from '@graphql-hive/logger';
 
 const fs = process.getBuiltinModule('node:fs');
 const pathModule = process.getBuiltinModule('node:path');

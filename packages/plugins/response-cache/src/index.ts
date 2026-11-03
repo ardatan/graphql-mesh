@@ -6,8 +6,7 @@ import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { isPromise } from '@whatwg-node/promise-helpers';
+import { handleMaybePromise, isPromise } from '@whatwg-node/promise-helpers';
 
 /**
  * Yoga calls session/enabled as `(request, context)`.

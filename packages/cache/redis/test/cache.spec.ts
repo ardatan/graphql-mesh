@@ -1,6 +1,6 @@
 /* eslint-disable no-new */
 import Redis from 'ioredis';
-import { dummyLogger as log} from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 import { buildIamRedisOptions, generateIamToken, setupIamAuthForCluster } from '../src/iam.js';
 import RedisCache from '../src/index.js';
 
@@ -79,13 +79,13 @@ describe('redis', () => {
       process.env.REDIS_PASSWORD = redisPasswordEnv;
     });
     it('never call Redis constructor if no config is provided', async () => {
-      using redis = new RedisCache({ log});
+      using redis = new RedisCache({ log });
 
       expect(Redis).toHaveBeenCalledTimes(0);
     });
 
     it('passes configuration to redis client with default options, url case', async () => {
-      using redis = new RedisCache({ url: 'redis://password@localhost:6379', log});
+      using redis = new RedisCache({ url: 'redis://password@localhost:6379', log });
 
       expect(Redis).toHaveBeenCalledWith(
         'redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
@@ -169,7 +169,7 @@ describe('redis', () => {
       'throws an error if protocol does not match [%s]',
       protocol => {
         expect(() => {
-          using redis = new RedisCache({ url: `${protocol}localhost:6379`, log});
+          using redis = new RedisCache({ url: `${protocol}localhost:6379`, log });
         }).toThrow('Redis URL must use either redis:// or rediss://');
       },
     );
@@ -444,7 +444,7 @@ describe('redis', () => {
 
   describe('methods', () => {
     it('get/set/delete', async () => {
-      using redis = new RedisCache({ log});
+      using redis = new RedisCache({ log });
       const key = 'key';
       const value = 'value';
       await redis.set(key, value);
@@ -453,7 +453,7 @@ describe('redis', () => {
       await expect(redis.get(key)).resolves.toBeUndefined();
     });
     it('getKeysByPrefix', async () => {
-      using redis = new RedisCache({ log});
+      using redis = new RedisCache({ log });
       const keys = ['foo1', 'foo2', 'foo3'];
       await Promise.all(keys.map((key, i) => redis.set(key, `value${i}`)));
       await expect(redis.getKeysByPrefix('foo')).resolves.toEqual(keys);

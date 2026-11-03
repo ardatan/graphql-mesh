@@ -1,15 +1,14 @@
 import type { DefinitionNode, DirectiveNode, DocumentNode, GraphQLSchema } from 'graphql';
 import { extendSchema, parse, visit } from 'graphql';
 import type { Driver } from 'neo4j-driver';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
-
 import { makeAsyncDisposable } from '@graphql-mesh/utils';
 import { asArray, getDirectiveExtensions, getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
-import { Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 // TODO: Neo4jFeaturesSettings cannot be imported because of exports field in neo4j package.json
 // import type { Neo4jFeaturesSettings } from '@neo4j/graphql/dist/types/index.js';
@@ -60,7 +59,8 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
   if (!driver) {
     driver = getDriverFromOpts({
       endpoint,
-      auth, log: opts.log,
+      auth,
+      log: opts.log,
     });
   }
   let typeDefs = getDocumentNodeFromSchema(opts.schema);

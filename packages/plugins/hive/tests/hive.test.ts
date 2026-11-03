@@ -1,11 +1,11 @@
 import { setTimeout } from 'node:timers/promises';
-import { createMeshHTTPHandler } from '@graphql-mesh/http';
+import { Logger } from '@graphql-hive/logger';
 import { MemPubSub } from '@graphql-hive/pubsub';
+import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import { Response } from '@whatwg-node/fetch';
 import { createDeferredPromise, fakePromise } from '@whatwg-node/promise-helpers';
 import { getTestMesh } from '../../../legacy/testing/getTestMesh';
 import useMeshHive from '../src';
-import { Logger } from '@graphql-hive/logger';
 
 describe('Hive', () => {
   it('does not hook into Node.js process', () => {
@@ -13,6 +13,7 @@ describe('Hive', () => {
     const plugin = useMeshHive({
       enabled: true,
       token: 'FAKE_TOKEN',
+      log: new Logger(),
     });
     plugin.onPluginInit?.({
       addPlugin: jest.fn(),

@@ -1,9 +1,8 @@
 import type { GraphQLField } from 'graphql';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-
-import { getResolverForPubSubOperation } from '@graphql-mesh/utils';
-import { Logger } from '@graphql-hive/logger';
+import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { getResolverForPubSubOperation } from '@graphql-mesh/utils';
 
 interface ProcessPubSubOperationAnnotationsOpts {
   field: GraphQLField<any, any>;
@@ -15,7 +14,8 @@ interface ProcessPubSubOperationAnnotationsOpts {
 export function processPubSubOperationAnnotations({
   field,
   globalPubsub,
-  pubsubTopic, log: globalLogger,
+  pubsubTopic,
+  log: globalLogger,
 }: ProcessPubSubOperationAnnotationsOpts) {
   const { subscribe, resolve } = getResolverForPubSubOperation({
     pubsubTopic,

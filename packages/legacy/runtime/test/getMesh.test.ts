@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { buildSchema, parse, validateSchema } from 'graphql';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import JsonSchemaHandler from '@graphql-mesh/json-schema';
@@ -7,10 +8,9 @@ import BareMerger from '@graphql-mesh/merger-bare';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn } from '@graphql-mesh/utils';
-import { MemPubSub } from '@graphql-hive/pubsub';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as log} from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 import { getMesh } from '../src/get-mesh.js';
 import type { MeshResolvedSource } from '../src/types.js';
 

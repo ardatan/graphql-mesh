@@ -7,6 +7,7 @@ import { addIdentifierToUrl } from '../utils/addIdentifierToUrl.js';
 import { getUrlString } from '../utils/getUrlString.js';
 import { handleResponseText } from '../utils/handleResponseText.js';
 import { rebuildOpenInputObjects } from '../utils/rebuildOpenInputObjects.js';
+
 export interface UpdateEntitySetResolverOptions {
   endpoint: string;
   entitySetName: string;

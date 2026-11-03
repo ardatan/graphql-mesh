@@ -1,16 +1,22 @@
-import type { PubSub } from '@graphql-hive/pubsub';
 // eslint-disable-next-line import/no-nodejs-modules
 import { tmpdir } from 'os';
 import pg from 'pg';
 import type { Plugin } from 'postgraphile';
 import { withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { ImportFn, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type {
+  ImportFn,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { Logger } from '@graphql-hive/logger';
 
 const path = process.getBuiltinModule('node:path');
 

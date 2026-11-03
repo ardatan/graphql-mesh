@@ -2,17 +2,16 @@ import type { ASTNode, ConstDirectiveNode, DefinitionNode } from 'graphql';
 import { parse, visit } from 'graphql';
 import type { Driver } from 'neo4j-driver';
 import neo4j from 'neo4j-driver';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { Neo4JAuthOpts } from '@graphql-mesh/transport-neo4j';
 import {
   getDriverFromOpts,
   getExecutableSchemaFromTypeDefsAndDriver,
 } from '@graphql-mesh/transport-neo4j';
-
 import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
-import { Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 function createAddIntrospectionDirective(subgraph: string) {
   return function addIntrospectionDirective<

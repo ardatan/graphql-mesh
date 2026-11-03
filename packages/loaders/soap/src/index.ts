@@ -1,8 +1,8 @@
+import { type Logger } from '@graphql-hive/logger';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { SOAPLoader, type SOAPHeaders } from './SOAPLoader.js';
-import { Logger } from '@graphql-hive/logger';
 
 export * from './SOAPLoader.js';
 export type * from './types.js';
@@ -46,7 +46,7 @@ export interface SOAPSubgraphLoaderOptions {
 }
 
 export function loadSOAPSubgraph(subgraphName: string, options: SOAPSubgraphLoaderOptions) {
-  return ({ cwd, fetch, log}: { cwd: string; fetch: MeshFetch; log: Logger }) => {
+  return ({ cwd, fetch, log }: { cwd: string; fetch: MeshFetch; log: Logger }) => {
     const soapLoader = new SOAPLoader({
       subgraphName,
       fetch,

@@ -1,12 +1,20 @@
 import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type {
+  GetMeshSourcePayload,
+  ImportFn,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { dispose, isDisposable, readFileOrUrl } from '@graphql-mesh/utils';
 import { getDriverFromOpts, getNeo4JExecutor, loadGraphQLSchemaFromNeo4J } from '@omnigraph/neo4j';
-import { Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class Neo4JHandler implements MeshHandler {
   private config: YamlConfig.Neo4JHandler;
@@ -46,7 +54,8 @@ export default class Neo4JHandler implements MeshHandler {
           cwd: this.baseDir,
           allowUnknownExtensions: true,
           importFn: this.importFn,
-          fetch: this.fetchFn, log: this.log,
+          fetch: this.fetchFn,
+          log: this.log,
         });
         return buildSchema(typeDefs, {
           noLocation: true,
@@ -61,7 +70,8 @@ export default class Neo4JHandler implements MeshHandler {
             type: 'basic',
             username: this.config.username,
             password: this.config.password,
-          }, log: this.log,
+          },
+          log: this.log,
           pubsub: this.pubsub,
           database: this.config.database,
         });
@@ -81,7 +91,8 @@ export default class Neo4JHandler implements MeshHandler {
           type: 'basic',
           username: this.config.username,
           password: this.config.password,
-        }, log: this.log,
+        },
+        log: this.log,
       });
     }
 
@@ -90,7 +101,8 @@ export default class Neo4JHandler implements MeshHandler {
     const executor = await getNeo4JExecutor({
       schema,
       driver,
-      pubsub: this.pubsub, log: this.log,
+      pubsub: this.pubsub,
+      log: this.log,
     });
 
     if (isDisposable(executor)) {

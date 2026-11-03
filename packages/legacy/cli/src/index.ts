@@ -1,6 +1,7 @@
 import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { Logger } from '@graphql-hive/logger';
 import { resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { getMesh } from '@graphql-mesh/runtime';
@@ -8,13 +9,12 @@ import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { pathExists, registerTerminateHandler, rmdirs, writeFile } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
 import { include, registerTsconfigPaths } from './include.js';
-import { fakePromise } from '@whatwg-node/promise-helpers';
-import { Logger } from '@graphql-hive/logger';
 
 const fs = process.getBuiltinModule('node:fs');
 const pathModule = process.getBuiltinModule('node:path');
@@ -206,8 +206,8 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
               log.info(`Polling for changes...`);
               buildMeshInstance()
                 .then(newMeshInstance =>
-                  meshInstance$.then(oldMeshInstance => {
-                    oldMeshInstance.destroy();
+                  meshInstance$.then(async oldMeshInstance => {
+                    await oldMeshInstance.destroy();
                     meshInstance$ = fakePromise(newMeshInstance);
                   }),
                 )
@@ -224,7 +224,8 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
-            getBuiltMesh: () => meshInstance$, log: meshConfig.log.child('Server'),
+            getBuiltMesh: () => meshInstance$,
+            log: meshConfig.log.child('Server'),
             rawServeConfig: meshConfig.config.serve,
             registerTerminateHandler,
           };
@@ -445,7 +446,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           );
 
           log.info(`Cleanup`);
-          destroy();
+          await destroy();
           log.info('Done! => ' + outputDir);
         } catch (e) {
           handleFatalError(e, log);
@@ -490,8 +491,8 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           const interval = setInterval(() => {
             getMesh(getMeshOpts)
               .then(newMeshInstance =>
-                meshInstance$.then(oldMeshInstance => {
-                  oldMeshInstance.destroy();
+                meshInstance$.then(async oldMeshInstance => {
+                  await oldMeshInstance.destroy();
                   meshInstance$ = fakePromise(newMeshInstance);
                 }),
               )
@@ -508,7 +509,8 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
         const serveMeshOptions: ServeMeshOptions = {
           baseDir,
           argsPort: 4000 + sourceIndex + 1,
-          getBuiltMesh: () => meshInstance$, log: meshConfig.log.child('Server'),
+          getBuiltMesh: () => meshInstance$,
+          log: meshConfig.log.child('Server'),
           rawServeConfig: meshConfig.config.serve,
           playgroundTitle: `${args.source} GraphiQL`,
           registerTerminateHandler,

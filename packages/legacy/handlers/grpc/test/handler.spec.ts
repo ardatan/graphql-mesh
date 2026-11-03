@@ -1,13 +1,13 @@
 import { join } from 'path';
 import { buildSchema, GraphQLSchema, validateSchema } from 'graphql';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
 import { defaultImportFn } from '@graphql-mesh/utils';
-import { MemPubSub } from '@graphql-hive/pubsub';
-import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import GrpcHandler from '../src/index.js';
 
 describe('gRPC Handler', () => {
@@ -56,7 +56,7 @@ describe('gRPC Handler', () => {
         config,
         cache,
         pubsub,
-      disposables,
+        disposables,
         store,
         log,
         importFn: defaultImportFn,
@@ -90,7 +90,7 @@ describe('gRPC Handler', () => {
         config,
         cache,
         pubsub,
-      disposables,
+        disposables,
         store,
         log,
         importFn: defaultImportFn,
@@ -125,7 +125,7 @@ describe('gRPC Handler', () => {
         config,
         cache,
         pubsub,
-      disposables,
+        disposables,
         store,
         log,
         importFn: defaultImportFn,

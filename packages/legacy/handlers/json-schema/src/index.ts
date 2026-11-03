@@ -1,16 +1,23 @@
 import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type {
+  GetMeshSourcePayload,
+  ImportFn,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
-import { Logger } from '@graphql-hive/logger';
-
 import {
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
   processDirectives,
 } from '@omnigraph/json-schema';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class JsonSchemaHandler implements MeshHandler {
   private name: string;
@@ -55,7 +62,8 @@ export default class JsonSchemaHandler implements MeshHandler {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         fetch: this.fetchFn,
-        importFn: this.importFn, log: this.log,
+        importFn: this.importFn,
+        log: this.log,
         headers: this.config.schemaHeaders,
       });
       return buildSchema(sdl, {
@@ -69,7 +77,8 @@ export default class JsonSchemaHandler implements MeshHandler {
         ...this.config,
         operations: this.config.operations as any,
         cwd: this.baseDir,
-        fetch: this.fetchFn, log: this.log,
+        fetch: this.fetchFn,
+        log: this.log,
         pubsub: this.pubsub,
       });
     });
@@ -82,7 +91,8 @@ export default class JsonSchemaHandler implements MeshHandler {
     this.log.info(`Processing annotations for the execution layer`);
     const schemaWithDirectives = processDirectives(nonExecutableSchema, {
       ...this.config,
-      pubsub: this.pubsub, log: this.log,
+      pubsub: this.pubsub,
+      log: this.log,
       globalFetch: fetchFn,
     });
     return {

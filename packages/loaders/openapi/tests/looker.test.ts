@@ -2,8 +2,8 @@ import { join } from 'path';
 import { Response } from 'fets';
 import { execute, GraphQLSchema, parse } from 'graphql';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 import { fakePromise } from '@whatwg-node/promise-helpers';
+import { loadGraphQLSchemaFromOpenAPI } from '../src/loadGraphQLSchemaFromOpenAPI.js';
 
 describe('Looker.4.0.oas', () => {
   const endpoint = 'http://dummy';

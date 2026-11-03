@@ -14,6 +14,7 @@ import type {
 } from 'graphql-compose';
 import { GraphQLJSON } from 'graphql-compose';
 import type { IStringifyOptions } from 'qs';
+import { type Logger } from '@graphql-hive/logger';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   HTTPOperationDirective,
@@ -30,7 +31,6 @@ import type {
   OperationHeadersConfiguration,
 } from './types.js';
 import { getOperationMetadata, isPubSubOperationConfig } from './utils.js';
-import { Logger } from '@graphql-hive/logger';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;

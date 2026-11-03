@@ -1,9 +1,16 @@
 import type { GraphQLSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { GetMeshSourcePayload, ImportFn, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type {
+  GetMeshSourcePayload,
+  ImportFn,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { getThriftExecutor, loadNonExecutableGraphQLSchemaFromIDL } from '@omnigraph/thrift';
-import { Logger } from '@graphql-hive/logger';
 
 export default class ThriftHandler implements MeshHandler {
   private config: YamlConfig.ThriftHandler;
@@ -47,7 +54,8 @@ export default class ThriftHandler implements MeshHandler {
         operationHeaders: this.config.operationHeaders,
         serviceName: this.config.serviceName,
         baseDir: this.baseDir,
-        fetchFn, log: this.log,
+        fetchFn,
+        log: this.log,
         importFn: this.importFn,
       }),
     );

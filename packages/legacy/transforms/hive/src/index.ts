@@ -14,7 +14,7 @@ export default class HiveTransform implements MeshTransform {
   private hiveClient: HiveClient;
   private log: MeshTransformOptions<YamlConfig.HivePlugin>['log'];
   private schema: GraphQLSchema;
-  constructor({ config, log}: MeshTransformOptions<YamlConfig.HivePlugin>) {
+  constructor({ config, log }: MeshTransformOptions<YamlConfig.HivePlugin>) {
     this.log = log;
     const enabled =
       // eslint-disable-next-line no-new-func

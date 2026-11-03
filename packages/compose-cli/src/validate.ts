@@ -1,4 +1,4 @@
-import { GraphQLError, buildSchema, type FieldDefinitionNode } from 'graphql';
+import { buildSchema, GraphQLError, type FieldDefinitionNode } from 'graphql';
 import { suggestionList } from '@graphql-mesh/fusion-composition';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';

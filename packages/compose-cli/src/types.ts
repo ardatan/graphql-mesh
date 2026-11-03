@@ -1,9 +1,9 @@
 import type { DocumentNode, GraphQLSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
 import type { ComposeSubgraphsOptions } from '@graphql-mesh/fusion-composition';
 import type { MeshFetch } from '@graphql-mesh/types';
 import type { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
-import { Logger } from '@graphql-hive/logger';
 
 export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
   /**

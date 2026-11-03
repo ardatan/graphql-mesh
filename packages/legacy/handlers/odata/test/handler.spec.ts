@@ -1,12 +1,12 @@
 import { GraphQLInterfaceType, parse, type ExecutionResult } from 'graphql';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache } from '@graphql-mesh/types';
-import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as log} from '../../../../testing/dummyLogger.js';
+import { dummyLogger as log } from '../../../../testing/dummyLogger.js';
 import ODataHandler from '../src/index.js';
 import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
 

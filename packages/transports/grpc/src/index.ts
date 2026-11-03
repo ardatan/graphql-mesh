@@ -19,7 +19,6 @@ import {
   ObjMapScalar,
   type Transport,
 } from '@graphql-mesh/transport-common';
-
 import { getDirective, getDirectives, getRootTypes } from '@graphql-tools/utils';
 import type { ChannelCredentials, ChannelOptions } from '@grpc/grpc-js';
 import { credentials, Client as GrpcClient, loadPackageDefinition } from '@grpc/grpc-js';
@@ -28,10 +27,10 @@ import { fromJSON } from '@grpc/proto-loader';
 import { DisposableStack } from '@whatwg-node/disposablestack';
 import { addExecutionLogicToScalar, addMetaDataToCall } from './utils.js';
 import './patchLongJs.js';
+import { type Logger } from '@graphql-hive/logger';
 import { makeDisposable } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
-import { Logger } from '@graphql-hive/logger';
 
 const fs = process.getBuiltinModule('node:fs');
 const path = process.getBuiltinModule('node:path');
@@ -361,7 +360,7 @@ function isListTypeByAnyMeans(type: GraphQLOutputType) {
 }
 
 const transport: Transport<gRPCTransportOptions> = {
-  getSubgraphExecutor({ transportEntry, subgraph, cwd, log}) {
+  getSubgraphExecutor({ transportEntry, subgraph, cwd, log }) {
     const transport = new GrpcTransportHelper(
       transportEntry.subgraph,
       cwd,

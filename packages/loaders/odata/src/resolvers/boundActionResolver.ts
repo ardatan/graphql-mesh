@@ -5,6 +5,7 @@ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { DataloaderFactory } from '../getDataloaderFactory.js';
 import { getUrlString } from '../utils/getUrlString.js';
 import { handleResponseText } from '../utils/handleResponseText.js';
+
 export interface BoundActionResolverOpts {
   actionRef: string;
   dataloaderFactory: DataloaderFactory;

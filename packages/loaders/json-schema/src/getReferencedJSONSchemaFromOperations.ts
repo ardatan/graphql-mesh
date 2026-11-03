@@ -1,12 +1,12 @@
 import type { JSONSchemaObject } from 'json-machete';
 import { AnySchema } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
+import { Logger } from '@graphql-hive/logger';
 import { getInterpolationKeys } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import type { JSONSchemaOperationConfig, JSONSchemaOperationResponseConfig } from './types.js';
 import { getOperationMetadata } from './utils.js';
-import { Logger } from '@graphql-hive/logger';
 
 async function handleOperationResponseConfig(
   operationResponseConfig: JSONSchemaOperationResponseConfig,

@@ -1,7 +1,12 @@
-import type { MeshMerger, MeshMergerContext, MeshMergerOptions, RawSourceOutput } from '@graphql-mesh/types';
+import { type Logger } from '@graphql-hive/logger';
+import type {
+  MeshMerger,
+  MeshMergerContext,
+  MeshMergerOptions,
+  RawSourceOutput,
+} from '@graphql-mesh/types';
 import type { StitchingInfo } from '@graphql-tools/delegate';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
-import { Logger } from '@graphql-hive/logger';
 
 export default class StitchingMerger implements MeshMerger {
   name = 'stitching';

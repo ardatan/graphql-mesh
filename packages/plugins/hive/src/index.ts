@@ -1,14 +1,14 @@
+import type { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import { createHive, useHive } from '@graphql-hive/yoga';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
-import { Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 type HivePluginOptions = Parameters<typeof createHive>[0];
 
 export default function useMeshHive<TContext>(
   pluginOptions: YamlConfig.HivePlugin & {
-    log?: Logger;
+    log: Logger;
     pubsub?: PubSub;
     fetch?: MeshFetch;
     disposables?: AsyncDisposableStack;
@@ -23,7 +23,7 @@ export default function useMeshHive<TContext>(
       : true;
 
   if (!enabled) {
-    pluginOptions.log?.warn('Plugin is disabled');
+    pluginOptions.log.warn('Plugin is disabled');
     return {};
   }
 
@@ -31,12 +31,12 @@ export default function useMeshHive<TContext>(
     env: process.env,
   });
   if (token) {
-    pluginOptions.log?.info('Reporting enabled');
+    pluginOptions.log.info('Reporting enabled');
   }
 
   const persistedDocuments = pluginOptions.persistedDocuments;
   if (persistedDocuments) {
-    pluginOptions.log?.info('Persisted documents enabled');
+    pluginOptions.log.info('Persisted documents enabled');
     persistedDocuments.fetch ||= pluginOptions.fetch;
   }
 
@@ -93,8 +93,8 @@ export default function useMeshHive<TContext>(
       minTimeout: pluginOptions.agent.minTimeout,
       sendInterval: pluginOptions.agent.sendInterval,
       maxSize: pluginOptions.agent.maxSize,
-      logger: pluginOptions.agent?.logger || pluginOptions.log,
-      fetch: pluginOptions.agent?.fetch,
+      logger: pluginOptions.agent.logger || pluginOptions.log,
+      fetch: pluginOptions.agent.fetch,
     };
   }
   let selfHosting: HivePluginOptions['selfHosting'];
@@ -129,7 +129,7 @@ export default function useMeshHive<TContext>(
   const client = createHive(yogaPluginOpts);
   const hivePlugin = useHive(client);
   pluginOptions.disposables?.defer(() =>
-    client.dispose().catch(e => pluginOptions.log?.error('Error disposing Hive client', e)),
+    client.dispose().catch(e => pluginOptions.log.error('Error disposing Hive client', e)),
   );
   // @ts-expect-error - Typings are incorrect
   return hivePlugin;

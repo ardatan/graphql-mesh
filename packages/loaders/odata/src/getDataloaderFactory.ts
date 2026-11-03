@@ -1,5 +1,5 @@
-import { GraphQLError } from 'graphql';
 import DataLoader from 'dataloader';
+import { GraphQLError } from 'graphql';
 import { parseResponse } from 'http-string-parser';
 import urljoin from 'url-join';
 import type { MeshFetch } from '@graphql-mesh/types';

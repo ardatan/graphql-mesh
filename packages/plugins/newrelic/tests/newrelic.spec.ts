@@ -1,15 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { createMeshHTTPHandler, type MeshHTTPHandler } from '@graphql-mesh/http';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import { defaultImportFn } from '@graphql-mesh/utils';
-import { MemPubSub } from '@graphql-hive/pubsub';
 import { TestAgent } from '@newrelic/test-utilities';
 import { getTestMesh } from '../../../legacy/testing/getTestMesh.js';
-import { dummyLogger as log} from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 import useMeshNewRelic from '../src/index.js';
-import { Logger } from '@graphql-hive/logger';
 
 describe('New Relic', () => {
   let mesh: MeshInstance;

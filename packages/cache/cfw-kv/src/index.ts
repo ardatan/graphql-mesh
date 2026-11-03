@@ -1,7 +1,7 @@
 /// <reference types="@cloudflare/workers-types" />
+import { type Logger } from '@graphql-hive/logger';
 import type { KeyValueCache } from '@graphql-mesh/types';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { Logger } from '@graphql-hive/logger';
 
 export default class CFWorkerKVCache implements KeyValueCache {
   private kvNamespace?: KVNamespace;

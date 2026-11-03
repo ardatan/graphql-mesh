@@ -1,5 +1,5 @@
-import { GraphQLError } from 'graphql';
 import {
+  GraphQLError,
   isAbstractType,
   type GraphQLObjectType,
   type GraphQLResolveInfo,

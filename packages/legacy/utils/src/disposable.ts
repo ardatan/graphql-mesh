@@ -23,9 +23,7 @@ export function createDisposable(disposeFn: () => void): Disposable {
   };
 }
 
-export function createAsyncDisposable(
-  disposeFn: () => MaybePromise<void>,
-): AsyncDisposable {
+export function createAsyncDisposable(disposeFn: () => MaybePromise<void>): AsyncDisposable {
   return {
     [DisposableSymbols.asyncDispose]: () => fakePromise(disposeFn()),
   };

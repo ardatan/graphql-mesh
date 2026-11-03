@@ -1,3 +1,4 @@
+import { type Logger } from '@graphql-hive/logger';
 import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
 import transportRest, { type RESTTransportOptions } from '@graphql-mesh/transport-rest';
 import type { MeshFetch } from '@graphql-mesh/types';
@@ -6,7 +7,6 @@ import {
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
 } from './loadGraphQLSchemaFromJSONSchemas.js';
 import type { JSONSchemaLoaderOptions } from './types.js';
-import { Logger } from '@graphql-hive/logger';
 
 export default loadGraphQLSchemaFromJSONSchemas;
 export * from './loadGraphQLSchemaFromJSONSchemas.js';
@@ -21,7 +21,8 @@ export function loadJSONSchemaSubgraph(name: string, options: JSONSchemaLoaderOp
     schema$: loadNonExecutableGraphQLSchemaFromJSONSchemas(name, {
       ...options,
       fetch: ctx.fetch,
-      cwd: ctx.cwd, log: ctx.log,
+      cwd: ctx.cwd,
+      log: ctx.log,
     }),
   });
 }

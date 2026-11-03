@@ -5,7 +5,6 @@ import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import {
   addMocksToSchema,
@@ -15,6 +14,7 @@ import {
   type IMockStore,
 } from '@graphql-tools/mock';
 import { memoize1 } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 interface MockingFieldConfig extends YamlConfig.MockingFieldConfig {
   custom?:

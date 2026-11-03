@@ -1,14 +1,14 @@
 import { setTimeout } from 'timers/promises';
 import { parse } from 'graphql';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { defaultImportFn } from '@graphql-mesh/utils';
-import { MemPubSub } from '@graphql-hive/pubsub';
-import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import RateLimitTransform from '../src/index.js';
 
 describe('Rate Limit Transform', () => {

@@ -1,9 +1,13 @@
 import { getInstrumented } from '@envelop/instrumentation';
-import type { MeshFetch, OnFetchHook, OnFetchHookDone, OnFetchHookPayload } from '@graphql-mesh/types';
-import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
-
-import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import { Logger } from '@graphql-hive/logger';
+import type {
+  MeshFetch,
+  OnFetchHook,
+  OnFetchHookDone,
+  OnFetchHookPayload,
+} from '@graphql-mesh/types';
+import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
 type ExecutionRequest = NonNullable<OnFetchHookPayload<any>['executionRequest']>;
 

@@ -3,11 +3,17 @@ import { SchemaComposer } from 'graphql-compose';
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
 import type { ConnectOptions, Document, Model } from 'mongoose';
 import { connect, disconnect } from 'mongoose';
-import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { ImportFn, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
-import { Logger } from '@graphql-hive/logger';
+import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import type {
+  ImportFn,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 
 const modelQueryOperations = [
   'findById',

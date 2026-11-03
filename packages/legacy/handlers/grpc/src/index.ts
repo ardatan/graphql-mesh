@@ -1,13 +1,19 @@
 import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { GrpcTransportHelper } from '@graphql-mesh/transport-grpc';
-import type { ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, YamlConfig } from '@graphql-mesh/types';
+import type {
+  ImportFn,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { loadGrpcSubgraph } from '@omnigraph/grpc';
-import { Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
@@ -51,7 +57,8 @@ export default class GrpcHandler implements MeshHandler {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         fetch: this.fetchFn,
-        importFn: this.importFn, log: this.log,
+        importFn: this.importFn,
+        log: this.log,
         headers: this.config.schemaHeaders,
       }).then(sdl => buildSchema(sdl, { assumeValidSDL: true, assumeValid: true }));
     }

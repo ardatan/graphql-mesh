@@ -1,7 +1,7 @@
 import LocalForage from 'localforage';
+import type { PubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class LocalforageCache<V = any> implements KeyValueCache<V> {
   private localforage: LocalForage;

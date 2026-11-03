@@ -8441,6 +8441,7 @@ __metadata:
     "@graphql-tools/load": "npm:^9.1.1"
     "@graphql-tools/utils": "npm:^13.2.1"
     "@graphql-yoga/plugin-persisted-operations": "npm:^4.0.1"
+    "@whatwg-node/disposablestack": "npm:^0.1.0"
     "@whatwg-node/fetch": "npm:^0.12.1"
     camel-case: "npm:^4.1.2"
     graphql: "npm:16.14.0"
@@ -8939,6 +8940,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@n1ru4l/in-memory-live-query-store": "npm:^0.11.0"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
+    "@whatwg-node/promise-helpers": "npm:^2.0.1"
     graphql: "npm:16.14.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -13862,6 +13864,7 @@ __metadata:
   resolution: "@omnigraph/grpc@workspace:packages/loaders/grpc"
   dependencies:
     "@ardatan/grpc-reflection-js": "npm:^0.0.2"
+    "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/transport-common": "npm:^1.0.20"
     "@graphql-tools/load-files": "npm:^8.0.8"
@@ -13883,6 +13886,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@omnigraph/json-schema@workspace:packages/loaders/json-schema"
   dependencies:
+    "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/transport-common": "npm:^1.0.20"
@@ -13941,6 +13945,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@omnigraph/neo4j@workspace:packages/loaders/neo4j"
   dependencies:
+    "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/transport-neo4j": "npm:^0.13.3"
     "@graphql-mesh/types": "npm:^0.107.3"
@@ -13959,6 +13964,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@omnigraph/odata@workspace:packages/loaders/odata"
   dependencies:
+    "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/store": "npm:^0.107.3"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
@@ -13988,6 +13994,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@omnigraph/openapi@workspace:packages/loaders/openapi"
   dependencies:
+    "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/fusion-composition": "npm:^0.11.4"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
@@ -14013,6 +14020,7 @@ __metadata:
   resolution: "@omnigraph/raml@workspace:packages/loaders/raml"
   dependencies:
     "@ardatan/raml-1-parser": "npm:1.1.69"
+    "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -14034,6 +14042,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@omnigraph/soap@workspace:packages/loaders/soap"
   dependencies:
+    "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/transport-common": "npm:^1.0.20"
     "@graphql-mesh/transport-soap": "npm:^0.13.3"
@@ -14075,6 +14084,7 @@ __metadata:
   dependencies:
     "@creditkarma/thrift-parser": "npm:^2.0.0"
     "@creditkarma/thrift-server-core": "npm:^1.0.4"
+    "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/transport-thrift": "npm:^0.12.3"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"

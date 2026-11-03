@@ -1,12 +1,20 @@
 import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type {
+  GetMeshSourcePayload,
+  ImportFn,
+  MeshFetch,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { loadNonExecutableGraphQLSchemaFromRAML, processDirectives } from '@omnigraph/raml';
-import { Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class RAMLHandler implements MeshHandler {
   private name: string;
@@ -45,7 +53,8 @@ export default class RAMLHandler implements MeshHandler {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         fetch: this.fetchFn,
-        importFn: this.importFn, log: this.log,
+        importFn: this.importFn,
+        log: this.log,
         headers: this.config.schemaHeaders,
       });
       return buildSchema(sdl, {
@@ -58,7 +67,8 @@ export default class RAMLHandler implements MeshHandler {
       const schema = await loadNonExecutableGraphQLSchemaFromRAML(this.name, {
         ...this.config,
         cwd: this.baseDir,
-        fetch: this.fetchFn, log: this.log,
+        fetch: this.fetchFn,
+        log: this.log,
         ignoreErrorResponses: this.config.ignoreErrorResponses,
         selectQueryOrMutationField: this.config.selectQueryOrMutationField?.map(
           ({ type, fieldName }) => ({
@@ -80,7 +90,8 @@ export default class RAMLHandler implements MeshHandler {
     this.log.info(`Processing annotations for the execution layer`);
     const schemaWithDirectives = processDirectives(nonExecutableSchema, {
       ...this.config,
-      pubsub: this.pubsub, log: this.log,
+      pubsub: this.pubsub,
+      log: this.log,
       globalFetch: fetchFn,
     });
     return {

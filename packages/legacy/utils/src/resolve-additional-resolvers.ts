@@ -18,16 +18,16 @@ import {
 } from 'graphql';
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { MeshContext } from '@graphql-mesh/runtime';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { type ImportFn, type YamlConfig } from '@graphql-mesh/types';
 import type { IResolvers } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { withFilter } from './with-filter.js';
-import type { MaybePromise } from '@whatwg-node/promise-helpers';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
   if ('ofType' in type) {

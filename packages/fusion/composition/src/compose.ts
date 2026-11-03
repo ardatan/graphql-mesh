@@ -1,23 +1,29 @@
-import { GraphQLError } from 'graphql';
-import type {
-  DirectiveNode,
-  GraphQLArgumentConfig,
-  GraphQLFieldConfig,
-  GraphQLFieldConfigArgumentMap,
-} from 'graphql';
 import {
   concatAST,
   getNamedType,
+  GraphQLError,
   GraphQLSchema,
   isNonNullType,
   isObjectType,
   isSpecifiedScalarType,
   parse,
 } from 'graphql';
+import type {
+  DirectiveNode,
+  GraphQLArgumentConfig,
+  GraphQLFieldConfig,
+  GraphQLFieldConfigArgumentMap,
+} from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import { getDirectiveExtensions, getDocumentNodeFromSchema, MapperKind, mapSchema, type FieldMapper } from '@graphql-tools/utils';
+import {
+  getDirectiveExtensions,
+  getDocumentNodeFromSchema,
+  MapperKind,
+  mapSchema,
+  type FieldMapper,
+} from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import {

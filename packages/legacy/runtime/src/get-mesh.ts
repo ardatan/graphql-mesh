@@ -1,16 +1,38 @@
 import {
+  getOperationAST,
   GraphQLError,
+  specifiedRules,
+  validate,
   type DocumentNode,
   type GraphQLObjectType,
   type GraphQLSchema,
   type OperationTypeNode,
 } from 'graphql';
-import { getOperationAST, specifiedRules, validate } from 'graphql';
 import type { Plugin } from '@envelop/core';
 import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
-import type { GraphQLOperation, KeyValueCache, MeshFetch, MeshPlugin, MeshTransform, OnDelegateHook, OnFetchHook, OnFetchHookPayload, RawSourceOutput } from '@graphql-mesh/types';
-import { applySchemaTransforms, getHeadersObj, getInContextSDK, groupTransforms, isDisposable, makeAsyncDisposable, parseWithCache, wrapFetchWithHooks } from '@graphql-mesh/utils';
+import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
+import type {
+  GraphQLOperation,
+  KeyValueCache,
+  MeshFetch,
+  MeshPlugin,
+  MeshTransform,
+  OnDelegateHook,
+  OnFetchHook,
+  OnFetchHookPayload,
+  RawSourceOutput,
+} from '@graphql-mesh/types';
+import {
+  applySchemaTransforms,
+  getHeadersObj,
+  getInContextSDK,
+  groupTransforms,
+  isDisposable,
+  makeAsyncDisposable,
+  parseWithCache,
+  wrapFetchWithHooks,
+} from '@graphql-mesh/utils';
 import type { CreateProxyingResolverFn, SubschemaConfig } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import type { ExecutionResult } from '@graphql-tools/utils';
@@ -18,11 +40,14 @@ import { getRootTypeMap, isAsyncIterable, memoize1 } from '@graphql-tools/utils'
 import { wrapSchema } from '@graphql-tools/wrap';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
+import {
+  handleMaybePromise,
+  mapAsyncIterator,
+  type MaybePromise,
+} from '@whatwg-node/promise-helpers';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import type { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { getOriginalError } from './utils.js';
-import { handleMaybePromise, mapAsyncIterator, type MaybePromise } from '@whatwg-node/promise-helpers';
-import { Logger } from '@graphql-hive/logger';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 

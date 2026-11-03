@@ -1,11 +1,11 @@
 import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 import { type Plugin } from '@envelop/core';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
 import { type YamlConfig } from '@graphql-mesh/types';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import { Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 interface InvalidateByResultParams {
   pubsub: PubSub;
@@ -43,6 +43,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
       }
       timers.add(
         setInterval(() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           pubsub.publish('live-query:invalidate', liveQueryInvalidation.invalidate);
         }, liveQueryInvalidation.pollingInterval),
       );
@@ -88,6 +89,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
                       result,
                     }),
                   );
+                  // eslint-disable-next-line @typescript-eslint/no-floating-promises
                   pubsub.publish('live-query:invalidate', invalidationPaths);
                 }
               },

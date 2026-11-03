@@ -1,11 +1,11 @@
 import { join } from 'path';
 import { parse } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { MemPubSub } from '@graphql-hive/pubsub';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import ResolversCompositionTransform, { type ResolversComposition } from '../src/index.js';
 
 describe('transform', () => {

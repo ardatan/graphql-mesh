@@ -1,10 +1,10 @@
 import type { Schema } from 'js-yaml';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Type } from 'js-yaml';
+import { type Logger } from '@graphql-hive/logger';
 import type { ImportFn, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { isUrl } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
-import { Logger } from '@graphql-hive/logger';
 
 const fs = process.getBuiltinModule('node:fs');
 const pathModule = process.getBuiltinModule('node:path');
@@ -84,7 +84,7 @@ export function loadYaml(filepath: string, content: string, log: Logger): any {
 
 export async function readFile<T>(
   fileExpression: string,
-  { allowUnknownExtensions, cwd, fallbackFormat, importFn, log}: ReadFileOrUrlOptions,
+  { allowUnknownExtensions, cwd, fallbackFormat, importFn, log }: ReadFileOrUrlOptions,
 ): Promise<T> {
   const [filePath] = fileExpression.split('#');
   if (/js$/.test(filePath) || /ts$/.test(filePath)) {

@@ -6,9 +6,9 @@ import {
   printSchema,
 } from 'graphql';
 import type { MeshFetch } from '@graphql-mesh/types';
-import { dummyLogger as log} from '../../testing/dummyLogger';
-import { loadGraphQLHTTPSubgraph } from '../src/loadGraphQLHTTPSubgraph';
 import { fakePromise } from '@whatwg-node/promise-helpers';
+import { dummyLogger as log } from '../../testing/dummyLogger';
+import { loadGraphQLHTTPSubgraph } from '../src/loadGraphQLHTTPSubgraph';
 
 describe('loadGraphQLHTTPSubgraph', () => {
   it('respects schemaHeaders in introspection query', async () => {
@@ -36,7 +36,7 @@ describe('loadGraphQLHTTPSubgraph', () => {
         'x-token': 'reallysafe',
       },
     });
-    const { schema$ } = loader({ fetch: fetchFn, cwd: __dirname, log});
+    const { schema$ } = loader({ fetch: fetchFn, cwd: __dirname, log });
     const schema = await schema$;
     expect(printSchema(schema)).toContain(
       /* GraphQL */ `

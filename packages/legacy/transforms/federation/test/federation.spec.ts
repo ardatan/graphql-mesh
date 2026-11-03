@@ -1,10 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { buildSchema } from 'graphql';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { defaultImportFn } from '@graphql-mesh/utils';
-import { MemPubSub } from '@graphql-hive/pubsub';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import FederationTransform from '../src/index.js';
 
 describe('transform-federation', () => {

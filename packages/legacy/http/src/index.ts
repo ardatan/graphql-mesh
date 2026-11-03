@@ -1,10 +1,10 @@
+import { Logger } from '@graphql-hive/logger';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { pathExists, withCookies } from '@graphql-mesh/utils';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';
 import { resolvePlaygroundConfig } from './playground.js';
-import { Logger } from '@graphql-hive/logger';
 
 const fs = process.getBuiltinModule('node:fs');
 const path = process.getBuiltinModule('node:path');
@@ -122,7 +122,7 @@ export function createMeshHTTPHandler<TServerContext>({
                   if (eventName === expectedEvent) {
                     const body = await request.text();
                     log.debug(`Received webhook request for ${url.pathname}`, body);
-                    mesh.pubsub.publish(
+                    await mesh.pubsub.publish(
                       eventName,
                       request.headers.get('content-type') === 'application/json'
                         ? JSON.parse(body)

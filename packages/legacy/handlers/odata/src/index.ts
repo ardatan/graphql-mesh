@@ -1,8 +1,15 @@
 import type { GraphQLSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
 import { PredefinedProxyOptions, type StoreProxy } from '@graphql-mesh/store';
-import type { GetMeshSourcePayload, ImportFn, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type {
+  GetMeshSourcePayload,
+  ImportFn,
+  MeshHandler,
+  MeshHandlerOptions,
+  MeshSource,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { loadNonExecutableGraphQLSchemaFromOData, processDirectives } from '@omnigraph/odata';
-import { Logger } from '@graphql-hive/logger';
 
 export default class ODataHandler implements MeshHandler {
   private name: string;
@@ -36,7 +43,8 @@ export default class ODataHandler implements MeshHandler {
         baseDir: this.baseDir,
         schemaHeaders: this.config.schemaHeaders,
         operationHeaders: this.config.operationHeaders,
-        fetchFn, log: this.log,
+        fetchFn,
+        log: this.log,
         importFn: this.importFn,
         batch: this.config.batch,
         expandNavProps: this.config.expandNavProps,

@@ -7,7 +7,7 @@ export * from './eventEmitterForPubSub.js';
 export * from './executor.js';
 
 export default {
-  getSubgraphExecutor({ subgraph, pubsub, log}) {
+  getSubgraphExecutor({ subgraph, pubsub, log }) {
     return getNeo4JExecutor({
       schema: subgraph,
       pubsub,

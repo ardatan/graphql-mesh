@@ -1,7 +1,12 @@
 import type { GraphQLSchema } from 'graphql';
 import { extendSchema } from 'graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
-import type { MeshMerger, MeshMergerContext, MeshMergerOptions, RawSourceOutput } from '@graphql-mesh/types';
+import type {
+  MeshMerger,
+  MeshMergerContext,
+  MeshMergerOptions,
+  RawSourceOutput,
+} from '@graphql-mesh/types';
 import { applySchemaTransforms } from '@graphql-mesh/utils';
 import { addResolversToSchema, mergeSchemas } from '@graphql-tools/schema';
 import { asArray, mapSchema } from '@graphql-tools/utils';

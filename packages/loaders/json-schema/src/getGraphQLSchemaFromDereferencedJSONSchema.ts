@@ -25,7 +25,8 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
   log.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
   const visitorResult = await getComposerFromJSONSchema({
     subgraphName,
-    schema: fullyDeferencedSchema, log: log.child('getComposerFromJSONSchema'),
+    schema: fullyDeferencedSchema,
+    log: log.child('getComposerFromJSONSchema'),
     getScalarForFormat: opts.getScalarForFormat,
   });
 

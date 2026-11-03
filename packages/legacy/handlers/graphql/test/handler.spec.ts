@@ -4,6 +4,7 @@
 import { promises as fsPromises } from 'fs';
 import { join } from 'path';
 import { buildASTSchema, buildSchema, introspectionFromSchema, parse } from 'graphql';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import {
   InMemoryStoreStorageAdapter,
@@ -11,11 +12,10 @@ import {
   PredefinedProxyOptions,
 } from '@graphql-mesh/store';
 import { defaultImportFn } from '@graphql-mesh/utils';
-import { MemPubSub } from '@graphql-hive/pubsub';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as fetchFn } from '@whatwg-node/fetch';
 import { createDisposableServer } from '../../../../testing/createDisposableServer.js';
-import { dummyLogger as log} from '../../../../testing/dummyLogger.js';
+import { dummyLogger as log } from '../../../../testing/dummyLogger.js';
 import GraphQLHandler from '../src/index.js';
 
 const { readFile } = fsPromises;

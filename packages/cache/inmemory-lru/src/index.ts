@@ -1,7 +1,7 @@
+import type { PubSub } from '@graphql-hive/pubsub';
 import { type KeyValueCache, type KeyValueCacheSetOptions } from '@graphql-mesh/types';
 import { createLruCache, type LRUCache } from '@graphql-mesh/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 export interface InMemoryLRUCacheOptions {
   max?: number;

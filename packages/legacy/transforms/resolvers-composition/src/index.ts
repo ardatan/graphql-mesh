@@ -1,5 +1,10 @@
 import type { GraphQLSchema } from 'graphql';
-import type { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type {
+  ImportFn,
+  MeshTransform,
+  MeshTransformOptions,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { extractResolvers, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import type { ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
 import { composeResolvers } from '@graphql-tools/resolvers-composition';

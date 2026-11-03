@@ -1,12 +1,11 @@
 import { buildSchema, GraphQLObjectType, printSchema, type GraphQLField } from 'graphql';
-import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-
-import { defaultImportFn } from '@graphql-mesh/utils';
-import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
-import { wrapSchema } from '@graphql-tools/wrap';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
-import HoistFieldTransform from '../src/index.js';
 import { Logger } from '@graphql-hive/logger';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
+import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import { defaultImportFn } from '@graphql-mesh/utils';
+import { wrapSchema } from '@graphql-tools/wrap';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
+import HoistFieldTransform from '../src/index.js';
 
 describe('hoist', () => {
   const importFn = defaultImportFn;

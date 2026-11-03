@@ -1,6 +1,11 @@
 import type { GraphQLFieldConfig, GraphQLFieldResolver, GraphQLSchema } from 'graphql';
 import { defaultFieldResolver, extendSchema } from 'graphql';
-import type { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import type {
+  ImportFn,
+  MeshTransform,
+  MeshTransformOptions,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';

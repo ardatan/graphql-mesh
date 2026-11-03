@@ -1,12 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { parse } from 'graphql';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn, getHeadersObj } from '@graphql-mesh/utils';
-import { MemPubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { Headers, Response } from '@whatwg-node/fetch';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import JsonSchemaHandler from '../src/index.js';
 
 describe('JSON Schema Handler', () => {

@@ -13,7 +13,15 @@ import type {
   SelectionSetNode,
 } from 'graphql';
 import { getNamedType, isLeafType, isListType, isNonNullType, Kind, print } from 'graphql';
-import type { OnDelegateHook, OnDelegateHookDone, OnDelegateHookPayload, RawSourceOutput, SelectionSetParam, SelectionSetParamOrFactory } from '@graphql-mesh/types';
+import { type Logger } from '@graphql-hive/logger';
+import type {
+  OnDelegateHook,
+  OnDelegateHookDone,
+  OnDelegateHookPayload,
+  RawSourceOutput,
+  SelectionSetParam,
+  SelectionSetParamOrFactory,
+} from '@graphql-mesh/types';
 import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import type {
@@ -31,7 +39,6 @@ import {
 import { WrapQuery } from '@graphql-tools/wrap';
 import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
 import { parseWithCache } from './parseAndPrintWithCache.js';
-import { Logger } from '@graphql-hive/logger';
 
 export const MESH_API_CONTEXT_SYMBOL = Symbol('isMeshAPIContext');
 

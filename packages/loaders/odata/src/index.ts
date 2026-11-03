@@ -22,6 +22,7 @@ import {
 } from 'graphql-scalars';
 import { pascalCase } from 'pascal-case';
 import urljoin from 'url-join';
+import { type Logger } from '@graphql-hive/logger';
 import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
@@ -49,7 +50,6 @@ import {
 import type { EntityTypeExtensions } from './types.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
 import { QUERY_OPTIONS_FIELDS } from './utils/QueryOptionsFields.js';
-import { Logger } from '@graphql-hive/logger';
 
 type DataLoaderMap = Record<symbol, DataLoader<Request, Response, Request>>;
 
@@ -1002,7 +1002,8 @@ export function loadODataSubgraph(
     name,
     schema$: loadNonExecutableGraphQLSchemaFromOData(name, {
       ...options,
-      importFn: defaultImportFn, log: ctx.log,
+      importFn: defaultImportFn,
+      log: ctx.log,
       fetchFn: ctx.fetch,
       baseDir: ctx.cwd,
     }),

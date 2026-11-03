@@ -7,6 +7,8 @@ import {
   isSpecifiedScalarType,
   isUnionType,
 } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { getDefDirectives } from '@graphql-mesh/utils';
@@ -24,8 +26,6 @@ import { processResolveRootFieldAnnotations } from './resolveRootField.js';
 import { processResponseMetadataAnnotations } from './responseMetadata.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
-import { Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 
 export interface ProcessDirectiveArgs {
   pubsub?: PubSub;

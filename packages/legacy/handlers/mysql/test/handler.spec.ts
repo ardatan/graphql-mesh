@@ -50,7 +50,8 @@ describe('mysql', () => {
       cache,
       pubsub: noOpFunction,
       store,
-      importFn: noOpFunction, log: noOpFunction,
+      importFn: noOpFunction,
+      log: noOpFunction,
     });
 
     const expectedOptions: LoadGraphQLSchemaFromMySQLOpts = {

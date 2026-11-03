@@ -1,14 +1,14 @@
 import { getIntrospectionQuery, parse } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import type { ImportFn } from '@graphql-mesh/types';
-import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { Repeater } from '@repeaterjs/repeater';
-import { dummyLogger as log} from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import Transform from '../src/index.js';
 
 describe('encapsulate', () => {

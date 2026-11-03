@@ -12,6 +12,7 @@ import {
   type GraphQLSchema,
   type ObjectTypeDefinitionNode,
 } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
 import {
   composeAnnotatedSubgraphs,
   futureAdditions,
@@ -19,7 +20,6 @@ import {
   type FutureAddition,
   type SubgraphConfig,
 } from '@graphql-mesh/fusion-composition';
-
 import { parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -33,7 +33,6 @@ import {
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
-import { Logger } from '@graphql-hive/logger';
 
 const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(process.env.DEBUG));
 

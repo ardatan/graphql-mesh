@@ -4,7 +4,7 @@ import { createExecutorFromSchemaAST } from './executor.js';
 export { createExecutorFromSchemaAST } from './executor.js';
 
 export default {
-  getSubgraphExecutor({ transportEntry, subgraph, fetch, log}) {
+  getSubgraphExecutor({ transportEntry, subgraph, fetch, log }) {
     let headers: Record<string, string> | undefined;
     if (typeof transportEntry.headers === 'string') {
       headers = JSON.parse(transportEntry.headers);
