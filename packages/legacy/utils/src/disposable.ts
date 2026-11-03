@@ -1,5 +1,5 @@
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import { fakePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 
 export function isDisposable(obj: any): obj is Disposable | AsyncDisposable {
   return obj?.[DisposableSymbols.dispose] || obj?.[DisposableSymbols.asyncDispose];
@@ -27,7 +27,7 @@ export function createAsyncDisposable(
   disposeFn: () => MaybePromise<void>,
 ): AsyncDisposable {
   return {
-    [DisposableSymbols.asyncDispose]: () => Promise.resolve(disposeFn()),
+    [DisposableSymbols.asyncDispose]: () => fakePromise(disposeFn()),
   };
 }
 
@@ -45,7 +45,7 @@ export function makeAsyncDisposable<T>(
   disposeFn: () => MaybePromise<void>,
 ): T & AsyncDisposable {
   Object.defineProperty(obj, DisposableSymbols.asyncDispose, {
-    value: () => Promise.resolve(disposeFn()),
+    value: () => fakePromise(disposeFn()),
     configurable: true,
     writable: true,
   });

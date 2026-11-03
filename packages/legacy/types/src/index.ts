@@ -12,14 +12,10 @@ import type {
 } from '@graphql-tools/delegate';
 import type { ExecutionRequest, Executor, IResolvers } from '@graphql-tools/utils';
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
-import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import * as YamlConfig from './config.js';
 import type { HivePubSub } from './pubsub.js';
 import type { IMeshStore } from './store.js';
-
-export type MeshDisposableStack = InstanceType<typeof AsyncDisposableStack>;
-export { AsyncDisposableStack };
 
 export * from './pubsub.js';
 
@@ -58,12 +54,12 @@ export type MeshHandlerOptions<THandlerConfig> = {
   store: IMeshStore;
   log: Logger;
   importFn: ImportFn;
-  disposables?: MeshDisposableStack;
+  disposables?: AsyncDisposableStack;
 };
 
 export type GetMeshSourcePayload = {
   fetchFn: MeshFetch;
-  disposables?: MeshDisposableStack;
+  disposables?: AsyncDisposableStack;
 };
 
 // Handlers
@@ -83,7 +79,7 @@ export interface MeshTransformOptions<Config = any> {
   pubsub: HivePubSub;
   importFn: ImportFn;
   log: Logger;
-  disposables?: MeshDisposableStack;
+  disposables?: AsyncDisposableStack;
 }
 
 export interface MeshTransformLibrary<Config = any> {
@@ -101,7 +97,7 @@ export interface MeshMergerOptions {
   pubsub: HivePubSub;
   log: Logger;
   store: IMeshStore;
-  disposables?: MeshDisposableStack;
+  disposables?: AsyncDisposableStack;
 }
 
 export interface MeshMergerLibrary {
@@ -125,7 +121,7 @@ export type MeshPluginOptions<TConfig> = TConfig & {
   pubsub: HivePubSub;
   baseDir: string;
   importFn: ImportFn;
-  disposables?: MeshDisposableStack;
+  disposables?: AsyncDisposableStack;
 };
 
 export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;

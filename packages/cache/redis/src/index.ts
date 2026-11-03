@@ -25,7 +25,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   private iamInitPromise?: Promise<void>;
 
   constructor(
-    options: YamlConfig.Cache['redis'] & { pubsub?: HivePubSub; log: Logger; disposables?: import('@graphql-mesh/types').MeshDisposableStack },
+    options: YamlConfig.Cache['redis'] & { pubsub?: HivePubSub; log: Logger; disposables?: AsyncDisposableStack },
   ) {
     this.tracer = trace.getTracer('hive.cache.redis');
     this.tracer.startActiveSpan('hive.cache.redis.init', span => {

@@ -283,6 +283,7 @@ export async function generateTsArtifacts(
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
                 `const pathModule = process.getBuiltinModule('node:path');`,
                 `import type { ImportFn } from '@graphql-mesh/types';`,
+                `import { fakePromise, fakeRejectPromise } from '@whatwg-node/promise-helpers';`,
               ]);
               const results = await Promise.all(
                 rawSources.map(async source => {
@@ -356,7 +357,7 @@ const importFn: ImportFn = <T>(moduleId: string) => {
     })
     .join('')}
     default:
-      return Promise.reject(new Error(\`Cannot find module '\${relativeModuleId}'.\`));
+      return fakeRejectPromise(new Error(\`Cannot find module '\${relativeModuleId}'.\`));
   }
 };
 
@@ -384,7 +385,7 @@ export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance> {
         .then(newMesh =>
           meshInstance$.then(oldMesh => {
             oldMesh.destroy()
-            meshInstance$ = Promise.resolve(newMesh)
+            meshInstance$ = fakePromise(newMesh)
           })
         ).catch(err => {
           console.error("Mesh polling failed so the existing version will be used:", err);
@@ -398,7 +399,7 @@ export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance> {
       return mesh;
     }).catch((err) => {
       meshInstance$ = undefined;
-      return Promise.reject(err);
+      return fakeRejectPromise(err);
     });
   }
   return meshInstance$;

@@ -14,7 +14,7 @@ export default class GrpcHandler implements MeshHandler {
   private schemaWithAnnotationsProxy: StoreProxy<GraphQLSchema>;
   private log: Logger;
   private pubsub: HivePubSub;
-  private disposables?: import('@graphql-mesh/types').MeshDisposableStack;
+  private disposables?: AsyncDisposableStack;
   private fetchFn: MeshFetch;
   private importFn: ImportFn;
   private sourceName: string;

@@ -11,7 +11,7 @@ export default class MySQLHandler implements MeshHandler {
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
   private pubsub: HivePubSub;
-  private disposables?: import('@graphql-mesh/types').MeshDisposableStack;
+  private disposables?: AsyncDisposableStack;
   private importFn: ImportFn;
   private schemaProxy: StoreProxy<GraphQLSchema>;
 

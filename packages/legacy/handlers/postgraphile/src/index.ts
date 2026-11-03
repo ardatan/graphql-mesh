@@ -18,7 +18,7 @@ export default class PostGraphileHandler implements MeshHandler {
   private config: YamlConfig.PostGraphileHandler;
   private baseDir: string;
   private pubsub: HivePubSub;
-  private disposables?: import('@graphql-mesh/types').MeshDisposableStack;
+  private disposables?: AsyncDisposableStack;
   private pgCache: any;
   private log: Logger;
   private importFn: ImportFn;

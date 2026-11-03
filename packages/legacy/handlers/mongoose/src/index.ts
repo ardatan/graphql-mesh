@@ -35,7 +35,7 @@ export default class MongooseHandler implements MeshHandler {
   private config: YamlConfig.MongooseHandler;
   private baseDir: string;
   private pubsub: HivePubSub;
-  private disposables?: import('@graphql-mesh/types').MeshDisposableStack;
+  private disposables?: AsyncDisposableStack;
   private importFn: ImportFn;
   private log: Logger;
 

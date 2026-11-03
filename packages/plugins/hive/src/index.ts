@@ -1,12 +1,6 @@
 import { createHive, useHive } from '@graphql-hive/yoga';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type {
-  MeshDisposableStack,
-  MeshFetch,
-  MeshPlugin,
-  HivePubSub,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { MeshFetch, MeshPlugin, HivePubSub, YamlConfig } from '@graphql-mesh/types';
 import { Logger } from '@graphql-hive/logger';
 
 type HivePluginOptions = Parameters<typeof createHive>[0];
@@ -16,7 +10,7 @@ export default function useMeshHive<TContext>(
     log?: Logger;
     pubsub?: HivePubSub;
     fetch?: MeshFetch;
-    disposables?: MeshDisposableStack;
+    disposables?: AsyncDisposableStack;
   },
 ): MeshPlugin<TContext> {
   const enabled =

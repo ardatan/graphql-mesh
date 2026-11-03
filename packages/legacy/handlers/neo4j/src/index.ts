@@ -11,7 +11,7 @@ export default class Neo4JHandler implements MeshHandler {
   private config: YamlConfig.Neo4JHandler;
   private baseDir: string;
   private pubsub: HivePubSub;
-  private disposables?: import('@graphql-mesh/types').MeshDisposableStack;
+  private disposables?: AsyncDisposableStack;
   private schema: StoreProxy<GraphQLSchema>;
   private log: Logger;
   private name: string;
