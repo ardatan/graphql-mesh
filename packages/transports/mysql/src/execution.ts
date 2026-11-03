@@ -200,15 +200,16 @@ export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): Disp
         mysqlConnection.release();
       }
     },
-    () =>
-      new Promise<void>((resolve, reject) => {
-        pool.end(err => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
-      }),
+    () => {
+      const { promise, resolve, reject } = Promise.withResolvers<void>();
+      pool.end(err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+      return promise;
+    },
   );
 }

@@ -106,32 +106,32 @@ export function addMetaDataToCall(
       callFnArguments.push(callOptions);
     }
   }
-  return new Promise((resolve, reject) => {
-    const call: ClientDuplexStream<any, any> = callFn(
-      ...callFnArguments,
-      (error: Error, response: ClientUnaryCall | ClientReadableStream<unknown>) => {
-        if (error) {
-          reject(toGrpcGraphQLError(error));
-          return;
-        }
-        resolve(response);
-      },
-    );
-    if (isResponseStream) {
-      let isCancelled = false;
-      const responseStreamWithCancel = withCancel(call, reason => {
-        if (!isCancelled) {
-          call.call?.cancelWithStatus(0, reason?.toString() || 'aborted');
-          isCancelled = true;
-        }
-      });
-      resolve(responseStreamWithCancel);
-      if (isBlob(input)) {
-        const blobStream = input.stream();
-        (blobStream as any).pipe(call);
+  const { promise, resolve, reject } = Promise.withResolvers<any>();
+  const call: ClientDuplexStream<any, any> = callFn(
+    ...callFnArguments,
+    (error: Error, response: ClientUnaryCall | ClientReadableStream<unknown>) => {
+      if (error) {
+        reject(toGrpcGraphQLError(error));
+        return;
       }
+      resolve(response);
+    },
+  );
+  if (isResponseStream) {
+    let isCancelled = false;
+    const responseStreamWithCancel = withCancel(call, reason => {
+      if (!isCancelled) {
+        call.call?.cancelWithStatus(0, reason?.toString() || 'aborted');
+        isCancelled = true;
+      }
+    });
+    resolve(responseStreamWithCancel);
+    if (isBlob(input)) {
+      const blobStream = input.stream();
+      (blobStream as any).pipe(call);
     }
-  });
+  }
+  return promise;
 }
 
 export function addExecutionLogicToScalar(

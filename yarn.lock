@@ -5463,6 +5463,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^2.11.2"
     "@types/dockerode": "npm:^4.0.1"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
+    "@whatwg-node/promise-helpers": "npm:^2.0.1"
     dockerode: "npm:^4.0.10"
     glob: "npm:^14.0.3"
     graphql: "npm:^16.14.0"

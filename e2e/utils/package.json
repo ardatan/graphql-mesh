@@ -7,6 +7,7 @@
     "@graphql-hive/gateway": "^2.11.2",
     "@types/dockerode": "^4.0.1",
     "@whatwg-node/disposablestack": "^0.1.0",
+    "@whatwg-node/promise-helpers": "^2.0.1",
     "dockerode": "^4.0.10",
     "glob": "^14.0.3",
     "graphql": "^16.14.0",

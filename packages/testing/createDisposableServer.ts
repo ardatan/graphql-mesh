@@ -19,10 +19,12 @@ export async function createDisposableServer(
 ): Promise<DisposableServer> {
   const server = createServer(requestListener);
   const port = opts?.port || 0;
-  await new Promise<void>((resolve, reject) => {
+  {
+    const { promise, resolve, reject } = Promise.withResolvers<void>();
     server.once('error', err => reject(err));
     server.listen(port, () => resolve());
-  });
+    await promise;
+  }
   const sockets = new Set<Socket>();
   server.on('connection', socket => {
     sockets.add(socket);
@@ -39,9 +41,9 @@ export async function createDisposableServer(
         socket.destroy();
       }
       server.closeAllConnections();
-      return new Promise<void>((resolve, reject) => {
-        server.close(err => (err ? reject(err) : resolve()));
-      });
+      const { promise, resolve, reject } = Promise.withResolvers<void>();
+      server.close(err => (err ? reject(err) : resolve()));
+      return promise;
     },
     get server(): Server {
       return server;

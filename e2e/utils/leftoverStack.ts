@@ -19,12 +19,13 @@ function handleSuppressedError(e: any) {
 if (typeof afterAll === 'function') {
   afterAll(async () => {
     try {
-      await new Promise<void>((resolve, reject) => {
+      {
+        const { promise, resolve, reject } = Promise.withResolvers<void>();
         const timeout = setTimeout(() => {
           resolve();
           console.error('Failed to dispose leftover stack in time');
         }, 25_000);
-        Promise.resolve(leftoverStack.disposeAsync()).then(
+        leftoverStack.disposeAsync().then(
           () => {
             clearTimeout(timeout);
             resolve();
@@ -34,7 +35,8 @@ if (typeof afterAll === 'function') {
             reject(e);
           },
         );
-      });
+        await promise;
+      }
       await leftoverStack.disposeAsync();
     } catch (e) {
       handleSuppressedError(e);

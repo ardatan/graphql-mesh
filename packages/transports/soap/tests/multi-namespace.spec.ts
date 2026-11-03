@@ -23,9 +23,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
     );
     const schema = soapLoader.buildSchema();
 
-    const fetchSpy = jest.fn((_url: string, _init: RequestInit) =>
-      fakePromise(Response.error()),
-    );
+    const fetchSpy = jest.fn((_url: string, _init: RequestInit) => fakePromise(Response.error()));
     const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
 
     await executor({
@@ -200,9 +198,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
     );
     const schema = soapLoader.buildSchema();
 
-    const fetchSpy = jest.fn((_url: string, _init: RequestInit) =>
-      fakePromise(Response.error()),
-    );
+    const fetchSpy = jest.fn((_url: string, _init: RequestInit) => fakePromise(Response.error()));
     const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
 
     await executor({

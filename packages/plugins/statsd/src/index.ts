@@ -73,15 +73,15 @@ export default function useMeshStatsd(pluginOptions: YamlConfig.StatsdPlugin): M
       };
     },
     [DisposableSymbols.asyncDispose]() {
-      return new Promise<void>((resolve, reject) => {
-        client.close(err => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
+      const { promise, resolve, reject } = Promise.withResolvers<void>();
+      client.close(err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
       });
+      return promise;
     },
   };
 }

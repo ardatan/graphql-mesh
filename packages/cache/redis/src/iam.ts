@@ -73,48 +73,48 @@ class IamTokenConnector extends AbstractConnectorClass {
     const { options } = this;
     this.connecting = true;
 
-    return new Promise((resolve, reject) => {
-      process.nextTick(async () => {
-        if (!this.connecting) {
-          reject(new Error('Connection is closed.'));
-          return;
-        }
-        try {
-          if (options.tls) {
-            // eslint-disable-next-line import/no-nodejs-modules
-            const { connect } = await import('node:tls');
-            if (options.path) {
-              this.stream = connect({ ...options.tls, path: options.path });
-            } else {
-              this.stream = connect({
-                ...options.tls,
-                port: options.port ?? 6380,
-                host: options.host,
-              });
-            }
+    const { promise, resolve, reject } = Promise.withResolvers<Awaited<ConnectResult>>();
+    process.nextTick(async () => {
+      if (!this.connecting) {
+        reject(new Error('Connection is closed.'));
+        return;
+      }
+      try {
+        if (options.tls) {
+          // eslint-disable-next-line import/no-nodejs-modules
+          const { connect } = await import('node:tls');
+          if (options.path) {
+            this.stream = connect({ ...options.tls, path: options.path });
           } else {
-            // eslint-disable-next-line import/no-nodejs-modules
-            const { createConnection } = await import('node:net');
-            if (options.path) {
-              this.stream = createConnection({ path: options.path });
-            } else {
-              this.stream = createConnection({
-                port: options.port ?? 6379,
-                host: options.host,
-                family: options.family,
-              });
-            }
+            this.stream = connect({
+              ...options.tls,
+              port: options.port ?? 6380,
+              host: options.host,
+            });
           }
-        } catch (err) {
-          reject(err);
-          return;
+        } else {
+          // eslint-disable-next-line import/no-nodejs-modules
+          const { createConnection } = await import('node:net');
+          if (options.path) {
+            this.stream = createConnection({ path: options.path });
+          } else {
+            this.stream = createConnection({
+              port: options.port ?? 6379,
+              host: options.host,
+              family: options.family,
+            });
+          }
         }
-        this.stream.once('error', err => {
-          this.firstError = err;
-        });
-        resolve(this.stream);
+      } catch (err) {
+        reject(err);
+        return;
+      }
+      this.stream.once('error', err => {
+        this.firstError = err;
       });
+      resolve(this.stream);
     });
+    return promise;
   }
 }
 

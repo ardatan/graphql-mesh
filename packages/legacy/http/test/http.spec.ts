@@ -35,10 +35,7 @@ describe('http', () => {
     });
     it('should return 503 when not ready', async () => {
       await using mesh = await getTestMesh();
-      let resolve: VoidFunction;
-      const readyPromise = new Promise<void>(r => {
-        resolve = r;
-      });
+      const { promise: readyPromise, resolve } = Promise.withResolvers<void>();
       const httpHandler = createMeshHTTPHandler({
         baseDir: __dirname,
         getBuiltMesh: async () => {
@@ -185,17 +182,19 @@ describe('http', () => {
       }),
     );
     req.end();
-    const res: IncomingMessage = await new Promise((resolve, reject) => {
-      req.on('response', resolve);
-      req.on('error', reject);
-    });
+    const resPromise = Promise.withResolvers<IncomingMessage>();
+    req.on('response', resPromise.resolve);
+    req.on('error', resPromise.reject);
+    const res = await resPromise.promise;
     const chunks: Buffer[] = [];
-    await new Promise<void>(resolve => {
+    {
+      const { promise, resolve } = Promise.withResolvers<void>();
       res.on('data', chunk => {
         chunks.push(chunk as Buffer);
       });
       res.on('end', resolve);
-    });
+      await promise;
+    }
     expect(res.statusCode).toBe(200);
     expect(res.headers['content-encoding']).toBe('gzip');
     const finalRes = Buffer.concat(chunks);
