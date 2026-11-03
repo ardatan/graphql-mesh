@@ -1,7 +1,6 @@
 import { paramCase } from 'param-case';
 import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
-import type { MeshStore } from '@graphql-mesh/store';
 import type { ImportFn, KeyValueCache, MeshFetch, YamlConfig } from '@graphql-mesh/types';
 import { parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
@@ -105,14 +104,12 @@ export async function resolveCustomFetch({
   fetchConfig,
   importFn,
   cwd,
-  cache,
   additionalPackagePrefixes,
 }: {
   fetchConfig?: string;
   importFn: ImportFn;
   cwd: string;
   additionalPackagePrefixes: string[];
-  cache: KeyValueCache;
 }): Promise<{
   fetchFn: MeshFetch;
   code: string;
@@ -149,7 +146,6 @@ export async function resolveCache(
     localforage: {},
   },
   importFn: ImportFn,
-  rootStore: MeshStore,
   cwd: string,
   log: Logger,
   additionalPackagePrefixes: string[],
@@ -168,11 +164,13 @@ export async function resolveCache(
     additionalPrefixes: additionalPackagePrefixes,
   });
 
-  // Caches clean up via [DisposableSymbols]; do not inject unused pubsub
+  // Only pass what cache implementations still read:
+  // - importFn: file cache
+  // - log: redis / cfw-kv diagnostics
+  // (pubsub/store/disposables are unused after destroy-pubsub → DisposableSymbols)
   const cache = new Cache({
     ...config,
     importFn,
-    store: rootStore.child('cache'),
     log,
   });
 
@@ -180,7 +178,6 @@ export async function resolveCache(
   const cache = new MeshCache({
       ...${JSON.stringify(config)},
       importFn,
-      store: rootStore.child('cache'),
       log,
     })`;
 

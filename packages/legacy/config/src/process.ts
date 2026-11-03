@@ -175,7 +175,6 @@ export async function processConfig(
   const { cache, code: cacheCode } = await resolveCache(
     config.cache,
     importFn,
-    rootStore,
     dir,
     log,
     additionalPackagePrefixes,
@@ -184,7 +183,6 @@ export async function processConfig(
 
   const { fetchFn, code: fetchFnCode } = await resolveCustomFetch({
     fetchConfig: config.customFetch,
-    cache,
     importFn,
     cwd: dir,
     additionalPackagePrefixes,
