@@ -1,8 +1,8 @@
 import { getIntrospectionQuery, parse } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { ImportFn, HivePubSub } from '@graphql-mesh/types';
-import { MemPubSub } from '@graphql-hive/pubsub';
+import type { ImportFn } from '@graphql-mesh/types';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
@@ -54,7 +54,7 @@ describe('encapsulate', () => {
       },
     },
   });
-  let pubsub: HivePubSub;
+  let pubsub: PubSub;
 
   beforeEach(() => {
     pubsub = new MemPubSub();

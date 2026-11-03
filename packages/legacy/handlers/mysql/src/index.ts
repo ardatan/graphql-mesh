@@ -2,15 +2,16 @@ import type { GraphQLSchema } from 'graphql';
 import type { Pool } from 'mysql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { ImportFn, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { ImportFn, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { getMySQLExecutor, loadGraphQLSchemaFromMySQL } from '@omnigraph/mysql';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class MySQLHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
-  private pubsub: HivePubSub;
+  private pubsub: PubSub;
   private disposables?: AsyncDisposableStack;
   private importFn: ImportFn;
   private schemaProxy: StoreProxy<GraphQLSchema>;

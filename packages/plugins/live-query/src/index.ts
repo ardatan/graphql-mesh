@@ -1,8 +1,8 @@
 import type { Plugin } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { type HivePubSub, type YamlConfig } from '@graphql-mesh/types';
-import { MemPubSub } from '@graphql-hive/pubsub';
+import { type YamlConfig } from '@graphql-mesh/types';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import {
   defaultResourceIdentifierNormalizer,
   InMemoryLiveQueryStore,
@@ -13,7 +13,7 @@ import { Logger } from '@graphql-hive/logger';
 export default function useMeshLiveQuery(
   options: {
     log?: Logger;
-    pubsub?: HivePubSub;
+    pubsub?: PubSub;
   } & YamlConfig.LiveQueryConfig,
 ): Plugin {
   options.log ||= new Logger();

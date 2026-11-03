@@ -3,10 +3,11 @@ import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { loadNonExecutableGraphQLSchemaFromOpenAPI, processDirectives } from '@omnigraph/openapi';
 import { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class OpenAPIHandler implements MeshHandler {
   private name: string;
@@ -15,7 +16,7 @@ export default class OpenAPIHandler implements MeshHandler {
   private baseDir: string;
   private log: Logger;
   private fetchFn: MeshFetch;
-  private pubsub: HivePubSub;
+  private pubsub: PubSub;
   private importFn: ImportFn;
   constructor({
     name,

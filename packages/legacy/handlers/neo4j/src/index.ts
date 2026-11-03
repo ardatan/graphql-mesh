@@ -2,15 +2,16 @@ import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { dispose, isDisposable, readFileOrUrl } from '@graphql-mesh/utils';
 import { getDriverFromOpts, getNeo4JExecutor, loadGraphQLSchemaFromNeo4J } from '@omnigraph/neo4j';
 import { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class Neo4JHandler implements MeshHandler {
   private config: YamlConfig.Neo4JHandler;
   private baseDir: string;
-  private pubsub: HivePubSub;
+  private pubsub: PubSub;
   private disposables?: AsyncDisposableStack;
   private schema: StoreProxy<GraphQLSchema>;
   private log: Logger;

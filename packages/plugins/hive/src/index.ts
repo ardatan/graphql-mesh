@@ -1,14 +1,15 @@
 import { createHive, useHive } from '@graphql-hive/yoga';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { MeshFetch, MeshPlugin, HivePubSub, YamlConfig } from '@graphql-mesh/types';
+import type { MeshFetch, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 type HivePluginOptions = Parameters<typeof createHive>[0];
 
 export default function useMeshHive<TContext>(
   pluginOptions: YamlConfig.HivePlugin & {
     log?: Logger;
-    pubsub?: HivePubSub;
+    pubsub?: PubSub;
     fetch?: MeshFetch;
     disposables?: AsyncDisposableStack;
   },

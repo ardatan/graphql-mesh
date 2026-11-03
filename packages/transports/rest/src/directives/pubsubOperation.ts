@@ -1,12 +1,13 @@
 import type { GraphQLField } from 'graphql';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { type HivePubSub } from '@graphql-mesh/types';
+
 import { getResolverForPubSubOperation } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 interface ProcessPubSubOperationAnnotationsOpts {
   field: GraphQLField<any, any>;
-  globalPubsub: HivePubSub;
+  globalPubsub: PubSub;
   pubsubTopic: string;
   log: Logger;
 }

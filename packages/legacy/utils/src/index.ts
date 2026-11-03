@@ -9,14 +9,8 @@ export * from './getRootFieldsWithArgs.js';
 export * from './global-lru-cache.js';
 export * from './group-transforms.js';
 export * from './load-from-module-export-expression.js';
-export {
-  handleMaybePromise,
-  iterateAsync,
-  type MaybePromise,
-} from '@whatwg-node/promise-helpers';
 export * from './parseAndPrintWithCache.js';
 export * from './projectResultBySelectionSet.js';
-export * from './pubsub.js';
 export * from './read-file-or-url.js';
 export * from './resolve-additional-resolvers.js';
 export * from './sanitize-name-for-graphql.js';

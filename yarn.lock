@@ -8176,6 +8176,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-inmemory-lru@workspace:packages/cache/inmemory-lru"
   dependencies:
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
@@ -8204,6 +8205,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-localforage@workspace:packages/cache/localforage"
   dependencies:
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/cache-inmemory-lru": "npm:^0.11.3"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -8272,6 +8274,7 @@ __metadata:
     "@aws-sdk/credential-providers": "npm:^3.1107.0"
     "@aws-sdk/util-format-url": "npm:^3.972.43"
     "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@opentelemetry/api": "npm:^1.9.1"
@@ -8344,6 +8347,7 @@ __metadata:
     "@graphql-codegen/typescript-operations": "npm:^5.1.0"
     "@graphql-codegen/typescript-resolvers": "npm:^5.1.8"
     "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/config": "npm:^0.111.3"
     "@graphql-mesh/http": "npm:^0.109.3"
     "@graphql-mesh/incontext-sdk-codegen": "npm:^0.3.3"
@@ -8707,6 +8711,7 @@ __metadata:
   resolution: "@graphql-mesh/mongoose@workspace:packages/legacy/handlers/mongoose"
   dependencies:
     "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -8727,6 +8732,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/mysql@workspace:packages/legacy/handlers/mysql"
   dependencies:
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/store": "npm:^0.107.3"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -8744,6 +8750,7 @@ __metadata:
   resolution: "@graphql-mesh/neo4j@workspace:packages/legacy/handlers/neo4j"
   dependencies:
     "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/store": "npm:^0.107.3"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -8776,6 +8783,7 @@ __metadata:
   resolution: "@graphql-mesh/openapi@workspace:packages/legacy/handlers/openapi"
   dependencies:
     "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/store": "npm:^0.107.3"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
@@ -9156,6 +9164,7 @@ __metadata:
   resolution: "@graphql-mesh/postgraphile@workspace:packages/legacy/handlers/postgraphile"
   dependencies:
     "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/store": "npm:^0.107.3"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
@@ -9176,6 +9185,7 @@ __metadata:
   resolution: "@graphql-mesh/raml@workspace:packages/legacy/handlers/raml"
   dependencies:
     "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/store": "npm:^0.107.3"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -9313,6 +9323,7 @@ __metadata:
     "@graphql-tools/resolvers-composition": "npm:^8.0.8"
     "@graphql-tools/schema": "npm:^11.0.8"
     "@graphql-tools/utils": "npm:^13.2.1"
+    "@whatwg-node/promise-helpers": "npm:^2.0.1"
     dayjs: "npm:^1.11.21"
     graphql: "npm:16.14.0"
     tslib: "npm:^2.4.0"
@@ -9705,12 +9716,14 @@ __metadata:
   resolution: "@graphql-mesh/transport-neo4j@workspace:packages/transports/neo4j"
   dependencies:
     "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/transport-common": "npm:^1.0.20"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.3.2"
     "@graphql-tools/utils": "npm:^13.2.1"
     "@neo4j/graphql": "npm:^7.6.5"
+    "@whatwg-node/promise-helpers": "npm:^2.0.1"
     graphql: "npm:16.14.0"
     neo4j-driver: "npm:^6.2.0"
     tslib: "npm:^2.4.0"
@@ -9737,6 +9750,7 @@ __metadata:
   resolution: "@graphql-mesh/transport-rest@workspace:packages/transports/rest"
   dependencies:
     "@graphql-hive/logger": "npm:^1.1.1"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/transport-common": "npm:^1.0.20"
     "@graphql-mesh/types": "npm:^0.107.3"
@@ -13869,6 +13883,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@omnigraph/json-schema@workspace:packages/loaders/json-schema"
   dependencies:
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/transport-common": "npm:^1.0.20"
     "@graphql-mesh/transport-rest": "npm:^0.12.4"
@@ -13926,6 +13941,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@omnigraph/neo4j@workspace:packages/loaders/neo4j"
   dependencies:
+    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/transport-neo4j": "npm:^0.13.3"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.3.2"

@@ -4,9 +4,10 @@ import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-
 import type { ConnectOptions, Document, Model } from 'mongoose';
 import { connect, disconnect } from 'mongoose';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { ImportFn, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { ImportFn, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 const modelQueryOperations = [
   'findById',
@@ -34,7 +35,7 @@ const modelMutationOperations = [
 export default class MongooseHandler implements MeshHandler {
   private config: YamlConfig.MongooseHandler;
   private baseDir: string;
-  private pubsub: HivePubSub;
+  private pubsub: PubSub;
   private disposables?: AsyncDisposableStack;
   private importFn: ImportFn;
   private log: Logger;

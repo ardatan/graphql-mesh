@@ -51,7 +51,7 @@ export interface Config {
   documents?: string[];
   persistedOperations?: PersistedOperationsConfig;
   /**
-   * Path to a file exporting a logger instance compatible with the `Logger` type from `@graphql-mesh/types`
+   * Path to a file exporting a logger instance compatible with the `Logger` type from `@graphql-hive/logger`
    */
   logger?: string;
   /**

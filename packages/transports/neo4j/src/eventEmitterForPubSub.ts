@@ -1,15 +1,16 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { EventEmitter } from 'events';
-import type { HivePubSub } from '@graphql-mesh/types';
+import type { PubSub } from '@graphql-hive/pubsub';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 
-export function getEventEmitterFromPubSub(pubsub: HivePubSub) {
+export function getEventEmitterFromPubSub(pubsub: PubSub) {
   return {
     on(event: string | symbol, listener: (...args: any[]) => void) {
-      void Promise.resolve(pubsub.subscribe(event.toString(), listener));
+      void fakePromise(pubsub.subscribe(event.toString(), listener));
       return this;
     },
     once(event: string | symbol, listener: (...args: any[]) => void) {
-      const unsubPromise = Promise.resolve(
+      const unsubPromise = fakePromise(
         pubsub.subscribe(event.toString(), data => {
           listener(data);
           void unsubPromise.then(unsub => unsub());

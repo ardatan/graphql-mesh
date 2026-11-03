@@ -1,3 +1,4 @@
+import type { PubSub } from '@graphql-hive/pubsub';
 // eslint-disable-next-line import/no-nodejs-modules
 import { tmpdir } from 'os';
 import pg from 'pg';
@@ -6,7 +7,7 @@ import { withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { ImportFn, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { ImportFn, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { Logger } from '@graphql-hive/logger';
@@ -17,7 +18,7 @@ export default class PostGraphileHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.PostGraphileHandler;
   private baseDir: string;
-  private pubsub: HivePubSub;
+  private pubsub: PubSub;
   private disposables?: AsyncDisposableStack;
   private pgCache: any;
   private log: Logger;

@@ -2,13 +2,14 @@ import type { DefinitionNode, DirectiveNode, DocumentNode, GraphQLSchema } from 
 import { extendSchema, parse, visit } from 'graphql';
 import type { Driver } from 'neo4j-driver';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
-import { type HivePubSub } from '@graphql-mesh/types';
+
 import { makeAsyncDisposable } from '@graphql-mesh/utils';
 import { asArray, getDirectiveExtensions, getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
 import { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 // TODO: Neo4jFeaturesSettings cannot be imported because of exports field in neo4j package.json
 // import type { Neo4jFeaturesSettings } from '@neo4j/graphql/dist/types/index.js';
@@ -17,7 +18,7 @@ type Neo4jFeaturesSettings = any;
 export interface Neo4JExecutorOpts {
   schema: GraphQLSchema;
   driver?: Driver;
-  pubsub?: HivePubSub;
+  pubsub?: PubSub;
   log?: Logger;
 }
 
@@ -113,18 +114,18 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
 
 interface GetExecutableSchemaFromTypeDefs {
   driver: Driver;
-  pubsub?: HivePubSub;
+  pubsub?: PubSub;
   typeDefs?: string | DocumentNode;
 }
 
 export function getExecutableSchemaFromTypeDefsAndDriver({
   driver,
-  pubsub: meshOrHivePubSub,
+  pubsub: meshOrPubSub,
   typeDefs,
 }: GetExecutableSchemaFromTypeDefs) {
   let features: Neo4jFeaturesSettings;
-  if (meshOrHivePubSub) {
-    const pubsub = meshOrHivePubSub;
+  if (meshOrPubSub) {
+    const pubsub = meshOrPubSub;
     features = {
       subscriptions: {
         events: getEventEmitterFromPubSub(pubsub),

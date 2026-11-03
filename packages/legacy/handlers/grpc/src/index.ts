@@ -3,17 +3,18 @@ import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { GrpcTransportHelper } from '@graphql-mesh/transport-grpc';
-import type { ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, HivePubSub, YamlConfig } from '@graphql-mesh/types';
+import type { ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, YamlConfig } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { loadGrpcSubgraph } from '@omnigraph/grpc';
 import { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
   private baseDir: string;
   private schemaWithAnnotationsProxy: StoreProxy<GraphQLSchema>;
   private log: Logger;
-  private pubsub: HivePubSub;
+  private pubsub: PubSub;
   private disposables?: AsyncDisposableStack;
   private fetchFn: MeshFetch;
   private importFn: ImportFn;

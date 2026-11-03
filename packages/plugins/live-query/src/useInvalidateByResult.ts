@@ -2,12 +2,13 @@ import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo 
 import { type Plugin } from '@envelop/core';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
-import { type HivePubSub, type YamlConfig } from '@graphql-mesh/types';
+import { type YamlConfig } from '@graphql-mesh/types';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 interface InvalidateByResultParams {
-  pubsub: HivePubSub;
+  pubsub: PubSub;
   invalidations: YamlConfig.LiveQueryInvalidation[];
   log: Logger;
 }

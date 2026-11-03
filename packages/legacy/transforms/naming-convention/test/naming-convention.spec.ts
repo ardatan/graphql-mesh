@@ -7,8 +7,8 @@ import {
   parse,
 } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { ImportFn, HivePubSub } from '@graphql-mesh/types';
-import { MemPubSub } from '@graphql-hive/pubsub';
+import type { ImportFn } from '@graphql-mesh/types';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { dummyLogger as log} from '../../../../testing/dummyLogger';
@@ -40,7 +40,7 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     }
   `);
   using cache = new InMemoryLRUCache();
-  let pubsub: HivePubSub;
+  let pubsub: PubSub;
   const baseDir: string = undefined;
   const importFn: ImportFn = m => import(m);
 

@@ -11,8 +11,8 @@ import {
 } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { hashObject } from '@graphql-mesh/string-interpolation';
-import type { ImportFn, HivePubSub, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
-import { MemPubSub } from '@graphql-hive/pubsub';
+import type { ImportFn, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import { computeCacheKey } from '../src/compute-cache-key.js';
@@ -129,7 +129,7 @@ const spies = {
 
 describe('cache', () => {
   let schema: GraphQLSchema;
-  let pubsub: HivePubSub;
+  let pubsub: PubSub;
   const baseDir: string = undefined;
 
   beforeEach(() => {

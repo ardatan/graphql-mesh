@@ -1,8 +1,8 @@
 import { paramCase } from 'param-case';
 import type { MeshStore } from '@graphql-mesh/store';
-import type { ImportFn, KeyValueCache, MeshFetch, HivePubSub, YamlConfig } from '@graphql-mesh/types';
+import type { ImportFn, KeyValueCache, MeshFetch, YamlConfig } from '@graphql-mesh/types';
 import { parseWithCache } from '@graphql-mesh/utils';
-import { MemPubSub } from '@graphql-hive/pubsub';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
@@ -145,7 +145,7 @@ export async function resolveCache(
   importFn: ImportFn,
   rootStore: MeshStore,
   cwd: string,
-  pubsub: HivePubSub,
+  pubsub: PubSub,
   log: Logger,
   additionalPackagePrefixes: string[],
 ): Promise<{
@@ -194,7 +194,7 @@ export async function resolvePubSub(
 ): Promise<{
   code: string;
   importCode: string;
-  pubsub: HivePubSub;
+  pubsub: PubSub;
 }> {
   if (pubsubYamlConfig) {
     let pubsubName: string;

@@ -1,7 +1,7 @@
 import { GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { HivePubSub } from '@graphql-mesh/types';
-import { MemPubSub } from '@graphql-hive/pubsub';
+
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { dummyLogger as log} from '../../../../testing/dummyLogger';
@@ -12,7 +12,7 @@ import { Logger } from '@graphql-hive/logger';
 describeTransformerTests('prefix', ({ mode, transformSchema }) => {
   let schema: GraphQLSchema;
   using cache = new InMemoryLRUCache();
-  let pubsub: HivePubSub;
+  let pubsub: PubSub;
   const baseDir: string = undefined;
 
   beforeEach(() => {

@@ -20,13 +20,14 @@ import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
 import type { MeshContext } from '@graphql-mesh/runtime';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { type HivePubSub, type ImportFn, type YamlConfig } from '@graphql-mesh/types';
+import { type ImportFn, type YamlConfig } from '@graphql-mesh/types';
 import type { IResolvers } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { withFilter } from './with-filter.js';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
   if ('ofType' in type) {
@@ -290,7 +291,7 @@ function generateValuesFromResultsByKey(
 
 export interface PubSubOperationOptions {
   pubsubTopic: string;
-  pubsub?: HivePubSub;
+  pubsub?: PubSub;
   filterBy?: string;
   result?: string;
 }
@@ -335,7 +336,7 @@ export function resolveAdditionalResolversWithoutImport(
     | YamlConfig.AdditionalStitchingResolverObject
     | YamlConfig.AdditionalSubscriptionObject
     | YamlConfig.AdditionalStitchingBatchResolverObject,
-  pubsub?: HivePubSub,
+  pubsub?: PubSub,
 ): IResolvers {
   const baseOptions: any = {
     valuesFromResults: additionalResolver.result
@@ -505,7 +506,7 @@ export function resolveAdditionalResolvers(
     | YamlConfig.AdditionalStitchingBatchResolverObject
   )[],
   importFn: ImportFn,
-  pubsub: HivePubSub,
+  pubsub: PubSub,
 ): Promise<IResolvers[]> {
   return Promise.all(
     (additionalResolvers || []).map(async additionalResolver => {

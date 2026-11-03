@@ -2,6 +2,7 @@ import type { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode 
 import type { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import type { Plugin } from '@envelop/core';
 import type { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import type {
   CreateProxyingResolverFn,
@@ -14,10 +15,7 @@ import type { ExecutionRequest, Executor, IResolvers } from '@graphql-tools/util
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import * as YamlConfig from './config.js';
-import type { HivePubSub } from './pubsub.js';
 import type { IMeshStore } from './store.js';
-
-export * from './pubsub.js';
 
 export { jsonSchema } from './config-schema.js';
 
@@ -50,7 +48,7 @@ export type MeshHandlerOptions<THandlerConfig> = {
   config: THandlerConfig;
   baseDir: string;
   cache: KeyValueCache;
-  pubsub: HivePubSub;
+  pubsub: PubSub;
   store: IMeshStore;
   log: Logger;
   importFn: ImportFn;
@@ -76,7 +74,7 @@ export interface MeshTransformOptions<Config = any> {
   config: Config;
   baseDir: string;
   cache: KeyValueCache;
-  pubsub: HivePubSub;
+  pubsub: PubSub;
   importFn: ImportFn;
   log: Logger;
   disposables?: AsyncDisposableStack;
@@ -94,7 +92,7 @@ export type Maybe<T> = null | undefined | T;
 
 export interface MeshMergerOptions {
   cache: KeyValueCache;
-  pubsub: HivePubSub;
+  pubsub: PubSub;
   log: Logger;
   store: IMeshStore;
   disposables?: AsyncDisposableStack;
@@ -118,7 +116,7 @@ export interface MeshMerger {
 export type MeshPluginOptions<TConfig> = TConfig & {
   log: Logger;
   cache: KeyValueCache;
-  pubsub: HivePubSub;
+  pubsub: PubSub;
   baseDir: string;
   importFn: ImportFn;
   disposables?: AsyncDisposableStack;

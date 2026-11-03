@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import type { MeshInstance } from '@graphql-mesh/runtime';
-import type { HivePubSub } from '@graphql-mesh/types';
 
 /**
  * Replicates the exact getBuiltMesh pattern emitted by ts-artifacts.ts so we

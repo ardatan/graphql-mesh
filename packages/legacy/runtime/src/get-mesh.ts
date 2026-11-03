@@ -8,9 +8,9 @@ import {
 import { getOperationAST, specifiedRules, validate } from 'graphql';
 import type { Plugin } from '@envelop/core';
 import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
-import type { GraphQLOperation, KeyValueCache, MeshFetch, MeshPlugin, HivePubSub, MeshTransform, OnDelegateHook, OnFetchHook, OnFetchHookPayload, RawSourceOutput } from '@graphql-mesh/types';
+import type { GraphQLOperation, KeyValueCache, MeshFetch, MeshPlugin, MeshTransform, OnDelegateHook, OnFetchHook, OnFetchHookPayload, RawSourceOutput } from '@graphql-mesh/types';
 import { applySchemaTransforms, getHeadersObj, getInContextSDK, groupTransforms, isDisposable, makeAsyncDisposable, parseWithCache, wrapFetchWithHooks } from '@graphql-mesh/utils';
-import { MemPubSub } from '@graphql-hive/pubsub';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import type { CreateProxyingResolverFn, SubschemaConfig } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import type { ExecutionResult } from '@graphql-tools/utils';
@@ -37,7 +37,7 @@ export interface MeshInstance extends AsyncDisposable {
    * Register cleanup to run when {@link destroy} / `await using` disposes this mesh.
    */
   deferDispose(fn: () => MaybePromise<void>): void;
-  pubsub: HivePubSub;
+  pubsub: PubSub;
   cache: KeyValueCache;
   log: Logger;
   plugins: Plugin[];

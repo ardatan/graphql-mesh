@@ -36,8 +36,8 @@ import {
 } from 'graphql-scalars';
 import type { JSONSchemaObject } from 'json-machete';
 import { processDirectives, processScalarType } from '@graphql-mesh/transport-rest';
-import type { HivePubSub } from '@graphql-mesh/types';
-import { MemPubSub } from '@graphql-hive/pubsub';
+
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { JSONSchema } from '@json-schema-tools/meta-schema';
 import { fetch } from '@whatwg-node/fetch';
@@ -46,7 +46,7 @@ import { getComposerFromJSONSchema } from '../src/getComposerFromJSONSchema.js';
 import { Logger } from '@graphql-hive/logger';
 
 describe('getComposerFromJSONSchema', () => {
-  const pubsub = new MemPubSub() as HivePubSub;
+  const pubsub = new MemPubSub() as PubSub;
   it('should return JSON scalar if given schema is boolean true', async () => {
     const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema: true, log});
     expect(result.input.getType()).toBe(GraphQLJSON);

@@ -4696,7 +4696,7 @@
     },
     "logger": {
       "type": "string",
-      "description": "Path to a file exporting a logger instance compatible with the `Logger` type from `@graphql-mesh/types`"
+      "description": "Path to a file exporting a logger instance compatible with the `Logger` type from `@graphql-hive/logger`"
     },
     "customFetch": {
       "anyOf": [

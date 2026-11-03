@@ -1,8 +1,8 @@
 import { join } from 'path';
 import { GraphQLObjectType, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { ImportFn, HivePubSub } from '@graphql-mesh/types';
-import { MemPubSub } from '@graphql-hive/pubsub';
+import type { ImportFn } from '@graphql-mesh/types';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable, pruneSchema } from '@graphql-tools/utils';
@@ -48,7 +48,7 @@ describe('replace-field', () => {
     }
   `;
   using cache = new InMemoryLRUCache();
-  let pubsub: HivePubSub;
+  let pubsub: PubSub;
   const baseDir: string = undefined;
 
   beforeEach(() => {

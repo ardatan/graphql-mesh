@@ -57,9 +57,9 @@ Breaking changes for Node 22+, Yoga 6, and Hive platform alignment:
 
 - Require Node.js `>=22.18.0` (Node 18/20 support dropped)
 - Upgrade to Yoga 6 / GraphQL Tools / WHATWG majors
-- Replace Mesh Logger with `@graphql-hive/logger` (use the `.log` option/property; Mesh `Logger` / `DefaultLogger` re-exports removed)
-- Replace Mesh PubSub with `@graphql-hive/pubsub` (`MemPubSub`); Mesh PubSub implementation and `destroy` pubsub event removed
+- Use `@graphql-hive/logger` directly (`.log` option/property); Mesh `Logger` / `DefaultLogger` types and re-exports removed
+- Use `@graphql-hive/pubsub` (`PubSub` / `MemPubSub`) directly; Mesh `HivePubSub` alias and `PubSub` re-export from `@graphql-mesh/utils` removed; `destroy` pubsub event removed
 - Mesh lifecycle cleanup now uses `AsyncDisposableStack` / `disposables` / `deferDispose` instead of `pubsub.publish('destroy')`
 - Remove `@graphql-mesh/cross-helpers` — use global `process` and `process.getBuiltinModule('node:…')` for builtins
-- Remove `mapMaybePromise` re-export from `@graphql-mesh/utils` (use `@whatwg-node/promise-helpers`)
+- Remove `handleMaybePromise` / `MaybePromise` / `mapMaybePromise` re-exports from `@graphql-mesh/utils` (import from `@whatwg-node/promise-helpers`)
 - Replace `globby` usage with `matchFiles` where applicable

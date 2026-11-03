@@ -2,8 +2,8 @@ import { GraphQLInterfaceType, parse, type ExecutionResult } from 'graphql';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import type { KeyValueCache, HivePubSub } from '@graphql-mesh/types';
-import { MemPubSub } from '@graphql-hive/pubsub';
+import type { KeyValueCache } from '@graphql-mesh/types';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { dummyLogger as log} from '../../../../testing/dummyLogger.js';
@@ -39,7 +39,7 @@ const baseDir = __dirname;
 const importFn = (id: string) => require(id);
 
 describe('odata', () => {
-  let pubsub: HivePubSub;
+  let pubsub: PubSub;
   let store: MeshStore;
   beforeEach(() => {
     pubsub = new MemPubSub();

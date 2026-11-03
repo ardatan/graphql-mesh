@@ -2,10 +2,11 @@ import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { loadNonExecutableGraphQLSchemaFromRAML, processDirectives } from '@omnigraph/raml';
 import { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 
 export default class RAMLHandler implements MeshHandler {
   private name: string;
@@ -14,7 +15,7 @@ export default class RAMLHandler implements MeshHandler {
   private baseDir: string;
   private log: Logger;
   private fetchFn: MeshFetch;
-  private pubsub: HivePubSub;
+  private pubsub: PubSub;
   private importFn: ImportFn;
   constructor({
     name,
