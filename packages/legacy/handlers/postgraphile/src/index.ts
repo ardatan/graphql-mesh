@@ -15,7 +15,7 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, makeAsyncDisposable } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 
 const path = process.getBuiltinModule('node:path');
@@ -25,7 +25,6 @@ export default class PostGraphileHandler implements MeshHandler {
   private config: YamlConfig.PostGraphileHandler;
   private baseDir: string;
   private pubsub: PubSub;
-  private disposables?: AsyncDisposableStack;
   private pgCache: any;
   private log: Logger;
   private importFn: ImportFn;
@@ -35,7 +34,7 @@ export default class PostGraphileHandler implements MeshHandler {
     config,
     baseDir,
     pubsub,
-    disposables,
+    disposables: _disposables,
     store,
     log,
     importFn,
@@ -44,7 +43,6 @@ export default class PostGraphileHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
-    this.disposables = disposables;
     this.pgCache = store.proxy('pgCache.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.log = log;
     this.importFn = importFn;
@@ -72,9 +70,9 @@ export default class PostGraphileHandler implements MeshHandler {
       });
     }
 
-    this.disposables?.defer(() => {
+    makeAsyncDisposable(this, () => {
       this.log.debug('Destroying PostgreSQL pool');
-      pgPool.end();
+      return pgPool.end();
     });
 
     const cacheKey = this.name + '_introspection.json';

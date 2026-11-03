@@ -13,14 +13,13 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { dispose, isDisposable, readFileOrUrl } from '@graphql-mesh/utils';
+import { dispose, isDisposable, makeAsyncDisposable, readFileOrUrl } from '@graphql-mesh/utils';
 import { getDriverFromOpts, getNeo4JExecutor, loadGraphQLSchemaFromNeo4J } from '@omnigraph/neo4j';
 
 export default class Neo4JHandler implements MeshHandler {
   private config: YamlConfig.Neo4JHandler;
   private baseDir: string;
   private pubsub: PubSub;
-  private disposables?: AsyncDisposableStack;
   private schema: StoreProxy<GraphQLSchema>;
   private log: Logger;
   private name: string;
@@ -32,7 +31,7 @@ export default class Neo4JHandler implements MeshHandler {
     config,
     baseDir,
     pubsub,
-    disposables,
+    disposables: _disposables,
     store,
     log,
     importFn,
@@ -41,7 +40,6 @@ export default class Neo4JHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
-    this.disposables = disposables;
     this.schema = store.proxy('schema.graphql', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
     this.log = log;
     this.importFn = importFn;
@@ -106,10 +104,7 @@ export default class Neo4JHandler implements MeshHandler {
     });
 
     if (isDisposable(executor)) {
-      this.disposables?.defer(() => {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        dispose(executor);
-      });
+      makeAsyncDisposable(this, () => dispose(executor));
     }
 
     return {

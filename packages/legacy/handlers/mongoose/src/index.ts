@@ -13,7 +13,7 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression, makeAsyncDisposable } from '@graphql-mesh/utils';
 
 const modelQueryOperations = [
   'findById',
@@ -42,7 +42,6 @@ export default class MongooseHandler implements MeshHandler {
   private config: YamlConfig.MongooseHandler;
   private baseDir: string;
   private pubsub: PubSub;
-  private disposables?: AsyncDisposableStack;
   private importFn: ImportFn;
   private log: Logger;
 
@@ -51,14 +50,13 @@ export default class MongooseHandler implements MeshHandler {
     config,
     baseDir,
     pubsub,
-    disposables,
+    disposables: _disposables,
     importFn,
     log,
   }: MeshHandlerOptions<YamlConfig.MongooseHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
-    this.disposables = disposables;
     this.importFn = importFn;
     this.log = log;
   }
@@ -73,9 +71,7 @@ export default class MongooseHandler implements MeshHandler {
         useUnifiedTopology: true,
       } as ConnectOptions).catch(e => this.log.error(e));
 
-      this.disposables?.defer(() => {
-        disconnect().catch(e => this.log.error(e));
-      });
+      makeAsyncDisposable(this, () => disconnect().catch(e => this.log.error(e)));
     }
 
     const schemaComposer = new SchemaComposer();

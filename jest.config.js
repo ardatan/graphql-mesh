@@ -111,8 +111,7 @@ module.exports = {
     '@graphql-mesh/plugin-jwt-auth':
       '<rootDir>/node_modules/@graphql-mesh/plugin-jwt-auth/dist/index.cjs',
     // Still a transitive dep of @graphql-hive/gateway-runtime; not part of this monorepo anymore
-    '@graphql-mesh/cross-helpers':
-      '<rootDir>/node_modules/@graphql-mesh/cross-helpers/node.js',
+    '@graphql-mesh/cross-helpers': '<rootDir>/node_modules/@graphql-mesh/cross-helpers/node.js',
 
     '^graphql$': '<rootDir>/node_modules/graphql/index.js',
     '^lru-cache$': '<rootDir>/node_modules/lru-cache/dist/commonjs/index.js',

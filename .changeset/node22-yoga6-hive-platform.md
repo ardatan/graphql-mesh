@@ -36,6 +36,7 @@
 "@graphql-mesh/plugin-rate-limit": major
 "@graphql-mesh/plugin-response-cache": major
 "@graphql-mesh/plugin-snapshot": major
+"@graphql-mesh/plugin-http-cache": major
 "@graphql-mesh/incontext-sdk-codegen": major
 "@graphql-mesh/transport-grpc": major
 "@graphql-mesh/transport-mysql": major
@@ -53,13 +54,46 @@
 "@omnigraph/thrift": major
 ---
 
-Breaking changes for Node 22+, Yoga 6, and Hive platform alignment:
+## Platform
 
-- Require Node.js `>=22.18.0` (Node 18/20 support dropped)
-- Upgrade to Yoga 6 / GraphQL Tools / WHATWG majors
-- Use `@graphql-hive/logger` directly (`.log` option/property); Mesh `Logger` / `DefaultLogger` types and re-exports removed
-- Use `@graphql-hive/pubsub` (`PubSub` / `MemPubSub`) directly; Mesh `HivePubSub` alias and `PubSub` re-export from `@graphql-mesh/utils` removed; `destroy` pubsub event removed
-- Mesh lifecycle cleanup now uses `AsyncDisposableStack` / `disposables` / `deferDispose` instead of `pubsub.publish('destroy')`
-- Remove `@graphql-mesh/cross-helpers` — use global `process` and `process.getBuiltinModule('node:…')` for builtins
-- Remove `handleMaybePromise` / `MaybePromise` / `mapMaybePromise` re-exports from `@graphql-mesh/utils` (import from `@whatwg-node/promise-helpers`)
-- Replace `globby` usage with `matchFiles` where applicable
+- Require Node.js `>=22.18.0` (Node 18/20 dropped)
+- Upgrade Yoga 6 / GraphQL Tools / WHATWG majors
+
+## `@graphql-mesh/types`
+
+- Remove Mesh `Logger` / `DefaultLogger` / `HivePubSub` exports; use `@graphql-hive/logger` and `@graphql-hive/pubsub` (`PubSub`) directly
+- Add optional `disposables?: AsyncDisposableStack` on handler/transform/plugin/merger options and `GetMeshSourcePayload`
+- Drop `destroy` pubsub hook typing
+
+## `@graphql-mesh/utils`
+
+- Remove Mesh PubSub implementation and `PubSub` / `MemPubSub` re-exports
+- Remove `handleMaybePromise` / `MaybePromise` / `mapMaybePromise` re-exports (use `@whatwg-node/promise-helpers`)
+- Prefer `fakePromise` / `fakeRejectPromise` in disposable helpers
+
+## `@graphql-mesh/runtime` / `@graphql-mesh/config` / `@graphql-mesh/cli` / `@graphql-mesh/http`
+
+- Create/share `AsyncDisposableStack`; `destroy` / `deferDispose` dispose that stack
+- Generated artifacts import `AsyncDisposableStack` and `fakePromise` / `fakeRejectPromise`
+- Serve/CLI use Hive `Logger` and Hive `MemPubSub`
+
+## Handlers (`@graphql-mesh/grpc`, `mysql`, `mongoose`, `neo4j`, `postgraphile`, …)
+
+- Cleanup via `makeAsyncDisposable(handler, …)` so `getMesh` can `disposables.use(handler)` instead of `pubsub.publish('destroy')`
+
+## Transforms / plugins
+
+- `@graphql-mesh/transform-rate-limit`: disposable via `makeDisposable` + `disposables.use(this)`
+- `@graphql-mesh/transform-cache`: `Promise.withResolvers` for waiters; forward subscribe failures
+- `@graphql-mesh/plugin-hive` / `plugin-live-query`: require context/`log` from Mesh/Gateway; no default `new Logger()`
+- `@graphql-mesh/plugin-http-cache`: use `context.log` in `onFetch` (no plugin `log` option)
+
+## Cross-helpers removed
+
+- Delete `@graphql-mesh/cross-helpers` package
+- Call sites use global `process` and `process.getBuiltinModule('node:…')` (no `node:` static imports)
+
+## Caches / loaders / transports
+
+- Import Hive `Logger` / `PubSub` from original packages; declare those dependencies where needed
+- Redis/localforage/inmemory-lru disconnect via `DisposableSymbols` / shared disposables stack

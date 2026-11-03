@@ -122,7 +122,8 @@ export function createMeshHTTPHandler<TServerContext>({
                   if (eventName === expectedEvent) {
                     const body = await request.text();
                     log.debug(`Received webhook request for ${url.pathname}`, body);
-                    await mesh.pubsub.publish(
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                    mesh.pubsub.publish(
                       eventName,
                       request.headers.get('content-type') === 'application/json'
                         ? JSON.parse(body)

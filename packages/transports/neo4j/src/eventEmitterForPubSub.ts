@@ -11,8 +11,13 @@ export function getEventEmitterFromPubSub(pubsub: PubSub) {
       return this;
     },
     once(event: string | symbol, listener: (...args: any[]) => void) {
+      let called = false;
       const unsubPromise = fakePromise(
         pubsub.subscribe(event.toString(), data => {
+          if (called) {
+            return;
+          }
+          called = true;
           listener(data);
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
           unsubPromise.then(unsub => unsub());
@@ -23,7 +28,7 @@ export function getEventEmitterFromPubSub(pubsub: PubSub) {
     },
     emit(event: string | symbol, ...args: any[]) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      fakePromise(pubsub.publish(event.toString(), args[0]));
+      pubsub.publish(event.toString(), args[0]);
       return true;
     },
     addListener(event: string | symbol, listener: (...args: any[]) => void) {

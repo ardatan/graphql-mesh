@@ -23,3 +23,5 @@ export * from './get-def-directives.js';
 export * from './disposable.js';
 export * from './in-context-sdk.js';
 export * from './with-filter.js';
+// Kept for @graphql-mesh/fusion-runtime until it imports from @whatwg-node/promise-helpers directly
+export { iterateAsync } from '@whatwg-node/promise-helpers';

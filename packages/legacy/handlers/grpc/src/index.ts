@@ -12,7 +12,8 @@ import type {
   MeshHandlerOptions,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { readFileOrUrl } from '@graphql-mesh/utils';
+import { makeAsyncDisposable, readFileOrUrl } from '@graphql-mesh/utils';
+// placeholder
 import { loadGrpcSubgraph } from '@omnigraph/grpc';
 
 export default class GrpcHandler implements MeshHandler {
@@ -21,7 +22,6 @@ export default class GrpcHandler implements MeshHandler {
   private schemaWithAnnotationsProxy: StoreProxy<GraphQLSchema>;
   private log: Logger;
   private pubsub: PubSub;
-  private disposables?: AsyncDisposableStack;
   private fetchFn: MeshFetch;
   private importFn: ImportFn;
   private sourceName: string;
@@ -33,7 +33,7 @@ export default class GrpcHandler implements MeshHandler {
     store,
     log,
     pubsub,
-    disposables,
+    disposables: _disposables,
     importFn,
   }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
     this.log = log;
@@ -44,7 +44,6 @@ export default class GrpcHandler implements MeshHandler {
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.pubsub = pubsub;
-    this.disposables = disposables;
     this.importFn = importFn;
     this.sourceName = name;
   }
@@ -77,9 +76,7 @@ export default class GrpcHandler implements MeshHandler {
       this.config.endpoint,
       this.config,
     );
-    this.disposables?.defer(() => {
-      transport.dispose();
-    });
+    makeAsyncDisposable(this, () => transport.dispose());
     return Promise.all([transport.getCredentials(), this.getCachedNonExecutableSchema()]).then(
       ([creds, schema]) => {
         transport.processDirectives({ schema, creds });

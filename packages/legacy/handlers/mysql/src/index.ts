@@ -10,7 +10,12 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import {
+  dispose,
+  isDisposable,
+  loadFromModuleExportExpression,
+  makeAsyncDisposable,
+} from '@graphql-mesh/utils';
 import { getMySQLExecutor, loadGraphQLSchemaFromMySQL } from '@omnigraph/mysql';
 
 export default class MySQLHandler implements MeshHandler {
@@ -18,7 +23,6 @@ export default class MySQLHandler implements MeshHandler {
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
   private pubsub: PubSub;
-  private disposables?: AsyncDisposableStack;
   private importFn: ImportFn;
   private schemaProxy: StoreProxy<GraphQLSchema>;
 
@@ -27,7 +31,7 @@ export default class MySQLHandler implements MeshHandler {
     config,
     baseDir,
     pubsub,
-    disposables,
+    disposables: _disposables,
     store,
     importFn,
   }: MeshHandlerOptions<YamlConfig.MySQLHandler>) {
@@ -35,7 +39,6 @@ export default class MySQLHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
-    this.disposables = disposables;
     this.importFn = importFn;
     this.schemaProxy = store.proxy(
       'schema.graphql',
@@ -91,10 +94,7 @@ export default class MySQLHandler implements MeshHandler {
     });
 
     if (isDisposable(executor)) {
-      this.disposables?.defer(() => {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        dispose(executor);
-      });
+      makeAsyncDisposable(this, () => dispose(executor));
     }
 
     return {

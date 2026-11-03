@@ -206,8 +206,9 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
               log.info(`Polling for changes...`);
               buildMeshInstance()
                 .then(newMeshInstance =>
-                  meshInstance$.then(async oldMeshInstance => {
-                    await oldMeshInstance.destroy();
+                  meshInstance$.then(oldMeshInstance => {
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                    oldMeshInstance.destroy();
                     meshInstance$ = fakePromise(newMeshInstance);
                   }),
                 )
@@ -446,7 +447,8 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           );
 
           log.info(`Cleanup`);
-          await destroy();
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          destroy();
           log.info('Done! => ' + outputDir);
         } catch (e) {
           handleFatalError(e, log);
@@ -491,8 +493,9 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           const interval = setInterval(() => {
             getMesh(getMeshOpts)
               .then(newMeshInstance =>
-                meshInstance$.then(async oldMeshInstance => {
-                  await oldMeshInstance.destroy();
+                meshInstance$.then(oldMeshInstance => {
+                  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                  oldMeshInstance.destroy();
                   meshInstance$ = fakePromise(newMeshInstance);
                 }),
               )

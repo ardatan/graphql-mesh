@@ -149,20 +149,24 @@ export default class CacheTransform implements MeshTransform {
   }
 
   private waitAndReturn(pubsubTopic: string) {
-    return new Promise((resolve, reject) => {
-      const unsubPromise = fakePromise(
-        this.options.pubsub.subscribe(pubsubTopic, ({ result, error }) => {
-          unsubPromise.then(unsub => unsub());
-
-          if (error) {
-            reject(error);
+    const { promise, resolve, reject } = Promise.withResolvers<any>();
+    const unsubPromise = fakePromise(
+      this.options.pubsub.subscribe(pubsubTopic, ({ result, error }) => {
+        unsubPromise.then(unsub => {
+          if (typeof unsub === 'function') {
+            return unsub();
           }
+        });
 
-          if (result) {
-            resolve(result);
-          }
-        }),
-      );
-    });
+        if (error) {
+          reject(error);
+        }
+
+        if (result) {
+          resolve(result);
+        }
+      }),
+    ).catch(reject);
+    return promise;
   }
 }

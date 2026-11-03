@@ -58,8 +58,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
   let ignoresPatterns: URLPattern[];
   let URLPatternCtor: typeof URLPattern = DefaultURLPatternCtor;
   let ResponseCtor: typeof Response = DefaultResponseCtor;
-  let log: Logger | undefined;
-  function shouldSkip(url: string) {
+  function shouldSkip(url: string, log?: Logger) {
     ignoresPatterns ||= ignores?.map(match => new URLPatternCtor(match)) || [];
     if (ignoresPatterns?.length) {
       for (const pattern of ignoresPatterns) {
@@ -90,10 +89,10 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
       if (yoga.fetchAPI.Response) {
         ResponseCtor = yoga.fetchAPI.Response;
       }
-      log = yoga.log.child({ plugin: 'HTTP Cache' });
     },
     onFetch({ url, options, setOptions, context, endResponse }) {
-      if (shouldSkip(url) || typeof options?.body === 'object') {
+      const log = context?.log?.child?.({ plugin: 'HTTP Cache' }) ?? context?.log;
+      if (shouldSkip(url, log) || typeof options?.body === 'object') {
         log?.debug(`Skipping cache for ${url}`);
         return;
       }

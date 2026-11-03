@@ -71,7 +71,6 @@ export const graphqlHandler = ({
     const yoga = createYoga(yogaOptions);
     // Dispose Yoga instance when the Mesh instance is destroyed
     mesh.deferDispose(() =>
-       
       handleMaybePromise(
         () => yoga.dispose(),
         () => undefined,
