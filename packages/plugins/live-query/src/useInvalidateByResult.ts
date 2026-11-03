@@ -1,6 +1,5 @@
 import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 import { type Plugin } from '@envelop/core';
-import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
@@ -10,7 +9,6 @@ import { DisposableSymbols } from '@whatwg-node/disposablestack';
 interface InvalidateByResultParams {
   pubsub: PubSub;
   invalidations: YamlConfig.LiveQueryInvalidation[];
-  log: Logger;
 }
 
 export function useInvalidateByResult(params: InvalidateByResultParams): Plugin & Disposable {
@@ -22,11 +20,6 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
   }
   for (const liveQueryInvalidation of params.invalidations) {
     if (liveQueryInvalidation.invalidate.length === 0) {
-      params.log.warn(
-        `Invalidation paths are empty for live query invalidation config: ${JSON.stringify(
-          liveQueryInvalidation,
-        )}. Skipping this invalidation config.`,
-      );
       continue;
     }
     const rawInvalidationPaths = liveQueryInvalidation.invalidate;

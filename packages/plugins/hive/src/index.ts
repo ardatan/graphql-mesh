@@ -9,11 +9,16 @@ type HivePluginOptions = Parameters<typeof createHive>[0];
 
 export default function useMeshHive<TContext>(
   pluginOptions: YamlConfig.HivePlugin & {
-    log: Logger;
+    /**
+     * @deprecated Prefer Yoga/Gateway `log` from context when available.
+     * Mesh YAML composition still injects this for init-time Hive client setup.
+     */
+    log?: Logger;
     pubsub?: PubSub;
     fetch?: MeshFetch;
   },
 ): MeshPlugin<TContext> {
+  const log = pluginOptions.log;
   const enabled =
     pluginOptions != null && 'enabled' in pluginOptions
       ? typeof pluginOptions.enabled === 'string'
@@ -23,7 +28,7 @@ export default function useMeshHive<TContext>(
       : true;
 
   if (!enabled) {
-    pluginOptions.log.warn('Plugin is disabled');
+    log?.warn('Plugin is disabled');
     return {};
   }
 
@@ -31,12 +36,12 @@ export default function useMeshHive<TContext>(
     env: process.env,
   });
   if (token) {
-    pluginOptions.log.info('Reporting enabled');
+    log?.info('Reporting enabled');
   }
 
   const persistedDocuments = pluginOptions.persistedDocuments;
   if (persistedDocuments) {
-    pluginOptions.log.info('Persisted documents enabled');
+    log?.info('Persisted documents enabled');
     persistedDocuments.fetch ||= pluginOptions.fetch;
   }
 
@@ -83,7 +88,7 @@ export default function useMeshHive<TContext>(
   }
   let agent: HivePluginOptions['agent'] = {
     name: 'graphql-mesh',
-    logger: pluginOptions.log,
+    logger: log,
   };
   if (pluginOptions.agent) {
     agent = {
@@ -93,7 +98,7 @@ export default function useMeshHive<TContext>(
       minTimeout: pluginOptions.agent.minTimeout,
       sendInterval: pluginOptions.agent.sendInterval,
       maxSize: pluginOptions.agent.maxSize,
-      logger: pluginOptions.agent.logger || pluginOptions.log,
+      logger: pluginOptions.agent.logger || log,
       fetch: pluginOptions.agent.fetch,
     };
   }
@@ -124,7 +129,7 @@ export default function useMeshHive<TContext>(
     reporting,
     selfHosting,
     persistedDocuments,
-    logger: pluginOptions.log,
+    logger: log,
   };
   const client = createHive(yogaPluginOpts);
   const hivePlugin = useHive(client);
@@ -132,7 +137,7 @@ export default function useMeshHive<TContext>(
   return {
     ...hivePlugin,
     [DisposableSymbols.asyncDispose]() {
-      return client.dispose().catch(e => pluginOptions.log.error('Error disposing Hive client', e));
+      return client.dispose().catch(e => log?.error('Error disposing Hive client', e));
     },
   };
 }

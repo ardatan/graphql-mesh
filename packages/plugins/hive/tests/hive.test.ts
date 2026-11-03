@@ -13,7 +13,6 @@ describe('Hive', () => {
     const plugin = useMeshHive({
       enabled: true,
       token: 'FAKE_TOKEN',
-      log: new Logger(),
     });
     plugin.onPluginInit?.({
       addPlugin: jest.fn(),

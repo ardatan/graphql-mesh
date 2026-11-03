@@ -1,6 +1,5 @@
 import type { Plugin } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
-import type { Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { type YamlConfig } from '@graphql-mesh/types';
@@ -13,14 +12,12 @@ import { useInvalidateByResult } from './useInvalidateByResult.js';
 
 export default function useMeshLiveQuery(
   options: YamlConfig.LiveQueryConfig & {
-    log: Logger;
     pubsub?: PubSub;
   },
 ): Plugin {
   if (!options.pubsub) {
     throw new Error('Live Query plugin requires a pubsub instance from Mesh/Gateway context');
   }
-  options.log.debug(`Creating Live Query Store`);
   const liveQueryStore = new InMemoryLiveQueryStore({
     buildResourceIdentifier:
       options.resourceIdentifier != null
@@ -54,7 +51,6 @@ export default function useMeshLiveQuery(
           useInvalidateByResult({
             pubsub,
             invalidations: options.invalidations,
-            log: options.log,
           }),
         );
       }
