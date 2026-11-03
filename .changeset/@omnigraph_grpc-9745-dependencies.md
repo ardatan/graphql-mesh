@@ -8,3 +8,4 @@ dependencies updates:
   - Added dependency [`@graphql-tools/load-files@^8.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/load-files/v/8.0.8) (to `dependencies`)
   - Removed dependency [`@graphql-mesh/cross-helpers@^0.4.18` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.18) (from `dependencies`)
   - Removed dependency [`globby@^11.1.0` ↗︎](https://www.npmjs.com/package/globby/v/11.1.0) (from `dependencies`)
+  - Updated dependency [`graphql@^16.0.0 || ^17.0.0` ↗︎](https://www.npmjs.com/package/graphql/v/16.0.0) (from `*`, in `peerDependencies`)
