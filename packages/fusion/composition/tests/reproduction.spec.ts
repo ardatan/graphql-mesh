@@ -22,6 +22,11 @@ describe('Reproductions', () => {
         schema,
       },
     ]);
-    expect(result).toMatchSnapshot();
+    expect({
+      publicSdl: result.publicSdl,
+      supergraphSdl: result.supergraphSdl,
+      subgraphs: result.subgraphs,
+      annotatedSubgraphs: result.annotatedSubgraphs,
+    }).toMatchSnapshot();
   });
 });

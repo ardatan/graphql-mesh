@@ -1,103 +1,65 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY)
-    
-    
-    
-    @link(
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@enum", "@httpOperation", "@transport", "@merge", "@source", "@extraSchemaDefinitionDirective"]
-)
-  {
-    query: Query
-    mutation: Mutation
-    
-  }
-
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
-
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
-
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
-
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
-
-  scalar link__Import
-
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
-
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
-
-  
-  
-  
-  directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ENUM | ENUM_VALUE | SCALAR | INPUT_OBJECT | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
-
-  
-  
-  
-  
-enum join__Graph {
-  PETSTORE @join__graph(name: "petstore", url: "http://localhost:<petstore_port>/api/v3") 
-  VACCINATION @join__graph(name: "vaccination", url: "http://localhost:<vaccination_port>/graphql") 
+) {
+  query: Query
+  mutation: Mutation
 }
 
-directive @enum(subgraph: String, value: String)  repeatable on ENUM_VALUE
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ENUM | ENUM_VALUE | SCALAR | INPUT_OBJECT | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
+
+enum join__Graph {
+  PETSTORE @join__graph(name: "petstore", url: "http://localhost:<petstore_port>/api/v3")
+  VACCINATION @join__graph(name: "vaccination", url: "http://localhost:<vaccination_port>/graphql")
+}
+
+directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
 
 directive @httpOperation(
   subgraph: String
@@ -130,83 +92,83 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-directive @source(name: String!, type: String, subgraph: String!)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
-scalar BigInt @join__type(graph: PETSTORE)  @join__type(graph: VACCINATION) 
+scalar BigInt @join__type(graph: PETSTORE) @join__type(graph: VACCINATION)
 
 """
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
-scalar JSON @join__type(graph: PETSTORE)  @inaccessible @specifiedBy(
+scalar JSON @join__type(graph: PETSTORE) @inaccessible @specifiedBy(
   url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf"
 )
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar DateTime @join__type(graph: PETSTORE)  @inaccessible
+scalar DateTime @join__type(graph: PETSTORE) @inaccessible
 
 """
 A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
 """
-scalar EmailAddress @join__type(graph: PETSTORE)  @inaccessible @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address") 
+scalar EmailAddress @join__type(graph: PETSTORE) @inaccessible @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
 """
 The \`File\` scalar type represents a file upload.
 """
-scalar File @join__type(graph: PETSTORE)  @inaccessible
+scalar File @join__type(graph: PETSTORE) @inaccessible
 
-scalar ObjMap @join__type(graph: PETSTORE) 
+scalar ObjMap @join__type(graph: PETSTORE)
 
-scalar _DirectiveExtensions @join__type(graph: PETSTORE) 
+scalar _DirectiveExtensions @join__type(graph: PETSTORE)
 
-scalar TransportOptions @join__type(graph: VACCINATION) 
+scalar TransportOptions @join__type(graph: VACCINATION)
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3"}]}
-) @join__type(graph: PETSTORE)  @join__type(graph: VACCINATION)  {
+) @join__type(graph: PETSTORE) @join__type(graph: VACCINATION) {
   """
   Multiple status values can be provided with comma separated strings
   """
-  findPetsByStatus(status: queryInput_findPetsByStatus_status = available) : [Pet] @httpOperation(
+  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @httpOperation(
     subgraph: "petstore"
     path: "/pet/findByStatus"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
     queryParamArgMap: "{\\"status\\":\\"status\\"}"
     queryStringOptionsByParam: "{\\"status\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}"
-  ) @join__field(graph: PETSTORE)  @inaccessible
+  ) @join__field(graph: PETSTORE) @inaccessible
   """
   Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
   """
   findPetsByTags("""
   Tags to filter by
   """
-  tags: [String]) : [Pet] @httpOperation(
+  tags: [String]): [Pet] @httpOperation(
     subgraph: "petstore"
     path: "/pet/findByTags"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
     queryParamArgMap: "{\\"tags\\":\\"tags\\"}"
     queryStringOptionsByParam: "{\\"tags\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}"
-  ) @join__field(graph: PETSTORE)  @inaccessible
+  ) @join__field(graph: PETSTORE) @inaccessible
   """
   Returns a single pet
   """
   getPetById("""
   ID of pet to return
   """
-  petId: BigInt!) : Pet @httpOperation(
+  petId: BigInt!): Pet @httpOperation(
     subgraph: "petstore"
     path: "/pet/{args.petId}"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")  @join__field(graph: PETSTORE) 
+  ) @merge(subgraph: "petstore", keyField: "id", keyArg: "petId") @join__field(graph: PETSTORE)
   """
   Returns a map of status codes to quantities
   """
@@ -215,19 +177,19 @@ type Query @extraSchemaDefinitionDirective(
     path: "/store/inventory"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @join__field(graph: PETSTORE)  @inaccessible
+  ) @join__field(graph: PETSTORE) @inaccessible
   """
   For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
   """
   getOrderById("""
   ID of order that needs to be fetched
   """
-  orderId: BigInt!) : Order @httpOperation(
+  orderId: BigInt!): Order @httpOperation(
     subgraph: "petstore"
     path: "/store/order/{args.orderId}"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")  @join__field(graph: PETSTORE)  @inaccessible
+  ) @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId") @join__field(graph: PETSTORE) @inaccessible
   """
   Logs user into the system
   """
@@ -246,11 +208,11 @@ type Query @extraSchemaDefinitionDirective(
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
     queryParamArgMap: "{\\"username\\":\\"username\\",\\"password\\":\\"password\\"}"
-  ) @join__field(graph: PETSTORE)  @inaccessible
+  ) @join__field(graph: PETSTORE) @inaccessible
   """
   Logs out current logged in user session
   """
-  logoutUser: JSON @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET)  @join__field(graph: PETSTORE)  @inaccessible
+  logoutUser: JSON @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET) @join__field(graph: PETSTORE) @inaccessible
   """
   Get user by user name
   """
@@ -264,34 +226,34 @@ type Query @extraSchemaDefinitionDirective(
     path: "/user/{args.username}"
     operationSpecificHeaders: [["accept", "application/json"]]
     httpMethod: GET
-  ) @join__field(graph: PETSTORE)  @inaccessible
-  petById(id: BigInt!) : Pet @source(name: "pet_by_id", type: "Pet", subgraph: "vaccination")  @merge(subgraph: "vaccination", keyField: "id", keyArg: "id")  @join__field(graph: VACCINATION) 
+  ) @join__field(graph: PETSTORE) @inaccessible
+  petById(id: BigInt!): Pet @source(name: "pet_by_id", type: "Pet", subgraph: "vaccination") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id") @join__field(graph: VACCINATION)
 }
 
 """
 Pet object that needs to be added to the store
 """
-type Pet @join__type(graph: PETSTORE, key: "id")  @join__type(graph: VACCINATION, key: "id")  {
-  id: BigInt @join__field(graph: PETSTORE, type: "BigInt")  @join__field(graph: VACCINATION, type: "BigInt!") 
-  name: String! @join__field(graph: PETSTORE) 
-  category: Category @join__field(graph: PETSTORE) 
-  photoUrls: [String]! @join__field(graph: PETSTORE) 
-  tags: [Tag] @join__field(graph: PETSTORE) 
-  status: mutation_updatePet_status @join__field(graph: PETSTORE) 
-  vaccinated: Boolean! @join__field(graph: VACCINATION) 
+type Pet @join__type(graph: PETSTORE, key: "id") @join__type(graph: VACCINATION, key: "id") {
+  id: BigInt @join__field(graph: PETSTORE, type: "BigInt") @join__field(graph: VACCINATION, type: "BigInt!")
+  name: String! @join__field(graph: PETSTORE)
+  category: Category @join__field(graph: PETSTORE)
+  photoUrls: [String]! @join__field(graph: PETSTORE)
+  tags: [Tag] @join__field(graph: PETSTORE)
+  status: mutation_updatePet_status @join__field(graph: PETSTORE)
+  vaccinated: Boolean! @join__field(graph: VACCINATION)
 }
 
-type Category @join__type(graph: PETSTORE)  {
+type Category @join__type(graph: PETSTORE) {
   id: BigInt
   name: String
 }
 
-type Tag @join__type(graph: PETSTORE)  {
+type Tag @join__type(graph: PETSTORE) {
   id: BigInt
   name: String
 }
 
-type Order @join__type(graph: PETSTORE, key: "id")  @inaccessible {
+type Order @join__type(graph: PETSTORE, key: "id") @inaccessible {
   id: BigInt
   petId: BigInt
   quantity: Int
@@ -300,7 +262,7 @@ type Order @join__type(graph: PETSTORE, key: "id")  @inaccessible {
   complete: Boolean
 }
 
-type User @join__type(graph: PETSTORE)  @inaccessible {
+type User @join__type(graph: PETSTORE) @inaccessible {
   id: BigInt
   username: String
   firstName: String
@@ -314,11 +276,11 @@ type User @join__type(graph: PETSTORE)  @inaccessible {
   userStatus: Int
 }
 
-type Mutation @join__type(graph: PETSTORE)  @inaccessible {
+type Mutation @join__type(graph: PETSTORE) @inaccessible {
   """
   Update an existing pet by Id
   """
-  updatePet(input: Pet_Input) : Pet @httpOperation(
+  updatePet(input: Pet_Input): Pet @httpOperation(
     subgraph: "petstore"
     path: "/pet"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
@@ -327,7 +289,7 @@ type Mutation @join__type(graph: PETSTORE)  @inaccessible {
   """
   Add a new pet to the store
   """
-  addPet(input: Pet_Input) : Pet @httpOperation(
+  addPet(input: Pet_Input): Pet @httpOperation(
     subgraph: "petstore"
     path: "/pet"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
@@ -361,7 +323,7 @@ type Mutation @join__type(graph: PETSTORE)  @inaccessible {
   deletePet(api_key: String, """
   Pet id to delete
   """
-  petId: BigInt!) : JSON @httpOperation(
+  petId: BigInt!): JSON @httpOperation(
     subgraph: "petstore"
     path: "/pet/{args.petId}"
     operationSpecificHeaders: [["api_key", "{args.api_key}"]]
@@ -390,7 +352,7 @@ type Mutation @join__type(graph: PETSTORE)  @inaccessible {
   """
   Place a new order in the store
   """
-  placeOrder(input: Order_Input) : Order @httpOperation(
+  placeOrder(input: Order_Input): Order @httpOperation(
     subgraph: "petstore"
     path: "/store/order"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
@@ -402,11 +364,11 @@ type Mutation @join__type(graph: PETSTORE)  @inaccessible {
   deleteOrder("""
   ID of the order that needs to be deleted
   """
-  orderId: BigInt!) : JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE)  @inaccessible
+  orderId: BigInt!): JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE) @inaccessible
   """
   This can only be done by the logged in user.
   """
-  createUser(input: User_Input) : User @httpOperation(
+  createUser(input: User_Input): User @httpOperation(
     subgraph: "petstore"
     path: "/user"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
@@ -415,7 +377,7 @@ type Mutation @join__type(graph: PETSTORE)  @inaccessible {
   """
   Creates list of users with given input array
   """
-  createUsersWithListInput(input: [User_Input]) : User @httpOperation(
+  createUsersWithListInput(input: [User_Input]): User @httpOperation(
     subgraph: "petstore"
     path: "/user/createWithList"
     operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
@@ -427,7 +389,7 @@ type Mutation @join__type(graph: PETSTORE)  @inaccessible {
   updateUser("""
   name that need to be deleted
   """
-  username: String!, input: User_Input) : JSON @httpOperation(
+  username: String!, input: User_Input): JSON @httpOperation(
     subgraph: "petstore"
     path: "/user/{args.username}"
     operationSpecificHeaders: [["Content-Type", "application/json"]]
@@ -439,10 +401,10 @@ type Mutation @join__type(graph: PETSTORE)  @inaccessible {
   deleteUser("""
   The name that needs to be deleted
   """
-  username: String!) : JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE)  @inaccessible
+  username: String!): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE) @inaccessible
 }
 
-type ApiResponse @join__type(graph: PETSTORE)  @inaccessible {
+type ApiResponse @join__type(graph: PETSTORE) @inaccessible {
   code: Int
   type: String
   message: String
@@ -451,46 +413,46 @@ type ApiResponse @join__type(graph: PETSTORE)  @inaccessible {
 """
 Status values that need to be considered for filter
 """
-enum queryInput_findPetsByStatus_status @join__type(graph: PETSTORE)  {
-  available @join__enumValue(graph: PETSTORE) 
-  pending @join__enumValue(graph: PETSTORE) 
-  sold @join__enumValue(graph: PETSTORE) 
+enum queryInput_findPetsByStatus_status @join__type(graph: PETSTORE) {
+  available @join__enumValue(graph: PETSTORE)
+  pending @join__enumValue(graph: PETSTORE)
+  sold @join__enumValue(graph: PETSTORE)
 }
 
 """
 pet status in the store
 """
-enum mutation_updatePet_status @join__type(graph: PETSTORE)  {
-  available @join__enumValue(graph: PETSTORE) 
-  pending @join__enumValue(graph: PETSTORE) 
-  sold @join__enumValue(graph: PETSTORE) 
+enum mutation_updatePet_status @join__type(graph: PETSTORE) {
+  available @join__enumValue(graph: PETSTORE)
+  pending @join__enumValue(graph: PETSTORE)
+  sold @join__enumValue(graph: PETSTORE)
 }
 
 """
 Order Status
 """
-enum mutation_placeOrder_status @join__type(graph: PETSTORE)  {
-  placed @join__enumValue(graph: PETSTORE) 
-  approved @join__enumValue(graph: PETSTORE) 
-  delivered @join__enumValue(graph: PETSTORE) 
+enum mutation_placeOrder_status @join__type(graph: PETSTORE) {
+  placed @join__enumValue(graph: PETSTORE)
+  approved @join__enumValue(graph: PETSTORE)
+  delivered @join__enumValue(graph: PETSTORE)
 }
 
-enum HTTPMethod @join__type(graph: PETSTORE)  {
-  GET @join__enumValue(graph: PETSTORE) 
-  HEAD @join__enumValue(graph: PETSTORE) 
-  POST @join__enumValue(graph: PETSTORE) 
-  PUT @join__enumValue(graph: PETSTORE) 
-  DELETE @join__enumValue(graph: PETSTORE) 
-  CONNECT @join__enumValue(graph: PETSTORE) 
-  OPTIONS @join__enumValue(graph: PETSTORE) 
-  TRACE @join__enumValue(graph: PETSTORE) 
-  PATCH @join__enumValue(graph: PETSTORE) 
+enum HTTPMethod @join__type(graph: PETSTORE) {
+  GET @join__enumValue(graph: PETSTORE)
+  HEAD @join__enumValue(graph: PETSTORE)
+  POST @join__enumValue(graph: PETSTORE)
+  PUT @join__enumValue(graph: PETSTORE)
+  DELETE @join__enumValue(graph: PETSTORE)
+  CONNECT @join__enumValue(graph: PETSTORE)
+  OPTIONS @join__enumValue(graph: PETSTORE)
+  TRACE @join__enumValue(graph: PETSTORE)
+  PATCH @join__enumValue(graph: PETSTORE)
 }
 
 """
 Pet object that needs to be added to the store
 """
-input Pet_Input @join__type(graph: PETSTORE)  @inaccessible {
+input Pet_Input @join__type(graph: PETSTORE) @inaccessible {
   id: BigInt
   name: String!
   category: Category_Input
@@ -499,17 +461,17 @@ input Pet_Input @join__type(graph: PETSTORE)  @inaccessible {
   status: mutation_updatePet_status
 }
 
-input Category_Input @join__type(graph: PETSTORE)  @inaccessible {
+input Category_Input @join__type(graph: PETSTORE) @inaccessible {
   id: BigInt
   name: String
 }
 
-input Tag_Input @join__type(graph: PETSTORE)  @inaccessible {
+input Tag_Input @join__type(graph: PETSTORE) @inaccessible {
   id: BigInt
   name: String
 }
 
-input Order_Input @join__type(graph: PETSTORE)  @inaccessible {
+input Order_Input @join__type(graph: PETSTORE) @inaccessible {
   id: BigInt
   petId: BigInt
   quantity: Int
@@ -518,7 +480,7 @@ input Order_Input @join__type(graph: PETSTORE)  @inaccessible {
   complete: Boolean
 }
 
-input User_Input @join__type(graph: PETSTORE)  @inaccessible {
+input User_Input @join__type(graph: PETSTORE) @inaccessible {
   id: BigInt
   username: String
   firstName: String

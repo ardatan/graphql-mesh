@@ -1,131 +1,93 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@relationshipProperties", "@relationship", "@introspection", "@transport", "@node", "@extraSchemaDefinitionDirective"]
-)
-  {
-    query: Query
-    mutation: Mutation
-    
-  }
+) {
+  query: Query
+  mutation: Mutation
+}
 
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
+scalar join__FieldSet
 
-  scalar link__Import
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
+scalar link__Import
 
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
 
-  
-  
-  
-  
-  
-  
-  
 enum join__Graph {
-  MOVIES @join__graph(name: "Movies", url: "neo4j://localhost:<neo4j_port>") 
+  MOVIES @join__graph(name: "Movies", url: "neo4j://localhost:<neo4j_port>")
 }
 
 directive @relationshipProperties on OBJECT
 
-directive @relationship(type: String, direction: _RelationDirections, properties: String)  on FIELD_DEFINITION
+directive @relationship(type: String, direction: _RelationDirections, properties: String) on FIELD_DEFINITION
 
-directive @introspection(subgraph: String)  repeatable on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+directive @introspection(subgraph: String) repeatable on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
 
-directive @transport(kind: String, subgraph: String, location: String, options: TransportOptions)  repeatable on SCHEMA
+directive @transport(kind: String, subgraph: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 directive @node on OBJECT
 
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 
-scalar TransportOptions @join__type(graph: MOVIES) 
+scalar TransportOptions @join__type(graph: MOVIES)
 
-scalar _DirectiveExtensions @join__type(graph: MOVIES) 
+scalar _DirectiveExtensions @join__type(graph: MOVIES)
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{kind: "neo4j", subgraph: "Movies", location: "neo4j://localhost:<neo4j_port>", options: {database: "neo4j", auth: {type: "basic", username: "neo4j", password: "password"}}}]}
-) @join__type(graph: MOVIES)  {
-  moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort!]) : MoviesConnection!
-  movies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]!
-  peopleConnection(first: Int, after: String, where: PersonWhere, sort: [PersonSort!]) : PeopleConnection!
-  people(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]!
+) @join__type(graph: MOVIES) {
+  moviesConnection(first: Int, after: String, where: MovieWhere, sort: [MovieSort!]): MoviesConnection!
+  movies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]!
+  peopleConnection(first: Int, after: String, where: PersonWhere, sort: [PersonSort!]): PeopleConnection!
+  people(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]!
 }
 
-type Mutation @join__type(graph: MOVIES)  {
-  createMovies(input: [MovieCreateInput!]!) : CreateMoviesMutationResponse!
-  deleteMovies(where: MovieWhere, delete: MovieDeleteInput) : DeleteInfo!
-  updateMovies(where: MovieWhere, update: MovieUpdateInput) : UpdateMoviesMutationResponse!
-  createPeople(input: [PersonCreateInput!]!) : CreatePeopleMutationResponse!
-  deletePeople(where: PersonWhere, delete: PersonDeleteInput) : DeleteInfo!
-  updatePeople(where: PersonWhere, update: PersonUpdateInput) : UpdatePeopleMutationResponse!
+type Mutation @join__type(graph: MOVIES) {
+  createMovies(input: [MovieCreateInput!]!): CreateMoviesMutationResponse!
+  deleteMovies(where: MovieWhere, delete: MovieDeleteInput): DeleteInfo!
+  updateMovies(where: MovieWhere, update: MovieUpdateInput): UpdateMoviesMutationResponse!
+  createPeople(input: [PersonCreateInput!]!): CreatePeopleMutationResponse!
+  deletePeople(where: PersonWhere, delete: PersonDeleteInput): DeleteInfo!
+  updatePeople(where: PersonWhere, update: PersonUpdateInput): UpdatePeopleMutationResponse!
 }
 
 """
@@ -133,15 +95,15 @@ The edge properties for the following fields:
 * Movie.peopleActedIn
 * Person.actedInMovies
 """
-type ActedInProperties @relationshipProperties @introspection @join__type(graph: MOVIES)  {
+type ActedInProperties @relationshipProperties @introspection @join__type(graph: MOVIES) {
   roles: String! @introspection
 }
 
-type Count @join__type(graph: MOVIES)  {
+type Count @join__type(graph: MOVIES) {
   nodes: Int!
 }
 
-type CountConnection @join__type(graph: MOVIES)  {
+type CountConnection @join__type(graph: MOVIES) {
   nodes: Int!
   edges: Int!
 }
@@ -149,17 +111,17 @@ type CountConnection @join__type(graph: MOVIES)  {
 """
 Information about the number of nodes and relationships created during a create mutation
 """
-type CreateInfo @join__type(graph: MOVIES)  {
+type CreateInfo @join__type(graph: MOVIES) {
   nodesCreated: Int!
   relationshipsCreated: Int!
 }
 
-type CreateMoviesMutationResponse @join__type(graph: MOVIES)  {
+type CreateMoviesMutationResponse @join__type(graph: MOVIES) {
   info: CreateInfo!
   movies: [Movie!]!
 }
 
-type CreatePeopleMutationResponse @join__type(graph: MOVIES)  {
+type CreatePeopleMutationResponse @join__type(graph: MOVIES) {
   info: CreateInfo!
   people: [Person!]!
 }
@@ -167,44 +129,44 @@ type CreatePeopleMutationResponse @join__type(graph: MOVIES)  {
 """
 Information about the number of nodes and relationships deleted during a delete mutation
 """
-type DeleteInfo @join__type(graph: MOVIES)  {
+type DeleteInfo @join__type(graph: MOVIES) {
   nodesDeleted: Int!
   relationshipsDeleted: Int!
 }
 
-type Movie @introspection @node @join__type(graph: MOVIES)  {
+type Movie @introspection @node @join__type(graph: MOVIES) {
   released: String! @introspection
   tagline: String @introspection
   title: String! @introspection
-  peopleActedIn(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties") 
+  peopleActedIn(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "ACTED_IN", direction: IN, properties: "ActedInProperties")
   peopleActedInConnection(
     where: MoviePeopleActedInConnectionWhere
     first: Int
     after: String
     sort: [MoviePeopleActedInConnectionSort!]
   ): MoviePeopleActedInConnection!
-  peopleDirected(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "DIRECTED", direction: IN) 
+  peopleDirected(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "DIRECTED", direction: IN)
   peopleDirectedConnection(
     where: MoviePeopleDirectedConnectionWhere
     first: Int
     after: String
     sort: [MoviePeopleDirectedConnectionSort!]
   ): MoviePeopleDirectedConnection!
-  peopleProduced(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "PRODUCED", direction: IN) 
+  peopleProduced(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "PRODUCED", direction: IN)
   peopleProducedConnection(
     where: MoviePeopleProducedConnectionWhere
     first: Int
     after: String
     sort: [MoviePeopleProducedConnectionSort!]
   ): MoviePeopleProducedConnection!
-  peopleReviewed(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "REVIEWED", direction: IN, properties: "ReviewedProperties") 
+  peopleReviewed(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "REVIEWED", direction: IN, properties: "ReviewedProperties")
   peopleReviewedConnection(
     where: MoviePeopleReviewedConnectionWhere
     first: Int
     after: String
     sort: [MoviePeopleReviewedConnectionSort!]
   ): MoviePeopleReviewedConnection!
-  peopleWrote(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "WROTE", direction: IN) 
+  peopleWrote(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "WROTE", direction: IN)
   peopleWroteConnection(
     where: MoviePeopleWroteConnectionWhere
     first: Int
@@ -213,146 +175,146 @@ type Movie @introspection @node @join__type(graph: MOVIES)  {
   ): MoviePeopleWroteConnection!
 }
 
-type MovieAggregate @join__type(graph: MOVIES)  {
+type MovieAggregate @join__type(graph: MOVIES) {
   count: Count!
   node: MovieAggregateNode!
 }
 
-type MovieAggregateNode @join__type(graph: MOVIES)  {
+type MovieAggregateNode @join__type(graph: MOVIES) {
   released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
 
-type MovieEdge @join__type(graph: MOVIES)  {
+type MovieEdge @join__type(graph: MOVIES) {
   cursor: String!
   node: Movie!
 }
 
-type MoviePeopleActedInConnection @join__type(graph: MOVIES)  {
+type MoviePeopleActedInConnection @join__type(graph: MOVIES) {
   edges: [MoviePeopleActedInRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: MoviePersonPeopleActedInAggregateSelection!
 }
 
-type MoviePeopleActedInRelationship @join__type(graph: MOVIES)  {
+type MoviePeopleActedInRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Person!
   properties: ActedInProperties!
 }
 
-type MoviePeopleDirectedConnection @join__type(graph: MOVIES)  {
+type MoviePeopleDirectedConnection @join__type(graph: MOVIES) {
   edges: [MoviePeopleDirectedRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: MoviePersonPeopleDirectedAggregateSelection!
 }
 
-type MoviePeopleDirectedRelationship @join__type(graph: MOVIES)  {
+type MoviePeopleDirectedRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Person!
 }
 
-type MoviePeopleProducedConnection @join__type(graph: MOVIES)  {
+type MoviePeopleProducedConnection @join__type(graph: MOVIES) {
   edges: [MoviePeopleProducedRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: MoviePersonPeopleProducedAggregateSelection!
 }
 
-type MoviePeopleProducedRelationship @join__type(graph: MOVIES)  {
+type MoviePeopleProducedRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Person!
 }
 
-type MoviePeopleReviewedConnection @join__type(graph: MOVIES)  {
+type MoviePeopleReviewedConnection @join__type(graph: MOVIES) {
   edges: [MoviePeopleReviewedRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: MoviePersonPeopleReviewedAggregateSelection!
 }
 
-type MoviePeopleReviewedRelationship @join__type(graph: MOVIES)  {
+type MoviePeopleReviewedRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Person!
   properties: ReviewedProperties!
 }
 
-type MoviePeopleWroteConnection @join__type(graph: MOVIES)  {
+type MoviePeopleWroteConnection @join__type(graph: MOVIES) {
   edges: [MoviePeopleWroteRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: MoviePersonPeopleWroteAggregateSelection!
 }
 
-type MoviePeopleWroteRelationship @join__type(graph: MOVIES)  {
+type MoviePeopleWroteRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Person!
 }
 
-type MoviePersonPeopleActedInAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleActedInAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: MoviePersonPeopleActedInNodeAggregateSelection
   edge: MoviePersonPeopleActedInEdgeAggregateSelection
 }
 
-type MoviePersonPeopleActedInEdgeAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleActedInEdgeAggregateSelection @join__type(graph: MOVIES) {
   roles: StringAggregateSelection!
 }
 
-type MoviePersonPeopleActedInNodeAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleActedInNodeAggregateSelection @join__type(graph: MOVIES) {
   born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
-type MoviePersonPeopleDirectedAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleDirectedAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: MoviePersonPeopleDirectedNodeAggregateSelection
 }
 
-type MoviePersonPeopleDirectedNodeAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleDirectedNodeAggregateSelection @join__type(graph: MOVIES) {
   born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
-type MoviePersonPeopleProducedAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleProducedAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: MoviePersonPeopleProducedNodeAggregateSelection
 }
 
-type MoviePersonPeopleProducedNodeAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleProducedNodeAggregateSelection @join__type(graph: MOVIES) {
   born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
-type MoviePersonPeopleReviewedAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleReviewedAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: MoviePersonPeopleReviewedNodeAggregateSelection
   edge: MoviePersonPeopleReviewedEdgeAggregateSelection
 }
 
-type MoviePersonPeopleReviewedEdgeAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleReviewedEdgeAggregateSelection @join__type(graph: MOVIES) {
   rating: StringAggregateSelection!
   summary: StringAggregateSelection!
 }
 
-type MoviePersonPeopleReviewedNodeAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleReviewedNodeAggregateSelection @join__type(graph: MOVIES) {
   born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
-type MoviePersonPeopleWroteAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleWroteAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: MoviePersonPeopleWroteNodeAggregateSelection
 }
 
-type MoviePersonPeopleWroteNodeAggregateSelection @join__type(graph: MOVIES)  {
+type MoviePersonPeopleWroteNodeAggregateSelection @join__type(graph: MOVIES) {
   born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
-type MoviesConnection @join__type(graph: MOVIES)  {
+type MoviesConnection @join__type(graph: MOVIES) {
   edges: [MovieEdge!]!
   totalCount: Int!
   pageInfo: PageInfo!
@@ -362,66 +324,66 @@ type MoviesConnection @join__type(graph: MOVIES)  {
 """
 Pagination information (Relay)
 """
-type PageInfo @join__type(graph: MOVIES)  {
+type PageInfo @join__type(graph: MOVIES) {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
   startCursor: String
   endCursor: String
 }
 
-type PeopleConnection @join__type(graph: MOVIES)  {
+type PeopleConnection @join__type(graph: MOVIES) {
   edges: [PersonEdge!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: PersonAggregate!
 }
 
-type Person @introspection @node @join__type(graph: MOVIES)  {
+type Person @introspection @node @join__type(graph: MOVIES) {
   born: String @introspection
   name: String! @introspection
-  actedInMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties") 
+  actedInMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @introspection @relationship(type: "ACTED_IN", direction: OUT, properties: "ActedInProperties")
   actedInMoviesConnection(
     where: PersonActedInMoviesConnectionWhere
     first: Int
     after: String
     sort: [PersonActedInMoviesConnectionSort!]
   ): PersonActedInMoviesConnection!
-  directedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT) 
+  directedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @introspection @relationship(type: "DIRECTED", direction: OUT)
   directedMoviesConnection(
     where: PersonDirectedMoviesConnectionWhere
     first: Int
     after: String
     sort: [PersonDirectedMoviesConnectionSort!]
   ): PersonDirectedMoviesConnection!
-  followsPeople(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "FOLLOWS", direction: OUT) 
+  followsPeople(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "FOLLOWS", direction: OUT)
   followsPeopleConnection(
     where: PersonFollowsPeopleConnectionWhere
     first: Int
     after: String
     sort: [PersonFollowsPeopleConnectionSort!]
   ): PersonFollowsPeopleConnection!
-  peopleFollows(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]) : [Person!]! @introspection @relationship(type: "FOLLOWS", direction: IN) 
+  peopleFollows(where: PersonWhere, limit: Int, offset: Int, sort: [PersonSort!]): [Person!]! @introspection @relationship(type: "FOLLOWS", direction: IN)
   peopleFollowsConnection(
     where: PersonPeopleFollowsConnectionWhere
     first: Int
     after: String
     sort: [PersonPeopleFollowsConnectionSort!]
   ): PersonPeopleFollowsConnection!
-  producedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "PRODUCED", direction: OUT) 
+  producedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @introspection @relationship(type: "PRODUCED", direction: OUT)
   producedMoviesConnection(
     where: PersonProducedMoviesConnectionWhere
     first: Int
     after: String
     sort: [PersonProducedMoviesConnectionSort!]
   ): PersonProducedMoviesConnection!
-  reviewedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "REVIEWED", direction: OUT, properties: "ReviewedProperties") 
+  reviewedMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @introspection @relationship(type: "REVIEWED", direction: OUT, properties: "ReviewedProperties")
   reviewedMoviesConnection(
     where: PersonReviewedMoviesConnectionWhere
     first: Int
     after: String
     sort: [PersonReviewedMoviesConnectionSort!]
   ): PersonReviewedMoviesConnection!
-  wroteMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]) : [Movie!]! @introspection @relationship(type: "WROTE", direction: OUT) 
+  wroteMovies(where: MovieWhere, limit: Int, offset: Int, sort: [MovieSort!]): [Movie!]! @introspection @relationship(type: "WROTE", direction: OUT)
   wroteMoviesConnection(
     where: PersonWroteMoviesConnectionWhere
     first: Int
@@ -430,189 +392,189 @@ type Person @introspection @node @join__type(graph: MOVIES)  {
   ): PersonWroteMoviesConnection!
 }
 
-type PersonActedInMoviesConnection @join__type(graph: MOVIES)  {
+type PersonActedInMoviesConnection @join__type(graph: MOVIES) {
   edges: [PersonActedInMoviesRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: PersonMovieActedInMoviesAggregateSelection!
 }
 
-type PersonActedInMoviesRelationship @join__type(graph: MOVIES)  {
+type PersonActedInMoviesRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Movie!
   properties: ActedInProperties!
 }
 
-type PersonAggregate @join__type(graph: MOVIES)  {
+type PersonAggregate @join__type(graph: MOVIES) {
   count: Count!
   node: PersonAggregateNode!
 }
 
-type PersonAggregateNode @join__type(graph: MOVIES)  {
+type PersonAggregateNode @join__type(graph: MOVIES) {
   born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
-type PersonDirectedMoviesConnection @join__type(graph: MOVIES)  {
+type PersonDirectedMoviesConnection @join__type(graph: MOVIES) {
   edges: [PersonDirectedMoviesRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: PersonMovieDirectedMoviesAggregateSelection!
 }
 
-type PersonDirectedMoviesRelationship @join__type(graph: MOVIES)  {
+type PersonDirectedMoviesRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Movie!
 }
 
-type PersonEdge @join__type(graph: MOVIES)  {
+type PersonEdge @join__type(graph: MOVIES) {
   cursor: String!
   node: Person!
 }
 
-type PersonFollowsPeopleConnection @join__type(graph: MOVIES)  {
+type PersonFollowsPeopleConnection @join__type(graph: MOVIES) {
   edges: [PersonFollowsPeopleRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: PersonPersonFollowsPeopleAggregateSelection!
 }
 
-type PersonFollowsPeopleRelationship @join__type(graph: MOVIES)  {
+type PersonFollowsPeopleRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Person!
 }
 
-type PersonMovieActedInMoviesAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieActedInMoviesAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: PersonMovieActedInMoviesNodeAggregateSelection
   edge: PersonMovieActedInMoviesEdgeAggregateSelection
 }
 
-type PersonMovieActedInMoviesEdgeAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieActedInMoviesEdgeAggregateSelection @join__type(graph: MOVIES) {
   roles: StringAggregateSelection!
 }
 
-type PersonMovieActedInMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieActedInMoviesNodeAggregateSelection @join__type(graph: MOVIES) {
   released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
 
-type PersonMovieDirectedMoviesAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieDirectedMoviesAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: PersonMovieDirectedMoviesNodeAggregateSelection
 }
 
-type PersonMovieDirectedMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieDirectedMoviesNodeAggregateSelection @join__type(graph: MOVIES) {
   released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
 
-type PersonMovieProducedMoviesAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieProducedMoviesAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: PersonMovieProducedMoviesNodeAggregateSelection
 }
 
-type PersonMovieProducedMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieProducedMoviesNodeAggregateSelection @join__type(graph: MOVIES) {
   released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
 
-type PersonMovieReviewedMoviesAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieReviewedMoviesAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: PersonMovieReviewedMoviesNodeAggregateSelection
   edge: PersonMovieReviewedMoviesEdgeAggregateSelection
 }
 
-type PersonMovieReviewedMoviesEdgeAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieReviewedMoviesEdgeAggregateSelection @join__type(graph: MOVIES) {
   rating: StringAggregateSelection!
   summary: StringAggregateSelection!
 }
 
-type PersonMovieReviewedMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieReviewedMoviesNodeAggregateSelection @join__type(graph: MOVIES) {
   released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
 
-type PersonMovieWroteMoviesAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieWroteMoviesAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: PersonMovieWroteMoviesNodeAggregateSelection
 }
 
-type PersonMovieWroteMoviesNodeAggregateSelection @join__type(graph: MOVIES)  {
+type PersonMovieWroteMoviesNodeAggregateSelection @join__type(graph: MOVIES) {
   released: StringAggregateSelection!
   tagline: StringAggregateSelection!
   title: StringAggregateSelection!
 }
 
-type PersonPeopleFollowsConnection @join__type(graph: MOVIES)  {
+type PersonPeopleFollowsConnection @join__type(graph: MOVIES) {
   edges: [PersonPeopleFollowsRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: PersonPersonPeopleFollowsAggregateSelection!
 }
 
-type PersonPeopleFollowsRelationship @join__type(graph: MOVIES)  {
+type PersonPeopleFollowsRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Person!
 }
 
-type PersonPersonFollowsPeopleAggregateSelection @join__type(graph: MOVIES)  {
+type PersonPersonFollowsPeopleAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: PersonPersonFollowsPeopleNodeAggregateSelection
 }
 
-type PersonPersonFollowsPeopleNodeAggregateSelection @join__type(graph: MOVIES)  {
+type PersonPersonFollowsPeopleNodeAggregateSelection @join__type(graph: MOVIES) {
   born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
-type PersonPersonPeopleFollowsAggregateSelection @join__type(graph: MOVIES)  {
+type PersonPersonPeopleFollowsAggregateSelection @join__type(graph: MOVIES) {
   count: CountConnection!
   node: PersonPersonPeopleFollowsNodeAggregateSelection
 }
 
-type PersonPersonPeopleFollowsNodeAggregateSelection @join__type(graph: MOVIES)  {
+type PersonPersonPeopleFollowsNodeAggregateSelection @join__type(graph: MOVIES) {
   born: StringAggregateSelection!
   name: StringAggregateSelection!
 }
 
-type PersonProducedMoviesConnection @join__type(graph: MOVIES)  {
+type PersonProducedMoviesConnection @join__type(graph: MOVIES) {
   edges: [PersonProducedMoviesRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: PersonMovieProducedMoviesAggregateSelection!
 }
 
-type PersonProducedMoviesRelationship @join__type(graph: MOVIES)  {
+type PersonProducedMoviesRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Movie!
 }
 
-type PersonReviewedMoviesConnection @join__type(graph: MOVIES)  {
+type PersonReviewedMoviesConnection @join__type(graph: MOVIES) {
   edges: [PersonReviewedMoviesRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: PersonMovieReviewedMoviesAggregateSelection!
 }
 
-type PersonReviewedMoviesRelationship @join__type(graph: MOVIES)  {
+type PersonReviewedMoviesRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Movie!
   properties: ReviewedProperties!
 }
 
-type PersonWroteMoviesConnection @join__type(graph: MOVIES)  {
+type PersonWroteMoviesConnection @join__type(graph: MOVIES) {
   edges: [PersonWroteMoviesRelationship!]!
   totalCount: Int!
   pageInfo: PageInfo!
   aggregate: PersonMovieWroteMoviesAggregateSelection!
 }
 
-type PersonWroteMoviesRelationship @join__type(graph: MOVIES)  {
+type PersonWroteMoviesRelationship @join__type(graph: MOVIES) {
   cursor: String!
   node: Movie!
 }
@@ -622,12 +584,12 @@ The edge properties for the following fields:
 * Movie.peopleReviewed
 * Person.reviewedMovies
 """
-type ReviewedProperties @relationshipProperties @introspection @join__type(graph: MOVIES)  {
+type ReviewedProperties @relationshipProperties @introspection @join__type(graph: MOVIES) {
   rating: String! @introspection
   summary: String! @introspection
 }
 
-type StringAggregateSelection @join__type(graph: MOVIES)  {
+type StringAggregateSelection @join__type(graph: MOVIES) {
   shortest: String
   longest: String
 }
@@ -635,43 +597,43 @@ type StringAggregateSelection @join__type(graph: MOVIES)  {
 """
 Information about the number of nodes and relationships created and deleted during an update mutation
 """
-type UpdateInfo @join__type(graph: MOVIES)  {
+type UpdateInfo @join__type(graph: MOVIES) {
   nodesCreated: Int!
   nodesDeleted: Int!
   relationshipsCreated: Int!
   relationshipsDeleted: Int!
 }
 
-type UpdateMoviesMutationResponse @join__type(graph: MOVIES)  {
+type UpdateMoviesMutationResponse @join__type(graph: MOVIES) {
   info: UpdateInfo!
   movies: [Movie!]!
 }
 
-type UpdatePeopleMutationResponse @join__type(graph: MOVIES)  {
+type UpdatePeopleMutationResponse @join__type(graph: MOVIES) {
   info: UpdateInfo!
   people: [Person!]!
 }
 
-enum _RelationDirections @join__type(graph: MOVIES)  {
-  IN @join__enumValue(graph: MOVIES) 
-  OUT @join__enumValue(graph: MOVIES) 
+enum _RelationDirections @join__type(graph: MOVIES) {
+  IN @join__enumValue(graph: MOVIES)
+  OUT @join__enumValue(graph: MOVIES)
 }
 
 """
 An enum for sorting in either ascending or descending order.
 """
-enum SortDirection @join__type(graph: MOVIES)  {
+enum SortDirection @join__type(graph: MOVIES) {
   """
   Sort by field values in ascending order.
   """
-  ASC @join__enumValue(graph: MOVIES) 
+  ASC @join__enumValue(graph: MOVIES)
   """
   Sort by field values in descending order.
   """
-  DESC @join__enumValue(graph: MOVIES) 
+  DESC @join__enumValue(graph: MOVIES)
 }
 
-input ActedInPropertiesAggregationWhereInput @join__type(graph: MOVIES)  {
+input ActedInPropertiesAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [ActedInPropertiesAggregationWhereInput!]
   OR: [ActedInPropertiesAggregationWhereInput!]
   NOT: ActedInPropertiesAggregationWhereInput
@@ -723,32 +685,32 @@ input ActedInPropertiesAggregationWhereInput @join__type(graph: MOVIES)  {
   roles: StringScalarAggregationFilters
 }
 
-input ActedInPropertiesCreateInput @join__type(graph: MOVIES)  {
+input ActedInPropertiesCreateInput @join__type(graph: MOVIES) {
   roles: String!
 }
 
-input ActedInPropertiesSort @join__type(graph: MOVIES)  {
+input ActedInPropertiesSort @join__type(graph: MOVIES) {
   roles: SortDirection
 }
 
-input ActedInPropertiesUpdateInput @join__type(graph: MOVIES)  {
+input ActedInPropertiesUpdateInput @join__type(graph: MOVIES) {
   roles: StringScalarMutations
   roles_SET: String
 }
 
-input ActedInPropertiesWhere @join__type(graph: MOVIES)  {
+input ActedInPropertiesWhere @join__type(graph: MOVIES) {
   roles: StringScalarFilters
-  roles_EQ: String @deprecated(reason: "Please use the relevant generic filter roles: { eq: ... }") 
-  roles_IN: [String!] @deprecated(reason: "Please use the relevant generic filter roles: { in: ... }") 
-  roles_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter roles: { contains: ... }") 
-  roles_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter roles: { startsWith: ... }") 
-  roles_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter roles: { endsWith: ... }") 
+  roles_EQ: String @deprecated(reason: "Please use the relevant generic filter roles: { eq: ... }")
+  roles_IN: [String!] @deprecated(reason: "Please use the relevant generic filter roles: { in: ... }")
+  roles_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter roles: { contains: ... }")
+  roles_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter roles: { startsWith: ... }")
+  roles_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter roles: { endsWith: ... }")
   OR: [ActedInPropertiesWhere!]
   AND: [ActedInPropertiesWhere!]
   NOT: ActedInPropertiesWhere
 }
 
-input ConnectionAggregationCountFilterInput @join__type(graph: MOVIES)  {
+input ConnectionAggregationCountFilterInput @join__type(graph: MOVIES) {
   nodes: IntScalarFilters
   edges: IntScalarFilters
 }
@@ -756,7 +718,7 @@ input ConnectionAggregationCountFilterInput @join__type(graph: MOVIES)  {
 """
 Float filters
 """
-input FloatScalarFilters @join__type(graph: MOVIES)  {
+input FloatScalarFilters @join__type(graph: MOVIES) {
   eq: Float
   gt: Float
   gte: Float
@@ -768,7 +730,7 @@ input FloatScalarFilters @join__type(graph: MOVIES)  {
 """
 Int filters
 """
-input IntScalarFilters @join__type(graph: MOVIES)  {
+input IntScalarFilters @join__type(graph: MOVIES) {
   eq: Int
   gt: Int
   gte: Int
@@ -777,7 +739,7 @@ input IntScalarFilters @join__type(graph: MOVIES)  {
   lte: Int
 }
 
-input MovieConnectInput @join__type(graph: MOVIES)  {
+input MovieConnectInput @join__type(graph: MOVIES) {
   peopleActedIn: [MoviePeopleActedInConnectFieldInput!]
   peopleDirected: [MoviePeopleDirectedConnectFieldInput!]
   peopleProduced: [MoviePeopleProducedConnectFieldInput!]
@@ -785,11 +747,11 @@ input MovieConnectInput @join__type(graph: MOVIES)  {
   peopleWrote: [MoviePeopleWroteConnectFieldInput!]
 }
 
-input MovieConnectWhere @join__type(graph: MOVIES)  {
+input MovieConnectWhere @join__type(graph: MOVIES) {
   node: MovieWhere!
 }
 
-input MovieCreateInput @join__type(graph: MOVIES)  {
+input MovieCreateInput @join__type(graph: MOVIES) {
   released: String!
   tagline: String
   title: String!
@@ -800,7 +762,7 @@ input MovieCreateInput @join__type(graph: MOVIES)  {
   peopleWrote: MoviePeopleWroteFieldInput
 }
 
-input MovieDeleteInput @join__type(graph: MOVIES)  {
+input MovieDeleteInput @join__type(graph: MOVIES) {
   peopleActedIn: [MoviePeopleActedInDeleteFieldInput!]
   peopleDirected: [MoviePeopleDirectedDeleteFieldInput!]
   peopleProduced: [MoviePeopleProducedDeleteFieldInput!]
@@ -808,7 +770,7 @@ input MovieDeleteInput @join__type(graph: MOVIES)  {
   peopleWrote: [MoviePeopleWroteDeleteFieldInput!]
 }
 
-input MovieDisconnectInput @join__type(graph: MOVIES)  {
+input MovieDisconnectInput @join__type(graph: MOVIES) {
   peopleActedIn: [MoviePeopleActedInDisconnectFieldInput!]
   peopleDirected: [MoviePeopleDirectedDisconnectFieldInput!]
   peopleProduced: [MoviePeopleProducedDisconnectFieldInput!]
@@ -816,7 +778,7 @@ input MovieDisconnectInput @join__type(graph: MOVIES)  {
   peopleWrote: [MoviePeopleWroteDisconnectFieldInput!]
 }
 
-input MoviePeopleActedInAggregateInput @join__type(graph: MOVIES)  {
+input MoviePeopleActedInAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -840,13 +802,13 @@ input MoviePeopleActedInAggregateInput @join__type(graph: MOVIES)  {
   edge: ActedInPropertiesAggregationWhereInput
 }
 
-input MoviePeopleActedInConnectFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleActedInConnectFieldInput @join__type(graph: MOVIES) {
   edge: ActedInPropertiesCreateInput!
   where: PersonConnectWhere
   connect: [PersonConnectInput!]
 }
 
-input MoviePeopleActedInConnectionAggregateInput @join__type(graph: MOVIES)  {
+input MoviePeopleActedInConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [MoviePeopleActedInConnectionAggregateInput!]
   OR: [MoviePeopleActedInConnectionAggregateInput!]
@@ -855,7 +817,7 @@ input MoviePeopleActedInConnectionAggregateInput @join__type(graph: MOVIES)  {
   edge: ActedInPropertiesAggregationWhereInput
 }
 
-input MoviePeopleActedInConnectionFilters @join__type(graph: MOVIES)  {
+input MoviePeopleActedInConnectionFilters @join__type(graph: MOVIES) {
   """
   Return Movies where all of the related MoviePeopleActedInConnections match this filter
   """
@@ -878,12 +840,12 @@ input MoviePeopleActedInConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: MoviePeopleActedInConnectionAggregateInput
 }
 
-input MoviePeopleActedInConnectionSort @join__type(graph: MOVIES)  {
+input MoviePeopleActedInConnectionSort @join__type(graph: MOVIES) {
   node: PersonSort
   edge: ActedInPropertiesSort
 }
 
-input MoviePeopleActedInConnectionWhere @join__type(graph: MOVIES)  {
+input MoviePeopleActedInConnectionWhere @join__type(graph: MOVIES) {
   AND: [MoviePeopleActedInConnectionWhere!]
   OR: [MoviePeopleActedInConnectionWhere!]
   NOT: MoviePeopleActedInConnectionWhere
@@ -891,27 +853,27 @@ input MoviePeopleActedInConnectionWhere @join__type(graph: MOVIES)  {
   edge: ActedInPropertiesWhere
 }
 
-input MoviePeopleActedInCreateFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleActedInCreateFieldInput @join__type(graph: MOVIES) {
   edge: ActedInPropertiesCreateInput!
   node: PersonCreateInput!
 }
 
-input MoviePeopleActedInDeleteFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleActedInDeleteFieldInput @join__type(graph: MOVIES) {
   where: MoviePeopleActedInConnectionWhere
   delete: PersonDeleteInput
 }
 
-input MoviePeopleActedInDisconnectFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleActedInDisconnectFieldInput @join__type(graph: MOVIES) {
   where: MoviePeopleActedInConnectionWhere
   disconnect: PersonDisconnectInput
 }
 
-input MoviePeopleActedInFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleActedInFieldInput @join__type(graph: MOVIES) {
   connect: [MoviePeopleActedInConnectFieldInput!]
   create: [MoviePeopleActedInCreateFieldInput!]
 }
 
-input MoviePeopleActedInNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input MoviePeopleActedInNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [MoviePeopleActedInNodeAggregationWhereInput!]
   OR: [MoviePeopleActedInNodeAggregationWhereInput!]
   NOT: MoviePeopleActedInNodeAggregationWhereInput
@@ -1009,13 +971,13 @@ input MoviePeopleActedInNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   name: StringScalarAggregationFilters
 }
 
-input MoviePeopleActedInUpdateConnectionInput @join__type(graph: MOVIES)  {
+input MoviePeopleActedInUpdateConnectionInput @join__type(graph: MOVIES) {
   node: PersonUpdateInput
   where: MoviePeopleActedInConnectionWhere
   edge: ActedInPropertiesUpdateInput
 }
 
-input MoviePeopleActedInUpdateFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleActedInUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [MoviePeopleActedInConnectFieldInput!]
   disconnect: [MoviePeopleActedInDisconnectFieldInput!]
   create: [MoviePeopleActedInCreateFieldInput!]
@@ -1023,7 +985,7 @@ input MoviePeopleActedInUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [MoviePeopleActedInDeleteFieldInput!]
 }
 
-input MoviePeopleDirectedAggregateInput @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -1046,12 +1008,12 @@ input MoviePeopleDirectedAggregateInput @join__type(graph: MOVIES)  {
   node: MoviePeopleDirectedNodeAggregationWhereInput
 }
 
-input MoviePeopleDirectedConnectFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedConnectFieldInput @join__type(graph: MOVIES) {
   where: PersonConnectWhere
   connect: [PersonConnectInput!]
 }
 
-input MoviePeopleDirectedConnectionAggregateInput @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [MoviePeopleDirectedConnectionAggregateInput!]
   OR: [MoviePeopleDirectedConnectionAggregateInput!]
@@ -1059,7 +1021,7 @@ input MoviePeopleDirectedConnectionAggregateInput @join__type(graph: MOVIES)  {
   node: MoviePeopleDirectedNodeAggregationWhereInput
 }
 
-input MoviePeopleDirectedConnectionFilters @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedConnectionFilters @join__type(graph: MOVIES) {
   """
   Return Movies where all of the related MoviePeopleDirectedConnections match this filter
   """
@@ -1082,37 +1044,37 @@ input MoviePeopleDirectedConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: MoviePeopleDirectedConnectionAggregateInput
 }
 
-input MoviePeopleDirectedConnectionSort @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedConnectionSort @join__type(graph: MOVIES) {
   node: PersonSort
 }
 
-input MoviePeopleDirectedConnectionWhere @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedConnectionWhere @join__type(graph: MOVIES) {
   AND: [MoviePeopleDirectedConnectionWhere!]
   OR: [MoviePeopleDirectedConnectionWhere!]
   NOT: MoviePeopleDirectedConnectionWhere
   node: PersonWhere
 }
 
-input MoviePeopleDirectedCreateFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedCreateFieldInput @join__type(graph: MOVIES) {
   node: PersonCreateInput!
 }
 
-input MoviePeopleDirectedDeleteFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedDeleteFieldInput @join__type(graph: MOVIES) {
   where: MoviePeopleDirectedConnectionWhere
   delete: PersonDeleteInput
 }
 
-input MoviePeopleDirectedDisconnectFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedDisconnectFieldInput @join__type(graph: MOVIES) {
   where: MoviePeopleDirectedConnectionWhere
   disconnect: PersonDisconnectInput
 }
 
-input MoviePeopleDirectedFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedFieldInput @join__type(graph: MOVIES) {
   connect: [MoviePeopleDirectedConnectFieldInput!]
   create: [MoviePeopleDirectedCreateFieldInput!]
 }
 
-input MoviePeopleDirectedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [MoviePeopleDirectedNodeAggregationWhereInput!]
   OR: [MoviePeopleDirectedNodeAggregationWhereInput!]
   NOT: MoviePeopleDirectedNodeAggregationWhereInput
@@ -1210,12 +1172,12 @@ input MoviePeopleDirectedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   name: StringScalarAggregationFilters
 }
 
-input MoviePeopleDirectedUpdateConnectionInput @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedUpdateConnectionInput @join__type(graph: MOVIES) {
   node: PersonUpdateInput
   where: MoviePeopleDirectedConnectionWhere
 }
 
-input MoviePeopleDirectedUpdateFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleDirectedUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [MoviePeopleDirectedConnectFieldInput!]
   disconnect: [MoviePeopleDirectedDisconnectFieldInput!]
   create: [MoviePeopleDirectedCreateFieldInput!]
@@ -1223,7 +1185,7 @@ input MoviePeopleDirectedUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [MoviePeopleDirectedDeleteFieldInput!]
 }
 
-input MoviePeopleProducedAggregateInput @join__type(graph: MOVIES)  {
+input MoviePeopleProducedAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -1246,12 +1208,12 @@ input MoviePeopleProducedAggregateInput @join__type(graph: MOVIES)  {
   node: MoviePeopleProducedNodeAggregationWhereInput
 }
 
-input MoviePeopleProducedConnectFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleProducedConnectFieldInput @join__type(graph: MOVIES) {
   where: PersonConnectWhere
   connect: [PersonConnectInput!]
 }
 
-input MoviePeopleProducedConnectionAggregateInput @join__type(graph: MOVIES)  {
+input MoviePeopleProducedConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [MoviePeopleProducedConnectionAggregateInput!]
   OR: [MoviePeopleProducedConnectionAggregateInput!]
@@ -1259,7 +1221,7 @@ input MoviePeopleProducedConnectionAggregateInput @join__type(graph: MOVIES)  {
   node: MoviePeopleProducedNodeAggregationWhereInput
 }
 
-input MoviePeopleProducedConnectionFilters @join__type(graph: MOVIES)  {
+input MoviePeopleProducedConnectionFilters @join__type(graph: MOVIES) {
   """
   Return Movies where all of the related MoviePeopleProducedConnections match this filter
   """
@@ -1282,37 +1244,37 @@ input MoviePeopleProducedConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: MoviePeopleProducedConnectionAggregateInput
 }
 
-input MoviePeopleProducedConnectionSort @join__type(graph: MOVIES)  {
+input MoviePeopleProducedConnectionSort @join__type(graph: MOVIES) {
   node: PersonSort
 }
 
-input MoviePeopleProducedConnectionWhere @join__type(graph: MOVIES)  {
+input MoviePeopleProducedConnectionWhere @join__type(graph: MOVIES) {
   AND: [MoviePeopleProducedConnectionWhere!]
   OR: [MoviePeopleProducedConnectionWhere!]
   NOT: MoviePeopleProducedConnectionWhere
   node: PersonWhere
 }
 
-input MoviePeopleProducedCreateFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleProducedCreateFieldInput @join__type(graph: MOVIES) {
   node: PersonCreateInput!
 }
 
-input MoviePeopleProducedDeleteFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleProducedDeleteFieldInput @join__type(graph: MOVIES) {
   where: MoviePeopleProducedConnectionWhere
   delete: PersonDeleteInput
 }
 
-input MoviePeopleProducedDisconnectFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleProducedDisconnectFieldInput @join__type(graph: MOVIES) {
   where: MoviePeopleProducedConnectionWhere
   disconnect: PersonDisconnectInput
 }
 
-input MoviePeopleProducedFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleProducedFieldInput @join__type(graph: MOVIES) {
   connect: [MoviePeopleProducedConnectFieldInput!]
   create: [MoviePeopleProducedCreateFieldInput!]
 }
 
-input MoviePeopleProducedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input MoviePeopleProducedNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [MoviePeopleProducedNodeAggregationWhereInput!]
   OR: [MoviePeopleProducedNodeAggregationWhereInput!]
   NOT: MoviePeopleProducedNodeAggregationWhereInput
@@ -1410,12 +1372,12 @@ input MoviePeopleProducedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   name: StringScalarAggregationFilters
 }
 
-input MoviePeopleProducedUpdateConnectionInput @join__type(graph: MOVIES)  {
+input MoviePeopleProducedUpdateConnectionInput @join__type(graph: MOVIES) {
   node: PersonUpdateInput
   where: MoviePeopleProducedConnectionWhere
 }
 
-input MoviePeopleProducedUpdateFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleProducedUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [MoviePeopleProducedConnectFieldInput!]
   disconnect: [MoviePeopleProducedDisconnectFieldInput!]
   create: [MoviePeopleProducedCreateFieldInput!]
@@ -1423,7 +1385,7 @@ input MoviePeopleProducedUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [MoviePeopleProducedDeleteFieldInput!]
 }
 
-input MoviePeopleReviewedAggregateInput @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -1447,13 +1409,13 @@ input MoviePeopleReviewedAggregateInput @join__type(graph: MOVIES)  {
   edge: ReviewedPropertiesAggregationWhereInput
 }
 
-input MoviePeopleReviewedConnectFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedConnectFieldInput @join__type(graph: MOVIES) {
   edge: ReviewedPropertiesCreateInput!
   where: PersonConnectWhere
   connect: [PersonConnectInput!]
 }
 
-input MoviePeopleReviewedConnectionAggregateInput @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [MoviePeopleReviewedConnectionAggregateInput!]
   OR: [MoviePeopleReviewedConnectionAggregateInput!]
@@ -1462,7 +1424,7 @@ input MoviePeopleReviewedConnectionAggregateInput @join__type(graph: MOVIES)  {
   edge: ReviewedPropertiesAggregationWhereInput
 }
 
-input MoviePeopleReviewedConnectionFilters @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedConnectionFilters @join__type(graph: MOVIES) {
   """
   Return Movies where all of the related MoviePeopleReviewedConnections match this filter
   """
@@ -1485,12 +1447,12 @@ input MoviePeopleReviewedConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: MoviePeopleReviewedConnectionAggregateInput
 }
 
-input MoviePeopleReviewedConnectionSort @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedConnectionSort @join__type(graph: MOVIES) {
   node: PersonSort
   edge: ReviewedPropertiesSort
 }
 
-input MoviePeopleReviewedConnectionWhere @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedConnectionWhere @join__type(graph: MOVIES) {
   AND: [MoviePeopleReviewedConnectionWhere!]
   OR: [MoviePeopleReviewedConnectionWhere!]
   NOT: MoviePeopleReviewedConnectionWhere
@@ -1498,27 +1460,27 @@ input MoviePeopleReviewedConnectionWhere @join__type(graph: MOVIES)  {
   edge: ReviewedPropertiesWhere
 }
 
-input MoviePeopleReviewedCreateFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedCreateFieldInput @join__type(graph: MOVIES) {
   edge: ReviewedPropertiesCreateInput!
   node: PersonCreateInput!
 }
 
-input MoviePeopleReviewedDeleteFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedDeleteFieldInput @join__type(graph: MOVIES) {
   where: MoviePeopleReviewedConnectionWhere
   delete: PersonDeleteInput
 }
 
-input MoviePeopleReviewedDisconnectFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedDisconnectFieldInput @join__type(graph: MOVIES) {
   where: MoviePeopleReviewedConnectionWhere
   disconnect: PersonDisconnectInput
 }
 
-input MoviePeopleReviewedFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedFieldInput @join__type(graph: MOVIES) {
   connect: [MoviePeopleReviewedConnectFieldInput!]
   create: [MoviePeopleReviewedCreateFieldInput!]
 }
 
-input MoviePeopleReviewedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [MoviePeopleReviewedNodeAggregationWhereInput!]
   OR: [MoviePeopleReviewedNodeAggregationWhereInput!]
   NOT: MoviePeopleReviewedNodeAggregationWhereInput
@@ -1616,13 +1578,13 @@ input MoviePeopleReviewedNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   name: StringScalarAggregationFilters
 }
 
-input MoviePeopleReviewedUpdateConnectionInput @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedUpdateConnectionInput @join__type(graph: MOVIES) {
   node: PersonUpdateInput
   where: MoviePeopleReviewedConnectionWhere
   edge: ReviewedPropertiesUpdateInput
 }
 
-input MoviePeopleReviewedUpdateFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleReviewedUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [MoviePeopleReviewedConnectFieldInput!]
   disconnect: [MoviePeopleReviewedDisconnectFieldInput!]
   create: [MoviePeopleReviewedCreateFieldInput!]
@@ -1630,7 +1592,7 @@ input MoviePeopleReviewedUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [MoviePeopleReviewedDeleteFieldInput!]
 }
 
-input MoviePeopleWroteAggregateInput @join__type(graph: MOVIES)  {
+input MoviePeopleWroteAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -1653,12 +1615,12 @@ input MoviePeopleWroteAggregateInput @join__type(graph: MOVIES)  {
   node: MoviePeopleWroteNodeAggregationWhereInput
 }
 
-input MoviePeopleWroteConnectFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleWroteConnectFieldInput @join__type(graph: MOVIES) {
   where: PersonConnectWhere
   connect: [PersonConnectInput!]
 }
 
-input MoviePeopleWroteConnectionAggregateInput @join__type(graph: MOVIES)  {
+input MoviePeopleWroteConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [MoviePeopleWroteConnectionAggregateInput!]
   OR: [MoviePeopleWroteConnectionAggregateInput!]
@@ -1666,7 +1628,7 @@ input MoviePeopleWroteConnectionAggregateInput @join__type(graph: MOVIES)  {
   node: MoviePeopleWroteNodeAggregationWhereInput
 }
 
-input MoviePeopleWroteConnectionFilters @join__type(graph: MOVIES)  {
+input MoviePeopleWroteConnectionFilters @join__type(graph: MOVIES) {
   """
   Return Movies where all of the related MoviePeopleWroteConnections match this filter
   """
@@ -1689,37 +1651,37 @@ input MoviePeopleWroteConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: MoviePeopleWroteConnectionAggregateInput
 }
 
-input MoviePeopleWroteConnectionSort @join__type(graph: MOVIES)  {
+input MoviePeopleWroteConnectionSort @join__type(graph: MOVIES) {
   node: PersonSort
 }
 
-input MoviePeopleWroteConnectionWhere @join__type(graph: MOVIES)  {
+input MoviePeopleWroteConnectionWhere @join__type(graph: MOVIES) {
   AND: [MoviePeopleWroteConnectionWhere!]
   OR: [MoviePeopleWroteConnectionWhere!]
   NOT: MoviePeopleWroteConnectionWhere
   node: PersonWhere
 }
 
-input MoviePeopleWroteCreateFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleWroteCreateFieldInput @join__type(graph: MOVIES) {
   node: PersonCreateInput!
 }
 
-input MoviePeopleWroteDeleteFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleWroteDeleteFieldInput @join__type(graph: MOVIES) {
   where: MoviePeopleWroteConnectionWhere
   delete: PersonDeleteInput
 }
 
-input MoviePeopleWroteDisconnectFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleWroteDisconnectFieldInput @join__type(graph: MOVIES) {
   where: MoviePeopleWroteConnectionWhere
   disconnect: PersonDisconnectInput
 }
 
-input MoviePeopleWroteFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleWroteFieldInput @join__type(graph: MOVIES) {
   connect: [MoviePeopleWroteConnectFieldInput!]
   create: [MoviePeopleWroteCreateFieldInput!]
 }
 
-input MoviePeopleWroteNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input MoviePeopleWroteNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [MoviePeopleWroteNodeAggregationWhereInput!]
   OR: [MoviePeopleWroteNodeAggregationWhereInput!]
   NOT: MoviePeopleWroteNodeAggregationWhereInput
@@ -1817,12 +1779,12 @@ input MoviePeopleWroteNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   name: StringScalarAggregationFilters
 }
 
-input MoviePeopleWroteUpdateConnectionInput @join__type(graph: MOVIES)  {
+input MoviePeopleWroteUpdateConnectionInput @join__type(graph: MOVIES) {
   node: PersonUpdateInput
   where: MoviePeopleWroteConnectionWhere
 }
 
-input MoviePeopleWroteUpdateFieldInput @join__type(graph: MOVIES)  {
+input MoviePeopleWroteUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [MoviePeopleWroteConnectFieldInput!]
   disconnect: [MoviePeopleWroteDisconnectFieldInput!]
   create: [MoviePeopleWroteCreateFieldInput!]
@@ -1830,7 +1792,7 @@ input MoviePeopleWroteUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [MoviePeopleWroteDeleteFieldInput!]
 }
 
-input MovieRelationshipFilters @join__type(graph: MOVIES)  {
+input MovieRelationshipFilters @join__type(graph: MOVIES) {
   """
   Filter type where all of the related Movies match this filter
   """
@@ -1852,13 +1814,13 @@ input MovieRelationshipFilters @join__type(graph: MOVIES)  {
 """
 Fields to sort Movies by. The order in which sorts are applied is not guaranteed when specifying many fields in one MovieSort object.
 """
-input MovieSort @join__type(graph: MOVIES)  {
+input MovieSort @join__type(graph: MOVIES) {
   released: SortDirection
   tagline: SortDirection
   title: SortDirection
 }
 
-input MovieUpdateInput @join__type(graph: MOVIES)  {
+input MovieUpdateInput @join__type(graph: MOVIES) {
   released: StringScalarMutations
   released_SET: String
   tagline: StringScalarMutations
@@ -1872,27 +1834,25 @@ input MovieUpdateInput @join__type(graph: MOVIES)  {
   peopleWrote: [MoviePeopleWroteUpdateFieldInput!]
 }
 
-input MovieWhere @join__type(graph: MOVIES)  {
+input MovieWhere @join__type(graph: MOVIES) {
   released: StringScalarFilters
-  released_EQ: String @deprecated(reason: "Please use the relevant generic filter released: { eq: ... }") 
-  released_IN: [String!] @deprecated(reason: "Please use the relevant generic filter released: { in: ... }") 
-  released_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter released: { contains: ... }") 
-  released_STARTS_WITH: String @deprecated(
-    reason: "Please use the relevant generic filter released: { startsWith: ... }"
-  )
-  released_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter released: { endsWith: ... }") 
+  released_EQ: String @deprecated(reason: "Please use the relevant generic filter released: { eq: ... }")
+  released_IN: [String!] @deprecated(reason: "Please use the relevant generic filter released: { in: ... }")
+  released_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter released: { contains: ... }")
+  released_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter released: { startsWith: ... }")
+  released_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter released: { endsWith: ... }")
   tagline: StringScalarFilters
-  tagline_EQ: String @deprecated(reason: "Please use the relevant generic filter tagline: { eq: ... }") 
-  tagline_IN: [String] @deprecated(reason: "Please use the relevant generic filter tagline: { in: ... }") 
-  tagline_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter tagline: { contains: ... }") 
-  tagline_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter tagline: { startsWith: ... }") 
-  tagline_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter tagline: { endsWith: ... }") 
+  tagline_EQ: String @deprecated(reason: "Please use the relevant generic filter tagline: { eq: ... }")
+  tagline_IN: [String] @deprecated(reason: "Please use the relevant generic filter tagline: { in: ... }")
+  tagline_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter tagline: { contains: ... }")
+  tagline_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter tagline: { startsWith: ... }")
+  tagline_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter tagline: { endsWith: ... }")
   title: StringScalarFilters
-  title_EQ: String @deprecated(reason: "Please use the relevant generic filter title: { eq: ... }") 
-  title_IN: [String!] @deprecated(reason: "Please use the relevant generic filter title: { in: ... }") 
-  title_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter title: { contains: ... }") 
-  title_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter title: { startsWith: ... }") 
-  title_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter title: { endsWith: ... }") 
+  title_EQ: String @deprecated(reason: "Please use the relevant generic filter title: { eq: ... }")
+  title_IN: [String!] @deprecated(reason: "Please use the relevant generic filter title: { in: ... }")
+  title_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter title: { contains: ... }")
+  title_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter title: { startsWith: ... }")
+  title_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter title: { endsWith: ... }")
   OR: [MovieWhere!]
   AND: [MovieWhere!]
   NOT: MovieWhere
@@ -2163,7 +2123,7 @@ input MovieWhere @join__type(graph: MOVIES)  {
   )
 }
 
-input PersonActedInMoviesAggregateInput @join__type(graph: MOVIES)  {
+input PersonActedInMoviesAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -2187,13 +2147,13 @@ input PersonActedInMoviesAggregateInput @join__type(graph: MOVIES)  {
   edge: ActedInPropertiesAggregationWhereInput
 }
 
-input PersonActedInMoviesConnectFieldInput @join__type(graph: MOVIES)  {
+input PersonActedInMoviesConnectFieldInput @join__type(graph: MOVIES) {
   edge: ActedInPropertiesCreateInput!
   where: MovieConnectWhere
   connect: [MovieConnectInput!]
 }
 
-input PersonActedInMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
+input PersonActedInMoviesConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [PersonActedInMoviesConnectionAggregateInput!]
   OR: [PersonActedInMoviesConnectionAggregateInput!]
@@ -2202,7 +2162,7 @@ input PersonActedInMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
   edge: ActedInPropertiesAggregationWhereInput
 }
 
-input PersonActedInMoviesConnectionFilters @join__type(graph: MOVIES)  {
+input PersonActedInMoviesConnectionFilters @join__type(graph: MOVIES) {
   """
   Return People where all of the related PersonActedInMoviesConnections match this filter
   """
@@ -2225,12 +2185,12 @@ input PersonActedInMoviesConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: PersonActedInMoviesConnectionAggregateInput
 }
 
-input PersonActedInMoviesConnectionSort @join__type(graph: MOVIES)  {
+input PersonActedInMoviesConnectionSort @join__type(graph: MOVIES) {
   node: MovieSort
   edge: ActedInPropertiesSort
 }
 
-input PersonActedInMoviesConnectionWhere @join__type(graph: MOVIES)  {
+input PersonActedInMoviesConnectionWhere @join__type(graph: MOVIES) {
   AND: [PersonActedInMoviesConnectionWhere!]
   OR: [PersonActedInMoviesConnectionWhere!]
   NOT: PersonActedInMoviesConnectionWhere
@@ -2238,27 +2198,27 @@ input PersonActedInMoviesConnectionWhere @join__type(graph: MOVIES)  {
   edge: ActedInPropertiesWhere
 }
 
-input PersonActedInMoviesCreateFieldInput @join__type(graph: MOVIES)  {
+input PersonActedInMoviesCreateFieldInput @join__type(graph: MOVIES) {
   edge: ActedInPropertiesCreateInput!
   node: MovieCreateInput!
 }
 
-input PersonActedInMoviesDeleteFieldInput @join__type(graph: MOVIES)  {
+input PersonActedInMoviesDeleteFieldInput @join__type(graph: MOVIES) {
   where: PersonActedInMoviesConnectionWhere
   delete: MovieDeleteInput
 }
 
-input PersonActedInMoviesDisconnectFieldInput @join__type(graph: MOVIES)  {
+input PersonActedInMoviesDisconnectFieldInput @join__type(graph: MOVIES) {
   where: PersonActedInMoviesConnectionWhere
   disconnect: MovieDisconnectInput
 }
 
-input PersonActedInMoviesFieldInput @join__type(graph: MOVIES)  {
+input PersonActedInMoviesFieldInput @join__type(graph: MOVIES) {
   connect: [PersonActedInMoviesConnectFieldInput!]
   create: [PersonActedInMoviesCreateFieldInput!]
 }
 
-input PersonActedInMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input PersonActedInMoviesNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [PersonActedInMoviesNodeAggregationWhereInput!]
   OR: [PersonActedInMoviesNodeAggregationWhereInput!]
   NOT: PersonActedInMoviesNodeAggregationWhereInput
@@ -2402,13 +2362,13 @@ input PersonActedInMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   title: StringScalarAggregationFilters
 }
 
-input PersonActedInMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
+input PersonActedInMoviesUpdateConnectionInput @join__type(graph: MOVIES) {
   node: MovieUpdateInput
   where: PersonActedInMoviesConnectionWhere
   edge: ActedInPropertiesUpdateInput
 }
 
-input PersonActedInMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
+input PersonActedInMoviesUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [PersonActedInMoviesConnectFieldInput!]
   disconnect: [PersonActedInMoviesDisconnectFieldInput!]
   create: [PersonActedInMoviesCreateFieldInput!]
@@ -2416,7 +2376,7 @@ input PersonActedInMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [PersonActedInMoviesDeleteFieldInput!]
 }
 
-input PersonConnectInput @join__type(graph: MOVIES)  {
+input PersonConnectInput @join__type(graph: MOVIES) {
   actedInMovies: [PersonActedInMoviesConnectFieldInput!]
   directedMovies: [PersonDirectedMoviesConnectFieldInput!]
   followsPeople: [PersonFollowsPeopleConnectFieldInput!]
@@ -2426,11 +2386,11 @@ input PersonConnectInput @join__type(graph: MOVIES)  {
   wroteMovies: [PersonWroteMoviesConnectFieldInput!]
 }
 
-input PersonConnectWhere @join__type(graph: MOVIES)  {
+input PersonConnectWhere @join__type(graph: MOVIES) {
   node: PersonWhere!
 }
 
-input PersonCreateInput @join__type(graph: MOVIES)  {
+input PersonCreateInput @join__type(graph: MOVIES) {
   born: String
   name: String!
   actedInMovies: PersonActedInMoviesFieldInput
@@ -2442,7 +2402,7 @@ input PersonCreateInput @join__type(graph: MOVIES)  {
   wroteMovies: PersonWroteMoviesFieldInput
 }
 
-input PersonDeleteInput @join__type(graph: MOVIES)  {
+input PersonDeleteInput @join__type(graph: MOVIES) {
   actedInMovies: [PersonActedInMoviesDeleteFieldInput!]
   directedMovies: [PersonDirectedMoviesDeleteFieldInput!]
   followsPeople: [PersonFollowsPeopleDeleteFieldInput!]
@@ -2452,7 +2412,7 @@ input PersonDeleteInput @join__type(graph: MOVIES)  {
   wroteMovies: [PersonWroteMoviesDeleteFieldInput!]
 }
 
-input PersonDirectedMoviesAggregateInput @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -2475,12 +2435,12 @@ input PersonDirectedMoviesAggregateInput @join__type(graph: MOVIES)  {
   node: PersonDirectedMoviesNodeAggregationWhereInput
 }
 
-input PersonDirectedMoviesConnectFieldInput @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesConnectFieldInput @join__type(graph: MOVIES) {
   where: MovieConnectWhere
   connect: [MovieConnectInput!]
 }
 
-input PersonDirectedMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [PersonDirectedMoviesConnectionAggregateInput!]
   OR: [PersonDirectedMoviesConnectionAggregateInput!]
@@ -2488,7 +2448,7 @@ input PersonDirectedMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
   node: PersonDirectedMoviesNodeAggregationWhereInput
 }
 
-input PersonDirectedMoviesConnectionFilters @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesConnectionFilters @join__type(graph: MOVIES) {
   """
   Return People where all of the related PersonDirectedMoviesConnections match this filter
   """
@@ -2511,37 +2471,37 @@ input PersonDirectedMoviesConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: PersonDirectedMoviesConnectionAggregateInput
 }
 
-input PersonDirectedMoviesConnectionSort @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesConnectionSort @join__type(graph: MOVIES) {
   node: MovieSort
 }
 
-input PersonDirectedMoviesConnectionWhere @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesConnectionWhere @join__type(graph: MOVIES) {
   AND: [PersonDirectedMoviesConnectionWhere!]
   OR: [PersonDirectedMoviesConnectionWhere!]
   NOT: PersonDirectedMoviesConnectionWhere
   node: MovieWhere
 }
 
-input PersonDirectedMoviesCreateFieldInput @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesCreateFieldInput @join__type(graph: MOVIES) {
   node: MovieCreateInput!
 }
 
-input PersonDirectedMoviesDeleteFieldInput @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesDeleteFieldInput @join__type(graph: MOVIES) {
   where: PersonDirectedMoviesConnectionWhere
   delete: MovieDeleteInput
 }
 
-input PersonDirectedMoviesDisconnectFieldInput @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesDisconnectFieldInput @join__type(graph: MOVIES) {
   where: PersonDirectedMoviesConnectionWhere
   disconnect: MovieDisconnectInput
 }
 
-input PersonDirectedMoviesFieldInput @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesFieldInput @join__type(graph: MOVIES) {
   connect: [PersonDirectedMoviesConnectFieldInput!]
   create: [PersonDirectedMoviesCreateFieldInput!]
 }
 
-input PersonDirectedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [PersonDirectedMoviesNodeAggregationWhereInput!]
   OR: [PersonDirectedMoviesNodeAggregationWhereInput!]
   NOT: PersonDirectedMoviesNodeAggregationWhereInput
@@ -2685,12 +2645,12 @@ input PersonDirectedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
   title: StringScalarAggregationFilters
 }
 
-input PersonDirectedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesUpdateConnectionInput @join__type(graph: MOVIES) {
   node: MovieUpdateInput
   where: PersonDirectedMoviesConnectionWhere
 }
 
-input PersonDirectedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
+input PersonDirectedMoviesUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [PersonDirectedMoviesConnectFieldInput!]
   disconnect: [PersonDirectedMoviesDisconnectFieldInput!]
   create: [PersonDirectedMoviesCreateFieldInput!]
@@ -2698,7 +2658,7 @@ input PersonDirectedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [PersonDirectedMoviesDeleteFieldInput!]
 }
 
-input PersonDisconnectInput @join__type(graph: MOVIES)  {
+input PersonDisconnectInput @join__type(graph: MOVIES) {
   actedInMovies: [PersonActedInMoviesDisconnectFieldInput!]
   directedMovies: [PersonDirectedMoviesDisconnectFieldInput!]
   followsPeople: [PersonFollowsPeopleDisconnectFieldInput!]
@@ -2708,7 +2668,7 @@ input PersonDisconnectInput @join__type(graph: MOVIES)  {
   wroteMovies: [PersonWroteMoviesDisconnectFieldInput!]
 }
 
-input PersonFollowsPeopleAggregateInput @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -2731,12 +2691,12 @@ input PersonFollowsPeopleAggregateInput @join__type(graph: MOVIES)  {
   node: PersonFollowsPeopleNodeAggregationWhereInput
 }
 
-input PersonFollowsPeopleConnectFieldInput @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleConnectFieldInput @join__type(graph: MOVIES) {
   where: PersonConnectWhere
   connect: [PersonConnectInput!]
 }
 
-input PersonFollowsPeopleConnectionAggregateInput @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [PersonFollowsPeopleConnectionAggregateInput!]
   OR: [PersonFollowsPeopleConnectionAggregateInput!]
@@ -2744,7 +2704,7 @@ input PersonFollowsPeopleConnectionAggregateInput @join__type(graph: MOVIES)  {
   node: PersonFollowsPeopleNodeAggregationWhereInput
 }
 
-input PersonFollowsPeopleConnectionFilters @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleConnectionFilters @join__type(graph: MOVIES) {
   """
   Return People where all of the related PersonFollowsPeopleConnections match this filter
   """
@@ -2767,37 +2727,37 @@ input PersonFollowsPeopleConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: PersonFollowsPeopleConnectionAggregateInput
 }
 
-input PersonFollowsPeopleConnectionSort @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleConnectionSort @join__type(graph: MOVIES) {
   node: PersonSort
 }
 
-input PersonFollowsPeopleConnectionWhere @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleConnectionWhere @join__type(graph: MOVIES) {
   AND: [PersonFollowsPeopleConnectionWhere!]
   OR: [PersonFollowsPeopleConnectionWhere!]
   NOT: PersonFollowsPeopleConnectionWhere
   node: PersonWhere
 }
 
-input PersonFollowsPeopleCreateFieldInput @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleCreateFieldInput @join__type(graph: MOVIES) {
   node: PersonCreateInput!
 }
 
-input PersonFollowsPeopleDeleteFieldInput @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleDeleteFieldInput @join__type(graph: MOVIES) {
   where: PersonFollowsPeopleConnectionWhere
   delete: PersonDeleteInput
 }
 
-input PersonFollowsPeopleDisconnectFieldInput @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleDisconnectFieldInput @join__type(graph: MOVIES) {
   where: PersonFollowsPeopleConnectionWhere
   disconnect: PersonDisconnectInput
 }
 
-input PersonFollowsPeopleFieldInput @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleFieldInput @join__type(graph: MOVIES) {
   connect: [PersonFollowsPeopleConnectFieldInput!]
   create: [PersonFollowsPeopleCreateFieldInput!]
 }
 
-input PersonFollowsPeopleNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [PersonFollowsPeopleNodeAggregationWhereInput!]
   OR: [PersonFollowsPeopleNodeAggregationWhereInput!]
   NOT: PersonFollowsPeopleNodeAggregationWhereInput
@@ -2895,12 +2855,12 @@ input PersonFollowsPeopleNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   name: StringScalarAggregationFilters
 }
 
-input PersonFollowsPeopleUpdateConnectionInput @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleUpdateConnectionInput @join__type(graph: MOVIES) {
   node: PersonUpdateInput
   where: PersonFollowsPeopleConnectionWhere
 }
 
-input PersonFollowsPeopleUpdateFieldInput @join__type(graph: MOVIES)  {
+input PersonFollowsPeopleUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [PersonFollowsPeopleConnectFieldInput!]
   disconnect: [PersonFollowsPeopleDisconnectFieldInput!]
   create: [PersonFollowsPeopleCreateFieldInput!]
@@ -2908,7 +2868,7 @@ input PersonFollowsPeopleUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [PersonFollowsPeopleDeleteFieldInput!]
 }
 
-input PersonPeopleFollowsAggregateInput @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -2931,12 +2891,12 @@ input PersonPeopleFollowsAggregateInput @join__type(graph: MOVIES)  {
   node: PersonPeopleFollowsNodeAggregationWhereInput
 }
 
-input PersonPeopleFollowsConnectFieldInput @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsConnectFieldInput @join__type(graph: MOVIES) {
   where: PersonConnectWhere
   connect: [PersonConnectInput!]
 }
 
-input PersonPeopleFollowsConnectionAggregateInput @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [PersonPeopleFollowsConnectionAggregateInput!]
   OR: [PersonPeopleFollowsConnectionAggregateInput!]
@@ -2944,7 +2904,7 @@ input PersonPeopleFollowsConnectionAggregateInput @join__type(graph: MOVIES)  {
   node: PersonPeopleFollowsNodeAggregationWhereInput
 }
 
-input PersonPeopleFollowsConnectionFilters @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsConnectionFilters @join__type(graph: MOVIES) {
   """
   Return People where all of the related PersonPeopleFollowsConnections match this filter
   """
@@ -2967,37 +2927,37 @@ input PersonPeopleFollowsConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: PersonPeopleFollowsConnectionAggregateInput
 }
 
-input PersonPeopleFollowsConnectionSort @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsConnectionSort @join__type(graph: MOVIES) {
   node: PersonSort
 }
 
-input PersonPeopleFollowsConnectionWhere @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsConnectionWhere @join__type(graph: MOVIES) {
   AND: [PersonPeopleFollowsConnectionWhere!]
   OR: [PersonPeopleFollowsConnectionWhere!]
   NOT: PersonPeopleFollowsConnectionWhere
   node: PersonWhere
 }
 
-input PersonPeopleFollowsCreateFieldInput @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsCreateFieldInput @join__type(graph: MOVIES) {
   node: PersonCreateInput!
 }
 
-input PersonPeopleFollowsDeleteFieldInput @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsDeleteFieldInput @join__type(graph: MOVIES) {
   where: PersonPeopleFollowsConnectionWhere
   delete: PersonDeleteInput
 }
 
-input PersonPeopleFollowsDisconnectFieldInput @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsDisconnectFieldInput @join__type(graph: MOVIES) {
   where: PersonPeopleFollowsConnectionWhere
   disconnect: PersonDisconnectInput
 }
 
-input PersonPeopleFollowsFieldInput @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsFieldInput @join__type(graph: MOVIES) {
   connect: [PersonPeopleFollowsConnectFieldInput!]
   create: [PersonPeopleFollowsCreateFieldInput!]
 }
 
-input PersonPeopleFollowsNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [PersonPeopleFollowsNodeAggregationWhereInput!]
   OR: [PersonPeopleFollowsNodeAggregationWhereInput!]
   NOT: PersonPeopleFollowsNodeAggregationWhereInput
@@ -3095,12 +3055,12 @@ input PersonPeopleFollowsNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   name: StringScalarAggregationFilters
 }
 
-input PersonPeopleFollowsUpdateConnectionInput @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsUpdateConnectionInput @join__type(graph: MOVIES) {
   node: PersonUpdateInput
   where: PersonPeopleFollowsConnectionWhere
 }
 
-input PersonPeopleFollowsUpdateFieldInput @join__type(graph: MOVIES)  {
+input PersonPeopleFollowsUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [PersonPeopleFollowsConnectFieldInput!]
   disconnect: [PersonPeopleFollowsDisconnectFieldInput!]
   create: [PersonPeopleFollowsCreateFieldInput!]
@@ -3108,7 +3068,7 @@ input PersonPeopleFollowsUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [PersonPeopleFollowsDeleteFieldInput!]
 }
 
-input PersonProducedMoviesAggregateInput @join__type(graph: MOVIES)  {
+input PersonProducedMoviesAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -3131,12 +3091,12 @@ input PersonProducedMoviesAggregateInput @join__type(graph: MOVIES)  {
   node: PersonProducedMoviesNodeAggregationWhereInput
 }
 
-input PersonProducedMoviesConnectFieldInput @join__type(graph: MOVIES)  {
+input PersonProducedMoviesConnectFieldInput @join__type(graph: MOVIES) {
   where: MovieConnectWhere
   connect: [MovieConnectInput!]
 }
 
-input PersonProducedMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
+input PersonProducedMoviesConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [PersonProducedMoviesConnectionAggregateInput!]
   OR: [PersonProducedMoviesConnectionAggregateInput!]
@@ -3144,7 +3104,7 @@ input PersonProducedMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
   node: PersonProducedMoviesNodeAggregationWhereInput
 }
 
-input PersonProducedMoviesConnectionFilters @join__type(graph: MOVIES)  {
+input PersonProducedMoviesConnectionFilters @join__type(graph: MOVIES) {
   """
   Return People where all of the related PersonProducedMoviesConnections match this filter
   """
@@ -3167,37 +3127,37 @@ input PersonProducedMoviesConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: PersonProducedMoviesConnectionAggregateInput
 }
 
-input PersonProducedMoviesConnectionSort @join__type(graph: MOVIES)  {
+input PersonProducedMoviesConnectionSort @join__type(graph: MOVIES) {
   node: MovieSort
 }
 
-input PersonProducedMoviesConnectionWhere @join__type(graph: MOVIES)  {
+input PersonProducedMoviesConnectionWhere @join__type(graph: MOVIES) {
   AND: [PersonProducedMoviesConnectionWhere!]
   OR: [PersonProducedMoviesConnectionWhere!]
   NOT: PersonProducedMoviesConnectionWhere
   node: MovieWhere
 }
 
-input PersonProducedMoviesCreateFieldInput @join__type(graph: MOVIES)  {
+input PersonProducedMoviesCreateFieldInput @join__type(graph: MOVIES) {
   node: MovieCreateInput!
 }
 
-input PersonProducedMoviesDeleteFieldInput @join__type(graph: MOVIES)  {
+input PersonProducedMoviesDeleteFieldInput @join__type(graph: MOVIES) {
   where: PersonProducedMoviesConnectionWhere
   delete: MovieDeleteInput
 }
 
-input PersonProducedMoviesDisconnectFieldInput @join__type(graph: MOVIES)  {
+input PersonProducedMoviesDisconnectFieldInput @join__type(graph: MOVIES) {
   where: PersonProducedMoviesConnectionWhere
   disconnect: MovieDisconnectInput
 }
 
-input PersonProducedMoviesFieldInput @join__type(graph: MOVIES)  {
+input PersonProducedMoviesFieldInput @join__type(graph: MOVIES) {
   connect: [PersonProducedMoviesConnectFieldInput!]
   create: [PersonProducedMoviesCreateFieldInput!]
 }
 
-input PersonProducedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input PersonProducedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [PersonProducedMoviesNodeAggregationWhereInput!]
   OR: [PersonProducedMoviesNodeAggregationWhereInput!]
   NOT: PersonProducedMoviesNodeAggregationWhereInput
@@ -3341,12 +3301,12 @@ input PersonProducedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
   title: StringScalarAggregationFilters
 }
 
-input PersonProducedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
+input PersonProducedMoviesUpdateConnectionInput @join__type(graph: MOVIES) {
   node: MovieUpdateInput
   where: PersonProducedMoviesConnectionWhere
 }
 
-input PersonProducedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
+input PersonProducedMoviesUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [PersonProducedMoviesConnectFieldInput!]
   disconnect: [PersonProducedMoviesDisconnectFieldInput!]
   create: [PersonProducedMoviesCreateFieldInput!]
@@ -3354,7 +3314,7 @@ input PersonProducedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [PersonProducedMoviesDeleteFieldInput!]
 }
 
-input PersonRelationshipFilters @join__type(graph: MOVIES)  {
+input PersonRelationshipFilters @join__type(graph: MOVIES) {
   """
   Filter type where all of the related People match this filter
   """
@@ -3373,7 +3333,7 @@ input PersonRelationshipFilters @join__type(graph: MOVIES)  {
   some: PersonWhere
 }
 
-input PersonReviewedMoviesAggregateInput @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -3397,13 +3357,13 @@ input PersonReviewedMoviesAggregateInput @join__type(graph: MOVIES)  {
   edge: ReviewedPropertiesAggregationWhereInput
 }
 
-input PersonReviewedMoviesConnectFieldInput @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesConnectFieldInput @join__type(graph: MOVIES) {
   edge: ReviewedPropertiesCreateInput!
   where: MovieConnectWhere
   connect: [MovieConnectInput!]
 }
 
-input PersonReviewedMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [PersonReviewedMoviesConnectionAggregateInput!]
   OR: [PersonReviewedMoviesConnectionAggregateInput!]
@@ -3412,7 +3372,7 @@ input PersonReviewedMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
   edge: ReviewedPropertiesAggregationWhereInput
 }
 
-input PersonReviewedMoviesConnectionFilters @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesConnectionFilters @join__type(graph: MOVIES) {
   """
   Return People where all of the related PersonReviewedMoviesConnections match this filter
   """
@@ -3435,12 +3395,12 @@ input PersonReviewedMoviesConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: PersonReviewedMoviesConnectionAggregateInput
 }
 
-input PersonReviewedMoviesConnectionSort @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesConnectionSort @join__type(graph: MOVIES) {
   node: MovieSort
   edge: ReviewedPropertiesSort
 }
 
-input PersonReviewedMoviesConnectionWhere @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesConnectionWhere @join__type(graph: MOVIES) {
   AND: [PersonReviewedMoviesConnectionWhere!]
   OR: [PersonReviewedMoviesConnectionWhere!]
   NOT: PersonReviewedMoviesConnectionWhere
@@ -3448,27 +3408,27 @@ input PersonReviewedMoviesConnectionWhere @join__type(graph: MOVIES)  {
   edge: ReviewedPropertiesWhere
 }
 
-input PersonReviewedMoviesCreateFieldInput @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesCreateFieldInput @join__type(graph: MOVIES) {
   edge: ReviewedPropertiesCreateInput!
   node: MovieCreateInput!
 }
 
-input PersonReviewedMoviesDeleteFieldInput @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesDeleteFieldInput @join__type(graph: MOVIES) {
   where: PersonReviewedMoviesConnectionWhere
   delete: MovieDeleteInput
 }
 
-input PersonReviewedMoviesDisconnectFieldInput @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesDisconnectFieldInput @join__type(graph: MOVIES) {
   where: PersonReviewedMoviesConnectionWhere
   disconnect: MovieDisconnectInput
 }
 
-input PersonReviewedMoviesFieldInput @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesFieldInput @join__type(graph: MOVIES) {
   connect: [PersonReviewedMoviesConnectFieldInput!]
   create: [PersonReviewedMoviesCreateFieldInput!]
 }
 
-input PersonReviewedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [PersonReviewedMoviesNodeAggregationWhereInput!]
   OR: [PersonReviewedMoviesNodeAggregationWhereInput!]
   NOT: PersonReviewedMoviesNodeAggregationWhereInput
@@ -3612,13 +3572,13 @@ input PersonReviewedMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  
   title: StringScalarAggregationFilters
 }
 
-input PersonReviewedMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesUpdateConnectionInput @join__type(graph: MOVIES) {
   node: MovieUpdateInput
   where: PersonReviewedMoviesConnectionWhere
   edge: ReviewedPropertiesUpdateInput
 }
 
-input PersonReviewedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
+input PersonReviewedMoviesUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [PersonReviewedMoviesConnectFieldInput!]
   disconnect: [PersonReviewedMoviesDisconnectFieldInput!]
   create: [PersonReviewedMoviesCreateFieldInput!]
@@ -3629,12 +3589,12 @@ input PersonReviewedMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
 """
 Fields to sort People by. The order in which sorts are applied is not guaranteed when specifying many fields in one PersonSort object.
 """
-input PersonSort @join__type(graph: MOVIES)  {
+input PersonSort @join__type(graph: MOVIES) {
   born: SortDirection
   name: SortDirection
 }
 
-input PersonUpdateInput @join__type(graph: MOVIES)  {
+input PersonUpdateInput @join__type(graph: MOVIES) {
   born: StringScalarMutations
   born_SET: String
   name: StringScalarMutations
@@ -3648,19 +3608,19 @@ input PersonUpdateInput @join__type(graph: MOVIES)  {
   wroteMovies: [PersonWroteMoviesUpdateFieldInput!]
 }
 
-input PersonWhere @join__type(graph: MOVIES)  {
+input PersonWhere @join__type(graph: MOVIES) {
   born: StringScalarFilters
-  born_EQ: String @deprecated(reason: "Please use the relevant generic filter born: { eq: ... }") 
-  born_IN: [String] @deprecated(reason: "Please use the relevant generic filter born: { in: ... }") 
-  born_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter born: { contains: ... }") 
-  born_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter born: { startsWith: ... }") 
-  born_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter born: { endsWith: ... }") 
+  born_EQ: String @deprecated(reason: "Please use the relevant generic filter born: { eq: ... }")
+  born_IN: [String] @deprecated(reason: "Please use the relevant generic filter born: { in: ... }")
+  born_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter born: { contains: ... }")
+  born_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter born: { startsWith: ... }")
+  born_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter born: { endsWith: ... }")
   name: StringScalarFilters
-  name_EQ: String @deprecated(reason: "Please use the relevant generic filter name: { eq: ... }") 
-  name_IN: [String!] @deprecated(reason: "Please use the relevant generic filter name: { in: ... }") 
-  name_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter name: { contains: ... }") 
-  name_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter name: { startsWith: ... }") 
-  name_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter name: { endsWith: ... }") 
+  name_EQ: String @deprecated(reason: "Please use the relevant generic filter name: { eq: ... }")
+  name_IN: [String!] @deprecated(reason: "Please use the relevant generic filter name: { in: ... }")
+  name_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter name: { contains: ... }")
+  name_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter name: { startsWith: ... }")
+  name_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter name: { endsWith: ... }")
   OR: [PersonWhere!]
   AND: [PersonWhere!]
   NOT: PersonWhere
@@ -4037,7 +3997,7 @@ input PersonWhere @join__type(graph: MOVIES)  {
   )
 }
 
-input PersonWroteMoviesAggregateInput @join__type(graph: MOVIES)  {
+input PersonWroteMoviesAggregateInput @join__type(graph: MOVIES) {
   count_EQ: Int @deprecated(
     reason: "Please use the relevant generic filter '{ count: { eq: ... } } }' instead."
   )
@@ -4060,12 +4020,12 @@ input PersonWroteMoviesAggregateInput @join__type(graph: MOVIES)  {
   node: PersonWroteMoviesNodeAggregationWhereInput
 }
 
-input PersonWroteMoviesConnectFieldInput @join__type(graph: MOVIES)  {
+input PersonWroteMoviesConnectFieldInput @join__type(graph: MOVIES) {
   where: MovieConnectWhere
   connect: [MovieConnectInput!]
 }
 
-input PersonWroteMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
+input PersonWroteMoviesConnectionAggregateInput @join__type(graph: MOVIES) {
   count: ConnectionAggregationCountFilterInput
   AND: [PersonWroteMoviesConnectionAggregateInput!]
   OR: [PersonWroteMoviesConnectionAggregateInput!]
@@ -4073,7 +4033,7 @@ input PersonWroteMoviesConnectionAggregateInput @join__type(graph: MOVIES)  {
   node: PersonWroteMoviesNodeAggregationWhereInput
 }
 
-input PersonWroteMoviesConnectionFilters @join__type(graph: MOVIES)  {
+input PersonWroteMoviesConnectionFilters @join__type(graph: MOVIES) {
   """
   Return People where all of the related PersonWroteMoviesConnections match this filter
   """
@@ -4096,37 +4056,37 @@ input PersonWroteMoviesConnectionFilters @join__type(graph: MOVIES)  {
   aggregate: PersonWroteMoviesConnectionAggregateInput
 }
 
-input PersonWroteMoviesConnectionSort @join__type(graph: MOVIES)  {
+input PersonWroteMoviesConnectionSort @join__type(graph: MOVIES) {
   node: MovieSort
 }
 
-input PersonWroteMoviesConnectionWhere @join__type(graph: MOVIES)  {
+input PersonWroteMoviesConnectionWhere @join__type(graph: MOVIES) {
   AND: [PersonWroteMoviesConnectionWhere!]
   OR: [PersonWroteMoviesConnectionWhere!]
   NOT: PersonWroteMoviesConnectionWhere
   node: MovieWhere
 }
 
-input PersonWroteMoviesCreateFieldInput @join__type(graph: MOVIES)  {
+input PersonWroteMoviesCreateFieldInput @join__type(graph: MOVIES) {
   node: MovieCreateInput!
 }
 
-input PersonWroteMoviesDeleteFieldInput @join__type(graph: MOVIES)  {
+input PersonWroteMoviesDeleteFieldInput @join__type(graph: MOVIES) {
   where: PersonWroteMoviesConnectionWhere
   delete: MovieDeleteInput
 }
 
-input PersonWroteMoviesDisconnectFieldInput @join__type(graph: MOVIES)  {
+input PersonWroteMoviesDisconnectFieldInput @join__type(graph: MOVIES) {
   where: PersonWroteMoviesConnectionWhere
   disconnect: MovieDisconnectInput
 }
 
-input PersonWroteMoviesFieldInput @join__type(graph: MOVIES)  {
+input PersonWroteMoviesFieldInput @join__type(graph: MOVIES) {
   connect: [PersonWroteMoviesConnectFieldInput!]
   create: [PersonWroteMoviesCreateFieldInput!]
 }
 
-input PersonWroteMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
+input PersonWroteMoviesNodeAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [PersonWroteMoviesNodeAggregationWhereInput!]
   OR: [PersonWroteMoviesNodeAggregationWhereInput!]
   NOT: PersonWroteMoviesNodeAggregationWhereInput
@@ -4270,12 +4230,12 @@ input PersonWroteMoviesNodeAggregationWhereInput @join__type(graph: MOVIES)  {
   title: StringScalarAggregationFilters
 }
 
-input PersonWroteMoviesUpdateConnectionInput @join__type(graph: MOVIES)  {
+input PersonWroteMoviesUpdateConnectionInput @join__type(graph: MOVIES) {
   node: MovieUpdateInput
   where: PersonWroteMoviesConnectionWhere
 }
 
-input PersonWroteMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
+input PersonWroteMoviesUpdateFieldInput @join__type(graph: MOVIES) {
   connect: [PersonWroteMoviesConnectFieldInput!]
   disconnect: [PersonWroteMoviesDisconnectFieldInput!]
   create: [PersonWroteMoviesCreateFieldInput!]
@@ -4283,7 +4243,7 @@ input PersonWroteMoviesUpdateFieldInput @join__type(graph: MOVIES)  {
   delete: [PersonWroteMoviesDeleteFieldInput!]
 }
 
-input ReviewedPropertiesAggregationWhereInput @join__type(graph: MOVIES)  {
+input ReviewedPropertiesAggregationWhereInput @join__type(graph: MOVIES) {
   AND: [ReviewedPropertiesAggregationWhereInput!]
   OR: [ReviewedPropertiesAggregationWhereInput!]
   NOT: ReviewedPropertiesAggregationWhereInput
@@ -4381,36 +4341,36 @@ input ReviewedPropertiesAggregationWhereInput @join__type(graph: MOVIES)  {
   summary: StringScalarAggregationFilters
 }
 
-input ReviewedPropertiesCreateInput @join__type(graph: MOVIES)  {
+input ReviewedPropertiesCreateInput @join__type(graph: MOVIES) {
   rating: String!
   summary: String!
 }
 
-input ReviewedPropertiesSort @join__type(graph: MOVIES)  {
+input ReviewedPropertiesSort @join__type(graph: MOVIES) {
   rating: SortDirection
   summary: SortDirection
 }
 
-input ReviewedPropertiesUpdateInput @join__type(graph: MOVIES)  {
+input ReviewedPropertiesUpdateInput @join__type(graph: MOVIES) {
   rating: StringScalarMutations
   rating_SET: String
   summary: StringScalarMutations
   summary_SET: String
 }
 
-input ReviewedPropertiesWhere @join__type(graph: MOVIES)  {
+input ReviewedPropertiesWhere @join__type(graph: MOVIES) {
   rating: StringScalarFilters
-  rating_EQ: String @deprecated(reason: "Please use the relevant generic filter rating: { eq: ... }") 
-  rating_IN: [String!] @deprecated(reason: "Please use the relevant generic filter rating: { in: ... }") 
-  rating_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter rating: { contains: ... }") 
-  rating_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter rating: { startsWith: ... }") 
-  rating_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter rating: { endsWith: ... }") 
+  rating_EQ: String @deprecated(reason: "Please use the relevant generic filter rating: { eq: ... }")
+  rating_IN: [String!] @deprecated(reason: "Please use the relevant generic filter rating: { in: ... }")
+  rating_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter rating: { contains: ... }")
+  rating_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter rating: { startsWith: ... }")
+  rating_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter rating: { endsWith: ... }")
   summary: StringScalarFilters
-  summary_EQ: String @deprecated(reason: "Please use the relevant generic filter summary: { eq: ... }") 
-  summary_IN: [String!] @deprecated(reason: "Please use the relevant generic filter summary: { in: ... }") 
-  summary_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter summary: { contains: ... }") 
-  summary_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter summary: { startsWith: ... }") 
-  summary_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter summary: { endsWith: ... }") 
+  summary_EQ: String @deprecated(reason: "Please use the relevant generic filter summary: { eq: ... }")
+  summary_IN: [String!] @deprecated(reason: "Please use the relevant generic filter summary: { in: ... }")
+  summary_CONTAINS: String @deprecated(reason: "Please use the relevant generic filter summary: { contains: ... }")
+  summary_STARTS_WITH: String @deprecated(reason: "Please use the relevant generic filter summary: { startsWith: ... }")
+  summary_ENDS_WITH: String @deprecated(reason: "Please use the relevant generic filter summary: { endsWith: ... }")
   OR: [ReviewedPropertiesWhere!]
   AND: [ReviewedPropertiesWhere!]
   NOT: ReviewedPropertiesWhere
@@ -4419,7 +4379,7 @@ input ReviewedPropertiesWhere @join__type(graph: MOVIES)  {
 """
 Filters for an aggregation of a string field
 """
-input StringScalarAggregationFilters @join__type(graph: MOVIES)  {
+input StringScalarAggregationFilters @join__type(graph: MOVIES) {
   averageLength: FloatScalarFilters
   shortestLength: IntScalarFilters
   longestLength: IntScalarFilters
@@ -4428,7 +4388,7 @@ input StringScalarAggregationFilters @join__type(graph: MOVIES)  {
 """
 String filters
 """
-input StringScalarFilters @join__type(graph: MOVIES)  {
+input StringScalarFilters @join__type(graph: MOVIES) {
   eq: String
   in: [String!]
   contains: String
@@ -4439,7 +4399,7 @@ input StringScalarFilters @join__type(graph: MOVIES)  {
 """
 String mutations
 """
-input StringScalarMutations @join__type(graph: MOVIES)  {
+input StringScalarMutations @join__type(graph: MOVIES) {
   set: String
 }
 "

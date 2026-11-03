@@ -1,102 +1,63 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should write compose output to supergraph.graphql 1`] = `
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    
-  {
-    query: Query
-    
-    
-  }
-
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
-
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
-
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
-
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
-
-  scalar link__Import
-
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
-
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
-
-  
-  
-  
-  
-  
-  
-  
-enum join__Graph {
-  HELLOWORLD @join__graph(name: "helloworld", url: "") 
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) {
+  query: Query
 }
 
-type Query @join__type(graph: HELLOWORLD)  {
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  HELLOWORLD @join__graph(name: "helloworld", url: "")
+}
+
+type Query @join__type(graph: HELLOWORLD) {
   hello: String
 }"
 `;
 
-exports[`should write compose output to supergraph.js 1`] = `"export default "schema\\n    @link(url: \\"https://specs.apollo.dev/link/v1.0\\")\\n    @link(url: \\"https://specs.apollo.dev/join/v0.3\\", for: EXECUTION)\\n    \\n    \\n    \\n    \\n    \\n    \\n    \\n  {\\n    query: Query\\n    \\n    \\n  }\\n\\n  \\n    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE\\n\\n    directive @join__graph(name: String!, url: String!) on ENUM_VALUE\\n\\n    \\n      directive @join__field(\\n        graph: join__Graph\\n        requires: join__FieldSet\\n        provides: join__FieldSet\\n        type: String\\n        external: Boolean\\n        override: String\\n        usedOverridden: Boolean\\n        \\n        \\n      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION\\n    \\n    \\n\\n    directive @join__implements(\\n      graph: join__Graph!\\n      interface: String!\\n    ) repeatable on OBJECT | INTERFACE\\n\\n    directive @join__type(\\n      graph: join__Graph!\\n      key: join__FieldSet\\n      extension: Boolean! = false\\n      resolvable: Boolean! = true\\n      isInterfaceObject: Boolean! = false\\n    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR\\n\\n    directive @join__unionMember(\\n      graph: join__Graph!\\n      member: String!\\n    ) repeatable on UNION\\n\\n    scalar join__FieldSet\\n    \\n  \\n  \\n  directive @link(\\n    url: String\\n    as: String\\n    for: link__Purpose\\n    import: [link__Import]\\n  ) repeatable on SCHEMA\\n\\n  scalar link__Import\\n\\n  enum link__Purpose {\\n    \\"\\"\\"\\n    \`SECURITY\` features provide metadata necessary to securely resolve fields.\\n    \\"\\"\\"\\n    SECURITY\\n\\n    \\"\\"\\"\\n    \`EXECUTION\` features provide metadata necessary for operation execution.\\n    \\"\\"\\"\\n    EXECUTION\\n  }\\n\\n  \\n  \\n  \\n  \\n  \\n  \\n  \\nenum join__Graph {\\n  HELLOWORLD @join__graph(name: \\"helloworld\\", url: \\"\\") \\n}\\n\\ntype Query @join__type(graph: HELLOWORLD)  {\\n  hello: String\\n}""`;
+exports[`should write compose output to supergraph.js 1`] = `"export default "schema @link(url: \\"https://specs.apollo.dev/link/v1.0\\") @link(url: \\"https://specs.apollo.dev/join/v0.3\\", for: EXECUTION) {\\n  query: Query\\n}\\n\\ndirective @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE\\n\\ndirective @join__graph(name: String!, url: String!) on ENUM_VALUE\\n\\ndirective @join__field(\\n  graph: join__Graph\\n  requires: join__FieldSet\\n  provides: join__FieldSet\\n  type: String\\n  external: Boolean\\n  override: String\\n  usedOverridden: Boolean\\n) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION\\n\\ndirective @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE\\n\\ndirective @join__type(\\n  graph: join__Graph!\\n  key: join__FieldSet\\n  extension: Boolean! = false\\n  resolvable: Boolean! = true\\n  isInterfaceObject: Boolean! = false\\n) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR\\n\\ndirective @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION\\n\\nscalar join__FieldSet\\n\\ndirective @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA\\n\\nscalar link__Import\\n\\nenum link__Purpose {\\n  \\"\\"\\"\\n  \`SECURITY\` features provide metadata necessary to securely resolve fields.\\n  \\"\\"\\"\\n  SECURITY\\n  \\"\\"\\"\\n  \`EXECUTION\` features provide metadata necessary for operation execution.\\n  \\"\\"\\"\\n  EXECUTION\\n}\\n\\nenum join__Graph {\\n  HELLOWORLD @join__graph(name: \\"helloworld\\", url: \\"\\")\\n}\\n\\ntype Query @join__type(graph: HELLOWORLD) {\\n  hello: String\\n}""`;
 
 exports[`should write compose output to supergraph.json 1`] = `
 "{
@@ -869,4 +830,4 @@ exports[`should write compose output to supergraph.json 1`] = `
 }"
 `;
 
-exports[`should write compose output to supergraph.ts 1`] = `"export default "schema\\n    @link(url: \\"https://specs.apollo.dev/link/v1.0\\")\\n    @link(url: \\"https://specs.apollo.dev/join/v0.3\\", for: EXECUTION)\\n    \\n    \\n    \\n    \\n    \\n    \\n    \\n  {\\n    query: Query\\n    \\n    \\n  }\\n\\n  \\n    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE\\n\\n    directive @join__graph(name: String!, url: String!) on ENUM_VALUE\\n\\n    \\n      directive @join__field(\\n        graph: join__Graph\\n        requires: join__FieldSet\\n        provides: join__FieldSet\\n        type: String\\n        external: Boolean\\n        override: String\\n        usedOverridden: Boolean\\n        \\n        \\n      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION\\n    \\n    \\n\\n    directive @join__implements(\\n      graph: join__Graph!\\n      interface: String!\\n    ) repeatable on OBJECT | INTERFACE\\n\\n    directive @join__type(\\n      graph: join__Graph!\\n      key: join__FieldSet\\n      extension: Boolean! = false\\n      resolvable: Boolean! = true\\n      isInterfaceObject: Boolean! = false\\n    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR\\n\\n    directive @join__unionMember(\\n      graph: join__Graph!\\n      member: String!\\n    ) repeatable on UNION\\n\\n    scalar join__FieldSet\\n    \\n  \\n  \\n  directive @link(\\n    url: String\\n    as: String\\n    for: link__Purpose\\n    import: [link__Import]\\n  ) repeatable on SCHEMA\\n\\n  scalar link__Import\\n\\n  enum link__Purpose {\\n    \\"\\"\\"\\n    \`SECURITY\` features provide metadata necessary to securely resolve fields.\\n    \\"\\"\\"\\n    SECURITY\\n\\n    \\"\\"\\"\\n    \`EXECUTION\` features provide metadata necessary for operation execution.\\n    \\"\\"\\"\\n    EXECUTION\\n  }\\n\\n  \\n  \\n  \\n  \\n  \\n  \\n  \\nenum join__Graph {\\n  HELLOWORLD @join__graph(name: \\"helloworld\\", url: \\"\\") \\n}\\n\\ntype Query @join__type(graph: HELLOWORLD)  {\\n  hello: String\\n}""`;
+exports[`should write compose output to supergraph.ts 1`] = `"export default "schema @link(url: \\"https://specs.apollo.dev/link/v1.0\\") @link(url: \\"https://specs.apollo.dev/join/v0.3\\", for: EXECUTION) {\\n  query: Query\\n}\\n\\ndirective @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE\\n\\ndirective @join__graph(name: String!, url: String!) on ENUM_VALUE\\n\\ndirective @join__field(\\n  graph: join__Graph\\n  requires: join__FieldSet\\n  provides: join__FieldSet\\n  type: String\\n  external: Boolean\\n  override: String\\n  usedOverridden: Boolean\\n) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION\\n\\ndirective @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE\\n\\ndirective @join__type(\\n  graph: join__Graph!\\n  key: join__FieldSet\\n  extension: Boolean! = false\\n  resolvable: Boolean! = true\\n  isInterfaceObject: Boolean! = false\\n) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR\\n\\ndirective @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION\\n\\nscalar join__FieldSet\\n\\ndirective @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA\\n\\nscalar link__Import\\n\\nenum link__Purpose {\\n  \\"\\"\\"\\n  \`SECURITY\` features provide metadata necessary to securely resolve fields.\\n  \\"\\"\\"\\n  SECURITY\\n  \\"\\"\\"\\n  \`EXECUTION\` features provide metadata necessary for operation execution.\\n  \\"\\"\\"\\n  EXECUTION\\n}\\n\\nenum join__Graph {\\n  HELLOWORLD @join__graph(name: \\"helloworld\\", url: \\"\\")\\n}\\n\\ntype Query @join__type(graph: HELLOWORLD) {\\n  hello: String\\n}""`;

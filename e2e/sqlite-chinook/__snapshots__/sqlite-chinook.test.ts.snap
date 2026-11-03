@@ -1,111 +1,73 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@extraSchemaDefinitionDirective"]
-)
-  {
-    query: Query
-    mutation: Mutation
-    
-  }
-
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
-
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
-
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
-
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
-
-  scalar link__Import
-
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
-
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
-
-  
-  
-  
-  
-  
-  
-  
-enum join__Graph {
-  CHINOOK @join__graph(name: "chinook", url: "chinook.db") 
+) {
+  query: Query
+  mutation: Mutation
 }
 
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions)  repeatable on OBJECT
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  CHINOOK @join__graph(name: "chinook", url: "chinook.db")
+}
+
+directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 
 """
 The \`JSON\` scalar type represents raw JSON as values.
 """
-scalar SequelizeJSON @join__type(graph: CHINOOK) 
+scalar SequelizeJSON @join__type(graph: CHINOOK)
 
-scalar _DirectiveExtensions @join__type(graph: CHINOOK) 
+scalar _DirectiveExtensions @join__type(graph: CHINOOK)
 
 type Query @extraSchemaDefinitionDirective(
   directives: {transport: [{kind: "sqlite", subgraph: "chinook", location: "chinook.db", options: {type: "db"}}]}
-) @join__type(graph: CHINOOK)  {
+) @join__type(graph: CHINOOK) {
   albums(
     limit: Int
     order: String
@@ -268,7 +230,7 @@ type Query @extraSchemaDefinitionDirective(
   ): Track
 }
 
-type Album @join__type(graph: CHINOOK)  {
+type Album @join__type(graph: CHINOOK) {
   albumId: Int!
   title: String!
   artistId: Int!
@@ -284,7 +246,7 @@ type Album @join__type(graph: CHINOOK)  {
   artist: Artist
 }
 
-type Track @join__type(graph: CHINOOK)  {
+type Track @join__type(graph: CHINOOK) {
   trackId: Int!
   name: String!
   albumId: Int
@@ -309,7 +271,7 @@ type Track @join__type(graph: CHINOOK)  {
   playlists: [Playlist]
 }
 
-type InvoiceItem @join__type(graph: CHINOOK)  {
+type InvoiceItem @join__type(graph: CHINOOK) {
   invoiceLineId: Int!
   invoiceId: Int!
   trackId: Int!
@@ -319,7 +281,7 @@ type InvoiceItem @join__type(graph: CHINOOK)  {
   invoice: Invoice
 }
 
-type Invoice @join__type(graph: CHINOOK)  {
+type Invoice @join__type(graph: CHINOOK) {
   invoiceId: Int!
   customerId: Int!
   invoiceDate: String!
@@ -341,7 +303,7 @@ type Invoice @join__type(graph: CHINOOK)  {
   customer: Customer
 }
 
-type Customer @join__type(graph: CHINOOK)  {
+type Customer @join__type(graph: CHINOOK) {
   customerId: Int!
   firstName: String!
   lastName: String!
@@ -367,7 +329,7 @@ type Customer @join__type(graph: CHINOOK)  {
   employee: Employee
 }
 
-type Employee @join__type(graph: CHINOOK)  {
+type Employee @join__type(graph: CHINOOK) {
   employeeId: Int!
   lastName: String!
   firstName: String!
@@ -404,7 +366,7 @@ type Employee @join__type(graph: CHINOOK)  {
   employee: Employee
 }
 
-type MediaType @join__type(graph: CHINOOK)  {
+type MediaType @join__type(graph: CHINOOK) {
   mediaTypeId: Int!
   name: String
   tracks(
@@ -418,7 +380,7 @@ type MediaType @join__type(graph: CHINOOK)  {
   ): [Track]
 }
 
-type Genre @join__type(graph: CHINOOK)  {
+type Genre @join__type(graph: CHINOOK) {
   genreId: Int!
   name: String
   tracks(
@@ -432,13 +394,13 @@ type Genre @join__type(graph: CHINOOK)  {
   ): [Track]
 }
 
-type Playlist @join__type(graph: CHINOOK)  {
+type Playlist @join__type(graph: CHINOOK) {
   playlistId: Int!
   name: String
   tracks: [Track]
 }
 
-type Artist @join__type(graph: CHINOOK)  {
+type Artist @join__type(graph: CHINOOK) {
   artistId: Int!
   name: String
   albums(
@@ -452,13 +414,13 @@ type Artist @join__type(graph: CHINOOK)  {
   ): [Album]
 }
 
-type Mutation @join__type(graph: CHINOOK)  {
-  createAlbum(title: String!, artistId: Int!) : Album
-  updateAlbum(albumId: Int, title: String, artistId: Int) : Album
-  deleteAlbum(albumId: Int!) : GenericResponse
-  createArtist(name: String) : Artist
-  updateArtist(artistId: Int, name: String) : Artist
-  deleteArtist(artistId: Int!) : GenericResponse
+type Mutation @join__type(graph: CHINOOK) {
+  createAlbum(title: String!, artistId: Int!): Album
+  updateAlbum(albumId: Int, title: String, artistId: Int): Album
+  deleteAlbum(albumId: Int!): GenericResponse
+  createArtist(name: String): Artist
+  updateArtist(artistId: Int, name: String): Artist
+  deleteArtist(artistId: Int!): GenericResponse
   createCustomer(
     firstName: String!
     lastName: String!
@@ -488,7 +450,7 @@ type Mutation @join__type(graph: CHINOOK)  {
     email: String
     supportRepId: Int
   ): Customer
-  deleteCustomer(customerId: Int!) : GenericResponse
+  deleteCustomer(customerId: Int!): GenericResponse
   createEmployee(
     lastName: String!
     firstName: String!
@@ -522,10 +484,10 @@ type Mutation @join__type(graph: CHINOOK)  {
     fax: String
     email: String
   ): Employee
-  deleteEmployee(employeeId: Int!) : GenericResponse
-  createGenre(name: String) : Genre
-  updateGenre(genreId: Int, name: String) : Genre
-  deleteGenre(genreId: Int!) : GenericResponse
+  deleteEmployee(employeeId: Int!): GenericResponse
+  createGenre(name: String): Genre
+  updateGenre(genreId: Int, name: String): Genre
+  deleteGenre(genreId: Int!): GenericResponse
   createInvoice(
     customerId: Int!
     invoiceDate: String!
@@ -547,8 +509,8 @@ type Mutation @join__type(graph: CHINOOK)  {
     billingPostalCode: String
     total: String
   ): Invoice
-  deleteInvoice(invoiceId: Int!) : GenericResponse
-  createInvoiceItem(invoiceId: Int!, trackId: Int!, unitPrice: String!, quantity: Int!) : InvoiceItem
+  deleteInvoice(invoiceId: Int!): GenericResponse
+  createInvoiceItem(invoiceId: Int!, trackId: Int!, unitPrice: String!, quantity: Int!): InvoiceItem
   updateInvoiceItem(
     invoiceLineId: Int
     invoiceId: Int
@@ -556,15 +518,15 @@ type Mutation @join__type(graph: CHINOOK)  {
     unitPrice: String
     quantity: Int
   ): InvoiceItem
-  deleteInvoiceItem(invoiceLineId: Int!) : GenericResponse
-  createMediaType(name: String) : MediaType
-  updateMediaType(mediaTypeId: Int, name: String) : MediaType
-  deleteMediaType(mediaTypeId: Int!) : GenericResponse
-  createPlaylist(name: String) : Playlist
-  updatePlaylist(playlistId: Int, name: String) : Playlist
-  deletePlaylist(playlistId: Int!) : GenericResponse
-  addPlaylistToTrack(playlistId: Int!, trackId: Int!) : GenericResponse
-  removePlaylistFromTrack(playlistId: Int!, trackId: Int!) : GenericResponse
+  deleteInvoiceItem(invoiceLineId: Int!): GenericResponse
+  createMediaType(name: String): MediaType
+  updateMediaType(mediaTypeId: Int, name: String): MediaType
+  deleteMediaType(mediaTypeId: Int!): GenericResponse
+  createPlaylist(name: String): Playlist
+  updatePlaylist(playlistId: Int, name: String): Playlist
+  deletePlaylist(playlistId: Int!): GenericResponse
+  addPlaylistToTrack(playlistId: Int!, trackId: Int!): GenericResponse
+  removePlaylistFromTrack(playlistId: Int!, trackId: Int!): GenericResponse
   createTrack(
     name: String!
     albumId: Int
@@ -586,12 +548,12 @@ type Mutation @join__type(graph: CHINOOK)  {
     bytes: Int
     unitPrice: String
   ): Track
-  deleteTrack(trackId: Int!) : GenericResponse
-  addTrackToPlaylist(trackId: Int!, playlistId: Int!) : GenericResponse
-  removeTrackFromPlaylist(trackId: Int!, playlistId: Int!) : GenericResponse
+  deleteTrack(trackId: Int!): GenericResponse
+  addTrackToPlaylist(trackId: Int!, playlistId: Int!): GenericResponse
+  removeTrackFromPlaylist(trackId: Int!, playlistId: Int!): GenericResponse
 }
 
-type GenericResponse @join__type(graph: CHINOOK)  {
+type GenericResponse @join__type(graph: CHINOOK) {
   success: Boolean
 }
 "
