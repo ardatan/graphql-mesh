@@ -8859,7 +8859,6 @@ __metadata:
     "@graphql-hive/yoga": "npm:^0.49.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
-    "@whatwg-node/disposablestack": "npm:^0.1.0"
     graphql: "npm:16.14.0"
     graphql-yoga: "npm:^6.0.1"
     tslib: "npm:^2.4.0"

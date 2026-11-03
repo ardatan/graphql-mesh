@@ -2,7 +2,6 @@ import type { PubSub } from '@graphql-hive/pubsub';
 import { createHive, useHive } from '@graphql-hive/yoga';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
-import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 type HivePluginOptions = Parameters<typeof createHive>[0];
 
@@ -117,13 +116,7 @@ export default function useMeshHive<TContext>(
     selfHosting,
     persistedDocuments,
   };
-  const client = createHive(yogaPluginOpts);
-  const hivePlugin = useHive(client);
-  // @ts-expect-error - Typings are incorrect
-  return {
-    ...hivePlugin,
-    [DisposableSymbols.asyncDispose]() {
-      return client.dispose();
-    },
-  };
+  // useHive already disposes the client via Yoga `onDispose` when autoDispose is enabled (default).
+  // @ts-expect-error Yoga Plugin context typing does not match MeshPlugin generics
+  return useHive(createHive(yogaPluginOpts));
 }

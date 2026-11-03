@@ -114,6 +114,8 @@ export type MeshPluginOptions<TConfig> = TConfig & {
   pubsub: PubSub;
   baseDir: string;
   importFn: ImportFn;
+  /** Optional Mesh/Hive logger for plugins that need init-time diagnostics (e.g. New Relic agent missing). Prefer Yoga/Gateway `context.log` at request time. */
+  log?: Logger;
 };
 
 export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;

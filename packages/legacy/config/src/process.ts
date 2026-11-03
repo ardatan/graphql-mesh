@@ -385,6 +385,7 @@ export async function processConfig(
           pubsub,
           baseDir,
           importFn,
+          log,
         })`);
           }
         } else {
@@ -408,6 +409,7 @@ export async function processConfig(
           pubsub,
           baseDir,
           importFn,
+          log,
         });`,
               );
             }
@@ -419,6 +421,7 @@ export async function processConfig(
           pubsub,
           baseDir: dir,
           importFn,
+          log,
         });
       }) || [],
     ),
