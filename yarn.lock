@@ -11514,35 +11514,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-jwt@npm:3.18.6":
-  version: 3.18.6
-  resolution: "@graphql-yoga/plugin-jwt@npm:3.18.6"
+"@graphql-yoga/plugin-jwt@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@graphql-yoga/plugin-jwt@npm:4.0.1"
   dependencies:
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-    "@whatwg-node/server-plugin-cookies": "npm:^1.0.3"
+    "@whatwg-node/promise-helpers": "npm:^2.0.0"
+    "@whatwg-node/server-plugin-cookies": "npm:^2.0.1"
     jsonwebtoken: "npm:^9.0.0"
     jwks-rsa: "npm:^3.0.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
-    graphql: ^15.2.0 || ^16.0.0 || ^17.0.0
-    graphql-yoga: ^5.24.6
-  checksum: 10c0/c4449e3fa3770c2e316f9c39549df2b0afee1b1b2d8ad06f469fb7ba9cbe300dd01398b7975a6f03329564104cbd6d5f073c8e249caf11d7bf7f92ad780305bd
-  languageName: node
-  linkType: hard
-
-"@graphql-yoga/plugin-jwt@patch:@graphql-yoga/plugin-jwt@npm%3A3.18.6#~/.yarn/patches/@graphql-yoga-plugin-jwt-npm-3.18.6-51ede016e9.patch":
-  version: 3.18.6
-  resolution: "@graphql-yoga/plugin-jwt@patch:@graphql-yoga/plugin-jwt@npm%3A3.18.6#~/.yarn/patches/@graphql-yoga-plugin-jwt-npm-3.18.6-51ede016e9.patch::version=3.18.6&hash=71ea1a"
-  dependencies:
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-    "@whatwg-node/server-plugin-cookies": "npm:^1.0.3"
-    jsonwebtoken: "npm:^9.0.0"
-    jwks-rsa: "npm:^3.0.0"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    graphql: ^15.2.0 || ^16.0.0 || ^17.0.0
-    graphql-yoga: ^5.24.6
-  checksum: 10c0/0db0c7a0f0ebc957dbfb42fcfaa2c090c09642ef95b044bf90035006974d06650ba2da987430329f47dcf0bbe2d62421376a3275d7ba292d9d8238f3f5d01c77
+    graphql: ^16.0.0 || ^17.0.0
+    graphql-yoga: ^6.0.1
+  checksum: 10c0/80b6fcf6a67badfdb36b302a25629228c8935431643cdfd4d56e0bcf58a065073ca5a3e34b0a3557db12bebe9a5a49eefac77cc7683a8eb96ce3b3a3c3d2af26
   languageName: node
   linkType: hard
 
@@ -21731,6 +21715,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@whatwg-node/cookie-store@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@whatwg-node/cookie-store@npm:0.3.0"
+  dependencies:
+    "@whatwg-node/promise-helpers": "npm:^2.0.0"
+    tslib: "npm:^2.6.3"
+  checksum: 10c0/227e4e126169d9c0720640b9433406f858c6039f28502c3293ec8c1bb03f70e1703f8b5d23432f1342ff3f85b149f5eb3bbaad2dd18c2653da6fb02be1f55bac
+  languageName: node
+  linkType: hard
+
 "@whatwg-node/disposablestack@npm:^0.0.6":
   version: 0.0.6
   resolution: "@whatwg-node/disposablestack@npm:0.0.6"
@@ -21822,7 +21816,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/server-plugin-cookies@npm:^1.0.3, @whatwg-node/server-plugin-cookies@npm:^1.0.7":
+"@whatwg-node/server-plugin-cookies@npm:^1.0.7":
   version: 1.0.7
   resolution: "@whatwg-node/server-plugin-cookies@npm:1.0.7"
   dependencies:
@@ -21831,6 +21825,18 @@ __metadata:
   peerDependencies:
     "@whatwg-node/server": ^0.10.0 || ^0.11.0
   checksum: 10c0/f9d7dd7da92c25902c63396145a008f0b69c857e4d04004aa99260d50e3533026c9d872c6ce632b2054193f9f4ebc765f9ca311d47ca9f1bad1554426d39f1f9
+  languageName: node
+  linkType: hard
+
+"@whatwg-node/server-plugin-cookies@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@whatwg-node/server-plugin-cookies@npm:2.0.1"
+  dependencies:
+    "@whatwg-node/cookie-store": "npm:^0.3.0"
+    tslib: "npm:^2.6.3"
+  peerDependencies:
+    "@whatwg-node/server": ^0.13.0
+  checksum: 10c0/091576570cb40d3fb58e06371b53e23975d19bacd3bd9c3b15d054ca31748e865d009d43cbd4c8e521d6e4245ec5435c912f11a1f1d20c168cfc9d6c5294dcc8
   languageName: node
   linkType: hard
 
