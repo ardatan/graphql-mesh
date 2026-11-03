@@ -219,7 +219,7 @@ export class GrpcLoaderHelper extends DisposableStack {
     const rootFromDescriptor = (Root as any).fromDescriptor(decodedDescriptorSet);
     if (options.includeDirs) {
       if (!Array.isArray(options.includeDirs)) {
-        return Promise.reject(new Error('The includeDirs option must be an array'));
+        throw new Error('The includeDirs option must be an array');
       }
       addIncludePathResolver(rootFromDescriptor, options.includeDirs);
     }

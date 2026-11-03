@@ -27,7 +27,7 @@ function createGetBuiltMesh(
         })
         .catch((err: Error) => {
           meshInstance$ = undefined;
-          return Promise.reject(err);
+          throw err;
         });
     }
     return meshInstance$;

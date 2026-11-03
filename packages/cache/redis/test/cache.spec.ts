@@ -35,9 +35,7 @@ jest.mock('@smithy/signature-v4', () => ({
 jest.mock('@aws-sdk/credential-providers', () => ({
   fromNodeProviderChain: jest
     .fn()
-    .mockReturnValue(() =>
-      Promise.resolve({ accessKeyId: 'AKIA_TEST', secretAccessKey: 'secret' }),
-    ),
+    .mockReturnValue(async () => ({ accessKeyId: 'AKIA_TEST', secretAccessKey: 'secret' })),
 }));
 
 jest.mock('@aws-crypto/sha256-js', () => ({
@@ -388,7 +386,7 @@ describe('redis', () => {
         port: 6379,
         tokenConnector: {
           redisRef,
-          getToken: () => Promise.resolve(token),
+          getToken: async () => token,
         },
       });
 
@@ -416,7 +414,7 @@ describe('redis', () => {
         port: 6379,
         tokenConnector: {
           redisRef,
-          getToken: () => Promise.resolve(token),
+          getToken: async () => token,
         },
       });
 

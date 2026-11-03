@@ -226,7 +226,7 @@ export function createGraphQLThriftClient<Context = any>({
         if (messageType === MessageType.EXCEPTION) {
           const err: TApplicationException = TApplicationExceptionCodec.decode(input);
           input.readMessageEnd();
-          return Promise.reject(err);
+          throw err;
         } else {
           const result = this.readType(TType.STRUCT, input);
           input.readMessageEnd();

@@ -4,6 +4,7 @@ import { parse } from 'graphql';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
 import { fetch, Response } from '@whatwg-node/fetch';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 import { dummyLogger as log } from '../../../testing/dummyLogger';
 
 function getRequestBodyFromFetchSpy(fetchSpy: jest.Mock): string {
@@ -23,7 +24,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
     const schema = soapLoader.buildSchema();
 
     const fetchSpy = jest.fn((_url: string, _init: RequestInit) =>
-      Promise.resolve(Response.error()),
+      fakePromise(Response.error()),
     );
     const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
 
@@ -89,7 +90,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
     );
     const schema = soapLoader.buildSchema();
 
-    const fetchSpy = jest.fn(() => Promise.resolve(Response.error()));
+    const fetchSpy = jest.fn(() => fakePromise(Response.error()));
     const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
 
     await executor({
@@ -127,7 +128,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
     );
     const schema = soapLoader.buildSchema();
 
-    const fetchSpy = jest.fn(() => Promise.resolve(Response.error()));
+    const fetchSpy = jest.fn(() => fakePromise(Response.error()));
     const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
 
     await executor({
@@ -166,7 +167,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
     );
     const schema = soapLoader.buildSchema();
 
-    const fetchSpy = jest.fn(() => Promise.resolve(Response.error()));
+    const fetchSpy = jest.fn(() => fakePromise(Response.error()));
     const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
 
     await executor({
@@ -200,7 +201,7 @@ describe('SOAP multi-namespace, headers, and arrays', () => {
     const schema = soapLoader.buildSchema();
 
     const fetchSpy = jest.fn((_url: string, _init: RequestInit) =>
-      Promise.resolve(Response.error()),
+      fakePromise(Response.error()),
     );
     const executor = createExecutorFromSchemaAST(schema, fetchSpy as unknown as MeshFetch);
 
