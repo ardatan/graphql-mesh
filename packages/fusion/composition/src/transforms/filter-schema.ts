@@ -141,7 +141,7 @@ export function createFilterTransform({
 
       if (!fieldNameOrGlob) {
         throw new Error(
-          `Type-only filter "${filter}" is no longer supported. Use "Type.${filter}" instead (see #1605).`,
+          `Type-only filter "${filter}" is no longer supported. Use "Type.${filter}" instead.`,
         );
       }
 
