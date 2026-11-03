@@ -92,19 +92,17 @@ Mesh still had its own logging, pubsub, and teardown model next to Yoga 6 / Hive
 
 - Mesh `DefaultLogger` and Mesh PubSub / `HivePubSub` re-exports beside `@graphql-hive/logger` and `@graphql-hive/pubsub`
 - Shutdown via `pubsub.publish('destroy')`, with handlers and caches subscribing to that topic (easy to miss, leaks pools/clients/timers)
-- `@graphql-mesh/cross-helpers` and Node builtin access that is unsafe when `process` is missing
 - Node 18/20 engines and loose `graphql` peers that drift from Yoga 6 / GraphQL Tools
 
 This major aligns Mesh with that shared platform in one release.
 
 ## Design decisions
 
-1. **Node `>=22.18.0`**: matches current Yoga / Hive / WHATWG engines and supports `getBuiltinModule` without polyfills.
+1. **Node `>=22.18.0`**: matches current Yoga / Hive / WHATWG engines.
 2. **GraphQL peer `^16 || ^17`**: what Yoga 6 and `@graphql-tools/utils` / `schema` / `merge` / `executor` support (not `*`).
 3. **Request path prefers context**: use Yoga/Gateway `context.log` / `context.pubsub` when present. Constructor `log` / `pubsub` stay only where init-time wiring is required (for example live-query subscribe, New Relic agent missing).
 4. **Teardown via Explicit Resource Management**: Mesh tore down with `destroy` pubsub. Now components implement `[DisposableSymbols]` and `getMesh` registers them with `disposables.use(...)`. Handler/transform/plugin/cache constructors never took a `disposables` option; that is unchanged.
 5. **No Mesh re-exports** for Logger, PubSub, or promise helpers; import Hive/WHATWG packages directly.
-6. **Call-site Node builtins**: `globalThis.process?.getBuiltinModule?.('node:...')` where needed; `@graphql-mesh/cross-helpers` removed.
 
 ## Shared platform changes ()
 
@@ -113,7 +111,6 @@ This major aligns Mesh with that shared platform in one release.
 - **Logging**: Mesh `Logger` / `DefaultLogger` removed. Use `@graphql-hive/logger`. Prefer `context.log` on the request path. Option fields renamed from `logger` to `log` where they remain.
 - **PubSub**: Mesh PubSub re-exports removed. Use `@graphql-hive/pubsub`. The **`destroy` pubsub lifecycle event is removed**; tear down with the disposable stack / `mesh.destroy()` instead of `pubsub.publish('destroy')`.
 - **Lifecycle**: `getMesh` owns an `AsyncDisposableStack` and calls `disposables.use(...)` on disposable cache/handler/transform/plugin/pubsub instances. the change is destroy-pubsub subscribers replaced by `[DisposableSymbols]`, not "stop injecting disposables into options" (those options did not exist ).
-- **Node builtins**: call-site `globalThis.process?.getBuiltinModule?.('node:...')`. `@graphql-mesh/cross-helpers` removed.
 - **Promises**: `handleMaybePromise` / `fakePromise` / `fakeRejectPromise` / `Promise.withResolvers` from `@whatwg-node/promise-helpers` (no Mesh re-exports).
 
 ## Migration checklist
@@ -149,7 +146,6 @@ disposables.use(handler)
 | Mesh `PubSub` / `MemPubSub` / `HivePubSub` | `@graphql-hive/pubsub` |
 | `handleMaybePromise` / `MaybePromise` from Mesh utils | `@whatwg-node/promise-helpers` |
 | `pubsub.publish('destroy')` + destroy subscribers | `[DisposableSymbols]` + `disposables.use` / `mesh.destroy()` |
-| `import { fs, path } from '@graphql-mesh/cross-helpers'` | `globalThis.process?.getBuiltinModule?.('node:fs' \| 'node:path')` at use site |
 | cache ctor `pubsub` (destroy subscribe) | removed; dispose the cache instead |
 | option field `logger` | `log` |
 

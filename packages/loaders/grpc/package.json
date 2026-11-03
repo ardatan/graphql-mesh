@@ -37,7 +37,7 @@
   "dependencies": {
     "@ardatan/grpc-reflection-js": "^0.0.2",
     "@graphql-hive/logger": "^1.1.1",
-    "@graphql-mesh/cross-helpers": "^0.4.19",
+    "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/transport-common": "^1.1.1",
     "@graphql-tools/load-files": "^8.0.8",

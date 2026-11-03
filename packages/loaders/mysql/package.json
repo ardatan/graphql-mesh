@@ -35,7 +35,7 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.19",
+    "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/transport-mysql": "^0.12.3",
     "@graphql-mesh/types": "^0.107.3",
