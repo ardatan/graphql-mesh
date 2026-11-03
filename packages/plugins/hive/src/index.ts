@@ -1,4 +1,3 @@
-import type { PubSub } from '@graphql-hive/pubsub';
 import { createHive, useHive } from '@graphql-hive/yoga';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
@@ -7,7 +6,7 @@ type HivePluginOptions = Parameters<typeof createHive>[0];
 
 export default function useMeshHive<TContext>(
   pluginOptions: YamlConfig.HivePlugin & {
-    pubsub?: PubSub;
+    /** Used for persisted documents fetch when not set on persistedDocuments. */
     fetch?: MeshFetch;
   },
 ): MeshPlugin<TContext> {

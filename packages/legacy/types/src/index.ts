@@ -111,7 +111,11 @@ export interface MeshMerger {
 
 export type MeshPluginOptions<TConfig> = TConfig & {
   cache: KeyValueCache;
-  pubsub: PubSub;
+  /**
+   * Init-time PubSub from Mesh plugin factory / Hive Gateway `ctx`.
+   * Prefer GraphQL `context.pubsub` at request time when available.
+   */
+  pubsub?: PubSub;
   baseDir: string;
   importFn: ImportFn;
   /** Optional Mesh/Hive logger for plugins that need init-time diagnostics (e.g. New Relic agent missing). Prefer Yoga/Gateway `context.log` at request time. */

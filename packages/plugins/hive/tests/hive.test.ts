@@ -1,6 +1,5 @@
 import { setTimeout } from 'node:timers/promises';
 import { Logger } from '@graphql-hive/logger';
-import { MemPubSub } from '@graphql-hive/pubsub';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
 import { Response } from '@whatwg-node/fetch';
 import { createDeferredPromise, fakePromise } from '@whatwg-node/promise-helpers';
@@ -25,17 +24,14 @@ describe('Hive', () => {
     return plugin.onDispose();
   });
   it('does not leak when mesh instance is disposed', async () => {
-    const pubsub = new MemPubSub();
     const logger = new Logger();
     const reportDeferred = createDeferredPromise();
     await using mesh = await getTestMesh({
-      pubsub,
       log: logger,
       additionalEnvelopPlugins: [
         useMeshHive({
           enabled: true,
           token: 'FAKE_TOKEN',
-          pubsub,
           agent: {
             fetch(url, init) {
               reportDeferred.resolve();

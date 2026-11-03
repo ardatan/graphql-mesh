@@ -62,6 +62,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
           if (!operationAST) {
             throw new Error(`Operation couldn't be found`);
           }
+          const activePubSub = (contextValue as { pubsub?: PubSub } | undefined)?.pubsub ?? pubsub;
           const typeInfo = new TypeInfo(schema);
           visit(
             operationAST,
@@ -83,7 +84,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
                     }),
                   );
                   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                  pubsub.publish('live-query:invalidate', invalidationPaths);
+                  activePubSub.publish('live-query:invalidate', invalidationPaths);
                 }
               },
             }),

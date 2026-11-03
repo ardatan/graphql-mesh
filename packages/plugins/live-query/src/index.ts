@@ -12,11 +12,18 @@ import { useInvalidateByResult } from './useInvalidateByResult.js';
 
 export default function useMeshLiveQuery(
   options: YamlConfig.LiveQueryConfig & {
+    /**
+     * Init-time PubSub for invalidate subscriptions (Mesh plugin factory / Gateway `ctx`).
+     * Request-time invalidation prefers GraphQL `context.pubsub` when present.
+     */
     pubsub?: PubSub;
   },
 ): Plugin {
-  if (!options.pubsub) {
-    throw new Error('Live Query plugin requires a pubsub instance from Mesh/Gateway context');
+  const pubsub = options.pubsub;
+  if (!pubsub) {
+    throw new Error(
+      'Live Query plugin requires pubsub (Mesh plugin options / Hive Gateway ctx). Request context.pubsub alone is not enough for invalidate subscriptions.',
+    );
   }
   const liveQueryStore = new InMemoryLiveQueryStore({
     buildResourceIdentifier:
@@ -36,7 +43,6 @@ export default function useMeshLiveQuery(
     idFieldName: options.idFieldName,
     indexBy: options.indexBy,
   });
-  const pubsub = options.pubsub;
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   fakePromise(
     pubsub.subscribe('live-query:invalidate', (identifiers: string | string[]) =>
