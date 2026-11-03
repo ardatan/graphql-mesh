@@ -36,7 +36,7 @@ import {
   resolvePubSub,
 } from './utils.js';
 
-const pathModule = process.getBuiltinModule('node:path');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 
 const ENVELOP_CORE_PLUGINS_MAP: Record<
   string,

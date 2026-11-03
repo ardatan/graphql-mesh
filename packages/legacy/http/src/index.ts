@@ -6,8 +6,8 @@ import { createServerAdapter, Response } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';
 import { resolvePlaygroundConfig } from './playground.js';
 
-const fs = process.getBuiltinModule('node:fs');
-const path = process.getBuiltinModule('node:path');
+const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 export { resolvePlaygroundConfig } from './playground.js';
 

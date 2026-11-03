@@ -13,7 +13,7 @@ import {
   generateUnifiedContextTypeFromIdentifiers,
 } from './generateIncontextSDKTypes.js';
 
-const path = process.getBuiltinModule('node:path');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 export interface InContextSDKCodegenPluginConfig {}
 

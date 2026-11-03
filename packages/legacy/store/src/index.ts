@@ -4,8 +4,8 @@ import type { ImportFn } from '@graphql-mesh/types';
 import { writeFile } from '@graphql-mesh/utils';
 import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
 
-const fs = process.getBuiltinModule('node:fs');
-const pathModule = process.getBuiltinModule('node:path');
+const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 
 export class ReadonlyStoreError extends Error {}
 

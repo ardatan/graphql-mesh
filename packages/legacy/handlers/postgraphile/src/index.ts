@@ -15,10 +15,9 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression, makeAsyncDisposable } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-
-const path = process.getBuiltinModule('node:path');
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -28,13 +27,13 @@ export default class PostGraphileHandler implements MeshHandler {
   private pgCache: any;
   private log: Logger;
   private importFn: ImportFn;
+  private pgPool?: { end(): Promise<void> };
 
   constructor({
     name,
     config,
     baseDir,
     pubsub,
-    disposables: _disposables,
     store,
     log,
     importFn,
@@ -70,14 +69,14 @@ export default class PostGraphileHandler implements MeshHandler {
       });
     }
 
-    makeAsyncDisposable(this, () => {
-      this.log.debug('Destroying PostgreSQL pool');
-      return pgPool.end();
-    });
+    this.pgPool = pgPool;
 
     const cacheKey = this.name + '_introspection.json';
-
-    const dummyCacheFilePath = path.join(tmpdir(), cacheKey);
+    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+    if (!pathModule) {
+      throw new Error('Node.js path module is required for PostGraphile handler');
+    }
+    const dummyCacheFilePath = pathModule.join(tmpdir(), cacheKey);
     let cachedIntrospection = await this.pgCache.get();
 
     let writeCache: () => Promise<void>;
@@ -171,5 +170,12 @@ export default class PostGraphileHandler implements MeshHandler {
         ) as any;
       },
     };
+  }
+
+  [DisposableSymbols.asyncDispose]() {
+    if (this.pgPool) {
+      this.log.debug('Destroying PostgreSQL pool');
+      return this.pgPool.end();
+    }
   }
 }

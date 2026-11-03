@@ -31,8 +31,8 @@ import {
 } from './directives.js';
 import type { TableFieldConfig } from './types.js';
 
-const fs = () => process.getBuiltinModule('node:fs');
-const util = () => process.getBuiltinModule('node:util');
+const fs = () => globalThis.process?.getBuiltinModule?.('node:fs');
+const util = () => globalThis.process?.getBuiltinModule?.('node:util');
 
 export interface LoadGraphQLSchemaFromMySQLOpts {
   endpoint: string;

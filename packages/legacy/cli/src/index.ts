@@ -16,8 +16,8 @@ import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
 import { include, registerTsconfigPaths } from './include.js';
 
-const fs = process.getBuiltinModule('node:fs');
-const pathModule = process.getBuiltinModule('node:path');
+const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 
 export { findConfig } from './config.js';
 

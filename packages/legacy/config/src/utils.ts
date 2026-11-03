@@ -11,7 +11,7 @@ import type { Source as GraphQLToolsSource } from '@graphql-tools/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as defaultFetch, TextEncoder } from '@whatwg-node/fetch';
 
-const path = process.getBuiltinModule('node:path');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 const crypto = globalThis.crypto;
 

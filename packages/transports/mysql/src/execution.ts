@@ -9,7 +9,7 @@ import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
 import type { MySQLContext } from './types.js';
 
-const util = process.getBuiltinModule('node:util');
+const util = globalThis.process?.getBuiltinModule?.('node:util');
 
 function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {
   const fieldMap: Record<string, any> = graphqlFields(info);

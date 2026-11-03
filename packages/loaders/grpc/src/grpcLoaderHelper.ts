@@ -39,8 +39,8 @@ import {
 } from './directives.js';
 import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils.js';
 
-const fs = process.getBuiltinModule('node:fs');
-const path = process.getBuiltinModule('node:path');
+const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 const { Root } = protobufjs;
 

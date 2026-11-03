@@ -2,7 +2,7 @@ import DataLoader from 'dataloader';
 import type { ImportFn, KeyValueCache } from '@graphql-mesh/types';
 import { pathExists, writeJSON } from '@graphql-mesh/utils';
 
-const pathModule = process.getBuiltinModule('node:path');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 
 export default class FileCache<V = any> implements KeyValueCache<V> {
   json$: Promise<Record<string, V>>;

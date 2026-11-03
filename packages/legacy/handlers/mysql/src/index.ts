@@ -10,13 +10,10 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import {
-  dispose,
-  isDisposable,
-  loadFromModuleExportExpression,
-  makeAsyncDisposable,
-} from '@graphql-mesh/utils';
+import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { getMySQLExecutor, loadGraphQLSchemaFromMySQL } from '@omnigraph/mysql';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
 export default class MySQLHandler implements MeshHandler {
   private name: string;
@@ -25,13 +22,13 @@ export default class MySQLHandler implements MeshHandler {
   private pubsub: PubSub;
   private importFn: ImportFn;
   private schemaProxy: StoreProxy<GraphQLSchema>;
+  private disposeFn?: () => MaybePromise<void>;
 
   constructor({
     name,
     config,
     baseDir,
     pubsub,
-    disposables: _disposables,
     store,
     importFn,
   }: MeshHandlerOptions<YamlConfig.MySQLHandler>) {
@@ -94,12 +91,16 @@ export default class MySQLHandler implements MeshHandler {
     });
 
     if (isDisposable(executor)) {
-      makeAsyncDisposable(this, () => dispose(executor));
+      this.disposeFn = () => dispose(executor);
     }
 
     return {
       schema,
       executor,
     };
+  }
+
+  [DisposableSymbols.asyncDispose]() {
+    return this.disposeFn?.();
   }
 }

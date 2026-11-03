@@ -10,8 +10,8 @@ import { dummyLogger as log } from '../../../../testing/dummyLogger.js';
 import ODataHandler from '../src/index.js';
 import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
 
-const fs = process.getBuiltinModule('node:fs');
-const path = process.getBuiltinModule('node:path');
+const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 const TripPinMetadata = fs.readFileSync(
   path.resolve(__dirname, './fixtures/trippin-metadata.xml'),

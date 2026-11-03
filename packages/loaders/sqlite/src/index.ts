@@ -1,6 +1,6 @@
 import type { GraphQLSchema } from 'graphql';
 
-const path = process.getBuiltinModule('node:path');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 export interface GraphQLSQLiteLoaderOpts {
   infile?: string;

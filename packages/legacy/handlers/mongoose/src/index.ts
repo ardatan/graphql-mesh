@@ -13,7 +13,8 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression, makeAsyncDisposable } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 const modelQueryOperations = [
   'findById',
@@ -45,12 +46,12 @@ export default class MongooseHandler implements MeshHandler {
   private importFn: ImportFn;
   private log: Logger;
 
+  private shouldDisconnect = false;
+
   constructor({
-    name,
     config,
     baseDir,
     pubsub,
-    disposables: _disposables,
     importFn,
     log,
   }: MeshHandlerOptions<YamlConfig.MongooseHandler>) {
@@ -71,7 +72,7 @@ export default class MongooseHandler implements MeshHandler {
         useUnifiedTopology: true,
       } as ConnectOptions).catch(e => this.log.error(e));
 
-      makeAsyncDisposable(this, () => disconnect().catch(e => this.log.error(e)));
+      this.shouldDisconnect = true;
     }
 
     const schemaComposer = new SchemaComposer();
@@ -182,5 +183,11 @@ export default class MongooseHandler implements MeshHandler {
     return {
       schema,
     };
+  }
+
+  [DisposableSymbols.asyncDispose]() {
+    if (this.shouldDisconnect) {
+      return disconnect().catch(e => this.log.error(e));
+    }
   }
 }

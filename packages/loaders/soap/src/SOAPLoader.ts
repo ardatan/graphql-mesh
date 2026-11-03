@@ -63,7 +63,7 @@ import type {
 import type { SoapAnnotations } from './utils.js';
 import { PARSE_XML_OPTIONS } from './utils.js';
 
-const path = process.getBuiltinModule('node:path');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 export interface SOAPLoaderOptions {
   subgraphName: string;

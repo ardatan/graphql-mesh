@@ -3,8 +3,8 @@ import lodashHas from 'lodash.has';
 import type { INamespace, Root } from 'protobufjs';
 import { getGraphQLScalarForGrpc, isGrpcScalar } from './scalars.js';
 
-const fs = process.getBuiltinModule('node:fs');
-const pathModule = process.getBuiltinModule('node:path');
+const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 
 export function addIncludePathResolver(root: Root, includePaths: string[]): void {
   const originalResolvePath = root.resolvePath;

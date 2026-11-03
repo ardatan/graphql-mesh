@@ -6,8 +6,8 @@ import { isUrl } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 
-const fs = process.getBuiltinModule('node:fs');
-const pathModule = process.getBuiltinModule('node:path');
+const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 
 export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
   allowUnknownExtensions?: boolean;

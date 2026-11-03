@@ -41,6 +41,8 @@
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@omnigraph/neo4j": "^0.14.3",
+    "@whatwg-node/disposablestack": "^0.1.0",
+    "@whatwg-node/promise-helpers": "^2.0.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

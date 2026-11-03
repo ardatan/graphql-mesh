@@ -32,7 +32,6 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
     options: YamlConfig.Cache['redis'] & {
       pubsub?: PubSub;
       log: Logger;
-      disposables?: AsyncDisposableStack;
     },
   ) {
     this.tracer = trace.getTracer('hive.cache.redis');

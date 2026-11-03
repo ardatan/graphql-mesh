@@ -38,7 +38,7 @@
     "@graphql-codegen/core": "^6.2.0",
     "@graphql-codegen/plugin-helpers": "^6.3.0",
     "@graphql-codegen/typescript": "^6.1.0",
-    "@graphql-mesh/fusion-runtime": "^1.11.6",
+    "@graphql-mesh/fusion-runtime": "patch:@graphql-mesh/fusion-runtime@npm%3A1.11.6#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.11.6-5f5e740237.patch",
     "@graphql-mesh/transport-common": "^1.0.20",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",

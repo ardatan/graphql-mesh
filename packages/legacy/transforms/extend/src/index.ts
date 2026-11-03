@@ -6,7 +6,7 @@ import { loadTypedefsSync } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { asArray } from '@graphql-tools/utils';
 
-const pathModule = process.getBuiltinModule('node:path');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 
 function loadFromModuleExportExpressionSync<T>({
   expression,

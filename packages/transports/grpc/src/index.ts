@@ -32,8 +32,8 @@ import { makeDisposable } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
-const fs = process.getBuiltinModule('node:fs');
-const path = process.getBuiltinModule('node:path');
+const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 /**
  * SSL Credentials

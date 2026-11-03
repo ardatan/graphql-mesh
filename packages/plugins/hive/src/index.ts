@@ -3,6 +3,7 @@ import type { PubSub } from '@graphql-hive/pubsub';
 import { createHive, useHive } from '@graphql-hive/yoga';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 type HivePluginOptions = Parameters<typeof createHive>[0];
 
@@ -11,7 +12,6 @@ export default function useMeshHive<TContext>(
     log: Logger;
     pubsub?: PubSub;
     fetch?: MeshFetch;
-    disposables?: AsyncDisposableStack;
   },
 ): MeshPlugin<TContext> {
   const enabled =
@@ -128,9 +128,11 @@ export default function useMeshHive<TContext>(
   };
   const client = createHive(yogaPluginOpts);
   const hivePlugin = useHive(client);
-  pluginOptions.disposables?.defer(() =>
-    client.dispose().catch(e => pluginOptions.log.error('Error disposing Hive client', e)),
-  );
   // @ts-expect-error - Typings are incorrect
-  return hivePlugin;
+  return {
+    ...hivePlugin,
+    [DisposableSymbols.asyncDispose]() {
+      return client.dispose().catch(e => pluginOptions.log.error('Error disposing Hive client', e));
+    },
+  };
 }

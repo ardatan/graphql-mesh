@@ -4,8 +4,8 @@ import type { MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj, pathExists, writeJSON } from '@graphql-mesh/utils';
 import { Response } from '@whatwg-node/fetch';
 
-const fs = process.getBuiltinModule('node:fs');
-const path = process.getBuiltinModule('node:path');
+const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 function calculateCacheKey(url: string, options: RequestInit) {
   return hashObject({

@@ -51,7 +51,7 @@ import {
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
 
-const util = process.getBuiltinModule('node:util');
+const util = globalThis.process?.getBuiltinModule?.('node:util');
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {

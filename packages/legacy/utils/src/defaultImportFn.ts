@@ -1,4 +1,4 @@
-const pathModule = process.getBuiltinModule('node:path');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 function defaultImportFn(path: string): Promise<any> {
   return import(/* @vite-ignore */ path).then(
     module => {

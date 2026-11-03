@@ -41,7 +41,7 @@ import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 
-const path = process.getBuiltinModule('node:path');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 export interface GraphQLThriftLoaderOptions {
   subgraphName: string;

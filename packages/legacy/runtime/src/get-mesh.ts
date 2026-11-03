@@ -211,6 +211,12 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           transforms = apiSource.transforms;
         }
 
+        for (const transform of apiSource.transforms || []) {
+          if (isDisposable(transform)) {
+            disposables.use(transform as Disposable | AsyncDisposable);
+          }
+        }
+
         const rootTypeMap = getRootTypeMap(apiSchema);
         rawSources[index] = {
           name: apiName,
@@ -253,6 +259,9 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   unifiedSubschema.transforms = unifiedSubschema.transforms || [];
 
   for (const rootLevelTransform of transforms) {
+    if (isDisposable(rootLevelTransform)) {
+      disposables.use(rootLevelTransform as Disposable | AsyncDisposable);
+    }
     if (rootLevelTransform.noWrap) {
       if (rootLevelTransform.transformSchema) {
         unifiedSubschema.schema = rootLevelTransform.transformSchema(

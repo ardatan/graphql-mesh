@@ -25,8 +25,8 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
 
-const fs = process.getBuiltinModule('node:fs');
-const pathModule = process.getBuiltinModule('node:path');
+const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
 
@@ -281,7 +281,7 @@ export async function generateTsArtifacts(
                 ...meshConfigImportCodes,
                 `import { getMesh, type ExecuteMeshFn, type SubscribeMeshFn, type MeshContext as BaseMeshContext, type MeshInstance } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
-                `const pathModule = process.getBuiltinModule('node:path');`,
+                `const pathModule = globalThis.process?.getBuiltinModule?.('node:path');`,
                 `import type { ImportFn } from '@graphql-mesh/types';`,
                 `import { fakePromise, fakeRejectPromise } from '@whatwg-node/promise-helpers';`,
               ]);

@@ -12,9 +12,10 @@ import type {
   MeshHandlerOptions,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { makeAsyncDisposable, readFileOrUrl } from '@graphql-mesh/utils';
-// placeholder
+import { readFileOrUrl } from '@graphql-mesh/utils';
 import { loadGrpcSubgraph } from '@omnigraph/grpc';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
@@ -25,6 +26,7 @@ export default class GrpcHandler implements MeshHandler {
   private fetchFn: MeshFetch;
   private importFn: ImportFn;
   private sourceName: string;
+  private disposeFn?: () => MaybePromise<void>;
 
   constructor({
     name,
@@ -33,7 +35,6 @@ export default class GrpcHandler implements MeshHandler {
     store,
     log,
     pubsub,
-    disposables: _disposables,
     importFn,
   }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
     this.log = log;
@@ -76,7 +77,7 @@ export default class GrpcHandler implements MeshHandler {
       this.config.endpoint,
       this.config,
     );
-    makeAsyncDisposable(this, () => transport.dispose());
+    this.disposeFn = () => transport.dispose();
     return Promise.all([transport.getCredentials(), this.getCachedNonExecutableSchema()]).then(
       ([creds, schema]) => {
         transport.processDirectives({ schema, creds });
@@ -85,5 +86,9 @@ export default class GrpcHandler implements MeshHandler {
         };
       },
     );
+  }
+
+  [DisposableSymbols.asyncDispose]() {
+    return this.disposeFn?.();
   }
 }

@@ -1,4 +1,4 @@
-const pathModule = process.getBuiltinModule('node:path');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 function fileUriToPath(uri: string) {
   if (typeof uri !== 'string' || uri.length <= 7 || uri.substring(0, 7) !== 'file://') {
     throw new TypeError('must pass in a file:// URI to convert to a file path');

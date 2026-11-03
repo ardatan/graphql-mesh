@@ -1,7 +1,7 @@
 import { writeFile } from '@graphql-mesh/utils';
 import { processConfig } from '../src/process.js';
 
-const pathModule = process.getBuiltinModule('node:path');
+const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
 
 describe('processConfig', () => {
   const generatedMeshConfiguration = '.mesh';

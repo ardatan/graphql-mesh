@@ -8,7 +8,7 @@ import { jsonSchema } from '@graphql-mesh/types';
 import { loadYaml } from '@graphql-mesh/utils';
 import { include } from './include.js';
 
-const path = process.getBuiltinModule('node:path');
+const path = globalThis.process?.getBuiltinModule?.('node:path');
 
 export function validateConfig(
   config: any,
