@@ -3,18 +3,11 @@ import { process } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
-import type {
-  GetMeshSourcePayload,
-  ImportFn,
-  Logger,
-  MeshHandler,
-  MeshHandlerOptions,
-  MeshSource,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import type { Executor } from '@graphql-tools/utils';
 import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
+import { Logger } from '@graphql-hive/logger';
 
 export default class SoapHandler implements MeshHandler {
   private name: string;
@@ -22,7 +15,7 @@ export default class SoapHandler implements MeshHandler {
   private soapSDLProxy: StoreProxy<GraphQLSchema>;
   private baseDir: string;
   private importFn: ImportFn;
-  private logger: Logger;
+  private log: Logger;
 
   constructor({
     name,
@@ -30,7 +23,7 @@ export default class SoapHandler implements MeshHandler {
     store,
     baseDir,
     importFn,
-    logger,
+    log,
   }: MeshHandlerOptions<YamlConfig.SoapHandler>) {
     this.name = name;
     this.config = config;
@@ -40,7 +33,7 @@ export default class SoapHandler implements MeshHandler {
     );
     this.baseDir = baseDir;
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
@@ -52,16 +45,14 @@ export default class SoapHandler implements MeshHandler {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         fetch: fetchFn,
-        importFn: this.importFn,
-        logger: this.logger,
+        importFn: this.importFn, log: this.log,
         headers: schemaHeadersFactory({ env: process.env }),
       });
     } else {
       schema = await this.soapSDLProxy.getWithSet(async () => {
         const soapLoader = new SOAPLoader({
           subgraphName: this.name,
-          fetch: fetchFn,
-          logger: this.logger,
+          fetch: fetchFn, log: this.log,
           cwd: this.baseDir,
           schemaHeaders: this.config.schemaHeaders,
           operationHeaders: this.config.operationHeaders,
@@ -73,8 +64,7 @@ export default class SoapHandler implements MeshHandler {
           allowUnknownExtensions: true,
           cwd: this.baseDir,
           fetch: fetchFn,
-          importFn: this.importFn,
-          logger: this.logger,
+          importFn: this.importFn, log: this.log,
           headers: schemaHeadersFactory({ env: process.env }),
         });
         // Pass wsdlLocation as the base URL so nested <wsdl:import> /

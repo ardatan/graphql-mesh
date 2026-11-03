@@ -8,7 +8,8 @@ import type {
   RedisOptions,
   StandaloneConnectionOptions,
 } from 'ioredis';
-import type { Logger, YamlConfig } from '@graphql-mesh/types';
+import type { YamlConfig } from '@graphql-mesh/types';
+import { Logger } from '@graphql-hive/logger';
 
 const AbstractConnectorClass =
   // @ts-expect-error ioredis is CJS-only and reassigns module.exports, which breaks Node.js static
@@ -208,7 +209,7 @@ export function setupIamAuthRefreshForStandalone(
   redisRef: { current: Redis | null },
   cfg: IamAuthConfig,
   username: string | undefined,
-  logger?: Logger,
+  log?: Logger,
 ): ReturnType<typeof setInterval> {
   const expiryMs = (cfg.tokenExpirySeconds ?? 900) * 1000;
   const refreshIntervalMs = expiryMs * 0.8;
@@ -222,7 +223,7 @@ export function setupIamAuthRefreshForStandalone(
         }
       })
       .catch(err => {
-        logger?.error('Failed to refresh IAM token for Redis:', err);
+        log?.error('Failed to refresh IAM token for Redis:', err);
       });
   }, refreshIntervalMs);
 }
@@ -240,7 +241,7 @@ export async function setupIamAuthForCluster(
   redisOptions: RedisOptions,
   cfg: IamAuthConfig,
   username: string | undefined,
-  logger?: Logger,
+  log?: Logger,
 ): Promise<ReturnType<typeof setInterval>> {
   const expiryMs = (cfg.tokenExpirySeconds ?? 900) * 1000;
   const refreshIntervalMs = expiryMs * 0.8;
@@ -273,7 +274,7 @@ export async function setupIamAuthForCluster(
 
   const timer = setInterval(() => {
     refreshToken().catch(err => {
-      logger?.error('Failed to refresh IAM token for Redis cluster:', err);
+      log?.error('Failed to refresh IAM token for Redis cluster:', err);
     });
   }, refreshIntervalMs);
 

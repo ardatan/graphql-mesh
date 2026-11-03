@@ -1,10 +1,11 @@
 import { fs, path } from '@graphql-mesh/cross-helpers';
 import type { MeshInstance } from '@graphql-mesh/runtime';
-import type { Logger, YamlConfig } from '@graphql-mesh/types';
-import { DefaultLogger, pathExists, withCookies } from '@graphql-mesh/utils';
+import type { YamlConfig } from '@graphql-mesh/types';
+import { pathExists, withCookies } from '@graphql-mesh/utils';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';
 import { resolvePlaygroundConfig } from './playground.js';
+import { Logger } from '@graphql-hive/logger';
 
 export { resolvePlaygroundConfig } from './playground.js';
 
@@ -24,7 +25,7 @@ export function createMeshHTTPHandler<TServerContext>({
   renderGraphiQL?: (options?: any) => string | Promise<string>;
 }) {
   let readyFlag = false;
-  let logger: Logger = new DefaultLogger('Mesh HTTP');
+  let log: Logger = new Logger({ prefix: 'Mesh HTTP' });
 
   const {
     cors: corsConfig,
@@ -41,10 +42,10 @@ export function createMeshHTTPHandler<TServerContext>({
   getBuiltMesh()
     .then(mesh => {
       readyFlag = true;
-      logger = mesh.logger.child('HTTP');
+      log = mesh.log.child('HTTP');
     })
     .catch(err => {
-      logger.error(err);
+      log.error(err);
     });
 
   return createServerAdapter<TServerContext>(
@@ -116,7 +117,7 @@ export function createMeshHTTPHandler<TServerContext>({
                 for (const eventName of mesh.pubsub.getEventNames()) {
                   if (eventName === `webhook:${request.method.toLowerCase()}:${url.pathname}`) {
                     const body = await request.text();
-                    logger.debug(`Received webhook request for ${url.pathname}`, body);
+                    log.debug(`Received webhook request for ${url.pathname}`, body);
                     mesh.pubsub.publish(
                       eventName,
                       request.headers.get('content-type') === 'application/json'

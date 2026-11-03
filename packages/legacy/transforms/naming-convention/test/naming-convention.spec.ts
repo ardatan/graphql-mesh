@@ -11,7 +11,7 @@ import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import NamingConventionTransform from '../src/index.js';
 
@@ -65,7 +65,7 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
         pubsub,
         baseDir,
 
-        logger,
+        log,
       }),
     );
 
@@ -191,7 +191,7 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
         },
         baseDir,
 
-        logger,
+        log,
       }),
     );
     const result = await execute({
@@ -302,7 +302,7 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
         },
         baseDir,
 
-        logger,
+        log,
       }),
     );
     const { data } = await execute({
@@ -333,7 +333,7 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
         pubsub,
         baseDir,
 
-        logger,
+        log,
       }),
     );
 
@@ -397,7 +397,7 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
         pubsub,
         baseDir,
 
-        logger,
+        log,
       }),
     );
     const { data }: any = await execute({

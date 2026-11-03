@@ -1,12 +1,10 @@
 import type { GraphQLFieldResolver } from 'graphql';
 import urljoin from 'url-join';
-import { mapMaybePromise } from '@graphql-tools/utils';
 import { Request } from '@whatwg-node/fetch';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { DataloaderFactory } from '../getDataloaderFactory.js';
 import { getUrlString } from '../utils/getUrlString.js';
 import { handleResponseText } from '../utils/handleResponseText.js';
-
 export interface BoundActionResolverOpts {
   actionRef: string;
   dataloaderFactory: DataloaderFactory;

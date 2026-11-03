@@ -21,8 +21,8 @@ import descriptor from 'protobufjs/ext/descriptor/index.js';
 import { Client } from '@ardatan/grpc-reflection-js';
 import { fs, path } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { Logger, YamlConfig } from '@graphql-mesh/types';
-import { GraphQLStreamDirective, type Constructor, type MaybePromise } from '@graphql-tools/utils';
+import type { YamlConfig } from '@graphql-mesh/types';
+import { GraphQLStreamDirective, type Constructor } from '@graphql-tools/utils';
 import {
   credentials,
   Client as GrpcClient,
@@ -37,6 +37,8 @@ import {
   transportDirective,
 } from './directives.js';
 import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils.js';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import { Logger } from '@graphql-hive/logger';
 
 const { Root } = protobufjs;
 
@@ -53,7 +55,7 @@ export class GrpcLoaderHelper extends DisposableStack {
   constructor(
     private subgraphName: string,
     private baseDir: string,
-    private logger: Logger,
+    private log: Logger,
     private config: YamlConfig.GrpcHandler,
   ) {
     super();
@@ -82,13 +84,13 @@ export class GrpcLoaderHelper extends DisposableStack {
 
     this.config.requestTimeout = this.config.requestTimeout || 200000;
 
-    this.logger.debug(`Getting channel credentials`);
+    this.log.debug(`Getting channel credentials`);
     const creds = await this.getCredentials();
     if ('_unref' in creds && typeof creds._unref === 'function') {
       this.defer(() => (creds as { _unref: () => void })._unref());
     }
 
-    this.logger.debug(`Getting stored root and decoded descriptor set objects`);
+    this.log.debug(`Getting stored root and decoded descriptor set objects`);
     const descriptorSets = await this.getDescriptorSets(creds);
 
     const directives: Directive[] = [];
@@ -97,9 +99,9 @@ export class GrpcLoaderHelper extends DisposableStack {
       rootJson: string;
     }[] = [];
     for (const { name: rootJsonName, rootJson } of descriptorSets) {
-      const rootLogger = this.logger.child({ root: rootJsonName });
+      const rootLogger = this.log.child({ root: rootJsonName });
 
-      this.logger.debug(`Building the schema structure based on the root object`);
+      this.log.debug(`Building the schema structure based on the root object`);
       this.visit({
         nested: rootJson,
         name: '',
@@ -119,7 +121,7 @@ export class GrpcLoaderHelper extends DisposableStack {
       this.schemaComposer.addDirective(GraphQLStreamDirective);
     }
 
-    this.logger.debug(`Building the final GraphQL Schema`);
+    this.log.debug(`Building the final GraphQL Schema`);
     this.schemaComposer.addDirective(transportDirective);
     const schema = this.schemaComposer.buildSchema();
     const schemaExtensions: Record<string, any> = (schema.extensions = schema.extensions || {});
@@ -144,9 +146,9 @@ export class GrpcLoaderHelper extends DisposableStack {
   }
 
   private processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {
-    this.logger.debug(`Using the reflection`);
+    this.log.debug(`Using the reflection`);
     const reflectionEndpoint = stringInterpolator.parse(this.config.endpoint, { env: process.env });
-    this.logger.debug(`Creating gRPC Reflection Client`);
+    this.log.debug(`Creating gRPC Reflection Client`);
     const reflectionClient = new Client(reflectionEndpoint, creds, this.config.channelOptions);
     // Attach reflectionMetadata to server-reflection calls (routing / auth metadata)
     if (this.config.reflectionMetadata) {
@@ -171,7 +173,7 @@ export class GrpcLoaderHelper extends DisposableStack {
     return reflectionClient.listServices().then(services =>
       (services.filter(service => service && !service?.startsWith('grpc.')) as string[]).map(
         service => {
-          this.logger.debug(`Resolving root of Service: ${service} from the reflection response`);
+          this.log.debug(`Resolving root of Service: ${service} from the reflection response`);
           return reflectionClient.fileContainingSymbol(service);
         },
       ),
@@ -196,12 +198,12 @@ export class GrpcLoaderHelper extends DisposableStack {
     const absoluteFilePath = path.isAbsolute(fileName)
       ? fileName
       : path.join(this.baseDir, fileName);
-    this.logger.debug(`Using the descriptor set from ${absoluteFilePath} `);
+    this.log.debug(`Using the descriptor set from ${absoluteFilePath} `);
     const descriptorSetBuffer = await fs.promises.readFile(absoluteFilePath);
-    this.logger.debug(`Reading ${absoluteFilePath} `);
+    this.log.debug(`Reading ${absoluteFilePath} `);
     let decodedDescriptorSet: DecodedDescriptorSet;
     if (absoluteFilePath.endsWith('json')) {
-      this.logger.debug(`Parsing ${absoluteFilePath} as json`);
+      this.log.debug(`Parsing ${absoluteFilePath} as json`);
       const descriptorSetJSON = JSON.parse(descriptorSetBuffer.toString());
       decodedDescriptorSet = descriptor.FileDescriptorSet.fromObject(
         descriptorSetJSON,
@@ -211,7 +213,7 @@ export class GrpcLoaderHelper extends DisposableStack {
         descriptorSetBuffer,
       ) as unknown as DecodedDescriptorSet;
     }
-    this.logger.debug(`Creating root from descriptor set`);
+    this.log.debug(`Creating root from descriptor set`);
     const rootFromDescriptor = (Root as any).fromDescriptor(decodedDescriptorSet);
     if (options.includeDirs) {
       if (!Array.isArray(options.includeDirs)) {
@@ -223,7 +225,7 @@ export class GrpcLoaderHelper extends DisposableStack {
   }
 
   private async processProtoFile() {
-    this.logger.debug(`Using proto file(s)`);
+    this.log.debug(`Using proto file(s)`);
     let protoRoot = new Root();
     let fileGlob: string;
     let options: LoadOptions = {
@@ -254,20 +256,20 @@ export class GrpcLoaderHelper extends DisposableStack {
     const fileNames = await globby(fileGlob, {
       cwd: this.baseDir,
     });
-    this.logger.debug(`Loading proto files(${fileGlob}); \n ${fileNames.join('\n')} `);
+    this.log.debug(`Loading proto files(${fileGlob}); \n ${fileNames.join('\n')} `);
     protoRoot = await protoRoot.load(
       fileNames.map(filePath =>
         path.isAbsolute(filePath) ? filePath : path.join(this.baseDir, filePath),
       ),
       options,
     );
-    this.logger.debug(`Adding proto content to the root`);
+    this.log.debug(`Adding proto content to the root`);
     return protoRoot;
   }
 
   private async getDescriptorSets(creds: ChannelCredentials) {
     const rootPromises: Promise<protobufjs.Root>[] = [];
-    this.logger.debug(`Building Roots`);
+    this.log.debug(`Building Roots`);
     const filePath = this.config.source
       ? typeof this.config.source === 'string'
         ? this.config.source
@@ -287,7 +289,7 @@ export class GrpcLoaderHelper extends DisposableStack {
       rootPromises.map(async (root$, i) => {
         const root = await root$;
         const rootName = root.name || `Root${i}`;
-        const rootLogger = this.logger.child({ root: rootName });
+        const rootLogger = this.log.child({ root: rootName });
         rootLogger.debug(`Resolving entire the root tree`);
         root.resolveAll();
         rootLogger.debug(`Creating artifacts from descriptor set and root`);
@@ -302,9 +304,9 @@ export class GrpcLoaderHelper extends DisposableStack {
   }
 
   getCredentials(): MaybePromise<ChannelCredentials> {
-    this.logger.debug(`Getting channel credentials`);
+    this.log.debug(`Getting channel credentials`);
     if (this.config.credentialsSsl) {
-      this.logger.debug(
+      this.log.debug(
         () =>
           `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`,
       );
@@ -329,10 +331,10 @@ export class GrpcLoaderHelper extends DisposableStack {
         credentials.createSsl(rootCA, privateKey, certChain),
       );
     } else if (this.config.useHTTPS) {
-      this.logger.debug(`Using SSL Connection`);
+      this.log.debug(`Using SSL Connection`);
       return credentials.createSsl();
     }
-    this.logger.debug(`Using insecure connection`);
+    this.log.debug(`Using insecure connection`);
     return credentials.createInsecure();
   }
 
@@ -342,7 +344,7 @@ export class GrpcLoaderHelper extends DisposableStack {
     currentPath,
     rootJsonName,
     rootJson,
-    rootLogger: logger,
+    rootLogger: log,
   }: {
     nested: AnyNestedObject;
     name: string;
@@ -354,7 +356,7 @@ export class GrpcLoaderHelper extends DisposableStack {
     const pathWithName = [...currentPath, ...name.split('.')].filter(Boolean);
     if ('nested' in nested) {
       for (const key in nested.nested) {
-        logger.debug(`Visiting ${currentPath}.nested[${key}]`);
+        log.debug(`Visiting ${currentPath}.nested[${key}]`);
         const currentNested = nested.nested[key];
         this.visit({
           nested: currentNested,
@@ -362,7 +364,7 @@ export class GrpcLoaderHelper extends DisposableStack {
           currentPath: pathWithName,
           rootJsonName,
           rootJson,
-          rootLogger: logger,
+          rootLogger: log,
         });
       }
     }
@@ -371,7 +373,7 @@ export class GrpcLoaderHelper extends DisposableStack {
       const enumValues: Record<string, EnumTypeComposerValueConfigDefinition> = {};
       const commentMap = (nested as any).comments;
       for (const [key, value] of Object.entries(nested.values)) {
-        logger.debug(`Visiting ${currentPath}.nested.values[${key}]`);
+        log.debug(`Visiting ${currentPath}.nested.values[${key}]`);
         enumValues[key] = {
           directives: [
             {
@@ -411,7 +413,7 @@ export class GrpcLoaderHelper extends DisposableStack {
           fields: {},
         });
         for (const [fieldName, { type, rule, comment, keyType }] of fieldEntries) {
-          logger.debug(`Visiting ${currentPath}.nested.fields[${fieldName}]`);
+          log.debug(`Visiting ${currentPath}.nested.fields[${fieldName}]`);
           const baseFieldTypePath = type.split('.');
           inputTC.addFields({
             [fieldName]: {

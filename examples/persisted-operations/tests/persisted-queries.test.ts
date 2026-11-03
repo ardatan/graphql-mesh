@@ -3,7 +3,7 @@ import { ExecutionResult } from 'graphql';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { fakePromise } from '@graphql-tools/utils';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 
 const baseDir = join(__dirname, '..');
 

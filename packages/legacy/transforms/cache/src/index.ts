@@ -5,8 +5,8 @@ import { extractResolvers } from '@graphql-mesh/utils';
 import type { ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
 import { composeResolvers } from '@graphql-tools/resolvers-composition';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import type { MaybePromise } from '@graphql-tools/utils';
 import { computeCacheKey } from './compute-cache-key.js';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
 export default class CacheTransform implements MeshTransform {
   noWrap = true;

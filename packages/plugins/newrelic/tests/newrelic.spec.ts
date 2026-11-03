@@ -3,11 +3,12 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { createMeshHTTPHandler, type MeshHTTPHandler } from '@graphql-mesh/http';
 import type { MeshInstance } from '@graphql-mesh/runtime';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { TestAgent } from '@newrelic/test-utilities';
 import { getTestMesh } from '../../../legacy/testing/getTestMesh.js';
-import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../testing/dummyLogger';
 import useMeshNewRelic from '../src/index.js';
+import { Logger } from '@graphql-hive/logger';
 
 describe('New Relic', () => {
   let mesh: MeshInstance;
@@ -19,13 +20,13 @@ describe('New Relic', () => {
   beforeAll(async () => {
     helper = TestAgent.makeInstrumented();
     mesh = await getTestMesh({
-      logger,
+      log,
       cache,
       pubsub,
       additionalEnvelopPlugins: [
         useMeshNewRelic(
           {
-            logger,
+            log,
             cache,
             pubsub,
             baseDir,

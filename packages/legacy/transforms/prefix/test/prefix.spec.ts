@@ -1,12 +1,13 @@
 import { GraphQLObjectType, GraphQLSchema, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { Logger, MeshPubSub } from '@graphql-mesh/types';
+import type { MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import { describeTransformerTests } from '../../../testing/describeTransformerTests.js';
 import PrefixTransform from '../src/index.js';
+import { Logger } from '@graphql-hive/logger';
 
 describeTransformerTests('prefix', ({ mode, transformSchema }) => {
   let schema: GraphQLSchema;
@@ -69,7 +70,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         pubsub,
         importFn: m => import(m),
 
-        logger,
+        log,
       }),
     );
 
@@ -95,7 +96,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         pubsub,
         importFn: m => import(m),
 
-        logger,
+        log,
       }),
     );
 
@@ -117,7 +118,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         pubsub,
         importFn: m => import(m),
 
-        logger,
+        log,
       }),
     );
 
@@ -139,7 +140,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         pubsub,
         importFn: m => import(m),
 
-        logger,
+        log,
       }),
     );
 
@@ -163,7 +164,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         pubsub,
         importFn: m => import(m),
 
-        logger,
+        log,
       }),
     );
 
@@ -186,7 +187,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         pubsub,
         importFn: m => import(m),
 
-        logger,
+        log,
       }),
     );
 
@@ -211,7 +212,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         pubsub,
         importFn: m => import(m),
 
-        logger,
+        log,
       }),
     );
 
@@ -241,7 +242,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         pubsub,
         importFn: m => import(m),
 
-        logger,
+        log,
       }),
     );
 
@@ -271,7 +272,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         pubsub,
         importFn: m => import(m),
 
-        logger,
+        log,
       }),
     );
     expect(newSchema.getType('Query')).toBeDefined();
@@ -301,7 +302,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger,
+        log,
       }),
     );
     expect(newSchema.getType('DateTime')).toBeDefined();
@@ -331,7 +332,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger,
+        log,
       }),
     );
     expect(newSchema.getType('DateTime')).toBeUndefined();
@@ -362,7 +363,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger,
+        log,
       }),
     );
     expect(newSchema.getType('String')).toBeDefined();
@@ -395,7 +396,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger,
+        log,
       }),
     );
     const withoutForce = transformSchema(
@@ -410,7 +411,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         cache,
         pubsub,
         importFn: m => import(m),
-        logger,
+        log,
       }),
     );
     expect(withoutForce.getType('DateTime')).toBeDefined();
@@ -432,7 +433,7 @@ describeTransformerTests('prefix', ({ mode, transformSchema }) => {
         pubsub,
         importFn: m => import(m),
 
-        logger,
+        log,
       }),
     );
 

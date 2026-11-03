@@ -20,8 +20,8 @@ import {
   ObjMapScalar,
   type Transport,
 } from '@graphql-mesh/transport-common';
-import type { Logger } from '@graphql-mesh/types';
-import { getDirective, getDirectives, getRootTypes, type MaybePromise } from '@graphql-tools/utils';
+
+import { getDirective, getDirectives, getRootTypes } from '@graphql-tools/utils';
 import type { ChannelCredentials, ChannelOptions } from '@grpc/grpc-js';
 import { credentials, Client as GrpcClient, loadPackageDefinition } from '@grpc/grpc-js';
 import type { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
@@ -31,6 +31,8 @@ import { addExecutionLogicToScalar, addMetaDataToCall } from './utils.js';
 import './patchLongJs.js';
 import { makeDisposable } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import { Logger } from '@graphql-hive/logger';
 
 /**
  * SSL Credentials
@@ -76,7 +78,7 @@ export class GrpcTransportHelper extends DisposableStack {
   constructor(
     private subgraphName: string,
     private baseDir: string,
-    private logger: Logger,
+    private log: Logger,
     private endpoint: string,
     private config: gRPCTransportOptions,
   ) {
@@ -84,9 +86,9 @@ export class GrpcTransportHelper extends DisposableStack {
   }
 
   getCredentials(): MaybePromise<ChannelCredentials> {
-    this.logger.debug(`Getting channel credentials`);
+    this.log.debug(`Getting channel credentials`);
     if (this.config.credentialsSsl) {
-      this.logger.debug(
+      this.log.debug(
         () =>
           `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`,
       );
@@ -111,10 +113,10 @@ export class GrpcTransportHelper extends DisposableStack {
         credentials.createSsl(rootCA, privateKey, certChain),
       );
     } else if (this.config.useHTTPS) {
-      this.logger.debug(`Using SSL Connection`);
+      this.log.debug(`Using SSL Connection`);
       return credentials.createSsl();
     }
-    this.logger.debug(`Using insecure connection`);
+    this.log.debug(`Using insecure connection`);
     return credentials.createInsecure();
   }
 
@@ -248,7 +250,7 @@ export class GrpcTransportHelper extends DisposableStack {
     const grpcObjectByRootJsonName = new Map<string, ReturnType<typeof loadPackageDefinition>>();
     for (let { name, rootJson, loadOptions } of roots) {
       rootJson = typeof rootJson === 'string' ? JSON.parse(rootJson) : rootJson;
-      const rootLogger = this.logger.child({ root: name });
+      const rootLogger = this.log.child({ root: name });
       grpcObjectByRootJsonName.set(name, this.getGrpcObject({ rootJson, loadOptions, rootLogger }));
     }
     const typeMap = schema.getTypeMap();
@@ -357,11 +359,11 @@ function isListTypeByAnyMeans(type: GraphQLOutputType) {
 }
 
 const transport: Transport<gRPCTransportOptions> = {
-  getSubgraphExecutor({ transportEntry, subgraph, cwd, logger }) {
+  getSubgraphExecutor({ transportEntry, subgraph, cwd, log}) {
     const transport = new GrpcTransportHelper(
       transportEntry.subgraph,
       cwd,
-      logger,
+      log,
       transportEntry.location,
       transportEntry.options,
     );

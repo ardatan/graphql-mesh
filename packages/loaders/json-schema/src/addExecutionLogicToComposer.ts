@@ -15,7 +15,7 @@ import type {
 import { GraphQLJSON } from 'graphql-compose';
 import type { IStringifyOptions } from 'qs';
 import { process } from '@graphql-mesh/cross-helpers';
-import type { Logger } from '@graphql-mesh/types';
+
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   HTTPOperationDirective,
@@ -32,13 +32,14 @@ import type {
   OperationHeadersConfiguration,
 } from './types.js';
 import { getOperationMetadata, isPubSubOperationConfig } from './utils.js';
+import { Logger } from '@graphql-hive/logger';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
   endpoint: string;
   operations: JSONSchemaOperationConfig[];
   operationHeaders?: OperationHeadersConfiguration;
-  logger: Logger;
+  log: Logger;
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
@@ -61,7 +62,7 @@ export function addExecutionDirectivesToComposer(
   subgraphName: string,
   {
     schemaComposer,
-    logger,
+    log,
     operations,
     operationHeaders,
     endpoint,
@@ -70,7 +71,7 @@ export function addExecutionDirectivesToComposer(
     handlerName,
   }: AddExecutionLogicToComposerOptions,
 ) {
-  logger.debug(`Attaching execution directives to the schema`);
+  log.debug(`Attaching execution directives to the schema`);
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
 
@@ -160,7 +161,7 @@ ${operationConfig.description || ''}
             } catch {}
           }
           if (!targetField) {
-            logger.debug(
+            log.debug(
               `Field ${linkObj.fieldName} not found in ${subgraphName} for link ${linkName}`,
             );
           }
@@ -295,7 +296,7 @@ ${operationConfig.description || ''}
     }
   }
 
-  logger.debug(`Building the executable schema.`);
+  log.debug(`Building the executable schema.`);
   if (schemaComposer.Query.getFieldNames().length === 0) {
     schemaComposer.Query.addFields({
       dummy: {

@@ -3,7 +3,7 @@ import { buildSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import FederationTransform from '../src/index.js';
 
 describe('transform-federation', () => {
@@ -32,7 +32,7 @@ describe('transform-federation', () => {
       config,
       cache,
       importFn,
-      logger,
+      log,
       pubsub,
     });
     const transformedSchema = transform.transformSchema(schema, {

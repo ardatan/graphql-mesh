@@ -20,16 +20,7 @@ import {
   parseInterpolationStrings,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import type {
-  GetMeshSourcePayload,
-  ImportFn,
-  Logger,
-  MeshFetch,
-  MeshHandler,
-  MeshHandlerOptions,
-  MeshSource,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import {
   isUrl,
   loadFromModuleExportExpression,
@@ -51,6 +42,7 @@ import {
 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
+import { Logger } from '@graphql-hive/logger';
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {
@@ -68,7 +60,7 @@ export default class GraphQLHandler implements MeshHandler {
   private nonExecutableSchema: StoreProxy<GraphQLSchema>;
   private importFn: ImportFn;
   private fetchFn: MeshFetch;
-  private logger: Logger;
+  private log: Logger;
   private urlLoader = new UrlLoader();
 
   constructor({
@@ -77,7 +69,7 @@ export default class GraphQLHandler implements MeshHandler {
     baseDir,
     store,
     importFn,
-    logger,
+    log,
   }: MeshHandlerOptions<YamlConfig.Handler['graphql']>) {
     this.name = name;
     this.config = config;
@@ -87,7 +79,7 @@ export default class GraphQLHandler implements MeshHandler {
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   private interpolationStringSet = new Set<string>();
@@ -98,7 +90,7 @@ export default class GraphQLHandler implements MeshHandler {
 
   private wrapExecutorToPassSourceNameAndDebug(executor: Executor) {
     const sourceName = this.name;
-    const logger = this.logger;
+    const logger = this.log;
     return function executorWithSourceName(executionRequest: ExecutionRequest) {
       logger.debug(() => `Sending GraphQL Request: `, print(executionRequest.document));
       executionRequest.info = executionRequest.info || ({} as ExecutionRequest['info']);
@@ -198,8 +190,7 @@ export default class GraphQLHandler implements MeshHandler {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
-        fetch: this.fetchFn,
-        logger: this.logger,
+        fetch: this.fetchFn, log: this.log,
       };
       if (!isUrl(interpolatedSourcePath)) {
         return this.nonExecutableSchema.getWithSet(async () => {
@@ -270,8 +261,7 @@ export default class GraphQLHandler implements MeshHandler {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
-        fetch: this.fetchFn,
-        logger: this.logger,
+        fetch: this.fetchFn, log: this.log,
       });
       const schema = buildSchema(rawSDL, {
         assumeValid: true,

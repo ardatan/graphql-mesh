@@ -13,15 +13,7 @@ import type {
   SelectionSetNode,
 } from 'graphql';
 import { getNamedType, isLeafType, isListType, isNonNullType, Kind, print } from 'graphql';
-import type {
-  Logger,
-  OnDelegateHook,
-  OnDelegateHookDone,
-  OnDelegateHookPayload,
-  RawSourceOutput,
-  SelectionSetParam,
-  SelectionSetParamOrFactory,
-} from '@graphql-mesh/types';
+import type { OnDelegateHook, OnDelegateHookDone, OnDelegateHookPayload, RawSourceOutput, SelectionSetParam, SelectionSetParamOrFactory } from '@graphql-mesh/types';
 import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import { batchDelegateToSchema } from '@graphql-tools/batch-delegate';
 import type {
@@ -39,19 +31,20 @@ import {
 import { WrapQuery } from '@graphql-tools/wrap';
 import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
 import { parseWithCache } from './parseAndPrintWithCache.js';
+import { Logger } from '@graphql-hive/logger';
 
 export const MESH_API_CONTEXT_SYMBOL = Symbol('isMeshAPIContext');
 
 export function getInContextSDK(
   unifiedSchema: GraphQLSchema,
   rawSources: RawSourceOutput[],
-  logger: Logger,
+  log: Logger,
   onDelegateHooks: OnDelegateHook<any>[],
 ) {
   const inContextSDK: Record<string, any> = {};
   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
   for (const rawSource of rawSources) {
-    const rawSourceLogger = logger?.child({ source: rawSource.name });
+    const rawSourceLogger = log?.child({ source: rawSource.name });
 
     const rawSourceContext: any = {
       rawSource,

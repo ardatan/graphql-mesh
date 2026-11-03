@@ -5,7 +5,7 @@ import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
 import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import GrpcHandler from '../src/index.js';
 
 describe('gRPC Handler', () => {
@@ -53,7 +53,7 @@ describe('gRPC Handler', () => {
         cache,
         pubsub,
         store,
-        logger,
+        log,
         importFn: defaultImportFn,
         baseDir: __dirname,
       });
@@ -86,7 +86,7 @@ describe('gRPC Handler', () => {
         cache,
         pubsub,
         store,
-        logger,
+        log,
         importFn: defaultImportFn,
         baseDir: __dirname,
       });
@@ -120,7 +120,7 @@ describe('gRPC Handler', () => {
         cache,
         pubsub,
         store,
-        logger,
+        log,
         importFn: defaultImportFn,
         baseDir: __dirname,
       });

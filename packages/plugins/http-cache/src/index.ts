@@ -1,12 +1,13 @@
 import CachePolicy from 'http-cache-semantics';
-import type { GatewayPlugin } from '@graphql-hive/gateway';
-import type { KeyValueCache, Logger } from '@graphql-mesh/types';
+import type { Plugin as YogaPlugin } from 'graphql-yoga';
+import type { KeyValueCache, MeshPlugin } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import {
   Response as DefaultResponseCtor,
   URLPattern as DefaultURLPatternCtor,
 } from '@whatwg-node/fetch';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { Logger } from '@graphql-hive/logger';
 
 interface CacheEntry {
   policy: CachePolicy.CachePolicyObject;
@@ -28,7 +29,7 @@ export interface HTTPCachePluginOptions {
     | CachePolicy.Options
     | ((request: CachePolicy.Request, response: CachePolicy.Response) => CachePolicy.Options);
 
-  logger?: Logger;
+  log?: Logger;
   cache?: KeyValueCache<CacheEntry>;
 }
 
@@ -50,8 +51,8 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
   cache,
   matches,
   ignores,
-  logger,
-}: HTTPCachePluginOptions): GatewayPlugin<TContext> {
+  log,
+}: HTTPCachePluginOptions): MeshPlugin<TContext> & YogaPlugin<TContext> {
   if (!cache) {
     throw new Error('HTTP Cache plugin requires a cache instance');
   }
@@ -64,7 +65,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
     if (ignoresPatterns?.length) {
       for (const pattern of ignoresPatterns) {
         if (pattern.test(url)) {
-          logger?.debug(`Ignore pattern ${pattern} matched for ${url}`);
+          log?.debug(`Ignore pattern ${pattern} matched for ${url}`);
           return true;
         }
       }
@@ -73,16 +74,16 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
     if (matchesPatterns?.length) {
       for (const pattern of matchesPatterns) {
         if (pattern.test(url)) {
-          logger?.debug(`Match pattern ${pattern} matched for ${url}`);
+          log?.debug(`Match pattern ${pattern} matched for ${url}`);
           return false;
         }
       }
-      logger?.debug(`No match pattern matched for ${url}`);
+      log?.debug(`No match pattern matched for ${url}`);
       return true;
     }
     return false;
   }
-  const pluginLogger = logger?.child({ plugin: 'HTTP Cache' });
+  const pluginLogger = log?.child({ plugin: 'HTTP Cache' });
   return {
     onYogaInit({ yoga }) {
       if (yoga.fetchAPI.URLPattern) {
@@ -91,8 +92,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
       if (yoga.fetchAPI.Response) {
         ResponseCtor = yoga.fetchAPI.Response;
       }
-      // @ts-expect-error - Logger type mismatch
-      logger ||= yoga.logger;
+      log ||= yoga.log;
     },
     onFetch({ url, options, setOptions, context, endResponse }) {
       if (shouldSkip(url) || typeof options?.body === 'object') {
@@ -112,8 +112,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
             return endResponse(
               new ResponseCtor(cacheEntry.body, {
                 status: cacheEntry.response.status,
-                // @ts-expect-error - Headers type mismatch
-                headers: policy.responseHeaders(),
+                headers: policy.responseHeaders() as HeadersInit,
               }),
             );
           }
@@ -127,8 +126,7 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
               pluginLogger?.debug(`Cache will be revalidated for ${url}`);
               setOptions({
                 ...(options || {}),
-                // @ts-expect-error - Headers type mismatch
-                headers: policy.revalidationHeaders(policyRequest),
+                headers: policy.revalidationHeaders(policyRequest) as Record<string, string>,
               });
             }
           }
@@ -170,7 +168,6 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
                   );
                 },
               );
-              // @ts-expect-error - type mismatch
               context?.waitUntil?.(store$);
             }
             if (policy) {
@@ -191,12 +188,11 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
               pluginLogger?.debug(`Storing the cache entry for ${url}`);
               body$ = response.text();
               updateCacheEntry();
-              return body$.then(body =>
+              return Promise.resolve(body$).then(body =>
                 setResponse(
                   new ResponseCtor(body, {
                     ...response,
-                    // @ts-expect-error - Headers type mismatch
-                    headers: policy.responseHeaders(),
+                    headers: policy.responseHeaders() as HeadersInit,
                   }),
                 ),
               );
@@ -204,7 +200,6 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
               if (cacheEntry) {
                 pluginLogger?.debug(`Deleting the cache entry for ${url}`);
                 const delete$ = cache.delete(cacheKey);
-                // @ts-expect-error - Promise type mismatch
                 context?.waitUntil?.(delete$);
               }
             }

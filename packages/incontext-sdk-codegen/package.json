@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=22.18.0"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -43,8 +43,8 @@
     "@graphql-mesh/transport-common": "^1.0.20",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/utils": "^12.1.0",
-    "@graphql-tools/wrap": "^11.2.1",
+    "@graphql-tools/utils": "^13.2.1",
+    "@graphql-tools/wrap": "^11.2.4",
     "graphql-scalars": "^2.0.1",
     "pascal-case": "^3.1.2",
     "tslib": "^2.4.0"

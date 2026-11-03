@@ -35,13 +35,18 @@ export const graphqlHandler = ({
           skipIntrospection: true,
           logFn: (eventName, { args }) => {
             if (eventName.endsWith('-start')) {
-              mesh.logger.debug(`\t headers: `, args.contextValue.headers);
+              mesh.log.debug(`\t headers: `, args.contextValue.headers);
             }
           },
         }),
       ],
       extraParamNames,
-      logging: mesh.logger,
+      logging: mesh.log,
+      // whatwg-node fetch no longer re-exports `crypto`; platform crypto is required
+      // for request-id generation and digest helpers still reading `fetchAPI.crypto`.
+      fetchAPI: {
+        crypto: globalThis.crypto,
+      } as any,
       maskedErrors: false,
       graphiql: playgroundEnabled && {
         title: playgroundTitle,

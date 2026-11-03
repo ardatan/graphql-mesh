@@ -5,10 +5,10 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
-import { isPromise, mapMaybePromise } from '@graphql-tools/utils';
 import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { isPromise } from '@whatwg-node/promise-helpers';
 
 /**
  * Yoga calls session/enabled as `(request, context)`.

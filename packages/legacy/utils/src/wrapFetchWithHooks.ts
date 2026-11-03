@@ -1,14 +1,9 @@
 import { getInstrumented } from '@envelop/instrumentation';
-import type {
-  Logger,
-  MeshFetch,
-  OnFetchHook,
-  OnFetchHookDone,
-  OnFetchHookPayload,
-} from '@graphql-mesh/types';
-import type { MaybePromise } from '@graphql-tools/utils';
+import type { MeshFetch, OnFetchHook, OnFetchHookDone, OnFetchHookPayload } from '@graphql-mesh/types';
 import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
-import { DefaultLogger } from './logger.js';
+
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import { Logger } from '@graphql-hive/logger';
 
 type ExecutionRequest = NonNullable<OnFetchHookPayload<any>['executionRequest']>;
 
@@ -59,24 +54,24 @@ export function wrapFetchWithHooks<TContext>(
                   return requestIdByRequest.get(context.request);
                 }
               },
-              get logger() {
-                let logger: Logger;
+              get log() {
+                let log: Logger | undefined;
                 if (info?.executionRequest) {
-                  logger = loggerForExecutionRequest.get(info.executionRequest);
+                  log = loggerForExecutionRequest.get(info.executionRequest);
                 }
-                if (!logger) {
-                  logger = defaultLogger?.child('fetch') || new DefaultLogger('fetch');
+                if (!log) {
+                  log = defaultLogger?.child('fetch') || new Logger({ prefix: 'fetch' });
                 }
                 if (context?.request) {
                   const requestId = requestIdByRequest.get(context.request);
                   if (requestId) {
-                    logger = logger.child({ requestId });
+                    log = log.child({ requestId });
                   }
                 }
                 if (info?.executionRequest) {
-                  loggerForExecutionRequest.set(info.executionRequest, logger);
+                  loggerForExecutionRequest.set(info.executionRequest, log);
                 }
-                return logger;
+                return log;
               },
               endResponse(newResponse) {
                 response$ = newResponse;

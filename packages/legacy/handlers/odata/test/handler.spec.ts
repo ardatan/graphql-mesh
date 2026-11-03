@@ -7,7 +7,7 @@ import type { KeyValueCache, MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger.js';
+import { dummyLogger as log} from '../../../../testing/dummyLogger.js';
 import ODataHandler from '../src/index.js';
 import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
 
@@ -63,7 +63,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -83,7 +83,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -106,7 +106,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -129,7 +129,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -167,7 +167,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -213,7 +213,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -268,7 +268,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -316,7 +316,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -362,7 +362,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -426,7 +426,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -475,7 +475,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -524,7 +524,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -580,7 +580,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -639,7 +639,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -697,7 +697,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -746,7 +746,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -796,7 +796,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -849,7 +849,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,

@@ -14,7 +14,7 @@ import { hashObject } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshPubSub, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import { computeCacheKey } from '../src/compute-cache-key.js';
 import CacheTransform from '../src/index.js';
 
@@ -198,7 +198,7 @@ describe('cache', () => {
         ],
         pubsub,
         baseDir,
-        logger,
+        log,
       });
       const modifiedSchema = transform.transformSchema(schema);
 
@@ -230,7 +230,7 @@ describe('cache', () => {
         ],
         pubsub,
         baseDir,
-        logger,
+        log,
       });
 
       const modifiedSchema = transform.transformSchema(schema);
@@ -257,7 +257,7 @@ describe('cache', () => {
         config,
         pubsub,
         baseDir,
-        logger,
+        log,
       });
 
       const modifiedSchema = transform.transformSchema(schema);
@@ -497,7 +497,7 @@ describe('cache', () => {
         cache,
         pubsub,
         baseDir,
-        logger,
+        log,
       });
 
       const schemaWithCache = transform.transformSchema(schema);
@@ -558,7 +558,7 @@ describe('cache', () => {
           cache,
           pubsub,
           baseDir,
-          logger,
+          log,
         });
         const schemaWithCache = transform.transformSchema(schema);
 
@@ -621,7 +621,7 @@ describe('cache', () => {
           cache: slowCache,
           pubsub,
           baseDir,
-          logger,
+          log,
         };
 
         let callCount = 0;
@@ -671,7 +671,7 @@ describe('cache', () => {
           cache: slowCache,
           pubsub,
           baseDir,
-          logger,
+          log,
         };
         function getNewSchema() {
           return makeExecutableSchema({
@@ -729,7 +729,7 @@ describe('cache', () => {
           cache,
           pubsub,
           baseDir,
-          logger,
+          log,
         };
         function getNewSchema() {
           return makeExecutableSchema({

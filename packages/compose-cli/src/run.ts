@@ -12,11 +12,11 @@ import { isAbsolute, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
-import type { Logger } from '@graphql-mesh/types';
-import { DefaultLogger } from '@graphql-mesh/utils';
+
 import { getComposedResultFromConfig } from './getComposedSchemaFromConfig.js';
 import type { MeshComposeCLIConfig } from './types.js';
 import { validateSupergraphSdl } from './validate.js';
+import { ConsoleLogWriter, Logger } from '@graphql-hive/logger';
 
 /** Default config paths sorted by priority. */
 const defaultConfigPaths = [
@@ -39,7 +39,7 @@ let program = new Command()
   .option('-o, --output <path>', 'path to the output file');
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
-  /** @default new DefaultLogger() */
+  /** @default new Logger() */
   log?: Logger;
   /** @default Mesh Compose */
   productName?: string;
@@ -52,7 +52,9 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
 }
 
 export async function run({
-  log: rootLog = new DefaultLogger(undefined, undefined, undefined, new Console(process.stderr)),
+  log: rootLog = new Logger({
+    writers: [new ConsoleLogWriter({ console: new Console(process.stderr) })],
+  }),
   productName = 'Mesh Compose',
   productDescription = 'compose a GraphQL federated schema from any API service(s)',
   binName = 'mesh-compose',

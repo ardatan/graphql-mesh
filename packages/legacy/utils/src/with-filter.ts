@@ -1,4 +1,4 @@
-import { fakePromise } from '@graphql-tools/utils';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 
 export type FilterFn<TSource = any, TArgs = any, TContext = any> = (
   rootValue?: TSource,

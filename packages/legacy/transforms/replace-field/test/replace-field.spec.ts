@@ -1,13 +1,14 @@
 import { join } from 'path';
 import { GraphQLObjectType, parse, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { ImportFn, Logger, MeshPubSub } from '@graphql-mesh/types';
+import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
 import { PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable, pruneSchema } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import ReplaceFieldTransform from '../src/index.js';
+import { Logger } from '@graphql-hive/logger';
 
 const importFn: ImportFn = m =>
   import(m).catch(e => {
@@ -80,7 +81,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -139,7 +140,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -206,7 +207,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -274,7 +275,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -354,7 +355,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -428,7 +429,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -497,7 +498,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -570,7 +571,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -639,7 +640,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -713,7 +714,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -785,7 +786,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -864,7 +865,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -930,7 +931,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -1030,7 +1031,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,

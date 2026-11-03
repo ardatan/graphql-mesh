@@ -44,7 +44,7 @@ describe('processConfig', () => {
 
     meshConfigContent = meshConfigContent.replace('await import', 'fakeImport');
     meshConfigContent =
-      'const fakeImport = m => require("@graphql-tools/utils").fakePromise(require(m));\n' +
+      'const fakeImport = m => require("@whatwg-node/promise-helpers").fakePromise(require(m));\n' +
       meshConfigContent;
 
     // Create a .ts file with the codes and importCodes content

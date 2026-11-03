@@ -5,8 +5,7 @@ describe('Redis', () => {
   it('works', async () => {
     using redisCache = new RedisCache<any>({
       host: '{env.REDIS_HOST}',
-      port: '{env.REDIS_PORT}',
-      logger: dummyLogger,
+      port: '{env.REDIS_PORT}', log: dummyLogger,
     });
     const test = await redisCache.get('test');
     expect(test).toBeUndefined();

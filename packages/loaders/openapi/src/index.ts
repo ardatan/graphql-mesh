@@ -1,6 +1,7 @@
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { loadNonExecutableGraphQLSchemaFromOpenAPI } from './loadGraphQLSchemaFromOpenAPI.js';
 import type { OpenAPILoaderOptions } from './types.js';
+import { Logger } from '@graphql-hive/logger';
 
 export { loadGraphQLSchemaFromOpenAPI as default } from './loadGraphQLSchemaFromOpenAPI.js';
 export * from './loadGraphQLSchemaFromOpenAPI.js';
@@ -8,13 +9,12 @@ export { getJSONSchemaOptionsFromOpenAPIOptions } from './getJSONSchemaOptionsFr
 export type { OpenAPILoaderOptions } from './types.js';
 
 export function loadOpenAPISubgraph(name: string, options: OpenAPILoaderOptions) {
-  return (ctx: { fetch: MeshFetch; cwd: string; logger: Logger }) => ({
+  return (ctx: { fetch: MeshFetch; cwd: string; log: Logger }) => ({
     name,
     schema$: loadNonExecutableGraphQLSchemaFromOpenAPI(name, {
       ...options,
       fetch: ctx.fetch,
-      cwd: ctx.cwd,
-      logger: ctx.logger,
+      cwd: ctx.cwd, log: ctx.log,
     }),
   });
 }

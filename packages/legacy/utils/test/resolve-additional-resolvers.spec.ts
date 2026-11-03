@@ -2,16 +2,13 @@
 import { parse, type ExecutionResult } from 'graphql';
 import { MemPubSub } from '@graphql-hive/pubsub';
 import type { RawSourceOutput } from '@graphql-mesh/types';
-import {
-  DefaultLogger,
-  getInContextSDK,
-  resolveAdditionalResolversWithoutImport,
-} from '@graphql-mesh/utils';
+import { getInContextSDK, resolveAdditionalResolversWithoutImport } from '@graphql-mesh/utils';
 import type { SubschemaConfig } from '@graphql-tools/delegate';
 import { execute, subscribe } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
 import { assertAsyncIterable } from '../../testing/utils';
+import { Logger } from '@graphql-hive/logger';
 
 function makeReviews() {
   const data = [
@@ -314,7 +311,7 @@ describe('key-based (batch) additional resolver with a null parent key', () => {
     const inContextSDK = getInContextSDK(
       users.schema,
       [usersRawSource],
-      new DefaultLogger('test'),
+      new Logger({ prefix: 'test' }),
       [],
     );
 
@@ -465,7 +462,7 @@ describe('key-based (batch) additional resolver with valueKeyField', () => {
     const inContextSDK = getInContextSDK(
       products.schema,
       [productsRawSource],
-      new DefaultLogger('test'),
+      new Logger({ prefix: 'test' }),
       [],
     );
 
@@ -740,7 +737,7 @@ describe('@resolveTo result path when the source field is missing from the gatew
       batch: true,
       createProxyingResolver: () => undefined as any,
     };
-    const inContextSDK = getInContextSDK(sourceSchema, [sourceRaw], new DefaultLogger('test'), []);
+    const inContextSDK = getInContextSDK(sourceSchema, [sourceRaw], new Logger({ prefix: 'test' }), []);
 
     const additionalResolvers = resolveAdditionalResolversWithoutImport({
       targetTypeName: 'TargetType',

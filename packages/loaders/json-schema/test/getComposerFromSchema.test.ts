@@ -36,18 +36,19 @@ import {
 } from 'graphql-scalars';
 import type { JSONSchemaObject } from 'json-machete';
 import { processDirectives, processScalarType } from '@graphql-mesh/transport-rest';
-import type { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import type { MeshPubSub } from '@graphql-mesh/types';
+import { PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { JSONSchema } from '@json-schema-tools/meta-schema';
 import { fetch } from '@whatwg-node/fetch';
-import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../testing/dummyLogger';
 import { getComposerFromJSONSchema } from '../src/getComposerFromJSONSchema.js';
+import { Logger } from '@graphql-hive/logger';
 
 describe('getComposerFromJSONSchema', () => {
   const pubsub = new PubSub() as MeshPubSub;
   it('should return JSON scalar if given schema is boolean true', async () => {
-    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema: true, logger });
+    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema: true, log});
     expect(result.input.getType()).toBe(GraphQLJSON);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLJSON);
   });
@@ -62,7 +63,7 @@ describe('getComposerFromJSONSchema', () => {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     // Scalar types are both input and output types
     expect(result.input).toBe(result.output);
@@ -85,7 +86,7 @@ describe('getComposerFromJSONSchema', () => {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     // Scalar types are both input and output types
     expect(result.input).toBe(result.output);
@@ -107,7 +108,7 @@ describe('getComposerFromJSONSchema', () => {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     // Enum types are both input and output types
     expect(result.input).toBe(result.output);
@@ -132,7 +133,7 @@ enum ExampleEnum {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     // Enum types are both input and output types
     expect(result.input).toBe(result.output);
@@ -233,7 +234,7 @@ enum AdminPermission {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const unionComposer = result.output as UnionTypeComposer;
     expect(
@@ -264,7 +265,7 @@ enum AdminPermission {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(
       (result.input as InputTypeComposer).toSDL({
@@ -314,7 +315,7 @@ input ExampleObject_Input {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect((result.input as InputTypeComposer).toSDL()).toBe(
       /* GraphQL */ `
@@ -405,7 +406,7 @@ type ExampleAllOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(
       (result.input as InputTypeComposer).toSDL({
@@ -483,7 +484,7 @@ type Address {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const outputComposer = result.output as ObjectTypeComposer;
     expect(isObjectType(outputComposer.getType())).toBeTruthy();
@@ -520,7 +521,7 @@ type Address {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect((result.input as InputTypeComposer).toSDL()).toBe(
       /* GraphQL */ `
@@ -561,7 +562,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const outputComposer = result.output as ObjectTypeComposer;
     expect(isObjectType(outputComposer.getType())).toBeTruthy();
@@ -576,7 +577,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
 
     expect(result.input.getType()).toBe(GraphQLBoolean);
@@ -589,7 +590,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
 
     expect(result.input.getType().name).toBe('Void');
@@ -603,7 +604,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
 
     expect(result.input.getType()).toBe(GraphQLBigInt);
@@ -617,7 +618,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
 
     expect(result.input.getType()).toBe(GraphQLInt);
@@ -630,7 +631,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
 
     expect(result.input.getType()).toBe(GraphQLInt);
@@ -643,7 +644,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
 
     expect(result.input.getType()).toBe(GraphQLFloat);
@@ -659,7 +660,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const inputComposer = result.input as ScalarTypeComposer;
     expect(inputComposer).toBe(result.output);
@@ -678,7 +679,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const inputComposer = result.input as ScalarTypeComposer;
     expect(inputComposer).toBe(result.output);
@@ -699,7 +700,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const inputComposer = result.input as ScalarTypeComposer;
     expect(inputComposer).toBe(result.output);
@@ -717,7 +718,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(result.input.getType()).toBe(GraphQLDateTime);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLDateTime);
@@ -730,7 +731,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(result.input.getType()).toBe(GraphQLTime);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLTime);
@@ -743,7 +744,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(result.input.getType()).toBe(GraphQLEmailAddress);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLEmailAddress);
@@ -756,7 +757,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(result.input.getType()).toBe(GraphQLIPv4);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLIPv4);
@@ -769,7 +770,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(result.input.getType()).toBe(GraphQLIPv6);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLIPv6);
@@ -782,7 +783,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(result.input.getType()).toBe(GraphQLURL);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLURL);
@@ -794,7 +795,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(result.input.getType()).toBe(GraphQLString);
     expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLString);
@@ -809,7 +810,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(isListType(result.input.getType())).toBeTruthy();
     expect((result.input as ListComposer).ofType.getType()).toBe(GraphQLString);
@@ -828,7 +829,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(result.input).toBe(result.output);
     const outputComposer = result.output as ListComposer;
@@ -872,7 +873,7 @@ type ExampleAnyOf {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(
       (result.output as ObjectTypeComposer).toSDL({
@@ -912,7 +913,7 @@ type Bar {
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect((result.input as InputTypeComposer).toSDL()).toBe(
       /* GraphQL */ `
@@ -948,7 +949,7 @@ type ExampleObject {
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(output instanceof SchemaComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toContain(
@@ -972,7 +973,7 @@ type Query {
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(output instanceof ObjectTypeComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toContain(
@@ -996,7 +997,7 @@ type Query {
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(output instanceof ObjectTypeComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toContain(
@@ -1020,7 +1021,7 @@ type Mutation {
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(output instanceof ObjectTypeComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toContain(
@@ -1065,7 +1066,7 @@ type Subscription_ {
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(output instanceof SchemaComposer).toBeTruthy();
     expect((output as SchemaComposer).toSDL()).toBe(
@@ -1120,7 +1121,7 @@ ${printType(GraphQLString)}
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
 
     const schemaComposer = result.output as SchemaComposer;
@@ -1138,7 +1139,7 @@ ${printType(GraphQLString)}
     });
     const schema = schemaComposer.buildSchema();
     processDirectives(schema, {
-      logger,
+      log,
       pubsub,
       globalFetch: fetch,
     });
@@ -1178,7 +1179,7 @@ ${printType(GraphQLString)}
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: FooEnum,
-      logger,
+      log,
     });
     expect(output instanceof EnumTypeComposer).toBeTruthy();
     const enumTypeComposer = output as EnumTypeComposer;
@@ -1228,7 +1229,7 @@ ${printType(GraphQLString)}
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: FooEnum,
-      logger,
+      log,
     });
     expect(output instanceof EnumTypeComposer).toBeTruthy();
     const enumTypeComposer = output as EnumTypeComposer;
@@ -1326,7 +1327,7 @@ ${printType(GraphQLString)}
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: jsonSchema,
-      logger,
+      log,
     });
     expect(output instanceof SchemaComposer).toBeTruthy();
     const schema = (output as SchemaComposer).buildSchema();
@@ -1365,7 +1366,7 @@ ${printType(GraphQLString)}
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: FooEnum,
-      logger,
+      log,
     });
     expect(output instanceof EnumTypeComposer).toBeTruthy();
     const enumTypeComposer = output as EnumTypeComposer;
@@ -1405,7 +1406,7 @@ ${printType(GraphQLString)}
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: FacetFilterType,
-      logger,
+      log,
     });
     expect((output as UnionTypeComposer).getType().toString()).toBe('[String]');
   });
@@ -1424,7 +1425,7 @@ ${printType(GraphQLString)}
     const { output } = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema,
-      logger,
+      log,
     });
     expect((output as ObjectTypeComposer).getField('bar').type.getTypeName()).toEqual('String');
   });
@@ -1457,7 +1458,7 @@ ${printType(GraphQLString)}
       ],
     } as JSONSchema;
 
-    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema, logger });
+    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema, log});
     // The resolved type must be a list of String, not a spurious double-nested list like
     // [[ArrayItemInput]] that would result from the getter silently not being updated.
     expect(result.input?.getType().toString()).toBe('[String]');
@@ -1471,7 +1472,7 @@ ${printType(GraphQLString)}
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     // Should be a nullable String scalar, not an object type with String/Void fields
     expect((result.output as ScalarTypeComposer<any>).getType()).toBe(GraphQLString);
@@ -1492,7 +1493,7 @@ ${printType(GraphQLString)}
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect(result.nullable).toBe(true);
     const output = result.output as ObjectTypeComposer;
@@ -1524,7 +1525,7 @@ ${printType(GraphQLString)}
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const output = result.output as ObjectTypeComposer;
     const groupType = (output.getField('group').type as any).getUnwrappedTC() as ObjectTypeComposer;
@@ -1560,7 +1561,7 @@ ${printType(GraphQLString)}
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const output = result.output as ObjectTypeComposer;
     const idField = output.getField('id');
@@ -1589,7 +1590,7 @@ ${printType(GraphQLString)}
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const output = result.output as ObjectTypeComposer;
     expect(output.getField('endpoint').type.getTypeName()).toBe('endpoint');
@@ -1603,7 +1604,7 @@ ${printType(GraphQLString)}
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     expect((result.output as ScalarTypeComposer<any>).getType()).toBe(GraphQLString);
     expect(result.nullable).toBe(true);
@@ -1633,7 +1634,7 @@ ${printType(GraphQLString)}
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const output = result.output as ObjectTypeComposer;
     const fieldType = (output.getField('deleteThing').type as any).getUnwrappedTC();
@@ -1662,7 +1663,7 @@ ${printType(GraphQLString)}
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const output = result.output as ObjectTypeComposer;
     const fieldType = (output.getField('deleteThing').type as any).getUnwrappedTC();
@@ -1709,7 +1710,7 @@ ${printType(GraphQLString)}
     const result = await getComposerFromJSONSchema({
       subgraphName: 'Test',
       schema: inputSchema,
-      logger,
+      log,
     });
     const output = result.output as ObjectTypeComposer;
     expect(isObjectType(output.getType())).toBe(true);

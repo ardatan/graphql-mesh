@@ -3,7 +3,7 @@ import { promises } from 'fs';
 import { join } from 'path';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
-import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../testing/dummyLogger';
 import { SOAPLoader } from '../src/index.js';
 
 const { readFile } = promises;
@@ -21,7 +21,7 @@ describe('Multi-file WSDL', () => {
     const entryPath = join(__dirname, './fixtures/multi-file/service.wsdl');
     const wsdl = await readFile(entryPath, 'utf-8');
 
-    const loader = new SOAPLoader({ subgraphName: 'multi-file', fetch, logger });
+    const loader = new SOAPLoader({ subgraphName: 'multi-file', fetch, log});
     await loader.loadWSDL(wsdl, entryPath);
     const schema = loader.buildSchema();
 
@@ -40,7 +40,7 @@ describe('Multi-file WSDL', () => {
     const loader = new SOAPLoader({
       subgraphName: 'multi-file',
       fetch,
-      logger,
+      log,
       cwd: fixturesDir,
     });
     await loader.loadWSDL(wsdl, relativeSource);

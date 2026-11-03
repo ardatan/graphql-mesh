@@ -6,7 +6,7 @@ import { parse } from 'graphql';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
-import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../testing/dummyLogger';
 import { createExecutorFromSchemaAST, SOAPLoader } from '../src/index.js';
 
 describe('SOAP Loader', () => {
@@ -19,7 +19,7 @@ describe('SOAP Loader', () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,
-      logger,
+      log,
     });
     await soapLoader.fetchWSDL('https://www.crcind.com/csp/samples/SOAP.Demo.cls?WSDL');
     const schema = soapLoader.buildSchema();
@@ -41,7 +41,7 @@ describe('SOAP Loader', () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,
-      logger,
+      log,
     });
     const example1Wsdl = await fsPromises.readFile(
       join(__dirname, './fixtures/greeting.wsdl'),

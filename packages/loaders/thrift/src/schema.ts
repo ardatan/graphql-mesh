@@ -37,9 +37,10 @@ import type {
   TypeMap,
   TypeVal,
 } from '@graphql-mesh/transport-thrift';
-import type { ImportFn, Logger, MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
+import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
+import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import { Logger } from '@graphql-hive/logger';
 
 export interface GraphQLThriftLoaderOptions {
   subgraphName: string;
@@ -52,7 +53,7 @@ export interface GraphQLThriftLoaderOptions {
   baseDir?: string;
   schemaHeaders?: Record<string, string>;
   fetchFn?: MeshFetch;
-  logger?: Logger;
+  log?: Logger;
   importFn?: ImportFn;
 }
 
@@ -81,7 +82,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
   baseDir = process.cwd(),
   schemaHeaders = {},
   fetchFn = defaultFetch,
-  logger = new DefaultLogger('Thrift'),
+  log = new Logger({ prefix: 'Thrift' }),
   importFn = defaultImportFn,
 }: GraphQLThriftLoaderOptions) {
   const namespaceASTMap: Record<string, ThriftDocument> = {};
@@ -91,7 +92,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
     baseDir,
     schemaHeaders,
     fetchFn,
-    logger,
+    log,
     importFn,
   });
   const baseNamespace = path.basename(source, '.thrift');
@@ -111,7 +112,7 @@ interface ParseWithIncludesOpts {
   baseDir: string;
   schemaHeaders: Record<string, string>;
   fetchFn: MeshFetch;
-  logger: Logger;
+  log: Logger;
   importFn: ImportFn;
 }
 
@@ -121,7 +122,7 @@ async function parseWithIncludes({
   baseDir,
   schemaHeaders,
   fetchFn,
-  logger,
+  log,
   importFn,
 }: ParseWithIncludesOpts): Promise<Record<string, ThriftDocument>> {
   const rawThrift = await readFileOrUrl<string>(idlFilePath, {
@@ -129,7 +130,7 @@ async function parseWithIncludes({
     cwd: baseDir,
     headers: schemaHeaders,
     fetch: fetchFn,
-    logger,
+    log,
     importFn,
   });
   const parseResult = parse(rawThrift, { organize: false });
@@ -156,7 +157,7 @@ async function parseWithIncludes({
         baseDir,
         schemaHeaders,
         fetchFn,
-        logger,
+        log,
         importFn,
       });
     }),

@@ -1,10 +1,11 @@
+import { GraphQLError } from 'graphql';
 import {
   isAbstractType,
   type GraphQLObjectType,
   type GraphQLResolveInfo,
   type GraphQLTypeResolver,
 } from 'graphql';
-import { createGraphQLError, getDirective } from '@graphql-tools/utils';
+import { getDirective } from '@graphql-tools/utils';
 
 export function getTypeResolverForAbstractType({
   possibleTypes,
@@ -107,7 +108,7 @@ export function getTypeResolverForAbstractType({
       return typeName;
     }
     if (data.$response) {
-      const error = createGraphQLError(`Upstream HTTP Error: ${data.$statusCode}`, {
+      const error = new GraphQLError(`Upstream HTTP Error: ${data.$statusCode}`, {
         extensions: {
           code: 'DOWNSTREAM_SERVICE_ERROR',
           serviceName,

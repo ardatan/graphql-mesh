@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=22.18.0"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -41,9 +41,9 @@
     "@graphql-mesh/transport-soap": "^0.13.3",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/utils": "^12.1.0",
-    "@whatwg-node/fetch": "^0.10.6",
-    "@whatwg-node/promise-helpers": "^1.0.0",
+    "@graphql-tools/utils": "^13.2.1",
+    "@whatwg-node/fetch": "^0.12.1",
+    "@whatwg-node/promise-helpers": "^2.0.1",
     "fast-xml-parser": "^5.10.1",
     "graphql-compose": "^9.0.11",
     "graphql-scalars": "^2.0.1"

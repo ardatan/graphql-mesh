@@ -28,11 +28,12 @@ import {
   type MeshPubSub,
   type YamlConfig,
 } from '@graphql-mesh/types';
-import type { IResolvers, MaybePromise } from '@graphql-tools/utils';
+import type { IResolvers } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { withFilter } from './with-filter.js';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
   if ('ofType' in type) {

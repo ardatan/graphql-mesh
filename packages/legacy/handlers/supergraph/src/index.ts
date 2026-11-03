@@ -8,22 +8,14 @@ import {
   getInterpolatedStringFactory,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import type {
-  GetMeshSourcePayload,
-  ImportFn,
-  Logger,
-  MeshFetch,
-  MeshHandler,
-  MeshHandlerOptions,
-  MeshSource,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { isUrl, readFile, readUrl } from '@graphql-mesh/utils';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 import type { SubscriptionProtocol } from '@graphql-tools/url-loader';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import { memoize1 } from '@graphql-tools/utils';
+import { Logger } from '@graphql-hive/logger';
 
 export default class SupergraphHandler implements MeshHandler {
   private config: YamlConfig.Handler['supergraph'];
@@ -31,14 +23,14 @@ export default class SupergraphHandler implements MeshHandler {
   private supergraphSdl: StoreProxy<DocumentNode>;
   private importFn: ImportFn;
   private fetchFn: MeshFetch;
-  private logger: Logger;
+  private log: Logger;
 
   constructor({
     config,
     baseDir,
     store,
     importFn,
-    logger,
+    log,
   }: MeshHandlerOptions<YamlConfig.Handler['supergraph']>) {
     this.config = config;
     this.baseDir = baseDir;
@@ -47,7 +39,7 @@ export default class SupergraphHandler implements MeshHandler {
       PredefinedProxyOptions.JsonWithoutValidation,
     );
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   private async getSupergraphSdl(): Promise<DocumentNode> {
@@ -63,8 +55,7 @@ export default class SupergraphHandler implements MeshHandler {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
-        fetch: this.fetchFn,
-        logger: this.logger,
+        fetch: this.fetchFn, log: this.log,
       }).catch(e => {
         throw new Error(`Failed to load supergraph SDL from ${interpolatedSource}:\n ${e.message}`);
       });
@@ -78,8 +69,7 @@ export default class SupergraphHandler implements MeshHandler {
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
-        fetch: this.fetchFn,
-        logger: this.logger,
+        fetch: this.fetchFn, log: this.log,
       }).catch(e => {
         throw new Error(`Failed to load supergraph SDL from ${interpolatedSource}:\n ${e.message}`);
       });

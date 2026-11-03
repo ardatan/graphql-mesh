@@ -6,16 +6,7 @@ import { useMaskedErrors } from '@envelop/core';
 import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import type { GetMeshOptions, MeshResolvedSource } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import type {
-  ImportFn,
-  Logger,
-  MeshHandlerLibrary,
-  MeshMergerLibrary,
-  MeshPlugin,
-  MeshPluginFactory,
-  MeshTransformLibrary,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { ImportFn, MeshHandlerLibrary, MeshMergerLibrary, MeshPlugin, MeshPluginFactory, MeshTransformLibrary, YamlConfig } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   getAdditionalResolversFromTypeDefs,
@@ -25,6 +16,8 @@ import {
 } from '@graphql-mesh/utils';
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';
 import type { Source } from './utils.js';
+import { Logger } from '@graphql-hive/logger';
+
 import {
   getPackage,
   hashSHA256,
@@ -62,7 +55,7 @@ export type ConfigProcessOptions = {
   generateCode?: boolean;
   initialLoggerPrefix?: string;
   throwOnInvalidConfig?: boolean;
-  logger?: Logger;
+  log?: Logger;
 };
 
 export type ProcessedConfig = GetMeshOptions & {
@@ -146,7 +139,7 @@ export async function processConfig(
   codes.add(`const sourcesStore = rootStore.child('sources');`);
 
   const {
-    logger,
+    log,
     importCode: loggerImportCode,
     code: loggerCode,
   } = await resolveLogger(
@@ -165,7 +158,7 @@ export async function processConfig(
     rootStore,
     dir,
     pubsub,
-    logger,
+    log,
     additionalPackagePrefixes,
   );
   codes.add(cacheCode);
@@ -219,8 +212,7 @@ export async function processConfig(
               baseDir,
               cache,
               pubsub,
-              store: sourcesStore.child(${JSON.stringify(source.name)}),
-              logger: logger.child({ source: ${JSON.stringify(source.name)} }),
+              store: sourcesStore.child(${JSON.stringify(source.name)}), log: log.child({ source: ${JSON.stringify(source.name)} }),
               importFn,
             });`,
               );
@@ -231,8 +223,7 @@ export async function processConfig(
               baseDir: dir,
               cache,
               pubsub,
-              store: sourcesStore.child(source.name),
-              logger: logger.child({ source: source.name }),
+              store: sourcesStore.child(source.name), log: log.child({ source: source.name }),
               importFn,
             });
           }),
@@ -262,7 +253,7 @@ export async function processConfig(
                   cache,
                   pubsub,
                   importFn,
-                  logger,
+                  log,
                 });`,
                 );
               }
@@ -274,7 +265,7 @@ export async function processConfig(
                 cache,
                 pubsub,
                 importFn,
-                logger,
+                log,
               });
             }),
           ),
@@ -318,7 +309,7 @@ export async function processConfig(
             cache,
             pubsub,
             importFn,
-            logger,
+            log,
           })`,
           );
         }
@@ -329,7 +320,7 @@ export async function processConfig(
           cache,
           pubsub,
           importFn,
-          logger,
+          log,
         });
       }) || [],
     ),
@@ -375,8 +366,7 @@ export async function processConfig(
               `const ${importName} = await import(${JSON.stringify(moduleName)}).then(handleImport);`,
             );
             codes.add(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
-          ...(${JSON.stringify(pluginConfig, null, 2)}),
-          logger: logger.child({ plugin: ${JSON.stringify(pluginName)} }),
+          ...(${JSON.stringify(pluginConfig, null, 2)}), log: log.child({ plugin: ${JSON.stringify(pluginName)} }),
           cache,
           pubsub,
           baseDir,
@@ -399,8 +389,7 @@ export async function processConfig(
               importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
               codes.add(
                 `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
-          ...(${JSON.stringify(pluginConfig, null, 2)}),
-          logger: logger.child({ plugin: ${JSON.stringify(pluginName)} }),
+          ...(${JSON.stringify(pluginConfig, null, 2)}), log: log.child({ plugin: ${JSON.stringify(pluginName)} }),
           cache,
           pubsub,
           baseDir,
@@ -411,8 +400,7 @@ export async function processConfig(
           }
         }
         return pluginFactory({
-          ...pluginConfig,
-          logger: logger.child({ plugin: pluginName }),
+          ...pluginConfig, log: log.child({ plugin: pluginName }),
           cache,
           pubsub,
           baseDir: dir,
@@ -558,16 +546,14 @@ export async function processConfig(
     );
     codes.add(`const merger = new Merger({
         cache,
-        pubsub,
-        logger: logger.child({ merger: ${JSON.stringify(mergerName)} }),
+        pubsub, log: log.child({ merger: ${JSON.stringify(mergerName)} }),
         store: rootStore.child(${JSON.stringify(mergerName)})
       })`);
   }
 
   const merger = new Merger({
     cache,
-    pubsub,
-    logger: logger.child({ merger: mergerName }),
+    pubsub, log: log.child({ merger: mergerName }),
     store: rootStore.child(mergerName),
   });
 
@@ -678,7 +664,7 @@ export async function processConfig(
     cache,
     pubsub,
     merger,
-    logger,
+    log,
     additionalEnvelopPlugins,
     get documents() {
       return [
@@ -710,7 +696,7 @@ export async function processConfig(
     pubsub,
     config,
     documents,
-    logger,
+    log,
     store: rootStore,
     additionalEnvelopPlugins,
     importCodes,

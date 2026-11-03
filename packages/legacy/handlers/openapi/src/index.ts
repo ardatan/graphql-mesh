@@ -3,26 +3,17 @@ import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type {
-  GetMeshSourcePayload,
-  ImportFn,
-  Logger,
-  MeshFetch,
-  MeshHandler,
-  MeshHandlerOptions,
-  MeshPubSub,
-  MeshSource,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { loadNonExecutableGraphQLSchemaFromOpenAPI, processDirectives } from '@omnigraph/openapi';
+import { Logger } from '@graphql-hive/logger';
 
 export default class OpenAPIHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.OpenapiHandler;
   private schemaWithAnnotationsProxy: StoreProxy<GraphQLSchema>;
   private baseDir: string;
-  private logger: Logger;
+  private log: Logger;
   private fetchFn: MeshFetch;
   private pubsub: MeshPubSub;
   private importFn: ImportFn;
@@ -32,7 +23,7 @@ export default class OpenAPIHandler implements MeshHandler {
     baseDir,
     store,
     pubsub,
-    logger,
+    log,
     importFn,
   }: MeshHandlerOptions<YamlConfig.OpenapiHandler>) {
     this.name = name;
@@ -44,18 +35,17 @@ export default class OpenAPIHandler implements MeshHandler {
     );
     this.pubsub = pubsub;
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   async getNonExecutableSchema({ interpolatedSource }: { interpolatedSource: string }) {
     if (interpolatedSource.endsWith('.graphql')) {
-      this.logger.info(`Fetching GraphQL Schema with annotations`);
+      this.log.info(`Fetching GraphQL Schema with annotations`);
       const sdl = await readFileOrUrl<string>(interpolatedSource, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         fetch: this.fetchFn,
-        importFn: this.importFn,
-        logger: this.logger,
+        importFn: this.importFn, log: this.log,
         headers: this.config.schemaHeaders,
       });
       return buildSchema(sdl, {
@@ -64,13 +54,12 @@ export default class OpenAPIHandler implements MeshHandler {
       });
     }
     return this.schemaWithAnnotationsProxy.getWithSet(async () => {
-      this.logger.info(`Generating GraphQL schema from OpenAPI schema`);
+      this.log.info(`Generating GraphQL schema from OpenAPI schema`);
       const schema = await loadNonExecutableGraphQLSchemaFromOpenAPI(this.name, {
         ...this.config,
         source: interpolatedSource,
         cwd: this.baseDir,
-        fetch: this.fetchFn,
-        logger: this.logger,
+        fetch: this.fetchFn, log: this.log,
         selectQueryOrMutationField: this.config.selectQueryOrMutationField?.map(
           ({ type, fieldName }) => ({
             type: type.toLowerCase() as any,
@@ -88,15 +77,14 @@ export default class OpenAPIHandler implements MeshHandler {
       env: process.env,
     });
     this.fetchFn = fetchFn;
-    this.logger.debug('Getting the schema with annotations');
+    this.log.debug('Getting the schema with annotations');
     const nonExecutableSchema = await this.getNonExecutableSchema({
       interpolatedSource,
     });
-    this.logger.info(`Processing annotations for the execution layer`);
+    this.log.info(`Processing annotations for the execution layer`);
     const schemaWithDirectives = processDirectives(nonExecutableSchema, {
       ...this.config,
-      pubsub: this.pubsub,
-      logger: this.logger,
+      pubsub: this.pubsub, log: this.log,
       globalFetch: fetchFn,
     });
     return {

@@ -5,7 +5,7 @@ import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn, getHeadersObj, PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { Headers, Response } from '@whatwg-node/fetch';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import JsonSchemaHandler from '../src/index.js';
 
 describe('JSON Schema Handler', () => {
@@ -40,7 +40,7 @@ describe('JSON Schema Handler', () => {
         validate: false,
       }),
       pubsub: new PubSub(),
-      logger,
+      log,
       importFn: defaultImportFn,
     });
 

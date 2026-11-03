@@ -2,18 +2,10 @@ import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type {
-  GetMeshSourcePayload,
-  ImportFn,
-  Logger,
-  MeshFetch,
-  MeshHandler,
-  MeshHandlerOptions,
-  MeshPubSub,
-  MeshSource,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
+import { Logger } from '@graphql-hive/logger';
+
 import {
   loadNonExecutableGraphQLSchemaFromJSONSchemas,
   processDirectives,
@@ -24,7 +16,7 @@ export default class JsonSchemaHandler implements MeshHandler {
   private config: YamlConfig.Handler['jsonSchema'];
   private schemaWithAnnotationsProxy: StoreProxy<GraphQLSchema>;
   private baseDir: string;
-  private logger: Logger;
+  private log: Logger;
   private fetchFn: MeshFetch;
   private pubsub: MeshPubSub;
   private importFn: ImportFn;
@@ -35,7 +27,7 @@ export default class JsonSchemaHandler implements MeshHandler {
     baseDir,
     store,
     pubsub,
-    logger,
+    log,
     importFn,
   }: MeshHandlerOptions<YamlConfig.Handler['jsonSchema']>) {
     this.name = name;
@@ -46,7 +38,7 @@ export default class JsonSchemaHandler implements MeshHandler {
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.pubsub = pubsub;
-    this.logger = logger;
+    this.log = log;
     this.importFn = importFn;
     if ('bundlePath' in config || 'bundleHeaders' in config) {
       throw new Error(
@@ -57,13 +49,12 @@ export default class JsonSchemaHandler implements MeshHandler {
 
   async getNonExecutableSchema() {
     if (this.config.source) {
-      this.logger.info(`Fetching GraphQL Schema with annotations`);
+      this.log.info(`Fetching GraphQL Schema with annotations`);
       const sdl = await readFileOrUrl<string>(this.config.source, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         fetch: this.fetchFn,
-        importFn: this.importFn,
-        logger: this.logger,
+        importFn: this.importFn, log: this.log,
         headers: this.config.schemaHeaders,
       });
       return buildSchema(sdl, {
@@ -72,13 +63,12 @@ export default class JsonSchemaHandler implements MeshHandler {
       });
     }
     return this.schemaWithAnnotationsProxy.getWithSet(() => {
-      this.logger.info(`Generating GraphQL schema from JSON Schemas`);
+      this.log.info(`Generating GraphQL schema from JSON Schemas`);
       return loadNonExecutableGraphQLSchemaFromJSONSchemas(this.name, {
         ...this.config,
         operations: this.config.operations as any,
         cwd: this.baseDir,
-        fetch: this.fetchFn,
-        logger: this.logger,
+        fetch: this.fetchFn, log: this.log,
         pubsub: this.pubsub,
       });
     });
@@ -86,13 +76,12 @@ export default class JsonSchemaHandler implements MeshHandler {
 
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
     this.fetchFn = fetchFn;
-    this.logger.debug('Getting the schema with annotations');
+    this.log.debug('Getting the schema with annotations');
     const nonExecutableSchema = await this.getNonExecutableSchema();
-    this.logger.info(`Processing annotations for the execution layer`);
+    this.log.info(`Processing annotations for the execution layer`);
     const schemaWithDirectives = processDirectives(nonExecutableSchema, {
       ...this.config,
-      pubsub: this.pubsub,
-      logger: this.logger,
+      pubsub: this.pubsub, log: this.log,
       globalFetch: fetchFn,
     });
     return {

@@ -1,20 +1,11 @@
 import type { DocumentNode, ExecutionResult } from 'graphql';
-import type {
-  GraphQLOperation,
-  KeyValueCache,
-  Logger,
-  MeshFetch,
-  MeshHandler,
-  MeshMerger,
-  MeshPlugin,
-  MeshPubSub,
-  MeshTransform,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { GraphQLOperation, KeyValueCache, MeshFetch, MeshHandler, MeshMerger, MeshPlugin, MeshPubSub, MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import type { TerminateHandler } from '@graphql-mesh/utils';
-import type { IResolvers, MaybeAsyncIterable, MaybePromise, Source } from '@graphql-tools/utils';
+import type { IResolvers, MaybeAsyncIterable, Source } from '@graphql-tools/utils';
 import type { MESH_CONTEXT_SYMBOL } from './constants.js';
 import type { MeshInstance } from './get-mesh.js';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import type { Logger } from '@graphql-hive/logger';
 
 export type GetMeshOptions = {
   sources: MeshResolvedSource[];
@@ -24,7 +15,7 @@ export type GetMeshOptions = {
   cache: KeyValueCache;
   pubsub?: MeshPubSub;
   merger: MeshMerger;
-  logger?: Logger;
+  log?: Logger;
   additionalEnvelopPlugins?: MeshPlugin<any>[];
   documents?: Source[];
   fetchFn?: MeshFetch;
@@ -54,12 +45,12 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
 
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
-} & { pubsub: MeshPubSub; cache: KeyValueCache; logger: Logger; fetch: MeshFetch };
+} & { pubsub: MeshPubSub; cache: KeyValueCache; log: Logger; fetch: MeshFetch };
 
 export interface ServeMeshOptions {
   baseDir: string;
   getBuiltMesh: () => Promise<MeshInstance>;
-  logger: Logger;
+  log: Logger;
   rawServeConfig: YamlConfig.Config['serve'];
   argsPort?: number;
   playgroundTitle?: string;

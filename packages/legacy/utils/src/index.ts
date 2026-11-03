@@ -9,8 +9,12 @@ export * from './getRootFieldsWithArgs.js';
 export * from './global-lru-cache.js';
 export * from './group-transforms.js';
 export * from './load-from-module-export-expression.js';
-export * from './logger.js';
-export { iterateAsync, mapMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
+export {
+  handleMaybePromise,
+  iterateAsync,
+  type MaybePromise,
+} from '@whatwg-node/promise-helpers';
+export { mapMaybePromise } from './map-maybe-promise.js';
 export * from './parseAndPrintWithCache.js';
 export * from './projectResultBySelectionSet.js';
 export * from './pubsub.js';

@@ -1,48 +1,27 @@
-import type { DocumentNode, GraphQLObjectType, GraphQLSchema, OperationTypeNode } from 'graphql';
+import {
+  GraphQLError,
+  type DocumentNode,
+  type GraphQLObjectType,
+  type GraphQLSchema,
+  type OperationTypeNode,
+} from 'graphql';
 import { getOperationAST, specifiedRules, validate } from 'graphql';
 import type { Plugin } from '@envelop/core';
 import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
 import { process } from '@graphql-mesh/cross-helpers';
-import type {
-  GraphQLOperation,
-  KeyValueCache,
-  Logger,
-  MeshFetch,
-  MeshPlugin,
-  MeshPubSub,
-  MeshTransform,
-  OnDelegateHook,
-  OnFetchHook,
-  OnFetchHookPayload,
-  RawSourceOutput,
-} from '@graphql-mesh/types';
-import {
-  applySchemaTransforms,
-  DefaultLogger,
-  getHeadersObj,
-  getInContextSDK,
-  groupTransforms,
-  makeDisposable,
-  parseWithCache,
-  PubSub,
-  wrapFetchWithHooks,
-} from '@graphql-mesh/utils';
+import type { GraphQLOperation, KeyValueCache, MeshFetch, MeshPlugin, MeshPubSub, MeshTransform, OnDelegateHook, OnFetchHook, OnFetchHookPayload, RawSourceOutput } from '@graphql-mesh/types';
+import { applySchemaTransforms, getHeadersObj, getInContextSDK, groupTransforms, makeDisposable, parseWithCache, PubSub, wrapFetchWithHooks } from '@graphql-mesh/utils';
 import type { CreateProxyingResolverFn, SubschemaConfig } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import type { ExecutionResult } from '@graphql-tools/utils';
-import {
-  createGraphQLError,
-  getRootTypeMap,
-  isAsyncIterable,
-  mapAsyncIterator,
-  memoize1,
-} from '@graphql-tools/utils';
+import { getRootTypeMap, isAsyncIterable, memoize1 } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import type { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { getOriginalError } from './utils.js';
+import { handleMaybePromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
+import { Logger } from '@graphql-hive/logger';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -55,7 +34,7 @@ export interface MeshInstance extends Disposable {
   destroy(): void;
   pubsub: MeshPubSub;
   cache: KeyValueCache;
-  logger: Logger;
+  log: Logger;
   plugins: Plugin[];
   getEnveloped: ReturnType<typeof envelop>;
   sdkRequesterFactory(globalContext: any): SdkRequester;
@@ -102,7 +81,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const {
     pubsub = new PubSub(),
     cache,
-    logger = new DefaultLogger(''),
+    log = new Logger({ prefix: '' }),
     additionalEnvelopPlugins = [],
     sources,
     merger,
@@ -112,7 +91,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     fetchFn = defaultFetchFn,
   } = options;
 
-  const getMeshLogger = logger.child('GetMesh');
+  const getMeshLogger = log.child('GetMesh');
   getMeshLogger.debug(`Getting subschemas from source handlers`);
   let failed = false;
   const initialPluginList: MeshPlugin<any>[] = [
@@ -147,7 +126,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     useExtendContext(() => ({
       pubsub,
       cache,
-      logger,
+      log,
       fetch: wrappedFetchFn,
       [MESH_CONTEXT_SYMBOL]: true,
     })),
@@ -162,7 +141,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   await Promise.allSettled(
     sources.map(async (apiSource, index) => {
       const apiName = apiSource.name;
-      const sourceLogger = logger.child({ source: apiName });
+      const sourceLogger = log.child({ source: apiName });
       sourceLogger.debug(`Generating the schema`);
       try {
         const source = await apiSource.handler.getMeshSource({
@@ -269,7 +248,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
             onDelegateHooks.push(plugin.onDelegate);
           }
         }
-        inContextSDK = getInContextSDK(schema, rawSources, logger, onDelegateHooks);
+        inContextSDK = getInContextSDK(schema, rawSources, log, onDelegateHooks);
       }
       return inContextSDK;
     }),
@@ -283,7 +262,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                 for (const error of result.errors) {
                   const origError = getOriginalError(error);
                   if (origError) {
-                    logger.error(origError);
+                    log.error(origError.stack || origError.message);
                   }
                 }
               } else {
@@ -292,7 +271,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                   errors: result.errors.map(error => {
                     const origError = getOriginalError(error);
                     if (origError) {
-                      return createGraphQLError(error.message, {
+                      return new GraphQLError(error.message, {
                         ...error,
                         extensions: {
                           ...error.extensions,
@@ -376,7 +355,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       cache,
       pubsub,
       destroy: meshDestroy,
-      logger,
+      log,
       plugins,
       get getEnveloped() {
         return memoizedGetEnvelopedFactory(plugins);

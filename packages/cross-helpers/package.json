@@ -10,7 +10,7 @@
   "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=22.18.0"
   },
   "main": "node.js",
   "browser": "browser.js",
@@ -20,7 +20,7 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-tools/utils": "^12.1.0",
+    "@graphql-tools/utils": "^13.2.1",
     "path-browserify": "1.0.1"
   },
   "devDependencies": {

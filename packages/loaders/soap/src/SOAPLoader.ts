@@ -42,13 +42,8 @@ import { path, process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
-import {
-  defaultImportFn,
-  DefaultLogger,
-  readFileOrUrl,
-  sanitizeNameForGraphQL,
-} from '@graphql-mesh/utils';
+import type { MeshFetch } from '@graphql-mesh/types';
+import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import type {
   WSDLBinding,
@@ -67,11 +62,12 @@ import type {
 } from './types.js';
 import type { SoapAnnotations } from './utils.js';
 import { PARSE_XML_OPTIONS } from './utils.js';
+import { Logger } from '@graphql-hive/logger';
 
 export interface SOAPLoaderOptions {
   subgraphName: string;
   fetch?: MeshFetch;
-  logger?: Logger;
+  log?: Logger;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
   soapHeaders?: SOAPHeaders;
@@ -299,7 +295,7 @@ export class SOAPLoader {
   private schemaHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
   private fetchFn: MeshFetch;
   private subgraphName: string;
-  private logger: Logger;
+  private log: Logger;
   private endpoint?: string;
   private cwd: string;
   private soapHeaders: SOAPHeaders;
@@ -308,7 +304,7 @@ export class SOAPLoader {
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
-    this.logger = options.logger || new DefaultLogger(options.subgraphName);
+    this.log = options.log || new Logger({ prefix: options.subgraphName });
     this.subgraphName = options.subgraphName;
     this.loadXMLSchemaNamespace();
     this.schemaComposer.addDirective(soapDirective);
@@ -828,8 +824,7 @@ export class SOAPLoader {
       allowUnknownExtensions: true,
       cwd: this.cwd,
       fetch: this.fetchFn,
-      importFn: defaultImportFn,
-      logger: this.logger,
+      importFn: defaultImportFn, log: this.log,
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
     xsdText = xsdText.split('xmlns:').join('namespace:');
@@ -886,8 +881,7 @@ export class SOAPLoader {
       allowUnknownExtensions: true,
       cwd: this.cwd,
       fetch: this.fetchFn,
-      importFn: defaultImportFn,
-      logger: this.logger,
+      importFn: defaultImportFn, log: this.log,
       headers: this.schemaHeadersFactory({ env: process.env }),
     });
     await this.loadWSDL(wsdlText, resolved);
@@ -1102,9 +1096,9 @@ export class SOAPLoader {
               } as any;
             } else {
               if (elementObj.attributes?.ref) {
-                this.logger.warn(`element.ref isn't supported yet.`);
+                this.log.warn(`element.ref isn't supported yet.`);
               } else {
-                this.logger.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
+                this.log.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
               }
             }
           }
@@ -1332,9 +1326,9 @@ export class SOAPLoader {
               } as any;
             } else {
               if (elementObj.attributes?.ref) {
-                this.logger.warn(`element.ref isn't supported yet.`, elementObj.attributes?.ref);
+                this.log.warn(`element.ref isn't supported yet.`, elementObj.attributes?.ref);
               } else {
-                this.logger.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
+                this.log.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
               }
             }
           }

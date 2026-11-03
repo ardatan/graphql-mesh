@@ -41,7 +41,7 @@ if (!process.env.MESH_COMPOSE) {
 
   console.log(`Using cache plugin: ${cachePlugin}`);
   if (cachePlugin === 'HTTP Caching') {
-    config.plugins = ctx => [useHTTPCache(ctx)];
+    config.plugins = ctx => [useHTTPCache(ctx) as any];
   } else if (cachePlugin === 'Response Caching') {
     config.responseCaching = {
       session: () => null,

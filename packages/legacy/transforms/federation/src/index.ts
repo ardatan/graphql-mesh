@@ -11,12 +11,7 @@ import {
 } from 'graphql';
 import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type {
-  ImportFn,
-  MeshTransform,
-  MeshTransformOptions,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { ImportFn, MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import type { MergedTypeResolver, SubschemaConfig } from '@graphql-tools/delegate';
 import { MapperKind, mapSchema, printSchemaWithDirectives } from '@graphql-tools/utils';

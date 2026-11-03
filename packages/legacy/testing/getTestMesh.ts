@@ -7,7 +7,8 @@ import GraphQLHandler from '@graphql-mesh/graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { getMesh, type GetMeshOptions } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { Logger } from '@graphql-hive/logger';
 
 export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
   const yoga = createYoga({
@@ -40,7 +41,7 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
   });
   const cache = extraOptions?.cache || new InMemoryLRUCache();
   const pubsub = extraOptions?.pubsub || new PubSub();
-  const logger = extraOptions?.logger || new DefaultLogger('Test');
+  const log = extraOptions?.log || new Logger({ prefix: 'Test' });
   const store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
     readonly: false,
     validate: false,
@@ -60,7 +61,7 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
           cache,
           pubsub,
           store: store.child('sources/Yoga'),
-          logger,
+          log,
           importFn: defaultImportFn,
         }),
       },
@@ -71,7 +72,7 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
     merger: new StitchingMerger({
       cache,
       pubsub,
-      logger,
+      log,
       store: store.child('Stitching'),
     }),
     ...extraOptions,

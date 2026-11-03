@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql';
 import {
   buildASTSchema,
   buildClientSchema,
@@ -21,14 +22,10 @@ import {
 } from 'graphql';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { isUrl, readFile } from '@graphql-mesh/utils';
-import {
-  createGraphQLError,
-  isValidPath,
-  type ExecutionResult,
-  type MaybePromise,
-} from '@graphql-tools/utils';
+import { isValidPath, type ExecutionResult } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { LoaderContext, MeshComposeCLISourceHandlerDef } from './types.js';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
 export interface GraphQLSubgraphLoaderHTTPConfiguration {
   /**
@@ -313,8 +310,7 @@ export function loadGraphQLHTTPSubgraph(
               allowUnknownExtensions: true,
               cwd: ctx.cwd,
               fetch: ctx.fetch,
-              importFn: (p: string) => import(p),
-              logger: ctx.logger,
+              importFn: (p: string) => import(p), log: ctx.log,
             });
           }
           return source$;
@@ -346,7 +342,7 @@ export function loadGraphQLHTTPSubgraph(
               (result: ExecutionResult<IntrospectionQuery>) => {
                 if (result.errors) {
                   throw new AggregateError(
-                    result.errors.map(err => createGraphQLError(err.message, err)),
+                    result.errors.map(err => new GraphQLError(err.message, err)),
                     'Introspection Query Failed',
                   );
                 }
@@ -389,7 +385,7 @@ export function loadGraphQLHTTPSubgraph(
               (result: ExecutionResult) => {
                 if (result.errors) {
                   throw new AggregateError(
-                    result.errors.map(err => createGraphQLError(err.message, err)),
+                    result.errors.map(err => new GraphQLError(err.message, err)),
                     'Introspection Query Failed',
                   );
                 }

@@ -3,17 +3,11 @@ import RedisMock from 'ioredis-mock';
 import type { RedisOptions } from 'ioredis/built/redis/RedisOptions';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import {
-  toMeshPubSub,
-  type HivePubSub,
-  type KeyValueCache,
-  type KeyValueCacheSetOptions,
-  type Logger,
-  type MeshPubSub,
-  type YamlConfig,
-} from '@graphql-mesh/types';
+import { toMeshPubSub, type HivePubSub, type KeyValueCache, type KeyValueCacheSetOptions, type MeshPubSub, type YamlConfig } from '@graphql-mesh/types';
 import { trace, type Tracer } from '@opentelemetry/api';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import { Logger } from '@graphql-hive/logger';
+
 import {
   buildIamRedisOptions,
   setupIamAuthForCluster,
@@ -32,7 +26,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   private iamInitPromise?: Promise<void>;
 
   constructor(
-    options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub | HivePubSub; logger: Logger },
+    options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub | HivePubSub; log: Logger },
   ) {
     this.tracer = trace.getTracer('hive.cache.redis');
     this.tracer.startActiveSpan('hive.cache.redis.init', span => {
@@ -76,7 +70,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
               redisOptions,
               options.iamAuth,
               parsedUsername,
-              options.logger,
+              options.log,
             )
               .then(timer => {
                 this.iamRefreshTimer = timer;
@@ -125,7 +119,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
             redisUrl.searchParams.set('family', '6');
           }
           const urlStr = redisUrl.toString();
-          safelyLogURL(options.logger, urlStr);
+          safelyLogURL(options.log, urlStr);
           if (options.iamAuth) {
             const redisRef: { current: Redis | null } = { current: null };
             const connectorUsername = redisUrl.username || undefined;
@@ -142,7 +136,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
               redisRef,
               options.iamAuth,
               connectorUsername,
-              options.logger,
+              options.log,
             );
           } else {
             this.client = new Redis(urlStr);
@@ -162,7 +156,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
           const numPort = parseInt(parsedPort);
           const numDb = parseInt(parsedDb);
           if (parsedHost) {
-            options.logger.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
+            options.log.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
             const baseOpts: RedisOptions = {
               host: parsedHost,
               port: isNaN(numPort) ? undefined : numPort,
@@ -182,13 +176,13 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
                 redisRef,
                 options.iamAuth,
                 parsedUsername,
-                options.logger,
+                options.log,
               );
             } else {
               this.client = new Redis(baseOpts);
             }
           } else {
-            options.logger.debug(`Connecting to Redis mock`);
+            options.log.debug(`Connecting to Redis mock`);
             this.client = new RedisMock();
           }
         }

@@ -1,10 +1,11 @@
 import { setTimeout } from 'node:timers/promises';
 import { createMeshHTTPHandler } from '@graphql-mesh/http';
-import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { PubSub } from '@graphql-mesh/utils';
 import { Response } from '@whatwg-node/fetch';
 import { createDeferredPromise, fakePromise } from '@whatwg-node/promise-helpers';
 import { getTestMesh } from '../../../legacy/testing/getTestMesh';
 import useMeshHive from '../src';
+import { Logger } from '@graphql-hive/logger';
 
 describe('Hive', () => {
   it('does not hook into Node.js process', () => {
@@ -25,24 +26,24 @@ describe('Hive', () => {
   });
   it('does not leak when mesh instance is disposed', async () => {
     const pubsub = new PubSub();
-    const logger = new DefaultLogger();
+    const logger = new Logger();
     const reportDeferred = createDeferredPromise();
     await using mesh = await getTestMesh({
       pubsub,
-      logger,
+      log: logger,
       additionalEnvelopPlugins: [
         useMeshHive({
           enabled: true,
           token: 'FAKE_TOKEN',
           pubsub,
-          logger: {
+          log: {
             child: jest.fn().mockReturnThis(),
             info: jest.fn(),
             error: jest.fn(),
             warn: jest.fn(),
             debug: jest.fn(),
             log: jest.fn(),
-          },
+          } as any,
           agent: {
             fetch(url, init) {
               reportDeferred.resolve();

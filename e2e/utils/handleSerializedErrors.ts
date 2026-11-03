@@ -1,10 +1,10 @@
-import type { ExecutionResult } from 'graphql';
-import { createGraphQLError } from '@graphql-tools/utils';
+import { GraphQLError, type ExecutionResult } from 'graphql';
+;
 
 export function handleSerializedErrors(serializedResult: ExecutionResult) {
   if (serializedResult.errors?.length) {
     const coercedErrors = serializedResult.errors.map((error: any) =>
-      error instanceof Error ? error : createGraphQLError(error.message, error),
+      error instanceof Error ? error : new GraphQLError(error.message, error),
     );
     if (coercedErrors.length === 1) {
       throw coercedErrors[0];

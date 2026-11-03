@@ -1,9 +1,9 @@
-import type { GraphQLScalarType } from 'graphql';
+import { GraphQLError, GraphQLScalarType } from 'graphql';
 import lodashGet from 'lodash.get';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { withCancel } from '@graphql-mesh/utils';
-import { createGraphQLError } from '@graphql-tools/utils';
+;
 import type {
   CallOptions,
   ClientDuplexStream,
@@ -39,7 +39,7 @@ export function toGrpcGraphQLError(error: unknown) {
   const status = GrpcStatus[error.code] != null ? String(GrpcStatus[error.code]) : 'UNKNOWN';
   // Do not set `originalError` to the raw ServiceError — Envelop's maskedErrors
   // walks originalError and would treat a non-GraphQLError root as unexpected.
-  return createGraphQLError(error.message || status, {
+  return new GraphQLError(error.message || status, {
     extensions: {
       code: 'DOWNSTREAM_SERVICE_ERROR',
       grpc: {

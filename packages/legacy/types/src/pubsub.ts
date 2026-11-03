@@ -1,7 +1,7 @@
 import type { PubSub as HivePubSub } from '@graphql-hive/pubsub';
-import { isPromise, type MaybePromise } from '@graphql-tools/utils';
 import { Repeater } from '@repeaterjs/repeater';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import { isPromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 
 export type { HivePubSub };
 

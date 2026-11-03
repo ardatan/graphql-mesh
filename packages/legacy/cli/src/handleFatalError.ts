@@ -1,8 +1,8 @@
 import { process } from '@graphql-mesh/cross-helpers';
-import type { Logger } from '@graphql-mesh/types';
+import { Logger } from '@graphql-hive/logger';
 
-export function handleFatalError(e: Error, logger: Logger): any {
-  logger.error(e);
+export function handleFatalError(e: Error, log: Logger): any {
+  log.error(e);
   if (process.env.JEST == null) {
     process.exit(1);
   }

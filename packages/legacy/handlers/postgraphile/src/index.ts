@@ -7,17 +7,10 @@ import { getPostGraphileBuilder } from 'postgraphile-core';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type {
-  ImportFn,
-  Logger,
-  MeshHandler,
-  MeshHandlerOptions,
-  MeshPubSub,
-  MeshSource,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { ImportFn, MeshHandler, MeshHandlerOptions, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { Logger } from '@graphql-hive/logger';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -25,7 +18,7 @@ export default class PostGraphileHandler implements MeshHandler {
   private baseDir: string;
   private pubsub: MeshPubSub;
   private pgCache: any;
-  private logger: Logger;
+  private log: Logger;
   private importFn: ImportFn;
 
   constructor({
@@ -34,7 +27,7 @@ export default class PostGraphileHandler implements MeshHandler {
     baseDir,
     pubsub,
     store,
-    logger,
+    log,
     importFn,
   }: MeshHandlerOptions<YamlConfig.PostGraphileHandler>) {
     this.name = name;
@@ -42,7 +35,7 @@ export default class PostGraphileHandler implements MeshHandler {
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.pgCache = store.proxy('pgCache.json', PredefinedProxyOptions.JsonWithoutValidation);
-    this.logger = logger;
+    this.log = log;
     this.importFn = importFn;
   }
 
@@ -58,7 +51,7 @@ export default class PostGraphileHandler implements MeshHandler {
     }
 
     if (!pgPool || !('connect' in pgPool)) {
-      const pgLogger = this.logger.child('PostgreSQL');
+      const pgLogger = this.log.child('PostgreSQL');
       pgPool = new pg.Pool({
         connectionString: stringInterpolator.parse(this.config.connectionString, {
           env: process.env,
@@ -70,7 +63,7 @@ export default class PostGraphileHandler implements MeshHandler {
 
     const id = this.pubsub.subscribe('destroy', () => {
       this.pubsub.unsubscribe(id);
-      this.logger.debug('Destroying PostgreSQL pool');
+      this.log.debug('Destroying PostgreSQL pool');
       pgPool.end();
     });
 

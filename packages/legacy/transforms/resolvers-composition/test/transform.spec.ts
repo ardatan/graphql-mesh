@@ -5,7 +5,7 @@ import { PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import ResolversCompositionTransform, { type ResolversComposition } from '../src/index.js';
 
 describe('transform', () => {
@@ -26,7 +26,7 @@ describe('transform', () => {
       apiName: '',
       importFn: m => import(m),
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -69,7 +69,7 @@ describe('transform', () => {
       apiName: '',
       importFn: m => import(m),
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

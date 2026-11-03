@@ -9,7 +9,7 @@ import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../testing/dummyLogger';
 import { getMesh } from '../src/get-mesh.js';
 import type { MeshResolvedSource } from '../src/types.js';
 
@@ -30,7 +30,7 @@ describe('getMesh', () => {
       store,
       cache,
       pubsub,
-      logger,
+      log,
     });
     process.env.NODE_ENV = 'test';
   });
@@ -96,7 +96,7 @@ describe('getMesh', () => {
           source: `./schema${config.suffix}.ts`,
         },
         store,
-        logger,
+        log,
         async importFn(moduleId) {
           if (config.delayImport) {
             await new Promise(r => setTimeout(r, 1));
@@ -115,7 +115,7 @@ describe('getMesh', () => {
     const mesh = await getMesh({
       cache,
       pubsub,
-      logger,
+      log,
       sources: new Array(3).fill(0).map((_, i) =>
         createGraphQLSource({
           suffix: i.toString(),
@@ -169,7 +169,7 @@ describe('getMesh', () => {
     const mesh = await getMesh({
       cache,
       pubsub,
-      logger,
+      log,
       merger,
       sources: [
         createGraphQLSource({
@@ -220,11 +220,11 @@ describe('getMesh', () => {
 
   it('logs the unexpected errors with stack traces in production', async () => {
     process.env.NODE_ENV = 'production';
-    const errorLogSpy = jest.spyOn(logger, 'error');
+    const errorLogSpy = jest.spyOn(log, 'error');
     const mesh = await getMesh({
       cache,
       pubsub,
-      logger,
+      log,
       merger,
       sources: [
         createGraphQLSource({
@@ -270,7 +270,7 @@ describe('getMesh', () => {
       }
     `);
 
-    const firstErrorWithStack = errorLogSpy.mock.calls[0][0].stack;
+    const firstErrorWithStack = String(errorLogSpy.mock.calls[0][0]);
     expect(firstErrorWithStack).toContain('This is an error');
     expect(firstErrorWithStack).toContain('at Object.throwMe (');
   });
@@ -280,7 +280,7 @@ describe('getMesh', () => {
     const mesh = await getMesh({
       cache,
       pubsub,
-      logger,
+      log,
       merger,
       sources: [
         createGraphQLSource({
@@ -347,7 +347,7 @@ describe('getMesh', () => {
     const mesh1 = await getMesh({
       cache,
       pubsub,
-      logger,
+      log,
       sources,
       merger,
     });
@@ -355,7 +355,7 @@ describe('getMesh', () => {
     const mesh2 = await getMesh({
       cache,
       pubsub,
-      logger,
+      log,
       sources,
       merger,
     });
@@ -395,7 +395,7 @@ describe('getMesh', () => {
     const mesh = await getMesh({
       cache,
       pubsub,
-      logger,
+      log,
       sources: [
         {
           name: 'Foo',
@@ -403,7 +403,7 @@ describe('getMesh', () => {
             baseDir,
             cache,
             pubsub,
-            logger,
+            log,
             store,
             importFn: defaultImportFn,
             name: 'Foo',
@@ -427,7 +427,7 @@ describe('getMesh', () => {
             baseDir,
             cache,
             pubsub,
-            logger,
+            log,
             store,
             importFn: defaultImportFn,
             name: 'Bar',
@@ -449,7 +449,7 @@ describe('getMesh', () => {
       merger: new BareMerger({
         cache,
         pubsub,
-        logger,
+        log,
         store,
       }),
     });

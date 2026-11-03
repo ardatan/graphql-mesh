@@ -1,8 +1,9 @@
 import type { DocumentNode, GraphQLSchema } from 'graphql';
 import type { ComposeSubgraphsOptions } from '@graphql-mesh/fusion-composition';
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
-import type { MaybePromise } from '@graphql-tools/utils';
+import type { MeshFetch } from '@graphql-mesh/types';
 import type { fetch as defaultFetch } from '@whatwg-node/fetch';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import { Logger } from '@graphql-hive/logger';
 
 export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
   /**
@@ -36,7 +37,7 @@ export type MeshComposeCLITransformConfig = (input: GraphQLSchema, ...args: any[
 export interface LoaderContext {
   fetch: MeshFetch;
   cwd: string;
-  logger: Logger;
+  log: Logger;
 }
 
 /**

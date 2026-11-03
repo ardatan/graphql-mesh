@@ -1,7 +1,6 @@
-import { buildSchema, type FieldDefinitionNode } from 'graphql';
-import type { GraphQLError } from 'graphql/error';
+import { GraphQLError, buildSchema, type FieldDefinitionNode } from 'graphql';
 import { suggestionList } from '@graphql-mesh/fusion-composition';
-import { createGraphQLError, getDirectiveExtensions } from '@graphql-tools/utils';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 
 export class FatalCompositionError extends Error {
@@ -30,7 +29,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
           const subgraph = subgraphs.find(s => s.name === subgraphName);
           if (!subgraphName) {
             errors.push(
-              createGraphQLError(
+              new GraphQLError(
                 `Expected @merge directive on type ${typeName} to have a subgraph argument`,
                 {
                   nodes: type.astNode,
@@ -40,7 +39,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
             continue;
           } else if (!subgraph) {
             errors.push(
-              createGraphQLError(
+              new GraphQLError(
                 `@merge directive on type ${typeName} references unknown subgraph ${subgraphName}`,
                 {
                   nodes: type.astNode,
@@ -57,7 +56,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
           const subgraph = subgraphs.find(s => s.name === subgraphName);
           if (!subgraphName) {
             errors.push(
-              createGraphQLError(
+              new GraphQLError(
                 `Expected @resolveTo directive on type ${typeName} to have a sourceName argument`,
                 {
                   nodes: type.astNode,
@@ -67,7 +66,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
             continue;
           } else if (!subgraph) {
             errors.push(
-              createGraphQLError(
+              new GraphQLError(
                 `@resolveTo directive on type ${typeName} references unknown subgraph ${subgraphName}`,
                 {
                   nodes: type.astNode,
@@ -82,7 +81,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
             );
             if (!typeDef) {
               errors.push(
-                createGraphQLError(
+                new GraphQLError(
                   `@resolveTo directive on type ${typeName} references unknown type ${resolveToDirective.sourceTypeName} in subgraph ${subgraphName}`,
                   {
                     nodes: type.astNode,
@@ -103,7 +102,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
                 ? ` Did you mean "${suggestions.join(' or ')}"?`
                 : '';
               errors.push(
-                createGraphQLError(
+                new GraphQLError(
                   `@resolveTo directive on type ${typeName} references unknown field ${fieldName} in subgraph ${subgraphName} ${suggestionStr}`,
                   {
                     nodes: type.astNode,
@@ -126,7 +125,7 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
                     ? ` Did you mean "${suggestions.join(' or ')}"?`
                     : '';
                   errors.push(
-                    createGraphQLError(
+                    new GraphQLError(
                       `@resolveTo directive on type ${typeName} references unknown argument ${argName} in field ${fieldName} of subgraph ${subgraphName} ${suggestionStr}`,
                       {
                         nodes: type.astNode,

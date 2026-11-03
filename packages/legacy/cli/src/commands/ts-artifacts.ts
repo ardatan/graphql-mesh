@@ -13,7 +13,7 @@ import {
   generateIncontextSDKTypes,
   generateUnifiedContextTypeFromIdentifiers,
 } from '@graphql-mesh/incontext-sdk-codegen';
-import type { Logger, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
+import type { RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   pathExists,
@@ -24,6 +24,7 @@ import {
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
+import { Logger } from '@graphql-hive/logger';
 
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
 
@@ -170,7 +171,7 @@ export async function generateTsArtifacts(
     baseDir,
     meshConfigImportCodes,
     meshConfigCodes,
-    logger,
+    log,
     sdkConfig,
     fileType,
     codegenConfig = {},
@@ -185,7 +186,7 @@ export async function generateTsArtifacts(
     baseDir: string;
     meshConfigImportCodes: Set<string>;
     meshConfigCodes: Set<string>;
-    logger: Logger;
+    log: Logger;
     sdkConfig: YamlConfig.SDKConfig;
     fileType: 'ts' | 'json' | 'js';
     codegenConfig: any;
@@ -194,7 +195,7 @@ export async function generateTsArtifacts(
   cliParams: GraphQLMeshCLIParams,
 ) {
   const artifactsDir = pathModule.join(baseDir, cliParams.artifactsDir);
-  logger.info('Generating index file in TypeScript');
+  log.info('Generating index file in TypeScript');
   for (const rawSource of rawSources) {
     const transformedSchema = (unifiedSchema.extensions as any).sourceMap.get(rawSource);
     const sdl = printSchemaWithDirectives(transformedSchema);
@@ -450,7 +451,7 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
   const dtsFilePath = pathModule.join(artifactsDir, 'index.d.ts');
 
   const esmJob = (ext: 'mjs' | 'js') => async () => {
-    logger.info('Writing index.ts for ESM to the disk.');
+    log.info('Writing index.ts for ESM to the disk.');
     await writeFile(
       tsFilePath,
       codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, endpointAssignmentESM),
@@ -462,7 +463,7 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
     }
 
     if (fileType !== 'ts') {
-      logger.info(`Compiling TS file as ES Module to "index.${ext}"`);
+      log.info(`Compiling TS file as ES Module to "index.${ext}"`);
       compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
 
       if (ext === 'mjs') {
@@ -470,13 +471,13 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
         await fs.promises.rename(jsFilePath, mjsFilePath);
       }
 
-      logger.info('Deleting index.ts');
+      log.info('Deleting index.ts');
       await fs.promises.unlink(tsFilePath);
     }
   };
 
   const cjsJob = async () => {
-    logger.info('Writing index.ts for CJS to the disk.');
+    log.info('Writing index.ts for CJS to the disk.');
     await writeFile(
       tsFilePath,
       codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, endpointAssignmentCJS),
@@ -486,10 +487,10 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
       await fs.promises.unlink(jsFilePath);
     }
     if (fileType !== 'ts') {
-      logger.info('Compiling TS file as CommonJS Module to `index.js`');
+      log.info('Compiling TS file as CommonJS Module to `index.js`');
       compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
 
-      logger.info('Deleting index.ts');
+      log.info('Deleting index.ts');
       await fs.promises.unlink(tsFilePath);
     }
   };

@@ -8,7 +8,7 @@ import {
   isUnionType,
 } from 'graphql';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
-import type { HivePubSub, Logger, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
+import type { HivePubSub, MeshFetch, MeshPubSub } from '@graphql-mesh/types';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processDictionaryDirective } from './dictionary.js';
@@ -24,10 +24,11 @@ import { processResolveRootFieldAnnotations } from './resolveRootField.js';
 import { processResponseMetadataAnnotations } from './responseMetadata.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
+import { Logger } from '@graphql-hive/logger';
 
 export interface ProcessDirectiveArgs {
   pubsub?: MeshPubSub | HivePubSub;
-  logger?: Logger;
+  log?: Logger;
   globalFetch?: MeshFetch;
   endpoint?: string;
   timeout?: number;
@@ -37,7 +38,7 @@ export interface ProcessDirectiveArgs {
 
 export function processDirectives(
   schema: GraphQLSchema,
-  { globalFetch, logger, pubsub, ...extraGlobalOptions }: ProcessDirectiveArgs = {},
+  { globalFetch, log, pubsub, ...extraGlobalOptions }: ProcessDirectiveArgs = {},
 ) {
   const nonExecutableObjMapScalar = schema.getType('ObjMap');
   if (nonExecutableObjMapScalar && isScalarType(nonExecutableObjMapScalar)) {
@@ -179,7 +180,7 @@ export function processDirectives(
                 field: field as GraphQLField<any, any>,
                 pubsubTopic: directiveAnnotation.args.pubsubTopic,
                 globalPubsub: pubsub,
-                logger,
+                log,
               });
               break;
             case 'httpOperation': {
@@ -197,7 +198,7 @@ export function processDirectives(
               addHTTPRootFieldResolver(
                 schema,
                 field as GraphQLField<any, any>,
-                logger,
+                log,
                 globalFetch,
                 // TODO: Fix JSON parsing here for queryParams and headers
                 {

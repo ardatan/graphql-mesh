@@ -7,10 +7,11 @@ import {
   getDriverFromOpts,
   getExecutableSchemaFromTypeDefsAndDriver,
 } from '@graphql-mesh/transport-neo4j';
-import type { HivePubSub, Logger, MeshPubSub } from '@graphql-mesh/types';
+import type { HivePubSub, MeshPubSub } from '@graphql-mesh/types';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
+import { Logger } from '@graphql-hive/logger';
 
 function createAddIntrospectionDirective(subgraph: string) {
   return function addIntrospectionDirective<
@@ -52,22 +53,22 @@ export interface LoadGraphQLSchemaFromNeo4JOpts {
   database?: string;
   auth?: Neo4JAuthOpts;
   pubsub?: MeshPubSub | HivePubSub;
-  logger?: Logger;
+  log?: Logger;
   driver?: Driver;
 }
 
 export async function loadGraphQLSchemaFromNeo4J(
   subgraphName: string,
-  { endpoint, auth, logger, pubsub, database = 'neo4j', driver }: LoadGraphQLSchemaFromNeo4JOpts,
+  { endpoint, auth, log, pubsub, database = 'neo4j', driver }: LoadGraphQLSchemaFromNeo4JOpts,
 ) {
-  logger?.info('Inferring the schema from the database: ', `"${database}"`);
+  log?.info('Inferring the schema from the database: ', `"${database}"`);
   let closeDriverAfter = false;
   if (!driver) {
     closeDriverAfter = !pubsub;
     driver = getDriverFromOpts({
       endpoint,
       auth,
-      logger,
+      log,
     });
   }
   polyfillStrReplaceAll();

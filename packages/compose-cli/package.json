@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=22.18.0"
   },
   "bin": {
     "mesh-compose": "dist/esm/bin.js"
@@ -40,17 +40,18 @@
   "dependencies": {
     "@commander-js/extra-typings": "^15.0.0",
     "@graphql-hive/importer": "^2.0.0",
+    "@graphql-hive/logger": "^1.1.1",
     "@graphql-mesh/fusion-composition": "^0.11.4",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/code-file-loader": "^8.1.41",
-    "@graphql-tools/graphql-file-loader": "^8.1.22",
-    "@graphql-tools/load": "^8.1.19",
-    "@graphql-tools/schema": "^10.1.3",
-    "@graphql-tools/utils": "^12.1.0",
-    "@whatwg-node/fetch": "^0.10.6",
-    "@whatwg-node/promise-helpers": "^1.0.0",
+    "@graphql-tools/code-file-loader": "^9.1.1",
+    "@graphql-tools/graphql-file-loader": "^9.1.1",
+    "@graphql-tools/load": "^9.1.1",
+    "@graphql-tools/schema": "^11.0.8",
+    "@graphql-tools/utils": "^13.2.1",
+    "@whatwg-node/fetch": "^0.12.1",
+    "@whatwg-node/promise-helpers": "^2.0.1",
     "commander": "^15.0.0",
     "dotenv": "^17.4.2"
   },

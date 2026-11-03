@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=22.18.0"
   },
   "bin": {
     "mesh-migrate-config": "dist/cjs/bin.js"

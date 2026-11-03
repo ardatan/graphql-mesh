@@ -5,15 +5,16 @@ import { processConfig } from '@graphql-mesh/config';
 import { path, process } from '@graphql-mesh/cross-helpers';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { jsonSchema } from '@graphql-mesh/types';
-import { DefaultLogger, loadYaml } from '@graphql-mesh/utils';
+import { loadYaml } from '@graphql-mesh/utils';
 import { include } from './include.js';
+import { Logger } from '@graphql-hive/logger';
 
 export function validateConfig(
   config: any,
   filepath: string,
   initialLoggerPrefix: string,
   throwOnInvalidConfig = false,
-  logger = new DefaultLogger(initialLoggerPrefix).child('config'),
+  log = new Logger({ prefix: initialLoggerPrefix }).child('config'),
 ): asserts config is YamlConfig.Config {
   if (jsonSchema) {
     const ajv = new Ajv({
@@ -33,9 +34,9 @@ export function validateConfig(
         );
         throw aggregateError;
       }
-      logger = logger.child('config');
-      logger.warn('Configuration file is not valid!');
-      logger.warn("This is just a warning! It doesn't have any effects on runtime.");
+      log = log.child('config');
+      log.warn('Configuration file is not valid!');
+      log.warn("This is just a warning! It doesn't have any effects on runtime.");
       ajv.errors.forEach(error => {
         let errorMessage = '';
         if (error.propertyName) {
@@ -45,7 +46,7 @@ export function validateConfig(
           errorMessage += `Given: ${error.data} \n`;
         }
         errorMessage += `Error: ${error.message}`;
-        logger.warn(errorMessage);
+        log.warn(errorMessage);
       });
     }
   }
@@ -101,7 +102,7 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
     dir: configDir = '',
     initialLoggerPrefix = '',
     importFn,
-    logger = new DefaultLogger(initialLoggerPrefix),
+    log = new Logger({ prefix: initialLoggerPrefix }),
     ...restOptions
   } = options || {};
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
@@ -139,13 +140,13 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
     results.filepath,
     initialLoggerPrefix,
     restOptions.throwOnInvalidConfig,
-    logger,
+    log,
   );
-  return processConfig(config, { dir, initialLoggerPrefix, importFn, logger, ...restOptions });
+  return processConfig(config, { dir, initialLoggerPrefix, importFn, log, ...restOptions });
 }
 
 function customLoader(ext: 'json' | 'yaml' | 'js', importFn = include, initialLoggerPrefix = '') {
-  const logger = new DefaultLogger(initialLoggerPrefix).child('config');
+  const log = new Logger({ prefix: initialLoggerPrefix }).child('config');
   function loader(filepath: string, content: string) {
     if (process.env) {
       content = content.replace(/\$\{(.*?)\}/g, (_, variable) => {
@@ -167,7 +168,7 @@ function customLoader(ext: 'json' | 'yaml' | 'js', importFn = include, initialLo
     }
 
     if (ext === 'yaml') {
-      return loadYaml(filepath, content, logger);
+      return loadYaml(filepath, content, log);
     }
 
     if (ext === 'js') {

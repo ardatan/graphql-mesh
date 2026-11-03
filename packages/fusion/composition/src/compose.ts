@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql';
 import type {
   DirectiveNode,
   GraphQLArgumentConfig,
@@ -16,14 +17,7 @@ import {
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
-import {
-  createGraphQLError,
-  getDirectiveExtensions,
-  getDocumentNodeFromSchema,
-  MapperKind,
-  mapSchema,
-  type FieldMapper,
-} from '@graphql-tools/utils';
+import { getDirectiveExtensions, getDocumentNodeFromSchema, MapperKind, mapSchema, type FieldMapper } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import {

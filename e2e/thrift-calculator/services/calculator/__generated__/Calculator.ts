@@ -6,7 +6,7 @@
 */
 import * as thrift from "@creditkarma/thrift-server-core";
 import * as AddRequest from "./AddRequest";
-import { fakePromise } from '@graphql-tools/utils';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 
 export const serviceName: string = "Calculator";
 export const annotations: thrift.IThriftAnnotations = {};

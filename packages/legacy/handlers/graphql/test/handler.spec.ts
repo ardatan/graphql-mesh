@@ -14,7 +14,7 @@ import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as fetchFn } from '@whatwg-node/fetch';
 import { createDisposableServer } from '../../../../testing/createDisposableServer.js';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger.js';
+import { dummyLogger as log} from '../../../../testing/dummyLogger.js';
 import GraphQLHandler from '../src/index.js';
 
 const { readFile } = fsPromises;
@@ -40,7 +40,7 @@ describe('graphql', () => {
       pubsub: new PubSub(),
       store,
       importFn: defaultImportFn,
-      logger,
+      log,
     });
     const absoluteFilePath = join(__dirname, sdlFilePath);
     const schemaStringFromFile = await readFile(absoluteFilePath, 'utf-8');
@@ -64,7 +64,7 @@ describe('graphql', () => {
       pubsub: new PubSub(),
       store,
       importFn: defaultImportFn,
-      logger,
+      log,
     });
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaFromFile = require(absoluteFilePath);
@@ -87,7 +87,7 @@ describe('graphql', () => {
       pubsub: new PubSub(),
       store,
       importFn: defaultImportFn,
-      logger,
+      log,
     });
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaDocumentFromFile = require(absoluteFilePath);
@@ -111,7 +111,7 @@ describe('graphql', () => {
       pubsub: new PubSub(),
       store,
       importFn: defaultImportFn,
-      logger,
+      log,
     });
     const absoluteFilePath = join(__dirname, schemaFilePath);
     const schemaStringFromFile = require(absoluteFilePath);
@@ -186,7 +186,7 @@ describe('graphql', () => {
       pubsub: new PubSub(),
       store,
       importFn: defaultImportFn,
-      logger,
+      log,
     });
     const { schema, executor } = await handler.getMeshSource({
       fetchFn,

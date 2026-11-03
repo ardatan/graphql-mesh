@@ -54,7 +54,7 @@ import {
 } from 'graphql-scalars';
 import type { JSONSchema, JSONSchemaObject } from 'json-machete';
 import { visitJSONSchema } from 'json-machete';
-import type { Logger } from '@graphql-mesh/types';
+
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import {
   DictionaryDirective,
@@ -73,6 +73,7 @@ import { getJSONSchemaStringFormatScalarMap } from './getJSONSchemaStringFormatS
 import { getUnionTypeComposers } from './getUnionTypeComposers.js';
 import { getValidTypeName } from './getValidTypeName.js';
 import { GraphQLFile, GraphQLVoid } from './scalars.js';
+import { Logger } from '@graphql-hive/logger';
 
 export interface TypeComposers {
   input?: AnyTypeComposer<any>;
@@ -107,7 +108,7 @@ const formatScalarMapWithoutAjv: Record<string, GraphQLScalarType> = {
 export interface GetComposerFromJSONSchemaOpts {
   subgraphName: string;
   schema: JSONSchema;
-  logger: Logger;
+  log: Logger;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
 }
 
@@ -224,7 +225,7 @@ function isJsonPrimitiveSchema(schema: JSONSchemaObject): boolean {
 export function getComposerFromJSONSchema({
   subgraphName,
   schema,
-  logger,
+  log,
   getScalarForFormat,
 }: GetComposerFromJSONSchemaOpts): Promise<TypeComposers> {
   const schemaComposer = new SchemaComposer();
@@ -1038,7 +1039,7 @@ export function getComposerFromJSONSchema({
               }),
             ) as any[],
             subSchemaAndTypeComposers,
-            logger,
+            log,
           });
           return {
             input: input.getTypePlural(),
@@ -1059,7 +1060,7 @@ export function getComposerFromJSONSchema({
           schemaComposer,
           typeComposersList: subSchemaAndTypeComposers.oneOf as any[],
           subSchemaAndTypeComposers,
-          logger,
+          log,
         });
       }
 
@@ -1686,7 +1687,7 @@ export function getComposerFromJSONSchema({
           deprecated: subSchemaAndTypeComposers.deprecated,
         };
       } else {
-        logger.debug(`GraphQL Type cannot be created for this JSON Schema definition;`, {
+        log.debug(`GraphQL Type cannot be created for this JSON Schema definition;`, {
           subSchema: subSchemaOnly,
           path,
         });

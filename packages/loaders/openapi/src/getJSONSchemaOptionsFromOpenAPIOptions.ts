@@ -9,14 +9,9 @@ import {
   getInterpolationKeys,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
-import {
-  defaultImportFn,
-  DefaultLogger,
-  readFileOrUrl,
-  sanitizeNameForGraphQL,
-} from '@graphql-mesh/utils';
-import { asArray, createDeferred } from '@graphql-tools/utils';
+import type { MeshFetch } from '@graphql-mesh/types';
+import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { asArray } from '@graphql-tools/utils';
 import type {
   HTTPMethod,
   JSONSchemaHTTPJSONOperationConfig,
@@ -27,6 +22,7 @@ import type {
 } from '@omnigraph/json-schema';
 import type { SelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
+import { Logger } from '@graphql-hive/logger';
 
 function mimeType(contentType: string): string {
   return contentType.split(';')[0].trim().toLowerCase();
@@ -104,7 +100,7 @@ interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
   operationHeaders?: OperationHeadersConfiguration;
   queryParams?: Record<string, any>;
   selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
-  logger?: Logger;
+  log?: Logger;
   jsonApi?: boolean;
   HATEOAS?: Partial<HATEOASConfig> | boolean;
 }
@@ -148,7 +144,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     operationHeaders,
     queryParams = {},
     selectQueryOrMutationField = [],
-    logger = new DefaultLogger('getJSONSchemaOptionsFromOpenAPIOptions'),
+    log = new Logger({ prefix: 'getJSONSchemaOptionsFromOpenAPIOptions' }),
     jsonApi,
     HATEOAS,
   }: GetJSONSchemaOptionsFromOpenAPIOptionsParams,
@@ -177,7 +173,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     fieldTypeMap[fieldName] = type;
   }
   const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
-  logger?.debug(`Fetching OpenAPI Document from ${source}`);
+  log?.debug(`Fetching OpenAPI Document from ${source}`);
   let oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document;
   const readFileOrUrlForJsonMachete = (path: string, opts: { cwd: string }) =>
     readFileOrUrl(path, {
@@ -185,7 +181,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       fetch: fetchFn,
       headers: schemaHeadersFactory({ env: process.env }),
       importFn: defaultImportFn,
-      logger,
+      log,
       fallbackFormat,
     });
   if (typeof source === 'string') {
@@ -196,14 +192,14 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
       {
         cwd,
         readFileOrUrl: readFileOrUrlForJsonMachete,
-        debugLogFn: logger.debug.bind(logger),
+        debugLogFn: log.debug.bind(log),
       },
     )) as any;
   } else {
     oasOrSwagger = await dereferenceObject(source, {
       cwd,
       readFileOrUrl: readFileOrUrlForJsonMachete,
-      debugLogFn: logger.debug.bind(logger),
+      debugLogFn: log.debug.bind(log),
     });
   }
 
@@ -322,16 +318,16 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           : resolvePath(ref.refPath, oasOrSwagger) ||
             lookInUnionBranchesByResolvedRef(schema, ref.refPath);
         if (!resolvedSchema) {
-          logger.warn(`Invalid discriminator mapping: ${value}`);
+          log.warn(`Invalid discriminator mapping: ${value}`);
           continue;
         }
         ensureDiscriminatorMapping(schema)[key] = resolvedSchema;
       } else if (value.includes('/')) {
-        logger.warn(`Unsupported discriminator mapping: ${value}`);
+        log.warn(`Unsupported discriminator mapping: ${value}`);
       } else {
         const schemaObj = lookFromMaps(oasOrSwagger, value);
         if (!schemaObj) {
-          logger.warn(`Invalid discriminator mapping: ${value}`);
+          log.warn(`Invalid discriminator mapping: ${value}`);
           continue;
         }
         ensureDiscriminatorMapping(schema)[key] = schemaObj;
@@ -722,7 +718,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                         'comma';
                       break;
                     }
-                    logger.warn(
+                    log.warn(
                       `Other styles including ${paramObj.style} of query parameters are not supported yet.`,
                     );
                 }
@@ -1022,7 +1018,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 const xLinkHref = xLinkObj[hateOasConfig.linkPathIdentifier];
                 // Remove query parameters and path parameters for comparison
                 const cleanXLinkHref = xLinkHref.split('?')[0].replace(/{[^}]+}/g, '{}');
-                const deferred = createDeferred<void>();
+                const deferred = Promise.withResolvers<void>();
                 function findActualOperationAndPath(
                   possibleName: string,
                   possibleOasDoc: typeof oasOrSwagger,
@@ -1123,7 +1119,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 // Only set timeout if we're not in batch mode (no context provided)
                 if (!hateoasContext) {
                   setTimeout(() => {
-                    logger.warn(
+                    log.warn(
                       `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
                     );
                     contextFutureLinks.delete(findActualOperationAndPath);
@@ -1178,7 +1174,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
             if ('operationRef' in linkObj) {
               const [externalPath, ref] = linkObj.operationRef.split('#');
               if (externalPath) {
-                logger.debug(
+                log.debug(
                   `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`,
                 );
               } else {
@@ -1358,8 +1354,8 @@ export async function getJSONSchemaOptionsFromMultipleOpenAPIOptions(
 
   // Log remaining unresolved links
   if (hateoasContext.futureLinks.size > 0) {
-    const logger = new DefaultLogger('getJSONSchemaOptionsFromMultipleOpenAPIOptions');
-    logger.warn(
+    const log = new Logger({ prefix: 'getJSONSchemaOptionsFromMultipleOpenAPIOptions' });
+    log.warn(
       `${hateoasContext.futureLinks.size} HATEOAS links could not be resolved after loading all schemas. This may indicate missing operations or circular dependencies.`,
     );
   }

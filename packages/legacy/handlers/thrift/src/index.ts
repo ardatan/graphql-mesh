@@ -1,23 +1,16 @@
 import type { GraphQLSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type {
-  GetMeshSourcePayload,
-  ImportFn,
-  Logger,
-  MeshHandler,
-  MeshHandlerOptions,
-  MeshSource,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshHandler, MeshHandlerOptions, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { getThriftExecutor, loadNonExecutableGraphQLSchemaFromIDL } from '@omnigraph/thrift';
+import { Logger } from '@graphql-hive/logger';
 
 export default class ThriftHandler implements MeshHandler {
   private config: YamlConfig.ThriftHandler;
   private baseDir: string;
   private sdl: StoreProxy<GraphQLSchema>;
   private importFn: ImportFn;
-  private logger: Logger;
+  private log: Logger;
   private subgraphName: string;
 
   constructor({
@@ -25,7 +18,7 @@ export default class ThriftHandler implements MeshHandler {
     baseDir,
     store,
     importFn,
-    logger,
+    log,
     name,
   }: MeshHandlerOptions<YamlConfig.ThriftHandler>) {
     this.subgraphName = name;
@@ -36,7 +29,7 @@ export default class ThriftHandler implements MeshHandler {
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   private buildEndpointUrl() {
@@ -54,8 +47,7 @@ export default class ThriftHandler implements MeshHandler {
         operationHeaders: this.config.operationHeaders,
         serviceName: this.config.serviceName,
         baseDir: this.baseDir,
-        fetchFn,
-        logger: this.logger,
+        fetchFn, log: this.log,
         importFn: this.importFn,
       }),
     );

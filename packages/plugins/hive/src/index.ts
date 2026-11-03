@@ -1,13 +1,14 @@
 import { createHive, useHive } from '@graphql-hive/yoga';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshFetch, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import type { MeshFetch, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import { Logger } from '@graphql-hive/logger';
 
 type HivePluginOptions = Parameters<typeof createHive>[0];
 
 export default function useMeshHive<TContext>(
   pluginOptions: YamlConfig.HivePlugin & {
-    logger?: Logger;
+    log?: Logger;
     pubsub?: MeshPubSub;
     fetch?: MeshFetch;
   },
@@ -21,7 +22,7 @@ export default function useMeshHive<TContext>(
       : true;
 
   if (!enabled) {
-    pluginOptions.logger?.warn('Plugin is disabled');
+    pluginOptions.log?.warn('Plugin is disabled');
     return {};
   }
 
@@ -29,12 +30,12 @@ export default function useMeshHive<TContext>(
     env: process.env,
   });
   if (token) {
-    pluginOptions.logger?.info('Reporting enabled');
+    pluginOptions.log?.info('Reporting enabled');
   }
 
   const persistedDocuments = pluginOptions.persistedDocuments;
   if (persistedDocuments) {
-    pluginOptions.logger?.info('Persisted documents enabled');
+    pluginOptions.log?.info('Persisted documents enabled');
     persistedDocuments.fetch ||= pluginOptions.fetch;
   }
 
@@ -81,7 +82,7 @@ export default function useMeshHive<TContext>(
   }
   let agent: HivePluginOptions['agent'] = {
     name: 'graphql-mesh',
-    logger: pluginOptions.logger,
+    logger: pluginOptions.log,
   };
   if (pluginOptions.agent) {
     agent = {
@@ -91,7 +92,7 @@ export default function useMeshHive<TContext>(
       minTimeout: pluginOptions.agent.minTimeout,
       sendInterval: pluginOptions.agent.sendInterval,
       maxSize: pluginOptions.agent.maxSize,
-      logger: pluginOptions.agent?.logger || pluginOptions.logger,
+      logger: pluginOptions.agent?.logger || pluginOptions.log,
       fetch: pluginOptions.agent?.fetch,
     };
   }
@@ -122,13 +123,14 @@ export default function useMeshHive<TContext>(
     reporting,
     selfHosting,
     persistedDocuments,
+    logger: pluginOptions.log,
   };
   const client = createHive(yogaPluginOpts);
   // Destroy the Hive client when the Mesh instance is destroyed
   const id = pluginOptions.pubsub?.subscribe('destroy', () => {
     client
       .dispose()
-      .catch(e => pluginOptions.logger?.error('Error disposing Hive client', e))
+      .catch(e => pluginOptions.log?.error('Error disposing Hive client', e))
       .finally(() => pluginOptions.pubsub?.unsubscribe(id));
   });
   // @ts-expect-error - Typings are incorrect

@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // eslint-disable-next-line import/no-nodejs-modules
 import { Console } from 'console';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import { ConsoleLogWriter, Logger } from '@graphql-hive/logger';
 import { run } from './run.js';
 
-const log = new DefaultLogger(undefined, undefined, undefined, new Console(process.stderr));
+const log = new Logger({
+  writers: [new ConsoleLogWriter({ console: new Console(process.stderr) })],
+});
 
 run({ log }).catch(err => {
   log.error(err);

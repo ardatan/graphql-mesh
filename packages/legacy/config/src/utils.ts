@@ -1,21 +1,17 @@
 import { paramCase } from 'param-case';
 import { path } from '@graphql-mesh/cross-helpers';
 import type { MeshStore } from '@graphql-mesh/store';
-import type {
-  ImportFn,
-  KeyValueCache,
-  Logger,
-  MeshFetch,
-  MeshPubSub,
-  YamlConfig,
-} from '@graphql-mesh/types';
-import { DefaultLogger, parseWithCache, PubSub } from '@graphql-mesh/utils';
+import type { ImportFn, KeyValueCache, MeshFetch, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import { parseWithCache, PubSub } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import type { Source as GraphQLToolsSource } from '@graphql-tools/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { crypto, fetch as defaultFetch, TextEncoder } from '@whatwg-node/fetch';
+import { fetch as defaultFetch, TextEncoder } from '@whatwg-node/fetch';
+import { Logger } from '@graphql-hive/logger';
+
+const crypto = globalThis.crypto;
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -148,7 +144,7 @@ export async function resolveCache(
   rootStore: MeshStore,
   cwd: string,
   pubsub: MeshPubSub,
-  logger: Logger,
+  log: Logger,
   additionalPackagePrefixes: string[],
 ): Promise<{
   cache: KeyValueCache;
@@ -170,7 +166,7 @@ export async function resolveCache(
     importFn,
     store: rootStore.child('cache'),
     pubsub,
-    logger,
+    log,
   });
 
   const code = `const MeshCache = await import(${JSON.stringify(moduleName)}).then(handleImport);
@@ -179,7 +175,7 @@ export async function resolveCache(
       importFn,
       store: rootStore.child('cache'),
       pubsub,
-      logger,
+      log,
     })`;
 
   return {
@@ -262,10 +258,10 @@ export async function resolveLogger(
 ): Promise<{
   importCode: string;
   code: string;
-  logger: Logger;
+  log: Logger;
 }> {
   if (loggerConfig) {
-    const { moduleName, resolved: logger } = await getPackage<Logger>({
+    const { moduleName, resolved: log } = await getPackage<Logger>({
       name: loggerConfig,
       type: 'logger',
       importFn,
@@ -278,16 +274,16 @@ export async function resolveLogger(
       : moduleName;
 
     return {
-      logger,
+      log,
       importCode: ``,
-      code: `const logger = await import(${JSON.stringify(processedModuleName)}).then(handleImport);`,
+      code: `const log = await import(${JSON.stringify(processedModuleName)}).then(handleImport);`,
     };
   }
-  const logger = new DefaultLogger(initialLoggerPrefix);
+  const log = new Logger({ prefix: initialLoggerPrefix });
   return {
-    logger,
-    importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
-    code: `const logger = new DefaultLogger(${JSON.stringify(initialLoggerPrefix)});`,
+    log,
+    importCode: `import { Logger } from '@graphql-hive/logger';`,
+    code: `const log = new Logger({ prefix: ${JSON.stringify(initialLoggerPrefix)} });`,
   };
 }
 

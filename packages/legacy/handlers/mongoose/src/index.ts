@@ -4,16 +4,9 @@ import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-
 import type { ConnectOptions, Document, Model } from 'mongoose';
 import { connect, disconnect } from 'mongoose';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type {
-  ImportFn,
-  Logger,
-  MeshHandler,
-  MeshHandlerOptions,
-  MeshPubSub,
-  MeshSource,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { ImportFn, MeshHandler, MeshHandlerOptions, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { Logger } from '@graphql-hive/logger';
 
 const modelQueryOperations = [
   'findById',
@@ -43,7 +36,7 @@ export default class MongooseHandler implements MeshHandler {
   private baseDir: string;
   private pubsub: MeshPubSub;
   private importFn: ImportFn;
-  private logger: Logger;
+  private log: Logger;
 
   constructor({
     name,
@@ -51,13 +44,13 @@ export default class MongooseHandler implements MeshHandler {
     baseDir,
     pubsub,
     importFn,
-    logger,
+    log,
   }: MeshHandlerOptions<YamlConfig.MongooseHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -68,11 +61,11 @@ export default class MongooseHandler implements MeshHandler {
       connect(interpolatedConnectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-      } as ConnectOptions).catch(e => this.logger.error(e));
+      } as ConnectOptions).catch(e => this.log.error(e));
 
       const id = this.pubsub.subscribe('destroy', () => {
         disconnect()
-          .catch(e => this.logger.error(e))
+          .catch(e => this.log.error(e))
           .finally(() => this.pubsub.unsubscribe(id));
       });
     }

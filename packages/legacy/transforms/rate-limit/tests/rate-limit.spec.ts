@@ -6,7 +6,7 @@ import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import RateLimitTransform from '../src/index.js';
 
 describe('Rate Limit Transform', () => {
@@ -57,7 +57,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
-      logger,
+      log,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -126,7 +126,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
-      logger,
+      log,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -192,7 +192,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
-      logger,
+      log,
     });
     const wrappedSchema = wrapSchema({
       schema,
@@ -272,7 +272,7 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
-      logger,
+      log,
     });
 
     const wrappedSchema = wrapSchema({

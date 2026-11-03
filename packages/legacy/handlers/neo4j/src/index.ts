@@ -2,26 +2,17 @@ import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type {
-  GetMeshSourcePayload,
-  ImportFn,
-  Logger,
-  MeshFetch,
-  MeshHandler,
-  MeshHandlerOptions,
-  MeshPubSub,
-  MeshSource,
-  YamlConfig,
-} from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { dispose, isDisposable, readFileOrUrl } from '@graphql-mesh/utils';
 import { getDriverFromOpts, getNeo4JExecutor, loadGraphQLSchemaFromNeo4J } from '@omnigraph/neo4j';
+import { Logger } from '@graphql-hive/logger';
 
 export default class Neo4JHandler implements MeshHandler {
   private config: YamlConfig.Neo4JHandler;
   private baseDir: string;
   private pubsub: MeshPubSub;
   private schema: StoreProxy<GraphQLSchema>;
-  private logger: Logger;
+  private log: Logger;
   private name: string;
   fetchFn: MeshFetch;
   importFn: ImportFn;
@@ -32,7 +23,7 @@ export default class Neo4JHandler implements MeshHandler {
     baseDir,
     pubsub,
     store,
-    logger,
+    log,
     importFn,
   }: MeshHandlerOptions<YamlConfig.Neo4JHandler>) {
     this.name = name;
@@ -40,7 +31,7 @@ export default class Neo4JHandler implements MeshHandler {
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.schema = store.proxy('schema.graphql', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
-    this.logger = logger;
+    this.log = log;
     this.importFn = importFn;
   }
 
@@ -51,8 +42,7 @@ export default class Neo4JHandler implements MeshHandler {
           cwd: this.baseDir,
           allowUnknownExtensions: true,
           importFn: this.importFn,
-          fetch: this.fetchFn,
-          logger: this.logger,
+          fetch: this.fetchFn, log: this.log,
         });
         return buildSchema(typeDefs, {
           noLocation: true,
@@ -67,8 +57,7 @@ export default class Neo4JHandler implements MeshHandler {
             type: 'basic',
             username: this.config.username,
             password: this.config.password,
-          },
-          logger: this.logger,
+          }, log: this.log,
           pubsub: this.pubsub,
           database: this.config.database,
         });
@@ -88,8 +77,7 @@ export default class Neo4JHandler implements MeshHandler {
           type: 'basic',
           username: this.config.username,
           password: this.config.password,
-        },
-        logger: this.logger,
+        }, log: this.log,
       });
     }
 
@@ -98,8 +86,7 @@ export default class Neo4JHandler implements MeshHandler {
     const executor = await getNeo4JExecutor({
       schema,
       driver,
-      pubsub: this.pubsub,
-      logger: this.logger,
+      pubsub: this.pubsub, log: this.log,
     });
 
     if (isDisposable(executor)) {

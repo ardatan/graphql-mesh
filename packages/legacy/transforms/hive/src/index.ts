@@ -13,10 +13,10 @@ interface TransformationContext {
 
 export default class HiveTransform implements MeshTransform {
   private hiveClient: HiveClient;
-  private logger: MeshTransformOptions<YamlConfig.HivePlugin>['logger'];
+  private log: MeshTransformOptions<YamlConfig.HivePlugin>['log'];
   private schema: GraphQLSchema;
-  constructor({ config, logger }: MeshTransformOptions<YamlConfig.HivePlugin>) {
-    this.logger = logger;
+  constructor({ config, log}: MeshTransformOptions<YamlConfig.HivePlugin>) {
+    this.log = log;
     const enabled =
       // eslint-disable-next-line no-new-func
       config != null && 'enabled' in config ? new Function(`return ${config.enabled}`)() : true;
@@ -66,7 +66,7 @@ export default class HiveTransform implements MeshTransform {
         minTimeout: config.agent.minTimeout,
         sendInterval: config.agent.sendInterval,
         maxSize: config.agent.maxSize,
-        logger,
+        logger: this.log,
       };
     }
     this.hiveClient = createHive({
@@ -77,6 +77,7 @@ export default class HiveTransform implements MeshTransform {
       usage,
       reporting,
       selfHosting: config.selfHosting,
+      logger: this.log,
     });
   }
 
@@ -95,7 +96,7 @@ export default class HiveTransform implements MeshTransform {
       transformationContext.collectUsageCallback = this.hiveClient.collectUsage();
       transformationContext.request = request;
     } catch (e) {
-      this.logger.error(`Failed to collect usage`, e);
+      this.log.error(`Failed to collect usage`, e);
     }
     return request;
   }
@@ -129,10 +130,10 @@ export default class HiveTransform implements MeshTransform {
           result,
         )
         ?.catch(e => {
-          this.logger.error(`Failed to report usage`, e);
+          this.log.error(`Failed to report usage`, e);
         });
     } catch (e) {
-      this.logger.error(`Failed to report usage`, e);
+      this.log.error(`Failed to report usage`, e);
     }
     return result;
   }

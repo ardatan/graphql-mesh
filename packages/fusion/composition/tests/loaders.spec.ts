@@ -1,7 +1,7 @@
 import { OperationTypeNode } from 'graphql';
 import { createGatewayRuntime, useCustomFetch } from '@graphql-hive/gateway-runtime';
 import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema';
-import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { dummyLogger as log} from '../../../testing/dummyLogger';
 import { composeSubgraphs } from '../src/compose';
 
 describe('Loaders', () => {
@@ -25,7 +25,7 @@ describe('Loaders', () => {
     })({
       fetch,
       cwd: process.cwd(),
-      logger,
+      log,
     });
     const { supergraphSdl } = composeSubgraphs([
       {

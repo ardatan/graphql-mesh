@@ -1,7 +1,8 @@
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn, mapMaybePromise, readFileOrUrl } from '@graphql-mesh/utils';
+import type { MeshFetch } from '@graphql-mesh/types';
+import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { SOAPLoader, type SOAPHeaders } from './SOAPLoader.js';
+import { Logger } from '@graphql-hive/logger';
 
 export * from './SOAPLoader.js';
 export type * from './types.js';
@@ -45,11 +46,11 @@ export interface SOAPSubgraphLoaderOptions {
 }
 
 export function loadSOAPSubgraph(subgraphName: string, options: SOAPSubgraphLoaderOptions) {
-  return ({ cwd, fetch, logger }: { cwd: string; fetch: MeshFetch; logger: Logger }) => {
+  return ({ cwd, fetch, log}: { cwd: string; fetch: MeshFetch; log: Logger }) => {
     const soapLoader = new SOAPLoader({
       subgraphName,
       fetch,
-      logger,
+      log,
       cwd,
       // Configuration from the user
       schemaHeaders: options.schemaHeaders,
@@ -67,7 +68,7 @@ export function loadSOAPSubgraph(subgraphName: string, options: SOAPSubgraphLoad
             cwd,
             fetch,
             importFn: defaultImportFn,
-            logger,
+            log,
           }),
         // Pass source as the base URL so nested <wsdl:import> / <xsd:import>
         // locations resolve relative to the importing document.
