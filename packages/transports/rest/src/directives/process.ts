@@ -181,7 +181,6 @@ export function processDirectives(
                 field: field as GraphQLField<any, any>,
                 pubsubTopic: directiveAnnotation.args.pubsubTopic,
                 globalPubsub: pubsub,
-                log,
               });
               break;
             case 'httpOperation': {

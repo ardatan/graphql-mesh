@@ -64,7 +64,12 @@ export function wrapFetchWithHooks<TContext>(
                   log = loggerForExecutionRequest.get(info.executionRequest);
                 }
                 if (!log) {
-                  log = defaultLogger?.child('fetch') || new Logger({ prefix: 'fetch' });
+                  // Prefer Yoga/Gateway/Mesh request context.log over init-time defaults
+                  log =
+                    context?.log?.child?.('fetch') ??
+                    context?.log ??
+                    defaultLogger?.child('fetch') ??
+                    new Logger({ prefix: 'fetch' });
                 }
                 if (context?.request) {
                   const requestId = requestIdByRequest.get(context.request);

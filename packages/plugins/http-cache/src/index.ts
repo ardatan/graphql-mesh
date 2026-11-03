@@ -90,8 +90,8 @@ export default function useHTTPCache<TContext extends Record<string, any>>({
         ResponseCtor = yoga.fetchAPI.Response;
       }
     },
-    onFetch({ url, options, setOptions, context, endResponse }) {
-      const log = context?.log?.child?.({ plugin: 'HTTP Cache' }) ?? context?.log;
+    onFetch({ url, options, setOptions, context, endResponse, log: fetchLog }) {
+      const log = fetchLog?.child?.({ plugin: 'HTTP Cache' }) ?? context?.log;
       if (shouldSkip(url, log) || typeof options?.body === 'object') {
         log?.debug(`Skipping cache for ${url}`);
         return;

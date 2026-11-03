@@ -7,3 +7,5 @@
 - Remove `handleMaybePromise` / `MaybePromise` / `mapMaybePromise` re-exports (use `@whatwg-node/promise-helpers`)
 - Disposable helpers wrap dispose with `fakePromise`
 - Node builtins via `globalThis.process?.getBuiltinModule?.('node:…')` instead of `@graphql-mesh/cross-helpers`
+- `wrapFetchWithHooks` prefers `context.log` for onFetch payload `log` (not init-time defaults)
+
