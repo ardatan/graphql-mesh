@@ -31,6 +31,9 @@ import { type Logger } from '@graphql-hive/logger';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
+/** Shared fallback when GraphQL omits `input` (protobufjs@8 rejects undefined). */
+const EMPTY_OBJECT = Object.freeze({});
+
 /**
  * SSL Credentials
  */
@@ -192,8 +195,7 @@ export class GrpcTransportHelper extends DisposableStack {
     return function grpcFieldResolver(root, args, context) {
       return addMetaDataToCall(
         clientMethod,
-        // protobufjs@8 rejects undefined for empty request messages ("object expected")
-        args.input ?? {},
+        args.input ?? EMPTY_OBJECT,
         {
           root,
           args,
