@@ -37,7 +37,7 @@
   "dependencies": {
     "@envelop/instrumentation": "^2.0.0",
     "@graphql-hive/logger": "^1.1.1",
-    "@graphql-mesh/cross-helpers": "^0.4.18",
+    "@graphql-hive/pubsub": "^2.2.1",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-tools/batch-delegate": "^10.1.4",

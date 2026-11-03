@@ -217,6 +217,5 @@
     "**/*.{ts,tsx,graphql,yml,json,md,js,mjs,cjs,mdx}": [
       "prettier --write"
     ]
-  },
-  "dependencies": {}
+  }
 }

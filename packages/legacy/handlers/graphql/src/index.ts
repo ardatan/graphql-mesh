@@ -11,7 +11,6 @@ import {
   visit,
 } from 'graphql';
 import lodashGet from 'lodash.get';
-import { process, util } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions, ValidationError } from '@graphql-mesh/store';
 import {
@@ -43,6 +42,8 @@ import {
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
 import { Logger } from '@graphql-hive/logger';
+
+const util = process.getBuiltinModule('node:util');
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {

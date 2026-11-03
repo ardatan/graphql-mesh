@@ -7,7 +7,9 @@ import GraphQLHandler from '@graphql-mesh/graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { getMesh, type GetMeshOptions } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { Logger } from '@graphql-hive/logger';
 
 export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
@@ -40,12 +42,13 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
     }),
   });
   const cache = extraOptions?.cache || new InMemoryLRUCache();
-  const pubsub = extraOptions?.pubsub || new PubSub();
+  const pubsub = extraOptions?.pubsub || new MemPubSub();
   const log = extraOptions?.log || new Logger({ prefix: 'Test' });
   const store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
     readonly: false,
     validate: false,
   });
+  const disposables = extraOptions?.disposables || new AsyncDisposableStack();
   return getMesh({
     fetchFn: yoga.fetch as any,
     sources: [
@@ -63,6 +66,7 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
           store: store.child('sources/Yoga'),
           log,
           importFn: defaultImportFn,
+          disposables,
         }),
       },
       ...(extraOptions?.sources || []),
@@ -74,7 +78,9 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
       pubsub,
       log,
       store: store.child('Stitching'),
+      disposables,
     }),
+    disposables,
     ...extraOptions,
   });
 }

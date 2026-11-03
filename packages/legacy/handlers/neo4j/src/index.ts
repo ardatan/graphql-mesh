@@ -2,7 +2,7 @@ import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { dispose, isDisposable, readFileOrUrl } from '@graphql-mesh/utils';
 import { getDriverFromOpts, getNeo4JExecutor, loadGraphQLSchemaFromNeo4J } from '@omnigraph/neo4j';
 import { Logger } from '@graphql-hive/logger';
@@ -10,7 +10,8 @@ import { Logger } from '@graphql-hive/logger';
 export default class Neo4JHandler implements MeshHandler {
   private config: YamlConfig.Neo4JHandler;
   private baseDir: string;
-  private pubsub: MeshPubSub;
+  private pubsub: HivePubSub;
+  private disposables?: import('@graphql-mesh/types').MeshDisposableStack;
   private schema: StoreProxy<GraphQLSchema>;
   private log: Logger;
   private name: string;
@@ -22,6 +23,7 @@ export default class Neo4JHandler implements MeshHandler {
     config,
     baseDir,
     pubsub,
+    disposables,
     store,
     log,
     importFn,
@@ -30,6 +32,7 @@ export default class Neo4JHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
+    this.disposables = disposables;
     this.schema = store.proxy('schema.graphql', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
     this.log = log;
     this.importFn = importFn;
@@ -90,10 +93,9 @@ export default class Neo4JHandler implements MeshHandler {
     });
 
     if (isDisposable(executor)) {
-      const id = this.pubsub.subscribe('destroy', () => {
+      this.disposables?.defer(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         dispose(executor);
-        this.pubsub.unsubscribe(id);
       });
     }
 

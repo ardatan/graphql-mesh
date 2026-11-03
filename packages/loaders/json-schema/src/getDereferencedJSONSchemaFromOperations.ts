@@ -1,6 +1,5 @@
 import type { JSONSchemaObject } from 'json-machete';
 import { dereferenceObject, healJSONSchema } from 'json-machete';
-import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';

@@ -23,9 +23,11 @@ export function createDisposable(disposeFn: () => void): Disposable {
   };
 }
 
-export function createAsyncDisposable(disposeFn: () => Promise<void>): AsyncDisposable {
+export function createAsyncDisposable(
+  disposeFn: () => MaybePromise<void>,
+): AsyncDisposable {
   return {
-    [DisposableSymbols.asyncDispose]: disposeFn,
+    [DisposableSymbols.asyncDispose]: () => Promise.resolve(disposeFn()),
   };
 }
 
@@ -40,10 +42,10 @@ export function makeDisposable<T>(obj: T, disposeFn: () => void): T & Disposable
 
 export function makeAsyncDisposable<T>(
   obj: T,
-  disposeFn: () => Promise<void>,
+  disposeFn: () => MaybePromise<void>,
 ): T & AsyncDisposable {
   Object.defineProperty(obj, DisposableSymbols.asyncDispose, {
-    value: disposeFn,
+    value: () => Promise.resolve(disposeFn()),
     configurable: true,
     writable: true,
   });

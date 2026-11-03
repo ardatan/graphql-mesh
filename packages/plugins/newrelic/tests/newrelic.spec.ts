@@ -3,7 +3,8 @@
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { createMeshHTTPHandler, type MeshHTTPHandler } from '@graphql-mesh/http';
 import type { MeshInstance } from '@graphql-mesh/runtime';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { TestAgent } from '@newrelic/test-utilities';
 import { getTestMesh } from '../../../legacy/testing/getTestMesh.js';
 import { dummyLogger as log} from '../../../testing/dummyLogger';
@@ -15,7 +16,7 @@ describe('New Relic', () => {
   let helper: any;
   let httpHandler: MeshHTTPHandler;
   using cache = new InMemoryLRUCache();
-  const pubsub = new PubSub();
+  const pubsub = new MemPubSub();
   const baseDir = __dirname;
   beforeAll(async () => {
     helper = TestAgent.makeInstrumented();

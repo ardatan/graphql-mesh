@@ -13,7 +13,6 @@ import {
 import { resolvers as scalarResolvers } from 'graphql-scalars';
 import lodashGet from 'lodash.get';
 import type protobufjs from 'protobufjs';
-import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
   createDefaultExecutor,
@@ -33,6 +32,9 @@ import { makeDisposable } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import { Logger } from '@graphql-hive/logger';
+
+const fs = process.getBuiltinModule('node:fs');
+const path = process.getBuiltinModule('node:path');
 
 /**
  * SSL Credentials

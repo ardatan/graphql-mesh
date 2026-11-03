@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { GraphQLObjectType, printSchema } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { MeshPubSub } from '@graphql-mesh/types';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import type { HivePubSub } from '@graphql-mesh/types';
+import { defaultImportFn } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import TransferFieldTransform from '../src/index.js';
@@ -24,7 +25,7 @@ describe('transfer-schema transform', () => {
       author: String!
     }
   `;
-  let pubsub: MeshPubSub;
+  let pubsub: HivePubSub;
   const baseDir: string = undefined;
   using cache = new InMemoryLRUCache();
 
@@ -33,7 +34,7 @@ describe('transfer-schema transform', () => {
   });
 
   afterEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
   });
 
   it('should move and copy fields correctly', async () => {

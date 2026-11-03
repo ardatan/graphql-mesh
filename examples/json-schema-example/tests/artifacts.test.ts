@@ -1,5 +1,6 @@
 import { join } from 'path';
-import { fs } from '@graphql-mesh/cross-helpers';
+
+const fs = process.getBuiltinModule('node:fs');
 
 const { readFile } = fs.promises;
 

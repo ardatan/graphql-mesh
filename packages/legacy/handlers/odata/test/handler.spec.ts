@@ -1,15 +1,17 @@
 import { GraphQLInterfaceType, parse, type ExecutionResult } from 'graphql';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { fs, path } from '@graphql-mesh/cross-helpers';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import type { KeyValueCache, MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import type { KeyValueCache, HivePubSub } from '@graphql-mesh/types';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { dummyLogger as log} from '../../../../testing/dummyLogger.js';
 import ODataHandler from '../src/index.js';
 import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
+
+const fs = process.getBuiltinModule('node:fs');
+const path = process.getBuiltinModule('node:path');
 
 const TripPinMetadata = fs.readFileSync(
   path.resolve(__dirname, './fixtures/trippin-metadata.xml'),
@@ -37,10 +39,10 @@ const baseDir = __dirname;
 const importFn = (id: string) => require(id);
 
 describe('odata', () => {
-  let pubsub: MeshPubSub;
+  let pubsub: HivePubSub;
   let store: MeshStore;
   beforeEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
     store = new MeshStore('odata', new InMemoryStoreStorageAdapter(), {
       readonly: false,
       validate: false,

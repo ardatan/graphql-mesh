@@ -4,7 +4,7 @@ import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-
 import type { ConnectOptions, Document, Model } from 'mongoose';
 import { connect, disconnect } from 'mongoose';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { ImportFn, MeshHandler, MeshHandlerOptions, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { ImportFn, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-hive/logger';
 
@@ -34,7 +34,8 @@ const modelMutationOperations = [
 export default class MongooseHandler implements MeshHandler {
   private config: YamlConfig.MongooseHandler;
   private baseDir: string;
-  private pubsub: MeshPubSub;
+  private pubsub: HivePubSub;
+  private disposables?: import('@graphql-mesh/types').MeshDisposableStack;
   private importFn: ImportFn;
   private log: Logger;
 
@@ -43,12 +44,14 @@ export default class MongooseHandler implements MeshHandler {
     config,
     baseDir,
     pubsub,
+    disposables,
     importFn,
     log,
   }: MeshHandlerOptions<YamlConfig.MongooseHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
+    this.disposables = disposables;
     this.importFn = importFn;
     this.log = log;
   }
@@ -63,10 +66,8 @@ export default class MongooseHandler implements MeshHandler {
         useUnifiedTopology: true,
       } as ConnectOptions).catch(e => this.log.error(e));
 
-      const id = this.pubsub.subscribe('destroy', () => {
-        disconnect()
-          .catch(e => this.log.error(e))
-          .finally(() => this.pubsub.unsubscribe(id));
+      this.disposables?.defer(() => {
+        disconnect().catch(e => this.log.error(e));
       });
     }
 

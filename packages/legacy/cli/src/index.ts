@@ -1,7 +1,6 @@
 import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { getMesh } from '@graphql-mesh/runtime';
@@ -16,6 +15,9 @@ import { handleFatalError } from './handleFatalError.js';
 import { include, registerTsconfigPaths } from './include.js';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { Logger } from '@graphql-hive/logger';
+
+const fs = process.getBuiltinModule('node:fs');
+const pathModule = process.getBuiltinModule('node:path');
 
 export { findConfig } from './config.js';
 

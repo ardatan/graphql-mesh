@@ -49,7 +49,6 @@
     "@graphql-codegen/typescript-resolvers": "^5.1.8",
     "@graphql-hive/logger": "^1.1.1",
     "@graphql-mesh/config": "^0.111.3",
-    "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/http": "^0.109.3",
     "@graphql-mesh/incontext-sdk-codegen": "^0.3.3",
     "@graphql-mesh/runtime": "^0.109.3",

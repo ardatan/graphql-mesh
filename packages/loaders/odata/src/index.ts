@@ -22,7 +22,6 @@ import {
 } from 'graphql-scalars';
 import { pascalCase } from 'pascal-case';
 import urljoin from 'url-join';
-import { process } from '@graphql-mesh/cross-helpers';
 import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';

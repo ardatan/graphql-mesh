@@ -1,9 +1,11 @@
 import { buildASTSchema } from 'graphql';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
 import { writeFile } from '@graphql-mesh/utils';
 import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
+
+const fs = process.getBuiltinModule('node:fs');
+const pathModule = process.getBuiltinModule('node:path');
 
 export class ReadonlyStoreError extends Error {}
 

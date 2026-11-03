@@ -1,6 +1,5 @@
 import type { DocumentNode, EnumTypeDefinitionNode } from 'graphql';
 import { parse } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import {

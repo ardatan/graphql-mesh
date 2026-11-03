@@ -1,7 +1,9 @@
 import { setTimeout } from 'timers/promises';
 import { parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
@@ -10,15 +12,17 @@ import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import RateLimitTransform from '../src/index.js';
 
 describe('Rate Limit Transform', () => {
-  let pubsub: PubSub;
+  let pubsub: MemPubSub;
+  let disposables: AsyncDisposableStack;
   let cache: InMemoryLRUCache;
 
   beforeEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
+    disposables = new AsyncDisposableStack();
   });
 
-  afterEach(() => {
-    pubsub.publish('destroy', {} as any);
+  afterEach(async () => {
+    await disposables.disposeAsync();
   });
 
   const baseDir = process.cwd();
@@ -56,6 +60,7 @@ describe('Rate Limit Transform', () => {
       baseDir,
       cache,
       pubsub,
+      disposables,
       importFn,
       log,
     });
@@ -125,6 +130,7 @@ describe('Rate Limit Transform', () => {
       baseDir,
       cache,
       pubsub,
+      disposables,
       importFn,
       log,
     });
@@ -191,6 +197,7 @@ describe('Rate Limit Transform', () => {
       baseDir,
       cache,
       pubsub,
+      disposables,
       importFn,
       log,
     });
@@ -271,6 +278,7 @@ describe('Rate Limit Transform', () => {
       baseDir,
       cache,
       pubsub,
+      disposables,
       importFn,
       log,
     });

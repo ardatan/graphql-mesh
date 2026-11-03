@@ -1,4 +1,3 @@
-import { process } from '@graphql-mesh/cross-helpers';
 import type { YamlConfig } from '@graphql-mesh/types';
 
 export function resolvePlaygroundConfig(

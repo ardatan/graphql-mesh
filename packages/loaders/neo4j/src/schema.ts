@@ -7,7 +7,7 @@ import {
   getDriverFromOpts,
   getExecutableSchemaFromTypeDefsAndDriver,
 } from '@graphql-mesh/transport-neo4j';
-import type { HivePubSub, MeshPubSub } from '@graphql-mesh/types';
+import type { HivePubSub } from '@graphql-mesh/types';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
@@ -52,7 +52,7 @@ export interface LoadGraphQLSchemaFromNeo4JOpts {
   endpoint: string;
   database?: string;
   auth?: Neo4JAuthOpts;
-  pubsub?: MeshPubSub | HivePubSub;
+  pubsub?: HivePubSub;
   log?: Logger;
   driver?: Driver;
 }

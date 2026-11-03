@@ -8,7 +8,6 @@ import type {
   GraphQLType,
 } from 'graphql';
 import { GraphQLError, getNamedType, isInputObjectType, isListType, isNonNullType } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverData, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import {
   getInterpolatedHeadersFactory,

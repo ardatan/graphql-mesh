@@ -1,8 +1,8 @@
 import { paramCase } from 'param-case';
-import { path } from '@graphql-mesh/cross-helpers';
 import type { MeshStore } from '@graphql-mesh/store';
-import type { ImportFn, KeyValueCache, MeshFetch, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
-import { parseWithCache, PubSub } from '@graphql-mesh/utils';
+import type { ImportFn, KeyValueCache, MeshFetch, HivePubSub, YamlConfig } from '@graphql-mesh/types';
+import { parseWithCache } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
@@ -10,6 +10,8 @@ import type { Source as GraphQLToolsSource } from '@graphql-tools/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as defaultFetch, TextEncoder } from '@whatwg-node/fetch';
 import { Logger } from '@graphql-hive/logger';
+
+const path = process.getBuiltinModule('node:path');
 
 const crypto = globalThis.crypto;
 
@@ -143,7 +145,7 @@ export async function resolveCache(
   importFn: ImportFn,
   rootStore: MeshStore,
   cwd: string,
-  pubsub: MeshPubSub,
+  pubsub: HivePubSub,
   log: Logger,
   additionalPackagePrefixes: string[],
 ): Promise<{
@@ -192,7 +194,7 @@ export async function resolvePubSub(
 ): Promise<{
   code: string;
   importCode: string;
-  pubsub: MeshPubSub;
+  pubsub: HivePubSub;
 }> {
   if (pubsubYamlConfig) {
     let pubsubName: string;
@@ -204,7 +206,7 @@ export async function resolvePubSub(
       pubsubConfig = pubsubYamlConfig.config;
     }
 
-    const { moduleName, resolved: PubSub } = await getPackage<any>({
+    const { moduleName, resolved: PubSubCtor } = await getPackage<any>({
       name: pubsubName,
       type: 'pubsub',
       importFn,
@@ -212,7 +214,7 @@ export async function resolvePubSub(
       additionalPrefixes: additionalPackagePrefixes,
     });
 
-    const pubsub = new PubSub(pubsubConfig);
+    const pubsub = new PubSubCtor(pubsubConfig);
 
     const code = `const PubSub = await import(${JSON.stringify(moduleName)}).then(handleImport);
     const pubsub = new PubSub(${JSON.stringify(pubsubConfig)});`;
@@ -223,13 +225,13 @@ export async function resolvePubSub(
       pubsub,
     };
   } else {
-    const pubsub = new PubSub();
+    const pubsub = new MemPubSub();
 
-    const code = `const pubsub = new PubSub();`;
+    const code = `const pubsub = new MemPubSub();`;
 
     return {
       code,
-      importCode: `import { PubSub } from '@graphql-mesh/utils';`,
+      importCode: `import { MemPubSub } from '@graphql-hive/pubsub';`,
       pubsub,
     };
   }

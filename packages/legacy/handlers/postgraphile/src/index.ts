@@ -4,19 +4,21 @@ import pg from 'pg';
 import type { Plugin } from 'postgraphile';
 import { withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
-import { path, process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { ImportFn, MeshHandler, MeshHandlerOptions, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { ImportFn, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { Logger } from '@graphql-hive/logger';
+
+const path = process.getBuiltinModule('node:path');
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.PostGraphileHandler;
   private baseDir: string;
-  private pubsub: MeshPubSub;
+  private pubsub: HivePubSub;
+  private disposables?: import('@graphql-mesh/types').MeshDisposableStack;
   private pgCache: any;
   private log: Logger;
   private importFn: ImportFn;
@@ -26,6 +28,7 @@ export default class PostGraphileHandler implements MeshHandler {
     config,
     baseDir,
     pubsub,
+    disposables,
     store,
     log,
     importFn,
@@ -34,6 +37,7 @@ export default class PostGraphileHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
+    this.disposables = disposables;
     this.pgCache = store.proxy('pgCache.json', PredefinedProxyOptions.JsonWithoutValidation);
     this.log = log;
     this.importFn = importFn;
@@ -61,8 +65,7 @@ export default class PostGraphileHandler implements MeshHandler {
       });
     }
 
-    const id = this.pubsub.subscribe('destroy', () => {
-      this.pubsub.unsubscribe(id);
+    this.disposables?.defer(() => {
       this.log.debug('Destroying PostgreSQL pool');
       pgPool.end();
     });

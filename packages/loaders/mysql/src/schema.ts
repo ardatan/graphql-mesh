@@ -17,7 +17,6 @@ import {
 import type { Connection, DatabaseTable, MysqlError, TableField, TableForeign } from 'mysql';
 import { createConnection } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
-import { fs, process, util } from '@graphql-mesh/cross-helpers';
 import type { MySQLSSLOptions } from '@graphql-mesh/transport-mysql';
 import { getConnectionOptsFromEndpointUri } from '@graphql-mesh/transport-mysql';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
@@ -31,6 +30,9 @@ import {
   TransportDirective,
 } from './directives.js';
 import type { TableFieldConfig } from './types.js';
+
+const fs = () => process.getBuiltinModule('node:fs');
+const util = () => process.getBuiltinModule('node:util');
 
 export interface LoadGraphQLSchemaFromMySQLOpts {
   endpoint: string;
@@ -49,7 +51,7 @@ export async function loadGraphQLSchemaFromMySQL(
     sslOpts = {
       rejectUnauthorized:
         opts.ssl?.rejectUnauthorized || process.env.NODE_TLS_REJECT_UNAUTHORIZED === '1',
-      ca: opts.ssl?.caPath ? fs.readFileSync(opts.ssl?.caPath) : opts.ssl?.ca,
+      ca: opts.ssl?.caPath ? fs().readFileSync(opts.ssl?.caPath) : opts.ssl?.ca,
     };
   }
   connectionOpts.ssl = sslOpts;
@@ -58,7 +60,7 @@ export async function loadGraphQLSchemaFromMySQL(
 
   upgrade(introspectionConnection);
   introspection(introspectionConnection);
-  const getDatabaseTables = util.promisify(
+  const getDatabaseTables = util().promisify(
     introspectionConnection.databaseTables.bind(introspectionConnection),
   );
   const schemaComposer = new SchemaComposer();
@@ -105,12 +107,10 @@ export async function loadGraphQLSchemaFromMySQL(
       });
     }),
   );
-  const endConnection$ = util.promisify<
+  const endConnection$ = util().promisify<
     // we need to define the generic because introspectionConnection.end is overloaded
     (err?: MysqlError) => void
-    // @ts-expect-error - We know it works
   >(introspectionConnection.end.bind(introspectionConnection));
-  // @ts-expect-error - We know it works
   await endConnection$(undefined);
 
   const schema = schemaComposer.buildSchema();
@@ -184,7 +184,7 @@ const SCALARS: Record<string, string> = {
 };
 
 function getAutoIncrementFields(connection: Connection): Promise<Record<string, string>> {
-  const queryKeyValue$ = util.promisify(connection.queryKeyValue.bind(connection));
+  const queryKeyValue$ = util().promisify(connection.queryKeyValue.bind(connection));
   return queryKeyValue$(
     'SELECT TABLE_NAME, COLUMN_NAME FROM information_schema.columns WHERE EXTRA LIKE "%auto_increment%"',
     [],
@@ -250,7 +250,7 @@ async function handleTableName({
     fields: {},
   });
   const primaryKeys = new Set<string>();
-  const getTableFields$ = util.promisify(
+  const getTableFields$ = util().promisify(
     introspectionConnection.fields.bind(introspectionConnection),
   );
   const fields = await getTableFields$(tableName);
@@ -273,7 +273,7 @@ async function handleTableName({
       }),
     ),
   );
-  const getTableForeigns$ = util.promisify(
+  const getTableForeigns$ = util().promisify(
     introspectionConnection.foreign.bind(introspectionConnection),
   );
   const tableForeigns = await getTableForeigns$(tableName);

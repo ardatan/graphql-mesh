@@ -70,13 +70,13 @@ export const graphqlHandler = ({
 
     const yoga = createYoga(yogaOptions);
     // Dispose Yoga instance when the Mesh instance is destroyed
-    const id = mesh.pubsub.subscribe('destroy', () => {
-      const unsubscribe = () => {
-        return mesh.pubsub.unsubscribe(id);
-      };
+    mesh.deferDispose(() =>
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleMaybePromise(() => yoga.dispose(), unsubscribe, unsubscribe);
-    });
+      handleMaybePromise(
+        () => yoga.dispose(),
+        () => undefined,
+      ),
+    );
     return yoga;
   });
   return (request: Request, ctx: any) =>

@@ -8,7 +8,6 @@ import {
   GraphQLString,
   type GraphQLSchema,
 } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
 import {
   getInterpolatedHeadersFactory,
   stringInterpolator,

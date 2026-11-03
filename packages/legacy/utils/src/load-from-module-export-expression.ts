@@ -1,7 +1,8 @@
-import { path } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
 import { fakePromise, handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { defaultImportFn } from './defaultImportFn.js';
+
+const path = process.getBuiltinModule('node:path');
 
 type LoadFromModuleExportExpressionOptions = {
   defaultExportName: string;

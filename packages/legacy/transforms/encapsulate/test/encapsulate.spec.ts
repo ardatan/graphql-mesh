@@ -1,8 +1,8 @@
 import { getIntrospectionQuery, parse } from 'graphql';
 import { envelop, useEngine, useSchema } from '@envelop/core';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import type { ImportFn, HivePubSub } from '@graphql-mesh/types';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
@@ -54,10 +54,10 @@ describe('encapsulate', () => {
       },
     },
   });
-  let pubsub: MeshPubSub;
+  let pubsub: HivePubSub;
 
   beforeEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
   });
 
   it('should wrap the schema and group Mutation correctly', async () => {

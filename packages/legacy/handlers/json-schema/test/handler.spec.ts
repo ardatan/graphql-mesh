@@ -2,7 +2,8 @@
 import { parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { defaultImportFn, getHeadersObj, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn, getHeadersObj } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { Headers, Response } from '@whatwg-node/fetch';
 import { dummyLogger as log} from '../../../../testing/dummyLogger';
@@ -39,7 +40,7 @@ describe('JSON Schema Handler', () => {
         readonly: false,
         validate: false,
       }),
-      pubsub: new PubSub(),
+      pubsub: new MemPubSub(),
       log,
       importFn: defaultImportFn,
     });

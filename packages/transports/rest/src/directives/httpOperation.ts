@@ -10,7 +10,6 @@ import { GraphQLError, getNamedType, isListType, isNonNullType, isScalarType, is
 import type { IStringifyOptions } from 'qs';
 import { parse as qsParse, stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
-import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';

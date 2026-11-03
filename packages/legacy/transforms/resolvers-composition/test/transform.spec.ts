@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { parse } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { PubSub } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
@@ -15,7 +15,7 @@ describe('transform', () => {
   it('should handle composition functions from external modules', async () => {
     const transform = new ResolversCompositionTransform({
       cache,
-      pubsub: new PubSub(),
+      pubsub: new MemPubSub(),
       config: [
         {
           resolver: 'Query.foo',
@@ -58,7 +58,7 @@ describe('transform', () => {
     const composer: ResolversComposition = next => (root, args, context, info) => 'FOO';
     const transform = new ResolversCompositionTransform({
       cache,
-      pubsub: new PubSub(),
+      pubsub: new MemPubSub(),
       config: [
         {
           resolver: 'Query.foo',

@@ -37,7 +37,6 @@
   "dependencies": {
     "@creditkarma/thrift-parser": "^2.0.0",
     "@creditkarma/thrift-server-core": "^1.0.4",
-    "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/transport-thrift": "^0.12.3",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",

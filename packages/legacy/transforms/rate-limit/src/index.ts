@@ -1,6 +1,5 @@
 import type { ExecutionResult } from 'graphql';
 import { GraphQLError, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
@@ -17,12 +16,9 @@ export default class RateLimitTransform implements MeshTransform {
         this.pathRateLimitDef.set(`${config.type}.${config.field}`, config);
       });
     }
-    if (options.pubsub) {
-      const id = options.pubsub.subscribe('destroy', () => {
-        options.pubsub.unsubscribe(id);
-        this.timeouts.forEach(timeout => clearTimeout(timeout));
-      });
-    }
+    options.disposables?.defer(() => {
+      this.timeouts.forEach(timeout => clearTimeout(timeout));
+    });
   }
 
   private errors = new WeakMap<DelegationContext, GraphQLError[]>();

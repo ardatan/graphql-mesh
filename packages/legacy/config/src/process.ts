@@ -3,7 +3,6 @@ import type { DocumentNode } from 'graphql';
 import { parse, print, visit } from 'graphql';
 import { pascalCase } from 'pascal-case';
 import { useMaskedErrors } from '@envelop/core';
-import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import type { GetMeshOptions, MeshResolvedSource } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { ImportFn, MeshHandlerLibrary, MeshMergerLibrary, MeshPlugin, MeshPluginFactory, MeshTransformLibrary, YamlConfig } from '@graphql-mesh/types';
@@ -17,6 +16,7 @@ import {
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';
 import type { Source } from './utils.js';
 import { Logger } from '@graphql-hive/logger';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 
 import {
   getPackage,
@@ -28,6 +28,8 @@ import {
   resolveLogger,
   resolvePubSub,
 } from './utils.js';
+
+const pathModule = process.getBuiltinModule('node:path');
 
 const ENVELOP_CORE_PLUGINS_MAP: Record<
   string,
@@ -135,6 +137,10 @@ export async function processConfig(
   }
   codes.add(pubsubCode);
 
+  const disposables = new AsyncDisposableStack();
+  importCodes.add(`import { AsyncDisposableStack } from '@whatwg-node/disposablestack';`);
+  codes.add(`const disposables = new AsyncDisposableStack();`);
+
   const sourcesStore = rootStore.child('sources');
   codes.add(`const sourcesStore = rootStore.child('sources');`);
 
@@ -212,6 +218,7 @@ export async function processConfig(
               baseDir,
               cache,
               pubsub,
+              disposables,
               store: sourcesStore.child(${JSON.stringify(source.name)}), log: log.child({ source: ${JSON.stringify(source.name)} }),
               importFn,
             });`,
@@ -223,6 +230,7 @@ export async function processConfig(
               baseDir: dir,
               cache,
               pubsub,
+              disposables,
               store: sourcesStore.child(source.name), log: log.child({ source: source.name }),
               importFn,
             });
@@ -252,6 +260,7 @@ export async function processConfig(
                   baseDir,
                   cache,
                   pubsub,
+                  disposables,
                   importFn,
                   log,
                 });`,
@@ -264,6 +273,7 @@ export async function processConfig(
                 baseDir: dir,
                 cache,
                 pubsub,
+                disposables,
                 importFn,
                 log,
               });
@@ -308,6 +318,7 @@ export async function processConfig(
             baseDir,
             cache,
             pubsub,
+            disposables,
             importFn,
             log,
           })`,
@@ -319,6 +330,7 @@ export async function processConfig(
           baseDir: dir,
           cache,
           pubsub,
+          disposables,
           importFn,
           log,
         });
@@ -369,6 +381,7 @@ export async function processConfig(
           ...(${JSON.stringify(pluginConfig, null, 2)}), log: log.child({ plugin: ${JSON.stringify(pluginName)} }),
           cache,
           pubsub,
+          disposables,
           baseDir,
           importFn,
         })`);
@@ -392,6 +405,7 @@ export async function processConfig(
           ...(${JSON.stringify(pluginConfig, null, 2)}), log: log.child({ plugin: ${JSON.stringify(pluginName)} }),
           cache,
           pubsub,
+          disposables,
           baseDir,
           importFn,
         });`,
@@ -403,6 +417,7 @@ export async function processConfig(
           ...pluginConfig, log: log.child({ plugin: pluginName }),
           cache,
           pubsub,
+          disposables,
           baseDir: dir,
           importFn,
         });
@@ -546,14 +561,14 @@ export async function processConfig(
     );
     codes.add(`const merger = new Merger({
         cache,
-        pubsub, log: log.child({ merger: ${JSON.stringify(mergerName)} }),
+        pubsub, disposables, log: log.child({ merger: ${JSON.stringify(mergerName)} }),
         store: rootStore.child(${JSON.stringify(mergerName)})
       })`);
   }
 
   const merger = new Merger({
     cache,
-    pubsub, log: log.child({ merger: mergerName }),
+    pubsub, disposables, log: log.child({ merger: mergerName }),
     store: rootStore.child(mergerName),
   });
 
@@ -663,6 +678,7 @@ export async function processConfig(
     additionalResolvers,
     cache,
     pubsub,
+    disposables,
     merger,
     log,
     additionalEnvelopPlugins,
@@ -694,6 +710,7 @@ export async function processConfig(
     cache,
     merger,
     pubsub,
+    disposables,
     config,
     documents,
     log,

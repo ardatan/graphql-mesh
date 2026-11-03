@@ -5,7 +5,6 @@ import NAMES from 'newrelic/lib/metrics/names.js';
 import recordExternal from 'newrelic/lib/metrics/recorders/http_external.js';
 import cat from 'newrelic/lib/util/cat.js';
 import { useNewRelic } from '@envelop/newrelic';
-import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';

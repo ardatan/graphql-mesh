@@ -38,7 +38,6 @@ import {
   GraphQLVoid,
   RegularExpression,
 } from 'graphql-scalars';
-import { path, process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
@@ -63,6 +62,8 @@ import type {
 import type { SoapAnnotations } from './utils.js';
 import { PARSE_XML_OPTIONS } from './utils.js';
 import { Logger } from '@graphql-hive/logger';
+
+const path = process.getBuiltinModule('node:path');
 
 export interface SOAPLoaderOptions {
   subgraphName: string;

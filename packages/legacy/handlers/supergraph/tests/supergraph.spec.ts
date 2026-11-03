@@ -8,7 +8,8 @@ import { getMesh } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import SupergraphHandler from '@graphql-mesh/supergraph';
 import type { MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn as importFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn as importFn } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { createDisposableServer } from '../../../../testing/createDisposableServer.js';
 import { dummyLogger as log} from '../../../../testing/dummyLogger.js';
@@ -33,7 +34,7 @@ describe('Supergraph', () => {
       validate: false,
       readonly: false,
     });
-    const pubsub = new PubSub();
+    const pubsub = new MemPubSub();
     const merger = new BareMerger({ cache, pubsub, store, log});
     const fetchFn: MeshFetch = async (url, options) => {
       if (url.includes('authors')) {

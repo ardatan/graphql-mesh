@@ -6,7 +6,8 @@ import JsonSchemaHandler from '@graphql-mesh/json-schema';
 import BareMerger from '@graphql-mesh/merger-bare';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { dummyLogger as log} from '../../../testing/dummyLogger';
@@ -16,12 +17,12 @@ import type { MeshResolvedSource } from '../src/types.js';
 describe('getMesh', () => {
   const baseDir = __dirname;
   let cache: InMemoryLRUCache;
-  let pubsub: PubSub;
+  let pubsub: MemPubSub;
   let store: MeshStore;
   let merger: StitchingMerger;
   beforeEach(() => {
     cache = new InMemoryLRUCache();
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
     store = new MeshStore('test', new InMemoryStoreStorageAdapter(), {
       readonly: false,
       validate: false,

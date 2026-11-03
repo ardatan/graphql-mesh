@@ -1,5 +1,5 @@
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
 
+const pathModule = process.getBuiltinModule('node:path');
 function defaultImportFn(path: string): Promise<any> {
   return import(/* @vite-ignore */ path).then(
     module => {

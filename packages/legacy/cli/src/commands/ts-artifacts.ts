@@ -8,7 +8,6 @@ import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import type { Source } from '@graphql-mesh/config';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import {
   generateIncontextSDKTypes,
   generateUnifiedContextTypeFromIdentifiers,
@@ -25,6 +24,9 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
 import { Logger } from '@graphql-hive/logger';
+
+const fs = process.getBuiltinModule('node:fs');
+const pathModule = process.getBuiltinModule('node:path');
 
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
 
@@ -279,7 +281,7 @@ export async function generateTsArtifacts(
                 ...meshConfigImportCodes,
                 `import { getMesh, type ExecuteMeshFn, type SubscribeMeshFn, type MeshContext as BaseMeshContext, type MeshInstance } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
-                `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
+                `const pathModule = process.getBuiltinModule('node:path');`,
                 `import type { ImportFn } from '@graphql-mesh/types';`,
               ]);
               const results = await Promise.all(
@@ -390,9 +392,8 @@ export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance> {
       }, pollingInterval)
     }
     meshInstance$ = getMeshOptions().then(meshOptions => getMesh(meshOptions)).then(mesh => {
-      const id = mesh.pubsub.subscribe('destroy', () => {
+      mesh.deferDispose(() => {
         meshInstance$ = undefined;
-        mesh.pubsub.unsubscribe(id);
       });
       return mesh;
     }).catch((err) => {

@@ -3,7 +3,6 @@
 import cluster from 'cluster';
 import os from 'os';
 import open from 'open';
-import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler, resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 

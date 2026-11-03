@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@graphql-hive/logger": "^1.1.1",
+    "@graphql-hive/pubsub": "^2.2.1",
     "@graphql-mesh/store": "^0.107.3",
     "@graphql-mesh/transport-grpc": "^0.7.2",
     "@graphql-mesh/types": "^0.107.3",

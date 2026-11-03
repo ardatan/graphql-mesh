@@ -2,7 +2,7 @@ import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { GetMeshSourcePayload, ImportFn, MeshFetch, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { Logger } from '@graphql-hive/logger';
 
@@ -18,7 +18,7 @@ export default class JsonSchemaHandler implements MeshHandler {
   private baseDir: string;
   private log: Logger;
   private fetchFn: MeshFetch;
-  private pubsub: MeshPubSub;
+  private pubsub: HivePubSub;
   private importFn: ImportFn;
 
   constructor({

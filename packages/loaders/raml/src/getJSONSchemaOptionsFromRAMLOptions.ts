@@ -3,7 +3,6 @@ import { getAbsolutePath, getCwd } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
 import type { api10 } from '@ardatan/raml-1-parser';
 import { loadApi } from '@ardatan/raml-1-parser';
-import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';

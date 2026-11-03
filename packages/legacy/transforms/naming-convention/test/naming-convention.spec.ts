@@ -7,8 +7,8 @@ import {
   parse,
 } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import type { ImportFn, HivePubSub } from '@graphql-mesh/types';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { addResolversToSchema, makeExecutableSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { dummyLogger as log} from '../../../../testing/dummyLogger';
@@ -40,12 +40,12 @@ describeTransformerTests('naming-convention', ({ mode, transformSchema }) => {
     }
   `);
   using cache = new InMemoryLRUCache();
-  let pubsub: MeshPubSub;
+  let pubsub: HivePubSub;
   const baseDir: string = undefined;
   const importFn: ImportFn = m => import(m);
 
   beforeEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
   });
 
   it('should change the name of a types, enums, fields and fieldArguments', () => {

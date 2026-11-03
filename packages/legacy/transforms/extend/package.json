@@ -35,7 +35,6 @@
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/code-file-loader": "^9.1.1",

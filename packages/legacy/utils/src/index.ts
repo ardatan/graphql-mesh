@@ -14,7 +14,6 @@ export {
   iterateAsync,
   type MaybePromise,
 } from '@whatwg-node/promise-helpers';
-export { mapMaybePromise } from './map-maybe-promise.js';
 export * from './parseAndPrintWithCache.js';
 export * from './projectResultBySelectionSet.js';
 export * from './pubsub.js';

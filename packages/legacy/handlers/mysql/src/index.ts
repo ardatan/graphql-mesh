@@ -2,7 +2,7 @@ import type { GraphQLSchema } from 'graphql';
 import type { Pool } from 'mysql';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
-import type { ImportFn, MeshHandler, MeshHandlerOptions, MeshPubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
+import type { ImportFn, MeshHandler, MeshHandlerOptions, HivePubSub, MeshSource, YamlConfig } from '@graphql-mesh/types';
 import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { getMySQLExecutor, loadGraphQLSchemaFromMySQL } from '@omnigraph/mysql';
 
@@ -10,7 +10,8 @@ export default class MySQLHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
-  private pubsub: MeshPubSub;
+  private pubsub: HivePubSub;
+  private disposables?: import('@graphql-mesh/types').MeshDisposableStack;
   private importFn: ImportFn;
   private schemaProxy: StoreProxy<GraphQLSchema>;
 
@@ -19,6 +20,7 @@ export default class MySQLHandler implements MeshHandler {
     config,
     baseDir,
     pubsub,
+    disposables,
     store,
     importFn,
   }: MeshHandlerOptions<YamlConfig.MySQLHandler>) {
@@ -26,6 +28,7 @@ export default class MySQLHandler implements MeshHandler {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
+    this.disposables = disposables;
     this.importFn = importFn;
     this.schemaProxy = store.proxy(
       'schema.graphql',
@@ -81,10 +84,9 @@ export default class MySQLHandler implements MeshHandler {
     });
 
     if (isDisposable(executor)) {
-      const id = this.pubsub.subscribe('destroy', () => {
+      this.disposables?.defer(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         dispose(executor);
-        this.pubsub.unsubscribe(id);
       });
     }
 

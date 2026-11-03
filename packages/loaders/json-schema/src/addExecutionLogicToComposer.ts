@@ -14,8 +14,6 @@ import type {
 } from 'graphql-compose';
 import { GraphQLJSON } from 'graphql-compose';
 import type { IStringifyOptions } from 'qs';
-import { process } from '@graphql-mesh/cross-helpers';
-
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   HTTPOperationDirective,

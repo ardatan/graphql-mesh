@@ -4,7 +4,8 @@ import type { GraphQLFieldResolver, GraphQLResolveInfo, GraphQLSchema } from 'gr
 import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression, mapMaybePromise } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import {
   addMocksToSchema,
@@ -214,10 +215,12 @@ export default function useMock(
     });
     return {
       onContextBuilding({ extendContext }) {
-        return mapMaybePromise(init$, () =>
-          extendContext({
-            mockStore,
-          }),
+        return handleMaybePromise(
+          () => init$,
+          () =>
+            extendContext({
+              mockStore,
+            }),
         );
       },
       onSchemaChange({ schema, replaceSchema }) {

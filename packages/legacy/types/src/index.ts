@@ -12,10 +12,14 @@ import type {
 } from '@graphql-tools/delegate';
 import type { ExecutionRequest, Executor, IResolvers } from '@graphql-tools/utils';
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import * as YamlConfig from './config.js';
-import type { MeshPubSub } from './pubsub.js';
+import type { HivePubSub } from './pubsub.js';
 import type { IMeshStore } from './store.js';
+
+export type MeshDisposableStack = InstanceType<typeof AsyncDisposableStack>;
+export { AsyncDisposableStack };
 
 export * from './pubsub.js';
 
@@ -50,14 +54,16 @@ export type MeshHandlerOptions<THandlerConfig> = {
   config: THandlerConfig;
   baseDir: string;
   cache: KeyValueCache;
-  pubsub: MeshPubSub;
+  pubsub: HivePubSub;
   store: IMeshStore;
   log: Logger;
   importFn: ImportFn;
+  disposables?: MeshDisposableStack;
 };
 
 export type GetMeshSourcePayload = {
   fetchFn: MeshFetch;
+  disposables?: MeshDisposableStack;
 };
 
 // Handlers
@@ -74,9 +80,10 @@ export interface MeshTransformOptions<Config = any> {
   config: Config;
   baseDir: string;
   cache: KeyValueCache;
-  pubsub: MeshPubSub;
+  pubsub: HivePubSub;
   importFn: ImportFn;
   log: Logger;
+  disposables?: MeshDisposableStack;
 }
 
 export interface MeshTransformLibrary<Config = any> {
@@ -91,9 +98,10 @@ export type Maybe<T> = null | undefined | T;
 
 export interface MeshMergerOptions {
   cache: KeyValueCache;
-  pubsub: MeshPubSub;
+  pubsub: HivePubSub;
   log: Logger;
   store: IMeshStore;
+  disposables?: MeshDisposableStack;
 }
 
 export interface MeshMergerLibrary {
@@ -114,9 +122,10 @@ export interface MeshMerger {
 export type MeshPluginOptions<TConfig> = TConfig & {
   log: Logger;
   cache: KeyValueCache;
-  pubsub: MeshPubSub;
+  pubsub: HivePubSub;
   baseDir: string;
   importFn: ImportFn;
+  disposables?: MeshDisposableStack;
 };
 
 export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;

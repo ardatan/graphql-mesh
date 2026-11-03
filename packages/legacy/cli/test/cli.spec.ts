@@ -1,5 +1,8 @@
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { DEFAULT_CLI_PARAMS, graphqlMesh } from '../src/index';
+
+const fs = process.getBuiltinModule('node:fs');
+const pathModule = process.getBuiltinModule('node:path');
+
 
 describe('runtime', () => {
   describe('build', () => {

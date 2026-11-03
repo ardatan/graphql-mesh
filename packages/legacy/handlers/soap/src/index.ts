@@ -1,5 +1,4 @@
 import type { GraphQLSchema } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';

@@ -1,7 +1,12 @@
 import { createHive, useHive } from '@graphql-hive/yoga';
-import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { MeshFetch, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import type {
+  MeshDisposableStack,
+  MeshFetch,
+  MeshPlugin,
+  HivePubSub,
+  YamlConfig,
+} from '@graphql-mesh/types';
 import { Logger } from '@graphql-hive/logger';
 
 type HivePluginOptions = Parameters<typeof createHive>[0];
@@ -9,8 +14,9 @@ type HivePluginOptions = Parameters<typeof createHive>[0];
 export default function useMeshHive<TContext>(
   pluginOptions: YamlConfig.HivePlugin & {
     log?: Logger;
-    pubsub?: MeshPubSub;
+    pubsub?: HivePubSub;
     fetch?: MeshFetch;
+    disposables?: MeshDisposableStack;
   },
 ): MeshPlugin<TContext> {
   const enabled =
@@ -126,13 +132,10 @@ export default function useMeshHive<TContext>(
     logger: pluginOptions.log,
   };
   const client = createHive(yogaPluginOpts);
-  // Destroy the Hive client when the Mesh instance is destroyed
-  const id = pluginOptions.pubsub?.subscribe('destroy', () => {
-    client
-      .dispose()
-      .catch(e => pluginOptions.log?.error('Error disposing Hive client', e))
-      .finally(() => pluginOptions.pubsub?.unsubscribe(id));
-  });
+  const hivePlugin = useHive(client);
+  pluginOptions.disposables?.defer(() =>
+    client.dispose().catch(e => pluginOptions.log?.error('Error disposing Hive client', e)),
+  );
   // @ts-expect-error - Typings are incorrect
-  return useHive(client);
+  return hivePlugin;
 }

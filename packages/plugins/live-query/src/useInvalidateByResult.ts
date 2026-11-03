@@ -2,12 +2,12 @@ import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo 
 import { type Plugin } from '@envelop/core';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
-import { toMeshPubSub, type HivePubSub, type MeshPubSub, type YamlConfig } from '@graphql-mesh/types';
+import { type HivePubSub, type YamlConfig } from '@graphql-mesh/types';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { Logger } from '@graphql-hive/logger';
 
 interface InvalidateByResultParams {
-  pubsub: MeshPubSub | HivePubSub;
+  pubsub: HivePubSub;
   invalidations: YamlConfig.LiveQueryInvalidation[];
   log: Logger;
 }
@@ -15,7 +15,7 @@ interface InvalidateByResultParams {
 export function useInvalidateByResult(params: InvalidateByResultParams): Plugin & Disposable {
   const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
   const timers = new Set<ReturnType<typeof setInterval>>();
-  const pubsub = toMeshPubSub(params.pubsub);
+  const pubsub = params.pubsub;
   if (!pubsub) {
     throw new Error(`Live Query plugin requires a pubsub instance.`);
   }
@@ -57,12 +57,6 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
       existingFactories.push(...factories);
     }
   }
-  const id = pubsub.subscribe('destroy', () => {
-    for (const timer of timers) {
-      clearInterval(timer);
-    }
-    pubsub.unsubscribe(id);
-  });
   return {
     onExecute() {
       return {

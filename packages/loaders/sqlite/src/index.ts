@@ -1,5 +1,6 @@
 import type { GraphQLSchema } from 'graphql';
-import { path, process } from '@graphql-mesh/cross-helpers';
+
+const path = process.getBuiltinModule('node:path');
 
 export interface GraphQLSQLiteLoaderOpts {
   infile?: string;

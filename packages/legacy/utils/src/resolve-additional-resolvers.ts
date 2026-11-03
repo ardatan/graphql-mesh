@@ -18,16 +18,9 @@ import {
 } from 'graphql';
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
-import { process } from '@graphql-mesh/cross-helpers';
 import type { MeshContext } from '@graphql-mesh/runtime';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import {
-  isHivePubSub,
-  type HivePubSub,
-  type ImportFn,
-  type MeshPubSub,
-  type YamlConfig,
-} from '@graphql-mesh/types';
+import { type HivePubSub, type ImportFn, type YamlConfig } from '@graphql-mesh/types';
 import type { IResolvers } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
@@ -297,7 +290,7 @@ function generateValuesFromResultsByKey(
 
 export interface PubSubOperationOptions {
   pubsubTopic: string;
-  pubsub?: MeshPubSub | HivePubSub;
+  pubsub?: HivePubSub;
   filterBy?: string;
   result?: string;
 }
@@ -316,10 +309,7 @@ export function getResolverForPubSubOperation(
     const resolverData = { root, args, context, info, env: process.env };
     const topic = stringInterpolator.parse(pubsubTopic, resolverData);
     const ps = context?.pubsub || opts?.pubsub;
-    if (isHivePubSub(ps)) {
-      return ps.subscribe(topic)[Symbol.asyncIterator]();
-    }
-    return ps.asyncIterator(topic)[Symbol.asyncIterator]();
+    return ps.subscribe(topic)[Symbol.asyncIterator]();
   };
   if (opts.filterBy) {
     let filterFunction: any;
@@ -345,7 +335,7 @@ export function resolveAdditionalResolversWithoutImport(
     | YamlConfig.AdditionalStitchingResolverObject
     | YamlConfig.AdditionalSubscriptionObject
     | YamlConfig.AdditionalStitchingBatchResolverObject,
-  pubsub?: MeshPubSub | HivePubSub,
+  pubsub?: HivePubSub,
 ): IResolvers {
   const baseOptions: any = {
     valuesFromResults: additionalResolver.result
@@ -515,7 +505,7 @@ export function resolveAdditionalResolvers(
     | YamlConfig.AdditionalStitchingBatchResolverObject
   )[],
   importFn: ImportFn,
-  pubsub: MeshPubSub | HivePubSub,
+  pubsub: HivePubSub,
 ): Promise<IResolvers[]> {
   return Promise.all(
     (additionalResolvers || []).map(async additionalResolver => {

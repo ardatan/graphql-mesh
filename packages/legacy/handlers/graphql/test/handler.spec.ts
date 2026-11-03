@@ -10,7 +10,8 @@ import {
   MeshStore,
   PredefinedProxyOptions,
 } from '@graphql-mesh/store';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as fetchFn } from '@whatwg-node/fetch';
 import { createDisposableServer } from '../../../../testing/createDisposableServer.js';
@@ -37,7 +38,7 @@ describe('graphql', () => {
       },
       baseDir: __dirname,
       cache,
-      pubsub: new PubSub(),
+      pubsub: new MemPubSub(),
       store,
       importFn: defaultImportFn,
       log,
@@ -61,7 +62,7 @@ describe('graphql', () => {
       },
       baseDir: __dirname,
       cache,
-      pubsub: new PubSub(),
+      pubsub: new MemPubSub(),
       store,
       importFn: defaultImportFn,
       log,
@@ -84,7 +85,7 @@ describe('graphql', () => {
       },
       baseDir: __dirname,
       cache,
-      pubsub: new PubSub(),
+      pubsub: new MemPubSub(),
       store,
       importFn: defaultImportFn,
       log,
@@ -108,7 +109,7 @@ describe('graphql', () => {
       },
       baseDir: __dirname,
       cache,
-      pubsub: new PubSub(),
+      pubsub: new MemPubSub(),
       store,
       importFn: defaultImportFn,
       log,
@@ -183,7 +184,7 @@ describe('graphql', () => {
       },
       baseDir: __dirname,
       cache,
-      pubsub: new PubSub(),
+      pubsub: new MemPubSub(),
       store,
       importFn: defaultImportFn,
       log,

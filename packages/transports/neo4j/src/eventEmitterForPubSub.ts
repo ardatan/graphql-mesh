@@ -1,23 +1,25 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import type { EventEmitter } from 'events';
-import type { MeshPubSub } from '@graphql-mesh/types';
+import type { HivePubSub } from '@graphql-mesh/types';
 
-export function getEventEmitterFromPubSub(pubsub: MeshPubSub) {
+export function getEventEmitterFromPubSub(pubsub: HivePubSub) {
   return {
     on(event: string | symbol, listener: (...args: any[]) => void) {
-      pubsub.subscribe(event.toString(), listener);
+      void Promise.resolve(pubsub.subscribe(event.toString(), listener));
       return this;
     },
     once(event: string | symbol, listener: (...args: any[]) => void) {
-      const id = pubsub.subscribe(event.toString(), data => {
-        listener(data);
-        pubsub.unsubscribe(id);
-      });
+      const unsubPromise = Promise.resolve(
+        pubsub.subscribe(event.toString(), data => {
+          listener(data);
+          void unsubPromise.then(unsub => unsub());
+        }),
+      );
 
       return this;
     },
     emit(event: string | symbol, ...args: any[]) {
-      pubsub.publish(event.toString(), args[0]);
+      void pubsub.publish(event.toString(), args[0]);
       return true;
     },
     addListener(event: string | symbol, listener: (...args: any[]) => void) {

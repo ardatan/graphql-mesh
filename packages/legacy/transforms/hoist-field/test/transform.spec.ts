@@ -1,7 +1,8 @@
 import { buildSchema, GraphQLObjectType, printSchema, type GraphQLField } from 'graphql';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { MeshPubSub } from '@graphql-mesh/types';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import type { HivePubSub } from '@graphql-mesh/types';
+import { defaultImportFn } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { dummyLogger as log} from '../../../../testing/dummyLogger';
 import HoistFieldTransform from '../src/index.js';
@@ -24,11 +25,11 @@ describe('hoist', () => {
       name: String!
     }
   `);
-  let pubsub: MeshPubSub;
+  let pubsub: HivePubSub;
   const baseDir: string = undefined;
 
   beforeEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
   });
 
   it('should hoist field with string pathConfig array', () => {

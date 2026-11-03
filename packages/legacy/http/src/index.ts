@@ -1,4 +1,3 @@
-import { fs, path } from '@graphql-mesh/cross-helpers';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { pathExists, withCookies } from '@graphql-mesh/utils';
@@ -6,6 +5,9 @@ import { createServerAdapter, Response } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';
 import { resolvePlaygroundConfig } from './playground.js';
 import { Logger } from '@graphql-hive/logger';
+
+const fs = process.getBuiltinModule('node:fs');
+const path = process.getBuiltinModule('node:path');
 
 export { resolvePlaygroundConfig } from './playground.js';
 
@@ -114,8 +116,10 @@ export function createMeshHTTPHandler<TServerContext>({
             withCookies(request);
             if (readyFlag) {
               return getBuiltMesh().then(async mesh => {
-                for (const eventName of mesh.pubsub.getEventNames()) {
-                  if (eventName === `webhook:${request.method.toLowerCase()}:${url.pathname}`) {
+                const expectedEvent = `webhook:${request.method.toLowerCase()}:${url.pathname}`;
+                const topics = await mesh.pubsub.subscribedTopics();
+                for (const eventName of topics) {
+                  if (eventName === expectedEvent) {
                     const body = await request.text();
                     log.debug(`Received webhook request for ${url.pathname}`, body);
                     mesh.pubsub.publish(

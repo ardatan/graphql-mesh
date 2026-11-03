@@ -8,31 +8,36 @@ import {
 import { getOperationAST, specifiedRules, validate } from 'graphql';
 import type { Plugin } from '@envelop/core';
 import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
-import { process } from '@graphql-mesh/cross-helpers';
-import type { GraphQLOperation, KeyValueCache, MeshFetch, MeshPlugin, MeshPubSub, MeshTransform, OnDelegateHook, OnFetchHook, OnFetchHookPayload, RawSourceOutput } from '@graphql-mesh/types';
-import { applySchemaTransforms, getHeadersObj, getInContextSDK, groupTransforms, makeDisposable, parseWithCache, PubSub, wrapFetchWithHooks } from '@graphql-mesh/utils';
+import type { GraphQLOperation, KeyValueCache, MeshFetch, MeshPlugin, HivePubSub, MeshTransform, OnDelegateHook, OnFetchHook, OnFetchHookPayload, RawSourceOutput } from '@graphql-mesh/types';
+import { applySchemaTransforms, getHeadersObj, getInContextSDK, groupTransforms, isDisposable, makeAsyncDisposable, parseWithCache, wrapFetchWithHooks } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import type { CreateProxyingResolverFn, SubschemaConfig } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import type { ExecutionResult } from '@graphql-tools/utils';
 import { getRootTypeMap, isAsyncIterable, memoize1 } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import type { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { getOriginalError } from './utils.js';
-import { handleMaybePromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
+import { handleMaybePromise, mapAsyncIterator, type MaybePromise } from '@whatwg-node/promise-helpers';
 import { Logger } from '@graphql-hive/logger';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
-export interface MeshInstance extends Disposable {
+export interface MeshInstance extends AsyncDisposable {
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
   createExecutor(globalContext: any): MeshExecutor;
   rawSources: RawSourceOutput[];
-  destroy(): void;
-  pubsub: MeshPubSub;
+  destroy(): MaybePromise<void>;
+  /**
+   * Register cleanup to run when {@link destroy} / `await using` disposes this mesh.
+   */
+  deferDispose(fn: () => MaybePromise<void>): void;
+  pubsub: HivePubSub;
   cache: KeyValueCache;
   log: Logger;
   plugins: Plugin[];
@@ -79,7 +84,7 @@ function createProxyingResolverFactory(
 export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const rawSources: RawSourceOutput[] = [];
   const {
-    pubsub = new PubSub(),
+    pubsub = new MemPubSub(),
     cache,
     log = new Logger({ prefix: '' }),
     additionalEnvelopPlugins = [],
@@ -89,7 +94,15 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     additionalTypeDefs = [],
     transforms = [],
     fetchFn = defaultFetchFn,
+    disposables = new AsyncDisposableStack(),
   } = options;
+
+  if (isDisposable(cache)) {
+    disposables.use(cache as Disposable | AsyncDisposable);
+  }
+  if (isDisposable(pubsub)) {
+    disposables.use(pubsub as Disposable | AsyncDisposable);
+  }
 
   const getMeshLogger = log.child('GetMesh');
   getMeshLogger.debug(`Getting subschemas from source handlers`);
@@ -146,7 +159,11 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       try {
         const source = await apiSource.handler.getMeshSource({
           fetchFn: wrappedFetchFn,
+          disposables,
         });
+        if (isDisposable(apiSource.handler)) {
+          disposables.use(apiSource.handler as Disposable | AsyncDisposable);
+        }
         sourceLogger.debug(`The schema has been generated successfully`);
 
         let apiSchema = source.schema;
@@ -344,17 +361,26 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     };
   }
 
-  function meshDestroy() {
-    return pubsub.publish('destroy', undefined);
+  for (const plugin of plugins) {
+    if (isDisposable(plugin)) {
+      disposables.use(plugin as Disposable | AsyncDisposable);
+    }
   }
 
-  return makeDisposable(
+  function meshDestroy(): MaybePromise<void> {
+    return disposables.disposeAsync();
+  }
+
+  return makeAsyncDisposable(
     {
       schema,
       rawSources,
       cache,
       pubsub,
       destroy: meshDestroy,
+      deferDispose(fn: () => MaybePromise<void>) {
+        disposables.defer(fn);
+      },
       log,
       plugins,
       get getEnveloped() {

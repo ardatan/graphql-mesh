@@ -1,5 +1,5 @@
 import type { DocumentNode, ExecutionResult } from 'graphql';
-import type { GraphQLOperation, KeyValueCache, MeshFetch, MeshHandler, MeshMerger, MeshPlugin, MeshPubSub, MeshTransform, YamlConfig } from '@graphql-mesh/types';
+import type { MeshDisposableStack, GraphQLOperation, KeyValueCache, MeshFetch, MeshHandler, MeshMerger, MeshPlugin, HivePubSub, MeshTransform, YamlConfig } from '@graphql-mesh/types';
 import type { TerminateHandler } from '@graphql-mesh/utils';
 import type { IResolvers, MaybeAsyncIterable, Source } from '@graphql-tools/utils';
 import type { MESH_CONTEXT_SYMBOL } from './constants.js';
@@ -13,12 +13,14 @@ export type GetMeshOptions = {
   additionalTypeDefs?: DocumentNode[];
   additionalResolvers?: IResolvers | IResolvers[];
   cache: KeyValueCache;
-  pubsub?: MeshPubSub;
+  pubsub?: HivePubSub;
   merger: MeshMerger;
   log?: Logger;
   additionalEnvelopPlugins?: MeshPlugin<any>[];
   documents?: Source[];
   fetchFn?: MeshFetch;
+  /** Shared dispose stack for handlers/plugins/cache. Created by getMesh when omitted. */
+  disposables?: MeshDisposableStack;
 };
 
 export type MeshResolvedSource = {
@@ -45,7 +47,7 @@ export type SubscribeMeshFn<TVariables = any, TContext = any, TRootValue = any, 
 
 export type MeshContext = {
   [MESH_CONTEXT_SYMBOL]: true;
-} & { pubsub: MeshPubSub; cache: KeyValueCache; log: Logger; fetch: MeshFetch };
+} & { pubsub: HivePubSub; cache: KeyValueCache; log: Logger; fetch: MeshFetch };
 
 export interface ServeMeshOptions {
   baseDir: string;

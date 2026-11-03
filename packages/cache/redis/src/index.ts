@@ -1,9 +1,8 @@
 import Redis, { type Cluster } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import type { RedisOptions } from 'ioredis/built/redis/RedisOptions';
-import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { toMeshPubSub, type HivePubSub, type KeyValueCache, type KeyValueCacheSetOptions, type MeshPubSub, type YamlConfig } from '@graphql-mesh/types';
+import { type HivePubSub, type KeyValueCache, type KeyValueCacheSetOptions, type YamlConfig } from '@graphql-mesh/types';
 import { trace, type Tracer } from '@opentelemetry/api';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { Logger } from '@graphql-hive/logger';
@@ -26,7 +25,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   private iamInitPromise?: Promise<void>;
 
   constructor(
-    options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub | HivePubSub; log: Logger },
+    options: YamlConfig.Cache['redis'] & { pubsub?: HivePubSub; log: Logger; disposables?: import('@graphql-mesh/types').MeshDisposableStack },
   ) {
     this.tracer = trace.getTracer('hive.cache.redis');
     this.tracer.startActiveSpan('hive.cache.redis.init', span => {
@@ -186,12 +185,6 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
             this.client = new RedisMock();
           }
         }
-        const pubsub = toMeshPubSub(options.pubsub);
-        // TODO: PubSub.destroy will no longer be needed after v0
-        const id = pubsub?.subscribe('destroy', () => {
-          this.client.disconnect(false);
-          pubsub.unsubscribe(id);
-        });
       } finally {
         span.end();
       }

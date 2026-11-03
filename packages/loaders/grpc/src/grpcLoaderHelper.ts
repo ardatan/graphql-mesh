@@ -1,4 +1,4 @@
-import globby from 'globby';
+import { matchFiles } from '@graphql-tools/load-files';
 import { specifiedDirectives } from 'graphql';
 import {
   SchemaComposer,
@@ -19,7 +19,6 @@ import protobufjs, { type AnyNestedObject, type IParseOptions } from 'protobufjs
 import type { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
 import descriptor from 'protobufjs/ext/descriptor/index.js';
 import { Client } from '@ardatan/grpc-reflection-js';
-import { fs, path } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { GraphQLStreamDirective, type Constructor } from '@graphql-tools/utils';
@@ -39,6 +38,9 @@ import {
 import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils.js';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import { Logger } from '@graphql-hive/logger';
+
+const fs = process.getBuiltinModule('node:fs');
+const path = process.getBuiltinModule('node:path');
 
 const { Root } = protobufjs;
 
@@ -253,8 +255,9 @@ export class GrpcLoaderHelper extends DisposableStack {
 
     fileGlob = stringInterpolator.parse(fileGlob, { env: process.env });
 
-    const fileNames = await globby(fileGlob, {
+    const fileNames = await matchFiles(fileGlob, {
       cwd: this.baseDir,
+      absolute: false,
     });
     this.log.debug(`Loading proto files(${fileGlob}); \n ${fileNames.join('\n')} `);
     protoRoot = await protoRoot.load(
