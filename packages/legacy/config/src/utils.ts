@@ -151,7 +151,6 @@ export async function resolveCache(
   importFn: ImportFn,
   rootStore: MeshStore,
   cwd: string,
-  pubsub: PubSub,
   log: Logger,
   additionalPackagePrefixes: string[],
 ): Promise<{
@@ -169,11 +168,11 @@ export async function resolveCache(
     additionalPrefixes: additionalPackagePrefixes,
   });
 
+  // Caches clean up via [DisposableSymbols]; do not inject unused pubsub
   const cache = new Cache({
     ...config,
     importFn,
     store: rootStore.child('cache'),
-    pubsub,
     log,
   });
 
@@ -182,7 +181,6 @@ export async function resolveCache(
       ...${JSON.stringify(config)},
       importFn,
       store: rootStore.child('cache'),
-      pubsub,
       log,
     })`;
 

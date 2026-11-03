@@ -2,7 +2,6 @@ import Redis, { type Cluster } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import type { RedisOptions } from 'ioredis/built/redis/RedisOptions';
 import { type Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
   type KeyValueCache,
@@ -30,7 +29,6 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
 
   constructor(
     options: YamlConfig.Cache['redis'] & {
-      pubsub?: PubSub;
       log: Logger;
     },
   ) {

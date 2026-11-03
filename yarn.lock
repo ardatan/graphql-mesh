@@ -8177,7 +8177,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-inmemory-lru@workspace:packages/cache/inmemory-lru"
   dependencies:
-    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
@@ -8206,7 +8205,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cache-localforage@workspace:packages/cache/localforage"
   dependencies:
-    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/cache-inmemory-lru": "npm:^0.11.3"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
@@ -8275,7 +8273,6 @@ __metadata:
     "@aws-sdk/credential-providers": "npm:^3.1107.0"
     "@aws-sdk/util-format-url": "npm:^3.972.43"
     "@graphql-hive/logger": "npm:^1.1.1"
-    "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@opentelemetry/api": "npm:^1.9.1"

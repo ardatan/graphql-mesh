@@ -177,7 +177,6 @@ export async function processConfig(
     importFn,
     rootStore,
     dir,
-    pubsub,
     log,
     additionalPackagePrefixes,
   );
