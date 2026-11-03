@@ -2,13 +2,13 @@
 "@graphql-mesh/cli": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
 
 ## Motivation
 
-Generated serve/SDK artifacts on `master` still assumed Mesh helpers and sometimes awaited `destroy()` on shutdown paths that should not block. Artifacts now follow AsyncDisposableStack + `fakePromise` like runtime.
+Generated serve/SDK artifacts still assumed Mesh helpers and sometimes awaited `destroy()` on shutdown paths that should not block. Artifacts now follow AsyncDisposableStack + `fakePromise` like runtime.
 
-## What changed (vs `master`)
+## What changed ()
 
 - Generated artifacts import `AsyncDisposableStack` and `fakePromise` / `fakeRejectPromise`
 - Serve/polling shutdown may fire-and-forget `destroy()` where a hanging await was unnecessary

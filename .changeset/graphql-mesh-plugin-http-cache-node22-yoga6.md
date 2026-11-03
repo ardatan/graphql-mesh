@@ -2,13 +2,13 @@
 "@graphql-mesh/plugin-http-cache": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
 
 ## Motivation
 
 HTTP cache debug lines should follow the Yoga request logger. Constructor `log` / onFetch `log: fetchLog` were easy to get wrong relative to `context.log`.
 
-## What changed (vs `master`)
+## What changed ()
 
 - No plugin `log` option
 - `onFetch` uses `context?.log?.child({ plugin: 'HTTP Cache' }) ?? context?.log`

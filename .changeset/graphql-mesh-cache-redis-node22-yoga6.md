@@ -2,13 +2,13 @@
 "@graphql-mesh/cache-redis": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
 
 ## Motivation
 
-On `master`, Redis subscribed to `destroy` via optional ctor `pubsub` and used `logger` for connection/IAM logs. Teardown is now `[DisposableSymbols.dispose]`; `pubsub` is removed; logging uses `log`.
+Redis subscribed to `destroy` via optional ctor `pubsub` and used `logger` for connection/IAM logs. Teardown is now `[DisposableSymbols.dispose]`; `pubsub` is removed; logging uses `log`.
 
-## What changed (vs `master`)
+## What changed ()
 
 - Client closed via `[DisposableSymbols.dispose]` (no destroy-pubsub subscriber)
 - `pubsub` constructor option removed
@@ -25,6 +25,6 @@ On `master`, Redis subscribed to `destroy` via optional ctor `pubsub` and used `
 import RedisCache from '@graphql-mesh/cache-redis'
 import { Logger } from '@graphql-hive/logger'
 
-// master: new RedisCache({ host, pubsub, logger })
+// before: new RedisCache({ host, pubsub, logger })
 await using cache = new RedisCache({ host: '127.0.0.1', log: new Logger() })
 ```

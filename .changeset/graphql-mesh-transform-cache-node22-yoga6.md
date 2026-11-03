@@ -2,13 +2,13 @@
 "@graphql-mesh/transform-cache": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
 
 ## Motivation
 
-Cache-transform waiters on `master` mixed Mesh promise helpers with weak subscribe error handling. Use `Promise.withResolvers` and Hive PubSub so invalidation races surface clearly.
+Cache-transform waiters mixed Mesh promise helpers with weak subscribe error handling. Use `Promise.withResolvers` and Hive PubSub so invalidation races surface clearly.
 
-## What changed (vs `master`)
+## What changed ()
 
 - Waiters use `Promise.withResolvers`; subscribe failures are forwarded
 - Hive `PubSub` + `fakePromise` from their packages
@@ -23,9 +23,9 @@ import CacheTransform from '@graphql-mesh/transform-cache'
 import type { PubSub } from '@graphql-hive/pubsub'
 
 const transform = new CacheTransform({
-  config: [{ field: 'Query.user', cacheKey: 'user-{args.id}', invalidate: { ttl: 60 } }],
-  pubsub,
-  cache,
-  ...meshTransformOptions,
+ config: [{ field: 'Query.user', cacheKey: 'user-{args.id}', invalidate: { ttl: 60 } }],
+ pubsub,
+ cache,
+ ...meshTransformOptions,
 })
 ```

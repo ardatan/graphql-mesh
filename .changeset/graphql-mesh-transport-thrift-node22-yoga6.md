@@ -2,13 +2,13 @@
 "@graphql-mesh/transport-thrift": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
 
 ## Motivation
 
 `return Promise.reject(err)` inside async functions loses stacks. Throwing matches other Mesh transports.
 
-## What changed (vs `master`)
+## What changed ()
 
 - Async request path throws instead of `return Promise.reject(...)`
 

@@ -2,13 +2,13 @@
 "@graphql-mesh/utils": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
 
 ## Motivation
 
-On `master`, utils re-exported Mesh Logger, Mesh PubSub, and promise helpers, and `wrapFetchWithHooks` accepted a default logger argument. That fought Yoga `context.log` and duplicated Hive/WHATWG packages.
+utils re-exported Mesh Logger, Mesh PubSub, and promise helpers, and `wrapFetchWithHooks` accepted a default logger argument. That fought Yoga `context.log` and duplicated Hive/WHATWG packages.
 
-## What changed (vs `master`)
+## What changed ()
 
 - Remove Mesh `Logger` / `DefaultLogger`, Mesh PubSub implementation, and PubSub re-exports
 - Remove `handleMaybePromise` / `MaybePromise` / `mapMaybePromise` re-exports
@@ -28,6 +28,6 @@ import { handleMaybePromise, fakePromise } from '@whatwg-node/promise-helpers'
 import { Logger } from '@graphql-hive/logger'
 import { MemPubSub } from '@graphql-hive/pubsub'
 
-// master: wrapFetchWithHooks(hooks, instrumentation, defaultLogger)
+// before: wrapFetchWithHooks(hooks, instrumentation, defaultLogger)
 const fetchFn = wrapFetchWithHooks(hooks)
 ```

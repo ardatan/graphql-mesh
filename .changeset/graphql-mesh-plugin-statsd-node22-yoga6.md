@@ -2,13 +2,13 @@
 "@graphql-mesh/plugin-statsd": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
 
 ## Motivation
 
-On `master`, StatsD cleanup depended on destroy-pubsub style lifecycle elsewhere. The plugin now implements `[DisposableSymbols.asyncDispose]` so `getMesh` can `disposables.use(plugin)`.
+StatsD cleanup depended on destroy-pubsub style lifecycle elsewhere. The plugin now implements `[DisposableSymbols.asyncDispose]` so `getMesh` can `disposables.use(plugin)`.
 
-## What changed (vs `master`)
+## What changed ()
 
 - Plugin implements `[DisposableSymbols.asyncDispose]` for the StatsD client
 - `getMesh` registers the plugin with `disposables.use(plugin)`

@@ -2,16 +2,16 @@
 "@graphql-mesh/cache-inmemory-lru": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
 
 ## Motivation
 
-On `master`, InMemoryLRU accepted optional `pubsub` and subscribed to `destroy` to clear TTL timeouts. That lifecycle is gone. The cache implements `[DisposableSymbols.dispose]` and no longer takes `pubsub`.
+InMemoryLRU accepted optional `pubsub` and subscribed to `destroy` to clear TTL timeouts. That lifecycle is gone. The cache implements `[DisposableSymbols.dispose]` and no longer takes `pubsub`.
 
-## What changed (vs `master`)
+## What changed ()
 
 - `[DisposableSymbols.dispose]` clears TTL timeouts
-- `pubsub` constructor option removed (it existed on `master` for destroy subscribe)
+- `pubsub` constructor option removed (it existed for destroy subscribe)
 
 ## How to migrate
 
@@ -22,7 +22,7 @@ On `master`, InMemoryLRU accepted optional `pubsub` and subscribed to `destroy` 
 ```ts
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru'
 
-// master: new InMemoryLRUCache({ pubsub })
+// before: new InMemoryLRUCache({ pubsub })
 const cache = new InMemoryLRUCache({ max: 1000 })
 disposables.use(cache)
 ```
