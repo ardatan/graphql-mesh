@@ -18,9 +18,9 @@ const mockUtil = {
   // We do not promisify, the functions passed in are already promise-based for simplicity
   promisify: jest.fn(fn => fn),
 };
-const originalGetBuiltinModule = process.getBuiltinModule.bind(process);
+const originalGetBuiltinModule = globalThis.process!.getBuiltinModule.bind(globalThis.process);
 function mockGetBuiltinModule(): void {
-  process.getBuiltinModule = ((id: string) => {
+  globalThis.process!.getBuiltinModule = ((id: string) => {
     if (id === 'node:fs' || id === 'fs') {
       return mockFs as any;
     }
@@ -79,7 +79,7 @@ describe('loadGraphQLSchemaFromMySQL', () => {
   });
 
   afterAll(() => {
-    process.getBuiltinModule = originalGetBuiltinModule;
+    globalThis.process!.getBuiltinModule = originalGetBuiltinModule;
   });
 
   describe('should correctly generate graphql schema from a mysql schema', () => {

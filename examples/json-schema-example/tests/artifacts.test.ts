@@ -2,7 +2,10 @@ import { join } from 'path';
 
 describe('Artifacts', () => {
   it('should execute queries', async () => {
-    const fs = process.getBuiltinModule('node:fs');
+    const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+    if (!fs) {
+      throw new Error('Node.js fs module is required for artifacts tests');
+    }
     const { readFile } = fs.promises;
     const { getBuiltMesh } = await import('../.mesh/index');
     const { execute } = await getBuiltMesh();
