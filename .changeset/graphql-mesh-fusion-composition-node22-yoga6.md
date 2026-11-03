@@ -2,9 +2,15 @@
 "@graphql-mesh/fusion-composition": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
 
-- Type-only filter globs like `!User` are removed from `createFilterTransform`; use `Type.!User`
+## Why
+
+Fusion filter transforms accepted the same ambiguous type-only globs as legacy filter-schema. Compose-time filters must share the explicit `Type.` grammar so composed supergraphs do not drop the wrong things.
+
+## What changed in this package
+
+- `createFilterTransform` rejects type-only globs like `!User`; use `Type.!User`
 
 #### Example
 ```ts

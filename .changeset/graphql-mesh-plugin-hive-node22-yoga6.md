@@ -2,20 +2,25 @@
 "@graphql-mesh/plugin-hive": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
 
-- Align with `@graphql-hive/yoga` / Yoga 6; rely on `useHive`'s Yoga `onDispose` / Hive `autoDispose` for client cleanup (no extra Mesh `[DisposableSymbols]` wrapper)
-- Drop unused plugin `pubsub` option (Hive does not need Mesh/Gateway pubsub)
+## Why
+
+Hive reporting already disposes through `@graphql-hive/yoga` (`onDispose` / `autoDispose`). An extra Mesh `[DisposableSymbols]` wrapper and an unused Mesh `pubsub` option suggested Mesh owned Hive lifecycle when it does not.
+
+## What changed in this package
+
+- Rely on `useHive` Yoga `onDispose` / Hive `autoDispose` — no extra Mesh dispose wrapper
+- Drop unused plugin `pubsub` option
 - Hive agent logger comes from `agent.logger` when set
 
 #### Example
 ```ts
 import { useMeshHive } from '@graphql-mesh/plugin-hive'
 
-// Before: useMeshHive({ ...opts, pubsub, /* Mesh dispose wrapper */ })
+// Before: useMeshHive({ ...opts, pubsub }) + Mesh DisposableSymbols wrapper
 useMeshHive({
   ...meshPluginOptions,
-  token: process.env.HIVE_TOKEN,
-  // cleanup via Yoga onDispose / Hive autoDispose
+  token: process.env.HIVE_TOKEN!,
 })
 ```

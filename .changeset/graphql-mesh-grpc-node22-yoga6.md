@@ -2,19 +2,26 @@
 "@graphql-mesh/grpc": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
 
-- Handler owns `GrpcTransportHelper` and cleans up via `[DisposableSymbols.dispose]`; `getMesh` registers with `disposables.use(handler)` (no injected `disposables` option)
-- Use Hive `Logger` / `PubSub` from original packages
+## Why
+
+Handlers previously expected Mesh to inject disposables or to publish destroy so gRPC clients / `GrpcTransportHelper` could close. That leaked when destroy subscribers were missing. The handler now owns teardown via `[DisposableSymbols.dispose]`.
+
+## What changed in this package
+
+- Cleanup gRPC clients / `GrpcTransportHelper` via `[DisposableSymbols.dispose]`; `getMesh` registers with `disposables.use(handler)`
+- No injected `disposables` constructor option
+- Use Hive `Logger` / `PubSub` types from their packages
 
 #### Example
 ```ts
-import GrpcHandler from '@graphql-mesh/grpc'
+import Handler from '@graphql-mesh/grpc'
 
-const handler = new GrpcHandler({
-  name: 'MyGrpc',
-  config: { source: './service.proto', endpoint: 'localhost:50051' },
-  // no disposables option — implement DisposableSymbols on the handler
+const handler = new Handler({
+  name: 'API',
+  config: { /* source-specific */ },
+  // Before: { disposables } or destroy-pubsub subscription
 })
-// getMesh: disposables.use(handler)
+disposables.use(handler)
 ```

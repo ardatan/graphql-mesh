@@ -2,10 +2,17 @@
 "@graphql-mesh/plugin-newrelic": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
 
-- Align envelop/Yoga 6 majors
-- Keep optional `options.log` for init-time diagnostics when the New Relic agent is unavailable (e.g. `options.log?.debug('Agent unavailable…')`); prefer Yoga `context.log` for request-time logging
+## Why
+
+New Relic setup can fail before any GraphQL request exists (agent missing / disabled). That still needs an init-time logger, while request spans should follow Yoga `context.log`. Keeping `options.log` optional preserves the agent-unavailable diagnostic without forcing every plugin to take a logger.
+
+## What changed in this package
+
+- Align with envelop / Yoga 6 plugin shapes
+- Keep optional `options.log` for init-time diagnostics when the New Relic agent is unavailable
+- Prefer Yoga `context.log` for request-time logging
 
 #### Example
 ```ts
@@ -13,6 +20,6 @@ import { useMeshNewrelic } from '@graphql-mesh/plugin-newrelic'
 
 useMeshNewrelic({
   ...meshPluginOptions,
-  log: meshLogger, // optional init-time logger when the New Relic agent is missing
+  log: meshLogger, // optional — used for: options.log?.debug('Agent unavailable…')
 })
 ```
