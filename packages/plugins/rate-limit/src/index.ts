@@ -1,5 +1,4 @@
 import { Store, useRateLimiter, type Identity } from '@envelop/rate-limiter';
-import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
@@ -57,7 +56,7 @@ export default function useMeshRateLimit({
         ? (context: any) =>
             stringInterpolator.parse(origConfig.identifier, {
               context,
-              env: process.env,
+              env: globalThis.process?.env,
             })
         : undefined,
     })),

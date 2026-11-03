@@ -8,7 +8,8 @@ import type {
   RedisOptions,
   StandaloneConnectionOptions,
 } from 'ioredis';
-import type { Logger, YamlConfig } from '@graphql-mesh/types';
+import { type Logger } from '@graphql-hive/logger';
+import type { YamlConfig } from '@graphql-mesh/types';
 
 const AbstractConnectorClass =
   // @ts-expect-error ioredis is CJS-only and reassigns module.exports, which breaks Node.js static
@@ -72,48 +73,48 @@ class IamTokenConnector extends AbstractConnectorClass {
     const { options } = this;
     this.connecting = true;
 
-    return new Promise((resolve, reject) => {
-      process.nextTick(async () => {
-        if (!this.connecting) {
-          reject(new Error('Connection is closed.'));
-          return;
-        }
-        try {
-          if (options.tls) {
-            // eslint-disable-next-line import/no-nodejs-modules
-            const { connect } = await import('node:tls');
-            if (options.path) {
-              this.stream = connect({ ...options.tls, path: options.path });
-            } else {
-              this.stream = connect({
-                ...options.tls,
-                port: options.port ?? 6380,
-                host: options.host,
-              });
-            }
+    const { promise, resolve, reject } = Promise.withResolvers<Awaited<ConnectResult>>();
+    globalThis.process?.nextTick(async () => {
+      if (!this.connecting) {
+        reject(new Error('Connection is closed.'));
+        return;
+      }
+      try {
+        if (options.tls) {
+          // eslint-disable-next-line import/no-nodejs-modules
+          const { connect } = await import('node:tls');
+          if (options.path) {
+            this.stream = connect({ ...options.tls, path: options.path });
           } else {
-            // eslint-disable-next-line import/no-nodejs-modules
-            const { createConnection } = await import('node:net');
-            if (options.path) {
-              this.stream = createConnection({ path: options.path });
-            } else {
-              this.stream = createConnection({
-                port: options.port ?? 6379,
-                host: options.host,
-                family: options.family,
-              });
-            }
+            this.stream = connect({
+              ...options.tls,
+              port: options.port ?? 6380,
+              host: options.host,
+            });
           }
-        } catch (err) {
-          reject(err);
-          return;
+        } else {
+          // eslint-disable-next-line import/no-nodejs-modules
+          const { createConnection } = await import('node:net');
+          if (options.path) {
+            this.stream = createConnection({ path: options.path });
+          } else {
+            this.stream = createConnection({
+              port: options.port ?? 6379,
+              host: options.host,
+              family: options.family,
+            });
+          }
         }
-        this.stream.once('error', err => {
-          this.firstError = err;
-        });
-        resolve(this.stream);
+      } catch (err) {
+        reject(err);
+        return;
+      }
+      this.stream.once('error', err => {
+        this.firstError = err;
       });
+      resolve(this.stream);
     });
+    return promise;
   }
 }
 
@@ -208,7 +209,7 @@ export function setupIamAuthRefreshForStandalone(
   redisRef: { current: Redis | null },
   cfg: IamAuthConfig,
   username: string | undefined,
-  logger?: Logger,
+  log?: Logger,
 ): ReturnType<typeof setInterval> {
   const expiryMs = (cfg.tokenExpirySeconds ?? 900) * 1000;
   const refreshIntervalMs = expiryMs * 0.8;
@@ -222,7 +223,7 @@ export function setupIamAuthRefreshForStandalone(
         }
       })
       .catch(err => {
-        logger?.error('Failed to refresh IAM token for Redis:', err);
+        log?.error('Failed to refresh IAM token for Redis:', err);
       });
   }, refreshIntervalMs);
 }
@@ -240,7 +241,7 @@ export async function setupIamAuthForCluster(
   redisOptions: RedisOptions,
   cfg: IamAuthConfig,
   username: string | undefined,
-  logger?: Logger,
+  log?: Logger,
 ): Promise<ReturnType<typeof setInterval>> {
   const expiryMs = (cfg.tokenExpirySeconds ?? 900) * 1000;
   const refreshIntervalMs = expiryMs * 0.8;
@@ -273,7 +274,7 @@ export async function setupIamAuthForCluster(
 
   const timer = setInterval(() => {
     refreshToken().catch(err => {
-      logger?.error('Failed to refresh IAM token for Redis cluster:', err);
+      log?.error('Failed to refresh IAM token for Redis cluster:', err);
     });
   }, refreshIntervalMs);
 

@@ -19,10 +19,10 @@ export default class BareMerger implements MeshMerger {
   handleSingleWrappedExtendedSource(mergerCtx: MeshMergerContext) {
     // switch to stitching merger
     this.name = 'stitching';
-    this.options.logger.debug(
+    this.options.log.debug(
       `Switching to Stitching merger due to the transforms and additional resolvers`,
     );
-    this.options.logger = this.options.logger.child({ proxy: 'stitching' });
+    this.options.log = this.options.log.child({ proxy: 'stitching' });
     this.stitchingMerger = this.stitchingMerger || new StitchingMerger(this.options);
     return this.stitchingMerger.getUnifiedSchema(mergerCtx);
   }
@@ -41,7 +41,7 @@ export default class BareMerger implements MeshMerger {
         });
       }
     }
-    this.options.logger.debug(`Attaching a dummy sourceMap to the final schema`);
+    this.options.log.debug(`Attaching a dummy sourceMap to the final schema`);
     schema.extensions = schema.extensions || {};
     Object.defineProperty(schema.extensions, 'sourceMap', {
       configurable: true,
@@ -78,7 +78,7 @@ export default class BareMerger implements MeshMerger {
       return this.handleSingleRegularSource({ rawSources, typeDefs, resolvers });
     }
     const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
-    this.options.logger.debug(`Applying transforms for each source`);
+    this.options.log.debug(`Applying transforms for each source`);
     const schemas = rawSources.map(source => {
       let schema = source.schema;
       let sourceLevelSchema = source.schema;
@@ -93,14 +93,14 @@ export default class BareMerger implements MeshMerger {
       return schema;
     });
 
-    this.options.logger.debug(`Merging sources`);
+    this.options.log.debug(`Merging sources`);
     const unifiedSchema = mergeSchemas({
       schemas,
       typeDefs,
       resolvers,
     });
 
-    this.options.logger.debug(`Attaching sources to the unified schema`);
+    this.options.log.debug(`Attaching sources to the unified schema`);
     unifiedSchema.extensions = unifiedSchema.extensions || {};
     Object.defineProperty(unifiedSchema.extensions, 'sourceMap', {
       get: () => sourceMap,

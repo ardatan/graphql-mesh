@@ -1,12 +1,11 @@
 import type { GraphQLSchema } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
+import { type Logger } from '@graphql-hive/logger';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type {
   GetMeshSourcePayload,
   ImportFn,
-  Logger,
   MeshHandler,
   MeshHandlerOptions,
   MeshSource,
@@ -22,7 +21,7 @@ export default class SoapHandler implements MeshHandler {
   private soapSDLProxy: StoreProxy<GraphQLSchema>;
   private baseDir: string;
   private importFn: ImportFn;
-  private logger: Logger;
+  private log: Logger;
 
   constructor({
     name,
@@ -30,7 +29,7 @@ export default class SoapHandler implements MeshHandler {
     store,
     baseDir,
     importFn,
-    logger,
+    log,
   }: MeshHandlerOptions<YamlConfig.SoapHandler>) {
     this.name = name;
     this.config = config;
@@ -40,7 +39,7 @@ export default class SoapHandler implements MeshHandler {
     );
     this.baseDir = baseDir;
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
@@ -53,15 +52,15 @@ export default class SoapHandler implements MeshHandler {
         cwd: this.baseDir,
         fetch: fetchFn,
         importFn: this.importFn,
-        logger: this.logger,
-        headers: schemaHeadersFactory({ env: process.env }),
+        log: this.log,
+        headers: schemaHeadersFactory({ env: globalThis.process?.env }),
       });
     } else {
       schema = await this.soapSDLProxy.getWithSet(async () => {
         const soapLoader = new SOAPLoader({
           subgraphName: this.name,
           fetch: fetchFn,
-          logger: this.logger,
+          log: this.log,
           cwd: this.baseDir,
           schemaHeaders: this.config.schemaHeaders,
           operationHeaders: this.config.operationHeaders,
@@ -74,8 +73,8 @@ export default class SoapHandler implements MeshHandler {
           cwd: this.baseDir,
           fetch: fetchFn,
           importFn: this.importFn,
-          logger: this.logger,
-          headers: schemaHeadersFactory({ env: process.env }),
+          log: this.log,
+          headers: schemaHeadersFactory({ env: globalThis.process?.env }),
         });
         // Pass wsdlLocation as the base URL so nested <wsdl:import> /
         // <xsd:import> locations resolve relative to the importing document.

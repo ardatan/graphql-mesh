@@ -2,7 +2,8 @@ import { join } from 'path';
 import { findAndParseConfig } from '@graphql-mesh/cli';
 import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
 import { getMesh, MeshInstance } from '@graphql-mesh/runtime';
-import { fakePromise, isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { isAsyncIterable, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 import { createApi } from '../api/app';
 
 describe('JSON Schema Subscriptions', () => {

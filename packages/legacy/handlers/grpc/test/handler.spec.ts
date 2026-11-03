@@ -1,25 +1,29 @@
 import { join } from 'path';
 import { buildSchema, GraphQLSchema, validateSchema } from 'graphql';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import GrpcHandler from '../src/index.js';
 
 describe('gRPC Handler', () => {
-  let pubsub: PubSub;
+  let pubsub: MemPubSub;
+  let disposables: AsyncDisposableStack;
   let store: MeshStore;
   beforeEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
+    disposables = new AsyncDisposableStack();
     store = new MeshStore('grpc-test', new InMemoryStoreStorageAdapter(), {
       readonly: false,
       validate: false,
     });
   });
-  afterEach(() => {
-    pubsub.publish('destroy', undefined);
+  afterEach(async () => {
+    await disposables.disposeAsync();
   });
 
   describe.each<[string, string]>([
@@ -53,10 +57,11 @@ describe('gRPC Handler', () => {
         cache,
         pubsub,
         store,
-        logger,
+        log,
         importFn: defaultImportFn,
         baseDir: __dirname,
       });
+      disposables.use(handler);
       const { schema } = await handler.getMeshSource();
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
@@ -86,10 +91,11 @@ describe('gRPC Handler', () => {
         cache,
         pubsub,
         store,
-        logger,
+        log,
         importFn: defaultImportFn,
         baseDir: __dirname,
       });
+      disposables.use(handler);
 
       const { schema } = await handler.getMeshSource();
 
@@ -120,10 +126,11 @@ describe('gRPC Handler', () => {
         cache,
         pubsub,
         store,
-        logger,
+        log,
         importFn: defaultImportFn,
         baseDir: __dirname,
       });
+      disposables.use(handler);
 
       const { schema } = await handler.getMeshSource();
 

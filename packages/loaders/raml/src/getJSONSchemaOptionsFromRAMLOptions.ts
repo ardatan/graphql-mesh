@@ -3,7 +3,6 @@ import { getAbsolutePath, getCwd } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
 import type { api10 } from '@ardatan/raml-1-parser';
 import { loadApi } from '@ardatan/raml-1-parser';
-import { process } from '@graphql-mesh/cross-helpers';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
@@ -36,7 +35,7 @@ function resolveTraitsByIs(base: { is: () => api10.TraitRef[] }) {
  */
 export async function getJSONSchemaOptionsFromRAMLOptions({
   source,
-  cwd: ramlFileCwd = process.cwd(),
+  cwd: ramlFileCwd = globalThis.process?.cwd?.(),
   operations: extraOperations,
   endpoint: forcedBaseUrl,
   fetch = crossUndiciFetch,
@@ -59,7 +58,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
     httpResolver: {
       getResourceAsync: async (url: string) => {
         const fetchResponse = await fetch(url, {
-          headers: schemaHeadersFactory({ env: process.env }),
+          headers: schemaHeadersFactory({ env: globalThis.process?.env }),
         });
         const content = await fetchResponse.text();
         if (fetchResponse.status !== 200) {

@@ -1,7 +1,7 @@
 import type { Schema } from 'js-yaml';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Type } from 'js-yaml';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
-import type { ImportFn, Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
+import { type Logger } from '@graphql-hive/logger';
+import type { ImportFn, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { isUrl } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
@@ -12,7 +12,7 @@ export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
   cwd: string;
   fetch: MeshFetch;
   importFn: ImportFn;
-  logger: Logger;
+  log: Logger;
 }
 
 export { isUrl };
@@ -22,17 +22,17 @@ export async function readFileOrUrl<T>(
   config: ReadFileOrUrlOptions,
 ): Promise<T> {
   if (isUrl(filePathOrUrl)) {
-    config.logger.debug(`Fetching ${filePathOrUrl} via HTTP`);
+    config.log.debug(`Fetching ${filePathOrUrl} via HTTP`);
     return readUrl(filePathOrUrl, config);
   } else if (filePathOrUrl.startsWith('{') || filePathOrUrl.startsWith('[')) {
     return JSON.parse(filePathOrUrl);
   } else {
-    config.logger.debug(`Reading ${filePathOrUrl} from the file system`);
+    config.log.debug(`Reading ${filePathOrUrl} from the file system`);
     return readFile(filePathOrUrl, config);
   }
 }
 
-function getSchema(filepath: string, logger: Logger): Schema {
+function getSchema(filepath: string, log: Logger): Schema {
   return DEFAULT_SCHEMA.extend([
     new Type('!include', {
       kind: 'scalar',
@@ -40,12 +40,17 @@ function getSchema(filepath: string, logger: Logger): Schema {
         return typeof path === 'string';
       },
       construct(path: string) {
+        const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+        const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+        if (!fs || !pathModule) {
+          throw new Error('Node.js fs and path modules are required for YAML !include');
+        }
         const newCwd = pathModule.dirname(filepath);
         const absoluteFilePath = pathModule.isAbsolute(path)
           ? path
           : pathModule.resolve(newCwd, path);
         const content = fs.readFileSync(absoluteFilePath, 'utf8');
-        return loadYaml(absoluteFilePath, content, logger);
+        return loadYaml(absoluteFilePath, content, log);
       },
     }),
     new Type('!includes', {
@@ -54,6 +59,11 @@ function getSchema(filepath: string, logger: Logger): Schema {
         return typeof path === 'string';
       },
       construct(path: string) {
+        const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+        const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+        if (!fs || !pathModule) {
+          throw new Error('Node.js fs and path modules are required for YAML !includes');
+        }
         const newCwd = pathModule.dirname(filepath);
         const absoluteDirPath = pathModule.isAbsolute(path)
           ? path
@@ -62,26 +72,26 @@ function getSchema(filepath: string, logger: Logger): Schema {
         return files.map(filePath => {
           const absoluteFilePath = pathModule.resolve(absoluteDirPath, filePath);
           const fileContent = fs.readFileSync(absoluteFilePath, 'utf8');
-          return loadYaml(absoluteFilePath, fileContent, logger);
+          return loadYaml(absoluteFilePath, fileContent, log);
         });
       },
     }),
   ]);
 }
 
-export function loadYaml(filepath: string, content: string, logger: Logger): any {
+export function loadYaml(filepath: string, content: string, log: Logger): any {
   return loadYamlFromJsYaml(content, {
     filename: filepath,
-    schema: getSchema(filepath, logger),
+    schema: getSchema(filepath, log),
     onWarning(warning) {
-      logger.warn(`${filepath}: ${warning.message}\n${warning.stack}`);
+      log.warn(`${filepath}: ${warning.message}\n${warning.stack}`);
     },
   });
 }
 
 export async function readFile<T>(
   fileExpression: string,
-  { allowUnknownExtensions, cwd, fallbackFormat, importFn, logger }: ReadFileOrUrlOptions,
+  { allowUnknownExtensions, cwd, fallbackFormat, importFn, log }: ReadFileOrUrlOptions,
 ): Promise<T> {
   const [filePath] = fileExpression.split('#');
   if (/js$/.test(filePath) || /ts$/.test(filePath)) {
@@ -91,19 +101,24 @@ export async function readFile<T>(
       defaultExportName: 'default',
     });
   }
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!fs || !pathModule) {
+    throw new Error('Node.js fs and path modules are required for readFile');
+  }
   const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.join(cwd, filePath);
   const rawResult = await fs.promises.readFile(actualPath, 'utf-8');
   if (/json$/.test(actualPath)) {
     return JSON.parse(rawResult);
   }
   if (/yaml$/.test(actualPath) || /yml$/.test(actualPath)) {
-    return loadYaml(actualPath, rawResult, logger);
+    return loadYaml(actualPath, rawResult, log);
   } else if (fallbackFormat) {
     switch (fallbackFormat) {
       case 'json':
         return JSON.parse(rawResult);
       case 'yaml':
-        return loadYaml(actualPath, rawResult, logger);
+        return loadYaml(actualPath, rawResult, log);
       case 'ts':
       case 'js':
         return importFn(actualPath);
@@ -124,7 +139,7 @@ export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Pr
   const response = await config.fetch(path, config);
   const contentType = response.headers?.get('content-type') || '';
   const responseText = await response.text();
-  config?.logger?.debug(`${path} returned `, responseText);
+  config?.log?.debug(`${path} returned `, responseText);
   if (
     /json$/.test(path) ||
     contentType.startsWith('application/json') ||
@@ -138,7 +153,7 @@ export async function readUrl<T>(path: string, config: ReadFileOrUrlOptions): Pr
     contentType.includes('yml') ||
     fallbackFormat === 'yaml'
   ) {
-    return loadYaml(path, responseText, config?.logger);
+    return loadYaml(path, responseText, config?.log);
   } else if (!allowUnknownExtensions) {
     throw new Error(
       `Failed to parse JSON/YAML. Ensure URL '${path}' has ` +

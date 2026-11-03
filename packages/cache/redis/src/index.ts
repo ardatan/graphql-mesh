@@ -1,15 +1,11 @@
 import Redis, { type Cluster } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import type { RedisOptions } from 'ioredis/built/redis/RedisOptions';
-import { process } from '@graphql-mesh/cross-helpers';
+import { type Logger } from '@graphql-hive/logger';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
-  toMeshPubSub,
-  type HivePubSub,
   type KeyValueCache,
   type KeyValueCacheSetOptions,
-  type Logger,
-  type MeshPubSub,
   type YamlConfig,
 } from '@graphql-mesh/types';
 import { trace, type Tracer } from '@opentelemetry/api';
@@ -21,7 +17,7 @@ import {
 } from './iam.js';
 
 function interpolateStrWithEnv(str: string): string {
-  return stringInterpolator.parse(str, { env: process.env });
+  return stringInterpolator.parse(str, { env: globalThis.process?.env });
 }
 
 export default class RedisCache<V = string> implements KeyValueCache<V>, Disposable {
@@ -32,7 +28,9 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
   private iamInitPromise?: Promise<void>;
 
   constructor(
-    options: YamlConfig.Cache['redis'] & { pubsub?: MeshPubSub | HivePubSub; logger: Logger },
+    options: YamlConfig.Cache['redis'] & {
+      log: Logger;
+    },
   ) {
     this.tracer = trace.getTracer('hive.cache.redis');
     this.tracer.startActiveSpan('hive.cache.redis.init', span => {
@@ -40,10 +38,13 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
         const lazyConnect = options.lazyConnect !== false;
         if ('startupNodes' in options) {
           const parsedUsername =
-            interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
+            interpolateStrWithEnv(options.username?.toString()) ||
+            globalThis.process?.env?.REDIS_USERNAME;
           const parsedPassword =
-            interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
-          const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+            interpolateStrWithEnv(options.password?.toString()) ||
+            globalThis.process?.env?.REDIS_PASSWORD;
+          const parsedDb =
+            interpolateStrWithEnv(options.db?.toString()) || globalThis.process?.env?.REDIS_DB;
           const numDb = parseInt(parsedDb);
           const redisOptions: RedisOptions = {
             username: parsedUsername,
@@ -76,7 +77,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
               redisOptions,
               options.iamAuth,
               parsedUsername,
-              options.logger,
+              options.log,
             )
               .then(timer => {
                 this.iamRefreshTimer = timer;
@@ -125,7 +126,7 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
             redisUrl.searchParams.set('family', '6');
           }
           const urlStr = redisUrl.toString();
-          safelyLogURL(options.logger, urlStr);
+          safelyLogURL(options.log, urlStr);
           if (options.iamAuth) {
             const redisRef: { current: Redis | null } = { current: null };
             const connectorUsername = redisUrl.username || undefined;
@@ -142,27 +143,31 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
               redisRef,
               options.iamAuth,
               connectorUsername,
-              options.logger,
+              options.log,
             );
           } else {
             this.client = new Redis(urlStr);
           }
         } else {
           const parsedHost =
-            interpolateStrWithEnv(options.host?.toString()) || process.env.REDIS_HOST;
+            interpolateStrWithEnv(options.host?.toString()) || globalThis.process?.env?.REDIS_HOST;
           const parsedPort =
-            interpolateStrWithEnv(options.port?.toString()) || process.env.REDIS_PORT;
+            interpolateStrWithEnv(options.port?.toString()) || globalThis.process?.env?.REDIS_PORT;
           const parsedUsername =
-            interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
+            interpolateStrWithEnv(options.username?.toString()) ||
+            globalThis.process?.env?.REDIS_USERNAME;
           const parsedPassword =
-            interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
-          const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+            interpolateStrWithEnv(options.password?.toString()) ||
+            globalThis.process?.env?.REDIS_PASSWORD;
+          const parsedDb =
+            interpolateStrWithEnv(options.db?.toString()) || globalThis.process?.env?.REDIS_DB;
           const parsedFamily =
-            interpolateStrWithEnv(options.family?.toString()) || process.env.REDIS_FAMILY;
+            interpolateStrWithEnv(options.family?.toString()) ||
+            globalThis.process?.env?.REDIS_FAMILY;
           const numPort = parseInt(parsedPort);
           const numDb = parseInt(parsedDb);
           if (parsedHost) {
-            options.logger.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
+            options.log.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
             const baseOpts: RedisOptions = {
               host: parsedHost,
               port: isNaN(numPort) ? undefined : numPort,
@@ -182,22 +187,16 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
                 redisRef,
                 options.iamAuth,
                 parsedUsername,
-                options.logger,
+                options.log,
               );
             } else {
               this.client = new Redis(baseOpts);
             }
           } else {
-            options.logger.debug(`Connecting to Redis mock`);
+            options.log.debug(`Connecting to Redis mock`);
             this.client = new RedisMock();
           }
         }
-        const pubsub = toMeshPubSub(options.pubsub);
-        // TODO: PubSub.destroy will no longer be needed after v0
-        const id = pubsub?.subscribe('destroy', () => {
-          this.client.disconnect(false);
-          pubsub.unsubscribe(id);
-        });
       } finally {
         span.end();
       }

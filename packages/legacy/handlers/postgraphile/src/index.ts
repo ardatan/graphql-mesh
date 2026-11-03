@@ -4,29 +4,30 @@ import pg from 'pg';
 import type { Plugin } from 'postgraphile';
 import { withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
-import { path, process } from '@graphql-mesh/cross-helpers';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type {
   ImportFn,
-  Logger,
   MeshHandler,
   MeshHandlerOptions,
-  MeshPubSub,
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.PostGraphileHandler;
   private baseDir: string;
-  private pubsub: MeshPubSub;
+  private pubsub: PubSub;
   private pgCache: any;
-  private logger: Logger;
+  private log: Logger;
   private importFn: ImportFn;
+  private pgPool?: { end(): Promise<void> };
 
   constructor({
     name,
@@ -34,7 +35,7 @@ export default class PostGraphileHandler implements MeshHandler {
     baseDir,
     pubsub,
     store,
-    logger,
+    log,
     importFn,
   }: MeshHandlerOptions<YamlConfig.PostGraphileHandler>) {
     this.name = name;
@@ -42,7 +43,7 @@ export default class PostGraphileHandler implements MeshHandler {
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.pgCache = store.proxy('pgCache.json', PredefinedProxyOptions.JsonWithoutValidation);
-    this.logger = logger;
+    this.log = log;
     this.importFn = importFn;
   }
 
@@ -58,25 +59,24 @@ export default class PostGraphileHandler implements MeshHandler {
     }
 
     if (!pgPool || !('connect' in pgPool)) {
-      const pgLogger = this.logger.child('PostgreSQL');
+      const pgLogger = this.log.child('PostgreSQL');
       pgPool = new pg.Pool({
         connectionString: stringInterpolator.parse(this.config.connectionString, {
-          env: process.env,
+          env: globalThis.process?.env,
         }),
         log: messages => pgLogger.debug(messages),
         ...this.config?.pool,
       });
     }
 
-    const id = this.pubsub.subscribe('destroy', () => {
-      this.pubsub.unsubscribe(id);
-      this.logger.debug('Destroying PostgreSQL pool');
-      pgPool.end();
-    });
+    this.pgPool = pgPool;
 
     const cacheKey = this.name + '_introspection.json';
-
-    const dummyCacheFilePath = path.join(tmpdir(), cacheKey);
+    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+    if (!pathModule) {
+      throw new Error('Node.js path module is required for PostGraphile handler');
+    }
+    const dummyCacheFilePath = pathModule.join(tmpdir(), cacheKey);
     let cachedIntrospection = await this.pgCache.get();
 
     let writeCache: () => Promise<void>;
@@ -170,5 +170,12 @@ export default class PostGraphileHandler implements MeshHandler {
         ) as any;
       },
     };
+  }
+
+  [DisposableSymbols.asyncDispose]() {
+    if (this.pgPool) {
+      this.log.debug('Destroying PostgreSQL pool');
+      return this.pgPool.end();
+    }
   }
 }

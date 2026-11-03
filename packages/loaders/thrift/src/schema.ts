@@ -30,15 +30,15 @@ import type {
 import { parse, SyntaxType } from '@creditkarma/thrift-parser';
 import type { IMethodAnnotations, IThriftAnnotations } from '@creditkarma/thrift-server-core';
 import { TType } from '@creditkarma/thrift-server-core';
-import { path } from '@graphql-mesh/cross-helpers';
+import { Logger } from '@graphql-hive/logger';
 import type {
   GraphQLThriftAnnotations,
   StructTypeVal,
   TypeMap,
   TypeVal,
 } from '@graphql-mesh/transport-thrift';
-import type { ImportFn, Logger, MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn, DefaultLogger, readFileOrUrl } from '@graphql-mesh/utils';
+import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
+import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 
 export interface GraphQLThriftLoaderOptions {
@@ -52,7 +52,7 @@ export interface GraphQLThriftLoaderOptions {
   baseDir?: string;
   schemaHeaders?: Record<string, string>;
   fetchFn?: MeshFetch;
-  logger?: Logger;
+  log?: Logger;
   importFn?: ImportFn;
 }
 
@@ -78,10 +78,10 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
   operationHeaders = {},
   serviceName,
 
-  baseDir = process.cwd(),
+  baseDir = globalThis.process?.cwd?.(),
   schemaHeaders = {},
   fetchFn = defaultFetch,
-  logger = new DefaultLogger('Thrift'),
+  log = new Logger({ prefix: 'Thrift' }),
   importFn = defaultImportFn,
 }: GraphQLThriftLoaderOptions) {
   const namespaceASTMap: Record<string, ThriftDocument> = {};
@@ -91,9 +91,13 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
     baseDir,
     schemaHeaders,
     fetchFn,
-    logger,
+    log,
     importFn,
   });
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!path) {
+    throw new Error('Node.js path module is required for Thrift loader');
+  }
   const baseNamespace = path.basename(source, '.thrift');
   return loadNonExecutableGraphQLSchemaFromThriftDocument({
     subgraphName,
@@ -111,7 +115,7 @@ interface ParseWithIncludesOpts {
   baseDir: string;
   schemaHeaders: Record<string, string>;
   fetchFn: MeshFetch;
-  logger: Logger;
+  log: Logger;
   importFn: ImportFn;
 }
 
@@ -121,7 +125,7 @@ async function parseWithIncludes({
   baseDir,
   schemaHeaders,
   fetchFn,
-  logger,
+  log,
   importFn,
 }: ParseWithIncludesOpts): Promise<Record<string, ThriftDocument>> {
   const rawThrift = await readFileOrUrl<string>(idlFilePath, {
@@ -129,10 +133,14 @@ async function parseWithIncludes({
     cwd: baseDir,
     headers: schemaHeaders,
     fetch: fetchFn,
-    logger,
+    log,
     importFn,
   });
   const parseResult = parse(rawThrift, { organize: false });
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!path) {
+    throw new Error('Node.js path module is required for Thrift loader');
+  }
   const idlNamespace = path.basename(idlFilePath).split('.')[0];
   if (parseResult.type === SyntaxType.ThriftErrors) {
     if (parseResult.errors.length === 1) {
@@ -156,7 +164,7 @@ async function parseWithIncludes({
         baseDir,
         schemaHeaders,
         fetchFn,
-        logger,
+        log,
         importFn,
       });
     }),

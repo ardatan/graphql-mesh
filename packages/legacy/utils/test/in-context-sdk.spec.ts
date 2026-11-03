@@ -6,8 +6,9 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
+import { Logger } from '@graphql-hive/logger';
 import type { RawSourceOutput } from '@graphql-mesh/types';
-import { DefaultLogger, getInContextSDK } from '@graphql-mesh/utils';
+import { getInContextSDK } from '@graphql-mesh/utils';
 
 describe('getInContextSDK key-based delegation', () => {
   const UserType = new GraphQLObjectType({
@@ -44,7 +45,7 @@ describe('getInContextSDK key-based delegation', () => {
       batch: true,
       createProxyingResolver: () => undefined as any,
     };
-    const inContextSDK = getInContextSDK(schema, [rawSource], new DefaultLogger('test'), []);
+    const inContextSDK = getInContextSDK(schema, [rawSource], new Logger({ prefix: 'test' }), []);
     return { inContextSDK, usersByIds };
   }
 

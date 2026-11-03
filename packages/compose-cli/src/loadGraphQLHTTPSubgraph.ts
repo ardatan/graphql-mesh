@@ -6,6 +6,7 @@ import {
   getIntrospectionQuery,
   getNamedType,
   GraphQLDirective,
+  GraphQLError,
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
@@ -21,13 +22,9 @@ import {
 } from 'graphql';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { isUrl, readFile } from '@graphql-mesh/utils';
-import {
-  createGraphQLError,
-  isValidPath,
-  type ExecutionResult,
-  type MaybePromise,
-} from '@graphql-tools/utils';
+import { isValidPath, type ExecutionResult } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import type { LoaderContext, MeshComposeCLISourceHandlerDef } from './types.js';
 
 export interface GraphQLSubgraphLoaderHTTPConfiguration {
@@ -274,7 +271,7 @@ export function loadGraphQLHTTPSubgraph(
   return (ctx: LoaderContext) => {
     let schema$: MaybePromise<GraphQLSchema>;
     const interpolationData = {
-      env: process.env,
+      env: globalThis.process?.env,
     };
     const interpolatedEndpoint = stringInterpolator.parse(endpoint, interpolationData);
     const interpolatedSource = stringInterpolator.parse(source, interpolationData);
@@ -314,7 +311,7 @@ export function loadGraphQLHTTPSubgraph(
               cwd: ctx.cwd,
               fetch: ctx.fetch,
               importFn: (p: string) => import(p),
-              logger: ctx.logger,
+              log: ctx.log,
             });
           }
           return source$;
@@ -346,7 +343,7 @@ export function loadGraphQLHTTPSubgraph(
               (result: ExecutionResult<IntrospectionQuery>) => {
                 if (result.errors) {
                   throw new AggregateError(
-                    result.errors.map(err => createGraphQLError(err.message, err)),
+                    result.errors.map(err => new GraphQLError(err.message, err)),
                     'Introspection Query Failed',
                   );
                 }
@@ -389,7 +386,7 @@ export function loadGraphQLHTTPSubgraph(
               (result: ExecutionResult) => {
                 if (result.errors) {
                   throw new AggregateError(
-                    result.errors.map(err => createGraphQLError(err.message, err)),
+                    result.errors.map(err => new GraphQLError(err.message, err)),
                     'Introspection Query Failed',
                   );
                 }

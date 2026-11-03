@@ -1,15 +1,22 @@
-import type { DocumentNode, GraphQLObjectType, GraphQLSchema, OperationTypeNode } from 'graphql';
-import { getOperationAST, specifiedRules, validate } from 'graphql';
+import {
+  getOperationAST,
+  GraphQLError,
+  specifiedRules,
+  validate,
+  type DocumentNode,
+  type GraphQLObjectType,
+  type GraphQLSchema,
+  type OperationTypeNode,
+} from 'graphql';
 import type { Plugin } from '@envelop/core';
 import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
-import { process } from '@graphql-mesh/cross-helpers';
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import type {
   GraphQLOperation,
   KeyValueCache,
-  Logger,
   MeshFetch,
   MeshPlugin,
-  MeshPubSub,
   MeshTransform,
   OnDelegateHook,
   OnFetchHook,
@@ -18,44 +25,45 @@ import type {
 } from '@graphql-mesh/types';
 import {
   applySchemaTransforms,
-  DefaultLogger,
   getHeadersObj,
   getInContextSDK,
   groupTransforms,
-  makeDisposable,
+  isDisposable,
   parseWithCache,
-  PubSub,
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
 import type { CreateProxyingResolverFn, SubschemaConfig } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import type { ExecutionResult } from '@graphql-tools/utils';
-import {
-  createGraphQLError,
-  getRootTypeMap,
-  isAsyncIterable,
-  mapAsyncIterator,
-  memoize1,
-} from '@graphql-tools/utils';
+import { getRootTypeMap, isAsyncIterable, memoize1 } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
+import { AsyncDisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import {
+  handleMaybePromise,
+  mapAsyncIterator,
+  type MaybePromise,
+} from '@whatwg-node/promise-helpers';
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import type { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { getOriginalError } from './utils.js';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
-export interface MeshInstance extends Disposable {
+export interface MeshInstance extends AsyncDisposable {
   execute: ExecuteMeshFn;
   subscribe: SubscribeMeshFn;
   schema: GraphQLSchema;
   createExecutor(globalContext: any): MeshExecutor;
   rawSources: RawSourceOutput[];
-  destroy(): void;
-  pubsub: MeshPubSub;
+  destroy(): MaybePromise<void>;
+  /**
+   * Register cleanup to run when {@link destroy} / `await using` disposes this mesh.
+   */
+  deferDispose(fn: () => MaybePromise<void>): void;
+  pubsub: PubSub;
   cache: KeyValueCache;
-  logger: Logger;
+  log: Logger;
   plugins: Plugin[];
   getEnveloped: ReturnType<typeof envelop>;
   sdkRequesterFactory(globalContext: any): SdkRequester;
@@ -100,9 +108,9 @@ function createProxyingResolverFactory(
 export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   const rawSources: RawSourceOutput[] = [];
   const {
-    pubsub = new PubSub(),
+    pubsub = new MemPubSub(),
     cache,
-    logger = new DefaultLogger(''),
+    log = new Logger({ prefix: '' }),
     additionalEnvelopPlugins = [],
     sources,
     merger,
@@ -110,9 +118,17 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     additionalTypeDefs = [],
     transforms = [],
     fetchFn = defaultFetchFn,
+    disposables = new AsyncDisposableStack(),
   } = options;
 
-  const getMeshLogger = logger.child('GetMesh');
+  if (isDisposable(cache)) {
+    disposables.use(cache as Disposable | AsyncDisposable);
+  }
+  if (isDisposable(pubsub)) {
+    disposables.use(pubsub as Disposable | AsyncDisposable);
+  }
+
+  const getMeshLogger = log.child('GetMesh');
   getMeshLogger.debug(`Getting subschemas from source handlers`);
   let failed = false;
   const initialPluginList: MeshPlugin<any>[] = [
@@ -147,7 +163,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     useExtendContext(() => ({
       pubsub,
       cache,
-      logger,
+      log,
       fetch: wrappedFetchFn,
       [MESH_CONTEXT_SYMBOL]: true,
     })),
@@ -162,12 +178,15 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   await Promise.allSettled(
     sources.map(async (apiSource, index) => {
       const apiName = apiSource.name;
-      const sourceLogger = logger.child({ source: apiName });
+      const sourceLogger = log.child({ source: apiName });
       sourceLogger.debug(`Generating the schema`);
       try {
         const source = await apiSource.handler.getMeshSource({
           fetchFn: wrappedFetchFn,
         });
+        if (isDisposable(apiSource.handler)) {
+          disposables.use(apiSource.handler as Disposable | AsyncDisposable);
+        }
         sourceLogger.debug(`The schema has been generated successfully`);
 
         let apiSchema = source.schema;
@@ -188,6 +207,12 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           );
         } else {
           transforms = apiSource.transforms;
+        }
+
+        for (const transform of apiSource.transforms || []) {
+          if (isDisposable(transform)) {
+            disposables.use(transform as Disposable | AsyncDisposable);
+          }
         }
 
         const rootTypeMap = getRootTypeMap(apiSchema);
@@ -213,7 +238,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   if (failed) {
     throw new Error(
       `Schemas couldn't be generated successfully. Check for the logs by running Mesh${
-        process.env.DEBUG == null
+        globalThis.process?.env?.DEBUG == null
           ? ' with DEBUG=1 environmental variable to get more verbose output'
           : ''
       }.`,
@@ -232,6 +257,9 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   unifiedSubschema.transforms = unifiedSubschema.transforms || [];
 
   for (const rootLevelTransform of transforms) {
+    if (isDisposable(rootLevelTransform)) {
+      disposables.use(rootLevelTransform as Disposable | AsyncDisposable);
+    }
     if (rootLevelTransform.noWrap) {
       if (rootLevelTransform.transformSchema) {
         unifiedSubschema.schema = rootLevelTransform.transformSchema(
@@ -269,7 +297,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
             onDelegateHooks.push(plugin.onDelegate);
           }
         }
-        inContextSDK = getInContextSDK(schema, rawSources, logger, onDelegateHooks);
+        inContextSDK = getInContextSDK(schema, rawSources, log, onDelegateHooks);
       }
       return inContextSDK;
     }),
@@ -279,11 +307,11 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           onExecuteDone({ result, setResult }) {
             if (result.errors) {
               // Print errors with stack trace in development
-              if (process.env.NODE_ENV === 'production') {
+              if (globalThis.process?.env?.NODE_ENV === 'production') {
                 for (const error of result.errors) {
                   const origError = getOriginalError(error);
                   if (origError) {
-                    logger.error(origError);
+                    log.error(origError.stack || origError.message);
                   }
                 }
               } else {
@@ -292,7 +320,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
                   errors: result.errors.map(error => {
                     const origError = getOriginalError(error);
                     if (origError) {
-                      return createGraphQLError(error.message, {
+                      return new GraphQLError(error.message, {
                         ...error,
                         extensions: {
                           ...error.extensions,
@@ -365,33 +393,42 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     };
   }
 
-  function meshDestroy() {
-    return pubsub.publish('destroy', undefined);
+  for (const plugin of plugins) {
+    if (isDisposable(plugin)) {
+      disposables.use(plugin as Disposable | AsyncDisposable);
+    }
   }
 
-  return makeDisposable(
-    {
-      schema,
-      rawSources,
-      cache,
-      pubsub,
-      destroy: meshDestroy,
-      logger,
-      plugins,
-      get getEnveloped() {
-        return memoizedGetEnvelopedFactory(plugins);
-      },
-      createExecutor,
-      get execute() {
-        return createExecutor();
-      },
-      get subscribe() {
-        return createExecutor();
-      },
-      sdkRequesterFactory,
+  function meshDestroy(): MaybePromise<void> {
+    return disposables.disposeAsync();
+  }
+
+  return {
+    schema,
+    rawSources,
+    cache,
+    pubsub,
+    destroy: meshDestroy,
+    deferDispose(fn: () => MaybePromise<void>) {
+      disposables.defer(fn);
     },
-    meshDestroy,
-  );
+    log,
+    plugins,
+    get getEnveloped() {
+      return memoizedGetEnvelopedFactory(plugins);
+    },
+    createExecutor,
+    get execute() {
+      return createExecutor();
+    },
+    get subscribe() {
+      return createExecutor();
+    },
+    sdkRequesterFactory,
+    async [DisposableSymbols.asyncDispose]() {
+      await meshDestroy();
+    },
+  };
 }
 
 function extractDataOrThrowErrors<T>(result: ExecutionResult<T>): T {

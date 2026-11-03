@@ -70,12 +70,12 @@ export const createDefaultPluginResolver =
     }
   };
 
-export async function run(argv = process.argv): Promise<MigrateLegacyConfigResult> {
+export async function run(argv = globalThis.process?.argv): Promise<MigrateLegacyConfigResult> {
   const args = argv.slice(2).filter(arg => arg !== '--');
   const dryRun = args.includes('--dry-run');
   const force = args.includes('--force');
   const positional = args.filter(arg => !arg.startsWith('--'));
-  const cwd = positional[0] || process.cwd();
+  const cwd = positional[0] || globalThis.process?.cwd?.();
 
   const {
     config: legacyConfig,
@@ -143,7 +143,7 @@ export async function run(argv = process.argv): Promise<MigrateLegacyConfigResul
     }
     writeFileSync(newConfigPath, result.code);
   } else {
-    process.stdout.write(result.code);
+    globalThis.process?.stdout.write(result.code);
   }
 
   log('Migration successful!');

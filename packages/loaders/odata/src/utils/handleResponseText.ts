@@ -1,6 +1,12 @@
-import { getNamedType, isListType, type GraphQLObjectType, type GraphQLResolveInfo } from 'graphql';
+import {
+  getNamedType,
+  GraphQLError,
+  isListType,
+  type GraphQLObjectType,
+  type GraphQLResolveInfo,
+} from 'graphql';
 import urljoin from 'url-join';
-import { createGraphQLError, getDirectiveExtensions } from '@graphql-tools/utils';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { DirectiveArgsMap } from '../directives.js';
 import { addIdentifierToUrl } from './addIdentifierToUrl.js';
 import { getUrlString } from './getUrlString.js';
@@ -14,7 +20,7 @@ export function handleResponseText(
   try {
     responseJson = JSON.parse(responseText);
   } catch (error) {
-    return createGraphQLError(`Failed to parse response JSON: ${error.message}`, {
+    return new GraphQLError(`Failed to parse response JSON: ${error.message}`, {
       extensions: {
         request: {
           url: urlString,
@@ -27,7 +33,7 @@ export function handleResponseText(
     });
   }
   if (responseJson.error) {
-    return createGraphQLError(responseJson.error.message || responseJson.error, {
+    return new GraphQLError(responseJson.error.message || responseJson.error, {
       extensions: {
         request: {
           url: urlString,
@@ -43,7 +49,7 @@ export function handleResponseText(
     const actualReturnType = getNamedType(info.returnType) as GraphQLObjectType;
     const entityTypeDirectives = getDirectiveExtensions<DirectiveArgsMap>(actualReturnType);
     if ('Message' in responseJson && !('value' in responseJson)) {
-      return createGraphQLError(responseJson.Message, {
+      return new GraphQLError(responseJson.Message, {
         extensions: {
           request: {
             url: urlString,

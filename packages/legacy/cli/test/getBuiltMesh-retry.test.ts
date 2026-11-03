@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import type { MeshInstance } from '@graphql-mesh/runtime';
-import type { MeshPubSub } from '@graphql-mesh/types';
 
 /**
  * Replicates the exact getBuiltMesh pattern emitted by ts-artifacts.ts so we
@@ -21,15 +20,14 @@ function createGetBuiltMesh(
       meshInstance$ = getMeshOptions()
         .then(meshOptions => getMesh(meshOptions))
         .then(mesh => {
-          const id = mesh.pubsub.subscribe('destroy', () => {
+          mesh.deferDispose(() => {
             meshInstance$ = undefined;
-            mesh.pubsub.unsubscribe(id);
           });
           return mesh;
         })
         .catch((err: Error) => {
           meshInstance$ = undefined;
-          return Promise.reject(err);
+          throw err;
         });
     }
     return meshInstance$;
@@ -37,11 +35,14 @@ function createGetBuiltMesh(
 }
 
 function makeMockMesh(): MeshInstance {
-  const pubsub: Pick<MeshPubSub, 'subscribe' | 'unsubscribe'> = {
-    subscribe: jest.fn().mockReturnValue(1),
-    unsubscribe: jest.fn(),
-  };
-  return { pubsub } as unknown as MeshInstance;
+  return {
+    deferDispose: jest.fn(),
+    destroy: jest.fn(),
+    pubsub: {
+      subscribe: jest.fn().mockResolvedValue(() => undefined),
+      publish: jest.fn(),
+    },
+  } as unknown as MeshInstance;
 }
 
 describe('getBuiltMesh retry behaviour', () => {

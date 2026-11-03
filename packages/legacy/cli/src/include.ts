@@ -13,7 +13,7 @@ const jiti = createJiti(
    */
   '',
   {
-    debug: !!process.env.DEBUG,
+    debug: !!globalThis.process?.env?.DEBUG,
     interopDefault: true,
   },
 );
@@ -45,7 +45,7 @@ export interface RegisterTsconfigPathsOptions {
   /**
    * Accepts a path to a file or directory to search up for a {@link configName} file.
    *
-   * @default process.cwd()
+   * @default globalThis.process?.cwd?.()
    */
   cwd?: string;
   /**
@@ -65,8 +65,8 @@ export interface RegisterTsconfigPathsOptions {
  * @returns The unregister function.
  */
 export function registerTsconfigPaths({
-  cwd = process.cwd(),
-  configName = process.env.MESH_INCLUDE_TSCONFIG_SEARCH_PATH || 'tsconfig.json',
+  cwd = globalThis.process?.cwd?.(),
+  configName = globalThis.process?.env?.MESH_INCLUDE_TSCONFIG_SEARCH_PATH || 'tsconfig.json',
 }: RegisterTsconfigPathsOptions = {}): () => void {
   const tsconfig = getTsconfig(cwd, configName);
   if (!tsconfig) return () => {}; // no tsconfig, no register

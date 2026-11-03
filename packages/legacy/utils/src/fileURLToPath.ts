@@ -1,6 +1,13 @@
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
+function requireNodePath() {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required for fileURLToPath');
+  }
+  return pathModule;
+}
 
 function fileUriToPath(uri: string) {
+  const pathModule = requireNodePath();
   if (typeof uri !== 'string' || uri.length <= 7 || uri.substring(0, 7) !== 'file://') {
     throw new TypeError('must pass in a file:// URI to convert to a file path');
   }

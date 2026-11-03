@@ -12,6 +12,7 @@ import {
   type GraphQLSchema,
   type ObjectTypeDefinitionNode,
 } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
 import {
   composeAnnotatedSubgraphs,
   futureAdditions,
@@ -19,7 +20,6 @@ import {
   type FutureAddition,
   type SubgraphConfig,
 } from '@graphql-mesh/fusion-composition';
-import type { Logger } from '@graphql-mesh/types';
 import { parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -34,7 +34,7 @@ import type { ServiceDefinition } from '@theguild/federation-composition';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
-const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(process.env.DEBUG));
+const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(globalThis.process?.env?.DEBUG));
 
 export interface ComposedResult {
   supergraphSdl: string;
@@ -43,37 +43,37 @@ export interface ComposedResult {
 
 export async function getComposedSchemaFromConfig(
   config: MeshComposeCLIConfig,
-  logger: Logger,
+  log: Logger,
 ): Promise<string> {
-  const { supergraphSdl } = await getComposedResultFromConfig(config, logger);
+  const { supergraphSdl } = await getComposedResultFromConfig(config, log);
   return supergraphSdl;
 }
 
 export async function getComposedResultFromConfig(
   config: MeshComposeCLIConfig,
-  logger: Logger,
+  log: Logger,
 ): Promise<ComposedResult> {
   const ctx: LoaderContext = {
     fetch: config.fetch || defaultFetch,
     cwd: config.cwd || globalThis.process?.cwd?.(),
-    logger,
+    log,
   };
   const subgraphConfigsForComposition: SubgraphConfig[] = await Promise.all(
     config.subgraphs.map(async subgraphCLIConfig => {
       const { name: subgraphName, schema$ } = subgraphCLIConfig.sourceHandler(ctx);
-      const log = logger.child({ subgraph: subgraphName });
-      log.debug(`Loading subgraph`);
+      const subgraphLog = log.child({ subgraph: subgraphName });
+      subgraphLog.debug(`Loading subgraph`);
       let subgraphSchema: GraphQLSchema;
       try {
         subgraphSchema = await schema$;
       } catch (e) {
         if (isDebug) {
-          log.error(`Failed to load subgraph`, e);
+          subgraphLog.error(`Failed to load subgraph`, e);
         } else {
-          log.error(e.message || e);
-          log.error(`Failed to load subgraph`);
+          subgraphLog.error(e instanceof Error ? e.message : String(e));
+          subgraphLog.error(`Failed to load subgraph`);
         }
-        process.exit(1);
+        globalThis.process?.exit(1);
       }
       return {
         name: subgraphName,
@@ -90,8 +90,8 @@ export async function getComposedResultFromConfig(
       try {
         additionalTypeDefs = [parseWithCache(config.additionalTypeDefs)];
       } catch (e) {
-        logger.error(`Failed to parse additional type definitions: ${e.message || e}`);
-        process.exit(1);
+        log.error(`Failed to parse additional type definitions: ${e.message || e}`);
+        globalThis.process?.exit(1);
       }
     } else {
       const result = await loadTypedefs(config.additionalTypeDefs, {
@@ -138,8 +138,8 @@ export async function getComposedResultFromConfig(
   if (config.subgraph) {
     const subgraph = annotatedSubgraphs.find(sg => sg.name === config.subgraph);
     if (!subgraph) {
-      logger.error(`Subgraph ${config.subgraph} not found`);
-      process.exit(1);
+      log.error(`Subgraph ${config.subgraph} not found`);
+      globalThis.process?.exit(1);
     }
     return {
       supergraphSdl: print(subgraph.typeDefs),
@@ -148,19 +148,19 @@ export async function getComposedResultFromConfig(
   }
   const result = composeAnnotatedSubgraphs(annotatedSubgraphs);
   if (result.errors?.length) {
-    logger.error(`Failed to compose subgraphs`);
+    log.error(`Failed to compose subgraphs`);
     for (const error of result.errors) {
       if (isDebug) {
-        logger.error(error);
+        log.error(error instanceof Error ? error.stack || error.message : String(error));
       } else {
-        logger.error(error.message || error);
+        log.error(error instanceof Error ? error.message : String(error));
       }
     }
-    process.exit(1);
+    globalThis.process?.exit(1);
   }
   if (!result.supergraphSdl) {
-    logger.error(`Unknown error: Supergraph is empty`);
-    process.exit(1);
+    log.error(`Unknown error: Supergraph is empty`);
+    globalThis.process?.exit(1);
   }
   let composedSchema: GraphQLSchema;
   if (futureAdditions.length) {
@@ -174,18 +174,18 @@ export async function getComposedResultFromConfig(
       });
       const sourceType = composedSchema.getType(futureAddition.sourceTypeName) as GraphQLObjectType;
       if (!sourceType) {
-        logger.error(`Target type ${futureAddition.sourceTypeName} not found`);
-        process.exit(1);
+        log.error(`Target type ${futureAddition.sourceTypeName} not found`);
+        globalThis.process?.exit(1);
       }
       const sourceField = sourceType.getFields()[futureAddition.sourceFieldName];
       if (!sourceField) {
-        logger.error(`Target field ${futureAddition.sourceFieldName} not found`);
-        process.exit(1);
+        log.error(`Target field ${futureAddition.sourceFieldName} not found`);
+        globalThis.process?.exit(1);
       }
       const sourceReturnType = getNamedType(sourceField.type);
       if (!isNamedType(sourceReturnType)) {
-        logger.error(`Target field ${futureAddition.sourceFieldName} has no return type`);
-        process.exit(1);
+        log.error(`Target field ${futureAddition.sourceFieldName} has no return type`);
+        globalThis.process?.exit(1);
       }
       const interfaceOrType = isInterfaceType(composedSchema.getType(futureAddition.targetTypeName))
         ? 'interface'
@@ -272,7 +272,7 @@ export async function getComposedResultFromConfig(
     }
     /* TODO
     if (config.transforms?.length) {
-      logger.info('Applying transforms');
+      log.info('Applying transforms');
       for (const transform of config.transforms) {
         composedSchema = transform(composedSchema);
       }

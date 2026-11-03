@@ -18,7 +18,13 @@ export function processLinkFieldAnnotations(
       operationType: info.operation.operation,
     });
     const linkResolverOpts = linkResolverMap[field.name];
-    return linkResolver(linkResolverOpts, { root, args, context, info, env: process.env });
+    return linkResolver(linkResolverOpts, {
+      root,
+      args,
+      context,
+      info,
+      env: globalThis.process?.env,
+    });
   };
 }
 

@@ -18,19 +18,14 @@ import {
 } from 'graphql';
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
-import { process } from '@graphql-mesh/cross-helpers';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { MeshContext } from '@graphql-mesh/runtime';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import {
-  isHivePubSub,
-  type HivePubSub,
-  type ImportFn,
-  type MeshPubSub,
-  type YamlConfig,
-} from '@graphql-mesh/types';
-import type { IResolvers, MaybePromise } from '@graphql-tools/utils';
+import { type ImportFn, type YamlConfig } from '@graphql-mesh/types';
+import type { IResolvers } from '@graphql-tools/utils';
 import { parseSelectionSet } from '@graphql-tools/utils';
 import { handleMaybePromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { withFilter } from './with-filter.js';
 
@@ -296,7 +291,7 @@ function generateValuesFromResultsByKey(
 
 export interface PubSubOperationOptions {
   pubsubTopic: string;
-  pubsub?: MeshPubSub | HivePubSub;
+  pubsub?: PubSub;
   filterBy?: string;
   result?: string;
 }
@@ -312,13 +307,10 @@ export function getResolverForPubSubOperation(
     context: MeshContext,
     info: GraphQLResolveInfo,
   ): MaybePromise<AsyncIterator<any>> {
-    const resolverData = { root, args, context, info, env: process.env };
+    const resolverData = { root, args, context, info, env: globalThis.process?.env };
     const topic = stringInterpolator.parse(pubsubTopic, resolverData);
     const ps = context?.pubsub || opts?.pubsub;
-    if (isHivePubSub(ps)) {
-      return ps.subscribe(topic)[Symbol.asyncIterator]();
-    }
-    return ps.asyncIterator(topic)[Symbol.asyncIterator]();
+    return ps.subscribe(topic)[Symbol.asyncIterator]();
   };
   if (opts.filterBy) {
     let filterFunction: any;
@@ -344,7 +336,7 @@ export function resolveAdditionalResolversWithoutImport(
     | YamlConfig.AdditionalStitchingResolverObject
     | YamlConfig.AdditionalSubscriptionObject
     | YamlConfig.AdditionalStitchingBatchResolverObject,
-  pubsub?: MeshPubSub | HivePubSub,
+  pubsub?: PubSub,
 ): IResolvers {
   const baseOptions: any = {
     valuesFromResults: additionalResolver.result
@@ -408,7 +400,7 @@ export function resolveAdditionalResolversWithoutImport(
               );
               baseOptions.valuesFromResultsByKeyReturnType = info.returnType;
             }
-            const resolverData = { root, args, context, info, env: process.env };
+            const resolverData = { root, args, context, info, env: globalThis.process?.env };
             const targetArgs: any = {};
             for (const argPath in additionalResolver.additionalArgs || {}) {
               const value = additionalResolver.additionalArgs[argPath];
@@ -476,7 +468,7 @@ export function resolveAdditionalResolversWithoutImport(
                 additionalResolver,
               );
             }
-            const resolverData = { root, args, context, info, env: process.env };
+            const resolverData = { root, args, context, info, env: globalThis.process?.env };
             const targetArgs: any = {};
 
             deeplySetArgs(
@@ -514,7 +506,7 @@ export function resolveAdditionalResolvers(
     | YamlConfig.AdditionalStitchingBatchResolverObject
   )[],
   importFn: ImportFn,
-  pubsub: MeshPubSub | HivePubSub,
+  pubsub: PubSub,
 ): Promise<IResolvers[]> {
   return Promise.all(
     (additionalResolvers || []).map(async additionalResolver => {

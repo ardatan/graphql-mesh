@@ -1,36 +1,25 @@
 import { getArgumentValues, getOperationAST, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
 import { type Plugin } from '@envelop/core';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
-import {
-  toMeshPubSub,
-  type HivePubSub,
-  type Logger,
-  type MeshPubSub,
-  type YamlConfig,
-} from '@graphql-mesh/types';
+import { type YamlConfig } from '@graphql-mesh/types';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 interface InvalidateByResultParams {
-  pubsub: MeshPubSub | HivePubSub;
+  pubsub: PubSub;
   invalidations: YamlConfig.LiveQueryInvalidation[];
-  logger: Logger;
 }
 
 export function useInvalidateByResult(params: InvalidateByResultParams): Plugin & Disposable {
   const liveQueryInvalidationFactoryMap = new Map<string, ResolverDataBasedFactory<string>[]>();
   const timers = new Set<ReturnType<typeof setInterval>>();
-  const pubsub = toMeshPubSub(params.pubsub);
+  const pubsub = params.pubsub;
   if (!pubsub) {
     throw new Error(`Live Query plugin requires a pubsub instance.`);
   }
   for (const liveQueryInvalidation of params.invalidations) {
     if (liveQueryInvalidation.invalidate.length === 0) {
-      params.logger.warn(
-        `Invalidation paths are empty for live query invalidation config: ${JSON.stringify(
-          liveQueryInvalidation,
-        )}. Skipping this invalidation config.`,
-      );
       continue;
     }
     const rawInvalidationPaths = liveQueryInvalidation.invalidate;
@@ -47,6 +36,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
       }
       timers.add(
         setInterval(() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           pubsub.publish('live-query:invalidate', liveQueryInvalidation.invalidate);
         }, liveQueryInvalidation.pollingInterval),
       );
@@ -62,12 +52,6 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
       existingFactories.push(...factories);
     }
   }
-  const id = pubsub.subscribe('destroy', () => {
-    for (const timer of timers) {
-      clearInterval(timer);
-    }
-    pubsub.unsubscribe(id);
-  });
   return {
     onExecute() {
       return {
@@ -78,6 +62,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
           if (!operationAST) {
             throw new Error(`Operation couldn't be found`);
           }
+          const activePubSub = (contextValue as { pubsub?: PubSub } | undefined)?.pubsub ?? pubsub;
           const typeInfo = new TypeInfo(schema);
           visit(
             operationAST,
@@ -94,11 +79,12 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
                       root: rootValue,
                       args,
                       context: contextValue,
-                      env: process.env,
+                      env: globalThis.process?.env,
                       result,
                     }),
                   );
-                  pubsub.publish('live-query:invalidate', invalidationPaths);
+                  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                  activePubSub.publish('live-query:invalidate', invalidationPaths);
                 }
               },
             }),

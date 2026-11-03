@@ -91,7 +91,6 @@ module.exports = {
   verbose: !!process.env.DEBUG,
   modulePathIgnorePatterns: ['dist', 'fixtures', '.bob'],
   moduleNameMapper: {
-    '@graphql-mesh/cross-helpers': '<rootDir>/packages/cross-helpers/node.js',
     // Packages outside this repo
     '@graphql-mesh/fusion-runtime':
       '<rootDir>/node_modules/@graphql-mesh/fusion-runtime/dist/index.cjs',

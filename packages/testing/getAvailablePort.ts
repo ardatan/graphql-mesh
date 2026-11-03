@@ -3,8 +3,16 @@ import type { AddressInfo } from 'net';
 
 export async function getAvailablePort() {
   const server = createServer();
-  await new Promise<void>(resolve => server.listen(0, resolve));
+  {
+    const { promise, resolve } = Promise.withResolvers<void>();
+    server.listen(0, resolve);
+    await promise;
+  }
   const port = (server.address() as AddressInfo).port;
-  await new Promise(resolve => server.close(resolve));
+  {
+    const { promise, resolve } = Promise.withResolvers<void>();
+    server.close(() => resolve());
+    await promise;
+  }
   return port;
 }

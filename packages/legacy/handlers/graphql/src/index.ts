@@ -11,7 +11,7 @@ import {
   visit,
 } from 'graphql';
 import lodashGet from 'lodash.get';
-import { process, util } from '@graphql-mesh/cross-helpers';
+import { type Logger } from '@graphql-hive/logger';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions, ValidationError } from '@graphql-mesh/store';
 import {
@@ -23,7 +23,6 @@ import {
 import type {
   GetMeshSourcePayload,
   ImportFn,
-  Logger,
   MeshFetch,
   MeshHandler,
   MeshHandlerOptions,
@@ -52,12 +51,20 @@ import {
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
 
+function inspect(value: unknown): string {
+  const util = globalThis.process?.getBuiltinModule?.('node:util');
+  if (!util) {
+    throw new Error('Node.js util module is required for GraphQL handler');
+  }
+  return util.inspect(value);
+}
+
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {
     root: params.rootValue,
     args: params.variables,
     context: params.context,
-    env: process.env,
+    env: globalThis.process?.env,
   };
 });
 
@@ -68,7 +75,7 @@ export default class GraphQLHandler implements MeshHandler {
   private nonExecutableSchema: StoreProxy<GraphQLSchema>;
   private importFn: ImportFn;
   private fetchFn: MeshFetch;
-  private logger: Logger;
+  private log: Logger;
   private urlLoader = new UrlLoader();
 
   constructor({
@@ -77,7 +84,7 @@ export default class GraphQLHandler implements MeshHandler {
     baseDir,
     store,
     importFn,
-    logger,
+    log,
   }: MeshHandlerOptions<YamlConfig.Handler['graphql']>) {
     this.name = name;
     this.config = config;
@@ -87,7 +94,7 @@ export default class GraphQLHandler implements MeshHandler {
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   private interpolationStringSet = new Set<string>();
@@ -98,7 +105,7 @@ export default class GraphQLHandler implements MeshHandler {
 
   private wrapExecutorToPassSourceNameAndDebug(executor: Executor) {
     const sourceName = this.name;
-    const logger = this.logger;
+    const logger = this.log;
     return function executorWithSourceName(executionRequest: ExecutionRequest) {
       logger.debug(() => `Sending GraphQL Request: `, print(executionRequest.document));
       executionRequest.info = executionRequest.info || ({} as ExecutionRequest['info']);
@@ -131,7 +138,9 @@ export default class GraphQLHandler implements MeshHandler {
     const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
 
     const subscriptionsEndpoint = httpSourceConfig.subscriptionsEndpoint
-      ? stringInterpolator.parse(httpSourceConfig.subscriptionsEndpoint, { env: process.env })
+      ? stringInterpolator.parse(httpSourceConfig.subscriptionsEndpoint, {
+          env: globalThis.process?.env,
+        })
       : undefined;
     const connectionParamsFactory = getInterpolatedHeadersFactory(connectionParams);
     const executor = this.urlLoader.getExecutorAsync(endpoint, {
@@ -174,7 +183,7 @@ export default class GraphQLHandler implements MeshHandler {
         assumeValid: true,
       });
     }
-    throw new Error(`Invalid introspection data: ${util.inspect(sdlOrIntrospection)}`);
+    throw new Error(`Invalid introspection data: ${inspect(sdlOrIntrospection)}`);
   }
 
   async getNonExecutableSchemaForHTTPSource(
@@ -191,7 +200,7 @@ export default class GraphQLHandler implements MeshHandler {
     const interpolatedSourcePath =
       httpSourceConfig.source &&
       stringInterpolator.parse(httpSourceConfig.source, {
-        env: process.env,
+        env: globalThis.process?.env,
       });
     if (interpolatedSourcePath) {
       const opts = {
@@ -199,7 +208,7 @@ export default class GraphQLHandler implements MeshHandler {
         allowUnknownExtensions: true,
         importFn: this.importFn,
         fetch: this.fetchFn,
-        logger: this.logger,
+        log: this.log,
       };
       if (!isUrl(interpolatedSourcePath)) {
         return this.nonExecutableSchema.getWithSet(async () => {
@@ -211,7 +220,7 @@ export default class GraphQLHandler implements MeshHandler {
         });
       }
       const headers = schemaHeadersFactory({
-        env: process.env,
+        env: globalThis.process?.env,
       });
       const sdlOrIntrospection = await readUrl<string | IntrospectionQuery | DocumentNode>(
         interpolatedSourcePath,
@@ -271,7 +280,7 @@ export default class GraphQLHandler implements MeshHandler {
         allowUnknownExtensions: true,
         importFn: this.importFn,
         fetch: this.fetchFn,
-        logger: this.logger,
+        log: this.log,
       });
       const schema = buildSchema(rawSDL, {
         assumeValid: true,
@@ -305,7 +314,7 @@ export default class GraphQLHandler implements MeshHandler {
         });
       } else {
         throw new Error(
-          `Provided file '${schemaConfig} exports an unknown type: ${util.inspect(
+          `Provided file '${schemaConfig} exports an unknown type: ${inspect(
             schemaOrStringOrDocumentNode,
           )}': expected GraphQLSchema, SDL or DocumentNode.`,
         );
@@ -503,14 +512,14 @@ export default class GraphQLHandler implements MeshHandler {
           throw schemaResult.reason;
         }
         throw new Error(
-          `Failed to fetch introspection from ${this.config.endpoint}: ${util.inspect(
+          `Failed to fetch introspection from ${this.config.endpoint}: ${inspect(
             schemaResult.reason,
           )}`,
         );
       }
       if (executorResult.status === 'rejected') {
         throw new Error(
-          `Failed to create executor for ${this.config.endpoint}: ${util.inspect(
+          `Failed to create executor for ${this.config.endpoint}: ${inspect(
             executorResult.reason,
           )}`,
         );
@@ -527,6 +536,6 @@ export default class GraphQLHandler implements MeshHandler {
       return this.getCodeFirstSource(this.config);
     }
 
-    throw new Error(`Unexpected config: ${util.inspect(this.config)}`);
+    throw new Error(`Unexpected config: ${inspect(this.config)}`);
   }
 }

@@ -5,9 +5,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 import { createRouter, Response } from 'fets';
-import { PubSub } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 
-export const pubsub = new PubSub();
+export const pubsub = new MemPubSub();
 
 const Devices: Record<string, { name: string; userName: string }> = {
   'Audio-player': {

@@ -41,7 +41,7 @@ input SOAPHeaders {
 scalar ObjMap"
 `;
 
-exports[`Multi-file WSDL resolves relative source against the loader cwd, not process.cwd() 1`] = `
+exports[`Multi-file WSDL resolves relative source against the loader cwd, not globalThis.process?.cwd?.() 1`] = `
 "schema @transport(kind: "soap", subgraph: "multi-file", typeNamespacesJson: {tns_Hello_Input: "http://example.com/hello/types", tns_Name_Input: "http://example.com/hello/names"}) {
   query: Query
   mutation: Mutation

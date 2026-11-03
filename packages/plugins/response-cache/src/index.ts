@@ -1,14 +1,12 @@
 import CacheControlParser from 'cache-control-parser';
 import { defaultBuildResponseCacheKey } from '@envelop/response-cache';
 import type { GatewayContext, GatewayPlugin } from '@graphql-hive/gateway-runtime';
-import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
-import { isPromise, mapMaybePromise } from '@graphql-tools/utils';
 import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { handleMaybePromise, isPromise } from '@whatwg-node/promise-helpers';
 
 /**
  * Yoga calls session/enabled as `(request, context)`.
@@ -34,7 +32,7 @@ function generateSessionIdFactory(sessionIdDef?: string | null) {
   return function session(request: Request, context?: Record<string, any>) {
     return stringInterpolator.parse(sessionIdDef, {
       context: getContextWithHeaders(request, context),
-      env: process.env,
+      env: globalThis.process?.env,
     });
   };
 }
@@ -58,7 +56,7 @@ function getBuildResponseCacheKey(
       context: contextWithHeaders,
       // Docs historically used `contextValue` (Envelop naming)
       contextValue: contextWithHeaders,
-      env: process.env,
+      env: globalThis.process?.env,
     });
     if (!cacheKey) {
       cacheKey = defaultBuildResponseCacheKey(cacheKeyParameters);
@@ -195,26 +193,10 @@ export type ResponseCacheConfig = Omit<UseResponseCacheParameter, 'cache'> & {
 };
 
 /**
- * Response cache plugin for GraphQL Mesh
- * @param options
- */
-export default function useMeshResponseCache(options: ResponseCacheConfig): GatewayPlugin;
-/**
- * @deprecated Use new configuration format `ResponseCacheConfig`
- * @param options
+ * Response cache plugin for GraphQL Mesh / Gateway.
  */
 export default function useMeshResponseCache(
-  options: YamlConfig.ResponseCacheConfig & {
-    cache?: KeyValueCache;
-  },
-): GatewayPlugin;
-export default function useMeshResponseCache(
-  options:
-    | ResponseCacheConfig
-    // TODO: This is for v0 compatibility, remove once v1 is released
-    | (YamlConfig.ResponseCacheConfig & {
-        cache?: KeyValueCache;
-      }),
+  options: ResponseCacheConfig | (YamlConfig.ResponseCacheConfig & { cache?: KeyValueCache }),
 ): GatewayPlugin {
   const ttlPerType: Record<string, number> = { ...(options as ResponseCacheConfig).ttlPerType };
   const ttlPerSchemaCoordinate: Record<string, number> = {
@@ -237,7 +219,7 @@ export default function useMeshResponseCache(
     includeExtensionMetadata:
       options.includeExtensionMetadata != null
         ? options.includeExtensionMetadata
-        : process.env.DEBUG === '1',
+        : globalThis.process?.env?.DEBUG === '1',
     session: 'sessionId' in options ? generateSessionIdFactory(options.sessionId) : () => null,
     enabled: 'if' in options ? generateEnabledFactory(options.if) : undefined,
     buildResponseCacheKey:

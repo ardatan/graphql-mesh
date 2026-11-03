@@ -31,7 +31,7 @@ export function createEntitySetCountResolver({
           args,
           context,
           info,
-          env: process.env,
+          env: globalThis.process?.env,
         },
         method,
       ),

@@ -5,7 +5,7 @@ import { extractResolvers } from '@graphql-mesh/utils';
 import type { ResolversComposerMapping } from '@graphql-tools/resolvers-composition';
 import { composeResolvers } from '@graphql-tools/resolvers-composition';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import type { MaybePromise } from '@graphql-tools/utils';
+import { fakePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 import { computeCacheKey } from './compute-cache-key.js';
 
 export default class CacheTransform implements MeshTransform {
@@ -149,9 +149,14 @@ export default class CacheTransform implements MeshTransform {
   }
 
   private waitAndReturn(pubsubTopic: string) {
-    return new Promise((resolve, reject) => {
-      const subId = this.options.pubsub.subscribe(pubsubTopic, ({ result, error }) => {
-        this.options.pubsub.unsubscribe(subId);
+    const { promise, resolve, reject } = Promise.withResolvers<any>();
+    const unsubPromise = fakePromise(
+      this.options.pubsub.subscribe(pubsubTopic, ({ result, error }) => {
+        unsubPromise.then(unsub => {
+          if (typeof unsub === 'function') {
+            return unsub();
+          }
+        });
 
         if (error) {
           reject(error);
@@ -160,7 +165,8 @@ export default class CacheTransform implements MeshTransform {
         if (result) {
           resolve(result);
         }
-      });
-    });
+      }),
+    ).catch(reject);
+    return promise;
   }
 }

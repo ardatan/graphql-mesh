@@ -1,27 +1,31 @@
 import { setTimeout } from 'timers/promises';
 import { parse } from 'graphql';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import RateLimitTransform from '../src/index.js';
 
 describe('Rate Limit Transform', () => {
-  let pubsub: PubSub;
+  let pubsub: MemPubSub;
+  let disposables: AsyncDisposableStack;
   let cache: InMemoryLRUCache;
 
   beforeEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
+    disposables = new AsyncDisposableStack();
   });
 
-  afterEach(() => {
-    pubsub.publish('destroy', {} as any);
+  afterEach(async () => {
+    await disposables.disposeAsync();
   });
 
-  const baseDir = process.cwd();
+  const baseDir = globalThis.process?.cwd?.();
   const importFn = defaultImportFn;
   const apiName = 'rate-limit-test';
   it('should throw an error if the rate limit is exceeded', async () => {
@@ -57,8 +61,9 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
-      logger,
+      log,
     });
+    disposables.use(rateLimitTransform);
     const wrappedSchema = wrapSchema({
       schema,
       transforms: [rateLimitTransform],
@@ -126,8 +131,9 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
-      logger,
+      log,
     });
+    disposables.use(rateLimitTransform);
     const wrappedSchema = wrapSchema({
       schema,
       transforms: [rateLimitTransform],
@@ -192,8 +198,9 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
-      logger,
+      log,
     });
+    disposables.use(rateLimitTransform);
     const wrappedSchema = wrapSchema({
       schema,
       transforms: [rateLimitTransform],
@@ -272,8 +279,9 @@ describe('Rate Limit Transform', () => {
       cache,
       pubsub,
       importFn,
-      logger,
+      log,
     });
+    disposables.use(rateLimitTransform);
 
     const wrappedSchema = wrapSchema({
       schema,

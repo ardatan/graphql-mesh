@@ -83,6 +83,6 @@ export const gatewayConfig = defineGatewayConfig({
           invalidate: ['Query.todos'],
         },
       ],
-    }),
+    }) as any,
   ],
 });

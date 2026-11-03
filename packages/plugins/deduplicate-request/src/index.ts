@@ -1,7 +1,6 @@
 import type { MeshPlugin } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
-import { mapMaybePromise, type MaybePromise } from '@graphql-tools/utils';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 
 export default function useDeduplicateRequest(): MeshPlugin<any> {
   const reqResMapByContext = new WeakMap<any, Map<string, MaybePromise<Response>>>();

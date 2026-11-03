@@ -38,17 +38,12 @@ import {
   GraphQLVoid,
   RegularExpression,
 } from 'graphql-scalars';
-import { path, process } from '@graphql-mesh/cross-helpers';
+import { Logger } from '@graphql-hive/logger';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
-import {
-  defaultImportFn,
-  DefaultLogger,
-  readFileOrUrl,
-  sanitizeNameForGraphQL,
-} from '@graphql-mesh/utils';
+import type { MeshFetch } from '@graphql-mesh/types';
+import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import type {
   WSDLBinding,
@@ -71,7 +66,7 @@ import { PARSE_XML_OPTIONS } from './utils.js';
 export interface SOAPLoaderOptions {
   subgraphName: string;
   fetch?: MeshFetch;
-  logger?: Logger;
+  log?: Logger;
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
   soapHeaders?: SOAPHeaders;
@@ -200,6 +195,10 @@ function resolveLocation(base: string | undefined, location: string): string {
   }
   // base is a filesystem path. A filesystem-absolute location passes through;
   // anything else is resolved relative to base's containing directory.
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!path) {
+    throw new Error('Node.js path module is required to resolve SOAP filesystem locations');
+  }
   if (path.isAbsolute(location)) return location;
   return path.resolve(path.dirname(base), location);
 }
@@ -299,7 +298,7 @@ export class SOAPLoader {
   private schemaHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
   private fetchFn: MeshFetch;
   private subgraphName: string;
-  private logger: Logger;
+  private log: Logger;
   private endpoint?: string;
   private cwd: string;
   private soapHeaders: SOAPHeaders;
@@ -308,7 +307,7 @@ export class SOAPLoader {
 
   constructor(options: SOAPLoaderOptions) {
     this.fetchFn = options.fetch || defaultFetchFn;
-    this.logger = options.logger || new DefaultLogger(options.subgraphName);
+    this.log = options.log || new Logger({ prefix: options.subgraphName });
     this.subgraphName = options.subgraphName;
     this.loadXMLSchemaNamespace();
     this.schemaComposer.addDirective(soapDirective);
@@ -829,8 +828,8 @@ export class SOAPLoader {
       cwd: this.cwd,
       fetch: this.fetchFn,
       importFn: defaultImportFn,
-      logger: this.logger,
-      headers: this.schemaHeadersFactory({ env: process.env }),
+      log: this.log,
+      headers: this.schemaHeadersFactory({ env: globalThis.process?.env }),
     });
     xsdText = xsdText.split('xmlns:').join('namespace:');
     // WSDL Import is different than XS Import
@@ -861,13 +860,14 @@ export class SOAPLoader {
     // loader's working directory in monorepos / containers, sending nested
     // imports to the wrong absolute paths.
     let resolvedBase = baseUrl;
-    if (
-      resolvedBase &&
-      !URI_SCHEME_RE.test(resolvedBase) &&
-      !path.isAbsolute(resolvedBase) &&
-      this.cwd
-    ) {
-      resolvedBase = path.resolve(this.cwd, resolvedBase);
+    if (resolvedBase && !URI_SCHEME_RE.test(resolvedBase) && this.cwd) {
+      const path = globalThis.process?.getBuiltinModule?.('node:path');
+      if (!path) {
+        throw new Error('Node.js path module is required to resolve SOAP WSDL paths');
+      }
+      if (!path.isAbsolute(resolvedBase)) {
+        resolvedBase = path.resolve(this.cwd, resolvedBase);
+      }
     }
     // Pre-register before recursing so circular imports terminate.
     if (resolvedBase) {
@@ -887,8 +887,8 @@ export class SOAPLoader {
       cwd: this.cwd,
       fetch: this.fetchFn,
       importFn: defaultImportFn,
-      logger: this.logger,
-      headers: this.schemaHeadersFactory({ env: process.env }),
+      log: this.log,
+      headers: this.schemaHeadersFactory({ env: globalThis.process?.env }),
     });
     await this.loadWSDL(wsdlText, resolved);
   }
@@ -1102,9 +1102,9 @@ export class SOAPLoader {
               } as any;
             } else {
               if (elementObj.attributes?.ref) {
-                this.logger.warn(`element.ref isn't supported yet.`);
+                this.log.warn(`element.ref isn't supported yet.`);
               } else {
-                this.logger.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
+                this.log.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
               }
             }
           }
@@ -1332,9 +1332,9 @@ export class SOAPLoader {
               } as any;
             } else {
               if (elementObj.attributes?.ref) {
-                this.logger.warn(`element.ref isn't supported yet.`, elementObj.attributes?.ref);
+                this.log.warn(`element.ref isn't supported yet.`, elementObj.attributes?.ref);
               } else {
-                this.logger.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
+                this.log.warn(`Element doesn't have a name in ${complexTypeName}. Ignoring...`);
               }
             }
           }

@@ -1,5 +1,4 @@
 import type { GraphQLSchema } from 'graphql';
-import { path, process } from '@graphql-mesh/cross-helpers';
 
 export interface GraphQLSQLiteLoaderOpts {
   infile?: string;
@@ -14,13 +13,17 @@ export default function loadGraphQLSchemaFromSQLite(_name: string, opts: GraphQL
 export function loadGraphQLSchemaFromOptions(
   opts: GraphQLSQLiteLoaderOpts,
 ): Promise<GraphQLSchema> {
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!path) {
+    throw new Error('Node.js path module is required for SQLite loader');
+  }
   const tuql$ = import('tuql').catch(e => {
     console.error(e);
     throw new Error(
       'Cannot import `tuql` packages necessary for SQLite data source. Have you installed it?',
     );
   });
-  const cwd = opts.cwd || process.cwd();
+  const cwd = opts.cwd || globalThis.process?.cwd?.();
   if (opts.infile != null) {
     const absolutePath = path.isAbsolute(opts.infile) ? opts.infile : path.join(cwd, opts.infile);
     return tuql$.then(tuql => tuql.buildSchemaFromInfile(absolutePath));

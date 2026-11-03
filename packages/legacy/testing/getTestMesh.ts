@@ -2,12 +2,15 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSchema, createYoga, Repeater } from 'graphql-yoga';
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import StitchingMerger from '@graphql-mesh/merger-stitching';
 import { getMesh, type GetMeshOptions } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 
 export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
   const yoga = createYoga({
@@ -39,12 +42,13 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
     }),
   });
   const cache = extraOptions?.cache || new InMemoryLRUCache();
-  const pubsub = extraOptions?.pubsub || new PubSub();
-  const logger = extraOptions?.logger || new DefaultLogger('Test');
+  const pubsub = extraOptions?.pubsub || new MemPubSub();
+  const log = extraOptions?.log || new Logger({ prefix: 'Test' });
   const store = new MeshStore('.mesh', new InMemoryStoreStorageAdapter(), {
     readonly: false,
     validate: false,
   });
+  const disposables = extraOptions?.disposables || new AsyncDisposableStack();
   return getMesh({
     fetchFn: yoga.fetch as any,
     sources: [
@@ -60,7 +64,7 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
           cache,
           pubsub,
           store: store.child('sources/Yoga'),
-          logger,
+          log,
           importFn: defaultImportFn,
         }),
       },
@@ -71,9 +75,10 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
     merger: new StitchingMerger({
       cache,
       pubsub,
-      logger,
+      log,
       store: store.child('Stitching'),
     }),
+    disposables,
     ...extraOptions,
   });
 }

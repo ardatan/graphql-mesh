@@ -1,4 +1,3 @@
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import { writeFile } from '@graphql-mesh/utils';
 import { processConfig } from '../src/process.js';
 
@@ -6,6 +5,10 @@ describe('processConfig', () => {
   const generatedMeshConfiguration = '.mesh';
 
   it('should be possible to load custom fetch function', async () => {
+    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+    if (!pathModule) {
+      throw new Error('Node.js path module is required for processConfig tests');
+    }
     const config = await processConfig(
       {
         customFetch: './mesh-config-sources/custom-fetch.ts',
@@ -44,7 +47,7 @@ describe('processConfig', () => {
 
     meshConfigContent = meshConfigContent.replace('await import', 'fakeImport');
     meshConfigContent =
-      'const fakeImport = m => require("@graphql-tools/utils").fakePromise(require(m));\n' +
+      'const fakeImport = m => require("@whatwg-node/promise-helpers").fakePromise(require(m));\n' +
       meshConfigContent;
 
     // Create a .ts file with the codes and importCodes content

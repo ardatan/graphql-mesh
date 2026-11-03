@@ -7,13 +7,13 @@ import * as typedDocumentNodePlugin from '@graphql-codegen/typed-document-node';
 import * as typescriptGenericSdk from '@graphql-codegen/typescript-generic-sdk';
 import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
+import { type Logger } from '@graphql-hive/logger';
 import type { Source } from '@graphql-mesh/config';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import {
   generateIncontextSDKTypes,
   generateUnifiedContextTypeFromIdentifiers,
 } from '@graphql-mesh/incontext-sdk-codegen';
-import type { Logger, RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
+import type { RawSourceOutput, YamlConfig } from '@graphql-mesh/types';
 import {
   defaultImportFn,
   pathExists,
@@ -144,6 +144,10 @@ export function getMeshArtifactsPackageJson(
  * tsconfig in `projectDir` itself (parent configs are ignored).
  */
 export function readResolvedTsConfigModule(projectDir: string): string | undefined {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required to read tsconfig module option');
+  }
   const tsconfig = getTsconfig(projectDir, 'tsconfig.json');
   if (!tsconfig) {
     return undefined;
@@ -170,7 +174,7 @@ export async function generateTsArtifacts(
     baseDir,
     meshConfigImportCodes,
     meshConfigCodes,
-    logger,
+    log,
     sdkConfig,
     fileType,
     codegenConfig = {},
@@ -185,7 +189,7 @@ export async function generateTsArtifacts(
     baseDir: string;
     meshConfigImportCodes: Set<string>;
     meshConfigCodes: Set<string>;
-    logger: Logger;
+    log: Logger;
     sdkConfig: YamlConfig.SDKConfig;
     fileType: 'ts' | 'json' | 'js';
     codegenConfig: any;
@@ -193,8 +197,13 @@ export async function generateTsArtifacts(
   },
   cliParams: GraphQLMeshCLIParams,
 ) {
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!fs || !pathModule) {
+    throw new Error('Node.js fs and path modules are required to generate Mesh artifacts');
+  }
   const artifactsDir = pathModule.join(baseDir, cliParams.artifactsDir);
-  logger.info('Generating index file in TypeScript');
+  log.info('Generating index file in TypeScript');
   for (const rawSource of rawSources) {
     const transformedSchema = (unifiedSchema.extensions as any).sourceMap.get(rawSource);
     const sdl = printSchemaWithDirectives(transformedSchema);
@@ -278,8 +287,8 @@ export async function generateTsArtifacts(
                 ...meshConfigImportCodes,
                 `import { getMesh, type ExecuteMeshFn, type SubscribeMeshFn, type MeshContext as BaseMeshContext, type MeshInstance } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
-                `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
                 `import type { ImportFn } from '@graphql-mesh/types';`,
+                `import { fakePromise, fakeRejectPromise } from '@whatwg-node/promise-helpers';`,
               ]);
               const results = await Promise.all(
                 rawSources.map(async source => {
@@ -328,6 +337,10 @@ export async function generateTsArtifacts(
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
 const importFn: ImportFn = <T>(moduleId: string) => {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    return fakeRejectPromise(new Error('Node.js path module is required'));
+  }
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {${[...importedModulesSet]
     .map(importedModuleName => {
@@ -353,7 +366,7 @@ const importFn: ImportFn = <T>(moduleId: string) => {
     })
     .join('')}
     default:
-      return Promise.reject(new Error(\`Cannot find module '\${relativeModuleId}'.\`));
+      return fakeRejectPromise(new Error(\`Cannot find module '\${relativeModuleId}'.\`));
   }
 };
 
@@ -381,7 +394,7 @@ export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance> {
         .then(newMesh =>
           meshInstance$.then(oldMesh => {
             oldMesh.destroy()
-            meshInstance$ = Promise.resolve(newMesh)
+            meshInstance$ = fakePromise(newMesh)
           })
         ).catch(err => {
           console.error("Mesh polling failed so the existing version will be used:", err);
@@ -389,14 +402,13 @@ export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance> {
       }, pollingInterval)
     }
     meshInstance$ = getMeshOptions().then(meshOptions => getMesh(meshOptions)).then(mesh => {
-      const id = mesh.pubsub.subscribe('destroy', () => {
+      mesh.deferDispose(() => {
         meshInstance$ = undefined;
-        mesh.pubsub.unsubscribe(id);
       });
       return mesh;
     }).catch((err) => {
       meshInstance$ = undefined;
-      return Promise.reject(err);
+      return fakeRejectPromise(err);
     });
   }
   return meshInstance$;
@@ -434,14 +446,26 @@ export function ${cliParams.builtMeshSDKFactoryName}<TGlobalContext = any, TOper
       .join('(');
 
   const endpointAssignmentESM = `import { fileURLToPath } from '@graphql-mesh/utils';
-const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
+const baseDir = (() => {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required for Mesh artifacts');
+  }
+  return pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
     artifactsDir,
     baseDir,
-  )}');`;
-  const endpointAssignmentCJS = `const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '${pathModule.relative(
+  )}');
+})();`;
+  const endpointAssignmentCJS = `const baseDir = (() => {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required for Mesh artifacts');
+  }
+  return pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '${pathModule.relative(
     artifactsDir,
     baseDir,
-  )}');`;
+  )}');
+})();`;
 
   const tsFilePath = pathModule.join(artifactsDir, 'index.ts');
 
@@ -450,7 +474,7 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
   const dtsFilePath = pathModule.join(artifactsDir, 'index.d.ts');
 
   const esmJob = (ext: 'mjs' | 'js') => async () => {
-    logger.info('Writing index.ts for ESM to the disk.');
+    log.info('Writing index.ts for ESM to the disk.');
     await writeFile(
       tsFilePath,
       codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, endpointAssignmentESM),
@@ -462,7 +486,7 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
     }
 
     if (fileType !== 'ts') {
-      logger.info(`Compiling TS file as ES Module to "index.${ext}"`);
+      log.info(`Compiling TS file as ES Module to "index.${ext}"`);
       compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
 
       if (ext === 'mjs') {
@@ -470,13 +494,13 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
         await fs.promises.rename(jsFilePath, mjsFilePath);
       }
 
-      logger.info('Deleting index.ts');
+      log.info('Deleting index.ts');
       await fs.promises.unlink(tsFilePath);
     }
   };
 
   const cjsJob = async () => {
-    logger.info('Writing index.ts for CJS to the disk.');
+    log.info('Writing index.ts for CJS to the disk.');
     await writeFile(
       tsFilePath,
       codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, endpointAssignmentCJS),
@@ -486,10 +510,10 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
       await fs.promises.unlink(jsFilePath);
     }
     if (fileType !== 'ts') {
-      logger.info('Compiling TS file as CommonJS Module to `index.js`');
+      log.info('Compiling TS file as CommonJS Module to `index.js`');
       compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
 
-      logger.info('Deleting index.ts');
+      log.info('Deleting index.ts');
       await fs.promises.unlink(tsFilePath);
     }
   };
@@ -556,6 +580,10 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
 }
 
 export function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFilePaths: string[]) {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required to compile Mesh TypeScript artifacts');
+  }
   const options: ts.CompilerOptions = {
     target: ts.ScriptTarget.ESNext,
     module,

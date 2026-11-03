@@ -1,11 +1,10 @@
-import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { URL } from '@whatwg-node/fetch';
 import type { MySQLSSLOptions } from './types.js';
 
 export function getConnectionOptsFromEndpointUri(endpointUri: string) {
   endpointUri = stringInterpolator.parse(endpointUri, {
-    env: process.env,
+    env: globalThis.process?.env,
   });
   const {
     username: user,
@@ -24,7 +23,7 @@ export function getConnectionOptsFromEndpointUri(endpointUri: string) {
   let sslOpts: MySQLSSLOptions | undefined;
   if (protocol === 'mysqls:') {
     sslOpts = {
-      rejectUnauthorized: process.env.NODE_TLS_REJECT_UNAUTHORIZED === '1',
+      rejectUnauthorized: globalThis.process?.env?.NODE_TLS_REJECT_UNAUTHORIZED === '1',
     };
   }
   return {
@@ -34,8 +33,8 @@ export function getConnectionOptsFromEndpointUri(endpointUri: string) {
     host,
     port: parseInt(port, 10),
     database,
-    trace: !!process.env.DEBUG,
-    debug: !!process.env.DEBUG,
+    trace: !!globalThis.process?.env?.DEBUG,
+    debug: !!globalThis.process?.env?.DEBUG,
     ssl: sslOpts,
     ...additionalOptions,
   };

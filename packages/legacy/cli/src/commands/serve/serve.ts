@@ -3,10 +3,9 @@
 import cluster from 'cluster';
 import os from 'os';
 import open from 'open';
-import { process } from '@graphql-mesh/cross-helpers';
+import { type Logger } from '@graphql-hive/logger';
 import { createMeshHTTPHandler, resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
-import type { Logger } from '@graphql-mesh/types';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { GraphQLMeshCLIParams } from '../../index.js';
 import { getMaxConcurrency } from './getMaxConcurency.js';
@@ -38,7 +37,7 @@ async function loadOfflineRenderGraphiQL(): Promise<RenderGraphiQL> {
   }
 }
 
-function portSelectorFn(sources: [number, number, number], logger: Logger) {
+function portSelectorFn(sources: [number, number, number], log: Logger) {
   const port = sources.find(source => Boolean(source)) || 4000;
   if (sources.filter(source => Boolean(source)).length > 1) {
     const activeSources: Array<string> = [];
@@ -51,7 +50,7 @@ function portSelectorFn(sources: [number, number, number], logger: Logger) {
     if (sources[2]) {
       activeSources.push('environment variable');
     }
-    logger.warn(`Multiple ports specified (${activeSources.join(', ')}), using ${port}`);
+    log.warn(`Multiple ports specified (${activeSources.join(', ')}), using ${port}`);
   }
 
   return port;
@@ -62,7 +61,7 @@ export async function serveMesh(
     baseDir,
     argsPort,
     getBuiltMesh,
-    logger,
+    log,
     rawServeConfig = {},
     playgroundTitle,
     registerTerminateHandler,
@@ -70,7 +69,7 @@ export async function serveMesh(
   cliParams: GraphQLMeshCLIParams,
 ) {
   const {
-    fork: configFork = process.env.NODE_ENV?.toLowerCase() === 'production',
+    fork: configFork = globalThis.process?.env?.NODE_ENV?.toLowerCase() === 'production',
     port: configPort,
     hostname = os.platform().toLowerCase() === 'win32' ||
     // is WSL?
@@ -79,17 +78,17 @@ export async function serveMesh(
       : '0.0.0.0',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
-    browser = process.env.NODE_ENV?.toLowerCase() !== 'production',
+    browser = globalThis.process?.env?.NODE_ENV?.toLowerCase() !== 'production',
   } = rawServeConfig;
 
   const port = portSelectorFn(
-    [argsPort, parseInt(configPort?.toString()), parseInt(process.env.PORT)],
-    logger,
+    [argsPort, parseInt(configPort?.toString()), parseInt(globalThis.process?.env?.PORT)],
+    log,
   );
 
   let forkNum: number;
 
-  const envFork = process.env.FORK;
+  const envFork = globalThis.process?.env?.FORK;
 
   let defaultForkNum = 0;
 
@@ -130,15 +129,15 @@ export async function serveMesh(
       const worker = cluster.fork();
       registerTerminateHandler(eventName => worker.kill(eventName));
     }
-    logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
+    log.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
     let diedWorkers = 0;
     cluster.on('exit', (worker, code, signal) => {
       if (!mainProcessKilled) {
-        logger.child({ worker: worker.id }).error(`died with ${signal || code}. Restarting...`);
+        log.child({ worker: worker.id }).error(`died with ${signal || code}. Restarting...`);
         diedWorkers++;
         if (diedWorkers === forkNum) {
-          logger.error('All workers died. Exiting...');
-          process.exit(1);
+          log.error('All workers died. Exiting...');
+          globalThis.process?.exit(1);
         } else {
           setTimeout(() => {
             const newWorker = cluster.fork();
@@ -149,15 +148,15 @@ export async function serveMesh(
     });
   } else {
     if (cluster.isWorker) {
-      logger.addPrefix?.({
+      log = log.child({
         worker: cluster.worker.id,
       });
     }
-    logger.info(`Starting GraphQL Mesh...`);
+    log.info(`Starting GraphQL Mesh...`);
 
-    logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
+    log.info(`${cliParams.serveMessage}: ${serverUrl}`);
     registerTerminateHandler(eventName => {
-      const eventLogger = logger.child({ terminateEvent: eventName });
+      const eventLogger = log.child({ terminateEvent: eventName });
       eventLogger.info(`Destroying GraphQL Mesh...`);
       getBuiltMesh()
         .then(mesh => mesh.destroy())
@@ -182,7 +181,7 @@ export async function serveMesh(
     });
 
     registerTerminateHandler(eventName => {
-      const eventLogger = logger.child({ terminateEvent: eventName });
+      const eventLogger = log.child({ terminateEvent: eventName });
       eventLogger.debug(`Stopping HTTP Server`);
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handleMaybePromise(
@@ -200,7 +199,7 @@ export async function serveMesh(
         serverUrl.replace('0.0.0.0', 'localhost'),
         typeof browser === 'string' ? { app: browser } : undefined,
       ).catch(() => {
-        logger.warn(`Failed to open browser for ${serverUrl}`);
+        log.warn(`Failed to open browser for ${serverUrl}`);
       });
     }
   }

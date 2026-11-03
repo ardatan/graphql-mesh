@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.18.0"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -32,13 +32,12 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/types": "^0.107.3",
     "@upstash/redis": "^1.38.2",
-    "@whatwg-node/disposablestack": "^0.0.6",
+    "@whatwg-node/disposablestack": "^0.1.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

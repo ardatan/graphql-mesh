@@ -1,6 +1,5 @@
 import { Kind, visit, visitWithTypeInfo, type ExecutionResult, type GraphQLSchema } from 'graphql';
 import { createHive, type HiveClient, type HivePluginOptions } from '@graphql-hive/core';
-import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { getTypeInfo, type DelegationContext } from '@graphql-tools/delegate';
@@ -13,16 +12,16 @@ interface TransformationContext {
 
 export default class HiveTransform implements MeshTransform {
   private hiveClient: HiveClient;
-  private logger: MeshTransformOptions<YamlConfig.HivePlugin>['logger'];
+  private log: MeshTransformOptions<YamlConfig.HivePlugin>['log'];
   private schema: GraphQLSchema;
-  constructor({ config, logger }: MeshTransformOptions<YamlConfig.HivePlugin>) {
-    this.logger = logger;
+  constructor({ config, log }: MeshTransformOptions<YamlConfig.HivePlugin>) {
+    this.log = log;
     const enabled =
       // eslint-disable-next-line no-new-func
       config != null && 'enabled' in config ? new Function(`return ${config.enabled}`)() : true;
 
     const token = stringInterpolator.parse(config.token, {
-      env: process.env,
+      env: globalThis.process?.env,
     });
 
     let usage: HivePluginOptions['usage'];
@@ -39,11 +38,11 @@ export default class HiveTransform implements MeshTransform {
           return {
             name: stringInterpolator.parse(config.usage.clientInfo.name, {
               context,
-              env: process.env,
+              env: globalThis.process?.env,
             }),
             version: stringInterpolator.parse(config.usage.clientInfo.version, {
               context,
-              env: process.env,
+              env: globalThis.process?.env,
             }),
           };
         };
@@ -52,10 +51,14 @@ export default class HiveTransform implements MeshTransform {
     let reporting: HivePluginOptions['reporting'];
     if (config.reporting) {
       reporting = {
-        author: stringInterpolator.parse(config.reporting.author, { env: process.env }),
-        commit: stringInterpolator.parse(config.reporting.commit, { env: process.env }),
-        serviceName: stringInterpolator.parse(config.reporting.serviceName, { env: process.env }),
-        serviceUrl: stringInterpolator.parse(config.reporting.serviceUrl, { env: process.env }),
+        author: stringInterpolator.parse(config.reporting.author, { env: globalThis.process?.env }),
+        commit: stringInterpolator.parse(config.reporting.commit, { env: globalThis.process?.env }),
+        serviceName: stringInterpolator.parse(config.reporting.serviceName, {
+          env: globalThis.process?.env,
+        }),
+        serviceUrl: stringInterpolator.parse(config.reporting.serviceUrl, {
+          env: globalThis.process?.env,
+        }),
       };
     }
     let agent: HivePluginOptions['agent'];
@@ -66,17 +69,18 @@ export default class HiveTransform implements MeshTransform {
         minTimeout: config.agent.minTimeout,
         sendInterval: config.agent.sendInterval,
         maxSize: config.agent.maxSize,
-        logger,
+        logger: this.log,
       };
     }
     this.hiveClient = createHive({
       enabled,
-      debug: !!process.env.DEBUG,
+      debug: !!globalThis.process?.env?.DEBUG,
       token,
       agent,
       usage,
       reporting,
       selfHosting: config.selfHosting,
+      logger: this.log,
     });
   }
 
@@ -95,7 +99,7 @@ export default class HiveTransform implements MeshTransform {
       transformationContext.collectUsageCallback = this.hiveClient.collectUsage();
       transformationContext.request = request;
     } catch (e) {
-      this.logger.error(`Failed to collect usage`, e);
+      this.log.error(`Failed to collect usage`, e);
     }
     return request;
   }
@@ -129,10 +133,10 @@ export default class HiveTransform implements MeshTransform {
           result,
         )
         ?.catch(e => {
-          this.logger.error(`Failed to report usage`, e);
+          this.log.error(`Failed to report usage`, e);
         });
     } catch (e) {
-      this.logger.error(`Failed to report usage`, e);
+      this.log.error(`Failed to report usage`, e);
     }
     return result;
   }

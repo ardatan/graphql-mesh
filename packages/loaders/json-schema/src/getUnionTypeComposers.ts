@@ -10,7 +10,7 @@ import {
   type InputTypeComposer,
   type SchemaComposer,
 } from 'graphql-compose';
-import type { Logger } from '@graphql-mesh/types';
+import { type Logger } from '@graphql-hive/logger';
 import type { JSONSchemaObject } from '@json-schema-tools/meta-schema';
 import { ResolveRootDirective, StatusCodeTypeNameDirective } from './directives.js';
 import type { TypeComposers } from './getComposerFromJSONSchema.js';
@@ -23,7 +23,7 @@ export interface GetUnionTypeComposersOpts {
     output?: ObjectTypeComposer | UnionTypeComposer;
   }[];
   subSchemaAndTypeComposers: JSONSchemaObject & TypeComposers;
-  logger: Logger;
+  log: Logger;
 }
 
 export function getContainerTC(
@@ -55,7 +55,7 @@ export function getUnionTypeComposers({
   schemaComposer,
   typeComposersList,
   subSchemaAndTypeComposers,
-  logger,
+  log,
 }: GetUnionTypeComposersOpts): TypeComposers {
   if (new Set(typeComposersList).size === 1) {
     return typeComposersList[0] as TypeComposers;
@@ -84,7 +84,7 @@ export function getUnionTypeComposers({
       };
     }
     if (!input) {
-      logger.debug(`No input type composer found for ${output.getTypeName()}, skipping...`);
+      log.debug(`No input type composer found for ${output.getTypeName()}, skipping...`);
     }
   });
 

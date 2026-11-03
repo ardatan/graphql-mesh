@@ -104,20 +104,20 @@ async function startServer(subscriptionInterval = 1000, debug = false): Promise<
       call.end();
     },
   });
-  return new Promise((resolve, reject) => {
-    server.bindAsync(
-      '0.0.0.0:' + opts.getServicePort('movies'),
-      ServerCredentials.createInsecure(),
-      (error, port) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        logger('Server started, listening: 0.0.0.0:' + port);
-        resolve(server);
-      },
-    );
-  });
+  const { promise, resolve, reject } = Promise.withResolvers<typeof server>();
+  server.bindAsync(
+    '0.0.0.0:' + opts.getServicePort('movies'),
+    ServerCredentials.createInsecure(),
+    (error, port) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      logger('Server started, listening: 0.0.0.0:' + port);
+      resolve(server);
+    },
+  );
+  return promise;
 }
 
 startServer(300, true).catch(console.error);

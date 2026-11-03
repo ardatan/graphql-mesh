@@ -11,15 +11,26 @@ jest.mock('mysql', () => ({
 // See mockDatabaseUpgrade for the actual mocks
 jest.mock('mysql-utilities');
 
-jest.mock('@graphql-mesh/cross-helpers', () => ({
-  fs: {
-    readFileSync: jest.fn(),
-  },
-  util: {
-    // We do not promisify, the functions passed in are already promise-based for simplicity
-    promisify: jest.fn(fn => fn),
-  },
-}));
+const mockFs = {
+  readFileSync: jest.fn(),
+};
+const mockUtil = {
+  // We do not promisify, the functions passed in are already promise-based for simplicity
+  promisify: jest.fn(fn => fn),
+};
+const originalGetBuiltinModule = globalThis.process!.getBuiltinModule.bind(globalThis.process);
+function mockGetBuiltinModule(): void {
+  globalThis.process!.getBuiltinModule = ((id: string) => {
+    if (id === 'node:fs' || id === 'fs') {
+      return mockFs as any;
+    }
+    if (id === 'node:util' || id === 'util') {
+      return mockUtil as any;
+    }
+    return originalGetBuiltinModule(id as any);
+  }) as typeof process.getBuiltinModule;
+}
+mockGetBuiltinModule();
 
 // Mock transport-mysql
 jest.mock('@graphql-mesh/transport-mysql', () => ({
@@ -64,6 +75,11 @@ const loaderParamsDefaultMock: Parameters<typeof loadGraphQLSchemaFromMySQL> = [
 describe('loadGraphQLSchemaFromMySQL', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetBuiltinModule();
+  });
+
+  afterAll(() => {
+    globalThis.process!.getBuiltinModule = originalGetBuiltinModule;
   });
 
   describe('should correctly generate graphql schema from a mysql schema', () => {

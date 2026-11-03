@@ -1,10 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { GraphQLObjectType, printSchema } from 'graphql';
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import TransferFieldTransform from '../src/index.js';
 
 describe('transfer-schema transform', () => {
@@ -23,7 +24,7 @@ describe('transfer-schema transform', () => {
       author: String!
     }
   `;
-  let pubsub: MeshPubSub;
+  let pubsub: PubSub;
   const baseDir: string = undefined;
   using cache = new InMemoryLRUCache();
 
@@ -32,7 +33,7 @@ describe('transfer-schema transform', () => {
   });
 
   afterEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
   });
 
   it('should move and copy fields correctly', async () => {
@@ -56,7 +57,7 @@ describe('transfer-schema transform', () => {
       apiName: '',
       importFn: defaultImportFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -104,7 +105,7 @@ describe('transfer-schema transform', () => {
       apiName: '',
       importFn: defaultImportFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -143,7 +144,7 @@ describe('transfer-schema transform', () => {
       apiName: '',
       importFn: defaultImportFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -185,7 +186,7 @@ describe('transfer-schema transform', () => {
       apiName: '',
       importFn: defaultImportFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -228,7 +229,7 @@ describe('transfer-schema transform', () => {
       apiName: '',
       importFn: defaultImportFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -269,7 +270,7 @@ describe('transfer-schema transform', () => {
       apiName: '',
       importFn: defaultImportFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -310,7 +311,7 @@ describe('transfer-schema transform', () => {
       apiName: '',
       importFn: defaultImportFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,

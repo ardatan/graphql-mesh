@@ -1,6 +1,6 @@
 import type { DocumentNode, EnumTypeDefinitionNode } from 'graphql';
 import { parse } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
+import { type Logger } from '@graphql-hive/logger';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import {
@@ -11,7 +11,6 @@ import {
 import type {
   GetMeshSourcePayload,
   ImportFn,
-  Logger,
   MeshFetch,
   MeshHandler,
   MeshHandlerOptions,
@@ -31,14 +30,14 @@ export default class SupergraphHandler implements MeshHandler {
   private supergraphSdl: StoreProxy<DocumentNode>;
   private importFn: ImportFn;
   private fetchFn: MeshFetch;
-  private logger: Logger;
+  private log: Logger;
 
   constructor({
     config,
     baseDir,
     store,
     importFn,
-    logger,
+    log,
   }: MeshHandlerOptions<YamlConfig.Handler['supergraph']>) {
     this.config = config;
     this.baseDir = baseDir;
@@ -47,24 +46,24 @@ export default class SupergraphHandler implements MeshHandler {
       PredefinedProxyOptions.JsonWithoutValidation,
     );
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   private async getSupergraphSdl(): Promise<DocumentNode> {
     const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     const interpolatedSource = stringInterpolator.parse(this.config.source, {
-      env: process.env,
+      env: globalThis.process?.env,
     });
     if (isUrl(interpolatedSource)) {
       const res = await readUrl<DocumentNode | string>(interpolatedSource, {
         headers: schemaHeadersFactory({
-          env: process.env,
+          env: globalThis.process?.env,
         }),
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
         fetch: this.fetchFn,
-        logger: this.logger,
+        log: this.log,
       }).catch(e => {
         throw new Error(`Failed to load supergraph SDL from ${interpolatedSource}:\n ${e.message}`);
       });
@@ -73,13 +72,13 @@ export default class SupergraphHandler implements MeshHandler {
     return this.supergraphSdl.getWithSet(async () => {
       const sdlOrIntrospection = await readFile<string | DocumentNode>(interpolatedSource, {
         headers: schemaHeadersFactory({
-          env: process.env,
+          env: globalThis.process?.env,
         }),
         cwd: this.baseDir,
         allowUnknownExtensions: true,
         importFn: this.importFn,
         fetch: this.fetchFn,
-        logger: this.logger,
+        log: this.log,
       }).catch(e => {
         throw new Error(`Failed to load supergraph SDL from ${interpolatedSource}:\n ${e.message}`);
       });
@@ -131,7 +130,7 @@ export default class SupergraphHandler implements MeshHandler {
 
         const subscriptionsEndpoint = subgraphConfiguration.subscriptionsEndpoint
           ? stringInterpolator.parse(subgraphConfiguration.subscriptionsEndpoint, {
-              env: process.env,
+              env: globalThis.process?.env,
             })
           : undefined;
 
@@ -205,6 +204,6 @@ const getResolverData = memoize1(function getResolverData(params: ExecutionReque
     root: params.rootValue,
     args: params.variables,
     context: params.context,
-    env: process.env,
+    env: globalThis.process?.env,
   };
 });

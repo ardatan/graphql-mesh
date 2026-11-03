@@ -285,19 +285,39 @@ exports[`Reproductions GW-164 1`] = `
                 "arguments": [
                   {
                     "kind": "Argument",
+                    "loc": {
+                      "end": 209,
+                      "start": 200,
+                    },
                     "name": {
                       "kind": "Name",
+                      "loc": {
+                        "end": 205,
+                        "start": 200,
+                      },
                       "value": "myarg",
                     },
                     "value": {
                       "kind": "ListValue",
+                      "loc": {
+                        "end": 209,
+                        "start": 207,
+                      },
                       "values": [],
                     },
                   },
                 ],
                 "kind": "Directive",
+                "loc": {
+                  "end": 210,
+                  "start": 187,
+                },
                 "name": {
                   "kind": "Name",
+                  "loc": {
+                    "end": 199,
+                    "start": 188,
+                  },
                   "value": "myDirective",
                 },
               },

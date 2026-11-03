@@ -1,6 +1,5 @@
 import type { GraphQLFieldResolver } from 'graphql';
 import urljoin from 'url-join';
-import { mapMaybePromise } from '@graphql-tools/utils';
 import { Request } from '@whatwg-node/fetch';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { DataloaderFactory } from '../getDataloaderFactory.js';
@@ -31,7 +30,7 @@ export function createBoundActionResolver({
           args,
           context,
           info,
-          env: process.env,
+          env: globalThis.process?.env,
         },
         method,
       ),

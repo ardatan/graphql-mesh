@@ -15,6 +15,7 @@ import {
 } from '@apollo/gateway';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
+import { fakeRejectPromise } from '@whatwg-node/promise-helpers';
 import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
 import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
@@ -296,7 +297,7 @@ export function createTenv(cwd: string): Tenv {
       const hostnames = await Promise.race([
         waitForExit
           ?.then(() =>
-            Promise.reject(
+            fakeRejectPromise(
               new Error(`Serve exited successfully, but shouldn't have\n${proc.getStd('both')}`),
             ),
           )
@@ -390,7 +391,7 @@ export function createTenv(cwd: string): Tenv {
       const hostnames = await Promise.race([
         waitForExit
           .then(() =>
-            Promise.reject(
+            fakeRejectPromise(
               new Error(
                 `Service "${name}" exited successfully, but shouldn't have\n${proc.getStd('both')}`,
               ),
@@ -435,7 +436,8 @@ export function createTenv(cwd: string): Tenv {
           imageStream.destroy();
         });
         ctrl.signal.addEventListener('abort', () => imageStream.destroy(ctrl.signal.reason));
-        await new Promise((resolve, reject) => {
+        {
+          const { promise, resolve, reject } = Promise.withResolvers<unknown>();
           docker.modem.followProgress(
             imageStream,
             (err, res) => (err ? reject(err) : resolve(res)),
@@ -445,7 +447,8 @@ export function createTenv(cwd: string): Tenv {
                 }
               : undefined,
           );
-        });
+          await promise;
+        }
       } else {
         if (pipeLogs) {
           process.stderr.write(`Image "${image}" exists, pull skipped\n\n`);
@@ -788,33 +791,33 @@ function spawn(
     exit(code ? new Error(`Exit code ${code}\n${trimError(proc.getStd('both'))}`) : null);
   });
 
-  return new Promise((resolve, reject) => {
-    child.once('error', err => {
-      exit(err); // reject waitForExit promise
-      reject(err);
-    });
-    child.once('spawn', () => resolve([proc, waitForExit]));
+  const { promise, resolve, reject } = Promise.withResolvers<[typeof proc, typeof waitForExit]>();
+  child.once('error', err => {
+    exit(err); // reject waitForExit promise
+    reject(err);
   });
+  child.once('spawn', () => resolve([proc, waitForExit]));
+  return promise;
 }
 
 export function getAvailablePort(): Promise<number> {
   const server = createServer();
-  return new Promise((resolve, reject) => {
-    try {
-      server.once('error', reject);
-      server.listen(0, () => {
-        const addressInfo = server.address() as AddressInfo;
-        server.close(err => {
-          if (err) {
-            reject(err);
-          }
-          resolve(addressInfo.port);
-        });
+  const { promise, resolve, reject } = Promise.withResolvers<number>();
+  try {
+    server.once('error', reject);
+    server.listen(0, () => {
+      const addressInfo = server.address() as AddressInfo;
+      server.close(err => {
+        if (err) {
+          reject(err);
+        }
+        resolve(addressInfo.port);
       });
-    } catch (err) {
-      reject(err);
-    }
-  });
+    });
+  } catch (err) {
+    reject(err);
+  }
+  return promise;
 }
 
 async function waitForPort(port: number, signal: AbortSignal) {

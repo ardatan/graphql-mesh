@@ -1,6 +1,8 @@
 import type { DocumentNode, GraphQLResolveInfo, GraphQLSchema, SelectionSetNode } from 'graphql';
 import type { PromiseOrValue } from 'graphql/jsutils/PromiseOrValue.js';
 import type { Plugin } from '@envelop/core';
+import type { Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { BatchDelegateOptions } from '@graphql-tools/batch-delegate';
 import type {
   CreateProxyingResolverFn,
@@ -9,13 +11,11 @@ import type {
   SubschemaConfig,
   Transform,
 } from '@graphql-tools/delegate';
-import type { ExecutionRequest, Executor, IResolvers, MaybePromise } from '@graphql-tools/utils';
+import type { ExecutionRequest, Executor, IResolvers } from '@graphql-tools/utils';
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import * as YamlConfig from './config.js';
-import type { MeshPubSub } from './pubsub.js';
 import type { IMeshStore } from './store.js';
-
-export * from './pubsub.js';
 
 export { jsonSchema } from './config-schema.js';
 
@@ -48,9 +48,9 @@ export type MeshHandlerOptions<THandlerConfig> = {
   config: THandlerConfig;
   baseDir: string;
   cache: KeyValueCache;
-  pubsub: MeshPubSub;
+  pubsub: PubSub;
   store: IMeshStore;
-  logger: Logger;
+  log: Logger;
   importFn: ImportFn;
 };
 
@@ -72,9 +72,9 @@ export interface MeshTransformOptions<Config = any> {
   config: Config;
   baseDir: string;
   cache: KeyValueCache;
-  pubsub: MeshPubSub;
+  pubsub: PubSub;
   importFn: ImportFn;
-  logger: Logger;
+  log: Logger;
 }
 
 export interface MeshTransformLibrary<Config = any> {
@@ -89,8 +89,8 @@ export type Maybe<T> = null | undefined | T;
 
 export interface MeshMergerOptions {
   cache: KeyValueCache;
-  pubsub: MeshPubSub;
-  logger: Logger;
+  pubsub: PubSub;
+  log: Logger;
   store: IMeshStore;
 }
 
@@ -110,11 +110,16 @@ export interface MeshMerger {
 }
 
 export type MeshPluginOptions<TConfig> = TConfig & {
-  logger: Logger;
   cache: KeyValueCache;
-  pubsub: MeshPubSub;
+  /**
+   * Init-time PubSub from Mesh plugin factory / Hive Gateway `ctx`.
+   * Prefer GraphQL `context.pubsub` at request time when available.
+   */
+  pubsub?: PubSub;
   baseDir: string;
   importFn: ImportFn;
+  /** Optional Mesh/Hive logger for plugins that need init-time diagnostics (e.g. New Relic agent missing). Prefer Yoga/Gateway `context.log` at request time. */
+  log?: Logger;
 };
 
 export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;
@@ -164,7 +169,7 @@ export interface OnFetchHookPayload<TContext> {
   fetchFn: MeshFetch;
   setFetchFn: (fetchFn: MeshFetch) => void;
   executionRequest?: Omit<ExecutionRequest, 'info'> & { info?: GraphQLResolveInfo };
-  logger: Logger;
+  log: Logger;
   requestId?: string;
   endResponse: (response$: MaybePromise<Response>) => void;
 }
@@ -195,19 +200,6 @@ export type RawSourceOutput = {
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;
 
 export type ImportFn = <T = any>(moduleId: string, noCache?: boolean) => Promise<T>;
-
-export type LazyLoggerMessage = (() => any | any[]) | any;
-
-export type Logger = {
-  name?: string;
-  log: (...args: any[]) => void;
-  warn: (...args: any[]) => void;
-  info: (...args: any[]) => void;
-  error: (...args: any[]) => void;
-  debug: (...lazyArgs: LazyLoggerMessage[]) => void;
-  child: (name: string | Record<string, string | number>) => Logger;
-  addPrefix?: (prefix: string | Record<string, string | number>) => Logger;
-};
 
 export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;
 export type SelectionSetParamOrFactory =

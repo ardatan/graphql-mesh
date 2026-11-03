@@ -2,16 +2,17 @@
 import { useServer } from 'graphql-ws/use/ws';
 import type { YogaServerInstance } from 'graphql-yoga';
 import { WebSocketServer } from 'ws';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import BareMerger from '@graphql-mesh/merger-bare';
 import { getMesh } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import SupergraphHandler from '@graphql-mesh/supergraph';
 import type { MeshFetch } from '@graphql-mesh/types';
-import { defaultImportFn as importFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn as importFn } from '@graphql-mesh/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { createDisposableServer } from '../../../../testing/createDisposableServer.js';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger.js';
+import { dummyLogger as log } from '../../../../testing/dummyLogger.js';
 import {
   AUTH_HEADER as AUTHORS_AUTH_HEADER,
   server as authorsServer,
@@ -33,8 +34,8 @@ describe('Supergraph', () => {
       validate: false,
       readonly: false,
     });
-    const pubsub = new PubSub();
-    const merger = new BareMerger({ cache, pubsub, store, logger });
+    const pubsub = new MemPubSub();
+    const merger = new BareMerger({ cache, pubsub, store, log });
     const fetchFn: MeshFetch = async (url, options) => {
       if (url.includes('authors')) {
         return authorsServer.fetch(url, options);
@@ -50,12 +51,12 @@ describe('Supergraph', () => {
       cache,
       store,
       pubsub,
-      logger,
+      log,
       importFn,
     };
     baseGetMeshConfig = {
       cache,
-      logger,
+      log,
       fetchFn,
       merger,
     };
@@ -243,8 +244,7 @@ describe('Supergraph', () => {
         ...baseGetMeshConfig,
       }),
     ).rejects.toThrow();
-    expect(logger.error.mock.calls[0][0].toString())
-      .toBe(`Failed to generate the schema for the source
+    expect(log.error.mock.calls[0][0].toString()).toBe(`Failed to generate the schema for the source
  Supergraph source must be a valid GraphQL SDL string or a parsed DocumentNode, but got an invalid result from ./fixtures/supergraph-invalid.graphql instead.
  Got result: type Query {
 
@@ -268,8 +268,7 @@ describe('Supergraph', () => {
         ...baseGetMeshConfig,
       }),
     ).rejects.toThrow();
-    expect(logger.error.mock.calls[0][0].toString())
-      .toBe(`Failed to generate the schema for the source
+    expect(log.error.mock.calls[0][0].toString()).toBe(`Failed to generate the schema for the source
  Failed to load supergraph SDL from http://down-sdl-source.com/my-sdl.graphql:
  getaddrinfo ENOTFOUND down-sdl-source.com`);
   });

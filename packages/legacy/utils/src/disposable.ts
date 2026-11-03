@@ -1,5 +1,5 @@
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import type { MaybePromise } from '@whatwg-node/promise-helpers';
+import { fakePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 
 export function isDisposable(obj: any): obj is Disposable | AsyncDisposable {
   return obj?.[DisposableSymbols.dispose] || obj?.[DisposableSymbols.asyncDispose];
@@ -17,33 +17,13 @@ export function dispose<T extends AsyncDisposable | Disposable>(disposable: T): 
   }
 }
 
-export function createDisposable(disposeFn: () => void): Disposable {
-  return {
-    [DisposableSymbols.dispose]: disposeFn,
-  };
-}
-
-export function createAsyncDisposable(disposeFn: () => Promise<void>): AsyncDisposable {
-  return {
-    [DisposableSymbols.asyncDispose]: disposeFn,
-  };
-}
-
-export function makeDisposable<T>(obj: T, disposeFn: () => void): T & Disposable {
-  Object.defineProperty(obj, DisposableSymbols.dispose, {
-    value: disposeFn,
-    configurable: true,
-    writable: true,
-  });
-  return obj as T & Disposable;
-}
-
+/** Kept for `@graphql-mesh/fusion-runtime` until it sets `[DisposableSymbols.asyncDispose]` directly. */
 export function makeAsyncDisposable<T>(
   obj: T,
-  disposeFn: () => Promise<void>,
+  disposeFn: () => MaybePromise<void>,
 ): T & AsyncDisposable {
   Object.defineProperty(obj, DisposableSymbols.asyncDispose, {
-    value: disposeFn,
+    value: () => fakePromise(disposeFn()),
     configurable: true,
     writable: true,
   });

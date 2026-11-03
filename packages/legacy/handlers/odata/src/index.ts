@@ -1,9 +1,9 @@
 import type { GraphQLSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
 import { PredefinedProxyOptions, type StoreProxy } from '@graphql-mesh/store';
 import type {
   GetMeshSourcePayload,
   ImportFn,
-  Logger,
   MeshHandler,
   MeshHandlerOptions,
   MeshSource,
@@ -14,7 +14,7 @@ import { loadNonExecutableGraphQLSchemaFromOData, processDirectives } from '@omn
 export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
-  private logger: Logger;
+  private log: Logger;
   private importFn: ImportFn;
   private baseDir: string;
   private schema: StoreProxy<GraphQLSchema>;
@@ -24,14 +24,14 @@ export default class ODataHandler implements MeshHandler {
     config,
     baseDir,
     importFn,
-    logger,
+    log,
     store,
   }: MeshHandlerOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
     this.schema = store.proxy('schema.graphql', PredefinedProxyOptions.GraphQLSchemaWithDiffing);
   }
 
@@ -44,7 +44,7 @@ export default class ODataHandler implements MeshHandler {
         schemaHeaders: this.config.schemaHeaders,
         operationHeaders: this.config.operationHeaders,
         fetchFn,
-        logger: this.logger,
+        log: this.log,
         importFn: this.importFn,
         batch: this.config.batch,
         expandNavProps: this.config.expandNavProps,

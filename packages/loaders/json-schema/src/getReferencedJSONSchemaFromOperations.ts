@@ -1,14 +1,10 @@
 import type { JSONSchemaObject } from 'json-machete';
 import { AnySchema } from 'json-machete';
 import toJsonSchema from 'to-json-schema';
+import { Logger } from '@graphql-hive/logger';
 import { getInterpolationKeys } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
-import {
-  defaultImportFn,
-  DefaultLogger,
-  readFileOrUrl,
-  sanitizeNameForGraphQL,
-} from '@graphql-mesh/utils';
+import type { MeshFetch } from '@graphql-mesh/types';
+import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import type { JSONSchemaOperationConfig, JSONSchemaOperationResponseConfig } from './types.js';
 import { getOperationMetadata } from './utils.js';
 
@@ -18,12 +14,12 @@ async function handleOperationResponseConfig(
     schemaHeaders,
     cwd,
     fetchFn,
-    logger = new DefaultLogger('handleOperationResponseConfig'),
+    log = new Logger({ prefix: 'handleOperationResponseConfig' }),
   }: {
     schemaHeaders: Record<string, any>;
     cwd: string;
     fetchFn: MeshFetch;
-    logger?: Logger;
+    log?: Logger;
   },
 ): Promise<JSONSchemaObject> {
   if (operationResponseConfig.responseSchema) {
@@ -45,7 +41,7 @@ async function handleOperationResponseConfig(
         : await readFileOrUrl(operationResponseConfig.responseSample, {
             cwd,
             fetch: fetchFn,
-            logger,
+            log,
             importFn: defaultImportFn,
             headers: schemaHeaders,
           }).catch((e: any) => {
@@ -76,7 +72,7 @@ export async function getReferencedJSONSchemaFromOperations({
   cwd,
   schemaHeaders,
   ignoreErrorResponses,
-  logger = new DefaultLogger('getReferencedJSONSchemaFromOperations'),
+  log = new Logger({ prefix: 'getReferencedJSONSchemaFromOperations' }),
   fetchFn,
   endpoint,
   operationHeaders,
@@ -86,7 +82,7 @@ export async function getReferencedJSONSchemaFromOperations({
   cwd: string;
   schemaHeaders?: { [key: string]: string };
   ignoreErrorResponses?: boolean;
-  logger?: Logger;
+  log?: Logger;
   fetchFn: MeshFetch;
   endpoint: string;
   operationHeaders: Record<string, string>;
@@ -142,7 +138,7 @@ export async function getReferencedJSONSchemaFromOperations({
             cwd,
             schemaHeaders,
             fetchFn,
-            logger,
+            log,
           },
         );
         statusCodeOneOfIndexMap[statusCode] = responseSchemas.length;
@@ -168,7 +164,7 @@ export async function getReferencedJSONSchemaFromOperations({
           cwd,
           schemaHeaders,
           fetchFn,
-          logger,
+          log,
         },
       );
     }
@@ -293,7 +289,7 @@ export async function getReferencedJSONSchemaFromOperations({
               cwd,
               headers: schemaHeaders,
               fetch: fetchFn,
-              logger,
+              log,
               importFn: defaultImportFn,
             }).catch((e: any) => {
               throw new Error(

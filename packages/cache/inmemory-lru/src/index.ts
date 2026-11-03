@@ -1,17 +1,10 @@
-import {
-  toMeshPubSub,
-  type HivePubSub,
-  type KeyValueCache,
-  type KeyValueCacheSetOptions,
-  type MeshPubSub,
-} from '@graphql-mesh/types';
+import { type KeyValueCache, type KeyValueCacheSetOptions } from '@graphql-mesh/types';
 import { createLruCache, type LRUCache } from '@graphql-mesh/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export interface InMemoryLRUCacheOptions {
   max?: number;
   ttl?: number;
-  pubsub?: MeshPubSub | HivePubSub;
 }
 
 export default class InMemoryLRUCache<V = any> implements KeyValueCache<V>, Disposable {
@@ -19,11 +12,6 @@ export default class InMemoryLRUCache<V = any> implements KeyValueCache<V>, Disp
   private timeouts = new Map<string, ReturnType<typeof setTimeout>>();
   constructor(options?: InMemoryLRUCacheOptions) {
     this.lru = createLruCache(options?.max, options?.ttl);
-    const pubsub = toMeshPubSub(options?.pubsub);
-    const subId = pubsub?.subscribe?.('destroy', () => {
-      pubsub.unsubscribe(subId);
-      this[DisposableSymbols.dispose]();
-    });
   }
 
   get(key: string) {

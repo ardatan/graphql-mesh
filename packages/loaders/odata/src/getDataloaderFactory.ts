@@ -1,9 +1,10 @@
 import DataLoader from 'dataloader';
+import { GraphQLError } from 'graphql';
 import { parseResponse } from 'http-string-parser';
 import urljoin from 'url-join';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
-import { createGraphQLError, memoize1 } from '@graphql-tools/utils';
+import { memoize1 } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
 
 export type DataloaderFactory = (context: any) => DataLoader<Request, Response>;
@@ -48,7 +49,7 @@ export function getDataloaderFactory({
         const batchHeaders = headersFactory(
           {
             context,
-            env: process.env,
+            env: globalThis.process?.env,
           },
           'POST',
         );
@@ -82,7 +83,7 @@ export function getDataloaderFactory({
         const batchHeaders = headersFactory(
           {
             context,
-            env: process.env,
+            env: globalThis.process?.env,
           },
           'POST',
         );
@@ -134,12 +135,12 @@ export function getDataloaderFactory({
 
 function handleBatchJsonResults(batchResponseJson: any, requests: readonly Request[]) {
   if ('error' in batchResponseJson) {
-    throw createGraphQLError(batchResponseJson.error.message, {
+    throw new GraphQLError(batchResponseJson.error.message, {
       extensions: batchResponseJson.error,
     });
   }
   if (!('responses' in batchResponseJson)) {
-    throw createGraphQLError(
+    throw new GraphQLError(
       batchResponseJson.ExceptionMessage ||
         batchResponseJson.Message ||
         `Batch Request didn't return a valid response.`,

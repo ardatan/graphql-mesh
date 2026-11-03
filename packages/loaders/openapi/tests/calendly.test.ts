@@ -1,5 +1,6 @@
 import { graphql } from 'graphql';
-import { fakePromise, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 import loadGraphQLSchemaFromOpenAPI from '../src/index.js';
 
 describe('Calendly', () => {

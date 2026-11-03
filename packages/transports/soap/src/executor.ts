@@ -7,18 +7,17 @@ import type {
   GraphQLSchema,
   GraphQLType,
 } from 'graphql';
-import { getNamedType, isInputObjectType, isListType, isNonNullType } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
+import { getNamedType, GraphQLError, isInputObjectType, isListType, isNonNullType } from 'graphql';
+import { Logger } from '@graphql-hive/logger';
 import type { ResolverData, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import {
   getInterpolatedHeadersFactory,
   stringInterpolator,
 } from '@graphql-mesh/string-interpolation';
 import type { Executor } from '@graphql-mesh/transport-common';
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
-import { DefaultLogger } from '@graphql-mesh/utils';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { normalizedExecutor } from '@graphql-tools/executor';
-import { createGraphQLError, getDirectiveExtensions, getRootTypes } from '@graphql-tools/utils';
+import { getDirectiveExtensions, getRootTypes } from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { parseXmlOptions } from './parseXmlOptions.js';
 
@@ -109,7 +108,7 @@ interface CreateRootValueMethodOpts {
   jsonToXMLConverter: JSONToXMLConverter;
   xmlToJSONConverter: XMLParser;
   operationHeadersFactory: ResolverDataBasedFactory<Record<string, string>>;
-  logger: Logger;
+  log: Logger;
 }
 
 /**
@@ -333,10 +332,10 @@ function createRootValueMethod({
   jsonToXMLConverter,
   xmlToJSONConverter,
   operationHeadersFactory,
-  logger,
+  log,
 }: CreateRootValueMethodOpts): RootValueMethod {
   if (!soapAnnotations.soapNamespace) {
-    logger.warn(`The expected 'soapNamespace' attribute is missing in SOAP directive definition.
+    log.warn(`The expected 'soapNamespace' attribute is missing in SOAP directive definition.
 Update the SOAP source handler, and re-generate the schema.
 Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
     soapAnnotations.soapNamespace = 'http://www.w3.org/2003/05/soap-envelope';
@@ -352,7 +351,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       args,
       context,
       info,
-      env: process.env,
+      env: globalThis.process?.env,
     };
 
     // Read typeNamespacesJson from the transport definition (which survives
@@ -512,7 +511,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
             args,
             context,
             info,
-            env: process.env,
+            env: globalThis.process?.env,
           }),
         },
       },
@@ -521,7 +520,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
     );
     const responseXML = await response.text();
     if (!response.ok) {
-      return createGraphQLError(`Upstream HTTP Error: ${response.status}`, {
+      return new GraphQLError(`Upstream HTTP Error: ${response.status}`, {
         extensions: {
           code: 'DOWNSTREAM_SERVICE_ERROR',
           serviceName: soapAnnotations.subgraph,
@@ -545,7 +544,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       const responseJSON = xmlToJSONConverter.parse(responseXML, parseXmlOptions);
       return normalizeResult(responseJSON.Envelope[0].Body[0][soapAnnotations.elementName]);
     } catch (e) {
-      return createGraphQLError(`Invalid SOAP response: ${e.message}`, {
+      return new GraphQLError(`Invalid SOAP response: ${e.message}`, {
         extensions: {
           subgraph: soapAnnotations.subgraph,
           request: {
@@ -571,7 +570,7 @@ function createRootValue(
   schema: GraphQLSchema,
   fetchFn: MeshFetch,
   operationHeaders: Record<string, string>,
-  logger: Logger,
+  log: Logger,
 ) {
   const rootValue: Record<string, RootValueMethod> = {};
   const rootTypes = getRootTypes(schema);
@@ -603,7 +602,7 @@ function createRootValue(
           jsonToXMLConverter,
           xmlToJSONConverter,
           operationHeadersFactory,
-          logger,
+          log,
         });
       }
     }
@@ -615,12 +614,12 @@ export function createExecutorFromSchemaAST(
   schema: GraphQLSchema,
   fetchFn: MeshFetch = defaultFetchFn,
   operationHeaders: Record<string, string> = {},
-  logger: Logger = new DefaultLogger(),
+  log: Logger = new Logger(),
 ): Executor {
   let rootValue: Record<string, RootValueMethod>;
   return function soapExecutor({ document, variables, context }) {
     if (!rootValue) {
-      rootValue = createRootValue(schema, fetchFn, operationHeaders, logger);
+      rootValue = createRootValue(schema, fetchFn, operationHeaders, log);
     }
     return normalizedExecutor({
       schema,

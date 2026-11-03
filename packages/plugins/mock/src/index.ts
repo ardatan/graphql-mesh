@@ -4,7 +4,7 @@ import type { GraphQLFieldResolver, GraphQLResolveInfo, GraphQLSchema } from 'gr
 import { mocks as graphqlScalarsMocks } from 'graphql-scalars';
 import { getInterpolatedStringFactory } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
-import { loadFromModuleExportExpression, mapMaybePromise } from '@graphql-mesh/utils';
+import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import {
   addMocksToSchema,
@@ -14,6 +14,7 @@ import {
   type IMockStore,
 } from '@graphql-tools/mock';
 import { memoize1 } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 interface MockingFieldConfig extends YamlConfig.MockingFieldConfig {
   custom?:
@@ -134,7 +135,7 @@ export default function useMock(
                     context,
                     info,
                     random: Date.now().toString(),
-                    env: process.env,
+                    env: globalThis.process?.env,
                   };
                   updateStoreFactories.forEach(
                     ({ updateStoreConfig, keyFactory, valueFactory }) => {
@@ -160,7 +161,13 @@ export default function useMock(
                   context: any,
                   info: GraphQLResolveInfo,
                 ) => {
-                  const key = keyFactory({ root, args, context, info, env: process.env });
+                  const key = keyFactory({
+                    root,
+                    args,
+                    context,
+                    info,
+                    env: globalThis.process?.env,
+                  });
                   return mockStore.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
                 };
               }
@@ -214,10 +221,12 @@ export default function useMock(
     });
     return {
       onContextBuilding({ extendContext }) {
-        return mapMaybePromise(init$, () =>
-          extendContext({
-            mockStore,
-          }),
+        return handleMaybePromise(
+          () => init$,
+          () =>
+            extendContext({
+              mockStore,
+            }),
         );
       },
       onSchemaChange({ schema, replaceSchema }) {

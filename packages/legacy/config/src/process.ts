@@ -3,12 +3,11 @@ import type { DocumentNode } from 'graphql';
 import { parse, print, visit } from 'graphql';
 import { pascalCase } from 'pascal-case';
 import { useMaskedErrors } from '@envelop/core';
-import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
+import { type Logger } from '@graphql-hive/logger';
 import type { GetMeshOptions, MeshResolvedSource } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type {
   ImportFn,
-  Logger,
   MeshHandlerLibrary,
   MeshMergerLibrary,
   MeshPlugin,
@@ -24,6 +23,7 @@ import {
   resolveAdditionalResolvers,
 } from '@graphql-mesh/utils';
 import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';
+import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
 import type { Source } from './utils.js';
 import {
   getPackage,
@@ -62,7 +62,7 @@ export type ConfigProcessOptions = {
   generateCode?: boolean;
   initialLoggerPrefix?: string;
   throwOnInvalidConfig?: boolean;
-  logger?: Logger;
+  log?: Logger;
 };
 
 export type ProcessedConfig = GetMeshOptions & {
@@ -74,7 +74,11 @@ export type ProcessedConfig = GetMeshOptions & {
 };
 
 function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: string) {
-  const isProd = process.env.NODE_ENV?.toLowerCase() === 'production';
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required for Mesh store');
+  }
+  const isProd = globalThis.process?.env?.NODE_ENV?.toLowerCase() === 'production';
   const storeStorageAdapter = isProd
     ? new FsStoreStorageAdapter({
         cwd: dir,
@@ -100,7 +104,12 @@ export async function processConfig(
   options?: ConfigProcessOptions,
 ): Promise<ProcessedConfig> {
   if (config.skipSSLValidation) {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    globalThis.process!.env!.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  }
+
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required to process Mesh config');
   }
 
   const importCodes = new Set([
@@ -142,11 +151,15 @@ export async function processConfig(
   }
   codes.add(pubsubCode);
 
+  const disposables = new AsyncDisposableStack();
+  importCodes.add(`import { AsyncDisposableStack } from '@whatwg-node/disposablestack';`);
+  codes.add(`const disposables = new AsyncDisposableStack();`);
+
   const sourcesStore = rootStore.child('sources');
   codes.add(`const sourcesStore = rootStore.child('sources');`);
 
   const {
-    logger,
+    log,
     importCode: loggerImportCode,
     code: loggerCode,
   } = await resolveLogger(
@@ -162,17 +175,14 @@ export async function processConfig(
   const { cache, code: cacheCode } = await resolveCache(
     config.cache,
     importFn,
-    rootStore,
     dir,
-    pubsub,
-    logger,
+    log,
     additionalPackagePrefixes,
   );
   codes.add(cacheCode);
 
   const { fetchFn, code: fetchFnCode } = await resolveCustomFetch({
     fetchConfig: config.customFetch,
-    cache,
     importFn,
     cwd: dir,
     additionalPackagePrefixes,
@@ -219,8 +229,7 @@ export async function processConfig(
               baseDir,
               cache,
               pubsub,
-              store: sourcesStore.child(${JSON.stringify(source.name)}),
-              logger: logger.child({ source: ${JSON.stringify(source.name)} }),
+              store: sourcesStore.child(${JSON.stringify(source.name)}), log: log.child({ source: ${JSON.stringify(source.name)} }),
               importFn,
             });`,
               );
@@ -232,7 +241,7 @@ export async function processConfig(
               cache,
               pubsub,
               store: sourcesStore.child(source.name),
-              logger: logger.child({ source: source.name }),
+              log: log.child({ source: source.name }),
               importFn,
             });
           }),
@@ -262,7 +271,7 @@ export async function processConfig(
                   cache,
                   pubsub,
                   importFn,
-                  logger,
+                  log,
                 });`,
                 );
               }
@@ -274,7 +283,7 @@ export async function processConfig(
                 cache,
                 pubsub,
                 importFn,
-                logger,
+                log,
               });
             }),
           ),
@@ -318,7 +327,7 @@ export async function processConfig(
             cache,
             pubsub,
             importFn,
-            logger,
+            log,
           })`,
           );
         }
@@ -329,7 +338,7 @@ export async function processConfig(
           cache,
           pubsub,
           importFn,
-          logger,
+          log,
         });
       }) || [],
     ),
@@ -376,11 +385,11 @@ export async function processConfig(
             );
             codes.add(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
-          logger: logger.child({ plugin: ${JSON.stringify(pluginName)} }),
           cache,
           pubsub,
           baseDir,
           importFn,
+          log,
         })`);
           }
         } else {
@@ -400,11 +409,11 @@ export async function processConfig(
               codes.add(
                 `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
           ...(${JSON.stringify(pluginConfig, null, 2)}),
-          logger: logger.child({ plugin: ${JSON.stringify(pluginName)} }),
           cache,
           pubsub,
           baseDir,
           importFn,
+          log,
         });`,
               );
             }
@@ -412,11 +421,11 @@ export async function processConfig(
         }
         return pluginFactory({
           ...pluginConfig,
-          logger: logger.child({ plugin: pluginName }),
           cache,
           pubsub,
           baseDir: dir,
           importFn,
+          log,
         });
       }) || [],
     ),
@@ -558,8 +567,7 @@ export async function processConfig(
     );
     codes.add(`const merger = new Merger({
         cache,
-        pubsub,
-        logger: logger.child({ merger: ${JSON.stringify(mergerName)} }),
+        pubsub, log: log.child({ merger: ${JSON.stringify(mergerName)} }),
         store: rootStore.child(${JSON.stringify(mergerName)})
       })`);
   }
@@ -567,7 +575,7 @@ export async function processConfig(
   const merger = new Merger({
     cache,
     pubsub,
-    logger: logger.child({ merger: mergerName }),
+    log: log.child({ merger: mergerName }),
     store: rootStore.child(mergerName),
   });
 
@@ -677,8 +685,9 @@ export async function processConfig(
     additionalResolvers,
     cache,
     pubsub,
+    disposables,
     merger,
-    logger,
+    log,
     additionalEnvelopPlugins,
     get documents() {
       return [
@@ -708,9 +717,10 @@ export async function processConfig(
     cache,
     merger,
     pubsub,
+    disposables,
     config,
     documents,
-    logger,
+    log,
     store: rootStore,
     additionalEnvelopPlugins,
     importCodes,

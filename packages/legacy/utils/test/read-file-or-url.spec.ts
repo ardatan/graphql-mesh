@@ -2,7 +2,7 @@ import { writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join, relative } from 'path';
 import { fetch } from '@whatwg-node/fetch';
-import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 import { readFile } from '../src/read-file-or-url.js';
 
 describe('readFile', () => {
@@ -12,12 +12,12 @@ describe('readFile', () => {
       test: 'TEST',
     };
     writeFileSync(tmpFileAbsolutePath, JSON.stringify(tmpFileContent));
-    const tmpFileRelativePath = relative(process.cwd(), tmpFileAbsolutePath);
+    const tmpFileRelativePath = relative(globalThis.process?.cwd?.(), tmpFileAbsolutePath);
     const receivedFileContent = await readFile(tmpFileRelativePath, {
-      cwd: process.cwd(),
+      cwd: globalThis.process?.cwd?.(),
       fetch,
 
-      logger,
+      log,
       importFn: m => import(m),
     });
     expect(receivedFileContent).toStrictEqual(tmpFileContent);
@@ -29,10 +29,10 @@ describe('readFile', () => {
     };
     writeFileSync(tmpFileAbsolutePath, JSON.stringify(tmpFileContent));
     const receivedFileContent = await readFile(tmpFileAbsolutePath, {
-      cwd: process.cwd(),
+      cwd: globalThis.process?.cwd?.(),
       fetch,
 
-      logger,
+      log,
       importFn: m => import(m),
     });
     expect(receivedFileContent).toStrictEqual(tmpFileContent);

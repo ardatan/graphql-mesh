@@ -1,14 +1,12 @@
 import { createHive, useHive } from '@graphql-hive/yoga';
-import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshFetch, MeshPlugin, MeshPubSub, YamlConfig } from '@graphql-mesh/types';
+import type { MeshFetch, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 
 type HivePluginOptions = Parameters<typeof createHive>[0];
 
 export default function useMeshHive<TContext>(
   pluginOptions: YamlConfig.HivePlugin & {
-    logger?: Logger;
-    pubsub?: MeshPubSub;
+    /** Used for persisted documents fetch when not set on persistedDocuments. */
     fetch?: MeshFetch;
   },
 ): MeshPlugin<TContext> {
@@ -21,20 +19,15 @@ export default function useMeshHive<TContext>(
       : true;
 
   if (!enabled) {
-    pluginOptions.logger?.warn('Plugin is disabled');
     return {};
   }
 
   const token = stringInterpolator.parse(pluginOptions.token, {
-    env: process.env,
+    env: globalThis.process?.env,
   });
-  if (token) {
-    pluginOptions.logger?.info('Reporting enabled');
-  }
 
   const persistedDocuments = pluginOptions.persistedDocuments;
   if (persistedDocuments) {
-    pluginOptions.logger?.info('Persisted documents enabled');
     persistedDocuments.fetch ||= pluginOptions.fetch;
   }
 
@@ -55,11 +48,11 @@ export default function useMeshHive<TContext>(
           return {
             name: stringInterpolator.parse(pluginOptions.usage.clientInfo.name, {
               context,
-              env: process.env,
+              env: globalThis.process?.env,
             }),
             version: stringInterpolator.parse(pluginOptions.usage.clientInfo.version, {
               context,
-              env: process.env,
+              env: globalThis.process?.env,
             }),
           };
         };
@@ -69,19 +62,22 @@ export default function useMeshHive<TContext>(
   let reporting: HivePluginOptions['reporting'];
   if (pluginOptions.reporting) {
     reporting = {
-      author: stringInterpolator.parse(pluginOptions.reporting.author, { env: process.env }),
-      commit: stringInterpolator.parse(pluginOptions.reporting.commit, { env: process.env }),
+      author: stringInterpolator.parse(pluginOptions.reporting.author, {
+        env: globalThis.process?.env,
+      }),
+      commit: stringInterpolator.parse(pluginOptions.reporting.commit, {
+        env: globalThis.process?.env,
+      }),
       serviceName: stringInterpolator.parse(pluginOptions.reporting.serviceName, {
-        env: process.env,
+        env: globalThis.process?.env,
       }),
       serviceUrl: stringInterpolator.parse(pluginOptions.reporting.serviceUrl, {
-        env: process.env,
+        env: globalThis.process?.env,
       }),
     };
   }
   let agent: HivePluginOptions['agent'] = {
     name: 'graphql-mesh',
-    logger: pluginOptions.logger,
   };
   if (pluginOptions.agent) {
     agent = {
@@ -91,21 +87,21 @@ export default function useMeshHive<TContext>(
       minTimeout: pluginOptions.agent.minTimeout,
       sendInterval: pluginOptions.agent.sendInterval,
       maxSize: pluginOptions.agent.maxSize,
-      logger: pluginOptions.agent?.logger || pluginOptions.logger,
-      fetch: pluginOptions.agent?.fetch,
+      logger: pluginOptions.agent.logger,
+      fetch: pluginOptions.agent.fetch,
     };
   }
   let selfHosting: HivePluginOptions['selfHosting'];
   if (pluginOptions.selfHosting) {
     selfHosting = {
       graphqlEndpoint: stringInterpolator.parse(pluginOptions.selfHosting.graphqlEndpoint, {
-        env: process.env,
+        env: globalThis.process?.env,
       }),
       usageEndpoint: stringInterpolator.parse(pluginOptions.selfHosting.usageEndpoint, {
-        env: process.env,
+        env: globalThis.process?.env,
       }),
       applicationUrl: stringInterpolator.parse(pluginOptions.selfHosting.applicationUrl, {
-        env: process.env,
+        env: globalThis.process?.env,
       }),
     };
   }
@@ -115,7 +111,7 @@ export default function useMeshHive<TContext>(
       persistedDocuments && !token
         ? false // disable usage reporting if just persisted documents are configured
         : true,
-    debug: ['1', 't', 'true', 'y', 'yes'].includes(process.env.DEBUG),
+    debug: ['1', 't', 'true', 'y', 'yes'].includes(globalThis.process?.env?.DEBUG),
     token,
     agent,
     usage,
@@ -123,14 +119,7 @@ export default function useMeshHive<TContext>(
     selfHosting,
     persistedDocuments,
   };
-  const client = createHive(yogaPluginOpts);
-  // Destroy the Hive client when the Mesh instance is destroyed
-  const id = pluginOptions.pubsub?.subscribe('destroy', () => {
-    client
-      .dispose()
-      .catch(e => pluginOptions.logger?.error('Error disposing Hive client', e))
-      .finally(() => pluginOptions.pubsub?.unsubscribe(id));
-  });
-  // @ts-expect-error - Typings are incorrect
-  return useHive(client);
+  // useHive already disposes the client via Yoga `onDispose` when autoDispose is enabled (default).
+  // @ts-expect-error Yoga Plugin context typing does not match MeshPlugin generics
+  return useHive(createHive(yogaPluginOpts));
 }

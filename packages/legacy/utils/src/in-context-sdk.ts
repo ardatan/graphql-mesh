@@ -13,8 +13,8 @@ import type {
   SelectionSetNode,
 } from 'graphql';
 import { getNamedType, isLeafType, isListType, isNonNullType, Kind, print } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
 import type {
-  Logger,
   OnDelegateHook,
   OnDelegateHookDone,
   OnDelegateHookPayload,
@@ -45,13 +45,13 @@ export const MESH_API_CONTEXT_SYMBOL = Symbol('isMeshAPIContext');
 export function getInContextSDK(
   unifiedSchema: GraphQLSchema,
   rawSources: RawSourceOutput[],
-  logger: Logger,
+  log: Logger,
   onDelegateHooks: OnDelegateHook<any>[],
 ) {
   const inContextSDK: Record<string, any> = {};
   const sourceMap = unifiedSchema.extensions.sourceMap as Map<RawSourceOutput, GraphQLSchema>;
   for (const rawSource of rawSources) {
-    const rawSourceLogger = logger?.child({ source: rawSource.name });
+    const rawSourceLogger = log?.child({ source: rawSource.name });
 
     const rawSourceContext: any = {
       rawSource,

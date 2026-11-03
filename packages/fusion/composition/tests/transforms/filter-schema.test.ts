@@ -30,7 +30,7 @@ describe('filter-schema', () => {
       }
     `);
     const filterTransform = createFilterTransform({
-      filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
+      filters: ['Type.!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
     });
     schema = await composeAndGetPublicSchema([
       {
@@ -88,7 +88,7 @@ type Query {
       }
     `);
     const filterTransform = createFilterTransform({
-      filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
+      filters: ['Type.!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
     });
     schema = await composeAndGetPublicSchema([
       {
@@ -165,7 +165,7 @@ type Query {
     `);
     const filterTransform = createFilterTransform({
       filters: [
-        '!Comment',
+        'Type.!Comment',
         'Type.!LooseType',
         'Type.!{Notification, Mention}',
         'Query.user.!{notifications, mentions}',
@@ -425,7 +425,7 @@ type Query {
       }
     `);
     const filterTransform = createFilterTransform({
-      filters: ['!Book'],
+      filters: ['Type.!Book'],
     });
     schema = await composeAndGetPublicSchema([
       {
@@ -621,7 +621,7 @@ type Query {
       }
     `);
     const filterTransform = createFilterTransform({
-      filters: ['!User'],
+      filters: ['Type.!User'],
     });
     schema = await composeAndGetPublicSchema([
       {
@@ -689,7 +689,7 @@ type Query {
       }
     `);
     const filterTransform = createFilterTransform({
-      filters: ['!AuthRule'],
+      filters: ['Type.!AuthRule'],
     });
     schema = await composeAndGetPublicSchema([
       {

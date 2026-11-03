@@ -1,20 +1,15 @@
 import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
+import { Logger } from '@graphql-hive/logger';
 import { resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { getMesh } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import type { Logger, YamlConfig } from '@graphql-mesh/types';
-import {
-  DefaultLogger,
-  pathExists,
-  registerTerminateHandler,
-  rmdirs,
-  writeFile,
-} from '@graphql-mesh/utils';
-import { fakePromise, printSchemaWithDirectives } from '@graphql-tools/utils';
+import type { YamlConfig } from '@graphql-mesh/types';
+import { pathExists, registerTerminateHandler, rmdirs, writeFile } from '@graphql-mesh/utils';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
@@ -46,7 +41,7 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   commandName: 'mesh',
   initialLoggerPrefix: '',
   configName: 'mesh',
-  artifactsDir: process.env.MESH_ARTIFACTS_DIRNAME || '.mesh',
+  artifactsDir: globalThis.process?.env?.MESH_ARTIFACTS_DIRNAME || '.mesh',
   serveMessage: 'Serving GraphQL Mesh',
   playgroundTitle: 'GraphiQL Mesh',
   builtMeshFactoryName: 'getBuiltMesh',
@@ -61,11 +56,16 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
 
 export async function graphqlMesh(
   cliParams = DEFAULT_CLI_PARAMS,
-  args = hideBin(process.argv),
-  cwdPath = process.cwd(),
+  args = hideBin(globalThis.process?.argv ?? []),
+  cwdPath = globalThis.process?.cwd?.() ?? '.',
 ) {
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!fs || !pathModule) {
+    throw new Error('Node.js fs and path modules are required for GraphQL Mesh CLI');
+  }
   let baseDir = cwdPath;
-  let logger: Logger = new DefaultLogger(cliParams.initialLoggerPrefix);
+  let log: Logger = new Logger({ prefix: cliParams.initialLoggerPrefix });
   const unregisterTsconfigPaths = registerTsconfigPaths({ cwd: baseDir });
   return yargs(args)
     .help()
@@ -118,7 +118,7 @@ export async function graphqlMesh(
         try {
           const outputDir = pathModule.join(baseDir, cliParams.artifactsDir);
 
-          process.env.NODE_ENV = 'development';
+          globalThis.process!.env!.NODE_ENV = 'development';
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
             artifactsDir: cliParams.artifactsDir,
@@ -127,7 +127,7 @@ export async function graphqlMesh(
             initialLoggerPrefix: cliParams.initialLoggerPrefix,
             importFn: include,
           });
-          logger = meshConfig.logger;
+          log = meshConfig.log;
 
           function buildMeshInstance() {
             return getMesh(meshConfig).then(meshInstance => {
@@ -136,7 +136,7 @@ export async function graphqlMesh(
               writeFile(
                 pathModule.join(outputDir, 'schema.graphql'),
                 printSchemaWithDirectives(meshInstance.schema),
-              ).catch(e => logger.error(`An error occured while writing the schema file: `, e));
+              ).catch(e => log.error(`An error occured while writing the schema file: `, e));
 
               generateTsArtifacts(
                 {
@@ -183,14 +183,14 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
 }
               `.trim(),
                   ]),
-                  logger,
+                  log,
                   sdkConfig: meshConfig.config.sdk,
                   fileType: 'ts',
                   codegenConfig: meshConfig.config.codegen,
                 },
                 cliParams,
               ).catch(e => {
-                logger.error(
+                log.error(
                   `An error occurred while building the artifacts: ${e.stack || e.message}`,
                 );
               });
@@ -203,22 +203,23 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           meshInstance$ = buildMeshInstance();
 
           if (meshConfig.config.pollingInterval) {
-            logger.info(`Polling enabled with interval of ${meshConfig.config.pollingInterval}ms`);
+            log.info(`Polling enabled with interval of ${meshConfig.config.pollingInterval}ms`);
             const interval = setInterval(() => {
-              logger.info(`Polling for changes...`);
+              log.info(`Polling for changes...`);
               buildMeshInstance()
                 .then(newMeshInstance =>
                   meshInstance$.then(oldMeshInstance => {
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
                     oldMeshInstance.destroy();
                     meshInstance$ = fakePromise(newMeshInstance);
                   }),
                 )
                 .catch(e => {
-                  logger.error(`Mesh polling failed so the previous version will be served: `, e);
+                  log.error(`Mesh polling failed so the previous version will be served: `, e);
                 });
             }, meshConfig.config.pollingInterval);
             registerTerminateHandler(() => {
-              logger.info(`Terminating polling...`);
+              log.info(`Terminating polling...`);
               clearInterval(interval);
             });
           }
@@ -227,13 +228,13 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             baseDir,
             argsPort: args.port,
             getBuiltMesh: () => meshInstance$,
-            logger: meshConfig.logger.child('Server'),
+            log: meshConfig.log.child('Server'),
             rawServeConfig: meshConfig.config.serve,
             registerTerminateHandler,
           };
           await serveMesh(serveMeshOptions, cliParams);
         } catch (e) {
-          handleFatalError(e, logger);
+          handleFatalError(e, log);
         }
       },
     )
@@ -253,23 +254,23 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
               `Seems like you haven't build the artifacts yet to start production server! You need to build artifacts first with "${cliParams.commandName} build" command!`,
             );
           }
-          process.env.NODE_ENV = 'production';
+          globalThis.process!.env!.NODE_ENV = 'production';
           const mainModule = pathModule.join(builtMeshArtifactsPath, 'index');
           const builtMeshArtifacts = await include(mainModule);
           const rawServeConfig: YamlConfig.Config['serve'] = builtMeshArtifacts.rawServeConfig;
           const meshOptions = await builtMeshArtifacts.getMeshOptions();
-          logger = meshOptions.logger;
+          log = meshOptions.log;
           const serveMeshOptions: ServeMeshOptions = {
             baseDir,
             argsPort: args.port,
             getBuiltMesh: builtMeshArtifacts[cliParams.builtMeshFactoryName],
-            logger,
+            log,
             rawServeConfig,
             registerTerminateHandler,
           };
           await serveMesh(serveMeshOptions, cliParams);
         } catch (e) {
-          handleFatalError(e, logger);
+          handleFatalError(e, log);
         }
       },
     )
@@ -299,7 +300,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             },
           );
 
-          logger.info(`Reading the configuration`);
+          log.info(`Reading the configuration`);
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
             store,
@@ -309,16 +310,16 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             configName: cliParams.configName,
             additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
             initialLoggerPrefix: cliParams.initialLoggerPrefix,
-            logger,
+            log,
           });
-          logger = meshConfig.logger;
+          log = meshConfig.log;
 
-          logger.info(`Generating the unified schema`);
+          log.info(`Generating the unified schema`);
           const mesh = await getMesh(meshConfig);
-          logger.info(`Artifacts are valid!`);
+          log.info(`Artifacts are valid!`);
           destroy = mesh?.destroy;
         } catch (e) {
-          handleFatalError(e, logger);
+          handleFatalError(e, log);
         }
         if (destroy) {
           destroy();
@@ -343,7 +344,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
         try {
           const outputDir = pathModule.join(baseDir, cliParams.artifactsDir);
 
-          logger.info('Cleaning existing artifacts');
+          log.info('Cleaning existing artifacts');
           await rmdirs(outputDir);
 
           const importedModulesSet = new Set<string>();
@@ -382,7 +383,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             },
           );
 
-          logger.info(`Reading the configuration`);
+          log.info(`Reading the configuration`);
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
             store,
@@ -394,18 +395,18 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             generateCode: true,
             initialLoggerPrefix: cliParams.initialLoggerPrefix,
             throwOnInvalidConfig: args.throwOnInvalidConfig,
-            logger,
+            log,
           });
-          logger = meshConfig.logger;
+          log = meshConfig.log;
 
-          logger.info(`Generating the unified schema`);
+          log.info(`Generating the unified schema`);
           const { schema, destroy, rawSources } = await getMesh(meshConfig);
           await writeFile(
             pathModule.join(outputDir, 'schema.graphql'),
             printSchemaWithDirectives(schema),
           );
 
-          logger.info(`Generating artifacts`);
+          log.info(`Generating artifacts`);
           meshConfig.importCodes.add(
             `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
           );
@@ -438,7 +439,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
               baseDir,
               meshConfigImportCodes: meshConfig.importCodes,
               meshConfigCodes: meshConfig.codes,
-              logger,
+              log,
               sdkConfig: meshConfig.config.sdk,
               fileType: args.fileType,
               codegenConfig: meshConfig.config.codegen,
@@ -447,11 +448,12 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             cliParams,
           );
 
-          logger.info(`Cleanup`);
+          log.info(`Cleanup`);
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           destroy();
-          logger.info('Done! => ' + outputDir);
+          log.info('Done! => ' + outputDir);
         } catch (e) {
-          handleFatalError(e, logger);
+          handleFatalError(e, log);
         }
       },
     )
@@ -465,16 +467,16 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
         });
       },
       async args => {
-        process.env.NODE_ENV = 'development';
+        globalThis.process!.env!.NODE_ENV = 'development';
         const meshConfig = await findAndParseConfig({
           dir: baseDir,
           artifactsDir: cliParams.artifactsDir,
           configName: cliParams.configName,
           additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
           initialLoggerPrefix: cliParams.initialLoggerPrefix,
-          logger,
+          log,
         });
-        logger = meshConfig.logger;
+        log = meshConfig.log;
         const sourceIndex = meshConfig.sources.findIndex(
           rawSource => rawSource.name === args.source,
         );
@@ -494,12 +496,13 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             getMesh(getMeshOpts)
               .then(newMeshInstance =>
                 meshInstance$.then(oldMeshInstance => {
+                  // eslint-disable-next-line @typescript-eslint/no-floating-promises
                   oldMeshInstance.destroy();
                   meshInstance$ = fakePromise(newMeshInstance);
                 }),
               )
               .catch(e => {
-                logger.error(`Mesh polling failed so the previous version will be served: `, e);
+                log.error(`Mesh polling failed so the previous version will be served: `, e);
               });
           }, meshConfig.config.pollingInterval);
           registerTerminateHandler(() => {
@@ -512,7 +515,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
           baseDir,
           argsPort: 4000 + sourceIndex + 1,
           getBuiltMesh: () => meshInstance$,
-          logger: meshConfig.logger.child('Server'),
+          log: meshConfig.log.child('Server'),
           rawServeConfig: meshConfig.config.serve,
           playgroundTitle: `${args.source} GraphiQL`,
           registerTerminateHandler,

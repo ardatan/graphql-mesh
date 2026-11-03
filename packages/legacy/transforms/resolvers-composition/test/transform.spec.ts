@@ -1,11 +1,11 @@
 import { join } from 'path';
 import { parse } from 'graphql';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { PubSub } from '@graphql-mesh/utils';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import ResolversCompositionTransform, { type ResolversComposition } from '../src/index.js';
 
 describe('transform', () => {
@@ -15,7 +15,7 @@ describe('transform', () => {
   it('should handle composition functions from external modules', async () => {
     const transform = new ResolversCompositionTransform({
       cache,
-      pubsub: new PubSub(),
+      pubsub: new MemPubSub(),
       config: [
         {
           resolver: 'Query.foo',
@@ -26,7 +26,7 @@ describe('transform', () => {
       apiName: '',
       importFn: m => import(m),
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -58,7 +58,7 @@ describe('transform', () => {
     const composer: ResolversComposition = next => (root, args, context, info) => 'FOO';
     const transform = new ResolversCompositionTransform({
       cache,
-      pubsub: new PubSub(),
+      pubsub: new MemPubSub(),
       config: [
         {
           resolver: 'Query.foo',
@@ -69,7 +69,7 @@ describe('transform', () => {
       apiName: '',
       importFn: m => import(m),
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: /* GraphQL */ `

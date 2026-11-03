@@ -14,8 +14,7 @@ import type {
 } from 'graphql-compose';
 import { GraphQLJSON } from 'graphql-compose';
 import type { IStringifyOptions } from 'qs';
-import { process } from '@graphql-mesh/cross-helpers';
-import type { Logger } from '@graphql-mesh/types';
+import { type Logger } from '@graphql-hive/logger';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   HTTPOperationDirective,
@@ -38,7 +37,7 @@ export interface AddExecutionLogicToComposerOptions {
   endpoint: string;
   operations: JSONSchemaOperationConfig[];
   operationHeaders?: OperationHeadersConfiguration;
-  logger: Logger;
+  log: Logger;
   queryParams?: Record<string, string | number | boolean>;
   queryStringOptions?: IStringifyOptions;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
@@ -61,7 +60,7 @@ export function addExecutionDirectivesToComposer(
   subgraphName: string,
   {
     schemaComposer,
-    logger,
+    log,
     operations,
     operationHeaders,
     endpoint,
@@ -70,7 +69,7 @@ export function addExecutionDirectivesToComposer(
     handlerName,
   }: AddExecutionLogicToComposerOptions,
 ) {
-  logger.debug(`Attaching execution directives to the schema`);
+  log.debug(`Attaching execution directives to the schema`);
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
 
@@ -91,7 +90,10 @@ export function addExecutionDirectivesToComposer(
         },
       });
     } else if (operationConfig.path) {
-      if (process.env.DEBUG === '1' || process.env.DEBUG === 'fieldDetails') {
+      if (
+        globalThis.process?.env?.DEBUG === '1' ||
+        globalThis.process?.env?.DEBUG === 'fieldDetails'
+      ) {
         field.description = `
 >**Method**: \`${operationConfig.method}\`
 >**Base URL**: \`${endpoint}\`
@@ -160,7 +162,7 @@ ${operationConfig.description || ''}
             } catch {}
           }
           if (!targetField) {
-            logger.debug(
+            log.debug(
               `Field ${linkObj.fieldName} not found in ${subgraphName} for link ${linkName}`,
             );
           }
@@ -295,7 +297,7 @@ ${operationConfig.description || ''}
     }
   }
 
-  logger.debug(`Building the executable schema.`);
+  log.debug(`Building the executable schema.`);
   if (schemaComposer.Query.getFieldNames().length === 0) {
     schemaComposer.Query.addFields({
       dummy: {

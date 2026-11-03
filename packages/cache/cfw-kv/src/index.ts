@@ -1,10 +1,11 @@
 /// <reference types="@cloudflare/workers-types" />
-import type { KeyValueCache, Logger } from '@graphql-mesh/types';
+import { type Logger } from '@graphql-hive/logger';
+import type { KeyValueCache } from '@graphql-mesh/types';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export default class CFWorkerKVCache implements KeyValueCache {
   private kvNamespace?: KVNamespace;
-  constructor(config: { namespace: string | KVNamespace; logger?: Logger }) {
+  constructor(config: { namespace: string | KVNamespace; log?: Logger }) {
     if (typeof config.namespace === 'string') {
       this.kvNamespace = globalThis[config.namespace];
     } else {
@@ -12,7 +13,7 @@ export default class CFWorkerKVCache implements KeyValueCache {
     }
     if (this.kvNamespace === undefined) {
       // We don't use mocks because they increase the bundle size.
-      config.logger?.warn(`Make sure KV Namespace: ${config.namespace} exists.`);
+      config.log?.warn(`Make sure KV Namespace: ${config.namespace} exists.`);
     }
   }
 

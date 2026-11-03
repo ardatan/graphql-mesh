@@ -1,10 +1,12 @@
 import { join } from 'path';
-import { fs } from '@graphql-mesh/cross-helpers';
-
-const { readFile } = fs.promises;
 
 describe('Artifacts', () => {
   it('should execute queries', async () => {
+    const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+    if (!fs) {
+      throw new Error('Node.js fs module is required for artifacts tests');
+    }
+    const { readFile } = fs.promises;
     const { getBuiltMesh } = await import('../.mesh/index');
     const { execute } = await getBuiltMesh();
     const query = await readFile(join(__dirname, '../example-query.graphql'), 'utf-8');

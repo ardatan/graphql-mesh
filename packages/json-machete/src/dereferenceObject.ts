@@ -163,7 +163,7 @@ function resolveFromSchemaIndex(
 export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
   {
-    cwd = globalThis?.process.cwd(),
+    cwd = globalThis.process?.cwd?.(),
     externalFileCache = new Map<string, any>(),
     refMap = new Map<string, any>(),
     root = obj as any,

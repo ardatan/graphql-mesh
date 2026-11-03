@@ -1,7 +1,7 @@
-import { fs, path } from '@graphql-mesh/cross-helpers';
+import { Logger } from '@graphql-hive/logger';
 import type { MeshInstance } from '@graphql-mesh/runtime';
-import type { Logger, YamlConfig } from '@graphql-mesh/types';
-import { DefaultLogger, pathExists, withCookies } from '@graphql-mesh/utils';
+import type { YamlConfig } from '@graphql-mesh/types';
+import { pathExists, withCookies } from '@graphql-mesh/utils';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';
 import { resolvePlaygroundConfig } from './playground.js';
@@ -24,7 +24,7 @@ export function createMeshHTTPHandler<TServerContext>({
   renderGraphiQL?: (options?: any) => string | Promise<string>;
 }) {
   let readyFlag = false;
-  let logger: Logger = new DefaultLogger('Mesh HTTP');
+  let log: Logger = new Logger({ prefix: 'Mesh HTTP' });
 
   const {
     cors: corsConfig,
@@ -41,10 +41,10 @@ export function createMeshHTTPHandler<TServerContext>({
   getBuiltMesh()
     .then(mesh => {
       readyFlag = true;
-      logger = mesh.logger.child('HTTP');
+      log = mesh.log.child('HTTP');
     })
     .catch(err => {
-      logger.error(err);
+      log.error(err);
     });
 
   return createServerAdapter<TServerContext>(
@@ -80,6 +80,11 @@ export function createMeshHTTPHandler<TServerContext>({
                 return;
             }
             if (staticFiles && request.method === 'GET') {
+              const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+              const path = globalThis.process?.getBuiltinModule?.('node:path');
+              if (!fs || !path) {
+                throw new Error('Node.js fs and path modules are required for Mesh static files');
+              }
               let relativePath = url.pathname;
               if (relativePath === '/' || !relativePath) {
                 relativePath = 'index.html';
@@ -113,10 +118,13 @@ export function createMeshHTTPHandler<TServerContext>({
             withCookies(request);
             if (readyFlag) {
               return getBuiltMesh().then(async mesh => {
-                for (const eventName of mesh.pubsub.getEventNames()) {
-                  if (eventName === `webhook:${request.method.toLowerCase()}:${url.pathname}`) {
+                const expectedEvent = `webhook:${request.method.toLowerCase()}:${url.pathname}`;
+                const topics = await mesh.pubsub.subscribedTopics();
+                for (const eventName of topics) {
+                  if (eventName === expectedEvent) {
                     const body = await request.text();
-                    logger.debug(`Received webhook request for ${url.pathname}`, body);
+                    log.debug(`Received webhook request for ${url.pathname}`, body);
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
                     mesh.pubsub.publish(
                       eventName,
                       request.headers.get('content-type') === 'application/json'

@@ -1,8 +1,8 @@
 import { getOperationAST } from 'graphql';
 import * as apolloClient from '@apollo/client';
 import type { ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
-import { fakePromise, isAsyncIterable } from '@graphql-tools/utils';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { isAsyncIterable } from '@graphql-tools/utils';
+import { fakePromise, handleMaybePromise } from '@whatwg-node/promise-helpers';
 
 export interface MeshApolloRequestHandlerOptions {
   execute: ExecuteMeshFn;

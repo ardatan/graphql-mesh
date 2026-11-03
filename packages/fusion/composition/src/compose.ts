@@ -1,23 +1,23 @@
-import type {
-  DirectiveNode,
-  GraphQLArgumentConfig,
-  GraphQLFieldConfig,
-  GraphQLFieldConfigArgumentMap,
-} from 'graphql';
 import {
   concatAST,
   getNamedType,
+  GraphQLError,
   GraphQLSchema,
   isNonNullType,
   isObjectType,
   isSpecifiedScalarType,
   parse,
 } from 'graphql';
+import type {
+  DirectiveNode,
+  GraphQLArgumentConfig,
+  GraphQLFieldConfig,
+  GraphQLFieldConfigArgumentMap,
+} from 'graphql';
 import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
-  createGraphQLError,
   getDirectiveExtensions,
   getDocumentNodeFromSchema,
   MapperKind,

@@ -1,6 +1,6 @@
-import { PubSub } from '@graphql-mesh/utils';
+import { MemPubSub } from '@graphql-hive/pubsub';
 
-const pubsub = new PubSub();
+const pubsub = new MemPubSub();
 
 export const resolvers = {
   Book: {
@@ -55,13 +55,13 @@ export const resolvers = {
   },
   Subscription: {
     bookCreated: {
-      subscribe: () => pubsub.asyncIterator('BOOK_CREATED'),
+      subscribe: () => pubsub.subscribe('BOOK_CREATED'),
     },
     bookUpdated: {
-      subscribe: () => pubsub.asyncIterator('BOOK_UPDATED'),
+      subscribe: () => pubsub.subscribe('BOOK_UPDATED'),
     },
     bookDeleted: {
-      subscribe: () => pubsub.asyncIterator('BOOK_DELETED'),
+      subscribe: () => pubsub.subscribe('BOOK_DELETED'),
     },
   },
 };

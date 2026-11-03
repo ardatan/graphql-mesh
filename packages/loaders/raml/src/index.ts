@@ -1,4 +1,5 @@
-import type { Logger, MeshFetch } from '@graphql-mesh/types';
+import { type Logger } from '@graphql-hive/logger';
+import type { MeshFetch } from '@graphql-mesh/types';
 import { loadGraphQLSchemaFromRAML } from './loadGraphQLSchemaFromRAML.js';
 import type { RAMLLoaderOptions } from './types.js';
 
@@ -8,13 +9,13 @@ export { getJSONSchemaOptionsFromRAMLOptions } from './getJSONSchemaOptionsFromR
 export type { RAMLLoaderOptions } from './types.js';
 
 export function loadRAMLSubgraph(name: string, options: RAMLLoaderOptions) {
-  return (ctx: { fetch: MeshFetch; cwd: string; logger: Logger }) => ({
+  return (ctx: { fetch: MeshFetch; cwd: string; log: Logger }) => ({
     name,
     schema$: loadGraphQLSchemaFromRAML(name, {
       ...options,
       fetch: ctx.fetch,
       cwd: ctx.cwd,
-      logger: ctx.logger,
+      log: ctx.log,
     }),
   });
 }

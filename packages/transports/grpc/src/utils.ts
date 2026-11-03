@@ -1,9 +1,8 @@
-import type { GraphQLScalarType } from 'graphql';
+import { GraphQLError, type GraphQLScalarType } from 'graphql';
 import lodashGet from 'lodash.get';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { withCancel } from '@graphql-mesh/utils';
-import { createGraphQLError } from '@graphql-tools/utils';
 import type {
   CallOptions,
   ClientDuplexStream,
@@ -39,7 +38,7 @@ export function toGrpcGraphQLError(error: unknown) {
   const status = GrpcStatus[error.code] != null ? String(GrpcStatus[error.code]) : 'UNKNOWN';
   // Do not set `originalError` to the raw ServiceError — Envelop's maskedErrors
   // walks originalError and would treat a non-GraphQLError root as unexpected.
-  return createGraphQLError(error.message || status, {
+  return new GraphQLError(error.message || status, {
     extensions: {
       code: 'DOWNSTREAM_SERVICE_ERROR',
       grpc: {
@@ -107,32 +106,32 @@ export function addMetaDataToCall(
       callFnArguments.push(callOptions);
     }
   }
-  return new Promise((resolve, reject) => {
-    const call: ClientDuplexStream<any, any> = callFn(
-      ...callFnArguments,
-      (error: Error, response: ClientUnaryCall | ClientReadableStream<unknown>) => {
-        if (error) {
-          reject(toGrpcGraphQLError(error));
-          return;
-        }
-        resolve(response);
-      },
-    );
-    if (isResponseStream) {
-      let isCancelled = false;
-      const responseStreamWithCancel = withCancel(call, reason => {
-        if (!isCancelled) {
-          call.call?.cancelWithStatus(0, reason?.toString() || 'aborted');
-          isCancelled = true;
-        }
-      });
-      resolve(responseStreamWithCancel);
-      if (isBlob(input)) {
-        const blobStream = input.stream();
-        (blobStream as any).pipe(call);
+  const { promise, resolve, reject } = Promise.withResolvers<any>();
+  const call: ClientDuplexStream<any, any> = callFn(
+    ...callFnArguments,
+    (error: Error, response: ClientUnaryCall | ClientReadableStream<unknown>) => {
+      if (error) {
+        reject(toGrpcGraphQLError(error));
+        return;
       }
+      resolve(response);
+    },
+  );
+  if (isResponseStream) {
+    let isCancelled = false;
+    const responseStreamWithCancel = withCancel(call, reason => {
+      if (!isCancelled) {
+        call.call?.cancelWithStatus(0, reason?.toString() || 'aborted');
+        isCancelled = true;
+      }
+    });
+    resolve(responseStreamWithCancel);
+    if (isBlob(input)) {
+      const blobStream = input.stream();
+      (blobStream as any).pipe(call);
     }
-  });
+  }
+  return promise;
 }
 
 export function addExecutionLogicToScalar(

@@ -1,11 +1,27 @@
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
+function requireNodeFs() {
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  if (!fs) {
+    throw new Error('Node.js fs module is required for filesystem operations');
+  }
+  return fs;
+}
+
+function requireNodePath() {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required for filesystem operations');
+  }
+  return pathModule;
+}
+
+type FsPromises = ReturnType<typeof requireNodeFs>['promises'];
 
 export async function pathExists(path: string) {
   if (!path) {
     return false;
   }
   try {
-    await fs.promises.stat(path);
+    await requireNodeFs().promises.stat(path);
     return true;
   } catch (e) {
     if (e.toString().includes('ENOENT')) {
@@ -26,7 +42,9 @@ export function writeJSON<T>(
   return writeFile(path, stringified, 'utf-8');
 }
 
-export const writeFile: typeof fs.promises.writeFile = async (path, ...args) => {
+export const writeFile: FsPromises['writeFile'] = async (path, ...args) => {
+  const fs = requireNodeFs();
+  const pathModule = requireNodePath();
   if (typeof path === 'string') {
     const containingDir = pathModule.dirname(path);
     if (!(await pathExists(containingDir))) {
@@ -58,11 +76,13 @@ export async function mkdir(
 ) {
   const ifExists = await pathExists(path);
   if (!ifExists) {
-    await fs.promises.mkdir(path, options);
+    await requireNodeFs().promises.mkdir(path, options);
   }
 }
 
 export async function rmdirs(dir: string) {
+  const fs = requireNodeFs();
+  const pathModule = requireNodePath();
   if (await pathExists(dir)) {
     const entries = await fs.promises.readdir(dir, { withFileTypes: true });
     const results = await Promise.allSettled(

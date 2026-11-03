@@ -1,30 +1,30 @@
 import type { Plugin } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
-import { process } from '@graphql-mesh/cross-helpers';
+import type { PubSub } from '@graphql-hive/pubsub';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import {
-  toMeshPubSub,
-  type HivePubSub,
-  type Logger,
-  type MeshPubSub,
-  type YamlConfig,
-} from '@graphql-mesh/types';
-import { DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { type YamlConfig } from '@graphql-mesh/types';
 import {
   defaultResourceIdentifierNormalizer,
   InMemoryLiveQueryStore,
 } from '@n1ru4l/in-memory-live-query-store';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 import { useInvalidateByResult } from './useInvalidateByResult.js';
 
 export default function useMeshLiveQuery(
-  options: {
-    logger?: Logger;
-    pubsub?: MeshPubSub | HivePubSub;
-  } & YamlConfig.LiveQueryConfig,
+  options: YamlConfig.LiveQueryConfig & {
+    /**
+     * Init-time PubSub for invalidate subscriptions (Mesh plugin factory / Gateway `ctx`).
+     * Request-time invalidation prefers GraphQL `context.pubsub` when present.
+     */
+    pubsub?: PubSub;
+  },
 ): Plugin {
-  options.logger ||= new DefaultLogger();
-  options.pubsub ||= new PubSub();
-  options.logger.debug(`Creating Live Query Store`);
+  const pubsub = options.pubsub;
+  if (!pubsub) {
+    throw new Error(
+      'Live Query plugin requires pubsub (Mesh plugin options / Hive Gateway ctx). Request context.pubsub alone is not enough for invalidate subscriptions.',
+    );
+  }
   const liveQueryStore = new InMemoryLiveQueryStore({
     buildResourceIdentifier:
       options.resourceIdentifier != null
@@ -32,20 +32,22 @@ export default function useMeshLiveQuery(
             return stringInterpolator.parse(options.resourceIdentifier, {
               typename,
               id,
-              env: process.env,
+              env: globalThis.process?.env,
             });
           }
         : defaultResourceIdentifierNormalizer,
     includeIdentifierExtension:
       options.includeIdentifierExtension != null
         ? options.includeIdentifierExtension
-        : process.env.DEBUG === '1',
+        : globalThis.process?.env?.DEBUG === '1',
     idFieldName: options.idFieldName,
     indexBy: options.indexBy,
   });
-  const pubsub = toMeshPubSub(options.pubsub);
-  pubsub.subscribe('live-query:invalidate', (identifiers: string | string[]) =>
-    liveQueryStore.invalidate(identifiers),
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  fakePromise(
+    pubsub.subscribe('live-query:invalidate', (identifiers: string | string[]) =>
+      liveQueryStore.invalidate(identifiers),
+    ),
   );
   return {
     onPluginInit({ addPlugin }) {
@@ -55,7 +57,6 @@ export default function useMeshLiveQuery(
           useInvalidateByResult({
             pubsub,
             invalidations: options.invalidations,
-            logger: options.logger,
           }),
         );
       }

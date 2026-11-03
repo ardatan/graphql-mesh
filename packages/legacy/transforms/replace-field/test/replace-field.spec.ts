@@ -1,12 +1,13 @@
 import { join } from 'path';
 import { GraphQLObjectType, parse, printSchema } from 'graphql';
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { ImportFn, Logger, MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import type { ImportFn } from '@graphql-mesh/types';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isAsyncIterable, pruneSchema } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import ReplaceFieldTransform from '../src/index.js';
 
 const importFn: ImportFn = m =>
@@ -47,7 +48,7 @@ describe('replace-field', () => {
     }
   `;
   using cache = new InMemoryLRUCache();
-  let pubsub: MeshPubSub;
+  let pubsub: PubSub;
   const baseDir: string = undefined;
 
   beforeEach(() => {
@@ -55,7 +56,7 @@ describe('replace-field', () => {
   });
 
   afterEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
   });
 
   it('should replace correctly field Type only', async () => {
@@ -80,7 +81,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -139,7 +140,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -206,7 +207,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -274,7 +275,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -354,7 +355,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -428,7 +429,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -497,7 +498,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -570,7 +571,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -639,7 +640,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -713,7 +714,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -785,7 +786,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -864,7 +865,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -930,7 +931,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,
@@ -1030,7 +1031,7 @@ describe('replace-field', () => {
       apiName: '',
       importFn,
 
-      logger,
+      log,
     });
     const schema = makeExecutableSchema({
       typeDefs: schemaDefs,

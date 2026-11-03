@@ -12,7 +12,7 @@
     "json-bigint-patch": "0.0.9"
   },
   "devDependencies": {
-    "@graphql-tools/executor-http": "3.4.1",
-    "@graphql-tools/utils": "12.1.0"
+    "@graphql-tools/executor-http": "3.6.0",
+    "@graphql-tools/utils": "^13.2.1"
   }
 }

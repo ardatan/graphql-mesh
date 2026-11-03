@@ -1,6 +1,7 @@
 import { wrapFetchWithPlugins } from '@graphql-mesh/runtime';
 import type { KeyValueCache } from '@graphql-mesh/types';
-import { createServerAdapter, fakePromise } from '@whatwg-node/server';
+import { fakePromise } from '@whatwg-node/promise-helpers';
+import { createServerAdapter } from '@whatwg-node/server';
 import useHTTPCache from '../src/index';
 
 describe('HTTP Cache Control behavior', () => {

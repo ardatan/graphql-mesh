@@ -1,5 +1,4 @@
 import { Minimatch } from 'minimatch';
-import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { hashObject } from '@graphql-mesh/string-interpolation';
 import type { MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj, pathExists, writeJSON } from '@graphql-mesh/utils';
@@ -31,7 +30,7 @@ export default function useSnapshot(
   }
   if (typeof pluginOptions.if === 'string') {
     // eslint-disable-next-line no-new-func
-    if (!new Function('env', 'return ' + pluginOptions.if)(process.env)) {
+    if (!new Function('env', 'return ' + pluginOptions.if)(globalThis.process?.env)) {
       return {};
     }
   }
@@ -40,9 +39,14 @@ export default function useSnapshot(
   return {
     async onFetch({ url, options, setFetchFn }) {
       if (matches.some(matcher => matcher.match(url))) {
+        const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+        const path = globalThis.process?.getBuiltinModule?.('node:path');
+        if (!fs || !path) {
+          throw new Error('Node.js fs and path modules are required for Snapshot plugin');
+        }
         const snapshotFileName = calculateCacheKey(url, options);
         const snapshotPath = path.join(
-          pluginOptions.baseDir || process.cwd(),
+          pluginOptions.baseDir || globalThis.process?.cwd?.(),
           snapshotsDir,
           `${snapshotFileName}.json`,
         );

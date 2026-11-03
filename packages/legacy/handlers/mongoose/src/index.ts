@@ -3,17 +3,18 @@ import { SchemaComposer } from 'graphql-compose';
 import { composeWithMongoose, composeWithMongooseDiscriminators } from 'graphql-compose-mongoose';
 import type { ConnectOptions, Document, Model } from 'mongoose';
 import { connect, disconnect } from 'mongoose';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type {
   ImportFn,
-  Logger,
   MeshHandler,
   MeshHandlerOptions,
-  MeshPubSub,
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 const modelQueryOperations = [
   'findById',
@@ -41,40 +42,37 @@ const modelMutationOperations = [
 export default class MongooseHandler implements MeshHandler {
   private config: YamlConfig.MongooseHandler;
   private baseDir: string;
-  private pubsub: MeshPubSub;
+  private pubsub: PubSub;
   private importFn: ImportFn;
-  private logger: Logger;
+  private log: Logger;
+
+  private shouldDisconnect = false;
 
   constructor({
-    name,
     config,
     baseDir,
     pubsub,
     importFn,
-    logger,
+    log,
   }: MeshHandlerOptions<YamlConfig.MongooseHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.pubsub = pubsub;
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   async getMeshSource(): Promise<MeshSource> {
     if (this.config.connectionString) {
       const interpolatedConnectionString = stringInterpolator.parse(this.config.connectionString, {
-        env: process.env,
+        env: globalThis.process?.env,
       });
       connect(interpolatedConnectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-      } as ConnectOptions).catch(e => this.logger.error(e));
+      } as ConnectOptions).catch(e => this.log.error(e));
 
-      const id = this.pubsub.subscribe('destroy', () => {
-        disconnect()
-          .catch(e => this.logger.error(e))
-          .finally(() => this.pubsub.unsubscribe(id));
-      });
+      this.shouldDisconnect = true;
     }
 
     const schemaComposer = new SchemaComposer();
@@ -185,5 +183,11 @@ export default class MongooseHandler implements MeshHandler {
     return {
       schema,
     };
+  }
+
+  [DisposableSymbols.asyncDispose]() {
+    if (this.shouldDisconnect) {
+      return disconnect().catch(e => this.log.error(e));
+    }
   }
 }

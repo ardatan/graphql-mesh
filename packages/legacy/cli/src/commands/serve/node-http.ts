@@ -40,22 +40,27 @@ export async function startNodeHttpServer({
   // @ts-ignore - GraphQL WS has some issues with Bob
   const { useServer } = await import('graphql-ws/use/ws');
   useServer(getGraphQLWSOptions(getBuiltMesh), wsServer);
-  return new Promise((resolve, reject) => {
-    server.once('error', err => reject(err));
-    server.listen(port, hostname, () => {
-      resolve({
-        stop: () =>
-          new Promise<void>((resolve, reject) => {
-            server.closeAllConnections();
-            server.close(err => {
-              if (err) {
-                reject(err);
-              } else {
-                resolve();
-              }
-            });
-          }),
-      });
+  const { promise, resolve, reject } = Promise.withResolvers<ServerStartResult>();
+  server.once('error', err => reject(err));
+  server.listen(port, hostname, () => {
+    resolve({
+      stop: () => {
+        const {
+          promise: stopPromise,
+          resolve: stopResolve,
+          reject: stopReject,
+        } = Promise.withResolvers<void>();
+        server.closeAllConnections();
+        server.close(err => {
+          if (err) {
+            stopReject(err);
+          } else {
+            stopResolve();
+          }
+        });
+        return stopPromise;
+      },
     });
   });
+  return promise;
 }

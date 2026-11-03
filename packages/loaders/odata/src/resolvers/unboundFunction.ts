@@ -50,7 +50,7 @@ export function createUnboundFunctionResolver({
           args,
           context,
           info,
-          env: process.env,
+          env: globalThis.process?.env,
         },
         method,
       ),

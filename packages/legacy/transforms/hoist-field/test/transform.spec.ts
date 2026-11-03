@@ -1,9 +1,10 @@
 import { buildSchema, GraphQLObjectType, printSchema, type GraphQLField } from 'graphql';
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import type { Logger, MeshPubSub } from '@graphql-mesh/types';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import HoistFieldTransform from '../src/index.js';
 
 describe('hoist', () => {
@@ -23,11 +24,11 @@ describe('hoist', () => {
       name: String!
     }
   `);
-  let pubsub: MeshPubSub;
+  let pubsub: PubSub;
   const baseDir: string = undefined;
 
   beforeEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
   });
 
   it('should hoist field with string pathConfig array', () => {
@@ -49,7 +50,7 @@ describe('hoist', () => {
           baseDir,
           importFn,
 
-          logger,
+          log,
         }),
       ],
     });
@@ -101,7 +102,7 @@ type User {
           baseDir,
           importFn,
 
-          logger,
+          log,
         }),
       ],
     });
@@ -148,7 +149,7 @@ type User {
           baseDir,
           importFn,
 
-          logger,
+          log,
         }),
       ],
     });
@@ -203,7 +204,7 @@ type User {
           baseDir,
           importFn,
 
-          logger,
+          log,
         }),
       ],
     });
@@ -260,7 +261,7 @@ type User {
           baseDir,
           importFn,
 
-          logger,
+          log,
         }),
       ],
     });
@@ -309,7 +310,7 @@ type User {
           baseDir,
           importFn,
 
-          logger,
+          log,
         }),
       ],
     });

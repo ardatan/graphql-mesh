@@ -35,13 +35,18 @@ export const graphqlHandler = ({
           skipIntrospection: true,
           logFn: (eventName, { args }) => {
             if (eventName.endsWith('-start')) {
-              mesh.logger.debug(`\t headers: `, args.contextValue.headers);
+              mesh.log.debug(`\t headers: `, args.contextValue.headers);
             }
           },
         }),
       ],
       extraParamNames,
-      logging: mesh.logger,
+      logging: mesh.log,
+      // whatwg-node fetch no longer re-exports `crypto`; platform crypto is required
+      // for request-id generation and digest helpers still reading `fetchAPI.crypto`.
+      fetchAPI: {
+        crypto: globalThis.crypto,
+      } as any,
       maskedErrors: false,
       graphiql: playgroundEnabled && {
         title: playgroundTitle,
@@ -65,13 +70,12 @@ export const graphqlHandler = ({
 
     const yoga = createYoga(yogaOptions);
     // Dispose Yoga instance when the Mesh instance is destroyed
-    const id = mesh.pubsub.subscribe('destroy', () => {
-      const unsubscribe = () => {
-        return mesh.pubsub.unsubscribe(id);
-      };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleMaybePromise(() => yoga.dispose(), unsubscribe, unsubscribe);
-    });
+    mesh.deferDispose(() =>
+      handleMaybePromise(
+        () => yoga.dispose(),
+        () => undefined,
+      ),
+    );
     return yoga;
   });
   return (request: Request, ctx: any) =>

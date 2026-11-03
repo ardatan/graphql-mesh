@@ -1,10 +1,10 @@
 import type { GraphQLSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import type {
   GetMeshSourcePayload,
   ImportFn,
-  Logger,
   MeshHandler,
   MeshHandlerOptions,
   MeshSource,
@@ -17,7 +17,7 @@ export default class ThriftHandler implements MeshHandler {
   private baseDir: string;
   private sdl: StoreProxy<GraphQLSchema>;
   private importFn: ImportFn;
-  private logger: Logger;
+  private log: Logger;
   private subgraphName: string;
 
   constructor({
@@ -25,7 +25,7 @@ export default class ThriftHandler implements MeshHandler {
     baseDir,
     store,
     importFn,
-    logger,
+    log,
     name,
   }: MeshHandlerOptions<YamlConfig.ThriftHandler>) {
     this.subgraphName = name;
@@ -36,7 +36,7 @@ export default class ThriftHandler implements MeshHandler {
       PredefinedProxyOptions.GraphQLSchemaWithDiffing,
     );
     this.importFn = importFn;
-    this.logger = logger;
+    this.log = log;
   }
 
   private buildEndpointUrl() {
@@ -55,7 +55,7 @@ export default class ThriftHandler implements MeshHandler {
         serviceName: this.config.serviceName,
         baseDir: this.baseDir,
         fetchFn,
-        logger: this.logger,
+        log: this.log,
         importFn: this.importFn,
       }),
     );

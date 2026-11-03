@@ -35,7 +35,7 @@ describeTransformerTests('filter-schema', ({ mode, transformSchema }) => {
       new FilterSchemaTransform({
         config: {
           mode,
-          filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
+          filters: ['Type.!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
         },
       }),
     );
@@ -91,7 +91,7 @@ type Query {
       new FilterSchemaTransform({
         config: {
           mode,
-          filters: ['!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
+          filters: ['Type.!Comment', 'User.posts.{message, author}', 'Query.user.!pk'],
         },
       }),
     );
@@ -166,7 +166,7 @@ type Query {
         config: {
           mode,
           filters: [
-            '!Comment',
+            'Type.!Comment',
             'Type.!LooseType',
             'Type.!{Notification, Mention}',
             'Query.user.!{notifications, mentions}',
@@ -447,7 +447,7 @@ type Query {
       new FilterSchemaTransform({
         config: {
           mode,
-          filters: ['!Book'],
+          filters: ['Type.!Book'],
         },
       }),
     );
@@ -634,7 +634,7 @@ type Query {
       new FilterSchemaTransform({
         config: {
           mode,
-          filters: ['!User'],
+          filters: ['Type.!User'],
         },
       }),
     );
@@ -700,7 +700,7 @@ type Query {
       new FilterSchemaTransform({
         config: {
           mode,
-          filters: ['!AuthRule'],
+          filters: ['Type.!AuthRule'],
         },
       }),
     );

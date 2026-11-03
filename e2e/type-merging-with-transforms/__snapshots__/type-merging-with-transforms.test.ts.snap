@@ -48,7 +48,7 @@ enum join__Graph {
 scalar TransportOptions @join__type(graph: AUTHORS) @join__type(graph: BOOKS)
 
 type Query @join__type(graph: AUTHORS) @join__type(graph: BOOKS) {
-  author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @merge(subgraph: "books", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books")
+  author(id: ID!): Author @merge(subgraph: "authors", keyField: "id", keyArg: "id") @source(name: "authorWithBooks", type: "AuthorWithBooks", subgraph: "books") @merge(subgraph: "books", keyField: "id", keyArg: "id")
   writers(ids: [ID]): [Author] @source(name: "authors", type: "[Author]", subgraph: "authors") @join__field(graph: AUTHORS)
   book(id: ID!): Book @merge(subgraph: "books", keyField: "id", keyArg: "id") @join__field(graph: BOOKS)
   books(ids: [ID]): [Book!]! @merge(subgraph: "books", keyField: "id", keyArg: "ids") @join__field(graph: BOOKS)

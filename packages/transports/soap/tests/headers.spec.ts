@@ -5,14 +5,14 @@ import type { MeshFetch } from '@graphql-mesh/types';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
 import { fetch, Response } from '@whatwg-node/fetch';
-import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 
 describe('SOAP Headers', () => {
   it('should pass headers to the executor', async () => {
     const soapLoader = new SOAPLoader({
       subgraphName: 'Test',
       fetch,
-      logger,
+      log,
       bodyAlias: 'guild',
       soapHeaders: {
         alias: 'guild',

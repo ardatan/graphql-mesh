@@ -1,11 +1,11 @@
 import type { ExecutionResult } from 'graphql';
 import { GraphQLError, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import type { DelegationContext } from '@graphql-tools/delegate';
 import type { ExecutionRequest } from '@graphql-tools/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export default class RateLimitTransform implements MeshTransform {
   private pathRateLimitDef = new Map<string, YamlConfig.RateLimitTransformConfig>();
@@ -15,12 +15,6 @@ export default class RateLimitTransform implements MeshTransform {
     if (options.config) {
       options.config.forEach(config => {
         this.pathRateLimitDef.set(`${config.type}.${config.field}`, config);
-      });
-    }
-    if (options.pubsub) {
-      const id = options.pubsub.subscribe('destroy', () => {
-        options.pubsub.unsubscribe(id);
-        this.timeouts.forEach(timeout => clearTimeout(timeout));
       });
     }
   }
@@ -35,7 +29,7 @@ export default class RateLimitTransform implements MeshTransform {
     if (transformedSchema) {
       const errors: GraphQLError[] = [];
       const resolverData: ResolverData = {
-        env: process.env,
+        env: globalThis.process?.env,
         root: rootValue,
         args,
         context,
@@ -105,5 +99,9 @@ export default class RateLimitTransform implements MeshTransform {
       };
     }
     return result;
+  }
+
+  [DisposableSymbols.dispose]() {
+    this.timeouts.forEach(timeout => clearTimeout(timeout));
   }
 }

@@ -6,15 +6,22 @@ import type {
   GraphQLSchema,
   GraphQLUnionType,
 } from 'graphql';
-import { getNamedType, isListType, isNonNullType, isScalarType, isUnionType } from 'graphql';
+import {
+  getNamedType,
+  GraphQLError,
+  isListType,
+  isNonNullType,
+  isScalarType,
+  isUnionType,
+} from 'graphql';
 import type { IStringifyOptions } from 'qs';
 import { parse as qsParse, stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
-import { process } from '@graphql-mesh/cross-helpers';
+import { Logger } from '@graphql-hive/logger';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { Logger, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
-import { DefaultLogger, getHeadersObj } from '@graphql-mesh/utils';
-import { createGraphQLError, getDirective, memoize1 } from '@graphql-tools/utils';
+import type { MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
+import { getHeadersObj } from '@graphql-mesh/utils';
+import { getDirective, memoize1 } from '@graphql-tools/utils';
 import { Blob, fetch as defaultFetch, File, FormData, URLSearchParams } from '@whatwg-node/fetch';
 import { isFileUpload } from './isFileUpload.js';
 import { getJsonApiFieldsQuery } from './jsonApiFields.js';
@@ -81,7 +88,7 @@ export interface GlobalOptions {
 export function addHTTPRootFieldResolver(
   schema: GraphQLSchema,
   field: GraphQLField<any, any>,
-  globalLogger: Logger = new DefaultLogger('HTTP'),
+  globalLogger: Logger = new Logger({ prefix: 'HTTP' }),
   globalFetch: MeshFetch,
   {
     path,
@@ -118,8 +125,8 @@ export function addHTTPRootFieldResolver(
     if (jsonApiFields) {
       args.fields = undefined;
     }
-    const logger = context?.logger || globalLogger;
-    const operationLogger = logger.child({
+    const log = context?.log || globalLogger;
+    const operationLogger = log.child({
       operation: `${info.parentType.name}.${info.fieldName}`,
     });
     operationLogger.debug(`Resolving`);
@@ -134,7 +141,12 @@ export function addHTTPRootFieldResolver(
         return value;
       },
     });
-    const interpolationData = { root, args: argsSerializeProxy, context, env: process.env };
+    const interpolationData = {
+      root,
+      args: argsSerializeProxy,
+      context,
+      env: globalThis.process?.env,
+    };
     const interpolatedBaseUrl = stringInterpolator.parse(endpoint, interpolationData) || '';
     const interpolatedPath = stringInterpolator.parse(path, interpolationData) || '';
     let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);
@@ -354,7 +366,7 @@ export function addHTTPRootFieldResolver(
       } else if (response.status === 204 || (response.status === 200 && responseText === '')) {
         responseJson = {};
       } else if (response.status.toString().startsWith('2')) {
-        return createGraphQLError(`Unexpected response in ${field.name}`, {
+        return new GraphQLError(`Unexpected response in ${field.name}`, {
           extensions: {
             subgraph: sourceName,
             request: {
@@ -371,7 +383,7 @@ export function addHTTPRootFieldResolver(
           },
         });
       } else {
-        return createGraphQLError(
+        return new GraphQLError(
           `Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
             extensions: {
@@ -406,7 +418,7 @@ export function addHTTPRootFieldResolver(
         );
 
       if (!hasErrorResponseMapping) {
-        return createGraphQLError(
+        return new GraphQLError(
           `Upstream HTTP Error: ${response.status}, Could not invoke operation ${httpMethod} ${path}`,
           {
             extensions: {

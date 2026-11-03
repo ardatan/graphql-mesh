@@ -1,0 +1,57 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index 361e4e4fcd82c572df610da3927129f5d9caa719..8b963f25e2cb4eeaf04c339653b136a5693df9bb 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -1119,7 +1119,7 @@ function wrapExecutorWithHooks({
+     let executionRequest = baseExecutionRequest;
+     const onSubgraphExecuteDoneHooks = [];
+     return promiseHelpers.handleMaybePromise(
+-      () => utils$1.iterateAsync(
++      () => promiseHelpers.iterateAsync(
+         onSubgraphExecuteHooks,
+         (onSubgraphExecuteHook) => onSubgraphExecuteHook({
+           get subgraph() {
+@@ -1151,7 +1151,7 @@ function wrapExecutorWithHooks({
+           (currentResult) => {
+             const executeDoneResults = [];
+             return promiseHelpers.handleMaybePromise(
+-              () => utils$1.iterateAsync(
++              () => promiseHelpers.iterateAsync(
+                 onSubgraphExecuteDoneHooks,
+                 (onSubgraphExecuteDoneHook) => onSubgraphExecuteDoneHook({
+                   result: currentResult,
+@@ -1185,7 +1185,7 @@ function wrapExecutorWithHooks({
+                 return promiseHelpers.mapAsyncIterator(
+                   currentResult,
+                   (currentResult2) => promiseHelpers.handleMaybePromise(
+-                    () => utils$1.iterateAsync(
++                    () => promiseHelpers.iterateAsync(
+                       onNextHooks,
+                       (onNext) => onNext({
+                         result: currentResult2,
+@@ -1198,7 +1198,7 @@ function wrapExecutorWithHooks({
+                     () => currentResult2
+                   ),
+                   void 0,
+-                  () => onEndHooks.length === 0 ? void 0 : utils$1.iterateAsync(onEndHooks, (onEnd) => onEnd())
++                  () => onEndHooks.length === 0 ? void 0 : promiseHelpers.iterateAsync(onEndHooks, (onEnd) => onEnd())
+                 );
+               }
+             );
+diff --git a/dist/index.js b/dist/index.js
+index d81fd8be023bead1c1575c7455da5585280400c1..91559ce2d77867557da300f394ade0a5f798ab52 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1,10 +1,10 @@
+ import { getInstrumented } from '@envelop/instrumentation';
+ import { LegacyLogger, Logger } from '@graphql-hive/logger';
+ import { defaultPrintFn, createDefaultExecutor } from '@graphql-mesh/transport-common';
+-import { getResolverForPubSubOperation, getInContextSDK, resolveAdditionalResolversWithoutImport, isDisposable, iterateAsync, dispose, makeAsyncDisposable } from '@graphql-mesh/utils';
++import { getResolverForPubSubOperation, getInContextSDK, resolveAdditionalResolversWithoutImport, isDisposable, dispose, makeAsyncDisposable } from '@graphql-mesh/utils';
+ import { getBatchingExecutor } from '@graphql-tools/batch-execute';
+ import { getDirectiveExtensions, mapSchema, MapperKind, astFromField, asArray, getDocumentNodeFromSchema, memoize1, isDocumentNode, printSchemaWithDirectives, mergeDeep, isAsyncIterable, createGraphQLError } from '@graphql-tools/utils';
+-import { handleMaybePromise, isPromise, mapAsyncIterator } from '@whatwg-node/promise-helpers';
++import { handleMaybePromise, isPromise, iterateAsync, mapAsyncIterator } from '@whatwg-node/promise-helpers';
+ import { isInterfaceType, Kind, isObjectType, typeFromAST, isOutputType, GraphQLSchema, GraphQLDirective, parseType, visit, GraphQLString, DirectiveLocation, isEnumType, parse, isSchema, buildSchema, buildASTSchema } from 'graphql';
+ import { defaultMergedResolver } from '@graphql-tools/delegate';
+ import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';

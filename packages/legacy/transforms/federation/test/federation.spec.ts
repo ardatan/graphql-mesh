@@ -1,9 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { buildSchema } from 'graphql';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { defaultImportFn, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../../testing/dummyLogger';
 import FederationTransform from '../src/index.js';
 
 describe('transform-federation', () => {
@@ -12,7 +13,7 @@ describe('transform-federation', () => {
   const config = {};
   const importFn = defaultImportFn;
   const cache = new InMemoryLRUCache();
-  const pubsub = new PubSub();
+  const pubsub = new MemPubSub();
   it('should trim non federation directives', () => {
     using cache = new InMemoryLRUCache();
     const schema = buildSchema(/* GraphQL */ `
@@ -32,7 +33,7 @@ describe('transform-federation', () => {
       config,
       cache,
       importFn,
-      logger,
+      log,
       pubsub,
     });
     const transformedSchema = transform.transformSchema(schema, {

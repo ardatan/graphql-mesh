@@ -1,5 +1,4 @@
 import type { GraphQLSchema } from 'graphql';
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -30,6 +29,10 @@ function tryRequire(modulePath: string, cwd: string) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     return require(modulePath);
   } catch {
+    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+    if (!pathModule) {
+      throw new Error('Node.js path module is required for Extend transform');
+    }
     if (!pathModule.isAbsolute(modulePath)) {
       const absoluteModulePath = pathModule.isAbsolute(modulePath)
         ? modulePath
@@ -51,6 +54,10 @@ export default class ExtendTransform implements MeshTransform {
   }
 
   transformSchema(schema: GraphQLSchema) {
+    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+    if (!pathModule) {
+      throw new Error('Node.js path module is required for Extend transform');
+    }
     const sources = loadTypedefsSync(this.config.typeDefs, {
       cwd: pathModule.isAbsolute(this.config.typeDefs) ? null : this.baseDir,
       loaders: [new CodeFileLoader(), new GraphQLFileLoader()],

@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=22.18.0"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -32,13 +32,14 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
+    "@graphql-hive/logger": "^1.1.1",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@whatwg-node/fetch": "^0.10.6",
-    "@whatwg-node/promise-helpers": "^1.0.0",
+    "@whatwg-node/fetch": "^0.12.1",
+    "@whatwg-node/promise-helpers": "^2.0.1",
     "http-cache-semantics": "^4.3.0",
     "tslib": "^2.4.0"
   },
@@ -46,7 +47,7 @@
     "@graphql-hive/gateway": "^2.11.2",
     "@graphql-mesh/runtime": "^0.109.3",
     "@types/http-cache-semantics": "4.2.0",
-    "@whatwg-node/server": "^0.11.0",
+    "@whatwg-node/server": "^0.13.2",
     "graphql": "16.14.0"
   },
   "publishConfig": {

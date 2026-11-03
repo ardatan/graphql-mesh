@@ -38,7 +38,7 @@ export function createDeleteEntitySetByIdentifierResolver({
           args,
           context,
           info,
-          env: process.env,
+          env: globalThis.process?.env,
         },
         method,
       ),

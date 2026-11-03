@@ -30,14 +30,10 @@ export default class WrapFilter implements Transform {
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
       const typeMatcher = new Minimatch(typeName);
 
-      // TODO: deprecate this in next major release as dscussed in #1605
       if (!fieldNameOrGlob) {
-        this.transforms.push(
-          new FilterTypes(type => {
-            return typeMatcher.match(type.name);
-          }) as any,
+        throw new Error(
+          `Type-only filter "${filter}" is no longer supported. Use "Type.${filter}" instead.`,
         );
-        continue;
       }
 
       let fixedFieldGlob = argsGlob || fieldNameOrGlob;

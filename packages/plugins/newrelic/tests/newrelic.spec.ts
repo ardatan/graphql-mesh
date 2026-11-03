@@ -1,12 +1,14 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import { createMeshHTTPHandler, type MeshHTTPHandler } from '@graphql-mesh/http';
 import type { MeshInstance } from '@graphql-mesh/runtime';
-import { defaultImportFn, DefaultLogger, PubSub } from '@graphql-mesh/utils';
+import { defaultImportFn } from '@graphql-mesh/utils';
 import { TestAgent } from '@newrelic/test-utilities';
 import { getTestMesh } from '../../../legacy/testing/getTestMesh.js';
-import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 import useMeshNewRelic from '../src/index.js';
 
 describe('New Relic', () => {
@@ -14,18 +16,17 @@ describe('New Relic', () => {
   let helper: any;
   let httpHandler: MeshHTTPHandler;
   using cache = new InMemoryLRUCache();
-  const pubsub = new PubSub();
+  const pubsub = new MemPubSub();
   const baseDir = __dirname;
   beforeAll(async () => {
     helper = TestAgent.makeInstrumented();
     mesh = await getTestMesh({
-      logger,
+      log,
       cache,
       pubsub,
       additionalEnvelopPlugins: [
         useMeshNewRelic(
           {
-            logger,
             cache,
             pubsub,
             baseDir,

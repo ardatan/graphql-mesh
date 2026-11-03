@@ -1,6 +1,6 @@
 /* eslint-disable no-new */
 import Redis from 'ioredis';
-import { dummyLogger as logger } from '../../../testing/dummyLogger';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
 import { buildIamRedisOptions, generateIamToken, setupIamAuthForCluster } from '../src/iam.js';
 import RedisCache from '../src/index.js';
 
@@ -35,9 +35,7 @@ jest.mock('@smithy/signature-v4', () => ({
 jest.mock('@aws-sdk/credential-providers', () => ({
   fromNodeProviderChain: jest
     .fn()
-    .mockReturnValue(() =>
-      Promise.resolve({ accessKeyId: 'AKIA_TEST', secretAccessKey: 'secret' }),
-    ),
+    .mockReturnValue(async () => ({ accessKeyId: 'AKIA_TEST', secretAccessKey: 'secret' })),
 }));
 
 jest.mock('@aws-crypto/sha256-js', () => ({
@@ -63,29 +61,29 @@ describe('redis', () => {
     let redisPortEnv: string;
     let redisPasswordEnv: string;
     beforeAll(() => {
-      redisUrlEnv = process.env.REDIS_URL;
-      redisHostEnv = process.env.REDIS_HOST;
-      redisPortEnv = process.env.REDIS_PORT;
-      redisPasswordEnv = process.env.REDIS_PASSWORD;
-      delete process.env.REDIS_URL;
-      delete process.env.REDIS_HOST;
-      delete process.env.REDIS_PORT;
-      delete process.env.REDIS_PASSWORD;
+      redisUrlEnv = globalThis.process?.env?.REDIS_URL;
+      redisHostEnv = globalThis.process?.env?.REDIS_HOST;
+      redisPortEnv = globalThis.process?.env?.REDIS_PORT;
+      redisPasswordEnv = globalThis.process?.env?.REDIS_PASSWORD;
+      delete globalThis.process?.env?.REDIS_URL;
+      delete globalThis.process?.env?.REDIS_HOST;
+      delete globalThis.process?.env?.REDIS_PORT;
+      delete globalThis.process?.env?.REDIS_PASSWORD;
     });
     afterAll(() => {
-      process.env.REDIS_URL = redisUrlEnv;
-      process.env.REDIS_HOST = redisHostEnv;
-      process.env.REDIS_PORT = redisPortEnv;
-      process.env.REDIS_PASSWORD = redisPasswordEnv;
+      globalThis.process!.env!.REDIS_URL = redisUrlEnv;
+      globalThis.process!.env!.REDIS_HOST = redisHostEnv;
+      globalThis.process!.env!.REDIS_PORT = redisPortEnv;
+      globalThis.process!.env!.REDIS_PASSWORD = redisPasswordEnv;
     });
     it('never call Redis constructor if no config is provided', async () => {
-      using redis = new RedisCache({ logger });
+      using redis = new RedisCache({ log });
 
       expect(Redis).toHaveBeenCalledTimes(0);
     });
 
     it('passes configuration to redis client with default options, url case', async () => {
-      using redis = new RedisCache({ url: 'redis://password@localhost:6379', logger });
+      using redis = new RedisCache({ url: 'redis://password@localhost:6379', log });
 
       expect(Redis).toHaveBeenCalledWith(
         'redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
@@ -96,7 +94,7 @@ describe('redis', () => {
       using redis = new RedisCache({
         url: 'redis://password@localhost:6379',
         lazyConnect: false,
-        logger,
+        log,
       });
 
       expect(Redis).toHaveBeenCalledWith(
@@ -108,7 +106,7 @@ describe('redis', () => {
       using redis = new RedisCache({
         url: 'redis://password@localhost:6379',
         lazyConnect: true,
-        logger,
+        log,
       });
 
       expect(Redis).toHaveBeenCalledWith(
@@ -121,7 +119,7 @@ describe('redis', () => {
         port: '6379',
         password: 'testpassword',
         host: 'localhost',
-        logger,
+        log,
       });
 
       expect(Redis).toHaveBeenCalledWith({
@@ -140,7 +138,7 @@ describe('redis', () => {
         password: 'testpassword',
         host: 'localhost',
         lazyConnect: false,
-        logger,
+        log,
       });
 
       expect(Redis).toHaveBeenCalledWith({
@@ -157,7 +155,7 @@ describe('redis', () => {
         url: 'redis://localhost:6379',
         host: 'ignoreme',
         port: '9999',
-        logger,
+        log,
       });
 
       expect(Redis).toHaveBeenCalledWith(
@@ -169,7 +167,7 @@ describe('redis', () => {
       'throws an error if protocol does not match [%s]',
       protocol => {
         expect(() => {
-          using redis = new RedisCache({ url: `${protocol}localhost:6379`, logger });
+          using redis = new RedisCache({ url: `${protocol}localhost:6379`, log });
         }).toThrow('Redis URL must use either redis:// or rediss://');
       },
     );
@@ -177,21 +175,21 @@ describe('redis', () => {
 
   describe('String interpolation', () => {
     beforeAll(() => {
-      process.env.REDIS_URL = 'redis://myredis.com:9876';
-      process.env.REDIS_HOST = 'myredis.com';
-      process.env.REDIS_PORT = '9876';
-      process.env.REDIS_PASSWORD = 'myredispassword';
+      globalThis.process!.env!.REDIS_URL = 'redis://myredis.com:9876';
+      globalThis.process!.env!.REDIS_HOST = 'myredis.com';
+      globalThis.process!.env!.REDIS_PORT = '9876';
+      globalThis.process!.env!.REDIS_PASSWORD = 'myredispassword';
     });
     afterAll(() => {
-      delete process.env.REDIS_URL;
-      delete process.env.REDIS_HOST;
-      delete process.env.REDIS_PORT;
-      delete process.env.REDIS_PASSWORD;
+      delete globalThis.process?.env?.REDIS_URL;
+      delete globalThis.process?.env?.REDIS_HOST;
+      delete globalThis.process?.env?.REDIS_PORT;
+      delete globalThis.process?.env?.REDIS_PASSWORD;
     });
     it('supports string interpolation for url', async () => {
       using redis = new RedisCache({
         url: '{env.REDIS_URL}',
-        logger,
+        log,
       });
       expect(Redis).toHaveBeenCalledWith(
         'redis://myredis.com:9876?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
@@ -202,7 +200,7 @@ describe('redis', () => {
         host: '{env.REDIS_HOST}',
         port: '{env.REDIS_PORT}',
         password: '{env.REDIS_PASSWORD}',
-        logger,
+        log,
       });
       expect(Redis).toHaveBeenCalledWith({
         enableAutoPipelining: true,
@@ -221,7 +219,7 @@ describe('redis', () => {
         host: 'my-cluster.abc123.use1.cache.amazonaws.com',
         port: '6379',
         username: 'iam-user-01',
-        logger,
+        log,
         iamAuth: {
           region: 'us-east-1',
           clusterName: 'my-cluster',
@@ -247,7 +245,7 @@ describe('redis', () => {
     it('passes Connector and tokenConnector to Redis when iamAuth is configured with url', async () => {
       using _redis = new RedisCache({
         url: 'rediss://iam-user-01@my-cluster.abc123.use1.cache.amazonaws.com:6379',
-        logger,
+        log,
         iamAuth: {
           region: 'us-east-1',
           clusterName: 'my-cluster',
@@ -388,7 +386,7 @@ describe('redis', () => {
         port: 6379,
         tokenConnector: {
           redisRef,
-          getToken: () => Promise.resolve(token),
+          getToken: async () => token,
         },
       });
 
@@ -416,7 +414,7 @@ describe('redis', () => {
         port: 6379,
         tokenConnector: {
           redisRef,
-          getToken: () => Promise.resolve(token),
+          getToken: async () => token,
         },
       });
 
@@ -444,7 +442,7 @@ describe('redis', () => {
 
   describe('methods', () => {
     it('get/set/delete', async () => {
-      using redis = new RedisCache({ logger });
+      using redis = new RedisCache({ log });
       const key = 'key';
       const value = 'value';
       await redis.set(key, value);
@@ -453,7 +451,7 @@ describe('redis', () => {
       await expect(redis.get(key)).resolves.toBeUndefined();
     });
     it('getKeysByPrefix', async () => {
-      using redis = new RedisCache({ logger });
+      using redis = new RedisCache({ log });
       const keys = ['foo1', 'foo2', 'foo3'];
       await Promise.all(keys.map((key, i) => redis.set(key, `value${i}`)));
       await expect(redis.getKeysByPrefix('foo')).resolves.toEqual(keys);

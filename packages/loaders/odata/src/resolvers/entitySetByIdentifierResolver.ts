@@ -52,7 +52,7 @@ export function createEntitySetByIdentifierResolver({
           args,
           context,
           info,
-          env: process.env,
+          env: globalThis.process?.env,
         },
         method,
       ),

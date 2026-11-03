@@ -1,25 +1,27 @@
 import type { GraphQLSchema } from 'graphql';
 import type { Pool } from 'mysql';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import type {
   ImportFn,
   MeshHandler,
   MeshHandlerOptions,
-  MeshPubSub,
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
 import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { getMySQLExecutor, loadGraphQLSchemaFromMySQL } from '@omnigraph/mysql';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export default class MySQLHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.MySQLHandler;
   private baseDir: string;
-  private pubsub: MeshPubSub;
+  private pubsub: PubSub;
   private importFn: ImportFn;
   private schemaProxy: StoreProxy<GraphQLSchema>;
+  private disposableResource?: Disposable | AsyncDisposable;
 
   constructor({
     name,
@@ -88,16 +90,18 @@ export default class MySQLHandler implements MeshHandler {
     });
 
     if (isDisposable(executor)) {
-      const id = this.pubsub.subscribe('destroy', () => {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        dispose(executor);
-        this.pubsub.unsubscribe(id);
-      });
+      this.disposableResource = executor;
     }
 
     return {
       schema,
       executor,
     };
+  }
+
+  [DisposableSymbols.asyncDispose]() {
+    if (this.disposableResource) {
+      return dispose(this.disposableResource);
+    }
   }
 }

@@ -2,12 +2,13 @@ import type { ASTNode, ConstDirectiveNode, DefinitionNode } from 'graphql';
 import { parse, visit } from 'graphql';
 import type { Driver } from 'neo4j-driver';
 import neo4j from 'neo4j-driver';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { Neo4JAuthOpts } from '@graphql-mesh/transport-neo4j';
 import {
   getDriverFromOpts,
   getExecutableSchemaFromTypeDefsAndDriver,
 } from '@graphql-mesh/transport-neo4j';
-import type { HivePubSub, Logger, MeshPubSub } from '@graphql-mesh/types';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
@@ -51,23 +52,23 @@ export interface LoadGraphQLSchemaFromNeo4JOpts {
   endpoint: string;
   database?: string;
   auth?: Neo4JAuthOpts;
-  pubsub?: MeshPubSub | HivePubSub;
-  logger?: Logger;
+  pubsub?: PubSub;
+  log?: Logger;
   driver?: Driver;
 }
 
 export async function loadGraphQLSchemaFromNeo4J(
   subgraphName: string,
-  { endpoint, auth, logger, pubsub, database = 'neo4j', driver }: LoadGraphQLSchemaFromNeo4JOpts,
+  { endpoint, auth, log, pubsub, database = 'neo4j', driver }: LoadGraphQLSchemaFromNeo4JOpts,
 ) {
-  logger?.info('Inferring the schema from the database: ', `"${database}"`);
+  log?.info('Inferring the schema from the database: ', `"${database}"`);
   let closeDriverAfter = false;
   if (!driver) {
     closeDriverAfter = !pubsub;
     driver = getDriverFromOpts({
       endpoint,
       auth,
-      logger,
+      log,
     });
   }
   polyfillStrReplaceAll();

@@ -1,40 +1,42 @@
 import type { GraphQLSchema } from 'graphql';
 import { buildSchema } from 'graphql';
+import { type Logger } from '@graphql-hive/logger';
+import type { PubSub } from '@graphql-hive/pubsub';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { GrpcTransportHelper } from '@graphql-mesh/transport-grpc';
 import type {
   ImportFn,
-  Logger,
   MeshFetch,
   MeshHandler,
   MeshHandlerOptions,
-  MeshPubSub,
   YamlConfig,
 } from '@graphql-mesh/types';
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import { loadGrpcSubgraph } from '@omnigraph/grpc';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 
 export default class GrpcHandler implements MeshHandler {
   private config: YamlConfig.GrpcHandler;
   private baseDir: string;
   private schemaWithAnnotationsProxy: StoreProxy<GraphQLSchema>;
-  private logger: Logger;
-  private pubsub: MeshPubSub;
+  private log: Logger;
+  private pubsub: PubSub;
   private fetchFn: MeshFetch;
   private importFn: ImportFn;
   private sourceName: string;
+  private transport?: GrpcTransportHelper;
 
   constructor({
     name,
     config,
     baseDir,
     store,
-    logger,
+    log,
     pubsub,
     importFn,
   }: MeshHandlerOptions<YamlConfig.GrpcHandler>) {
-    this.logger = logger;
+    this.log = log;
     this.config = config;
     this.baseDir = baseDir;
     this.schemaWithAnnotationsProxy = store.proxy(
@@ -49,42 +51,42 @@ export default class GrpcHandler implements MeshHandler {
   private getCachedNonExecutableSchema() {
     const interpolatedSource = this.config.source?.toString();
     if (interpolatedSource?.endsWith('.graphql')) {
-      this.logger.info(`Fetching GraphQL Schema with annotations`);
+      this.log.info(`Fetching GraphQL Schema with annotations`);
       return readFileOrUrl<string>(interpolatedSource, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
         fetch: this.fetchFn,
         importFn: this.importFn,
-        logger: this.logger,
+        log: this.log,
         headers: this.config.schemaHeaders,
       }).then(sdl => buildSchema(sdl, { assumeValidSDL: true, assumeValid: true }));
     }
     return this.schemaWithAnnotationsProxy.getWithSet(
       () =>
-        loadGrpcSubgraph(this.sourceName, this.config)({ cwd: this.baseDir, logger: this.logger })
+        loadGrpcSubgraph(this.sourceName, this.config)({ cwd: this.baseDir, log: this.log })
           .schema$,
     );
   }
 
   getMeshSource() {
-    const transport = new GrpcTransportHelper(
+    this.transport = new GrpcTransportHelper(
       this.sourceName,
       this.baseDir,
-      this.logger,
+      this.log,
       this.config.endpoint,
       this.config,
     );
-    const subId = this.pubsub.subscribe('destroy', () => {
-      transport.dispose();
-      this.pubsub.unsubscribe(subId);
-    });
-    return Promise.all([transport.getCredentials(), this.getCachedNonExecutableSchema()]).then(
+    return Promise.all([this.transport.getCredentials(), this.getCachedNonExecutableSchema()]).then(
       ([creds, schema]) => {
-        transport.processDirectives({ schema, creds });
+        this.transport!.processDirectives({ schema, creds });
         return {
           schema,
         };
       },
     );
+  }
+
+  [DisposableSymbols.dispose]() {
+    this.transport?.dispose();
   }
 }

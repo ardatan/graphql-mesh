@@ -1,46 +1,39 @@
 import { GraphQLInterfaceType, parse, type ExecutionResult } from 'graphql';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import { fs, path } from '@graphql-mesh/cross-helpers';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
-import type { KeyValueCache, MeshPubSub } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
+import type { KeyValueCache } from '@graphql-mesh/types';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { dummyLogger as logger } from '../../../../testing/dummyLogger.js';
+import { dummyLogger as log } from '../../../../testing/dummyLogger.js';
 import ODataHandler from '../src/index.js';
 import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
 
-const TripPinMetadata = fs.readFileSync(
-  path.resolve(__dirname, './fixtures/trippin-metadata.xml'),
-  'utf8',
-);
-const PersonMockData = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'),
-);
-const SimplePersonMockData = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, './fixtures/alice.json'), 'utf-8'),
-);
-const TripMockData = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, './fixtures/trip.json'), 'utf-8'),
-);
-const BasicMetadata = fs.readFileSync(
-  path.resolve(__dirname, './fixtures/simple-metadata.xml'),
-  'utf-8',
-);
-const BoundActionMetadata = fs.readFileSync(
-  path.resolve(__dirname, './fixtures/bound-action.xml'),
-  'utf-8',
-);
+function readFixture(relativePath: string) {
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!fs || !path) {
+    throw new Error('Node.js fs and path modules are required for OData handler tests');
+  }
+  return fs.readFileSync(path.resolve(__dirname, relativePath), 'utf8');
+}
+
+const TripPinMetadata = readFixture('./fixtures/trippin-metadata.xml');
+const PersonMockData = JSON.parse(readFixture('./fixtures/russellwhyte.json'));
+const SimplePersonMockData = JSON.parse(readFixture('./fixtures/alice.json'));
+const TripMockData = JSON.parse(readFixture('./fixtures/trip.json'));
+const BasicMetadata = readFixture('./fixtures/simple-metadata.xml');
+const BoundActionMetadata = readFixture('./fixtures/bound-action.xml');
 
 const baseDir = __dirname;
 const importFn = (id: string) => require(id);
 
 describe('odata', () => {
-  let pubsub: MeshPubSub;
+  let pubsub: PubSub;
   let store: MeshStore;
   beforeEach(() => {
-    pubsub = new PubSub();
+    pubsub = new MemPubSub();
     store = new MeshStore('odata', new InMemoryStoreStorageAdapter(), {
       readonly: false,
       validate: false,
@@ -63,7 +56,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -83,7 +76,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -106,7 +99,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -129,7 +122,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -167,7 +160,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -213,7 +206,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -268,7 +261,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -316,7 +309,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -362,7 +355,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -426,7 +419,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -475,7 +468,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -524,7 +517,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -580,7 +573,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -639,7 +632,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -697,7 +690,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -746,7 +739,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -796,7 +789,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
@@ -849,7 +842,7 @@ describe('odata', () => {
       store,
       baseDir,
       importFn,
-      logger,
+      log,
     });
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,

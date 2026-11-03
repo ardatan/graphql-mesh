@@ -5,7 +5,6 @@ import NAMES from 'newrelic/lib/metrics/names.js';
 import recordExternal from 'newrelic/lib/metrics/recorders/http_external.js';
 import cat from 'newrelic/lib/util/cat.js';
 import { useNewRelic } from '@envelop/newrelic';
-import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
@@ -24,7 +23,7 @@ export default function useMeshNewrelic(
   { instrumentationApi = newRelic?.shim, agentApi = newRelic }: any = {},
 ): MeshPlugin<any> & Plugin<any> {
   if (!instrumentationApi?.agent) {
-    options.logger.debug(
+    options.log?.debug(
       'Agent unavailable. Please check your New Relic Agent configuration and ensure New Relic is enabled.',
     );
     return {};
@@ -79,7 +78,7 @@ export default function useMeshNewrelic(
             ? context =>
                 stringInterpolator.parse(options.extractOperationName, {
                   context,
-                  env: process.env,
+                  env: globalThis.process?.env,
                 })
             : undefined,
         }),

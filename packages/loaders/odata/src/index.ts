@@ -22,9 +22,9 @@ import {
 } from 'graphql-scalars';
 import { pascalCase } from 'pascal-case';
 import urljoin from 'url-join';
-import { process } from '@graphql-mesh/cross-helpers';
+import { type Logger } from '@graphql-hive/logger';
 import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { ImportFn, Logger, MeshFetch } from '@graphql-mesh/types';
+import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import {
   AbstractTypeDirective,
@@ -60,7 +60,7 @@ export interface LoadGraphQLSchemaFromODataOpts {
   schemaHeaders?: Record<string, string>;
   operationHeaders?: Record<string, string>;
   fetchFn: MeshFetch;
-  logger: Logger;
+  log: Logger;
   importFn: ImportFn;
   batch?: 'none' | 'json' | 'multipart';
   expandNavProps?: boolean;
@@ -72,7 +72,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     endpoint: nonInterpolatedBaseUrl,
     operationHeaders,
     importFn,
-    logger,
+    log,
     fetchFn,
     source,
     baseDir,
@@ -83,7 +83,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
 ) {
   const eventEmitterSet = new Set<EventEmitter>();
   const endpoint = stringInterpolator.parse(nonInterpolatedBaseUrl, {
-    env: process.env,
+    env: globalThis.process?.env,
   });
 
   const schemaComposer = new SchemaComposer();
@@ -103,7 +103,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     cwd: baseDir,
     headers: schemaHeaders,
     fetch: fetchFn,
-    logger,
+    log,
     importFn,
   });
   const xmlParser = new XMLParser({
@@ -996,14 +996,14 @@ export { processDirectives };
 
 export function loadODataSubgraph(
   name: string,
-  options: Omit<LoadGraphQLSchemaFromODataOpts, 'logger' | 'fetchFn' | 'baseDir' | 'importFn'>,
+  options: Omit<LoadGraphQLSchemaFromODataOpts, 'log' | 'fetchFn' | 'baseDir' | 'importFn'>,
 ) {
-  return (ctx: { fetch: MeshFetch; cwd: string; logger: Logger }) => ({
+  return (ctx: { fetch: MeshFetch; cwd: string; log: Logger }) => ({
     name,
     schema$: loadNonExecutableGraphQLSchemaFromOData(name, {
       ...options,
       importFn: defaultImportFn,
-      logger: ctx.logger,
+      log: ctx.log,
       fetchFn: ctx.fetch,
       baseDir: ctx.cwd,
     }),

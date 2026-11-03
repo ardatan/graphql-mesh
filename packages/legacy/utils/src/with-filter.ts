@@ -1,4 +1,4 @@
-import { fakePromise } from '@graphql-tools/utils';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 
 export type FilterFn<TSource = any, TArgs = any, TContext = any> = (
   rootValue?: TSource,
@@ -31,34 +31,34 @@ export function withFilter<TSource = any, TArgs = any, TContext = any>(
     const asyncIterator = await asyncIteratorFn(rootValue, args, context, info);
 
     const getNextPromise = () => {
-      return new Promise<IteratorResult<any>>((resolve, reject) => {
-        const inner = () => {
-          asyncIterator
-            .next()
-            .then(payload => {
-              if (payload.done === true) {
-                resolve(payload);
-                return;
-              }
-              fakePromise(filterFn(payload.value, args, context, info))
-                .catch(() => false) // We ignore errors from filter function
-                .then(filterResult => {
-                  if (filterResult === true) {
-                    resolve(payload);
-                    return;
-                  }
-                  // Skip the current value and wait for the next one
-                  inner();
-                })
-                .catch(() => false); // We ignore errors from filter function;
-            })
-            .catch(err => {
-              reject(err);
-            });
-        };
+      const { promise, resolve, reject } = Promise.withResolvers<IteratorResult<any>>();
+      const inner = () => {
+        asyncIterator
+          .next()
+          .then(payload => {
+            if (payload.done === true) {
+              resolve(payload);
+              return;
+            }
+            fakePromise(filterFn(payload.value, args, context, info))
+              .catch(() => false) // We ignore errors from filter function
+              .then(filterResult => {
+                if (filterResult === true) {
+                  resolve(payload);
+                  return;
+                }
+                // Skip the current value and wait for the next one
+                inner();
+              })
+              .catch(() => false); // We ignore errors from filter function;
+          })
+          .catch(err => {
+            reject(err);
+          });
+      };
 
-        inner();
-      });
+      inner();
+      return promise;
     };
 
     const asyncIterator2: AsyncIterableIterator<any> = {

@@ -5,15 +5,15 @@ import unzip, { Entry } from 'unzip-stream';
 
 async function downloadFhirSchema() {
   const res = await fetch('https://www.hl7.org/fhir/fhir.schema.json.zip');
-  await new Promise((resolve, reject) => {
-    res.body
-      .pipe(unzip.Parse())
-      .on('entry', (entry: Entry) =>
-        entry.pipe(createWriteStream(join(__dirname, `../${entry.path}`))),
-      )
-      .on('finish', resolve);
-    res.body.on('error', reject);
-  });
+  const { promise, resolve, reject } = Promise.withResolvers<void>();
+  res.body
+    .pipe(unzip.Parse())
+    .on('entry', (entry: Entry) =>
+      entry.pipe(createWriteStream(join(__dirname, `../${entry.path}`))),
+    )
+    .on('finish', resolve);
+  res.body.on('error', reject);
+  await promise;
 }
 
 downloadFhirSchema().catch(e => {

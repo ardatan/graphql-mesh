@@ -1,21 +1,16 @@
 import { paramCase } from 'param-case';
-import { path } from '@graphql-mesh/cross-helpers';
-import type { MeshStore } from '@graphql-mesh/store';
-import type {
-  ImportFn,
-  KeyValueCache,
-  Logger,
-  MeshFetch,
-  MeshPubSub,
-  YamlConfig,
-} from '@graphql-mesh/types';
-import { DefaultLogger, parseWithCache, PubSub } from '@graphql-mesh/utils';
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
+import type { ImportFn, KeyValueCache, MeshFetch, YamlConfig } from '@graphql-mesh/types';
+import { parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import type { Source as GraphQLToolsSource } from '@graphql-tools/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { crypto, fetch as defaultFetch, TextEncoder } from '@whatwg-node/fetch';
+import { fetch as defaultFetch, TextEncoder } from '@whatwg-node/fetch';
+
+const crypto = globalThis.crypto;
 
 type ResolvedPackage<T> = {
   moduleName: string;
@@ -57,6 +52,10 @@ export async function getPackage<T>({
   }
   if (name.includes('-')) {
     possibleNames.push(name);
+  }
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!path) {
+    throw new Error('Node.js path module is required to resolve Mesh packages');
   }
   const possibleModules = possibleNames.concat(path.resolve(cwd, name));
 
@@ -105,14 +104,12 @@ export async function resolveCustomFetch({
   fetchConfig,
   importFn,
   cwd,
-  cache,
   additionalPackagePrefixes,
 }: {
   fetchConfig?: string;
   importFn: ImportFn;
   cwd: string;
   additionalPackagePrefixes: string[];
-  cache: KeyValueCache;
 }): Promise<{
   fetchFn: MeshFetch;
   code: string;
@@ -131,6 +128,10 @@ export async function resolveCustomFetch({
     additionalPrefixes: additionalPackagePrefixes,
   });
 
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!path) {
+    throw new Error('Node.js path module is required to resolve custom fetch');
+  }
   const processedModuleName = moduleName.startsWith('.') ? path.join('..', moduleName) : moduleName;
   const code = `const fetchFn = await import(${JSON.stringify(processedModuleName)}).then(m => m?.fetch || m);`;
 
@@ -145,10 +146,8 @@ export async function resolveCache(
     localforage: {},
   },
   importFn: ImportFn,
-  rootStore: MeshStore,
   cwd: string,
-  pubsub: MeshPubSub,
-  logger: Logger,
+  log: Logger,
   additionalPackagePrefixes: string[],
 ): Promise<{
   cache: KeyValueCache;
@@ -165,21 +164,21 @@ export async function resolveCache(
     additionalPrefixes: additionalPackagePrefixes,
   });
 
+  // Only pass what cache implementations still read:
+  // - importFn: file cache
+  // - log: redis / cfw-kv diagnostics
+  // (pubsub/store/disposables are unused after destroy-pubsub → DisposableSymbols)
   const cache = new Cache({
     ...config,
     importFn,
-    store: rootStore.child('cache'),
-    pubsub,
-    logger,
+    log,
   });
 
   const code = `const MeshCache = await import(${JSON.stringify(moduleName)}).then(handleImport);
   const cache = new MeshCache({
       ...${JSON.stringify(config)},
       importFn,
-      store: rootStore.child('cache'),
-      pubsub,
-      logger,
+      log,
     })`;
 
   return {
@@ -196,7 +195,7 @@ export async function resolvePubSub(
 ): Promise<{
   code: string;
   importCode: string;
-  pubsub: MeshPubSub;
+  pubsub: PubSub;
 }> {
   if (pubsubYamlConfig) {
     let pubsubName: string;
@@ -208,7 +207,7 @@ export async function resolvePubSub(
       pubsubConfig = pubsubYamlConfig.config;
     }
 
-    const { moduleName, resolved: PubSub } = await getPackage<any>({
+    const { moduleName, resolved: PubSubCtor } = await getPackage<any>({
       name: pubsubName,
       type: 'pubsub',
       importFn,
@@ -216,7 +215,7 @@ export async function resolvePubSub(
       additionalPrefixes: additionalPackagePrefixes,
     });
 
-    const pubsub = new PubSub(pubsubConfig);
+    const pubsub = new PubSubCtor(pubsubConfig);
 
     const code = `const PubSub = await import(${JSON.stringify(moduleName)}).then(handleImport);
     const pubsub = new PubSub(${JSON.stringify(pubsubConfig)});`;
@@ -227,13 +226,13 @@ export async function resolvePubSub(
       pubsub,
     };
   } else {
-    const pubsub = new PubSub();
+    const pubsub = new MemPubSub();
 
-    const code = `const pubsub = new PubSub();`;
+    const code = `const pubsub = new MemPubSub();`;
 
     return {
       code,
-      importCode: `import { PubSub } from '@graphql-mesh/utils';`,
+      importCode: `import { MemPubSub } from '@graphql-hive/pubsub';`,
       pubsub,
     };
   }
@@ -262,10 +261,10 @@ export async function resolveLogger(
 ): Promise<{
   importCode: string;
   code: string;
-  logger: Logger;
+  log: Logger;
 }> {
   if (loggerConfig) {
-    const { moduleName, resolved: logger } = await getPackage<Logger>({
+    const { moduleName, resolved: log } = await getPackage<Logger>({
       name: loggerConfig,
       type: 'logger',
       importFn,
@@ -273,21 +272,25 @@ export async function resolveLogger(
       additionalPrefixes: additionalPackagePrefixes,
     });
 
+    const path = globalThis.process?.getBuiltinModule?.('node:path');
+    if (!path) {
+      throw new Error('Node.js path module is required to resolve logger');
+    }
     const processedModuleName = moduleName.startsWith('.')
       ? path.join('..', moduleName)
       : moduleName;
 
     return {
-      logger,
+      log,
       importCode: ``,
-      code: `const logger = await import(${JSON.stringify(processedModuleName)}).then(handleImport);`,
+      code: `const log = await import(${JSON.stringify(processedModuleName)}).then(handleImport);`,
     };
   }
-  const logger = new DefaultLogger(initialLoggerPrefix);
+  const log = new Logger({ prefix: initialLoggerPrefix });
   return {
-    logger,
-    importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
-    code: `const logger = new DefaultLogger(${JSON.stringify(initialLoggerPrefix)});`,
+    log,
+    importCode: `import { Logger } from '@graphql-hive/logger';`,
+    code: `const log = new Logger({ prefix: ${JSON.stringify(initialLoggerPrefix)} });`,
   };
 }
 
