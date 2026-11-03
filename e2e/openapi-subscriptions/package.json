@@ -5,7 +5,7 @@
     "@graphql-hive/gateway": "^2.11.2",
     "fets": "^0.8.8",
     "graphql": "16.14.0",
-    "graphql-sse": "^2.5.3",
+    "graphql-sse": "^2.6.3",
     "url-join": "^5.0.0"
   }
 }

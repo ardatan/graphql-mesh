@@ -44,7 +44,7 @@
     "@whatwg-node/disposablestack": "^0.0.6",
     "globby": "^11.1.0",
     "graphql-compose": "^9.1.0",
-    "graphql-scalars": "^1.23.0",
+    "graphql-scalars": "^2.0.1",
     "lodash.has": "^4.5.2",
     "micromatch": "^4.0.8",
     "protobufjs": "^7.6.5"

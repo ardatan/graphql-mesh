@@ -13,7 +13,7 @@
     "@graphql-mesh/incontext-sdk-codegen": "^0.3.3",
     "@omnigraph/openapi": "^0.112.7",
     "graphql": "16.14.0",
-    "graphql-scalars": "^1.25.0",
+    "graphql-scalars": "^2.0.1",
     "json-bigint-patch": "^0.0.9",
     "typescript": "^6.0.3"
   }
