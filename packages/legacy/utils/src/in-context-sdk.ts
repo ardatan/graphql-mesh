@@ -117,6 +117,13 @@ export function getInContextSDK(
                 },
               },
               variableValues: {},
+              // Required by GraphQLResolveInfo augmentation from @graphql-tools/utils v13+
+              // (via @graphql-mesh/hmac-upstream-signature / executor).
+              getAbortSignal: () => undefined,
+              getAsyncHelpers: () => ({
+                promiseAll: Promise.all.bind(Promise),
+                track: () => undefined,
+              }),
             },
             selectionSet,
             key,
