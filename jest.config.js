@@ -6,6 +6,19 @@ const { readFileSync } = require('fs');
 const { platform } = require('os');
 
 const ROOT_DIR = __dirname;
+
+// yargs@18 is ESM-only; materialize CJS bundles for Jest when missing.
+{
+  const { existsSync } = require('fs');
+  const { execFileSync } = require('child_process');
+  const yargsBundle = resolve(ROOT_DIR, 'scripts/jest/yargs-bundle.cjs');
+  if (!existsSync(yargsBundle)) {
+    execFileSync(process.execPath, [resolve(ROOT_DIR, 'scripts/jest/bundle-yargs.mjs')], {
+      stdio: 'inherit',
+      cwd: ROOT_DIR,
+    });
+  }
+}
 const TSCONFIG = resolve(ROOT_DIR, 'tsconfig.json');
 const tsconfigStr = readFileSync(TSCONFIG, 'utf8');
 const tsconfig = JSON5.parse(tsconfigStr);

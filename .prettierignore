@@ -13,3 +13,6 @@ CHANGELOG.md
 Dockerfile
 bundle/
 examples/v1-next/integrations/fastify/supergraph.graphql
+
+# Generated yargs CJS shims for Jest (see scripts/jest/bundle-yargs.mjs)
+scripts/jest/*.cjs

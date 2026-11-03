@@ -53,7 +53,7 @@
     "postbuild": "yarn inject-version && yarn copy-config-schema && yarn fix-bin && tsx scripts/replace-import-meta-url-in-cjs.ts",
     "postchangeset": "yarn install --no-immutable",
     "postgenerate-config-schema": "node scripts/create-config-schema-ts.js && npx prettier --write ./packages/legacy/types/src",
-    "prebuild": "yarn clean && yarn generate-config-schema",
+    "prebuild": "yarn clean && yarn generate-config-schema && yarn bundle:yargs-jest",
     "prettier": "prettier --write --list-different .",
     "prettier:check": "prettier --check .",
     "release": "yarn build && changeset publish",
