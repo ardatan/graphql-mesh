@@ -38,7 +38,7 @@
     "@ardatan/grpc-reflection-js": "^0.0.2",
     "@graphql-hive/logger": "^1.1.1",
     "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/transport-common": "^1.0.20",
+    "@graphql-mesh/transport-common": "^1.1.1",
     "@graphql-tools/load-files": "^8.0.8",
     "@graphql-tools/utils": "^13.2.1",
     "@grpc/grpc-js": "^1.14.5",

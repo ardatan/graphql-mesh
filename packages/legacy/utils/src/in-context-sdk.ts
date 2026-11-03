@@ -37,7 +37,7 @@ import {
   memoize1,
 } from '@graphql-tools/utils';
 import { WrapQuery } from '@graphql-tools/wrap';
-import { handleMaybePromise, iterateAsync } from '@whatwg-node/promise-helpers';
+import { handleMaybePromise, isPromise, iterateAsync } from '@whatwg-node/promise-helpers';
 import { parseWithCache } from './parseAndPrintWithCache.js';
 
 export const MESH_API_CONTEXT_SYMBOL = Symbol('isMeshAPIContext');
@@ -117,6 +117,22 @@ export function getInContextSDK(
                 },
               },
               variableValues: {},
+              // Match @graphql-tools/executor buildResolveInfo helpers (GraphQL 17 / utils v13+).
+              getAbortSignal: () => context?.request?.signal,
+              getAsyncHelpers: () => ({
+                promiseAll: Promise.all.bind(Promise),
+                track: maybePromises => {
+                  const waitUntil = context?.waitUntil;
+                  if (typeof waitUntil !== 'function') {
+                    return;
+                  }
+                  for (const value of maybePromises) {
+                    if (isPromise(value)) {
+                      waitUntil(value);
+                    }
+                  }
+                },
+              }),
             },
             selectionSet,
             key,

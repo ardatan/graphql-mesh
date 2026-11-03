@@ -25,21 +25,18 @@ index fad44a8927d292bd99e73e5767cf7cc7b47db7ad..9df1bfb37df57d52359f2b6e5f66a53e
  };
  
 diff --git a/dist/index.js b/dist/index.js
-index 1c681150fdb3a0cac0b3198abde904ecf534e4bd..5d450320a963abd59f9cbdf8f97ef95fc45a1015 100644
+index 1c681150fdb3a0cac0b3198abde904ecf534e4bd..b574d40bd16f0f18dd0dd4cee82197836a7934ed 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -1,10 +1,10 @@
+@@ -1,7 +1,7 @@
  import { process } from '@graphql-mesh/cross-helpers';
  import { getInterpolatedStringFactory, getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
  import { abortSignalAny } from '@graphql-mesh/transport-common';
 -import { makeDisposable } from '@graphql-mesh/utils';
++import { DisposableSymbols } from '@whatwg-node/disposablestack';
  import { serializeExecutionRequest } from '@graphql-tools/executor-common';
  import { createGraphQLError } from '@graphql-tools/utils';
  import { Repeater } from '@repeaterjs/repeater';
-+import { DisposableSymbols } from '@whatwg-node/disposablestack';
- import { crypto } from '@whatwg-node/fetch';
- import { handleMaybePromise } from '@whatwg-node/promise-helpers';
- 
 @@ -253,7 +253,8 @@ var index = {
          clearTimeout(interval);
        }
@@ -51,18 +48,22 @@ index 1c681150fdb3a0cac0b3198abde904ecf534e4bd..5d450320a963abd59f9cbdf8f97ef95f
  };
  
 diff --git a/package.json b/package.json
-index d0355b360e8aa5b97ebf0c873236b68f4c9ee203..8a0e1c9bcfdce7ee214333160904739cd8c0dfba 100644
+index 5cb21e5e264ba055722a0e7219640fb076581677..c53e7cb47c90b5afed78caba19d14f5f50400c1c 100644
 --- a/package.json
 +++ b/package.json
-@@ -47,10 +47,10 @@
-     "@graphql-mesh/string-interpolation": "^0.5.16",
-     "@graphql-mesh/transport-common": "^1.0.20",
-     "@graphql-mesh/types": "^0.105.0",
--    "@graphql-mesh/utils": "^0.104.38",
-     "@graphql-tools/executor-common": "^1.0.6",
-     "@graphql-tools/utils": "^11.0.0",
+@@ -47,13 +47,13 @@
+     "@graphql-mesh/string-interpolation": "^0.5.18",
+     "@graphql-mesh/transport-common": "^1.1.1",
+     "@graphql-mesh/types": "^0.107.1",
+-    "@graphql-mesh/utils": "^0.107.1",
+     "@graphql-tools/executor-common": "^1.1.0",
+     "@graphql-tools/utils": "^12.0.1",
      "@repeaterjs/repeater": "^3.0.6",
-+    "@whatwg-node/disposablestack": "^0.0.6",
      "@whatwg-node/fetch": "^0.10.13",
      "@whatwg-node/promise-helpers": "^1.3.2",
-     "tslib": "^2.8.1"
+-    "tslib": "^2.8.1"
++    "tslib": "^2.8.1",
++    "@whatwg-node/disposablestack": "^0.0.6"
+   },
+   "devDependencies": {
+     "graphql": "^16.12.0",

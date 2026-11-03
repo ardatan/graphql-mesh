@@ -1,5 +1,5 @@
 import type { CORSOptions } from 'graphql-yoga';
-import { createYoga, useLogger } from 'graphql-yoga';
+import { createYoga } from 'graphql-yoga';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import { memoize1 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
@@ -29,17 +29,7 @@ export const graphqlHandler = ({
 }) => {
   const getYogaForMesh = memoize1(function getYogaForMesh(mesh: MeshInstance) {
     const yogaOptions: Parameters<typeof createYoga>[0] = {
-      plugins: [
-        ...mesh.plugins,
-        useLogger({
-          skipIntrospection: true,
-          logFn: (eventName, { args }) => {
-            if (eventName.endsWith('-start')) {
-              mesh.log.debug(`\t headers: `, args.contextValue.headers);
-            }
-          },
-        }),
-      ],
+      plugins: [...mesh.plugins],
       extraParamNames,
       logging: mesh.log,
       // whatwg-node fetch no longer re-exports `crypto`; platform crypto is required
