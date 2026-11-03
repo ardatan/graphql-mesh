@@ -7,11 +7,12 @@ export function getEventEmitterFromPubSub(pubsub: PubSub) {
   return {
     on(event: string | symbol, listener: (...args: any[]) => void) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      fakePromise(pubsub.subscribe(event.toString(), listener));
+      pubsub.subscribe(event.toString(), listener);
       return this;
     },
     once(event: string | symbol, listener: (...args: any[]) => void) {
       let called = false;
+      // subscribe may return MaybePromise<unsubscribe>; normalize only where .then is needed
       const unsubPromise = fakePromise(
         pubsub.subscribe(event.toString(), data => {
           if (called) {
@@ -20,7 +21,11 @@ export function getEventEmitterFromPubSub(pubsub: PubSub) {
           called = true;
           listener(data);
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          unsubPromise.then(unsub => unsub());
+          unsubPromise.then(unsub => {
+            if (typeof unsub === 'function') {
+              return unsub();
+            }
+          });
         }),
       );
 
