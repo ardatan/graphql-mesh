@@ -2,17 +2,21 @@
 "@graphql-mesh/transport-neo4j": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-Neo4j event bridging no longer wraps every `pubsub.publish` in `fakePromise` (unnecessary microtasks) and must not double-deliver `once` handlers. Driver close is asyncDispose.
+Wrapping every `pubsub.publish` in `fakePromise` added microtasks without benefit and `once` handlers could double-fire. Driver close belongs on asyncDispose with Hive PubSub used directly.
 
-## What changed in this package
+## What changed
 
-- Call `pubsub.publish` directly; guard `once` against double delivery
-- Use Hive `PubSub` from `@graphql-hive/pubsub`
-- Executor exposes `[DisposableSymbols.asyncDispose]` for driver close
+- `pubsub.publish` called directly; `once` guarded against double delivery
+- Hive `PubSub` from `@graphql-hive/pubsub`
+- Executor `[DisposableSymbols.asyncDispose]` closes the driver
+
+## How to migrate
+
+Pass a Hive PubSub into the executor; dispose via `await using` / Gateway stack.
 
 #### Example
 ```ts

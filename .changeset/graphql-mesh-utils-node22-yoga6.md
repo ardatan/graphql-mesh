@@ -2,18 +2,24 @@
 "@graphql-mesh/utils": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-Utils was a dumping ground for Mesh Logger, Mesh PubSub, and promise-helper re-exports. Consumers upgrading to Yoga 6 already depend on Hive/WHATWG packages; keeping Mesh copies caused duplicate types and a fake "default logger" path in fetch hooks.
+Utils re-exported Mesh Logger, Mesh PubSub, and WHATWG promise helpers, and `wrapFetchWithHooks` accepted a **default logger** argument so fetch hooks could log without Yoga context. After Yoga 6, that default path fought `context.log` (wrong logger identity, missing request children) and duplicated Hive/WHATWG packages in every consumer bundle.
 
-## What changed in this package
+## What changed
 
-- Remove Mesh `Logger` / `DefaultLogger`, Mesh PubSub implementation, and `PubSub` / `MemPubSub` / `HivePubSub` re-exports
-- Remove `handleMaybePromise` / `MaybePromise` / `mapMaybePromise` re-exports — import from `@whatwg-node/promise-helpers`
-- Keep `isDisposable` / `dispose` / `makeAsyncDisposable`; drop unused `createDisposable` / `createAsyncDisposable` / `makeDisposable`
-- `wrapFetchWithHooks` no longer takes a default logger argument; `OnFetchHookPayload.log` resolves from `context.log` (with a Hive `Logger` fallback)
+- Delete Mesh `Logger` / `DefaultLogger`, Mesh PubSub implementation, and `PubSub` / `MemPubSub` / `HivePubSub` re-exports
+- Delete `handleMaybePromise` / `MaybePromise` / `mapMaybePromise` re-exports
+- Keep `isDisposable` / `dispose` / `makeAsyncDisposable`; remove unused `createDisposable` / `createAsyncDisposable` / `makeDisposable`
+- `wrapFetchWithHooks(hooks, instrumentation?)` — **no** default logger argument; payload `log` resolves from `context.log` (Hive `Logger` fallback)
+
+## How to migrate
+
+1. Grep for `@graphql-mesh/utils` imports of Logger/PubSub/handleMaybePromise and point them at Hive/WHATWG.
+2. Remove the third argument from `wrapFetchWithHooks(...)`.
+3. In custom `onFetch` hooks, prefer `context.log?.child(...)` (or the payload `log` getter, which already derives from context).
 
 #### Example
 ```ts
@@ -27,5 +33,5 @@ import { MemPubSub } from '@graphql-hive/pubsub'
 // wrapFetchWithHooks(hooks, instrumentation, defaultLogger)
 
 const fetchFn = wrapFetchWithHooks(hooks)
-// onFetch payload.log === context.log.child('fetch') when Yoga/Gateway provides context.log
+// OnFetchHookPayload.log ≈ context.log.child('fetch') when context.log exists
 ```

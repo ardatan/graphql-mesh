@@ -2,16 +2,21 @@
 "@omnigraph/openapi": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-A module-level `futureLinks` set leaked HATEOAS link state across loads/tests and prevented concurrent OpenAPI loads from isolating link tracking. Link state belongs to the load/context.
+Module-level `futureLinks` shared HATEOAS link state across loads — tests polluted each other and concurrent `load*` calls could see each other’s links. Link tracking is now scoped to the load/context (`HATEOASContext` / local set).
 
-## What changed in this package
+## What changed
 
-- Remove global `futureLinks` export; HATEOAS link state stays on `HATEOASContext` (or a local set)
-- Use `@graphql-hive/logger` directly; drop Mesh cross-helpers / logger re-exports
+- Global `futureLinks` export removed
+- Hive `Logger` dependency; no Mesh cross-helpers / logger re-exports
+
+## How to migrate
+
+1. Delete imports of `futureLinks` from `@omnigraph/openapi`.
+2. If you relied on inspecting that set, hook link state through your load options/context instead.
 
 #### Example
 ```ts

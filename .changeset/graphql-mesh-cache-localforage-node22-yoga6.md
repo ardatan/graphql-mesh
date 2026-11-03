@@ -2,16 +2,20 @@
 "@graphql-mesh/cache-localforage": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-Localforage forwarded `pubsub` only so its InMemoryLRU fallback could subscribe to destroy. With that gone, the option is dead weight on both constructors.
+Localforage only accepted `pubsub` to forward it into the InMemoryLRU fallback for destroy cleanup. That path is gone, so the option is removed from both constructors.
 
-## What changed in this package
+## What changed
 
-- Drop unused `pubsub` constructor option
-- Unsupported-driver fallback is `new InMemoryLRUCache()` with no pubsub
+- `pubsub` constructor option removed
+- Driver-unsupported fallback: `new InMemoryLRUCache()` with no pubsub
+
+## How to migrate
+
+Remove `pubsub` from `new LocalforageCache({ ... })` and from YAML-driven cache options if you injected it manually.
 
 #### Example
 ```ts

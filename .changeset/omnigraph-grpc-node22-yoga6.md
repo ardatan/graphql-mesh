@@ -2,16 +2,20 @@
 "@omnigraph/grpc": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-Invalid `includeDirs` used `return Promise.reject`, which is hard to catch at the call site. Throwing (or rejecting the load promise normally) matches other loaders.
+Invalid `includeDirs` used `return Promise.reject`, which is awkward at call sites and inconsistent with other Omnigraph loaders that throw. Failing loudly simplifies loader composition.
 
-## What changed in this package
+## What changed
 
-- Throw instead of `return Promise.reject` for invalid `includeDirs`
-- Drop `@graphql-mesh/cross-helpers`; use `globalThis.process?.getBuiltinModule` at call sites
+- Invalid `includeDirs` throws instead of `return Promise.reject`
+- No cross-helpers; `getBuiltinModule` at call sites
+
+## How to migrate
+
+Prefer try/catch around `loadGraphQLSchemaFromGrpc`; update tests expecting a returned rejected promise.
 
 #### Example
 ```ts
@@ -20,6 +24,5 @@ import { loadGraphQLSchemaFromGrpc } from '@omnigraph/grpc'
 const schema = await loadGraphQLSchemaFromGrpc('Grpc', {
   source: './service.proto',
   endpoint: 'localhost:50051',
-  // invalid includeDirs now fails loudly via throw / rejected load
 })
 ```

@@ -2,17 +2,23 @@
 "@graphql-mesh/cache-redis": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-Redis used destroy-pubsub (and briefly a disposables option) to quit the client. Explicit dispose is clearer for connection pools and matches Gateway shutdown.
+Redis quit used to hang off destroy-pubsub (and briefly an injected disposables option). Connection lifecycle belongs on the cache instance so Gateway/Mesh shutdown always runs `quit`, even when no pubsub subscriber exists.
 
-## What changed in this package
+## What changed
 
-- Close the Redis client via `[DisposableSymbols.dispose]`
-- Drop unused `pubsub` / injected `disposables` constructor options
-- Keep required Hive `log` for IAM / connection diagnostics
+- Client closed via `[DisposableSymbols.dispose]`
+- Unused `pubsub` / injected `disposables` constructor options removed
+- Hive `log` kept for IAM / connection diagnostics
+
+## How to migrate
+
+1. Remove `pubsub` / `disposables` from `new RedisCache(...)`.
+2. Pass `log` for connection/IAM diagnostics.
+3. Use `await using` or `disposables.use(cache)`.
 
 #### Example
 ```ts

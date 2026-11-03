@@ -2,19 +2,26 @@
 "@graphql-mesh/types": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-Mesh types were still modeling a Mesh-owned logger/pubsub and a `destroy` pubsub lifecycle, plus optional `disposables` injected into every handler/plugin. That fought Yoga 6 / Hive Gateway, where request logging and pubsub live on GraphQL context and cleanup is Explicit Resource Management.
+`@graphql-mesh/types` still described a Mesh-owned world: Mesh `Logger` / `HivePubSub`, a required plugin `log`/`pubsub` pair, an injectable `disposables` bag on every factory, and a `destroy` pubsub channel for teardown. Yoga 6 and Hive Gateway already put logger/pubsub on GraphQL context and tear down with Explicit Resource Management. Leaving those types in place forced every handler/plugin to keep the old contract even when runtime no longer honored it.
 
-## What changed in this package
+## What changed
 
-- Remove Mesh `Logger` / `DefaultLogger` / `HivePubSub` types and the Mesh pubsub module — import `Logger` from `@graphql-hive/logger` and `PubSub` from `@graphql-hive/pubsub`
-- Do not pass `disposables` into handler / transform / plugin / merger options or `GetMeshSourcePayload`; disposable components implement `[DisposableSymbols]` and `getMesh` registers them
-- Drop `destroy` pubsub lifecycle typing
-- `MeshPluginOptions.log` is optional (init-time diagnostics only); prefer Yoga/Gateway `context.log` at request time
-- `MeshPluginOptions.pubsub` is optional; prefer GraphQL `context.pubsub` at request time when available
+- Remove Mesh `Logger` / `DefaultLogger` / `HivePubSub` types and the Mesh pubsub module — use `@graphql-hive/logger` and `@graphql-hive/pubsub`
+- Remove `disposables` from handler / transform / plugin / merger options and `GetMeshSourcePayload`; components implement `[DisposableSymbols]` and callers `disposables.use(...)`
+- Remove `destroy` pubsub lifecycle typing
+- `MeshPluginOptions.log` is **optional** (init-time diagnostics only); prefer `context.log` on the request path
+- `MeshPluginOptions.pubsub` is **optional**; prefer `context.pubsub` on the request path when Gateway/Yoga provides it
+
+## How to migrate
+
+1. Update imports of `Logger` / `PubSub` to Hive packages.
+2. Delete any `disposables` fields you passed into handlers/plugins.
+3. Treat plugin `log`/`pubsub` as optional; read request-scoped values from context inside hooks.
+4. Replace `destroy` pubsub listeners with `[DisposableSymbols]` on your resources.
 
 #### Example
 ```ts
@@ -22,15 +29,14 @@ import type { Logger } from '@graphql-hive/logger'
 import type { PubSub } from '@graphql-hive/pubsub'
 import type { MeshPluginOptions } from '@graphql-mesh/types'
 
-// Before: Mesh Logger/HivePubSub + required plugin log/pubsub + options.disposables
+// Before: required log/pubsub + options.disposables + Mesh Logger types
 function useMyPlugin(options: MeshPluginOptions<{ flag?: boolean }>) {
-  options.log?.debug('plugin booting') // init-time only
+  options.log?.debug('boot') // init-time only
   return {
     onExecute({ args }) {
-      const log = (args.contextValue as { log?: Logger }).log
-      const pubsub = (args.contextValue as { pubsub?: PubSub }).pubsub ?? options.pubsub
-      log?.debug('execute')
-      pubsub?.publish('my-plugin:tick', {})
+      const ctx = args.contextValue as { log?: Logger; pubsub?: PubSub }
+      ctx.log?.debug('execute')
+      ;(ctx.pubsub ?? options.pubsub)?.publish('my-plugin:tick', {})
     },
   }
 }

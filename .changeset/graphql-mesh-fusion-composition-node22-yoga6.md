@@ -2,15 +2,19 @@
 "@graphql-mesh/fusion-composition": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-Fusion filter transforms accepted the same ambiguous type-only globs as legacy filter-schema. Compose-time filters must share the explicit `Type.` grammar so composed supergraphs do not drop the wrong things.
+Fusion composition’s `createFilterTransform` accepted the same ambiguous type-only globs as legacy filter-schema. Compose is the wrong place for silent ambiguity: a bad filter changes the supergraph for every gateway. Aligning on `Type.` keeps Mesh and Fusion one mental model.
 
-## What changed in this package
+## What changed
 
-- `createFilterTransform` rejects type-only globs like `!User`; use `Type.!User`
+- `createFilterTransform` rejects type-only globs like `!User`; require `Type.!User`
+
+## How to migrate
+
+Update any programmatic or YAML filters passed into fusion composition the same way as `@graphql-mesh/transform-filter-schema`.
 
 #### Example
 ```ts

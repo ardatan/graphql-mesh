@@ -2,20 +2,25 @@
 "@graphql-mesh/plugin-statsd": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-StatsD clients hold sockets/timers. Cleanup must be part of Mesh/Gateway shutdown via disposables, not an ad-hoc destroy listener.
+StatsD clients own UDP sockets / timers. Without a disposable hook, Mesh shutdown left them open unless something subscribed to destroy-pubsub. Implementing `[DisposableSymbols.asyncDispose]` makes `getMesh`’s stack the single shutdown path.
 
-## What changed in this package
+## What changed
 
-- Plugin exposes `[DisposableSymbols.asyncDispose]` for the StatsD client; `getMesh` registers with `disposables.use(plugin)`
+- Plugin implements `[DisposableSymbols.asyncDispose]` for the StatsD client
+- `getMesh` registers the plugin with `disposables.use(plugin)`
+
+## How to migrate
+
+No options change — ensure you shut Mesh/Gateway down via dispose/destroy so the client closes.
 
 #### Example
 ```ts
 import useMeshStatsd from '@graphql-mesh/plugin-statsd'
 
 const plugin = useMeshStatsd({ ...meshPluginOptions, client: statsdClient })
-// getMesh: disposables.use(plugin) closes the client on shutdown
+// getMesh → disposables.use(plugin)
 ```

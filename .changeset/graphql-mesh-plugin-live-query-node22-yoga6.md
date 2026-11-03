@@ -2,26 +2,32 @@
 "@graphql-mesh/plugin-live-query": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-Live queries must subscribe once at init (needs a pubsub handle) but invalidations happen per operation. Forcing a required plugin `log` and always using options.pubsub ignored Gateway/Yoga context values that are already request-scoped.
+Live Query must **subscribe once at init** (needs a pubsub handle) but **invalidate per operation**. Requiring plugin `log` and always using `options.pubsub` ignored Gateway/Yoga request context and made invalidations log/publish on the wrong instance in multi-tenant gateways.
 
-## What changed in this package
+## What changed
 
-- Remove required `log` option; invalidations no longer take a logger argument
-- Init-time `pubsub` still comes from Mesh plugin options / Gateway `ctx` (subscribe setup)
-- Request invalidations prefer GraphQL `context.pubsub` when present (`context.pubsub ?? options.pubsub`)
-- Use `fakePromise` for subscribe fire-and-forget
+- Required `log` option removed
+- Init subscribe still uses plugin/Gateway `pubsub`
+- Invalidations prefer `context.pubsub ?? options.pubsub`
+- `fakePromise` for fire-and-forget subscribe
+
+## How to migrate
+
+1. Drop `log` from `useMeshLiveQuery(...)`.
+2. Keep providing `pubsub` through Mesh plugin options / Gateway ctx for startup subscribe.
+3. If you publish invalidations manually, prefer the request’s `context.pubsub` when present.
 
 #### Example
 ```ts
-import useMeshLiveQuery from '@graphql-mesh/plugin-live-query' // default export
+import useMeshLiveQuery from '@graphql-mesh/plugin-live-query'
 
 // Before: useMeshLiveQuery({ log, pubsub, invalidations })
 useMeshLiveQuery({
-  ...meshPluginOptions, // pubsub used at init to subscribe
+  ...meshPluginOptions,
   invalidations: [{ field: 'Mutation.updateUser', invalidate: ['Query.user'] }],
 })
 ```

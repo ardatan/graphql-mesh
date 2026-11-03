@@ -2,27 +2,32 @@
 "@graphql-mesh/runtime": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-`getMesh` used to tear down via `pubsub.publish('destroy')`. That was easy to miss (subscribers optional) and did not match Yoga/Gateway Explicit Resource Management. Runtime now owns the disposable stack and is itself async-disposable.
+`getMesh` historically signaled shutdown with `pubsub.publish('destroy')`. Anything that forgot to subscribe leaked pools, Redis clients, and timers. Runtime now **owns** an `AsyncDisposableStack`, registers every disposable it creates, and exposes the same async-dispose protocol Yoga/Gateway expect.
 
-## What changed in this package
+## What changed
 
-- Own an `AsyncDisposableStack`; `destroy` / `deferDispose` dispose that stack instead of publishing `destroy`
-- Register disposable handlers, transforms, plugins, cache, and pubsub with `disposables.use(...)`
-- Context exposes Hive `log` / `pubsub` types
-- Mesh instance exposes `[DisposableSymbols.asyncDispose]` directly (no `makeAsyncDisposable` wrapper)
+- `destroy` / `deferDispose` dispose the owned `AsyncDisposableStack` (no `destroy` pubsub event)
+- Handlers, transforms, plugins, cache, and pubsub are registered with `disposables.use(...)`
+- Context typing uses Hive `log` / `pubsub`
+- Mesh instance implements `[DisposableSymbols.asyncDispose]` directly
+
+## How to migrate
+
+1. Stop publishing or subscribing to `destroy` on Mesh pubsub.
+2. Prefer `await mesh.destroy()` or `await using mesh = await getMesh(...)`.
+3. If you construct caches/handlers yourself, either pass them through `getMesh` or call `disposables.use` yourself.
 
 #### Example
 ```ts
 import { getMesh } from '@graphql-mesh/runtime'
 import { DisposableSymbols } from '@whatwg-node/disposablestack'
 
-const mesh = await getMesh({ sources, transforms, plugins, cache, pubsub, log })
-
-// Before: rely on pubsub 'destroy' subscribers
+// Before: pubsub.publish('destroy') and hope subscribers run
+const mesh = await getMesh({ sources, cache, pubsub, log, plugins })
 await mesh.destroy()
-// or: await mesh[DisposableSymbols.asyncDispose]()
+// equivalent: await mesh[DisposableSymbols.asyncDispose]()
 ```

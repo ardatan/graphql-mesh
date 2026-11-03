@@ -2,16 +2,20 @@
 "@graphql-mesh/transport-grpc": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-gRPC transport helpers hold channels that must close with the subgraph executor. Extending DisposableStack makes Gateway/Mesh disposal uniform.
+gRPC helpers hold channels that outlive a single request. Making `GrpcTransportHelper` a DisposableStack participant means Gateway subgraph shutdown closes channels deterministically.
 
-## What changed in this package
+## What changed
 
-- `GrpcTransportHelper` extends `DisposableStack` / exposes `[DisposableSymbols.dispose]`
-- Drop `@graphql-mesh/cross-helpers`; use `globalThis.process?.getBuiltinModule` at call sites
+- `GrpcTransportHelper` / transport cleanup via `[DisposableSymbols.dispose]`
+- No `@graphql-mesh/cross-helpers`; `getBuiltinModule` at call sites
+
+## How to migrate
+
+If you construct helpers manually, `disposables.use(helper)`. Prefer letting the transport factory register dispose with the executor host.
 
 #### Example
 ```ts

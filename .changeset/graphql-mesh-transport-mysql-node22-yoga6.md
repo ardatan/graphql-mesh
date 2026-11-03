@@ -2,16 +2,20 @@
 "@graphql-mesh/transport-mysql": major
 ---
 
-Platform baseline (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, promise helpers) is covered in `.changeset/node22-yoga6-shared.md`.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
 
-## Why
+## Motivation
 
-MySQL executors own pools; asyncDispose is the supported teardown path instead of destroy-pubsub.
+MySQL executors own pools; asyncDispose is the supported teardown path so Gateway workers can recycle subgraphs without leaking connections.
 
-## What changed in this package
+## What changed
 
-- Executor exposes `[DisposableSymbols.asyncDispose]` for pool teardown
-- Drop `@graphql-mesh/cross-helpers`; `util` via `globalThis.process?.getBuiltinModule` at call sites
+- Executor `[DisposableSymbols.asyncDispose]` ends the pool
+- No cross-helpers; `util` via `getBuiltinModule` at call sites
+
+## How to migrate
+
+Use `await using` around executors you construct in tests/custom hosts.
 
 #### Example
 ```ts
