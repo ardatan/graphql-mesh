@@ -2,19 +2,19 @@
 "@graphql-mesh/transform-rate-limit": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
 
 ## Motivation
 
-Rate-limit windows use timers that must clear on shutdown. DisposableSymbols hooks the transform into Mesh’s stack instead of a destroy pubsub topic that custom hosts often never fired.
+Rate-limit timers need a clear shutdown path after destroy-pubsub is gone. The transform implements `[DisposableSymbols.dispose]` so `getMesh` can register it.
 
-## What changed
+## What changed (vs `master`)
 
 - `[DisposableSymbols.dispose]` clears timeouts; `getMesh` uses `disposables.use(transform)`
 
 ## How to migrate
 
-No config change — shut Mesh/Gateway down via dispose so timers are cleared.
+No YAML change. Shut Mesh/Gateway down via dispose so timers clear.
 
 #### Example
 ```ts

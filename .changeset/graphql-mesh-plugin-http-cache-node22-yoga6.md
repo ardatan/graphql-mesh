@@ -2,27 +2,25 @@
 "@graphql-mesh/plugin-http-cache": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
 
 ## Motivation
 
-HTTP cache needs per-request debug lines (hit/miss/revalidate). Feeding a constructor `log` or renaming onFetch’s `log: fetchLog` produced logs without Yoga request children (no request id / operation binding). Yoga 6 already exposes `context.log`; the plugin should child that logger instead of carrying a second channel.
+HTTP cache debug lines should follow the Yoga request logger. Constructor `log` / onFetch `log: fetchLog` were easy to get wrong relative to `context.log`.
 
-## What changed
+## What changed (vs `master`)
 
-- Plugin `log` option removed
+- No plugin `log` option
 - `onFetch` uses `context?.log?.child({ plugin: 'HTTP Cache' }) ?? context?.log`
 
 ## How to migrate
 
-1. Remove `log` from `useHTTPCache({ ... })` calls.
-2. Ensure your Yoga/Gateway context provides `log` if you rely on cache debug output.
+Remove `log` from `useHTTPCache({ ... })`. Ensure Yoga/Gateway context provides `log` if you need cache debug output.
 
 #### Example
 ```ts
 import useHTTPCache from '@graphql-mesh/plugin-http-cache'
 
-// Before: useHTTPCache({ ...meshPluginOptions, log })
-// Before: onFetch({ log: fetchLog, ... }) { fetchLog.child(...) }
+// before: useHTTPCache({ ...meshPluginOptions, log })
 useHTTPCache({ ...meshPluginOptions, cache })
 ```

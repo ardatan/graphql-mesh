@@ -2,19 +2,19 @@
 "@graphql-mesh/cache-upstash-redis": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
 
 ## Motivation
 
-Same disposable-cache model as other Redis adapters: Mesh/Gateway dispose the cache; the adapter does not listen for destroy-pubsub.
+Align Upstash Redis cache with the same disposable-cache model as other Redis adapters (dispose the instance; do not rely on destroy-pubsub).
 
-## What changed
+## What changed (vs `master`)
 
-- Cleanup via `[DisposableSymbols]`; no injected disposables / unused pubsub option
+- Cleanup via `[DisposableSymbols]`
 
 ## How to migrate
 
-Construct the cache without pubsub/disposables and register it on the Mesh/Gateway stack.
+Register the cache on the Mesh/Gateway disposable stack (automatic via `getMesh`).
 
 #### Example
 ```ts

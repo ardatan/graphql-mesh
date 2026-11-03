@@ -2,20 +2,20 @@
 "@omnigraph/grpc": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
 
 ## Motivation
 
-Invalid `includeDirs` used `return Promise.reject`, which is awkward at call sites and inconsistent with other Omnigraph loaders that throw. Failing loudly simplifies loader composition.
+Invalid `includeDirs` used `return Promise.reject` on `master`. Throwing matches other Omnigraph loaders.
 
-## What changed
+## What changed (vs `master`)
 
 - Invalid `includeDirs` throws instead of `return Promise.reject`
 - No cross-helpers; `getBuiltinModule` at call sites
 
 ## How to migrate
 
-Prefer try/catch around `loadGraphQLSchemaFromGrpc`; update tests expecting a returned rejected promise.
+Prefer try/catch around `loadGraphQLSchemaFromGrpc`.
 
 #### Example
 ```ts

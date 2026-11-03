@@ -88,38 +88,38 @@
 
 ## Motivation
 
-Mesh grew its own logging (`DefaultLogger`), pubsub (`HivePubSub` / Mesh PubSub), destroy-via-pubsub teardown, and `@graphql-mesh/cross-helpers` shims while the rest of the Guild stack converged on:
+Mesh still had its own logging, pubsub, and teardown model next to Yoga 6 / Hive Gateway:
 
-- **GraphQL Yoga 6** + Hive Gateway `context.log` / request-scoped diagnostics
-- **`@graphql-hive/logger`** and **`@graphql-hive/pubsub`**
-- **Explicit Resource Management** (`AsyncDisposableStack`, `[DisposableSymbols]`)
-- **`@whatwg-node/promise-helpers`** and Node’s `process.getBuiltinModule`
+- Mesh `DefaultLogger` and Mesh PubSub / `HivePubSub` re-exports beside `@graphql-hive/logger` and `@graphql-hive/pubsub`
+- Shutdown via `pubsub.publish('destroy')`, with handlers and caches subscribing to that topic (easy to miss, leaks pools/clients/timers)
+- `@graphql-mesh/cross-helpers` and Node builtin access that is unsafe when `process` is missing
+- Node 18/20 engines and loose `graphql` peers that drift from Yoga 6 / GraphQL Tools
 
-Keeping Mesh-specific copies meant apps could “upgrade Yoga” and still import Mesh Logger, miss `destroy` subscribers, or crash on edge runtimes where `process` / Node builtins are absent. This major removes that dual stack in one coordinated release.
+This major aligns Mesh with that shared platform in one release.
 
 ## Design decisions
 
-1. **One platform floor (Node `>=22.18.0`)** — matches engines used by current Yoga / WHATWG / Hive packages and unlocks `getBuiltinModule` without polyfills.
-2. **Context wins at request time** — `context.log` / `context.pubsub` from Yoga/Gateway beat plugin constructor options for per-operation work; optional `MeshPluginOptions.log` / `pubsub` remain only where init-time wiring is required (subscribe-once, agent missing, etc.).
-3. **Disposables at the call site** — handlers/caches/plugins implement `[DisposableSymbols]` and `getMesh` / Gateway call `disposables.use(...)`. Injecting a stack into every options bag duplicated ownership and was easy to forget.
-4. **No Mesh re-export tax** — promise helpers and Hive types come from their packages so TypeScript and bundlers see one source of truth.
-5. **Safe non-Node access** — `globalThis.process?.…` and call-site `getBuiltinModule?.` so Cloudflare/edge entrypoints do not throw on import.
+1. **Node `>=22.18.0`**: matches current Yoga / Hive / WHATWG engines and supports `getBuiltinModule` without polyfills.
+2. **GraphQL peer `^16 || ^17`**: what Yoga 6 and `@graphql-tools/utils` / `schema` / `merge` / `executor` support (not `*`).
+3. **Request path prefers context**: use Yoga/Gateway `context.log` / `context.pubsub` when present. Constructor `log` / `pubsub` stay only where init-time wiring is required (for example live-query subscribe, New Relic agent missing).
+4. **Teardown via Explicit Resource Management**: compared to `master`, Mesh tore down with `destroy` pubsub. Now components implement `[DisposableSymbols]` and `getMesh` registers them with `disposables.use(...)`. Handler/transform/plugin/cache constructors on `master` never took a `disposables` option; that is unchanged.
+5. **No Mesh re-exports** for Logger, PubSub, or promise helpers; import Hive/WHATWG packages directly.
+6. **Call-site Node builtins**: `globalThis.process?.getBuiltinModule?.('node:...')` where needed; `@graphql-mesh/cross-helpers` removed.
 
-## Shared platform changes
+## Shared platform changes (vs `master`)
 
-- **Node.js `>=22.18.0`** — Node 18/20 unsupported. Upgrade runtime, Docker base images, and CI before installing.
-- **`graphql` peer `^16.0.0 || ^17.0.0`** — aligned with Yoga 6 and `@graphql-tools/utils` / `schema` / `merge` / `executor`. GraphQL 15 is out.
-- **Logging** — use `@graphql-hive/logger`. Prefer Yoga/Gateway `context.log` (and `.child(...)`) on the request path. Mesh `Logger` / `DefaultLogger` are removed.
-- **PubSub** — use `@graphql-hive/pubsub` (`PubSub` / `MemPubSub`). Mesh PubSub re-exports and the **`destroy` pubsub lifecycle event** are removed; tear down with disposables instead of `pubsub.publish('destroy')`.
-- **Lifecycle** — own an `AsyncDisposableStack`, register resources with `disposables.use(...)`. Components implement `[DisposableSymbols.dispose|asyncDispose]`. Do **not** pass `disposables` into handler/plugin/cache options.
-- **Node builtins** — `globalThis.process?.getBuiltinModule?.('node:…')` at the **call site** (not module top-level). `@graphql-mesh/cross-helpers` is removed.
-- **Promises** — `handleMaybePromise` / `fakePromise` / `fakeRejectPromise` / `Promise.withResolvers` from `@whatwg-node/promise-helpers` (no Mesh re-exports).
+- **Node.js `>=22.18.0`** (18/20 dropped).
+- **`graphql` peer `^16.0.0 || ^17.0.0`**.
+- **Logging**: Mesh `Logger` / `DefaultLogger` removed. Use `@graphql-hive/logger`. Prefer `context.log` on the request path. Option fields renamed `logger` -> `log` where they remain.
+- **PubSub**: Mesh PubSub re-exports removed. Use `@graphql-hive/pubsub`. The **`destroy` pubsub lifecycle event is removed**; tear down with the disposable stack / `mesh.destroy()` instead of `pubsub.publish('destroy')`.
+- **Lifecycle**: `getMesh` owns an `AsyncDisposableStack` and calls `disposables.use(...)` on disposable cache/handler/transform/plugin/pubsub instances. Compared to `master`, the change is destroy-pubsub subscribers -> `[DisposableSymbols]`, not "stop injecting disposables into options" (those options did not exist on `master`).
+- **Node builtins**: call-site `globalThis.process?.getBuiltinModule?.('node:...')`. `@graphql-mesh/cross-helpers` removed.
+- **Promises**: `handleMaybePromise` / `fakePromise` / `fakeRejectPromise` / `Promise.withResolvers` from `@whatwg-node/promise-helpers` (no Mesh re-exports).
 
 ## Migration checklist
 
 ```bash
 node -v  # >= 22.18.0
-# replace Mesh logger/pubsub/promise imports
 yarn add graphql@^16 @graphql-hive/logger @graphql-hive/pubsub
 yarn add @whatwg-node/promise-helpers @whatwg-node/disposablestack
 ```
@@ -130,26 +130,27 @@ import { MemPubSub } from '@graphql-hive/pubsub'
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack'
 import { handleMaybePromise, fakePromise } from '@whatwg-node/promise-helpers'
 
-// Before:
+// Before on master:
 // import { DefaultLogger, PubSub, handleMaybePromise } from '@graphql-mesh/utils'
 // await pubsub.publish('destroy', undefined)
 
 const log = new Logger()
 const pubsub = new MemPubSub()
 await using disposables = new AsyncDisposableStack()
-disposables.use(cache)   // cache[DisposableSymbols.dispose|asyncDispose]
+disposables.use(cache)
 disposables.use(handler)
-// leaving the `await using` scope disposes the stack
 ```
 
-### Import map (common breakages)
+### Import map (common breakages vs `master`)
 
-| Before (`@graphql-mesh/utils` / types) | After |
+| Before (`master`) | After |
 | --- | --- |
-| `DefaultLogger` / Mesh `Logger` | `@graphql-hive/logger` → `Logger` |
-| `PubSub` / `MemPubSub` / `HivePubSub` | `@graphql-hive/pubsub` |
-| `handleMaybePromise` / `MaybePromise` | `@whatwg-node/promise-helpers` |
-| `pubsub.publish('destroy')` | `disposables.use(resource)` + dispose stack / `mesh.destroy()` |
+| `DefaultLogger` / Mesh `Logger` | `@graphql-hive/logger` -> `Logger` |
+| Mesh `PubSub` / `MemPubSub` / `HivePubSub` | `@graphql-hive/pubsub` |
+| `handleMaybePromise` / `MaybePromise` from Mesh utils | `@whatwg-node/promise-helpers` |
+| `pubsub.publish('destroy')` + destroy subscribers | `[DisposableSymbols]` + `disposables.use` / `mesh.destroy()` |
 | `import { fs, path } from '@graphql-mesh/cross-helpers'` | `globalThis.process?.getBuiltinModule?.('node:fs' \| 'node:path')` at use site |
+| cache ctor `pubsub` (destroy subscribe) | removed; dispose the cache instead |
+| option field `logger` | `log` |
 
-Package-specific breaks (filter globs, cache `pubsub` options, HTTP-cache logging, Hive plugin options, OpenAPI `futureLinks`, disposable handlers/transports, …) live in each package’s `*-node22-yoga6.md` with **Why / What changed / Example**.
+Package-specific breaks vs `master` (filter globs, cache `pubsub`, http-cache logging, Hive/live-query options, OpenAPI `futureLinks`, disposable handlers/transports, ...) are in each package's `*-node22-yoga6.md`.

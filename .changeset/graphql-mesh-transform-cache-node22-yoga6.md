@@ -2,20 +2,20 @@
 "@graphql-mesh/transform-cache": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
 
 ## Motivation
 
-Cache-transform waiters mixed Mesh promise helpers with swallowed `pubsub.subscribe` failures, which made invalidation races hard to debug. `Promise.withResolvers` plus Hive PubSub errors that surface correctly under Yoga 6.
+Cache-transform waiters on `master` mixed Mesh promise helpers with weak subscribe error handling. Use `Promise.withResolvers` and Hive PubSub so invalidation races surface clearly.
 
-## What changed
+## What changed (vs `master`)
 
 - Waiters use `Promise.withResolvers`; subscribe failures are forwarded
-- Hive `PubSub` + `fakePromise` from their packages (no Mesh re-exports)
+- Hive `PubSub` + `fakePromise` from their packages
 
 ## How to migrate
 
-Ensure the transform receives a Hive `PubSub` instance. No YAML shape change for field cache rules.
+Pass a Hive `PubSub` instance. YAML cache rules are unchanged.
 
 #### Example
 ```ts

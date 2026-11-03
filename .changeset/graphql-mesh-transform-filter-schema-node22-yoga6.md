@@ -2,29 +2,26 @@
 "@graphql-mesh/transform-filter-schema": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
 
 ## Motivation
 
-Bare type globs such as `!User` looked convenient but were ambiguous (drop a type vs drop fields?) and diverged between bare and wrap modes. For a breaking major we require an explicit `Type.` prefix so compose-time and runtime filters mean the same thing — and so misconfigured filters fail loudly instead of silently dropping the wrong schema parts.
+On `master`, type-only globs like `!User` were accepted but ambiguous across bare/wrap modes. This major requires an explicit `Type.` prefix so filters fail loudly and match fusion composition.
 
-## What changed
+## What changed (vs `master`)
 
-- Type-only filters like `!User` throw: use `Type.!User`
-- Transform options follow the shared model (no destroy-pubsub / injected disposables)
+- Type-only filters like `!User` throw; use `Type.!User`
 
 ## How to migrate
 
-1. Search `.meshrc` / compose configs for filter entries that start with `!` without a `Type.` / `Query.` / field path prefix.
-2. Rewrite type removals as `Type.!TypeName`.
-3. Keep field filters as `TypeName.field` / `TypeName.field.!arg` as before.
+Search configs for filters that start with `!` without a `Type.` / field path prefix and rewrite type removals as `Type.!TypeName`.
 
 #### Example
 ```yaml
 transforms:
   - filterSchema:
       filters:
-        # Before (throws): - '!User'
+        # master allowed: - '!User'
         - Type.!User
         - Query.user.!pk
 ```

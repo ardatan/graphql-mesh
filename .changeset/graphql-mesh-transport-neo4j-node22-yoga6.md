@@ -2,13 +2,13 @@
 "@graphql-mesh/transport-neo4j": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, builtins, promise helpers) and the common import/migration map.
+See `.changeset/node22-yoga6-shared.md` for the shared platform major vs `master` (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub -> disposables, builtins, promise helpers).
 
 ## Motivation
 
-Wrapping every `pubsub.publish` in `fakePromise` added microtasks without benefit and `once` handlers could double-fire. Driver close belongs on asyncDispose with Hive PubSub used directly.
+Avoid unnecessary `fakePromise` around `pubsub.publish`, guard `once` against double delivery, and close the driver via asyncDispose with Hive PubSub.
 
-## What changed
+## What changed (vs `master`)
 
 - `pubsub.publish` called directly; `once` guarded against double delivery
 - Hive `PubSub` from `@graphql-hive/pubsub`
@@ -16,7 +16,7 @@ Wrapping every `pubsub.publish` in `fakePromise` added microtasks without benefi
 
 ## How to migrate
 
-Pass a Hive PubSub into the executor; dispose via `await using` / Gateway stack.
+Pass Hive PubSub; dispose via `await using` / Gateway stack.
 
 #### Example
 ```ts
