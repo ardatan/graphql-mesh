@@ -14,9 +14,8 @@ import {
   GraphQLVoid,
 } from 'graphql-scalars';
 import micromatch from 'micromatch';
-import protobufjs, { type AnyNestedObject, type IParseOptions } from 'protobufjs';
-import type { IFileDescriptorSet } from 'protobufjs/ext/descriptor';
-import descriptor from 'protobufjs/ext/descriptor/index.js';
+import protobufjs, { type AnyNestedObject, type IParseOptions, type Message } from 'protobufjs';
+import descriptor, { type IFileDescriptorSet } from 'protobufjs/ext/descriptor.js';
 import { Client } from '@ardatan/grpc-reflection-js';
 import { type Logger } from '@graphql-hive/logger';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
