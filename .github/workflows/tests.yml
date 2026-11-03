@@ -191,7 +191,7 @@ jobs:
               max_attempts: 3
               command: yarn test:integration
           - name: Run Leak Tests
-            if: matrix.node-version == 22
+            if: matrix.node-version == 18
             uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
             with:
               timeout_minutes: 10
