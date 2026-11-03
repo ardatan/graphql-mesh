@@ -60,10 +60,10 @@ describe('Rate Limit Transform', () => {
       baseDir,
       cache,
       pubsub,
-      disposables,
       importFn,
       log,
     });
+    disposables.use(rateLimitTransform);
     const wrappedSchema = wrapSchema({
       schema,
       transforms: [rateLimitTransform],
@@ -130,10 +130,10 @@ describe('Rate Limit Transform', () => {
       baseDir,
       cache,
       pubsub,
-      disposables,
       importFn,
       log,
     });
+    disposables.use(rateLimitTransform);
     const wrappedSchema = wrapSchema({
       schema,
       transforms: [rateLimitTransform],
@@ -197,10 +197,10 @@ describe('Rate Limit Transform', () => {
       baseDir,
       cache,
       pubsub,
-      disposables,
       importFn,
       log,
     });
+    disposables.use(rateLimitTransform);
     const wrappedSchema = wrapSchema({
       schema,
       transforms: [rateLimitTransform],
@@ -278,10 +278,10 @@ describe('Rate Limit Transform', () => {
       baseDir,
       cache,
       pubsub,
-      disposables,
       importFn,
       log,
     });
+    disposables.use(rateLimitTransform);
 
     const wrappedSchema = wrapSchema({
       schema,

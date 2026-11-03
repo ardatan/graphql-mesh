@@ -16,7 +16,6 @@ import type {
 import { dispose, isDisposable, readFileOrUrl } from '@graphql-mesh/utils';
 import { getDriverFromOpts, getNeo4JExecutor, loadGraphQLSchemaFromNeo4J } from '@omnigraph/neo4j';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
 export default class Neo4JHandler implements MeshHandler {
   private config: YamlConfig.Neo4JHandler;
@@ -27,7 +26,7 @@ export default class Neo4JHandler implements MeshHandler {
   private name: string;
   fetchFn: MeshFetch;
   importFn: ImportFn;
-  private disposeFn?: () => MaybePromise<void>;
+  private disposableResource?: Disposable | AsyncDisposable;
 
   constructor({
     name,
@@ -106,7 +105,7 @@ export default class Neo4JHandler implements MeshHandler {
     });
 
     if (isDisposable(executor)) {
-      this.disposeFn = () => dispose(executor);
+      this.disposableResource = executor;
     }
 
     return {
@@ -116,6 +115,8 @@ export default class Neo4JHandler implements MeshHandler {
   }
 
   [DisposableSymbols.asyncDispose]() {
-    return this.disposeFn?.();
+    if (this.disposableResource) {
+      return dispose(this.disposableResource);
+    }
   }
 }

@@ -225,7 +225,6 @@ export async function processConfig(
               baseDir,
               cache,
               pubsub,
-              disposables,
               store: sourcesStore.child(${JSON.stringify(source.name)}), log: log.child({ source: ${JSON.stringify(source.name)} }),
               importFn,
             });`,
@@ -237,7 +236,6 @@ export async function processConfig(
               baseDir: dir,
               cache,
               pubsub,
-              disposables,
               store: sourcesStore.child(source.name),
               log: log.child({ source: source.name }),
               importFn,
@@ -268,7 +266,6 @@ export async function processConfig(
                   baseDir,
                   cache,
                   pubsub,
-                  disposables,
                   importFn,
                   log,
                 });`,
@@ -281,7 +278,6 @@ export async function processConfig(
                 baseDir: dir,
                 cache,
                 pubsub,
-                disposables,
                 importFn,
                 log,
               });
@@ -326,7 +322,6 @@ export async function processConfig(
             baseDir,
             cache,
             pubsub,
-            disposables,
             importFn,
             log,
           })`,
@@ -338,7 +333,6 @@ export async function processConfig(
           baseDir: dir,
           cache,
           pubsub,
-          disposables,
           importFn,
           log,
         });
@@ -389,7 +383,6 @@ export async function processConfig(
           ...(${JSON.stringify(pluginConfig, null, 2)}),
           cache,
           pubsub,
-          disposables,
           baseDir,
           importFn,
         })`);
@@ -413,7 +406,6 @@ export async function processConfig(
           ...(${JSON.stringify(pluginConfig, null, 2)}),
           cache,
           pubsub,
-          disposables,
           baseDir,
           importFn,
         });`,
@@ -425,7 +417,6 @@ export async function processConfig(
           ...pluginConfig,
           cache,
           pubsub,
-          disposables,
           baseDir: dir,
           importFn,
         });
@@ -569,7 +560,7 @@ export async function processConfig(
     );
     codes.add(`const merger = new Merger({
         cache,
-        pubsub, disposables, log: log.child({ merger: ${JSON.stringify(mergerName)} }),
+        pubsub, log: log.child({ merger: ${JSON.stringify(mergerName)} }),
         store: rootStore.child(${JSON.stringify(mergerName)})
       })`);
   }
@@ -577,7 +568,6 @@ export async function processConfig(
   const merger = new Merger({
     cache,
     pubsub,
-    disposables,
     log: log.child({ merger: mergerName }),
     store: rootStore.child(mergerName),
   });

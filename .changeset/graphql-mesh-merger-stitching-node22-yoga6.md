@@ -3,4 +3,4 @@
 ---
 
 - Require Node.js `>=22.18.0`
-- Accept optional `disposables` / Hive logger-pubsub typed options from Mesh config
+- Use Hive `Logger` / `PubSub` option types from Mesh config (no injected `disposables`)

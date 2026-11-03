@@ -184,7 +184,6 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
       try {
         const source = await apiSource.handler.getMeshSource({
           fetchFn: wrappedFetchFn,
-          disposables,
         });
         if (isDisposable(apiSource.handler)) {
           disposables.use(apiSource.handler as Disposable | AsyncDisposable);

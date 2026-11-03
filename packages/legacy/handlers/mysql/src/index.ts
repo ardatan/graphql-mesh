@@ -13,7 +13,6 @@ import type {
 import { dispose, isDisposable, loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { getMySQLExecutor, loadGraphQLSchemaFromMySQL } from '@omnigraph/mysql';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
 export default class MySQLHandler implements MeshHandler {
   private name: string;
@@ -22,7 +21,7 @@ export default class MySQLHandler implements MeshHandler {
   private pubsub: PubSub;
   private importFn: ImportFn;
   private schemaProxy: StoreProxy<GraphQLSchema>;
-  private disposeFn?: () => MaybePromise<void>;
+  private disposableResource?: Disposable | AsyncDisposable;
 
   constructor({
     name,
@@ -91,7 +90,7 @@ export default class MySQLHandler implements MeshHandler {
     });
 
     if (isDisposable(executor)) {
-      this.disposeFn = () => dispose(executor);
+      this.disposableResource = executor;
     }
 
     return {
@@ -101,6 +100,8 @@ export default class MySQLHandler implements MeshHandler {
   }
 
   [DisposableSymbols.asyncDispose]() {
-    return this.disposeFn?.();
+    if (this.disposableResource) {
+      return dispose(this.disposableResource);
+    }
   }
 }

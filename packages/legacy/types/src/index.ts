@@ -52,12 +52,10 @@ export type MeshHandlerOptions<THandlerConfig> = {
   store: IMeshStore;
   log: Logger;
   importFn: ImportFn;
-  disposables?: AsyncDisposableStack;
 };
 
 export type GetMeshSourcePayload = {
   fetchFn: MeshFetch;
-  disposables?: AsyncDisposableStack;
 };
 
 // Handlers
@@ -77,7 +75,6 @@ export interface MeshTransformOptions<Config = any> {
   pubsub: PubSub;
   importFn: ImportFn;
   log: Logger;
-  disposables?: AsyncDisposableStack;
 }
 
 export interface MeshTransformLibrary<Config = any> {
@@ -95,7 +92,6 @@ export interface MeshMergerOptions {
   pubsub: PubSub;
   log: Logger;
   store: IMeshStore;
-  disposables?: AsyncDisposableStack;
 }
 
 export interface MeshMergerLibrary {
@@ -118,7 +114,6 @@ export type MeshPluginOptions<TConfig> = TConfig & {
   pubsub: PubSub;
   baseDir: string;
   importFn: ImportFn;
-  disposables?: AsyncDisposableStack;
 };
 
 export type MeshPluginFactory<TConfig> = (options: MeshPluginOptions<TConfig>) => Plugin;

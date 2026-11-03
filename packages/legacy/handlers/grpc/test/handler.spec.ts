@@ -56,12 +56,12 @@ describe('gRPC Handler', () => {
         config,
         cache,
         pubsub,
-        disposables,
         store,
         log,
         importFn: defaultImportFn,
         baseDir: __dirname,
       });
+      disposables.use(handler);
       const { schema } = await handler.getMeshSource();
 
       expect(schema).toBeInstanceOf(GraphQLSchema);
@@ -90,12 +90,12 @@ describe('gRPC Handler', () => {
         config,
         cache,
         pubsub,
-        disposables,
         store,
         log,
         importFn: defaultImportFn,
         baseDir: __dirname,
       });
+      disposables.use(handler);
 
       const { schema } = await handler.getMeshSource();
 
@@ -125,12 +125,12 @@ describe('gRPC Handler', () => {
         config,
         cache,
         pubsub,
-        disposables,
         store,
         log,
         importFn: defaultImportFn,
         baseDir: __dirname,
       });
+      disposables.use(handler);
 
       const { schema } = await handler.getMeshSource();
 
