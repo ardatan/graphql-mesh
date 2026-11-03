@@ -73,7 +73,7 @@
     "@babel/plugin-syntax-top-level-await": "7.14.5",
     "@babel/plugin-transform-class-static-block": "8.0.5",
     "@babel/preset-env": "7.29.7",
-    "@babel/preset-typescript": "8.0.7",
+    "@babel/preset-typescript": "7.29.7",
     "@babel/types": "7.29.7",
     "@changesets/changelog-github": "1.0.1",
     "@changesets/cli": "2.31.1",
@@ -116,6 +116,7 @@
   },
   "resolutions": {
     "@babel/core": "7.29.7",
+    "@babel/preset-typescript": "7.29.7",
     "@changesets/assemble-release-plan": "patch:@changesets/assemble-release-plan@npm%3A5.2.3#~/.yarn/patches/@changesets-assemble-release-plan-npm-5.2.3-296454a28f.patch",
     "@changesets/get-github-info@npm:^0.8.0": "patch:@changesets/get-github-info@npm%3A0.8.0#~/.yarn/patches/@changesets-get-github-info-npm-0.8.0-cf3918dc5a.patch",
     "@graphql-hive/gateway-runtime@npm:^2.13.3": "patch:@graphql-hive/gateway-runtime@npm%3A2.13.3#~/.yarn/patches/@graphql-hive-gateway-runtime-npm-2.13.3-fc78fce559.patch",

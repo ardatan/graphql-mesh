@@ -354,13 +354,215 @@ exports[`Reproductions GW-164 1`] = `
       "url": undefined,
     },
   ],
-  "publicSdl": "directive @myDirective(myarg: [MyEnum!]!)  on OBJECT
+  "publicDocumentNode": {
+    "definitions": [
+      {
+        "arguments": [
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "myarg",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 10,
+                "start": 0,
+              },
+              "type": {
+                "kind": "ListType",
+                "loc": {
+                  "end": 9,
+                  "start": 0,
+                },
+                "type": {
+                  "kind": "NonNullType",
+                  "loc": {
+                    "end": 8,
+                    "start": 1,
+                  },
+                  "type": {
+                    "kind": "NamedType",
+                    "loc": {
+                      "end": 7,
+                      "start": 1,
+                    },
+                    "name": {
+                      "kind": "Name",
+                      "loc": {
+                        "end": 7,
+                        "start": 1,
+                      },
+                      "value": "MyEnum",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+        "kind": "DirectiveDefinition",
+        "locations": [
+          {
+            "kind": "Name",
+            "value": "OBJECT",
+          },
+        ],
+        "name": {
+          "kind": "Name",
+          "value": "myDirective",
+        },
+        "repeatable": false,
+      },
+      {
+        "description": undefined,
+        "directives": [],
+        "fields": [
+          {
+            "arguments": [],
+            "description": undefined,
+            "directives": [],
+            "kind": "FieldDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "myRootField",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 8,
+                "start": 0,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 8,
+                  "start": 0,
+                },
+                "value": "MyObject",
+              },
+            },
+          },
+        ],
+        "interfaces": [],
+        "kind": "ObjectTypeDefinition",
+        "name": {
+          "kind": "Name",
+          "value": "Query",
+        },
+      },
+      {
+        "description": undefined,
+        "directives": [
+          {
+            "arguments": [
+              {
+                "kind": "Argument",
+                "loc": {
+                  "end": 209,
+                  "start": 200,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 205,
+                    "start": 200,
+                  },
+                  "value": "myarg",
+                },
+                "value": {
+                  "kind": "ListValue",
+                  "loc": {
+                    "end": 209,
+                    "start": 207,
+                  },
+                  "values": [],
+                },
+              },
+            ],
+            "kind": "Directive",
+            "loc": {
+              "end": 210,
+              "start": 187,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 199,
+                "start": 188,
+              },
+              "value": "myDirective",
+            },
+          },
+        ],
+        "fields": [
+          {
+            "arguments": [],
+            "description": undefined,
+            "directives": [],
+            "kind": "FieldDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "myField",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 6,
+                "start": 0,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 6,
+                  "start": 0,
+                },
+                "value": "String",
+              },
+            },
+          },
+        ],
+        "interfaces": [],
+        "kind": "ObjectTypeDefinition",
+        "name": {
+          "kind": "Name",
+          "value": "MyObject",
+        },
+      },
+      {
+        "description": undefined,
+        "directives": [],
+        "kind": "EnumTypeDefinition",
+        "name": {
+          "kind": "Name",
+          "value": "MyEnum",
+        },
+        "values": [
+          {
+            "description": undefined,
+            "directives": [],
+            "kind": "EnumValueDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "MY_ENUM_VALUE",
+            },
+          },
+        ],
+      },
+    ],
+    "kind": "Document",
+  },
+  "publicSdl": "directive @myDirective(myarg: [MyEnum!]!) on OBJECT
 
 type Query {
   myRootField: MyObject
 }
 
-type MyObject @myDirective(myarg: [])  {
+type MyObject @myDirective(myarg: []) {
   myField: String
 }
 
@@ -407,108 +609,1853 @@ enum MyEnum {
       },
     },
   ],
-  "supergraphSdl": "schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@myDirective"]) 
-  {
-    query: Query
-    
-    
-  }
-
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
-
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
-
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
-
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
-
-  scalar link__Import
-
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
-
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
-
-  
-  
-  
-  
-  
-  
-  
-enum join__Graph {
-  A @join__graph(name: "A", url: "") 
+  "supergraphDocumentNode": {
+    "definitions": [
+      {
+        "description": undefined,
+        "directives": [
+          {
+            "arguments": [
+              {
+                "kind": "Argument",
+                "loc": {
+                  "end": 63,
+                  "start": 22,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 25,
+                    "start": 22,
+                  },
+                  "value": "url",
+                },
+                "value": {
+                  "block": false,
+                  "kind": "StringValue",
+                  "loc": {
+                    "end": 63,
+                    "start": 27,
+                  },
+                  "value": "https://specs.apollo.dev/link/v1.0",
+                },
+              },
+            ],
+            "kind": "Directive",
+            "loc": {
+              "end": 64,
+              "start": 16,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 21,
+                "start": 17,
+              },
+              "value": "link",
+            },
+          },
+          {
+            "arguments": [
+              {
+                "kind": "Argument",
+                "loc": {
+                  "end": 116,
+                  "start": 75,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 78,
+                    "start": 75,
+                  },
+                  "value": "url",
+                },
+                "value": {
+                  "block": false,
+                  "kind": "StringValue",
+                  "loc": {
+                    "end": 116,
+                    "start": 80,
+                  },
+                  "value": "https://specs.apollo.dev/join/v0.3",
+                },
+              },
+              {
+                "kind": "Argument",
+                "loc": {
+                  "end": 132,
+                  "start": 118,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 121,
+                    "start": 118,
+                  },
+                  "value": "for",
+                },
+                "value": {
+                  "kind": "EnumValue",
+                  "loc": {
+                    "end": 132,
+                    "start": 123,
+                  },
+                  "value": "EXECUTION",
+                },
+              },
+            ],
+            "kind": "Directive",
+            "loc": {
+              "end": 133,
+              "start": 69,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 74,
+                "start": 70,
+              },
+              "value": "link",
+            },
+          },
+          {
+            "arguments": [
+              {
+                "kind": "Argument",
+                "loc": {
+                  "end": 230,
+                  "start": 179,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 182,
+                    "start": 179,
+                  },
+                  "value": "url",
+                },
+                "value": {
+                  "block": false,
+                  "kind": "StringValue",
+                  "loc": {
+                    "end": 230,
+                    "start": 184,
+                  },
+                  "value": "https://the-guild.dev/graphql/mesh/spec/v1.0",
+                },
+              },
+              {
+                "kind": "Argument",
+                "loc": {
+                  "end": 256,
+                  "start": 232,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 238,
+                    "start": 232,
+                  },
+                  "value": "import",
+                },
+                "value": {
+                  "kind": "ListValue",
+                  "loc": {
+                    "end": 256,
+                    "start": 240,
+                  },
+                  "values": [
+                    {
+                      "block": false,
+                      "kind": "StringValue",
+                      "loc": {
+                        "end": 255,
+                        "start": 241,
+                      },
+                      "value": "@myDirective",
+                    },
+                  ],
+                },
+              },
+            ],
+            "kind": "Directive",
+            "loc": {
+              "end": 257,
+              "start": 173,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 178,
+                "start": 174,
+              },
+              "value": "link",
+            },
+          },
+        ],
+        "kind": "SchemaDefinition",
+        "loc": {
+          "end": 292,
+          "start": 5,
+        },
+        "operationTypes": [
+          {
+            "kind": "OperationTypeDefinition",
+            "loc": {
+              "end": 278,
+              "start": 266,
+            },
+            "operation": "query",
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 278,
+                "start": 273,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 278,
+                  "start": 273,
+                },
+                "value": "Query",
+              },
+            },
+          },
+        ],
+      },
+      {
+        "arguments": [
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 347,
+              "start": 328,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 333,
+                "start": 328,
+              },
+              "value": "graph",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 347,
+                "start": 335,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 346,
+                  "start": 335,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 346,
+                    "start": 335,
+                  },
+                  "value": "join__Graph",
+                },
+              },
+            },
+          },
+        ],
+        "description": undefined,
+        "directives": [],
+        "kind": "DirectiveDefinition",
+        "loc": {
+          "end": 373,
+          "start": 301,
+        },
+        "locations": [
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 373,
+              "start": 363,
+            },
+            "value": "ENUM_VALUE",
+          },
+        ],
+        "name": {
+          "kind": "Name",
+          "loc": {
+            "end": 327,
+            "start": 312,
+          },
+          "value": "join__enumValue",
+        },
+        "repeatable": true,
+      },
+      {
+        "arguments": [
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 415,
+              "start": 402,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 406,
+                "start": 402,
+              },
+              "value": "name",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 415,
+                "start": 408,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 414,
+                  "start": 408,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 414,
+                    "start": 408,
+                  },
+                  "value": "String",
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 429,
+              "start": 417,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 420,
+                "start": 417,
+              },
+              "value": "url",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 429,
+                "start": 422,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 428,
+                  "start": 422,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 428,
+                    "start": 422,
+                  },
+                  "value": "String",
+                },
+              },
+            },
+          },
+        ],
+        "description": undefined,
+        "directives": [],
+        "kind": "DirectiveDefinition",
+        "loc": {
+          "end": 444,
+          "start": 379,
+        },
+        "locations": [
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 444,
+              "start": 434,
+            },
+            "value": "ENUM_VALUE",
+          },
+        ],
+        "name": {
+          "kind": "Name",
+          "loc": {
+            "end": 401,
+            "start": 390,
+          },
+          "value": "join__graph",
+        },
+        "repeatable": false,
+      },
+      {
+        "arguments": [
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 507,
+              "start": 489,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 494,
+                "start": 489,
+              },
+              "value": "graph",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 507,
+                "start": 496,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 507,
+                  "start": 496,
+                },
+                "value": "join__Graph",
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 540,
+              "start": 516,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 524,
+                "start": 516,
+              },
+              "value": "requires",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 540,
+                "start": 526,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 540,
+                  "start": 526,
+                },
+                "value": "join__FieldSet",
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 573,
+              "start": 549,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 557,
+                "start": 549,
+              },
+              "value": "provides",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 573,
+                "start": 559,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 573,
+                  "start": 559,
+                },
+                "value": "join__FieldSet",
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 594,
+              "start": 582,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 586,
+                "start": 582,
+              },
+              "value": "type",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 594,
+                "start": 588,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 594,
+                  "start": 588,
+                },
+                "value": "String",
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 620,
+              "start": 603,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 611,
+                "start": 603,
+              },
+              "value": "external",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 620,
+                "start": 613,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 620,
+                  "start": 613,
+                },
+                "value": "Boolean",
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 645,
+              "start": 629,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 637,
+                "start": 629,
+              },
+              "value": "override",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 645,
+                "start": 639,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 645,
+                  "start": 639,
+                },
+                "value": "String",
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 677,
+              "start": 654,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 668,
+                "start": 654,
+              },
+              "value": "usedOverridden",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 677,
+                "start": 670,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 677,
+                  "start": 670,
+                },
+                "value": "Boolean",
+              },
+            },
+          },
+        ],
+        "description": undefined,
+        "directives": [],
+        "kind": "DirectiveDefinition",
+        "loc": {
+          "end": 759,
+          "start": 457,
+        },
+        "locations": [
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 734,
+              "start": 718,
+            },
+            "value": "FIELD_DEFINITION",
+          },
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 759,
+              "start": 737,
+            },
+            "value": "INPUT_FIELD_DEFINITION",
+          },
+        ],
+        "name": {
+          "kind": "Name",
+          "loc": {
+            "end": 479,
+            "start": 468,
+          },
+          "value": "join__field",
+        },
+        "repeatable": true,
+      },
+      {
+        "arguments": [
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 829,
+              "start": 810,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 815,
+                "start": 810,
+              },
+              "value": "graph",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 829,
+                "start": 817,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 828,
+                  "start": 817,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 828,
+                    "start": 817,
+                  },
+                  "value": "join__Graph",
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 854,
+              "start": 836,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 845,
+                "start": 836,
+              },
+              "value": "interface",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 854,
+                "start": 847,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 853,
+                  "start": 847,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 853,
+                    "start": 847,
+                  },
+                  "value": "String",
+                },
+              },
+            },
+          },
+        ],
+        "description": undefined,
+        "directives": [],
+        "kind": "DirectiveDefinition",
+        "loc": {
+          "end": 893,
+          "start": 775,
+        },
+        "locations": [
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 881,
+              "start": 875,
+            },
+            "value": "OBJECT",
+          },
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 893,
+              "start": 884,
+            },
+            "value": "INTERFACE",
+          },
+        ],
+        "name": {
+          "kind": "Name",
+          "loc": {
+            "end": 802,
+            "start": 786,
+          },
+          "value": "join__implements",
+        },
+        "repeatable": true,
+      },
+      {
+        "arguments": [
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 947,
+              "start": 928,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 933,
+                "start": 928,
+              },
+              "value": "graph",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 947,
+                "start": 935,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 946,
+                  "start": 935,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 946,
+                    "start": 935,
+                  },
+                  "value": "join__Graph",
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 973,
+              "start": 954,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 957,
+                "start": 954,
+              },
+              "value": "key",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 973,
+                "start": 959,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 973,
+                  "start": 959,
+                },
+                "value": "join__FieldSet",
+              },
+            },
+          },
+          {
+            "defaultValue": {
+              "kind": "BooleanValue",
+              "loc": {
+                "end": 1007,
+                "start": 1002,
+              },
+              "value": false,
+            },
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 1007,
+              "start": 980,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 989,
+                "start": 980,
+              },
+              "value": "extension",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 999,
+                "start": 991,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 998,
+                  "start": 991,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 998,
+                    "start": 991,
+                  },
+                  "value": "Boolean",
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": {
+              "kind": "BooleanValue",
+              "loc": {
+                "end": 1041,
+                "start": 1037,
+              },
+              "value": true,
+            },
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 1041,
+              "start": 1014,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 1024,
+                "start": 1014,
+              },
+              "value": "resolvable",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 1034,
+                "start": 1026,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 1033,
+                  "start": 1026,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 1033,
+                    "start": 1026,
+                  },
+                  "value": "Boolean",
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": {
+              "kind": "BooleanValue",
+              "loc": {
+                "end": 1083,
+                "start": 1078,
+              },
+              "value": false,
+            },
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 1083,
+              "start": 1048,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 1065,
+                "start": 1048,
+              },
+              "value": "isInterfaceObject",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 1075,
+                "start": 1067,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 1074,
+                  "start": 1067,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 1074,
+                    "start": 1067,
+                  },
+                  "value": "Boolean",
+                },
+              },
+            },
+          },
+        ],
+        "description": undefined,
+        "directives": [],
+        "kind": "DirectiveDefinition",
+        "loc": {
+          "end": 1161,
+          "start": 899,
+        },
+        "locations": [
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 1110,
+              "start": 1104,
+            },
+            "value": "OBJECT",
+          },
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 1122,
+              "start": 1113,
+            },
+            "value": "INTERFACE",
+          },
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 1130,
+              "start": 1125,
+            },
+            "value": "UNION",
+          },
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 1137,
+              "start": 1133,
+            },
+            "value": "ENUM",
+          },
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 1152,
+              "start": 1140,
+            },
+            "value": "INPUT_OBJECT",
+          },
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 1161,
+              "start": 1155,
+            },
+            "value": "SCALAR",
+          },
+        ],
+        "name": {
+          "kind": "Name",
+          "loc": {
+            "end": 920,
+            "start": 910,
+          },
+          "value": "join__type",
+        },
+        "repeatable": true,
+      },
+      {
+        "arguments": [
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 1222,
+              "start": 1203,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 1208,
+                "start": 1203,
+              },
+              "value": "graph",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 1222,
+                "start": 1210,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 1221,
+                  "start": 1210,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 1221,
+                    "start": 1210,
+                  },
+                  "value": "join__Graph",
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 1244,
+              "start": 1229,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 1235,
+                "start": 1229,
+              },
+              "value": "member",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 1244,
+                "start": 1237,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 1243,
+                  "start": 1237,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 1243,
+                    "start": 1237,
+                  },
+                  "value": "String",
+                },
+              },
+            },
+          },
+        ],
+        "description": undefined,
+        "directives": [],
+        "kind": "DirectiveDefinition",
+        "loc": {
+          "end": 1270,
+          "start": 1167,
+        },
+        "locations": [
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 1270,
+              "start": 1265,
+            },
+            "value": "UNION",
+          },
+        ],
+        "name": {
+          "kind": "Name",
+          "loc": {
+            "end": 1195,
+            "start": 1178,
+          },
+          "value": "join__unionMember",
+        },
+        "repeatable": true,
+      },
+      {
+        "description": undefined,
+        "directives": [],
+        "kind": "ScalarTypeDefinition",
+        "loc": {
+          "end": 1297,
+          "start": 1276,
+        },
+        "name": {
+          "kind": "Name",
+          "loc": {
+            "end": 1297,
+            "start": 1283,
+          },
+          "value": "join__FieldSet",
+        },
+      },
+      {
+        "arguments": [
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 1346,
+              "start": 1335,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 1338,
+                "start": 1335,
+              },
+              "value": "url",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 1346,
+                "start": 1340,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 1346,
+                  "start": 1340,
+                },
+                "value": "String",
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 1361,
+              "start": 1351,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 1353,
+                "start": 1351,
+              },
+              "value": "as",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 1361,
+                "start": 1355,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 1361,
+                  "start": 1355,
+                },
+                "value": "String",
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 1384,
+              "start": 1366,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 1369,
+                "start": 1366,
+              },
+              "value": "for",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 1384,
+                "start": 1371,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 1384,
+                  "start": 1371,
+                },
+                "value": "link__Purpose",
+              },
+            },
+          },
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "loc": {
+              "end": 1411,
+              "start": 1389,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 1395,
+                "start": 1389,
+              },
+              "value": "import",
+            },
+            "type": {
+              "kind": "ListType",
+              "loc": {
+                "end": 1411,
+                "start": 1397,
+              },
+              "type": {
+                "kind": "NamedType",
+                "loc": {
+                  "end": 1410,
+                  "start": 1398,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 1410,
+                    "start": 1398,
+                  },
+                  "value": "link__Import",
+                },
+              },
+            },
+          },
+        ],
+        "description": undefined,
+        "directives": [],
+        "kind": "DirectiveDefinition",
+        "loc": {
+          "end": 1436,
+          "start": 1314,
+        },
+        "locations": [
+          {
+            "kind": "Name",
+            "loc": {
+              "end": 1436,
+              "start": 1430,
+            },
+            "value": "SCHEMA",
+          },
+        ],
+        "name": {
+          "kind": "Name",
+          "loc": {
+            "end": 1329,
+            "start": 1325,
+          },
+          "value": "link",
+        },
+        "repeatable": true,
+      },
+      {
+        "description": undefined,
+        "directives": [],
+        "kind": "ScalarTypeDefinition",
+        "loc": {
+          "end": 1459,
+          "start": 1440,
+        },
+        "name": {
+          "kind": "Name",
+          "loc": {
+            "end": 1459,
+            "start": 1447,
+          },
+          "value": "link__Import",
+        },
+      },
+      {
+        "description": undefined,
+        "directives": [],
+        "kind": "EnumTypeDefinition",
+        "loc": {
+          "end": 1703,
+          "start": 1463,
+        },
+        "name": {
+          "kind": "Name",
+          "loc": {
+            "end": 1481,
+            "start": 1468,
+          },
+          "value": "link__Purpose",
+        },
+        "values": [
+          {
+            "description": {
+              "block": true,
+              "kind": "StringValue",
+              "loc": {
+                "end": 1578,
+                "start": 1488,
+              },
+              "value": "\`SECURITY\` features provide metadata necessary to securely resolve fields.",
+            },
+            "directives": [],
+            "kind": "EnumValueDefinition",
+            "loc": {
+              "end": 1591,
+              "start": 1488,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 1591,
+                "start": 1583,
+              },
+              "value": "SECURITY",
+            },
+          },
+          {
+            "description": {
+              "block": true,
+              "kind": "StringValue",
+              "loc": {
+                "end": 1685,
+                "start": 1597,
+              },
+              "value": "\`EXECUTION\` features provide metadata necessary for operation execution.",
+            },
+            "directives": [],
+            "kind": "EnumValueDefinition",
+            "loc": {
+              "end": 1699,
+              "start": 1597,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 1699,
+                "start": 1690,
+              },
+              "value": "EXECUTION",
+            },
+          },
+        ],
+      },
+      {
+        "description": undefined,
+        "directives": [],
+        "kind": "EnumTypeDefinition",
+        "name": {
+          "kind": "Name",
+          "value": "join__Graph",
+        },
+        "values": [
+          {
+            "description": undefined,
+            "directives": [
+              {
+                "arguments": [
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "name",
+                    },
+                    "value": {
+                      "kind": "StringValue",
+                      "value": "A",
+                    },
+                  },
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "url",
+                    },
+                    "value": {
+                      "kind": "StringValue",
+                      "value": "",
+                    },
+                  },
+                ],
+                "kind": "Directive",
+                "name": {
+                  "kind": "Name",
+                  "value": "join__graph",
+                },
+              },
+            ],
+            "kind": "EnumValueDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "A",
+            },
+          },
+        ],
+      },
+      {
+        "arguments": [
+          {
+            "defaultValue": undefined,
+            "description": undefined,
+            "directives": [],
+            "kind": "InputValueDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "myarg",
+            },
+            "type": {
+              "kind": "NonNullType",
+              "loc": {
+                "end": 10,
+                "start": 0,
+              },
+              "type": {
+                "kind": "ListType",
+                "loc": {
+                  "end": 9,
+                  "start": 0,
+                },
+                "type": {
+                  "kind": "NonNullType",
+                  "loc": {
+                    "end": 8,
+                    "start": 1,
+                  },
+                  "type": {
+                    "kind": "NamedType",
+                    "loc": {
+                      "end": 7,
+                      "start": 1,
+                    },
+                    "name": {
+                      "kind": "Name",
+                      "loc": {
+                        "end": 7,
+                        "start": 1,
+                      },
+                      "value": "MyEnum",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+        "kind": "DirectiveDefinition",
+        "locations": [
+          {
+            "kind": "Name",
+            "value": "OBJECT",
+          },
+        ],
+        "name": {
+          "kind": "Name",
+          "value": "myDirective",
+        },
+        "repeatable": false,
+      },
+      {
+        "description": undefined,
+        "directives": [
+          {
+            "arguments": [
+              {
+                "kind": "Argument",
+                "name": {
+                  "kind": "Name",
+                  "value": "graph",
+                },
+                "value": {
+                  "kind": "EnumValue",
+                  "value": "A",
+                },
+              },
+            ],
+            "kind": "Directive",
+            "name": {
+              "kind": "Name",
+              "value": "join__type",
+            },
+          },
+        ],
+        "fields": [
+          {
+            "arguments": [],
+            "description": undefined,
+            "directives": [],
+            "kind": "FieldDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "myRootField",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 8,
+                "start": 0,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 8,
+                  "start": 0,
+                },
+                "value": "MyObject",
+              },
+            },
+          },
+        ],
+        "interfaces": [],
+        "kind": "ObjectTypeDefinition",
+        "name": {
+          "kind": "Name",
+          "value": "Query",
+        },
+      },
+      {
+        "description": undefined,
+        "directives": [
+          {
+            "arguments": [
+              {
+                "kind": "Argument",
+                "loc": {
+                  "end": 209,
+                  "start": 200,
+                },
+                "name": {
+                  "kind": "Name",
+                  "loc": {
+                    "end": 205,
+                    "start": 200,
+                  },
+                  "value": "myarg",
+                },
+                "value": {
+                  "kind": "ListValue",
+                  "loc": {
+                    "end": 209,
+                    "start": 207,
+                  },
+                  "values": [],
+                },
+              },
+            ],
+            "kind": "Directive",
+            "loc": {
+              "end": 210,
+              "start": 187,
+            },
+            "name": {
+              "kind": "Name",
+              "loc": {
+                "end": 199,
+                "start": 188,
+              },
+              "value": "myDirective",
+            },
+          },
+          {
+            "arguments": [
+              {
+                "kind": "Argument",
+                "name": {
+                  "kind": "Name",
+                  "value": "graph",
+                },
+                "value": {
+                  "kind": "EnumValue",
+                  "value": "A",
+                },
+              },
+            ],
+            "kind": "Directive",
+            "name": {
+              "kind": "Name",
+              "value": "join__type",
+            },
+          },
+        ],
+        "fields": [
+          {
+            "arguments": [],
+            "description": undefined,
+            "directives": [],
+            "kind": "FieldDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "myField",
+            },
+            "type": {
+              "kind": "NamedType",
+              "loc": {
+                "end": 6,
+                "start": 0,
+              },
+              "name": {
+                "kind": "Name",
+                "loc": {
+                  "end": 6,
+                  "start": 0,
+                },
+                "value": "String",
+              },
+            },
+          },
+        ],
+        "interfaces": [],
+        "kind": "ObjectTypeDefinition",
+        "name": {
+          "kind": "Name",
+          "value": "MyObject",
+        },
+      },
+      {
+        "description": undefined,
+        "directives": [
+          {
+            "arguments": [
+              {
+                "kind": "Argument",
+                "name": {
+                  "kind": "Name",
+                  "value": "graph",
+                },
+                "value": {
+                  "kind": "EnumValue",
+                  "value": "A",
+                },
+              },
+            ],
+            "kind": "Directive",
+            "name": {
+              "kind": "Name",
+              "value": "join__type",
+            },
+          },
+        ],
+        "kind": "EnumTypeDefinition",
+        "name": {
+          "kind": "Name",
+          "value": "MyEnum",
+        },
+        "values": [
+          {
+            "description": undefined,
+            "directives": [
+              {
+                "arguments": [
+                  {
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "graph",
+                    },
+                    "value": {
+                      "kind": "EnumValue",
+                      "value": "A",
+                    },
+                  },
+                ],
+                "kind": "Directive",
+                "name": {
+                  "kind": "Name",
+                  "value": "join__enumValue",
+                },
+              },
+            ],
+            "kind": "EnumValueDefinition",
+            "name": {
+              "kind": "Name",
+              "value": "MY_ENUM_VALUE",
+            },
+          },
+        ],
+      },
+    ],
+    "kind": "Document",
+  },
+  "supergraphSdl": "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@myDirective"]) {
+  query: Query
 }
 
-directive @myDirective(myarg: [MyEnum!]!)  on OBJECT
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-type Query @join__type(graph: A)  {
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  A @join__graph(name: "A", url: "")
+}
+
+directive @myDirective(myarg: [MyEnum!]!) on OBJECT
+
+type Query @join__type(graph: A) {
   myRootField: MyObject
 }
 
-type MyObject @myDirective(myarg: [])  @join__type(graph: A)  {
+type MyObject @myDirective(myarg: []) @join__type(graph: A) {
   myField: String
 }
 
-enum MyEnum @join__type(graph: A)  {
-  MY_ENUM_VALUE @join__enumValue(graph: A) 
+enum MyEnum @join__type(graph: A) {
+  MY_ENUM_VALUE @join__enumValue(graph: A)
 }",
 }
 `;
