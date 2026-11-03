@@ -352,6 +352,7 @@ exports[`gRPC Example streams movies by cast correctly: 0 1`] = `
   "data": {
     "exampleSearchMoviesByCast": [],
   },
+  "hasNext": true,
 }
 `;
 
@@ -371,6 +372,7 @@ exports[`gRPC Example streams movies by cast correctly: 1 1`] = `
       },
     ],
   },
+  "hasNext": true,
 }
 `;
 
@@ -400,6 +402,7 @@ exports[`gRPC Example streams movies by cast correctly: 2 1`] = `
       },
     ],
   },
+  "hasNext": true,
 }
 `;
 
@@ -430,6 +433,7 @@ exports[`gRPC Example streams movies by cast correctly: 3 1`] = `
       null,
     ],
   },
+  "hasNext": true,
 }
 `;
 
@@ -460,5 +464,6 @@ exports[`gRPC Example streams movies by cast correctly: 4 1`] = `
       null,
     ],
   },
+  "hasNext": false,
 }
 `;

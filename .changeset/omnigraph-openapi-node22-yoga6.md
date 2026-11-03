@@ -6,11 +6,15 @@ See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=2
 
 ## Motivation
 
-module-level `futureLinks` shared HATEOAS link state across loads (test pollution / concurrent loads). Link tracking is now scoped to the load/context.
+The public module-level `futureLinks` export leaked HATEOAS link state into
+callers and tests. Prefer an explicit `HATEOASContext` (or
+`getJSONSchemaOptionsFromMultipleOpenAPIOptions`). Compose still uses a
+non-exported process-local fallback when subgraphs load independently so
+cross-subgraph HATEOAS links keep working.
 
 ## What changed ()
 
-- Global `futureLinks` export removed
+- Global `futureLinks` export removed (no public shared Set)
 - Hive `Logger` dependency; no Mesh cross-helpers / logger re-exports
 
 ## How to migrate

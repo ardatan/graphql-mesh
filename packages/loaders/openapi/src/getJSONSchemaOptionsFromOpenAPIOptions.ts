@@ -128,6 +128,13 @@ export interface HATEOASContext {
   >;
 }
 
+/**
+ * Process-local fallback when no `HATEOASContext` is passed (compose loads each
+ * OpenAPI subgraph independently). Not exported — use `HATEOASContext` /
+ * `getJSONSchemaOptionsFromMultipleOpenAPIOptions` for isolated loads.
+ */
+const defaultFutureLinks = new Set<FutureLink>();
+
 export async function getJSONSchemaOptionsFromOpenAPIOptions(
   name: string,
   {
@@ -146,7 +153,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
   }: GetJSONSchemaOptionsFromOpenAPIOptionsParams,
   hateoasContext?: HATEOASContext,
 ) {
-  const contextFutureLinks = hateoasContext?.futureLinks ?? new Set<FutureLink>();
+  const contextFutureLinks = hateoasContext?.futureLinks ?? defaultFutureLinks;
   const loadedSchemas = hateoasContext?.loadedSchemas ?? new Map();
 
   const hateOasConfig: HATEOASConfig | false =
