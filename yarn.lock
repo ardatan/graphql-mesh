@@ -11530,18 +11530,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/plugin-persisted-operations@npm:3.24.6":
-  version: 3.24.6
-  resolution: "@graphql-yoga/plugin-persisted-operations@npm:3.24.6"
-  dependencies:
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-  peerDependencies:
-    graphql: ^15.2.0 || ^16.0.0 || ^17.0.0
-    graphql-yoga: ^5.24.6
-  checksum: 10c0/c24392b89879c6701121e21c96d627493f3f8e9bf34ee8d65a0eb4bc34abd16bf99a9e043db298699cb280ae248b095ea92805b3be2df8c6e30a08ccf4339620
-  languageName: node
-  linkType: hard
-
 "@graphql-yoga/plugin-persisted-operations@npm:^4.0.1":
   version: 4.0.1
   resolution: "@graphql-yoga/plugin-persisted-operations@npm:4.0.1"
@@ -11551,18 +11539,6 @@ __metadata:
     graphql: ^16.0.0 || ^17.0.0
     graphql-yoga: ^6.0.1
   checksum: 10c0/2b4a1d94ef93f3816293fcfd9052107dc9eaec7ffd7353178608aa9bac4e4f837f87922c2435c45c6a916d54fdf4a8da4470bfba61190681064936cdd0215a4d
-  languageName: node
-  linkType: hard
-
-"@graphql-yoga/plugin-persisted-operations@patch:@graphql-yoga/plugin-persisted-operations@npm%3A3.24.6#~/.yarn/patches/@graphql-yoga-plugin-persisted-operations-npm-3.24.6-d98e9efc7b.patch":
-  version: 3.24.6
-  resolution: "@graphql-yoga/plugin-persisted-operations@patch:@graphql-yoga/plugin-persisted-operations@npm%3A3.24.6#~/.yarn/patches/@graphql-yoga-plugin-persisted-operations-npm-3.24.6-d98e9efc7b.patch::version=3.24.6&hash=c2f4d6"
-  dependencies:
-    "@whatwg-node/promise-helpers": "npm:^1.3.2"
-  peerDependencies:
-    graphql: ^15.2.0 || ^16.0.0 || ^17.0.0
-    graphql-yoga: ^5.24.6
-  checksum: 10c0/3096ed48355f3c53f6084a498a945427622ad610c6a9389ef0a5b81da3a262eba6565330707377529765e72c50e51d9536d1b1106bc987f9366808a8f0f724d4
   languageName: node
   linkType: hard
 
