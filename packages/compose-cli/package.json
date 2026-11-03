@@ -35,7 +35,7 @@
   },
   "typings": "dist/typings/index.d.ts",
   "peerDependencies": {
-    "graphql": "*"
+    "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
     "@commander-js/extra-typings": "^15.0.0",

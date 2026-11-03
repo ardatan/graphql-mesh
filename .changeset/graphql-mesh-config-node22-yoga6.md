@@ -7,3 +7,4 @@
 - Stop injecting `log` into plugin factories (plugins should use Yoga/Gateway context `log`)
 - Resolve logger / pubsub from `@graphql-hive/logger` and `@graphql-hive/pubsub`
 - Drop `@graphql-mesh/cross-helpers`; use `globalThis.process?.getBuiltinModule`
+- `peerDependencies.graphql` set to `^16.0.0 || ^17.0.0` (Yoga 6 / `@graphql-tools/utils` / `schema` / `merge` / `executor`)

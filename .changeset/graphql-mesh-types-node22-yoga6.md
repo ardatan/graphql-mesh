@@ -7,3 +7,4 @@
 - Do not pass `disposables` into handler / transform / plugin / merger options or `GetMeshSourcePayload`; disposable components implement `[DisposableSymbols]` and `getMesh` registers them with `disposables.use(...)`
 - Drop `destroy` pubsub lifecycle typing
 - `MeshPluginOptions` no longer includes `log` (use Yoga/Gateway `context.log`)
+- `peerDependencies.graphql` set to `^16.0.0 || ^17.0.0` (Yoga 6 / `@graphql-tools/utils` / `schema` / `merge` / `executor`)

@@ -37,7 +37,7 @@
     "@aws-sdk/util-format-url": ">=3.0.0",
     "@smithy/protocol-http": ">=3.0.0",
     "@smithy/signature-v4": ">=2.0.0",
-    "graphql": "*"
+    "graphql": "^16.0.0 || ^17.0.0"
   },
   "peerDependenciesMeta": {
     "@aws-crypto/sha256-js": {
