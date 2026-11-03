@@ -209,7 +209,8 @@
     "validator": "^13.7.0",
     "webpack-dev-server": "5.2.6",
     "ws": "^8.21.0",
-    "xml2js": "^0.6.0"
+    "xml2js": "^0.6.0",
+    "@graphql-mesh/transport-http-callback@npm:^1.0.24": "patch:@graphql-mesh/transport-http-callback@npm%3A1.0.24#~/.yarn/patches/@graphql-mesh-transport-http-callback-npm-1.0.24-ddc6695f4c.patch"
   },
   "lint-staged": {
     "packages/**/src/**/*.{ts,tsx}": [
