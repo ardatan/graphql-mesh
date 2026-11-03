@@ -1,10 +1,8 @@
-import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway';
 import {
   createFederationTransform,
   defineConfig as defineComposeConfig,
   loadGraphQLHTTPSubgraph,
 } from '@graphql-mesh/compose-cli';
-import { useApolloInlineTrace } from '@graphql-yoga/plugin-apollo-inline-trace';
 
 export const composeConfig = defineComposeConfig({
   subgraphs: [
@@ -104,8 +102,4 @@ export const composeConfig = defineComposeConfig({
       ],
     },
   ],
-});
-
-export const gatewayConfig = defineGatewayConfig({
-  plugins: () => [useApolloInlineTrace()],
 });
