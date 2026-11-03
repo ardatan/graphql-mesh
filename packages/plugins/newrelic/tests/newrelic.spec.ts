@@ -27,7 +27,6 @@ describe('New Relic', () => {
       additionalEnvelopPlugins: [
         useMeshNewRelic(
           {
-            log,
             cache,
             pubsub,
             baseDir,

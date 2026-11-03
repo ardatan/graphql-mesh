@@ -193,26 +193,10 @@ export type ResponseCacheConfig = Omit<UseResponseCacheParameter, 'cache'> & {
 };
 
 /**
- * Response cache plugin for GraphQL Mesh
- * @param options
- */
-export default function useMeshResponseCache(options: ResponseCacheConfig): GatewayPlugin;
-/**
- * @deprecated Use new configuration format `ResponseCacheConfig`
- * @param options
+ * Response cache plugin for GraphQL Mesh / Gateway.
  */
 export default function useMeshResponseCache(
-  options: YamlConfig.ResponseCacheConfig & {
-    cache?: KeyValueCache;
-  },
-): GatewayPlugin;
-export default function useMeshResponseCache(
-  options:
-    | ResponseCacheConfig
-    // TODO: This is for v0 compatibility, remove once v1 is released
-    | (YamlConfig.ResponseCacheConfig & {
-        cache?: KeyValueCache;
-      }),
+  options: ResponseCacheConfig | (YamlConfig.ResponseCacheConfig & { cache?: KeyValueCache }),
 ): GatewayPlugin {
   const ttlPerType: Record<string, number> = { ...(options as ResponseCacheConfig).ttlPerType };
   const ttlPerSchemaCoordinate: Record<string, number> = {

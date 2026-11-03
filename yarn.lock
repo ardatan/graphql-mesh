@@ -7160,7 +7160,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/busboy@npm:^3.2.3":
+"@fastify/busboy@npm:^3.1.1, @fastify/busboy@npm:^3.2.3":
   version: 3.2.4
   resolution: "@fastify/busboy@npm:3.2.4"
   checksum: 10c0/c36a677bea3cfec55b8063ae9ae2f246f6faf0125aee2c7a2cfbbcf980e5341a76b4b044a4d68d6cfe3cd8e65c43436ea33c47411fa9d7f63a481481f79a3fd0
@@ -8491,7 +8491,7 @@ __metadata:
     snake-case: "npm:^3.0.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    graphql: ^16.0.0 || ^17.0.0
   languageName: unknown
   linkType: soft
 
@@ -8590,6 +8590,8 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@omnigraph/grpc": "npm:^0.3.2"
+    "@whatwg-node/disposablestack": "npm:^0.1.0"
+    "@whatwg-node/promise-helpers": "npm:^2.0.1"
     graphql: "npm:16.14.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -8746,6 +8748,7 @@ __metadata:
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
+    "@whatwg-node/disposablestack": "npm:^0.1.0"
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.1.0"
     graphql-compose-connection: "npm:^8.2.1"
@@ -8769,6 +8772,8 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/utils": "npm:^13.2.1"
     "@omnigraph/mysql": "npm:^0.12.3"
+    "@whatwg-node/disposablestack": "npm:^0.1.0"
+    "@whatwg-node/promise-helpers": "npm:^2.0.1"
     graphql: "npm:16.14.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -8786,6 +8791,8 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@omnigraph/neo4j": "npm:^0.14.3"
+    "@whatwg-node/disposablestack": "npm:^0.1.0"
+    "@whatwg-node/promise-helpers": "npm:^2.0.1"
     graphql: "npm:16.14.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -8847,11 +8854,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/plugin-hive@workspace:packages/plugins/hive"
   dependencies:
-    "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-hive/yoga": "npm:^0.49.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
+    "@whatwg-node/disposablestack": "npm:^0.1.0"
     graphql: "npm:16.14.0"
     graphql-yoga: "npm:^6.0.1"
     tslib: "npm:^2.4.0"
@@ -8963,7 +8970,6 @@ __metadata:
   dependencies:
     "@envelop/core": "npm:^6.0.0"
     "@envelop/live-query": "npm:^11.0.0"
-    "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
@@ -9202,6 +9208,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.3.2"
+    "@whatwg-node/disposablestack": "npm:^0.1.0"
     graphql: "npm:16.14.0"
     pg: "npm:^8.23.1"
     postgraphile: "npm:^4.13.0"
@@ -9541,6 +9548,7 @@ __metadata:
     "@graphql-tools/schema": "npm:11.0.8"
     "@graphql-tools/utils": "npm:^13.2.1"
     "@graphql-tools/wrap": "npm:^11.2.4"
+    "@whatwg-node/disposablestack": "npm:^0.1.0"
     graphql: "npm:16.14.0"
     minimatch: "npm:^11.0.1"
     tslib: "npm:^2.4.0"
@@ -21659,7 +21667,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/fetch@npm:0.12.1":
+"@whatwg-node/fetch@npm:^0.10.0, @whatwg-node/fetch@npm:^0.10.12, @whatwg-node/fetch@npm:^0.10.13, @whatwg-node/fetch@npm:^0.10.4, @whatwg-node/fetch@npm:^0.10.6":
+  version: 0.10.13
+  resolution: "@whatwg-node/fetch@npm:0.10.13"
+  dependencies:
+    "@whatwg-node/node-fetch": "npm:^0.8.3"
+    urlpattern-polyfill: "npm:^10.0.0"
+  checksum: 10c0/afce42c44e9c5572ac5800615bac3a03865923af53af99098d2e931b40f6db556ad5d4a3e08c29e51ecf871809f0860fb11f2b024891daa26646a309f8b07fc1
+  languageName: node
+  linkType: hard
+
+"@whatwg-node/fetch@npm:^0.12.0, @whatwg-node/fetch@npm:^0.12.1":
   version: 0.12.1
   resolution: "@whatwg-node/fetch@npm:0.12.1"
   dependencies:
@@ -21669,7 +21687,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/node-fetch@npm:0.9.3":
+"@whatwg-node/node-fetch@npm:^0.8.3":
+  version: 0.8.6
+  resolution: "@whatwg-node/node-fetch@npm:0.8.6"
+  dependencies:
+    "@fastify/busboy": "npm:^3.1.1"
+    "@whatwg-node/disposablestack": "npm:^0.0.6"
+    "@whatwg-node/promise-helpers": "npm:^1.3.2"
+    tslib: "npm:^2.6.3"
+  checksum: 10c0/728447084f79cfef79c7cc7ae9461a71545c1d606704cb5b80ed74a96057ba1210444bf60a8351668af243dbeecbeaab5296e67e48bef94f9d1821c1d448d636
+  languageName: node
+  linkType: hard
+
+"@whatwg-node/node-fetch@npm:^0.9.1":
   version: 0.9.3
   resolution: "@whatwg-node/node-fetch@npm:0.9.3"
   dependencies:
@@ -21711,7 +21741,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@whatwg-node/server@npm:0.13.2":
+"@whatwg-node/server@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@whatwg-node/server@npm:0.11.0"
+  dependencies:
+    "@envelop/instrumentation": "npm:^1.0.0"
+    "@whatwg-node/disposablestack": "npm:^0.0.6"
+    "@whatwg-node/fetch": "npm:^0.10.13"
+    "@whatwg-node/promise-helpers": "npm:^1.3.2"
+    tslib: "npm:^2.6.3"
+  checksum: 10c0/01b2715a9677333fb9fe52aed3dc03ebdaf82185c38fbb8bff82ca4b830c717285b7653bc5b700ca9c05eb1a2bea2fb2c2265cf18055fe93cb1cce4add546450
+  languageName: node
+  linkType: hard
+
+"@whatwg-node/server@npm:^0.13.1, @whatwg-node/server@npm:^0.13.2":
   version: 0.13.2
   resolution: "@whatwg-node/server@npm:0.13.2"
   dependencies:

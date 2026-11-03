@@ -386,7 +386,7 @@ export async function processConfig(
               `const ${importName} = await import(${JSON.stringify(moduleName)}).then(handleImport);`,
             );
             codes.add(`additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
-          ...(${JSON.stringify(pluginConfig, null, 2)}), log: log.child({ plugin: ${JSON.stringify(pluginName)} }),
+          ...(${JSON.stringify(pluginConfig, null, 2)}),
           cache,
           pubsub,
           disposables,
@@ -410,7 +410,7 @@ export async function processConfig(
               importCodes.add(`import { ${importName} } from ${JSON.stringify(moduleName)};`);
               codes.add(
                 `additionalEnvelopPlugins[${pluginIndex}] = await ${importName}({
-          ...(${JSON.stringify(pluginConfig, null, 2)}), log: log.child({ plugin: ${JSON.stringify(pluginName)} }),
+          ...(${JSON.stringify(pluginConfig, null, 2)}),
           cache,
           pubsub,
           disposables,
@@ -423,7 +423,6 @@ export async function processConfig(
         }
         return pluginFactory({
           ...pluginConfig,
-          log: log.child({ plugin: pluginName }),
           cache,
           pubsub,
           disposables,

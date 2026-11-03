@@ -114,8 +114,6 @@ export interface MeshMerger {
 }
 
 export type MeshPluginOptions<TConfig> = TConfig & {
-  /** @deprecated Prefer `context.log` / Yoga `log` when available; Mesh still injects this for init-time use. */
-  log?: Logger;
   cache: KeyValueCache;
   pubsub: PubSub;
   baseDir: string;
