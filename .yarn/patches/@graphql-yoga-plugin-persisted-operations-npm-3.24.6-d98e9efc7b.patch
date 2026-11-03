@@ -1,0 +1,53 @@
+diff --git a/cjs/index.js b/cjs/index.js
+index 9cb99d27372849223b9ad63fbbe7f2ab84e27c1a..155dba6366a9853047018f9f983656b5fa84a519 100644
+--- a/cjs/index.js
++++ b/cjs/index.js
+@@ -2,7 +2,7 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.defaultExtractPersistedOperationId = void 0;
+ exports.usePersistedOperations = usePersistedOperations;
+-const graphql_yoga_1 = require("graphql-yoga");
++const graphql_1 = require("graphql");
+ const promise_helpers_1 = require("@whatwg-node/promise-helpers");
+ const defaultExtractPersistedOperationId = (params) => {
+     if (params.extensions != null &&
+@@ -99,12 +99,12 @@ function usePersistedOperations({ allowArbitraryOperations = false, extractPersi
+ }
+ function createErrorFactory(defaultMessage, options) {
+     if (typeof options === 'string') {
+-        return () => (0, graphql_yoga_1.createGraphQLError)(options);
++        return () => new graphql_1.GraphQLError(options);
+     }
+     if (typeof options === 'function') {
+         return options;
+     }
+     return () => {
+-        return (0, graphql_yoga_1.createGraphQLError)(options?.message ?? defaultMessage, options);
++        return new graphql_1.GraphQLError(options?.message ?? defaultMessage, options);
+     };
+ }
+diff --git a/esm/index.js b/esm/index.js
+index 43a8e15993ffb367b2dcb99bffeffec9a376a7a1..a2f729fa0e230aa5dfad1850b6d064407d6f2a3b 100644
+--- a/esm/index.js
++++ b/esm/index.js
+@@ -1,4 +1,4 @@
+-import { createGraphQLError } from 'graphql-yoga';
++import { GraphQLError } from 'graphql';
+ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+ export const defaultExtractPersistedOperationId = (params) => {
+     if (params.extensions != null &&
+@@ -94,12 +94,12 @@ export function usePersistedOperations({ allowArbitraryOperations = false, extra
+ }
+ function createErrorFactory(defaultMessage, options) {
+     if (typeof options === 'string') {
+-        return () => createGraphQLError(options);
++        return () => new GraphQLError(options);
+     }
+     if (typeof options === 'function') {
+         return options;
+     }
+     return () => {
+-        return createGraphQLError(options?.message ?? defaultMessage, options);
++        return new GraphQLError(options?.message ?? defaultMessage, options);
+     };
+ }

@@ -1,0 +1,26 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index 4985ec3dbe96865753a54a882d8e245b95788fe3..0bf904b8468daf816d5e9c38dd511b810e301acb 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -710,7 +710,7 @@ function handleUnifiedGraphSchema(unifiedGraphSchema, configContext) {
+     return utils$1.readFileOrUrl(unifiedGraphSchema, {
+       fetch: configContext.fetch,
+       cwd: configContext.cwd,
+-      logger: logger.LegacyLogger.from(configContext.log),
++      log: configContext.log,
+       allowUnknownExtensions: true,
+       importFn: utils$1.defaultImportFn
+     });
+diff --git a/dist/index.js b/dist/index.js
+index d4387c349c0b9e04be561816a0f4a3da5813bb04..7bb6d1591dcd907eb3cd9f3f0b90acb6407d15de 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -709,7 +709,7 @@ function handleUnifiedGraphSchema(unifiedGraphSchema, configContext) {
+     return readFileOrUrl(unifiedGraphSchema, {
+       fetch: configContext.fetch,
+       cwd: configContext.cwd,
+-      logger: LegacyLogger.from(configContext.log),
++      log: configContext.log,
+       allowUnknownExtensions: true,
+       importFn: defaultImportFn
+     });
