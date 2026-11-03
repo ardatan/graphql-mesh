@@ -2,7 +2,15 @@
 "@graphql-mesh/mongoose": major
 ---
 
-- Require Node.js `>=22.18.0`
+See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+
 - Disconnect via `[DisposableSymbols.asyncDispose]`; stop relying on `disposables.defer` / destroy pubsub
 - Use Hive `Logger` / `PubSub` from original packages
-- `peerDependencies.graphql` set to `^16.0.0 || ^17.0.0` (Yoga 6 / `@graphql-tools/utils` / `schema` / `merge` / `executor`)
+
+#### Example
+```ts
+import MongooseHandler from '@graphql-mesh/mongoose'
+
+const handler = new MongooseHandler({ name: 'Mongoose', config: { connectionString: mongoUrl, models: [...] } })
+// await handler[DisposableSymbols.asyncDispose]() closes mongoose connections
+```

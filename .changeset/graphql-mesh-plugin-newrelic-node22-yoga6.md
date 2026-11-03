@@ -2,12 +2,15 @@
 "@graphql-mesh/plugin-newrelic": major
 ---
 
-- Require Node.js `>=22.18.0`
+See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+
 - Align envelop/Yoga 6 majors
 - Keep optional `options.log` for init-time diagnostics when the New Relic agent is unavailable (e.g. `options.log?.debug('Agent unavailable…')`); prefer Yoga `context.log` for request-time logging
-- `peerDependencies.graphql` set to `^16.0.0 || ^17.0.0` (Yoga 6 / `@graphql-tools/utils` / `schema` / `merge` / `executor`)
+
 #### Example
 ```ts
+import { useMeshNewrelic } from '@graphql-mesh/plugin-newrelic'
+
 useMeshNewrelic({
   ...meshPluginOptions,
   log: meshLogger, // optional init-time logger when the New Relic agent is missing

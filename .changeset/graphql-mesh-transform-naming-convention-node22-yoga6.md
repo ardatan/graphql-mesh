@@ -2,6 +2,14 @@
 "@graphql-mesh/transform-naming-convention": major
 ---
 
-- Require Node.js `>=22.18.0`
-- Align with Mesh types / utils majors (Hive logger-pubsub option typing, no Mesh destroy pubsub)
-- `peerDependencies.graphql` set to `^16.0.0 || ^17.0.0` (Yoga 6 / `@graphql-tools/utils` / `schema` / `merge` / `executor`)
+See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+
+- Align with Mesh types / utils majors (Hive logger-pubsub option typing, no Mesh destroy pubsub, no injected `disposables`)
+
+#### Example
+```yaml
+transforms:
+  - namingConvention:
+      typeNames: camelCase
+      fieldNames: camelCase
+```

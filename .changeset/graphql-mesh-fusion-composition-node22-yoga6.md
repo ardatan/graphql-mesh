@@ -2,6 +2,19 @@
 "@graphql-mesh/fusion-composition": major
 ---
 
-- Require Node.js `>=22.18.0`
-- Type-only filter globs like `!User` are removed from `createFilterTransform`; use `Type.!User` (#1605)
-- `peerDependencies.graphql` tightened to `^16.0.0 || ^17.0.0` (aligned with `@graphql-tools/utils` / `schema`)
+See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+
+- Type-only filter globs like `!User` are removed from `createFilterTransform`; use `Type.!User`
+
+#### Example
+```ts
+import { createFilterTransform } from '@graphql-mesh/fusion-composition'
+
+createFilterTransform({
+  filters: [
+    // Before: '!User'
+    'Type.!User',
+    'Query.user.!pk',
+  ],
+})
+```

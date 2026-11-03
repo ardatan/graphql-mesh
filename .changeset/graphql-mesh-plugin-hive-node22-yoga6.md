@@ -2,8 +2,20 @@
 "@graphql-mesh/plugin-hive": major
 ---
 
-- Require Node.js `>=22.18.0`
+See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+
 - Align with `@graphql-hive/yoga` / Yoga 6; rely on `useHive`'s Yoga `onDispose` / Hive `autoDispose` for client cleanup (no extra Mesh `[DisposableSymbols]` wrapper)
 - Drop unused plugin `pubsub` option (Hive does not need Mesh/Gateway pubsub)
 - Hive agent logger comes from `agent.logger` when set
-- `peerDependencies.graphql` set to `^16.0.0 || ^17.0.0` (Yoga 6 / `@graphql-tools/utils` / `schema` / `merge` / `executor`)
+
+#### Example
+```ts
+import { useMeshHive } from '@graphql-mesh/plugin-hive'
+
+// Before: useMeshHive({ ...opts, pubsub, /* Mesh dispose wrapper */ })
+useMeshHive({
+  ...meshPluginOptions,
+  token: process.env.HIVE_TOKEN,
+  // cleanup via Yoga onDispose / Hive autoDispose
+})
+```

@@ -2,6 +2,18 @@
 "@graphql-mesh/supergraph": major
 ---
 
-- Require Node.js `>=22.18.0`
+See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+
 - Align with Hive logger/pubsub and disposable Mesh lifecycle
-- `peerDependencies.graphql` set to `^16.0.0 || ^17.0.0` (Yoga 6 / `@graphql-tools/utils` / `schema` / `merge` / `executor`)
+
+#### Example
+```ts
+import SupergraphHandler from '@graphql-mesh/supergraph'
+
+const handler = new SupergraphHandler({
+  name: 'Supergraph',
+  config: { source: './supergraph.graphql' },
+  logger,
+  pubsub,
+})
+```

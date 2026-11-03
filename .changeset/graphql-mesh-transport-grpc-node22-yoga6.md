@@ -2,8 +2,16 @@
 "@graphql-mesh/transport-grpc": major
 ---
 
-- Require Node.js `>=22.18.0`
+See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+
 - Drop `@graphql-mesh/cross-helpers`; use `globalThis.process?.getBuiltinModule`
-- Align disposable / Hive logger dependencies
-- `peerDependencies.graphql` set to `^16.0.0 || ^17.0.0` (Yoga 6 / `@graphql-tools/utils` / `schema` / `merge` / `executor`)
-- gRPC executor exposes `[DisposableSymbols.dispose]` for transport cleanup
+- `GrpcTransportHelper` extends `DisposableStack`; transport cleanup goes through `[DisposableSymbols.dispose]`
+
+#### Example
+```ts
+import { GrpcTransportHelper } from '@graphql-mesh/transport-grpc'
+import { DisposableSymbols } from '@whatwg-node/disposablestack'
+
+const helper = new GrpcTransportHelper({ /* credentials, endpoint, … */ })
+disposables.use(helper) // helper[DisposableSymbols.dispose]()
+```

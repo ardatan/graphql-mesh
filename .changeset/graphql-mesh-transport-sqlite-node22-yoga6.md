@@ -2,6 +2,11 @@
 "@graphql-mesh/transport-sqlite": major
 ---
 
-- Require Node.js `>=22.18.0`
-- Align with Yoga 6 / WHATWG majors; drop Mesh cross-helpers where applicable
-- `peerDependencies.graphql` set to `^16.0.0 || ^17.0.0` (Yoga 6 / `@graphql-tools/utils` / `schema` / `merge` / `executor`)
+See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+
+- Platform alignment with Mesh transports / WHATWG promise-helpers; default transport export unchanged
+
+#### Example
+```ts
+import sqliteTransport from '@graphql-mesh/transport-sqlite'
+```

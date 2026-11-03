@@ -2,7 +2,19 @@
 "@graphql-mesh/grpc": major
 ---
 
-- Require Node.js `>=22.18.0`
-- Handler owns `GrpcTransportHelper` and cleans up via `[DisposableSymbols.dispose]`; `getMesh` registers with `disposables.use(handler)`
+See `.changeset/node22-yoga6-shared.md` for Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, disposables, and promise-helper platform notes.
+
+- Handler owns `GrpcTransportHelper` and cleans up via `[DisposableSymbols.dispose]`; `getMesh` registers with `disposables.use(handler)` (no injected `disposables` option)
 - Use Hive `Logger` / `PubSub` from original packages
-- `peerDependencies.graphql` set to `^16.0.0 || ^17.0.0` (Yoga 6 / `@graphql-tools/utils` / `schema` / `merge` / `executor`)
+
+#### Example
+```ts
+import GrpcHandler from '@graphql-mesh/grpc'
+
+const handler = new GrpcHandler({
+  name: 'MyGrpc',
+  config: { source: './service.proto', endpoint: 'localhost:50051' },
+  // no disposables option — implement DisposableSymbols on the handler
+})
+// getMesh: disposables.use(handler)
+```
