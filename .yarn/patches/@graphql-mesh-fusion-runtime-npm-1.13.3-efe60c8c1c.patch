@@ -1,5 +1,5 @@
 diff --git a/dist/index.cjs b/dist/index.cjs
-index 8c49c18936b173833bc7ba1f81aff5fa273c1970..71f0266a87ffc98089a2c0ac0a0a9ad56944617e 100644
+index 8c49c18936b173833bc7ba1f81aff5fa273c1970..b7105845738f93aa069f29514e292e3528203a95 100644
 --- a/dist/index.cjs
 +++ b/dist/index.cjs
 @@ -1149,7 +1149,7 @@ function wrapExecutorWithHooks({
@@ -7,7 +7,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..71f0266a87ffc98089a2c0ac0a0a9ad5
      const onSubgraphExecuteDoneHooks = [];
      return require$$3.handleMaybePromise(
 -      () => utils$1.iterateAsync(
-+      () => promiseHelpers.iterateAsync(
++      () => require$$3.iterateAsync(
          onSubgraphExecuteHooks,
          (onSubgraphExecuteHook) => onSubgraphExecuteHook({
            get subgraph() {
@@ -16,7 +16,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..71f0266a87ffc98089a2c0ac0a0a9ad5
              const executeDoneResults = [];
              return require$$3.handleMaybePromise(
 -              () => utils$1.iterateAsync(
-+              () => promiseHelpers.iterateAsync(
++              () => require$$3.iterateAsync(
                  onSubgraphExecuteDoneHooks,
                  (onSubgraphExecuteDoneHook) => onSubgraphExecuteDoneHook({
                    result: currentResult,
@@ -25,7 +25,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..71f0266a87ffc98089a2c0ac0a0a9ad5
                    currentResult,
                    (currentResult2) => require$$3.handleMaybePromise(
 -                    () => utils$1.iterateAsync(
-+                    () => promiseHelpers.iterateAsync(
++                    () => require$$3.iterateAsync(
                        onNextHooks,
                        (onNext) => onNext({
                          result: currentResult2,
@@ -34,7 +34,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..71f0266a87ffc98089a2c0ac0a0a9ad5
                    ),
                    void 0,
 -                  () => onEndHooks.length === 0 ? void 0 : utils$1.iterateAsync(onEndHooks, (onEnd) => onEnd())
-+                  () => onEndHooks.length === 0 ? void 0 : promiseHelpers.iterateAsync(onEndHooks, (onEnd) => onEnd())
++                  () => onEndHooks.length === 0 ? void 0 : require$$3.iterateAsync(onEndHooks, (onEnd) => onEnd())
                  );
                }
              );
