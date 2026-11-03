@@ -24,11 +24,10 @@ import type { ChannelCredentials, ChannelOptions } from '@grpc/grpc-js';
 import { credentials, Client as GrpcClient, loadPackageDefinition } from '@grpc/grpc-js';
 import type { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
 import { fromJSON } from '@grpc/proto-loader';
-import { DisposableStack } from '@whatwg-node/disposablestack';
+import { DisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
 import { addExecutionLogicToScalar, addMetaDataToCall } from './utils.js';
 import './patchLongJs.js';
 import { type Logger } from '@graphql-hive/logger';
-import { makeDisposable } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
@@ -372,7 +371,9 @@ const transport: Transport<gRPCTransportOptions> = {
       () => transport.getCredentials(),
       creds => {
         transport.processDirectives({ schema: subgraph, creds });
-        return makeDisposable(createDefaultExecutor(subgraph), () => transport.dispose());
+        const executor = createDefaultExecutor(subgraph);
+        executor[DisposableSymbols.dispose] = () => transport.dispose();
+        return executor;
       },
     );
   },

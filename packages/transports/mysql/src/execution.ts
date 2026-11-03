@@ -4,8 +4,9 @@ import graphqlFields from 'graphql-fields';
 import { createPool, type Pool, type PoolConnection } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
-import { getDefDirectives, makeAsyncDisposable } from '@graphql-mesh/utils';
+import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
 import type { MySQLContext } from './types.js';
 
@@ -189,27 +190,26 @@ export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): Disp
   const defaultExecutor = createDefaultExecutor(subgraph);
   const getConnection$ = util.promisify(pool.getConnection.bind(pool));
 
-  return makeAsyncDisposable<DisposableExecutor>(
-    async function mysqlExecutor(executionRequest) {
-      const mysqlConnection = await getConnection$();
-      mysqlConnectionByContext.set(executionRequest.context, mysqlConnection);
-      try {
-        return await defaultExecutor(executionRequest);
-      } finally {
-        mysqlConnectionByContext.delete(executionRequest.context);
-        mysqlConnection.release();
+  async function mysqlExecutor(executionRequest) {
+    const mysqlConnection = await getConnection$();
+    mysqlConnectionByContext.set(executionRequest.context, mysqlConnection);
+    try {
+      return await defaultExecutor(executionRequest);
+    } finally {
+      mysqlConnectionByContext.delete(executionRequest.context);
+      mysqlConnection.release();
+    }
+  }
+  mysqlExecutor[DisposableSymbols.asyncDispose] = () => {
+    const { promise, resolve, reject } = Promise.withResolvers<void>();
+    pool.end(err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
       }
-    },
-    () => {
-      const { promise, resolve, reject } = Promise.withResolvers<void>();
-      pool.end(err => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-      return promise;
-    },
-  );
+    });
+    return promise;
+  };
+  return mysqlExecutor as DisposableExecutor;
 }

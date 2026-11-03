@@ -4,9 +4,9 @@ import type { Driver } from 'neo4j-driver';
 import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
-import { makeAsyncDisposable } from '@graphql-mesh/utils';
 import { asArray, getDirectiveExtensions, getDocumentNodeFromSchema } from '@graphql-tools/utils';
 import { Neo4jGraphQL } from '@neo4j/graphql';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { getDriverFromOpts } from './driver.js';
 import { getEventEmitterFromPubSub } from './eventEmitterForPubSub.js';
 
@@ -98,18 +98,17 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
     database,
   };
 
-  return makeAsyncDisposable<DisposableExecutor>(
-    function neo4JExecutor(args) {
-      return defaultExecutor({
-        ...args,
-        context: {
-          ...args.context,
-          sessionConfig,
-        },
-      });
-    },
-    () => driver.close(),
-  );
+  function neo4JExecutor(args) {
+    return defaultExecutor({
+      ...args,
+      context: {
+        ...args.context,
+        sessionConfig,
+      },
+    });
+  }
+  neo4JExecutor[DisposableSymbols.asyncDispose] = () => driver.close();
+  return neo4JExecutor as DisposableExecutor;
 }
 
 interface GetExecutableSchemaFromTypeDefs {

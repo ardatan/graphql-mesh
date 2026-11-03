@@ -39,10 +39,10 @@
     "@graphql-hive/pubsub": "^2.2.1",
     "@graphql-mesh/transport-common": "^1.0.20",
     "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/delegate": "^12.3.2",
     "@graphql-tools/utils": "^13.2.1",
     "@neo4j/graphql": "^7.6.5",
+    "@whatwg-node/disposablestack": "^0.1.0",
     "@whatwg-node/promise-helpers": "^2.0.1",
     "neo4j-driver": "^6.2.0",
     "tslib": "^2.4.0"

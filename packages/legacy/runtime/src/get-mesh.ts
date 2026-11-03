@@ -29,7 +29,6 @@ import {
   getInContextSDK,
   groupTransforms,
   isDisposable,
-  makeAsyncDisposable,
   parseWithCache,
   wrapFetchWithHooks,
 } from '@graphql-mesh/utils';
@@ -38,7 +37,7 @@ import { normalizedExecutor } from '@graphql-tools/executor';
 import type { ExecutionResult } from '@graphql-tools/utils';
 import { getRootTypeMap, isAsyncIterable, memoize1 } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
-import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
+import { AsyncDisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import {
   handleMaybePromise,
@@ -404,32 +403,32 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     return disposables.disposeAsync();
   }
 
-  return makeAsyncDisposable(
-    {
-      schema,
-      rawSources,
-      cache,
-      pubsub,
-      destroy: meshDestroy,
-      deferDispose(fn: () => MaybePromise<void>) {
-        disposables.defer(fn);
-      },
-      log,
-      plugins,
-      get getEnveloped() {
-        return memoizedGetEnvelopedFactory(plugins);
-      },
-      createExecutor,
-      get execute() {
-        return createExecutor();
-      },
-      get subscribe() {
-        return createExecutor();
-      },
-      sdkRequesterFactory,
+  return {
+    schema,
+    rawSources,
+    cache,
+    pubsub,
+    destroy: meshDestroy,
+    deferDispose(fn: () => MaybePromise<void>) {
+      disposables.defer(fn);
     },
-    meshDestroy,
-  );
+    log,
+    plugins,
+    get getEnveloped() {
+      return memoizedGetEnvelopedFactory(plugins);
+    },
+    createExecutor,
+    get execute() {
+      return createExecutor();
+    },
+    get subscribe() {
+      return createExecutor();
+    },
+    sdkRequesterFactory,
+    async [DisposableSymbols.asyncDispose]() {
+      await meshDestroy();
+    },
+  };
 }
 
 function extractDataOrThrowErrors<T>(result: ExecutionResult<T>): T {
