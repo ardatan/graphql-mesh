@@ -8425,7 +8425,7 @@ __metadata:
     "@types/lodash.get": "npm:4.4.9"
     "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:4.0.5"
-    "@types/ws": "npm:8.18.1"
+    "@types/ws": "npm:8.18.2"
     "@types/yargs": "npm:17.0.35"
     "@whatwg-node/promise-helpers": "npm:^2.0.1"
     ajv: "npm:^8.20.0"
@@ -8447,7 +8447,7 @@ __metadata:
     rimraf: "npm:^6.1.3"
     tslib: "npm:^2.4.0"
     typescript: "npm:^6.0.3"
-    ws: "npm:^8.21.3"
+    ws: "npm:^8.22.1"
     yargs: "npm:^17.7.1"
   peerDependencies:
     graphql: ^16.0.0 || ^17.0.0
@@ -8693,7 +8693,7 @@ __metadata:
     "@types/lodash.get": "npm:4.4.9"
     "@types/mkdirp": "npm:2.0.0"
     "@types/rimraf": "npm:4.0.5"
-    "@types/ws": "npm:8.18.1"
+    "@types/ws": "npm:8.18.2"
     "@types/yargs": "npm:17.0.35"
     "@whatwg-node/promise-helpers": "npm:^2.0.1"
     "@whatwg-node/server": "npm:^0.13.2"
@@ -20767,12 +20767,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:8.18.1, @types/ws@npm:^8.0.0, @types/ws@npm:^8.5.10":
-  version: 8.18.1
-  resolution: "@types/ws@npm:8.18.1"
+"@types/ws@npm:8.18.2, @types/ws@npm:^8.18.2":
+  version: 8.18.2
+  resolution: "@types/ws@npm:8.18.2"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/61aff1129143fcc4312f083bc9e9e168aa3026b7dd6e70796276dcfb2c8211c4292603f9c4864fae702f2ed86e4abd4d38aa421831c2fd7f856c931a481afbab
+  checksum: 10c0/8cf79499d26df06ffc27109fc86f1400371a5932082a4c1269be3f11e22b9e5a403a4ba2c1a3245d5fae420c270571aa833142a3d7fdce8f6cd24a45c52a98e4
   languageName: node
   linkType: hard
 
@@ -20785,12 +20785,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:^8.18.2":
-  version: 8.18.2
-  resolution: "@types/ws@npm:8.18.2"
+"@types/ws@npm:^8.0.0, @types/ws@npm:^8.5.10":
+  version: 8.18.1
+  resolution: "@types/ws@npm:8.18.1"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/8cf79499d26df06ffc27109fc86f1400371a5932082a4c1269be3f11e22b9e5a403a4ba2c1a3245d5fae420c270571aa833142a3d7fdce8f6cd24a45c52a98e4
+  checksum: 10c0/61aff1129143fcc4312f083bc9e9e168aa3026b7dd6e70796276dcfb2c8211c4292603f9c4864fae702f2ed86e4abd4d38aa421831c2fd7f856c931a481afbab
   languageName: node
   linkType: hard
 
