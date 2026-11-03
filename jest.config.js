@@ -111,6 +111,9 @@ module.exports = {
     '@graphql-mesh/plugin-jwt-auth':
       '<rootDir>/node_modules/@graphql-mesh/plugin-jwt-auth/dist/index.cjs',
 
+    // yargs@18 is ESM-only; use esbuild CJS bundles for Jest
+    '^yargs$': '<rootDir>/scripts/jest/yargs-bundle.cjs',
+    '^yargs/helpers$': '<rootDir>/scripts/jest/yargs-helpers-bundle.cjs',
     '^graphql$': '<rootDir>/node_modules/graphql/index.js',
     '^lru-cache$': '<rootDir>/node_modules/lru-cache/dist/commonjs/index.js',
     ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
