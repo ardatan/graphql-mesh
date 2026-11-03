@@ -76,9 +76,7 @@ type User {
   name: String!
 }
 
-input _HoistConfig {
-  _fake: String
-}"
+scalar _HoistConfig"
 `);
   });
   it('hoists field with mixed pathConfig array', async () => {
@@ -124,9 +122,7 @@ type User {
   name: String!
 }
 
-input _HoistConfig {
-  _fake: String
-}"
+scalar _HoistConfig"
 `);
   });
   it('hoists field and filter args with global flag', async () => {
@@ -170,9 +166,7 @@ type User {
   name: String!
 }
 
-input _HoistConfig {
-  _fake: String
-}"
+scalar _HoistConfig"
 `);
   });
   it('hoists field and filter individual args via pathConfig', async () => {
@@ -222,9 +216,7 @@ type User {
   name: String!
 }
 
-input _HoistConfig {
-  _fake: String
-}"
+scalar _HoistConfig"
 `);
   });
   it('hoists field and filter individual args via pathConfig independent of global flag', async () => {
@@ -277,9 +269,7 @@ type User {
   name: String!
 }
 
-input _HoistConfig {
-  _fake: String
-}"
+scalar _HoistConfig"
 `);
   });
   it('executes correctly', async () => {
@@ -365,9 +355,7 @@ type UserSearchResult {
   page: Int!
 }
 
-input _HoistConfig {
-  _fake: String
-}"
+scalar _HoistConfig"
 `);
   });
   it('executes the new field correctly', async () => {
