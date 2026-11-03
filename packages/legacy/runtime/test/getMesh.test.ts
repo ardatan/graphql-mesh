@@ -33,7 +33,7 @@ describe('getMesh', () => {
       pubsub,
       log,
     });
-    process.env.NODE_ENV = 'test';
+    globalThis.process!.env!.NODE_ENV = 'test';
   });
 
   interface CreateSchemaConfiguration {
@@ -220,7 +220,7 @@ describe('getMesh', () => {
   });
 
   it('logs the unexpected errors with stack traces in production', async () => {
-    process.env.NODE_ENV = 'production';
+    globalThis.process!.env!.NODE_ENV = 'production';
     const errorLogSpy = jest.spyOn(log, 'error');
     const mesh = await getMesh({
       cache,
@@ -277,7 +277,7 @@ describe('getMesh', () => {
   });
 
   it('prints errors with stack traces of the original errors in development', async () => {
-    process.env.NODE_ENV = 'development';
+    globalThis.process!.env!.NODE_ENV = 'development';
     const mesh = await getMesh({
       cache,
       pubsub,

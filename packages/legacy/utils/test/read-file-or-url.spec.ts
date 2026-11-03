@@ -12,9 +12,9 @@ describe('readFile', () => {
       test: 'TEST',
     };
     writeFileSync(tmpFileAbsolutePath, JSON.stringify(tmpFileContent));
-    const tmpFileRelativePath = relative(process.cwd(), tmpFileAbsolutePath);
+    const tmpFileRelativePath = relative(globalThis.process?.cwd?.(), tmpFileAbsolutePath);
     const receivedFileContent = await readFile(tmpFileRelativePath, {
-      cwd: process.cwd(),
+      cwd: globalThis.process?.cwd?.(),
       fetch,
 
       log,
@@ -29,7 +29,7 @@ describe('readFile', () => {
     };
     writeFileSync(tmpFileAbsolutePath, JSON.stringify(tmpFileContent));
     const receivedFileContent = await readFile(tmpFileAbsolutePath, {
-      cwd: process.cwd(),
+      cwd: globalThis.process?.cwd?.(),
       fetch,
 
       log,

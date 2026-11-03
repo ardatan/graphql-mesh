@@ -392,7 +392,7 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
   };
 
   const endpoint = stringInterpolator.parse(transportDirective.location, {
-    env: process.env,
+    env: globalThis.process?.env,
   });
 
   const dataloaderFactory = getDataloaderFactory({

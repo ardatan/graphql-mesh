@@ -13,7 +13,7 @@ export default function useMeshOperationFieldPermissions(
             const allowedFields = new Set<string>();
             for (const { if: condition, allow } of options.permissions) {
               const ifFn = new Function('context', 'env', 'return ' + condition);
-              if (ifFn(context, process.env)) {
+              if (ifFn(context, globalThis.process?.env)) {
                 for (const allowedField of allow) {
                   allowedFields.add(allowedField);
                 }

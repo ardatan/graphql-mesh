@@ -78,7 +78,7 @@ function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: stri
   if (!pathModule) {
     throw new Error('Node.js path module is required for Mesh store');
   }
-  const isProd = process.env.NODE_ENV?.toLowerCase() === 'production';
+  const isProd = globalThis.process?.env?.NODE_ENV?.toLowerCase() === 'production';
   const storeStorageAdapter = isProd
     ? new FsStoreStorageAdapter({
         cwd: dir,
@@ -104,7 +104,7 @@ export async function processConfig(
   options?: ConfigProcessOptions,
 ): Promise<ProcessedConfig> {
   if (config.skipSSLValidation) {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    globalThis.process!.env!.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   }
 
   const pathModule = globalThis.process?.getBuiltinModule?.('node:path');

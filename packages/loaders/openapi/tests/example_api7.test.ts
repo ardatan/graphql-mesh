@@ -25,7 +25,7 @@ describe('OpenAPI Loader: example_api7', () => {
       schema: createdSchema,
       context: { pubsub },
       maskedErrors: false,
-      logging: !!process.env.DEBUG,
+      logging: !!globalThis.process?.env?.DEBUG,
     });
   });
 

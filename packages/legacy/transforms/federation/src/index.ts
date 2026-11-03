@@ -135,7 +135,7 @@ export default class FederationTransform implements MeshTransform {
                     args,
                     context,
                     info,
-                    env: process.env,
+                    env: globalThis.process?.env,
                   });
                   if (argVal) {
                     dset(args, argName, argVal);

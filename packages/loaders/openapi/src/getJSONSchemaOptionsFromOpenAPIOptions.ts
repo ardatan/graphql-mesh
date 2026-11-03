@@ -164,7 +164,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           };
   if (typeof source === 'string') {
     source = stringInterpolator.parse(source, {
-      env: process.env,
+      env: globalThis.process?.env,
     });
   }
   const fieldTypeMap: Record<string, SelectQueryOrMutationFieldConfig['fieldName']> = {};
@@ -178,7 +178,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     readFileOrUrl(path, {
       cwd: opts.cwd,
       fetch: fetchFn,
-      headers: schemaHeadersFactory({ env: process.env }),
+      headers: schemaHeadersFactory({ env: globalThis.process?.env }),
       importFn: defaultImportFn,
       log,
       fallbackFormat,

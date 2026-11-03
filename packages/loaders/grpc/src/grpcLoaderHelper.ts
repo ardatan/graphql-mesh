@@ -146,13 +146,15 @@ export class GrpcLoaderHelper extends DisposableStack {
 
   private processReflection(creds: ChannelCredentials): Promise<Promise<protobufjs.Root>[]> {
     this.log.debug(`Using the reflection`);
-    const reflectionEndpoint = stringInterpolator.parse(this.config.endpoint, { env: process.env });
+    const reflectionEndpoint = stringInterpolator.parse(this.config.endpoint, {
+      env: globalThis.process?.env,
+    });
     this.log.debug(`Creating gRPC Reflection Client`);
     const reflectionClient = new Client(reflectionEndpoint, creds, this.config.channelOptions);
     // Attach reflectionMetadata to server-reflection calls (routing / auth metadata)
     if (this.config.reflectionMetadata) {
       const meta = new Metadata();
-      const resolverData = { env: process.env };
+      const resolverData = { env: globalThis.process?.env };
       for (const [key, value] of Object.entries(this.config.reflectionMetadata)) {
         const interpolated =
           typeof value === 'string' ? stringInterpolator.parse(value, resolverData) : value;
@@ -198,7 +200,7 @@ export class GrpcLoaderHelper extends DisposableStack {
     } else {
       fileName = this.config.source;
     }
-    fileName = stringInterpolator.parse(fileName, { env: process.env });
+    fileName = stringInterpolator.parse(fileName, { env: globalThis.process?.env });
     const absoluteFilePath = path.isAbsolute(fileName)
       ? fileName
       : path.join(this.baseDir, fileName);
@@ -259,7 +261,7 @@ export class GrpcLoaderHelper extends DisposableStack {
       fileGlob = this.config.source;
     }
 
-    fileGlob = stringInterpolator.parse(fileGlob, { env: process.env });
+    fileGlob = stringInterpolator.parse(fileGlob, { env: globalThis.process?.env });
 
     const fileNames = await matchFiles(fileGlob, {
       cwd: this.baseDir,

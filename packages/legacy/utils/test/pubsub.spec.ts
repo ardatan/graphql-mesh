@@ -6,7 +6,7 @@ describe('Hive PubSub (MemPubSub)', () => {
     const pubSub = new MemPubSub();
     const randomValues = new Array(10).fill(0).map(() => Date.now());
 
-    process.nextTick(() => {
+    globalThis.process?.nextTick(() => {
       for (const value of randomValues) {
         void pubSub.publish(randomTopicName, value);
       }

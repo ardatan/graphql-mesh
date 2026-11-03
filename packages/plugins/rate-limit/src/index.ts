@@ -56,7 +56,7 @@ export default function useMeshRateLimit({
         ? (context: any) =>
             stringInterpolator.parse(origConfig.identifier, {
               context,
-              env: process.env,
+              env: globalThis.process?.env,
             })
         : undefined,
     })),

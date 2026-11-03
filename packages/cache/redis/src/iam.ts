@@ -74,7 +74,7 @@ class IamTokenConnector extends AbstractConnectorClass {
     this.connecting = true;
 
     const { promise, resolve, reject } = Promise.withResolvers<Awaited<ConnectResult>>();
-    process.nextTick(async () => {
+    globalThis.process?.nextTick(async () => {
       if (!this.connecting) {
         reject(new Error('Connection is closed.'));
         return;

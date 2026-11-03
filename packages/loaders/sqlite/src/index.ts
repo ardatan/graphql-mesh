@@ -23,7 +23,7 @@ export function loadGraphQLSchemaFromOptions(
       'Cannot import `tuql` packages necessary for SQLite data source. Have you installed it?',
     );
   });
-  const cwd = opts.cwd || process.cwd();
+  const cwd = opts.cwd || globalThis.process?.cwd?.();
   if (opts.infile != null) {
     const absolutePath = path.isAbsolute(opts.infile) ? opts.infile : path.join(cwd, opts.infile);
     return tuql$.then(tuql => tuql.buildSchemaFromInfile(absolutePath));

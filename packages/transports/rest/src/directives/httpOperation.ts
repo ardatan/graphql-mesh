@@ -141,7 +141,12 @@ export function addHTTPRootFieldResolver(
         return value;
       },
     });
-    const interpolationData = { root, args: argsSerializeProxy, context, env: process.env };
+    const interpolationData = {
+      root,
+      args: argsSerializeProxy,
+      context,
+      env: globalThis.process?.env,
+    };
     const interpolatedBaseUrl = stringInterpolator.parse(endpoint, interpolationData) || '';
     const interpolatedPath = stringInterpolator.parse(path, interpolationData) || '';
     let fullPath = urlJoin(interpolatedBaseUrl, interpolatedPath);

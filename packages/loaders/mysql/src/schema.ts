@@ -52,7 +52,8 @@ export async function loadGraphQLSchemaFromMySQL(
   if (connectionOpts.protocol === 'mysqls:') {
     sslOpts = {
       rejectUnauthorized:
-        opts.ssl?.rejectUnauthorized || process.env.NODE_TLS_REJECT_UNAUTHORIZED === '1',
+        opts.ssl?.rejectUnauthorized ||
+        globalThis.process?.env?.NODE_TLS_REJECT_UNAUTHORIZED === '1',
       ca: opts.ssl?.caPath ? fs.readFileSync(opts.ssl?.caPath) : opts.ssl?.ca,
     };
   }

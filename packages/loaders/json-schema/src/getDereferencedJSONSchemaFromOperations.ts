@@ -9,7 +9,7 @@ import type { JSONSchemaOperationConfig } from './types.js';
 
 export async function getDereferencedJSONSchemaFromOperations({
   operations,
-  cwd = process.cwd(),
+  cwd = globalThis.process?.cwd?.(),
   log,
   fetchFn,
   schemaHeaders,
@@ -47,7 +47,7 @@ export async function getDereferencedJSONSchemaFromOperations({
       cwd: opts.cwd,
       fetch: fetchFn,
       log: dereferenceObjectLogger,
-      headers: schemaHeadersFactory({ env: process.env }),
+      headers: schemaHeadersFactory({ env: globalThis.process?.env }),
       importFn: defaultImportFn,
     });
   const fullyDeferencedSchema = await dereferenceObject(referencedJSONSchema, {

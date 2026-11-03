@@ -25,14 +25,14 @@ export default function useMeshLiveQuery(
             return stringInterpolator.parse(options.resourceIdentifier, {
               typename,
               id,
-              env: process.env,
+              env: globalThis.process?.env,
             });
           }
         : defaultResourceIdentifierNormalizer,
     includeIdentifierExtension:
       options.includeIdentifierExtension != null
         ? options.includeIdentifierExtension
-        : process.env.DEBUG === '1',
+        : globalThis.process?.env?.DEBUG === '1',
     idFieldName: options.idFieldName,
     indexBy: options.indexBy,
   });

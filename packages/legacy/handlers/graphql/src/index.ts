@@ -64,7 +64,7 @@ const getResolverData = memoize1(function getResolverData(params: ExecutionReque
     root: params.rootValue,
     args: params.variables,
     context: params.context,
-    env: process.env,
+    env: globalThis.process?.env,
   };
 });
 
@@ -138,7 +138,9 @@ export default class GraphQLHandler implements MeshHandler {
     const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
 
     const subscriptionsEndpoint = httpSourceConfig.subscriptionsEndpoint
-      ? stringInterpolator.parse(httpSourceConfig.subscriptionsEndpoint, { env: process.env })
+      ? stringInterpolator.parse(httpSourceConfig.subscriptionsEndpoint, {
+          env: globalThis.process?.env,
+        })
       : undefined;
     const connectionParamsFactory = getInterpolatedHeadersFactory(connectionParams);
     const executor = this.urlLoader.getExecutorAsync(endpoint, {
@@ -198,7 +200,7 @@ export default class GraphQLHandler implements MeshHandler {
     const interpolatedSourcePath =
       httpSourceConfig.source &&
       stringInterpolator.parse(httpSourceConfig.source, {
-        env: process.env,
+        env: globalThis.process?.env,
       });
     if (interpolatedSourcePath) {
       const opts = {
@@ -218,7 +220,7 @@ export default class GraphQLHandler implements MeshHandler {
         });
       }
       const headers = schemaHeadersFactory({
-        env: process.env,
+        env: globalThis.process?.env,
       });
       const sdlOrIntrospection = await readUrl<string | IntrospectionQuery | DocumentNode>(
         interpolatedSourcePath,

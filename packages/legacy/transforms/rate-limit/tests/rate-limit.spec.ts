@@ -25,7 +25,7 @@ describe('Rate Limit Transform', () => {
     await disposables.disposeAsync();
   });
 
-  const baseDir = process.cwd();
+  const baseDir = globalThis.process?.cwd?.();
   const importFn = defaultImportFn;
   const apiName = 'rate-limit-test';
   it('should throw an error if the rate limit is exceeded', async () => {

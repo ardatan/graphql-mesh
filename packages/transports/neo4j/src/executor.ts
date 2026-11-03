@@ -145,7 +145,7 @@ export function getExecutableSchemaFromTypeDefsAndDriver({
     typeDefs: extendedTypeDefs,
     driver,
     validate: false,
-    debug: !!process.env.DEBUG,
+    debug: !!globalThis.process?.env?.DEBUG,
     features,
   });
 

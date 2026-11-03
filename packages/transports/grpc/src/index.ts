@@ -164,7 +164,7 @@ export class GrpcTransportHelper extends DisposableStack {
         throw new Error(`Object at path ${objPath} is not a Service constructor`);
       }
       client = new ServiceClient(
-        stringInterpolator.parse(this.endpoint, { env: process.env }) ?? this.endpoint,
+        stringInterpolator.parse(this.endpoint, { env: globalThis.process?.env }) ?? this.endpoint,
         creds,
         Array.isArray(this.config.channelOptions)
           ? Object.fromEntries(this.config.channelOptions)
@@ -197,7 +197,7 @@ export class GrpcTransportHelper extends DisposableStack {
           root,
           args,
           context,
-          env: process.env,
+          env: globalThis.process?.env,
         },
         metaData,
         isResponseStream,

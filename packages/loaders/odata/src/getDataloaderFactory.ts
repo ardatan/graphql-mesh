@@ -49,7 +49,7 @@ export function getDataloaderFactory({
         const batchHeaders = headersFactory(
           {
             context,
-            env: process.env,
+            env: globalThis.process?.env,
           },
           'POST',
         );
@@ -83,7 +83,7 @@ export function getDataloaderFactory({
         const batchHeaders = headersFactory(
           {
             context,
-            env: process.env,
+            env: globalThis.process?.env,
           },
           'POST',
         );

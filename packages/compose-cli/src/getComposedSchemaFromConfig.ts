@@ -34,7 +34,7 @@ import type { ServiceDefinition } from '@theguild/federation-composition';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
 
-const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(process.env.DEBUG));
+const isDebug = ['1', 'y', 'yes', 't', 'true'].includes(String(globalThis.process?.env?.DEBUG));
 
 export interface ComposedResult {
   supergraphSdl: string;
@@ -73,7 +73,7 @@ export async function getComposedResultFromConfig(
           subgraphLog.error(e instanceof Error ? e.message : String(e));
           subgraphLog.error(`Failed to load subgraph`);
         }
-        process.exit(1);
+        globalThis.process?.exit(1);
       }
       return {
         name: subgraphName,
@@ -91,7 +91,7 @@ export async function getComposedResultFromConfig(
         additionalTypeDefs = [parseWithCache(config.additionalTypeDefs)];
       } catch (e) {
         log.error(`Failed to parse additional type definitions: ${e.message || e}`);
-        process.exit(1);
+        globalThis.process?.exit(1);
       }
     } else {
       const result = await loadTypedefs(config.additionalTypeDefs, {
@@ -139,7 +139,7 @@ export async function getComposedResultFromConfig(
     const subgraph = annotatedSubgraphs.find(sg => sg.name === config.subgraph);
     if (!subgraph) {
       log.error(`Subgraph ${config.subgraph} not found`);
-      process.exit(1);
+      globalThis.process?.exit(1);
     }
     return {
       supergraphSdl: print(subgraph.typeDefs),
@@ -156,11 +156,11 @@ export async function getComposedResultFromConfig(
         log.error(error instanceof Error ? error.message : String(error));
       }
     }
-    process.exit(1);
+    globalThis.process?.exit(1);
   }
   if (!result.supergraphSdl) {
     log.error(`Unknown error: Supergraph is empty`);
-    process.exit(1);
+    globalThis.process?.exit(1);
   }
   let composedSchema: GraphQLSchema;
   if (futureAdditions.length) {
@@ -175,17 +175,17 @@ export async function getComposedResultFromConfig(
       const sourceType = composedSchema.getType(futureAddition.sourceTypeName) as GraphQLObjectType;
       if (!sourceType) {
         log.error(`Target type ${futureAddition.sourceTypeName} not found`);
-        process.exit(1);
+        globalThis.process?.exit(1);
       }
       const sourceField = sourceType.getFields()[futureAddition.sourceFieldName];
       if (!sourceField) {
         log.error(`Target field ${futureAddition.sourceFieldName} not found`);
-        process.exit(1);
+        globalThis.process?.exit(1);
       }
       const sourceReturnType = getNamedType(sourceField.type);
       if (!isNamedType(sourceReturnType)) {
         log.error(`Target field ${futureAddition.sourceFieldName} has no return type`);
-        process.exit(1);
+        globalThis.process?.exit(1);
       }
       const interfaceOrType = isInterfaceType(composedSchema.getType(futureAddition.targetTypeName))
         ? 'interface'

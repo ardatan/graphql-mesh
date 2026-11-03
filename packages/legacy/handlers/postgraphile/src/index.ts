@@ -62,7 +62,7 @@ export default class PostGraphileHandler implements MeshHandler {
       const pgLogger = this.log.child('PostgreSQL');
       pgPool = new pg.Pool({
         connectionString: stringInterpolator.parse(this.config.connectionString, {
-          env: process.env,
+          env: globalThis.process?.env,
         }),
         log: messages => pgLogger.debug(messages),
         ...this.config?.pool,

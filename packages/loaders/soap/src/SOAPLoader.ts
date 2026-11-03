@@ -829,7 +829,7 @@ export class SOAPLoader {
       fetch: this.fetchFn,
       importFn: defaultImportFn,
       log: this.log,
-      headers: this.schemaHeadersFactory({ env: process.env }),
+      headers: this.schemaHeadersFactory({ env: globalThis.process?.env }),
     });
     xsdText = xsdText.split('xmlns:').join('namespace:');
     // WSDL Import is different than XS Import
@@ -888,7 +888,7 @@ export class SOAPLoader {
       fetch: this.fetchFn,
       importFn: defaultImportFn,
       log: this.log,
-      headers: this.schemaHeadersFactory({ env: process.env }),
+      headers: this.schemaHeadersFactory({ env: globalThis.process?.env }),
     });
     await this.loadWSDL(wsdlText, resolved);
   }

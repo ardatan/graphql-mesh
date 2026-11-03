@@ -85,7 +85,7 @@ export default class OpenAPIHandler implements MeshHandler {
 
   async getMeshSource({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {
     const interpolatedSource = stringInterpolator.parse(this.config.source, {
-      env: process.env,
+      env: globalThis.process?.env,
     });
     this.fetchFn = fetchFn;
     this.log.debug('Getting the schema with annotations');

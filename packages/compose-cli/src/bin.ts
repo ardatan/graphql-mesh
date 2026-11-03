@@ -5,10 +5,10 @@ import { ConsoleLogWriter, Logger } from '@graphql-hive/logger';
 import { run } from './run.js';
 
 const log = new Logger({
-  writers: [new ConsoleLogWriter({ console: new Console(process.stderr) })],
+  writers: [new ConsoleLogWriter({ console: new Console(globalThis.process?.stderr) })],
 });
 
 run({ log }).catch(err => {
   log.error(err);
-  process.exit(1);
+  globalThis.process?.exit(1);
 });

@@ -61,20 +61,20 @@ describe('redis', () => {
     let redisPortEnv: string;
     let redisPasswordEnv: string;
     beforeAll(() => {
-      redisUrlEnv = process.env.REDIS_URL;
-      redisHostEnv = process.env.REDIS_HOST;
-      redisPortEnv = process.env.REDIS_PORT;
-      redisPasswordEnv = process.env.REDIS_PASSWORD;
-      delete process.env.REDIS_URL;
-      delete process.env.REDIS_HOST;
-      delete process.env.REDIS_PORT;
-      delete process.env.REDIS_PASSWORD;
+      redisUrlEnv = globalThis.process?.env?.REDIS_URL;
+      redisHostEnv = globalThis.process?.env?.REDIS_HOST;
+      redisPortEnv = globalThis.process?.env?.REDIS_PORT;
+      redisPasswordEnv = globalThis.process?.env?.REDIS_PASSWORD;
+      delete globalThis.process?.env?.REDIS_URL;
+      delete globalThis.process?.env?.REDIS_HOST;
+      delete globalThis.process?.env?.REDIS_PORT;
+      delete globalThis.process?.env?.REDIS_PASSWORD;
     });
     afterAll(() => {
-      process.env.REDIS_URL = redisUrlEnv;
-      process.env.REDIS_HOST = redisHostEnv;
-      process.env.REDIS_PORT = redisPortEnv;
-      process.env.REDIS_PASSWORD = redisPasswordEnv;
+      globalThis.process!.env!.REDIS_URL = redisUrlEnv;
+      globalThis.process!.env!.REDIS_HOST = redisHostEnv;
+      globalThis.process!.env!.REDIS_PORT = redisPortEnv;
+      globalThis.process!.env!.REDIS_PASSWORD = redisPasswordEnv;
     });
     it('never call Redis constructor if no config is provided', async () => {
       using redis = new RedisCache({ log });
@@ -175,16 +175,16 @@ describe('redis', () => {
 
   describe('String interpolation', () => {
     beforeAll(() => {
-      process.env.REDIS_URL = 'redis://myredis.com:9876';
-      process.env.REDIS_HOST = 'myredis.com';
-      process.env.REDIS_PORT = '9876';
-      process.env.REDIS_PASSWORD = 'myredispassword';
+      globalThis.process!.env!.REDIS_URL = 'redis://myredis.com:9876';
+      globalThis.process!.env!.REDIS_HOST = 'myredis.com';
+      globalThis.process!.env!.REDIS_PORT = '9876';
+      globalThis.process!.env!.REDIS_PASSWORD = 'myredispassword';
     });
     afterAll(() => {
-      delete process.env.REDIS_URL;
-      delete process.env.REDIS_HOST;
-      delete process.env.REDIS_PORT;
-      delete process.env.REDIS_PASSWORD;
+      delete globalThis.process?.env?.REDIS_URL;
+      delete globalThis.process?.env?.REDIS_HOST;
+      delete globalThis.process?.env?.REDIS_PORT;
+      delete globalThis.process?.env?.REDIS_PASSWORD;
     });
     it('supports string interpolation for url', async () => {
       using redis = new RedisCache({

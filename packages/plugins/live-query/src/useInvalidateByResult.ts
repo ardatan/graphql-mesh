@@ -78,7 +78,7 @@ export function useInvalidateByResult(params: InvalidateByResultParams): Plugin 
                       root: rootValue,
                       args,
                       context: contextValue,
-                      env: process.env,
+                      env: globalThis.process?.env,
                       result,
                     }),
                   );

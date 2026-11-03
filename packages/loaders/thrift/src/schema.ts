@@ -78,7 +78,7 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
   operationHeaders = {},
   serviceName,
 
-  baseDir = process.cwd(),
+  baseDir = globalThis.process?.cwd?.(),
   schemaHeaders = {},
   fetchFn = defaultFetch,
   log = new Logger({ prefix: 'Thrift' }),

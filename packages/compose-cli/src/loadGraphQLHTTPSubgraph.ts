@@ -271,7 +271,7 @@ export function loadGraphQLHTTPSubgraph(
   return (ctx: LoaderContext) => {
     let schema$: MaybePromise<GraphQLSchema>;
     const interpolationData = {
-      env: process.env,
+      env: globalThis.process?.env,
     };
     const interpolatedEndpoint = stringInterpolator.parse(endpoint, interpolationData);
     const interpolatedSource = stringInterpolator.parse(source, interpolationData);

@@ -29,7 +29,7 @@ export default class RateLimitTransform implements MeshTransform {
     if (transformedSchema) {
       const errors: GraphQLError[] = [];
       const resolverData: ResolverData = {
-        env: process.env,
+        env: globalThis.process?.env,
         root: rootValue,
         args,
         context,

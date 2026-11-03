@@ -65,7 +65,7 @@ export default class MongooseHandler implements MeshHandler {
   async getMeshSource(): Promise<MeshSource> {
     if (this.config.connectionString) {
       const interpolatedConnectionString = stringInterpolator.parse(this.config.connectionString, {
-        env: process.env,
+        env: globalThis.process?.env,
       });
       connect(interpolatedConnectionString, {
         useNewUrlParser: true,

@@ -90,7 +90,10 @@ export function addExecutionDirectivesToComposer(
         },
       });
     } else if (operationConfig.path) {
-      if (process.env.DEBUG === '1' || process.env.DEBUG === 'fieldDetails') {
+      if (
+        globalThis.process?.env?.DEBUG === '1' ||
+        globalThis.process?.env?.DEBUG === 'fieldDetails'
+      ) {
         field.description = `
 >**Method**: \`${operationConfig.method}\`
 >**Base URL**: \`${endpoint}\`

@@ -41,7 +41,7 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   commandName: 'mesh',
   initialLoggerPrefix: '',
   configName: 'mesh',
-  artifactsDir: process.env.MESH_ARTIFACTS_DIRNAME || '.mesh',
+  artifactsDir: globalThis.process?.env?.MESH_ARTIFACTS_DIRNAME || '.mesh',
   serveMessage: 'Serving GraphQL Mesh',
   playgroundTitle: 'GraphiQL Mesh',
   builtMeshFactoryName: 'getBuiltMesh',
@@ -56,8 +56,8 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
 
 export async function graphqlMesh(
   cliParams = DEFAULT_CLI_PARAMS,
-  args = hideBin(process.argv),
-  cwdPath = process.cwd(),
+  args = hideBin(globalThis.process?.argv ?? []),
+  cwdPath = globalThis.process?.cwd?.() ?? '.',
 ) {
   const fs = globalThis.process?.getBuiltinModule?.('node:fs');
   const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
@@ -118,7 +118,7 @@ export async function graphqlMesh(
         try {
           const outputDir = pathModule.join(baseDir, cliParams.artifactsDir);
 
-          process.env.NODE_ENV = 'development';
+          globalThis.process!.env!.NODE_ENV = 'development';
           const meshConfig = await findAndParseConfig({
             dir: baseDir,
             artifactsDir: cliParams.artifactsDir,
@@ -254,7 +254,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
               `Seems like you haven't build the artifacts yet to start production server! You need to build artifacts first with "${cliParams.commandName} build" command!`,
             );
           }
-          process.env.NODE_ENV = 'production';
+          globalThis.process!.env!.NODE_ENV = 'production';
           const mainModule = pathModule.join(builtMeshArtifactsPath, 'index');
           const builtMeshArtifacts = await include(mainModule);
           const rawServeConfig: YamlConfig.Config['serve'] = builtMeshArtifacts.rawServeConfig;
@@ -467,7 +467,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
         });
       },
       async args => {
-        process.env.NODE_ENV = 'development';
+        globalThis.process!.env!.NODE_ENV = 'development';
         const meshConfig = await findAndParseConfig({
           dir: baseDir,
           artifactsDir: cliParams.artifactsDir,

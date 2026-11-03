@@ -20,7 +20,7 @@ export function computeCacheKey(options: {
     argsHash,
     fieldNamesHash,
     info: options.info || null,
-    env: process.env,
+    env: globalThis.process?.env,
   };
 
   return stringInterpolator.parse(options.keyStr, templateData);

@@ -238,7 +238,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   if (failed) {
     throw new Error(
       `Schemas couldn't be generated successfully. Check for the logs by running Mesh${
-        process.env.DEBUG == null
+        globalThis.process!.env!.DEBUG = = null
           ? ' with DEBUG=1 environmental variable to get more verbose output'
           : ''
       }.`,
@@ -307,7 +307,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           onExecuteDone({ result, setResult }) {
             if (result.errors) {
               // Print errors with stack trace in development
-              if (process.env.NODE_ENV === 'production') {
+              if (globalThis.process?.env?.NODE_ENV === 'production') {
                 for (const error of result.errors) {
                   const origError = getOriginalError(error);
                   if (origError) {

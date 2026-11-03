@@ -28,11 +28,11 @@ describe('Multi-file WSDL', () => {
     expect(printSchemaWithDirectives(schema)).toMatchSnapshot();
   });
 
-  it('resolves relative source against the loader cwd, not process.cwd()', async () => {
+  it('resolves relative source against the loader cwd, not globalThis.process?.cwd?.()', async () => {
     // Same fixture, but the source is given as a relative path with the
     // loader's cwd set to the parent directory. Exercises the
     // relative-baseUrl-anchoring code in loadWSDL — without it, the nested
-    // imports would resolve against process.cwd() and ENOENT.
+    // imports would resolve against globalThis.process?.cwd?.() and ENOENT.
     const fixturesDir = join(__dirname, './fixtures');
     const relativeSource = 'multi-file/service.wsdl';
     const wsdl = await readFile(join(fixturesDir, relativeSource), 'utf-8');

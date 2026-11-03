@@ -351,7 +351,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       args,
       context,
       info,
-      env: process.env,
+      env: globalThis.process?.env,
     };
 
     // Read typeNamespacesJson from the transport definition (which survives
@@ -511,7 +511,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
             args,
             context,
             info,
-            env: process.env,
+            env: globalThis.process?.env,
           }),
         },
       },

@@ -53,7 +53,7 @@ export default class SoapHandler implements MeshHandler {
         fetch: fetchFn,
         importFn: this.importFn,
         log: this.log,
-        headers: schemaHeadersFactory({ env: process.env }),
+        headers: schemaHeadersFactory({ env: globalThis.process?.env }),
       });
     } else {
       schema = await this.soapSDLProxy.getWithSet(async () => {
@@ -74,7 +74,7 @@ export default class SoapHandler implements MeshHandler {
           fetch: fetchFn,
           importFn: this.importFn,
           log: this.log,
-          headers: schemaHeadersFactory({ env: process.env }),
+          headers: schemaHeadersFactory({ env: globalThis.process?.env }),
         });
         // Pass wsdlLocation as the base URL so nested <wsdl:import> /
         // <xsd:import> locations resolve relative to the importing document.

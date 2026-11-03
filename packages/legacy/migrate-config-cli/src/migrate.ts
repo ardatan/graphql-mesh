@@ -348,7 +348,7 @@ ${additionalResolversNewConfig.join(',\n')}
     }
   }
   if (legacyConfig.skipSSLValidation) {
-    sideEffectStatements.push(`process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';`);
+    sideEffectStatements.push(`globalThis.process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';`);
   }
   if (pluginList.length) {
     serveConfigList.push(`plugins: ctx => ([
@@ -362,7 +362,7 @@ ${pluginList.join(',\n')}
   for (const [packageName, imports] of importMap) {
     namedImports.push(`import { ${Array.from(imports).join(', ')} } from '${packageName}';`);
   }
-  const tlsSideEffects = sideEffectStatements.filter(s => s.startsWith('process.env.'));
+  const tlsSideEffects = sideEffectStatements.filter(s => s.startsWith('globalThis.process.env.'));
   const requireImports = sideEffectStatements.filter(s => s.startsWith('import '));
   const configList = [
     ...requireImports,

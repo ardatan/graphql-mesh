@@ -52,12 +52,12 @@ export default class SupergraphHandler implements MeshHandler {
   private async getSupergraphSdl(): Promise<DocumentNode> {
     const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     const interpolatedSource = stringInterpolator.parse(this.config.source, {
-      env: process.env,
+      env: globalThis.process?.env,
     });
     if (isUrl(interpolatedSource)) {
       const res = await readUrl<DocumentNode | string>(interpolatedSource, {
         headers: schemaHeadersFactory({
-          env: process.env,
+          env: globalThis.process?.env,
         }),
         cwd: this.baseDir,
         allowUnknownExtensions: true,
@@ -72,7 +72,7 @@ export default class SupergraphHandler implements MeshHandler {
     return this.supergraphSdl.getWithSet(async () => {
       const sdlOrIntrospection = await readFile<string | DocumentNode>(interpolatedSource, {
         headers: schemaHeadersFactory({
-          env: process.env,
+          env: globalThis.process?.env,
         }),
         cwd: this.baseDir,
         allowUnknownExtensions: true,
@@ -130,7 +130,7 @@ export default class SupergraphHandler implements MeshHandler {
 
         const subscriptionsEndpoint = subgraphConfiguration.subscriptionsEndpoint
           ? stringInterpolator.parse(subgraphConfiguration.subscriptionsEndpoint, {
-              env: process.env,
+              env: globalThis.process?.env,
             })
           : undefined;
 
@@ -204,6 +204,6 @@ const getResolverData = memoize1(function getResolverData(params: ExecutionReque
     root: params.rootValue,
     args: params.variables,
     context: params.context,
-    env: process.env,
+    env: globalThis.process?.env,
   };
 });

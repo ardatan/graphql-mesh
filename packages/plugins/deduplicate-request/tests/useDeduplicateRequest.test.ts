@@ -3,7 +3,7 @@ import useDeduplicateRequest from '../src/index.js';
 
 const modules = ['node-fetch', '@whatwg-node/fetch'];
 
-if (!process.version.startsWith('v18')) {
+if (!globalThis.process?.version.startsWith('v18')) {
   modules.push('undici');
 }
 

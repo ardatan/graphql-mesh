@@ -21,7 +21,9 @@ export const codegenPlugin: CodegenPlugin = {
     if (!path) {
       throw new Error('Node.js path module is required for InContext SDK codegen');
     }
-    const outputFileDirName = info.outputFile ? path.dirname(info.outputFile) : process.cwd();
+    const outputFileDirName = info.outputFile
+      ? path.dirname(info.outputFile)
+      : globalThis.process?.cwd?.();
     const { inContextSDK, getSubschema } = handleFederationSupergraph({
       unifiedGraph,
       getUnifiedGraphSDL() {

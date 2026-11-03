@@ -21,7 +21,7 @@ export default class HiveTransform implements MeshTransform {
       config != null && 'enabled' in config ? new Function(`return ${config.enabled}`)() : true;
 
     const token = stringInterpolator.parse(config.token, {
-      env: process.env,
+      env: globalThis.process?.env,
     });
 
     let usage: HivePluginOptions['usage'];
@@ -38,11 +38,11 @@ export default class HiveTransform implements MeshTransform {
           return {
             name: stringInterpolator.parse(config.usage.clientInfo.name, {
               context,
-              env: process.env,
+              env: globalThis.process?.env,
             }),
             version: stringInterpolator.parse(config.usage.clientInfo.version, {
               context,
-              env: process.env,
+              env: globalThis.process?.env,
             }),
           };
         };
@@ -51,10 +51,14 @@ export default class HiveTransform implements MeshTransform {
     let reporting: HivePluginOptions['reporting'];
     if (config.reporting) {
       reporting = {
-        author: stringInterpolator.parse(config.reporting.author, { env: process.env }),
-        commit: stringInterpolator.parse(config.reporting.commit, { env: process.env }),
-        serviceName: stringInterpolator.parse(config.reporting.serviceName, { env: process.env }),
-        serviceUrl: stringInterpolator.parse(config.reporting.serviceUrl, { env: process.env }),
+        author: stringInterpolator.parse(config.reporting.author, { env: globalThis.process?.env }),
+        commit: stringInterpolator.parse(config.reporting.commit, { env: globalThis.process?.env }),
+        serviceName: stringInterpolator.parse(config.reporting.serviceName, {
+          env: globalThis.process?.env,
+        }),
+        serviceUrl: stringInterpolator.parse(config.reporting.serviceUrl, {
+          env: globalThis.process?.env,
+        }),
       };
     }
     let agent: HivePluginOptions['agent'];
@@ -70,7 +74,7 @@ export default class HiveTransform implements MeshTransform {
     }
     this.hiveClient = createHive({
       enabled,
-      debug: !!process.env.DEBUG,
+      debug: !!globalThis.process?.env?.DEBUG,
       token,
       agent,
       usage,

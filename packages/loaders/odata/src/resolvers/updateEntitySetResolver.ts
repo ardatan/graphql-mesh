@@ -40,7 +40,7 @@ export function createUpdateEntitySetResolver({
           args,
           context,
           info,
-          env: process.env,
+          env: globalThis.process?.env,
         },
         method,
       ),

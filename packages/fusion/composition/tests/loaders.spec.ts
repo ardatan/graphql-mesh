@@ -24,7 +24,7 @@ describe('Loaders', () => {
       ],
     })({
       fetch,
-      cwd: process.cwd(),
+      cwd: globalThis.process?.cwd?.(),
       log,
     });
     const { supergraphSdl } = composeSubgraphs([
@@ -44,7 +44,7 @@ describe('Loaders', () => {
       plugins() {
         return [useCustomFetch(mockFetch)];
       },
-      logging: !!process.env.DEBUG,
+      logging: !!globalThis.process?.env?.DEBUG,
     });
     const res = await runtime.fetch('/graphql', {
       method: 'POST',

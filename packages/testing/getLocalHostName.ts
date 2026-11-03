@@ -6,7 +6,7 @@ export async function getLocalHostName(port: number) {
   const timeoutSignal = AbortSignal.timeout(5000);
   while (!timeoutSignal.aborted) {
     for (const hostname of [...localHostnames]) {
-      if (process.env.DEBUG) {
+      if (globalThis.process?.env?.DEBUG) {
         console.log(`Trying hostname: ${hostname}`);
       }
       try {
@@ -17,12 +17,12 @@ export async function getLocalHostName(port: number) {
         if (errString.includes('unsupported') || errString.includes('parse error')) {
           return hostname;
         }
-        if (process.env.DEBUG) {
+        if (globalThis.process?.env?.DEBUG) {
           console.log(`Failed to connect to hostname: ${hostname}`);
         }
         continue;
       }
-      if (process.env.DEBUG) {
+      if (globalThis.process?.env?.DEBUG) {
         console.log(`Found hostname: ${hostname}`);
       }
       return hostname;

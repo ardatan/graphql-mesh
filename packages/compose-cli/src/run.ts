@@ -1,4 +1,4 @@
-import 'dotenv/config'; // inject dotenv options to process.env
+import 'dotenv/config'; // inject dotenv options to globalThis.process?.env
 
 // eslint-disable-next-line import/no-nodejs-modules
 import { Console } from 'node:console';
@@ -52,7 +52,7 @@ export interface RunOptions extends ReturnType<typeof program.opts> {
 
 export async function run({
   log: rootLog = new Logger({
-    writers: [new ConsoleLogWriter({ console: new Console(process.stderr) })],
+    writers: [new ConsoleLogWriter({ console: new Console(globalThis.process?.stderr) })],
   }),
   productName = 'Mesh Compose',
   productDescription = 'compose a GraphQL federated schema from any API service(s)',
@@ -68,7 +68,7 @@ export async function run({
 
   program = program.name(binName).description(productDescription);
   if (version) program = program.version(version);
-  if (process.env.NODE_ENV === 'test')
+  if (globalThis.process?.env?.NODE_ENV === 'test')
     program = program.allowUnknownOption().allowExcessArguments();
   const opts = program.parse().opts();
 
@@ -78,7 +78,7 @@ export async function run({
   if (!opts.configPath) {
     log.debug(`Searching for default config files`);
     for (const configPath of defaultConfigPaths) {
-      const absoluteConfigPath = join(process.cwd(), configPath);
+      const absoluteConfigPath = join(globalThis.process?.cwd?.() ?? '.', configPath);
       const exists = await fsPromises
         .lstat(absoluteConfigPath)
         .then(() => true)
@@ -103,7 +103,7 @@ export async function run({
     // using user-provided config
     const configPath = isAbsolute(opts.configPath)
       ? opts.configPath
-      : join(process.cwd(), opts.configPath);
+      : join(globalThis.process?.cwd?.() ?? '.', opts.configPath);
     log.debug(`Loading config file at path ${configPath}`);
     const exists = await fsPromises
       .lstat(configPath)
@@ -136,14 +136,14 @@ export async function run({
       for (const error of errors) {
         log.error(error.message);
       }
-      process.exit(1);
+      globalThis.process?.exit(1);
     }
   }
 
   let output = config.output;
   if (!output) {
     if (typeof process === 'object') {
-      process.stdout.write(supergraphSdl + '\n');
+      globalThis.process?.stdout.write(supergraphSdl + '\n');
     } else {
       console.log(supergraphSdl);
     }
@@ -153,7 +153,7 @@ export async function run({
 
   log.info(`Writing schema to ${output}`);
 
-  output = isAbsolute(output) ? output : join(process.cwd(), output);
+  output = isAbsolute(output) ? output : join(globalThis.process?.cwd?.() ?? '.', output);
   let writtenData: string;
   if (output.endsWith('.json')) {
     writtenData = JSON.stringify(parse(supergraphSdl, { noLocation: true }), null, 2);

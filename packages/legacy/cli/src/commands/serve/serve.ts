@@ -69,7 +69,7 @@ export async function serveMesh(
   cliParams: GraphQLMeshCLIParams,
 ) {
   const {
-    fork: configFork = process.env.NODE_ENV?.toLowerCase() === 'production',
+    fork: configFork = globalThis.process?.env?.NODE_ENV?.toLowerCase() === 'production',
     port: configPort,
     hostname = os.platform().toLowerCase() === 'win32' ||
     // is WSL?
@@ -78,17 +78,17 @@ export async function serveMesh(
       : '0.0.0.0',
     sslCredentials,
     endpoint: graphqlPath = '/graphql',
-    browser = process.env.NODE_ENV?.toLowerCase() !== 'production',
+    browser = globalThis.process?.env?.NODE_ENV?.toLowerCase() !== 'production',
   } = rawServeConfig;
 
   const port = portSelectorFn(
-    [argsPort, parseInt(configPort?.toString()), parseInt(process.env.PORT)],
+    [argsPort, parseInt(configPort?.toString()), parseInt(globalThis.process?.env?.PORT)],
     log,
   );
 
   let forkNum: number;
 
-  const envFork = process.env.FORK;
+  const envFork = globalThis.process?.env?.FORK;
 
   let defaultForkNum = 0;
 
@@ -137,7 +137,7 @@ export async function serveMesh(
         diedWorkers++;
         if (diedWorkers === forkNum) {
           log.error('All workers died. Exiting...');
-          process.exit(1);
+          globalThis.process?.exit(1);
         } else {
           setTimeout(() => {
             const newWorker = cluster.fork();

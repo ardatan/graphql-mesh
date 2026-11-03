@@ -83,7 +83,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
 ) {
   const eventEmitterSet = new Set<EventEmitter>();
   const endpoint = stringInterpolator.parse(nonInterpolatedBaseUrl, {
-    env: process.env,
+    env: globalThis.process?.env,
   });
 
   const schemaComposer = new SchemaComposer();

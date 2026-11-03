@@ -64,7 +64,7 @@ export default function useIncludeHttpDetailsInExtensions(opts: {
 
   return {
     onFetch({ url, context, info, options }) {
-      if (context != null && ifFn({ url, context, info, options, env: process.env })) {
+      if (context != null && ifFn({ url, context, info, options, env: globalThis.process?.env })) {
         const requestTimestamp = Date.now();
         return ({ response }) => {
           const responseTimestamp = Date.now();

@@ -135,7 +135,7 @@ export default function useMock(
                     context,
                     info,
                     random: Date.now().toString(),
-                    env: process.env,
+                    env: globalThis.process?.env,
                   };
                   updateStoreFactories.forEach(
                     ({ updateStoreConfig, keyFactory, valueFactory }) => {
@@ -161,7 +161,13 @@ export default function useMock(
                   context: any,
                   info: GraphQLResolveInfo,
                 ) => {
-                  const key = keyFactory({ root, args, context, info, env: process.env });
+                  const key = keyFactory({
+                    root,
+                    args,
+                    context,
+                    info,
+                    env: globalThis.process?.env,
+                  });
                   return mockStore.get(fieldConfig.store.type, key, fieldConfig.store.fieldName);
                 };
               }

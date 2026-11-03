@@ -7,11 +7,11 @@ export default class UpstashRedisCache implements KeyValueCache {
   private abortCtrl = new AbortController();
   constructor(config?: Partial<RedisConfigNodejs>) {
     this.redis = new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+      url: globalThis.process?.env?.UPSTASH_REDIS_REST_URL,
+      token: globalThis.process?.env?.UPSTASH_REDIS_REST_TOKEN,
       enableAutoPipelining: true,
       signal: this.abortCtrl.signal,
-      latencyLogging: !!process.env.DEBUG,
+      latencyLogging: !!globalThis.process?.env?.DEBUG,
       ...config,
     });
   }

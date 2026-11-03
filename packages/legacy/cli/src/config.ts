@@ -67,7 +67,9 @@ export async function findConfig(options?: {
   if (!path) {
     throw new Error('Node.js path module is required to find Mesh config');
   }
-  const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
+  const dir = path.isAbsolute(configDir)
+    ? configDir
+    : path.join(globalThis.process?.cwd?.() ?? '.', configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [
       'package.json',
@@ -112,7 +114,9 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
   if (!path) {
     throw new Error('Node.js path module is required to find and parse Mesh config');
   }
-  const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
+  const dir = path.isAbsolute(configDir)
+    ? configDir
+    : path.join(globalThis.process?.cwd?.() ?? '.', configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [
       'package.json',
@@ -155,7 +159,7 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
 function customLoader(ext: 'json' | 'yaml' | 'js', importFn = include, initialLoggerPrefix = '') {
   const log = new Logger({ prefix: initialLoggerPrefix }).child('config');
   function loader(filepath: string, content: string) {
-    if (process.env) {
+    if (globalThis.process?.env) {
       content = content.replace(/\$\{(.*?)\}/g, (_, variable) => {
         let varName = variable;
         let defaultValue = '';
@@ -166,7 +170,7 @@ function customLoader(ext: 'json' | 'yaml' | 'js', importFn = include, initialLo
           defaultValue = spl.join(':');
         }
 
-        return process.env[varName] || defaultValue;
+        return globalThis.process?.env?.[varName] || defaultValue;
       });
     }
 

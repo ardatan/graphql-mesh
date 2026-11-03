@@ -10,7 +10,7 @@ export async function loadNonExecutableGraphQLSchemaFromJSONSchemas(
   options: JSONSchemaLoaderOptions,
 ) {
   options.log = options.log || new Logger({ prefix: name });
-  options.cwd = options.cwd || process.cwd();
+  options.cwd = options.cwd || globalThis.process?.cwd?.();
   const fullyDeferencedSchema = await getDereferencedJSONSchemaFromOperations({
     operations: options.operations,
     operationHeaders: typeof options.operationHeaders === 'object' ? options.operationHeaders : {},

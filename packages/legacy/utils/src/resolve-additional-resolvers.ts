@@ -307,7 +307,7 @@ export function getResolverForPubSubOperation(
     context: MeshContext,
     info: GraphQLResolveInfo,
   ): MaybePromise<AsyncIterator<any>> {
-    const resolverData = { root, args, context, info, env: process.env };
+    const resolverData = { root, args, context, info, env: globalThis.process?.env };
     const topic = stringInterpolator.parse(pubsubTopic, resolverData);
     const ps = context?.pubsub || opts?.pubsub;
     return ps.subscribe(topic)[Symbol.asyncIterator]();
@@ -400,7 +400,7 @@ export function resolveAdditionalResolversWithoutImport(
               );
               baseOptions.valuesFromResultsByKeyReturnType = info.returnType;
             }
-            const resolverData = { root, args, context, info, env: process.env };
+            const resolverData = { root, args, context, info, env: globalThis.process?.env };
             const targetArgs: any = {};
             for (const argPath in additionalResolver.additionalArgs || {}) {
               const value = additionalResolver.additionalArgs[argPath];
@@ -468,7 +468,7 @@ export function resolveAdditionalResolversWithoutImport(
                 additionalResolver,
               );
             }
-            const resolverData = { root, args, context, info, env: process.env };
+            const resolverData = { root, args, context, info, env: globalThis.process?.env };
             const targetArgs: any = {};
 
             deeplySetArgs(

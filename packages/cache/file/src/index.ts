@@ -11,7 +11,9 @@ export default class FileCache<V = any> implements KeyValueCache<V> {
     if (!pathModule) {
       throw new Error('Node.js path module is required for FileCache');
     }
-    this.absolutePath = pathModule.isAbsolute(path) ? path : pathModule.join(process.cwd(), path);
+    this.absolutePath = pathModule.isAbsolute(path)
+      ? path
+      : pathModule.join(globalThis.process?.cwd?.() ?? '.', path);
     this.json$ = pathExists(this.absolutePath).then(async isExists => {
       if (isExists) {
         const existingData = await importFn(this.absolutePath);

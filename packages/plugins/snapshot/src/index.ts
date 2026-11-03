@@ -30,7 +30,7 @@ export default function useSnapshot(
   }
   if (typeof pluginOptions.if === 'string') {
     // eslint-disable-next-line no-new-func
-    if (!new Function('env', 'return ' + pluginOptions.if)(process.env)) {
+    if (!new Function('env', 'return ' + pluginOptions.if)(globalThis.process?.env)) {
       return {};
     }
   }
@@ -46,7 +46,7 @@ export default function useSnapshot(
         }
         const snapshotFileName = calculateCacheKey(url, options);
         const snapshotPath = path.join(
-          pluginOptions.baseDir || process.cwd(),
+          pluginOptions.baseDir || globalThis.process?.cwd?.(),
           snapshotsDir,
           `${snapshotFileName}.json`,
         );

@@ -437,7 +437,9 @@ describe('migrateLegacyConfig', () => {
       skipSSLValidation: true,
     });
 
-    const tlsIndex = result.code.indexOf("process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'");
+    const tlsIndex = result.code.indexOf(
+      "globalThis.process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'",
+    );
     const namedImportIndex = result.code.indexOf('defineConfig as defineComposeConfig');
     const requireIndex = result.code.indexOf("import 'dotenv/config'");
     expect(requireIndex).toBeGreaterThanOrEqual(0);

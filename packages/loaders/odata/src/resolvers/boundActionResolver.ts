@@ -30,7 +30,7 @@ export function createBoundActionResolver({
           args,
           context,
           info,
-          env: process.env,
+          env: globalThis.process?.env,
         },
         method,
       ),
