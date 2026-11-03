@@ -18,10 +18,10 @@ export default class BareFilter implements MeshTransform {
     for (const filter of filters) {
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
 
-      // TODO: deprecate this in next major release as dscussed in #1605
       if (!fieldNameOrGlob) {
-        this.typeGlobs.push(typeName);
-        continue;
+        throw new Error(
+          `Type-only filter "${filter}" is no longer supported. Use "Type.${filter}" instead (see #1605).`,
+        );
       }
 
       const rawGlob = argsGlob || fieldNameOrGlob;

@@ -17,27 +17,7 @@ export function dispose<T extends AsyncDisposable | Disposable>(disposable: T): 
   }
 }
 
-export function createDisposable(disposeFn: () => void): Disposable {
-  return {
-    [DisposableSymbols.dispose]: disposeFn,
-  };
-}
-
-export function createAsyncDisposable(disposeFn: () => MaybePromise<void>): AsyncDisposable {
-  return {
-    [DisposableSymbols.asyncDispose]: () => fakePromise(disposeFn()),
-  };
-}
-
-export function makeDisposable<T>(obj: T, disposeFn: () => void): T & Disposable {
-  Object.defineProperty(obj, DisposableSymbols.dispose, {
-    value: disposeFn,
-    configurable: true,
-    writable: true,
-  });
-  return obj as T & Disposable;
-}
-
+/** Kept for `@graphql-mesh/fusion-runtime` until it sets `[DisposableSymbols.asyncDispose]` directly. */
 export function makeAsyncDisposable<T>(
   obj: T,
   disposeFn: () => MaybePromise<void>,

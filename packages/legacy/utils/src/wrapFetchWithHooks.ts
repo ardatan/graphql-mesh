@@ -24,7 +24,6 @@ export type FetchInstrumentation = {
 export function wrapFetchWithHooks<TContext>(
   onFetchHooks: OnFetchHook<TContext>[],
   instrumentation?: () => FetchInstrumentation | undefined,
-  defaultLogger?: Logger,
 ): MeshFetch {
   let wrappedFetchFn = function wrappedFetchFn(url, options, context, info) {
     let fetchFn: MeshFetch;
@@ -64,11 +63,9 @@ export function wrapFetchWithHooks<TContext>(
                   log = loggerForExecutionRequest.get(info.executionRequest);
                 }
                 if (!log) {
-                  // Prefer Yoga/Gateway/Mesh request context.log over init-time defaults
                   log =
                     context?.log?.child?.('fetch') ??
                     context?.log ??
-                    defaultLogger?.child('fetch') ??
                     new Logger({ prefix: 'fetch' });
                 }
                 if (context?.request) {

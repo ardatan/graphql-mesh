@@ -139,10 +139,10 @@ export function createFilterTransform({
       const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
       const typeMatcher = new Minimatch(typeName);
 
-      // TODO: deprecate this in next major release as dscussed in #1605
       if (!fieldNameOrGlob) {
-        typeFilters.push(type => typeMatcher.match(type.name));
-        continue;
+        throw new Error(
+          `Type-only filter "${filter}" is no longer supported. Use "Type.${filter}" instead (see #1605).`,
+        );
       }
 
       let fixedFieldGlob = argsGlob || fieldNameOrGlob;

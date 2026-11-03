@@ -128,9 +128,6 @@ export interface HATEOASContext {
   >;
 }
 
-// Global fallback for backward compatibility - exported for testing
-export const futureLinks = new Set<FutureLink>();
-
 export async function getJSONSchemaOptionsFromOpenAPIOptions(
   name: string,
   {
@@ -149,9 +146,8 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
   }: GetJSONSchemaOptionsFromOpenAPIOptionsParams,
   hateoasContext?: HATEOASContext,
 ) {
-  // Use provided context or create/use global fallback
-  const contextFutureLinks = hateoasContext?.futureLinks || futureLinks;
-  const loadedSchemas = hateoasContext?.loadedSchemas || new Map();
+  const contextFutureLinks = hateoasContext?.futureLinks ?? new Set<FutureLink>();
+  const loadedSchemas = hateoasContext?.loadedSchemas ?? new Map();
 
   const hateOasConfig: HATEOASConfig | false =
     HATEOAS === true
