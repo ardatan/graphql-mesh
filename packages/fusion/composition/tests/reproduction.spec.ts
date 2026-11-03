@@ -16,17 +16,12 @@ describe('Reproductions', () => {
         myField: String
       }
     `);
-    const result = composeSubgraphs([
+    const { publicSdl, supergraphSdl } = composeSubgraphs([
       {
         name: 'A',
         schema,
       },
     ]);
-    expect({
-      publicSdl: result.publicSdl,
-      supergraphSdl: result.supergraphSdl,
-      subgraphs: result.subgraphs,
-      annotatedSubgraphs: result.annotatedSubgraphs,
-    }).toMatchSnapshot();
+    expect({ publicSdl, supergraphSdl }).toMatchSnapshot();
   });
 });
