@@ -5464,7 +5464,7 @@ __metadata:
     "@types/dockerode": "npm:^4.0.1"
     "@whatwg-node/disposablestack": "npm:^0.0.6"
     dockerode: "npm:^4.0.10"
-    glob: "npm:^14.0.2"
+    glob: "npm:^14.0.3"
     graphql: "npm:^16.14.0"
     tsx: "npm:^4.23.12"
   languageName: unknown
@@ -28585,14 +28585,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^14.0.2":
-  version: 14.0.2
-  resolution: "glob@npm:14.0.2"
+"glob@npm:^14.0.3":
+  version: 14.0.3
+  resolution: "glob@npm:14.0.3"
   dependencies:
-    minimatch: "npm:^11.0.0"
+    minimatch: "npm:^11.0.2"
     minipass: "npm:^7.1.3"
     path-scurry: "npm:^3.0.0"
-  checksum: 10c0/30e6d02930d281d1879048ac4631648491aa5e60d84fe4195b048f88545f341766a3e2ab05d0a9d59457bd8905720925d20a0491654feeb7fc68568177e8d8e4
+  checksum: 10c0/762d4b6e2dc3648e7dbc7f7aa4264fe62cce85014d004c0d0690f9e64471d898ba828c69d2dcd449ac949908fdf02934a9d2c51e444a84171a8f4158a42ef496
   languageName: node
   linkType: hard
 
