@@ -6,6 +6,7 @@ import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-m
 import type { DelegationContext } from '@graphql-tools/delegate';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default class RateLimitTransform implements MeshTransform {
   private pathRateLimitDef = new Map<string, YamlConfig.RateLimitTransformConfig>();
@@ -29,7 +30,7 @@ export default class RateLimitTransform implements MeshTransform {
     if (transformedSchema) {
       const errors: GraphQLError[] = [];
       const resolverData: ResolverData = {
-        env: globalThis.process?.env,
+        env: process.env,
         root: rootValue,
         args,
         context,

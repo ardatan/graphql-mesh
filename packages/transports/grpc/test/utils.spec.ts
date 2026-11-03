@@ -2,6 +2,7 @@
 import { GraphQLError } from 'graphql';
 import { status as GrpcStatus, Metadata } from '@grpc/grpc-js';
 import { addMetaDataToCall, toGrpcGraphQLError } from '../src/utils.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 describe('grpc utils', () => {
   describe('toGrpcGraphQLError', () => {
@@ -55,7 +56,7 @@ describe('grpc utils', () => {
       addMetaDataToCall(
         grpcClientMethod,
         input,
-        { context, env: globalThis.process?.env },
+        { context, env: process.env },
         undefined,
       );
       expect(grpcClientMethod).toHaveBeenCalledWith(input, expect.any(Function));
@@ -75,7 +76,7 @@ describe('grpc utils', () => {
         addMetaDataToCall(
           grpcClientMethod,
           input,
-          { context, env: globalThis.process?.env },
+          { context, env: process.env },
           undefined,
         ),
       ).rejects.toMatchObject({
@@ -96,7 +97,7 @@ describe('grpc utils', () => {
       addMetaDataToCall(
         grpcClientMethod,
         input,
-        { context, env: globalThis.process?.env },
+        { context, env: process.env },
         undefined,
         false,
         4000,
@@ -116,7 +117,7 @@ describe('grpc utils', () => {
       addMetaDataToCall(
         grpcClientMethod,
         input,
-        { context, env: globalThis.process?.env },
+        { context, env: process.env },
         { sportsTeam: 'Dodgers' },
         false,
         2500,
@@ -171,7 +172,7 @@ describe('grpc utils', () => {
         addMetaDataToCall(
           grpcClientMethod,
           input,
-          { context, env: globalThis.process?.env },
+          { context, env: process.env },
           config,
         );
         expect(grpcClientMethod).toHaveBeenCalledWith(
@@ -191,7 +192,7 @@ describe('grpc utils', () => {
           addMetaDataToCall(
             grpcClientMethod,
             input,
-            { context, env: globalThis.process?.env },
+            { context, env: process.env },
             config,
           ),
         ).toThrow(/keys that don't end with '-bin' must have String values/);

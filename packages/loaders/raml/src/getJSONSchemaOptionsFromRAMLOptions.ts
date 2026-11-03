@@ -15,6 +15,7 @@ import type {
 import { fetch as crossUndiciFetch } from '@whatwg-node/fetch';
 import type { RAMLLoaderOptions, SelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 function resolveTraitsByIs(base: { is: () => api10.TraitRef[] }) {
   const allTraits: api10.Trait[] = [];
@@ -35,7 +36,7 @@ function resolveTraitsByIs(base: { is: () => api10.TraitRef[] }) {
  */
 export async function getJSONSchemaOptionsFromRAMLOptions({
   source,
-  cwd: ramlFileCwd = globalThis.process?.cwd?.(),
+  cwd: ramlFileCwd = process.cwd(),
   operations: extraOperations,
   endpoint: forcedBaseUrl,
   fetch = crossUndiciFetch,
@@ -58,7 +59,7 @@ export async function getJSONSchemaOptionsFromRAMLOptions({
     httpResolver: {
       getResourceAsync: async (url: string) => {
         const fetchResponse = await fetch(url, {
-          headers: schemaHeadersFactory({ env: globalThis.process?.env }),
+          headers: schemaHeadersFactory({ env: process.env }),
         });
         const content = await fetchResponse.text();
         if (fetchResponse.status !== 200) {

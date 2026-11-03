@@ -9,13 +9,9 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { dummyLogger as log } from '../../../../testing/dummyLogger.js';
 import ODataHandler from '../src/index.js';
 import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 
 function readFixture(relativePath: string) {
-  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!fs || !path) {
-    throw new Error('Node.js fs and path modules are required for OData handler tests');
-  }
   return fs.readFileSync(path.resolve(__dirname, relativePath), 'utf8');
 }
 

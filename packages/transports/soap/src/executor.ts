@@ -20,6 +20,7 @@ import { normalizedExecutor } from '@graphql-tools/executor';
 import { getDirectiveExtensions, getRootTypes } from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { parseXmlOptions } from './parseXmlOptions.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 function isOriginallyListType(type: GraphQLOutputType): boolean {
   if (isNonNullType(type)) {
@@ -351,7 +352,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       args,
       context,
       info,
-      env: globalThis.process?.env,
+      env: process.env,
     };
 
     // Read typeNamespacesJson from the transport definition (which survives
@@ -511,7 +512,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
             args,
             context,
             info,
-            env: globalThis.process?.env,
+            env: process.env,
           }),
         },
       },

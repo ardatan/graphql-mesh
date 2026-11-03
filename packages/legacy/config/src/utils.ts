@@ -9,6 +9,7 @@ import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import type { Source as GraphQLToolsSource } from '@graphql-tools/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as defaultFetch, TextEncoder } from '@whatwg-node/fetch';
+import { path } from '@graphql-mesh/cross-helpers';
 
 const crypto = globalThis.crypto;
 
@@ -52,10 +53,6 @@ export async function getPackage<T>({
   }
   if (name.includes('-')) {
     possibleNames.push(name);
-  }
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required to resolve Mesh packages');
   }
   const possibleModules = possibleNames.concat(path.resolve(cwd, name));
 
@@ -127,11 +124,6 @@ export async function resolveCustomFetch({
     cwd,
     additionalPrefixes: additionalPackagePrefixes,
   });
-
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required to resolve custom fetch');
-  }
   const processedModuleName = moduleName.startsWith('.') ? path.join('..', moduleName) : moduleName;
   const code = `const fetchFn = await import(${JSON.stringify(processedModuleName)}).then(m => m?.fetch || m);`;
 
@@ -271,11 +263,6 @@ export async function resolveLogger(
       cwd,
       additionalPrefixes: additionalPackagePrefixes,
     });
-
-    const path = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!path) {
-      throw new Error('Node.js path module is required to resolve logger');
-    }
     const processedModuleName = moduleName.startsWith('.')
       ? path.join('..', moduleName)
       : moduleName;

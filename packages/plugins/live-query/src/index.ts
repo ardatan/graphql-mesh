@@ -9,6 +9,7 @@ import {
 } from '@n1ru4l/in-memory-live-query-store';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { useInvalidateByResult } from './useInvalidateByResult.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default function useMeshLiveQuery(
   options: YamlConfig.LiveQueryConfig & {
@@ -32,14 +33,14 @@ export default function useMeshLiveQuery(
             return stringInterpolator.parse(options.resourceIdentifier, {
               typename,
               id,
-              env: globalThis.process?.env,
+              env: process.env,
             });
           }
         : defaultResourceIdentifierNormalizer,
     includeIdentifierExtension:
       options.includeIdentifierExtension != null
         ? options.includeIdentifierExtension
-        : globalThis.process?.env?.DEBUG === '1',
+        : process.env.DEBUG === '1',
     idFieldName: options.idFieldName,
     indexBy: options.indexBy,
   });

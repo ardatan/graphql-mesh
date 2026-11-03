@@ -47,6 +47,7 @@ import {
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import type { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { getOriginalError } from './utils.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 
@@ -238,7 +239,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   if (failed) {
     throw new Error(
       `Schemas couldn't be generated successfully. Check for the logs by running Mesh${
-        globalThis.process?.env?.DEBUG == null
+        process.env.DEBUG == null
           ? ' with DEBUG=1 environmental variable to get more verbose output'
           : ''
       }.`,
@@ -307,7 +308,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           onExecuteDone({ result, setResult }) {
             if (result.errors) {
               // Print errors with stack trace in development
-              if (globalThis.process?.env?.NODE_ENV === 'production') {
+              if (process.env.NODE_ENV === 'production') {
                 for (const error of result.errors) {
                   const origError = getOriginalError(error);
                   if (origError) {

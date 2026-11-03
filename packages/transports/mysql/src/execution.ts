@@ -9,6 +9,7 @@ import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
 import type { MySQLContext } from './types.js';
+import { util } from '@graphql-mesh/cross-helpers';
 
 function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {
   const fieldMap: Record<string, any> = graphqlFields(info);
@@ -23,10 +24,6 @@ export interface GetMySQLExecutorOpts {
 }
 
 export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): DisposableExecutor {
-  const util = globalThis.process?.getBuiltinModule?.('node:util');
-  if (!util) {
-    throw new Error('Node.js util module is required for MySQL executor');
-  }
   const mysqlConnectionByContext = new WeakMap<any, PoolConnection>();
   subgraph = mapSchema(subgraph, {
     [MapperKind.OBJECT_FIELD](fieldConfig, fieldName) {

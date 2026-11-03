@@ -27,6 +27,7 @@ import { isFileUpload } from './isFileUpload.js';
 import { getJsonApiFieldsQuery } from './jsonApiFields.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 type HTTPMethod =
   'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
@@ -145,7 +146,7 @@ export function addHTTPRootFieldResolver(
       root,
       args: argsSerializeProxy,
       context,
-      env: globalThis.process?.env,
+      env: process.env,
     };
     const interpolatedBaseUrl = stringInterpolator.parse(endpoint, interpolationData) || '';
     const interpolatedPath = stringInterpolator.parse(path, interpolationData) || '';

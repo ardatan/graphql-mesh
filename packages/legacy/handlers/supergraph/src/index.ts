@@ -23,6 +23,7 @@ import type { SubscriptionProtocol } from '@graphql-tools/url-loader';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import { memoize1 } from '@graphql-tools/utils';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default class SupergraphHandler implements MeshHandler {
   private config: YamlConfig.Handler['supergraph'];
@@ -52,12 +53,12 @@ export default class SupergraphHandler implements MeshHandler {
   private async getSupergraphSdl(): Promise<DocumentNode> {
     const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     const interpolatedSource = stringInterpolator.parse(this.config.source, {
-      env: globalThis.process?.env,
+      env: process.env,
     });
     if (isUrl(interpolatedSource)) {
       const res = await readUrl<DocumentNode | string>(interpolatedSource, {
         headers: schemaHeadersFactory({
-          env: globalThis.process?.env,
+          env: process.env,
         }),
         cwd: this.baseDir,
         allowUnknownExtensions: true,
@@ -72,7 +73,7 @@ export default class SupergraphHandler implements MeshHandler {
     return this.supergraphSdl.getWithSet(async () => {
       const sdlOrIntrospection = await readFile<string | DocumentNode>(interpolatedSource, {
         headers: schemaHeadersFactory({
-          env: globalThis.process?.env,
+          env: process.env,
         }),
         cwd: this.baseDir,
         allowUnknownExtensions: true,
@@ -130,7 +131,7 @@ export default class SupergraphHandler implements MeshHandler {
 
         const subscriptionsEndpoint = subgraphConfiguration.subscriptionsEndpoint
           ? stringInterpolator.parse(subgraphConfiguration.subscriptionsEndpoint, {
-              env: globalThis.process?.env,
+              env: process.env,
             })
           : undefined;
 
@@ -204,6 +205,6 @@ const getResolverData = memoize1(function getResolverData(params: ExecutionReque
     root: params.rootValue,
     args: params.variables,
     context: params.context,
-    env: globalThis.process?.env,
+    env: process.env,
   };
 });

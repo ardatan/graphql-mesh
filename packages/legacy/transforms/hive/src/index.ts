@@ -4,6 +4,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { getTypeInfo, type DelegationContext } from '@graphql-tools/delegate';
 import { type ExecutionRequest } from '@graphql-tools/utils';
+import { process } from '@graphql-mesh/cross-helpers';
 
 interface TransformationContext {
   collectUsageCallback?: ReturnType<HiveClient['collectUsage']>;
@@ -21,7 +22,7 @@ export default class HiveTransform implements MeshTransform {
       config != null && 'enabled' in config ? new Function(`return ${config.enabled}`)() : true;
 
     const token = stringInterpolator.parse(config.token, {
-      env: globalThis.process?.env,
+      env: process.env,
     });
 
     let usage: HivePluginOptions['usage'];
@@ -38,11 +39,11 @@ export default class HiveTransform implements MeshTransform {
           return {
             name: stringInterpolator.parse(config.usage.clientInfo.name, {
               context,
-              env: globalThis.process?.env,
+              env: process.env,
             }),
             version: stringInterpolator.parse(config.usage.clientInfo.version, {
               context,
-              env: globalThis.process?.env,
+              env: process.env,
             }),
           };
         };
@@ -51,13 +52,13 @@ export default class HiveTransform implements MeshTransform {
     let reporting: HivePluginOptions['reporting'];
     if (config.reporting) {
       reporting = {
-        author: stringInterpolator.parse(config.reporting.author, { env: globalThis.process?.env }),
-        commit: stringInterpolator.parse(config.reporting.commit, { env: globalThis.process?.env }),
+        author: stringInterpolator.parse(config.reporting.author, { env: process.env }),
+        commit: stringInterpolator.parse(config.reporting.commit, { env: process.env }),
         serviceName: stringInterpolator.parse(config.reporting.serviceName, {
-          env: globalThis.process?.env,
+          env: process.env,
         }),
         serviceUrl: stringInterpolator.parse(config.reporting.serviceUrl, {
-          env: globalThis.process?.env,
+          env: process.env,
         }),
       };
     }
@@ -74,7 +75,7 @@ export default class HiveTransform implements MeshTransform {
     }
     this.hiveClient = createHive({
       enabled,
-      debug: !!globalThis.process?.env?.DEBUG,
+      debug: !!process.env.DEBUG,
       token,
       agent,
       usage,

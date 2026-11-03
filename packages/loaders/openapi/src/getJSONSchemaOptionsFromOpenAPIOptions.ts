@@ -22,6 +22,7 @@ import type {
 } from '@omnigraph/json-schema';
 import type { SelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 function mimeType(contentType: string): string {
   return contentType.split(';')[0].trim().toLowerCase();
@@ -167,7 +168,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           };
   if (typeof source === 'string') {
     source = stringInterpolator.parse(source, {
-      env: globalThis.process?.env,
+      env: process.env,
     });
   }
   const fieldTypeMap: Record<string, SelectQueryOrMutationFieldConfig['fieldName']> = {};
@@ -181,7 +182,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     readFileOrUrl(path, {
       cwd: opts.cwd,
       fetch: fetchFn,
-      headers: schemaHeadersFactory({ env: globalThis.process?.env }),
+      headers: schemaHeadersFactory({ env: process.env }),
       importFn: defaultImportFn,
       log,
       fallbackFormat,

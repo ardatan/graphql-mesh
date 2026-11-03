@@ -18,6 +18,7 @@ import type {
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import { path, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
@@ -62,7 +63,7 @@ export default class PostGraphileHandler implements MeshHandler {
       const pgLogger = this.log.child('PostgreSQL');
       pgPool = new pg.Pool({
         connectionString: stringInterpolator.parse(this.config.connectionString, {
-          env: globalThis.process?.env,
+          env: process.env,
         }),
         log: messages => pgLogger.debug(messages),
         ...this.config?.pool,
@@ -72,10 +73,6 @@ export default class PostGraphileHandler implements MeshHandler {
     this.pgPool = pgPool;
 
     const cacheKey = this.name + '_introspection.json';
-    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!pathModule) {
-      throw new Error('Node.js path module is required for PostGraphile handler');
-    }
     const dummyCacheFilePath = pathModule.join(tmpdir(), cacheKey);
     let cachedIntrospection = await this.pgCache.get();
 

@@ -38,6 +38,7 @@
     "@envelop/core": "^6.0.0",
     "@envelop/response-cache": "^10.0.0",
     "@graphql-hive/logger": "^1.1.1",
+    "@graphql-mesh/cross-helpers": "^0.4.19",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",

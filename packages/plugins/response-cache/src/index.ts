@@ -7,6 +7,7 @@ import { getHeadersObj } from '@graphql-mesh/utils';
 import type { UseResponseCacheParameter } from '@graphql-yoga/plugin-response-cache';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
 import { handleMaybePromise, isPromise } from '@whatwg-node/promise-helpers';
+import { process } from '@graphql-mesh/cross-helpers';
 
 /**
  * Yoga calls session/enabled as `(request, context)`.
@@ -32,7 +33,7 @@ function generateSessionIdFactory(sessionIdDef?: string | null) {
   return function session(request: Request, context?: Record<string, any>) {
     return stringInterpolator.parse(sessionIdDef, {
       context: getContextWithHeaders(request, context),
-      env: globalThis.process?.env,
+      env: process.env,
     });
   };
 }
@@ -56,7 +57,7 @@ function getBuildResponseCacheKey(
       context: contextWithHeaders,
       // Docs historically used `contextValue` (Envelop naming)
       contextValue: contextWithHeaders,
-      env: globalThis.process?.env,
+      env: process.env,
     });
     if (!cacheKey) {
       cacheKey = defaultBuildResponseCacheKey(cacheKeyParameters);
@@ -219,7 +220,7 @@ export default function useMeshResponseCache(
     includeExtensionMetadata:
       options.includeExtensionMetadata != null
         ? options.includeExtensionMetadata
-        : globalThis.process?.env?.DEBUG === '1',
+        : process.env.DEBUG === '1',
     session: 'sessionId' in options ? generateSessionIdFactory(options.sessionId) : () => null,
     enabled: 'if' in options ? generateEnabledFactory(options.if) : undefined,
     buildResponseCacheKey:

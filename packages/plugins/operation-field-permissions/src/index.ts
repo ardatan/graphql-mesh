@@ -1,6 +1,7 @@
 /* eslint-disable no-new-func */
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions';
 import type { MeshPlugin, YamlConfig } from '@graphql-mesh/types';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default function useMeshOperationFieldPermissions(
   options: YamlConfig.OperationFieldPermissionsConfig,
@@ -13,7 +14,7 @@ export default function useMeshOperationFieldPermissions(
             const allowedFields = new Set<string>();
             for (const { if: condition, allow } of options.permissions) {
               const ifFn = new Function('context', 'env', 'return ' + condition);
-              if (ifFn(context, globalThis.process?.env)) {
+              if (ifFn(context, process.env)) {
                 for (const allowedField of allow) {
                   allowedFields.add(allowedField);
                 }

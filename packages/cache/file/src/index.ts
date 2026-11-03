@@ -1,19 +1,16 @@
 import DataLoader from 'dataloader';
 import type { ImportFn, KeyValueCache } from '@graphql-mesh/types';
 import { pathExists, writeJSON } from '@graphql-mesh/utils';
+import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 
 export default class FileCache<V = any> implements KeyValueCache<V> {
   json$: Promise<Record<string, V>>;
   absolutePath: string;
   writeDataLoader: DataLoader<string, string>;
   constructor({ path, importFn }: { path: string; importFn: ImportFn }) {
-    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!pathModule) {
-      throw new Error('Node.js path module is required for FileCache');
-    }
     this.absolutePath = pathModule.isAbsolute(path)
       ? path
-      : pathModule.join(globalThis.process?.cwd?.() ?? '.', path);
+      : pathModule.join(process.cwd(), path);
     this.json$ = pathExists(this.absolutePath).then(async isExists => {
       if (isExists) {
         const existingData = await importFn(this.absolutePath);

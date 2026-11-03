@@ -40,6 +40,7 @@ import type {
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import { path } from '@graphql-mesh/cross-helpers';
 
 export interface GraphQLThriftLoaderOptions {
   subgraphName: string;
@@ -94,10 +95,6 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
     log,
     importFn,
   });
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required for Thrift loader');
-  }
   const baseNamespace = path.basename(source, '.thrift');
   return loadNonExecutableGraphQLSchemaFromThriftDocument({
     subgraphName,
@@ -137,10 +134,6 @@ async function parseWithIncludes({
     importFn,
   });
   const parseResult = parse(rawThrift, { organize: false });
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required for Thrift loader');
-  }
   const idlNamespace = path.basename(idlFilePath).split('.')[0];
   if (parseResult.type === SyntaxType.ThriftErrors) {
     if (parseResult.errors.length === 1) {

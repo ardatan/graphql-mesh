@@ -1,5 +1,6 @@
 import { buildASTSchema } from 'graphql';
 import { CriticalityLevel, diff } from '@graphql-inspector/core';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
 import { writeFile } from '@graphql-mesh/utils';
 import { getDocumentNodeFromSchema } from '@graphql-tools/utils';
@@ -43,10 +44,6 @@ export interface FsStoreStorageAdapterOptions {
 export class FsStoreStorageAdapter implements StoreStorageAdapter {
   constructor(private options: FsStoreStorageAdapterOptions) {}
   private getAbsolutePath(jsFileName: string) {
-    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!pathModule) {
-      throw new Error('Node.js path module is required for FsStoreStorageAdapter');
-    }
     return pathModule.isAbsolute(jsFileName)
       ? jsFileName
       : pathModule.join(this.options.cwd, jsFileName);
@@ -96,10 +93,6 @@ export class FsStoreStorageAdapter implements StoreStorageAdapter {
   }
 
   async delete(key: string): Promise<void> {
-    const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-    if (!fs) {
-      throw new Error('Node.js fs module is required for FsStoreStorageAdapter');
-    }
     const filePath = this.getAbsolutePath(key) + '.' + this.options.fileType;
     return fs.promises.unlink(filePath);
   }
@@ -147,6 +140,7 @@ export const PredefinedProxyOptions: Record<PredefinedProxyOptionsName, ProxyOpt
     codify: schema =>
       `
 import { buildASTSchema } from 'graphql';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 
 const schemaAST = ${JSON.stringify(getDocumentNodeFromSchema(schema), null, 2)};
 
@@ -191,10 +185,6 @@ export class MeshStore {
   ) {}
 
   child(childIdentifier: string, flags?: Partial<StoreFlags>): MeshStore {
-    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!pathModule) {
-      throw new Error('Node.js path module is required for MeshStore');
-    }
     return new MeshStore(pathModule.join(this.identifier, childIdentifier), this.storage, {
       ...this.flags,
       ...flags,
@@ -202,10 +192,6 @@ export class MeshStore {
   }
 
   proxy<TData>(id: string, options: ProxyOptions<TData>): StoreProxy<TData> {
-    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!pathModule) {
-      throw new Error('Node.js path module is required for MeshStore');
-    }
     const path = pathModule.join(this.identifier, id);
     let value: TData | null | undefined;
     let isValueCached = false;

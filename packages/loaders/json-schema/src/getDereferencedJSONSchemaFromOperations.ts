@@ -6,10 +6,11 @@ import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { getReferencedJSONSchemaFromOperations } from './getReferencedJSONSchemaFromOperations.js';
 import type { JSONSchemaOperationConfig } from './types.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export async function getDereferencedJSONSchemaFromOperations({
   operations,
-  cwd = globalThis.process?.cwd?.(),
+  cwd = process.cwd(),
   log,
   fetchFn,
   schemaHeaders,
@@ -47,7 +48,7 @@ export async function getDereferencedJSONSchemaFromOperations({
       cwd: opts.cwd,
       fetch: fetchFn,
       log: dereferenceObjectLogger,
-      headers: schemaHeadersFactory({ env: globalThis.process?.env }),
+      headers: schemaHeadersFactory({ env: process.env }),
       importFn: defaultImportFn,
     });
   const fullyDeferencedSchema = await dereferenceObject(referencedJSONSchema, {

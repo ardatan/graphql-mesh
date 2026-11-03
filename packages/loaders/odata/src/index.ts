@@ -50,6 +50,7 @@ import {
 import type { EntityTypeExtensions } from './types.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
 import { QUERY_OPTIONS_FIELDS } from './utils/QueryOptionsFields.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 type DataLoaderMap = Record<symbol, DataLoader<Request, Response, Request>>;
 
@@ -83,7 +84,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
 ) {
   const eventEmitterSet = new Set<EventEmitter>();
   const endpoint = stringInterpolator.parse(nonInterpolatedBaseUrl, {
-    env: globalThis.process?.env,
+    env: process.env,
   });
 
   const schemaComposer = new SchemaComposer();

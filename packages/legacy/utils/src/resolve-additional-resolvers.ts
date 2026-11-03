@@ -28,6 +28,7 @@ import { handleMaybePromise, mapAsyncIterator } from '@whatwg-node/promise-helpe
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 import { withFilter } from './with-filter.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 function getTypeByPath(type: GraphQLType, path: string[]): GraphQLNamedType {
   if ('ofType' in type) {
@@ -307,7 +308,7 @@ export function getResolverForPubSubOperation(
     context: MeshContext,
     info: GraphQLResolveInfo,
   ): MaybePromise<AsyncIterator<any>> {
-    const resolverData = { root, args, context, info, env: globalThis.process?.env };
+    const resolverData = { root, args, context, info, env: process.env };
     const topic = stringInterpolator.parse(pubsubTopic, resolverData);
     const ps = context?.pubsub || opts?.pubsub;
     return ps.subscribe(topic)[Symbol.asyncIterator]();
@@ -400,7 +401,7 @@ export function resolveAdditionalResolversWithoutImport(
               );
               baseOptions.valuesFromResultsByKeyReturnType = info.returnType;
             }
-            const resolverData = { root, args, context, info, env: globalThis.process?.env };
+            const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
             for (const argPath in additionalResolver.additionalArgs || {}) {
               const value = additionalResolver.additionalArgs[argPath];
@@ -468,7 +469,7 @@ export function resolveAdditionalResolversWithoutImport(
                 additionalResolver,
               );
             }
-            const resolverData = { root, args, context, info, env: globalThis.process?.env };
+            const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
 
             deeplySetArgs(

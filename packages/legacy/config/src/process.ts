@@ -35,6 +35,7 @@ import {
   resolveLogger,
   resolvePubSub,
 } from './utils.js';
+import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 
 const ENVELOP_CORE_PLUGINS_MAP: Record<
   string,
@@ -74,11 +75,7 @@ export type ProcessedConfig = GetMeshOptions & {
 };
 
 function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: string) {
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!pathModule) {
-    throw new Error('Node.js path module is required for Mesh store');
-  }
-  const isProd = globalThis.process?.env?.NODE_ENV?.toLowerCase() === 'production';
+  const isProd = process.env.NODE_ENV?.toLowerCase() === 'production';
   const storeStorageAdapter = isProd
     ? new FsStoreStorageAdapter({
         cwd: dir,
@@ -105,11 +102,6 @@ export async function processConfig(
 ): Promise<ProcessedConfig> {
   if (config.skipSSLValidation) {
     globalThis.process!.env!.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-  }
-
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!pathModule) {
-    throw new Error('Node.js path module is required to process Mesh config');
   }
 
   const importCodes = new Set([

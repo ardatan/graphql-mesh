@@ -5,6 +5,7 @@ import { pathExists, withCookies } from '@graphql-mesh/utils';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';
 import { resolvePlaygroundConfig } from './playground.js';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 
 export { resolvePlaygroundConfig } from './playground.js';
 
@@ -80,11 +81,6 @@ export function createMeshHTTPHandler<TServerContext>({
                 return;
             }
             if (staticFiles && request.method === 'GET') {
-              const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-              const path = globalThis.process?.getBuiltinModule?.('node:path');
-              if (!fs || !path) {
-                throw new Error('Node.js fs and path modules are required for Mesh static files');
-              }
               let relativePath = url.pathname;
               if (relativePath === '/' || !relativePath) {
                 relativePath = 'index.html';

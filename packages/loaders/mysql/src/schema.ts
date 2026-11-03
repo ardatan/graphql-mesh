@@ -30,6 +30,7 @@ import {
   TransportDirective,
 } from './directives.js';
 import type { TableFieldConfig } from './types.js';
+import { fs, process, util } from '@graphql-mesh/cross-helpers';
 
 export interface LoadGraphQLSchemaFromMySQLOpts {
   endpoint: string;
@@ -42,18 +43,13 @@ export async function loadGraphQLSchemaFromMySQL(
   subgraphName: string,
   opts: LoadGraphQLSchemaFromMySQLOpts,
 ) {
-  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-  const util = globalThis.process?.getBuiltinModule?.('node:util');
-  if (!fs || !util) {
-    throw new Error('Node.js fs and util modules are required for MySQL schema loading');
-  }
   const connectionOpts = getConnectionOptsFromEndpointUri(opts.endpoint);
   let sslOpts: MySQLSSLOptions | undefined;
   if (connectionOpts.protocol === 'mysqls:') {
     sslOpts = {
       rejectUnauthorized:
         opts.ssl?.rejectUnauthorized ||
-        globalThis.process?.env?.NODE_TLS_REJECT_UNAUTHORIZED === '1',
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED === '1',
       ca: opts.ssl?.caPath ? fs.readFileSync(opts.ssl?.caPath) : opts.ssl?.ca,
     };
   }
@@ -113,7 +109,9 @@ export async function loadGraphQLSchemaFromMySQL(
   const endConnection$ = util.promisify<
     // we need to define the generic because introspectionConnection.end is overloaded
     (err?: MysqlError) => void
+    // @ts-expect-error - We know it works
   >(introspectionConnection.end.bind(introspectionConnection));
+  // @ts-expect-error - We know it works
   await endConnection$(undefined);
 
   const schema = schemaComposer.buildSchema();
@@ -187,10 +185,6 @@ const SCALARS: Record<string, string> = {
 };
 
 function getAutoIncrementFields(connection: Connection): Promise<Record<string, string>> {
-  const util = globalThis.process?.getBuiltinModule?.('node:util');
-  if (!util) {
-    throw new Error('Node.js util module is required for MySQL schema loading');
-  }
   const queryKeyValue$ = util.promisify(connection.queryKeyValue.bind(connection));
   return queryKeyValue$(
     'SELECT TABLE_NAME, COLUMN_NAME FROM information_schema.columns WHERE EXTRA LIKE "%auto_increment%"',
@@ -256,10 +250,6 @@ async function handleTableName({
     extensions: table,
     fields: {},
   });
-  const util = globalThis.process?.getBuiltinModule?.('node:util');
-  if (!util) {
-    throw new Error('Node.js util module is required for MySQL schema loading');
-  }
   const primaryKeys = new Set<string>();
   const getTableFields$ = util.promisify(
     introspectionConnection.fields.bind(introspectionConnection),

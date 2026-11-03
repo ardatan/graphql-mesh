@@ -12,15 +12,12 @@ import {
   generateIncontextSDKTypes,
   generateUnifiedContextTypeFromIdentifiers,
 } from './generateIncontextSDKTypes.js';
+import { path } from '@graphql-mesh/cross-helpers';
 
 export interface InContextSDKCodegenPluginConfig {}
 
 export const codegenPlugin: CodegenPlugin = {
   async plugin(unifiedGraph, _documents, config, info) {
-    const path = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!path) {
-      throw new Error('Node.js path module is required for InContext SDK codegen');
-    }
     const outputFileDirName = info.outputFile
       ? path.dirname(info.outputFile)
       : globalThis.process?.cwd?.();

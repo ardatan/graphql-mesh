@@ -31,6 +31,7 @@ import type {
   OperationHeadersConfiguration,
 } from './types.js';
 import { getOperationMetadata, isPubSubOperationConfig } from './utils.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
@@ -91,8 +92,8 @@ export function addExecutionDirectivesToComposer(
       });
     } else if (operationConfig.path) {
       if (
-        globalThis.process?.env?.DEBUG === '1' ||
-        globalThis.process?.env?.DEBUG === 'fieldDetails'
+        process.env.DEBUG === '1' ||
+        process.env.DEBUG === 'fieldDetails'
       ) {
         field.description = `
 >**Method**: \`${operationConfig.method}\`

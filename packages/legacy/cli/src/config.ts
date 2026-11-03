@@ -7,6 +7,7 @@ import type { YamlConfig } from '@graphql-mesh/types';
 import { jsonSchema } from '@graphql-mesh/types';
 import { loadYaml } from '@graphql-mesh/utils';
 import { include } from './include.js';
+import { path, process } from '@graphql-mesh/cross-helpers';
 
 export function validateConfig(
   config: any,
@@ -63,13 +64,9 @@ export async function findConfig(options?: {
     initialLoggerPrefix = '',
     importFn,
   } = options || {};
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required to find Mesh config');
-  }
   const dir = path.isAbsolute(configDir)
     ? configDir
-    : path.join(globalThis.process?.cwd?.() ?? '.', configDir);
+    : path.join(process.cwd() ?? '.', configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [
       'package.json',
@@ -110,13 +107,9 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
     log = new Logger({ prefix: initialLoggerPrefix }),
     ...restOptions
   } = options || {};
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required to find and parse Mesh config');
-  }
   const dir = path.isAbsolute(configDir)
     ? configDir
-    : path.join(globalThis.process?.cwd?.() ?? '.', configDir);
+    : path.join(process.cwd() ?? '.', configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [
       'package.json',
@@ -159,7 +152,7 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
 function customLoader(ext: 'json' | 'yaml' | 'js', importFn = include, initialLoggerPrefix = '') {
   const log = new Logger({ prefix: initialLoggerPrefix }).child('config');
   function loader(filepath: string, content: string) {
-    if (globalThis.process?.env) {
+    if (process.env) {
       content = content.replace(/\$\{(.*?)\}/g, (_, variable) => {
         let varName = variable;
         let defaultValue = '';
@@ -170,7 +163,7 @@ function customLoader(ext: 'json' | 'yaml' | 'js', importFn = include, initialLo
           defaultValue = spl.join(':');
         }
 
-        return globalThis.process?.env?.[varName] || defaultValue;
+        return process.env[varName] || defaultValue;
       });
     }
 

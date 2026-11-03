@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "@graphql-hive/logger": "^1.1.1",
+    "@graphql-mesh/cross-helpers": "^0.4.19",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@opentelemetry/api": "^1.10.0",

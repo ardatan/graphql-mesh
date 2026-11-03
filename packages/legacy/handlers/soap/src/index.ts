@@ -14,6 +14,7 @@ import type {
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import type { Executor } from '@graphql-tools/utils';
 import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export default class SoapHandler implements MeshHandler {
   private name: string;
@@ -53,7 +54,7 @@ export default class SoapHandler implements MeshHandler {
         fetch: fetchFn,
         importFn: this.importFn,
         log: this.log,
-        headers: schemaHeadersFactory({ env: globalThis.process?.env }),
+        headers: schemaHeadersFactory({ env: process.env }),
       });
     } else {
       schema = await this.soapSDLProxy.getWithSet(async () => {
@@ -74,7 +75,7 @@ export default class SoapHandler implements MeshHandler {
           fetch: fetchFn,
           importFn: this.importFn,
           log: this.log,
-          headers: schemaHeadersFactory({ env: globalThis.process?.env }),
+          headers: schemaHeadersFactory({ env: process.env }),
         });
         // Pass wsdlLocation as the base URL so nested <wsdl:import> /
         // <xsd:import> locations resolve relative to the importing document.

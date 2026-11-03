@@ -2,6 +2,7 @@ import { Store, useRateLimiter, type Identity } from '@envelop/rate-limiter';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { KeyValueCache, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { process } from '@graphql-mesh/cross-helpers';
 
 class RateLimitMeshStore extends Store {
   constructor(private cache: KeyValueCache) {
@@ -56,7 +57,7 @@ export default function useMeshRateLimit({
         ? (context: any) =>
             stringInterpolator.parse(origConfig.identifier, {
               context,
-              env: globalThis.process?.env,
+              env: process.env,
             })
         : undefined,
     })),

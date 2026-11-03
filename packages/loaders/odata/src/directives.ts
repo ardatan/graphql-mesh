@@ -31,6 +31,7 @@ import { createSingularNavResolver } from './resolvers/singularNavResolver.js';
 import { createUnboundActionResolver } from './resolvers/unboundActionResolver.js';
 import { createUnboundFunctionResolver } from './resolvers/unboundFunction.js';
 import { createUpdateEntitySetResolver } from './resolvers/updateEntitySetResolver.js';
+import { process } from '@graphql-mesh/cross-helpers';
 
 export const EntityInfoDirective = new GraphQLDirective({
   name: 'entityInfo',
@@ -392,7 +393,7 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
   };
 
   const endpoint = stringInterpolator.parse(transportDirective.location, {
-    env: globalThis.process?.env,
+    env: process.env,
   });
 
   const dataloaderFactory = getDataloaderFactory({

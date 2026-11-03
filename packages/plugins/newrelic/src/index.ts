@@ -9,6 +9,7 @@ import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshPlugin, MeshPluginOptions, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { process } from '@graphql-mesh/cross-helpers';
 
 const DESTS = attributeFilter.DESTINATIONS;
 
@@ -78,7 +79,7 @@ export default function useMeshNewrelic(
             ? context =>
                 stringInterpolator.parse(options.extractOperationName, {
                   context,
-                  env: globalThis.process?.env,
+                  env: process.env,
                 })
             : undefined,
         }),
