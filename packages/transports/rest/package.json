@@ -38,7 +38,7 @@
     "@graphql-hive/logger": "^1.1.1",
     "@graphql-hive/pubsub": "^2.2.1",
     "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/transport-common": "^1.0.20",
+    "@graphql-mesh/transport-common": "^1.1.1",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/utils": "^13.2.1",

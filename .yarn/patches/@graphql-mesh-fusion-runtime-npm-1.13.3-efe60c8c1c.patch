@@ -1,35 +1,35 @@
 diff --git a/dist/index.cjs b/dist/index.cjs
-index 361e4e4fcd82c572df610da3927129f5d9caa719..8b963f25e2cb4eeaf04c339653b136a5693df9bb 100644
+index 8c49c18936b173833bc7ba1f81aff5fa273c1970..71f0266a87ffc98089a2c0ac0a0a9ad56944617e 100644
 --- a/dist/index.cjs
 +++ b/dist/index.cjs
-@@ -1119,7 +1119,7 @@ function wrapExecutorWithHooks({
+@@ -1149,7 +1149,7 @@ function wrapExecutorWithHooks({
      let executionRequest = baseExecutionRequest;
      const onSubgraphExecuteDoneHooks = [];
-     return promiseHelpers.handleMaybePromise(
+     return require$$3.handleMaybePromise(
 -      () => utils$1.iterateAsync(
 +      () => promiseHelpers.iterateAsync(
          onSubgraphExecuteHooks,
          (onSubgraphExecuteHook) => onSubgraphExecuteHook({
            get subgraph() {
-@@ -1151,7 +1151,7 @@ function wrapExecutorWithHooks({
+@@ -1181,7 +1181,7 @@ function wrapExecutorWithHooks({
            (currentResult) => {
              const executeDoneResults = [];
-             return promiseHelpers.handleMaybePromise(
+             return require$$3.handleMaybePromise(
 -              () => utils$1.iterateAsync(
 +              () => promiseHelpers.iterateAsync(
                  onSubgraphExecuteDoneHooks,
                  (onSubgraphExecuteDoneHook) => onSubgraphExecuteDoneHook({
                    result: currentResult,
-@@ -1185,7 +1185,7 @@ function wrapExecutorWithHooks({
-                 return promiseHelpers.mapAsyncIterator(
+@@ -1215,7 +1215,7 @@ function wrapExecutorWithHooks({
+                 return require$$3.mapAsyncIterator(
                    currentResult,
-                   (currentResult2) => promiseHelpers.handleMaybePromise(
+                   (currentResult2) => require$$3.handleMaybePromise(
 -                    () => utils$1.iterateAsync(
 +                    () => promiseHelpers.iterateAsync(
                        onNextHooks,
                        (onNext) => onNext({
                          result: currentResult2,
-@@ -1198,7 +1198,7 @@ function wrapExecutorWithHooks({
+@@ -1228,7 +1228,7 @@ function wrapExecutorWithHooks({
                      () => currentResult2
                    ),
                    void 0,
@@ -39,7 +39,7 @@ index 361e4e4fcd82c572df610da3927129f5d9caa719..8b963f25e2cb4eeaf04c339653b136a5
                }
              );
 diff --git a/dist/index.js b/dist/index.js
-index d81fd8be023bead1c1575c7455da5585280400c1..91559ce2d77867557da300f394ade0a5f798ab52 100644
+index ce3975285f3be72c6a47897f15ccdd35117eed99..90433178f559fb2e53d8c893cdfbeeb28adf41a8 100644
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -1,10 +1,10 @@

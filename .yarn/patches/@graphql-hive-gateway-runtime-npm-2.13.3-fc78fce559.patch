@@ -1,8 +1,8 @@
 diff --git a/dist/index.cjs b/dist/index.cjs
-index 4985ec3dbe96865753a54a882d8e245b95788fe3..0bf904b8468daf816d5e9c38dd511b810e301acb 100644
+index f819d8e53b5c078f59027520b1952c432d49ca2c..23d9539b8fa9347058381a42fe2349faffe1faa1 100644
 --- a/dist/index.cjs
 +++ b/dist/index.cjs
-@@ -710,7 +710,7 @@ function handleUnifiedGraphSchema(unifiedGraphSchema, configContext) {
+@@ -3026,7 +3026,7 @@ function handleUnifiedGraphSchema(unifiedGraphSchema, configContext) {
      return utils$1.readFileOrUrl(unifiedGraphSchema, {
        fetch: configContext.fetch,
        cwd: configContext.cwd,
@@ -12,10 +12,10 @@ index 4985ec3dbe96865753a54a882d8e245b95788fe3..0bf904b8468daf816d5e9c38dd511b81
        importFn: utils$1.defaultImportFn
      });
 diff --git a/dist/index.js b/dist/index.js
-index d4387c349c0b9e04be561816a0f4a3da5813bb04..7bb6d1591dcd907eb3cd9f3f0b90acb6407d15de 100644
+index cfe1910e93aeb32938c31f4d7b41846866cce23f..887a373136d533e23bb5b50755df85ec86446828 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -709,7 +709,7 @@ function handleUnifiedGraphSchema(unifiedGraphSchema, configContext) {
+@@ -3025,7 +3025,7 @@ function handleUnifiedGraphSchema(unifiedGraphSchema, configContext) {
      return readFileOrUrl(unifiedGraphSchema, {
        fetch: configContext.fetch,
        cwd: configContext.cwd,
