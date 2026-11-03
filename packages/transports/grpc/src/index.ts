@@ -192,7 +192,8 @@ export class GrpcTransportHelper extends DisposableStack {
     return function grpcFieldResolver(root, args, context) {
       return addMetaDataToCall(
         clientMethod,
-        args.input,
+        // protobufjs@8 rejects undefined for empty request messages ("object expected")
+        args.input ?? {},
         {
           root,
           args,
