@@ -1,7 +1,5 @@
 import type { GraphQLSchema } from 'graphql';
 
-const path = globalThis.process?.getBuiltinModule?.('node:path');
-
 export interface GraphQLSQLiteLoaderOpts {
   infile?: string;
   db?: string;
@@ -15,6 +13,10 @@ export default function loadGraphQLSchemaFromSQLite(_name: string, opts: GraphQL
 export function loadGraphQLSchemaFromOptions(
   opts: GraphQLSQLiteLoaderOpts,
 ): Promise<GraphQLSchema> {
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!path) {
+    throw new Error('Node.js path module is required for SQLite loader');
+  }
   const tuql$ = import('tuql').catch(e => {
     console.error(e);
     throw new Error(

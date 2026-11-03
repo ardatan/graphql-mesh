@@ -2,8 +2,6 @@ import type { ImportFn } from '@graphql-mesh/types';
 import { fakePromise, handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { defaultImportFn } from './defaultImportFn.js';
 
-const path = globalThis.process?.getBuiltinModule?.('node:path');
-
 type LoadFromModuleExportExpressionOptions = {
   defaultExportName: string;
   cwd: string;
@@ -31,6 +29,10 @@ function tryImport(modulePath: string, cwd: string, importFn: ImportFn) {
     () => importFn(modulePath),
     m => m,
     () => {
+      const path = globalThis.process?.getBuiltinModule?.('node:path');
+      if (!path) {
+        throw new Error('Node.js path module is required to resolve relative module paths');
+      }
       if (!path.isAbsolute(modulePath)) {
         const absoluteModulePath = path.isAbsolute(modulePath)
           ? modulePath

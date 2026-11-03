@@ -4,9 +4,6 @@ import type { MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { getHeadersObj, pathExists, writeJSON } from '@graphql-mesh/utils';
 import { Response } from '@whatwg-node/fetch';
 
-const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-const path = globalThis.process?.getBuiltinModule?.('node:path');
-
 function calculateCacheKey(url: string, options: RequestInit) {
   return hashObject({
     url,
@@ -42,6 +39,11 @@ export default function useSnapshot(
   return {
     async onFetch({ url, options, setFetchFn }) {
       if (matches.some(matcher => matcher.match(url))) {
+        const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+        const path = globalThis.process?.getBuiltinModule?.('node:path');
+        if (!fs || !path) {
+          throw new Error('Node.js fs and path modules are required for Snapshot plugin');
+        }
         const snapshotFileName = calculateCacheKey(url, options);
         const snapshotPath = path.join(
           pluginOptions.baseDir || process.cwd(),

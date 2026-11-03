@@ -1,13 +1,20 @@
 import { DEFAULT_CLI_PARAMS, graphqlMesh } from '../src/index';
 
-const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+function requireNodeFsAndPath() {
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!fs || !pathModule) {
+    throw new Error('Node.js fs and path modules are required for CLI tests');
+  }
+  return { fs, pathModule };
+}
 
 describe('runtime', () => {
   describe('build', () => {
     const generatedMeshConfiguration = '.mesh';
 
     it('Should replace the `.ts` extension of a config file in the built Mesh index file for the `.js` extension', async () => {
+      const { fs, pathModule } = requireNodeFsAndPath();
       const tsConfigFolder = 'ts-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
         'build',
@@ -30,6 +37,7 @@ describe('runtime', () => {
     });
 
     it('Should clear meshInstance$ on failure so subsequent calls retry', async () => {
+      const { fs, pathModule } = requireNodeFsAndPath();
       const tsConfigFolder = 'ts-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
         'build',
@@ -50,6 +58,7 @@ describe('runtime', () => {
     });
 
     it('Should keep the `.js` extension of a config file in the built Mesh index file', async () => {
+      const { fs, pathModule } = requireNodeFsAndPath();
       const jsConfigFolder = 'js-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
         'build',
@@ -72,6 +81,7 @@ describe('runtime', () => {
     });
 
     it('should include renderGraphiQL import and usage in generated artifacts when playground.offline is true', async () => {
+      const { fs, pathModule } = requireNodeFsAndPath();
       const configFolder = 'playground-offline-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
         'build',
@@ -95,6 +105,7 @@ describe('runtime', () => {
     });
 
     it('should not include renderGraphiQL import in generated artifacts when playground.offline is not set', async () => {
+      const { fs, pathModule } = requireNodeFsAndPath();
       const tsConfigFolder = 'ts-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
         'build',

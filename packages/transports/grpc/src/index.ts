@@ -31,9 +31,6 @@ import { type Logger } from '@graphql-hive/logger';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
-const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-const path = globalThis.process?.getBuiltinModule?.('node:path');
-
 /**
  * SSL Credentials
  */
@@ -92,6 +89,11 @@ export class GrpcTransportHelper extends DisposableStack {
         () =>
           `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`,
       );
+      const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+      const path = globalThis.process?.getBuiltinModule?.('node:path');
+      if (!fs || !path) {
+        throw new Error('Node.js fs and path modules are required for gRPC SSL credentials');
+      }
       const absolutePrivateKeyPath = path.isAbsolute(this.config.credentialsSsl.privateKey)
         ? this.config.credentialsSsl.privateKey
         : path.join(this.baseDir, this.config.credentialsSsl.privateKey);

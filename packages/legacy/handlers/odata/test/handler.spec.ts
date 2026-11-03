@@ -10,30 +10,21 @@ import { dummyLogger as log } from '../../../../testing/dummyLogger.js';
 import ODataHandler from '../src/index.js';
 import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
 
-const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-const path = globalThis.process?.getBuiltinModule?.('node:path');
+function readFixture(relativePath: string) {
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!fs || !path) {
+    throw new Error('Node.js fs and path modules are required for OData handler tests');
+  }
+  return fs.readFileSync(path.resolve(__dirname, relativePath), 'utf8');
+}
 
-const TripPinMetadata = fs.readFileSync(
-  path.resolve(__dirname, './fixtures/trippin-metadata.xml'),
-  'utf8',
-);
-const PersonMockData = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, './fixtures/russellwhyte.json'), 'utf-8'),
-);
-const SimplePersonMockData = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, './fixtures/alice.json'), 'utf-8'),
-);
-const TripMockData = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, './fixtures/trip.json'), 'utf-8'),
-);
-const BasicMetadata = fs.readFileSync(
-  path.resolve(__dirname, './fixtures/simple-metadata.xml'),
-  'utf-8',
-);
-const BoundActionMetadata = fs.readFileSync(
-  path.resolve(__dirname, './fixtures/bound-action.xml'),
-  'utf-8',
-);
+const TripPinMetadata = readFixture('./fixtures/trippin-metadata.xml');
+const PersonMockData = JSON.parse(readFixture('./fixtures/russellwhyte.json'));
+const SimplePersonMockData = JSON.parse(readFixture('./fixtures/alice.json'));
+const TripMockData = JSON.parse(readFixture('./fixtures/trip.json'));
+const BasicMetadata = readFixture('./fixtures/simple-metadata.xml');
+const BoundActionMetadata = readFixture('./fixtures/bound-action.xml');
 
 const baseDir = __dirname;
 const importFn = (id: string) => require(id);

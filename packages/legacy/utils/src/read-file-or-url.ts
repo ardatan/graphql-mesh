@@ -6,9 +6,6 @@ import { isUrl } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
 
-const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-
 export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
   allowUnknownExtensions?: boolean;
   fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
@@ -43,6 +40,11 @@ function getSchema(filepath: string, log: Logger): Schema {
         return typeof path === 'string';
       },
       construct(path: string) {
+        const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+        const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+        if (!fs || !pathModule) {
+          throw new Error('Node.js fs and path modules are required for YAML !include');
+        }
         const newCwd = pathModule.dirname(filepath);
         const absoluteFilePath = pathModule.isAbsolute(path)
           ? path
@@ -57,6 +59,11 @@ function getSchema(filepath: string, log: Logger): Schema {
         return typeof path === 'string';
       },
       construct(path: string) {
+        const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+        const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+        if (!fs || !pathModule) {
+          throw new Error('Node.js fs and path modules are required for YAML !includes');
+        }
         const newCwd = pathModule.dirname(filepath);
         const absoluteDirPath = pathModule.isAbsolute(path)
           ? path
@@ -93,6 +100,11 @@ export async function readFile<T>(
       importFn,
       defaultExportName: 'default',
     });
+  }
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!fs || !pathModule) {
+    throw new Error('Node.js fs and path modules are required for readFile');
   }
   const actualPath = pathModule.isAbsolute(filePath) ? filePath : pathModule.join(cwd, filePath);
   const rawResult = await fs.promises.readFile(actualPath, 'utf-8');

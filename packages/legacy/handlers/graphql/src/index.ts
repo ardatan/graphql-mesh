@@ -51,7 +51,13 @@ import {
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
 
-const util = globalThis.process?.getBuiltinModule?.('node:util');
+function inspect(value: unknown): string {
+  const util = globalThis.process?.getBuiltinModule?.('node:util');
+  if (!util) {
+    throw new Error('Node.js util module is required for GraphQL handler');
+  }
+  return util.inspect(value);
+}
 
 const getResolverData = memoize1(function getResolverData(params: ExecutionRequest) {
   return {
@@ -175,7 +181,7 @@ export default class GraphQLHandler implements MeshHandler {
         assumeValid: true,
       });
     }
-    throw new Error(`Invalid introspection data: ${util.inspect(sdlOrIntrospection)}`);
+    throw new Error(`Invalid introspection data: ${inspect(sdlOrIntrospection)}`);
   }
 
   async getNonExecutableSchemaForHTTPSource(
@@ -306,7 +312,7 @@ export default class GraphQLHandler implements MeshHandler {
         });
       } else {
         throw new Error(
-          `Provided file '${schemaConfig} exports an unknown type: ${util.inspect(
+          `Provided file '${schemaConfig} exports an unknown type: ${inspect(
             schemaOrStringOrDocumentNode,
           )}': expected GraphQLSchema, SDL or DocumentNode.`,
         );
@@ -504,14 +510,14 @@ export default class GraphQLHandler implements MeshHandler {
           throw schemaResult.reason;
         }
         throw new Error(
-          `Failed to fetch introspection from ${this.config.endpoint}: ${util.inspect(
+          `Failed to fetch introspection from ${this.config.endpoint}: ${inspect(
             schemaResult.reason,
           )}`,
         );
       }
       if (executorResult.status === 'rejected') {
         throw new Error(
-          `Failed to create executor for ${this.config.endpoint}: ${util.inspect(
+          `Failed to create executor for ${this.config.endpoint}: ${inspect(
             executorResult.reason,
           )}`,
         );
@@ -528,6 +534,6 @@ export default class GraphQLHandler implements MeshHandler {
       return this.getCodeFirstSource(this.config);
     }
 
-    throw new Error(`Unexpected config: ${util.inspect(this.config)}`);
+    throw new Error(`Unexpected config: ${inspect(this.config)}`);
   }
 }

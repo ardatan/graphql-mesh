@@ -1,4 +1,11 @@
-const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+function requireNodePath() {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required for defaultImportFn');
+  }
+  return pathModule;
+}
+
 function defaultImportFn(path: string): Promise<any> {
   return import(/* @vite-ignore */ path).then(
     module => {
@@ -27,6 +34,7 @@ function defaultImportFn(path: string): Promise<any> {
         // eslint-disable-next-line no-new-func
         return new Function(`return import(${JSON.stringify(path)})`)();
       }
+      const pathModule = requireNodePath();
       if (pathModule.isAbsolute(path) && !path.endsWith('.js') && !path.endsWith('.ts')) {
         return defaultImportFn(`${path}.ts`);
       }

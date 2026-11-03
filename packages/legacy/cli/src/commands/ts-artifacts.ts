@@ -25,9 +25,6 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
 
-const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
 
 export type MeshArtifactEsmExt = 'js' | 'mjs';
@@ -147,6 +144,10 @@ export function getMeshArtifactsPackageJson(
  * tsconfig in `projectDir` itself (parent configs are ignored).
  */
 export function readResolvedTsConfigModule(projectDir: string): string | undefined {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required to read tsconfig module option');
+  }
   const tsconfig = getTsconfig(projectDir, 'tsconfig.json');
   if (!tsconfig) {
     return undefined;
@@ -196,6 +197,11 @@ export async function generateTsArtifacts(
   },
   cliParams: GraphQLMeshCLIParams,
 ) {
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!fs || !pathModule) {
+    throw new Error('Node.js fs and path modules are required to generate Mesh artifacts');
+  }
   const artifactsDir = pathModule.join(baseDir, cliParams.artifactsDir);
   log.info('Generating index file in TypeScript');
   for (const rawSource of rawSources) {
@@ -281,7 +287,6 @@ export async function generateTsArtifacts(
                 ...meshConfigImportCodes,
                 `import { getMesh, type ExecuteMeshFn, type SubscribeMeshFn, type MeshContext as BaseMeshContext, type MeshInstance } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
-                `const pathModule = globalThis.process?.getBuiltinModule?.('node:path');`,
                 `import type { ImportFn } from '@graphql-mesh/types';`,
                 `import { fakePromise, fakeRejectPromise } from '@whatwg-node/promise-helpers';`,
               ]);
@@ -332,6 +337,10 @@ export async function generateTsArtifacts(
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
 const importFn: ImportFn = <T>(moduleId: string) => {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    return fakeRejectPromise(new Error('Node.js path module is required'));
+  }
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {${[...importedModulesSet]
     .map(importedModuleName => {
@@ -437,14 +446,26 @@ export function ${cliParams.builtMeshSDKFactoryName}<TGlobalContext = any, TOper
       .join('(');
 
   const endpointAssignmentESM = `import { fileURLToPath } from '@graphql-mesh/utils';
-const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
+const baseDir = (() => {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required for Mesh artifacts');
+  }
+  return pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
     artifactsDir,
     baseDir,
-  )}');`;
-  const endpointAssignmentCJS = `const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '${pathModule.relative(
+  )}');
+})();`;
+  const endpointAssignmentCJS = `const baseDir = (() => {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required for Mesh artifacts');
+  }
+  return pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '${pathModule.relative(
     artifactsDir,
     baseDir,
-  )}');`;
+  )}');
+})();`;
 
   const tsFilePath = pathModule.join(artifactsDir, 'index.ts');
 
@@ -559,6 +580,10 @@ const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url
 }
 
 export function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFilePaths: string[]) {
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!pathModule) {
+    throw new Error('Node.js path module is required to compile Mesh TypeScript artifacts');
+  }
   const options: ts.CompilerOptions = {
     target: ts.ScriptTarget.ESNext,
     module,

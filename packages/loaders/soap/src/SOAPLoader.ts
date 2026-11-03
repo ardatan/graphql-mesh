@@ -63,8 +63,6 @@ import type {
 import type { SoapAnnotations } from './utils.js';
 import { PARSE_XML_OPTIONS } from './utils.js';
 
-const path = globalThis.process?.getBuiltinModule?.('node:path');
-
 export interface SOAPLoaderOptions {
   subgraphName: string;
   fetch?: MeshFetch;
@@ -197,6 +195,10 @@ function resolveLocation(base: string | undefined, location: string): string {
   }
   // base is a filesystem path. A filesystem-absolute location passes through;
   // anything else is resolved relative to base's containing directory.
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!path) {
+    throw new Error('Node.js path module is required to resolve SOAP filesystem locations');
+  }
   if (path.isAbsolute(location)) return location;
   return path.resolve(path.dirname(base), location);
 }
@@ -858,13 +860,14 @@ export class SOAPLoader {
     // loader's working directory in monorepos / containers, sending nested
     // imports to the wrong absolute paths.
     let resolvedBase = baseUrl;
-    if (
-      resolvedBase &&
-      !URI_SCHEME_RE.test(resolvedBase) &&
-      !path.isAbsolute(resolvedBase) &&
-      this.cwd
-    ) {
-      resolvedBase = path.resolve(this.cwd, resolvedBase);
+    if (resolvedBase && !URI_SCHEME_RE.test(resolvedBase) && this.cwd) {
+      const path = globalThis.process?.getBuiltinModule?.('node:path');
+      if (!path) {
+        throw new Error('Node.js path module is required to resolve SOAP WSDL paths');
+      }
+      if (!path.isAbsolute(resolvedBase)) {
+        resolvedBase = path.resolve(this.cwd, resolvedBase);
+      }
     }
     // Pre-register before recursing so circular imports terminate.
     if (resolvedBase) {

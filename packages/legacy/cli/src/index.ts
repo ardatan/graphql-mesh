@@ -16,9 +16,6 @@ import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
 import { include, registerTsconfigPaths } from './include.js';
 
-const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-
 export { findConfig } from './config.js';
 
 export { generateTsArtifacts, serveMesh, findAndParseConfig, handleFatalError };
@@ -62,6 +59,11 @@ export async function graphqlMesh(
   args = hideBin(process.argv),
   cwdPath = process.cwd(),
 ) {
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!fs || !pathModule) {
+    throw new Error('Node.js fs and path modules are required for GraphQL Mesh CLI');
+  }
   let baseDir = cwdPath;
   let log: Logger = new Logger({ prefix: cliParams.initialLoggerPrefix });
   const unregisterTsconfigPaths = registerTsconfigPaths({ cwd: baseDir });

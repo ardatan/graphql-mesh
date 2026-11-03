@@ -1,11 +1,9 @@
 import { join } from 'path';
 
-const fs = process.getBuiltinModule('node:fs');
-
-const { readFile } = fs.promises;
-
 describe('Artifacts', () => {
   it('should execute queries', async () => {
+    const fs = process.getBuiltinModule('node:fs');
+    const { readFile } = fs.promises;
     const { getBuiltMesh } = await import('../.mesh/index');
     const { execute } = await getBuiltMesh();
     const query = await readFile(join(__dirname, '../example-query.graphql'), 'utf-8');

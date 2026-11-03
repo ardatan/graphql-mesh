@@ -8,8 +8,6 @@ import { jsonSchema } from '@graphql-mesh/types';
 import { loadYaml } from '@graphql-mesh/utils';
 import { include } from './include.js';
 
-const path = globalThis.process?.getBuiltinModule?.('node:path');
-
 export function validateConfig(
   config: any,
   filepath: string,
@@ -65,6 +63,10 @@ export async function findConfig(options?: {
     initialLoggerPrefix = '',
     importFn,
   } = options || {};
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!path) {
+    throw new Error('Node.js path module is required to find Mesh config');
+  }
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [
@@ -106,6 +108,10 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
     log = new Logger({ prefix: initialLoggerPrefix }),
     ...restOptions
   } = options || {};
+  const path = globalThis.process?.getBuiltinModule?.('node:path');
+  if (!path) {
+    throw new Error('Node.js path module is required to find and parse Mesh config');
+  }
   const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd(), configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [

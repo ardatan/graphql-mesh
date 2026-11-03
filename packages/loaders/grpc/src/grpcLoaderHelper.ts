@@ -39,9 +39,6 @@ import {
 } from './directives.js';
 import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils.js';
 
-const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-const path = globalThis.process?.getBuiltinModule?.('node:path');
-
 const { Root } = protobufjs;
 
 interface LoadOptions extends IParseOptions {
@@ -183,6 +180,11 @@ export class GrpcLoaderHelper extends DisposableStack {
   }
 
   private async processDescriptorFile() {
+    const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+    const path = globalThis.process?.getBuiltinModule?.('node:path');
+    if (!fs || !path) {
+      throw new Error('Node.js fs and path modules are required for gRPC descriptor files');
+    }
     let fileName: string;
     let options: LoadOptions;
     if (typeof this.config.source === 'object') {
@@ -228,6 +230,10 @@ export class GrpcLoaderHelper extends DisposableStack {
 
   private async processProtoFile() {
     this.log.debug(`Using proto file(s)`);
+    const path = globalThis.process?.getBuiltinModule?.('node:path');
+    if (!path) {
+      throw new Error('Node.js path module is required for gRPC proto files');
+    }
     let protoRoot = new Root();
     let fileGlob: string;
     let options: LoadOptions = {
@@ -313,6 +319,11 @@ export class GrpcLoaderHelper extends DisposableStack {
         () =>
           `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`,
       );
+      const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+      const path = globalThis.process?.getBuiltinModule?.('node:path');
+      if (!fs || !path) {
+        throw new Error('Node.js fs and path modules are required for gRPC SSL credentials');
+      }
       const absolutePrivateKeyPath = path.isAbsolute(this.config.credentialsSsl.privateKey)
         ? this.config.credentialsSsl.privateKey
         : path.join(this.baseDir, this.config.credentialsSsl.privateKey);

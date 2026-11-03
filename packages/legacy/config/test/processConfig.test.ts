@@ -1,12 +1,14 @@
 import { writeFile } from '@graphql-mesh/utils';
 import { processConfig } from '../src/process.js';
 
-const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-
 describe('processConfig', () => {
   const generatedMeshConfiguration = '.mesh';
 
   it('should be possible to load custom fetch function', async () => {
+    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
+    if (!pathModule) {
+      throw new Error('Node.js path module is required for processConfig tests');
+    }
     const config = await processConfig(
       {
         customFetch: './mesh-config-sources/custom-fetch.ts',
