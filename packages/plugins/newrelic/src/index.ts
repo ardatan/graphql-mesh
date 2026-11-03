@@ -78,7 +78,7 @@ export default function useMeshNewrelic(
             ? context =>
                 stringInterpolator.parse(options.extractOperationName, {
                   context,
-                  env: process.env,
+                  env: globalThis.process?.env,
                 })
             : undefined,
         }),
