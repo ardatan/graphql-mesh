@@ -31,9 +31,6 @@ import {
 } from './directives.js';
 import type { TableFieldConfig } from './types.js';
 
-const fs = () => globalThis.process?.getBuiltinModule?.('node:fs');
-const util = () => globalThis.process?.getBuiltinModule?.('node:util');
-
 export interface LoadGraphQLSchemaFromMySQLOpts {
   endpoint: string;
   ssl?: MySQLSSLOptions;
@@ -45,13 +42,18 @@ export async function loadGraphQLSchemaFromMySQL(
   subgraphName: string,
   opts: LoadGraphQLSchemaFromMySQLOpts,
 ) {
+  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
+  const util = globalThis.process?.getBuiltinModule?.('node:util');
+  if (!fs || !util) {
+    throw new Error('Node.js fs and util modules are required for MySQL schema loading');
+  }
   const connectionOpts = getConnectionOptsFromEndpointUri(opts.endpoint);
   let sslOpts: MySQLSSLOptions | undefined;
   if (connectionOpts.protocol === 'mysqls:') {
     sslOpts = {
       rejectUnauthorized:
         opts.ssl?.rejectUnauthorized || process.env.NODE_TLS_REJECT_UNAUTHORIZED === '1',
-      ca: opts.ssl?.caPath ? fs().readFileSync(opts.ssl?.caPath) : opts.ssl?.ca,
+      ca: opts.ssl?.caPath ? fs.readFileSync(opts.ssl?.caPath) : opts.ssl?.ca,
     };
   }
   connectionOpts.ssl = sslOpts;
@@ -60,7 +62,7 @@ export async function loadGraphQLSchemaFromMySQL(
 
   upgrade(introspectionConnection);
   introspection(introspectionConnection);
-  const getDatabaseTables = util().promisify(
+  const getDatabaseTables = util.promisify(
     introspectionConnection.databaseTables.bind(introspectionConnection),
   );
   const schemaComposer = new SchemaComposer();
@@ -107,7 +109,7 @@ export async function loadGraphQLSchemaFromMySQL(
       });
     }),
   );
-  const endConnection$ = util().promisify<
+  const endConnection$ = util.promisify<
     // we need to define the generic because introspectionConnection.end is overloaded
     (err?: MysqlError) => void
   >(introspectionConnection.end.bind(introspectionConnection));
@@ -184,7 +186,11 @@ const SCALARS: Record<string, string> = {
 };
 
 function getAutoIncrementFields(connection: Connection): Promise<Record<string, string>> {
-  const queryKeyValue$ = util().promisify(connection.queryKeyValue.bind(connection));
+  const util = globalThis.process?.getBuiltinModule?.('node:util');
+  if (!util) {
+    throw new Error('Node.js util module is required for MySQL schema loading');
+  }
+  const queryKeyValue$ = util.promisify(connection.queryKeyValue.bind(connection));
   return queryKeyValue$(
     'SELECT TABLE_NAME, COLUMN_NAME FROM information_schema.columns WHERE EXTRA LIKE "%auto_increment%"',
     [],
@@ -249,8 +255,12 @@ async function handleTableName({
     extensions: table,
     fields: {},
   });
+  const util = globalThis.process?.getBuiltinModule?.('node:util');
+  if (!util) {
+    throw new Error('Node.js util module is required for MySQL schema loading');
+  }
   const primaryKeys = new Set<string>();
-  const getTableFields$ = util().promisify(
+  const getTableFields$ = util.promisify(
     introspectionConnection.fields.bind(introspectionConnection),
   );
   const fields = await getTableFields$(tableName);
@@ -273,7 +283,7 @@ async function handleTableName({
       }),
     ),
   );
-  const getTableForeigns$ = util().promisify(
+  const getTableForeigns$ = util.promisify(
     introspectionConnection.foreign.bind(introspectionConnection),
   );
   const tableForeigns = await getTableForeigns$(tableName);
