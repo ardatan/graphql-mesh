@@ -16,7 +16,7 @@
   "devDependencies": {
     "@types/node": "^26.2.0",
     "concurrently": "10.0.4",
-    "jest": "30.4.2",
+    "jest": "30.5.2",
     "ts-node": "^10.9.2",
     "typescript": "6.0.3"
   }
