@@ -8477,7 +8477,7 @@ __metadata:
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
-    "@opentelemetry/api": "npm:^1.9.1"
+    "@opentelemetry/api": "npm:^1.10.0"
     "@smithy/protocol-http": "npm:^5.6.2"
     "@smithy/signature-v4": "npm:^5.6.12"
     "@types/ioredis-mock": "npm:8.2.8"
@@ -14020,6 +14020,13 @@ __metadata:
   dependencies:
     "@opentelemetry/api": "npm:^1.3.0"
   checksum: 10c0/1e514d3fd4ca68e7e8b008794a95ee0562a5d9e1d3ebb02647b245afaa6c2d72cc14e99e3ea47a1d1007f8a965c62bfb6170e1aa26756230bea063cfde2898bf
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/api@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "@opentelemetry/api@npm:1.10.0"
+  checksum: 10c0/c666f89d882e2e3ea3780b4e419de3ba7e00a80bf334269c3c8507a5e2b4e453e2bc8368f6230f894d789b206c14dde313ea6f51fa7bc629f0eff8480b5d356b
   languageName: node
   linkType: hard
 
