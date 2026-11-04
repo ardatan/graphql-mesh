@@ -9428,7 +9428,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/string-interpolation@workspace:packages/string-interpolation"
   dependencies:
-    dayjs: "npm:^1.11.21"
+    dayjs: "npm:^1.11.23"
     graphql: "npm:16.14.0"
     json-pointer: "npm:^0.6.2"
     lodash.get: "npm:^4.4.2"
@@ -9491,7 +9491,7 @@ __metadata:
     "@graphql-tools/schema": "npm:^11.0.8"
     "@graphql-tools/utils": "npm:^13.2.1"
     "@whatwg-node/promise-helpers": "npm:^2.0.1"
-    dayjs: "npm:^1.11.21"
+    dayjs: "npm:^1.11.23"
     graphql: "npm:16.14.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -25549,10 +25549,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.11.20, dayjs@npm:^1.11.21":
+"dayjs@npm:^1.11.20":
   version: 1.11.21
   resolution: "dayjs@npm:1.11.21"
   checksum: 10c0/bd97dfdc4bfea3c66268635690313828b386faa040fbc1f829ff42a2bd748b72c9d9b3c8f9616ce9e61fcb78923f1461a462c969c54b1084458ae1b715898fb0
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.23":
+  version: 1.11.23
+  resolution: "dayjs@npm:1.11.23"
+  checksum: 10c0/69ab04bf19c676e44ab50cc2fca223d265f3dafd107151ef3b0f3ad74d360c37caa602abe62f87cb25d90bd9f6bee003698af47df5b0dbf10a998b7b5f3bb3f1
   languageName: node
   linkType: hard
 
