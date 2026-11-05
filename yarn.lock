@@ -13761,7 +13761,7 @@ __metadata:
     "@graphql-tools/delegate": "npm:^12.3.2"
     "@graphql-tools/utils": "npm:^13.2.1"
     "@types/graphql-fields": "npm:1.3.9"
-    "@types/mysql": "npm:2.15.27"
+    "@types/mysql": "npm:2.15.28"
     graphql: "npm:16.14.0"
     graphql-compose: "npm:^9.0.11"
     graphql-fields: "npm:^2.0.3"
@@ -20087,6 +20087,15 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/d34064de1697e9e29dbad313df759a8c7aff9d9d1918c9b666b1ebc894b9a0c1c6f4ae779453fdcd20b892fa60a8e55640138c292c6c2a28d2f758eaeb539ce3
+  languageName: node
+  linkType: hard
+
+"@types/mysql@npm:2.15.28":
+  version: 2.15.28
+  resolution: "@types/mysql@npm:2.15.28"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/300b2c106280e07faccde51e23f9b4feb6dd0e7a990fa643fbc0d88995359ff92ea398b361cb0b40c3190a4d1d9d4b9b841fa45563f7a721460d1d22c929f480
   languageName: node
   linkType: hard
 
