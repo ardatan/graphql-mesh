@@ -43,7 +43,7 @@
     "@graphql-mesh/utils": "^0.107.3",
     "@json-schema-tools/meta-schema": "^1.7.5",
     "@omnigraph/json-schema": "^0.112.6",
-    "graphql-compose": "^9.1.0",
+    "graphql-compose": "^9.3.0",
     "json-machete": "^0.97.8",
     "tslib": "^2.4.0"
   },

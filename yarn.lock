@@ -8803,7 +8803,7 @@ __metadata:
     "@json-schema-tools/meta-schema": "npm:^1.7.5"
     "@omnigraph/json-schema": "npm:^0.112.6"
     graphql: "npm:16.14.0"
-    graphql-compose: "npm:^9.1.0"
+    graphql-compose: "npm:^9.3.0"
     json-machete: "npm:^0.97.8"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -8878,7 +8878,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
     graphql: "npm:16.14.0"
-    graphql-compose: "npm:^9.1.0"
+    graphql-compose: "npm:^9.3.0"
     graphql-compose-connection: "npm:^8.2.1"
     graphql-compose-mongoose: "npm:^10.1.0"
     graphql-compose-pagination: "npm:^8.3.0"
@@ -13704,7 +13704,7 @@ __metadata:
     "@grpc/grpc-js": "npm:^1.14.5"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
     graphql: "npm:16.14.0"
-    graphql-compose: "npm:^9.1.0"
+    graphql-compose: "npm:^9.3.0"
     graphql-scalars: "npm:^2.0.1"
     lodash.has: "npm:^4.5.2"
     micromatch: "npm:^4.0.8"
@@ -13736,7 +13736,7 @@ __metadata:
     ajv-formats: "npm:^3.0.1"
     dset: "npm:^3.1.4"
     graphql: "npm:16.14.0"
-    graphql-compose: "npm:^9.1.0"
+    graphql-compose: "npm:^9.3.0"
     graphql-fields: "npm:^2.0.3"
     graphql-scalars: "npm:^2.0.1"
     json-machete: "npm:^0.97.8"
@@ -13763,7 +13763,7 @@ __metadata:
     "@types/graphql-fields": "npm:1.3.9"
     "@types/mysql": "npm:2.15.28"
     graphql: "npm:16.14.0"
-    graphql-compose: "npm:^9.0.11"
+    graphql-compose: "npm:^9.3.0"
     graphql-fields: "npm:^2.0.3"
     graphql-scalars: "npm:^2.0.1"
     mysql: "npm:^2.18.1"
@@ -13810,7 +13810,7 @@ __metadata:
     dataloader: "npm:^2.2.2"
     fast-xml-parser: "npm:^5.10.1"
     graphql: "npm:16.14.0"
-    graphql-compose: "npm:^9.0.11"
+    graphql-compose: "npm:^9.3.0"
     graphql-parse-resolve-info: "npm:^4.13.0"
     graphql-scalars: "npm:^2.0.1"
     http-string-parser: "npm:^0.0.6"
@@ -13885,7 +13885,7 @@ __metadata:
     "@whatwg-node/promise-helpers": "npm:^2.0.1"
     fast-xml-parser: "npm:^5.10.1"
     graphql: "npm:16.14.0"
-    graphql-compose: "npm:^9.0.11"
+    graphql-compose: "npm:^9.3.0"
     graphql-scalars: "npm:^2.0.1"
     soap: "npm:1.10.0"
   peerDependencies:
@@ -29155,7 +29155,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-compose@npm:^9.0.11, graphql-compose@npm:^9.0.8, graphql-compose@npm:^9.1.0":
+"graphql-compose@npm:^9.0.8":
   version: 9.1.0
   resolution: "graphql-compose@npm:9.1.0"
   dependencies:
@@ -29163,6 +29163,17 @@ __metadata:
   peerDependencies:
     graphql: ^14.2.0 || ^15.0.0 || ^16.0.0
   checksum: 10c0/3323e08a8739cce90607ba0688a93813f62293eaed19ad39b0b017f31c44fd57b0d39e6c4b7e4d7999bbcfbd4e76ed8c92c6f242eac6104f6738ddbff67e62c6
+  languageName: node
+  linkType: hard
+
+"graphql-compose@npm:^9.3.0":
+  version: 9.3.0
+  resolution: "graphql-compose@npm:9.3.0"
+  dependencies:
+    graphql-type-json: "npm:0.3.2"
+  peerDependencies:
+    graphql: ^14.2.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 10c0/35cb688be9926f866dc4d70397399f1160ed694402594d01757e0c71c0173988bd093ad3aac0c77e3cfdeac29f68e6df6812e0a4621d7533694fe6dab14a083f
   languageName: node
   linkType: hard
 

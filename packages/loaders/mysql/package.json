@@ -41,7 +41,7 @@
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/delegate": "^12.3.2",
     "@graphql-tools/utils": "^13.2.1",
-    "graphql-compose": "^9.0.11",
+    "graphql-compose": "^9.3.0",
     "graphql-fields": "^2.0.3",
     "graphql-scalars": "^2.0.1",
     "mysql": "^2.18.1",

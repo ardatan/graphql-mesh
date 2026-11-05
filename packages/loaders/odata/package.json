@@ -46,7 +46,7 @@
     "@whatwg-node/promise-helpers": "^2.0.1",
     "dataloader": "^2.2.2",
     "fast-xml-parser": "^5.10.1",
-    "graphql-compose": "^9.0.11",
+    "graphql-compose": "^9.3.0",
     "graphql-parse-resolve-info": "^4.13.0",
     "graphql-scalars": "^2.0.1",
     "http-string-parser": "^0.0.6",
