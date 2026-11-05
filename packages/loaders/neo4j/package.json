@@ -42,7 +42,7 @@
     "@graphql-tools/delegate": "^12.3.2",
     "@graphql-tools/schema": "^11.0.8",
     "@neo4j/introspector": "^5.0.0",
-    "neo4j-driver": "^6.2.0",
+    "neo4j-driver": "^6.3.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
