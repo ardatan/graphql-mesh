@@ -41,3 +41,14 @@ updates:
           - 'major'
           - 'minor'
           - 'patch'
+      jest-babel:
+        patterns:
+          - '@jest/*'
+          - 'jest'
+          - 'ts-jest'
+          - 'babel-jest'
+          - '@babel/*'
+        update-types:
+          - 'major'
+          - 'minor'
+          - 'patch'
