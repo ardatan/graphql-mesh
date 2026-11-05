@@ -8773,7 +8773,7 @@ __metadata:
   resolution: "@graphql-mesh/incontext-sdk-codegen@workspace:packages/incontext-sdk-codegen"
   dependencies:
     "@graphql-codegen/core": "npm:^6.2.0"
-    "@graphql-codegen/plugin-helpers": "npm:^6.3.0"
+    "@graphql-codegen/plugin-helpers": "npm:^7.4.2"
     "@graphql-codegen/typescript": "npm:^6.1.2"
     "@graphql-mesh/fusion-runtime": "patch:@graphql-mesh/fusion-runtime@npm%3A1.13.3#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.3-efe60c8c1c.patch"
     "@graphql-mesh/transport-common": "npm:^1.1.1"
