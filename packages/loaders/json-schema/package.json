@@ -49,7 +49,7 @@
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "dset": "^3.1.4",
-    "graphql-compose": "^9.1.0",
+    "graphql-compose": "^9.3.0",
     "graphql-fields": "^2.0.3",
     "graphql-scalars": "^2.0.1",
     "json-machete": "^0.97.8",
