@@ -12,6 +12,7 @@ import type { Plugin } from '@envelop/core';
 import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
 import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
+import { process } from '@graphql-mesh/cross-helpers';
 import type {
   GraphQLOperation,
   KeyValueCache,
@@ -238,7 +239,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   if (failed) {
     throw new Error(
       `Schemas couldn't be generated successfully. Check for the logs by running Mesh${
-        globalThis.process?.env?.DEBUG == null
+        process.env.DEBUG == null
           ? ' with DEBUG=1 environmental variable to get more verbose output'
           : ''
       }.`,
@@ -307,7 +308,7 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
           onExecuteDone({ result, setResult }) {
             if (result.errors) {
               // Print errors with stack trace in development
-              if (globalThis.process?.env?.NODE_ENV === 'production') {
+              if (process.env.NODE_ENV === 'production') {
                 for (const error of result.errors) {
                   const origError = getOriginalError(error);
                   if (origError) {

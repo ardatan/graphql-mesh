@@ -2,7 +2,7 @@
 "@omnigraph/openapi": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, promise helpers).
 
 ## Motivation
 
@@ -15,7 +15,7 @@ cross-subgraph HATEOAS links keep working.
 ## What changed ()
 
 - Global `futureLinks` export removed (no public shared Set)
-- Hive `Logger` dependency; no Mesh cross-helpers / logger re-exports
+- Hive `Logger` dependency; no Mesh logger re-exports
 
 ## How to migrate
 

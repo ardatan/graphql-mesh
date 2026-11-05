@@ -1,4 +1,5 @@
 import { createHive, useHive } from '@graphql-hive/yoga';
+import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 
@@ -23,7 +24,7 @@ export default function useMeshHive<TContext>(
   }
 
   const token = stringInterpolator.parse(pluginOptions.token, {
-    env: globalThis.process?.env,
+    env: process.env,
   });
 
   const persistedDocuments = pluginOptions.persistedDocuments;
@@ -48,11 +49,11 @@ export default function useMeshHive<TContext>(
           return {
             name: stringInterpolator.parse(pluginOptions.usage.clientInfo.name, {
               context,
-              env: globalThis.process?.env,
+              env: process.env,
             }),
             version: stringInterpolator.parse(pluginOptions.usage.clientInfo.version, {
               context,
-              env: globalThis.process?.env,
+              env: process.env,
             }),
           };
         };
@@ -63,16 +64,16 @@ export default function useMeshHive<TContext>(
   if (pluginOptions.reporting) {
     reporting = {
       author: stringInterpolator.parse(pluginOptions.reporting.author, {
-        env: globalThis.process?.env,
+        env: process.env,
       }),
       commit: stringInterpolator.parse(pluginOptions.reporting.commit, {
-        env: globalThis.process?.env,
+        env: process.env,
       }),
       serviceName: stringInterpolator.parse(pluginOptions.reporting.serviceName, {
-        env: globalThis.process?.env,
+        env: process.env,
       }),
       serviceUrl: stringInterpolator.parse(pluginOptions.reporting.serviceUrl, {
-        env: globalThis.process?.env,
+        env: process.env,
       }),
     };
   }
@@ -95,13 +96,13 @@ export default function useMeshHive<TContext>(
   if (pluginOptions.selfHosting) {
     selfHosting = {
       graphqlEndpoint: stringInterpolator.parse(pluginOptions.selfHosting.graphqlEndpoint, {
-        env: globalThis.process?.env,
+        env: process.env,
       }),
       usageEndpoint: stringInterpolator.parse(pluginOptions.selfHosting.usageEndpoint, {
-        env: globalThis.process?.env,
+        env: process.env,
       }),
       applicationUrl: stringInterpolator.parse(pluginOptions.selfHosting.applicationUrl, {
-        env: globalThis.process?.env,
+        env: process.env,
       }),
     };
   }
@@ -111,7 +112,7 @@ export default function useMeshHive<TContext>(
       persistedDocuments && !token
         ? false // disable usage reporting if just persisted documents are configured
         : true,
-    debug: ['1', 't', 'true', 'y', 'yes'].includes(globalThis.process?.env?.DEBUG),
+    debug: ['1', 't', 'true', 'y', 'yes'].includes(process.env.DEBUG),
     token,
     agent,
     usage,

@@ -1,3 +1,4 @@
+import { process } from '@graphql-mesh/cross-helpers';
 import type { KeyValueCache } from '@graphql-mesh/types';
 import { Redis, type RedisConfigNodejs } from '@upstash/redis';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
@@ -7,11 +8,11 @@ export default class UpstashRedisCache implements KeyValueCache {
   private abortCtrl = new AbortController();
   constructor(config?: Partial<RedisConfigNodejs>) {
     this.redis = new Redis({
-      url: globalThis.process?.env?.UPSTASH_REDIS_REST_URL,
-      token: globalThis.process?.env?.UPSTASH_REDIS_REST_TOKEN,
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
       enableAutoPipelining: true,
       signal: this.abortCtrl.signal,
-      latencyLogging: !!globalThis.process?.env?.DEBUG,
+      latencyLogging: !!process.env.DEBUG,
       ...config,
     });
   }

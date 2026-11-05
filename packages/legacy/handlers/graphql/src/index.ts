@@ -12,6 +12,7 @@ import {
 } from 'graphql';
 import lodashGet from 'lodash.get';
 import { type Logger } from '@graphql-hive/logger';
+import { process, util } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions, ValidationError } from '@graphql-mesh/store';
 import {
@@ -52,10 +53,6 @@ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
 
 function inspect(value: unknown): string {
-  const util = globalThis.process?.getBuiltinModule?.('node:util');
-  if (!util) {
-    throw new Error('Node.js util module is required for GraphQL handler');
-  }
   return util.inspect(value);
 }
 
@@ -64,7 +61,7 @@ const getResolverData = memoize1(function getResolverData(params: ExecutionReque
     root: params.rootValue,
     args: params.variables,
     context: params.context,
-    env: globalThis.process?.env,
+    env: process.env,
   };
 });
 
@@ -139,7 +136,7 @@ export default class GraphQLHandler implements MeshHandler {
 
     const subscriptionsEndpoint = httpSourceConfig.subscriptionsEndpoint
       ? stringInterpolator.parse(httpSourceConfig.subscriptionsEndpoint, {
-          env: globalThis.process?.env,
+          env: process.env,
         })
       : undefined;
     const connectionParamsFactory = getInterpolatedHeadersFactory(connectionParams);
@@ -200,7 +197,7 @@ export default class GraphQLHandler implements MeshHandler {
     const interpolatedSourcePath =
       httpSourceConfig.source &&
       stringInterpolator.parse(httpSourceConfig.source, {
-        env: globalThis.process?.env,
+        env: process.env,
       });
     if (interpolatedSourcePath) {
       const opts = {
@@ -220,7 +217,7 @@ export default class GraphQLHandler implements MeshHandler {
         });
       }
       const headers = schemaHeadersFactory({
-        env: globalThis.process?.env,
+        env: process.env,
       });
       const sdlOrIntrospection = await readUrl<string | IntrospectionQuery | DocumentNode>(
         interpolatedSourcePath,

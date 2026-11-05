@@ -3,6 +3,7 @@ import {
   getCachedDocumentNodeFromSchema,
   type CodegenPlugin,
 } from '@graphql-codegen/plugin-helpers';
+import { path } from '@graphql-mesh/cross-helpers';
 import { handleFederationSupergraph } from '@graphql-mesh/fusion-runtime';
 import { defaultPrintFn } from '@graphql-mesh/transport-common';
 import { writeFile } from '@graphql-mesh/utils';
@@ -17,10 +18,6 @@ export interface InContextSDKCodegenPluginConfig {}
 
 export const codegenPlugin: CodegenPlugin = {
   async plugin(unifiedGraph, _documents, config, info) {
-    const path = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!path) {
-      throw new Error('Node.js path module is required for InContext SDK codegen');
-    }
     const outputFileDirName = info.outputFile
       ? path.dirname(info.outputFile)
       : globalThis.process?.cwd?.();

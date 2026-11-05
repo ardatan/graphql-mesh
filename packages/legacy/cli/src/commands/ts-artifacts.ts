@@ -9,6 +9,7 @@ import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import { type Logger } from '@graphql-hive/logger';
 import type { Source } from '@graphql-mesh/config';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import {
   generateIncontextSDKTypes,
   generateUnifiedContextTypeFromIdentifiers,
@@ -144,10 +145,6 @@ export function getMeshArtifactsPackageJson(
  * tsconfig in `projectDir` itself (parent configs are ignored).
  */
 export function readResolvedTsConfigModule(projectDir: string): string | undefined {
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!pathModule) {
-    throw new Error('Node.js path module is required to read tsconfig module option');
-  }
   const tsconfig = getTsconfig(projectDir, 'tsconfig.json');
   if (!tsconfig) {
     return undefined;
@@ -197,11 +194,6 @@ export async function generateTsArtifacts(
   },
   cliParams: GraphQLMeshCLIParams,
 ) {
-  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!fs || !pathModule) {
-    throw new Error('Node.js fs and path modules are required to generate Mesh artifacts');
-  }
   const artifactsDir = pathModule.join(baseDir, cliParams.artifactsDir);
   log.info('Generating index file in TypeScript');
   for (const rawSource of rawSources) {
@@ -287,6 +279,7 @@ export async function generateTsArtifacts(
                 ...meshConfigImportCodes,
                 `import { getMesh, type ExecuteMeshFn, type SubscribeMeshFn, type MeshContext as BaseMeshContext, type MeshInstance } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
+                `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
                 `import type { ImportFn } from '@graphql-mesh/types';`,
                 `import { fakePromise, fakeRejectPromise } from '@whatwg-node/promise-helpers';`,
               ]);
@@ -337,10 +330,6 @@ export async function generateTsArtifacts(
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
 const importFn: ImportFn = <T>(moduleId: string) => {
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!pathModule) {
-    return fakeRejectPromise(new Error('Node.js path module is required'));
-  }
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {${[...importedModulesSet]
     .map(importedModuleName => {
@@ -447,20 +436,12 @@ export function ${cliParams.builtMeshSDKFactoryName}<TGlobalContext = any, TOper
 
   const endpointAssignmentESM = `import { fileURLToPath } from '@graphql-mesh/utils';
 const baseDir = (() => {
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!pathModule) {
-    throw new Error('Node.js path module is required for Mesh artifacts');
-  }
   return pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${pathModule.relative(
     artifactsDir,
     baseDir,
   )}');
 })();`;
   const endpointAssignmentCJS = `const baseDir = (() => {
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!pathModule) {
-    throw new Error('Node.js path module is required for Mesh artifacts');
-  }
   return pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '${pathModule.relative(
     artifactsDir,
     baseDir,
@@ -580,10 +561,6 @@ const baseDir = (() => {
 }
 
 export function compileTS(tsFilePath: string, module: ts.ModuleKind, outputFilePaths: string[]) {
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!pathModule) {
-    throw new Error('Node.js path module is required to compile Mesh TypeScript artifacts');
-  }
   const options: ts.CompilerOptions = {
     target: ts.ScriptTarget.ESNext,
     module,

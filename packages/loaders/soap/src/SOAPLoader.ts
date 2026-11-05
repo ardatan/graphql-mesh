@@ -39,6 +39,7 @@ import {
   RegularExpression,
 } from 'graphql-scalars';
 import { Logger } from '@graphql-hive/logger';
+import { path, process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
@@ -195,10 +196,6 @@ function resolveLocation(base: string | undefined, location: string): string {
   }
   // base is a filesystem path. A filesystem-absolute location passes through;
   // anything else is resolved relative to base's containing directory.
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required to resolve SOAP filesystem locations');
-  }
   if (path.isAbsolute(location)) return location;
   return path.resolve(path.dirname(base), location);
 }
@@ -829,7 +826,7 @@ export class SOAPLoader {
       fetch: this.fetchFn,
       importFn: defaultImportFn,
       log: this.log,
-      headers: this.schemaHeadersFactory({ env: globalThis.process?.env }),
+      headers: this.schemaHeadersFactory({ env: process.env }),
     });
     xsdText = xsdText.split('xmlns:').join('namespace:');
     // WSDL Import is different than XS Import
@@ -861,10 +858,6 @@ export class SOAPLoader {
     // imports to the wrong absolute paths.
     let resolvedBase = baseUrl;
     if (resolvedBase && !URI_SCHEME_RE.test(resolvedBase) && this.cwd) {
-      const path = globalThis.process?.getBuiltinModule?.('node:path');
-      if (!path) {
-        throw new Error('Node.js path module is required to resolve SOAP WSDL paths');
-      }
       if (!path.isAbsolute(resolvedBase)) {
         resolvedBase = path.resolve(this.cwd, resolvedBase);
       }
@@ -888,7 +881,7 @@ export class SOAPLoader {
       fetch: this.fetchFn,
       importFn: defaultImportFn,
       log: this.log,
-      headers: this.schemaHeadersFactory({ env: globalThis.process?.env }),
+      headers: this.schemaHeadersFactory({ env: process.env }),
     });
     await this.loadWSDL(wsdlText, resolved);
   }

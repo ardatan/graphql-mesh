@@ -39,6 +39,7 @@
       "@graphql-mesh/transform-*": ["./packages/legacy/transforms/*/src/index.ts"],
       "@graphql-mesh/merger-*": ["./packages/legacy/mergers/*/src/index.ts"],
       "@graphql-mesh/plugin-*": ["./packages/plugins/*/src/index.ts"],
+      "@graphql-mesh/cross-helpers": ["./packages/cross-helpers/node.js"],
       "@graphql-mesh/string-interpolation": ["./packages/string-interpolation/src/index.ts"],
       "@graphql-mesh/fusion-composition": ["./packages/fusion/composition/src/index.ts"],
       "@graphql-mesh/compose-cli": ["./packages/compose-cli/src/index.ts"],

@@ -28,6 +28,7 @@ import { DisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack
 import { addExecutionLogicToScalar, addMetaDataToCall } from './utils.js';
 import './patchLongJs.js';
 import { type Logger } from '@graphql-hive/logger';
+import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 
@@ -92,11 +93,6 @@ export class GrpcTransportHelper extends DisposableStack {
         () =>
           `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`,
       );
-      const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-      const path = globalThis.process?.getBuiltinModule?.('node:path');
-      if (!fs || !path) {
-        throw new Error('Node.js fs and path modules are required for gRPC SSL credentials');
-      }
       const absolutePrivateKeyPath = path.isAbsolute(this.config.credentialsSsl.privateKey)
         ? this.config.credentialsSsl.privateKey
         : path.join(this.baseDir, this.config.credentialsSsl.privateKey);
@@ -167,7 +163,7 @@ export class GrpcTransportHelper extends DisposableStack {
         throw new Error(`Object at path ${objPath} is not a Service constructor`);
       }
       client = new ServiceClient(
-        stringInterpolator.parse(this.endpoint, { env: globalThis.process?.env }) ?? this.endpoint,
+        stringInterpolator.parse(this.endpoint, { env: process.env }) ?? this.endpoint,
         creds,
         Array.isArray(this.config.channelOptions)
           ? Object.fromEntries(this.config.channelOptions)
@@ -200,7 +196,7 @@ export class GrpcTransportHelper extends DisposableStack {
           root,
           args,
           context,
-          env: globalThis.process?.env,
+          env: process.env,
         },
         metaData,
         isResponseStream,

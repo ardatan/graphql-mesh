@@ -1,4 +1,5 @@
 import { Logger } from '@graphql-hive/logger';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { pathExists, withCookies } from '@graphql-mesh/utils';
@@ -80,11 +81,6 @@ export function createMeshHTTPHandler<TServerContext>({
                 return;
             }
             if (staticFiles && request.method === 'GET') {
-              const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-              const path = globalThis.process?.getBuiltinModule?.('node:path');
-              if (!fs || !path) {
-                throw new Error('Node.js fs and path modules are required for Mesh static files');
-              }
               let relativePath = url.pathname;
               if (relativePath === '/' || !relativePath) {
                 relativePath = 'index.html';

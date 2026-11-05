@@ -1,14 +1,10 @@
 import type { SchemaComposer } from 'graphql-compose';
 import lodashHas from 'lodash.has';
 import type { INamespace, Root } from 'protobufjs';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import { getGraphQLScalarForGrpc, isGrpcScalar } from './scalars.js';
 
 export function addIncludePathResolver(root: Root, includePaths: string[]): void {
-  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!fs || !pathModule) {
-    throw new Error('Node.js fs and path modules are required for gRPC include path resolver');
-  }
   const originalResolvePath = root.resolvePath;
   root.resolvePath = (origin: string, target: string) => {
     if (pathModule.isAbsolute(target)) {

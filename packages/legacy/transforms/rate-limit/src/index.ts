@@ -1,5 +1,6 @@
 import type { ExecutionResult } from 'graphql';
 import { GraphQLError, TypeInfo, visit, visitWithTypeInfo } from 'graphql';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
@@ -29,7 +30,7 @@ export default class RateLimitTransform implements MeshTransform {
     if (transformedSchema) {
       const errors: GraphQLError[] = [];
       const resolverData: ResolverData = {
-        env: globalThis.process?.env,
+        env: process.env,
         root: rootValue,
         args,
         context,

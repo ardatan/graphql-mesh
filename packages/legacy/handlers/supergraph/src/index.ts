@@ -1,6 +1,7 @@
 import type { DocumentNode, EnumTypeDefinitionNode } from 'graphql';
 import { parse } from 'graphql';
 import { type Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import {
@@ -52,12 +53,12 @@ export default class SupergraphHandler implements MeshHandler {
   private async getSupergraphSdl(): Promise<DocumentNode> {
     const schemaHeadersFactory = getInterpolatedHeadersFactory(this.config.schemaHeaders);
     const interpolatedSource = stringInterpolator.parse(this.config.source, {
-      env: globalThis.process?.env,
+      env: process.env,
     });
     if (isUrl(interpolatedSource)) {
       const res = await readUrl<DocumentNode | string>(interpolatedSource, {
         headers: schemaHeadersFactory({
-          env: globalThis.process?.env,
+          env: process.env,
         }),
         cwd: this.baseDir,
         allowUnknownExtensions: true,
@@ -72,7 +73,7 @@ export default class SupergraphHandler implements MeshHandler {
     return this.supergraphSdl.getWithSet(async () => {
       const sdlOrIntrospection = await readFile<string | DocumentNode>(interpolatedSource, {
         headers: schemaHeadersFactory({
-          env: globalThis.process?.env,
+          env: process.env,
         }),
         cwd: this.baseDir,
         allowUnknownExtensions: true,
@@ -130,7 +131,7 @@ export default class SupergraphHandler implements MeshHandler {
 
         const subscriptionsEndpoint = subgraphConfiguration.subscriptionsEndpoint
           ? stringInterpolator.parse(subgraphConfiguration.subscriptionsEndpoint, {
-              env: globalThis.process?.env,
+              env: process.env,
             })
           : undefined;
 
@@ -204,6 +205,6 @@ const getResolverData = memoize1(function getResolverData(params: ExecutionReque
     root: params.rootValue,
     args: params.variables,
     context: params.context,
-    env: globalThis.process?.env,
+    env: process.env,
   };
 });

@@ -4,6 +4,7 @@ import { parse, print, visit } from 'graphql';
 import { pascalCase } from 'pascal-case';
 import { useMaskedErrors } from '@envelop/core';
 import { type Logger } from '@graphql-hive/logger';
+import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import type { GetMeshOptions, MeshResolvedSource } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type {
@@ -74,11 +75,7 @@ export type ProcessedConfig = GetMeshOptions & {
 };
 
 function getDefaultMeshStore(dir: string, importFn: ImportFn, artifactsDir: string) {
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!pathModule) {
-    throw new Error('Node.js path module is required for Mesh store');
-  }
-  const isProd = globalThis.process?.env?.NODE_ENV?.toLowerCase() === 'production';
+  const isProd = process.env.NODE_ENV?.toLowerCase() === 'production';
   const storeStorageAdapter = isProd
     ? new FsStoreStorageAdapter({
         cwd: dir,
@@ -105,11 +102,6 @@ export async function processConfig(
 ): Promise<ProcessedConfig> {
   if (config.skipSSLValidation) {
     globalThis.process!.env!.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-  }
-
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!pathModule) {
-    throw new Error('Node.js path module is required to process Mesh config');
   }
 
   const importCodes = new Set([

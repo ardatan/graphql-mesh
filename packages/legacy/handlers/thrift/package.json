@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@graphql-hive/logger": "^1.1.1",
+    "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/store": "^0.107.3",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",

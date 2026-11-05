@@ -2,6 +2,7 @@ import { GraphQLInterfaceType, parse, type ExecutionResult } from 'graphql';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type { KeyValueCache } from '@graphql-mesh/types';
 import { normalizedExecutor } from '@graphql-tools/executor';
@@ -11,11 +12,6 @@ import ODataHandler from '../src/index.js';
 import { addMock, mockFetch, MockResponse, resetMocks } from './custom-fetch.js';
 
 function readFixture(relativePath: string) {
-  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!fs || !path) {
-    throw new Error('Node.js fs and path modules are required for OData handler tests');
-  }
   return fs.readFileSync(path.resolve(__dirname, relativePath), 'utf8');
 }
 

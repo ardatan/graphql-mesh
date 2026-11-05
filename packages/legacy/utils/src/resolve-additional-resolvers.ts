@@ -19,6 +19,7 @@ import {
 import lodashGet from 'lodash.get';
 import toPath from 'lodash.topath';
 import type { PubSub } from '@graphql-hive/pubsub';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { MeshContext } from '@graphql-mesh/runtime';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { type ImportFn, type YamlConfig } from '@graphql-mesh/types';
@@ -307,7 +308,7 @@ export function getResolverForPubSubOperation(
     context: MeshContext,
     info: GraphQLResolveInfo,
   ): MaybePromise<AsyncIterator<any>> {
-    const resolverData = { root, args, context, info, env: globalThis.process?.env };
+    const resolverData = { root, args, context, info, env: process.env };
     const topic = stringInterpolator.parse(pubsubTopic, resolverData);
     const ps = context?.pubsub || opts?.pubsub;
     return ps.subscribe(topic)[Symbol.asyncIterator]();
@@ -400,7 +401,7 @@ export function resolveAdditionalResolversWithoutImport(
               );
               baseOptions.valuesFromResultsByKeyReturnType = info.returnType;
             }
-            const resolverData = { root, args, context, info, env: globalThis.process?.env };
+            const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
             for (const argPath in additionalResolver.additionalArgs || {}) {
               const value = additionalResolver.additionalArgs[argPath];
@@ -468,7 +469,7 @@ export function resolveAdditionalResolversWithoutImport(
                 additionalResolver,
               );
             }
-            const resolverData = { root, args, context, info, env: globalThis.process?.env };
+            const resolverData = { root, args, context, info, env: process.env };
             const targetArgs: any = {};
 
             deeplySetArgs(

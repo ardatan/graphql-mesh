@@ -2,6 +2,7 @@ import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { Logger } from '@graphql-hive/logger';
+import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { getMesh } from '@graphql-mesh/runtime';
@@ -41,7 +42,7 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
   commandName: 'mesh',
   initialLoggerPrefix: '',
   configName: 'mesh',
-  artifactsDir: globalThis.process?.env?.MESH_ARTIFACTS_DIRNAME || '.mesh',
+  artifactsDir: process.env.MESH_ARTIFACTS_DIRNAME || '.mesh',
   serveMessage: 'Serving GraphQL Mesh',
   playgroundTitle: 'GraphiQL Mesh',
   builtMeshFactoryName: 'getBuiltMesh',
@@ -57,13 +58,8 @@ export const DEFAULT_CLI_PARAMS: GraphQLMeshCLIParams = {
 export async function graphqlMesh(
   cliParams = DEFAULT_CLI_PARAMS,
   args = hideBin(globalThis.process?.argv ?? []),
-  cwdPath = globalThis.process?.cwd?.() ?? '.',
+  cwdPath = process.cwd() ?? '.',
 ) {
-  const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-  const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!fs || !pathModule) {
-    throw new Error('Node.js fs and path modules are required for GraphQL Mesh CLI');
-  }
   let baseDir = cwdPath;
   let log: Logger = new Logger({ prefix: cliParams.initialLoggerPrefix });
   const unregisterTsconfigPaths = registerTsconfigPaths({ cwd: baseDir });

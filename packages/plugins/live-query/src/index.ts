@@ -1,6 +1,7 @@
 import type { Plugin } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
 import type { PubSub } from '@graphql-hive/pubsub';
+import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { type YamlConfig } from '@graphql-mesh/types';
 import {
@@ -32,14 +33,14 @@ export default function useMeshLiveQuery(
             return stringInterpolator.parse(options.resourceIdentifier, {
               typename,
               id,
-              env: globalThis.process?.env,
+              env: process.env,
             });
           }
         : defaultResourceIdentifierNormalizer,
     includeIdentifierExtension:
       options.includeIdentifierExtension != null
         ? options.includeIdentifierExtension
-        : globalThis.process?.env?.DEBUG === '1',
+        : process.env.DEBUG === '1',
     idFieldName: options.idFieldName,
     indexBy: options.indexBy,
   });

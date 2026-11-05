@@ -2,7 +2,7 @@
 "@graphql-mesh/transport-mysql": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, promise helpers).
 
 ## Motivation
 
@@ -11,7 +11,6 @@ MySQL executors own pools; asyncDispose replaces destroy-pubsub teardown.
 ## What changed ()
 
 - Executor `[DisposableSymbols.asyncDispose]` ends the pool
-- No cross-helpers; `util` via `getBuiltinModule` at call sites
 
 ## How to migrate
 

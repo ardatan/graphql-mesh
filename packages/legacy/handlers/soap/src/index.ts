@@ -1,5 +1,6 @@
 import type { GraphQLSchema } from 'graphql';
 import { type Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
@@ -53,7 +54,7 @@ export default class SoapHandler implements MeshHandler {
         fetch: fetchFn,
         importFn: this.importFn,
         log: this.log,
-        headers: schemaHeadersFactory({ env: globalThis.process?.env }),
+        headers: schemaHeadersFactory({ env: process.env }),
       });
     } else {
       schema = await this.soapSDLProxy.getWithSet(async () => {
@@ -74,7 +75,7 @@ export default class SoapHandler implements MeshHandler {
           fetch: fetchFn,
           importFn: this.importFn,
           log: this.log,
-          headers: schemaHeadersFactory({ env: globalThis.process?.env }),
+          headers: schemaHeadersFactory({ env: process.env }),
         });
         // Pass wsdlLocation as the base URL so nested <wsdl:import> /
         // <xsd:import> locations resolve relative to the importing document.

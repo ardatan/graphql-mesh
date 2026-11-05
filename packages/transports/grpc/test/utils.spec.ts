@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { GraphQLError } from 'graphql';
+import { process } from '@graphql-mesh/cross-helpers';
 import { status as GrpcStatus, Metadata } from '@grpc/grpc-js';
 import { addMetaDataToCall, toGrpcGraphQLError } from '../src/utils.js';
 
@@ -52,12 +53,7 @@ describe('grpc utils', () => {
     }
 
     test(`when no metadata is supplied by the config`, () => {
-      addMetaDataToCall(
-        grpcClientMethod,
-        input,
-        { context, env: globalThis.process?.env },
-        undefined,
-      );
+      addMetaDataToCall(grpcClientMethod, input, { context, env: process.env }, undefined);
       expect(grpcClientMethod).toHaveBeenCalledWith(input, expect.any(Function));
     });
 
@@ -72,12 +68,7 @@ describe('grpc utils', () => {
         );
       });
       await expect(
-        addMetaDataToCall(
-          grpcClientMethod,
-          input,
-          { context, env: globalThis.process?.env },
-          undefined,
-        ),
+        addMetaDataToCall(grpcClientMethod, input, { context, env: process.env }, undefined),
       ).rejects.toMatchObject({
         message: 'too big',
         extensions: {
@@ -96,7 +87,7 @@ describe('grpc utils', () => {
       addMetaDataToCall(
         grpcClientMethod,
         input,
-        { context, env: globalThis.process?.env },
+        { context, env: process.env },
         undefined,
         false,
         4000,
@@ -116,7 +107,7 @@ describe('grpc utils', () => {
       addMetaDataToCall(
         grpcClientMethod,
         input,
-        { context, env: globalThis.process?.env },
+        { context, env: process.env },
         { sportsTeam: 'Dodgers' },
         false,
         2500,
@@ -168,12 +159,7 @@ describe('grpc utils', () => {
       });
 
       test(`when ${type} metadata is supplied by the config`, () => {
-        addMetaDataToCall(
-          grpcClientMethod,
-          input,
-          { context, env: globalThis.process?.env },
-          config,
-        );
+        addMetaDataToCall(grpcClientMethod, input, { context, env: process.env }, config);
         expect(grpcClientMethod).toHaveBeenCalledWith(
           input,
           expectedMetadata,
@@ -188,12 +174,7 @@ describe('grpc utils', () => {
     ])('should throw errors when generating gRPC Metadata', (type, config) => {
       test(`when ${type} metadata is supplied by the config`, () => {
         expect(() =>
-          addMetaDataToCall(
-            grpcClientMethod,
-            input,
-            { context, env: globalThis.process?.env },
-            config,
-          ),
+          addMetaDataToCall(grpcClientMethod, input, { context, env: process.env }, config),
         ).toThrow(/keys that don't end with '-bin' must have String values/);
       });
     });

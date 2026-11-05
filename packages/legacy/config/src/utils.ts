@@ -1,6 +1,7 @@
 import { paramCase } from 'param-case';
 import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
+import { path } from '@graphql-mesh/cross-helpers';
 import type { ImportFn, KeyValueCache, MeshFetch, YamlConfig } from '@graphql-mesh/types';
 import { parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
@@ -52,10 +53,6 @@ export async function getPackage<T>({
   }
   if (name.includes('-')) {
     possibleNames.push(name);
-  }
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required to resolve Mesh packages');
   }
   const possibleModules = possibleNames.concat(path.resolve(cwd, name));
 
@@ -127,11 +124,6 @@ export async function resolveCustomFetch({
     cwd,
     additionalPrefixes: additionalPackagePrefixes,
   });
-
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required to resolve custom fetch');
-  }
   const processedModuleName = moduleName.startsWith('.') ? path.join('..', moduleName) : moduleName;
   const code = `const fetchFn = await import(${JSON.stringify(processedModuleName)}).then(m => m?.fetch || m);`;
 
@@ -271,11 +263,6 @@ export async function resolveLogger(
       cwd,
       additionalPrefixes: additionalPackagePrefixes,
     });
-
-    const path = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!path) {
-      throw new Error('Node.js path module is required to resolve logger');
-    }
     const processedModuleName = moduleName.startsWith('.')
       ? path.join('..', moduleName)
       : moduleName;

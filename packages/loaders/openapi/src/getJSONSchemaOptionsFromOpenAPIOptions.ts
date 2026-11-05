@@ -3,6 +3,7 @@ import type { JSONSchemaObject } from 'json-machete';
 import { dereferenceObject, handleUntitledDefinitions, resolvePath } from 'json-machete';
 import type { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import { futureAdditions } from '@graphql-mesh/fusion-composition';
 import {
   getInterpolatedHeadersFactory,
@@ -167,7 +168,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
           };
   if (typeof source === 'string') {
     source = stringInterpolator.parse(source, {
-      env: globalThis.process?.env,
+      env: process.env,
     });
   }
   const fieldTypeMap: Record<string, SelectQueryOrMutationFieldConfig['fieldName']> = {};
@@ -181,7 +182,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     readFileOrUrl(path, {
       cwd: opts.cwd,
       fetch: fetchFn,
-      headers: schemaHeadersFactory({ env: globalThis.process?.env }),
+      headers: schemaHeadersFactory({ env: process.env }),
       importFn: defaultImportFn,
       log,
       fallbackFormat,

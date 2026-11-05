@@ -18,6 +18,7 @@ import protobufjs, { type AnyNestedObject, type IParseOptions, type Message } fr
 import descriptor, { type IFileDescriptorSet } from 'protobufjs/ext/descriptor.js';
 import { Client } from '@ardatan/grpc-reflection-js';
 import { type Logger } from '@graphql-hive/logger';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { matchFiles } from '@graphql-tools/load-files';
@@ -181,11 +182,6 @@ export class GrpcLoaderHelper extends DisposableStack {
   }
 
   private async processDescriptorFile() {
-    const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-    const path = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!fs || !path) {
-      throw new Error('Node.js fs and path modules are required for gRPC descriptor files');
-    }
     let fileName: string;
     let options: LoadOptions;
     if (typeof this.config.source === 'object') {
@@ -231,10 +227,6 @@ export class GrpcLoaderHelper extends DisposableStack {
 
   private async processProtoFile() {
     this.log.debug(`Using proto file(s)`);
-    const path = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!path) {
-      throw new Error('Node.js path module is required for gRPC proto files');
-    }
     let protoRoot = new Root();
     let fileGlob: string;
     let options: LoadOptions = {
@@ -320,11 +312,6 @@ export class GrpcLoaderHelper extends DisposableStack {
         () =>
           `Using SSL Connection with credentials at ${this.config.credentialsSsl.privateKey} & ${this.config.credentialsSsl.certChain}`,
       );
-      const fs = globalThis.process?.getBuiltinModule?.('node:fs');
-      const path = globalThis.process?.getBuiltinModule?.('node:path');
-      if (!fs || !path) {
-        throw new Error('Node.js fs and path modules are required for gRPC SSL credentials');
-      }
       const absolutePrivateKeyPath = path.isAbsolute(this.config.credentialsSsl.privateKey)
         ? this.config.credentialsSsl.privateKey
         : path.join(this.baseDir, this.config.credentialsSsl.privateKey);

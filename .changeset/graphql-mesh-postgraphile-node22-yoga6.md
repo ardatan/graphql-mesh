@@ -2,7 +2,7 @@
 "@graphql-mesh/postgraphile": major
 ---
 
-See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, builtins, promise helpers).
+See `.changeset/node22-yoga6-shared.md` for the shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub replaced by disposables, promise helpers).
 
 ## Motivation
 
@@ -12,7 +12,6 @@ this handler cleaned up PostGraphile / pg pools by subscribing to Mesh `destroy`
 
 - Tear down PostGraphile / pg pools via `[DisposableSymbols.asyncDispose]` instead of a `destroy` pubsub subscriber
 - Hive `Logger` / `PubSub` types; option naming uses `log`
-- Node `path` via `globalThis.process?.getBuiltinModule` at use site
 
 ## How to migrate
 

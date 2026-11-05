@@ -23,6 +23,7 @@ import {
 import { pascalCase } from 'pascal-case';
 import urljoin from 'url-join';
 import { type Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
@@ -83,7 +84,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
 ) {
   const eventEmitterSet = new Set<EventEmitter>();
   const endpoint = stringInterpolator.parse(nonInterpolatedBaseUrl, {
-    env: globalThis.process?.env,
+    env: process.env,
   });
 
   const schemaComposer = new SchemaComposer();

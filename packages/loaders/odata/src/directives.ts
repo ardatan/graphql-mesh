@@ -8,6 +8,7 @@ import {
   GraphQLString,
   type GraphQLSchema,
 } from 'graphql';
+import { process } from '@graphql-mesh/cross-helpers';
 import {
   getInterpolatedHeadersFactory,
   stringInterpolator,
@@ -392,7 +393,7 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
   };
 
   const endpoint = stringInterpolator.parse(transportDirective.location, {
-    env: globalThis.process?.env,
+    env: process.env,
   });
 
   const dataloaderFactory = getDataloaderFactory({

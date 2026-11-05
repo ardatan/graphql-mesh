@@ -31,6 +31,7 @@ import { parse, SyntaxType } from '@creditkarma/thrift-parser';
 import type { IMethodAnnotations, IThriftAnnotations } from '@creditkarma/thrift-server-core';
 import { TType } from '@creditkarma/thrift-server-core';
 import { Logger } from '@graphql-hive/logger';
+import { path } from '@graphql-mesh/cross-helpers';
 import type {
   GraphQLThriftAnnotations,
   StructTypeVal,
@@ -94,10 +95,6 @@ export async function loadNonExecutableGraphQLSchemaFromIDL({
     log,
     importFn,
   });
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required for Thrift loader');
-  }
   const baseNamespace = path.basename(source, '.thrift');
   return loadNonExecutableGraphQLSchemaFromThriftDocument({
     subgraphName,
@@ -137,10 +134,6 @@ async function parseWithIncludes({
     importFn,
   });
   const parseResult = parse(rawThrift, { organize: false });
-  const path = globalThis.process?.getBuiltinModule?.('node:path');
-  if (!path) {
-    throw new Error('Node.js path module is required for Thrift loader');
-  }
   const idlNamespace = path.basename(idlFilePath).split('.')[0];
   if (parseResult.type === SyntaxType.ThriftErrors) {
     if (parseResult.errors.length === 1) {

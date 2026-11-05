@@ -6,6 +6,7 @@ import { withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
+import { path, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type {
@@ -62,7 +63,7 @@ export default class PostGraphileHandler implements MeshHandler {
       const pgLogger = this.log.child('PostgreSQL');
       pgPool = new pg.Pool({
         connectionString: stringInterpolator.parse(this.config.connectionString, {
-          env: globalThis.process?.env,
+          env: process.env,
         }),
         log: messages => pgLogger.debug(messages),
         ...this.config?.pool,
@@ -72,10 +73,6 @@ export default class PostGraphileHandler implements MeshHandler {
     this.pgPool = pgPool;
 
     const cacheKey = this.name + '_introspection.json';
-    const pathModule = globalThis.process?.getBuiltinModule?.('node:path');
-    if (!pathModule) {
-      throw new Error('Node.js path module is required for PostGraphile handler');
-    }
     const dummyCacheFilePath = pathModule.join(tmpdir(), cacheKey);
     let cachedIntrospection = await this.pgCache.get();
 

@@ -18,6 +18,7 @@ import type { IStringifyOptions } from 'qs';
 import { parse as qsParse, stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
 import { Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
@@ -145,7 +146,7 @@ export function addHTTPRootFieldResolver(
       root,
       args: argsSerializeProxy,
       context,
-      env: globalThis.process?.env,
+      env: process.env,
     };
     const interpolatedBaseUrl = stringInterpolator.parse(endpoint, interpolationData) || '';
     const interpolatedPath = stringInterpolator.parse(path, interpolationData) || '';

@@ -9,6 +9,7 @@ import type {
 } from 'graphql';
 import { getNamedType, GraphQLError, isInputObjectType, isListType, isNonNullType } from 'graphql';
 import { Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverData, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import {
   getInterpolatedHeadersFactory,
@@ -351,7 +352,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
       args,
       context,
       info,
-      env: globalThis.process?.env,
+      env: process.env,
     };
 
     // Read typeNamespacesJson from the transport definition (which survives
@@ -511,7 +512,7 @@ Falling back to 'http://www.w3.org/2003/05/soap-envelope' as SOAP Namespace.`);
             args,
             context,
             info,
-            env: globalThis.process?.env,
+            env: process.env,
           }),
         },
       },

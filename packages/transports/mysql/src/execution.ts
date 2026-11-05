@@ -3,6 +3,7 @@ import { getNamedType, isObjectType } from 'graphql';
 import graphqlFields from 'graphql-fields';
 import { createPool, type Pool, type PoolConnection } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
+import { util } from '@graphql-mesh/cross-helpers';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
@@ -23,10 +24,6 @@ export interface GetMySQLExecutorOpts {
 }
 
 export function getMySQLExecutor({ subgraph, pool }: GetMySQLExecutorOpts): DisposableExecutor {
-  const util = globalThis.process?.getBuiltinModule?.('node:util');
-  if (!util) {
-    throw new Error('Node.js util module is required for MySQL executor');
-  }
   const mysqlConnectionByContext = new WeakMap<any, PoolConnection>();
   subgraph = mapSchema(subgraph, {
     [MapperKind.OBJECT_FIELD](fieldConfig, fieldName) {
