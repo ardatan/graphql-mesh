@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.2.0",
-    "concurrently": "10.0.4",
+    "concurrently": "10.0.6",
     "jest": "30.4.2",
     "ts-jest": "29.4.12",
     "ts-node": "^10.9.2",

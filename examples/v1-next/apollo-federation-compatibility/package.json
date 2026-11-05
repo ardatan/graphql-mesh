@@ -17,7 +17,7 @@
   "dependencies": {
     "@graphql-hive/gateway": "^2.15.4",
     "@graphql-yoga/plugin-apollo-inline-trace": "4.0.1",
-    "concurrently": "10.0.4",
+    "concurrently": "10.0.6",
     "graphql": "16.14.0",
     "graphql-yoga": "^6.0.1",
     "tslib": "2.8.1",
