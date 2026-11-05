@@ -111,7 +111,7 @@
     "prettier": "3.9.6",
     "threads": "^1.7.0",
     "ts-jest": "29.4.12",
-    "tsx": "^4.23.12",
+    "tsx": "^4.23.15",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   },
   "resolutions": {
