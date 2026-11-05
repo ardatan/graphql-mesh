@@ -5544,7 +5544,7 @@ __metadata:
     "@types/express": "npm:^5.0.6"
     express: "npm:^5.3.0"
     graphql: "npm:^16.14.0"
-    thrift: "npm:^0.24.0"
+    thrift: "npm:^0.25.0"
   languageName: unknown
   linkType: soft
 
@@ -7235,7 +7235,7 @@ __metadata:
     concurrently: "npm:10.0.6"
     express: "npm:5.3.0"
     graphql: "npm:16.14.0"
-    thrift: "npm:0.24.0"
+    thrift: "npm:0.25.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
   languageName: unknown
@@ -13924,7 +13924,7 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.12.1"
     graphql: "npm:16.14.0"
     graphql-scalars: "npm:^2.0.1"
-    thrift: "npm:^0.24.0"
+    thrift: "npm:^0.25.0"
   peerDependencies:
     graphql: ^16.0.0 || ^17.0.0
   languageName: unknown
@@ -42465,16 +42465,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"thrift@npm:0.24.0, thrift@npm:^0.24.0":
-  version: 0.24.0
-  resolution: "thrift@npm:0.24.0"
+"thrift@npm:0.25.0, thrift@npm:^0.25.0":
+  version: 0.25.0
+  resolution: "thrift@npm:0.25.0"
   dependencies:
     browser-or-node: "npm:^1.2.1"
     isomorphic-ws: "npm:^4.0.1"
     node-int64: "npm:^0.4.0"
-    uuid: "npm:^14.0.0"
+    uuid: "npm:^11.1.1"
     ws: "npm:^8.21.0"
-  checksum: 10c0/79d15a1cc57f6ac6b94321da5602ab938019bfeed47d8f0898d98bee845987a6110cd40794dd997dd892425f5207824e464c5d4305bd51aadb644920089a7c14
+  checksum: 10c0/85bd1b3bfa945898441e32e3d6de70556d699e10662d47d698958c6940971e42ca293df6c532bd34e3b997556cfcaec7ca3c8e79885e891eb9449c9e0c4ee5f7
   languageName: node
   linkType: hard
 
