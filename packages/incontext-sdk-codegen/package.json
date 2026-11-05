@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@graphql-codegen/core": "^6.2.0",
-    "@graphql-codegen/plugin-helpers": "^6.3.0",
+    "@graphql-codegen/plugin-helpers": "^7.4.2",
     "@graphql-codegen/typescript": "^6.1.2",
     "@graphql-mesh/fusion-runtime": "patch:@graphql-mesh/fusion-runtime@npm%3A1.13.3#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.3-efe60c8c1c.patch",
     "@graphql-mesh/transport-common": "^1.1.1",
