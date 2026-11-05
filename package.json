@@ -191,7 +191,7 @@
     "postcss-selector-parser@npm:^6.1.1": "npm:6.1.4",
     "postcss-selector-parser@npm:^6.1.2": "npm:6.1.4",
     "postcss-selector-parser@npm:^7.0.0": "npm:7.1.6",
-    "protobufjs": "7.6.5",
+    "protobufjs": "8.8.1",
     "qs": "6.16.1",
     "rollup": "4.59.0",
     "sequelize": "6.37.8",
