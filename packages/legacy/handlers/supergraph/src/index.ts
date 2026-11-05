@@ -1,6 +1,7 @@
 import type { DocumentNode, EnumTypeDefinitionNode } from 'graphql';
 import { parse } from 'graphql';
 import { type Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import {
@@ -23,7 +24,6 @@ import type { SubscriptionProtocol } from '@graphql-tools/url-loader';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import { memoize1 } from '@graphql-tools/utils';
-import { process } from '@graphql-mesh/cross-helpers';
 
 export default class SupergraphHandler implements MeshHandler {
   private config: YamlConfig.Handler['supergraph'];

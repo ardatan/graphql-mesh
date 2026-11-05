@@ -4,13 +4,13 @@ import cluster from 'cluster';
 import os from 'os';
 import open from 'open';
 import { type Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import { createMeshHTTPHandler, resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { ServeMeshOptions } from '@graphql-mesh/runtime';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { GraphQLMeshCLIParams } from '../../index.js';
 import { getMaxConcurrency } from './getMaxConcurency.js';
 import { startNodeHttpServer } from './node-http.js';
-import { process } from '@graphql-mesh/cross-helpers';
 
 type RenderGraphiQL = (options?: any) => string | Promise<string>;
 

@@ -1,11 +1,11 @@
 import type { GraphQLSchema } from 'graphql';
+import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { MeshTransform, MeshTransformOptions, YamlConfig } from '@graphql-mesh/types';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefsSync } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { asArray } from '@graphql-tools/utils';
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
 
 function loadFromModuleExportExpressionSync<T>({
   expression,

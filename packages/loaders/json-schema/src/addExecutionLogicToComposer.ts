@@ -15,6 +15,7 @@ import type {
 import { GraphQLJSON } from 'graphql-compose';
 import type { IStringifyOptions } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   HTTPOperationDirective,
@@ -31,7 +32,6 @@ import type {
   OperationHeadersConfiguration,
 } from './types.js';
 import { getOperationMetadata, isPubSubOperationConfig } from './utils.js';
-import { process } from '@graphql-mesh/cross-helpers';
 
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
@@ -91,10 +91,7 @@ export function addExecutionDirectivesToComposer(
         },
       });
     } else if (operationConfig.path) {
-      if (
-        process.env.DEBUG === '1' ||
-        process.env.DEBUG === 'fieldDetails'
-      ) {
+      if (process.env.DEBUG === '1' || process.env.DEBUG === 'fieldDetails') {
         field.description = `
 >**Method**: \`${operationConfig.method}\`
 >**Base URL**: \`${endpoint}\`

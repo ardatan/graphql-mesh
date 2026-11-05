@@ -3,11 +3,11 @@ import { cosmiconfig, defaultLoaders } from 'cosmiconfig';
 import { Logger } from '@graphql-hive/logger';
 import type { ConfigProcessOptions } from '@graphql-mesh/config';
 import { processConfig } from '@graphql-mesh/config';
+import { path, process } from '@graphql-mesh/cross-helpers';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { jsonSchema } from '@graphql-mesh/types';
 import { loadYaml } from '@graphql-mesh/utils';
 import { include } from './include.js';
-import { path, process } from '@graphql-mesh/cross-helpers';
 
 export function validateConfig(
   config: any,
@@ -64,9 +64,7 @@ export async function findConfig(options?: {
     initialLoggerPrefix = '',
     importFn,
   } = options || {};
-  const dir = path.isAbsolute(configDir)
-    ? configDir
-    : path.join(process.cwd() ?? '.', configDir);
+  const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd() ?? '.', configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [
       'package.json',
@@ -107,9 +105,7 @@ export async function findAndParseConfig(options?: ConfigProcessOptions) {
     log = new Logger({ prefix: initialLoggerPrefix }),
     ...restOptions
   } = options || {};
-  const dir = path.isAbsolute(configDir)
-    ? configDir
-    : path.join(process.cwd() ?? '.', configDir);
+  const dir = path.isAbsolute(configDir) ? configDir : path.join(process.cwd() ?? '.', configDir);
   const explorer = cosmiconfig(configName, {
     searchPlaces: [
       'package.json',

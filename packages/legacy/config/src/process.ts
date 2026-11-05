@@ -4,6 +4,7 @@ import { parse, print, visit } from 'graphql';
 import { pascalCase } from 'pascal-case';
 import { useMaskedErrors } from '@envelop/core';
 import { type Logger } from '@graphql-hive/logger';
+import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import type { GetMeshOptions, MeshResolvedSource } from '@graphql-mesh/runtime';
 import { FsStoreStorageAdapter, InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import type {
@@ -35,7 +36,6 @@ import {
   resolveLogger,
   resolvePubSub,
 } from './utils.js';
-import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
 
 const ENVELOP_CORE_PLUGINS_MAP: Record<
   string,

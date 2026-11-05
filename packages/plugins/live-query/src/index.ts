@@ -1,6 +1,7 @@
 import type { Plugin } from '@envelop/core';
 import { useLiveQuery } from '@envelop/live-query';
 import type { PubSub } from '@graphql-hive/pubsub';
+import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import { type YamlConfig } from '@graphql-mesh/types';
 import {
@@ -9,7 +10,6 @@ import {
 } from '@n1ru4l/in-memory-live-query-store';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { useInvalidateByResult } from './useInvalidateByResult.js';
-import { process } from '@graphql-mesh/cross-helpers';
 
 export default function useMeshLiveQuery(
   options: YamlConfig.LiveQueryConfig & {

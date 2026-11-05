@@ -28,9 +28,9 @@ import { DisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack
 import { addExecutionLogicToScalar, addMetaDataToCall } from './utils.js';
 import './patchLongJs.js';
 import { type Logger } from '@graphql-hive/logger';
+import { fs, path, process } from '@graphql-mesh/cross-helpers';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
-import { fs, path, process } from '@graphql-mesh/cross-helpers';
 
 /** Shared fallback when GraphQL omits `input` (protobufjs@8 rejects undefined). */
 const EMPTY_OBJECT = Object.freeze({});

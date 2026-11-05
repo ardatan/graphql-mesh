@@ -1,6 +1,6 @@
+import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import { writeFile } from '@graphql-mesh/utils';
 import { processConfig } from '../src/process.js';
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
 
 describe('processConfig', () => {
   const generatedMeshConfiguration = '.mesh';

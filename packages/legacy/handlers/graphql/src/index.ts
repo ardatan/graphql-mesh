@@ -12,6 +12,7 @@ import {
 } from 'graphql';
 import lodashGet from 'lodash.get';
 import { type Logger } from '@graphql-hive/logger';
+import { process, util } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions, ValidationError } from '@graphql-mesh/store';
 import {
@@ -50,7 +51,6 @@ import {
 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
-import { process, util } from '@graphql-mesh/cross-helpers';
 
 function inspect(value: unknown): string {
   return util.inspect(value);

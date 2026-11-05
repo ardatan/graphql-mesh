@@ -1,11 +1,11 @@
 import type { Schema } from 'js-yaml';
 import { DEFAULT_SCHEMA, load as loadYamlFromJsYaml, Type } from 'js-yaml';
 import { type Logger } from '@graphql-hive/logger';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { ImportFn, MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { isUrl } from '@graphql-tools/utils';
 import { fetch } from '@whatwg-node/fetch';
 import { loadFromModuleExportExpression } from './load-from-module-export-expression.js';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 
 export interface ReadFileOrUrlOptions extends MeshFetchRequestInit {
   allowUnknownExtensions?: boolean;

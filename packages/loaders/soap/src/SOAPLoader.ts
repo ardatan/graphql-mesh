@@ -39,6 +39,7 @@ import {
   RegularExpression,
 } from 'graphql-scalars';
 import { Logger } from '@graphql-hive/logger';
+import { path, process } from '@graphql-mesh/cross-helpers';
 import type { ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
@@ -62,7 +63,6 @@ import type {
 } from './types.js';
 import type { SoapAnnotations } from './utils.js';
 import { PARSE_XML_OPTIONS } from './utils.js';
-import { path, process } from '@graphql-mesh/cross-helpers';
 
 export interface SOAPLoaderOptions {
   subgraphName: string;

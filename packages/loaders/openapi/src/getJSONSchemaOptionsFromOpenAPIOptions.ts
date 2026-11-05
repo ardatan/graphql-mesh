@@ -3,6 +3,7 @@ import type { JSONSchemaObject } from 'json-machete';
 import { dereferenceObject, handleUntitledDefinitions, resolvePath } from 'json-machete';
 import type { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import { futureAdditions } from '@graphql-mesh/fusion-composition';
 import {
   getInterpolatedHeadersFactory,
@@ -22,7 +23,6 @@ import type {
 } from '@omnigraph/json-schema';
 import type { SelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
-import { process } from '@graphql-mesh/cross-helpers';
 
 function mimeType(contentType: string): string {
   return contentType.split(';')[0].trim().toLowerCase();

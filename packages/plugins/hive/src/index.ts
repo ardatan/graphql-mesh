@@ -1,7 +1,7 @@
 import { createHive, useHive } from '@graphql-hive/yoga';
+import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshPlugin, YamlConfig } from '@graphql-mesh/types';
-import { process } from '@graphql-mesh/cross-helpers';
 
 type HivePluginOptions = Parameters<typeof createHive>[0];
 

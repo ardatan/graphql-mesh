@@ -12,6 +12,7 @@ import type { Plugin } from '@envelop/core';
 import { envelop, useEngine, useExtendContext, useSchema } from '@envelop/core';
 import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
+import { process } from '@graphql-mesh/cross-helpers';
 import type {
   GraphQLOperation,
   KeyValueCache,
@@ -47,7 +48,6 @@ import {
 import { MESH_CONTEXT_SYMBOL } from './constants.js';
 import type { ExecuteMeshFn, GetMeshOptions, MeshExecutor, SubscribeMeshFn } from './types.js';
 import { getOriginalError } from './utils.js';
-import { process } from '@graphql-mesh/cross-helpers';
 
 type SdkRequester = (document: DocumentNode, variables?: any, operationContext?: any) => any;
 

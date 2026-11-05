@@ -2,6 +2,7 @@ import Redis, { type Cluster } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import type { RedisOptions } from 'ioredis/built/redis/RedisOptions';
 import { type Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import {
   type KeyValueCache,
@@ -15,7 +16,6 @@ import {
   setupIamAuthForCluster,
   setupIamAuthRefreshForStandalone,
 } from './iam.js';
-import { process } from '@graphql-mesh/cross-helpers';
 
 function interpolateStrWithEnv(str: string): string {
   return stringInterpolator.parse(str, { env: process.env });
@@ -39,13 +39,10 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
         const lazyConnect = options.lazyConnect !== false;
         if ('startupNodes' in options) {
           const parsedUsername =
-            interpolateStrWithEnv(options.username?.toString()) ||
-            process.env.REDIS_USERNAME;
+            interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
           const parsedPassword =
-            interpolateStrWithEnv(options.password?.toString()) ||
-            process.env.REDIS_PASSWORD;
-          const parsedDb =
-            interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+            interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
+          const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
           const numDb = parseInt(parsedDb);
           const redisOptions: RedisOptions = {
             username: parsedUsername,
@@ -155,16 +152,12 @@ export default class RedisCache<V = string> implements KeyValueCache<V>, Disposa
           const parsedPort =
             interpolateStrWithEnv(options.port?.toString()) || process.env.REDIS_PORT;
           const parsedUsername =
-            interpolateStrWithEnv(options.username?.toString()) ||
-            process.env.REDIS_USERNAME;
+            interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
           const parsedPassword =
-            interpolateStrWithEnv(options.password?.toString()) ||
-            process.env.REDIS_PASSWORD;
-          const parsedDb =
-            interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+            interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
+          const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
           const parsedFamily =
-            interpolateStrWithEnv(options.family?.toString()) ||
-            process.env.REDIS_FAMILY;
+            interpolateStrWithEnv(options.family?.toString()) || process.env.REDIS_FAMILY;
           const numPort = parseInt(parsedPort);
           const numDb = parseInt(parsedDb);
           if (parsedHost) {

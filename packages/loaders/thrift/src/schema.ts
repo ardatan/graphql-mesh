@@ -31,6 +31,7 @@ import { parse, SyntaxType } from '@creditkarma/thrift-parser';
 import type { IMethodAnnotations, IThriftAnnotations } from '@creditkarma/thrift-server-core';
 import { TType } from '@creditkarma/thrift-server-core';
 import { Logger } from '@graphql-hive/logger';
+import { path } from '@graphql-mesh/cross-helpers';
 import type {
   GraphQLThriftAnnotations,
   StructTypeVal,
@@ -40,7 +41,6 @@ import type {
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
-import { path } from '@graphql-mesh/cross-helpers';
 
 export interface GraphQLThriftLoaderOptions {
   subgraphName: string;

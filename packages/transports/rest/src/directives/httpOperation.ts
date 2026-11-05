@@ -18,6 +18,7 @@ import type { IStringifyOptions } from 'qs';
 import { parse as qsParse, stringify as qsStringify } from 'qs';
 import urlJoin from 'url-join';
 import { Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
@@ -27,7 +28,6 @@ import { isFileUpload } from './isFileUpload.js';
 import { getJsonApiFieldsQuery } from './jsonApiFields.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
-import { process } from '@graphql-mesh/cross-helpers';
 
 type HTTPMethod =
   'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';

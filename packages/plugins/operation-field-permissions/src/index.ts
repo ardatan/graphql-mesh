@@ -1,7 +1,7 @@
 /* eslint-disable no-new-func */
 import { useOperationFieldPermissions } from '@envelop/operation-field-permissions';
-import type { MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 import { process } from '@graphql-mesh/cross-helpers';
+import type { MeshPlugin, YamlConfig } from '@graphql-mesh/types';
 
 export default function useMeshOperationFieldPermissions(
   options: YamlConfig.OperationFieldPermissionsConfig,

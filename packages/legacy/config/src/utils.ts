@@ -1,6 +1,7 @@
 import { paramCase } from 'param-case';
 import { Logger } from '@graphql-hive/logger';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
+import { path } from '@graphql-mesh/cross-helpers';
 import type { ImportFn, KeyValueCache, MeshFetch, YamlConfig } from '@graphql-mesh/types';
 import { parseWithCache } from '@graphql-mesh/utils';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
@@ -9,7 +10,6 @@ import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import type { Source as GraphQLToolsSource } from '@graphql-tools/utils';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as defaultFetch, TextEncoder } from '@whatwg-node/fetch';
-import { path } from '@graphql-mesh/cross-helpers';
 
 const crypto = globalThis.crypto;
 

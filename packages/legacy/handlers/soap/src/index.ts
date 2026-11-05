@@ -1,5 +1,6 @@
 import type { GraphQLSchema } from 'graphql';
 import { type Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { StoreProxy } from '@graphql-mesh/store';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { getInterpolatedHeadersFactory } from '@graphql-mesh/string-interpolation';
@@ -14,7 +15,6 @@ import type {
 import { readFileOrUrl } from '@graphql-mesh/utils';
 import type { Executor } from '@graphql-tools/utils';
 import { createExecutorFromSchemaAST, SOAPLoader } from '@omnigraph/soap';
-import { process } from '@graphql-mesh/cross-helpers';
 
 export default class SoapHandler implements MeshHandler {
   private name: string;

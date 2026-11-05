@@ -6,6 +6,7 @@ import { withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
 import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
+import { path, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { PredefinedProxyOptions } from '@graphql-mesh/store';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type {
@@ -18,7 +19,6 @@ import type {
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
-import { path, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;

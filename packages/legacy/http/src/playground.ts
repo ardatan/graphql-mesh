@@ -1,5 +1,5 @@
-import type { YamlConfig } from '@graphql-mesh/types';
 import { process } from '@graphql-mesh/cross-helpers';
+import type { YamlConfig } from '@graphql-mesh/types';
 
 export function resolvePlaygroundConfig(
   playground: YamlConfig.ServeConfig['playground'],

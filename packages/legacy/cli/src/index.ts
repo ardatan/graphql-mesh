@@ -2,6 +2,7 @@ import { config as dotEnvRegister } from 'dotenv';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { Logger } from '@graphql-hive/logger';
+import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 import { resolvePlaygroundConfig } from '@graphql-mesh/http';
 import type { GetMeshOptions, MeshInstance, ServeMeshOptions } from '@graphql-mesh/runtime';
 import { getMesh } from '@graphql-mesh/runtime';
@@ -15,7 +16,6 @@ import { generateTsArtifacts } from './commands/ts-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
 import { include, registerTsconfigPaths } from './include.js';
-import { fs, path as pathModule, process } from '@graphql-mesh/cross-helpers';
 
 export { findConfig } from './config.js';
 

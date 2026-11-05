@@ -17,6 +17,7 @@ import {
 import type { Connection, DatabaseTable, MysqlError, TableField, TableForeign } from 'mysql';
 import { createConnection } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
+import { fs, process, util } from '@graphql-mesh/cross-helpers';
 import type { MySQLSSLOptions } from '@graphql-mesh/transport-mysql';
 import { getConnectionOptsFromEndpointUri } from '@graphql-mesh/transport-mysql';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
@@ -30,7 +31,6 @@ import {
   TransportDirective,
 } from './directives.js';
 import type { TableFieldConfig } from './types.js';
-import { fs, process, util } from '@graphql-mesh/cross-helpers';
 
 export interface LoadGraphQLSchemaFromMySQLOpts {
   endpoint: string;
@@ -48,8 +48,7 @@ export async function loadGraphQLSchemaFromMySQL(
   if (connectionOpts.protocol === 'mysqls:') {
     sslOpts = {
       rejectUnauthorized:
-        opts.ssl?.rejectUnauthorized ||
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED === '1',
+        opts.ssl?.rejectUnauthorized || process.env.NODE_TLS_REJECT_UNAUTHORIZED === '1',
       ca: opts.ssl?.caPath ? fs.readFileSync(opts.ssl?.caPath) : opts.ssl?.ca,
     };
   }

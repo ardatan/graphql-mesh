@@ -18,6 +18,7 @@ import protobufjs, { type AnyNestedObject, type IParseOptions, type Message } fr
 import descriptor, { type IFileDescriptorSet } from 'protobufjs/ext/descriptor.js';
 import { Client } from '@ardatan/grpc-reflection-js';
 import { type Logger } from '@graphql-hive/logger';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { matchFiles } from '@graphql-tools/load-files';
@@ -37,7 +38,6 @@ import {
   transportDirective,
 } from './directives.js';
 import { addIncludePathResolver, getTypeName, walkToFindTypePath } from './utils.js';
-import { fs, path } from '@graphql-mesh/cross-helpers';
 
 const { Root } = protobufjs;
 

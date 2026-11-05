@@ -3,13 +3,13 @@ import { getNamedType, isObjectType } from 'graphql';
 import graphqlFields from 'graphql-fields';
 import { createPool, type Pool, type PoolConnection } from 'mysql';
 import { introspection, upgrade } from 'mysql-utilities';
+import { util } from '@graphql-mesh/cross-helpers';
 import { createDefaultExecutor, type DisposableExecutor } from '@graphql-mesh/transport-common';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { getConnectionOptsFromEndpointUri } from './parseEndpointUri.js';
 import type { MySQLContext } from './types.js';
-import { util } from '@graphql-mesh/cross-helpers';
 
 function getFieldsFromResolveInfo(info: GraphQLResolveInfo) {
   const fieldMap: Record<string, any> = graphqlFields(info);

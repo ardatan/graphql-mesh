@@ -8,6 +8,7 @@ import {
   GraphQLString,
   type GraphQLSchema,
 } from 'graphql';
+import { process } from '@graphql-mesh/cross-helpers';
 import {
   getInterpolatedHeadersFactory,
   stringInterpolator,
@@ -31,7 +32,6 @@ import { createSingularNavResolver } from './resolvers/singularNavResolver.js';
 import { createUnboundActionResolver } from './resolvers/unboundActionResolver.js';
 import { createUnboundFunctionResolver } from './resolvers/unboundFunction.js';
 import { createUpdateEntitySetResolver } from './resolvers/updateEntitySetResolver.js';
-import { process } from '@graphql-mesh/cross-helpers';
 
 export const EntityInfoDirective = new GraphQLDirective({
   name: 'entityInfo',

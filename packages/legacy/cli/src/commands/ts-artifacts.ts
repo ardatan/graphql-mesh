@@ -9,6 +9,7 @@ import * as tsOperationsPlugin from '@graphql-codegen/typescript-operations';
 import * as tsResolversPlugin from '@graphql-codegen/typescript-resolvers';
 import { type Logger } from '@graphql-hive/logger';
 import type { Source } from '@graphql-mesh/config';
+import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 import {
   generateIncontextSDKTypes,
   generateUnifiedContextTypeFromIdentifiers,
@@ -24,7 +25,6 @@ import {
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { GraphQLMeshCLIParams } from '../index.js';
 import { generateOperations } from './generate-operations.js';
-import { fs, path as pathModule } from '@graphql-mesh/cross-helpers';
 
 const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
 

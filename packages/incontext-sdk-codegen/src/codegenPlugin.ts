@@ -3,6 +3,7 @@ import {
   getCachedDocumentNodeFromSchema,
   type CodegenPlugin,
 } from '@graphql-codegen/plugin-helpers';
+import { path } from '@graphql-mesh/cross-helpers';
 import { handleFederationSupergraph } from '@graphql-mesh/fusion-runtime';
 import { defaultPrintFn } from '@graphql-mesh/transport-common';
 import { writeFile } from '@graphql-mesh/utils';
@@ -12,7 +13,6 @@ import {
   generateIncontextSDKTypes,
   generateUnifiedContextTypeFromIdentifiers,
 } from './generateIncontextSDKTypes.js';
-import { path } from '@graphql-mesh/cross-helpers';
 
 export interface InContextSDKCodegenPluginConfig {}
 

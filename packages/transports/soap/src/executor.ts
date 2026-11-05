@@ -9,6 +9,7 @@ import type {
 } from 'graphql';
 import { getNamedType, GraphQLError, isInputObjectType, isListType, isNonNullType } from 'graphql';
 import { Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
 import type { ResolverData, ResolverDataBasedFactory } from '@graphql-mesh/string-interpolation';
 import {
   getInterpolatedHeadersFactory,
@@ -20,7 +21,6 @@ import { normalizedExecutor } from '@graphql-tools/executor';
 import { getDirectiveExtensions, getRootTypes } from '@graphql-tools/utils';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
 import { parseXmlOptions } from './parseXmlOptions.js';
-import { process } from '@graphql-mesh/cross-helpers';
 
 function isOriginallyListType(type: GraphQLOutputType): boolean {
   if (isNonNullType(type)) {

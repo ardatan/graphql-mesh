@@ -1,11 +1,11 @@
 import { Logger } from '@graphql-hive/logger';
+import { fs, path } from '@graphql-mesh/cross-helpers';
 import type { MeshInstance } from '@graphql-mesh/runtime';
 import type { YamlConfig } from '@graphql-mesh/types';
 import { pathExists, withCookies } from '@graphql-mesh/utils';
 import { createServerAdapter, Response } from '@whatwg-node/server';
 import { graphqlHandler } from './graphqlHandler.js';
 import { resolvePlaygroundConfig } from './playground.js';
-import { fs, path } from '@graphql-mesh/cross-helpers';
 
 export { resolvePlaygroundConfig } from './playground.js';
 
