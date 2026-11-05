@@ -1,117 +1,78 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
   import: ["@hoist", "@source"]
-)
-  {
-    query: Query
-    
-    
-  }
+) {
+  query: Query
+}
 
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
+scalar join__FieldSet
 
-  scalar link__Import
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
+scalar link__Import
 
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
 
-  
-  
-  
-  
-  
-  
-  
 enum join__Graph {
-  WEATHER @join__graph(name: "weather", url: "http://localhost:<weather_port>/graphql") 
+  WEATHER @join__graph(name: "weather", url: "http://localhost:<weather_port>/graphql")
 }
 
-directive @hoist(subgraph: String, pathConfig: _HoistConfig)  repeatable on FIELD_DEFINITION
+directive @hoist(subgraph: String, pathConfig: _HoistConfig) repeatable on FIELD_DEFINITION
 
-directive @source(name: String!, type: String, subgraph: String!)  repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
-scalar Test_TransportOptions @source(name: "TransportOptions", subgraph: "weather")  @join__type(graph: WEATHER) 
+scalar Test_TransportOptions @source(name: "TransportOptions", subgraph: "weather") @join__type(graph: WEATHER)
 
-scalar _HoistConfig @join__type(graph: WEATHER) 
+scalar _HoistConfig @join__type(graph: WEATHER)
 
-type Query @join__type(graph: WEATHER)  {
-  here: Test_Weather @source(name: "here", type: "Weather", subgraph: "weather") 
+type Query @join__type(graph: WEATHER) {
+  here: Test_Weather @source(name: "here", type: "Weather", subgraph: "weather")
 }
 
-type Test_Weather @source(name: "Weather", subgraph: "weather")  @join__type(graph: WEATHER)  {
-  rain: Test_Rain! @source(name: "rain", type: "Rain!", subgraph: "weather") 
-  chanceOfRain: Float! @hoist(subgraph: "weather", pathConfig: ["rain", "chance"]) 
+type Test_Weather @source(name: "Weather", subgraph: "weather") @join__type(graph: WEATHER) {
+  rain: Test_Rain! @source(name: "rain", type: "Rain!", subgraph: "weather")
+  chanceOfRain: Float! @hoist(subgraph: "weather", pathConfig: ["rain", "chance"])
 }
 
-type Test_Rain @source(name: "Rain", subgraph: "weather")  @join__type(graph: WEATHER)  {
+type Test_Rain @source(name: "Rain", subgraph: "weather") @join__type(graph: WEATHER) {
   chance: Float!
 }
 "

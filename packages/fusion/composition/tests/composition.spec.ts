@@ -186,96 +186,57 @@ describe('Composition', () => {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
-  {
-    query: Query
-    
-    
-  }
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) {
+  query: Query
+}
 
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
+scalar join__FieldSet
 
-  scalar link__Import
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
+scalar link__Import
 
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
 
-  
-  
-  
-  
-  
-  
-  
 enum join__Graph {
-  BAR @join__graph(name: "Bar", url: "") 
-  BAZ @join__graph(name: "Baz", url: "") 
-  FOO @join__graph(name: "Foo", url: "") 
+  BAR @join__graph(name: "Bar", url: "")
+  BAZ @join__graph(name: "Baz", url: "")
+  FOO @join__graph(name: "Foo", url: "")
 }
 
 directive @merge(
@@ -287,18 +248,18 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-type Query @join__type(graph: BAR)  @join__type(graph: BAZ)  @join__type(graph: FOO)  {
-  foo(id: ID!) : Foo! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @merge(subgraph: "Foo", keyField: "id", keyArg: "id") 
-  bar(id: ID!) : Bar! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @join__field(graph: BAR) 
+type Query @join__type(graph: BAR) @join__type(graph: BAZ) @join__type(graph: FOO) {
+  foo(id: ID!): Foo! @merge(subgraph: "Bar", keyField: "id", keyArg: "id") @merge(subgraph: "Foo", keyField: "id", keyArg: "id")
+  bar(id: ID!): Bar! @merge(subgraph: "Bar", keyField: "id", keyArg: "id") @join__field(graph: BAR)
 }
 
-type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: BAZ, key: "id")  @join__type(graph: FOO, key: "id")  {
+type Foo @join__type(graph: BAR, key: "id") @join__type(graph: BAZ, key: "id") @join__type(graph: FOO, key: "id") {
   id: ID!
-  bar: Bar! @join__field(graph: BAR) 
-  barId: ID! @join__field(graph: FOO) 
+  bar: Bar! @join__field(graph: BAR)
+  barId: ID! @join__field(graph: FOO)
 }
 
-type Bar @join__type(graph: BAR, key: "id")  {
+type Bar @join__type(graph: BAR, key: "id") {
   id: ID!
 }"
 `);
@@ -342,95 +303,56 @@ type Bar @join__type(graph: BAR, key: "id")  {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
-  {
-    query: Query
-    
-    
-  }
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) {
+  query: Query
+}
 
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
+scalar join__FieldSet
 
-  scalar link__Import
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
+scalar link__Import
 
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
 
-  
-  
-  
-  
-  
-  
-  
 enum join__Graph {
-  BAR @join__graph(name: "Bar", url: "") 
-  FOO @join__graph(name: "Foo", url: "") 
+  BAR @join__graph(name: "Bar", url: "")
+  FOO @join__graph(name: "Foo", url: "")
 }
 
 directive @merge(
@@ -442,17 +364,17 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
-  getFooById(id: ID!) : Foo! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @merge(subgraph: "Foo", keyField: "id", keyArg: "id") 
-  getBarById(id: ID!) : Bar! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @join__field(graph: BAR) 
+type Query @join__type(graph: BAR) @join__type(graph: FOO) {
+  getFooById(id: ID!): Foo! @merge(subgraph: "Bar", keyField: "id", keyArg: "id") @merge(subgraph: "Foo", keyField: "id", keyArg: "id")
+  getBarById(id: ID!): Bar! @merge(subgraph: "Bar", keyField: "id", keyArg: "id") @join__field(graph: BAR)
 }
 
-type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+type Foo @join__type(graph: BAR, key: "id") @join__type(graph: FOO, key: "id") {
   id: ID!
-  bar: Bar! @join__field(graph: BAR) 
+  bar: Bar! @join__field(graph: BAR)
 }
 
-type Bar @join__type(graph: BAR, key: "id")  {
+type Bar @join__type(graph: BAR, key: "id") {
   id: ID!
 }"
 `);
@@ -496,95 +418,56 @@ type Bar @join__type(graph: BAR, key: "id")  {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
-  {
-    query: Query
-    
-    
-  }
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) {
+  query: Query
+}
 
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
+scalar join__FieldSet
 
-  scalar link__Import
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
+scalar link__Import
 
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
 
-  
-  
-  
-  
-  
-  
-  
 enum join__Graph {
-  BAR @join__graph(name: "Bar", url: "") 
-  FOO @join__graph(name: "Foo", url: "") 
+  BAR @join__graph(name: "Bar", url: "")
+  FOO @join__graph(name: "Foo", url: "")
 }
 
 directive @merge(
@@ -596,17 +479,17 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
-  fooById(id: ID!) : Foo! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @merge(subgraph: "Foo", keyField: "id", keyArg: "id") 
-  barById(id: ID!) : Bar! @merge(subgraph: "Bar", keyField: "id", keyArg: "id")  @join__field(graph: BAR) 
+type Query @join__type(graph: BAR) @join__type(graph: FOO) {
+  fooById(id: ID!): Foo! @merge(subgraph: "Bar", keyField: "id", keyArg: "id") @merge(subgraph: "Foo", keyField: "id", keyArg: "id")
+  barById(id: ID!): Bar! @merge(subgraph: "Bar", keyField: "id", keyArg: "id") @join__field(graph: BAR)
 }
 
-type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+type Foo @join__type(graph: BAR, key: "id") @join__type(graph: FOO, key: "id") {
   id: ID!
-  bar: Bar! @join__field(graph: BAR) 
+  bar: Bar! @join__field(graph: BAR)
 }
 
-type Bar @join__type(graph: BAR, key: "id")  {
+type Bar @join__type(graph: BAR, key: "id") {
   id: ID!
 }"
 `);
@@ -651,95 +534,56 @@ type Bar @join__type(graph: BAR, key: "id")  {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
-  {
-    query: Query
-    
-    
-  }
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) {
+  query: Query
+}
 
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
+scalar join__FieldSet
 
-  scalar link__Import
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
+scalar link__Import
 
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
 
-  
-  
-  
-  
-  
-  
-  
 enum join__Graph {
-  BAR @join__graph(name: "Bar", url: "") 
-  FOO @join__graph(name: "Foo", url: "") 
+  BAR @join__graph(name: "Bar", url: "")
+  FOO @join__graph(name: "Foo", url: "")
 }
 
 directive @merge(
@@ -751,17 +595,17 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
-  foos(ids: [ID!]!) : [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @merge(subgraph: "Foo", keyField: "id", keyArg: "ids") 
-  bars(ids: [ID!]!) : [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @join__field(graph: BAR) 
+type Query @join__type(graph: BAR) @join__type(graph: FOO) {
+  foos(ids: [ID!]!): [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids") @merge(subgraph: "Foo", keyField: "id", keyArg: "ids")
+  bars(ids: [ID!]!): [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids") @join__field(graph: BAR)
 }
 
-type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+type Foo @join__type(graph: BAR, key: "id") @join__type(graph: FOO, key: "id") {
   id: ID!
-  bar: Bar! @join__field(graph: BAR) 
+  bar: Bar! @join__field(graph: BAR)
 }
 
-type Bar @join__type(graph: BAR, key: "id")  {
+type Bar @join__type(graph: BAR, key: "id") {
   id: ID!
 }"
 `);
@@ -805,95 +649,56 @@ type Bar @join__type(graph: BAR, key: "id")  {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
-  {
-    query: Query
-    
-    
-  }
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) {
+  query: Query
+}
 
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
+scalar join__FieldSet
 
-  scalar link__Import
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
+scalar link__Import
 
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
 
-  
-  
-  
-  
-  
-  
-  
 enum join__Graph {
-  BAR @join__graph(name: "Bar", url: "") 
-  FOO @join__graph(name: "Foo", url: "") 
+  BAR @join__graph(name: "Bar", url: "")
+  FOO @join__graph(name: "Foo", url: "")
 }
 
 directive @merge(
@@ -905,17 +710,17 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
-  getFoosByIds(ids: [ID!]!) : [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @merge(subgraph: "Foo", keyField: "id", keyArg: "ids") 
-  getBarsByIds(ids: [ID!]!) : [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @join__field(graph: BAR) 
+type Query @join__type(graph: BAR) @join__type(graph: FOO) {
+  getFoosByIds(ids: [ID!]!): [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids") @merge(subgraph: "Foo", keyField: "id", keyArg: "ids")
+  getBarsByIds(ids: [ID!]!): [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids") @join__field(graph: BAR)
 }
 
-type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+type Foo @join__type(graph: BAR, key: "id") @join__type(graph: FOO, key: "id") {
   id: ID!
-  bar: Bar! @join__field(graph: BAR) 
+  bar: Bar! @join__field(graph: BAR)
 }
 
-type Bar @join__type(graph: BAR, key: "id")  {
+type Bar @join__type(graph: BAR, key: "id") {
   id: ID!
 }"
 `);
@@ -959,95 +764,56 @@ type Bar @join__type(graph: BAR, key: "id")  {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
-  {
-    query: Query
-    
-    
-  }
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) {
+  query: Query
+}
 
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
+scalar join__FieldSet
 
-  scalar link__Import
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
+scalar link__Import
 
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
 
-  
-  
-  
-  
-  
-  
-  
 enum join__Graph {
-  BAR @join__graph(name: "Bar", url: "") 
-  FOO @join__graph(name: "Foo", url: "") 
+  BAR @join__graph(name: "Bar", url: "")
+  FOO @join__graph(name: "Foo", url: "")
 }
 
 directive @merge(
@@ -1059,17 +825,17 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
-  foosByIds(ids: [ID!]!) : [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @merge(subgraph: "Foo", keyField: "id", keyArg: "ids") 
-  barsByIds(ids: [ID!]!) : [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @join__field(graph: BAR) 
+type Query @join__type(graph: BAR) @join__type(graph: FOO) {
+  foosByIds(ids: [ID!]!): [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids") @merge(subgraph: "Foo", keyField: "id", keyArg: "ids")
+  barsByIds(ids: [ID!]!): [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids") @join__field(graph: BAR)
 }
 
-type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+type Foo @join__type(graph: BAR, key: "id") @join__type(graph: FOO, key: "id") {
   id: ID!
-  bar: Bar! @join__field(graph: BAR) 
+  bar: Bar! @join__field(graph: BAR)
 }
 
-type Bar @join__type(graph: BAR, key: "id")  {
+type Bar @join__type(graph: BAR, key: "id") {
   id: ID!
 }"
 `);
@@ -1113,95 +879,56 @@ type Bar @join__type(graph: BAR, key: "id")  {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-"schema
-    @link(url: "https://specs.apollo.dev/link/v1.0")
-    @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
-    
-    
-    
-    
-    
-    
-    @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) 
-  {
-    query: Query
-    
-    
-  }
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge"]) {
+  query: Query
+}
 
-  
-    directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
-    directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-    
-      directive @join__field(
-        graph: join__Graph
-        requires: join__FieldSet
-        provides: join__FieldSet
-        type: String
-        external: Boolean
-        override: String
-        usedOverridden: Boolean
-        
-        
-      ) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-    
-    
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-    directive @join__implements(
-      graph: join__Graph!
-      interface: String!
-    ) repeatable on OBJECT | INTERFACE
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-    directive @join__type(
-      graph: join__Graph!
-      key: join__FieldSet
-      extension: Boolean! = false
-      resolvable: Boolean! = true
-      isInterfaceObject: Boolean! = false
-    ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-    directive @join__unionMember(
-      graph: join__Graph!
-      member: String!
-    ) repeatable on UNION
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-    scalar join__FieldSet
-    
-  
-  
-  directive @link(
-    url: String
-    as: String
-    for: link__Purpose
-    import: [link__Import]
-  ) repeatable on SCHEMA
+scalar join__FieldSet
 
-  scalar link__Import
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-  enum link__Purpose {
-    """
-    \`SECURITY\` features provide metadata necessary to securely resolve fields.
-    """
-    SECURITY
+scalar link__Import
 
-    """
-    \`EXECUTION\` features provide metadata necessary for operation execution.
-    """
-    EXECUTION
-  }
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
 
-  
-  
-  
-  
-  
-  
-  
 enum join__Graph {
-  BAR @join__graph(name: "Bar", url: "") 
-  FOO @join__graph(name: "Foo", url: "") 
+  BAR @join__graph(name: "Bar", url: "")
+  FOO @join__graph(name: "Foo", url: "")
 }
 
 directive @merge(
@@ -1213,17 +940,17 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-type Query @join__type(graph: BAR)  @join__type(graph: FOO)  {
-  foosByIdsList(ids: [ID!]!) : [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @merge(subgraph: "Foo", keyField: "id", keyArg: "ids") 
-  barsByIdsList(ids: [ID!]!) : [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids")  @join__field(graph: BAR) 
+type Query @join__type(graph: BAR) @join__type(graph: FOO) {
+  foosByIdsList(ids: [ID!]!): [Foo!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids") @merge(subgraph: "Foo", keyField: "id", keyArg: "ids")
+  barsByIdsList(ids: [ID!]!): [Bar!]! @merge(subgraph: "Bar", keyField: "id", keyArg: "ids") @join__field(graph: BAR)
 }
 
-type Foo @join__type(graph: BAR, key: "id")  @join__type(graph: FOO, key: "id")  {
+type Foo @join__type(graph: BAR, key: "id") @join__type(graph: FOO, key: "id") {
   id: ID!
-  bar: Bar! @join__field(graph: BAR) 
+  bar: Bar! @join__field(graph: BAR)
 }
 
-type Bar @join__type(graph: BAR, key: "id")  {
+type Bar @join__type(graph: BAR, key: "id") {
   id: ID!
 }"
 `);
