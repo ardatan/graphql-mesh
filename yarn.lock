@@ -8587,19 +8587,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/cross-helpers@npm:^0.4.16":
-  version: 0.4.18
-  resolution: "@graphql-mesh/cross-helpers@npm:0.4.18"
-  dependencies:
-    "@graphql-tools/utils": "npm:^12.0.4"
-    path-browserify: "npm:1.0.1"
-  peerDependencies:
-    graphql: "*"
-  checksum: 10c0/6bb28d6f37a4384657aafd1922d7a07db38aec0b8a7002bc60e406cd871392ebf4be9fb1d157d8715ac72d256aba64c463ae6c5b2984ff60872a1b81ca8ed065
-  languageName: node
-  linkType: hard
-
-"@graphql-mesh/cross-helpers@npm:^0.4.18, @graphql-mesh/cross-helpers@workspace:packages/cross-helpers":
+"@graphql-mesh/cross-helpers@workspace:*, @graphql-mesh/cross-helpers@workspace:packages/cross-helpers":
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/cross-helpers@workspace:packages/cross-helpers"
   dependencies:
@@ -11115,7 +11103,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:^12.0.0, @graphql-tools/utils@npm:^12.0.1, @graphql-tools/utils@npm:^12.0.3, @graphql-tools/utils@npm:^12.0.4, @graphql-tools/utils@npm:^12.1.0":
+"@graphql-tools/utils@npm:^12.0.0, @graphql-tools/utils@npm:^12.0.1, @graphql-tools/utils@npm:^12.0.3, @graphql-tools/utils@npm:^12.1.0":
   version: 12.1.0
   resolution: "@graphql-tools/utils@npm:12.1.0"
   dependencies:

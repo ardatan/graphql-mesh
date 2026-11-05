@@ -279,6 +279,7 @@ export async function generateTsArtifacts(
                 ...meshConfigImportCodes,
                 `import { getMesh, type ExecuteMeshFn, type SubscribeMeshFn, type MeshContext as BaseMeshContext, type MeshInstance } from '@graphql-mesh/runtime';`,
                 `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
+                `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
                 `import type { ImportFn } from '@graphql-mesh/types';`,
                 `import { fakePromise, fakeRejectPromise } from '@whatwg-node/promise-helpers';`,
               ]);
@@ -329,9 +330,6 @@ export async function generateTsArtifacts(
 ${BASEDIR_ASSIGNMENT_COMMENT}
 
 const importFn: ImportFn = <T>(moduleId: string) => {
-    if (!pathModule) {
-    return fakeRejectPromise(new Error('Node.js path module is required'));
-  }
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {${[...importedModulesSet]
     .map(importedModuleName => {
