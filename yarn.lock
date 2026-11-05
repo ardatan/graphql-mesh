@@ -37658,15 +37658,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-lightningcss@npm:1.1.0":
-  version: 1.1.0
-  resolution: "postcss-lightningcss@npm:1.1.0"
+"postcss-lightningcss@npm:1.1.2":
+  version: 1.1.2
+  resolution: "postcss-lightningcss@npm:1.1.2"
   dependencies:
     browserslist: "npm:^4.19.1"
     lightningcss: "npm:^1.32.0"
   peerDependencies:
     postcss: ^8.0.0
-  checksum: 10c0/ef1b018ce429d5084fc16bf6bd9f42c0fa65534a196b3e12146abaec768212a529a59ecf75b79370f834016d4bd84c8bf600efe873f613a24782b6e906b80213
+  checksum: 10c0/fde64802274a7d365cf687a8ab38af9bb609905ae2b2b36ba9aac1042e00dc3823d2c8a52b357f0873f40d5e2d54024620a2a6619e7d510ca5a34b0d4a51d300
   languageName: node
   linkType: hard
 
@@ -44391,7 +44391,7 @@ __metadata:
     pagefind: "npm:1.6.0"
     postcss: "npm:8.5.26"
     postcss-import: "npm:16.1.1"
-    postcss-lightningcss: "npm:1.1.0"
+    postcss-lightningcss: "npm:1.1.2"
     react: "npm:^19.2.8"
     react-dom: "npm:^19.3.1"
     react-icons: "npm:^5.7.0"
