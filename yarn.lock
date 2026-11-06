@@ -186,20 +186,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/federation-internals@npm:2.14.3":
-  version: 2.14.3
-  resolution: "@apollo/federation-internals@npm:2.14.3"
-  dependencies:
-    "@types/uuid": "npm:^9.0.0"
-    chalk: "npm:^4.1.0"
-    js-levenshtein: "npm:^1.1.6"
-    uuid: "npm:^9.0.0"
-  peerDependencies:
-    graphql: ^16.5.0
-  checksum: 10c0/3ea104554e694d55f21143471d277e3adac87f8d791724a0462b31f83dc69a1afd3e449dd71148fc8830ce544247f2d6fd7f98603209c6cf39c3e47bf470a6ef
-  languageName: node
-  linkType: hard
-
 "@apollo/federation-internals@npm:2.14.4":
   version: 2.14.4
   resolution: "@apollo/federation-internals@npm:2.14.4"
@@ -387,15 +373,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/subgraph@npm:2.14.3, @apollo/subgraph@npm:^2.14.3":
-  version: 2.14.3
-  resolution: "@apollo/subgraph@npm:2.14.3"
+"@apollo/subgraph@npm:2.15.1, @apollo/subgraph@npm:^2.15.1":
+  version: 2.15.1
+  resolution: "@apollo/subgraph@npm:2.15.1"
   dependencies:
-    "@apollo/cache-control-types": "npm:^1.0.2"
-    "@apollo/federation-internals": "npm:2.14.3"
+    "@apollo/cache-control-types": "npm:^1.0.3"
+    "@graphql-tools/utils": "npm:^12.0.0"
   peerDependencies:
-    graphql: ^16.5.0
-  checksum: 10c0/58073fbbd1c16d544b2b4d44867042aeb1d9fa1d42fe412f6d185a7b255c3aae241f7ec7405f1c808a5bdd8573bc60cf272f4db65ff21656d7bcffac15239761
+    graphql: ^16.11.0
+  checksum: 10c0/e360809d2778d01ec3c751c73d43dd549a833a5ca031892f322f9fbb4fed2c0567ec774b79fcfa164e488168155befe460b19ecd48b8db2fb9f00d1aded19e54
   languageName: node
   linkType: hard
 
@@ -5100,7 +5086,7 @@ __metadata:
   resolution: "@e2e/cache-control@workspace:e2e/cache-control"
   dependencies:
     "@apollo/server": "npm:^5.5.1"
-    "@apollo/subgraph": "npm:^2.14.3"
+    "@apollo/subgraph": "npm:^2.15.1"
     "@graphql-hive/gateway": "npm:^2.15.4"
     "@graphql-mesh/cache-upstash-redis": "npm:^0.4.3"
     "@graphql-mesh/compose-cli": "npm:^1.8.4"
@@ -5187,7 +5173,7 @@ __metadata:
   resolution: "@e2e/federation-mixed@workspace:e2e/federation-mixed"
   dependencies:
     "@apollo/server": "npm:^5.5.1"
-    "@apollo/subgraph": "npm:^2.14.3"
+    "@apollo/subgraph": "npm:^2.15.1"
     "@graphql-hive/gateway": "npm:^2.15.4"
     fets: "npm:^0.8.8"
     graphql: "npm:^16.14.0"
@@ -6492,7 +6478,7 @@ __metadata:
   resolution: "@examples/federation-example-services-accounts-subgraph@workspace:examples/federation-example/services/accounts-subgraph"
   dependencies:
     "@apollo/server": "npm:5.5.1"
-    "@apollo/subgraph": "npm:2.14.3"
+    "@apollo/subgraph": "npm:2.15.1"
     "@types/node": "npm:^26.2.0"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
@@ -6517,7 +6503,7 @@ __metadata:
   resolution: "@examples/federation-example-services-inventory@workspace:examples/federation-example/services/inventory"
   dependencies:
     "@apollo/server": "npm:5.5.1"
-    "@apollo/subgraph": "npm:2.14.3"
+    "@apollo/subgraph": "npm:2.15.1"
     "@types/node": "npm:^26.2.0"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
@@ -6530,7 +6516,7 @@ __metadata:
   resolution: "@examples/federation-example-services-products@workspace:examples/federation-example/services/products"
   dependencies:
     "@apollo/server": "npm:5.5.1"
-    "@apollo/subgraph": "npm:2.14.3"
+    "@apollo/subgraph": "npm:2.15.1"
     "@types/node": "npm:^26.2.0"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
@@ -6543,7 +6529,7 @@ __metadata:
   resolution: "@examples/federation-example-services-reviews@workspace:examples/federation-example/services/reviews"
   dependencies:
     "@apollo/server": "npm:5.5.1"
-    "@apollo/subgraph": "npm:2.14.3"
+    "@apollo/subgraph": "npm:2.15.1"
     "@types/node": "npm:^26.2.0"
     graphql: "npm:16.14.0"
     ts-node: "npm:^10.9.2"
@@ -9493,7 +9479,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transform-federation@workspace:packages/legacy/transforms/federation"
   dependencies:
-    "@apollo/subgraph": "npm:^2.14.3"
+    "@apollo/subgraph": "npm:^2.15.1"
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/types": "npm:^0.107.3"
