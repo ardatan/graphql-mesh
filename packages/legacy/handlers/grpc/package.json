@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.112.2",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,11 +37,11 @@
   "dependencies": {
     "@graphql-hive/logger": "^1.1.1",
     "@graphql-hive/pubsub": "^2.2.1",
-    "@graphql-mesh/store": "^0.107.3",
-    "@graphql-mesh/transport-grpc": "^0.7.2",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
-    "@omnigraph/grpc": "^0.3.2",
+    "@graphql-mesh/store": "^1.0.0",
+    "@graphql-mesh/transport-grpc": "^1.0.0",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
+    "@omnigraph/grpc": "^1.0.0",
     "@whatwg-node/disposablestack": "^0.1.0",
     "@whatwg-node/promise-helpers": "^2.0.1",
     "tslib": "^2.4.0"

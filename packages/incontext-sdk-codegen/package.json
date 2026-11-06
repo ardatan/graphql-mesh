@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/incontext-sdk-codegen",
-  "version": "0.3.3",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -41,8 +41,8 @@
     "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/fusion-runtime": "patch:@graphql-mesh/fusion-runtime@npm%3A1.13.3#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.3-efe60c8c1c.patch",
     "@graphql-mesh/transport-common": "^1.1.1",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
     "@graphql-tools/utils": "^13.2.1",
     "@graphql-tools/wrap": "^11.2.4",
     "graphql-scalars": "^2.0.1",

@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/neo4j",
-  "version": "0.14.3",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,8 +37,8 @@
   "dependencies": {
     "@graphql-hive/logger": "^1.1.1",
     "@graphql-hive/pubsub": "^2.2.1",
-    "@graphql-mesh/transport-neo4j": "^0.13.3",
-    "@graphql-mesh/types": "^0.107.3",
+    "@graphql-mesh/transport-neo4j": "^1.0.0",
+    "@graphql-mesh/types": "^1.0.0",
     "@graphql-tools/delegate": "^12.3.2",
     "@graphql-tools/schema": "^11.0.8",
     "@neo4j/introspector": "^5.0.0",

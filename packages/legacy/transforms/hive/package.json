@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-hive",
-  "version": "0.107.3",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,8 +37,8 @@
   "dependencies": {
     "@graphql-hive/core": "^0.23.2",
     "@graphql-mesh/cross-helpers": "^0.4.18",
-    "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/types": "^0.107.3",
+    "@graphql-mesh/string-interpolation": "^1.0.0",
+    "@graphql-mesh/types": "^1.0.0",
     "@graphql-tools/delegate": "^12.3.2",
     "@graphql-tools/utils": "^13.2.1",
     "tslib": "^2.4.0"

@@ -1,5 +1,229 @@
 # @graphql-mesh/cli
 
+## 1.0.0
+
+### Major Changes
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - See `.changeset/node22-yoga6-shared.md` for the
+  shared platform major (Node `>=22.18.0`, GraphQL `^16 || ^17`, Hive logger/pubsub, destroy-pubsub
+  replaced by disposables, promise helpers).
+
+  ## Motivation
+
+  Generated serve/SDK artifacts still assumed Mesh helpers and sometimes awaited `destroy()` on
+  shutdown paths that should not block. Artifacts now follow AsyncDisposableStack + `fakePromise`
+  like runtime.
+
+  ## What changed ()
+  - Generated artifacts import `AsyncDisposableStack` and `fakePromise` / `fakeRejectPromise`
+  - Serve/polling shutdown may fire-and-forget `destroy()` where a hanging await was unnecessary
+
+  ## How to migrate
+
+  Rebuild CLI artifacts after upgrading `@graphql-mesh/cli` and update any forked templates.
+
+  #### Example
+
+  ```ts
+  import { AsyncDisposableStack } from '@whatwg-node/disposablestack'
+  import { fakePromise } from '@whatwg-node/promise-helpers'
+
+  const disposables = new AsyncDisposableStack()
+  fakePromise(mesh.destroy())
+  ```
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - ## Motivation
+
+  Mesh still had its own logging, pubsub, and teardown model next to Yoga 6 / Hive Gateway:
+
+  - Mesh `DefaultLogger` and Mesh PubSub / `HivePubSub` re-exports beside `@graphql-hive/logger` and
+    `@graphql-hive/pubsub`
+  - Shutdown via `pubsub.publish('destroy')`, with handlers and caches subscribing to that topic
+    (easy to miss, leaks pools/clients/timers)
+  - Node 18/20 engines and loose `graphql` peers that drift from Yoga 6 / GraphQL Tools
+
+  This major aligns Mesh with that shared platform in one release.
+
+  ## Design decisions
+  1. **Node `>=22.18.0`**: matches current Yoga / Hive / WHATWG engines.
+  2. **GraphQL peer `^16 || ^17`**: what Yoga 6 and `@graphql-tools/utils` / `schema` / `merge` /
+     `executor` support (not `*`).
+  3. **Request path prefers context**: use Yoga/Gateway `context.log` / `context.pubsub` when
+     present. Constructor `log` / `pubsub` stay only where init-time wiring is required (for example
+     live-query subscribe, New Relic agent missing).
+  4. **Teardown via Explicit Resource Management**: Mesh tore down with `destroy` pubsub. Now
+     components implement `[DisposableSymbols]` and `getMesh` registers them with
+     `disposables.use(...)`. Handler/transform/plugin/cache constructors never took a `disposables`
+     option; that is unchanged.
+  5. **No Mesh re-exports** for Logger, PubSub, or promise helpers; import Hive/WHATWG packages
+     directly.
+
+  ## Shared platform changes ()
+  - **Node.js `>=22.18.0`** (18/20 dropped).
+  - **`graphql` peer `^16.0.0 || ^17.0.0`**.
+  - **Logging**: Mesh `Logger` / `DefaultLogger` removed. Use `@graphql-hive/logger`. Prefer
+    `context.log` on the request path. Option fields renamed from `logger` to `log` where they
+    remain.
+  - **PubSub**: Mesh PubSub re-exports removed. Use `@graphql-hive/pubsub`. The **`destroy` pubsub
+    lifecycle event is removed**; tear down with the disposable stack / `mesh.destroy()` instead of
+    `pubsub.publish('destroy')`.
+  - **Lifecycle**: `getMesh` owns an `AsyncDisposableStack` and calls `disposables.use(...)` on
+    disposable cache/handler/transform/plugin/pubsub instances. the change is destroy-pubsub
+    subscribers replaced by `[DisposableSymbols]`, not "stop injecting disposables into options"
+    (those options did not exist ).
+  - **Promises**: `handleMaybePromise` / `fakePromise` / `fakeRejectPromise` /
+    `Promise.withResolvers` from `@whatwg-node/promise-helpers` (no Mesh re-exports).
+
+  ## Migration checklist
+
+  ```bash
+  node -v # >= 22.18.0
+  yarn add graphql@^16 @graphql-hive/logger @graphql-hive/pubsub
+  yarn add @whatwg-node/promise-helpers @whatwg-node/disposablestack
+  ```
+
+  ```ts
+  import { Logger } from '@graphql-hive/logger'
+  import { MemPubSub } from '@graphql-hive/pubsub'
+  import { AsyncDisposableStack } from '@whatwg-node/disposablestack'
+  import { fakePromise, handleMaybePromise } from '@whatwg-node/promise-helpers'
+
+  // Before on before:
+  // import { DefaultLogger, PubSub, handleMaybePromise } from '@graphql-mesh/utils'
+  // await pubsub.publish('destroy', undefined)
+
+  const log = new Logger()
+  const pubsub = new MemPubSub()
+  await using disposables = new AsyncDisposableStack()
+  disposables.use(cache)
+  disposables.use(handler)
+  ```
+
+  ### Import map (common breakages)
+
+  | Before                                                | After                                                        |
+  | ----------------------------------------------------- | ------------------------------------------------------------ |
+  | `DefaultLogger` / Mesh `Logger`                       | `Logger` from `@graphql-hive/logger`                         |
+  | Mesh `PubSub` / `MemPubSub` / `HivePubSub`            | `@graphql-hive/pubsub`                                       |
+  | `handleMaybePromise` / `MaybePromise` from Mesh utils | `@whatwg-node/promise-helpers`                               |
+  | `pubsub.publish('destroy')` + destroy subscribers     | `[DisposableSymbols]` + `disposables.use` / `mesh.destroy()` |
+  | cache ctor `pubsub` (destroy subscribe)               | removed; dispose the cache instead                           |
+  | option field `logger`                                 | `log`                                                        |
+
+  Package-specific breaks (filter globs, cache `pubsub`, http-cache logging, Hive/live-query
+  options, OpenAPI `futureLinks`, disposable handlers/transports, ...) are in each package's
+  `*-node22-yoga6.md`.
+
+### Patch Changes
+
+- [#9706](https://github.com/ardatan/graphql-mesh/pull/9706)
+  [`569eecc`](https://github.com/ardatan/graphql-mesh/commit/569eeccf753b06f372fc63ede09591772d5ecbfc)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`graphql-ws@^6.4.1` ↗︎](https://www.npmjs.com/package/graphql-ws/v/6.4.1)
+    (from `^6.2.1`, in `dependencies`)
+
+- [#9713](https://github.com/ardatan/graphql-mesh/pull/9713)
+  [`9cb2401`](https://github.com/ardatan/graphql-mesh/commit/9cb24016b4d9164be661eb1074992d04589db86d)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`get-tsconfig@^4.14.3` ↗︎](https://www.npmjs.com/package/get-tsconfig/v/4.14.3) (from `^4.14.1`,
+    in `dependencies`)
+
+- [#9716](https://github.com/ardatan/graphql-mesh/pull/9716)
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^12.1.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/12.1.0)
+    (from `^12.0.4`, in `dependencies`)
+
+- [#9745](https://github.com/ardatan/graphql-mesh/pull/9745)
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/utils@^13.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/13.2.1)
+    (from `^12.1.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-yoga/render-graphiql@^6.0.1` ↗︎](https://www.npmjs.com/package/@graphql-yoga/render-graphiql/v/6.0.1)
+    (from `^5.21.2`, in `dependencies`)
+  - Updated dependency
+    [`@whatwg-node/promise-helpers@^2.0.1` ↗︎](https://www.npmjs.com/package/@whatwg-node/promise-helpers/v/2.0.1)
+    (from `^1.0.0`, in `dependencies`)
+  - Added dependency
+    [`@graphql-hive/logger@^1.1.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/logger/v/1.1.1)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-hive/pubsub@^2.2.1` ↗︎](https://www.npmjs.com/package/@graphql-hive/pubsub/v/2.2.1)
+    (to `dependencies`)
+  - Added dependency [`graphql-yoga@^6.0.1` ↗︎](https://www.npmjs.com/package/graphql-yoga/v/6.0.1)
+    (to `dependencies`)
+  - Updated dependency
+    [`graphql@^16.0.0 || ^17.0.0` ↗︎](https://www.npmjs.com/package/graphql/v/16.0.0) (from `*`, in
+    `peerDependencies`)
+
+- [#9751](https://github.com/ardatan/graphql-mesh/pull/9751)
+  [`84b2636`](https://github.com/ardatan/graphql-mesh/commit/84b2636f3525e0b9a8e165734a8c0071ec5e4ab5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-codegen/typescript@^6.1.2` ↗︎](https://www.npmjs.com/package/@graphql-codegen/typescript/v/6.1.2)
+    (from `^6.1.0`, in `dependencies`)
+
+- [#9752](https://github.com/ardatan/graphql-mesh/pull/9752)
+  [`e3adf5a`](https://github.com/ardatan/graphql-mesh/commit/e3adf5a5a643194d9d72921a35a2582906670c47)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`ws@^8.22.1` ↗︎](https://www.npmjs.com/package/ws/v/8.22.1) (from `^8.21.3`,
+    in `dependencies`)
+
+- [#9775](https://github.com/ardatan/graphql-mesh/pull/9775)
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/cross-helpers@^0.4.18` ↗︎](https://www.npmjs.com/package/@graphql-mesh/cross-helpers/v/0.4.18)
+    (to `dependencies`)
+- Updated dependencies
+  [[`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`a338c17`](https://github.com/ardatan/graphql-mesh/commit/a338c17ffe904171c8f60fded3a5f97a0c52d2b0),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`a7d4506`](https://github.com/ardatan/graphql-mesh/commit/a7d4506630217bd9e7ab2b594609698e7e5e1649),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`d80446d`](https://github.com/ardatan/graphql-mesh/commit/d80446d2ce4111fdcb329fedd2652800e53ecf8f),
+  [`84b2636`](https://github.com/ardatan/graphql-mesh/commit/84b2636f3525e0b9a8e165734a8c0071ec5e4ab5),
+  [`3dea400`](https://github.com/ardatan/graphql-mesh/commit/3dea400203124ab30deab9ec7a317ad71c799773),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`5022b7f`](https://github.com/ardatan/graphql-mesh/commit/5022b7fe6fda41289593cf23e11995baf5e57e2b),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`d466ccc`](https://github.com/ardatan/graphql-mesh/commit/d466ccc4475c0973c4c8352db27bf1c3b92eb9fc),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)]:
+  - @graphql-mesh/config@1.0.0
+  - @graphql-mesh/http@1.0.0
+  - @graphql-mesh/incontext-sdk-codegen@1.0.0
+  - @graphql-mesh/runtime@1.0.0
+  - @graphql-mesh/store@1.0.0
+  - @graphql-mesh/types@1.0.0
+  - @graphql-mesh/utils@1.0.0
+
 ## 0.103.4
 
 ### Patch Changes
@@ -713,8 +937,8 @@
   [`78d1cd4`](https://github.com/ardatan/graphql-mesh/commit/78d1cd477d47be3ebdcac7133e41f30cf6bf67c6)
   Thanks [@JacksonDahl2](https://github.com/JacksonDahl2)! - Fix: Added a .catch() to the initial
   meshInstance$ assignment in the getBuiltMesh code generation template
-  (packages/legacy/cli/src/commands/ts-artifacts.ts) that resets meshInstance$
-  to undefined on failure, allowing the next call to retry.
+  (packages/legacy/cli/src/commands/ts-artifacts.ts) that resets meshInstance$ to undefined on
+  failure, allowing the next call to retry.
 - Updated dependencies
   [[`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91),
   [`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91),
