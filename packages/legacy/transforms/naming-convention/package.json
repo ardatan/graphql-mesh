@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transform-naming-convention",
-  "version": "0.108.3",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,8 +36,8 @@
   },
   "dependencies": {
     "@graphql-hive/pubsub": "^2.2.1",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
     "@graphql-tools/delegate": "^12.3.2",
     "@graphql-tools/utils": "^13.2.1",
     "@graphql-tools/wrap": "^11.2.4",
@@ -48,7 +48,7 @@
     "upper-case": "^2.0.2"
   },
   "devDependencies": {
-    "@graphql-mesh/cache-localforage": "^0.108.3",
+    "@graphql-mesh/cache-localforage": "^1.0.0",
     "@graphql-tools/schema": "11.0.8",
     "graphql": "16.14.0"
   },

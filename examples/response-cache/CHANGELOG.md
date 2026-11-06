@@ -1,5 +1,34 @@
 # example-response-cache
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`569eecc`](https://github.com/ardatan/graphql-mesh/commit/569eeccf753b06f372fc63ede09591772d5ecbfc),
+  [`9cb2401`](https://github.com/ardatan/graphql-mesh/commit/9cb24016b4d9164be661eb1074992d04589db86d),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`84b2636`](https://github.com/ardatan/graphql-mesh/commit/84b2636f3525e0b9a8e165734a8c0071ec5e4ab5),
+  [`e3adf5a`](https://github.com/ardatan/graphql-mesh/commit/e3adf5a5a643194d9d72921a35a2582906670c47),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`a2fc2be`](https://github.com/ardatan/graphql-mesh/commit/a2fc2be8178c5f8052e4f3b9ec04bc068caaef66),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`a7d4506`](https://github.com/ardatan/graphql-mesh/commit/a7d4506630217bd9e7ab2b594609698e7e5e1649),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`45265d4`](https://github.com/ardatan/graphql-mesh/commit/45265d49d17461c046759f24b927422dbb58fe7a),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`720a8a5`](https://github.com/ardatan/graphql-mesh/commit/720a8a576a2467d2243b1ea81319cb3e815e3c28),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d),
+  [`080bc57`](https://github.com/ardatan/graphql-mesh/commit/080bc575d7f964fb219a797f903e77783f90966d)]:
+  - @graphql-mesh/cli@1.0.0
+  - @graphql-mesh/json-schema@1.0.0
+  - @graphql-mesh/plugin-mock@1.0.0
+  - @graphql-mesh/plugin-response-cache@1.0.0
+
 ## 0.9.6
 
 ### Patch Changes
