@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "graphql": "16.14.0",
-    "react": "19.2.8",
+    "react": "19.3.1",
     "react-dom": "19.3.1"
   },
   "devDependencies": {
     "@graphql-mesh/cli": "0.103.4",
-    "@types/react": "19.2.18",
+    "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.0.5",
     "typescript": "^6.0.3",
