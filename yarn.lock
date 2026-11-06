@@ -8539,7 +8539,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/code-file-loader": "npm:^9.1.1"
     "@graphql-tools/graphql-file-loader": "npm:^9.1.1"
-    "@graphql-tools/load": "npm:^9.1.1"
+    "@graphql-tools/load": "npm:^9.1.2"
     "@graphql-tools/schema": "npm:^11.0.8"
     "@graphql-tools/utils": "npm:^13.2.1"
     "@whatwg-node/fetch": "npm:^0.12.1"
@@ -8571,7 +8571,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/code-file-loader": "npm:^9.1.1"
     "@graphql-tools/graphql-file-loader": "npm:^9.1.1"
-    "@graphql-tools/load": "npm:^9.1.1"
+    "@graphql-tools/load": "npm:^9.1.2"
     "@graphql-tools/utils": "npm:^13.2.1"
     "@graphql-yoga/plugin-persisted-operations": "npm:^4.0.1"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
@@ -9479,7 +9479,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/code-file-loader": "npm:^9.1.1"
     "@graphql-tools/graphql-file-loader": "npm:^9.1.1"
-    "@graphql-tools/load": "npm:^9.1.1"
+    "@graphql-tools/load": "npm:^9.1.2"
     "@graphql-tools/schema": "npm:^11.0.8"
     "@graphql-tools/utils": "npm:^13.2.1"
     graphql: "npm:16.14.0"
@@ -9671,7 +9671,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/code-file-loader": "npm:^9.1.1"
     "@graphql-tools/graphql-file-loader": "npm:^9.1.1"
-    "@graphql-tools/load": "npm:^9.1.1"
+    "@graphql-tools/load": "npm:^9.1.2"
     "@graphql-tools/schema": "npm:11.0.8"
     "@graphql-tools/utils": "npm:^13.2.1"
     graphql: "npm:16.14.0"
@@ -10676,17 +10676,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/load@npm:^9.1.1":
-  version: 9.1.1
-  resolution: "@graphql-tools/load@npm:9.1.1"
+"@graphql-tools/load@npm:^9.1.2":
+  version: 9.1.2
+  resolution: "@graphql-tools/load@npm:9.1.2"
   dependencies:
     "@graphql-tools/schema": "npm:^11.0.8"
     "@graphql-tools/utils": "npm:^13.2.1"
-    p-limit: "npm:3.1.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^16.0.0 || ^17.0.0
-  checksum: 10c0/d5cd693e9ca8dd09b21ecc82dced6864f46a5938032b5b82ef0b339bae88487d92cf731ff4b3a7db4025fd24b27e25d1279678c754d13589861c58c69cb91724
+  checksum: 10c0/cbfd0d6199eb0d723f10b35e2a1202d3976c1e017e6c2eeaa3ce3bfcba9fc7290c7996079fa66dc7a4ad89196a91db7cd200ba7d5a70e4b2770632ba3055623f
   languageName: node
   linkType: hard
 
