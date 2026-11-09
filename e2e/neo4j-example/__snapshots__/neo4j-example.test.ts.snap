@@ -3,7 +3,7 @@
 exports[`should compose the appropriate schema 1`] = `
 "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@relationshipProperties", "@relationship", "@introspection", "@transport", "@node", "@extraSchemaDefinitionDirective"]
+  import: ["@relationshipProperties", "@relationship", "@introspection", "@node", "@transport", "@extraSchemaDefinitionDirective"]
 ) {
   query: Query
   mutation: Mutation
@@ -62,9 +62,9 @@ directive @relationship(type: String, direction: _RelationDirections, properties
 
 directive @introspection(subgraph: String) repeatable on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
 
-directive @transport(kind: String, subgraph: String, location: String, options: TransportOptions) repeatable on SCHEMA
-
 directive @node on OBJECT
+
+directive @transport(kind: String, subgraph: String, location: String, options: TransportOptions) repeatable on SCHEMA
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 

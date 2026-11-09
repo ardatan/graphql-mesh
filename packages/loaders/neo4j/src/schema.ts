@@ -108,6 +108,7 @@ export async function loadGraphQLSchemaFromNeo4J(
         directive @introspection(
           subgraph: String
         ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+        directive @node on OBJECT
         directive @transport(
           kind: String
           subgraph: String
@@ -115,7 +116,6 @@ export async function loadGraphQLSchemaFromNeo4J(
           options: TransportOptions
         ) on SCHEMA
         scalar TransportOptions
-        directive @node on OBJECT
       `,
       {
         noLocation: true,
