@@ -11,35 +11,38 @@ const port = opts.getServicePort('comments');
 
 startStandaloneServer(
   new ApolloServer({
-    schema: buildSubgraphSchema({
-      typeDefs: parse(/* GraphQL */ `
-        type Book @key(fields: "id") @extends {
-          id: ID! @external
-          comments: [Comment]
-        }
+    schema: buildSubgraphSchema([
+      {
+        typeDefs: parse(/* GraphQL */ `
+          type Book @key(fields: "id") @extends {
+            id: ID! @external
+            comments: [Comment]
+          }
 
-        type Comment @key(fields: "id") {
-          id: ID!
-          content: String!
-          book: Book!
-        }
+          type Comment @key(fields: "id") {
+            id: ID!
+            content: String!
+            book: Book!
+          }
 
-        type Query {
-          comments: [Comment]
-        }
-      `),
-      resolvers: {
-        Query: {
-          comments: () => comments,
-        },
-        Book: {
-          comments: book => comments.filter(comment => comment.bookId === book.id),
-        },
-        Comment: {
-          book: comment => ({ __typename: 'Book', id: comment.bookId }),
+          type Query {
+            comments: [Comment]
+          }
+        `),
+        resolvers: {
+          Query: {
+            comments: () => comments,
+          },
+          Book: {
+            comments: book => comments.filter(comment => comment.bookId === book.id),
+          },
+          Comment: {
+            book: comment => ({ __typename: 'Book', id: comment.bookId }),
+          },
         },
       },
-    }),
+    ]),
+
     plugins: [
       {
         async requestDidStart({ request }) {
