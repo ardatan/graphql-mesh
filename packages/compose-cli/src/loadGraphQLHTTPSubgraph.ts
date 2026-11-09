@@ -116,16 +116,53 @@ export interface GraphQLSubgraphLoaderHTTPConfiguration {
   introspectionOptions?: IntrospectionOptions;
 }
 
-function fixExtends(node: DocumentNode) {
-  return visit(node, {
-    [Kind.DIRECTIVE](node) {
-      if (node.name.value === 'link') {
-        const url = node.arguments?.find(arg => arg.name.value === 'url')?.value;
+const ROOT_TYPE_NAMES = new Set(['Query', 'Mutation', 'Subscription']);
+
+function withExtendsDirective<
+  TNode extends {
+    directives?: readonly any[];
+    kind: Kind;
+  },
+  TKind extends Kind,
+>(node: TNode, kind: TKind) {
+  return {
+    ...node,
+    directives: [
+      ...(node.directives || []),
+      {
+        kind: Kind.DIRECTIVE,
+        name: {
+          kind: Kind.NAME,
+          value: 'extends',
+        },
+      },
+    ],
+    kind,
+  };
+}
+
+/**
+ * Normalize federation `_service.sdl` for Mesh composition.
+ *
+ * @apollo/subgraph >= 2.15 emits:
+ * - `extend type Query { _entities _service }` alongside `type Query { ... }`
+ * - empty `type Foo` stubs next to `extend type Foo { ... }` for Fed1 schemas
+ *
+ * Converting root-type extensions into `@extends` definitions overwrites Query
+ * fields, and empty stubs leave entity types fieldless. Keep root extensions as
+ * extensions, convert other extensions to `@extends` definitions, then drop
+ * empty duplicate stubs.
+ */
+export function fixExtends(node: DocumentNode): DocumentNode {
+  const document = visit(node, {
+    [Kind.DIRECTIVE](directiveNode) {
+      if (directiveNode.name.value === 'link') {
+        const url = directiveNode.arguments?.find(arg => arg.name.value === 'url')?.value;
         if (
           url?.kind === Kind.STRING &&
           url.value.startsWith('https://specs.apollo.dev/federation/v2.')
         ) {
-          const imports = node.arguments?.find(arg => arg.name.value === 'import')?.value;
+          const imports = directiveNode.arguments?.find(arg => arg.name.value === 'import')?.value;
           if (imports?.kind === Kind.LIST) {
             // @ts-expect-error - We can modify it
             imports.values.push({
@@ -136,103 +173,56 @@ function fixExtends(node: DocumentNode) {
         }
       }
     },
-    [Kind.OBJECT_TYPE_EXTENSION](node) {
-      return {
-        ...node,
-        directives: [
-          ...(node.directives || []),
-          {
-            kind: Kind.DIRECTIVE,
-            name: {
-              kind: Kind.NAME,
-              value: 'extends',
-            },
-          },
-        ],
-        kind: Kind.OBJECT_TYPE_DEFINITION,
-      };
+    [Kind.OBJECT_TYPE_EXTENSION](typeNode) {
+      // Keep Query/Mutation/Subscription as extensions so they merge with the
+      // existing root type instead of replacing it.
+      if (ROOT_TYPE_NAMES.has(typeNode.name.value)) {
+        return undefined;
+      }
+      return withExtendsDirective(typeNode, Kind.OBJECT_TYPE_DEFINITION);
     },
-    [Kind.INTERFACE_TYPE_EXTENSION](node) {
-      return {
-        ...node,
-        directives: [
-          ...(node.directives || []),
-          {
-            kind: Kind.DIRECTIVE,
-            name: {
-              kind: Kind.NAME,
-              value: 'extends',
-            },
-          },
-        ],
-        kind: Kind.INTERFACE_TYPE_DEFINITION,
-      };
+    [Kind.INTERFACE_TYPE_EXTENSION](typeNode) {
+      return withExtendsDirective(typeNode, Kind.INTERFACE_TYPE_DEFINITION);
     },
-    [Kind.UNION_TYPE_EXTENSION](node) {
-      return {
-        ...node,
-        directives: [
-          ...(node.directives || []),
-          {
-            kind: Kind.DIRECTIVE,
-            name: {
-              kind: Kind.NAME,
-              value: 'extends',
-            },
-          },
-        ],
-        kind: Kind.UNION_TYPE_DEFINITION,
-      };
+    [Kind.UNION_TYPE_EXTENSION](typeNode) {
+      return withExtendsDirective(typeNode, Kind.UNION_TYPE_DEFINITION);
     },
-    [Kind.INPUT_OBJECT_TYPE_EXTENSION](node) {
-      return {
-        ...node,
-        directives: [
-          ...(node.directives || []),
-          {
-            kind: Kind.DIRECTIVE,
-            name: {
-              kind: Kind.NAME,
-              value: 'extends',
-            },
-          },
-        ],
-        kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
-      };
+    [Kind.INPUT_OBJECT_TYPE_EXTENSION](typeNode) {
+      return withExtendsDirective(typeNode, Kind.INPUT_OBJECT_TYPE_DEFINITION);
     },
-    [Kind.ENUM_TYPE_EXTENSION](node) {
-      return {
-        ...node,
-        directives: [
-          ...(node.directives || []),
-          {
-            kind: Kind.DIRECTIVE,
-            name: {
-              kind: Kind.NAME,
-              value: 'extends',
-            },
-          },
-        ],
-        kind: Kind.ENUM_TYPE_DEFINITION,
-      };
+    [Kind.ENUM_TYPE_EXTENSION](typeNode) {
+      return withExtendsDirective(typeNode, Kind.ENUM_TYPE_DEFINITION);
     },
-    [Kind.SCALAR_TYPE_EXTENSION](node) {
-      return {
-        ...node,
-        directives: [
-          ...(node.directives || []),
-          {
-            kind: Kind.DIRECTIVE,
-            name: {
-              kind: Kind.NAME,
-              value: 'extends',
-            },
-          },
-        ],
-        kind: Kind.SCALAR_TYPE_DEFINITION,
-      };
+    [Kind.SCALAR_TYPE_EXTENSION](typeNode) {
+      return withExtendsDirective(typeNode, Kind.SCALAR_TYPE_DEFINITION);
     },
   });
+
+  const nonEmptyTypeNames = new Set<string>();
+  for (const def of document.definitions) {
+    if (
+      (def.kind === Kind.OBJECT_TYPE_DEFINITION || def.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
+      def.fields?.length
+    ) {
+      nonEmptyTypeNames.add(def.name.value);
+    }
+  }
+
+  return {
+    ...document,
+    definitions: document.definitions.filter(def => {
+      if (
+        (def.kind === Kind.OBJECT_TYPE_DEFINITION || def.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
+        !def.fields?.length &&
+        nonEmptyTypeNames.has(def.name.value)
+      ) {
+        // Drop Apollo 2.15 empty stubs like `type Product` next to the real
+        // `extend type Product` / `@extends` definition.
+        return false;
+      }
+      return true;
+    }),
+  };
 }
 
 export const DEFAULT_INTROSPECTION_OPTIONS: Required<IntrospectionOptions> = {

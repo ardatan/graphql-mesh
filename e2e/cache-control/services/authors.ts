@@ -11,51 +11,54 @@ const port = opts.getServicePort('authors');
 
 createServer(
   createYoga({
-    schema: buildSubgraphSchema({
-      typeDefs: parse(/* GraphQL */ `
-        extend schema
-          @link(
-            url: "https://specs.apollo.dev/federation/v2.1"
-            import: ["@composeDirective", "@key"]
-          )
-          @link(
-            url: "https://www.apollographql.com/docs/federation/v1/performance/caching/v1.0"
-            import: ["@cacheControl"]
-          )
-          @composeDirective(name: "@cacheControl")
+    schema: buildSubgraphSchema([
+      {
+        typeDefs: parse(/* GraphQL */ `
+          extend schema
+            @link(
+              url: "https://specs.apollo.dev/federation/v2.1"
+              import: ["@composeDirective", "@key"]
+            )
+            @link(
+              url: "https://www.apollographql.com/docs/federation/v1/performance/caching/v1.0"
+              import: ["@cacheControl"]
+            )
+            @composeDirective(name: "@cacheControl")
 
-        enum CacheControlScope {
-          PUBLIC
-          PRIVATE
-        }
+          enum CacheControlScope {
+            PUBLIC
+            PRIVATE
+          }
 
-        directive @cacheControl(
-          maxAge: Int
-          scope: CacheControlScope
-          inheritMaxAge: Boolean
-        ) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+          directive @cacheControl(
+            maxAge: Int
+            scope: CacheControlScope
+            inheritMaxAge: Boolean
+          ) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
 
-        type Author @key(fields: "id") @cacheControl(maxAge: 10) {
-          id: ID!
-          name: String!
-          age: Int
-        }
+          type Author @key(fields: "id") @cacheControl(maxAge: 10) {
+            id: ID!
+            name: String!
+            age: Int
+          }
 
-        type Query {
-          authors: [Author]
-          author(id: ID!): Author
-        }
-      `),
-      resolvers: {
-        Query: {
-          authors: () => authors,
-          author: (_, { id }) => authors.find(author => author.id === id),
-        },
-        Author: {
-          __resolveReference: author => authors.find(a => a.id === author.id),
+          type Query {
+            authors: [Author]
+            author(id: ID!): Author
+          }
+        `),
+        resolvers: {
+          Query: {
+            authors: () => authors,
+            author: (_, { id }) => authors.find(author => author.id === id),
+          },
+          Author: {
+            __resolveReference: author => authors.find(a => a.id === author.id),
+          },
         },
       },
-    }),
+    ]),
+
     plugins: [
       useResponseCache({
         session: () => null,

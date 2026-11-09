@@ -1,15 +1,18 @@
 import { dset } from 'dset';
-import type { GraphQLSchema } from 'graphql';
+import type { GraphQLFieldConfig, GraphQLSchema } from 'graphql';
 import {
   GraphQLEnumType,
   GraphQLInterfaceType,
+  GraphQLList,
+  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLScalarType,
+  GraphQLString,
   GraphQLUnionType,
   isObjectType,
   isSpecifiedScalarType,
 } from 'graphql';
-import { entitiesField, EntityType, serviceField } from '@apollo/subgraph/dist/types.js';
+import { entitiesResolver } from '@apollo/subgraph';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type {
   ImportFn,
@@ -20,6 +23,47 @@ import type {
 import { loadFromModuleExportExpression } from '@graphql-mesh/utils';
 import type { MergedTypeResolver, SubschemaConfig } from '@graphql-tools/delegate';
 import { MapperKind, mapSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
+
+// @apollo/subgraph >= 2.15 no longer exports these GraphQL types/fields.
+// Keep local equivalents so the transform can still assemble federation root fields.
+const EntityType = new GraphQLUnionType({
+  name: '_Entity',
+  types: [],
+});
+
+const ServiceType = new GraphQLObjectType({
+  name: '_Service',
+  fields: {
+    sdl: {
+      type: GraphQLString,
+      description:
+        'The sdl representing the federated service capabilities. Includes federation directives, removes federation types, and includes rest of full schema after schema directives have been applied',
+    },
+  },
+});
+
+const AnyType = new GraphQLScalarType({
+  name: '_Any',
+  serialize(value) {
+    return value;
+  },
+});
+
+const entitiesField: GraphQLFieldConfig<any, any> = {
+  type: new GraphQLNonNull(new GraphQLList(EntityType)),
+  args: {
+    representations: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(AnyType))),
+    },
+  },
+  resolve(_source, { representations }, context, info) {
+    return entitiesResolver({ representations, context, info });
+  },
+};
+
+const serviceField: GraphQLFieldConfig<any, any> = {
+  type: new GraphQLNonNull(ServiceType),
+};
 
 const federationDirectives = [
   'link',
