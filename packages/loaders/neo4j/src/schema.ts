@@ -92,6 +92,8 @@ export async function loadGraphQLSchemaFromNeo4J(
     EnumValueDefinition: addIntrospectionDirective,
     InputValueDefinition: addIntrospectionDirective,
   });
+  // @transport is included for Mesh merge/output order, but stripped inside
+  // getExecutableSchemaFromTypeDefsAndDriver before Neo4jGraphQL 7.6.6+ sees it.
   (typeDefs.definitions as DefinitionNode[]).push(
     ...parse(
       /* GraphQL */ `

@@ -30,6 +30,70 @@ function filterIntrospectionDefinitions<TASTNode extends { directives?: readonly
   return node;
 }
 
+// Mesh/federation schema artifacts that @neo4j/graphql must not see.
+// 7.6.6+ keeps SCHEMA_DEFINITION directives when augmenting; leftover Mesh
+// `@transport` / Apollo `@link` usages then fail validation (e.g. unknown
+// `url`/`import` on `@link` after helper scalars were filtered out).
+const STRIP_SCHEMA_DIRECTIVES = new Set(['transport', 'link']);
+const STRIP_DIRECTIVE_DEFINITIONS = new Set([
+  'transport',
+  'link',
+  'extraSchemaDefinitionDirective',
+  'join__graph',
+  'join__field',
+  'join__type',
+  'join__implements',
+  'join__unionMember',
+  'join__enumValue',
+]);
+const STRIP_TYPE_NAMES = new Set([
+  'TransportOptions',
+  'link__Import',
+  'link__Purpose',
+  'join__FieldSet',
+  'join__Graph',
+  '_DirectiveExtensions',
+]);
+
+/**
+ * Strip Mesh/federation schema directives and helper types before Neo4jGraphQL.
+ */
+export function stripMeshTransportFromTypeDefs(typeDefs: DocumentNode): DocumentNode {
+  return visit(typeDefs, {
+    SchemaDefinition(node) {
+      return {
+        ...node,
+        directives: node.directives?.filter(
+          directive => !STRIP_SCHEMA_DIRECTIVES.has(directive.name.value),
+        ),
+      };
+    },
+    SchemaExtension(node) {
+      return {
+        ...node,
+        directives: node.directives?.filter(
+          directive => !STRIP_SCHEMA_DIRECTIVES.has(directive.name.value),
+        ),
+      };
+    },
+    DirectiveDefinition(node) {
+      if (STRIP_DIRECTIVE_DEFINITIONS.has(node.name.value)) {
+        return null;
+      }
+    },
+    ScalarTypeDefinition(node) {
+      if (STRIP_TYPE_NAMES.has(node.name.value)) {
+        return null;
+      }
+    },
+    EnumTypeDefinition(node) {
+      if (STRIP_TYPE_NAMES.has(node.name.value)) {
+        return null;
+      }
+    },
+  });
+}
+
 export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<DisposableExecutor> {
   const schemaDirectives = getDirectiveExtensions(opts.schema);
   if (!opts.schema.getDirective('relationship')) {
@@ -79,6 +143,7 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
     EnumValueDefinition: astVisitor,
     InputValueDefinition: astVisitor,
   });
+  typeDefs = stripMeshTransportFromTypeDefs(typeDefs);
   (typeDefs.definitions as DefinitionNode[]).push(
     ...parse(/* GraphQL */ `
       directive @source(
@@ -133,14 +198,14 @@ export function getExecutableSchemaFromTypeDefsAndDriver({
       },
     };
   }
-  const extendedTypeDefs = [
-    ...asArray(typeDefs),
-    /* GraphQL */ `
-      directive @introspection(
-        subgraph: String
-      ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
-    `,
-  ];
+  const extendedTypeDefs = asArray(typeDefs).map(defs =>
+    typeof defs === 'string' ? defs : stripMeshTransportFromTypeDefs(defs),
+  );
+  extendedTypeDefs.push(/* GraphQL */ `
+    directive @introspection(
+      subgraph: String
+    ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+  `);
   const neo4jGraphQL = new Neo4jGraphQL({
     typeDefs: extendedTypeDefs,
     driver,
