@@ -123,7 +123,8 @@ function withExtendsDirective<
     directives?: readonly any[];
     kind: Kind;
   },
->(node: TNode, kind: TNode['kind']) {
+  TKind extends Kind,
+>(node: TNode, kind: TKind) {
   return {
     ...node,
     directives: [
