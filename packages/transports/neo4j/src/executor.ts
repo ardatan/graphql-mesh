@@ -30,6 +30,46 @@ function filterIntrospectionDefinitions<TASTNode extends { directives?: readonly
   return node;
 }
 
+const MESH_NEO4J_SCHEMA_DIRECTIVES = new Set(['transport']);
+const MESH_NEO4J_ONLY_TYPE_NAMES = new Set(['TransportOptions']);
+
+/**
+ * @neo4j/graphql >= 7.6.6 keeps SCHEMA_DEFINITION directives when augmenting.
+ * Mesh @transport is not a Neo4j directive — strip it (and its helper scalar)
+ * before handing typeDefs to Neo4jGraphQL, or schema build fails with
+ * "Unknown argument ... on directive @transport".
+ */
+export function stripMeshTransportFromTypeDefs(typeDefs: DocumentNode): DocumentNode {
+  return visit(typeDefs, {
+    SchemaDefinition(node) {
+      return {
+        ...node,
+        directives: node.directives?.filter(
+          directive => !MESH_NEO4J_SCHEMA_DIRECTIVES.has(directive.name.value),
+        ),
+      };
+    },
+    SchemaExtension(node) {
+      return {
+        ...node,
+        directives: node.directives?.filter(
+          directive => !MESH_NEO4J_SCHEMA_DIRECTIVES.has(directive.name.value),
+        ),
+      };
+    },
+    DirectiveDefinition(node) {
+      if (MESH_NEO4J_SCHEMA_DIRECTIVES.has(node.name.value)) {
+        return null;
+      }
+    },
+    ScalarTypeDefinition(node) {
+      if (MESH_NEO4J_ONLY_TYPE_NAMES.has(node.name.value)) {
+        return null;
+      }
+    },
+  });
+}
+
 export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<DisposableExecutor> {
   const schemaDirectives = getDirectiveExtensions(opts.schema);
   if (!opts.schema.getDirective('relationship')) {
@@ -79,6 +119,7 @@ export async function getNeo4JExecutor(opts: Neo4JExecutorOpts): Promise<Disposa
     EnumValueDefinition: astVisitor,
     InputValueDefinition: astVisitor,
   });
+  typeDefs = stripMeshTransportFromTypeDefs(typeDefs);
   (typeDefs.definitions as DefinitionNode[]).push(
     ...parse(/* GraphQL */ `
       directive @source(
@@ -133,14 +174,14 @@ export function getExecutableSchemaFromTypeDefsAndDriver({
       },
     };
   }
-  const extendedTypeDefs = [
-    ...asArray(typeDefs),
-    /* GraphQL */ `
-      directive @introspection(
-        subgraph: String
-      ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
-    `,
-  ];
+  const extendedTypeDefs = asArray(typeDefs).map(defs =>
+    typeof defs === 'string' ? defs : stripMeshTransportFromTypeDefs(defs),
+  );
+  extendedTypeDefs.push(/* GraphQL */ `
+    directive @introspection(
+      subgraph: String
+    ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+  `);
   const neo4jGraphQL = new Neo4jGraphQL({
     typeDefs: extendedTypeDefs,
     driver,

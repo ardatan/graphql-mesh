@@ -92,36 +92,44 @@ export async function loadGraphQLSchemaFromNeo4J(
     EnumValueDefinition: addIntrospectionDirective,
     InputValueDefinition: addIntrospectionDirective,
   });
-  (typeDefs.definitions as DefinitionNode[]).push(
-    ...parse(
-      /* GraphQL */ `
-        directive @relationshipProperties on OBJECT
-        directive @relationship(
-          type: String
-          direction: _RelationDirections
-          properties: String
-        ) on FIELD_DEFINITION
-        enum _RelationDirections {
-          IN
-          OUT
-        }
-        directive @introspection(
-          subgraph: String
-        ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
-        directive @transport(
-          kind: String
-          subgraph: String
-          location: String
-          options: TransportOptions
-        ) on SCHEMA
-        scalar TransportOptions
-        directive @node on OBJECT
-      `,
-      {
-        noLocation: true,
-      },
-    ).definitions,
-  );
+  const neo4jDirectiveDefs = parse(
+    /* GraphQL */ `
+      directive @relationshipProperties on OBJECT
+      directive @relationship(
+        type: String
+        direction: _RelationDirections
+        properties: String
+      ) on FIELD_DEFINITION
+      enum _RelationDirections {
+        IN
+        OUT
+      }
+      directive @introspection(
+        subgraph: String
+      ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
+      directive @node on OBJECT
+    `,
+    {
+      noLocation: true,
+    },
+  ).definitions;
+  // Keep Mesh @transport off Neo4jGraphQL input — 7.6.6+ propagates SCHEMA_DEFINITION
+  // directives and rejects unknown @transport arguments during schema build.
+  const meshTransportDirectiveDefs = parse(
+    /* GraphQL */ `
+      directive @transport(
+        kind: String
+        subgraph: String
+        location: String
+        options: TransportOptions
+      ) on SCHEMA
+      scalar TransportOptions
+    `,
+    {
+      noLocation: true,
+    },
+  ).definitions;
+  (typeDefs.definitions as DefinitionNode[]).push(...neo4jDirectiveDefs);
   revertStrReplaceAllPolyfill();
 
   const schema = await getExecutableSchemaFromTypeDefsAndDriver({
@@ -149,7 +157,10 @@ export async function loadGraphQLSchemaFromNeo4J(
   ];
   return mergeSchemas({
     schemas: [schema],
-    typeDefs,
+    typeDefs: {
+      ...typeDefs,
+      definitions: [...typeDefs.definitions, ...meshTransportDirectiveDefs],
+    },
     assumeValid: true,
     assumeValidSDL: true,
   });
