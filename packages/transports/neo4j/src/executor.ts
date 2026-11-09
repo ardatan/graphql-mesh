@@ -30,14 +30,33 @@ function filterIntrospectionDefinitions<TASTNode extends { directives?: readonly
   return node;
 }
 
-const MESH_NEO4J_SCHEMA_DIRECTIVES = new Set(['transport']);
-const MESH_NEO4J_ONLY_TYPE_NAMES = new Set(['TransportOptions']);
+// Mesh/federation schema artifacts that @neo4j/graphql must not see.
+// 7.6.6+ keeps SCHEMA_DEFINITION directives when augmenting; leftover Mesh
+// `@transport` / Apollo `@link` usages then fail validation (e.g. unknown
+// `url`/`import` on `@link` after helper scalars were filtered out).
+const STRIP_SCHEMA_DIRECTIVES = new Set(['transport', 'link']);
+const STRIP_DIRECTIVE_DEFINITIONS = new Set([
+  'transport',
+  'link',
+  'extraSchemaDefinitionDirective',
+  'join__graph',
+  'join__field',
+  'join__type',
+  'join__implements',
+  'join__unionMember',
+  'join__enumValue',
+]);
+const STRIP_TYPE_NAMES = new Set([
+  'TransportOptions',
+  'link__Import',
+  'link__Purpose',
+  'join__FieldSet',
+  'join__Graph',
+  '_DirectiveExtensions',
+]);
 
 /**
- * @neo4j/graphql >= 7.6.6 keeps SCHEMA_DEFINITION directives when augmenting.
- * Mesh @transport is not a Neo4j directive — strip it (and its helper scalar)
- * before handing typeDefs to Neo4jGraphQL, or schema build fails with
- * "Unknown argument ... on directive @transport".
+ * Strip Mesh/federation schema directives and helper types before Neo4jGraphQL.
  */
 export function stripMeshTransportFromTypeDefs(typeDefs: DocumentNode): DocumentNode {
   return visit(typeDefs, {
@@ -45,7 +64,7 @@ export function stripMeshTransportFromTypeDefs(typeDefs: DocumentNode): Document
       return {
         ...node,
         directives: node.directives?.filter(
-          directive => !MESH_NEO4J_SCHEMA_DIRECTIVES.has(directive.name.value),
+          directive => !STRIP_SCHEMA_DIRECTIVES.has(directive.name.value),
         ),
       };
     },
@@ -53,17 +72,22 @@ export function stripMeshTransportFromTypeDefs(typeDefs: DocumentNode): Document
       return {
         ...node,
         directives: node.directives?.filter(
-          directive => !MESH_NEO4J_SCHEMA_DIRECTIVES.has(directive.name.value),
+          directive => !STRIP_SCHEMA_DIRECTIVES.has(directive.name.value),
         ),
       };
     },
     DirectiveDefinition(node) {
-      if (MESH_NEO4J_SCHEMA_DIRECTIVES.has(node.name.value)) {
+      if (STRIP_DIRECTIVE_DEFINITIONS.has(node.name.value)) {
         return null;
       }
     },
     ScalarTypeDefinition(node) {
-      if (MESH_NEO4J_ONLY_TYPE_NAMES.has(node.name.value)) {
+      if (STRIP_TYPE_NAMES.has(node.name.value)) {
+        return null;
+      }
+    },
+    EnumTypeDefinition(node) {
+      if (STRIP_TYPE_NAMES.has(node.name.value)) {
         return null;
       }
     },
