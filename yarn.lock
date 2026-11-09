@@ -930,22 +930,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/core@npm:^3.977.6":
-  version: 3.977.6
-  resolution: "@aws-sdk/core@npm:3.977.6"
-  dependencies:
-    "@aws-sdk/types": "npm:^3.974.2"
-    "@aws-sdk/xml-builder": "npm:^3.972.37"
-    "@aws/lambda-invoke-store": "npm:^0.3.0"
-    "@smithy/core": "npm:^3.31.1"
-    "@smithy/signature-v4": "npm:^5.6.12"
-    "@smithy/types": "npm:^4.16.1"
-    bowser: "npm:^2.11.0"
-    tslib: "npm:^2.6.2"
-  checksum: 10c0/4d743603bb41aeed426e2928be0947202191c341f9fbefe9ea347b0b4b7154b1ea94189d01c8abf3b03b9635449e2e7c268bd67379ea2294b9f49a61b909b9af
-  languageName: node
-  linkType: hard
-
 "@aws-sdk/core@npm:^3.979.1":
   version: 3.979.1
   resolution: "@aws-sdk/core@npm:3.979.1"
@@ -959,6 +943,22 @@ __metadata:
     bowser: "npm:^2.11.0"
     tslib: "npm:^2.6.2"
   checksum: 10c0/f44ffe99a8aa440445447cf9a4a73d9939fbee38d42a105cce188b740798e2a8c2bc0acdb847d010feef63ca8380783dfb247944c650419a9f8fe69a579fcacc
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/core@npm:^3.980.0":
+  version: 3.980.0
+  resolution: "@aws-sdk/core@npm:3.980.0"
+  dependencies:
+    "@aws-sdk/types": "npm:^3.975.0"
+    "@aws-sdk/xml-builder": "npm:^3.972.42"
+    "@aws/lambda-invoke-store": "npm:^0.3.0"
+    "@smithy/core": "npm:^3.38.0"
+    "@smithy/signature-v4": "npm:^5.7.5"
+    "@smithy/types": "npm:^4.19.0"
+    bowser: "npm:^2.11.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/db6b878af46aa66d970b2068a1648752dda2a1d909e9a53e8890783f1d416fcde0dcdb68de6843d3f6f4ead7bf2b3a6771f0caccbd3ec2be6a299a4f02f94565
   languageName: node
   linkType: hard
 
@@ -1434,16 +1434,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/types@npm:^3.974.2":
-  version: 3.974.2
-  resolution: "@aws-sdk/types@npm:3.974.2"
-  dependencies:
-    "@smithy/types": "npm:^4.16.1"
-    tslib: "npm:^2.6.2"
-  checksum: 10c0/b5ce05e8a4160c545edce1e8527e8ac490be7a6651c736f6811190b5d31d5682699889d51186ab0600df756679bebd2df9d650a17f577523441df803c4fb5777
-  languageName: node
-  linkType: hard
-
 "@aws-sdk/types@npm:^3.975.0":
   version: 3.975.0
   resolution: "@aws-sdk/types@npm:3.975.0"
@@ -1467,13 +1457,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/util-format-url@npm:^3.972.43":
-  version: 3.972.43
-  resolution: "@aws-sdk/util-format-url@npm:3.972.43"
+"@aws-sdk/util-format-url@npm:^3.972.57":
+  version: 3.972.57
+  resolution: "@aws-sdk/util-format-url@npm:3.972.57"
   dependencies:
-    "@aws-sdk/core": "npm:^3.977.6"
+    "@aws-sdk/core": "npm:^3.980.0"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/39acf0d3b7cd1d9c7cb381de09860acc10de2f9993169b60dcf5103eb6a69241dd6ef19a746d0816b3bf1f609ad223293670dbfe1dc58253c24819160b882fec
+  checksum: 10c0/ef7e490f64467b628d9bdcfa5a9342a9b30095d9d41d145111e77a78e3f35f17b44c17b9fe4fb32cef8b2cf63f409391e434d332ea5329b4c6d9bc667a6ca454
   languageName: node
   linkType: hard
 
@@ -1522,16 +1512,6 @@ __metadata:
   dependencies:
     tslib: "npm:^2.3.1"
   checksum: 10c0/ff56ff252c0ea22b760b909ba5bbe9ca59a447066097e73b1e2ae50a6d366631ba560c373ec4e83b3e225d16238eeaf8def210fdbf135070b3dd3ceb1cc2ef9a
-  languageName: node
-  linkType: hard
-
-"@aws-sdk/xml-builder@npm:^3.972.37":
-  version: 3.972.37
-  resolution: "@aws-sdk/xml-builder@npm:3.972.37"
-  dependencies:
-    "@smithy/types": "npm:^4.16.1"
-    tslib: "npm:^2.6.2"
-  checksum: 10c0/738f9302f495b3b95602641166a4182244add6e9e079201dba7e8994657dd442df0e4cea3355aa8c7d7f08efb385decaaf0b543f03efdb291c118536f36ac1a1
   languageName: node
   linkType: hard
 
@@ -8417,7 +8397,7 @@ __metadata:
   dependencies:
     "@aws-crypto/sha256-js": "npm:^5.2.0"
     "@aws-sdk/credential-providers": "npm:^3.1161.0"
-    "@aws-sdk/util-format-url": "npm:^3.972.43"
+    "@aws-sdk/util-format-url": "npm:^3.972.57"
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
