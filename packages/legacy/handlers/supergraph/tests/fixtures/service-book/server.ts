@@ -10,10 +10,13 @@ import { resolvers } from './resolvers';
 export const AUTH_HEADER = 'Bearer BOOKS_SECRET';
 
 export const server = createYoga({
-  schema: buildSubgraphSchema({
-    typeDefs: parse(readFileSync(join(__dirname, 'typeDefs.graphql'), 'utf-8')),
-    resolvers,
-  }),
+  schema: buildSubgraphSchema([
+    {
+      typeDefs: parse(readFileSync(join(__dirname, 'typeDefs.graphql'), 'utf-8')),
+      resolvers,
+    },
+  ]),
+
   plugins: [
     {
       onRequest({ request }) {

@@ -3,6 +3,9 @@ import { expect, test } from '@playwright/test';
 const SELECTED_EXAMPLE = 'openapi-stackexchange';
 const PROD_EXAMPLES_URL = 'https://the-guild.dev/graphql/mesh/examples';
 const LOCAL_EXAMPLES_URL = '/examples';
+const EMBED_SRC_RE = new RegExp(
+  `codesandbox\\.io/embed/github/ardatan/graphql-mesh/tree/master/examples/${SELECTED_EXAMPLE}(?:/|\\?|$)`,
+);
 
 function getExamplesSandboxUrl(againstProd: string | undefined) {
   return againstProd === '1' ? PROD_EXAMPLES_URL : LOCAL_EXAMPLES_URL;
@@ -24,127 +27,56 @@ test('switches and loads StackExchange example', async ({ page }) => {
   test.setTimeout(120_000);
   // when we're running the CI on master, we run the test against prod to know if the
   // CodeSandbox iframe isn't broken by website-router
+  const againstProd = process.env.AGAINST_PROD === '1';
   const url = getExamplesSandboxUrl(process.env.AGAINST_PROD);
-  if (process.env.AGAINST_PROD === '1') {
+  if (againstProd) {
     test.slow();
   }
 
   await page.goto(url);
   expect(new URL(page.url()).pathname).toMatch(
-    process.env.AGAINST_PROD === '1' ? /^\/graphql\/mesh\/examples\/?$/ : /^\/examples\/?$/,
+    againstProd ? /^\/graphql\/mesh\/examples\/?$/ : /^\/examples\/?$/,
   );
 
-  const exampleSelect = page.getByRole('combobox', { name: 'Choose Live Example' });
+  // Prod (Astro/website-router) uses "Choose live example:"; local Next.js uses
+  // "Choose Live Example". Match both.
+  const exampleSelect = page.getByRole('combobox', { name: /choose live example/i });
   await exampleSelect.scrollIntoViewIfNeeded();
   await expect(exampleSelect).toBeVisible();
 
-  if (process.env.CI && process.env.AGAINST_PROD === '1') {
+  // Prod mounts the iframe only after `[data-examples-frame]` intersects the viewport.
+  const examplesFrame = page.locator('[data-examples-frame]');
+  if ((await examplesFrame.count()) > 0) {
+    await examplesFrame.scrollIntoViewIfNeeded();
+  }
+
+  if (process.env.CI && againstProd) {
     // this isn't ideal, but should help with some flakiness
     await page.waitForTimeout(500);
   }
-  // CodeSandbox microVM cold starts and incident recovery can exceed 60s on prod.
-  const timeout = 120_000;
-  // Register response/console listeners before triggering the selection so that early
-  // failures (403 or X-Frame-Options errors) are reliably captured even if they occur
-  // before the iframe title is updated.
-  const upstreamBlockPromise =
-    process.env.AGAINST_PROD === '1'
-      ? page
-          .waitForResponse(
-            response => {
-              try {
-                const hostname = new URL(response.url()).hostname;
-                return (
-                  (hostname === 'codesandbox.io' || hostname.endsWith('.codesandbox.io')) &&
-                  response.status() === 403 &&
-                  response.url().includes(SELECTED_EXAMPLE)
-                );
-              } catch {
-                return false;
-              }
-            },
-            { timeout },
-          )
-          .then(() => 'blocked' as const)
-          .catch(() => 'blocked-timeout' as const)
-      : Promise.resolve('blocked-timeout' as const);
-  const xFrameOptionsPromise =
-    process.env.AGAINST_PROD === '1'
-      ? page
-          .waitForEvent('console', {
-            predicate: message => {
-              if (message.type() !== 'error' || !message.text().includes('X-Frame-Options')) {
-                return false;
-              }
-              const urlMatch = message.text().match(/https?:\/\/[^\s)'"]+/);
-              if (!urlMatch) return false;
-              try {
-                const hostname = new URL(urlMatch[0]).hostname;
-                return hostname === 'codesandbox.io' || hostname.endsWith('.codesandbox.io');
-              } catch {
-                return false;
-              }
-            },
-            timeout,
-          })
-          .then(() => 'blocked' as const)
-          .catch(() => 'blocked-timeout' as const)
-      : Promise.resolve('blocked-timeout' as const);
+
+  // Local Next.js ExamplesSandbox updates iframe.title to the selected example dir.
+  // Prod Astro/website-router keeps title="GraphQL Mesh Example" and only postMessages set-dir.
+  const sandboxIframe = againstProd
+    ? page.locator('[data-examples-sandbox] iframe')
+    : page.locator(`iframe[title="${SELECTED_EXAMPLE}"]`);
 
   // Retry the selection, since it can be dispatched before the page is hydrated
   // (or before the iframe is mounted), in which case it's silently ignored.
-  const sandboxIframe = page.locator(`iframe[title="${SELECTED_EXAMPLE}"]`);
   await expect(async () => {
     await exampleSelect.selectOption(SELECTED_EXAMPLE);
-    await expect(sandboxIframe).toBeVisible({ timeout: 2_000 });
+    await expect(exampleSelect).toHaveValue(SELECTED_EXAMPLE);
+    await expect(sandboxIframe.first()).toBeVisible({ timeout: 2_000 });
   }).toPass({ timeout: 30_000 });
 
-  // After selection the ExamplesSandbox component updates iframe.title to the selected
-  // example dir via postExampleDir (either on onChange or on the iframe's onLoad event).
-  // Waiting for this title confirms the iframe is visible and the selection was delivered.
-  if (process.env.AGAINST_PROD === '1') {
-    // Only verify the CodeSandbox content when running against prod, since the external
-    // service can't reliably load within the timeout in a local/CI environment.
-    const innerIframe = page
-      .frameLocator(`iframe[title="${SELECTED_EXAMPLE}"]`)
-      .frameLocator('iframe');
-    const title = innerIframe.getByText('@examples/openapi-stackexchange');
-    const outageIndicators = [
-      innerIframe.getByText('Unable to start the microVM').first(),
-      innerIframe.getByText('Service Disruption in Progress').first(),
-    ];
-    const readyPromise = title
-      .waitFor({ state: 'visible', timeout })
-      .then(() => 'ready' as const)
-      .catch(() => 'ready-timeout' as const);
-    const outagePromises = outageIndicators.map(outageIndicator =>
-      outageIndicator
-        .waitFor({ state: 'visible', timeout })
-        .then(() => 'outage' as const)
-        .catch(() => 'outage-timeout' as const),
-    );
-    const result = await Promise.race([
-      readyPromise,
-      ...outagePromises,
-      upstreamBlockPromise,
-      xFrameOptionsPromise,
-    ]);
-
-    if (result === 'ready') {
-      return;
-    }
-    if (result === 'outage') {
-      test.skip(true, 'CodeSandbox is temporarily unavailable');
-      return;
-    }
-    if (result === 'blocked') {
-      test.skip(true, 'CodeSandbox blocked this embedded GitHub sandbox upstream');
-      return;
-    }
-    if (result === 'ready-timeout' || result === 'outage-timeout' || result === 'blocked-timeout') {
-      throw new Error(
-        'Neither expected CodeSandbox content nor known outage banners appeared within 120 seconds',
-      );
-    }
+  if (againstProd) {
+    // Assert website-router wiring: select → postMessage(set-dir) → nested embed src update.
+    // Do not wait for CodeSandbox microVM UI text; that third-party content is too flaky for CI
+    // (empty nested iframe / cold starts / 403) and is not what this regression test owns.
+    const embedIframe = sandboxIframe.first().contentFrame().locator('iframe').first();
+    await expect(async () => {
+      await exampleSelect.selectOption(SELECTED_EXAMPLE);
+      await expect(embedIframe).toHaveAttribute('src', EMBED_SRC_RE, { timeout: 5_000 });
+    }).toPass({ timeout: 30_000 });
   }
 });
