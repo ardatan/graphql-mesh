@@ -6567,7 +6567,7 @@ __metadata:
     react-scripts: "npm:5.0.1"
     rxjs: "npm:7.8.2"
     typescript: "npm:^6.0.3"
-    web-vitals: "npm:5.3.0"
+    web-vitals: "npm:6.2.3"
   languageName: unknown
   linkType: soft
 
@@ -44117,10 +44117,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-vitals@npm:5.3.0":
-  version: 5.3.0
-  resolution: "web-vitals@npm:5.3.0"
-  checksum: 10c0/a073c024d791bfac7a92f82607999b45be978ef3070f642f3cdd94c50d3e1651cf62b2475039248256b2d84651e16fa9bdcaa4b03f31af8bfeefb05832298b97
+"web-vitals@npm:6.2.3":
+  version: 6.2.3
+  resolution: "web-vitals@npm:6.2.3"
+  checksum: 10c0/d7db74ab8503f069db0f697b1b1318670062616a1b46464abde98dc599ffbf71c0080f39bfe739ed122da12f6980fe882d471e86a78fedad61a4bfa1abffa32c
   languageName: node
   linkType: hard
 
