@@ -57,7 +57,7 @@
     "@graphql-mesh/store": "^0.107.3",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/utils": "^13.2.1",
+    "@graphql-tools/utils": "^13.2.2",
     "@graphql-yoga/render-graphiql": "^6.0.1",
     "@whatwg-node/promise-helpers": "^2.0.1",
     "ajv": "^8.20.0",

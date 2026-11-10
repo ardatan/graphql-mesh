@@ -41,7 +41,7 @@
     "@graphql-mesh/transport-common": "^1.1.1",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-tools/delegate": "^12.3.2",
-    "@graphql-tools/utils": "^13.2.1",
+    "@graphql-tools/utils": "^13.2.2",
     "@neo4j/graphql": "^7.6.7",
     "@whatwg-node/disposablestack": "^0.1.0",
     "@whatwg-node/promise-helpers": "^2.0.1",

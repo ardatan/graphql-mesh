@@ -42,7 +42,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/utils": "^13.2.1",
+    "@graphql-tools/utils": "^13.2.2",
     "@graphql-yoga/plugin-response-cache": "^4.0.1",
     "@whatwg-node/promise-helpers": "^2.0.1",
     "cache-control-parser": "^2.2.0",

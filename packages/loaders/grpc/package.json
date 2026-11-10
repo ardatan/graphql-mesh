@@ -41,7 +41,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/transport-common": "^1.1.1",
     "@graphql-tools/load-files": "^8.0.8",
-    "@graphql-tools/utils": "^13.2.1",
+    "@graphql-tools/utils": "^13.2.2",
     "@grpc/grpc-js": "^1.14.5",
     "@whatwg-node/disposablestack": "^0.1.0",
     "graphql-compose": "^9.3.0",
