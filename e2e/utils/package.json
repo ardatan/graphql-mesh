@@ -8,7 +8,7 @@
     "@types/dockerode": "^4.0.1",
     "@whatwg-node/disposablestack": "^0.1.0",
     "@whatwg-node/promise-helpers": "^2.0.1",
-    "dockerode": "^4.0.10",
+    "dockerode": "^5.0.1",
     "glob": "^14.0.3",
     "graphql": "^16.14.0",
     "tsx": "^4.23.15"
