@@ -8424,7 +8424,7 @@ __metadata:
   dependencies:
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
     "@graphql-mesh/types": "npm:^0.107.3"
-    "@upstash/redis": "npm:^1.38.2"
+    "@upstash/redis": "npm:^1.41.0"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
     graphql: "npm:16.14.0"
     tslib: "npm:^2.4.0"
@@ -21418,12 +21418,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@upstash/redis@npm:^1.38.2":
-  version: 1.38.2
-  resolution: "@upstash/redis@npm:1.38.2"
+"@upstash/redis@npm:^1.41.0":
+  version: 1.41.0
+  resolution: "@upstash/redis@npm:1.41.0"
   dependencies:
     uncrypto: "npm:^0.1.3"
-  checksum: 10c0/694506598c4e991e6d6782d4fce1adc031ae738b0dee92f069d455c7e8200b0565191272cfec55312b84f6b032186f6cd55dcd9cb86b7b4605cba8cec1c2c038
+  checksum: 10c0/607c86cdb9285059cf278623491da27fb34d509bddb808b5202e0249d119d62e7a3fffedc5c50b9a3d0239d6385060602b1395ab8c9caa2a78829d04ce5d67f4
   languageName: node
   linkType: hard
 
