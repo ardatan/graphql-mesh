@@ -37,7 +37,7 @@
   "dependencies": {
     "@envelop/core": "^6.0.0",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/utils": "^13.2.1",
+    "@graphql-tools/utils": "^13.2.2",
     "graphql-jit": "^0.8.10",
     "tslib": "^2.4.0"
   },

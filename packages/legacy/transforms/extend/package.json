@@ -42,7 +42,7 @@
     "@graphql-tools/graphql-file-loader": "^9.1.1",
     "@graphql-tools/load": "^9.1.2",
     "@graphql-tools/schema": "^11.0.8",
-    "@graphql-tools/utils": "^13.2.1",
+    "@graphql-tools/utils": "^13.2.2",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

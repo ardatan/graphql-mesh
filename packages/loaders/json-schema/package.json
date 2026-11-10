@@ -44,7 +44,7 @@
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/delegate": "^12.3.2",
-    "@graphql-tools/utils": "^13.2.1",
+    "@graphql-tools/utils": "^13.2.2",
     "@json-schema-tools/meta-schema": "^1.7.5",
     "@whatwg-node/fetch": "^0.12.1",
     "ajv": "^8.20.0",

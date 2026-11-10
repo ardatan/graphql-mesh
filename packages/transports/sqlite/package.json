@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@graphql-mesh/transport-common": "^1.1.1",
-    "@graphql-tools/utils": "^13.2.1",
+    "@graphql-tools/utils": "^13.2.2",
     "@omnigraph/sqlite": "^0.11.3",
     "@whatwg-node/promise-helpers": "^2.0.1",
     "tslib": "^2.4.0"
