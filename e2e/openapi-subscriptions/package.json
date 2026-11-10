@@ -6,6 +6,6 @@
     "fets": "^0.8.8",
     "graphql": "16.14.0",
     "graphql-sse": "^2.6.3",
-    "url-join": "^5.0.0"
+    "url-join": "^6.0.0"
   }
 }

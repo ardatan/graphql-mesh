@@ -58,7 +58,7 @@
     "qs": "^6.16.1",
     "to-json-schema": "^0.2.5",
     "tslib": "^2.4.0",
-    "url-join": "4.0.1"
+    "url-join": "6.0.0"
   },
   "devDependencies": {
     "@types/qs": "6.15.1",

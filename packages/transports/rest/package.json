@@ -49,7 +49,7 @@
     "graphql-scalars": "^2.0.1",
     "qs": "^6.16.1",
     "tslib": "^2.4.0",
-    "url-join": "4.0.1"
+    "url-join": "6.0.0"
   },
   "devDependencies": {
     "graphql": "16.14.0"
