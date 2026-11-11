@@ -21,14 +21,14 @@ type Query {
   getUsers(
     """Limit of the number of users to return."""
     limit: Int!
-  ): [user] @connect(source: "example_api", http: {GET: "/users", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n}"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  ): [user] @connect(source: "example_api", http: {GET: "/users", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n}"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
   """Returns a user from the system."""
   getUserByUsername(
     """Identifier of a user."""
     username: String!
     """any user input"""
     input: String
-  ): user @connect(source: "example_api", http: {GET: "/users/{$args.username}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  input: $args.input\\n}"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  ): user @connect(source: "example_api", http: {GET: "/users/{$args.username}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  input: $args.input\\n}"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
   """Returns a car to test nesting of sub operations"""
   getUserCar(
     """Identifier of a user."""
@@ -38,7 +38,7 @@ type Query {
   getUserFriends(
     """Identifier of a user."""
     username: String!
-  ): [user] @connect(source: "example_api", http: {GET: "/users/{$args.username}/friends", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  ): [user] @connect(source: "example_api", http: {GET: "/users/{$args.username}/friends", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
   """Returns all company assets"""
   getAllAssets(companyId: String!): [query_getAllAssets_items] @connect(source: "example_api", http: {GET: "/assets/{$args.companyId}", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """Returns information about all employee cars"""
@@ -114,7 +114,7 @@ type user {
   """Allows to fetch the user's employer company."""
   employerCompany: company @connect(source: "example_api", http: {GET: "/companies/{$this.employerId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nlegalForm\\nceoUsername\\noffices {\\n  street\\n  city\\n}")
   """Allows to fetch the user's friends."""
-  friends: [user] @connect(source: "example_api", http: {GET: "/users/{root.$request.path.username}/friends", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  friends: [user] @connect(source: "example_api", http: {GET: "/users/{root.$request.path.username}/friends", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
 }
 
 """The legal address of a user"""
@@ -157,7 +157,7 @@ type company {
   """The offices of a company"""
   offices: [address]
   """Allows to fetch the company's CEO user."""
-  ceoUser: user @connect(source: "example_api", http: {GET: "/users/{$this.ceoUsername}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  ceoUser: user @connect(source: "example_api", http: {GET: "/users/{$this.ceoUsername}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
 }
 
 """
@@ -246,7 +246,7 @@ type office {
   """The identifier of the company a user works for"""
   employerId: String
   """Allows to fetch the user who invented a product."""
-  owner: user @connect(source: "example_api", http: {GET: "/users/{$this.employeeId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  owner: user @connect(source: "example_api", http: {GET: "/users/{$this.employeeId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
   """Allows to fetch the user's employer company."""
   company: company @connect(source: "example_api", http: {GET: "/companies/{$this.employerId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nlegalForm\\nceoUsername\\noffices {\\n  street\\n  city\\n}")
 }
@@ -296,7 +296,7 @@ type patent_with_id {
   inventor_id: String @resolveRootField(subgraph: "example_api", field: "inventor-id")
   patent_name: JSON! @resolveRootField(subgraph: "example_api", field: "patent-name")
   """Allows to fetch the user who invented a product."""
-  inventor: user @connect(source: "example_api", http: {GET: "/users/{$this.inventorId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  inventor: user @connect(source: "example_api", http: {GET: "/users/{$this.inventorId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
 }
 
 """A project"""
@@ -310,9 +310,9 @@ type project_with_id {
   """The patent associated with a project if applicable"""
   patentId: String
   """Allows to fetch the user leading a project."""
-  ProjectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.leadId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  ProjectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.leadId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
   """Allows to fetch the user leading a project."""
-  projectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.leadId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  projectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.leadId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
   """Allows to fetch a patent."""
   patent: patent_with_id @connect(source: "example_api", http: {GET: "/patents/{$this.patentId}", headers: [{name: "accept", value: "application/json"}]}, selection: "patent_id: \\"patent-id\\"\\ninventor_id: \\"inventor-id\\"\\npatent_name: \\"patent-name\\"")
 }
@@ -351,7 +351,7 @@ type query_mystery_oneOf_1 {
 
 type Mutation {
   """Create a new user in the system."""
-  postUser(input: user_Input): user @connect(source: "example_api", http: {POST: "/users", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  postUser(input: user_Input): user @connect(source: "example_api", http: {POST: "/users", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
   """
   Create a new paper in the system. Endpoint to test non-application/json request and response bodies.
   """

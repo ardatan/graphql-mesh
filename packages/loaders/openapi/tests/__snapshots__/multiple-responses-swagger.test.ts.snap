@@ -18,7 +18,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Optional extended description in Markdown."""
-  foo_by_id: foo_by_id_response @connect(source: "test", http: {GET: "/{id}", headers: [{name: "Accept", value: "application/json"}]}, selection: "$")
+  foo_by_id: foo_by_id_response @connect(source: "test", http: {GET: "/{id}", headers: [{name: "Accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"Foo\\"], [500, \\"Error\\"], [@, \\"Foo\\"])\\nid\\nmessage\\nstack", isSuccess: "$status->match([200, true], [500, true], [@, false])")
 }
 
 union foo_by_id_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "Foo") @statusCodeTypeName(subgraph: "test", statusCode: "500", typeName: "Error") = Foo | Error
@@ -34,7 +34,7 @@ type Error {
 
 type Mutation {
   """Optional extended description in Markdown."""
-  post: post_response @connect(source: "test", http: {POST: "/", headers: [{name: "Accept", value: "application/json"}]}, selection: "$")
+  post: post_response @connect(source: "test", http: {POST: "/", headers: [{name: "Accept", value: "application/json"}]}, selection: "__typename: $status->match([204, \\"Void_container\\"], [500, \\"Error\\"], [@, \\"Void_container\\"])\\nVoid\\nmessage\\nstack", isSuccess: "$status->match([204, true], [500, true], [@, false])")
 }
 
 union post_response @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "test", statusCode: "500", typeName: "Error") = Void_container | Error

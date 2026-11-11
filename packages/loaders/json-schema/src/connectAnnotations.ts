@@ -13,6 +13,7 @@ import {
   isUnionType,
   type GraphQLNamedOutputType,
   type GraphQLOutputType,
+  type GraphQLUnionType,
 } from 'graphql';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import type { JSONSchemaHTTPJSONOperationConfig, JSONSchemaOperationConfig } from './types.js';
@@ -232,15 +233,99 @@ function unwrapType(type: GraphQLOutputType): GraphQLNamedOutputType {
 }
 
 /**
+ * Read `@statusCodeTypeName` mappings from a union (AST or extensions).
+ */
+export function getStatusCodeTypeNameMappings(
+  unionType: GraphQLUnionType,
+): Array<{ statusCode: string; typeName: string }> {
+  const mappings: Array<{ statusCode: string; typeName: string }> = [];
+  const fromExt = ((unionType.extensions as any)?.directives?.statusCodeTypeName || []) as Array<{
+    statusCode?: string | number | Array<string | number>;
+    typeName?: string;
+  }>;
+  for (const entry of fromExt) {
+    if (entry?.typeName == null || entry.statusCode == null) continue;
+    const codes = Array.isArray(entry.statusCode) ? entry.statusCode : [entry.statusCode];
+    for (const code of codes) {
+      mappings.push({ statusCode: String(code), typeName: entry.typeName });
+    }
+  }
+  for (const directive of unionType.astNode?.directives || []) {
+    if (directive.name.value !== 'statusCodeTypeName') continue;
+    let statusCode: string | undefined;
+    let typeName: string | undefined;
+    for (const arg of directive.arguments || []) {
+      if (arg.name.value === 'statusCode' && arg.value.kind === 'StringValue') {
+        statusCode = arg.value.value;
+      } else if (arg.name.value === 'statusCode' && arg.value.kind === 'IntValue') {
+        statusCode = arg.value.value;
+      } else if (arg.name.value === 'typeName' && arg.value.kind === 'StringValue') {
+        typeName = arg.value.value;
+      }
+    }
+    if (statusCode != null && typeName != null) {
+      mappings.push({ statusCode, typeName });
+    }
+  }
+  return mappings;
+}
+
+/**
+ * Apollo Connectors status-union helpers: `isSuccess` + `__typename` via `$status->match`.
+ *
+ * `__typename` arms only use concrete union members. Mappings that point at an
+ * interface / non-member (e.g. OpenAPI discriminator parent) are omitted so
+ * Hive `resolveType` can finish via `$statusCode` + discriminator.
+ */
+export function buildStatusUnionConnectExtras(unionType: GraphQLUnionType): {
+  isSuccess: string;
+  typenameSelection: string | null;
+} | null {
+  const mappings = getStatusCodeTypeNameMappings(unionType);
+  if (!mappings.length) {
+    return null;
+  }
+  const toMatchKey = (code: string) => {
+    const asNum = Number(code);
+    return Number.isFinite(asNum) && String(asNum) === code ? String(asNum) : JSON.stringify(code);
+  };
+  const memberNames = new Set(unionType.getTypes().map(t => t.name));
+  const concreteMappings = mappings.filter(m => memberNames.has(m.typeName));
+  const successArms = mappings.map(m => `[${toMatchKey(m.statusCode)}, true]`).join(', ');
+  let typenameSelection: string | null = null;
+  if (concreteMappings.length === mappings.length) {
+    const typenameArms = concreteMappings
+      .map(m => `[${toMatchKey(m.statusCode)}, ${JSON.stringify(m.typeName)}]`)
+      .join(', ');
+    const defaultType = concreteMappings[0]?.typeName;
+    typenameSelection = `__typename: $status->match(${typenameArms}, [@, ${JSON.stringify(defaultType)}])`;
+  } else if (concreteMappings.length) {
+    const typenameArms = concreteMappings
+      .map(m => `[${toMatchKey(m.statusCode)}, ${JSON.stringify(m.typeName)}]`)
+      .join(', ');
+    // Null default leaves `__typename` unset for abstract-mapped statuses.
+    typenameSelection = `__typename: $status->match(${typenameArms}, [@, null])`;
+  }
+  return {
+    isSuccess: `$status->match(${successArms}, [@, false])`,
+    typenameSelection,
+  };
+}
+
+/**
  * Build a Connectors selection that maps JSON fields with matching GraphQL names.
  * Skips fields that already have their own `@connect` (e.g. links).
  */
+/** Soft cap so huge OpenAPI schemas (K8s/Stripe) don't emit multi‑MB `@connect` selections. */
+const MAX_CONNECT_SELECTION_CHARS = 12_000;
+
 export function buildSelectionForType(
   type: GraphQLOutputType,
   options: { skipFields?: Set<string>; depth?: number } = {},
 ): string {
   const { skipFields = new Set(), depth = 0 } = options;
-  if (depth > 8) {
+  // Depth 2: root fields + one nested object level. Deeper nests pass through as bare names.
+  if (depth > 2) {
     return '';
   }
   const named = unwrapType(type);
@@ -252,10 +337,34 @@ export function buildSelectionForType(
     if (members.length === 1) {
       return buildSelectionForType(members[0], { skipFields, depth: depth + 1 });
     }
-    // Pass through the raw payload (`$` at field level). Hive `@discriminator` /
-    // `resolveType` and field resolvers map concrete members; emitting `... on`
-    // fragments here is not executable by our selection subset yet.
-    return '';
+    // Status-code unions: emit `__typename: $status->match(...)` + flattened member fields.
+    // Only walk members when status mappings exist — otherwise getFields() during emit can
+    // finalize graphql-compose object types before pending link fields are attached.
+    const statusExtras = buildStatusUnionConnectExtras(named);
+    if (!statusExtras) {
+      // Non-status unions: pass through raw payload for Hive discriminator / resolveType.
+      return '';
+    }
+    // Merge by top-level field block (brace-aware). Line-by-line dedupe would
+    // drop subsequent `}` closers and corrupt nested selections.
+    const merged = new Map<string, string>();
+    for (const member of members) {
+      const part = buildSelectionForType(member, { skipFields, depth: depth + 1 });
+      if (!part) continue;
+      for (const [key, block] of extractTopLevelSelectionFields(part)) {
+        if (!merged.has(key)) {
+          merged.set(key, block);
+        }
+      }
+    }
+    const mergedSelection = [statusExtras.typenameSelection, ...merged.values()]
+      .filter(Boolean)
+      .join('\n');
+    if (mergedSelection.length > MAX_CONNECT_SELECTION_CHARS) {
+      // Fall back to `$` (caller); runtime still resolves via `@statusCodeTypeName`.
+      return '';
+    }
+    return mergedSelection;
   }
   if (!isObjectType(named)) {
     return '';
@@ -327,7 +436,11 @@ export function buildSelectionForType(
       lines.push(aliasPrefix);
     }
   }
-  return lines.join('\n');
+  const joined = lines.join('\n');
+  if (joined.length > MAX_CONNECT_SELECTION_CHARS) {
+    return '';
+  }
+  return joined;
 }
 
 function indent(text: string, spaces: number): string {
@@ -336,6 +449,36 @@ function indent(text: string, spaces: number): string {
     .split('\n')
     .map(line => (line ? pad + line : line))
     .join('\n');
+}
+
+/**
+ * Split a Connectors selection into top-level field blocks, preserving nested `{ … }`.
+ */
+function extractTopLevelSelectionFields(selection: string): Array<[string, string]> {
+  const fields: Array<[string, string]> = [];
+  const lines = selection.split('\n');
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed || trimmed === '{' || trimmed === '}') {
+      i++;
+      continue;
+    }
+    const key = trimmed.split(/[\s:{]/)[0];
+    let block = line;
+    let depth = (line.match(/{/g) || []).length - (line.match(/}/g) || []).length;
+    i++;
+    while (depth > 0 && i < lines.length) {
+      block += '\n' + lines[i];
+      depth += (lines[i].match(/{/g) || []).length - (lines[i].match(/}/g) || []).length;
+      i++;
+    }
+    if (key) {
+      fields.push([key, block]);
+    }
+  }
+  return fields;
 }
 
 export function buildConnectHttpArgs(opts: {

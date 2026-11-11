@@ -5,16 +5,28 @@ export class TransformValidationError extends Error {
   }
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /**
  * Rewrite Apollo Connectors `@connect` `$args.<name>` references after GraphQL
  * argument renames. Mesh stitching used `@source(name:)` for this; Connectors
  * bind args by the GraphQL argument name in path/body/query/headers expressions.
+ *
+ * When `fieldRenameMap` is set, also rewrite selection aliases of the form
+ * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
+ * keep Connectors selection in sync with GraphQL field names.
  */
 export function rewriteConnectArgReferences(
   fieldDirectives: Record<string, any[]> | undefined,
   argRenameMap: Map<string, string>,
+  fieldRenameMap?: Map<string, string>,
 ): Record<string, any[]> | undefined {
-  if (!fieldDirectives?.connect?.length || argRenameMap.size === 0) {
+  if (
+    !fieldDirectives?.connect?.length ||
+    (argRenameMap.size === 0 && (!fieldRenameMap || fieldRenameMap.size === 0))
+  ) {
     return fieldDirectives;
   }
   const rewriteExpr = (value: unknown): unknown => {
@@ -27,6 +39,15 @@ export function rewriteConnectArgReferences(
       out = out
         .replaceAll(`{$args.${from}}`, `{$args.${to}}`)
         .replaceAll(`$args.${from}`, `$args.${to}`);
+    }
+    if (fieldRenameMap?.size) {
+      for (const [from, to] of fieldRenameMap) {
+        if (from === to) continue;
+        // `from {` / `from:` / bare `from` at line starts in selection
+        out = out
+          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
+          .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`);
+      }
     }
     return out;
   };

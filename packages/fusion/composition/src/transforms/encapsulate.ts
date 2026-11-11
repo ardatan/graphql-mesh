@@ -12,7 +12,11 @@ import {
   isUnionType,
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
-import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
+import {
+  isApolloConnectorsSubgraph,
+  type SubgraphConfig,
+  type SubgraphTransform,
+} from '../compose.js';
 import { importFederationDirectives } from '../federation-utils.js';
 import { addInaccessibleDirective } from './filter-schema.js';
 
@@ -39,6 +43,7 @@ export interface EncapsulateTransformOpts {
 export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}): SubgraphTransform {
   return function encapsulateTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
     const groupName = opts.name || subgraphConfig.name;
+    const isConnectors = isApolloConnectorsSubgraph(schema);
     const applyToMap: Record<OperationTypeNode, boolean> = {
       ...DEFAULT_APPLY_TO,
       ...(opts.applyTo || {}),
@@ -67,6 +72,21 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             wrappedFieldMap[fieldName] = originalFieldConfig;
             continue;
           }
+          // Apollo Connectors: move `@connect` onto the namespaced type field.
+          // No `@resolveTo` / inaccessible root copies — namespace root is a virtual connector.
+          if (isConnectors && originalDirectives.connect?.length) {
+            wrappedFieldMap[fieldName] = {
+              ...originalFieldConfig,
+              extensions: {
+                ...originalFieldConfig.extensions,
+                directives: {
+                  ...originalDirectives,
+                },
+              },
+              astNode: undefined,
+            };
+            continue;
+          }
           // Generate sourceArgs to forward all arguments
           const sourceArgs: Record<string, string> = {};
           if (originalFieldConfig.args) {
@@ -75,21 +95,12 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             }
           }
           const wrappedFieldName = `_encapsulated_${groupName}_${fieldName}`;
-          // For Apollo `@connect`, keep the directive only on the inaccessible root
-          // copy (subgraph/transport execution). The namespaced field uses `@resolveTo`
-          // so the gateway does not try to run `@connect` outside transport-rest.
-          // Duplicating `@connect` on both fields caused federation to drop it from the
-          // inaccessible copy (unlike Mesh `@httpOperation`).
-          const wrappedDirectives = { ...originalDirectives };
-          if (wrappedDirectives.connect?.length) {
-            delete wrappedDirectives.connect;
-          }
           wrappedFieldMap[fieldName] = {
             ...originalFieldConfig,
             extensions: {
               ...originalFieldConfig.extensions,
               directives: {
-                ...wrappedDirectives,
+                ...originalDirectives,
                 resolveTo: [
                   {
                     sourceName: subgraphConfig.name,
@@ -120,23 +131,37 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
           name: wrappedTypeName,
           fields: wrappedFieldMap,
         });
+        // Connectors: namespace root field is a virtual connector (`selection: "$({})"`).
+        // Legacy Mesh path keeps `@resolveTo` → `__typename`.
+        const groupFieldExtensions = isConnectors
+          ? {
+              directives: {
+                connect: [
+                  {
+                    source: subgraphConfig.name,
+                    selection: '$({})',
+                  },
+                ],
+              },
+            }
+          : {
+              directives: {
+                resolveTo: [
+                  {
+                    sourceName: subgraphConfig.name,
+                    sourceTypeName: originalType.name,
+                    sourceFieldName: '__typename',
+                  },
+                ],
+              },
+            };
         newRootTypes[operationType] = new GraphQLObjectType({
           ...originalTypeConfig,
           fields: {
             ...originalFieldMapWithHidden,
             [groupName]: {
               type: new GraphQLNonNull(wrappedType),
-              extensions: {
-                directives: {
-                  resolveTo: [
-                    {
-                      sourceName: subgraphConfig.name,
-                      sourceTypeName: originalType.name,
-                      sourceFieldName: '__typename',
-                    },
-                  ],
-                },
-              },
+              extensions: groupFieldExtensions,
             },
           },
         });

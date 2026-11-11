@@ -141,6 +141,7 @@ function lookupVar(
     env: Record<string, string | undefined>;
     context: any;
     config?: Record<string, any>;
+    batch?: Record<string, any>;
   },
 ): any {
   const parts = path.split('.');
@@ -152,6 +153,10 @@ function lookupVar(
       break;
     case '$this':
       cur = vars.thisValue;
+      break;
+    case '$batch':
+      // Entity batch keys (Apollo `$batch.id`) — prefer explicit batch, else parent/root.
+      cur = vars.batch ?? vars.thisValue;
       break;
     case '$env':
       cur = vars.env;
@@ -426,14 +431,9 @@ export function applySelection(
   if (trimmed === '$' || trimmed === '$root') {
     return root;
   }
-  // Path / literal expressions start with `$`. Plain field names are a subselection
-  // (e.g. selection: "id" means `{ id }` over the response object or list).
-  if (
-    trimmed.startsWith('$') &&
-    !trimmed.includes('\n') &&
-    !trimmed.includes('{') &&
-    !trimmed.includes(' ')
-  ) {
+  // Connectors literals / single path expressions (not multi-field selections).
+  // `$status->match(...)` may contain spaces inside the argument list.
+  if (trimmed.startsWith('$') && !trimmed.includes('\n') && !/^[A-Za-z_][\w]*\s*:/.test(trimmed)) {
     return evalPath(trimmed, root, extras);
   }
   return evalSubSelection(trimmed, root, extras);
@@ -633,6 +633,30 @@ function readSelectionIdent(s: string, start: number): { value: string; end: num
     if (s[i] === quote) i++;
     return { value, end: i };
   }
+  // `$status->match([200, "User"], …)` and similar path/method expressions.
+  if (s[i] === '$') {
+    i++;
+    // Don't consume the `-` of `->` into the path segment.
+    while (i < s.length && /[A-Za-z0-9_.]/.test(s[i])) i++;
+    while (s.slice(i, i + 2) === '->') {
+      i += 2;
+      while (i < s.length && /[A-Za-z0-9_]/.test(s[i])) i++;
+      if (s[i] === '(') {
+        let depth = 0;
+        for (; i < s.length; i++) {
+          if (s[i] === '(') depth++;
+          else if (s[i] === ')') {
+            depth--;
+            if (depth === 0) {
+              i++;
+              break;
+            }
+          }
+        }
+      }
+    }
+    return { value: s.slice(start, i), end: i };
+  }
   while (i < s.length && /[A-Za-z0-9_$.-]/.test(s[i])) i++;
   return { value: s.slice(start, i), end: i };
 }
@@ -644,8 +668,14 @@ function tokenizeSelection(selection: string): SelectionToken[] {
   while (i < s.length) {
     while (i < s.length && /\s/.test(s[i])) i++;
     if (i >= s.length) break;
+    const start = i;
     // alias or field
     let read = readSelectionIdent(s, i);
+    if (!read.value) {
+      // Avoid infinite loops on unexpected characters
+      i++;
+      continue;
+    }
     const name = read.value;
     i = read.end;
     while (i < s.length && /\s/.test(s[i])) i++;
@@ -676,6 +706,10 @@ function tokenizeSelection(selection: string): SelectionToken[] {
         }
       }
       if (!source) source = alias;
+    }
+    if (i === start) {
+      i++;
+      continue;
     }
     tokens.push({ alias, source: source || alias, sub });
   }
@@ -789,14 +823,24 @@ export function addConnectFieldResolver(
   const timeout = opts.timeout ?? fieldMeshRestOptions.timeout ?? schemaMeshRestOptions.timeout;
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
-    // Virtual connector: no http
+    // Virtual connector: no http — selection may only use $args / $this / literals.
     if (!picked) {
-      const value = applySelection(connectArgs.selection || '$({})', {}, {});
-      // Evaluate literal virtual selections against args/this
-      if (connectArgs.selection?.includes('$args') || connectArgs.selection?.includes('$this')) {
-        return applySelection(connectArgs.selection, { ...root, ...args }, {});
+      const selection = connectArgs.selection || '$({})';
+      if (
+        /\$root\b/.test(selection) ||
+        /\$status\b/.test(selection) ||
+        /\$response\b/.test(selection) ||
+        /\$batch\b/.test(selection)
+      ) {
+        throw new GraphQLError(
+          'Virtual connector selection cannot use $root, $status, $response, or $batch',
+          { extensions: { code: 'CONNECTOR_VALIDATE' } },
+        );
       }
-      return value;
+      if (selection.includes('$args') || selection.includes('$this')) {
+        return applySelection(selection, { ...(root || {}), ...(args || {}) }, {});
+      }
+      return applySelection(selection, {}, {});
     }
 
     // Serialize scalars (DateTime → ISO, etc.) before path/header/query interpolation —
@@ -1283,6 +1327,23 @@ export function processConnectDirectives(
   const typeMap = schema.getTypeMap();
   for (const typeName in typeMap) {
     const type = typeMap[typeName];
+    // Type-level `@connect` (Apollo entity / `$batch` readers) → resolveReference.
+    const typeDirectives = getDirectiveExtensions(type)?.connect as ConnectArgs[] | undefined;
+    if (typeDirectives?.length) {
+      const connectArgs = typeDirectives[0];
+      const syntheticField = {
+        name: '__resolveReference',
+        type: type as any,
+        args: [],
+        extensions: {},
+      } as unknown as GraphQLField<any, any>;
+      addConnectFieldResolver(schema, syntheticField, connectArgs, opts);
+      const resolve = syntheticField.resolve;
+      if (resolve) {
+        (type as any).resolveReference = (reference: any, context: any, info: any) =>
+          resolve(reference, {}, context, info);
+      }
+    }
     if (!('getFields' in type)) continue;
     const fields = type.getFields();
     for (const fieldName in fields) {

@@ -19,7 +19,7 @@ type Query {
     """The name of the collection to search for the document under"""
     collectionName: String!
     searchParameters: SearchParameters_Input!
-  ): searchCollection_response @connect(source: "example_api", http: {GET: "/collections/{$args.collectionName}/documents/search", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  searchParameters: $args.searchParameters\\n}"}, selection: "$")
+  ): searchCollection_response @connect(source: "example_api", http: {GET: "/collections/{$args.collectionName}/documents/search", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  searchParameters: $args.searchParameters\\n}"}, selection: "__typename: $status->match([200, \\"SearchResult\\"], [400, \\"ApiResponse\\"], [404, \\"ApiResponse\\"], [@, \\"SearchResult\\"])\\nfacet_counts {\\n  counts\\n  field_name\\n  stats\\n}\\nfound\\nsearch_time_ms\\nout_of\\nsearch_cutoff\\npage\\ngrouped_hits {\\n  group_key\\n  hits\\n}\\nhits {\\n  highlights\\n  document\\n  text_match\\n  geo_distance_meters\\n}\\nrequest_params {\\n  collection_name\\n  q\\n  per_page\\n}\\nmessage", isSuccess: "$status->match([200, true], [400, true], [404, true], [@, false])")
 }
 
 union searchCollection_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "SearchResult") @statusCodeTypeName(subgraph: "example_api", statusCode: "400", typeName: "ApiResponse") @statusCodeTypeName(subgraph: "example_api", statusCode: "404", typeName: "ApiResponse") = SearchResult | ApiResponse

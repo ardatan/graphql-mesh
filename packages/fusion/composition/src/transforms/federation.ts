@@ -413,6 +413,13 @@ export function createFederationTransform(config: FederationTransformConfig): Su
             argsExpr,
           });
           mergeDirectiveUsed = true;
+          // Apollo Connectors: mark entity-resolving fields with `entity: true`.
+          if (fieldDirectives.connect?.length) {
+            fieldDirectives.connect = fieldDirectives.connect.map((connectArgs: any) => ({
+              ...connectArgs,
+              entity: true,
+            }));
+          }
         }
         for (const directiveName of federationDirectiveNames) {
           if (fieldDirectives[directiveName]?.length) {

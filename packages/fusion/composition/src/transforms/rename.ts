@@ -250,6 +250,8 @@ export function createRenameTransform(opts: RenameTransformConfig) {
         const fieldExtensions: Record<string, any> = (field.extensions ||= {});
         fieldExtensions.directives = fieldDirectives;
       }
+      const selectionFieldRenameMap =
+        newFieldName !== fieldName ? new Map([[fieldName, newFieldName]]) : undefined;
       if (argRenamers.length && 'args' in field && field.args) {
         const newArgs: GraphQLFieldConfigArgumentMap = {};
         const argRenameMap = new Map<string, string>();
@@ -269,7 +271,11 @@ export function createRenameTransform(opts: RenameTransformConfig) {
           }
           newArgs[newArgName] = field.args[argName];
         }
-        const rewrittenDirectives = rewriteConnectArgReferences(fieldDirectives, argRenameMap);
+        const rewrittenDirectives = rewriteConnectArgReferences(
+          fieldDirectives,
+          argRenameMap,
+          selectionFieldRenameMap,
+        );
         if (rewrittenDirectives !== fieldDirectives) {
           const fieldExtensions: Record<string, any> = { ...(field.extensions || {}) };
           fieldExtensions.directives = rewrittenDirectives;
@@ -290,6 +296,25 @@ export function createRenameTransform(opts: RenameTransformConfig) {
             args: newArgs,
           },
         ];
+      }
+      if (selectionFieldRenameMap && fieldDirectives.connect?.length) {
+        const rewrittenDirectives = rewriteConnectArgReferences(
+          fieldDirectives,
+          new Map(),
+          selectionFieldRenameMap,
+        );
+        if (rewrittenDirectives !== fieldDirectives) {
+          const fieldExtensions: Record<string, any> = { ...(field.extensions || {}) };
+          fieldExtensions.directives = rewrittenDirectives;
+          return [
+            newFieldName,
+            {
+              ...field,
+              extensions: fieldExtensions,
+              astNode: undefined,
+            },
+          ];
+        }
       }
       return [newFieldName, field];
     };

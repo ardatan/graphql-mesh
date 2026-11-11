@@ -25,7 +25,17 @@ export function getTypeResolverForAbstractType({
     : discriminatorMapping;
   return function resolveType(data: any, _ctx: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
-      return data.__typename;
+      const hinted = info.schema.getType(data.__typename);
+      // Connectors/`$status->match` may emit an interface name when OpenAPI maps a
+      // status onto a discriminator parent — finish via that abstract type's resolver.
+      if (isAbstractType(hinted)) {
+        const resolved = hinted.resolveType?.(data, _ctx, info, hinted);
+        if (resolved) {
+          return resolved;
+        }
+      } else {
+        return data.__typename;
+      }
     } else if (discriminatorField != null && data[discriminatorField]) {
       const discriminatorValue = data[discriminatorField];
       return discriminatorMappingObj?.[discriminatorValue] || discriminatorValue;

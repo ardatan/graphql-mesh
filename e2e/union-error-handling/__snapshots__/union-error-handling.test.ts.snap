@@ -87,7 +87,8 @@ type Query @extraSchemaDefinitionDirective(
   getUserUnionNoErrorHandling: getUserUnionNoErrorHandling_response @connect(
     source: "ErrorAPI"
     http: {GET: "/userUnionNoErrorHandling", headers: [{name: "accept", value: "application/json"}]}
-    selection: "$"
+    selection: "__typename: $status->match([200, \\"User\\"], [202, \\"AsyncJob\\"], [@, \\"User\\"])\\nid\\nname\\nemail\\nasynchronous_job_id\\nstatus\\nestimated_completion"
+    isSuccess: "$status->match([200, true], [202, true], [@, false])"
   )
   """
   Get user - direct response type with error handling
@@ -95,7 +96,8 @@ type Query @extraSchemaDefinitionDirective(
   getUserErrorHandling: getUserErrorHandling_response @connect(
     source: "ErrorAPI"
     http: {GET: "/userErrorHandling", headers: [{name: "accept", value: "application/json"}]}
-    selection: "$"
+    selection: "__typename: $status->match([200, \\"User\\"], [400, \\"Error\\"], [@, \\"User\\"])\\nid\\nname\\nemail\\nerror\\ncode"
+    isSuccess: "$status->match([200, true], [400, true], [@, false])"
   )
   """
   Get user - union response type with error handling
@@ -103,7 +105,8 @@ type Query @extraSchemaDefinitionDirective(
   getUserUnionErrorHandling: getUserUnionErrorHandling_response @connect(
     source: "ErrorAPI"
     http: {GET: "/userUnionErrorHandling", headers: [{name: "accept", value: "application/json"}]}
-    selection: "$"
+    selection: "__typename: $status->match([200, \\"User\\"], [202, \\"AsyncJob\\"], [400, \\"Error\\"], [@, \\"User\\"])\\nid\\nname\\nemail\\nasynchronous_job_id\\nstatus\\nestimated_completion\\nerror\\ncode"
+    isSuccess: "$status->match([200, true], [202, true], [400, true], [@, false])"
   )
 }
 

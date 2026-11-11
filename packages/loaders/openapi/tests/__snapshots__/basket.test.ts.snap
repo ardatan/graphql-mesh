@@ -23,7 +23,7 @@ type Query {
     """Authentication Token"""
     x_auth_token: String!
   ): CustomerAttributes @connect(source: "basket", http: {GET: "/customers/{customerId}", headers: [{name: "x-auth-token", value: "{$args.x_auth_token}"}, {name: "accept", value: "application/json"}]}, selection: "attributes {\\n  name\\n  more\\n}")
-  Locations: [LocationModel] @connect(source: "basket", http: {GET: "/Locations", headers: [{name: "accept", value: "application/json,application/custom-thingy.v3+json"}]}, selection: "email\\nparents {\\n  email\\n  parents {\\n    email\\n    parents {\\n      email\\n      parents {\\n        email\\n        parents {\\n          email\\n          parents {\\n            email\\n            parents {\\n              email\\n              parents {\\n                email\\n                parents\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n}")
+  Locations: [LocationModel] @connect(source: "basket", http: {GET: "/Locations", headers: [{name: "accept", value: "application/json,application/custom-thingy.v3+json"}]}, selection: "email\\nparents {\\n  email\\n  parents {\\n    email\\n    parents\\n  }\\n}")
   Cards: [CardModel] @connect(source: "basket", http: {GET: "/Cards", headers: [{name: "accept", value: "application/json,application/custom.v3+json"}]}, selection: "id")
 }
 
@@ -53,7 +53,7 @@ type CardModel {
 }
 
 type Mutation {
-  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: {POST: "/basket", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
+  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: {POST: "/basket", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([200, \\"BasketResponse\\"], [400, \\"ApiError\\"], [@, \\"BasketResponse\\"])\\nproducts\\ncode\\ndescription", isSuccess: "$status->match([200, true], [400, true], [@, false])")
 }
 
 union post_basket_response @statusCodeTypeName(subgraph: "basket", statusCode: "200", typeName: "BasketResponse") @statusCodeTypeName(subgraph: "basket", statusCode: "400", typeName: "ApiError") = BasketResponse | ApiError

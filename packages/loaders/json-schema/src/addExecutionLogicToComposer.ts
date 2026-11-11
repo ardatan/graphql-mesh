@@ -5,6 +5,7 @@ import {
   GraphQLObjectType,
   GraphQLString,
   isInterfaceType,
+  isUnionType,
 } from 'graphql';
 import type {
   InterfaceTypeComposer,
@@ -21,6 +22,7 @@ import {
   buildConnectHttpArgs,
   buildSelectionForType,
   buildSourceDirectiveArgs,
+  buildStatusUnionConnectExtras,
   CONNECT_LINK_URL,
   ConnectDirective,
   inferBodySelection,
@@ -286,6 +288,7 @@ ${operationConfig.description || ''}
           }
         }
       }
+      const returnNamedType = getNamedType(field.type.getType());
       const selection =
         buildSelectionForType(field.type.getType(), { skipFields }) ||
         // Scalar / empty responses still need a non-empty Connectors selection
@@ -304,6 +307,8 @@ ${operationConfig.description || ''}
         argTypeMap: operationConfig.argTypeMap as Record<string, { type?: string }> | undefined,
         bodySelection: inferBodySelection(operationConfig),
       });
+      const statusUnionExtras =
+        isUnionType(returnNamedType) && buildStatusUnionConnectExtras(returnNamedType);
       field.directives.push({
         name: 'connect',
         args: JSON.parse(
@@ -311,6 +316,7 @@ ${operationConfig.description || ''}
             source: subgraphName,
             http,
             selection,
+            ...(statusUnionExtras?.isSuccess ? { isSuccess: statusUnionExtras.isSuccess } : {}),
           }),
         ),
       });

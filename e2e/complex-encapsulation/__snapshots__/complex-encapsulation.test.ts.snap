@@ -117,16 +117,7 @@ type Query @extraSchemaDefinitionDirective(
     sourceTypeName: "Query"
     sourceFieldName: "__typename"
   ) @join__field(graph: SUBGRAPH_A)
-  _encapsulated_SubgraphB_headers(xCustomHeader: String): SubgraphBheaders_200_response @connect(
-    source: "subgraph-b"
-    http: {GET: "/headers", headers: [{name: "accept", value: "application/json"}]}
-    selection: "x_custom_header: \\"x-custom-header\\""
-  ) @join__field(graph: SUBGRAPH_B) @inaccessible
-  SubgraphB: SubgraphBSubgraphBQuery! @resolveTo(
-    sourceName: "subgraph-b"
-    sourceTypeName: "Query"
-    sourceFieldName: "__typename"
-  ) @join__field(graph: SUBGRAPH_B)
+  SubgraphB: SubgraphBSubgraphBQuery! @connect(source: "subgraph-b", selection: "$({})") @join__field(graph: SUBGRAPH_B)
 }
 
 type SubgraphAFoo @source(name: "Foo", subgraph: "subgraph-a") @join__type(graph: SUBGRAPH_A, key: "id") {
@@ -161,17 +152,16 @@ type SubgraphASubgraphAQuery @join__type(graph: SUBGRAPH_A) {
   )
 }
 
-type SubgraphBheaders_200_response @join__type(graph: SUBGRAPH_B) {
-  x_custom_header: String @resolveRootField(subgraph: "subgraph-b", field: "x-custom-header")
+type SubgraphBSubgraphBQuery @join__type(graph: SUBGRAPH_B) {
+  headers(xCustomHeader: String): SubgraphBheaders_200_response @connect(
+    source: "subgraph-b"
+    http: {GET: "/headers", headers: [{name: "accept", value: "application/json"}]}
+    selection: "x_custom_header: \\"x-custom-header\\""
+  )
 }
 
-type SubgraphBSubgraphBQuery @join__type(graph: SUBGRAPH_B) {
-  headers(xCustomHeader: String): SubgraphBheaders_200_response @resolveTo(
-    sourceName: "subgraph-b"
-    sourceTypeName: "Query"
-    sourceFieldName: "_encapsulated_SubgraphB_headers"
-    sourceArgs: {xCustomHeader: "{args.xCustomHeader}"}
-  )
+type SubgraphBheaders_200_response @join__type(graph: SUBGRAPH_B) {
+  x_custom_header: String @resolveRootField(subgraph: "subgraph-b", field: "x-custom-header")
 }
 
 input ConnectHTTP @join__type(graph: SUBGRAPH_B) {
