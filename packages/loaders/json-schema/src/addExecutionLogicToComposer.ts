@@ -42,6 +42,87 @@ import type {
 } from './types.js';
 import { getOperationMetadata, isPubSubOperationConfig } from './utils.js';
 
+/**
+ * Split a Connectors selection / object-literal body at top-level commas or
+ * newlines, respecting quotes and `()`/`{}`/`[]` nesting (e.g. `joinNotNull(",")`).
+ */
+export function splitTopLevelEntries(inner: string): string[] {
+  const entries: string[] = [];
+  let buf = '';
+  let depthParen = 0;
+  let depthBrace = 0;
+  let depthBracket = 0;
+  let inSingle = false;
+  let inDouble = false;
+  let escape = false;
+  for (let i = 0; i < inner.length; i++) {
+    const ch = inner[i];
+    if (escape) {
+      buf += ch;
+      escape = false;
+      continue;
+    }
+    if ((inSingle || inDouble) && ch === '\\') {
+      buf += ch;
+      escape = true;
+      continue;
+    }
+    if (ch === "'" && !inDouble) {
+      inSingle = !inSingle;
+      buf += ch;
+      continue;
+    }
+    if (ch === '"' && !inSingle) {
+      inDouble = !inDouble;
+      buf += ch;
+      continue;
+    }
+    if (!inSingle && !inDouble) {
+      if (ch === '(') depthParen++;
+      else if (ch === ')') depthParen = Math.max(0, depthParen - 1);
+      else if (ch === '{') depthBrace++;
+      else if (ch === '}') depthBrace = Math.max(0, depthBrace - 1);
+      else if (ch === '[') depthBracket++;
+      else if (ch === ']') depthBracket = Math.max(0, depthBracket - 1);
+      else if (
+        (ch === ',' || ch === '\n') &&
+        depthParen === 0 &&
+        depthBrace === 0 &&
+        depthBracket === 0
+      ) {
+        const part = buf.trim();
+        if (part) entries.push(part);
+        buf = '';
+        continue;
+      }
+    }
+    buf += ch;
+  }
+  const last = buf.trim();
+  if (last) entries.push(last);
+  return entries;
+}
+
+/**
+ * Drop selection entries that still reference unmapped `$args.*`, keeping
+ * rewritten / literal entries (including nested commas in method args).
+ */
+export function dropUnmappedArgEntries(selection: string): string | undefined {
+  const trimmed = selection.trim();
+  if (!trimmed.includes('$args')) {
+    return selection;
+  }
+  if (trimmed.startsWith('{')) {
+    const inner = trimmed.slice(1, trimmed.lastIndexOf('}'));
+    const kept = splitTopLevelEntries(inner).filter(part => !part.includes('$args'));
+    if (!kept.length) return undefined;
+    return `{\n  ${kept.join('\n  ')}\n}`;
+  }
+  const keptLines = splitTopLevelEntries(selection).filter(part => !part.includes('$args'));
+  if (!keptLines.length) return undefined;
+  return keptLines.join('\n');
+}
+
 export interface AddExecutionLogicToComposerOptions {
   schemaComposer: SchemaComposer;
   endpoint: string;
@@ -163,80 +244,6 @@ export function addExecutionDirectivesToComposer(
           out = out.replaceAll(`{args.${argName}}`, replacement);
         }
         return out;
-      };
-      const dropUnmappedArgEntries = (selection: string): string | undefined => {
-        // Keep entries that no longer reference `$args`. Drop only entries still
-        // pointing at unmapped `$args.*`. Split at top-level commas/newlines so
-        // `joinNotNull(",")` (and nested braces) stay intact.
-        const trimmed = selection.trim();
-        if (!trimmed.includes('$args')) {
-          return selection;
-        }
-        const splitTopLevelEntries = (inner: string): string[] => {
-          const entries: string[] = [];
-          let buf = '';
-          let depthParen = 0;
-          let depthBrace = 0;
-          let depthBracket = 0;
-          let inSingle = false;
-          let inDouble = false;
-          let escape = false;
-          for (let i = 0; i < inner.length; i++) {
-            const ch = inner[i];
-            if (escape) {
-              buf += ch;
-              escape = false;
-              continue;
-            }
-            if ((inSingle || inDouble) && ch === '\\') {
-              buf += ch;
-              escape = true;
-              continue;
-            }
-            if (ch === "'" && !inDouble) {
-              inSingle = !inSingle;
-              buf += ch;
-              continue;
-            }
-            if (ch === '"' && !inSingle) {
-              inDouble = !inDouble;
-              buf += ch;
-              continue;
-            }
-            if (!inSingle && !inDouble) {
-              if (ch === '(') depthParen++;
-              else if (ch === ')') depthParen = Math.max(0, depthParen - 1);
-              else if (ch === '{') depthBrace++;
-              else if (ch === '}') depthBrace = Math.max(0, depthBrace - 1);
-              else if (ch === '[') depthBracket++;
-              else if (ch === ']') depthBracket = Math.max(0, depthBracket - 1);
-              else if (
-                (ch === ',' || ch === '\n') &&
-                depthParen === 0 &&
-                depthBrace === 0 &&
-                depthBracket === 0
-              ) {
-                const part = buf.trim();
-                if (part) entries.push(part);
-                buf = '';
-                continue;
-              }
-            }
-            buf += ch;
-          }
-          const last = buf.trim();
-          if (last) entries.push(last);
-          return entries;
-        };
-        if (trimmed.startsWith('{')) {
-          const inner = trimmed.slice(1, trimmed.lastIndexOf('}'));
-          const kept = splitTopLevelEntries(inner).filter(part => !part.includes('$args'));
-          if (!kept.length) return undefined;
-          return `{\n  ${kept.join('\n  ')}\n}`;
-        }
-        const keptLines = splitTopLevelEntries(selection).filter(part => !part.includes('$args'));
-        if (!keptLines.length) return undefined;
-        return keptLines.join('\n');
       };
       // Rewrite target `$args.*` in queryParams / body / headers to link expressions.
       if (typeof linkHttp.queryParams === 'string' && Object.keys(linkArgExprs).length) {
