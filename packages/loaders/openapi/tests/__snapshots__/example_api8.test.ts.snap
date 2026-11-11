@@ -9,6 +9,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Return a user."""
   user: user @connect(source: "test", http: {GET: "/user", headers: [{name: "accept", value: "application/json"}]}, selection: "name")

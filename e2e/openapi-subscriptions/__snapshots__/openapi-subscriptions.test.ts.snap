@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@httpOperation", "@pubsubOperation", "@transport", "@extraSchemaDefinitionDirective"]
+  import: ["@pubsubOperation", "@extraSchemaDefinitionDirective"]
 ) {
   query: Query
   mutation: Mutation
@@ -57,29 +57,16 @@ enum join__Graph {
   OPEN_API_CALLBACK_EXAMPLE @join__graph(name: "OpenAPICallbackExample", url: "http://localhost:<api_port>")
 }
 
-directive @httpOperation(
-  subgraph: String
-  path: String
-  operationSpecificHeaders: [[String]]
-  httpMethod: HTTPMethod
-  isBinary: Boolean
-  requestBaseBody: ObjMap
-  queryParamArgMap: ObjMap
-  queryStringOptionsByParam: ObjMap
-  jsonApiFields: Boolean
-  queryStringOptions: ObjMap
-) repeatable on FIELD_DEFINITION
-
 directive @pubsubOperation(subgraph: String, pubsubTopic: String) repeatable on FIELD_DEFINITION
 
-directive @transport(
-  subgraph: String
-  kind: String
-  location: String
-  headers: [[String]]
-  queryStringOptions: ObjMap
-  queryParams: [[String]]
-) repeatable on SCHEMA
+directive @connect(
+  source: String
+  http: ConnectHTTP
+  selection: String!
+  entity: Boolean
+  errors: ConnectorErrors
+  isSuccess: String
+) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 
@@ -93,12 +80,10 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`da
 """
 scalar DateTime @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
 
-scalar ObjMap @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
-
 scalar _DirectiveExtensions @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{subgraph: "OpenAPICallbackExample", kind: "rest", location: "http://localhost:<api_port>"}]}
+  directives: {source: [{name: "OpenAPICallbackExample", http: {baseURL: "http://localhost:<api_port>"}}], transport: [{subgraph: "OpenAPICallbackExample", kind: "rest", location: "http://localhost:<api_port>"}]}
 ) @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
   dummy: String
 }
@@ -107,11 +92,10 @@ type Mutation @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
   """
   subscribes a client to receive out-of-band data
   """
-  post_streams(input: post_streams_request_Input): SubscriptionInfo @httpOperation(
-    subgraph: "OpenAPICallbackExample"
-    path: "/streams"
-    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
-    httpMethod: POST
+  post_streams(input: post_streams_request_Input): SubscriptionInfo @connect(
+    source: "OpenAPICallbackExample"
+    http: {POST: "/streams", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
+    selection: "subscriptionId"
   )
 }
 
@@ -140,24 +124,43 @@ type SubscriptionPayload @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
   userData: String
 }
 
-enum HTTPMethod @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
-  GET @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  HEAD @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  POST @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  PUT @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  DELETE @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  CONNECT @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  OPTIONS @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  TRACE @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-  PATCH @join__enumValue(graph: OPEN_API_CALLBACK_EXAMPLE)
-}
-
 input post_streams_request_Input @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
   """
   the location where data will be sent.  Must be network accessible
   by the source server
   """
   callbackUrl: URL
+}
+
+input ConnectHTTP @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }
 "
 `;

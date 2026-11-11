@@ -11,6 +11,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   test: test_200_response @connect(source: "additionalPropertiesTest", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nfoo {\\n  bar\\n}\\nqux")
 }

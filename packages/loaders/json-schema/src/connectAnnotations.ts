@@ -89,6 +89,16 @@ export const SourceDirective = new GraphQLDirective({
   isRepeatable: true,
 });
 
+export const LinkDirective = new GraphQLDirective({
+  name: 'link',
+  locations: [DirectiveLocation.SCHEMA],
+  args: {
+    url: { type: new GraphQLNonNull(GraphQLString) },
+    import: { type: new GraphQLList(GraphQLString) },
+  },
+  isRepeatable: true,
+});
+
 export const CONNECT_LINK_URL = 'https://specs.apollo.dev/connect/v0.4';
 
 /**
@@ -200,9 +210,7 @@ export function buildQueryParamsSelection(
   }
   // Object-literal form so keys like `foo:bar` stay intact (line `key: expr` cannot).
   const lines = Object.entries(queryParamArgMap).map(([queryParam, argName]) => {
-    const key = /^[A-Za-z_][\w]*$/.test(queryParam)
-      ? queryParam
-      : JSON.stringify(queryParam);
+    const key = /^[A-Za-z_][\w]*$/.test(queryParam) ? queryParam : JSON.stringify(queryParam);
     let expr = `$args.${argName}`;
     const paramOpts = queryStringOptionsByParam?.[queryParam];
     const argType = argTypeMap?.[argName]?.type || argTypeMap?.[queryParam]?.type;
@@ -264,7 +272,8 @@ export function buildSelectionForType(
     return '';
   }
   const lines: string[] = [];
-  for (const fieldName of Object.keys(fields)) {
+  for (const rawFieldName of Object.keys(fields)) {
+    const fieldName = String(rawFieldName);
     if (skipFields.has(fieldName) || fieldName.startsWith('__')) {
       continue;
     }
@@ -286,9 +295,9 @@ export function buildSelectionForType(
     // `@resolveRootField(field: "foo-bar")` → GraphQL `foo_bar` from JSON `foo-bar`
     const resolveRootField =
       directiveExt.resolveRootField?.[0]?.field ||
-      field.astNode?.directives?.find(d => d.name.value === 'resolveRootField')?.arguments?.find(
-        a => a.name.value === 'field',
-      );
+      field.astNode?.directives
+        ?.find(d => d.name.value === 'resolveRootField')
+        ?.arguments?.find(a => a.name.value === 'field');
     let jsonName: string | undefined;
     if (typeof resolveRootField === 'string') {
       jsonName = resolveRootField;
@@ -296,7 +305,7 @@ export function buildSelectionForType(
       const v = (resolveRootField as any).value;
       jsonName = v?.value ?? v;
     }
-    const aliasPrefix =
+    const aliasPrefix: string =
       jsonName && jsonName !== fieldName
         ? `${fieldName}: ${/^[A-Za-z_][\w]*$/.test(jsonName) ? jsonName : JSON.stringify(jsonName)}`
         : fieldName;
@@ -336,7 +345,8 @@ export function buildConnectHttpArgs(opts: {
   queryParamArgMap?: Record<string, string>;
   queryStringOptionsByParam?: Record<
     string,
-    { arrayFormat?: string; destructObject?: boolean; [key: string]: unknown }
+    | { arrayFormat?: string; destructObject?: boolean; [key: string]: unknown }
+    | Record<string, unknown>
   >;
   argTypeMap?: Record<string, { type?: string }>;
   bodySelection?: string;
@@ -363,9 +373,7 @@ export function buildConnectHttpArgs(opts: {
   return http;
 }
 
-export function inferBodySelection(
-  operationConfig: JSONSchemaOperationConfig,
-): string | undefined {
+export function inferBodySelection(operationConfig: JSONSchemaOperationConfig): string | undefined {
   if (!('path' in operationConfig)) {
     return undefined;
   }
@@ -375,11 +383,7 @@ export function inferBodySelection(
     return undefined;
   }
   // Conventional Mesh/OpenAPI request arg is `input`; Connectors body maps from it.
-  if (
-    httpOp.requestTypeName ||
-    httpOp.requestSample != null ||
-    httpOp.requestSchema != null
-  ) {
+  if (httpOp.requestTypeName || httpOp.requestSample != null || httpOp.requestSchema != null) {
     return `$args.input`;
   }
   if (httpOp.requestBaseBody != null) {

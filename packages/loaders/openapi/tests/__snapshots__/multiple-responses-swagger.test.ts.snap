@@ -14,6 +14,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Optional extended description in Markdown."""
   foo_by_id: foo_by_id_response @connect(source: "test", http: {GET: "/{id}", headers: [{name: "Accept", value: "application/json"}]}, selection: "$")

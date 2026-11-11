@@ -11,6 +11,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
 }
@@ -70,6 +72,8 @@ directive @discriminator(subgraph: String, field: String, mapping: [[String]]) o
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   dummy: String
@@ -144,6 +148,8 @@ directive @discriminator(subgraph: String, field: String, mapping: [[String]]) o
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   things: [query_things_items] @connect(source: "test", http: {GET: "/things", headers: [{name: "accept", value: "application/json"}]}, selection: "$")

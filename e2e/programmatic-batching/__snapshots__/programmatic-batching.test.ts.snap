@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@httpOperation", "@transport", "@extraSchemaDefinitionDirective"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@extraSchemaDefinitionDirective"]) {
   query: Query
   mutation: Mutation
 }
@@ -20,9 +20,7 @@ directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on
 
 directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) repeatable on FIELD_DEFINITION
-
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
 
@@ -47,17 +45,15 @@ enum join__Graph {
   API @join__graph(name: "API", url: "http://localhost:<api_port>")
 }
 
-scalar ObjMap @join__type(graph: API)
-
 scalar _DirectiveExtensions @join__type(graph: API)
 
-type Query @extraSchemaDefinitionDirective(directives: {transport: [{subgraph: "API", kind: "rest", location: "http://localhost:<api_port>"}]}) @join__type(graph: API) {
+type Query @extraSchemaDefinitionDirective(directives: {source: [{name: "API", http: {baseURL: "http://localhost:<api_port>"}}], transport: [{subgraph: "API", kind: "rest", location: "http://localhost:<api_port>"}]}) @join__type(graph: API) {
   dummy: String
   user(id: Float!): User @additionalField
 }
 
 type Mutation @join__type(graph: API) {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @httpOperation(subgraph: "API", path: "/users_by_ids", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @connect(source: "API", http: {POST: "/users_by_ids", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "results {\\n  id\\n  name\\n}")
 }
 
 type UsersByIdResponse @join__type(graph: API) {
@@ -69,20 +65,39 @@ type User @join__type(graph: API) {
   name: String!
 }
 
-enum HTTPMethod @join__type(graph: API) {
-  GET @join__enumValue(graph: API)
-  HEAD @join__enumValue(graph: API)
-  POST @join__enumValue(graph: API)
-  PUT @join__enumValue(graph: API)
-  DELETE @join__enumValue(graph: API)
-  CONNECT @join__enumValue(graph: API)
-  OPTIONS @join__enumValue(graph: API)
-  TRACE @join__enumValue(graph: API)
-  PATCH @join__enumValue(graph: API)
-}
-
 input UsersByIdRequest_Input @join__type(graph: API) {
   ids: [Float]!
+}
+
+input ConnectHTTP @join__type(graph: API) {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping @join__type(graph: API) {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors @join__type(graph: API) {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP @join__type(graph: API) {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }
 "
 `;

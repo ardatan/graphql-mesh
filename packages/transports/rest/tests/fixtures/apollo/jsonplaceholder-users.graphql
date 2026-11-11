@@ -1,19 +1,9 @@
-
 # These are the necessary federation and connector directives you will be using
 extend schema
-  @link(
-    url: "https://specs.apollo.dev/federation/v2.10"
-    import: ["@key"]
-  )
-  @link(
-    url: "https://specs.apollo.dev/connect/v0.2"
-    import: ["@connect", "@source"]
-  )
-# A @source directive defines a shared data source for multiple connectors.
-  @source(
-    name: "JSONPlaceholder"
-    http: { baseURL: "https://jsonplaceholder.typicode.com/" }
-  )
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"])
+  # A @source directive defines a shared data source for multiple connectors.
+  @source(name: "JSONPlaceholder", http: { baseURL: "https://jsonplaceholder.typicode.com/" })
 
 type User @key(fields: "id") {
   id: ID!
@@ -25,7 +15,6 @@ type User @key(fields: "id") {
   website: String
   company: Company
 }
-
 
 type Address {
   line1: String
@@ -53,27 +42,27 @@ type Query {
       source: "JSONPlaceholder"
       http: { GET: "/users/{$args.id}" }
       selection: """
-        id
+      id
+      name
+      username
+      email
+      address: $.address {
+        line1: street
+        line2: suite
+        city
+        zip: zipcode
+        geo: $.geo {
+          lat
+          lng
+        }
+      }
+      phone
+      website
+      company: $.company {
         name
-        username
-        email
-        address: $.address {
-          line1: street
-          line2: suite
-          city
-          zip: zipcode
-          geo: $.geo {
-            lat
-            lng
-          }
-        }
-        phone
-        website
-        company: $.company {
-          name
-          catchPhrase
-          bs
-        }
+        catchPhrase
+        bs
+      }
       """
       entity: true
     )

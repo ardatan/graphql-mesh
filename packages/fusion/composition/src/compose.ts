@@ -283,24 +283,28 @@ export function getAnnotatedSubgraphs(
       },
       [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
         const directiveExtensions = getDirectiveExtensions(fieldConfig);
-        if (!transforms?.length && !options.ignoreSemanticConventions) {
-          addAnnotationsForSemanticConventions({
-            queryFieldName: fieldName,
-            queryFieldConfig: fieldConfig,
-            directiveExtensions,
-            subgraphName,
-          });
-          if (directiveExtensions.merge) {
-            mergeDirectiveUsed = true;
+        // Connectors must never get stitching `@source` (Apollo owns SCHEMA `@source`).
+        if (!sourceDirectiveUsed) {
+          if (!transforms?.length && !options.ignoreSemanticConventions) {
+            addAnnotationsForSemanticConventions({
+              queryFieldName: fieldName,
+              queryFieldConfig: fieldConfig,
+              directiveExtensions,
+              subgraphName,
+            });
+            if (directiveExtensions.merge) {
+              mergeDirectiveUsed = true;
+            }
+            return {
+              ...fieldConfig,
+              extensions: {
+                ...fieldConfig.extensions,
+                directives: directiveExtensions,
+              },
+              astNode: undefined,
+            };
           }
-          return {
-            ...fieldConfig,
-            extensions: {
-              ...fieldConfig.extensions,
-              directives: directiveExtensions,
-            },
-            astNode: undefined,
-          };
+          return fieldConfig;
         }
         const newArgs: GraphQLFieldConfigArgumentMap = {};
         if (fieldConfig.args) {
@@ -365,13 +369,12 @@ export function getAnnotatedSubgraphs(
         if (directive.name === 'transport' && removeTransportDirectiveDefinition) {
           return null;
         }
-        // Keep Apollo Connectors `@source`; only strip unused stitching `@source`.
-        if (
-          !sourceDirectiveUsed &&
-          !isConnectorsSubgraph &&
-          directive.name === 'source'
-        ) {
-          return null;
+        // Mesh composition carries Apollo `@source` via `@extraSchemaDefinitionDirective`
+        // so Mesh stitching `@source` (composeDirective) does not clash on the name.
+        if (directive.name === 'source') {
+          if (isConnectorsSubgraph || !sourceDirectiveUsed) {
+            return null;
+          }
         }
       },
     });
@@ -427,12 +430,40 @@ export function getAnnotatedSubgraphs(
     }
     // Preserve Apollo `@connect` through federation via `@composeDirective`, while keeping
     // the Apollo connect `@link` as the sole feature that imports `@connect` (not Mesh spec).
+    // Drop `@source` from the connect `@link` import — SCHEMA source args live in
+    // `@extraSchemaDefinitionDirective` so they don't collide with Mesh stitching `@source`.
     if (isConnectorsSubgraph) {
       const schemaDirectives = getDirectiveExtensions(transformedSubgraph) || {};
       const composeDirectives = (schemaDirectives.composeDirective =
         schemaDirectives.composeDirective?.filter(Boolean) || []);
       if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
         composeDirectives.push({ name: '@connect' });
+      }
+      if (Array.isArray(schemaDirectives.link)) {
+        schemaDirectives.link = schemaDirectives.link.map(
+          (link: { url?: string; import?: any[] }) => {
+            if (
+              typeof link?.url === 'string' &&
+              link.url.includes('specs.apollo.dev/connect') &&
+              Array.isArray(link.import)
+            ) {
+              return {
+                ...link,
+                import: link.import.filter(item => {
+                  if (typeof item === 'string') {
+                    return item !== '@source' && item !== 'source';
+                  }
+                  if (item && typeof item === 'object' && 'name' in item) {
+                    const name = String((item as { name?: string }).name || '');
+                    return name !== '@source' && name !== 'source';
+                  }
+                  return true;
+                }),
+              };
+            }
+            return link;
+          },
+        );
       }
       const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
       extensions.directives = schemaDirectives;

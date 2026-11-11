@@ -155,19 +155,8 @@ export function normalizeDirectiveExtensions(subgraph: GraphQLSchema) {
   });
 }
 
-export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
-  const schemaDirectives = getDirectiveExtensions(subgraph);
-  if (
-    schemaDirectives?.link?.some(linkDirectiveArgs =>
-      linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/'),
-    )
-  ) {
-    // This is already v2, skipping
-    return subgraph;
-  }
-  subgraph = addFederation2DirectivesToSubgraph(subgraph);
-  // Add @shareable
-  subgraph = mapSchema(subgraph, {
+function ensureObjectTypesShareable(subgraph: GraphQLSchema) {
+  return mapSchema(subgraph, {
     [MapperKind.OBJECT_TYPE]: type => {
       const typeDirectives = getDirectiveExtensions(type);
       typeDirectives.shareable ||= [];
@@ -185,6 +174,23 @@ export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
       return type;
     },
   });
+}
+
+export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
+  const schemaDirectives = getDirectiveExtensions(subgraph);
+  // Only treat as "already v2" when Federation itself is linked. Apollo Connectors
+  // `@link` also uses specs.apollo.dev but does not imply `@shareable`.
+  // Encapsulate may import federation early for `@inaccessible` — still ensure shareable.
+  const hasFederationLink = schemaDirectives?.link?.some(linkDirectiveArgs =>
+    linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/'),
+  );
+  if (hasFederationLink) {
+    subgraph = ensureObjectTypesShareable(subgraph);
+    subgraph = importFederationDirectives(subgraph, FEDERATION_V1_DIRECTIVES);
+    return subgraph;
+  }
+  subgraph = addFederation2DirectivesToSubgraph(subgraph);
+  subgraph = ensureObjectTypesShareable(subgraph);
   subgraph = importFederationDirectives(subgraph, FEDERATION_V1_DIRECTIVES);
   return subgraph;
 }

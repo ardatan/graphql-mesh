@@ -1,19 +1,9 @@
-
 # These are the necessary federation and connector directives you will be using
 extend schema
-  @link(
-    url: "https://specs.apollo.dev/federation/v2.10"
-    import: ["@key"]
-  )
-  @link(
-    url: "https://specs.apollo.dev/connect/v0.2"
-    import: ["@connect", "@source"]
-  )
-# A @source directive defines a shared data source for multiple connectors.
-  @source(
-    name: "ecomm"
-    http: { baseURL: "https://ecommerce.demo-api.apollo.dev/" }
-  )
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"])
+  # A @source directive defines a shared data source for multiple connectors.
+  @source(name: "ecomm", http: { baseURL: "https://ecommerce.demo-api.apollo.dev/" })
 
 type Product {
   id: ID!

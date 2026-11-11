@@ -11,6 +11,8 @@ directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   test: test_200_response @connect(source: "toto", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   testLink: testLink_200_response @connect(source: "toto", http: {GET: "/test-link", headers: [{name: "accept", value: "application/json"}]}, selection: "foo")

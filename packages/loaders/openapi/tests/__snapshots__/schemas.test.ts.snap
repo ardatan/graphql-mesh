@@ -24,6 +24,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """
   Root endpoint has no other function than to point end users to documentation.
@@ -2931,6 +2933,8 @@ directive @regexp(subgraph: String, pattern: String) on SCALAR
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """List all accounts you have ownership or verified access to."""
@@ -46287,6 +46291,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Retrieve the list of language pairs supported by the glossary feature."""
   listGlossaryLanguages: listGlossaryLanguages_response @connect(source: "DeepL", http: {GET: "/glossary-language-pairs", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
@@ -46971,6 +46977,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Get all Samples"""
   getAllSamples(
@@ -47041,6 +47049,8 @@ exports[`Schemas DefaultValues 1`] = `
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   Retrieve_list_of_stacks: StacksResponse @connect(source: "DefaultValues", http: {GET: "/stacks"}, selection: "data {\\n  name\\n  description\\n  items {\\n    item\\n  }\\n}")
@@ -47127,6 +47137,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Return a user."""
   user(port: String = "3002", basePath: String = "api"): user @connect(source: "Dictionary", http: {GET: "/user", headers: [{name: "accept", value: "application/json"}]}, selection: "traits")
@@ -47186,6 +47198,8 @@ directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """## Behavior"""
@@ -47283,6 +47297,8 @@ directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: St
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Lists all the emojis available to use on GitHub."""
@@ -55252,6 +55268,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   dummy: String
 }
@@ -55312,6 +55330,8 @@ directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: St
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """
@@ -55598,6 +55618,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   UsersGetUser(userId: String!): UserGet @connect(source: "InfiniteRecursion", http: {GET: "/users/{$args.userId}", headers: [{name: "accept", value: "application/json"}]}, selection: "_resolveType\\nid")
   CompanysGetCompany(companyId: String!): CompanyGet @connect(source: "InfiniteRecursion", http: {GET: "/companies/{$args.companyId}", headers: [{name: "accept", value: "application/json"}]}, selection: "_resolveType\\nid")
@@ -55702,6 +55724,8 @@ directive @enum(subgraph: String, value: String) on ENUM_VALUE
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """
@@ -56361,6 +56385,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Get all Samples"""
   getAllSamples(
@@ -56447,6 +56473,8 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """
@@ -76351,6 +76379,8 @@ directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """
@@ -121811,6 +121841,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Get health of the Meilisearch instance."""
   health_check(protocol: mutationInput_dumps_create_protocol = https, domain: String = "example.meilisearch.com", port: String = "7700"): health_check_200_response @connect(source: "MeiliSearch", http: {GET: "/health", headers: [{name: "accept", value: "application/json"}]}, selection: "status")
@@ -123688,6 +123720,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Get example data"""
   example: example_200_response @connect(source: "Relative Dereference", http: {GET: "/example", headers: [{name: "accept", value: "application/json"}]}, selection: "message")
@@ -123750,6 +123784,8 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """List approved apps for an org or workspace."""
@@ -130638,6 +130674,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   getItem: Item @connect(source: "SmallRye UUID", http: {GET: "/items", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nparent_id")
 }
@@ -130694,6 +130732,8 @@ directive @enum(subgraph: String, value: String) on ENUM_VALUE
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """
@@ -131080,6 +131120,8 @@ directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: St
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """<p>Retrieves the details of an account.</p>"""
@@ -207155,6 +207197,8 @@ directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFIN
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   a(
     """Company ID"""
@@ -207246,6 +207290,8 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Returns the courses for the specified recruitment cycle."""
@@ -208282,6 +208328,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """List Resources At Any Folder Level"""
   list_resources_at_any_folder_v1(
@@ -208739,6 +208787,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Get current weather conditions for a given place."""
   weatherConditions_by_key_conditions_q_by_state_by_place_json(
@@ -209069,6 +209119,8 @@ directive @enum(subgraph: String, value: String) on ENUM_VALUE
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 """
 Represents unlimited visibility. When access to an entity is not restricted, the visibility attribute of this entity has the type \`UnlimitedVisibility\`. Entities of this type do not have any attributes.
@@ -212446,6 +212498,8 @@ directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: St
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """This method allow you to send requests to the Algolia REST API."""

@@ -21,9 +21,10 @@ import {
   buildConnectHttpArgs,
   buildSelectionForType,
   buildSourceDirectiveArgs,
-  ConnectDirective,
   CONNECT_LINK_URL,
+  ConnectDirective,
   inferBodySelection,
+  LinkDirective,
   SourceDirective,
   toConnectLinkExpression,
 } from './connectAnnotations.js';
@@ -148,9 +149,7 @@ export function addExecutionDirectivesToComposer(
         for (const [argName, connectExpr] of Object.entries(linkArgExprs)) {
           // Keep templates with `{...}` interpolations intact for resolveTemplate.
           const replacement =
-            connectExpr.includes('{') ||
-            connectExpr.startsWith('$(') ||
-            connectExpr.startsWith('$')
+            connectExpr.includes('{') || connectExpr.startsWith('$(') || connectExpr.startsWith('$')
               ? connectExpr
               : `$(${JSON.stringify(connectExpr)})`;
           out = out.replaceAll(`{$args.${argName}}`, replacement);
@@ -296,7 +295,12 @@ ${operationConfig.description || ''}
         path: operationConfig.path,
         headers: operationConfig.headers,
         queryParamArgMap: operationConfig.queryParamArgMap,
-        queryStringOptionsByParam: operationConfig.queryStringOptionsByParam,
+        queryStringOptionsByParam: operationConfig.queryStringOptionsByParam as
+          | Record<
+              string,
+              { arrayFormat?: string; destructObject?: boolean; [key: string]: unknown }
+            >
+          | undefined,
         argTypeMap: operationConfig.argTypeMap as Record<string, { type?: string }> | undefined,
         bodySelection: inferBodySelection(operationConfig),
       });
@@ -311,18 +315,19 @@ ${operationConfig.description || ''}
         ),
       });
       // Hive-only per-param qs options (brackets/indices/destructObject) for transport-rest
+      const operationQueryStringOptions = operationConfig.queryStringOptions;
       if (operationConfig.queryStringOptionsByParam) {
         field.extensions = field.extensions || {};
         (field.extensions as any).meshRestOptions = {
           ...((field.extensions as any).meshRestOptions || {}),
           queryStringOptionsByParam: operationConfig.queryStringOptionsByParam,
-          queryStringOptions: operationConfig.queryStringOptions ?? queryStringOptions,
+          queryStringOptions: operationQueryStringOptions ?? queryStringOptions,
         };
-      } else if (operationConfig.queryStringOptions || queryStringOptions) {
+      } else if (operationQueryStringOptions || queryStringOptions) {
         field.extensions = field.extensions || {};
         (field.extensions as any).meshRestOptions = {
           ...((field.extensions as any).meshRestOptions || {}),
-          queryStringOptions: operationConfig.queryStringOptions ?? queryStringOptions,
+          queryStringOptions: operationQueryStringOptions ?? queryStringOptions,
         };
       }
 
@@ -437,6 +442,7 @@ ${operationConfig.description || ''}
 
   schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
+  schemaComposer.addDirective(LinkDirective);
   let schema = schemaComposer.buildSchema();
   const schemaExtensions: any = (schema.extensions = schema.extensions || {});
   schemaExtensions.directives = schemaExtensions.directives || {};

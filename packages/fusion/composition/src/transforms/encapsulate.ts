@@ -75,12 +75,21 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             }
           }
           const wrappedFieldName = `_encapsulated_${groupName}_${fieldName}`;
+          // For Apollo `@connect`, keep the directive only on the inaccessible root
+          // copy (subgraph/transport execution). The namespaced field uses `@resolveTo`
+          // so the gateway does not try to run `@connect` outside transport-rest.
+          // Duplicating `@connect` on both fields caused federation to drop it from the
+          // inaccessible copy (unlike Mesh `@httpOperation`).
+          const wrappedDirectives = { ...originalDirectives };
+          if (wrappedDirectives.connect?.length) {
+            delete wrappedDirectives.connect;
+          }
           wrappedFieldMap[fieldName] = {
             ...originalFieldConfig,
             extensions: {
               ...originalFieldConfig.extensions,
               directives: {
-                ...originalDirectives,
+                ...wrappedDirectives,
                 resolveTo: [
                   {
                     sourceName: subgraphConfig.name,
@@ -91,9 +100,16 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
                 ],
               },
             },
+            astNode: undefined,
           };
           const newOriginalFieldConfig = {
             ...originalFieldConfig,
+            extensions: {
+              ...originalFieldConfig.extensions,
+              directives: {
+                ...originalDirectives,
+              },
+            },
             astNode: undefined,
           };
           addInaccessibleDirective(newOriginalFieldConfig);
@@ -163,13 +179,9 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
       directives: newDirectives,
       ...newRootTypes,
     });
-    const schemaLevelDirectives = getDirectiveExtensions(newSchema);
-    const importStatement = schemaLevelDirectives?.link?.find(
-      linkDirectiveArgs =>
-        linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/') &&
-        linkDirectiveArgs.import,
-    );
-    if (importStatement && inaccessibleDirectiveAdded) {
+    // Always import `@inaccessible` when encapsulate added it. Connectors subgraphs
+    // may only have the Apollo connect `@link` at this point (no federation import yet).
+    if (inaccessibleDirectiveAdded) {
       return importFederationDirectives(newSchema, ['@inaccessible']);
     }
     return newSchema;

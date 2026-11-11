@@ -69,7 +69,9 @@ function loadApolloExample(relativePath: string): string {
  * schema definition that keeps those schema directives (especially `@source`).
  */
 function normalizeCommunitySchema(sdl: string): string {
-  const match = sdl.match(/extend\s+schema([\s\S]*?)(?=\n\s*(?:type|enum|interface|input|scalar)\b)/);
+  const match = sdl.match(
+    /extend\s+schema([\s\S]*?)(?=\n\s*(?:type|enum|interface|input|scalar)\b)/,
+  );
   if (!match) {
     return sdl;
   }
@@ -264,18 +266,13 @@ describe('Apollo Connectors error shape', () => {
   const errorSchemaSdl = /* GraphQL */ `
     ${CONNECTOR_DIRECTIVES}
 
-    schema
-      @source(name: "ecomm", http: { baseURL: "https://api.example.com" }) {
+    schema @source(name: "ecomm", http: { baseURL: "https://api.example.com" }) {
       query: Query
     }
 
     type Query {
       products: [Product]
-        @connect(
-          source: "ecomm"
-          http: { GET: "/products" }
-          selection: "id name"
-        )
+        @connect(source: "ecomm", http: { GET: "/products" }, selection: "id name")
       users: [User]
         @connect(
           source: "ecomm"

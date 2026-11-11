@@ -11,6 +11,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Basic simpleNames option test"""
   o_d_d___n_a_m_e: o_d_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/o_d_d___n_a_m_e", headers: [{name: "accept", value: "application/json"}]}, selection: "data")

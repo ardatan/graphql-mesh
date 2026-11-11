@@ -4,21 +4,23 @@ import {
   isListType,
   isNonNullType,
   isScalarType,
+  isUnionType,
   type GraphQLField,
   type GraphQLOutputType,
   type GraphQLResolveInfo,
   type GraphQLSchema,
+  type GraphQLUnionType,
 } from 'graphql';
 import type { IStringifyOptions } from 'qs';
 import { stringify as qsStringify } from 'qs';
+import urlJoin from 'url-join';
 import { Logger, type Logger as HiveLogger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import type { MeshFetch } from '@graphql-mesh/types';
+import type { MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
-import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
-import { Blob, File, FormData, fetch as defaultFetch } from '@whatwg-node/fetch';
-import urlJoin from 'url-join';
+import { getDirective, getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
+import { Blob, fetch as defaultFetch, File, FormData } from '@whatwg-node/fetch';
 import { isFileUpload } from './isFileUpload.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
@@ -32,6 +34,17 @@ const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListTyp
   return isListType(type);
 });
 
+function hasStatusCodeMapping(
+  schema: GraphQLSchema,
+  unionType: GraphQLUnionType,
+  statusCode: string,
+) {
+  const mappings = getDirective(schema, unionType, 'statusCodeTypeName') || [];
+  return mappings.some(d => {
+    const codes = Array.isArray(d?.statusCode) ? d.statusCode : [d?.statusCode];
+    return codes?.some(code => String(code) === String(statusCode));
+  });
+}
 
 type ConnectHttp = {
   GET?: string;
@@ -272,10 +285,7 @@ function applyQueryParams(
 
 function parseQueryParamsEntries(selection: string): Array<[string, string]> {
   const trimmed = selection.trim();
-  const body =
-    trimmed.startsWith('{') && trimmed.endsWith('}')
-      ? trimmed.slice(1, -1)
-      : trimmed;
+  const body = trimmed.startsWith('{') && trimmed.endsWith('}') ? trimmed.slice(1, -1) : trimmed;
   const entries: Array<[string, string]> = [];
   for (const rawLine of body.split('\n')) {
     const line = rawLine.trim().replace(/,$/, '');
@@ -375,10 +385,22 @@ function applyHeaders(
         ...vars,
         config: {},
       });
-      // Match Mesh httpOperation: skip null/empty header values
-      if (resolved != null && resolved !== '') {
-        headers[mapping.name.toLowerCase()] = resolved;
+      if (resolved == null) {
+        continue;
       }
+      // Skip empty interpolations from missing context/env, but still send an
+      // explicitly provided empty GraphQL argument (`$args.x` === '').
+      if (resolved === '') {
+        const argMatch = String(mapping.value).match(/\$args\.(\w+)/);
+        if (!argMatch) {
+          continue;
+        }
+        const argVal = vars.args?.[argMatch[1]];
+        if (argVal === undefined || argVal === null) {
+          continue;
+        }
+      }
+      headers[mapping.name.toLowerCase()] = String(resolved);
     }
   }
 }
@@ -611,7 +633,7 @@ function readSelectionIdent(s: string, start: number): { value: string; end: num
     if (s[i] === quote) i++;
     return { value, end: i };
   }
-  while (i < s.length && /[A-Za-z0-9_$.\-]/.test(s[i])) i++;
+  while (i < s.length && /[A-Za-z0-9_$.-]/.test(s[i])) i++;
   return { value: s.slice(start, i), end: i };
 }
 
@@ -624,7 +646,7 @@ function tokenizeSelection(selection: string): SelectionToken[] {
     if (i >= s.length) break;
     // alias or field
     let read = readSelectionIdent(s, i);
-    let name = read.value;
+    const name = read.value;
     i = read.end;
     while (i < s.length && /\s/.test(s[i])) i++;
     let alias = name;
@@ -764,8 +786,7 @@ export function addConnectFieldResolver(
   const queryStringOptionsByParam =
     fieldMeshRestOptions.queryStringOptionsByParam ||
     schemaMeshRestOptions.queryStringOptionsByParam;
-  const timeout =
-    opts.timeout ?? fieldMeshRestOptions.timeout ?? schemaMeshRestOptions.timeout;
+  const timeout = opts.timeout ?? fieldMeshRestOptions.timeout ?? schemaMeshRestOptions.timeout;
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // Virtual connector: no http
@@ -810,11 +831,7 @@ export function addConnectFieldResolver(
       if (!argDef || value == null || typeof value !== 'object') {
         return value;
       }
-      return resolveDataByUnionInputType(
-        JSON.parse(JSON.stringify(value)),
-        argDef.type,
-        schema,
-      );
+      return resolveDataByUnionInputType(JSON.parse(JSON.stringify(value)), argDef.type, schema);
     };
     fullPath = applyQueryParams(
       fullPath,
@@ -843,7 +860,11 @@ export function addConnectFieldResolver(
           query: Object.fromEntries(abs.searchParams.entries()),
         };
       } catch {
-        return { href: fullPath, originPath: fullPath.split('?')[0], query: {} as Record<string, string> };
+        return {
+          href: fullPath,
+          originPath: fullPath.split('?')[0],
+          query: {} as Record<string, string>,
+        };
       }
     })();
 
@@ -852,7 +873,7 @@ export function addConnectFieldResolver(
     applyHeaders(headers, connectArgs.http?.headers, vars);
 
     const method = picked.method;
-    const requestInit: RequestInit = {
+    const requestInit: MeshFetchRequestInit = {
       method,
       headers,
     };
@@ -869,7 +890,8 @@ export function addConnectFieldResolver(
         delete headers['content-type'];
         delete headers['Content-Type'];
         const input =
-          connectArgs.http?.body === '$args.input' || connectArgs.http?.body?.startsWith('$args.input')
+          connectArgs.http?.body === '$args.input' ||
+          connectArgs.http?.body?.startsWith('$args.input')
             ? rawArgs.input
             : rawArgs;
         const formData = new FormData();
@@ -882,11 +904,9 @@ export function addConnectFieldResolver(
               if (inputValue instanceof File) {
                 formDataValue = inputValue;
               } else if (isFileUpload(inputValue)) {
-                formDataValue = new File(
-                  [inputValue.createReadStream() as any],
-                  inputValue.filename || 'file',
-                  { type: inputValue.mimetype },
-                );
+                formDataValue = new File([inputValue.createReadStream() as any], 'file', {
+                  type: inputValue.mimetype,
+                });
               } else if (inputValue.name && inputValue instanceof Blob) {
                 formDataValue = new File([inputValue], (inputValue as File).name, {
                   type: inputValue.type,
@@ -902,7 +922,7 @@ export function addConnectFieldResolver(
             } else {
               formDataValue = String(inputValue);
             }
-            formData.append(key, formDataValue);
+            formData.append(String(key), formDataValue as any);
           }
         }
         requestBody = formData;
@@ -939,7 +959,8 @@ export function addConnectFieldResolver(
     }
 
     const fetchFn: MeshFetch = context?.fetch || opts.globalFetch || defaultFetch;
-    const operationLogger = log.child?.({ operation: `${info.parentType.name}.${info.fieldName}` }) || log;
+    const operationLogger =
+      log.child?.({ operation: `${info.parentType.name}.${info.fieldName}` }) || log;
     operationLogger.debug?.(`Connect ${method} ${fullPath}`);
 
     const response = await fetchFn(fullPath, requestInit, context, info as any);
@@ -1004,6 +1025,8 @@ export function addConnectFieldResolver(
             connector: connectorExt,
             code,
             service,
+            // Mesh Hive e2e historically asserted `serviceName`
+            serviceName: service,
             // Mesh OpenAPI tests still assert extensions.request.url
             request: {
               url: requestUrlForMeta.href,
@@ -1025,12 +1048,23 @@ export function addConnectFieldResolver(
     };
 
     const evaluateIsSuccess = (body: any): boolean => {
-      const isSuccessExpr =
-        connectArgs.isSuccess ?? source?.isSuccess ?? source?.http?.isSuccess;
+      const isSuccessExpr = connectArgs.isSuccess ?? source?.isSuccess ?? source?.http?.isSuccess;
       if (isSuccessExpr != null && String(isSuccessExpr).trim() !== '') {
         return Boolean(evalMappingExpression(String(isSuccessExpr), body, selectionExtras));
       }
       if (handlesStatus) {
+        return true;
+      }
+      // OpenAPI status unions map non-2xx payloads into union members via
+      // `@statusCodeTypeName` — treat those statuses as successful for selection.
+      if (
+        isUnionType(returnNamedGraphQLType) &&
+        hasStatusCodeMapping(
+          schema,
+          returnNamedGraphQLType as GraphQLUnionType,
+          String(response.status),
+        )
+      ) {
         return true;
       }
       return response.status.toString().startsWith('2');
@@ -1049,7 +1083,10 @@ export function addConnectFieldResolver(
           responseData = {};
         } else if (!evaluateIsSuccess(text)) {
           throw buildConnectorError(text, error);
-        } else if (response.status.toString().startsWith('2') && !isScalarType(returnNamedGraphQLType)) {
+        } else if (
+          response.status.toString().startsWith('2') &&
+          !isScalarType(returnNamedGraphQLType)
+        ) {
           // Successful status but non-JSON body for object/list fields — still a fetch failure.
           throw buildConnectorError(text, error);
         } else {
@@ -1076,7 +1113,8 @@ export function addConnectFieldResolver(
     const parentPath = root?.$request?.path;
     if (parentPath && typeof parentPath === 'object') {
       // Include Proxy-only keys (pathless resources expose path params via object fallback).
-      for (const key of Object.keys(parentPath)) {
+      for (const rawKey of Object.keys(parentPath)) {
+        const key = String(rawKey);
         if (key.startsWith('$')) continue;
         const value = parentPath[key];
         if (pathArgs[key] == null && value != null && typeof value !== 'object') {
@@ -1129,16 +1167,24 @@ function attachResponseMetadata(
       },
       has(_, prop) {
         if (typeof prop !== 'string') return false;
-        return prop in args || (args.input != null && prop in args.input) || (obj != null && prop in obj);
+        return (
+          prop in args || (args.input != null && prop in args.input) || (obj != null && prop in obj)
+        );
       },
       // So Object.keys / inheritance see pathless fallbacks like `username` on the resource.
-      ownKeys() {
-        const keys = new Set<string>([
-          ...Object.keys(args),
-          ...(args.input && typeof args.input === 'object' ? Object.keys(args.input) : []),
-        ]);
+      ownKeys(): Array<string | symbol> {
+        const keys = new Set<string>();
+        for (const rawKey of Object.keys(args)) {
+          keys.add(String(rawKey));
+        }
+        if (args.input && typeof args.input === 'object') {
+          for (const rawKey of Object.keys(args.input)) {
+            keys.add(String(rawKey));
+          }
+        }
         if (obj && typeof obj === 'object') {
-          for (const key of Object.keys(obj)) {
+          for (const rawKey of Object.keys(obj)) {
+            const key = String(rawKey);
             if (key.startsWith('$')) continue;
             const value = obj[key];
             // Only scalar-ish fields are meaningful as path params
@@ -1146,7 +1192,7 @@ function attachResponseMetadata(
             keys.add(key);
           }
         }
-        return [...keys];
+        return Array.from(keys);
       },
       getOwnPropertyDescriptor(target, prop) {
         if (typeof prop !== 'string') return undefined;

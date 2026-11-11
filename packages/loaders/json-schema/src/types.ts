@@ -70,6 +70,7 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
 
   headers?: Record<string, string>;
   queryParamArgMap?: Record<string, string>;
+  queryStringOptions?: IStringifyOptions & { jsonStringify?: boolean };
   queryStringOptionsByParam?: Record<
     string,
     IStringifyOptions & { destructObject?: boolean; jsonStringify?: boolean }

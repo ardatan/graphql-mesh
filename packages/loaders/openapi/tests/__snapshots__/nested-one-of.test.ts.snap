@@ -14,6 +14,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
 type Query {
   """Retrieve the Rule with the specified objectID."""
   getRule(appId: String = "myAppId"): rule @connect(source: "algolia-nested-one-of", http: {GET: "/1/indexes/", headers: [{name: "accept", value: "application/json"}]}, selection: "consequence {\\n  params {\\n    facetFilters\\n  }\\n}")

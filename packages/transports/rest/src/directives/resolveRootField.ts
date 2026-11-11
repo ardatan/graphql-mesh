@@ -17,11 +17,7 @@ export function processResolveRootFieldAnnotations(
       // Prefer the original JSON property when present (legacy @httpOperation).
       // Fall back to the GraphQL field name when `@connect` selection already aliased it.
       const actualFieldObj =
-        root == null
-          ? undefined
-          : propertyName in root
-            ? root[propertyName]
-            : root[info.fieldName];
+        root == null ? undefined : propertyName in root ? root[propertyName] : root[info.fieldName];
       if (actualFieldObj != null) {
         const isArray = Array.isArray(actualFieldObj);
         const isListType = isOriginallyListType(info.returnType);

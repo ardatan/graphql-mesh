@@ -1,5 +1,6 @@
 import { buildSchema, parse, print } from 'graphql';
 import { getAnnotatedSubgraphs, isApolloConnectorsSubgraph } from '../src/index.js';
+import { createRenameTransform } from '../src/transforms/rename.js';
 
 describe('Apollo Connectors composition', () => {
   const connectorsSchema = buildSchema(/* GraphQL */ `
@@ -39,11 +40,7 @@ describe('Apollo Connectors composition', () => {
 
     type Query {
       user(id: ID!): User
-        @connect(
-          source: "rest"
-          http: { GET: "/users/{$args.id}" }
-          selection: "id name"
-        )
+        @connect(source: "rest", http: { GET: "/users/{$args.id}" }, selection: "id name")
     }
 
     type User {
@@ -82,9 +79,12 @@ describe('Apollo Connectors composition', () => {
     expect(annotated[0].url).toBe('https://api.example.com');
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).not.toMatch(/@transport\b/);
-    // Stitching source uses `subgraph:`; Apollo source uses `http:`
+    // Stitching source uses `subgraph:`; Apollo SCHEMA source is moved to extras
+    // so Mesh composeDirective `@source` can coexist in mixed supergraphs.
     expect(sdl).not.toMatch(/@source\([^)]*subgraph:/);
+    expect(sdl).not.toMatch(/import:\s*\[[^\]]*@source/);
     expect(sdl).toContain('specs.apollo.dev/connect/v0.4');
+    expect(sdl).toContain('@connect');
   });
 
   it('keeps Apollo @source on schema extensions path', () => {
@@ -97,9 +97,27 @@ describe('Apollo Connectors composition', () => {
     const sdl = print(annotated[0].typeDefs);
     // Either printed on schema or carried via Mesh extraSchemaDefinitionDirective
     expect(
-      sdl.includes('baseURL') ||
-        sdl.includes('extraSchemaDefinitionDirective') ||
-        parse(sdl),
+      sdl.includes('baseURL') || sdl.includes('extraSchemaDefinitionDirective') || parse(sdl),
     ).toBeTruthy();
+  });
+
+  it('rewrites @connect $args when rename transform renames arguments', () => {
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'REST',
+        schema: connectorsSchema,
+        transforms: [
+          createRenameTransform({
+            argRenamer: ({ argName, fieldName }) =>
+              fieldName === 'user' && argName === 'id' ? 'userId' : argName,
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).not.toMatch(/@source\([^)]*subgraph:/);
+    expect(sdl).toContain('user(userId:');
+    expect(sdl).toMatch(/\$args\.userId/);
+    expect(sdl).not.toMatch(/\$args\.id\b/);
   });
 });

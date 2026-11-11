@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@merge", "@httpOperation", "@transport", "@source", "@extraSchemaDefinitionDirective"]
+  import: ["@merge", "@extraSchemaDefinitionDirective"]
 ) {
   query: Query
 }
@@ -67,64 +67,44 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-directive @httpOperation(
-  subgraph: String
-  path: String
-  operationSpecificHeaders: [[String]]
-  httpMethod: HTTPMethod
-  isBinary: Boolean
-  requestBaseBody: ObjMap
-  queryParamArgMap: ObjMap
-  queryStringOptionsByParam: ObjMap
-  jsonApiFields: Boolean
-  queryStringOptions: ObjMap
-) repeatable on FIELD_DEFINITION
-
-directive @transport(
-  subgraph: String
-  kind: String
-  location: String
-  headers: [[String]]
-  queryStringOptions: ObjMap
-  queryParams: [[String]]
-) repeatable on SCHEMA
-
-directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @connect(
+  source: String
+  http: ConnectHTTP
+  selection: String!
+  entity: Boolean
+  errors: ConnectorErrors
+  isSuccess: String
+) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
-
-scalar ObjMap @join__type(graph: ACCOUNTS)
 
 scalar _DirectiveExtensions @join__type(graph: ACCOUNTS)
 
 scalar TransportOptions @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS)
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{subgraph: "accounts", kind: "rest", location: "http://localhost:<accounts_port>"}]}
+  directives: {source: [{name: "accounts", http: {baseURL: "http://localhost:<accounts_port>"}}], transport: [{subgraph: "accounts", kind: "rest", location: "http://localhost:<accounts_port>"}]}
 ) @join__type(graph: ACCOUNTS) @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS) {
-  me: User @httpOperation(
-    subgraph: "accounts"
-    path: "/me"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
+  me: User @connect(
+    source: "accounts"
+    http: {GET: "/me", headers: [{name: "accept", value: "application/json"}]}
+    selection: "id\\nname\\nusername"
   ) @join__field(graph: ACCOUNTS)
-  user(id: String!): User @httpOperation(
-    subgraph: "accounts"
-    path: "/users/{args.id}"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
+  user(id: String!): User @connect(
+    source: "accounts"
+    http: {GET: "/users/{$args.id}", headers: [{name: "accept", value: "application/json"}]}
+    selection: "id\\nname\\nusername"
   ) @merge(subgraph: "accounts", keyField: "id", keyArg: "id") @join__field(graph: ACCOUNTS)
-  users: [User] @httpOperation(
-    subgraph: "accounts"
-    path: "/users"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
+  users: [User] @connect(
+    source: "accounts"
+    http: {GET: "/users", headers: [{name: "accept", value: "application/json"}]}
+    selection: "id\\nname\\nusername"
   ) @join__field(graph: ACCOUNTS)
   topProducts(first: Int = 5): [Product] @join__field(graph: PRODUCTS)
 }
 
 type User @join__type(graph: ACCOUNTS, key: "id") @join__type(graph: REVIEWS, key: "id", extension: true) {
-  id: ID! @source(name: "id", type: "String!", subgraph: "accounts")
+  id: ID!
   name: String @join__field(graph: ACCOUNTS)
   username: String @join__field(graph: ACCOUNTS) @join__field(graph: REVIEWS, external: true)
   reviews: [Review] @join__field(graph: REVIEWS)
@@ -147,16 +127,35 @@ type Review @join__type(graph: REVIEWS, key: "id") {
   product: Product
 }
 
-enum HTTPMethod @join__type(graph: ACCOUNTS) {
-  GET @join__enumValue(graph: ACCOUNTS)
-  HEAD @join__enumValue(graph: ACCOUNTS)
-  POST @join__enumValue(graph: ACCOUNTS)
-  PUT @join__enumValue(graph: ACCOUNTS)
-  DELETE @join__enumValue(graph: ACCOUNTS)
-  CONNECT @join__enumValue(graph: ACCOUNTS)
-  OPTIONS @join__enumValue(graph: ACCOUNTS)
-  TRACE @join__enumValue(graph: ACCOUNTS)
-  PATCH @join__enumValue(graph: ACCOUNTS)
+input ConnectHTTP @join__type(graph: ACCOUNTS) {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping @join__type(graph: ACCOUNTS) {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors @join__type(graph: ACCOUNTS) {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP @join__type(graph: ACCOUNTS) {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }
 "
 `;

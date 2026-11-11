@@ -13,11 +13,11 @@ import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
+import { processConnectDirectives } from './connect.js';
 import { processDictionaryDirective } from './dictionary.js';
 import { processDiscriminatorAnnotations } from './discriminator.js';
 import { processFlattenAnnotations } from './flatten.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
-import { processConnectDirectives } from './connect.js';
 import type { GlobalOptions } from './httpOperation.js';
 import { addHTTPRootFieldResolver } from './httpOperation.js';
 import { processLinkFieldAnnotations } from './link.js';
@@ -65,8 +65,7 @@ export function processDirectives(
     endpoint: sourceDirective?.http?.baseURL ?? currDirective?.location,
     operationHeaders: sourceHeaders ?? currDirective?.headers,
     queryParams: currDirective?.queryParams,
-    queryStringOptions:
-      currDirective?.queryStringOptions ?? meshRestOptions.queryStringOptions,
+    queryStringOptions: currDirective?.queryStringOptions ?? meshRestOptions.queryStringOptions,
     timeout: meshRestOptions.timeout,
     ...extraGlobalOptions,
   };
