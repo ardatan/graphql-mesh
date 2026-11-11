@@ -165,35 +165,76 @@ export function addExecutionDirectivesToComposer(
         return out;
       };
       const dropUnmappedArgEntries = (selection: string): string | undefined => {
-        // Keep entries that no longer reference `$args`, or only reference mapped args.
-        // Drop only lines/entries still pointing at unmapped `$args.*`.
+        // Keep entries that no longer reference `$args`. Drop only entries still
+        // pointing at unmapped `$args.*`. Split at top-level commas/newlines so
+        // `joinNotNull(",")` (and nested braces) stay intact.
         const trimmed = selection.trim();
         if (!trimmed.includes('$args')) {
           return selection;
         }
-        // Object-literal form: `{ key: expr, ... }`
-        if (trimmed.startsWith('{')) {
-          try {
-            // Soft parse via line-ish split of `key: value` pairs inside braces.
-            const inner = trimmed.slice(1, trimmed.lastIndexOf('}'));
-            const kept: string[] = [];
-            for (const rawPart of inner.split(',')) {
-              const part = rawPart.trim();
-              if (!part) continue;
-              if (part.includes('$args')) continue;
-              kept.push(part);
+        const splitTopLevelEntries = (inner: string): string[] => {
+          const entries: string[] = [];
+          let buf = '';
+          let depthParen = 0;
+          let depthBrace = 0;
+          let depthBracket = 0;
+          let inSingle = false;
+          let inDouble = false;
+          let escape = false;
+          for (let i = 0; i < inner.length; i++) {
+            const ch = inner[i];
+            if (escape) {
+              buf += ch;
+              escape = false;
+              continue;
             }
-            if (!kept.length) return undefined;
-            return `{\n  ${kept.join(',\n  ')}\n}`;
-          } catch {
-            return undefined;
+            if ((inSingle || inDouble) && ch === '\\') {
+              buf += ch;
+              escape = true;
+              continue;
+            }
+            if (ch === "'" && !inDouble) {
+              inSingle = !inSingle;
+              buf += ch;
+              continue;
+            }
+            if (ch === '"' && !inSingle) {
+              inDouble = !inDouble;
+              buf += ch;
+              continue;
+            }
+            if (!inSingle && !inDouble) {
+              if (ch === '(') depthParen++;
+              else if (ch === ')') depthParen = Math.max(0, depthParen - 1);
+              else if (ch === '{') depthBrace++;
+              else if (ch === '}') depthBrace = Math.max(0, depthBrace - 1);
+              else if (ch === '[') depthBracket++;
+              else if (ch === ']') depthBracket = Math.max(0, depthBracket - 1);
+              else if (
+                (ch === ',' || ch === '\n') &&
+                depthParen === 0 &&
+                depthBrace === 0 &&
+                depthBracket === 0
+              ) {
+                const part = buf.trim();
+                if (part) entries.push(part);
+                buf = '';
+                continue;
+              }
+            }
+            buf += ch;
           }
+          const last = buf.trim();
+          if (last) entries.push(last);
+          return entries;
+        };
+        if (trimmed.startsWith('{')) {
+          const inner = trimmed.slice(1, trimmed.lastIndexOf('}'));
+          const kept = splitTopLevelEntries(inner).filter(part => !part.includes('$args'));
+          if (!kept.length) return undefined;
+          return `{\n  ${kept.join('\n  ')}\n}`;
         }
-        // Line form: `key: $args.foo`
-        const keptLines = selection
-          .split('\n')
-          .map(l => l.trimEnd())
-          .filter(line => line.trim() && !line.includes('$args'));
+        const keptLines = splitTopLevelEntries(selection).filter(part => !part.includes('$args'));
         if (!keptLines.length) return undefined;
         return keptLines.join('\n');
       };

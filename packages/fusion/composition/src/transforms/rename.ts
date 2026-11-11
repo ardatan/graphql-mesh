@@ -15,7 +15,7 @@ import {
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
-import { rewriteConnectArgReferences } from './utils.js';
+import { rewriteConnectArgReferences, withOriginalKeyFallback } from './utils.js';
 
 export const ignoreList = [
   'Int',
@@ -252,31 +252,6 @@ export function createRenameTransform(opts: RenameTransformConfig) {
       }
       // Do not rewrite `@connect(selection:)` with the connector field's own rename —
       // selection keys are response JSON paths, not GraphQL field names.
-      const withOriginalKeyFallback = <T extends typeof field>(nextField: T): T => {
-        if (newFieldName === fieldName) {
-          return nextField;
-        }
-        // Input fields cannot carry resolvers — rename the key only.
-        if (!('args' in nextField) && !('resolve' in nextField)) {
-          return nextField;
-        }
-        const originalResolve = (nextField as GraphQLFieldConfig<any, any>).resolve;
-        return {
-          ...nextField,
-          resolve(source: any, args: any, context: any, info: any) {
-            if (originalResolve) {
-              return originalResolve(source, args, context, info);
-            }
-            if (source == null) {
-              return null;
-            }
-            if (Object.prototype.hasOwnProperty.call(source, newFieldName)) {
-              return source[newFieldName];
-            }
-            return source[fieldName];
-          },
-        } as T;
-      };
       if (argRenamers.length && 'args' in field && field.args) {
         const newArgs: GraphQLFieldConfigArgumentMap = {};
         const argRenameMap = new Map<string, string>();
@@ -302,23 +277,31 @@ export function createRenameTransform(opts: RenameTransformConfig) {
           fieldExtensions.directives = rewrittenDirectives;
           return [
             newFieldName,
-            withOriginalKeyFallback({
-              ...field,
-              extensions: fieldExtensions,
-              args: newArgs,
-              astNode: undefined,
-            }),
+            withOriginalKeyFallback(
+              {
+                ...field,
+                extensions: fieldExtensions,
+                args: newArgs,
+                astNode: undefined,
+              },
+              fieldName,
+              newFieldName,
+            ),
           ];
         }
         return [
           newFieldName,
-          withOriginalKeyFallback({
-            ...field,
-            args: newArgs,
-          }),
+          withOriginalKeyFallback(
+            {
+              ...field,
+              args: newArgs,
+            },
+            fieldName,
+            newFieldName,
+          ),
         ];
       }
-      return [newFieldName, withOriginalKeyFallback(field)];
+      return [newFieldName, withOriginalKeyFallback(field, fieldName, newFieldName)];
     };
     return mapSchema(schema, schemaMapper);
   };

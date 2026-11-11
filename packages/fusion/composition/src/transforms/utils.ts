@@ -10,6 +10,41 @@ function escapeRegExp(value: string): string {
 }
 
 /**
+ * After renaming a GraphQL output field, resolve from the new key first and
+ * fall back to the original key so Connectors selections that still emit the
+ * pre-rename JSON path keep working. Input fields are left untouched.
+ */
+export function withOriginalKeyFallback<T extends Record<string, any>>(
+  nextField: T,
+  fieldName: string,
+  newFieldName: string,
+): T {
+  if (newFieldName === fieldName) {
+    return nextField;
+  }
+  // Input fields cannot carry resolvers — rename the key only.
+  if (!('args' in nextField) && !('resolve' in nextField)) {
+    return nextField;
+  }
+  const originalResolve = nextField.resolve;
+  return {
+    ...nextField,
+    resolve(source: any, args: any, context: any, info: any) {
+      if (originalResolve) {
+        return originalResolve(source, args, context, info);
+      }
+      if (source == null) {
+        return null;
+      }
+      if (Object.prototype.hasOwnProperty.call(source, newFieldName)) {
+        return source[newFieldName];
+      }
+      return source[fieldName];
+    },
+  };
+}
+
+/**
  * Rewrite Apollo Connectors `@connect` `$args.<name>` references after GraphQL
  * argument renames. Mesh stitching used `@source(name:)` for this; Connectors
  * bind args by the GraphQL argument name in path/body/query/headers expressions.

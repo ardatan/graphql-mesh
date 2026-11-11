@@ -29,7 +29,7 @@ import {
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
-import { rewriteConnectArgReferences } from './utils.js';
+import { rewriteConnectArgReferences, withOriginalKeyFallback } from './utils.js';
 
 const EnumValueDirective = new GraphQLDirective({
   name: 'enum',
@@ -122,33 +122,8 @@ export function createNamingConventionTransform(
       const newFieldName = APOLLO_CONNECTORS_INPUT_TYPES.has(typeName)
         ? fieldName
         : fieldNamesFn?.(fieldName) || fieldName;
-      const withOriginalKeyFallback = (nextField: typeof fieldConfig) => {
-        if (newFieldName === fieldName) {
-          return nextField;
-        }
-        // Input fields cannot carry resolvers — rename the key only.
-        if (!('args' in nextField) && !('resolve' in nextField)) {
-          return nextField;
-        }
-        const originalResolve = 'resolve' in nextField ? nextField.resolve : undefined;
-        return {
-          ...nextField,
-          resolve(source: any, args: any, context: any, info: any) {
-            if (originalResolve) {
-              return originalResolve(source, args, context, info);
-            }
-            if (source == null) {
-              return null;
-            }
-            if (Object.prototype.hasOwnProperty.call(source, newFieldName)) {
-              return source[newFieldName];
-            }
-            return source[fieldName];
-          },
-        };
-      };
       if (!fieldArgumentNamesFn && !enumValuesFn) {
-        return [newFieldName, withOriginalKeyFallback(fieldConfig)];
+        return [newFieldName, withOriginalKeyFallback(fieldConfig, fieldName, newFieldName)];
       }
       if ('args' in fieldConfig && fieldConfig.args && (fieldArgumentNamesFn || enumValuesFn)) {
         const newArgs: GraphQLFieldConfigArgumentMap = {};
@@ -181,23 +156,31 @@ export function createNamingConventionTransform(
           fieldExtensions.directives = rewrittenDirectives;
           return [
             newFieldName,
-            withOriginalKeyFallback({
-              ...fieldConfig,
-              extensions: fieldExtensions,
-              args: newArgs,
-              astNode: undefined,
-            }),
+            withOriginalKeyFallback(
+              {
+                ...fieldConfig,
+                extensions: fieldExtensions,
+                args: newArgs,
+                astNode: undefined,
+              },
+              fieldName,
+              newFieldName,
+            ),
           ];
         }
         return [
           newFieldName,
-          withOriginalKeyFallback({
-            ...fieldConfig,
-            args: newArgs,
-          }),
+          withOriginalKeyFallback(
+            {
+              ...fieldConfig,
+              args: newArgs,
+            },
+            fieldName,
+            newFieldName,
+          ),
         ];
       }
-      return [newFieldName, withOriginalKeyFallback(fieldConfig)];
+      return [newFieldName, withOriginalKeyFallback(fieldConfig, fieldName, newFieldName)];
     };
   }
   if (enumValuesFn) {
