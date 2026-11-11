@@ -6,9 +6,9 @@ exports[`Cloudfunction should generate correct schema: cloudfunction-schema 1`] 
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Query {
   dummy: String
@@ -47,9 +47,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

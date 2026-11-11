@@ -7,9 +7,9 @@ exports[`OpanAPI: nested objects should generate the schema correctly 1`] = `
 
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Query {
   """Search for documents in a collection that match the search criteria."""
@@ -17,7 +17,7 @@ type Query {
     """The name of the collection to search for the document under"""
     collectionName: String!
     searchParameters: SearchParameters_Input!
-  ): searchCollection_response @connect(source: "example_api", http: {GET: "/collections/{$args.collectionName}/documents/search", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  searchParameters: $args.searchParameters\\n}"}, selection: "... on SearchResult { facet_counts {\\n  counts {\\n    count\\n    highlighted\\n    value\\n  }\\n  field_name\\n  stats {\\n    max\\n    min\\n    sum\\n    total_values\\n    avg\\n  }\\n}\\nfound\\nsearch_time_ms\\nout_of\\nsearch_cutoff\\npage\\ngrouped_hits {\\n  group_key\\n  hits {\\n    highlights {\\n      field\\n      snippet\\n      snippets\\n      indices\\n      matched_tokens\\n    }\\n    document\\n    text_match\\n    geo_distance_meters\\n  }\\n}\\nhits {\\n  highlights {\\n    field\\n    snippet\\n    snippets\\n    indices\\n    matched_tokens\\n  }\\n  document\\n  text_match\\n  geo_distance_meters\\n}\\nrequest_params {\\n  collection_name\\n  q\\n  per_page\\n} }\\n... on ApiResponse { message }")
+  ): searchCollection_response @connect(source: "example_api", http: {GET: "/collections/{$args.collectionName}/documents/search", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  searchParameters: $args.searchParameters\\n}"}, selection: "$")
 }
 
 union searchCollection_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "SearchResult") @statusCodeTypeName(subgraph: "example_api", statusCode: "400", typeName: "ApiResponse") @statusCodeTypeName(subgraph: "example_api", statusCode: "404", typeName: "ApiResponse") = SearchResult | ApiResponse
@@ -257,9 +257,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

@@ -10,9 +10,9 @@ directive @discriminator(subgraph: String, field: String, mapping: [[String]]) o
 
 directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Admin implements User {
   """The name"""
@@ -64,9 +64,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

@@ -1,0 +1,80 @@
+
+# These are the necessary federation and connector directives you will be using
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key"]
+  )
+  @link(
+    url: "https://specs.apollo.dev/connect/v0.2"
+    import: ["@connect", "@source"]
+  )
+# A @source directive defines a shared data source for multiple connectors.
+  @source(
+    name: "JSONPlaceholder"
+    http: { baseURL: "https://jsonplaceholder.typicode.com/" }
+  )
+
+type User @key(fields: "id") {
+  id: ID!
+  name: String
+  username: String
+  email: String
+  address: Address
+  phone: String
+  website: String
+  company: Company
+}
+
+
+type Address {
+  line1: String
+  line2: String
+  city: String
+  zip: String
+  geo: Geo
+}
+
+type Geo {
+  lat: String
+  lng: String
+}
+
+type Company {
+  name: String
+  catchPhrase: String
+  bs: String
+}
+
+type Query {
+  getUser(id: ID!): User
+    # A @connect directive defines the API data source of a GraphQL schema field.
+    @connect(
+      source: "JSONPlaceholder"
+      http: { GET: "/users/{$args.id}" }
+      selection: """
+        id
+        name
+        username
+        email
+        address: $.address {
+          line1: street
+          line2: suite
+          city
+          zip: zipcode
+          geo: $.geo {
+            lat
+            lng
+          }
+        }
+        phone
+        website
+        company: $.company {
+          name
+          catchPhrase
+          bs
+        }
+      """
+      entity: true
+    )
+}

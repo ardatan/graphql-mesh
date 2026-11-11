@@ -7,12 +7,12 @@ exports[`Discriminator Mapping should generate correct schema: discriminator-map
 
 directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Query {
-  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on Cat { petType\\ncat_exclusive }\\n... on DogDifferent { petType\\ndog_exclusive }")
+  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
 }
 
 union Pet @discriminator(subgraph: "test", field: "petType", mapping: [["Dog", "DogDifferent"], ["Cat", "Cat"]]) = Cat | DogDifferent
@@ -45,10 +45,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;
 
@@ -60,9 +67,9 @@ exports[`Inline Discriminator Mapping (request body) should generate correct sch
 
 directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Query {
   dummy: String
@@ -113,10 +120,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;
 
@@ -127,12 +141,12 @@ exports[`Inline Discriminator Mapping should generate correct schema: discrimina
 
 directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Query {
-  things: [query_things_items] @connect(source: "test", http: {GET: "/things", headers: [{name: "accept", value: "application/json"}]}, selection: "... on Cat { id\\ntype\\nname\\ndata }\\n... on Dog { id\\ntype\\nname\\ndata }")
+  things: [query_things_items] @connect(source: "test", http: {GET: "/things", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
 }
 
 union query_things_items @discriminator(subgraph: "test", field: "type", mapping: [["cat", "Cat"], ["dog", "Dog"]]) = Cat | Dog
@@ -174,9 +188,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

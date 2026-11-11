@@ -9,9 +9,9 @@ directive @discriminator(subgraph: String, field: String, mapping: [[String]]) o
 
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Dog implements Pet {
   dog_exclusive: String
@@ -31,7 +31,7 @@ type Cat implements Pet {
 }
 
 type Query {
-  pets_by_id(id: String!): pets_by_id_response @connect(source: "Pet", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on Dog { dog_exclusive\\nname\\npetType }\\n... on Cat { cat_exclusive\\nname\\npetType }\\n... on ApiError { code\\ndescription }")
+  pets_by_id(id: String!): pets_by_id_response @connect(source: "Pet", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
 }
 
 union pets_by_id_response @statusCodeTypeName(subgraph: "Pet", statusCode: "200", typeName: "Pet") @statusCodeTypeName(subgraph: "Pet", statusCode: "400", typeName: "ApiError") = Dog | Cat | ApiError
@@ -64,9 +64,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

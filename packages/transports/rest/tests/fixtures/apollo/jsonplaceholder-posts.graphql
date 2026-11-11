@@ -1,0 +1,51 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key"]
+  )
+  @link(
+    url: "https://specs.apollo.dev/connect/v0.2"
+    import: ["@connect", "@source"]
+  )
+# A @source directive defines a shared data source for multiple connectors.
+  @source(
+    name: "JSONPlaceholder"
+    http: { baseURL: "https://jsonplaceholder.typicode.com/" }
+  )
+
+  type Post @key(fields: "id") {
+    id: ID!
+    userId: ID!
+    title: String
+    body: String
+  }
+
+  type User @key(fields: "id") {
+    id: ID!
+    posts: [Post]
+    @connect(
+      source: "JSONPlaceholder"
+      http: { GET: "/users/{$this.id}/posts" }
+      selection: """
+        id
+        userId
+        title
+        body
+      """
+    )
+  }
+
+  type Query {
+    getPost(id: ID!): Post
+    @connect(
+      source: "JSONPlaceholder"
+      http: { GET: "/posts/{$args.id}" }
+      selection: """
+        id
+        userId
+        title
+        body
+    """
+    entity: true
+    )
+  }

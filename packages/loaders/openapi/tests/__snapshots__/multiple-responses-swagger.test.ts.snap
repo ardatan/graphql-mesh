@@ -10,13 +10,13 @@ directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: St
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Query {
   """Optional extended description in Markdown."""
-  foo_by_id: foo_by_id_response @connect(source: "test", http: {GET: "/{id}", headers: [{name: "Accept", value: "application/json"}]}, selection: "... on Foo { id }\\n... on Error { message\\nstack }")
+  foo_by_id: foo_by_id_response @connect(source: "test", http: {GET: "/{id}", headers: [{name: "Accept", value: "application/json"}]}, selection: "$")
 }
 
 union foo_by_id_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "Foo") @statusCodeTypeName(subgraph: "test", statusCode: "500", typeName: "Error") = Foo | Error
@@ -32,7 +32,7 @@ type Error {
 
 type Mutation {
   """Optional extended description in Markdown."""
-  post: post_response @connect(source: "test", http: {POST: "/", headers: [{name: "Accept", value: "application/json"}]}, selection: "... on Void_container { Void }\\n... on Error { message\\nstack }")
+  post: post_response @connect(source: "test", http: {POST: "/", headers: [{name: "Accept", value: "application/json"}]}, selection: "$")
 }
 
 union post_response @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "test", statusCode: "500", typeName: "Error") = Void_container | Error
@@ -62,9 +62,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

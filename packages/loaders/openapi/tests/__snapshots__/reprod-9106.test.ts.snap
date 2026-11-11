@@ -16,9 +16,9 @@ directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 """
 The credentials of the client application that are verified by the authorization server.
@@ -75,7 +75,7 @@ type Mutation {
   - **Refresh Token**, see [IETF 6749, section 6](https://datatracker.ietf.org/doc/html/rfc6749#section-6)
   - **Authorization Code Grant**, see [IETF 6749, section 4.1](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
   """
-  post_token(input: post_token_request_Input): post_token_200_response @connect(source: "test", http: {POST: "/token", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on Provider_specific_Access_Token_Response { access_token\\nexpires_in\\ntoken_type\\nscope\\nadditionalProperties\\nissued_at\\nstatus\\nissuer\\nclient_id\\napplication_name\\napi_products\\npublic_key }\\n... on Provider_specific_Tokens_Response { access_token\\nexpires_in\\ntoken_type\\nscope\\nadditionalProperties\\nrefresh_token\\nrefresh_token_issued_at\\nrefresh_token_expires_in\\nrefresh_count\\nrefresh_token_status\\nissued_at\\nstatus\\nissuer\\nclient_id\\napplication_name\\napi_products\\npublic_key }")
+  post_token(input: post_token_request_Input): post_token_200_response @connect(source: "test", http: {POST: "/token", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
   """
   Prevent tokens from being further used to access APIs by disposing one or more OAuth tokens that are no longer needed. Basic Authentication is used to access this resource, using the issued client Id and client secret. This resource is based on the *OAuth 2.0 Token Revocation* IETF Draft RFC 7009, August 2013.
   * [IETF 7009](https://datatracker.ietf.org/doc/html/rfc7009).
@@ -275,9 +275,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

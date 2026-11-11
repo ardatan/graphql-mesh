@@ -14,16 +14,16 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Query {
   dummy: String
 }
 
 type Mutation {
-  test_endpoint(input: TestType_Input): TestType @connect(source: "test", http: {POST: "/test", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on A_const_container { A_const }\\n... on mutation_test_endpoint_oneOf_1 { B\\nadditionalProperties }")
+  test_endpoint(input: TestType_Input): TestType @connect(source: "test", http: {POST: "/test", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
 }
 
 union TestType = A_const_container | mutation_test_endpoint_oneOf_1
@@ -75,9 +75,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

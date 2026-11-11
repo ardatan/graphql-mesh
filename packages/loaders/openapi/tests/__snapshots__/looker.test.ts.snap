@@ -16,9 +16,9 @@ directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Query {
   """
@@ -2257,7 +2257,7 @@ type Query {
     project_id: String!
     """Requested fields"""
     fields: String
-  ): project_validation_results_response @connect(source: "test", http: {GET: "/projects/{$args.project_id}/validate", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "... on ProjectValidationCache { errors {\\n  code\\n  severity\\n  kind\\n  message\\n  field_name\\n  file_path\\n  line_number\\n  model_id\\n  explore\\n  help_url\\n  params\\n  sanitized_message\\n}\\nproject_digest\\nmodels_not_validated {\\n  name\\n  project_file_id\\n}\\ncomputation_time\\nstale }\\n... on Void_container { Void }")
+  ): project_validation_results_response @connect(source: "test", http: {GET: "/projects/{$args.project_id}/validate", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "$")
   """
   ### Get Project Workspace
   
@@ -9430,7 +9430,7 @@ type Mutation {
     project_id: String!
     """Requested fields"""
     fields: String
-  ): lock_all_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/manifest/lock_all", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "... on String_container { String }\\n... on Void_container { Void }")
+  ): lock_all_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/manifest/lock_all", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "$")
   """
   ### Update the setting for enabling/disabling digest emails
   
@@ -10063,7 +10063,7 @@ type Mutation {
     look_id: String!
     """Folder id to copy to."""
     folder_id: String
-  ): copy_look_response @connect(source: "test", http: {POST: "/looks/{$args.look_id}/copy", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  folder_id: $args.folder_id\\n}"}, selection: "... on LookWithQuery { can\\ncontent_metadata_id\\nid\\ntitle\\nuser_id\\ncontent_favorite_id\\ncreated_at\\ndeleted\\ndeleted_at\\ndeleter_id\\ndescription\\nembed_url\\nexcel_file_url\\nfavorite_count\\ngoogle_spreadsheet_formula\\nimage_embed_url\\nis_run_on_load\\nlast_accessed_at\\nlast_updater_id\\nlast_viewed_at\\nmodel {\\n  id\\n  label\\n}\\npublic\\npublic_slug\\npublic_url\\nquery_id\\nshort_url\\nfolder {\\n  name\\n  parent_id\\n  id\\n  content_metadata_id\\n  created_at\\n  creator_id\\n  child_count\\n  external_id\\n  is_embed\\n  is_embed_shared_root\\n  is_embed_users_root\\n  is_personal\\n  is_personal_descendant\\n  is_shared_root\\n  is_users_root\\n  can\\n}\\nfolder_id\\nupdated_at\\nview_count\\nquery {\\n  can\\n  id\\n  model\\n  view\\n  fields\\n  pivots\\n  fill_fields\\n  filters\\n  filter_expression\\n  sorts\\n  limit\\n  column_limit\\n  total\\n  row_total\\n  subtotals\\n  vis_config\\n  filter_config\\n  visible_ui_sections\\n  slug\\n  dynamic_fields\\n  client_id\\n  share_url\\n  expanded_share_url\\n  url\\n  query_timezone\\n  has_table_calculations\\n}\\nurl }\\n... on Look { can\\ncontent_metadata_id\\nid\\ntitle\\nuser_id\\ncontent_favorite_id\\ncreated_at\\ndeleted\\ndeleted_at\\ndeleter_id\\ndescription\\nembed_url\\nexcel_file_url\\nfavorite_count\\ngoogle_spreadsheet_formula\\nimage_embed_url\\nis_run_on_load\\nlast_accessed_at\\nlast_updater_id\\nlast_viewed_at\\nmodel {\\n  id\\n  label\\n}\\npublic\\npublic_slug\\npublic_url\\nquery_id\\nshort_url\\nfolder {\\n  name\\n  parent_id\\n  id\\n  content_metadata_id\\n  created_at\\n  creator_id\\n  child_count\\n  external_id\\n  is_embed\\n  is_embed_shared_root\\n  is_embed_users_root\\n  is_personal\\n  is_personal_descendant\\n  is_shared_root\\n  is_users_root\\n  can\\n}\\nfolder_id\\nupdated_at\\nview_count }")
+  ): copy_look_response @connect(source: "test", http: {POST: "/looks/{$args.look_id}/copy", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  folder_id: $args.folder_id\\n}"}, selection: "$")
   """
   ### Move an existing look
   
@@ -10078,7 +10078,7 @@ type Mutation {
     look_id: String!
     """Folder id to move to."""
     folder_id: String!
-  ): move_look_response @connect(source: "test", http: {PATCH: "/looks/{$args.look_id}/move", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  folder_id: $args.folder_id\\n}"}, selection: "... on LookWithQuery { can\\ncontent_metadata_id\\nid\\ntitle\\nuser_id\\ncontent_favorite_id\\ncreated_at\\ndeleted\\ndeleted_at\\ndeleter_id\\ndescription\\nembed_url\\nexcel_file_url\\nfavorite_count\\ngoogle_spreadsheet_formula\\nimage_embed_url\\nis_run_on_load\\nlast_accessed_at\\nlast_updater_id\\nlast_viewed_at\\nmodel {\\n  id\\n  label\\n}\\npublic\\npublic_slug\\npublic_url\\nquery_id\\nshort_url\\nfolder {\\n  name\\n  parent_id\\n  id\\n  content_metadata_id\\n  created_at\\n  creator_id\\n  child_count\\n  external_id\\n  is_embed\\n  is_embed_shared_root\\n  is_embed_users_root\\n  is_personal\\n  is_personal_descendant\\n  is_shared_root\\n  is_users_root\\n  can\\n}\\nfolder_id\\nupdated_at\\nview_count\\nquery {\\n  can\\n  id\\n  model\\n  view\\n  fields\\n  pivots\\n  fill_fields\\n  filters\\n  filter_expression\\n  sorts\\n  limit\\n  column_limit\\n  total\\n  row_total\\n  subtotals\\n  vis_config\\n  filter_config\\n  visible_ui_sections\\n  slug\\n  dynamic_fields\\n  client_id\\n  share_url\\n  expanded_share_url\\n  url\\n  query_timezone\\n  has_table_calculations\\n}\\nurl }\\n... on Look { can\\ncontent_metadata_id\\nid\\ntitle\\nuser_id\\ncontent_favorite_id\\ncreated_at\\ndeleted\\ndeleted_at\\ndeleter_id\\ndescription\\nembed_url\\nexcel_file_url\\nfavorite_count\\ngoogle_spreadsheet_formula\\nimage_embed_url\\nis_run_on_load\\nlast_accessed_at\\nlast_updater_id\\nlast_viewed_at\\nmodel {\\n  id\\n  label\\n}\\npublic\\npublic_slug\\npublic_url\\nquery_id\\nshort_url\\nfolder {\\n  name\\n  parent_id\\n  id\\n  content_metadata_id\\n  created_at\\n  creator_id\\n  child_count\\n  external_id\\n  is_embed\\n  is_embed_shared_root\\n  is_embed_users_root\\n  is_personal\\n  is_personal_descendant\\n  is_shared_root\\n  is_users_root\\n  can\\n}\\nfolder_id\\nupdated_at\\nview_count }")
+  ): move_look_response @connect(source: "test", http: {PATCH: "/looks/{$args.look_id}/move", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  folder_id: $args.folder_id\\n}"}, selection: "$")
   """
   ### Create a lookml model using the specified configuration.
   
@@ -10258,7 +10258,7 @@ type Mutation {
     user_id: String!
     """Requested fields."""
     fields: String
-  ): activate_app_user_response @connect(source: "test", http: {POST: "/oauth_client_apps/{$args.client_guid}/users/{$args.user_id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "... on String_container { String }\\n... on Void_container { Void }")
+  ): activate_app_user_response @connect(source: "test", http: {POST: "/oauth_client_apps/{$args.client_guid}/users/{$args.user_id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "$")
   """
   ### Deactivate an app for a user
   
@@ -10368,7 +10368,7 @@ type Mutation {
     branch: String
     """Ref to deploy to production"""
     ref: String
-  ): deploy_ref_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/deploy_ref_to_production", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  branch: $args.branch\\n  ref: $args.ref\\n}"}, selection: "... on String_container { String }\\n... on Void_container { Void }")
+  ): deploy_ref_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/deploy_ref_to_production", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  branch: $args.branch\\n  ref: $args.ref\\n}"}, selection: "$")
   """
   ### Deploy LookML from this Development Mode Project to Production
   
@@ -10388,7 +10388,7 @@ type Mutation {
   deploy_to_production(
     """Id of project"""
     project_id: String!
-  ): deploy_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/deploy_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: "... on String_container { String }\\n... on Void_container { Void }")
+  ): deploy_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/deploy_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """
   ### Reset a project to the revision of the project that is in production.
   
@@ -10398,7 +10398,7 @@ type Mutation {
   reset_project_to_production(
     """Id of project"""
     project_id: String!
-  ): reset_project_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: "... on String_container { String }\\n... on Void_container { Void }")
+  ): reset_project_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """
   ### Reset a project development branch to the revision of the project that is on the remote.
   
@@ -10408,7 +10408,7 @@ type Mutation {
   reset_project_to_remote(
     """Id of project"""
     project_id: String!
-  ): reset_project_to_remote_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_remote", headers: [{name: "accept", value: "application/json"}]}, selection: "... on String_container { String }\\n... on Void_container { Void }")
+  ): reset_project_to_remote_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_remote", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """
   ### Create A Project
   
@@ -10504,7 +10504,7 @@ type Mutation {
     """(Optional): Tag Message"""
     tag_message: String
     input: Project_Input
-  ): tag_ref_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/tag", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  commit_sha: $args.commit_sha\\n  tag_name: $args.tag_name\\n  tag_message: $args.tag_message\\n}"}, selection: "... on Project { can\\nid\\nname\\nuses_git\\ngit_remote_url\\ngit_username\\ngit_password\\ngit_production_branch_name\\nuse_git_cookie_auth\\ngit_username_user_attribute\\ngit_password_user_attribute\\ngit_service_name\\ngit_application_server_http_port\\ngit_application_server_http_scheme\\ndeploy_secret\\nunset_deploy_secret\\npull_request_mode\\nvalidation_required\\ngit_release_mgmt_enabled\\nallow_warnings\\nis_example\\ndependency_status }\\n... on Void_container { Void }")
+  ): tag_ref_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/tag", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  commit_sha: $args.commit_sha\\n  tag_name: $args.tag_name\\n  tag_message: $args.tag_message\\n}"}, selection: "$")
   """
   ### Create a new task to render a look to an image.
   
@@ -11151,7 +11151,7 @@ type Mutation {
   
   
   """
-  validate_theme(input: Theme_Input): validate_theme_response @connect(source: "test", http: {POST: "/themes/validate", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on ValidationError { message\\nerrors {\\n  field\\n  code\\n  message\\n  documentation_url\\n}\\ndocumentation_url }\\n... on String_container { String }")
+  validate_theme(input: Theme_Input): validate_theme_response @connect(source: "test", http: {POST: "/themes/validate", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
   """
   ### Update the theme by id.
   
@@ -15364,9 +15364,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

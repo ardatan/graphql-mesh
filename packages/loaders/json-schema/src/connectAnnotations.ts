@@ -44,12 +44,22 @@ export const ConnectHTTPInput = new GraphQLInputObjectType({
   },
 });
 
+export const ConnectorErrorsInput = new GraphQLInputObjectType({
+  name: 'ConnectorErrors',
+  fields: {
+    message: { type: JSONSelectionScalar },
+    extensions: { type: JSONSelectionScalar },
+  },
+});
+
 export const SourceHTTPInput = new GraphQLInputObjectType({
   name: 'SourceHTTP',
   fields: {
     baseURL: { type: new GraphQLNonNull(GraphQLString) },
     headers: { type: new GraphQLList(new GraphQLNonNull(HTTPHeaderMappingInput)) },
     queryParams: { type: JSONSelectionScalar },
+    errors: { type: ConnectorErrorsInput },
+    isSuccess: { type: JSONSelectionScalar },
   },
 });
 
@@ -61,6 +71,8 @@ export const ConnectDirective = new GraphQLDirective({
     http: { type: ConnectHTTPInput },
     selection: { type: new GraphQLNonNull(JSONSelectionScalar) },
     entity: { type: GraphQLBoolean },
+    errors: { type: ConnectorErrorsInput },
+    isSuccess: { type: JSONSelectionScalar },
   },
   isRepeatable: true,
 });
@@ -71,6 +83,8 @@ export const SourceDirective = new GraphQLDirective({
   args: {
     name: { type: new GraphQLNonNull(GraphQLString) },
     http: { type: new GraphQLNonNull(SourceHTTPInput) },
+    errors: { type: ConnectorErrorsInput },
+    isSuccess: { type: JSONSelectionScalar },
   },
   isRepeatable: true,
 });

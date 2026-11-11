@@ -41,7 +41,7 @@ describe('OpenAPI loader: Empty upstream 404 response', () => {
           "user": null,
         },
         "errors": [
-          [GraphQLError: Connect HTTP 404: Not Found],
+          [GraphQLError: Request failed],
         ],
       }
     `);

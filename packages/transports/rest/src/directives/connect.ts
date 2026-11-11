@@ -11,15 +11,17 @@ import {
 } from 'graphql';
 import type { IStringifyOptions } from 'qs';
 import { stringify as qsStringify } from 'qs';
-import { type Logger } from '@graphql-hive/logger';
+import { Logger, type Logger as HiveLogger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
-import { DefaultLogger, getHeadersObj } from '@graphql-mesh/utils';
+import { getHeadersObj } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
-import { fetch as defaultFetch } from '@whatwg-node/fetch';
+import { Blob, File, FormData, fetch as defaultFetch } from '@whatwg-node/fetch';
 import urlJoin from 'url-join';
+import { isFileUpload } from './isFileUpload.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
+import { serializeArgumentsForInterpolation } from './utils.js';
 
 const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
   type: GraphQLOutputType,
@@ -43,11 +45,18 @@ type ConnectHttp = {
   queryParams?: string;
 };
 
+type ConnectorErrors = {
+  message?: string;
+  extensions?: string;
+};
+
 type ConnectArgs = {
   source?: string;
   http?: ConnectHttp;
   selection?: string;
   entity?: boolean;
+  errors?: ConnectorErrors;
+  isSuccess?: string;
 };
 
 type SourceArgs = {
@@ -56,7 +65,11 @@ type SourceArgs = {
     baseURL: string;
     headers?: Array<{ name: string; value?: string; from?: string }>;
     queryParams?: string;
+    errors?: ConnectorErrors;
+    isSuccess?: string;
   };
+  errors?: ConnectorErrors;
+  isSuccess?: string;
 };
 
 const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
@@ -160,7 +173,7 @@ const defaultQsOptions: IStringifyOptions = {
  * Null values are omitted. Array/object encoding follows Hive qs options.
  */
 function applyQueryParams(
-  url: URL,
+  fullPath: string,
   queryParamsSelection: string | undefined,
   vars: {
     args: Record<string, any>;
@@ -171,9 +184,9 @@ function applyQueryParams(
   qsOptions: MeshQsOptions = {},
   queryStringOptionsByParam?: Record<string, MeshQsOptions & { destructObject?: boolean }>,
   resolveArg?: (argName: string, value: any) => any,
-) {
+): string {
   if (!queryParamsSelection) {
-    return;
+    return fullPath;
   }
   const entries = parseQueryParamsEntries(queryParamsSelection);
   const params: Record<string, any> = {};
@@ -197,7 +210,7 @@ function applyQueryParams(
     params[key] = value;
   }
   if (!Object.keys(params).length) {
-    return;
+    return fullPath;
   }
   const { jsonStringify, ...restQs } = qsOptions;
   if (jsonStringify) {
@@ -235,14 +248,26 @@ function applyQueryParams(
     });
   }
   if (!serialized) {
-    return;
+    return fullPath;
   }
   // Field-level queryParams override source/global keys (Mesh httpOperation semantics).
+  const abs = /^https?:\/\//i.test(fullPath);
+  const url = abs ? new URL(fullPath) : new URL(fullPath, 'http://mesh.local/');
   for (const key of Object.keys(params)) {
     url.searchParams.delete(key);
   }
   const existing = url.search.startsWith('?') ? url.search.slice(1) : url.search;
   url.search = existing ? `?${existing}&${serialized}` : `?${serialized}`;
+  if (abs) {
+    return url.toString();
+  }
+  // Preserve relative paths (no forced leading slash) for Mesh test mocks.
+  const leadingSlash = fullPath.startsWith('/');
+  let pathPart = url.pathname;
+  if (!leadingSlash && pathPart.startsWith('/')) {
+    pathPart = pathPart.slice(1);
+  }
+  return `${pathPart}${url.search}`;
 }
 
 function parseQueryParamsEntries(selection: string): Array<[string, string]> {
@@ -411,6 +436,31 @@ function evalPath(
       return path.slice(2, -1);
     }
   }
+  // Method calls: `$status->match(...)`, `$response.headers.x->first`
+  const methodMatch = path.match(/^(.*?)->([A-Za-z_][\w]*)\((.*)\)$/);
+  if (methodMatch) {
+    const left = evalPath(methodMatch[1].trim(), root, extras);
+    const method = methodMatch[2];
+    const rawArgs = methodMatch[3].trim();
+    if (method === 'first') {
+      return Array.isArray(left) ? left[0] : left;
+    }
+    if (method === 'match') {
+      return evalMatchMethod(left, rawArgs);
+    }
+    if (method === 'joinNotNull') {
+      if (!Array.isArray(left)) return left;
+      const sepMatch = rawArgs.match(/^["'](.*)["']$/);
+      const sep = sepMatch ? sepMatch[1] : ',';
+      return left.filter(v => v != null).join(sep);
+    }
+    if (method === 'jsonStringify') {
+      return JSON.stringify(left);
+    }
+    if (method === 'toString') {
+      return left == null ? '' : String(left);
+    }
+  }
   const parts = path.replace(/^\$\.?/, '').split('.');
   let cur = root;
   for (const part of parts) {
@@ -418,6 +468,90 @@ function evalPath(
     cur = cur[part];
   }
   return cur;
+}
+
+/**
+ * Apollo Connectors `$x->match([key, value], …, [@, default])`.
+ */
+function evalMatchMethod(left: any, rawArgs: string): any {
+  // Split top-level `[...]` groups
+  const groups: string[] = [];
+  let depth = 0;
+  let start = -1;
+  for (let i = 0; i < rawArgs.length; i++) {
+    const ch = rawArgs[i];
+    if (ch === '[') {
+      if (depth === 0) start = i;
+      depth++;
+    } else if (ch === ']') {
+      depth--;
+      if (depth === 0 && start >= 0) {
+        groups.push(rawArgs.slice(start, i + 1));
+        start = -1;
+      }
+    }
+  }
+  let fallback: any;
+  for (const group of groups) {
+    const inner = group.slice(1, -1).trim();
+    // [@, value] default arm
+    if (inner.startsWith('@')) {
+      const comma = inner.indexOf(',');
+      fallback = parseMatchValue(comma >= 0 ? inner.slice(comma + 1).trim() : 'null');
+      continue;
+    }
+    const comma = inner.indexOf(',');
+    if (comma < 0) continue;
+    const key = parseMatchValue(inner.slice(0, comma).trim());
+    const value = parseMatchValue(inner.slice(comma + 1).trim());
+    if (Object.is(key, left) || key === left) {
+      return value;
+    }
+  }
+  return fallback;
+}
+
+function parseMatchValue(raw: string): any {
+  if (raw === '@') return undefined;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw.replace(/^["']|["']$/g, '');
+  }
+}
+
+/**
+ * Evaluate a Connectors mapping expression used by `errors.*` / `isSuccess`.
+ * Bare paths like `error.message` are relative to the response body (Apollo docs).
+ */
+function evalMappingExpression(
+  expr: string | undefined,
+  root: any,
+  extras: { status?: number; responseHeaders?: Headers },
+): any {
+  if (expr == null || expr === '') return undefined;
+  const trimmed = expr.trim();
+  if (
+    trimmed.startsWith('$') ||
+    trimmed.includes('->') ||
+    trimmed.includes('{') ||
+    /^[A-Za-z_$]/.test(trimmed)
+  ) {
+    // Object / multi-field selection for errors.extensions
+    if (trimmed.includes('\n') || (trimmed.includes(':') && !trimmed.startsWith('$'))) {
+      try {
+        return applySelection(trimmed, root, extras);
+      } catch {
+        /* fall through to path */
+      }
+    }
+    if (trimmed.startsWith('$') || trimmed.includes('->')) {
+      return evalPath(trimmed, root, extras);
+    }
+    // Bare path: `error.message` → root.error.message
+    return evalPath(`$.${trimmed}`, root, extras);
+  }
+  return trimmed;
 }
 
 function evalSubSelection(
@@ -428,8 +562,24 @@ function evalSubSelection(
   if (Array.isArray(root)) {
     return root.map(item => evalSubSelection(selection, item, extras));
   }
-  const result: Record<string, any> = {};
   const tokens = tokenizeSelection(selection);
+  // Apollo: a lone path root like `$.products { id }` is the field value itself,
+  // not `{ "$.products": [...] }`. Explicit aliases (`products: $.products { id }`) wrap.
+  if (
+    tokens.length === 1 &&
+    tokens[0].source.startsWith('$') &&
+    tokens[0].alias === tokens[0].source
+  ) {
+    const source =
+      tokens[0].source === '$' || tokens[0].source === '$root'
+        ? root
+        : evalPath(tokens[0].source, root, extras);
+    if (tokens[0].sub) {
+      return evalSubSelection(tokens[0].sub, source, extras);
+    }
+    return source;
+  }
+  const result: Record<string, any> = {};
   for (const token of tokens) {
     if (token.sub) {
       const source = token.source === '$' ? root : evalPath(token.source, root, extras);
@@ -595,12 +745,12 @@ export function addConnectFieldResolver(
   connectArgs: ConnectArgs,
   opts: {
     globalFetch?: MeshFetch;
-    log?: Logger;
+    log?: HiveLogger;
     timeout?: number;
     queryStringOptions?: MeshQsOptions;
   } = {},
 ) {
-  const log = opts.log || new DefaultLogger('connect');
+  const log = opts.log || new Logger({ prefix: 'connect' });
   const sources = getSourceMap(schema);
   const source = connectArgs.source ? sources.get(connectArgs.source) : undefined;
   const picked = pickHttp(connectArgs.http);
@@ -628,8 +778,21 @@ export function addConnectFieldResolver(
       return value;
     }
 
+    // Serialize scalars (DateTime → ISO, etc.) before path/header/query interpolation —
+    // same Proxy pattern as Mesh httpOperation.
+    const rawArgs = args || {};
+    const argsSerializeProxy = new Proxy(rawArgs, {
+      get(target, argName) {
+        const value = target[argName as string];
+        const argDef = field.args?.find(arg => arg.name === String(argName));
+        if (argDef) {
+          return serializeArgumentsForInterpolation(value, argDef.type);
+        }
+        return value;
+      },
+    });
     const vars = {
-      args: args || {},
+      args: argsSerializeProxy as Record<string, any>,
       thisValue: root,
       env: process.env,
       context: context || {},
@@ -638,18 +801,9 @@ export function addConnectFieldResolver(
 
     const baseURL = resolveTemplate(source?.http?.baseURL || '', vars);
     const path = resolveTemplate(picked.path, vars);
-    let fullUrl: URL;
-    try {
-      if (/^https?:\/\//i.test(path)) {
-        fullUrl = new URL(path);
-      } else if (baseURL) {
-        fullUrl = new URL(path.replace(/^\//, ''), baseURL.endsWith('/') ? baseURL : baseURL + '/');
-      } else {
-        fullUrl = new URL(path, 'http://localhost');
-      }
-    } catch {
-      fullUrl = new URL(urlJoin(baseURL || 'http://localhost', path));
-    }
+    // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
+    // so test mocks like `fetch('pets/1')` keep working.
+    let fullPath = urlJoin(baseURL || '', path) || path;
 
     const resolveArg = (argName: string, value: any) => {
       const argDef = field.args?.find(arg => arg.name === argName);
@@ -662,22 +816,36 @@ export function addConnectFieldResolver(
         schema,
       );
     };
-    applyQueryParams(
-      fullUrl,
+    fullPath = applyQueryParams(
+      fullPath,
       source?.http?.queryParams,
       vars,
       queryStringOptions,
       queryStringOptionsByParam,
       resolveArg,
     );
-    applyQueryParams(
-      fullUrl,
+    fullPath = applyQueryParams(
+      fullPath,
       connectArgs.http?.queryParams,
       vars,
       queryStringOptions,
       queryStringOptionsByParam,
       resolveArg,
     );
+    const requestUrlForMeta = (() => {
+      try {
+        const abs = /^https?:\/\//i.test(fullPath)
+          ? new URL(fullPath)
+          : new URL(fullPath, 'http://localhost/');
+        return {
+          href: fullPath,
+          originPath: `${abs.origin}${abs.pathname}`,
+          query: Object.fromEntries(abs.searchParams.entries()),
+        };
+      } catch {
+        return { href: fullPath, originPath: fullPath.split('?')[0], query: {} as Record<string, string> };
+      }
+    })();
 
     const headers: Record<string, string> = {};
     applyHeaders(headers, source?.http?.headers, vars);
@@ -693,73 +861,180 @@ export function addConnectFieldResolver(
     }
     let requestBody: any;
     if (method !== 'GET' && method !== 'HEAD') {
-      const bodyJson = buildBody(connectArgs.http?.body, vars, { schema, field });
-      if (bodyJson != null) {
-        const contentType = Object.entries(headers).find(
-          ([k]) => k.toLowerCase() === 'content-type',
-        )?.[1];
-        if (
-          contentType?.includes('application/x-www-form-urlencoded') ||
-          contentType?.includes('multipart/form-data')
-        ) {
-          try {
-            const parsed = JSON.parse(bodyJson);
-            if (contentType.includes('application/x-www-form-urlencoded')) {
-              requestBody = qsStringify(parsed, {
+      const contentType = Object.entries(headers).find(
+        ([k]) => k.toLowerCase() === 'content-type',
+      )?.[1];
+      // Multipart needs the live File/Blob values from args (not JSON round-trip).
+      if (contentType?.includes('multipart/form-data')) {
+        delete headers['content-type'];
+        delete headers['Content-Type'];
+        const input =
+          connectArgs.http?.body === '$args.input' || connectArgs.http?.body?.startsWith('$args.input')
+            ? rawArgs.input
+            : rawArgs;
+        const formData = new FormData();
+        if (input && typeof input === 'object') {
+          for (const key of Object.keys(input)) {
+            const inputValue = input[key];
+            if (inputValue == null) continue;
+            let formDataValue: Blob | string;
+            if (typeof inputValue === 'object') {
+              if (inputValue instanceof File) {
+                formDataValue = inputValue;
+              } else if (isFileUpload(inputValue)) {
+                formDataValue = new File(
+                  [inputValue.createReadStream() as any],
+                  inputValue.filename || 'file',
+                  { type: inputValue.mimetype },
+                );
+              } else if (inputValue.name && inputValue instanceof Blob) {
+                formDataValue = new File([inputValue], (inputValue as File).name, {
+                  type: inputValue.type,
+                });
+              } else if (typeof inputValue.arrayBuffer === 'function') {
+                const arrayBuffer = await inputValue.arrayBuffer();
+                formDataValue = inputValue.name
+                  ? new File([arrayBuffer], inputValue.name, { type: inputValue.type })
+                  : new Blob([arrayBuffer], { type: inputValue.type });
+              } else {
+                formDataValue = JSON.stringify(inputValue);
+              }
+            } else {
+              formDataValue = String(inputValue);
+            }
+            formData.append(key, formDataValue);
+          }
+        }
+        requestBody = formData;
+        requestInit.body = formData;
+      } else {
+        const bodyJson = buildBody(connectArgs.http?.body, vars, { schema, field });
+        if (bodyJson != null) {
+          if (contentType?.includes('application/x-www-form-urlencoded')) {
+            try {
+              requestBody = qsStringify(JSON.parse(bodyJson), {
                 ...defaultQsOptions,
                 ...queryStringOptions,
               });
-            } else {
-              // multipart: leave JSON string for now; File/FormData path is Hive-only later
+            } catch {
               requestBody = bodyJson;
             }
-          } catch {
+          } else if (contentType?.startsWith('text/')) {
+            // text/plain (and other text/*): send the raw scalar, not a JSON-encoded string
+            try {
+              const parsed = JSON.parse(bodyJson);
+              requestBody = typeof parsed === 'string' ? parsed : bodyJson;
+            } catch {
+              requestBody = bodyJson;
+            }
+          } else {
             requestBody = bodyJson;
+            if (!contentType) {
+              headers['content-type'] = 'application/json';
+            }
           }
-        } else if (contentType?.startsWith('text/')) {
-          // text/plain (and other text/*): send the raw scalar, not a JSON-encoded string
-          try {
-            const parsed = JSON.parse(bodyJson);
-            requestBody = typeof parsed === 'string' ? parsed : bodyJson;
-          } catch {
-            requestBody = bodyJson;
-          }
-        } else {
-          requestBody = bodyJson;
-          if (!contentType) {
-            headers['content-type'] = 'application/json';
-          }
+          requestInit.body = requestBody;
         }
-        requestInit.body = requestBody;
       }
     }
 
     const fetchFn: MeshFetch = context?.fetch || opts.globalFetch || defaultFetch;
     const operationLogger = log.child?.({ operation: `${info.parentType.name}.${info.fieldName}` }) || log;
-    operationLogger.debug?.(`Connect ${method} ${fullUrl.toString()}`);
+    operationLogger.debug?.(`Connect ${method} ${fullPath}`);
 
-    const response = await fetchFn(fullUrl.toString(), requestInit, context, info as any);
-    const contentType = response.headers.get('content-type') || '';
+    const response = await fetchFn(fullPath, requestInit, context, info as any);
     const returnNamedGraphQLType = getNamedType(field.type);
     let responseData: any;
     const text = await response.text();
-    const handlesStatus = connectArgs.selection?.includes('$status');
-    const httpErrorExtensions = (body: any) => ({
-      request: {
-        url: fullUrl.toString(),
-        method,
-      },
-      response: {
-        status: response.status,
-        statusText: response.statusText,
-        headers: getHeadersObj(response.headers),
-        body,
-      },
-      // Legacy Mesh shape
+    const selectionExtras = {
       status: response.status,
-      headers: getHeadersObj(response.headers),
-      responseJson: body,
-    });
+      responseHeaders: response.headers,
+    };
+    // Mesh OpenAPI status unions put `$status` in selection; treat as success so mapping runs.
+    const handlesStatus = connectArgs.selection?.includes('$status');
+    const serviceName =
+      connectArgs.source ||
+      source?.name ||
+      (schema.extensions as any)?.apolloServiceName ||
+      'connectors';
+    const connectorCoordinate = `${serviceName}:${info.parentType.name}.${info.fieldName}@connect[0]`;
+
+    const buildConnectorError = (body: any, parseError?: unknown) => {
+      const errorsConfig = connectArgs.errors || source?.errors || source?.http?.errors;
+      const customMessage = evalMappingExpression(errorsConfig?.message, body, selectionExtras);
+      const customExtensionsRaw = evalMappingExpression(
+        errorsConfig?.extensions,
+        body,
+        selectionExtras,
+      );
+      const customExtensions =
+        customExtensionsRaw &&
+        typeof customExtensionsRaw === 'object' &&
+        !Array.isArray(customExtensionsRaw)
+          ? { ...customExtensionsRaw }
+          : {};
+      // Apollo Connectors: custom extensions overlay defaults; code/service/coordinate/http.status
+      // remain present (router always adds them after customizations).
+      const httpExt = {
+        status: response.status,
+        ...(customExtensions.http && typeof customExtensions.http === 'object'
+          ? customExtensions.http
+          : {}),
+      };
+      delete customExtensions.http;
+      const connectorExt = {
+        coordinate: connectorCoordinate,
+        ...(customExtensions.connector && typeof customExtensions.connector === 'object'
+          ? customExtensions.connector
+          : {}),
+      };
+      delete customExtensions.connector;
+      const code = customExtensions.code ?? 'CONNECTOR_FETCH';
+      delete customExtensions.code;
+      const service = customExtensions.service ?? serviceName;
+      delete customExtensions.service;
+      return new GraphQLError(
+        typeof customMessage === 'string' && customMessage.length
+          ? customMessage
+          : 'Request failed',
+        {
+          extensions: {
+            ...customExtensions,
+            http: httpExt,
+            connector: connectorExt,
+            code,
+            service,
+            // Mesh OpenAPI tests still assert extensions.request.url
+            request: {
+              url: requestUrlForMeta.href,
+              method,
+            },
+            response: {
+              status: response.status,
+              statusText: response.statusText,
+              headers: getHeadersObj(response.headers),
+              body,
+            },
+            status: response.status,
+            headers: getHeadersObj(response.headers),
+            responseJson: body,
+            ...(parseError ? { originalError: parseError } : {}),
+          },
+        },
+      );
+    };
+
+    const evaluateIsSuccess = (body: any): boolean => {
+      const isSuccessExpr =
+        connectArgs.isSuccess ?? source?.isSuccess ?? source?.http?.isSuccess;
+      if (isSuccessExpr != null && String(isSuccessExpr).trim() !== '') {
+        return Boolean(evalMappingExpression(String(isSuccessExpr), body, selectionExtras));
+      }
+      if (handlesStatus) {
+        return true;
+      }
+      return response.status.toString().startsWith('2');
+    };
 
     if (!text) {
       // Preserve legacy Mesh behavior for empty / 204 responses (e.g. String fields → "")
@@ -772,49 +1047,29 @@ export function addConnectFieldResolver(
           responseData = text;
         } else if (response.status === 204 || (response.status === 200 && text === '')) {
           responseData = {};
-        } else if (response.status.toString().startsWith('2')) {
-          // Match httpOperation: unexpected non-JSON 2xx for object/list fields
-          throw new GraphQLError(`Unexpected response in ${field.name}`, {
-            extensions: {
-              ...httpErrorExtensions(text),
-              originalError: error,
-            },
-          });
-        } else if (!handlesStatus) {
-          throw new GraphQLError(
-            `Connect HTTP ${response.status}: ${response.statusText}`,
-            { extensions: httpErrorExtensions(text) },
-          );
+        } else if (!evaluateIsSuccess(text)) {
+          throw buildConnectorError(text, error);
+        } else if (response.status.toString().startsWith('2') && !isScalarType(returnNamedGraphQLType)) {
+          // Successful status but non-JSON body for object/list fields — still a fetch failure.
+          throw buildConnectorError(text, error);
         } else {
           responseData = text;
         }
       }
     }
 
-    if (
-      !response.status.toString().startsWith('2') &&
-      !handlesStatus
-    ) {
-      // Default: non-2xx becomes GraphQL error unless selection handles $status
-      throw new GraphQLError(`Connect HTTP ${response.status}: ${response.statusText}`, {
-        extensions: httpErrorExtensions(responseData),
-      });
+    if (!evaluateIsSuccess(responseData)) {
+      throw buildConnectorError(responseData);
     }
 
-    // Normalize array vs list return type like Mesh httpOperation
+    let selected = applySelection(connectArgs.selection || '$', responseData, selectionExtras);
+    // Normalize after selection so mappings like `$.products { id }` (object → array) work.
     const isListReturnType = isListTypeOrNonNullListType(field.type);
-    if (isListReturnType && !Array.isArray(responseData)) {
-      responseData = [responseData];
-    } else if (!isListReturnType && Array.isArray(responseData)) {
-      responseData = responseData[0];
+    if (isListReturnType && !Array.isArray(selected)) {
+      selected = [selected];
+    } else if (!isListReturnType && Array.isArray(selected)) {
+      selected = selected[0];
     }
-
-    const selected = applySelection(connectArgs.selection || '$', responseData, {
-      status: response.status,
-      responseHeaders: response.headers,
-    });
-    // Mesh `$url` historically excluded the query string (path/base only).
-    const urlForMeta = `${fullUrl.origin}${fullUrl.pathname}`;
     // Inherit parent `$request.path` so nested OpenAPI links keep the same path
     // args as the request that produced the parent (Mesh linkResolver semantics).
     const pathArgs: Record<string, any> = { ...args };
@@ -830,7 +1085,8 @@ export function addConnectFieldResolver(
       }
     }
     return attachResponseMetadata(selected, {
-      url: urlForMeta,
+      // Mesh `$url` historically excluded the query string (path/base only).
+      url: requestUrlForMeta.originPath,
       method,
       status: response.status,
       statusText: response.statusText,
@@ -839,7 +1095,7 @@ export function addConnectFieldResolver(
       args: pathArgs,
       requestBody,
       responseData,
-      query: Object.fromEntries(fullUrl.searchParams.entries()),
+      query: requestUrlForMeta.query,
     });
   };
 }
@@ -973,7 +1229,7 @@ export function processConnectDirectives(
   schema: GraphQLSchema,
   opts: {
     globalFetch?: MeshFetch;
-    log?: Logger;
+    log?: HiveLogger;
     timeout?: number;
     queryStringOptions?: MeshQsOptions;
   } = {},

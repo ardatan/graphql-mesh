@@ -7,23 +7,23 @@ exports[`OpenAPI loader: Handle anyOf and oneOf should generate the schema corre
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Query {
   """Basic oneOf test"""
-  oneOf: oneOf_200_response @connect(source: "test", http: {GET: "/oneOf", headers: [{name: "accept", value: "application/json"}]}, selection: "... on commonAttributeObject { commonAttribute }\\n... on differentAttributeObject { differentAttribute }")
+  oneOf: oneOf_200_response @connect(source: "test", http: {GET: "/oneOf", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """oneOf test with non-object type member schema"""
-  oneOf2: oneOf2_200_response @connect(source: "test", http: {GET: "/oneOf2", headers: [{name: "accept", value: "application/json"}]}, selection: "... on commonAttributeObject { commonAttribute }\\n... on Int_container { Int }")
+  oneOf2: oneOf2_200_response @connect(source: "test", http: {GET: "/oneOf2", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """oneOf test with no object type member schemas"""
-  oneOf3: oneOf3_200_response @connect(source: "test", http: {GET: "/oneOf3", headers: [{name: "accept", value: "application/json"}]}, selection: "... on String_container { String }\\n... on Int_container { Int }")
+  oneOf3: oneOf3_200_response @connect(source: "test", http: {GET: "/oneOf3", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """oneOf test with extraneous member schemas"""
   oneOf4: Int @connect(source: "test", http: {GET: "/oneOf4", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """Basic oneOf test with allOf"""
-  oneOf5: oneOf5_200_response @connect(source: "test", http: {GET: "/oneOf5", headers: [{name: "accept", value: "application/json"}]}, selection: "... on commonAttributeObject { commonAttribute }\\n... on differentAttributeObject { differentAttribute }")
+  oneOf5: oneOf5_200_response @connect(source: "test", http: {GET: "/oneOf5", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """oneOf test with allOf, requiring oneOf collapse"""
-  oneOf6: oneOf6_200_response @connect(source: "test", http: {GET: "/oneOf6", headers: [{name: "accept", value: "application/json"}]}, selection: "... on commonAttributeObject { commonAttribute }\\n... on differentAttributeObject { differentAttribute }\\n... on anotherAttributeObject { anotherAttribute }")
+  oneOf6: oneOf6_200_response @connect(source: "test", http: {GET: "/oneOf6", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """Basic anyOf test using the same member schemas"""
   anyOf: anyOf_200_response @connect(source: "test", http: {GET: "/anyOf", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute")
   """Basic anyOf test with different member schemas"""
@@ -47,7 +47,7 @@ type Query {
   """anyOf test with allOf, requiring anyOf collapse"""
   anyOf11: anyOf11_200_response @connect(source: "test", http: {GET: "/anyOf11", headers: [{name: "accept", value: "application/json"}]}, selection: "anotherAttribute\\ncommonAttribute\\ndifferentAttribute")
   testLink: String @connect(source: "test", http: {GET: "/testLink", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
-  oneOfWithAllOfsAndLink: OneOfWithAllOfsAndLink @connect(source: "test", http: {GET: "/oneOfWithAllOfsAndLink", headers: [{name: "accept", value: "application/json"}]}, selection: "... on One { commonProp\\ndifferentOneProp }\\n... on Two { commonProp\\ndifferentTwoProp }")
+  oneOfWithAllOfsAndLink: OneOfWithAllOfsAndLink @connect(source: "test", http: {GET: "/oneOfWithAllOfsAndLink", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
 }
 
 union oneOf_200_response = commonAttributeObject | differentAttributeObject
@@ -139,6 +139,7 @@ union OneOfWithAllOfsAndLink = One | Two
 type One {
   commonProp: String
   differentOneProp: String
+  testLink: String
 }
 
 type Two {
@@ -164,9 +165,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

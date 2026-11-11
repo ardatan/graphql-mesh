@@ -12,9 +12,9 @@ directive @regexp(subgraph: String, pattern: String) on SCALAR
 
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 type Query {
   customers_by_customerId(
@@ -51,7 +51,7 @@ type CardModel {
 }
 
 type Mutation {
-  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: {POST: "/basket", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on BasketResponse { products {\\n  ... on ApiProduct { co2EmissionInGramsPerPassenger\\n  eligibleForVouchers }\\n  ... on ApiReservedProduct { co2EmissionInGramsPerPassenger\\n  reservationExpiresAt }\\n} }\\n... on ApiError { code\\ndescription }")
+  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: {POST: "/basket", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
 }
 
 union post_basket_response @statusCodeTypeName(subgraph: "basket", statusCode: "200", typeName: "BasketResponse") @statusCodeTypeName(subgraph: "basket", statusCode: "400", typeName: "ApiError") = BasketResponse | ApiError
@@ -95,9 +95,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;
