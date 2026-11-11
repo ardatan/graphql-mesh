@@ -675,7 +675,7 @@ describe('Federation Connectors error shape', () => {
     ]);
   });
 
-  it('bakes Mesh _response metadata via selection ($request.url / $statusText / …)', async () => {
+  it('bakes Mesh _response with Apollo-portable selection + runtime url/statusText/headers', async () => {
     const sdl = /* GraphQL */ `
       ${CONNECTOR_DIRECTIVES}
       scalar JSON
@@ -687,7 +687,9 @@ describe('Federation Connectors error shape', () => {
           @connect(
             source: "meta"
             http: { GET: "/thing" }
-            selection: "$ _response: { url: $request.url method: $request.method status: $status statusText: $statusText headers: $response.header body: $ }"
+            selection: """
+            $ _response: { method: $("GET") status: $status body: $ }
+            """
           )
       }
       type Thing {

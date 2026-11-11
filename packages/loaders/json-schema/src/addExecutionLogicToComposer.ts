@@ -160,9 +160,15 @@ const responseMetadataType = new GraphQLObjectType({
   },
 });
 
-/** Mesh-only Connectors selection for `exposeResponseMetadata` → `_response`. */
-const RESPONSE_METADATA_CONNECT_SELECTION =
-  '_response: { url: $request.url method: $request.method status: $status statusText: $statusText headers: $response.header body: $ }';
+/**
+ * Mesh `exposeResponseMetadata` → `_response` selection.
+ * Apollo-portable: `$status`, `$`, `$("METHOD")`. Runtime-only url / statusText /
+ * headers are filled after selection in the Connectors executor (no Mesh `$` vars).
+ */
+function responseMetadataConnectSelection(httpMethod: string): string {
+  const methodLiteral = JSON.stringify(String(httpMethod || 'GET').toUpperCase());
+  return `_response: { method: $(${methodLiteral}) status: $status body: $ }`;
+}
 
 export function addExecutionDirectivesToComposer(
   subgraphName: string,
@@ -502,12 +508,13 @@ ${operationConfig.description || ''}
       ) {
         warnConnectSelectionPassthrough(selectionLimit, returnNamedType.name);
       }
-      // Bake Mesh `_response` into selection (Hive-only vars: $request.url / $statusText / …).
+      // Bake Mesh `_response` (hardcoded method; `$status` / `body: $`; rest filled at runtime).
       if (exposeResponseMetadata && !selection.includes('_response:')) {
+        const metaSelection = responseMetadataConnectSelection(String(httpMethod));
         selection =
           selection === '$' || selection === '$root'
-            ? `$ ${RESPONSE_METADATA_CONNECT_SELECTION}`
-            : `${selection} ${RESPONSE_METADATA_CONNECT_SELECTION}`;
+            ? `$ ${metaSelection}`
+            : `${selection} ${metaSelection}`;
       }
       const http = buildConnectHttpArgs({
         httpMethod,

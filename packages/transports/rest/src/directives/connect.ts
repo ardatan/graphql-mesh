@@ -608,15 +608,10 @@ function applyHeaders(
   }
 }
 
-/** Runtime values available to Connectors selection / errors mapping (Mesh extras beyond Apollo). */
+/** Runtime values available to Connectors selection / errors mapping. */
 export type ConnectSelectionExtras = {
   status?: number;
-  statusText?: string;
   responseHeaders?: Headers;
-  /** Flat string map for Mesh `_response.headers` (`$response.header`). */
-  responseHeaderMap?: Record<string, string>;
-  requestUrl?: string;
-  requestMethod?: string;
 };
 
 /**
@@ -625,10 +620,12 @@ export type ConnectSelectionExtras = {
  * - `alias: path` aliases
  * - nested `field { a b }`
  * - `$` / `$root` for root
- * - `$status` / `$statusText`
- * - `$request.url` / `$request.method` (Mesh; for `_response` bake)
- * - `$response.header` (Mesh flat map) / `$response.headers.x` (Apollo first value)
- * - `$ <fields>` — merge root object with mapped fields (Mesh `exposeResponseMetadata`)
+ * - `$status`
+ * - `$response.headers.x` (Apollo multi-value array; use `->first`)
+ * - `$ <fields>` — merge root with mapped fields (Mesh `exposeResponseMetadata`)
+ *
+ * Mesh-only `_response` fields (url / statusText / full headers map) are filled after
+ * selection — Apollo has no `$request.url` / `$statusText` / whole-headers var.
  */
 export function applySelection(selection: string, root: any, extras: ConnectSelectionExtras): any {
   const trimmed = selection.trim();
@@ -659,17 +656,11 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
 function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any {
   if (path === '$' || path === '$root') return root;
   if (path === '$status') return extras.status;
-  if (path === '$statusText') return extras.statusText;
-  if (path === '$request.url' || path === '$url') return extras.requestUrl;
-  if (path === '$request.method' || path === '$method') return extras.requestMethod;
-  // Mesh flat response header map (exposeResponseMetadata → `_response.headers`).
-  if (path === '$response.header' || path === '$response.headers') {
-    return extras.responseHeaderMap ?? {};
-  }
   if (path.startsWith('$response.headers.')) {
     const name = path.slice('$response.headers.'.length).replace(/^['"]|['"]$/g, '');
-    const values = extras.responseHeaders?.get(name);
-    return values;
+    const value = extras.responseHeaders?.get(name);
+    // Apollo: header vars are always arrays (fetch Headers.get → single joined string).
+    return value == null ? undefined : [value];
   }
   if (path.startsWith('$(') && path.endsWith(')')) {
     try {
@@ -1531,11 +1522,7 @@ export function addConnectFieldResolver(
     const responseHeaderMap = getHeadersObj(response.headers);
     const selectionExtras: ConnectSelectionExtras = {
       status: response.status,
-      statusText: response.statusText,
       responseHeaders: response.headers,
-      responseHeaderMap,
-      requestUrl: requestUrlForMeta.originPath,
-      requestMethod: method,
     };
     // Mesh OpenAPI status unions put `$status` in selection; treat as success so mapping runs.
     const handlesStatus = connectArgs.selection?.includes('$status');
@@ -1647,6 +1634,15 @@ export function addConnectFieldResolver(
     } else if (!isListReturnType && Array.isArray(selected)) {
       selected = selected[0];
     }
+    // Fill Mesh-only `_response` fields Apollo selection cannot express.
+    selected = fillExposeResponseMetadata(selected, {
+      url: requestUrlForMeta.originPath,
+      method,
+      status: response.status,
+      statusText: response.statusText,
+      headers: responseHeaderMap,
+      body: responseData,
+    });
     // Inherit parent `$request.path` so nested OpenAPI links keep the same path
     // args as the request that produced the parent (Mesh linkResolver semantics).
     const pathArgs: Record<string, any> = { ...args };
@@ -1668,7 +1664,7 @@ export function addConnectFieldResolver(
       method,
       status: response.status,
       statusText: response.statusText,
-      headers: getHeadersObj(response.headers),
+      headers: responseHeaderMap,
       requestHeaders: headers,
       args: pathArgs,
       requestBody,
@@ -1676,6 +1672,49 @@ export function addConnectFieldResolver(
       query: requestUrlForMeta.query,
     });
   };
+}
+
+/**
+ * Complete Mesh `exposeResponseMetadata` `_response` after Apollo-portable selection
+ * (`method: $("GET") status: $status body: $`). Adds url / statusText / headers map.
+ */
+function fillExposeResponseMetadata(
+  selected: any,
+  meta: {
+    url: string;
+    method: string;
+    status: number;
+    statusText: string;
+    headers: Record<string, string>;
+    body: any;
+  },
+): any {
+  const fill = (obj: any) => {
+    if (obj == null || typeof obj !== 'object' || Array.isArray(obj)) {
+      return obj;
+    }
+    if (
+      obj._response == null ||
+      typeof obj._response !== 'object' ||
+      Array.isArray(obj._response)
+    ) {
+      return obj;
+    }
+    obj._response = {
+      ...obj._response,
+      url: meta.url,
+      method: obj._response.method ?? meta.method,
+      status: obj._response.status ?? meta.status,
+      statusText: meta.statusText,
+      headers: meta.headers,
+      body: obj._response.body ?? meta.body,
+    };
+    return obj;
+  };
+  if (Array.isArray(selected)) {
+    return selected.map(fill);
+  }
+  return fill(selected);
 }
 
 /**

@@ -221,10 +221,11 @@ describe('Federation Connectors annotations', () => {
 
     const sdl = printSchemaWithDirectives(schema);
     expect(sdl).toContain('_response:');
-    expect(sdl).toContain('$request.url');
-    expect(sdl).toContain('$request.method');
-    expect(sdl).toContain('$statusText');
-    expect(sdl).toContain('$response.header');
+    expect(sdl).toMatch(/method: \$\(\\"GET\\"\)/);
+    expect(sdl).toContain('status: $status');
+    expect(sdl).toContain('body: $');
+    expect(sdl).not.toContain('$request.url');
+    expect(sdl).not.toContain('$statusText');
     expect(sdl).not.toContain('@responseMetadata');
 
     const result = await normalizedExecutor({
