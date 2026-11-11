@@ -1473,37 +1473,18 @@ export function addConnectFieldResolver(
         !Array.isArray(customExtensionsRaw)
           ? (customExtensionsRaw as Record<string, unknown>)
           : {};
-      // Pull reserved keys so we can apply Mesh defaults / merges; everything else
-      // from `@connect(errors.extensions:)` / `@source` is kept as-is (including a
-      // mapped top-level `status`). Do not invent a default top-level `status` —
-      // that duplicates `response.status`.
-      const {
-        http: mappedHttp,
-        connector: mappedConnector,
-        code: mappedCode,
-        serviceName: mappedServiceName,
-        ...customExtensions
-      } = mappedExtensions;
-      // Exception: never emit `extensions.http.status`. GraphQL Yoga (Hive Gateway)
-      // promotes that path to the *gateway* HTTP status. Apollo Router emits
-      // `http.status` itself for native Connectors; this transport only runs on Hive.
+      // Only `http` is peeled off: later keys overwrite `code` / `connector` /
+      // `serviceName`, but a mapped `http.status` must not survive the spread —
+      // Yoga promotes it to the gateway HTTP status.
+      const { http: mappedHttpRaw, ...customExtensions } = mappedExtensions;
       const customHttp =
-        mappedHttp && typeof mappedHttp === 'object' && !Array.isArray(mappedHttp)
-          ? { ...(mappedHttp as Record<string, unknown>) }
+        mappedHttpRaw && typeof mappedHttpRaw === 'object' && !Array.isArray(mappedHttpRaw)
+          ? { ...(mappedHttpRaw as Record<string, unknown>) }
           : undefined;
       if (customHttp && 'status' in customHttp) {
         delete customHttp.status;
       }
-      const connectorExt = {
-        coordinate: connectorCoordinate,
-        ...(mappedConnector && typeof mappedConnector === 'object' && !Array.isArray(mappedConnector)
-          ? (mappedConnector as Record<string, unknown>)
-          : {}),
-      };
-      const code = mappedCode ?? 'CONNECTOR_FETCH';
-      // Mesh transports use `serviceName` (grpc/soap/httpOperation).
-      const resolvedServiceName =
-        (typeof mappedServiceName === 'string' && mappedServiceName) || serviceName;
+      const mappedConnector = mappedExtensions.connector;
       // Match httpOperation: expose the unresolved path template (Mesh `{args.x}` form).
       const pathForMessage = picked.path.replace(/\{\$/g, '{');
       const defaultMessage = `Upstream HTTP Error: ${response.status}, Could not invoke operation ${method} ${pathForMessage}`;
@@ -1513,9 +1494,18 @@ export function addConnectFieldResolver(
           extensions: {
             ...customExtensions,
             ...(customHttp && Object.keys(customHttp).length ? { http: customHttp } : {}),
-            connector: connectorExt,
-            code,
-            serviceName: resolvedServiceName,
+            connector: {
+              coordinate: connectorCoordinate,
+              ...(mappedConnector &&
+              typeof mappedConnector === 'object' &&
+              !Array.isArray(mappedConnector)
+                ? (mappedConnector as Record<string, unknown>)
+                : {}),
+            },
+            code: mappedExtensions.code ?? 'CONNECTOR_FETCH',
+            serviceName:
+              (typeof mappedExtensions.serviceName === 'string' && mappedExtensions.serviceName) ||
+              serviceName,
             // Mesh OpenAPI tests still assert extensions.request.url
             request: {
               url: requestUrlForMeta.href,
