@@ -137,10 +137,11 @@ export function getAnnotatedSubgraphs(
     }
 
     let mergeDirectiveUsed = false;
-    // Stitching `@meshSource` is only for non-connectors transforms. Connectors
-    // transforms rewrite `@connect` selection/http instead of adding Mesh source annotations.
+    // Stitching `@meshSource` (Mesh `@source` aliased via `@link`) is only for
+    // non-connectors transforms. Connectors transforms rewrite `@connect`
+    // selection/http instead of adding Mesh source annotations.
     const sourceDirectiveUsed = !isConnectorsSubgraph && transforms?.length > 0;
-    /** Mesh stitching source directive — distinct from Apollo SCHEMA `@source`. */
+    /** Local name after Mesh `@link` alias `{ name: "@source", as: "@meshSource" }`. */
     const meshSourceDirectiveName = 'meshSource';
     const normalizedSchema = normalizeDirectiveExtensions(schema);
     if (isConnectorsSubgraph) {
@@ -435,20 +436,49 @@ export function getAnnotatedSubgraphs(
       importedDirectives.push('@merge');
     }
     if (sourceDirectiveUsed) {
-      // Distinct Mesh-spec name (not an alias of `@source`) so Guild compose does not
-      // clash with Apollo Connectors SCHEMA `@source` across subgraphs.
-      importedDirectives.push('@meshSource');
+      // Alias Mesh-spec `@source` as `@meshSource` so Apollo SCHEMA `@source` can coexist
+      // after compose. Guild treats Mesh `@source` and Apollo connect `@source` as the same
+      // composed name — so we strip Apollo `@source` from the connect `@link` import below
+      // (args stay in extras) and post-process restores it on the supergraph.
+      importedDirectives.push({ name: '@source', as: '@meshSource' });
     }
-    // Preserve Apollo `@connect` (and `@source`) through federation via `@composeDirective`.
-    // Mesh stitching uses the distinct `@meshSource` name so it does not clash with Apollo
-    // SCHEMA `@source`. SCHEMA usages still ride in extras for Guild compose; post-process
-    // lifts them onto `schema @…`.
+    // Preserve Apollo `@connect` through federation via `@composeDirective`.
+    // Drop `@source` from the connect `@link` import during annotate so it does not clash
+    // with Mesh `{ name: "@source", as: "@meshSource" }` across subgraphs. SCHEMA `@source`
+    // / `@transport` still ride in extras; post-process lifts them onto `schema @…` and
+    // restores `@source` on the connect `@link`.
     if (isConnectorsSubgraph) {
       const schemaDirectives = getDirectiveExtensions(transformedSubgraph) || {};
       const composeDirectives = (schemaDirectives.composeDirective =
         schemaDirectives.composeDirective?.filter(Boolean) || []);
       if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
         composeDirectives.push({ name: '@connect' });
+      }
+      if (Array.isArray(schemaDirectives.link)) {
+        schemaDirectives.link = schemaDirectives.link.map(
+          (link: { url?: string; import?: any[] }) => {
+            if (
+              typeof link?.url === 'string' &&
+              link.url.startsWith('https://specs.apollo.dev/connect') &&
+              Array.isArray(link.import)
+            ) {
+              return {
+                ...link,
+                import: link.import.filter(item => {
+                  if (typeof item === 'string') {
+                    return item !== '@source' && item !== 'source';
+                  }
+                  if (item && typeof item === 'object' && 'name' in item) {
+                    const name = String((item as { name?: string }).name || '');
+                    return name !== '@source' && name !== 'source';
+                  }
+                  return true;
+                }),
+              };
+            }
+            return link;
+          },
+        );
       }
       const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
       extensions.directives = schemaDirectives;

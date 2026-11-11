@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@resolveTo", "@meshSource", "@resolveRootField", "@transport"]) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @source(name: "subgraph-b", http: {baseURL: "http://localhost:<subgraph-b_port>", headers: [{name: "x-custom-header", value: "{$args.xCustomHeader}"}]}) @transport(subgraph: "subgraph-b", kind: "rest", location: "http://localhost:<subgraph-b_port>") {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@resolveTo", {name: "@source", as: "@meshSource"}, "@resolveRootField", "@transport"]) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @source(name: "subgraph-b", http: {baseURL: "http://localhost:<subgraph-b_port>", headers: [{name: "x-custom-header", value: "{$args.xCustomHeader}"}]}) @transport(subgraph: "subgraph-b", kind: "rest", location: "http://localhost:<subgraph-b_port>") {
   query: Query
 }
 

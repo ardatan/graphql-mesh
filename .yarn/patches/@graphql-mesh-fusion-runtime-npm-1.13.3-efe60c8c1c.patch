@@ -1,30 +1,8 @@
 diff --git a/dist/index.cjs b/dist/index.cjs
-index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e90117bc0beef3f954b6965a37e22d8930377920 100644
+index 8c49c18936b173833bc7ba1f81aff5fa273c1970..b7105845738f93aa069f29514e292e3528203a95 100644
 --- a/dist/index.cjs
 +++ b/dist/index.cjs
-@@ -109,9 +109,20 @@ function getMeshSourceDirectiveName(schemaExtensions) {
-     for (const linkDirective of linkDirectives) {
-       if (linkDirective.url === "https://the-guild.dev/graphql/mesh/spec/v1.0") {
-         for (const importInfo of linkDirective.import || []) {
-+          // Prefer the dedicated Mesh stitching directive name so it never
-+          // clashes with Apollo Connectors SCHEMA `@source` during composition.
-+          if (importInfo === "@meshSource") {
-+            return "meshSource";
-+          }
-           if (importInfo === "@source") {
-             return "source";
--          } else if (importInfo.name === "@source") {
-+          } else if (importInfo && typeof importInfo === "object" && importInfo.name === "@meshSource") {
-+            const alias = importInfo.as;
-+            if (typeof alias === "string") {
-+              return alias.startsWith("@") ? alias.slice(1) : "meshSource";
-+            }
-+            return "meshSource";
-+          } else if (importInfo && typeof importInfo === "object" && importInfo.name === "@source") {
-             const alias = importInfo.as;
-             if (typeof alias === "string") {
-               return alias.startsWith("@") ? alias.slice(1) : void 0;
-@@ -1149,7 +1160,7 @@ function wrapExecutorWithHooks({
+@@ -1149,7 +1149,7 @@ function wrapExecutorWithHooks({
      let executionRequest = baseExecutionRequest;
      const onSubgraphExecuteDoneHooks = [];
      return require$$3.handleMaybePromise(
@@ -33,7 +11,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e90117bc0beef3f954b6965a37e22d89
          onSubgraphExecuteHooks,
          (onSubgraphExecuteHook) => onSubgraphExecuteHook({
            get subgraph() {
-@@ -1181,7 +1192,7 @@ function wrapExecutorWithHooks({
+@@ -1181,7 +1181,7 @@ function wrapExecutorWithHooks({
            (currentResult) => {
              const executeDoneResults = [];
              return require$$3.handleMaybePromise(
@@ -42,7 +20,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e90117bc0beef3f954b6965a37e22d89
                  onSubgraphExecuteDoneHooks,
                  (onSubgraphExecuteDoneHook) => onSubgraphExecuteDoneHook({
                    result: currentResult,
-@@ -1215,7 +1226,7 @@ function wrapExecutorWithHooks({
+@@ -1215,7 +1215,7 @@ function wrapExecutorWithHooks({
                  return require$$3.mapAsyncIterator(
                    currentResult,
                    (currentResult2) => require$$3.handleMaybePromise(
@@ -51,7 +29,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e90117bc0beef3f954b6965a37e22d89
                        onNextHooks,
                        (onNext) => onNext({
                          result: currentResult2,
-@@ -1228,7 +1239,7 @@ function wrapExecutorWithHooks({
+@@ -1228,7 +1228,7 @@ function wrapExecutorWithHooks({
                      () => currentResult2
                    ),
                    void 0,
@@ -61,7 +39,7 @@ index 8c49c18936b173833bc7ba1f81aff5fa273c1970..e90117bc0beef3f954b6965a37e22d89
                }
              );
 diff --git a/dist/index.js b/dist/index.js
-index ce3975285f3be72c6a47897f15ccdd35117eed99..2a9bce7583b1170846021a013d7f9a9dc92a46af 100644
+index ce3975285f3be72c6a47897f15ccdd35117eed99..90433178f559fb2e53d8c893cdfbeeb28adf41a8 100644
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -1,10 +1,10 @@
@@ -77,25 +55,3 @@ index ce3975285f3be72c6a47897f15ccdd35117eed99..2a9bce7583b1170846021a013d7f9a9d
  import { isInterfaceType, Kind, isObjectType, typeFromAST, isOutputType, GraphQLSchema, GraphQLDirective, parseType, visit, GraphQLString, DirectiveLocation, isEnumType, parse, isSchema, buildSchema, buildASTSchema } from 'graphql';
  import { defaultMergedResolver } from '@graphql-tools/delegate';
  import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
-@@ -107,9 +107,20 @@ function getMeshSourceDirectiveName(schemaExtensions) {
-     for (const linkDirective of linkDirectives) {
-       if (linkDirective.url === "https://the-guild.dev/graphql/mesh/spec/v1.0") {
-         for (const importInfo of linkDirective.import || []) {
-+          // Prefer the dedicated Mesh stitching directive name so it never
-+          // clashes with Apollo Connectors SCHEMA `@source` during composition.
-+          if (importInfo === "@meshSource") {
-+            return "meshSource";
-+          }
-           if (importInfo === "@source") {
-             return "source";
--          } else if (importInfo.name === "@source") {
-+          } else if (importInfo && typeof importInfo === "object" && importInfo.name === "@meshSource") {
-+            const alias = importInfo.as;
-+            if (typeof alias === "string") {
-+              return alias.startsWith("@") ? alias.slice(1) : "meshSource";
-+            }
-+            return "meshSource";
-+          } else if (importInfo && typeof importInfo === "object" && importInfo.name === "@source") {
-             const alias = importInfo.as;
-             if (typeof alias === "string") {
-               return alias.startsWith("@") ? alias.slice(1) : void 0;

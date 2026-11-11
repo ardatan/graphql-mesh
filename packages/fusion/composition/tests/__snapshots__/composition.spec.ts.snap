@@ -83,7 +83,7 @@ input FooFilter @join__type(graph: B) {
 exports[`Composition composes with transforms 1`] = `
 "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@meshSource", "@merge"]
+  import: [{name: "@source", as: "@meshSource"}, "@merge"]
 ) {
   query: Query
 }
