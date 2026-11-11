@@ -165,9 +165,9 @@ export async function getComposedResultFromConfig(
   let composedSchema: GraphQLSchema;
   if (futureAdditions.length) {
     additionalTypeDefs ||= [];
-    // Ensure Mesh stitching directives exist in the final SDL so Apollo Router can
-    // parse HATEOAS `@resolveTo` / `@additionalField` applications (Hive executes them;
-    // Router entity-ref selection covers the same edges for Connectors).
+    // Declare Mesh stitching directives so futureAdditions `@resolveTo` /
+    // `@additionalField` applications stay valid GraphQL SDL (Hive executes them;
+    // Apollo Router uses Connectors entity-ref selection for the same edges).
     additionalTypeDefs.unshift(
       parse(/* GraphQL */ `
         directive @additionalField on FIELD_DEFINITION

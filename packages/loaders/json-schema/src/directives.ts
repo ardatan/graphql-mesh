@@ -105,16 +105,6 @@ export const TypeScriptDirective = new GraphQLDirective({
   },
 });
 
-export const ResponseMetadataDirective = new GraphQLDirective({
-  name: 'responseMetadata',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-  },
-});
-
 export const DictionaryDirective = new GraphQLDirective({
   name: 'dictionary',
   locations: [DirectiveLocation.FIELD_DEFINITION],

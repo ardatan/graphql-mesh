@@ -1130,7 +1130,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                           // Always emit Mesh `@resolveTo` for Hive cross-subgraph HATEOAS
                           // resolution (entity stubs alone do not fill `name` on Hive today).
                           // Entity-ref selection still covers Apollo Router entity planning.
-                          // Directive definitions are ensured in compose so Router can parse SDL.
+                          // Compose declares `@resolveTo` so the supergraph SDL stays valid.
                           futureAdditions.push({
                             targetTypeName: schemaObj.title,
                             targetFieldName: linkName,
