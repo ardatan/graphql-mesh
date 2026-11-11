@@ -13,6 +13,11 @@ it('should compose the appropriate schema', async () => {
     maskServicePorts: true,
   });
   expect(result).toMatchSnapshot();
+
+  // Connectors entity contract (arg === key → `entity: true`, no Mesh `@merge` on REST):
+  const userField = result.match(/user\(id:\s*String!\):\s*User[^\n]*/)?.[0] || '';
+  expect(userField).toContain('entity: true');
+  expect(userField).not.toContain('@merge');
 });
 
 describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {

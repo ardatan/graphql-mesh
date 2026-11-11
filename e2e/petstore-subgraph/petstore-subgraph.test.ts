@@ -19,6 +19,12 @@ it('should generate the subgraph schema correctly', async () => {
     args: ['--subgraph=petstore'],
   });
   expect(result).toMatchSnapshot();
+
+  // arg ≠ key → type-level `$this.id`, Query keeps `$args.petId`, no Mesh `@merge`.
+  expect(result).toMatch(/type Pet[\s\S]*@connect\([\s\S]*\$this\.id/);
+  const getPetByIdField = result.match(/getPetById\([\s\S]*?\):\s*Pet[^\n]*/)?.[0] || '';
+  expect(getPetByIdField).toContain('$args.petId');
+  expect(getPetByIdField).not.toContain('@merge');
 });
 
 describe.each(['hive', 'apollo-router'] as ServeRunner[])('compose + serve with %s', runner => {
@@ -36,6 +42,8 @@ describe.each(['hive', 'apollo-router'] as ServeRunner[])('compose + serve with 
         query {
           getPetById(petId: 1) {
             id
+            name
+            status
           }
         }
       `,
@@ -44,6 +52,8 @@ describe.each(['hive', 'apollo-router'] as ServeRunner[])('compose + serve with 
       data: {
         getPetById: {
           id: 1,
+          name: 'Cat 1',
+          status: 'available',
         },
       },
     });

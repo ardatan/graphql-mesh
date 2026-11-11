@@ -1,12 +1,10 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should generate the subgraph schema correctly 1`] = `
-"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions", "@enum", "@merge", "@extraSchemaDefinitionDirective"]) @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@provides", "@requires", "@external", "@inaccessible", "@shareable", "@extends", "@tag", "@composeDirective"]) @composeDirective(name: "@enum") @composeDirective(name: "@meshRestOptions") @composeDirective(name: "@connect") @composeDirective(name: "@merge") @composeDirective(name: "@extraSchemaDefinitionDirective") {
+"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions", "@extraSchemaDefinitionDirective"]) @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@provides", "@requires", "@external", "@inaccessible", "@shareable", "@extends", "@tag", "@composeDirective"]) @composeDirective(name: "@meshRestOptions") @composeDirective(name: "@connect") @composeDirective(name: "@extraSchemaDefinitionDirective") {
   query: Query
   mutation: Mutation
 }
-
-directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -30,7 +28,7 @@ type Query @shareable @extraSchemaDefinitionDirective(directives: {source: [{nam
   getPetById(
     """ID of pet to return"""
     petId: BigInt!
-  ): Pet @connect(source: "petstore", http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name category { id name } photoUrls tags { id name } status") @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")
+  ): Pet @connect(source: "petstore", http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name category { id name } photoUrls tags { id name } status")
   """Returns a map of status codes to quantities"""
   getInventory: JSON @connect(source: "petstore", http: {GET: "/store/inventory", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """
@@ -39,7 +37,7 @@ type Query @shareable @extraSchemaDefinitionDirective(directives: {source: [{nam
   getOrderById(
     """ID of order that needs to be fetched"""
     orderId: BigInt!
-  ): Order @connect(source: "petstore", http: {GET: "/store/order/{$args.orderId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id petId quantity shipDate status complete") @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")
+  ): Order @connect(source: "petstore", http: {GET: "/store/order/{$args.orderId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id petId quantity shipDate status complete")
   """Logs user into the system"""
   loginUser(
     """The user name for login"""
@@ -57,7 +55,7 @@ type Query @shareable @extraSchemaDefinitionDirective(directives: {source: [{nam
 }
 
 """Pet object that needs to be added to the store"""
-type Pet @key(fields: "id") @shareable {
+type Pet @connect(source: "petstore", selection: "id name category { id name } photoUrls tags { id name } status", http: {GET: "/pet/{$this.id}", headers: [{name: "accept", value: "application/json"}]}) @key(fields: "id") @shareable {
   id: BigInt
   name: String!
   category: Category
@@ -100,7 +98,7 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-type Order @key(fields: "id") @shareable {
+type Order @connect(source: "petstore", selection: "id petId quantity shipDate status complete", http: {GET: "/store/order/{$this.id}", headers: [{name: "accept", value: "application/json"}]}) @key(fields: "id") @shareable {
   id: BigInt
   petId: BigInt
   quantity: Int
@@ -274,8 +272,6 @@ input SourceHTTP {
   errors: ConnectorErrors
   isSuccess: String
 }
-
-directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
 
 scalar _DirectiveExtensions
 

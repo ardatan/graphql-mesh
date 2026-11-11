@@ -7,6 +7,10 @@ it('should compose the appropriate schema', async () => {
   expect(result).toMatchSnapshot();
 });
 
+// Wiki OpenAPI selections still trip Apollo Router's Connectors parser
+// (`nom::error::ErrorKind::Eof` on startup). Keep Hive-only until selections
+// are fully Router-safe; dual-run entity coverage lives in auto-type-merging /
+// federation-mixed / petstore-subgraph.
 it.concurrent.each([
   {
     name: 'Metrics',
