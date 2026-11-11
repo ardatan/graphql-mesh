@@ -80,7 +80,7 @@ type Query {
 }
 
 type Mutation {
-  createThing(input: createThing_request_Input): Thing @connect(source: "test", http: {POST: "/things", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id\\ntype\\nname")
+  createThing(input: createThing_request_Input): Thing @connect(source: "test", http: {POST: "/things", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id type name")
 }
 
 type Thing {

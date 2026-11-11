@@ -284,6 +284,7 @@ export function buildQueryParamsSelection(
     }
     lines.push(`  ${key}: ${expr}`);
   }
+  // Newlines required: Hive `parseQueryParamsEntries` splits on `\n` (Apollo accepts both).
   return `{\n${lines.join('\n')}\n}`;
 }
 
@@ -432,7 +433,7 @@ export function buildSelectionForType(
     }
     const mergedSelection = [statusExtras.typenameSelection, ...merged.values()]
       .filter(Boolean)
-      .join('\n');
+      .join(' ');
     if (mergedSelection.length > MAX_CONNECT_SELECTION_CHARS) {
       // Fall back to `$` (caller); runtime still resolves via `@statusCodeTypeName`.
       return '';
@@ -501,7 +502,7 @@ export function buildSelectionForType(
     ) {
       const nested = buildSelectionForType(field.type, { skipFields, depth: depth + 1 });
       if (nested) {
-        lines.push(`${aliasPrefix} {\n${indent(nested, 2)}\n}`);
+        lines.push(`${aliasPrefix} { ${nested} }`);
       } else {
         lines.push(aliasPrefix);
       }
@@ -509,19 +510,13 @@ export function buildSelectionForType(
       lines.push(aliasPrefix);
     }
   }
-  const joined = lines.join('\n');
+  // Spaces are enough for Connectors mapping (newlines are optional sugar).
+  // Avoid `\n` escapes in printed SDL (`selection: "id name"` vs `"id\\nname"`).
+  const joined = lines.join(' ');
   if (joined.length > MAX_CONNECT_SELECTION_CHARS) {
     return '';
   }
   return joined;
-}
-
-function indent(text: string, spaces: number): string {
-  const pad = ' '.repeat(spaces);
-  return text
-    .split('\n')
-    .map(line => (line ? pad + line : line))
-    .join('\n');
 }
 
 /**

@@ -412,10 +412,10 @@ export function getAnnotatedSubgraphs(
           );
         }
       }
-      // Semantic conventions
+      // Semantic conventions (ById/ByIds) after transforms — including connectors.
+      // Connectors with `entity: true` skip Mesh `@merge` inside the helper; `@key` still lands.
       transformedSubgraph = mapSchema(transformedSubgraph, {
         [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
-          // Automatic type merging configuration based on ById and ByIds naming conventions after transforms
           const directiveExtensions = getDirectiveExtensions(fieldConfig);
           if (!options.ignoreSemanticConventions) {
             addAnnotationsForSemanticConventions({
@@ -792,25 +792,48 @@ function addAnnotationsForSemanticConventions({
       const pluralTypeName = pluralize(type.name);
       if (arg) {
         const typeDirectives = getDirectiveExtensions(type);
+        const ensureKey = () => {
+          typeDirectives.key ||= [];
+          if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
+            typeDirectives.key.push({
+              fields: fieldName,
+            });
+            const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
+            typeExtensions.directives = typeDirectives;
+          }
+        };
+        // Connectors: Apollo `entity: true` keys the entity by *argument names*, which
+        // must match the `@key` fields. When `keyArg !== keyField` (e.g. petId → id),
+        // keep Mesh `@merge` for Hive remapping instead of emitting a broken entity connector.
+        // Federation transform may already set `entity: true` when args align.
+        const markConnectEntityOrMerge = () => {
+          if (directiveExtensions.connect?.length) {
+            const alreadyEntity = directiveExtensions.connect.some((c: any) => c?.entity === true);
+            if (alreadyEntity) {
+              return;
+            }
+            if (argName === fieldName) {
+              directiveExtensions.connect = directiveExtensions.connect.map((c: any) => ({
+                ...c,
+                entity: true,
+              }));
+              return;
+            }
+          }
+          directiveExtensions.merge ||= [];
+          directiveExtensions.merge.push({
+            subgraph: subgraphName,
+            keyField: fieldName,
+            keyArg: argName,
+          });
+        };
         switch (queryFieldNameSnakeCase) {
           case snakeCase(type.name):
           case snakeCase(`get_${type.name}_by_${fieldName}`):
           case snakeCase(`${type.name}_by_${fieldName}`): {
             if (isNonNullType(arg.type)) {
-              directiveExtensions.merge ||= [];
-              directiveExtensions.merge.push({
-                subgraph: subgraphName,
-                keyField: fieldName,
-                keyArg: argName,
-              });
-              typeDirectives.key ||= [];
-              if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
-                typeDirectives.key.push({
-                  fields: fieldName,
-                });
-                const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
-                typeExtensions.directives = typeDirectives;
-              }
+              markConnectEntityOrMerge();
+              ensureKey();
             }
             break;
           }
@@ -820,20 +843,8 @@ function addAnnotationsForSemanticConventions({
           case snakeCase(`get_${pluralTypeName}_by_${pluralFieldName}`):
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}`):
           case snakeCase(`${pluralTypeName}_by_${pluralFieldName}_list`): {
-            directiveExtensions.merge ||= [];
-            directiveExtensions.merge.push({
-              subgraph: subgraphName,
-              keyField: fieldName,
-              keyArg: argName,
-            });
-            typeDirectives.key ||= [];
-            if (!typeDirectives.key.some((key: any) => key.fields === fieldName)) {
-              typeDirectives.key.push({
-                fields: fieldName,
-              });
-              const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
-              typeExtensions.directives = typeDirectives;
-            }
+            markConnectEntityOrMerge();
+            ensureKey();
             break;
           }
         }

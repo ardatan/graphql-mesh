@@ -29,25 +29,25 @@ type Query {
   """Basic anyOf test using the same member schemas"""
   anyOf: anyOf_200_response @connect(source: "test", http: {GET: "/anyOf", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute")
   """Basic anyOf test with different member schemas"""
-  anyOf2: anyOf2_200_response @connect(source: "test", http: {GET: "/anyOf2", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute\\ndifferentAttribute")
+  anyOf2: anyOf2_200_response @connect(source: "test", http: {GET: "/anyOf2", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute differentAttribute")
   """anyOf test with the same nested member schemas"""
-  anyOf3: anyOf3_200_response @connect(source: "test", http: {GET: "/anyOf3", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute {\\n  commonAttribute\\n}")
+  anyOf3: anyOf3_200_response @connect(source: "test", http: {GET: "/anyOf3", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute { commonAttribute }")
   """anyOf test with different nested member schemas"""
-  anyOf4: anyOf4_200_response @connect(source: "test", http: {GET: "/anyOf4", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute {\\n  commonAttribute\\n}\\ndifferentAttribute {\\n  commonAttribute\\n}")
+  anyOf4: anyOf4_200_response @connect(source: "test", http: {GET: "/anyOf4", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute { commonAttribute } differentAttribute { commonAttribute }")
   """anyOf test with different nested member schemas, leading to conflict"""
   anyOf5: anyOf5_200_response @connect(source: "test", http: {GET: "/anyOf5", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute")
   """anyOf test with incompatible member schema types"""
-  anyOf6: anyOf6_200_response @connect(source: "test", http: {GET: "/anyOf6", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute\\nString")
+  anyOf6: anyOf6_200_response @connect(source: "test", http: {GET: "/anyOf6", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute String")
   """anyOf test with some extraneous member schemas"""
-  anyOf7: anyOf7_200_response @connect(source: "test", http: {GET: "/anyOf7", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute\\nFloat")
+  anyOf7: anyOf7_200_response @connect(source: "test", http: {GET: "/anyOf7", headers: [{name: "accept", value: "application/json"}]}, selection: "commonAttribute Float")
   """anyOf test with no object type member schemas"""
-  anyOf8: anyOf8_200_response @connect(source: "test", http: {GET: "/anyOf8", headers: [{name: "accept", value: "application/json"}]}, selection: "Int\\nFloat")
+  anyOf8: anyOf8_200_response @connect(source: "test", http: {GET: "/anyOf8", headers: [{name: "accept", value: "application/json"}]}, selection: "Int Float")
   """anyOf test with extraneous member schemas with external type"""
   anyOf9: Int @connect(source: "test", http: {GET: "/anyOf9", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """Basic anyOf test with allOf"""
-  anyOf10: anyOf10_200_response @connect(source: "test", http: {GET: "/anyOf10", headers: [{name: "accept", value: "application/json"}]}, selection: "anotherAttribute\\ncommonAttribute\\ndifferentAttribute")
+  anyOf10: anyOf10_200_response @connect(source: "test", http: {GET: "/anyOf10", headers: [{name: "accept", value: "application/json"}]}, selection: "anotherAttribute commonAttribute differentAttribute")
   """anyOf test with allOf, requiring anyOf collapse"""
-  anyOf11: anyOf11_200_response @connect(source: "test", http: {GET: "/anyOf11", headers: [{name: "accept", value: "application/json"}]}, selection: "anotherAttribute\\ncommonAttribute\\ndifferentAttribute")
+  anyOf11: anyOf11_200_response @connect(source: "test", http: {GET: "/anyOf11", headers: [{name: "accept", value: "application/json"}]}, selection: "anotherAttribute commonAttribute differentAttribute")
   testLink: String @connect(source: "test", http: {GET: "/testLink", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   oneOfWithAllOfsAndLink: OneOfWithAllOfsAndLink @connect(source: "test", http: {GET: "/oneOfWithAllOfsAndLink", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
 }

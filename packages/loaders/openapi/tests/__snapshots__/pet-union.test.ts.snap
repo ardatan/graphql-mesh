@@ -33,7 +33,7 @@ type Cat implements Pet {
 }
 
 type Query {
-  pets_by_id(id: String!): pets_by_id_response @connect(source: "Pet", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([400, \\"ApiError\\"], [@, null])\\ndog_exclusive\\nname\\npetType\\ncat_exclusive\\ncode\\ndescription", isSuccess: "$status->match([200, true], [400, true], [@, false])")
+  pets_by_id(id: String!): pets_by_id_response @connect(source: "Pet", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([400, \\"ApiError\\"], [@, null]) dog_exclusive name petType cat_exclusive name petType code description", isSuccess: "$status->match([200, true], [400, true], [@, false])")
 }
 
 union pets_by_id_response @statusCodeTypeName(subgraph: "Pet", statusCode: "200", typeName: "Pet") @statusCodeTypeName(subgraph: "Pet", statusCode: "400", typeName: "ApiError") = Dog | Cat | ApiError

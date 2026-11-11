@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should generate the subgraph schema correctly 1`] = `
-"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@provides", "@requires", "@external", "@inaccessible", "@shareable", "@extends", "@tag", "@composeDirective"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@enum", "@merge", "@extraSchemaDefinitionDirective"]) @composeDirective(name: "@enum") @composeDirective(name: "@connect") @composeDirective(name: "@merge") @composeDirective(name: "@extraSchemaDefinitionDirective") {
+"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions", "@enum", "@merge", "@extraSchemaDefinitionDirective"]) @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@provides", "@requires", "@external", "@inaccessible", "@shareable", "@extends", "@tag", "@composeDirective"]) @composeDirective(name: "@enum") @composeDirective(name: "@meshRestOptions") @composeDirective(name: "@connect") @composeDirective(name: "@merge") @composeDirective(name: "@extraSchemaDefinitionDirective") {
   query: Query
   mutation: Mutation
 }
@@ -10,23 +10,27 @@ directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
+directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
+
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query @shareable @extraSchemaDefinitionDirective(directives: {source: [{name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}], transport: [{subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3"}]}) {
   """Multiple status values can be provided with comma separated strings"""
-  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByStatus", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n}"}, selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus")
+  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByStatus", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status") @meshRestOptions(queryStringOptionsByParam: "{\\"status\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
   """
   Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
   """
   findPetsByTags(
     """Tags to filter by"""
     tags: [String]
-  ): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByTags", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tags: $args.tags\\n}"}, selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus")
+  ): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByTags", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tags: $args.tags\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status") @meshRestOptions(queryStringOptionsByParam: "{\\"tags\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
   """Returns a single pet"""
   getPetById(
     """ID of pet to return"""
     petId: BigInt!
-  ): Pet @connect(source: "petstore", http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus") @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")
+  ): Pet @connect(source: "petstore", http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name category { id name } photoUrls tags { id name } status") @merge(subgraph: "petstore", keyField: "id", keyArg: "petId")
   """Returns a map of status codes to quantities"""
   getInventory: JSON @connect(source: "petstore", http: {GET: "/store/inventory", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """
@@ -35,7 +39,7 @@ type Query @shareable @extraSchemaDefinitionDirective(directives: {source: [{nam
   getOrderById(
     """ID of order that needs to be fetched"""
     orderId: BigInt!
-  ): Order @connect(source: "petstore", http: {GET: "/store/order/{$args.orderId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete") @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")
+  ): Order @connect(source: "petstore", http: {GET: "/store/order/{$args.orderId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id petId quantity shipDate status complete") @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId")
   """Logs user into the system"""
   loginUser(
     """The user name for login"""
@@ -49,7 +53,7 @@ type Query @shareable @extraSchemaDefinitionDirective(directives: {source: [{nam
   getUserByName(
     """The name that needs to be fetched. Use user1 for testing."""
     username: String!
-  ): User @connect(source: "petstore", http: {GET: "/user/{$args.username}", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus")
+  ): User @connect(source: "petstore", http: {GET: "/user/{$args.username}", headers: [{name: "accept", value: "application/json"}]}, selection: "id username firstName lastName email password phone userStatus")
 }
 
 """Pet object that needs to be added to the store"""
@@ -136,9 +140,9 @@ scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/in
 
 type Mutation @shareable {
   """Update an existing pet by Id"""
-  updatePet(input: Pet_Input): Pet @connect(source: "petstore", http: {PUT: "/pet", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus")
+  updatePet(input: Pet_Input): Pet @connect(source: "petstore", http: {PUT: "/pet", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id name category { id name } photoUrls tags { id name } status")
   """Add a new pet to the store"""
-  addPet(input: Pet_Input): Pet @connect(source: "petstore", http: {POST: "/pet", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus")
+  addPet(input: Pet_Input): Pet @connect(source: "petstore", http: {POST: "/pet", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id name category { id name } photoUrls tags { id name } status")
   """Updates a pet in the store with form data"""
   updatePetWithForm(
     """ID of pet that needs to be updated"""
@@ -161,9 +165,9 @@ type Mutation @shareable {
     """Additional Metadata"""
     additionalMetadata: String
     input: File
-  ): ApiResponse @connect(source: "petstore", http: {POST: "/pet/{$args.petId}/uploadImage", headers: [{name: "Content-Type", value: "application/octet-stream"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  additionalMetadata: $args.additionalMetadata\\n}"}, selection: "code\\ntype\\nmessage")
+  ): ApiResponse @connect(source: "petstore", http: {POST: "/pet/{$args.petId}/uploadImage", headers: [{name: "Content-Type", value: "application/octet-stream"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  additionalMetadata: $args.additionalMetadata\\n}"}, selection: "code type message")
   """Place a new order in the store"""
-  placeOrder(input: Order_Input): Order @connect(source: "petstore", http: {POST: "/store/order", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete")
+  placeOrder(input: Order_Input): Order @connect(source: "petstore", http: {POST: "/store/order", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id petId quantity shipDate status complete")
   """
   For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
   """
@@ -172,9 +176,9 @@ type Mutation @shareable {
     orderId: BigInt!
   ): JSON @connect(source: "petstore", http: {DELETE: "/store/order/{$args.orderId}"}, selection: "$")
   """This can only be done by the logged in user."""
-  createUser(input: User_Input): User @connect(source: "petstore", http: {POST: "/user", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus")
+  createUser(input: User_Input): User @connect(source: "petstore", http: {POST: "/user", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id username firstName lastName email password phone userStatus")
   """Creates list of users with given input array"""
-  createUsersWithListInput(input: [User_Input]): User @connect(source: "petstore", http: {POST: "/user/createWithList", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus")
+  createUsersWithListInput(input: [User_Input]): User @connect(source: "petstore", http: {POST: "/user/createWithList", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id username firstName lastName email password phone userStatus")
   """This can only be done by the logged in user."""
   updateUser(
     """name that need to be deleted"""
@@ -260,6 +264,8 @@ input ConnectorErrors {
   message: String
   extensions: String
 }
+
+scalar ObjMap
 
 input SourceHTTP {
   baseURL: String!

@@ -17,8 +17,8 @@ directive @source(name: String!, http: SourceHttp!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  me: User @connect(source: "FakeAPI", http: {GET: "/me"}, selection: "firstName\\nlastName\\njobTitle\\ncompanyId\\nbirthDate\\nfoos {\\n  id\\n}")
-  company(id: String!): Company @connect(source: "FakeAPI", http: {GET: "/company/{$args.id}"}, selection: "name\\ntype")
+  me: User @connect(source: "FakeAPI", http: {GET: "/me"}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
+  company(id: String!): Company @connect(source: "FakeAPI", http: {GET: "/company/{$args.id}"}, selection: "name type")
 }
 
 """Fake User Object"""
@@ -53,8 +53,8 @@ enum CompanyType {
 }
 
 type Mutation {
-  createUser(input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {PUT: "/user", body: "$args.input"}, selection: "firstName\\nlastName\\njobTitle\\ncompanyId\\nbirthDate\\nfoos {\\n  id\\n}")
-  updateUser(id: String!, input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {POST: "/user/{$args.id}", body: "$args.input"}, selection: "firstName\\nlastName\\njobTitle\\ncompanyId\\nbirthDate\\nfoos {\\n  id\\n}")
+  createUser(input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {PUT: "/user", body: "$args.input"}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
+  updateUser(id: String!, input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {POST: "/user/{$args.id}", body: "$args.input"}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
   deleteUser(id: String!): JSON @connect(source: "FakeAPI", http: {DELETE: "/user/{$args.id}"}, selection: "$")
 }
 

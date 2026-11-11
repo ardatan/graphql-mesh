@@ -1,123 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@transport"]) @source(name: "accounts", http: {baseURL: "http://localhost:<accounts_port>"}) @transport(subgraph: "accounts", kind: "rest", location: "http://localhost:<accounts_port>") {
-  query: Query
-}
-
-directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
-
-directive @join__graph(name: String!, url: String!) on ENUM_VALUE
-
-directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
-
-directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
-
-directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
-
-directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
-
-scalar join__FieldSet
-
-directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
-
-scalar link__Import
-
-enum link__Purpose {
-  """
-  \`SECURITY\` features provide metadata necessary to securely resolve fields.
-  """
-  SECURITY
-  """
-  \`EXECUTION\` features provide metadata necessary for operation execution.
-  """
-  EXECUTION
-}
-
-enum join__Graph {
-  ACCOUNTS @join__graph(name: "accounts", url: "http://localhost:<accounts_port>")
-  INVENTORY @join__graph(name: "inventory", url: "http://localhost:<inventory_port>/graphql")
-  PRODUCTS @join__graph(name: "products", url: "http://localhost:<products_port>/graphql")
-  REVIEWS @join__graph(name: "reviews", url: "http://localhost:<reviews_port>/graphql")
-}
-
-directive @merge(subgraph: String!, argsExpr: String, keyArg: String, keyField: String, key: [String], additionalArgs: String) repeatable on FIELD_DEFINITION
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
-
-scalar TransportOptions @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS)
-
-type Query @join__type(graph: ACCOUNTS) @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS) {
-  me: User @connect(source: "accounts", http: {GET: "/me", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nusername") @join__field(graph: ACCOUNTS)
-  user(id: String!): User @connect(source: "accounts", http: {GET: "/users/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nusername", entity: true) @merge(subgraph: "accounts", keyField: "id", keyArg: "id") @join__field(graph: ACCOUNTS)
-  users: [User] @connect(source: "accounts", http: {GET: "/users", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nusername") @join__field(graph: ACCOUNTS)
-  topProducts(first: Int = 5): [Product] @join__field(graph: PRODUCTS)
-}
-
-type User @join__type(graph: ACCOUNTS, key: "id") @join__type(graph: REVIEWS, key: "id", extension: true) {
-  id: ID!
-  name: String @join__field(graph: ACCOUNTS)
-  username: String @join__field(graph: ACCOUNTS) @join__field(graph: REVIEWS, external: true)
-  reviews: [Review] @join__field(graph: REVIEWS)
-}
-
-type Product @join__type(graph: INVENTORY, key: "upc", extension: true) @join__type(graph: PRODUCTS, key: "upc") @join__type(graph: REVIEWS, key: "upc", extension: true) {
-  upc: String!
-  weight: Int @join__field(graph: INVENTORY, external: true) @join__field(graph: PRODUCTS)
-  price: Int @join__field(graph: INVENTORY, external: true) @join__field(graph: PRODUCTS)
-  inStock: Boolean @join__field(graph: INVENTORY)
-  shippingEstimate: Int @join__field(graph: INVENTORY, requires: "price weight")
-  name: String @join__field(graph: PRODUCTS)
-  reviews: [Review] @join__field(graph: REVIEWS)
-}
-
-type Review @join__type(graph: REVIEWS, key: "id") {
-  id: ID!
-  body: String
-  author: User @join__field(graph: REVIEWS, provides: "username")
-  product: Product
-}
-
-input ConnectHTTP @join__type(graph: ACCOUNTS) {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping @join__type(graph: ACCOUNTS) {
-  name: String!
-  value: String
-  from: String
-}
-
-input ConnectorErrors @join__type(graph: ACCOUNTS) {
-  message: String
-  extensions: String
-}
-
-input SourceHTTP @join__type(graph: ACCOUNTS) {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
-}
-
-scalar ObjMap
-
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
-
-directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA
-"
-`;
-
-exports[`should execute TestQuery 1`] = `
+exports[`execute with apollo-router should execute TestQuery 1`] = `
 {
   "data": {
     "topProducts": [
@@ -576,4 +459,549 @@ exports[`should execute TestQuery 1`] = `
     ],
   },
 }
+`;
+
+exports[`execute with hive should execute TestQuery 1`] = `
+{
+  "data": {
+    "topProducts": [
+      {
+        "inStock": true,
+        "name": "Table",
+        "price": 899,
+        "reviews": [
+          {
+            "author": {
+              "id": "1",
+              "name": null,
+              "reviews": [
+                {
+                  "body": "Love it!",
+                  "id": "1",
+                  "product": {
+                    "inStock": true,
+                    "name": "Table",
+                    "price": 899,
+                    "shippingEstimate": 50,
+                    "upc": "1",
+                    "weight": 100,
+                  },
+                },
+                {
+                  "body": "Too expensive.",
+                  "id": "2",
+                  "product": {
+                    "inStock": false,
+                    "name": "Couch",
+                    "price": 1299,
+                    "shippingEstimate": 0,
+                    "upc": "2",
+                    "weight": 1000,
+                  },
+                },
+              ],
+              "username": "@ada",
+            },
+            "body": "Love it!",
+            "id": "1",
+          },
+          {
+            "author": {
+              "id": "2",
+              "name": null,
+              "reviews": [
+                {
+                  "body": "Could be better.",
+                  "id": "3",
+                  "product": {
+                    "inStock": true,
+                    "name": "Chair",
+                    "price": 54,
+                    "shippingEstimate": 25,
+                    "upc": "3",
+                    "weight": 50,
+                  },
+                },
+                {
+                  "body": "Prefer something else.",
+                  "id": "4",
+                  "product": {
+                    "inStock": true,
+                    "name": "Table",
+                    "price": 899,
+                    "shippingEstimate": 50,
+                    "upc": "1",
+                    "weight": 100,
+                  },
+                },
+              ],
+              "username": "@complete",
+            },
+            "body": "Prefer something else.",
+            "id": "4",
+          },
+        ],
+        "shippingEstimate": 50,
+        "upc": "1",
+        "weight": 100,
+      },
+      {
+        "inStock": false,
+        "name": "Couch",
+        "price": 1299,
+        "reviews": [
+          {
+            "author": {
+              "id": "1",
+              "name": null,
+              "reviews": [
+                {
+                  "body": "Love it!",
+                  "id": "1",
+                  "product": {
+                    "inStock": true,
+                    "name": "Table",
+                    "price": 899,
+                    "shippingEstimate": 50,
+                    "upc": "1",
+                    "weight": 100,
+                  },
+                },
+                {
+                  "body": "Too expensive.",
+                  "id": "2",
+                  "product": {
+                    "inStock": false,
+                    "name": "Couch",
+                    "price": 1299,
+                    "shippingEstimate": 0,
+                    "upc": "2",
+                    "weight": 1000,
+                  },
+                },
+              ],
+              "username": "@ada",
+            },
+            "body": "Too expensive.",
+            "id": "2",
+          },
+        ],
+        "shippingEstimate": 0,
+        "upc": "2",
+        "weight": 1000,
+      },
+      {
+        "inStock": true,
+        "name": "Chair",
+        "price": 54,
+        "reviews": [
+          {
+            "author": {
+              "id": "2",
+              "name": null,
+              "reviews": [
+                {
+                  "body": "Could be better.",
+                  "id": "3",
+                  "product": {
+                    "inStock": true,
+                    "name": "Chair",
+                    "price": 54,
+                    "shippingEstimate": 25,
+                    "upc": "3",
+                    "weight": 50,
+                  },
+                },
+                {
+                  "body": "Prefer something else.",
+                  "id": "4",
+                  "product": {
+                    "inStock": true,
+                    "name": "Table",
+                    "price": 899,
+                    "shippingEstimate": 50,
+                    "upc": "1",
+                    "weight": 100,
+                  },
+                },
+              ],
+              "username": "@complete",
+            },
+            "body": "Could be better.",
+            "id": "3",
+          },
+        ],
+        "shippingEstimate": 25,
+        "upc": "3",
+        "weight": 50,
+      },
+    ],
+    "users": [
+      {
+        "id": "1",
+        "name": "Ada Lovelace",
+        "reviews": [
+          {
+            "body": "Love it!",
+            "id": "1",
+            "product": {
+              "inStock": true,
+              "name": "Table",
+              "price": 899,
+              "reviews": [
+                {
+                  "author": {
+                    "id": "1",
+                    "name": null,
+                    "reviews": [
+                      {
+                        "body": "Love it!",
+                        "id": "1",
+                        "product": {
+                          "inStock": true,
+                          "name": "Table",
+                          "price": 899,
+                          "shippingEstimate": 50,
+                          "upc": "1",
+                          "weight": 100,
+                        },
+                      },
+                      {
+                        "body": "Too expensive.",
+                        "id": "2",
+                        "product": {
+                          "inStock": false,
+                          "name": "Couch",
+                          "price": 1299,
+                          "shippingEstimate": 0,
+                          "upc": "2",
+                          "weight": 1000,
+                        },
+                      },
+                    ],
+                    "username": "@ada",
+                  },
+                  "body": "Love it!",
+                  "id": "1",
+                },
+                {
+                  "author": {
+                    "id": "2",
+                    "name": null,
+                    "reviews": [
+                      {
+                        "body": "Could be better.",
+                        "id": "3",
+                        "product": {
+                          "inStock": true,
+                          "name": "Chair",
+                          "price": 54,
+                          "shippingEstimate": 25,
+                          "upc": "3",
+                          "weight": 50,
+                        },
+                      },
+                      {
+                        "body": "Prefer something else.",
+                        "id": "4",
+                        "product": {
+                          "inStock": true,
+                          "name": "Table",
+                          "price": 899,
+                          "shippingEstimate": 50,
+                          "upc": "1",
+                          "weight": 100,
+                        },
+                      },
+                    ],
+                    "username": "@complete",
+                  },
+                  "body": "Prefer something else.",
+                  "id": "4",
+                },
+              ],
+              "shippingEstimate": 50,
+              "upc": "1",
+              "weight": 100,
+            },
+          },
+          {
+            "body": "Too expensive.",
+            "id": "2",
+            "product": {
+              "inStock": false,
+              "name": "Couch",
+              "price": 1299,
+              "reviews": [
+                {
+                  "author": {
+                    "id": "1",
+                    "name": null,
+                    "reviews": [
+                      {
+                        "body": "Love it!",
+                        "id": "1",
+                        "product": {
+                          "inStock": true,
+                          "name": "Table",
+                          "price": 899,
+                          "shippingEstimate": 50,
+                          "upc": "1",
+                          "weight": 100,
+                        },
+                      },
+                      {
+                        "body": "Too expensive.",
+                        "id": "2",
+                        "product": {
+                          "inStock": false,
+                          "name": "Couch",
+                          "price": 1299,
+                          "shippingEstimate": 0,
+                          "upc": "2",
+                          "weight": 1000,
+                        },
+                      },
+                    ],
+                    "username": "@ada",
+                  },
+                  "body": "Too expensive.",
+                  "id": "2",
+                },
+              ],
+              "shippingEstimate": 0,
+              "upc": "2",
+              "weight": 1000,
+            },
+          },
+        ],
+        "username": "@ada",
+      },
+      {
+        "id": "2",
+        "name": "Alan Turing",
+        "reviews": [
+          {
+            "body": "Could be better.",
+            "id": "3",
+            "product": {
+              "inStock": true,
+              "name": "Chair",
+              "price": 54,
+              "reviews": [
+                {
+                  "author": {
+                    "id": "2",
+                    "name": null,
+                    "reviews": [
+                      {
+                        "body": "Could be better.",
+                        "id": "3",
+                        "product": {
+                          "inStock": true,
+                          "name": "Chair",
+                          "price": 54,
+                          "shippingEstimate": 25,
+                          "upc": "3",
+                          "weight": 50,
+                        },
+                      },
+                      {
+                        "body": "Prefer something else.",
+                        "id": "4",
+                        "product": {
+                          "inStock": true,
+                          "name": "Table",
+                          "price": 899,
+                          "shippingEstimate": 50,
+                          "upc": "1",
+                          "weight": 100,
+                        },
+                      },
+                    ],
+                    "username": "@complete",
+                  },
+                  "body": "Could be better.",
+                  "id": "3",
+                },
+              ],
+              "shippingEstimate": 25,
+              "upc": "3",
+              "weight": 50,
+            },
+          },
+          {
+            "body": "Prefer something else.",
+            "id": "4",
+            "product": {
+              "inStock": true,
+              "name": "Table",
+              "price": 899,
+              "reviews": [
+                {
+                  "author": {
+                    "id": "1",
+                    "name": null,
+                    "reviews": [
+                      {
+                        "body": "Love it!",
+                        "id": "1",
+                        "product": {
+                          "inStock": true,
+                          "name": "Table",
+                          "price": 899,
+                          "shippingEstimate": 50,
+                          "upc": "1",
+                          "weight": 100,
+                        },
+                      },
+                      {
+                        "body": "Too expensive.",
+                        "id": "2",
+                        "product": {
+                          "inStock": false,
+                          "name": "Couch",
+                          "price": 1299,
+                          "shippingEstimate": 0,
+                          "upc": "2",
+                          "weight": 1000,
+                        },
+                      },
+                    ],
+                    "username": "@ada",
+                  },
+                  "body": "Love it!",
+                  "id": "1",
+                },
+                {
+                  "author": {
+                    "id": "2",
+                    "name": null,
+                    "reviews": [
+                      {
+                        "body": "Could be better.",
+                        "id": "3",
+                        "product": {
+                          "inStock": true,
+                          "name": "Chair",
+                          "price": 54,
+                          "shippingEstimate": 25,
+                          "upc": "3",
+                          "weight": 50,
+                        },
+                      },
+                      {
+                        "body": "Prefer something else.",
+                        "id": "4",
+                        "product": {
+                          "inStock": true,
+                          "name": "Table",
+                          "price": 899,
+                          "shippingEstimate": 50,
+                          "upc": "1",
+                          "weight": 100,
+                        },
+                      },
+                    ],
+                    "username": "@complete",
+                  },
+                  "body": "Prefer something else.",
+                  "id": "4",
+                },
+              ],
+              "shippingEstimate": 50,
+              "upc": "1",
+              "weight": 100,
+            },
+          },
+        ],
+        "username": "@complete",
+      },
+    ],
+  },
+}
+`;
+
+exports[`should compose the appropriate schema 1`] = `
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(subgraph: "accounts", kind: "rest", location: "http://localhost:<accounts_port>") @join__directive(graphs: [ACCOUNTS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [ACCOUNTS], name: "source", args: {name: "accounts", http: {baseURL: "http://localhost:<accounts_port>"}}) {
+  query: Query
+}
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+
+scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  \`SECURITY\` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  \`EXECUTION\` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+enum join__Graph {
+  ACCOUNTS @join__graph(name: "accounts", url: "http://localhost:<accounts_port>")
+  INVENTORY @join__graph(name: "inventory", url: "http://localhost:<inventory_port>/graphql")
+  PRODUCTS @join__graph(name: "products", url: "http://localhost:<products_port>/graphql")
+  REVIEWS @join__graph(name: "reviews", url: "http://localhost:<reviews_port>/graphql")
+}
+
+scalar TransportOptions @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS)
+
+type Query @join__type(graph: ACCOUNTS) @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS) {
+  me: User @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/me", headers: [{name: "accept", value: "application/json"}]}, selection: "id name username"})
+  user(id: String!): User @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/users/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name username", entity: true})
+  users: [User] @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/users", headers: [{name: "accept", value: "application/json"}]}, selection: "id name username"})
+  topProducts(first: Int = 5): [Product] @join__field(graph: PRODUCTS)
+}
+
+type User @join__type(graph: ACCOUNTS, key: "id") @join__type(graph: REVIEWS, key: "id", extension: true) {
+  id: ID!
+  name: String @join__field(graph: ACCOUNTS)
+  username: String @join__field(graph: ACCOUNTS) @join__field(graph: REVIEWS, external: true)
+  reviews: [Review] @join__field(graph: REVIEWS)
+}
+
+type Product @join__type(graph: INVENTORY, key: "upc", extension: true) @join__type(graph: PRODUCTS, key: "upc") @join__type(graph: REVIEWS, key: "upc", extension: true) {
+  upc: String!
+  weight: Int @join__field(graph: INVENTORY, external: true) @join__field(graph: PRODUCTS)
+  price: Int @join__field(graph: INVENTORY, external: true) @join__field(graph: PRODUCTS)
+  inStock: Boolean @join__field(graph: INVENTORY)
+  shippingEstimate: Int @join__field(graph: INVENTORY, requires: "price weight")
+  name: String @join__field(graph: PRODUCTS)
+  reviews: [Review] @join__field(graph: REVIEWS)
+}
+
+type Review @join__type(graph: REVIEWS, key: "id") {
+  id: ID!
+  body: String
+  author: User @join__field(graph: REVIEWS, provides: "username")
+  product: Product
+}
+
+scalar ObjMap
+
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments
+"
 `;

@@ -15,7 +15,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Returns information about all employee cars"""
-  getAllCars: [query_getAllCars_items] @connect(source: "example_api_combined", http: {GET: "/cars", headers: [{name: "accept", value: "application/json"}]}, selection: "model\\ncolor\\nfeatures\\ntags\\nkind\\nrating")
+  getAllCars: [query_getAllCars_items] @connect(source: "example_api_combined", http: {GET: "/cars", headers: [{name: "accept", value: "application/json"}]}, selection: "model color features tags kind rating")
 }
 
 type query_getAllCars_items {

@@ -43,9 +43,9 @@ type Editor implements User {
 
 type Query {
   """Get admin"""
-  getAdmin: Admin @connect(source: "test", http: {GET: "/admin", headers: [{name: "accept", value: "application/json"}]}, selection: "name\\ntype\\nadmin")
+  getAdmin: Admin @connect(source: "test", http: {GET: "/admin", headers: [{name: "accept", value: "application/json"}]}, selection: "name type admin")
   """Get editor"""
-  getEditor: Editor @connect(source: "test", http: {GET: "/editor", headers: [{name: "accept", value: "application/json"}]}, selection: "name\\ntype")
+  getEditor: Editor @connect(source: "test", http: {GET: "/editor", headers: [{name: "accept", value: "application/json"}]}, selection: "name type")
 }
 
 input ConnectHTTP {

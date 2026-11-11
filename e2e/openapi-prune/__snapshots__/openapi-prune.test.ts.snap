@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI w/ Prune Transform composes 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @source(name: "Wiki", http: {baseURL: "http://localhost:<Wiki_port>"}) @transport(subgraph: "Wiki", kind: "rest", location: "http://localhost:<Wiki_port>") {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(subgraph: "Wiki", kind: "rest", location: "http://localhost:<Wiki_port>") @join__directive(graphs: [WIKI], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [WIKI], name: "source", args: {name: "Wiki", http: {baseURL: "http://localhost:<Wiki_port>"}}) {
   query: Query
   mutation: Mutation
 }
@@ -39,14 +39,12 @@ enum join__Graph {
   WIKI @join__graph(name: "Wiki", url: "http://localhost:<Wiki_port>")
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
-
 type Query @join__type(graph: WIKI) {
   dummy: String
 }
 
 type Mutation @join__type(graph: WIKI) {
-  post_main(input: RequestBody_Input): [ResponseBody] @connect(source: "Wiki", http: {POST: "/main", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "apple")
+  post_main(input: RequestBody_Input): [ResponseBody] @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {POST: "/main", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "apple"})
 }
 
 type ResponseBody @join__type(graph: WIKI) {
@@ -57,40 +55,11 @@ input RequestBody_Input @join__type(graph: WIKI) {
   banana: Boolean
 }
 
-input ConnectHTTP @join__type(graph: WIKI) {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping @join__type(graph: WIKI) {
-  name: String!
-  value: String
-  from: String
-}
-
-input ConnectorErrors @join__type(graph: WIKI) {
-  message: String
-  extensions: String
-}
-
-input SourceHTTP @join__type(graph: WIKI) {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
-}
-
 scalar ObjMap
 
 directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
-directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA"
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments"
 `;

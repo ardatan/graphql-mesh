@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@enum", "@transport"]) @source(name: "Wiki", http: {baseURL: "https://api.chucknorris.io"}) @transport(subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io") {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@enum", "@transport"]) @transport(subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io") @join__directive(graphs: [WIKI], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [WIKI], name: "source", args: {name: "Wiki", http: {baseURL: "https://api.chucknorris.io"}}) {
   query: Query
 }
 
@@ -40,10 +40,8 @@ enum join__Graph {
 
 directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
-
 type Query @join__type(graph: WIKI) {
-  jokes_categories: [Category] @connect(source: "Wiki", http: {GET: "/jokes/categories", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
+  jokes_categories: [Category] @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/jokes/categories", headers: [{name: "accept", value: "application/json"}]}, selection: "$"})
 }
 
 enum Category @join__type(graph: WIKI) {
@@ -65,40 +63,11 @@ enum Category @join__type(graph: WIKI) {
   TRAVEL @enum(value: "\\"travel\\"") @join__enumValue(graph: WIKI)
 }
 
-input ConnectHTTP @join__type(graph: WIKI) {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping @join__type(graph: WIKI) {
-  name: String!
-  value: String
-  from: String
-}
-
-input ConnectorErrors @join__type(graph: WIKI) {
-  message: String
-  extensions: String
-}
-
-input SourceHTTP @join__type(graph: WIKI) {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
-}
-
 scalar ObjMap
 
 directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
-directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA"
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments"
 `;

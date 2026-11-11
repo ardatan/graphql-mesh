@@ -18,7 +18,7 @@ type Query {
 
 type Mutation {
   """Description of the action"""
-  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @connect(source: "test", http: {POST: "/test-action-2", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  blocking: $args.blocking\\n  result: $args.result\\n}"}, selection: "payload\\nage\\nvalid")
+  post_test_action_2(usernamePassword: String, blocking: Boolean = true, result: Boolean = true, input: Payload_Input): Response @connect(source: "test", http: {POST: "/test-action-2", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  blocking: $args.blocking\\n  result: $args.result\\n}"}, selection: "payload age valid")
 }
 
 type Response {

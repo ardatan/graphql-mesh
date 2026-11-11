@@ -37,7 +37,7 @@ scalar query_getAdmin_allOf_0_name @length(subgraph: "test", max: 100)
 
 type Query {
   """Get admin"""
-  getAdmin: Admin @connect(source: "test", http: {GET: "/admin", headers: [{name: "accept", value: "application/json"}]}, selection: "name\\ntype\\nadmin")
+  getAdmin: Admin @connect(source: "test", http: {GET: "/admin", headers: [{name: "accept", value: "application/json"}]}, selection: "name type admin")
 }
 
 type Mutation {

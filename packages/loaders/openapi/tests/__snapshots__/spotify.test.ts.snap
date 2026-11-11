@@ -45,7 +45,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): AlbumObject @connect(source: "test", http: {GET: "/albums/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "album_type\\ntotal_tracks\\navailable_markets\\nexternal_urls {\\n  spotify\\n}\\nhref\\nid\\nimages {\\n  url\\n  height\\n  width\\n}\\nname\\nrelease_date\\nrelease_date_precision\\nrestrictions {\\n  reason\\n}\\ntype\\nuri\\ncopyrights {\\n  text\\n  type\\n}\\nexternal_ids {\\n  isrc\\n  ean\\n  upc\\n}\\ngenres\\nlabel\\npopularity\\nartists {\\n  external_urls {\\n    spotify\\n  }\\n  followers {\\n    href\\n    total\\n  }\\n  genres\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  name\\n  popularity\\n  type\\n  uri\\n}\\ntracks {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    artists\\n    available_markets\\n    disc_number\\n    duration_ms\\n    explicit\\n    external_urls\\n    href\\n    id\\n    is_playable\\n    linked_from\\n    restrictions\\n    name\\n    preview_url\\n    track_number\\n    type\\n    uri\\n    is_local\\n  }\\n}")
+  ): AlbumObject @connect(source: "test", http: {GET: "/albums/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "album_type total_tracks available_markets external_urls { spotify } href id images { url height width } name release_date release_date_precision restrictions { reason } type uri copyrights { text type } external_ids { isrc ean upc } genres label popularity artists { external_urls { spotify } followers { href total } genres href id images { url height width } name popularity type uri } tracks { href limit next offset previous total items { artists available_markets disc_number duration_ms explicit external_urls href id is_playable linked_from restrictions name preview_url track_number type uri is_local } }")
   """
   Get Spotify catalog information for multiple albums identified by their Spotify IDs.
   
@@ -64,7 +64,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ManyAlbums_response @connect(source: "test", http: {GET: "/albums", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n  market: $args.market\\n}"}, selection: "albums {\\n  album_type\\n  total_tracks\\n  available_markets\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  name\\n  release_date\\n  release_date_precision\\n  restrictions {\\n    reason\\n  }\\n  type\\n  uri\\n  copyrights {\\n    text\\n    type\\n  }\\n  external_ids {\\n    isrc\\n    ean\\n    upc\\n  }\\n  genres\\n  label\\n  popularity\\n  artists {\\n    external_urls\\n    followers\\n    genres\\n    href\\n    id\\n    images\\n    name\\n    popularity\\n    type\\n    uri\\n  }\\n  tracks {\\n    href\\n    limit\\n    next\\n    offset\\n    previous\\n    total\\n    items\\n  }\\n}")
+  ): ManyAlbums_response @connect(source: "test", http: {GET: "/albums", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n  market: $args.market\\n}"}, selection: "albums { album_type total_tracks available_markets external_urls { spotify } href id images { url height width } name release_date release_date_precision restrictions { reason } type uri copyrights { text type } external_ids { isrc ean upc } genres label popularity artists { external_urls followers genres href id images name popularity type uri } tracks { href limit next offset previous total items } }")
   """
   Get Spotify catalog information about an album’s tracks.
   Optional parameters can be used to limit the number of tracks returned.
@@ -92,7 +92,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSimplifiedTrackObject @connect(source: "test", http: {GET: "/albums/{$args.id}/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  artists {\\n    external_urls\\n    href\\n    id\\n    name\\n    type\\n    uri\\n  }\\n  available_markets\\n  disc_number\\n  duration_ms\\n  explicit\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  is_playable\\n  linked_from {\\n    external_urls\\n    href\\n    id\\n    type\\n    uri\\n  }\\n  restrictions {\\n    reason\\n  }\\n  name\\n  preview_url\\n  track_number\\n  type\\n  uri\\n  is_local\\n}")
+  ): PagingSimplifiedTrackObject @connect(source: "test", http: {GET: "/albums/{$args.id}/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items { artists { external_urls href id name type uri } available_markets disc_number duration_ms explicit external_urls { spotify } href id is_playable linked_from { external_urls href id type uri } restrictions { reason } name preview_url track_number type uri is_local }")
   """
   Get Spotify catalog information for a single artist identified by their unique Spotify ID.
   
@@ -102,7 +102,7 @@ type Query {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) of the artist.
     """
     id: String!
-  ): ArtistObject @connect(source: "test", http: {GET: "/artists/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "external_urls {\\n  spotify\\n}\\nfollowers {\\n  href\\n  total\\n}\\ngenres\\nhref\\nid\\nimages {\\n  url\\n  height\\n  width\\n}\\nname\\npopularity\\ntype\\nuri")
+  ): ArtistObject @connect(source: "test", http: {GET: "/artists/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "external_urls { spotify } followers { href total } genres href id images { url height width } name popularity type uri")
   """
   Get Spotify catalog information for several artists based on their Spotify IDs.
   
@@ -112,7 +112,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the artists. Maximum: 50 IDs.
     """
     ids: String!
-  ): ManyArtists_response @connect(source: "test", http: {GET: "/artists", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n}"}, selection: "artists {\\n  external_urls {\\n    spotify\\n  }\\n  followers {\\n    href\\n    total\\n  }\\n  genres\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  name\\n  popularity\\n  type\\n  uri\\n}")
+  ): ManyArtists_response @connect(source: "test", http: {GET: "/artists", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n}"}, selection: "artists { external_urls { spotify } followers { href total } genres href id images { url height width } name popularity type uri }")
   """
   Get Spotify catalog information about an artist's albums.
   
@@ -144,7 +144,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSimplifiedAlbumObject @connect(source: "test", http: {GET: "/artists/{$args.id}/albums", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  include_groups: $args.include_groups\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  album_type\\n  total_tracks\\n  available_markets\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  name\\n  release_date\\n  release_date_precision\\n  restrictions {\\n    reason\\n  }\\n  type\\n  uri\\n  copyrights {\\n    text\\n    type\\n  }\\n  external_ids {\\n    isrc\\n    ean\\n    upc\\n  }\\n  genres\\n  label\\n  popularity\\n  album_group\\n  artists {\\n    external_urls\\n    href\\n    id\\n    name\\n    type\\n    uri\\n  }\\n}")
+  ): PagingSimplifiedAlbumObject @connect(source: "test", http: {GET: "/artists/{$args.id}/albums", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  include_groups: $args.include_groups\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items { album_type total_tracks available_markets external_urls { spotify } href id images { url height width } name release_date release_date_precision restrictions { reason } type uri copyrights { text type } external_ids { isrc ean upc } genres label popularity album_group artists { external_urls href id name type uri } }")
   """
   Get Spotify catalog information about an artist's top tracks by country.
   
@@ -163,7 +163,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ManyTracks_response @connect(source: "test", http: {GET: "/artists/{$args.id}/top-tracks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "tracks {\\n  album {\\n    album_type\\n    total_tracks\\n    available_markets\\n    external_urls\\n    href\\n    id\\n    images\\n    name\\n    release_date\\n    release_date_precision\\n    restrictions\\n    type\\n    uri\\n    copyrights\\n    external_ids\\n    genres\\n    label\\n    popularity\\n    album_group\\n    artists\\n  }\\n  artists {\\n    external_urls\\n    followers\\n    genres\\n    href\\n    id\\n    images\\n    name\\n    popularity\\n    type\\n    uri\\n  }\\n  available_markets\\n  disc_number\\n  duration_ms\\n  explicit\\n  external_ids {\\n    isrc\\n    ean\\n    upc\\n  }\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  is_playable\\n  linked_from\\n  restrictions {\\n    reason\\n  }\\n  name\\n  popularity\\n  preview_url\\n  track_number\\n  type\\n  uri\\n  is_local\\n}")
+  ): ManyTracks_response @connect(source: "test", http: {GET: "/artists/{$args.id}/top-tracks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "tracks { album { album_type total_tracks available_markets external_urls href id images name release_date release_date_precision restrictions type uri copyrights external_ids genres label popularity album_group artists } artists { external_urls followers genres href id images name popularity type uri } available_markets disc_number duration_ms explicit external_ids { isrc ean upc } external_urls { spotify } href id is_playable linked_from restrictions { reason } name popularity preview_url track_number type uri is_local }")
   """
   Get Spotify catalog information about artists similar to a given artist. Similarity is based on analysis of the Spotify community's [listening history](http://news.spotify.com/se/2010/02/03/related-artists/).
   
@@ -173,7 +173,7 @@ type Query {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) of the artist.
     """
     id: String!
-  ): ManyArtists_response @connect(source: "test", http: {GET: "/artists/{$args.id}/related-artists", headers: [{name: "accept", value: "application/json"}]}, selection: "artists {\\n  external_urls {\\n    spotify\\n  }\\n  followers {\\n    href\\n    total\\n  }\\n  genres\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  name\\n  popularity\\n  type\\n  uri\\n}")
+  ): ManyArtists_response @connect(source: "test", http: {GET: "/artists/{$args.id}/related-artists", headers: [{name: "accept", value: "application/json"}]}, selection: "artists { external_urls { spotify } followers { href total } genres href id images { url height width } name popularity type uri }")
   """
   Get Spotify catalog information for a single show identified by its
   unique Spotify ID.
@@ -194,7 +194,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ShowObject @connect(source: "test", http: {GET: "/shows/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "available_markets\\ncopyrights {\\n  text\\n  type\\n}\\ndescription\\nhtml_description\\nexplicit\\nexternal_urls {\\n  spotify\\n}\\nhref\\nid\\nimages {\\n  url\\n  height\\n  width\\n}\\nis_externally_hosted\\nlanguages\\nmedia_type\\nname\\npublisher\\ntype\\nuri\\ntotal_episodes\\nepisodes {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    audio_preview_url\\n    description\\n    html_description\\n    duration_ms\\n    explicit\\n    external_urls\\n    href\\n    id\\n    images\\n    is_externally_hosted\\n    is_playable\\n    language\\n    languages\\n    name\\n    release_date\\n    release_date_precision\\n    resume_point\\n    type\\n    uri\\n    restrictions\\n    JSON\\n  }\\n}")
+  ): ShowObject @connect(source: "test", http: {GET: "/shows/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "available_markets copyrights { text type } description html_description explicit external_urls { spotify } href id images { url height width } is_externally_hosted languages media_type name publisher type uri total_episodes episodes { href limit next offset previous total items { audio_preview_url description html_description duration_ms explicit external_urls href id images is_externally_hosted is_playable language languages name release_date release_date_precision resume_point type uri restrictions JSON } }")
   """
   Get Spotify catalog information for several shows based on their Spotify IDs.
   
@@ -213,7 +213,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids) for the shows. Maximum: 50 IDs.
     """
     ids: String!
-  ): ManySimplifiedShows_response @connect(source: "test", http: {GET: "/shows", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  ids: $args.ids\\n}"}, selection: "shows {\\n  available_markets\\n  copyrights {\\n    text\\n    type\\n  }\\n  description\\n  html_description\\n  explicit\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  is_externally_hosted\\n  languages\\n  media_type\\n  name\\n  publisher\\n  type\\n  uri\\n  total_episodes\\n  JSON\\n}")
+  ): ManySimplifiedShows_response @connect(source: "test", http: {GET: "/shows", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  ids: $args.ids\\n}"}, selection: "shows { available_markets copyrights { text type } description html_description explicit external_urls { spotify } href id images { url height width } is_externally_hosted languages media_type name publisher type uri total_episodes JSON }")
   """
   Get Spotify catalog information about an show’s episodes. Optional parameters can be used to limit the number of episodes returned.
   
@@ -241,7 +241,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSimplifiedEpisodeObject @connect(source: "test", http: {GET: "/shows/{$args.id}/episodes", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  audio_preview_url\\n  description\\n  html_description\\n  duration_ms\\n  explicit\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  is_externally_hosted\\n  is_playable\\n  language\\n  languages\\n  name\\n  release_date\\n  release_date_precision\\n  resume_point {\\n    fully_played\\n    resume_position_ms\\n  }\\n  type\\n  uri\\n  restrictions {\\n    reason\\n  }\\n  JSON\\n}")
+  ): PagingSimplifiedEpisodeObject @connect(source: "test", http: {GET: "/shows/{$args.id}/episodes", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items { audio_preview_url description html_description duration_ms explicit external_urls { spotify } href id images { url height width } is_externally_hosted is_playable language languages name release_date release_date_precision resume_point { fully_played resume_position_ms } type uri restrictions { reason } JSON }")
   """
   Get Spotify catalog information for a single episode identified by its
   unique Spotify ID.
@@ -261,7 +261,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): EpisodeObject @connect(source: "test", http: {GET: "/episodes/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "audio_preview_url\\ndescription\\nhtml_description\\nduration_ms\\nexplicit\\nexternal_urls {\\n  spotify\\n}\\nhref\\nid\\nimages {\\n  url\\n  height\\n  width\\n}\\nis_externally_hosted\\nis_playable\\nlanguage\\nlanguages\\nname\\nrelease_date\\nrelease_date_precision\\nresume_point {\\n  fully_played\\n  resume_position_ms\\n}\\ntype\\nuri\\nrestrictions {\\n  reason\\n}\\nshow {\\n  available_markets\\n  copyrights {\\n    text\\n    type\\n  }\\n  description\\n  html_description\\n  explicit\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  is_externally_hosted\\n  languages\\n  media_type\\n  name\\n  publisher\\n  type\\n  uri\\n  total_episodes\\n  JSON\\n}")
+  ): EpisodeObject @connect(source: "test", http: {GET: "/episodes/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "audio_preview_url description html_description duration_ms explicit external_urls { spotify } href id images { url height width } is_externally_hosted is_playable language languages name release_date release_date_precision resume_point { fully_played resume_position_ms } type uri restrictions { reason } show { available_markets copyrights { text type } description html_description explicit external_urls { spotify } href id images { url height width } is_externally_hosted languages media_type name publisher type uri total_episodes JSON }")
   """
   Get Spotify catalog information for several episodes based on their Spotify IDs.
   
@@ -280,7 +280,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ManyEpisodes_response @connect(source: "test", http: {GET: "/episodes", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n  market: $args.market\\n}"}, selection: "episodes {\\n  audio_preview_url\\n  description\\n  html_description\\n  duration_ms\\n  explicit\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  is_externally_hosted\\n  is_playable\\n  language\\n  languages\\n  name\\n  release_date\\n  release_date_precision\\n  resume_point {\\n    fully_played\\n    resume_position_ms\\n  }\\n  type\\n  uri\\n  restrictions {\\n    reason\\n  }\\n  show {\\n    available_markets\\n    copyrights\\n    description\\n    html_description\\n    explicit\\n    external_urls\\n    href\\n    id\\n    images\\n    is_externally_hosted\\n    languages\\n    media_type\\n    name\\n    publisher\\n    type\\n    uri\\n    total_episodes\\n    JSON\\n  }\\n}")
+  ): ManyEpisodes_response @connect(source: "test", http: {GET: "/episodes", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n  market: $args.market\\n}"}, selection: "episodes { audio_preview_url description html_description duration_ms explicit external_urls { spotify } href id images { url height width } is_externally_hosted is_playable language languages name release_date release_date_precision resume_point { fully_played resume_position_ms } type uri restrictions { reason } show { available_markets copyrights description html_description explicit external_urls href id images is_externally_hosted languages media_type name publisher type uri total_episodes JSON } }")
   """
   Get Spotify catalog information for a single audiobook.<br />
   **Note: Audiobooks are only available for the US, UK, Ireland, New Zealand and Australia markets.**
@@ -301,7 +301,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): AudiobookObject @connect(source: "test", http: {GET: "/audiobooks/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "authors {\\n  name\\n}\\navailable_markets\\ncopyrights {\\n  text\\n  type\\n}\\ndescription\\nhtml_description\\nedition\\nexplicit\\nexternal_urls {\\n  spotify\\n}\\nhref\\nid\\nimages {\\n  url\\n  height\\n  width\\n}\\nlanguages\\nmedia_type\\nname\\nnarrators {\\n  name\\n}\\npublisher\\ntype\\nuri\\ntotal_chapters\\nchapters {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    audio_preview_url\\n    available_markets\\n    chapter_number\\n    description\\n    html_description\\n    duration_ms\\n    explicit\\n    external_urls\\n    href\\n    id\\n    images\\n    is_playable\\n    languages\\n    name\\n    release_date\\n    release_date_precision\\n    resume_point\\n    type\\n    uri\\n    restrictions\\n    JSON\\n  }\\n}")
+  ): AudiobookObject @connect(source: "test", http: {GET: "/audiobooks/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "authors { name } available_markets copyrights { text type } description html_description edition explicit external_urls { spotify } href id images { url height width } languages media_type name narrators { name } publisher type uri total_chapters chapters { href limit next offset previous total items { audio_preview_url available_markets chapter_number description html_description duration_ms explicit external_urls href id images is_playable languages name release_date release_date_precision resume_point type uri restrictions JSON } }")
   """
   Get Spotify catalog information for several audiobooks identified by their Spotify IDs.<br />
   **Note: Audiobooks are only available for the US, UK, Ireland, New Zealand and Australia markets.**
@@ -321,7 +321,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ManyAudiobooks_response @connect(source: "test", http: {GET: "/audiobooks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n  market: $args.market\\n}"}, selection: "audiobooks {\\n  authors {\\n    name\\n  }\\n  available_markets\\n  copyrights {\\n    text\\n    type\\n  }\\n  description\\n  html_description\\n  edition\\n  explicit\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  languages\\n  media_type\\n  name\\n  narrators {\\n    name\\n  }\\n  publisher\\n  type\\n  uri\\n  total_chapters\\n  chapters {\\n    href\\n    limit\\n    next\\n    offset\\n    previous\\n    total\\n    items\\n  }\\n}")
+  ): ManyAudiobooks_response @connect(source: "test", http: {GET: "/audiobooks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n  market: $args.market\\n}"}, selection: "audiobooks { authors { name } available_markets copyrights { text type } description html_description edition explicit external_urls { spotify } href id images { url height width } languages media_type name narrators { name } publisher type uri total_chapters chapters { href limit next offset previous total items } }")
   """
   Get Spotify catalog information about an audiobook's chapters.<br />
   **Note: Audiobooks are only available for the US, UK, Ireland, New Zealand and Australia markets.**
@@ -350,7 +350,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSimplifiedChapterObject @connect(source: "test", http: {GET: "/audiobooks/{$args.id}/chapters", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  audio_preview_url\\n  available_markets\\n  chapter_number\\n  description\\n  html_description\\n  duration_ms\\n  explicit\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  is_playable\\n  languages\\n  name\\n  release_date\\n  release_date_precision\\n  resume_point {\\n    fully_played\\n    resume_position_ms\\n  }\\n  type\\n  uri\\n  restrictions {\\n    reason\\n  }\\n  JSON\\n}")
+  ): PagingSimplifiedChapterObject @connect(source: "test", http: {GET: "/audiobooks/{$args.id}/chapters", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items { audio_preview_url available_markets chapter_number description html_description duration_ms explicit external_urls { spotify } href id images { url height width } is_playable languages name release_date release_date_precision resume_point { fully_played resume_position_ms } type uri restrictions { reason } JSON }")
   """
   Get a list of the audiobooks saved in the current Spotify user's 'Your Music' library.
   
@@ -364,7 +364,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSimplifiedAudiobookObject @connect(source: "test", http: {GET: "/me/audiobooks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  authors {\\n    name\\n  }\\n  available_markets\\n  copyrights {\\n    text\\n    type\\n  }\\n  description\\n  html_description\\n  edition\\n  explicit\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  languages\\n  media_type\\n  name\\n  narrators {\\n    name\\n  }\\n  publisher\\n  type\\n  uri\\n  total_chapters\\n  JSON\\n}")
+  ): PagingSimplifiedAudiobookObject @connect(source: "test", http: {GET: "/me/audiobooks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items { authors { name } available_markets copyrights { text type } description html_description edition explicit external_urls { spotify } href id images { url height width } languages media_type name narrators { name } publisher type uri total_chapters JSON }")
   """
   Check if one or more audiobooks are already saved in the current Spotify user's library.
   
@@ -395,7 +395,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ChapterObject @connect(source: "test", http: {GET: "/chapters/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "audio_preview_url\\navailable_markets\\nchapter_number\\ndescription\\nhtml_description\\nduration_ms\\nexplicit\\nexternal_urls {\\n  spotify\\n}\\nhref\\nid\\nimages {\\n  url\\n  height\\n  width\\n}\\nis_playable\\nlanguages\\nname\\nrelease_date\\nrelease_date_precision\\nresume_point {\\n  fully_played\\n  resume_position_ms\\n}\\ntype\\nuri\\nrestrictions {\\n  reason\\n}\\naudiobook {\\n  authors {\\n    name\\n  }\\n  available_markets\\n  copyrights {\\n    text\\n    type\\n  }\\n  description\\n  html_description\\n  edition\\n  explicit\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  languages\\n  media_type\\n  name\\n  narrators {\\n    name\\n  }\\n  publisher\\n  type\\n  uri\\n  total_chapters\\n  JSON\\n}")
+  ): ChapterObject @connect(source: "test", http: {GET: "/chapters/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "audio_preview_url available_markets chapter_number description html_description duration_ms explicit external_urls { spotify } href id images { url height width } is_playable languages name release_date release_date_precision resume_point { fully_played resume_position_ms } type uri restrictions { reason } audiobook { authors { name } available_markets copyrights { text type } description html_description edition explicit external_urls { spotify } href id images { url height width } languages media_type name narrators { name } publisher type uri total_chapters JSON }")
   """
   Get Spotify catalog information for several chapters identified by their Spotify IDs.<br />
   **Note: Chapters are only available for the US, UK, Ireland, New Zealand and Australia markets.**
@@ -415,7 +415,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): ManyChapters_response @connect(source: "test", http: {GET: "/chapters", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n  market: $args.market\\n}"}, selection: "chapters {\\n  audio_preview_url\\n  available_markets\\n  chapter_number\\n  description\\n  html_description\\n  duration_ms\\n  explicit\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  is_playable\\n  languages\\n  name\\n  release_date\\n  release_date_precision\\n  resume_point {\\n    fully_played\\n    resume_position_ms\\n  }\\n  type\\n  uri\\n  restrictions {\\n    reason\\n  }\\n  audiobook {\\n    authors\\n    available_markets\\n    copyrights\\n    description\\n    html_description\\n    edition\\n    explicit\\n    external_urls\\n    href\\n    id\\n    images\\n    languages\\n    media_type\\n    name\\n    narrators\\n    publisher\\n    type\\n    uri\\n    total_chapters\\n    JSON\\n  }\\n}")
+  ): ManyChapters_response @connect(source: "test", http: {GET: "/chapters", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n  market: $args.market\\n}"}, selection: "chapters { audio_preview_url available_markets chapter_number description html_description duration_ms explicit external_urls { spotify } href id images { url height width } is_playable languages name release_date release_date_precision resume_point { fully_played resume_position_ms } type uri restrictions { reason } audiobook { authors available_markets copyrights description html_description edition explicit external_urls href id images languages media_type name narrators publisher type uri total_chapters JSON } }")
   """
   Get Spotify catalog information for a single track identified by its
   unique Spotify ID.
@@ -436,7 +436,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): TrackObject @connect(source: "test", http: {GET: "/tracks/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "album {\\n  album_type\\n  total_tracks\\n  available_markets\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  name\\n  release_date\\n  release_date_precision\\n  restrictions {\\n    reason\\n  }\\n  type\\n  uri\\n  copyrights {\\n    text\\n    type\\n  }\\n  external_ids {\\n    isrc\\n    ean\\n    upc\\n  }\\n  genres\\n  label\\n  popularity\\n  album_group\\n  artists {\\n    external_urls\\n    href\\n    id\\n    name\\n    type\\n    uri\\n  }\\n}\\nartists {\\n  external_urls {\\n    spotify\\n  }\\n  followers {\\n    href\\n    total\\n  }\\n  genres\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  name\\n  popularity\\n  type\\n  uri\\n}\\navailable_markets\\ndisc_number\\nduration_ms\\nexplicit\\nexternal_ids {\\n  isrc\\n  ean\\n  upc\\n}\\nexternal_urls {\\n  spotify\\n}\\nhref\\nid\\nis_playable\\nlinked_from\\nrestrictions {\\n  reason\\n}\\nname\\npopularity\\npreview_url\\ntrack_number\\ntype\\nuri\\nis_local")
+  ): TrackObject @connect(source: "test", http: {GET: "/tracks/{$args.id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n}"}, selection: "album { album_type total_tracks available_markets external_urls { spotify } href id images { url height width } name release_date release_date_precision restrictions { reason } type uri copyrights { text type } external_ids { isrc ean upc } genres label popularity album_group artists { external_urls href id name type uri } } artists { external_urls { spotify } followers { href total } genres href id images { url height width } name popularity type uri } available_markets disc_number duration_ms explicit external_ids { isrc ean upc } external_urls { spotify } href id is_playable linked_from restrictions { reason } name popularity preview_url track_number type uri is_local")
   """
   Get Spotify catalog information for multiple tracks based on their Spotify IDs.
   
@@ -455,7 +455,7 @@ type Query {
     A comma-separated list of the [Spotify IDs](/documentation/web-api/concepts/spotify-uris-ids). For example: \`ids=4iV5W9uYEdYUVa79Axb7Rh,1301WleyT98MSxVHPZCA6M\`. Maximum: 50 IDs.
     """
     ids: String!
-  ): ManyTracks_response @connect(source: "test", http: {GET: "/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  ids: $args.ids\\n}"}, selection: "tracks {\\n  album {\\n    album_type\\n    total_tracks\\n    available_markets\\n    external_urls\\n    href\\n    id\\n    images\\n    name\\n    release_date\\n    release_date_precision\\n    restrictions\\n    type\\n    uri\\n    copyrights\\n    external_ids\\n    genres\\n    label\\n    popularity\\n    album_group\\n    artists\\n  }\\n  artists {\\n    external_urls\\n    followers\\n    genres\\n    href\\n    id\\n    images\\n    name\\n    popularity\\n    type\\n    uri\\n  }\\n  available_markets\\n  disc_number\\n  duration_ms\\n  explicit\\n  external_ids {\\n    isrc\\n    ean\\n    upc\\n  }\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  is_playable\\n  linked_from\\n  restrictions {\\n    reason\\n  }\\n  name\\n  popularity\\n  preview_url\\n  track_number\\n  type\\n  uri\\n  is_local\\n}")
+  ): ManyTracks_response @connect(source: "test", http: {GET: "/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  ids: $args.ids\\n}"}, selection: "tracks { album { album_type total_tracks available_markets external_urls href id images name release_date release_date_precision restrictions type uri copyrights external_ids genres label popularity album_group artists } artists { external_urls followers genres href id images name popularity type uri } available_markets disc_number duration_ms explicit external_ids { isrc ean upc } external_urls { spotify } href id is_playable linked_from restrictions { reason } name popularity preview_url track_number type uri is_local }")
   """
   Get Spotify catalog information about albums, artists, playlists, tracks, shows, episodes or audiobooks
   that match a keyword string.<br />
@@ -498,13 +498,13 @@ type Query {
     """
     offset: NonNegativeInt
     include_external: Include_External
-  ): SearchItems_response @connect(source: "test", http: {GET: "/search", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  q: $args.q\\n  type: $args.type->joinNotNull(\\",\\")\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n  include_external: $args.include_external\\n}"}, selection: "tracks {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    album\\n    artists\\n    available_markets\\n    disc_number\\n    duration_ms\\n    explicit\\n    external_ids\\n    external_urls\\n    href\\n    id\\n    is_playable\\n    linked_from\\n    restrictions\\n    name\\n    popularity\\n    preview_url\\n    track_number\\n    type\\n    uri\\n    is_local\\n  }\\n}\\nartists {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    external_urls\\n    followers\\n    genres\\n    href\\n    id\\n    images\\n    name\\n    popularity\\n    type\\n    uri\\n  }\\n}\\nalbums {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    album_type\\n    total_tracks\\n    available_markets\\n    external_urls\\n    href\\n    id\\n    images\\n    name\\n    release_date\\n    release_date_precision\\n    restrictions\\n    type\\n    uri\\n    copyrights\\n    external_ids\\n    genres\\n    label\\n    popularity\\n    album_group\\n    artists\\n  }\\n}\\nplaylists {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    collaborative\\n    description\\n    external_urls\\n    href\\n    id\\n    images\\n    name\\n    owner\\n    public\\n    snapshot_id\\n    tracks\\n    type\\n    uri\\n  }\\n}\\nshows {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    available_markets\\n    copyrights\\n    description\\n    html_description\\n    explicit\\n    external_urls\\n    href\\n    id\\n    images\\n    is_externally_hosted\\n    languages\\n    media_type\\n    name\\n    publisher\\n    type\\n    uri\\n    total_episodes\\n    JSON\\n  }\\n}\\nepisodes {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    audio_preview_url\\n    description\\n    html_description\\n    duration_ms\\n    explicit\\n    external_urls\\n    href\\n    id\\n    images\\n    is_externally_hosted\\n    is_playable\\n    language\\n    languages\\n    name\\n    release_date\\n    release_date_precision\\n    resume_point\\n    type\\n    uri\\n    restrictions\\n    JSON\\n  }\\n}\\naudiobooks {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    authors\\n    available_markets\\n    copyrights\\n    description\\n    html_description\\n    edition\\n    explicit\\n    external_urls\\n    href\\n    id\\n    images\\n    languages\\n    media_type\\n    name\\n    narrators\\n    publisher\\n    type\\n    uri\\n    total_chapters\\n    JSON\\n  }\\n}") @meshRestOptions(queryStringOptionsByParam: "{\\"type\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): SearchItems_response @connect(source: "test", http: {GET: "/search", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  q: $args.q\\n  type: $args.type->joinNotNull(\\",\\")\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n  include_external: $args.include_external\\n}"}, selection: "tracks { href limit next offset previous total items { album artists available_markets disc_number duration_ms explicit external_ids external_urls href id is_playable linked_from restrictions name popularity preview_url track_number type uri is_local } } artists { href limit next offset previous total items { external_urls followers genres href id images name popularity type uri } } albums { href limit next offset previous total items { album_type total_tracks available_markets external_urls href id images name release_date release_date_precision restrictions type uri copyrights external_ids genres label popularity album_group artists } } playlists { href limit next offset previous total items { collaborative description external_urls href id images name owner public snapshot_id tracks type uri } } shows { href limit next offset previous total items { available_markets copyrights description html_description explicit external_urls href id images is_externally_hosted languages media_type name publisher type uri total_episodes JSON } } episodes { href limit next offset previous total items { audio_preview_url description html_description duration_ms explicit external_urls href id images is_externally_hosted is_playable language languages name release_date release_date_precision resume_point type uri restrictions JSON } } audiobooks { href limit next offset previous total items { authors available_markets copyrights description html_description edition explicit external_urls href id images languages media_type name narrators publisher type uri total_chapters JSON } }") @meshRestOptions(queryStringOptionsByParam: "{\\"type\\":{\\"arrayFormat\\":\\"comma\\"}}")
   """
   Get detailed profile information about the current user (including the
   current user's username).
   
   """
-  get_current_users_profile: PrivateUserObject @connect(source: "test", http: {GET: "/me", headers: [{name: "accept", value: "application/json"}]}, selection: "country\\ndisplay_name\\nemail\\nexplicit_content {\\n  filter_enabled\\n  filter_locked\\n}\\nexternal_urls {\\n  spotify\\n}\\nfollowers {\\n  href\\n  total\\n}\\nhref\\nid\\nimages {\\n  url\\n  height\\n  width\\n}\\nproduct\\ntype\\nuri")
+  get_current_users_profile: PrivateUserObject @connect(source: "test", http: {GET: "/me", headers: [{name: "accept", value: "application/json"}]}, selection: "country display_name email explicit_content { filter_enabled filter_locked } external_urls { spotify } followers { href total } href id images { url height width } product type uri")
   """
   Get a playlist owned by a Spotify user.
   
@@ -541,7 +541,7 @@ type Query {
     In addition to providing this parameter, make sure that your client properly handles cases of new types in the future by checking against the \`type\` field of each object.
     """
     additional_types: String
-  ): PlaylistObject @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  fields: $args.fields\\n  additional_types: $args.additional_types\\n}"}, selection: "collaborative\\ndescription\\nexternal_urls {\\n  spotify\\n}\\nfollowers {\\n  href\\n  total\\n}\\nhref\\nid\\nimages {\\n  url\\n  height\\n  width\\n}\\nname\\nowner {\\n  external_urls {\\n    spotify\\n  }\\n  followers {\\n    href\\n    total\\n  }\\n  href\\n  id\\n  type\\n  uri\\n  display_name\\n}\\npublic\\nsnapshot_id\\ntracks {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    added_at\\n    added_by\\n    is_local\\n    track\\n  }\\n}\\ntype\\nuri")
+  ): PlaylistObject @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  fields: $args.fields\\n  additional_types: $args.additional_types\\n}"}, selection: "collaborative description external_urls { spotify } followers { href total } href id images { url height width } name owner { external_urls { spotify } followers { href total } href id type uri display_name } public snapshot_id tracks { href limit next offset previous total items { added_at added_by is_local track } } type uri")
   """
   Get full details of the items of a playlist owned by a Spotify user.
   
@@ -585,7 +585,7 @@ type Query {
     In addition to providing this parameter, make sure that your client properly handles cases of new types in the future by checking against the \`type\` field of each object.
     """
     additional_types: String
-  ): PagingPlaylistTrackObject @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  fields: $args.fields\\n  limit: $args.limit\\n  offset: $args.offset\\n  additional_types: $args.additional_types\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  added_at\\n  added_by {\\n    external_urls\\n    followers\\n    href\\n    id\\n    type\\n    uri\\n  }\\n  is_local\\n  track\\n}")
+  ): PagingPlaylistTrackObject @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  fields: $args.fields\\n  limit: $args.limit\\n  offset: $args.offset\\n  additional_types: $args.additional_types\\n}"}, selection: "href limit next offset previous total items { added_at added_by { external_urls followers href id type uri } is_local track }")
   """
   Get a list of the playlists owned or followed by the current Spotify
   user.
@@ -602,7 +602,7 @@ type Query {
     next set of playlists.'
     """
     offset: Int
-  ): PagingPlaylistObject @connect(source: "test", http: {GET: "/me/playlists", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  collaborative\\n  description\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  name\\n  owner {\\n    external_urls\\n    followers\\n    href\\n    id\\n    type\\n    uri\\n    display_name\\n  }\\n  public\\n  snapshot_id\\n  tracks {\\n    href\\n    total\\n  }\\n  type\\n  uri\\n}")
+  ): PagingPlaylistObject @connect(source: "test", http: {GET: "/me/playlists", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items { collaborative description external_urls { spotify } href id images { url height width } name owner { external_urls followers href id type uri display_name } public snapshot_id tracks { href total } type uri }")
   """
   Get a list of the albums saved in the current Spotify user's 'Your Music' library.
   
@@ -625,7 +625,7 @@ type Query {
       Users can view the country that is associated with their account in the [account settings](https://www.spotify.com/se/account/overview/).
     """
     market: String
-  ): PagingSavedAlbumObject @connect(source: "test", http: {GET: "/me/albums", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  offset: $args.offset\\n  market: $args.market\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  added_at\\n  album {\\n    album_type\\n    total_tracks\\n    available_markets\\n    external_urls\\n    href\\n    id\\n    images\\n    name\\n    release_date\\n    release_date_precision\\n    restrictions\\n    type\\n    uri\\n    copyrights\\n    external_ids\\n    genres\\n    label\\n    popularity\\n    artists\\n    tracks\\n  }\\n}")
+  ): PagingSavedAlbumObject @connect(source: "test", http: {GET: "/me/albums", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  offset: $args.offset\\n  market: $args.market\\n}"}, selection: "href limit next offset previous total items { added_at album { album_type total_tracks available_markets external_urls href id images name release_date release_date_precision restrictions type uri copyrights external_ids genres label popularity artists tracks } }")
   """
   Check if one or more albums is already saved in the current Spotify user's 'Your Music' library.
   
@@ -658,7 +658,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSavedTrackObject @connect(source: "test", http: {GET: "/me/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  added_at\\n  track {\\n    album\\n    artists\\n    available_markets\\n    disc_number\\n    duration_ms\\n    explicit\\n    external_ids\\n    external_urls\\n    href\\n    id\\n    is_playable\\n    linked_from\\n    restrictions\\n    name\\n    popularity\\n    preview_url\\n    track_number\\n    type\\n    uri\\n    is_local\\n  }\\n}")
+  ): PagingSavedTrackObject @connect(source: "test", http: {GET: "/me/tracks", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items { added_at track { album artists available_markets disc_number duration_ms explicit external_ids external_urls href id is_playable linked_from restrictions name popularity preview_url track_number type uri is_local } }")
   """
   Check if one or more tracks is already saved in the current Spotify user's 'Your Music' library.
   
@@ -692,7 +692,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSavedEpisodeObject @connect(source: "test", http: {GET: "/me/episodes", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  added_at\\n  episode {\\n    audio_preview_url\\n    description\\n    html_description\\n    duration_ms\\n    explicit\\n    external_urls\\n    href\\n    id\\n    images\\n    is_externally_hosted\\n    is_playable\\n    language\\n    languages\\n    name\\n    release_date\\n    release_date_precision\\n    resume_point\\n    type\\n    uri\\n    restrictions\\n    show\\n  }\\n}")
+  ): PagingSavedEpisodeObject @connect(source: "test", http: {GET: "/me/episodes", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items { added_at episode { audio_preview_url description html_description duration_ms explicit external_urls href id images is_externally_hosted is_playable language languages name release_date release_date_precision resume_point type uri restrictions show } }")
   """
   Check if one or more episodes is already saved in the current Spotify user's 'Your Episodes' library.<br/>
   This API endpoint is in __beta__ and could change without warning. Please share any feedback that you have, or issues that you discover, in our [developer community forum](https://community.spotify.com/t5/Spotify-for-Developers/bd-p/Spotify_Developer)..
@@ -717,7 +717,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingSavedShowObject @connect(source: "test", http: {GET: "/me/shows", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  added_at\\n  show {\\n    available_markets\\n    copyrights\\n    description\\n    html_description\\n    explicit\\n    external_urls\\n    href\\n    id\\n    images\\n    is_externally_hosted\\n    languages\\n    media_type\\n    name\\n    publisher\\n    type\\n    uri\\n    total_episodes\\n    JSON\\n  }\\n}")
+  ): PagingSavedShowObject @connect(source: "test", http: {GET: "/me/shows", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items { added_at show { available_markets copyrights description html_description explicit external_urls href id images is_externally_hosted languages media_type name publisher type uri total_episodes JSON } }")
   """
   Check if one or more shows is already saved in the current Spotify user's library.
   
@@ -746,7 +746,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingArtistOrTrackObject_response @connect(source: "test", http: {GET: "/me/top/{$args.type}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  time_range: $args.time_range\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems")
+  ): PagingArtistOrTrackObject_response @connect(source: "test", http: {GET: "/me/top/{$args.type}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  time_range: $args.time_range\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items")
   """
   Get public profile information about a Spotify user.
   
@@ -756,7 +756,7 @@ type Query {
     The user's [Spotify user ID](/documentation/web-api/concepts/spotify-uris-ids).
     """
     user_id: String!
-  ): PublicUserObject @connect(source: "test", http: {GET: "/users/{$args.user_id}", headers: [{name: "accept", value: "application/json"}]}, selection: "display_name\\nexternal_urls {\\n  spotify\\n}\\nfollowers {\\n  href\\n  total\\n}\\nhref\\nid\\nimages {\\n  url\\n  height\\n  width\\n}\\ntype\\nuri")
+  ): PublicUserObject @connect(source: "test", http: {GET: "/users/{$args.user_id}", headers: [{name: "accept", value: "application/json"}]}, selection: "display_name external_urls { spotify } followers { href total } href id images { url height width } type uri")
   """
   Get a list of the playlists owned or followed by a Spotify user.
   
@@ -776,7 +776,7 @@ type Query {
     next set of playlists.
     """
     offset: Int
-  ): PagingPlaylistObject @connect(source: "test", http: {GET: "/users/{$args.user_id}/playlists", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href\\nlimit\\nnext\\noffset\\nprevious\\ntotal\\nitems {\\n  collaborative\\n  description\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  images {\\n    url\\n    height\\n    width\\n  }\\n  name\\n  owner {\\n    external_urls\\n    followers\\n    href\\n    id\\n    type\\n    uri\\n    display_name\\n  }\\n  public\\n  snapshot_id\\n  tracks {\\n    href\\n    total\\n  }\\n  type\\n  uri\\n}")
+  ): PagingPlaylistObject @connect(source: "test", http: {GET: "/users/{$args.user_id}/playlists", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "href limit next offset previous total items { collaborative description external_urls { spotify } href id images { url height width } name owner { external_urls followers href id type uri display_name } public snapshot_id tracks { href total } type uri }")
   """
   Get a list of Spotify featured playlists (shown, for example, on a Spotify player's 'Browse' tab).
   
@@ -803,7 +803,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingFeaturedPlaylistObject @connect(source: "test", http: {GET: "/browse/featured-playlists", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  country: $args.country\\n  locale: $args.locale\\n  timestamp: $args.timestamp\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "message\\nplaylists {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    collaborative\\n    description\\n    external_urls\\n    href\\n    id\\n    images\\n    name\\n    owner\\n    public\\n    snapshot_id\\n    tracks\\n    type\\n    uri\\n  }\\n}")
+  ): PagingFeaturedPlaylistObject @connect(source: "test", http: {GET: "/browse/featured-playlists", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  country: $args.country\\n  locale: $args.locale\\n  timestamp: $args.timestamp\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "message playlists { href limit next offset previous total items { collaborative description external_urls href id images name owner public snapshot_id tracks type uri } }")
   """
   Get a list of categories used to tag items in Spotify (on, for example, the Spotify player’s “Browse” tab).
   
@@ -826,7 +826,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagedCategories_response @connect(source: "test", http: {GET: "/browse/categories", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  country: $args.country\\n  locale: $args.locale\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "categories {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items\\n}")
+  ): PagedCategories_response @connect(source: "test", http: {GET: "/browse/categories", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  country: $args.country\\n  locale: $args.locale\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "categories { href limit next offset previous total items }")
   """
   Get a single category used to tag items in Spotify (on, for example, the Spotify player’s “Browse” tab).
   
@@ -844,7 +844,7 @@ type Query {
     The desired language, consisting of an [ISO 639-1](http://en.wikipedia.org/wiki/ISO_639-1) language code and an [ISO 3166-1 alpha-2 country code](http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2), joined by an underscore. For example: \`es_MX\`, meaning &quot;Spanish (Mexico)&quot;. Provide this parameter if you want the category strings returned in a particular language.<br/> _**Note**: if \`locale\` is not supplied, or if the specified language is not available, the category strings returned will be in the Spotify default language (American English)._
     """
     locale: String
-  ): CategoryObject @connect(source: "test", http: {GET: "/browse/categories/{$args.category_id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  country: $args.country\\n  locale: $args.locale\\n}"}, selection: "href\\nicons {\\n  url\\n  height\\n  width\\n}\\nid\\nname")
+  ): CategoryObject @connect(source: "test", http: {GET: "/browse/categories/{$args.category_id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  country: $args.country\\n  locale: $args.locale\\n}"}, selection: "href icons { url height width } id name")
   """
   Get a list of Spotify playlists tagged with a particular category.
   
@@ -866,7 +866,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagingFeaturedPlaylistObject @connect(source: "test", http: {GET: "/browse/categories/{$args.category_id}/playlists", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  country: $args.country\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "message\\nplaylists {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    collaborative\\n    description\\n    external_urls\\n    href\\n    id\\n    images\\n    name\\n    owner\\n    public\\n    snapshot_id\\n    tracks\\n    type\\n    uri\\n  }\\n}")
+  ): PagingFeaturedPlaylistObject @connect(source: "test", http: {GET: "/browse/categories/{$args.category_id}/playlists", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  country: $args.country\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "message playlists { href limit next offset previous total items { collaborative description external_urls href id images name owner public snapshot_id tracks type uri } }")
   """
   Get the current image associated with a specific playlist.
   
@@ -876,7 +876,7 @@ type Query {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) of the playlist.
     """
     playlist_id: String!
-  ): [ImageObject] @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}/images", headers: [{name: "accept", value: "application/json"}]}, selection: "url\\nheight\\nwidth")
+  ): [ImageObject] @connect(source: "test", http: {GET: "/playlists/{$args.playlist_id}/images", headers: [{name: "accept", value: "application/json"}]}, selection: "url height width")
   """
   Get a list of new album releases featured in Spotify (shown, for example, on a Spotify player’s “Browse” tab).
   
@@ -894,7 +894,7 @@ type Query {
     The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
     """
     offset: Int
-  ): PagedAlbums_response @connect(source: "test", http: {GET: "/browse/new-releases", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  country: $args.country\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "albums {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    album_type\\n    total_tracks\\n    available_markets\\n    external_urls\\n    href\\n    id\\n    images\\n    name\\n    release_date\\n    release_date_precision\\n    restrictions\\n    type\\n    uri\\n    copyrights\\n    external_ids\\n    genres\\n    label\\n    popularity\\n    album_group\\n    artists\\n  }\\n}")
+  ): PagedAlbums_response @connect(source: "test", http: {GET: "/browse/new-releases", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  country: $args.country\\n  limit: $args.limit\\n  offset: $args.offset\\n}"}, selection: "albums { href limit next offset previous total items { album_type total_tracks available_markets external_urls href id images name release_date release_date_precision restrictions type uri copyrights external_ids genres label popularity album_group artists } }")
   """
   Get the current user's followed artists.
   
@@ -907,7 +907,7 @@ type Query {
     The maximum number of items to return. Default: 20\\. Minimum: 1\\. Maximum: 50\\.
     """
     limit: NonNegativeInt = 20
-  ): CursorPagedArtists_response @connect(source: "test", http: {GET: "/me/following", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  type: $args.type\\n  after: $args.after\\n  limit: $args.limit\\n}"}, selection: "artists {\\n  href\\n  limit\\n  next\\n  cursors {\\n    after\\n    before\\n  }\\n  total\\n  items {\\n    external_urls\\n    followers\\n    genres\\n    href\\n    id\\n    images\\n    name\\n    popularity\\n    type\\n    uri\\n  }\\n}")
+  ): CursorPagedArtists_response @connect(source: "test", http: {GET: "/me/following", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  type: $args.type\\n  after: $args.after\\n  limit: $args.limit\\n}"}, selection: "artists { href limit next cursors { after before } total items { external_urls followers genres href id images name popularity type uri } }")
   """
   Check to see if the current user is following one or more artists or other Spotify users.
   
@@ -943,7 +943,7 @@ type Query {
     for the tracks. Maximum: 100 IDs.
     """
     ids: String!
-  ): ManyAudioFeatures_response @connect(source: "test", http: {GET: "/audio-features", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n}"}, selection: "audio_features {\\n  acousticness\\n  analysis_url\\n  danceability\\n  duration_ms\\n  energy\\n  id\\n  instrumentalness\\n  key\\n  liveness\\n  loudness\\n  mode\\n  speechiness\\n  tempo\\n  time_signature\\n  track_href\\n  type\\n  uri\\n  valence\\n}")
+  ): ManyAudioFeatures_response @connect(source: "test", http: {GET: "/audio-features", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  ids: $args.ids\\n}"}, selection: "audio_features { acousticness analysis_url danceability duration_ms energy id instrumentalness key liveness loudness mode speechiness tempo time_signature track_href type uri valence }")
   """
   Get audio feature information for a single track identified by its unique
   Spotify ID.
@@ -954,7 +954,7 @@ type Query {
     The [Spotify ID](/documentation/web-api/concepts/spotify-uris-ids) for the track.
     """
     id: String!
-  ): AudioFeaturesObject @connect(source: "test", http: {GET: "/audio-features/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "acousticness\\nanalysis_url\\ndanceability\\nduration_ms\\nenergy\\nid\\ninstrumentalness\\nkey\\nliveness\\nloudness\\nmode\\nspeechiness\\ntempo\\ntime_signature\\ntrack_href\\ntype\\nuri\\nvalence")
+  ): AudioFeaturesObject @connect(source: "test", http: {GET: "/audio-features/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "acousticness analysis_url danceability duration_ms energy id instrumentalness key liveness loudness mode speechiness tempo time_signature track_href type uri valence")
   """
   Get a low-level audio analysis for a track in the Spotify catalog. The audio analysis describes the track’s structure and musical content, including rhythm, pitch, and timbre.
   
@@ -965,7 +965,7 @@ type Query {
     for the track.
     """
     id: String!
-  ): AudioAnalysisObject @connect(source: "test", http: {GET: "/audio-analysis/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "meta {\\n  analyzer_version\\n  platform\\n  detailed_status\\n  status_code\\n  timestamp\\n  analysis_time\\n  input_process\\n}\\ntrack {\\n  num_samples\\n  duration\\n  sample_md5\\n  offset_seconds\\n  window_seconds\\n  analysis_sample_rate\\n  analysis_channels\\n  end_of_fade_in\\n  start_of_fade_out\\n  loudness\\n  tempo\\n  tempo_confidence\\n  time_signature\\n  time_signature_confidence\\n  key\\n  key_confidence\\n  mode\\n  mode_confidence\\n  codestring\\n  code_version\\n  echoprintstring\\n  echoprint_version\\n  synchstring\\n  synch_version\\n  rhythmstring\\n  rhythm_version\\n}\\nbars {\\n  start\\n  duration\\n  confidence\\n}\\nbeats {\\n  start\\n  duration\\n  confidence\\n}\\nsections {\\n  start\\n  duration\\n  confidence\\n  loudness\\n  tempo\\n  tempo_confidence\\n  key\\n  key_confidence\\n  mode\\n  mode_confidence\\n  time_signature\\n  time_signature_confidence\\n}\\nsegments {\\n  start\\n  duration\\n  confidence\\n  loudness_start\\n  loudness_max\\n  loudness_max_time\\n  loudness_end\\n  pitches\\n  timbre\\n}\\ntatums {\\n  start\\n  duration\\n  confidence\\n}")
+  ): AudioAnalysisObject @connect(source: "test", http: {GET: "/audio-analysis/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "meta { analyzer_version platform detailed_status status_code timestamp analysis_time input_process } track { num_samples duration sample_md5 offset_seconds window_seconds analysis_sample_rate analysis_channels end_of_fade_in start_of_fade_out loudness tempo tempo_confidence time_signature time_signature_confidence key key_confidence mode mode_confidence codestring code_version echoprintstring echoprint_version synchstring synch_version rhythmstring rhythm_version } bars { start duration confidence } beats { start duration confidence } sections { start duration confidence loudness tempo tempo_confidence key key_confidence mode mode_confidence time_signature time_signature_confidence } segments { start duration confidence loudness_start loudness_max loudness_max_time loudness_end pitches timbre } tatums { start duration confidence }")
   """
   Recommendations are generated based on the available information for a given seed entity and matched against similar artists and tracks. If there is sufficient information about the provided seeds, a list of tracks will be returned together with pool size details.
   
@@ -1162,7 +1162,7 @@ type Query {
     For each of the tunable track attributes (below) a target value may be provided. Tracks with the attribute values nearest to the target values will be preferred. For example, you might request \`target_energy=0.6\` and \`target_danceability=0.8\`. All target values will be weighed equally in ranking results.
     """
     target_valence: NonNegativeFloat
-  ): RecommendationsObject @connect(source: "test", http: {GET: "/recommendations", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  market: $args.market\\n  seed_artists: $args.seed_artists\\n  seed_genres: $args.seed_genres\\n  seed_tracks: $args.seed_tracks\\n  min_acousticness: $args.min_acousticness\\n  max_acousticness: $args.max_acousticness\\n  target_acousticness: $args.target_acousticness\\n  min_danceability: $args.min_danceability\\n  max_danceability: $args.max_danceability\\n  target_danceability: $args.target_danceability\\n  min_duration_ms: $args.min_duration_ms\\n  max_duration_ms: $args.max_duration_ms\\n  target_duration_ms: $args.target_duration_ms\\n  min_energy: $args.min_energy\\n  max_energy: $args.max_energy\\n  target_energy: $args.target_energy\\n  min_instrumentalness: $args.min_instrumentalness\\n  max_instrumentalness: $args.max_instrumentalness\\n  target_instrumentalness: $args.target_instrumentalness\\n  min_key: $args.min_key\\n  max_key: $args.max_key\\n  target_key: $args.target_key\\n  min_liveness: $args.min_liveness\\n  max_liveness: $args.max_liveness\\n  target_liveness: $args.target_liveness\\n  min_loudness: $args.min_loudness\\n  max_loudness: $args.max_loudness\\n  target_loudness: $args.target_loudness\\n  min_mode: $args.min_mode\\n  max_mode: $args.max_mode\\n  target_mode: $args.target_mode\\n  min_popularity: $args.min_popularity\\n  max_popularity: $args.max_popularity\\n  target_popularity: $args.target_popularity\\n  min_speechiness: $args.min_speechiness\\n  max_speechiness: $args.max_speechiness\\n  target_speechiness: $args.target_speechiness\\n  min_tempo: $args.min_tempo\\n  max_tempo: $args.max_tempo\\n  target_tempo: $args.target_tempo\\n  min_time_signature: $args.min_time_signature\\n  max_time_signature: $args.max_time_signature\\n  target_time_signature: $args.target_time_signature\\n  min_valence: $args.min_valence\\n  max_valence: $args.max_valence\\n  target_valence: $args.target_valence\\n}"}, selection: "seeds {\\n  afterFilteringSize\\n  afterRelinkingSize\\n  href\\n  id\\n  initialPoolSize\\n  type\\n}\\ntracks {\\n  album {\\n    album_type\\n    total_tracks\\n    available_markets\\n    external_urls\\n    href\\n    id\\n    images\\n    name\\n    release_date\\n    release_date_precision\\n    restrictions\\n    type\\n    uri\\n    copyrights\\n    external_ids\\n    genres\\n    label\\n    popularity\\n    album_group\\n    artists\\n  }\\n  artists {\\n    external_urls\\n    followers\\n    genres\\n    href\\n    id\\n    images\\n    name\\n    popularity\\n    type\\n    uri\\n  }\\n  available_markets\\n  disc_number\\n  duration_ms\\n  explicit\\n  external_ids {\\n    isrc\\n    ean\\n    upc\\n  }\\n  external_urls {\\n    spotify\\n  }\\n  href\\n  id\\n  is_playable\\n  linked_from\\n  restrictions {\\n    reason\\n  }\\n  name\\n  popularity\\n  preview_url\\n  track_number\\n  type\\n  uri\\n  is_local\\n}")
+  ): RecommendationsObject @connect(source: "test", http: {GET: "/recommendations", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  market: $args.market\\n  seed_artists: $args.seed_artists\\n  seed_genres: $args.seed_genres\\n  seed_tracks: $args.seed_tracks\\n  min_acousticness: $args.min_acousticness\\n  max_acousticness: $args.max_acousticness\\n  target_acousticness: $args.target_acousticness\\n  min_danceability: $args.min_danceability\\n  max_danceability: $args.max_danceability\\n  target_danceability: $args.target_danceability\\n  min_duration_ms: $args.min_duration_ms\\n  max_duration_ms: $args.max_duration_ms\\n  target_duration_ms: $args.target_duration_ms\\n  min_energy: $args.min_energy\\n  max_energy: $args.max_energy\\n  target_energy: $args.target_energy\\n  min_instrumentalness: $args.min_instrumentalness\\n  max_instrumentalness: $args.max_instrumentalness\\n  target_instrumentalness: $args.target_instrumentalness\\n  min_key: $args.min_key\\n  max_key: $args.max_key\\n  target_key: $args.target_key\\n  min_liveness: $args.min_liveness\\n  max_liveness: $args.max_liveness\\n  target_liveness: $args.target_liveness\\n  min_loudness: $args.min_loudness\\n  max_loudness: $args.max_loudness\\n  target_loudness: $args.target_loudness\\n  min_mode: $args.min_mode\\n  max_mode: $args.max_mode\\n  target_mode: $args.target_mode\\n  min_popularity: $args.min_popularity\\n  max_popularity: $args.max_popularity\\n  target_popularity: $args.target_popularity\\n  min_speechiness: $args.min_speechiness\\n  max_speechiness: $args.max_speechiness\\n  target_speechiness: $args.target_speechiness\\n  min_tempo: $args.min_tempo\\n  max_tempo: $args.max_tempo\\n  target_tempo: $args.target_tempo\\n  min_time_signature: $args.min_time_signature\\n  max_time_signature: $args.max_time_signature\\n  target_time_signature: $args.target_time_signature\\n  min_valence: $args.min_valence\\n  max_valence: $args.max_valence\\n  target_valence: $args.target_valence\\n}"}, selection: "seeds { afterFilteringSize afterRelinkingSize href id initialPoolSize type } tracks { album { album_type total_tracks available_markets external_urls href id images name release_date release_date_precision restrictions type uri copyrights external_ids genres label popularity album_group artists } artists { external_urls followers genres href id images name popularity type uri } available_markets disc_number duration_ms explicit external_ids { isrc ean upc } external_urls { spotify } href id is_playable linked_from restrictions { reason } name popularity preview_url track_number type uri is_local }")
   """
   Retrieve a list of available genres seed parameter values for [recommendations](/documentation/web-api/reference/get-recommendations).
   
@@ -1188,12 +1188,12 @@ type Query {
     In addition to providing this parameter, make sure that your client properly handles cases of new types in the future by checking against the \`type\` field of each object.
     """
     additional_types: String
-  ): get_information_about_the_users_current_playback_response @connect(source: "test", http: {GET: "/me/player", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  additional_types: $args.additional_types\\n}"}, selection: "__typename: $status->match([200, \\"CurrentlyPlayingContextObject\\"], [204, \\"Void_container\\"], [@, \\"CurrentlyPlayingContextObject\\"])\\ndevice {\\n  id\\n  is_active\\n  is_private_session\\n  is_restricted\\n  name\\n  type\\n  volume_percent\\n}\\nrepeat_state\\nshuffle_state\\ncontext {\\n  type\\n  href\\n  external_urls\\n  uri\\n}\\ntimestamp\\nprogress_ms\\nis_playing\\nitem\\ncurrently_playing_type\\nactions {\\n  interrupting_playback\\n  pausing\\n  resuming\\n  seeking\\n  skipping_next\\n  skipping_prev\\n  toggling_repeat_context\\n  toggling_shuffle\\n  toggling_repeat_track\\n  transferring_playback\\n}\\nVoid", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): get_information_about_the_users_current_playback_response @connect(source: "test", http: {GET: "/me/player", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  additional_types: $args.additional_types\\n}"}, selection: "__typename: $status->match([200, \\"CurrentlyPlayingContextObject\\"], [204, \\"Void_container\\"], [@, \\"CurrentlyPlayingContextObject\\"]) device { id is_active is_private_session is_restricted name type volume_percent } repeat_state shuffle_state context { type href external_urls uri } timestamp progress_ms is_playing item currently_playing_type actions { interrupting_playback pausing resuming seeking skipping_next skipping_prev toggling_repeat_context toggling_shuffle toggling_repeat_track transferring_playback } Void", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   Get information about a user’s available devices.
   
   """
-  get_a_users_available_devices: ManyDevices_response @connect(source: "test", http: {GET: "/me/player/devices", headers: [{name: "accept", value: "application/json"}]}, selection: "devices {\\n  id\\n  is_active\\n  is_private_session\\n  is_restricted\\n  name\\n  type\\n  volume_percent\\n}")
+  get_a_users_available_devices: ManyDevices_response @connect(source: "test", http: {GET: "/me/player/devices", headers: [{name: "accept", value: "application/json"}]}, selection: "devices { id is_active is_private_session is_restricted name type volume_percent }")
   """
   Get the object currently being played on the user's Spotify account.
   
@@ -1214,7 +1214,7 @@ type Query {
     In addition to providing this parameter, make sure that your client properly handles cases of new types in the future by checking against the \`type\` field of each object.
     """
     additional_types: String
-  ): CurrentlyPlayingContextObject @connect(source: "test", http: {GET: "/me/player/currently-playing", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  additional_types: $args.additional_types\\n}"}, selection: "device {\\n  id\\n  is_active\\n  is_private_session\\n  is_restricted\\n  name\\n  type\\n  volume_percent\\n}\\nrepeat_state\\nshuffle_state\\ncontext {\\n  type\\n  href\\n  external_urls {\\n    spotify\\n  }\\n  uri\\n}\\ntimestamp\\nprogress_ms\\nis_playing\\nitem\\ncurrently_playing_type\\nactions {\\n  interrupting_playback\\n  pausing\\n  resuming\\n  seeking\\n  skipping_next\\n  skipping_prev\\n  toggling_repeat_context\\n  toggling_shuffle\\n  toggling_repeat_track\\n  transferring_playback\\n}")
+  ): CurrentlyPlayingContextObject @connect(source: "test", http: {GET: "/me/player/currently-playing", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  market: $args.market\\n  additional_types: $args.additional_types\\n}"}, selection: "device { id is_active is_private_session is_restricted name type volume_percent } repeat_state shuffle_state context { type href external_urls { spotify } uri } timestamp progress_ms is_playing item currently_playing_type actions { interrupting_playback pausing resuming seeking skipping_next skipping_prev toggling_repeat_context toggling_shuffle toggling_repeat_track transferring_playback }")
   """
   Get tracks from the current user's recently played tracks.
   _**Note**: Currently doesn't support podcast episodes._
@@ -1237,12 +1237,12 @@ type Query {
     \`after\` must not be specified.
     """
     before: Int
-  ): CursorPagingPlayHistoryObject @connect(source: "test", http: {GET: "/me/player/recently-played", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  after: $args.after\\n  before: $args.before\\n}"}, selection: "href\\nlimit\\nnext\\ncursors {\\n  after\\n  before\\n}\\ntotal\\nitems {\\n  track {\\n    album\\n    artists\\n    available_markets\\n    disc_number\\n    duration_ms\\n    explicit\\n    external_ids\\n    external_urls\\n    href\\n    id\\n    is_playable\\n    linked_from\\n    restrictions\\n    name\\n    popularity\\n    preview_url\\n    track_number\\n    type\\n    uri\\n    is_local\\n  }\\n  played_at\\n  context {\\n    type\\n    href\\n    external_urls\\n    uri\\n  }\\n}")
+  ): CursorPagingPlayHistoryObject @connect(source: "test", http: {GET: "/me/player/recently-played", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  limit: $args.limit\\n  after: $args.after\\n  before: $args.before\\n}"}, selection: "href limit next cursors { after before } total items { track { album artists available_markets disc_number duration_ms explicit external_ids external_urls href id is_playable linked_from restrictions name popularity preview_url track_number type uri is_local } played_at context { type href external_urls uri } }")
   """
   Get the list of objects that make up the user's queue.
   
   """
-  get_queue: QueueObject @connect(source: "test", http: {GET: "/me/player/queue", headers: [{name: "accept", value: "application/json"}]}, selection: "currently_playing\\nqueue")
+  get_queue: QueueObject @connect(source: "test", http: {GET: "/me/player/queue", headers: [{name: "accept", value: "application/json"}]}, selection: "currently_playing queue")
   """
   Get the list of markets where Spotify is available.
   
@@ -3565,7 +3565,7 @@ type Mutation {
     """
     user_id: String!
     input: create_playlist_request_Input
-  ): PlaylistObject @connect(source: "test", http: {POST: "/users/{$args.user_id}/playlists", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "collaborative\\ndescription\\nexternal_urls {\\n  spotify\\n}\\nfollowers {\\n  href\\n  total\\n}\\nhref\\nid\\nimages {\\n  url\\n  height\\n  width\\n}\\nname\\nowner {\\n  external_urls {\\n    spotify\\n  }\\n  followers {\\n    href\\n    total\\n  }\\n  href\\n  id\\n  type\\n  uri\\n  display_name\\n}\\npublic\\nsnapshot_id\\ntracks {\\n  href\\n  limit\\n  next\\n  offset\\n  previous\\n  total\\n  items {\\n    added_at\\n    added_by\\n    is_local\\n    track\\n  }\\n}\\ntype\\nuri")
+  ): PlaylistObject @connect(source: "test", http: {POST: "/users/{$args.user_id}/playlists", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "collaborative description external_urls { spotify } followers { href total } href id images { url height width } name owner { external_urls { spotify } followers { href total } href id type uri display_name } public snapshot_id tracks { href limit next offset previous total items { added_at added_by is_local track } } type uri")
   """
   Add the current user as a follower of a playlist.
   

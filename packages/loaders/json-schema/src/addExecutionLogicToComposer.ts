@@ -658,7 +658,9 @@ function schemaHasResolveRootFieldUsage(schema: import('graphql').GraphQLSchema)
       for (const field of Object.values(type.getFields())) {
         const ext = (field as any).extensions?.directives?.resolveRootField;
         if (ext?.length) return true;
-        if ((field as any).astNode?.directives?.some((d: any) => d.name.value === 'resolveRootField')) {
+        if (
+          (field as any).astNode?.directives?.some((d: any) => d.name.value === 'resolveRootField')
+        ) {
           return true;
         }
         if ('args' in field) {
@@ -681,9 +683,7 @@ function stripResolveRootFieldFromConfig<
     extensions?: unknown;
   },
 >(config: T): T {
-  const ext = config.extensions as
-    | { directives?: Record<string, unknown> }
-    | undefined;
+  const ext = config.extensions as { directives?: Record<string, unknown> } | undefined;
   const hasExt = Boolean(ext?.directives?.resolveRootField);
   const hasAst = Boolean(
     config.astNode?.directives?.some(d => d.name.value === 'resolveRootField'),

@@ -36,7 +36,7 @@ type Query {
   """Test link object with non-string parameter."""
   testLinkWithNonStringParam: testLinkWithNonStringParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkWithNonStringParam", headers: [{name: "accept", value: "application/json"}]}, selection: "hello")
   """Test link object with nested parameter."""
-  testLinkwithNestedParam: testLinkwithNestedParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkwithNestedParam", headers: [{name: "accept", value: "application/json"}]}, selection: "nesting1 {\\n  nesting2\\n}")
+  testLinkwithNestedParam: testLinkwithNestedParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkwithNestedParam", headers: [{name: "accept", value: "application/json"}]}, selection: "nesting1 { nesting2 }")
 }
 
 type object_200_response {
@@ -77,7 +77,7 @@ type query_testLinkwithNestedParam_nesting1 {
 
 type Mutation {
   """Basic application/x-www-form-urlencoded test"""
-  post_formUrlEncoded(input: pet_Input): pet @connect(source: "example_api6", http: {POST: "/formUrlEncoded", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "name\\nstatus\\nweight\\nprevious_owner\\nhistory {\\n  data\\n}\\nhistory2")
+  post_formUrlEncoded(input: pet_Input): pet @connect(source: "example_api6", http: {POST: "/formUrlEncoded", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "name status weight previous_owner history { data } history2")
   post_inputUnion(input: post_inputUnion_request_Input): String @connect(source: "example_api6", http: {POST: "/inputUnion", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "text/html"}], body: "$args.input"}, selection: "$")
 }
 

@@ -14,7 +14,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  test: test_200_response @connect(source: "additionalPropertiesTest", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nfoo {\\n  bar\\n}\\nqux")
+  test: test_200_response @connect(source: "additionalPropertiesTest", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "id foo { bar } qux")
 }
 
 type test_200_response {

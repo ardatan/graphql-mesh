@@ -1,7 +1,4 @@
-schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(
-  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@meshRestOptions", "@extraSchemaDefinitionDirective"]
-) {
+schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(subgraph: "Pets", kind: "rest", location: "http://localhost:{$context.headers['x-upstream-port']:4001}") @join__directive(graphs: [PETS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PETS], name: "source", args: {name: "Pets", http: {baseURL: "http://localhost:{$context.headers['x-upstream-port']:4001}"}}) {
   query: Query
 }
 
@@ -9,25 +6,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -49,79 +32,24 @@ enum link__Purpose {
 }
 
 enum join__Graph {
-  PETS @join__graph(
-    name: "Pets"
-    url: "http://localhost:{$context.headers['x-upstream-port']:4001}"
-  )
+  PETS @join__graph(name: "Pets", url: "http://localhost:{$context.headers['x-upstream-port']:4001}")
 }
 
-directive @meshRestOptions(
-  queryStringOptions: ObjMap
-  queryStringOptionsByParam: ObjMap
-  requestBaseBody: ObjMap
-  timeout: Int
-  isBinary: Boolean
-) on FIELD_DEFINITION
-
-directive @connect(
-  source: String
-  http: ConnectHTTP
-  selection: String!
-  entity: Boolean
-  errors: ConnectorErrors
-  isSuccess: String
-) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
-
-scalar ObjMap @join__type(graph: PETS)
-
-scalar _DirectiveExtensions @join__type(graph: PETS)
-
-type Query @extraSchemaDefinitionDirective(
-  directives: {source: [{name: "Pets", http: {baseURL: "http://localhost:{$context.headers['x-upstream-port']:4001}"}}], transport: [{subgraph: "Pets", kind: "rest", location: "http://localhost:{$context.headers['x-upstream-port']:4001}"}]}
-) @join__type(graph: PETS) {
-  pet_by_petId("""
-  ID of pet to return
-  """
-  petId: String!): Pet @connect(
-    source: "Pets"
-    http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}
-    selection: "name"
-  )
+type Query @join__type(graph: PETS) {
+  pet_by_petId(
+    """ID of pet to return"""
+    petId: String!
+  ): Pet @join__directive(graphs: [PETS], name: "connect", args: {source: "Pets", http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}, selection: "name"})
 }
 
 type Pet @join__type(graph: PETS) {
   name: String!
 }
 
-input ConnectHTTP @join__type(graph: PETS) {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
+scalar ObjMap
 
-input HTTPHeaderMapping @join__type(graph: PETS) {
-  name: String!
-  value: String
-  from: String
-}
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
-input ConnectorErrors @join__type(graph: PETS) {
-  message: String
-  extensions: String
-}
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
-input SourceHTTP @join__type(graph: PETS) {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
-}
+scalar join__DirectiveArguments

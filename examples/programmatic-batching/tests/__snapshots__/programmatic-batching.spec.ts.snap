@@ -36,7 +36,7 @@ input HTTPHeaderMapping {
 }
 
 type Mutation {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @connect(source: "ExampleAPI", http: {POST: "/users_by_ids", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "results {\\n  id\\n  name\\n}")
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @connect(source: "ExampleAPI", http: {POST: "/users_by_ids", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "results { id name }")
 }
 
 type Query {

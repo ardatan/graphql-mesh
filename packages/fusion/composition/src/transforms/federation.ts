@@ -405,20 +405,22 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               argsExpr = argsExprElems.join(', ');
             }
           }
-          mergeDirectiveExtensions.push({
-            subgraph: subgraphConfig.name,
-            key: mergeDirectiveConfig.key,
-            keyField: mergeDirectiveConfig.keyField,
-            keyArg: mergeDirectiveConfig.keyArg,
-            argsExpr,
-          });
-          mergeDirectiveUsed = true;
-          // Apollo Connectors: mark entity-resolving fields with `entity: true`.
+          // Apollo Connectors: `entity: true` is the entity resolver signal — do not
+          // also emit Mesh `@merge` (redundant for Hive+Router connectors path).
           if (fieldDirectives.connect?.length) {
             fieldDirectives.connect = fieldDirectives.connect.map((connectArgs: any) => ({
               ...connectArgs,
               entity: true,
             }));
+          } else {
+            mergeDirectiveExtensions.push({
+              subgraph: subgraphConfig.name,
+              key: mergeDirectiveConfig.key,
+              keyField: mergeDirectiveConfig.keyField,
+              keyArg: mergeDirectiveConfig.keyArg,
+              argsExpr,
+            });
+            mergeDirectiveUsed = true;
           }
         }
         for (const directiveName of federationDirectiveNames) {

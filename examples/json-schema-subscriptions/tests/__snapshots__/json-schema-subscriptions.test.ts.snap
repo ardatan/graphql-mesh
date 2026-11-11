@@ -20,7 +20,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 directive @live on QUERY
 
 type Query {
-  todos: [query_todos_items] @connect(source: "Example", http: {GET: "/todos"}, selection: "id\\nname\\ncontent")
+  todos: [query_todos_items] @connect(source: "Example", http: {GET: "/todos"}, selection: "id name content")
 }
 
 type query_todos_items {
@@ -30,7 +30,7 @@ type query_todos_items {
 }
 
 type Mutation {
-  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @connect(source: "Example", http: {POST: "/todo", body: "$args.input"}, selection: "id\\nname\\ncontent")
+  addTodo(input: mutationInput_addTodo_input_Input): mutation_addTodo @connect(source: "Example", http: {POST: "/todo", body: "$args.input"}, selection: "id name content")
 }
 
 type mutation_addTodo @example(subgraph: "Example", value: "{\\"id\\":0,\\"name\\":\\"TodoName\\",\\"content\\":\\"TodoContent\\"}") {
