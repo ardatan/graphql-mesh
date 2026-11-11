@@ -932,9 +932,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/core@npm:^3.980.0":
-  version: 3.980.0
-  resolution: "@aws-sdk/core@npm:3.980.0"
+"@aws-sdk/core@npm:^3.980.1":
+  version: 3.980.1
+  resolution: "@aws-sdk/core@npm:3.980.1"
   dependencies:
     "@aws-sdk/types": "npm:^3.975.0"
     "@aws-sdk/xml-builder": "npm:^3.972.42"
@@ -944,7 +944,7 @@ __metadata:
     "@smithy/types": "npm:^4.19.0"
     bowser: "npm:^2.11.0"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/db6b878af46aa66d970b2068a1648752dda2a1d909e9a53e8890783f1d416fcde0dcdb68de6843d3f6f4ead7bf2b3a6771f0caccbd3ec2be6a299a4f02f94565
+  checksum: 10c0/1bd2c77c1d492807f6d45cfac2aff8cb6d4f40cf72148c43eaa59d3c9d5fbb079b6539481d6e3ae7640fe433ae2da97409b69455d0b95503df0fa4fb47c9c1a3
   languageName: node
   linkType: hard
 
@@ -1443,13 +1443,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/util-format-url@npm:^3.972.57":
-  version: 3.972.57
-  resolution: "@aws-sdk/util-format-url@npm:3.972.57"
+"@aws-sdk/util-format-url@npm:^3.972.58":
+  version: 3.972.58
+  resolution: "@aws-sdk/util-format-url@npm:3.972.58"
   dependencies:
-    "@aws-sdk/core": "npm:^3.980.0"
+    "@aws-sdk/core": "npm:^3.980.1"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/ef7e490f64467b628d9bdcfa5a9342a9b30095d9d41d145111e77a78e3f35f17b44c17b9fe4fb32cef8b2cf63f409391e434d332ea5329b4c6d9bc667a6ca454
+  checksum: 10c0/c482e232362faf2ed342c77bc7a188d39d28aea9d8d61f5630bf32bfc8275aaf9e66f5c29acd1215a701e93f20df2a555cfe1ef6aedc1a4892d497b7959eeefc
   languageName: node
   linkType: hard
 
@@ -8398,7 +8398,7 @@ __metadata:
   dependencies:
     "@aws-crypto/sha256-js": "npm:^5.2.0"
     "@aws-sdk/credential-providers": "npm:^3.1161.0"
-    "@aws-sdk/util-format-url": "npm:^3.972.57"
+    "@aws-sdk/util-format-url": "npm:^3.972.58"
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
