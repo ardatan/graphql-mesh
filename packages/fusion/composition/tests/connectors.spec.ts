@@ -2,13 +2,13 @@ import { buildSchema, print } from 'graphql';
 import {
   composeSubgraphs,
   getAnnotatedSubgraphs,
-  isApolloConnectorsSubgraph,
+  isFederationConnectorsSubgraph,
   liftExtraSchemaDefinitionDirectives,
   toApolloRouterConnectorsSupergraph,
 } from '../src/index.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
 
-describe('Apollo Connectors composition', () => {
+describe('Federation Connectors composition', () => {
   const connectorsSchema = buildSchema(/* GraphQL */ `
     schema
       @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
@@ -55,10 +55,10 @@ describe('Apollo Connectors composition', () => {
     }
   `);
 
-  it('detects Apollo Connectors subgraphs', () => {
-    expect(isApolloConnectorsSubgraph(connectorsSchema)).toBe(true);
+  it('detects Federation Connectors subgraphs', () => {
+    expect(isFederationConnectorsSubgraph(connectorsSchema)).toBe(true);
     expect(
-      isApolloConnectorsSubgraph(
+      isFederationConnectorsSubgraph(
         buildSchema(/* GraphQL */ `
           type Query {
             hello: String

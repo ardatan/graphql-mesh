@@ -27,7 +27,6 @@ import {
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import { toApolloRouterConnectorsSupergraph } from './apollo-router-connectors-supergraph.js';
-import { bakeConnectEnumDirectives } from './bake-connect-enums.js';
 import { hasEquivalentTypeConnect, toTypeLevelEntityConnect } from './connect-entity.js';
 import {
   convertSubgraphToFederationv2,
@@ -81,11 +80,11 @@ function isEmptyObject(obj: any) {
 }
 
 /**
- * Apollo Connectors subgraphs use `@link(url: "https://specs.apollo.dev/connect/...")`
+ * Federation Connectors subgraphs use `@link(url: "https://specs.apollo.dev/connect/...")`
  * and/or schema `@source(http: { baseURL })`. They must not get Mesh `@transport`
  * or stitching `@meshSource(subgraph:)` annotations — transforms rewrite connect SDL instead.
  */
-export function isApolloConnectorsSubgraph(schema: GraphQLSchema): boolean {
+export function isFederationConnectorsSubgraph(schema: GraphQLSchema): boolean {
   const directives = getDirectiveExtensions(schema);
   const links = directives?.link || [];
   if (
@@ -100,17 +99,20 @@ export function isApolloConnectorsSubgraph(schema: GraphQLSchema): boolean {
   return sources.some((source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null);
 }
 
+/** @deprecated Use {@link isFederationConnectorsSubgraph}. */
+export const isApolloConnectorsSubgraph = isFederationConnectorsSubgraph;
+
 export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
   options: GetAnnotatedSubgraphsOptions = {},
 ) {
   // Alias Mesh stitching `@source` as `@meshSource` only when the composition also
-  // has Apollo Connectors (SCHEMA `@source`). Mesh-only graphs keep plain `@source`.
+  // has Federation Connectors (SCHEMA `@source`). Mesh-only graphs keep plain `@source`.
   const compositionHasConnectors = subgraphs.some(({ schema }) =>
-    isApolloConnectorsSubgraph(schema),
+    isFederationConnectorsSubgraph(schema),
   );
   const compositionHasMeshStitchingSource = subgraphs.some(
-    ({ schema, transforms }) => !isApolloConnectorsSubgraph(schema) && !!transforms?.length,
+    ({ schema, transforms }) => !isFederationConnectorsSubgraph(schema) && !!transforms?.length,
   );
 
   const annotatedSubgraphs: ServiceDefinition[] = [];
@@ -118,7 +120,7 @@ export function getAnnotatedSubgraphs(
     const { name: subgraphName, schema, transforms } = subgraphConfig;
     let url: string = subgraphConfig.url;
     const subgraphSchemaExtensions = getDirectiveExtensions(schema);
-    const isConnectorsSubgraph = isApolloConnectorsSubgraph(schema);
+    const isConnectorsSubgraph = isFederationConnectorsSubgraph(schema);
     const transportDirectives = subgraphSchemaExtensions?.transport;
     const transportDirective = transportDirectives?.[0];
     const apolloSource = (subgraphSchemaExtensions?.source || []).find(
@@ -159,7 +161,7 @@ export function getAnnotatedSubgraphs(
     if (isConnectorsSubgraph) {
       const extensions: Record<string, any> = (normalizedSchema.extensions ||= {});
       extensions.directives = extensions.directives || {};
-      // Hive execution hint — not part of the Apollo Connectors subgraph contract
+      // Hive execution hint — not part of the Federation Connectors subgraph contract
       extensions.directives.transport = [
         {
           subgraph: subgraphName,
@@ -440,11 +442,6 @@ export function getAnnotatedSubgraphs(
           }
         },
       });
-    }
-    // Naming-convention (and similar) transforms may re-add Mesh `@enum` after the
-    // loader already baked/stripped it — re-bake into `@connect(selection:)` here.
-    if (isConnectorsSubgraph) {
-      transformedSubgraph = bakeConnectEnumDirectives(transformedSubgraph);
     }
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
     transformedSubgraph = detectAndAddMeshDirectives(transformedSubgraph);

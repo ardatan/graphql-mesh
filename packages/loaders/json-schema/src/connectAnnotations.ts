@@ -112,7 +112,7 @@ export const LinkDirective = new GraphQLDirective({
 
 /**
  * Mesh-only field options that must survive compose → SDL → reload.
- * Apollo Connectors SDL has no home for qs/timeout/binary/requestBaseBody;
+ * Federation Connectors SDL has no home for qs/timeout/binary/requestBaseBody;
  * store them here and restore into `field.extensions.meshRestOptions` at process time.
  */
 export const MeshRestOptionsDirective = new GraphQLDirective({
@@ -426,7 +426,7 @@ export function buildQueryParamsSelection(
     }
     const key = /^[A-Za-z_][\w]*$/.test(queryParam) ? queryParam : JSON.stringify(queryParam);
     let expr = `$args.${argName}`;
-    // Apollo Connectors: explode:false / form style arrays → comma-joined list
+    // Federation Connectors: explode:false / form style arrays → comma-joined list
     if (paramOpts?.arrayFormat === 'comma' && argType === 'array') {
       expr = `$args.${argName}->joinNotNull(",")`;
     }
@@ -483,7 +483,7 @@ export function getStatusCodeTypeNameMappings(
 }
 
 /**
- * Apollo Connectors status-union helpers: `isSuccess` + `__typename` via `$status->match`.
+ * Federation Connectors status-union helpers: `isSuccess` + `__typename` via `$status->match`.
  *
  * Concrete status→type arms use type names. Statuses that map to a discriminator
  * interface / abstract parent use that type's `@discriminator` `->match` expr as the
@@ -708,7 +708,7 @@ export function buildSelectionForType(
       const v = (resolveRootField as any).value;
       jsonName = v?.value ?? v;
     }
-    // Apollo Connectors: safe idents are bare paths; hyphenated/odd keys need `$["…"]`.
+    // Federation Connectors: safe idents are bare paths; hyphenated/odd keys need `$["…"]`.
     // (A bare JSON string like `"patent-id"` is a literal, not a path, on Router.)
     const jsonPath =
       jsonName && jsonName !== fieldName

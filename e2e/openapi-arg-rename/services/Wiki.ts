@@ -6,7 +6,7 @@ const opts = Opts(process.argv);
 const server = http.createServer((req, res) => {
   if (req.url?.endsWith('good')) {
     res.setHeader('content-type', 'application/json');
-    // OpenAPI declares an array response; Apollo Connectors selection expects a JSON array.
+    // OpenAPI declares an array response; Federation Connectors selection expects a JSON array.
     res.end(JSON.stringify([{ apple: 'good' }]));
     return;
   }

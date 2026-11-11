@@ -79,7 +79,7 @@ export function processDirectives(
     timeout: meshRestOptions.timeout,
     ...extraGlobalOptions,
   };
-  // Wire @connect resolvers (Apollo Connectors)
+  // Wire @connect resolvers (Federation Connectors)
   processConnectDirectives(schema, {
     globalFetch,
     log,

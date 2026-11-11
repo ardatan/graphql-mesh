@@ -4,7 +4,7 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
 import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
 
-describe('Apollo Connectors annotations', () => {
+describe('Federation Connectors annotations', () => {
   it('emits @source and @connect instead of @httpOperation/@transport', async () => {
     const schema = await loadGraphQLSchemaFromJSONSchemas('pets', {
       endpoint: 'http://localhost:3000',

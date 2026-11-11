@@ -5,7 +5,7 @@ import { Response } from '@whatwg-node/fetch';
 import { processConnectDirectives } from '../src/directives/connect.js';
 
 /**
- * Directive SDL required by graphql-js `buildSchema` for Apollo Connectors examples
+ * Directive SDL required by graphql-js `buildSchema` for Federation Connectors examples
  * (community schemas only @link the specs; they don't inline the directive defs).
  */
 const CONNECTOR_DIRECTIVES = /* GraphQL */ `
@@ -95,7 +95,7 @@ function buildConnectorsSchema(exampleSdl: string, fetchImpl: typeof fetch): Gra
   return processConnectDirectives(schema, { globalFetch: fetchImpl as any });
 }
 
-describe('Apollo Connectors community examples (executor)', () => {
+describe('Federation Connectors — Apollo community examples (executor)', () => {
   it('runs apollo-ecomm-simple against a mocked ecommerce API', async () => {
     const example = loadApolloExample('ecomm-simple.graphql');
     const fetchImpl = async (url: string) => {
@@ -262,7 +262,7 @@ describe('Apollo Connectors community examples (executor)', () => {
   });
 });
 
-describe('Apollo Connectors error shape', () => {
+describe('Federation Connectors error shape', () => {
   const errorSchemaSdl = /* GraphQL */ `
     ${CONNECTOR_DIRECTIVES}
 

@@ -406,7 +406,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               argsExpr = argsExprElems.join(', ');
             }
           }
-          // Apollo Connectors entity patterns:
+          // Federation Connectors entity patterns:
           // - keyArg === keyField → Query `@connect(entity: true)`
           // - keyArg !== keyField → type-level `@connect` with `$this.<keyField>`
           //   (see https://www.apollographql.com/docs/graphos/connectors/entities/patterns)

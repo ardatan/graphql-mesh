@@ -1,58 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`execute with apollo-router should execute GetPet 1`] = `
-{
-  "data": {
-    "getPetById": null,
-  },
-  "errors": [
-    {
-      "extensions": {
-        "code": "GRAPHQL_VALIDATION_FAILED",
-        "service": "vaccination",
-      },
-      "message": "Unknown type "_Any".",
-      "path": [
-        "getPetById",
-      ],
-    },
-    {
-      "extensions": {
-        "code": "GRAPHQL_VALIDATION_FAILED",
-        "service": "vaccination",
-      },
-      "message": "Cannot query field "_entities" on type "Query".",
-      "path": [
-        "getPetById",
-      ],
-    },
-  ],
-  "extensions": {
-    "valueCompletion": [
-      {
-        "message": "Cannot return null for non-nullable type Boolean",
-        "path": [
-          "getPetById",
-        ],
-      },
-    ],
-  },
-}
-`;
-
-exports[`execute with hive should execute GetPet 1`] = `
-{
-  "data": {
-    "getPetById": {
-      "__typename": "Pet",
-      "id": 1,
-      "name": "Cat 1",
-      "vaccinated": false,
-    },
-  },
-}
-`;
-
 exports[`should compose the appropriate schema 1`] = `
 "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions", "@merge", {name: "@source", as: "@meshSource"}, "@transport"]) @transport(subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3") @join__directive(graphs: [PETSTORE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PETSTORE], name: "source", args: {name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}) {
   query: Query

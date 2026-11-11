@@ -219,7 +219,7 @@ function ensureObjectTypesShareable(subgraph: GraphQLSchema) {
 
 export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
   const schemaDirectives = getDirectiveExtensions(subgraph);
-  // Only treat as "already v2" when Federation itself is linked. Apollo Connectors
+  // Only treat as "already v2" when Federation itself is linked. Federation Connectors
   // `@link` also uses specs.apollo.dev but does not imply `@shareable`.
   // Encapsulate may import federation early for `@inaccessible` — still ensure shareable.
   const hasFederationLink = schemaDirectives?.link?.some(linkDirectiveArgs =>

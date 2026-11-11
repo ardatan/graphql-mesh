@@ -29,6 +29,7 @@ import {
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
+import { bakeConnectEnumsInTransform } from './connect-enum-bake.js';
 import { rewriteConnectArgReferences, withOriginalKeyFallback } from './utils.js';
 
 const EnumValueDirective = new GraphQLDirective({
@@ -45,13 +46,28 @@ function isFromGraphQLScalars(name: string) {
   return Object.keys(resolvers).includes(name);
 }
 
-/** Apollo Connectors directive input types — field names (GET/POST/baseURL) are spec-fixed. */
-const APOLLO_CONNECTORS_INPUT_TYPES = new Set([
+/** Federation Connectors directive input types — field names (GET/POST/baseURL) are spec-fixed. */
+const CONNECTORS_INPUT_TYPES = new Set([
   'ConnectHTTP',
   'SourceHTTP',
   'HTTPHeaderMapping',
   'ConnectorErrors',
 ]);
+
+function schemaUsesConnect(schema: GraphQLSchema): boolean {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!('getFields' in type)) continue;
+    for (const field of Object.values((type as any).getFields())) {
+      if (getDirectiveExtensions(field)?.connect?.length) return true;
+    }
+  }
+  const schemaDirs = getDirectiveExtensions(schema);
+  return Boolean(
+    schemaDirs?.link?.some(
+      (l: any) => typeof l?.url === 'string' && l.url.includes('specs.apollo.dev/connect'),
+    ),
+  );
+}
 
 export type NameReplacer = (name: string) => string;
 
@@ -106,7 +122,7 @@ export function createNamingConventionTransform(
       if (
         isSpecifiedScalarType(type) ||
         isFromGraphQLScalars(type.name) ||
-        APOLLO_CONNECTORS_INPUT_TYPES.has(type.name)
+        CONNECTORS_INPUT_TYPES.has(type.name)
       ) {
         return type;
       }
@@ -119,7 +135,7 @@ export function createNamingConventionTransform(
   if (fieldNamesFn || fieldArgumentNamesFn || enumValuesFn) {
     schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName) => {
       // Keep Connectors HTTP method / baseURL field names intact.
-      const newFieldName = APOLLO_CONNECTORS_INPUT_TYPES.has(typeName)
+      const newFieldName = CONNECTORS_INPUT_TYPES.has(typeName)
         ? fieldName
         : fieldNamesFn?.(fieldName) || fieldName;
       if (!fieldArgumentNamesFn && !enumValuesFn) {
@@ -190,12 +206,13 @@ export function createNamingConventionTransform(
         return [newExternalValue, valueConfig];
       }
       // Keep the original JSON/wire value when the GraphQL enum name changes.
-      // Connectors subgraphs cannot use Mesh stitching `@meshSource(name:)` for this.
       const nextValue =
         valueConfig.value !== undefined && valueConfig.value !== externalValue
           ? valueConfig.value
           : externalValue;
       const existingDirectives = getDirectiveExtensions(valueConfig) || {};
+      // Always stash wire value on `@enum` first; Connectors bake strips it into
+      // `@connect` selections below. Non-connectors keep `@enum` for Mesh runtime.
       return [
         newExternalValue,
         {
@@ -214,13 +231,18 @@ export function createNamingConventionTransform(
     };
   }
   return function namingConventionTransform(schema: GraphQLSchema) {
+    const connectors = schemaUsesConnect(schema);
     let next = mapSchema(schema, schemaMapper);
-    if (enumValuesFn && !next.getDirective('enum')) {
+    if (enumValuesFn && !connectors && !next.getDirective('enum')) {
       const config = next.toConfig();
       next = new GraphQLSchema({
         ...config,
         directives: [...config.directives, EnumValueDirective],
       });
+    }
+    // Federation Connectors: bake rename remaps into `@connect`, drop Mesh `@enum`.
+    if (enumValuesFn && connectors) {
+      next = bakeConnectEnumsInTransform(next);
     }
     return next;
   };

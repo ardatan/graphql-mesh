@@ -1,5 +1,5 @@
 /**
- * Apollo Connectors entity helpers.
+ * Federation Connectors entity helpers.
  *
  * When a Query field arg name differs from the entity `@key` field (e.g.
  * `getPetById(petId)` → `Pet.id`), `entity: true` is invalid — Connectors

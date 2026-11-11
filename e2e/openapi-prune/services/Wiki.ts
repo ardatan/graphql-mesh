@@ -10,7 +10,7 @@ const server = http.createServer((req, res) => {
       return (
         res
           .setHeader('content-type', 'application/json')
-          // OpenAPI declares an array response; Apollo Connectors selection expects a JSON array.
+          // OpenAPI declares an array response; Federation Connectors selection expects a JSON array.
           .end(JSON.stringify([{ apple: 'correct' }]))
       );
     } else {

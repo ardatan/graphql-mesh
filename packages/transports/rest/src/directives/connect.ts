@@ -717,7 +717,7 @@ function evalPath(
 }
 
 /**
- * Apollo Connectors `$x->match([key, value], …, [@, default])`.
+ * Federation Connectors `$x->match([key, value], …, [@, default])`.
  * Values may be nested exprs (e.g. `$.petType->match(...)`) for discriminator defaults.
  */
 function evalMatchMethod(
@@ -1389,7 +1389,7 @@ export function addConnectFieldResolver(
         !Array.isArray(customExtensionsRaw)
           ? { ...customExtensionsRaw }
           : {};
-      // Apollo Connectors: `extensions.http.status` is the upstream status.
+      // Federation Connectors: `extensions.http.status` is the upstream status.
       // GraphQL Yoga also promotes that path to the gateway HTTP status (hence
       // e2e may see ResponseError on partial field failures) — Mesh still emits
       // the Apollo shape and mirrors status on `response` / top-level `status`.

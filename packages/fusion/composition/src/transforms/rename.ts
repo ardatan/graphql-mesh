@@ -32,7 +32,7 @@ export const ignoreList = [
   'uri-template',
   'ObjMap',
   'HttpMethod',
-  // Apollo Connectors directive inputs (method names / baseURL are spec-fixed)
+  // Federation Connectors directive inputs (method names / baseURL are spec-fixed)
   'ConnectHTTP',
   'SourceHTTP',
   'HTTPHeaderMapping',

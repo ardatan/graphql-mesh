@@ -642,7 +642,7 @@ ${operationConfig.description || ''}
   let schema = schemaComposer.buildSchema();
   const schemaExtensions: any = (schema.extensions = schema.extensions || {});
   schemaExtensions.directives = schemaExtensions.directives || {};
-  // Apollo Connectors source — replaces Mesh @transport for REST subgraphs
+  // Federation Connectors source — replaces Mesh @transport for REST subgraphs
   schemaExtensions.directives.source = [
     buildSourceDirectiveArgs({
       name: subgraphName,

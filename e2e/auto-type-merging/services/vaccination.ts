@@ -2,6 +2,12 @@ import { createServer } from 'http';
 import { createSchema, createYoga } from 'graphql-yoga';
 import { Opts } from '@e2e/opts';
 
+/**
+ * Plain GraphQL subgraph — Mesh `@merge` auto-type-merging is the point of this
+ * e2e. Do not convert to a Federation subgraph: Apollo Router needs `_entities`
+ * for entity fetches, which would bypass Mesh merge and change the test intent.
+ * Execute coverage stays Hive-only for that reason.
+ */
 export const yoga = createYoga({
   schema: createSchema({
     typeDefs: /* GraphQL */ `

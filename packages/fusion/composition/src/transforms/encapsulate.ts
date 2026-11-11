@@ -13,7 +13,7 @@ import {
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import {
-  isApolloConnectorsSubgraph,
+  isFederationConnectorsSubgraph,
   type SubgraphConfig,
   type SubgraphTransform,
 } from '../compose.js';
@@ -43,7 +43,7 @@ export interface EncapsulateTransformOpts {
 export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}): SubgraphTransform {
   return function encapsulateTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
     const groupName = opts.name || subgraphConfig.name;
-    const isConnectors = isApolloConnectorsSubgraph(schema);
+    const isConnectors = isFederationConnectorsSubgraph(schema);
     const applyToMap: Record<OperationTypeNode, boolean> = {
       ...DEFAULT_APPLY_TO,
       ...(opts.applyTo || {}),
@@ -72,7 +72,7 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             wrappedFieldMap[fieldName] = originalFieldConfig;
             continue;
           }
-          // Apollo Connectors: move `@connect` onto the namespaced type field.
+          // Federation Connectors: move `@connect` onto the namespaced type field.
           // No `@resolveTo` / inaccessible root copies — namespace root is a virtual connector.
           if (isConnectors && originalDirectives.connect?.length) {
             wrappedFieldMap[fieldName] = {
