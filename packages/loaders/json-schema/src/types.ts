@@ -73,7 +73,11 @@ export type JSONSchemaHTTPBaseOperationConfig = JSONSchemaBaseOperationConfig & 
   queryStringOptions?: IStringifyOptions & { jsonStringify?: boolean };
   queryStringOptionsByParam?: Record<
     string,
-    IStringifyOptions & { destructObject?: boolean; jsonStringify?: boolean }
+    IStringifyOptions & {
+      destructObject?: boolean;
+      deepObject?: boolean;
+      jsonStringify?: boolean;
+    }
   >;
   queryParamsSample?: any;
 

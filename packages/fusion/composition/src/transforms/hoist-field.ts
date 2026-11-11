@@ -15,7 +15,7 @@ import {
 } from 'graphql';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
-import { TransformValidationError } from './utils.js';
+import { applyHoistAliasToConnectSelection, TransformValidationError } from './utils.js';
 
 export interface CreateHoistFieldTransformOpts {
   mapping?: HoistFieldMappingObject[];
@@ -80,6 +80,10 @@ export const hoistDirective = new GraphQLDirective({
 
 export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): SubgraphTransform {
   return function hoistFieldTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
+    const hoistAliasesByReturnType = new Map<
+      string,
+      Array<{ path: string[]; newFieldName: string }>
+    >();
     const mappedSchema = mapSchema(schema, {
       [MapperKind.TYPE](type) {
         if (opts.mapping) {
@@ -97,6 +101,7 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
                 let filteredArgs: string[] | undefined =
                   typeof pathConfig === 'object' ? pathConfig.filterArgs : undefined;
                 const argsConfig: GraphQLFieldConfigArgumentMap = {};
+                const pathFieldNames: string[] = [fieldName];
                 while (pathConfigArr.length > 0) {
                   if (!field) {
                     throw new TransformValidationError(
@@ -119,10 +124,13 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
                   const pathPart = pathConfigArr.shift();
                   filteredArgs = typeof pathPart === 'string' ? [] : pathPart.filterArgs || [];
                   fieldName = typeof pathPart === 'string' ? pathPart : pathPart.fieldName;
+                  pathFieldNames.push(fieldName);
                   field = subFields[fieldName];
                 }
                 changed = true;
                 const existingFieldConfig = newFieldConfigMap[mapping.newFieldName];
+                // Keep Mesh `@hoist` for non-Connectors runtimes; Connectors also get a
+                // selection alias below so Apollo Router does not need `@hoist`.
                 newFieldConfigMap[mapping.newFieldName] = {
                   ...(existingFieldConfig || {}),
                   args: argsConfig,
@@ -140,6 +148,9 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
                     },
                   },
                 };
+                const aliases = hoistAliasesByReturnType.get(type.name) || [];
+                aliases.push({ path: pathFieldNames, newFieldName: mapping.newFieldName });
+                hoistAliasesByReturnType.set(type.name, aliases);
               }
             }
             if (changed) {
@@ -153,12 +164,54 @@ export function createHoistFieldTransform(opts: CreateHoistFieldTransformOpts): 
         return type;
       },
     });
-    if (mappedSchema.getDirective('hoist') == null) {
+    const withConnectAliases =
+      hoistAliasesByReturnType.size === 0
+        ? mappedSchema
+        : mapSchema(mappedSchema, {
+            [MapperKind.FIELD]: fieldConfig => {
+              const directives = getDirectiveExtensions(fieldConfig);
+              const connectList = directives?.connect;
+              if (!connectList?.length) {
+                return fieldConfig;
+              }
+              const returnTypeName = getNamedType(fieldConfig.type).name;
+              const aliases = hoistAliasesByReturnType.get(returnTypeName);
+              if (!aliases?.length) {
+                return fieldConfig;
+              }
+              const nextConnect = connectList.map((connectArgs: any) => {
+                if (typeof connectArgs?.selection !== 'string') {
+                  return connectArgs;
+                }
+                let selection = connectArgs.selection;
+                for (const alias of aliases) {
+                  selection = applyHoistAliasToConnectSelection(
+                    selection,
+                    alias.path,
+                    alias.newFieldName,
+                  );
+                }
+                return { ...connectArgs, selection };
+              });
+              return {
+                ...fieldConfig,
+                extensions: {
+                  ...fieldConfig.extensions,
+                  directives: {
+                    ...directives,
+                    connect: nextConnect,
+                  },
+                },
+                astNode: undefined,
+              };
+            },
+          });
+    if (withConnectAliases.getDirective('hoist') == null) {
       return new GraphQLSchema({
-        ...mappedSchema.toConfig(),
-        directives: [...mappedSchema.toConfig().directives, hoistDirective],
+        ...withConnectAliases.toConfig(),
+        directives: [...withConnectAliases.toConfig().directives, hoistDirective],
       });
     }
-    return mappedSchema;
+    return withConnectAliases;
   };
 }

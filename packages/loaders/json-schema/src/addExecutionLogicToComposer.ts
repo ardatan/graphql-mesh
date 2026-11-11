@@ -416,20 +416,37 @@ ${operationConfig.description || ''}
           }),
         ),
       });
-      // Hive-only per-param qs options (brackets/indices/destructObject) for transport-rest
+      // Hive-only per-param qs options (brackets/indices/destructObject/deepObject) +
+      // requestBaseBody merge for transport-rest (extensions survive in-memory schemas).
       const operationQueryStringOptions = operationConfig.queryStringOptions;
-      if (operationConfig.queryStringOptionsByParam) {
+      const httpOpForRest =
+        'path' in operationConfig
+          ? (operationConfig as import('./types.js').JSONSchemaHTTPJSONOperationConfig)
+          : undefined;
+      const requestBaseBody =
+        httpOpForRest &&
+        (httpOpForRest.requestTypeName ||
+          httpOpForRest.requestSample != null ||
+          httpOpForRest.requestSchema != null) &&
+        httpOpForRest.requestBaseBody != null
+          ? httpOpForRest.requestBaseBody
+          : undefined;
+      if (
+        operationConfig.queryStringOptionsByParam ||
+        operationQueryStringOptions ||
+        queryStringOptions ||
+        requestBaseBody !== undefined
+      ) {
         field.extensions = field.extensions || {};
         (field.extensions as any).meshRestOptions = {
           ...((field.extensions as any).meshRestOptions || {}),
-          queryStringOptionsByParam: operationConfig.queryStringOptionsByParam,
-          queryStringOptions: operationQueryStringOptions ?? queryStringOptions,
-        };
-      } else if (operationQueryStringOptions || queryStringOptions) {
-        field.extensions = field.extensions || {};
-        (field.extensions as any).meshRestOptions = {
-          ...((field.extensions as any).meshRestOptions || {}),
-          queryStringOptions: operationQueryStringOptions ?? queryStringOptions,
+          ...(operationConfig.queryStringOptionsByParam
+            ? { queryStringOptionsByParam: operationConfig.queryStringOptionsByParam }
+            : {}),
+          ...((operationQueryStringOptions || queryStringOptions) && {
+            queryStringOptions: operationQueryStringOptions ?? queryStringOptions,
+          }),
+          ...(requestBaseBody !== undefined ? { requestBaseBody } : {}),
         };
       }
 

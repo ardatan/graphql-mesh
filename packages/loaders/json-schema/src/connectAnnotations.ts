@@ -201,26 +201,68 @@ export function headersToConnectMappings(
   });
 }
 
+function collectObjectPropertyNames(
+  schema:
+    | { type?: string; properties?: Record<string, unknown>; anyOf?: any[]; oneOf?: any[] }
+    | undefined,
+): string[] {
+  if (!schema) return [];
+  if (schema.properties && typeof schema.properties === 'object') {
+    return Object.keys(schema.properties);
+  }
+  for (const branch of [...(schema.anyOf || []), ...(schema.oneOf || [])]) {
+    const props = branch?.properties as Record<string, unknown> | undefined;
+    if (props && typeof props === 'object') {
+      return Object.keys(props);
+    }
+  }
+  return [];
+}
+
+/**
+ * Build Connectors `http.queryParams` mapping from Mesh queryParamArgMap.
+ * deepObject params with known properties expand to `filter[name]: $args.filter.name`.
+ */
 export function buildQueryParamsSelection(
   queryParamArgMap?: Record<string, string>,
-  queryStringOptionsByParam?: Record<string, { arrayFormat?: string; destructObject?: boolean }>,
-  argTypeMap?: Record<string, { type?: string }>,
+  queryStringOptionsByParam?: Record<
+    string,
+    { arrayFormat?: string; destructObject?: boolean; deepObject?: boolean }
+  >,
+  argTypeMap?: Record<
+    string,
+    { type?: string; properties?: Record<string, unknown>; anyOf?: any[]; oneOf?: any[] }
+  >,
 ): string | undefined {
   if (!queryParamArgMap || !Object.keys(queryParamArgMap).length) {
     return undefined;
   }
   // Object-literal form so keys like `foo:bar` stay intact (line `key: expr` cannot).
-  const lines = Object.entries(queryParamArgMap).map(([queryParam, argName]) => {
+  const lines: string[] = [];
+  for (const [queryParam, argName] of Object.entries(queryParamArgMap)) {
+    const paramOpts = queryStringOptionsByParam?.[queryParam];
+    const argSchema = argTypeMap?.[argName] || argTypeMap?.[queryParam];
+    const argType = argSchema?.type;
+    // OpenAPI deepObject with known properties → Apollo-friendly expanded keys.
+    if (paramOpts?.deepObject) {
+      const propNames = collectObjectPropertyNames(argSchema);
+      if (propNames.length) {
+        for (const prop of propNames) {
+          const deepKey = `${queryParam}[${prop}]`;
+          const key = /^[A-Za-z_][\w]*$/.test(deepKey) ? deepKey : JSON.stringify(deepKey);
+          lines.push(`  ${key}: $args.${argName}.${prop}`);
+        }
+        continue;
+      }
+    }
     const key = /^[A-Za-z_][\w]*$/.test(queryParam) ? queryParam : JSON.stringify(queryParam);
     let expr = `$args.${argName}`;
-    const paramOpts = queryStringOptionsByParam?.[queryParam];
-    const argType = argTypeMap?.[argName]?.type || argTypeMap?.[queryParam]?.type;
     // Apollo Connectors: explode:false / form style arrays → comma-joined list
     if (paramOpts?.arrayFormat === 'comma' && argType === 'array') {
       expr = `$args.${argName}->joinNotNull(",")`;
     }
-    return `  ${key}: ${expr}`;
-  });
+    lines.push(`  ${key}: ${expr}`);
+  }
   return `{\n${lines.join('\n')}\n}`;
 }
 
@@ -526,6 +568,11 @@ export function buildConnectHttpArgs(opts: {
   return http;
 }
 
+/**
+ * Infer `@connect(http.body:)` from Mesh operation request config.
+ * When both `requestSchema`/`input` and `requestBaseBody` exist, emit `$args.input`
+ * and stash the base body on `meshRestOptions` for runtime merge (see transport-rest).
+ */
 export function inferBodySelection(operationConfig: JSONSchemaOperationConfig): string | undefined {
   if (!('path' in operationConfig)) {
     return undefined;

@@ -1,4 +1,5 @@
 import {
+  getNamedType,
   isEnumType,
   isNonNullType,
   type GraphQLFieldConfig,
@@ -17,6 +18,7 @@ import {
   type SchemaMapper,
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
+import { stripFieldsFromConnectSelection } from './utils.js';
 
 export interface FilterTransformConfig {}
 
@@ -291,6 +293,66 @@ export function createFilterTransform({
         .map(type => type.name),
     );
     // preserve the executable schema and hide filtered fields and newly orphaned types from clients
-    return compareAndAddInaccessibleDirective(schema, filteredSchema, typesMadeUnreachable);
+    const withInaccessible = compareAndAddInaccessibleDirective(
+      schema,
+      filteredSchema,
+      typesMadeUnreachable,
+    );
+    // Strip inaccessible fields from `@connect(selection:)` so Connectors don't over-fetch.
+    return stripInaccessibleFromConnectSelections(withInaccessible);
   };
+}
+
+function stripInaccessibleFromConnectSelections(schema: GraphQLSchema): GraphQLSchema {
+  const inaccessibleByType = new Map<string, Set<string>>();
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!('getFields' in type)) continue;
+    const removed = new Set<string>();
+    for (const [fieldName, field] of Object.entries(type.getFields())) {
+      const dirs = getDirectiveExtensions(field as any);
+      if (dirs?.inaccessible?.length) {
+        removed.add(fieldName);
+      }
+    }
+    if (removed.size) {
+      inaccessibleByType.set(type.name, removed);
+    }
+  }
+  if (!inaccessibleByType.size) {
+    return schema;
+  }
+  return mapSchema(schema, {
+    [MapperKind.FIELD]: (fieldConfig, _fieldName, _typeName) => {
+      const directives = getDirectiveExtensions(fieldConfig);
+      const connectList = directives?.connect;
+      if (!connectList?.length) {
+        return fieldConfig;
+      }
+      const returnTypeName = getNamedType(fieldConfig.type).name;
+      const removed = inaccessibleByType.get(returnTypeName);
+      if (!removed?.size) {
+        return fieldConfig;
+      }
+      const nextConnect = connectList.map((connectArgs: any) => {
+        if (typeof connectArgs?.selection !== 'string') {
+          return connectArgs;
+        }
+        return {
+          ...connectArgs,
+          selection: stripFieldsFromConnectSelection(connectArgs.selection, removed),
+        };
+      });
+      return {
+        ...fieldConfig,
+        extensions: {
+          ...fieldConfig.extensions,
+          directives: {
+            ...directives,
+            connect: nextConnect,
+          },
+        },
+        astNode: undefined,
+      };
+    },
+  });
 }

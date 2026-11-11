@@ -699,12 +699,18 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 }
               }
             }
-            if ('explode' in paramObj) {
+            if ('explode' in paramObj || paramObj.style === 'deepObject') {
               operationConfig.queryStringOptionsByParam =
                 operationConfig.queryStringOptionsByParam || {};
               operationConfig.queryStringOptionsByParam[paramObj.name] =
                 operationConfig.queryStringOptionsByParam[paramObj.name] || {};
-              if (paramObj.explode) {
+              if (paramObj.style === 'deepObject') {
+                // OpenAPI deepObject → `filter[name]=…`. Emit expands known
+                // properties; runtime still flattens via destructObject+deepObject.
+                operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'repeat';
+                operationConfig.queryStringOptionsByParam[paramObj.name].destructObject = true;
+                operationConfig.queryStringOptionsByParam[paramObj.name].deepObject = true;
+              } else if (paramObj.explode) {
                 operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'repeat';
                 operationConfig.queryStringOptionsByParam[paramObj.name].destructObject = true;
               } else {

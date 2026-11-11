@@ -10,6 +10,57 @@ function escapeRegExp(value: string): string {
 }
 
 /**
+ * Remove top-level field picks / aliases from a Connectors `selection` string.
+ * Used after filter/prune marks fields inaccessible so upstream JSON isn't over-fetched.
+ */
+export function stripFieldsFromConnectSelection(
+  selection: string,
+  removedFields: Set<string>,
+): string {
+  if (!selection || !removedFields.size) {
+    return selection;
+  }
+  let out = selection;
+  for (const name of removedFields) {
+    const esc = escapeRegExp(name);
+    // `name: <expr>` (no nested `{…}` on this line)
+    out = out.replace(new RegExp(`(^|[\\n\\s])${esc}\\s*:[^\\n{]+`, 'g'), '$1');
+    // `name { … }` one nesting level
+    out = out.replace(new RegExp(`(^|[\\n\\s])${esc}\\s*\\{[^}]*\\}`, 'g'), '$1');
+    // bare `name`
+    out = out.replace(new RegExp(`(^|[\\n\\s])${esc}(?=[\\s\\n]|$)`, 'g'), '$1');
+  }
+  return out
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+/**
+ * After hoist `path → newFieldName`, append a Connectors selection alias
+ * (`newFieldName: a.b.c`) so the hoisted GraphQL field resolves from the
+ * selected JSON without relying on Mesh `@hoist` at runtime.
+ */
+export function applyHoistAliasToConnectSelection(
+  selection: string,
+  pathFieldNames: string[],
+  newFieldName: string,
+): string {
+  if (!selection || pathFieldNames.length === 0) {
+    return selection;
+  }
+  const pathExpr = pathFieldNames.join('.');
+  const aliasLine = `${newFieldName}: ${pathExpr}`;
+  if (
+    selection.includes(aliasLine) ||
+    new RegExp(`(^|[\\n\\s])${escapeRegExp(newFieldName)}\\s*:`).test(selection)
+  ) {
+    return selection;
+  }
+  return `${selection.trim()}\n${aliasLine}`;
+}
+
+/**
  * After renaming a GraphQL output field, resolve from the new key first and
  * fall back to the original key so Connectors selections that still emit the
  * pre-rename JSON path keep working. Input fields are left untouched.

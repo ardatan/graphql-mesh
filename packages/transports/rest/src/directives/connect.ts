@@ -98,6 +98,14 @@ function getSourceMap(schema: GraphQLSchema): Map<string, SourceArgs> {
   return map;
 }
 
+/**
+ * Resolve a Connectors / Mesh `{…}` template.
+ *
+ * When `encodeValues` is set (path / in-URL query templates), each replaced
+ * expression value is percent-encoded — Apollo URLPathTemplate semantics — so
+ * values like `1?admin=true` cannot break out of a path segment. Leave
+ * `encodeValues` off for `@source` baseURL (host/port) and header values.
+ */
 function resolveTemplate(
   template: string,
   vars: {
@@ -107,6 +115,7 @@ function resolveTemplate(
     context: any;
     config?: Record<string, any>;
   },
+  options: { encodeValues?: boolean } = {},
 ): string {
   if (!template) {
     return '';
@@ -124,15 +133,26 @@ function resolveTemplate(
     const normalized = path.replace(/^root\b/, 'this');
     return `{${normalized}}`;
   });
-  const interpolated = stringInterpolator.parse(meshForm, {
+  const interpolateArgs = {
     args: vars.args,
     context: vars.context,
     env: vars.env,
     root: vars.thisValue,
     this: vars.thisValue,
     config: vars.config,
+  };
+  if (!options.encodeValues) {
+    const interpolated = stringInterpolator.parse(meshForm, interpolateArgs);
+    return interpolated == null ? '' : String(interpolated);
+  }
+  // Encode each `{expr}` replacement individually (not the whole URL).
+  return meshForm.replace(/\{([^{}]+)\}/g, (_match, path: string) => {
+    const value = stringInterpolator.parse(`{${path}}`, interpolateArgs);
+    if (value == null || value === '') {
+      return '';
+    }
+    return encodeURIComponent(String(value));
   });
-  return interpolated == null ? '' : String(interpolated);
 }
 
 function lookupVar(
@@ -218,10 +238,15 @@ function applyQueryParams(
     if (argNameMatch && resolveArg) {
       value = resolveArg(argNameMatch[1], value);
     }
-    const paramOpts = queryStringOptionsByParam?.[key];
+    const paramOpts = queryStringOptionsByParam?.[key] as
+      (MeshQsOptions & { destructObject?: boolean; deepObject?: boolean }) | undefined;
     if (paramOpts?.destructObject && value && typeof value === 'object' && !Array.isArray(value)) {
       for (const [nestedKey, nestedVal] of Object.entries(value)) {
-        if (nestedVal != null) {
+        if (nestedVal == null) continue;
+        // OpenAPI `style: deepObject` → `filter[name]=…` (Apollo queryParams form).
+        if (paramOpts.deepObject) {
+          params[`${key}[${nestedKey}]`] = nestedVal;
+        } else {
           params[nestedKey] = nestedVal;
         }
       }
@@ -767,7 +792,15 @@ function buildBody(
     return JSON.stringify(vars.args);
   }
   if (trimmed === '$args.input' || trimmed.startsWith('$args.input')) {
-    const input = recoverInput(vars.args.input, 'input');
+    let input = recoverInput(vars.args.input, 'input');
+    // Merge Mesh `requestBaseBody` under the GraphQL `input` arg when both exist.
+    const baseBody = (opts.field?.extensions as any)?.meshRestOptions?.requestBaseBody;
+    if (baseBody != null && typeof baseBody === 'object' && !Array.isArray(baseBody)) {
+      input =
+        input != null && typeof input === 'object' && !Array.isArray(input)
+          ? { ...baseBody, ...input }
+          : { ...baseBody };
+    }
     // `$args.input { alias: field }` subselection
     const subMatch = trimmed.match(/^\$args\.input\s*\{([\s\S]*)\}$/);
     if (subMatch) {
@@ -872,7 +905,8 @@ export function addConnectFieldResolver(
     };
 
     const baseURL = resolveTemplate(source?.http?.baseURL || '', vars);
-    const path = resolveTemplate(picked.path, vars);
+    // Path templates percent-encode expression values; baseURL / headers do not.
+    const path = resolveTemplate(picked.path, vars, { encodeValues: true });
     // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
     // so test mocks like `fetch('pets/1')` keep working.
     let fullPath = urlJoin(baseURL || '', path) || path;

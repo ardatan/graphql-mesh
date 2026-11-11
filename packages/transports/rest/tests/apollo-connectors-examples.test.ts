@@ -376,6 +376,101 @@ describe('Apollo Connectors error shape', () => {
     });
   });
 
+  it('serializes deepObject query params as filter[name]=value', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "api", http: { baseURL: "http://localhost:3000" }) {
+        query: Query
+      }
+
+      type Query {
+        search(created: CreatedInput): [Pet]
+          @connect(
+            source: "api"
+            http: { GET: "/search", queryParams: "{ created: $args.created }" }
+            selection: "name"
+          )
+      }
+
+      input CreatedInput {
+        gt: Int
+        lt: Int
+      }
+
+      type Pet {
+        name: String
+      }
+    `;
+    const rawSchema = buildSchema(sdl);
+    // Attach per-param deepObject options the OpenAPI loader would emit (before wiring).
+    const field = rawSchema.getQueryType()!.getFields().search;
+    (field.extensions as any) = {
+      ...field.extensions,
+      meshRestOptions: {
+        queryStringOptionsByParam: {
+          created: { destructObject: true, deepObject: true },
+        },
+      },
+    };
+    const schema = processConnectDirectives(rawSchema, {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json([{ name: 'Bob' }]);
+      }) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          search(created: { gt: 1, lt: 10 }) {
+            name
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(urls[0]).toContain('created%5Bgt%5D=1');
+    expect(urls[0]).toContain('created%5Blt%5D=10');
+  });
+
+  it('percent-encodes path template expression values', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "Pets", http: { baseURL: "http://localhost:3000" }) {
+        query: Query
+      }
+
+      type Query {
+        pet(petId: String!): Pet
+          @connect(source: "Pets", http: { GET: "/pet/{$args.petId}" }, selection: "name")
+      }
+
+      type Pet {
+        name: String
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json({ name: 'Bob' });
+      }) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          pet(petId: "1?admin=true") {
+            name
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(urls).toEqual(['http://localhost:3000/pet/1%3Fadmin%3Dtrue']);
+  });
+
   it('interpolates $context.headers bracket accessors with defaults in baseURL', async () => {
     const urls: string[] = [];
     const sdl = /* GraphQL */ `
