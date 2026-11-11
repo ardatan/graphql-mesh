@@ -68,4 +68,3 @@ describe('OpenAPI entity stubs (FK + getById)', () => {
     });
   });
 });
-

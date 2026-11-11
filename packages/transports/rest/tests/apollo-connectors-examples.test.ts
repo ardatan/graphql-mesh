@@ -278,10 +278,7 @@ describe('Federation Connectors error shape', () => {
           source: "ecomm"
           http: { GET: "/users" }
           selection: "id name"
-          errors: {
-            message: "error.message"
-            extensions: "code: error.code status: $status"
-          }
+          errors: { message: "error.message", extensions: "code: error.code status: $status" }
         )
       alwaysOk(id: ID!): Product
         @connect(
@@ -678,4 +675,3 @@ describe('Federation Connectors error shape', () => {
     ]);
   });
 });
-

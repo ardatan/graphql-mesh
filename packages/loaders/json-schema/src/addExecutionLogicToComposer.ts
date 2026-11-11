@@ -19,9 +19,9 @@ import type {
 } from 'graphql-compose';
 import { GraphQLJSON } from 'graphql-compose';
 import type { IStringifyOptions } from 'qs';
-import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
+import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   bakeEnumRootSelection,
@@ -205,10 +205,7 @@ export function addExecutionDirectivesToComposer(
       continue;
     }
     const field = rootTypeComposer.getField(fieldName);
-    registerEntityTypeFromGetPath(
-      getNamedType(field.type.getType()),
-      String(operationConfig.path),
-    );
+    registerEntityTypeFromGetPath(getNamedType(field.type.getType()), String(operationConfig.path));
   }
 
   const handleLinkMap = (

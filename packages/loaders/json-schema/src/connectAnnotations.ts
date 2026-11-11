@@ -22,19 +22,15 @@ import {
   type GraphQLOutputType,
   type GraphQLUnionType,
 } from 'graphql';
-import { ObjMapScalar } from '@graphql-mesh/transport-common';
-import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
+import { type Logger } from '@graphql-hive/logger';
 import {
   formatEntityStubSelection,
   inferEntityRefFromParentFkNames,
 } from '@graphql-mesh/fusion-composition';
-import { type Logger } from '@graphql-hive/logger';
-import {
-  getMeshEntityKeyFields,
-  getMeshEntityRef,
-  isMeshEntityType,
-} from './entityRefs.js';
+import { ObjMapScalar } from '@graphql-mesh/transport-common';
+import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
+import { getMeshEntityKeyFields, getMeshEntityRef, isMeshEntityType } from './entityRefs.js';
 import type {
   ConnectSelectionOptions,
   ConnectSelectionOverLimit,
@@ -57,8 +53,7 @@ export interface ResolvedConnectSelectionLimit {
 const DEFAULT_CONNECT_SELECTION_MAX_LENGTH = 12_000;
 const DEFAULT_CONNECT_SELECTION_SOFT_DEPTH = 2;
 
-export const CONNECT_SELECTION_PASSTHROUGH_ROUTER_WARNING =
-  `connect(selection: "$") was used because the response mapping could not be fully expanded under connectSelection limits. Hive Gateway will pass through the raw JSON. Apollo Router requires explicit scalar leaf mappings for object types — set connectSelection: { overLimit: "leavesOnly" } (and/or raise maxLength) or model foreign keys as entity stubs to run this subgraph on Router.`;
+export const CONNECT_SELECTION_PASSTHROUGH_ROUTER_WARNING = `connect(selection: "$") was used because the response mapping could not be fully expanded under connectSelection limits. Hive Gateway will pass through the raw JSON. Apollo Router requires explicit scalar leaf mappings for object types — set connectSelection: { overLimit: "leavesOnly" } (and/or raise maxLength) or model foreign keys as entity stubs to run this subgraph on Router.`;
 
 /**
  * Resolve programmatic `connectSelection` limit options with defaults.
@@ -758,11 +753,7 @@ export function buildSelectionForType(
   // Soft depth only applies for `leavesOnly` overLimit (Router-oriented). With
   // default `passthrough`, expand until maxLength then fall back to `$`.
   const named = unwrapType(type);
-  if (
-    !leavesOnly &&
-    limit.overLimit === 'leavesOnly' &&
-    depth > limit.softDepth
-  ) {
+  if (!leavesOnly && limit.overLimit === 'leavesOnly' && depth > limit.softDepth) {
     return buildSelectionForType(type, { ...childOpts, depth, leavesOnly: true });
   }
   if (
@@ -965,9 +956,7 @@ export function buildSelectionForType(
     if (entityRef && Object.keys(entityRef).length) {
       // Apollo entity references need a string-literal `__typename` plus key fields:
       // `supplier: { __typename: $("Supplier") id: supplierId }`
-      lines.push(
-        formatEntityStubSelection(fieldName, unwrapType(field.type).name, entityRef),
-      );
+      lines.push(formatEntityStubSelection(fieldName, unwrapType(field.type).name, entityRef));
       continue;
     }
     // `@resolveRootField(field: "foo-bar")` → GraphQL `foo_bar` from JSON `foo-bar`

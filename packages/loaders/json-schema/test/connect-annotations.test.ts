@@ -2,14 +2,8 @@ import { buildSchema, OperationTypeNode, parse } from 'graphql';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
-import {
-  buildSelectionForType,
-  resolveConnectSelectionLimit,
-} from '../src/connectAnnotations.js';
-import {
-  clearMeshEntityRegistries,
-  registerMeshEntityType,
-} from '../src/entityRefs.js';
+import { buildSelectionForType, resolveConnectSelectionLimit } from '../src/connectAnnotations.js';
+import { clearMeshEntityRegistries, registerMeshEntityType } from '../src/entityRefs.js';
 import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
 
 describe('Federation Connectors annotations', () => {
@@ -197,13 +191,10 @@ describe('Federation Connectors annotations', () => {
     const selection = buildSelectionForType(schema.getType('Product') as any, {
       limit: resolveConnectSelectionLimit(),
     });
-    expect(selection).toContain(
-      'supplier: { __typename: $("Supplier") id: supplierId }',
-    );
+    expect(selection).toContain('supplier: { __typename: $("Supplier") id: supplierId }');
     expect(selection).not.toMatch(/supplier: \{[^}]*\bname\b/);
     expect(selection).toMatch(/\bid\b/);
     expect(selection).toMatch(/\bname\b/);
     clearMeshEntityRegistries();
   });
 });
-

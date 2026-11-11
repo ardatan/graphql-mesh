@@ -451,7 +451,9 @@ describe('Federation Connectors composition', () => {
     expect(entityKeyFieldsFromHttpPath('/customers/{$args.id}', ['id', 'name'])).toEqual(['id']);
     expect(entityKeyFieldsFromHttpPath('/customers/{args.id}', ['id', 'name'])).toEqual(['id']);
     expect(entityKeyFieldsFromHttpPath('/pets/{$args.petId}', ['id', 'name'])).toBeUndefined();
-    expect(inferEntityRefFromParentFkNames(['id', 'customerId', 'customer'], 'customer', ['id'])).toEqual({
+    expect(
+      inferEntityRefFromParentFkNames(['id', 'customerId', 'customer'], 'customer', ['id']),
+    ).toEqual({
       id: 'customerId',
     });
     expect(formatEntityStubSelection('customer', 'Customer', { id: 'customerId' })).toBe(

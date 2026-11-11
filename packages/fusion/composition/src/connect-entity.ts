@@ -149,8 +149,7 @@ export function inferEntityRefFromParentFkNames(
     return undefined;
   }
   const keyField = keyFields[0];
-  const parentSet =
-    parentFieldNames instanceof Set ? parentFieldNames : new Set(parentFieldNames);
+  const parentSet = parentFieldNames instanceof Set ? parentFieldNames : new Set(parentFieldNames);
   for (const fromField of parentFkFieldCandidates(fieldName, keyField)) {
     if (parentSet.has(fromField)) {
       return { [keyField]: fromField };
