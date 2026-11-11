@@ -117,8 +117,10 @@ function resolveTemplate(
     /\$\(\s*(true|false|null|-?\d+(?:\.\d+)?)\s*\)/g,
     (_, value: string) => value,
   );
-  // Normalize Connectors `{$args.x|base64}` to Mesh `{args.x|base64}` so modifiers work.
-  const meshForm = resolved.replace(/\{\$([a-zA-Z_][\w.|:]*)\}/g, (_, path: string) => {
+  // Normalize Connectors `{$args.x|base64}` / `{$context.headers['x-port']:4001}` to Mesh
+  // `{args.x|base64}` / `{context.headers['x-port']:4001}` so stringInterpolator modifiers work.
+  // Use `[^{}]+` (not `\w` only) so bracket accessors and `:default` values are preserved.
+  const meshForm = resolved.replace(/\{\$([^{}]+)\}/g, (_, path: string) => {
     const normalized = path.replace(/^root\b/, 'this');
     return `{${normalized}}`;
   });
@@ -1061,14 +1063,19 @@ export function addConnectFieldResolver(
           : {}),
       };
       delete customExtensions.connector;
-      const code = customExtensions.code ?? 'CONNECTOR_FETCH';
+      // Prefer Apollo `errors.extensions.code` when set; otherwise Mesh
+      // `DOWNSTREAM_SERVICE_ERROR` so Hive/Yoga don't mask the message.
+      const code = customExtensions.code ?? 'DOWNSTREAM_SERVICE_ERROR';
       delete customExtensions.code;
       const service = customExtensions.service ?? serviceName;
       delete customExtensions.service;
+      // Match httpOperation: expose the unresolved path template (Mesh `{args.x}` form).
+      const pathForMessage = picked.path.replace(/\{\$/g, '{');
+      const defaultMessage = `Upstream HTTP Error: ${response.status}, Could not invoke operation ${method} ${pathForMessage}`;
       return new GraphQLError(
         typeof customMessage === 'string' && customMessage.length
           ? customMessage
-          : 'Request failed',
+          : defaultMessage,
         {
           extensions: {
             ...customExtensions,

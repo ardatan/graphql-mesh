@@ -14,11 +14,7 @@ describe('Execution', () => {
         } else {
           request = info;
         }
-        return new Response(JSON.stringify(getHeadersObj(request.headers)), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        return Response.json(getHeadersObj(request.headers));
       },
       endpoint: 'http://localhost:3000',
       operations: [
@@ -486,11 +482,7 @@ describe('Execution', () => {
             request = info;
           }
           receivedInput = await request.json();
-          return new Response(JSON.stringify({}), {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
+          return Response.json({});
         },
         endpoint: 'http://localhost:3000',
         operations: [

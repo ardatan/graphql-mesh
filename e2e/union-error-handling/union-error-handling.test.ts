@@ -67,15 +67,19 @@ describe('OpenAPI rest transport Union Error Handling', () => {
 
     // Should get GraphQL errors since these endpoints don't have 400 in their OpenAPI spec
     expect(noErrorHandlingResult.errors).toHaveLength(2);
-    expect(noErrorHandlingResult.errors?.[0].message).toBe('Request failed');
-    expect(noErrorHandlingResult.errors?.[1].message).toBe('Request failed');
+    expect(noErrorHandlingResult.errors?.[0].message).toMatch(
+      /^Upstream HTTP Error: 400, Could not invoke operation GET /,
+    );
+    expect(noErrorHandlingResult.errors?.[1].message).toMatch(
+      /^Upstream HTTP Error: 400, Could not invoke operation GET /,
+    );
 
-    // Check that error extensions are properly populated (Apollo Connectors + Mesh request)
+    // Check that error extensions are properly populated (Mesh Downstream + Apollo http/connector)
     const firstError = noErrorHandlingResult.errors?.[0];
     const secondError = noErrorHandlingResult.errors?.[1];
 
     expect(firstError?.extensions).toMatchObject({
-      code: 'CONNECTOR_FETCH',
+      code: 'DOWNSTREAM_SERVICE_ERROR',
       service: 'ErrorAPI',
       serviceName: 'ErrorAPI',
       request: {
@@ -89,7 +93,7 @@ describe('OpenAPI rest transport Union Error Handling', () => {
     expect(firstError?.extensions?.http?.status ?? firstError?.extensions?.status).toBe(400);
 
     expect(secondError?.extensions).toMatchObject({
-      code: 'CONNECTOR_FETCH',
+      code: 'DOWNSTREAM_SERVICE_ERROR',
       service: 'ErrorAPI',
       serviceName: 'ErrorAPI',
       request: {

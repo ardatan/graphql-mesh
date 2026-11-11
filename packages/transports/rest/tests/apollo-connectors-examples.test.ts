@@ -300,7 +300,7 @@ describe('Apollo Connectors error shape', () => {
     }
   `;
 
-  it('emits Apollo default CONNECTOR_FETCH extensions on HTTP failure', async () => {
+  it('emits Mesh-compatible default extensions on HTTP failure', async () => {
     const schema = processConnectDirectives(buildSchema(errorSchemaSdl), {
       globalFetch: (async () => Response.json({ message: 'boom' }, { status: 500 })) as any,
     });
@@ -317,13 +317,17 @@ describe('Apollo Connectors error shape', () => {
     expect(result.data).toEqual({ products: null });
     expect(result.errors).toHaveLength(1);
     const err = result.errors![0];
-    expect(err.message).toBe('Request failed');
+    expect(err.message).toBe(
+      'Upstream HTTP Error: 500, Could not invoke operation GET /products',
+    );
     expect(err.extensions).toMatchObject({
-      code: 'CONNECTOR_FETCH',
+      code: 'DOWNSTREAM_SERVICE_ERROR',
       service: 'ecomm',
+      serviceName: 'ecomm',
       http: { status: 500 },
       connector: { coordinate: 'ecomm:Query.products@connect[0]' },
       request: { method: 'GET' },
+      response: { body: { message: 'boom' } },
     });
     expect((err.extensions as any).request.url).toContain('/products');
   });
@@ -372,5 +376,55 @@ describe('Apollo Connectors error shape', () => {
     expect(result.data).toEqual({
       alwaysOk: { id: 'missing', name: null },
     });
+  });
+
+  it('interpolates $context.headers bracket accessors with defaults in baseURL', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(
+        name: "Pets"
+        http: { baseURL: "http://localhost:{$context.headers['x-upstream-port']:4001}" }
+      ) {
+        query: Query
+      }
+
+      type Query {
+        pet(petId: String!): Pet
+          @connect(
+            source: "Pets"
+            http: { GET: "/pet/{$args.petId}" }
+            selection: "name"
+          )
+      }
+
+      type Pet {
+        name: String
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json({ name: 'Bob' });
+      }) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          pet(petId: "pet200") {
+            name
+          }
+        }
+      `),
+      contextValue: {
+        headers: {
+          'x-upstream-port': '5555',
+        },
+      },
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ pet: { name: 'Bob' } });
+    expect(urls).toEqual(['http://localhost:5555/pet/pet200']);
   });
 });
