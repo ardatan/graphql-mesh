@@ -1467,47 +1467,47 @@ export function addConnectFieldResolver(
         body,
         selectionExtras,
       );
-      const customExtensions =
+      const mappedExtensions =
         customExtensionsRaw &&
         typeof customExtensionsRaw === 'object' &&
         !Array.isArray(customExtensionsRaw)
-          ? { ...customExtensionsRaw }
+          ? (customExtensionsRaw as Record<string, unknown>)
           : {};
-      // Upstream status belongs on `response.status` / top-level `status`.
-      // Do NOT set `extensions.http.status`: GraphQL Yoga (Hive Gateway) promotes
-      // that path to the *gateway* HTTP status, turning field-level upstream
-      // failures into non-2xx GraphQL responses. Apollo Router emits
-      // `extensions.http.status` itself for native Connectors; this transport
-      // only runs on Hive.
-      // Allow `@connect(errors.extensions:)` / `@source` to set custom `http` /
-      // `connector` blobs, but strip a bare `http.status` that would trip Yoga.
+      // Pull reserved keys so we can apply Mesh defaults / merges; everything else
+      // from `@connect(errors.extensions:)` / `@source` is kept as-is (including a
+      // mapped top-level `status`). Do not invent a default top-level `status` —
+      // that duplicates `response.status`.
+      const {
+        http: mappedHttp,
+        connector: mappedConnector,
+        code: mappedCode,
+        service: mappedService,
+        serviceName: mappedServiceName,
+        ...customExtensions
+      } = mappedExtensions;
+      // Exception: never emit `extensions.http.status`. GraphQL Yoga (Hive Gateway)
+      // promotes that path to the *gateway* HTTP status. Apollo Router emits
+      // `http.status` itself for native Connectors; this transport only runs on Hive.
       const customHttp =
-        customExtensions.http && typeof customExtensions.http === 'object'
-          ? { ...customExtensions.http }
+        mappedHttp && typeof mappedHttp === 'object' && !Array.isArray(mappedHttp)
+          ? { ...(mappedHttp as Record<string, unknown>) }
           : undefined;
-      delete customExtensions.http;
       if (customHttp && 'status' in customHttp) {
         delete customHttp.status;
       }
       const connectorExt = {
         coordinate: connectorCoordinate,
-        ...(customExtensions.connector && typeof customExtensions.connector === 'object'
-          ? customExtensions.connector
+        ...(mappedConnector && typeof mappedConnector === 'object' && !Array.isArray(mappedConnector)
+          ? (mappedConnector as Record<string, unknown>)
           : {}),
       };
-      delete customExtensions.connector;
-      // Prefer `@connect(errors.extensions:)` / `@source` `code` when set; otherwise
-      // Apollo Connectors default `CONNECTOR_FETCH` (Router uses the same for HTTP failures).
-      const code = customExtensions.code ?? 'CONNECTOR_FETCH';
-      delete customExtensions.code;
+      const code = mappedCode ?? 'CONNECTOR_FETCH';
       // Mesh transports use `serviceName` (grpc/soap/httpOperation). Accept Apollo-style
       // `service` from `errors.extensions` mapping but only emit `serviceName`.
       const resolvedServiceName =
-        (typeof customExtensions.serviceName === 'string' && customExtensions.serviceName) ||
-        (typeof customExtensions.service === 'string' && customExtensions.service) ||
+        (typeof mappedServiceName === 'string' && mappedServiceName) ||
+        (typeof mappedService === 'string' && mappedService) ||
         serviceName;
-      delete customExtensions.serviceName;
-      delete customExtensions.service;
       // Match httpOperation: expose the unresolved path template (Mesh `{args.x}` form).
       const pathForMessage = picked.path.replace(/\{\$/g, '{');
       const defaultMessage = `Upstream HTTP Error: ${response.status}, Could not invoke operation ${method} ${pathForMessage}`;
@@ -1531,7 +1531,6 @@ export function addConnectFieldResolver(
               headers: getHeadersObj(response.headers),
               body,
             },
-            status: response.status,
             headers: getHeadersObj(response.headers),
             responseJson: body,
             ...(parseError ? { originalError: parseError } : {}),

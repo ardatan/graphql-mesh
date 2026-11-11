@@ -278,7 +278,10 @@ describe('Federation Connectors error shape', () => {
           source: "ecomm"
           http: { GET: "/users" }
           selection: "id name"
-          errors: { message: "error.message", extensions: "code: error.code" }
+          errors: {
+            message: "error.message"
+            extensions: "code: error.code status: $status"
+          }
         )
       alwaysOk(id: ID!): Product
         @connect(
@@ -324,8 +327,9 @@ describe('Federation Connectors error shape', () => {
       connector: { coordinate: 'ecomm:Query.products@connect[0]' },
       request: { method: 'GET' },
       response: { status: 500, body: { message: 'boom' } },
-      status: 500,
     });
+    // Default shape uses `response.status` only — no duplicate top-level `status`.
+    expect((err.extensions as any).status).toBeUndefined();
     // Yoga promotes `extensions.http.status` to the gateway HTTP status — omit it.
     expect((err.extensions as any).http?.status).toBeUndefined();
     expect((err.extensions as any).service).toBeUndefined();
@@ -353,6 +357,7 @@ describe('Federation Connectors error shape', () => {
       serviceName: 'ecomm',
       connector: { coordinate: 'ecomm:Query.users@connect[0]' },
       response: { status: 404 },
+      // Mapped via `@connect(errors.extensions:)` — kept, not invented by default.
       status: 404,
     });
     expect((result.errors![0].extensions as any).http?.status).toBeUndefined();

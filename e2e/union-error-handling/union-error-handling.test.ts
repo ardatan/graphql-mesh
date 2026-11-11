@@ -76,8 +76,9 @@ describe('OpenAPI rest transport Union Error Handling', () => {
       response: {
         status: 400,
       },
-      status: 400,
     });
+    // Default: `response.status` only — no duplicate top-level `status`.
+    expect(firstError?.extensions?.status).toBeUndefined();
     // Must not set `extensions.http.status` — Yoga would promote it to gateway HTTP 400.
     expect(firstError?.extensions?.http?.status).toBeUndefined();
     expect(firstError?.extensions?.service).toBeUndefined();
@@ -91,8 +92,8 @@ describe('OpenAPI rest transport Union Error Handling', () => {
       response: {
         status: 400,
       },
-      status: 400,
     });
+    expect(secondError?.extensions?.status).toBeUndefined();
     expect(secondError?.extensions?.http?.status).toBeUndefined();
     expect(secondError?.extensions?.service).toBeUndefined();
   });
