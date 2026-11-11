@@ -244,7 +244,7 @@ type office {
   """The owner ID of the office"""
   employeeId: String
   """The room number of the office"""
-  room_number: Int @resolveRootField(subgraph: "example_api", field: "room number")
+  room_number: Int
   """The identifier of the company a user works for"""
   employerId: String
   """Allows to fetch the user who invented a product."""
@@ -269,11 +269,11 @@ type paper {
 """A product"""
 type product_with_id {
   """The name of the product"""
-  product_name: String @resolveRootField(subgraph: "example_api", field: "product-name")
+  product_name: String
   """The id of the product"""
-  product_id: String @resolveRootField(subgraph: "example_api", field: "product-id")
+  product_id: String
   """A tag associated with the product"""
-  product_tag: String @resolveRootField(subgraph: "example_api", field: "product-tag")
+  product_tag: String
   """Obtain reviews for a product."""
   reviews: [query_getProductReviews_items] @connect(source: "example_api", http: {GET: "/products/{root.$request.path.product_id}/reviews", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  \\"product-tag\\": {root.$request.query.product-tag}\\n}"}, selection: "text\\ntimestamp")
   """Obtain reviews for a product."""
@@ -293,10 +293,10 @@ scalar BigInt
 """A patent"""
 type patent_with_id {
   """The id of the patent"""
-  patent_id: String! @resolveRootField(subgraph: "example_api", field: "patent-id")
+  patent_id: String!
   """The id of the inventor"""
-  inventor_id: String @resolveRootField(subgraph: "example_api", field: "inventor-id")
-  patent_name: JSON! @resolveRootField(subgraph: "example_api", field: "patent-name")
+  inventor_id: String
+  patent_name: JSON!
   """Allows to fetch the user who invented a product."""
   inventor: user @connect(source: "example_api", http: {GET: "/users/{$this.inventorId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular\\n  }\\n  genus\\n  species\\n}")
 }
@@ -304,9 +304,9 @@ type patent_with_id {
 """A project"""
 type project_with_id {
   """The id of the project"""
-  project_id: Int @resolveRootField(subgraph: "example_api", field: "project-id")
+  project_id: Int
   """The id of the lead"""
-  lead_id: String @resolveRootField(subgraph: "example_api", field: "lead-id")
+  lead_id: String
   """Whether the project is active"""
   active: Boolean
   """The patent associated with a project if applicable"""

@@ -10,8 +10,6 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
-directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
-
 directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
@@ -1386,8 +1384,8 @@ type query_workspace_slug_reports_data_attributes_members {
 type query_workspace_slug_reports_data_attributes_activities {
   total_count: Int
   total_delta: Int
-  spec_activity: query_workspace_slug_reports_data_attributes_activities_spec_activity @resolveRootField(subgraph: "test", field: "spec:activity")
-  foo_activity: query_workspace_slug_reports_data_attributes_activities_foo_activity @resolveRootField(subgraph: "test", field: "foo:activity")
+  spec_activity: query_workspace_slug_reports_data_attributes_activities_spec_activity
+  foo_activity: query_workspace_slug_reports_data_attributes_activities_foo_activity
 }
 
 type query_workspace_slug_reports_data_attributes_activities_spec_activity {
@@ -1529,10 +1527,10 @@ type query_workspaces_by_workspace_slug_data_attributes {
 }
 
 type query_workspaces_by_workspace_slug_data_attributes_orbit_level_counts {
-  _1: Int @resolveRootField(subgraph: "test", field: "1")
-  _2: Int @resolveRootField(subgraph: "test", field: "2")
-  _3: Int @resolveRootField(subgraph: "test", field: "3")
-  _4: Int @resolveRootField(subgraph: "test", field: "4")
+  _1: Int
+  _2: Int
+  _3: Int
+  _4: Int
 }
 
 type query_workspaces_by_workspace_slug_data_relationships {

@@ -38,9 +38,6 @@ it.concurrent.each([
     `,
   },
 ])('should execute $name', async ({ query }) => {
-  // Large Mesh OpenAPI graphs still use `@resolveRootField` for JSON key mapping;
-  // Apollo Connectors requires those keys in `@connect(selection:)` aliases. Hive path
-  // covers runtime until selection emit covers the full schema for Rover/Router.
   const composition = await compose({ output: 'graphql' });
   const { execute } = await serve({
     runner: 'hive',

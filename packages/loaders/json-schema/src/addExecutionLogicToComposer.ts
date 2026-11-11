@@ -623,7 +623,10 @@ ${operationConfig.description || ''}
       queryStringOptions,
     };
   }
-  // Fix orphaned interfaces
+  // Fix orphaned interfaces; drop Mesh `@resolveRootField` from *output* fields —
+  // JSON key remapping is already folded into `@connect(selection:)` aliases
+  // (`foo_bar: foo-bar`). Keep it on input/argument fields so request bodies still
+  // de-sanitize GraphQL names → JSON property names via resolveDataByUnionInputType.
   schema = mapSchema(schema, {
     [MapperKind.TYPE]: type => {
       if (isInterfaceType(type)) {
@@ -634,6 +637,82 @@ ${operationConfig.description || ''}
       }
       return type;
     },
+    // Use OBJECT/INTERFACE field mappers — MapperKind.FIELD also matches input fields.
+    [MapperKind.OBJECT_FIELD]: fieldConfig => stripResolveRootFieldFromConfig(fieldConfig),
+    [MapperKind.INTERFACE_FIELD]: fieldConfig => stripResolveRootFieldFromConfig(fieldConfig),
   });
+  // Drop the directive definition when nothing references it anymore (GET-only APIs).
+  if (!schemaHasResolveRootFieldUsage(schema)) {
+    schema = mapSchema(schema, {
+      [MapperKind.DIRECTIVE]: directive =>
+        directive.name === 'resolveRootField' ? null : directive,
+    });
+  }
   return schema;
+}
+
+function schemaHasResolveRootFieldUsage(schema: import('graphql').GraphQLSchema): boolean {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (type.name.startsWith('__')) continue;
+    if ('getFields' in type) {
+      for (const field of Object.values(type.getFields())) {
+        const ext = (field as any).extensions?.directives?.resolveRootField;
+        if (ext?.length) return true;
+        if ((field as any).astNode?.directives?.some((d: any) => d.name.value === 'resolveRootField')) {
+          return true;
+        }
+        if ('args' in field) {
+          for (const arg of (field as any).args || []) {
+            if (arg.extensions?.directives?.resolveRootField?.length) return true;
+            if (arg.astNode?.directives?.some((d: any) => d.name.value === 'resolveRootField')) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function stripResolveRootFieldFromConfig<
+  T extends {
+    astNode?: { directives?: readonly { name: { value: string } }[] } | null;
+    extensions?: unknown;
+  },
+>(config: T): T {
+  const ext = config.extensions as
+    | { directives?: Record<string, unknown> }
+    | undefined;
+  const hasExt = Boolean(ext?.directives?.resolveRootField);
+  const hasAst = Boolean(
+    config.astNode?.directives?.some(d => d.name.value === 'resolveRootField'),
+  );
+  if (!hasExt && !hasAst) {
+    return config;
+  }
+  const nextExt = ext
+    ? {
+        ...ext,
+        directives: ext.directives
+          ? Object.fromEntries(
+              Object.entries(ext.directives).filter(([name]) => name !== 'resolveRootField'),
+            )
+          : ext.directives,
+      }
+    : config.extensions;
+  const nextAst =
+    config.astNode && hasAst
+      ? {
+          ...config.astNode,
+          directives: (config.astNode.directives || []).filter(
+            d => d.name.value !== 'resolveRootField',
+          ),
+        }
+      : config.astNode;
+  return {
+    ...config,
+    extensions: nextExt,
+    astNode: nextAst as T['astNode'],
+  };
 }

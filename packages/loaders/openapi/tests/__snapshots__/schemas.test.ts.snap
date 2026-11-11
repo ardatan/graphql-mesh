@@ -12,8 +12,6 @@ directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
-
 directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
@@ -1114,13 +1112,13 @@ type query_epochs_latest_parameters_oneOf_0_cost_models {
 }
 
 type query_epochs_latest_parameters_oneOf_0_cost_models_PlutusV1 {
-  addInteger_cpu_arguments_intercept: Int @resolveRootField(subgraph: "BlockFrost", field: "addInteger-cpu-arguments-intercept")
-  addInteger_cpu_arguments_slope: Int @resolveRootField(subgraph: "BlockFrost", field: "addInteger-cpu-arguments-slope")
+  addInteger_cpu_arguments_intercept: Int
+  addInteger_cpu_arguments_slope: Int
 }
 
 type query_epochs_latest_parameters_oneOf_0_cost_models_PlutusV2 {
-  addInteger_cpu_arguments_intercept: Int @resolveRootField(subgraph: "BlockFrost", field: "addInteger-cpu-arguments-intercept")
-  addInteger_cpu_arguments_slope: Int @resolveRootField(subgraph: "BlockFrost", field: "addInteger-cpu-arguments-slope")
+  addInteger_cpu_arguments_intercept: Int
+  addInteger_cpu_arguments_slope: Int
 }
 
 """
@@ -7016,11 +7014,11 @@ type query_zone_analytics__deprecated_get_dashboard_oneOf_0_allOf_1_result_times
   """The number of requests served over TLS v1.0."""
   TLSv1: Int
   """The number of requests served over TLS v1.1."""
-  TLSv1_1: Int @resolveRootField(subgraph: "CloudFlare", field: "TLSv1.1")
+  TLSv1_1: Int
   """The number of requests served over TLS v1.2."""
-  TLSv1_2: Int @resolveRootField(subgraph: "CloudFlare", field: "TLSv1.2")
+  TLSv1_2: Int
   """The number of requests served over TLS v1.3."""
-  TLSv1_3: Int @resolveRootField(subgraph: "CloudFlare", field: "TLSv1.3")
+  TLSv1_3: Int
   """The number of requests served over HTTP."""
   none: Int
 }
@@ -7054,11 +7052,11 @@ type query_zone_analytics__deprecated_get_analytics_by_co_locations_oneOf_0_allO
 A variable list of key/value pairs where the key is a HTTP status code and the value is the number of requests with that code served.
 """
 type query_zone_analytics__deprecated_get_analytics_by_co_locations_oneOf_0_allOf_1_result_items_timeseries_items_requests_http_status {
-  _200: Int @resolveRootField(subgraph: "CloudFlare", field: "200")
-  _301: Int @resolveRootField(subgraph: "CloudFlare", field: "301")
-  _400: Int @resolveRootField(subgraph: "CloudFlare", field: "400")
-  _402: Int @resolveRootField(subgraph: "CloudFlare", field: "402")
-  _404: Int @resolveRootField(subgraph: "CloudFlare", field: "404")
+  _200: Int
+  _301: Int
+  _400: Int
+  _402: Int
+  _404: Int
   additionalProperties: JSON @resolveRoot(subgraph: "CloudFlare")
 }
 
@@ -7086,11 +7084,11 @@ type query_zone_analytics__deprecated_get_dashboard_oneOf_0_allOf_1_result_times
   """The number of requests served over TLS v1.0."""
   TLSv1: Int
   """The number of requests served over TLS v1.1."""
-  TLSv1_1: Int @resolveRootField(subgraph: "CloudFlare", field: "TLSv1.1")
+  TLSv1_1: Int
   """The number of requests served over TLS v1.2."""
-  TLSv1_2: Int @resolveRootField(subgraph: "CloudFlare", field: "TLSv1.2")
+  TLSv1_2: Int
   """The number of requests served over TLS v1.3."""
-  TLSv1_3: Int @resolveRootField(subgraph: "CloudFlare", field: "TLSv1.3")
+  TLSv1_3: Int
   """The number of requests served over HTTP."""
   none: Int
 }
@@ -7116,10 +7114,10 @@ type query_zone_analytics__deprecated_get_analytics_by_co_locations_oneOf_0_allO
 The list of key/value pairs where the key is a threat category and the value is the number of requests.
 """
 type query_zone_analytics__deprecated_get_analytics_by_co_locations_oneOf_0_allOf_1_result_items_timeseries_items_threats_type {
-  hot_ban_unknown: Int @resolveRootField(subgraph: "CloudFlare", field: "hot.ban.unknown")
-  macro_chl_captchaErr: Int @resolveRootField(subgraph: "CloudFlare", field: "macro.chl.captchaErr")
-  macro_chl_jschlErr: Int @resolveRootField(subgraph: "CloudFlare", field: "macro.chl.jschlErr")
-  user_ban_ip: Int @resolveRootField(subgraph: "CloudFlare", field: "user.ban.ip")
+  hot_ban_unknown: Int
+  macro_chl_captchaErr: Int
+  macro_chl_jschlErr: Int
+  user_ban_ip: Int
 }
 
 """Breakdown of totals for pageviews."""
@@ -7193,7 +7191,7 @@ The HTTP request headers to send in the health check. It is recommended you set 
 """
 type header {
   Host: [String]
-  X_App_ID: [String] @resolveRootField(subgraph: "CloudFlare", field: "X-App-ID")
+  X_App_ID: [String]
 }
 
 """The HTTP method used to access the endpoint."""
@@ -7325,7 +7323,7 @@ type schemas_header {
 }
 
 type query_account_load_balancer_pools_pool_health_details_oneOf_0_allOf_1_result_pop_health {
-  Amsterdam_COMMA__NL: query_account_load_balancer_pools_pool_health_details_oneOf_0_allOf_1_result_pop_health_Amsterdam_COMMA__NL @resolveRootField(subgraph: "CloudFlare", field: "Amsterdam, NL")
+  Amsterdam_COMMA__NL: query_account_load_balancer_pools_pool_health_details_oneOf_0_allOf_1_result_pop_health_Amsterdam_COMMA__NL
 }
 
 type query_account_load_balancer_pools_pool_health_details_oneOf_0_allOf_1_result_pop_health_Amsterdam_COMMA__NL {
@@ -7334,7 +7332,7 @@ type query_account_load_balancer_pools_pool_health_details_oneOf_0_allOf_1_resul
 }
 
 type query_account_load_balancer_pools_pool_health_details_oneOf_0_allOf_1_result_pop_health_Amsterdam_COMMA__NL_origins_items {
-  _2001_DB8__5: query_account_load_balancer_pools_pool_health_details_oneOf_0_allOf_1_result_pop_health_Amsterdam_COMMA__NL_origins_items_2001_DB8__5 @resolveRootField(subgraph: "CloudFlare", field: "2001:DB8::5")
+  _2001_DB8__5: query_account_load_balancer_pools_pool_health_details_oneOf_0_allOf_1_result_pop_health_Amsterdam_COMMA__NL_origins_items_2001_DB8__5
 }
 
 type query_account_load_balancer_pools_pool_health_details_oneOf_0_allOf_1_result_pop_health_Amsterdam_COMMA__NL_origins_items_2001_DB8__5 {
@@ -7734,7 +7732,7 @@ type rules_components_schemas_rule {
   If this rule's condition is true, this causes rule evaluation to stop after processing this rule.
   """
   terminates: Boolean
-  _100015: String @resolveRootField(subgraph: "CloudFlare", field: "100015")
+  _100015: String
   additionalProperties: JSON @resolveRoot(subgraph: "CloudFlare")
 }
 
@@ -7882,7 +7880,7 @@ type random_steering {
 A mapping of pool IDs to custom weights. The weight is relative to other pools in the load balancer.
 """
 type query_load_balancers_load_balancer_details_oneOf_0_allOf_1_result_random_steering_pool_weights {
-  _9290f38c5d07c2e2f4df57b1f61d4196: Float @resolveRootField(subgraph: "CloudFlare", field: "9290f38c5d07c2e2f4df57b1f61d4196")
+  _9290f38c5d07c2e2f4df57b1f61d4196: Float
   de90f38ced07c2e2f4df50b1f61d4194: Float
 }
 
@@ -8185,7 +8183,7 @@ Matches a Github organization.
 Requires a Github identity provider.
 """
 type Github_organization {
-  github_organization: query_access_policies_get_an_access_policy_oneOf_0_allOf_1_result_exclude_items_oneOf_8_github_organization! @resolveRootField(subgraph: "CloudFlare", field: "github-organization")
+  github_organization: query_access_policies_get_an_access_policy_oneOf_0_allOf_1_result_exclude_items_oneOf_8_github_organization!
 }
 
 type query_access_policies_get_an_access_policy_oneOf_0_allOf_1_result_exclude_items_oneOf_8_github_organization {
@@ -8434,8 +8432,8 @@ type rule_settings {
 Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s).
 """
 type query_zero_trust_gateway_rules_list_zero_trust_gateway_rules_oneOf_0_allOf_1_result_items_rule_settings_add_headers {
-  My_Next_Header: [String] @resolveRootField(subgraph: "CloudFlare", field: "My-Next-Header")
-  X_Custom_Header_Name: [String] @resolveRootField(subgraph: "CloudFlare", field: "X-Custom-Header-Name")
+  My_Next_Header: [String]
+  X_Custom_Header_Name: [String]
 }
 
 """Configure how browser isolation behaves."""
@@ -8636,7 +8634,7 @@ The HTTP request headers to send in the health check. It is recommended you set 
 """
 type query_health_checks_list_health_checks_oneOf_0_allOf_1_result_items_http_config_header {
   Host: [String]
-  X_App_ID: [String] @resolveRootField(subgraph: "CloudFlare", field: "X-App-ID")
+  X_App_ID: [String]
 }
 
 """The HTTP method to use for the health check."""
@@ -8837,8 +8835,8 @@ type query_api_shield_endpoint_management_retrieve_api_discovery_results_for_a_z
 }
 
 type query_api_shield_endpoint_management_retrieve_api_discovery_results_for_a_zone_oneOf_0_allOf_1_result_schemas_items_paths {
-  _0__Further_paths____: JSON @resolveRootField(subgraph: "CloudFlare", field: "... Further paths ...")
-  _api_v1_users__LEFT_CURLY_BRACE_var1_RIGHT_CURLY_BRACE_: query_api_shield_endpoint_management_retrieve_api_discovery_results_for_a_zone_oneOf_0_allOf_1_result_schemas_items_paths_api_v1_users__LEFT_CURLY_BRACE_var1_RIGHT_CURLY_BRACE_ @resolveRootField(subgraph: "CloudFlare", field: "/api/v1/users/{var1}")
+  _0__Further_paths____: JSON
+  _api_v1_users__LEFT_CURLY_BRACE_var1_RIGHT_CURLY_BRACE_: query_api_shield_endpoint_management_retrieve_api_discovery_results_for_a_zone_oneOf_0_allOf_1_result_schemas_items_paths_api_v1_users__LEFT_CURLY_BRACE_var1_RIGHT_CURLY_BRACE_
 }
 
 type query_api_shield_endpoint_management_retrieve_api_discovery_results_for_a_zone_oneOf_0_allOf_1_result_schemas_items_paths_api_v1_users__LEFT_CURLY_BRACE_var1_RIGHT_CURLY_BRACE_ {
@@ -10715,11 +10713,11 @@ type query_account_load_balancer_monitors_preview_result_oneOf_0_allOf_1_abwlnp5
 }
 
 type query_account_load_balancer_monitors_preview_result_oneOf_0_allOf_1_abwlnp5jbqn45ecgxd03erbgtxtqai0d_origins_items {
-  originone_example_com_: query_account_load_balancer_monitors_preview_result_oneOf_0_allOf_1_abwlnp5jbqn45ecgxd03erbgtxtqai0d_origins_items_originone_example_com_ @resolveRootField(subgraph: "CloudFlare", field: "originone.example.com.")
+  originone_example_com_: query_account_load_balancer_monitors_preview_result_oneOf_0_allOf_1_abwlnp5jbqn45ecgxd03erbgtxtqai0d_origins_items_originone_example_com_
 }
 
 type query_account_load_balancer_monitors_preview_result_oneOf_0_allOf_1_abwlnp5jbqn45ecgxd03erbgtxtqai0d_origins_items_originone_example_com_ {
-  _DOLLAR_ref: String @resolveRootField(subgraph: "CloudFlare", field: "$ref")
+  _DOLLAR_ref: String
 }
 
 type account_load_balancer_monitors_preview_result_4xx_response {
@@ -14099,7 +14097,7 @@ type alert_types_components_schemas_response_collection {
 }
 
 type query_notification_alert_types_get_alert_types_oneOf_0_allOf_1_result {
-  Origin_Monitoring: [query_notification_alert_types_get_alert_types_oneOf_0_allOf_1_result_Origin_Monitoring_items] @resolveRootField(subgraph: "CloudFlare", field: "Origin Monitoring")
+  Origin_Monitoring: [query_notification_alert_types_get_alert_types_oneOf_0_allOf_1_result_Origin_Monitoring_items]
   additionalProperties: JSON @resolveRoot(subgraph: "CloudFlare")
 }
 
@@ -14963,15 +14961,15 @@ type query_devices_list_admin_override_code_for_device_oneOf_0_allOf_1_result {
 
 type disable_for_time {
   """Override code that is valid for 1 hour."""
-  _1: String @resolveRootField(subgraph: "CloudFlare", field: "1")
+  _1: String
   """Override code that is valid for 3 hours."""
-  _3: String @resolveRootField(subgraph: "CloudFlare", field: "3")
+  _3: String
   """Override code that is valid for 6 hours."""
-  _6: String @resolveRootField(subgraph: "CloudFlare", field: "6")
+  _6: String
   """Override code that is valid for 12 hour2."""
-  _12: String @resolveRootField(subgraph: "CloudFlare", field: "12")
+  _12: String
   """Override code that is valid for 24 hour.2."""
-  _24: String @resolveRootField(subgraph: "CloudFlare", field: "24")
+  _24: String
 }
 
 type devices_list_admin_override_code_for_device_4xx_response {
@@ -17520,9 +17518,9 @@ type query_radar_http_get_a_summary_of_http_versions_oneOf_0_result {
 }
 
 type query_radar_http_get_a_summary_of_http_versions_oneOf_0_result_summary_0 {
-  HTTP_1_x: String @resolveRootField(subgraph: "CloudFlare", field: "HTTP/1.x")
-  HTTP_2: String @resolveRootField(subgraph: "CloudFlare", field: "HTTP/2")
-  HTTP_3: String @resolveRootField(subgraph: "CloudFlare", field: "HTTP/3")
+  HTTP_1_x: String
+  HTTP_2: String
+  HTTP_3: String
 }
 
 type radar_http_get_a_summary_of_http_versions_4xx_response {
@@ -17539,9 +17537,9 @@ type query_radar_http_get_a_summary_of_http_versions_oneOf_1_allOf_0_result {
 }
 
 type query_radar_http_get_a_summary_of_http_versions_oneOf_1_allOf_0_result_summary_0 {
-  HTTP_1_x: String @resolveRootField(subgraph: "CloudFlare", field: "HTTP/1.x")
-  HTTP_2: String @resolveRootField(subgraph: "CloudFlare", field: "HTTP/2")
-  HTTP_3: String @resolveRootField(subgraph: "CloudFlare", field: "HTTP/3")
+  HTTP_1_x: String
+  HTTP_2: String
+  HTTP_3: String
 }
 
 union radar_http_get_a_summary_of_ip_versions_response @statusCodeTypeName(subgraph: "CloudFlare", statusCode: "200", typeName: "radar_http_get_a_summary_of_ip_versions_200_response") @statusCodeTypeName(subgraph: "CloudFlare", statusCode: "4xx", typeName: "radar_http_get_a_summary_of_ip_versions_4xx_response") = radar_http_get_a_summary_of_ip_versions_200_response | radar_http_get_a_summary_of_ip_versions_4xx_response
@@ -17592,11 +17590,11 @@ type query_radar_http_get_a_summary_of_tls_versions_oneOf_0_result {
 }
 
 type query_radar_http_get_a_summary_of_tls_versions_oneOf_0_result_summary_0 {
-  TLS_1_0: String @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.0")
-  TLS_1_1: String @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.1")
-  TLS_1_2: String @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.2")
-  TLS_1_3: String @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.3")
-  TLS_QUIC: String @resolveRootField(subgraph: "CloudFlare", field: "TLS QUIC")
+  TLS_1_0: String
+  TLS_1_1: String
+  TLS_1_2: String
+  TLS_1_3: String
+  TLS_QUIC: String
 }
 
 type radar_http_get_a_summary_of_tls_versions_4xx_response {
@@ -17613,11 +17611,11 @@ type query_radar_http_get_a_summary_of_tls_versions_oneOf_1_allOf_0_result {
 }
 
 type query_radar_http_get_a_summary_of_tls_versions_oneOf_1_allOf_0_result_summary_0 {
-  TLS_1_0: String @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.0")
-  TLS_1_1: String @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.1")
-  TLS_1_2: String @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.2")
-  TLS_1_3: String @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.3")
-  TLS_QUIC: String @resolveRootField(subgraph: "CloudFlare", field: "TLS QUIC")
+  TLS_1_0: String
+  TLS_1_1: String
+  TLS_1_2: String
+  TLS_1_3: String
+  TLS_QUIC: String
 }
 
 union radar_http_get_time_series_of_bot_classes_response @statusCodeTypeName(subgraph: "CloudFlare", statusCode: "200", typeName: "radar_http_get_time_series_of_bot_classes_200_response") @statusCodeTypeName(subgraph: "CloudFlare", statusCode: "4xx", typeName: "radar_http_get_time_series_of_bot_classes_4xx_response") = radar_http_get_time_series_of_bot_classes_200_response | radar_http_get_time_series_of_bot_classes_4xx_response
@@ -17670,7 +17668,7 @@ type query_radar_http_get_time_series_of_user_agents_oneOf_0_result {
 }
 
 type query_radar_http_get_time_series_of_user_agents_oneOf_0_result_serie_0 {
-  _LESS_THAN_browser_name_GREATER_THAN_: [String] @resolveRootField(subgraph: "CloudFlare", field: "<browser name>")
+  _LESS_THAN_browser_name_GREATER_THAN_: [String]
   timestamps: [String]
 }
 
@@ -17688,7 +17686,7 @@ type query_radar_http_get_time_series_of_user_agents_oneOf_1_allOf_0_result {
 }
 
 type query_radar_http_get_time_series_of_user_agents_oneOf_1_allOf_0_result_serie_0 {
-  _LESS_THAN_browser_name_GREATER_THAN_: [String] @resolveRootField(subgraph: "CloudFlare", field: "<browser name>")
+  _LESS_THAN_browser_name_GREATER_THAN_: [String]
   timestamps: [String]
 }
 
@@ -17705,7 +17703,7 @@ type query_radar_http_get_time_series_of_user_agents_aggregated_in_families_oneO
 }
 
 type query_radar_http_get_time_series_of_user_agents_aggregated_in_families_oneOf_0_result_serie_0 {
-  _LESS_THAN_browser_name_GREATER_THAN_: [String] @resolveRootField(subgraph: "CloudFlare", field: "<browser name>")
+  _LESS_THAN_browser_name_GREATER_THAN_: [String]
   timestamps: [String]
 }
 
@@ -17723,7 +17721,7 @@ type query_radar_http_get_time_series_of_user_agents_aggregated_in_families_oneO
 }
 
 type query_radar_http_get_time_series_of_user_agents_aggregated_in_families_oneOf_1_allOf_0_result_serie_0 {
-  _LESS_THAN_browser_name_GREATER_THAN_: [String] @resolveRootField(subgraph: "CloudFlare", field: "<browser name>")
+  _LESS_THAN_browser_name_GREATER_THAN_: [String]
   timestamps: [String]
 }
 
@@ -17816,9 +17814,9 @@ type query_radar_http_get_time_series_of_http_versions_oneOf_0_result {
 }
 
 type query_radar_http_get_time_series_of_http_versions_oneOf_0_result_serie_0 {
-  HTTP_1_x: [String] @resolveRootField(subgraph: "CloudFlare", field: "HTTP/1.x")
-  HTTP_2: [String] @resolveRootField(subgraph: "CloudFlare", field: "HTTP/2")
-  HTTP_3: [String] @resolveRootField(subgraph: "CloudFlare", field: "HTTP/3")
+  HTTP_1_x: [String]
+  HTTP_2: [String]
+  HTTP_3: [String]
   timestamps: [String]
 }
 
@@ -17836,9 +17834,9 @@ type query_radar_http_get_time_series_of_http_versions_oneOf_1_allOf_0_result {
 }
 
 type query_radar_http_get_time_series_of_http_versions_oneOf_1_allOf_0_result_serie_0 {
-  HTTP_1_x: [String] @resolveRootField(subgraph: "CloudFlare", field: "HTTP/1.x")
-  HTTP_2: [String] @resolveRootField(subgraph: "CloudFlare", field: "HTTP/2")
-  HTTP_3: [String] @resolveRootField(subgraph: "CloudFlare", field: "HTTP/3")
+  HTTP_1_x: [String]
+  HTTP_2: [String]
+  HTTP_3: [String]
   timestamps: [String]
 }
 
@@ -17892,11 +17890,11 @@ type query_radar_http_get_time_series_of_tls_versions_oneOf_0_result {
 }
 
 type query_radar_http_get_time_series_of_tls_versions_oneOf_0_result_serie_0 {
-  TLS_1_0: [String] @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.0")
-  TLS_1_1: [String] @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.1")
-  TLS_1_2: [String] @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.2")
-  TLS_1_3: [String] @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.3")
-  TLS_QUIC: [String] @resolveRootField(subgraph: "CloudFlare", field: "TLS QUIC")
+  TLS_1_0: [String]
+  TLS_1_1: [String]
+  TLS_1_2: [String]
+  TLS_1_3: [String]
+  TLS_QUIC: [String]
   timestamps: [String]
 }
 
@@ -17914,11 +17912,11 @@ type query_radar_http_get_time_series_of_tls_versions_oneOf_1_allOf_0_result {
 }
 
 type query_radar_http_get_time_series_of_tls_versions_oneOf_1_allOf_0_result_serie_0 {
-  TLS_1_0: [String] @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.0")
-  TLS_1_1: [String] @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.1")
-  TLS_1_2: [String] @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.2")
-  TLS_1_3: [String] @resolveRootField(subgraph: "CloudFlare", field: "TLS 1.3")
-  TLS_QUIC: [String] @resolveRootField(subgraph: "CloudFlare", field: "TLS QUIC")
+  TLS_1_0: [String]
+  TLS_1_1: [String]
+  TLS_1_2: [String]
+  TLS_1_3: [String]
+  TLS_QUIC: [String]
   timestamps: [String]
 }
 
@@ -18580,7 +18578,7 @@ type query_radar_http_get_top_user_agents_aggregated_in_families_by_http_request
 }
 
 type query_radar_http_get_top_user_agents_aggregated_in_families_by_http_requests_oneOf_0_result_top_0_items {
-  _LESS_THAN_browser_name_GREATER_THAN_: String @resolveRootField(subgraph: "CloudFlare", field: "<browser name>")
+  _LESS_THAN_browser_name_GREATER_THAN_: String
   value: String
 }
 
@@ -18621,7 +18619,7 @@ type query_radar_http_get_top_user_agents_aggregated_in_families_by_http_request
 }
 
 type query_radar_http_get_top_user_agents_aggregated_in_families_by_http_requests_oneOf_1_allOf_0_result_top_0_items {
-  _LESS_THAN_browser_name_GREATER_THAN_: String @resolveRootField(subgraph: "CloudFlare", field: "<browser name>")
+  _LESS_THAN_browser_name_GREATER_THAN_: String
   value: String
 }
 
@@ -18661,7 +18659,7 @@ type query_radar_http_get_top_user_agents_by_http_requests_oneOf_0_result_meta_d
 }
 
 type query_radar_http_get_top_user_agents_by_http_requests_oneOf_0_result_top_0_items {
-  _LESS_THAN_browser_name_GREATER_THAN_: String @resolveRootField(subgraph: "CloudFlare", field: "<browser name>")
+  _LESS_THAN_browser_name_GREATER_THAN_: String
   value: String
 }
 
@@ -18702,7 +18700,7 @@ type query_radar_http_get_top_user_agents_by_http_requests_oneOf_1_allOf_0_resul
 }
 
 type query_radar_http_get_top_user_agents_by_http_requests_oneOf_1_allOf_0_result_top_0_items {
-  _LESS_THAN_browser_name_GREATER_THAN_: String @resolveRootField(subgraph: "CloudFlare", field: "<browser name>")
+  _LESS_THAN_browser_name_GREATER_THAN_: String
   value: String
 }
 
@@ -19470,7 +19468,7 @@ type query_radar_ranking_get_domains_rank_time_series_oneOf_0_result_meta_dateRa
 }
 
 type query_radar_ranking_get_domains_rank_time_series_oneOf_0_result_serie_0 {
-  _LESS_THAN_domain_name_GREATER_THAN_: [Int] @resolveRootField(subgraph: "CloudFlare", field: "<domain name>")
+  _LESS_THAN_domain_name_GREATER_THAN_: [Int]
   timestamps: [Date]
 }
 
@@ -19499,7 +19497,7 @@ type query_radar_ranking_get_domains_rank_time_series_oneOf_1_allOf_0_result_met
 }
 
 type query_radar_ranking_get_domains_rank_time_series_oneOf_1_allOf_0_result_serie_0 {
-  _LESS_THAN_domain_name_GREATER_THAN_: [Int] @resolveRootField(subgraph: "CloudFlare", field: "<domain name>")
+  _LESS_THAN_domain_name_GREATER_THAN_: [Int]
   timestamps: [Date]
 }
 
@@ -23215,7 +23213,7 @@ scalar overrides_components_schemas_id @length(subgraph: "CloudFlare", max: 32)
 An object that allows you to override the action of specific WAF rules. Each key of this object must be the ID of a WAF rule, and each value must be a valid WAF action. Unless you are disabling a rule, ensure that you also enable the rule group that this WAF rule belongs to. When creating a new URI-based WAF override, you must provide a \`groups\` object or a \`rules\` object.
 """
 type schemas_rules {
-  _100015: String @resolveRootField(subgraph: "CloudFlare", field: "100015")
+  _100015: String
   additionalProperties: JSON @resolveRoot(subgraph: "CloudFlare")
 }
 
@@ -49809,11 +49807,11 @@ type Query {
 }
 
 type emojis {
-  _100: String @resolveRootField(subgraph: "GitHub", field: "100")
-  _1234: String @resolveRootField(subgraph: "GitHub", field: "1234")
-  _0PLUS_1: String @resolveRootField(subgraph: "GitHub", field: "+1")
-  NEGATIVE_1: String @resolveRootField(subgraph: "GitHub", field: "-1")
-  _8ball: String @resolveRootField(subgraph: "GitHub", field: "8ball")
+  _100: String
+  _1234: String
+  _0PLUS_1: String
+  NEGATIVE_1: String
+  _8ball: String
   a: String
   ab: String
 }
@@ -49921,7 +49919,7 @@ type query_gists_items {
 }
 
 type query_gists_items_files {
-  ring_erl: query_gists_items_files_ring_erl @resolveRootField(subgraph: "GitHub", field: "ring.erl")
+  ring_erl: query_gists_items_files_ring_erl
 }
 
 type query_gists_items_files_ring_erl {
@@ -49957,7 +49955,7 @@ type gist {
 }
 
 type query_gists_by_id_files {
-  ring_erl: query_gists_by_id_files_ring_erl @resolveRootField(subgraph: "GitHub", field: "ring.erl")
+  ring_erl: query_gists_by_id_files_ring_erl
 }
 
 type query_gists_by_id_files_ring_erl {
@@ -61114,13 +61112,13 @@ enum query_getAttachment_author_accountType {
 
 type AvatarUrlsBean {
   """The URL of the item's 16x16 pixel avatar."""
-  _16x16: URL @resolveRootField(subgraph: "Jira", field: "16x16")
+  _16x16: URL
   """The URL of the item's 24x24 pixel avatar."""
-  _24x24: URL @resolveRootField(subgraph: "Jira", field: "24x24")
+  _24x24: URL
   """The URL of the item's 32x32 pixel avatar."""
-  _32x32: URL @resolveRootField(subgraph: "Jira", field: "32x32")
+  _32x32: URL
   """The URL of the item's 48x48 pixel avatar."""
-  _48x48: URL @resolveRootField(subgraph: "Jira", field: "48x48")
+  _48x48: URL
 }
 
 type SimpleListWrapperGroupName {
@@ -61128,7 +61126,7 @@ type SimpleListWrapperGroupName {
   items: [GroupName]
   pagingCallback: JSON
   callback: JSON
-  max_results: Int @resolveRootField(subgraph: "Jira", field: "max-results")
+  max_results: Int
 }
 
 type SimpleListWrapperApplicationRole {
@@ -61136,7 +61134,7 @@ type SimpleListWrapperApplicationRole {
   items: [ApplicationRole]
   pagingCallback: JSON
   callback: JSON
-  max_results: Int @resolveRootField(subgraph: "Jira", field: "max-results")
+  max_results: Int
 }
 
 """
@@ -61554,13 +61552,13 @@ scalar query_getAllDashboards_oneOf_0_dashboards_items_owner_accountId @length(s
 
 type UserBeanAvatarUrls {
   """The URL of the user's 16x16 pixel avatar."""
-  _16x16: URL @resolveRootField(subgraph: "Jira", field: "16x16")
+  _16x16: URL
   """The URL of the user's 24x24 pixel avatar."""
-  _24x24: URL @resolveRootField(subgraph: "Jira", field: "24x24")
+  _24x24: URL
   """The URL of the user's 32x32 pixel avatar."""
-  _32x32: URL @resolveRootField(subgraph: "Jira", field: "32x32")
+  _32x32: URL
   """The URL of the user's 48x48 pixel avatar."""
-  _48x48: URL @resolveRootField(subgraph: "Jira", field: "48x48")
+  _48x48: URL
 }
 
 """Details of a share permission for the filter."""
@@ -62156,8 +62154,8 @@ enum query_getAllGadgets_oneOf_0_gadgets_items_color {
 
 """Details of a gadget position."""
 type DashboardGadgetPosition {
-  The_row_position_of_the_gadget_: Int! @resolveRootField(subgraph: "Jira", field: "The row position of the gadget.")
-  The_column_position_of_the_gadget_: Int! @resolveRootField(subgraph: "Jira", field: "The column position of the gadget.")
+  The_row_position_of_the_gadget_: Int!
+  The_column_position_of_the_gadget_: Int!
 }
 
 union getDashboard_response @statusCodeTypeName(subgraph: "Jira", statusCode: "200", typeName: "Dashboard") @statusCodeTypeName(subgraph: "Jira", statusCode: "400", typeName: "ErrorCollection") @statusCodeTypeName(subgraph: "Jira", statusCode: "401", typeName: "ErrorCollection") = Dashboard | ErrorCollection
@@ -63105,11 +63103,11 @@ type UserList {
   """The list of items."""
   items: [User]
   """The maximum number of results that could be on the page."""
-  max_results: Int @resolveRootField(subgraph: "Jira", field: "max-results")
+  max_results: Int
   """The index of the first item returned on the page."""
-  start_index: Int @resolveRootField(subgraph: "Jira", field: "start-index")
+  start_index: Int
   """The index of the last item returned on the page."""
-  end_index: Int @resolveRootField(subgraph: "Jira", field: "end-index")
+  end_index: Int
 }
 
 """A paginated list of subscriptions to a filter."""
@@ -63119,11 +63117,11 @@ type FilterSubscriptionsList {
   """The list of items."""
   items: [FilterSubscription]
   """The maximum number of results that could be on the page."""
-  max_results: Int @resolveRootField(subgraph: "Jira", field: "max-results")
+  max_results: Int
   """The index of the first item returned on the page."""
-  start_index: Int @resolveRootField(subgraph: "Jira", field: "start-index")
+  start_index: Int
   """The index of the last item returned on the page."""
-  end_index: Int @resolveRootField(subgraph: "Jira", field: "end-index")
+  end_index: Int
 }
 
 """Details of a user or group subscribing to a filter."""
@@ -63290,11 +63288,11 @@ type PagedListUserDetailsApplicationUser {
   """The list of items."""
   items: [UserDetails]
   """The maximum number of results that could be on the page."""
-  max_results: Int @resolveRootField(subgraph: "Jira", field: "max-results")
+  max_results: Int
   """The index of the first item returned on the page."""
-  start_index: Int @resolveRootField(subgraph: "Jira", field: "start-index")
+  start_index: Int
   """The index of the last item returned on the page."""
-  end_index: Int @resolveRootField(subgraph: "Jira", field: "end-index")
+  end_index: Int
 }
 
 """
@@ -95986,8 +95984,8 @@ type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_CustomResourceVali
 JSONSchemaProps is a JSON-Schema following Specification Draft 4 (http://json-schema.org/).
 """
 type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps {
-  _DOLLAR_ref: String @resolveRootField(subgraph: "Kubernetes", field: "$ref")
-  _DOLLAR_schema: String @resolveRootField(subgraph: "Kubernetes", field: "$schema")
+  _DOLLAR_ref: String
+  _DOLLAR_schema: String
   """
   JSONSchemaPropsOrBool represents JSONSchemaProps or a boolean value. Defaults to true for the boolean property.
   """
@@ -96045,7 +96043,7 @@ type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps {
   """
   x-kubernetes-embedded-resource defines that the value is an embedded Kubernetes runtime.Object, with TypeMeta and ObjectMeta. The type must be object. It is allowed to further restrict the embedded object. kind, apiVersion and metadata are validated automatically. x-kubernetes-preserve-unknown-fields is allowed to be true, but does not have to be if the object is fully specified (up to kind, apiVersion, metadata).
   """
-  x_kubernetes_embedded_resource: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-embedded-resource")
+  x_kubernetes_embedded_resource: Boolean
   """
   x-kubernetes-int-or-string specifies that this value is either an integer or a string. If this is true, an empty type is allowed and type as child of anyOf is permitted if following one of the following patterns:
   
@@ -96058,7 +96056,7 @@ type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps {
        - type: string
      - ... zero or more
   """
-  x_kubernetes_int_or_string: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-int-or-string")
+  x_kubernetes_int_or_string: Boolean
   """
   x-kubernetes-list-map-keys annotates an array with the x-kubernetes-list-type \`map\` by specifying the keys used as the index of the map.
   
@@ -96066,7 +96064,7 @@ type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps {
   
   The properties specified must either be required or have a default value, to ensure those properties are present for all list items.
   """
-  x_kubernetes_list_map_keys: [String] @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-list-map-keys")
+  x_kubernetes_list_map_keys: [String]
   """
   x-kubernetes-list-type annotates an array to further describe its topology. This extension must only be used on lists and may have 3 possible values:
   
@@ -96083,7 +96081,7 @@ type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps {
        must only be used on a list with elements of type object.
   Defaults to atomic for arrays.
   """
-  x_kubernetes_list_type: String @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-list-type")
+  x_kubernetes_list_type: String
   """
   x-kubernetes-map-type annotates an object to further describe its topology. This extension must only be used when type is object and may have 2 possible values:
   
@@ -96094,11 +96092,11 @@ type io_k8s_apiextensions_apiserver_pkg_apis_apiextensions_v1_JSONSchemaProps {
   2) \`atomic\`: the list is treated as a single entity, like a scalar.
        Atomic maps will be entirely replaced when updated.
   """
-  x_kubernetes_map_type: String @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-map-type")
+  x_kubernetes_map_type: String
   """
   x-kubernetes-preserve-unknown-fields stops the API server decoding step from pruning fields which are not specified in the validation schema. This affects fields recursively, but switches back to normal pruning behaviour if nested properties or additionalProperties are specified in the schema. This can either be true or undefined. False is forbidden.
   """
-  x_kubernetes_preserve_unknown_fields: Boolean @resolveRootField(subgraph: "Kubernetes", field: "x-kubernetes-preserve-unknown-fields")
+  x_kubernetes_preserve_unknown_fields: Boolean
 }
 
 """
@@ -121825,8 +121823,6 @@ directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: St
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
-
 directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
@@ -122345,7 +122341,7 @@ type hit @example(subgraph: "MeiliSearch", value: "{\\"id\\":25684,\\"title\\":\
 Only present if showMatchesPosition = \`true\`. Array of all search query occurrences in all fields.
 """
 type mutation_indexes_documents_search_oneOf_0_hits_items__matchesPosition {
-  _: matchesPosition @resolveRootField(subgraph: "MeiliSearch", field: "")
+  _: matchesPosition
 }
 
 """
@@ -209127,7 +209123,7 @@ Represents unlimited visibility. When access to an entity is not restricted, the
 """
 type UnlimitedVisibility implements Visibility {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209135,7 +209131,7 @@ Represents visibility settings of an entity, for example, an issue or a comment.
 """
 interface Visibility @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["Visibility", "Visibility"], ["UnlimitedVisibility", "UnlimitedVisibility"], ["LimitedVisibility", "LimitedVisibility"]]) {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type Project implements IssueFolder {
@@ -209154,7 +209150,7 @@ type Project implements IssueFolder {
   startingNumber: BigInt
   team: UserGroup
   template: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209163,7 +209159,7 @@ Represents an issue folder, such as a project, a saved search, or a tag.
 interface IssueFolder @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["IssueFolder", "IssueFolder"], ["WatchFolder", "WatchFolder"], ["IssueTag", "IssueTag"], ["Tag", "Tag"], ["SavedQuery", "SavedQuery"], ["Project", "Project"]]) {
   id: String
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 interface User @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["User", "User"], ["VcsUnresolvedUser", "VcsUnresolvedUser"], ["Me", "Me"]]) {
@@ -209179,13 +209175,13 @@ interface User @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["
   savedQueries: [SavedQuery]
   avatarUrl: String
   profiles: UserProfiles
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type Tag {
   id: String
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
   owner: User
   visibleFor: UserGroup
   updateableBy: UserGroup
@@ -209205,7 +209201,7 @@ type UserGroup @discriminator(subgraph: "YouTrack", field: "$type") {
   icon: String
   allUsersGroup: Boolean
   teamForProject: Project
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209218,7 +209214,7 @@ type WatchFolderSharingSettings @discriminator(subgraph: "YouTrack", field: "$ty
   id: String
   permittedGroups: [UserGroup]
   permittedUsers: [User]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type Issue @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -209250,7 +209246,7 @@ type Issue @discriminator(subgraph: "YouTrack", field: "$type") {
   votes: Int
   watchers: IssueWatchers
   wikifiedDescription: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type IssueAttachment @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -209272,7 +209268,7 @@ type IssueAttachment @discriminator(subgraph: "YouTrack", field: "$type") {
   issue: Issue
   comment: IssueComment
   thumbnailURL: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type IssueComment @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -209288,14 +209284,14 @@ type IssueComment @discriminator(subgraph: "YouTrack", field: "$type") {
   textPreview: String
   updated: BigInt
   visibility: Visibility
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type Reaction @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   author: User
   reaction: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 interface IssueCustomField @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["IssueCustomField", "IssueCustomField"], ["PeriodIssueCustomField", "PeriodIssueCustomField"], ["SimpleIssueCustomField", "SimpleIssueCustomField"], ["DateIssueCustomField", "DateIssueCustomField"], ["SingleValueIssueCustomField", "DatabaseSingleValueIssueCustomField"], ["StateIssueCustomField", "StateIssueCustomField"], ["SingleBuildIssueCustomField", "SingleBuildIssueCustomField"], ["SingleUserIssueCustomField", "SingleUserIssueCustomField"], ["SingleGroupIssueCustomField", "SingleGroupIssueCustomField"], ["SingleVersionIssueCustomField", "SingleVersionIssueCustomField"], ["SingleOwnedIssueCustomField", "SingleOwnedIssueCustomField"], ["SingleEnumIssueCustomField", "SingleEnumIssueCustomField"], ["MultiValueIssueCustomField", "DatabaseMultiValueIssueCustomField"], ["MultiBuildIssueCustomField", "MultiBuildIssueCustomField"], ["MultiGroupIssueCustomField", "MultiGroupIssueCustomField"], ["MultiVersionIssueCustomField", "MultiVersionIssueCustomField"], ["MultiOwnedIssueCustomField", "MultiOwnedIssueCustomField"], ["MultiEnumIssueCustomField", "MultiEnumIssueCustomField"], ["MultiUserIssueCustomField", "MultiUserIssueCustomField"], ["StateMachineIssueCustomField", "StateMachineIssueCustomField"], ["TextIssueCustomField", "TextIssueCustomField"]]) {
@@ -209303,7 +209299,7 @@ interface IssueCustomField @discriminator(subgraph: "YouTrack", field: "$type", 
   name: String
   projectCustomField: ProjectCustomField
   value: JSON
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 interface ProjectCustomField @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["ProjectCustomField", "ProjectCustomField"], ["GroupProjectCustomField", "GroupProjectCustomField"], ["BundleProjectCustomField", "BundleProjectCustomField"], ["UserProjectCustomField", "UserProjectCustomField"], ["BuildProjectCustomField", "BuildProjectCustomField"], ["StateProjectCustomField", "StateProjectCustomField"], ["VersionProjectCustomField", "VersionProjectCustomField"], ["OwnedProjectCustomField", "OwnedProjectCustomField"], ["EnumProjectCustomField", "EnumProjectCustomField"], ["SimpleProjectCustomField", "SimpleProjectCustomField"], ["PeriodProjectCustomField", "PeriodProjectCustomField"], ["TextProjectCustomField", "TextProjectCustomField"]]) {
@@ -209316,7 +209312,7 @@ interface ProjectCustomField @discriminator(subgraph: "YouTrack", field: "$type"
   isPublic: Boolean
   hasRunningJob: Boolean
   condition: CustomFieldCondition
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type CustomField @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -209332,12 +209328,12 @@ type CustomField @discriminator(subgraph: "YouTrack", field: "$type") {
   hasRunningJob: Boolean
   isUpdateable: Boolean
   instances: [ProjectCustomField]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type FieldType @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 interface CustomFieldDefaults @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["CustomFieldDefaults", "CustomFieldDefaults"], ["BundleCustomFieldDefaults", "BundleCustomFieldDefaults"], ["UserCustomFieldDefaults", "UserCustomFieldDefaults"], ["BuildBundleCustomFieldDefaults", "BuildBundleCustomFieldDefaults"], ["StateBundleCustomFieldDefaults", "StateBundleCustomFieldDefaults"], ["VersionBundleCustomFieldDefaults", "VersionBundleCustomFieldDefaults"], ["EnumBundleCustomFieldDefaults", "EnumBundleCustomFieldDefaults"], ["OwnedBundleCustomFieldDefaults", "OwnedBundleCustomFieldDefaults"]]) {
@@ -209346,14 +209342,14 @@ interface CustomFieldDefaults @discriminator(subgraph: "YouTrack", field: "$type
   emptyFieldText: String
   isPublic: Boolean
   parent: CustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents the condition for showing a custom field."""
 interface CustomFieldCondition @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["CustomFieldCondition", "CustomFieldCondition"], ["FieldBasedCondition", "FieldBasedCondition"]]) {
   id: String
   parent: ProjectCustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209369,7 +209365,7 @@ type ExternalIssue @discriminator(subgraph: "YouTrack", field: "$type") {
   name: String
   url: String
   key: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type IssueLink @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -209378,7 +209374,7 @@ type IssueLink @discriminator(subgraph: "YouTrack", field: "$type") {
   linkType: IssueLinkType
   issues: [Issue]
   trimmedIssues: [Issue]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 enum query_activities_items_author_tags_items_allOf_0_allOf_0_discriminatorMapping_SavedQuery_allOf_1_issues_items_links_items_direction {
@@ -209398,7 +209394,7 @@ type IssueLinkType @discriminator(subgraph: "YouTrack", field: "$type") {
   directed: Boolean
   aggregation: Boolean
   readOnly: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents users that have voted for the issue or its duplicates."""
@@ -209407,7 +209403,7 @@ type IssueVoters @discriminator(subgraph: "YouTrack", field: "$type") {
   hasVote: Boolean
   original: [User]
   duplicate: [DuplicateVote]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a vote for duplicates of the issue."""
@@ -209415,7 +209411,7 @@ type DuplicateVote @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   issue: Issue
   user: User
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents users that are subscribed to notifications about the issue."""
@@ -209424,7 +209420,7 @@ type IssueWatchers @discriminator(subgraph: "YouTrack", field: "$type") {
   hasStar: Boolean
   issueWatchers: [IssueWatcher]
   duplicateWatchers: [IssueWatcher]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a user who subscribed for notifications about an issue."""
@@ -209433,7 +209429,7 @@ type IssueWatcher @discriminator(subgraph: "YouTrack", field: "$type") {
   user: User
   issue: Issue
   isStarred: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents the style settings of the field in YouTrack."""
@@ -209441,7 +209437,7 @@ type FieldStyle @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   background: String
   foreground: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Stores users and groups that have access to a tag."""
@@ -209449,7 +209445,7 @@ type TagSharingSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   permittedGroups: [UserGroup]
   permittedUsers: [User]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type SavedQuery {
@@ -209461,7 +209457,7 @@ type SavedQuery {
   readSharingSettings: WatchFolderSharingSettings
   updateSharingSettings: WatchFolderSharingSettings
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a group of settings of a user profile in YouTrack."""
@@ -209470,7 +209466,7 @@ type UserProfiles @discriminator(subgraph: "YouTrack", field: "$type") {
   general: GeneralUserProfile
   notifications: NotificationsUserProfile
   timetracking: TimeTrackingUserProfile
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type GeneralUserProfile @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -209478,7 +209474,7 @@ type GeneralUserProfile @discriminator(subgraph: "YouTrack", field: "$type") {
   dateFieldFormat: DateFormatDescriptor
   timezone: TimeZoneDescriptor
   locale: LocaleDescriptor
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents date format."""
@@ -209487,7 +209483,7 @@ type DateFormatDescriptor @discriminator(subgraph: "YouTrack", field: "$type") {
   presentation: String
   pattern: String
   datePattern: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a time zone."""
@@ -209495,7 +209491,7 @@ type TimeZoneDescriptor @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   presentation: String
   offset: Int
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a language locale that is used in UI."""
@@ -209505,7 +209501,7 @@ type LocaleDescriptor @discriminator(subgraph: "YouTrack", field: "$type") {
   language: String
   community: Boolean
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type NotificationsUserProfile @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -209520,13 +209516,13 @@ type NotificationsUserProfile @discriminator(subgraph: "YouTrack", field: "$type
   autoWatchOnCreate: Boolean
   autoWatchOnVote: Boolean
   autoWatchOnUpdate: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type TimeTrackingUserProfile @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   periodFormat: PeriodFieldFormat
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209534,7 +209530,7 @@ Represents the format, in which the period values are displayed to the user.
 """
 type PeriodFieldFormat @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents visibility limited to several users and/or groups."""
@@ -209542,7 +209538,7 @@ type LimitedVisibility implements Visibility {
   id: String
   permittedGroups: [UserGroup]
   permittedUsers: [User]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents custom field default settings for enumerated fields."""
@@ -209552,7 +209548,7 @@ type BundleCustomFieldDefaults implements CustomFieldDefaults {
   emptyFieldText: String
   isPublic: Boolean
   parent: CustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents field value that can be localized."""
@@ -209566,7 +209562,7 @@ type LocalizableBundleElement implements BundleElement {
   ordinal: Int
   color: FieldStyle
   hasRunningJob: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a field value in YouTrack."""
@@ -209579,13 +209575,13 @@ interface BundleElement @discriminator(subgraph: "YouTrack", field: "$type", map
   ordinal: Int
   color: FieldStyle
   hasRunningJob: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 interface Bundle @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["Bundle", "Bundle"], ["BaseBundle", "BaseBundle"], ["StateBundle", "StateBundle"], ["EnumBundle", "EnumBundle"], ["UserBundle", "UserBundle"], ["OwnedBundle", "OwnedBundle"], ["VersionBundle", "VersionBundle"], ["BuildBundle", "BuildBundle"]]) {
   id: String
   isUpdateable: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type OwnedBundleElement implements BundleElement {
@@ -209598,7 +209594,7 @@ type OwnedBundleElement implements BundleElement {
   ordinal: Int
   color: FieldStyle
   hasRunningJob: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type VersionBundleElement implements BundleElement {
@@ -209613,7 +209609,7 @@ type VersionBundleElement implements BundleElement {
   ordinal: Int
   color: FieldStyle
   hasRunningJob: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type BuildBundleElement implements BundleElement {
@@ -209626,7 +209622,7 @@ type BuildBundleElement implements BundleElement {
   ordinal: Int
   color: FieldStyle
   hasRunningJob: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a set of field values in YouTrack."""
@@ -209634,13 +209630,13 @@ type BaseBundle implements Bundle {
   id: String
   values: [BundleElement]
   isUpdateable: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type UserBundle implements Bundle {
   id: String
   isUpdateable: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
   groups: [UserGroup]
   individuals: [User]
   aggregatedUsers: [User]
@@ -209655,7 +209651,7 @@ type UserCustomFieldDefaults implements CustomFieldDefaults {
   emptyFieldText: String
   isPublic: Boolean
   parent: CustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209671,7 +209667,7 @@ type BundleProjectCustomField implements ProjectCustomField {
   isPublic: Boolean
   hasRunningJob: Boolean
   condition: CustomFieldCondition
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents the condition for showing a custom field."""
@@ -209684,7 +209680,7 @@ type FieldBasedCondition implements CustomFieldCondition {
   values: [BundleElement]
   showForNullValue: Boolean
   parent: ProjectCustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents project settings for a group custom field."""
@@ -209699,7 +209695,7 @@ type GroupProjectCustomField implements ProjectCustomField {
   isPublic: Boolean
   hasRunningJob: Boolean
   condition: CustomFieldCondition
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209715,7 +209711,7 @@ type SimpleProjectCustomField implements ProjectCustomField {
   isPublic: Boolean
   hasRunningJob: Boolean
   condition: CustomFieldCondition
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents project settings for the period field."""
@@ -209729,7 +209725,7 @@ type PeriodProjectCustomField implements ProjectCustomField {
   isPublic: Boolean
   hasRunningJob: Boolean
   condition: CustomFieldCondition
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents the period field in the issue."""
@@ -209738,7 +209734,7 @@ type PeriodIssueCustomField implements IssueCustomField {
   value: JSON
   name: String
   projectCustomField: ProjectCustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a simple-type custom field in the issue."""
@@ -209747,7 +209743,7 @@ type SimpleIssueCustomField implements IssueCustomField {
   value: JSON
   name: String
   projectCustomField: ProjectCustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a a single-value custom field in the issue."""
@@ -209756,7 +209752,7 @@ type DatabaseSingleValueIssueCustomField implements IssueCustomField {
   value: JSON
   name: String
   projectCustomField: ProjectCustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a custom field that may have multiple values in the issue."""
@@ -209765,7 +209761,7 @@ type DatabaseMultiValueIssueCustomField implements IssueCustomField {
   value: JSON
   name: String
   projectCustomField: ProjectCustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents the issue custom field of the \`text\` type."""
@@ -209774,7 +209770,7 @@ type TextIssueCustomField implements IssueCustomField {
   value: JSON
   name: String
   projectCustomField: ProjectCustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209783,7 +209779,7 @@ type TextIssueCustomField implements IssueCustomField {
 type WatchFolder implements IssueFolder {
   id: String
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
   owner: User
   visibleFor: UserGroup
   updateableBy: UserGroup
@@ -209808,7 +209804,7 @@ type VcsUnresolvedUser implements User {
   savedQueries: [SavedQuery]
   avatarUrl: String
   profiles: UserProfiles
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type Me implements User {
@@ -209824,7 +209820,7 @@ type Me implements User {
   savedQueries: [SavedQuery]
   avatarUrl: String
   profiles: UserProfiles
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209836,7 +209832,7 @@ type PredefinedFilterField implements FilterField {
   id: String
   presentation: String
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209846,7 +209842,7 @@ interface FilterField @discriminator(subgraph: "YouTrack", field: "$type", mappi
   id: String
   presentation: String
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a custom field of the issue."""
@@ -209855,7 +209851,7 @@ type CustomFilterField implements FilterField {
   customField: CustomField
   presentation: String
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209871,7 +209867,7 @@ type CreatedDeletedActivityItem implements ActivityItem {
   target: JSON
   targetMember: String
   timestamp: BigInt
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 interface ActivityItem @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["ActivityItem", "ActivityItem"], ["VcsChangeActivityItem", "VcsChangeActivityItem"], ["WorkItemActivityItem", "WorkItemActivityItem"], ["WorkItemAuthorActivityItem", "WorkItemAuthorActivityItem"], ["WorkItemDurationActivityItem", "WorkItemDurationActivityItem"], ["WorkItemTypeActivityItem", "WorkItemTypeActivityItem"], ["SprintActivityItem", "SprintActivityItem"], ["CreatedDeletedActivityItem", "CreatedDeletedActivityItem"], ["AttachmentActivityItem", "AttachmentActivityItem"], ["CommentActivityItem", "CommentActivityItem"], ["IssueCreatedActivityItem", "IssueCreatedActivityItem"], ["IssueResolvedActivityItem", "IssueResolvedActivityItem"], ["SingleValueActivityItem", "SingleValueActivityItem"], ["SimpleValueActivityItem", "SimpleValueActivityItem"], ["TextMarkupActivityItem", "TextMarkupActivityItem"], ["UsesMarkupActivityItem", "UsesMarkupActivityItem"], ["ProjectActivityItem", "ProjectActivityItem"], ["MultiValueActivityItem", "MultiValueActivityItem"], ["CommentAttachmentsActivityItem", "CommentAttachmentsActivityItem"], ["LinksActivityItem", "LinksActivityItem"], ["TagsActivityItem", "TagsActivityItem"], ["VotersActivityItem", "VotersActivityItem"], ["VisibilityActivityItem", "VisibilityActivityItem"], ["VisibilityGroupActivityItem", "VisibilityGroupActivityItem"], ["VisibilityUserActivityItem", "VisibilityUserActivityItem"], ["CustomFieldActivityItem", "CustomFieldActivityItem"], ["TextCustomFieldActivityItem", "TextCustomFieldActivityItem"]]) {
@@ -209884,47 +209880,47 @@ interface ActivityItem @discriminator(subgraph: "YouTrack", field: "$type", mapp
   target: JSON
   targetMember: String
   timestamp: BigInt
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type ActivityCategory @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a Jenkins server."""
 type JenkinsServer implements VcsServer {
   id: String
   url: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """The basic entity that represents a VCS or a build server."""
 interface VcsServer @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["VcsServer", "VcsServer"], ["JenkinsServer", "JenkinsServer"], ["VcsHostingServer", "VcsHostingServer"], ["GogsServer", "GogsServer"], ["GiteaServer", "GiteaServer"], ["SpaceServer", "SpaceServer"], ["GitHubServer", "GitHubServer"], ["GitLabServer", "GitLabServer"], ["BitBucketServer", "BitBucketServer"], ["BitbucketStandaloneServer", "BitbucketStandaloneServer"], ["UpsourceServer", "UpsourceServer"], ["TeamcityServer", "TeamcityServer"]]) {
   id: String
   url: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """The basic entity that represents a VCS server."""
 type VcsHostingServer implements VcsServer {
   id: String
   url: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents an Upsource server."""
 type UpsourceServer implements VcsServer {
   id: String
   url: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a TeamCity server."""
 type TeamcityServer implements VcsServer {
   id: String
   url: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209942,7 +209938,7 @@ type VcsHostingChangesProcessor implements ChangesProcessor {
   visibleForGroups: [UserGroup]
   addComments: Boolean
   lookupIssuesInBranchName: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -209957,7 +209953,7 @@ interface ChangesProcessor @discriminator(subgraph: "YouTrack", field: "$type", 
   visibleForGroups: [UserGroup]
   addComments: Boolean
   lookupIssuesInBranchName: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a TeamCity integration configured for a project."""
@@ -209970,7 +209966,7 @@ type TeamcityChangesProcessor implements ChangesProcessor {
   visibleForGroups: [UserGroup]
   addComments: Boolean
   lookupIssuesInBranchName: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a Jenkins integration configured for a project."""
@@ -209983,7 +209979,7 @@ type JenkinsChangesProcessor implements ChangesProcessor {
   visibleForGroups: [UserGroup]
   addComments: Boolean
   lookupIssuesInBranchName: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents an Upsource integration configured for a project."""
@@ -209996,12 +209992,12 @@ type UpsourceChangesProcessor implements ChangesProcessor {
   visibleForGroups: [UserGroup]
   addComments: Boolean
   lookupIssuesInBranchName: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type IssueWorkItem implements BaseWorkItem {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
   author: User
   creator: User
   text: String
@@ -210018,14 +210014,14 @@ type IssueWorkItem implements BaseWorkItem {
 """Represents a basic ancestor for work items."""
 interface BaseWorkItem @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["BaseWorkItem", "BaseWorkItem"], ["IssueWorkItem", "IssueWorkItem"]]) {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type WorkItemType @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   name: String
   autoAttached: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents the duration value and its visual presentation."""
@@ -210033,7 +210029,7 @@ type DurationValue @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   minutes: Int
   presentation: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents the attribute of a specific work item."""
@@ -210043,7 +210039,7 @@ type WorkItemAttribute @discriminator(subgraph: "YouTrack", field: "$type") {
   projectAttribute: WorkItemProjectAttribute
   value: WorkItemAttributeValue
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents the project-related settings of a work item attribute."""
@@ -210054,7 +210050,7 @@ type WorkItemProjectAttribute @discriminator(subgraph: "YouTrack", field: "$type
   values: [WorkItemAttributeValue]
   name: String
   ordinal: Int
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type ProjectTimeTrackingSettings @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210065,7 +210061,7 @@ type ProjectTimeTrackingSettings @discriminator(subgraph: "YouTrack", field: "$t
   workItemTypes: [WorkItemType]
   project: Project
   attributes: [WorkItemProjectAttribute]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -210076,7 +210072,7 @@ type WorkItemAttributePrototype @discriminator(subgraph: "YouTrack", field: "$ty
   name: String
   instances: [WorkItemProjectAttribute]
   values: [WorkItemAttributeValue]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a value of a work item attribute."""
@@ -210089,7 +210085,7 @@ type WorkItemAttributeValue @discriminator(subgraph: "YouTrack", field: "$type")
   Represents a work item attribute prototype that is common for all projects. The project-related settings for work item attributes are stored in the \`WorkItemProjectAttribute\` entities.
   """
   prototype: WorkItemAttributePrototype
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Describe change of properties that can have single value."""
@@ -210103,7 +210099,7 @@ type SingleValueActivityItem implements ActivityItem {
   target: JSON
   targetMember: String
   timestamp: BigInt
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -210119,7 +210115,7 @@ type MultiValueActivityItem implements ActivityItem {
   target: JSON
   targetMember: String
   timestamp: BigInt
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -210129,19 +210125,19 @@ type SwimlaneEntityAttributeValue implements DatabaseAttributeValue {
   id: String
   name: String
   isResolved: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents string reference to the value."""
 interface DatabaseAttributeValue @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["DatabaseAttributeValue", "DatabaseAttributeValue"], ["SwimlaneEntityAttributeValue", "SwimlaneEntityAttributeValue"], ["AgileColumnFieldValue", "AgileColumnFieldValue"]]) {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents a field value or values, parameterizing agile column."""
 type AgileColumnFieldValue implements DatabaseAttributeValue {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
   name: String
   isResolved: Boolean
 }
@@ -210151,14 +210147,14 @@ type AttributeBasedSwimlaneSettings implements SwimlaneSettings {
   field: FilterField
   values: [SwimlaneEntityAttributeValue]
   enabled: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Base entity for different swimlane settings"""
 interface SwimlaneSettings @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["SwimlaneSettings", "SwimlaneSettings"], ["AttributeBasedSwimlaneSettings", "AttributeBasedSwimlaneSettings"], ["IssueBasedSwimlaneSettings", "IssueBasedSwimlaneSettings"]]) {
   id: String
   enabled: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -210170,21 +210166,21 @@ type IssueBasedSwimlaneSettings implements SwimlaneSettings {
   defaultCardType: SwimlaneValue
   values: [SwimlaneValue]
   enabled: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents single swimlane in case of IssueBasedSwimlaneSettings."""
 type SwimlaneValue @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Sets a card color based on a value of some custom field."""
 type FieldBasedColorCoding implements ColorCoding {
   id: String
   prototype: CustomField
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -210192,14 +210188,14 @@ Describes rules that define which colors are used for cards on the agile board.
 """
 interface ColorCoding @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["ColorCoding", "ColorCoding"], ["FieldBasedColorCoding", "FieldBasedColorCoding"], ["ProjectBasedColorCoding", "ProjectBasedColorCoding"]]) {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Lets you set a color for a card based on its project."""
 type ProjectBasedColorCoding implements ColorCoding {
   id: String
   projectColors: [ProjectColor]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents color setting for one project on the board."""
@@ -210207,7 +210203,7 @@ type ProjectColor @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   project: Project
   color: FieldStyle
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents an activity that affects a custom field of an issue."""
@@ -210221,7 +210217,7 @@ type CustomFieldActivityItem implements ActivityItem {
   field: FilterField
   targetMember: String
   timestamp: BigInt
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type Article implements BaseArticle {
@@ -210231,7 +210227,7 @@ type Article implements BaseArticle {
   reporter: User
   summary: String
   visibility: Visibility
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
   childArticles: [Article]
   comments: [ArticleComment]
   created: BigInt
@@ -210256,7 +210252,7 @@ interface BaseArticle @discriminator(subgraph: "YouTrack", field: "$type", mappi
   reporter: User
   summary: String
   visibility: Visibility
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type ArticleAttachment @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210278,7 +210274,7 @@ type ArticleAttachment @discriminator(subgraph: "YouTrack", field: "$type") {
   """Represents a base article entity."""
   article: BaseArticle
   comment: ArticleComment
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type ArticleComment @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210292,7 +210288,7 @@ type ArticleComment @discriminator(subgraph: "YouTrack", field: "$type") {
   text: String
   updated: BigInt
   visibility: Visibility
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -210303,13 +210299,13 @@ type ExternalArticle @discriminator(subgraph: "YouTrack", field: "$type") {
   name: String
   url: String
   key: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Comment is visible for all the users who can read the issue."""
 type CommandUnlimitedVisibility implements CommandVisibility {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -210317,7 +210313,7 @@ Visibility settings of the comment that is added along with the command.
 """
 interface CommandVisibility @discriminator(subgraph: "YouTrack", field: "$type", mapping: [["CommandVisibility", "CommandVisibility"], ["CommandUnlimitedVisibility", "CommandUnlimitedVisibility"], ["CommandLimitedVisibility", "CommandLimitedVisibility"]]) {
   id: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Stores the restricted visibility settings for the command."""
@@ -210325,7 +210321,7 @@ type CommandLimitedVisibility implements CommandVisibility {
   id: String
   permittedGroups: [UserGroup]
   permittedUsers: [User]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type Query {
@@ -210669,21 +210665,21 @@ type ActivityCursorPage @discriminator(subgraph: "YouTrack", field: "$type") {
   hasAfter: Boolean
   hasBefore: Boolean
   reverse: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type BuildBundle {
   id: String
   values: [BuildBundleElement]
   isUpdateable: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type EnumBundle {
   id: String
   values: [EnumBundleElement]
   isUpdateable: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type EnumBundleElement {
@@ -210696,21 +210692,21 @@ type EnumBundleElement {
   ordinal: Int
   color: FieldStyle
   hasRunningJob: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type OwnedBundle {
   id: String
   values: [OwnedBundleElement]
   isUpdateable: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type StateBundle {
   id: String
   values: [StateBundleElement]
   isUpdateable: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type StateBundleElement {
@@ -210724,14 +210720,14 @@ type StateBundleElement {
   ordinal: Int
   color: FieldStyle
   hasRunningJob: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type VersionBundle {
   id: String
   values: [VersionBundleElement]
   isUpdateable: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type BackupFile @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210740,7 +210736,7 @@ type BackupFile @discriminator(subgraph: "YouTrack", field: "$type") {
   size: BigInt
   creationDate: BigInt
   link: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type DatabaseBackupSettings @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210753,7 +210749,7 @@ type DatabaseBackupSettings @discriminator(subgraph: "YouTrack", field: "$type")
   availableDiskSpace: BigInt
   notifiedUsers: [User]
   backupStatus: BackupStatus
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 enum query_admin_databaseBackup_settings_archiveFormat {
@@ -210766,7 +210762,7 @@ type BackupStatus @discriminator(subgraph: "YouTrack", field: "$type") {
   backupInProgress: Boolean
   backupCancelled: Boolean
   backupError: BackupError
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents an error that appeared during the backup."""
@@ -210774,7 +210770,7 @@ type BackupError @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   date: BigInt
   errorMessage: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type GlobalSettings @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210785,7 +210781,7 @@ type GlobalSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   appearanceSettings: AppearanceSettings
   localeSettings: LocaleSettings
   license: License
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type SystemSettings @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210796,13 +210792,13 @@ type SystemSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   administratorEmail: String
   allowStatisticsCollection: Boolean
   isApplicationReadOnly: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type NotificationSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   emailSettings: EmailSettings
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents email settings for this YouTrack installation."""
@@ -210817,7 +210813,7 @@ type EmailSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   sslKey: StorageEntry
   from: String
   replyTo: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 enum query_admin_globalSettings_notificationSettings_emailSettings_mailProtocol {
@@ -210830,14 +210826,14 @@ enum query_admin_globalSettings_notificationSettings_emailSettings_mailProtocol 
 type StorageEntry @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   name: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type RestCorsSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   allowedOrigins: [String]
   allowAllOrigins: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type AppearanceSettings @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210845,21 +210841,21 @@ type AppearanceSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   timeZone: TimeZoneDescriptor
   dateFieldFormat: DateFormatDescriptor
   logo: Logo
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Company logo that is used in YouTrack."""
 type Logo @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   url: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type LocaleSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   locale: LocaleDescriptor
   isRTL: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type License @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210867,7 +210863,7 @@ type License @discriminator(subgraph: "YouTrack", field: "$type") {
   username: String
   license: String
   error: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type Telemetry @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210895,14 +210891,14 @@ type Telemetry @discriminator(subgraph: "YouTrack", field: "$type") {
   onlineUsers: OnlineUsers
   reportCalculatorThreads: Int
   notificationAnalyzerThreads: Int
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Stores number of online user."""
 type OnlineUsers @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   users: Int
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type GlobalTimeTrackingSettings @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210910,7 +210906,7 @@ type GlobalTimeTrackingSettings @discriminator(subgraph: "YouTrack", field: "$ty
   workItemTypes: [WorkItemType]
   workTimeSettings: WorkTimeSettings
   attributePrototypes: [WorkItemAttributePrototype]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type WorkTimeSettings @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210919,7 +210915,7 @@ type WorkTimeSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   workDays: [Int]
   firstDayOfWeek: Int
   daysAWeek: Int
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type Agile @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210944,7 +210940,7 @@ type Agile @discriminator(subgraph: "YouTrack", field: "$type") {
   sprintsSettings: SprintsSettings
   colorCoding: ColorCoding
   status: AgileStatus
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Stores users and groups that have access to an agile board."""
@@ -210952,7 +210948,7 @@ type AgileSharingSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   permittedGroups: [UserGroup]
   permittedUsers: [User]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type Sprint @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -210967,7 +210963,7 @@ type Sprint @discriminator(subgraph: "YouTrack", field: "$type") {
   issues: [Issue]
   unresolvedIssuesCount: Int
   previousSprint: Sprint
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Agile board columns settings."""
@@ -210975,7 +210971,7 @@ type ColumnSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   field: CustomField
   columns: [AgileColumn]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents settings for a single board column"""
@@ -210988,7 +210984,7 @@ type AgileColumn @discriminator(subgraph: "YouTrack", field: "$type") {
   parent: ColumnSettings
   wipLimit: WIPLimit
   fieldValues: [AgileColumnFieldValue]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """
@@ -211000,7 +210996,7 @@ type WIPLimit @discriminator(subgraph: "YouTrack", field: "$type") {
   min: Int
   """Represents settings for a single board column"""
   column: AgileColumn
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Describes sprints configuration."""
@@ -211013,7 +211009,7 @@ type SprintsSettings @discriminator(subgraph: "YouTrack", field: "$type") {
   explicitQuery: String
   sprintSyncField: CustomField
   hideSubtasksOfCards: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Shows if the board has any configuration problems."""
@@ -211023,14 +211019,14 @@ type AgileStatus @discriminator(subgraph: "YouTrack", field: "$type") {
   hasJobs: Boolean
   errors: [String]
   warnings: [String]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type IssueTimeTracker @discriminator(subgraph: "YouTrack", field: "$type") {
   id: String
   workItems: [IssueWorkItem]
   enabled: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 type VcsChange @discriminator(subgraph: "YouTrack", field: "$type") {
@@ -211045,7 +211041,7 @@ type VcsChange @discriminator(subgraph: "YouTrack", field: "$type") {
   version: String
   issue: Issue
   state: Int
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents date values"""
@@ -212241,7 +212237,7 @@ type CommandList @discriminator(subgraph: "YouTrack", field: "$type") {
   commands: [ParsedCommand]
   issues: [Issue]
   suggestions: [Suggestion]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents the command that was parsed from the provided query."""
@@ -212250,7 +212246,7 @@ type ParsedCommand @discriminator(subgraph: "YouTrack", field: "$type") {
   description: String
   error: Boolean
   delete: Boolean
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 """Represents query suggestion."""
@@ -212269,7 +212265,7 @@ type Suggestion @discriminator(subgraph: "YouTrack", field: "$type") {
   icon: String
   auxiliaryIcon: String
   className: String
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 input CommandList_Input {
@@ -212412,7 +212408,7 @@ type IssueCountResponse @discriminator(subgraph: "YouTrack", field: "$type") {
   unresolvedOnly: Boolean
   query: String
   folder: IssueFolder
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 input IssueCountResponse_Input {
@@ -212440,7 +212436,7 @@ type SearchSuggestions @discriminator(subgraph: "YouTrack", field: "$type") {
   query: String
   suggestions: [Suggestion]
   folders: [IssueFolder]
-  _DOLLAR_type: String @resolveRootField(subgraph: "YouTrack", field: "$type")
+  _DOLLAR_type: String
 }
 
 input SearchSuggestions_Input {

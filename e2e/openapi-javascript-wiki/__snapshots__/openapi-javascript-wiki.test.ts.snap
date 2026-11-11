@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@resolveRootField", "@enum", "@transport"]) @source(name: "Wiki", http: {baseURL: "https://wikimedia.org/api/rest_v1", headers: [{name: "user-agent", value: "my-app/1.0.0"}]}) @transport(subgraph: "Wiki", kind: "rest", location: "https://wikimedia.org/api/rest_v1") {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@enum", "@transport"]) @transport(subgraph: "Wiki", kind: "rest", location: "https://wikimedia.org/api/rest_v1") @join__directive(graphs: [WIKI], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [WIKI], name: "source", args: {name: "Wiki", http: {baseURL: "https://wikimedia.org/api/rest_v1", headers: [{name: "user-agent", value: "my-app/1.0.0"}]}}) {
   query: Query
   mutation: Mutation
 }
@@ -20,15 +20,11 @@ directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on
 
 directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-directive @resolveRootField(subgraph: String, field: String) repeatable on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
-
 directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
-directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
 directive @additionalField on FIELD_DEFINITION
 
@@ -70,7 +66,7 @@ type Query @join__type(graph: WIKI) {
   
   Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
   """
-  feed_availability: availability @connect(source: "Wiki", http: {GET: "/feed/availability", headers: [{name: "Accept", value: "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"}]}, selection: "in_the_news\\nmost_read\\non_this_day\\npicture_of_the_day\\ntodays_featured_article")
+  feed_availability: availability @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/feed/availability", headers: [{name: "Accept", value: "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"}]}, selection: "in_the_news\\nmost_read\\non_this_day\\npicture_of_the_day\\ntodays_featured_article"})
   """
   Returns the previously-stored formula via \`/media/math/check/{type}\` for
   the given hash.
@@ -80,7 +76,7 @@ type Query @join__type(graph: WIKI) {
   media_math_formula_by_hash(
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): JSON @connect(source: "Wiki", http: {GET: "/media/math/formula/{$args.hash}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$")
+  ): JSON @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/media/math/formula/{$args.hash}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$"})
   """
   Given a request hash, renders a TeX formula into its mathematic
   representation in the given format. When a request is issued to the
@@ -94,7 +90,7 @@ type Query @join__type(graph: WIKI) {
     format: queryInput_media_math_render_by_format_by_hash_format!
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): JSON @connect(source: "Wiki", http: {GET: "/media/math/render/{$args.format}/{$args.hash}", headers: [{name: "Accept", value: "image/svg+xml, application/mathml+xml, image/png, application/problem+json"}]}, selection: "$")
+  ): JSON @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/media/math/render/{$args.format}/{$args.hash}", headers: [{name: "Accept", value: "image/svg+xml, application/mathml+xml, image/png, application/problem+json"}]}, selection: "$"})
   """
   Given a Mediawiki project and a date range, returns a timeseries of absolute bytes
   difference sums. You can filter by editors-type (all-editor-types, anonymous, group-bot,
@@ -123,7 +119,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): absolute_bytes_difference @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    abs_bytes_diff\\n    timestamp\\n  }\\n}")
+  ): absolute_bytes_difference @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    abs_bytes_diff\\n    timestamp\\n  }\\n}"})
   """
   Given a Mediawiki project, a page-title prefixed with canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
@@ -155,7 +151,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): absolute_bytes_difference_per_page @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/per-page/{$args.project}/{$args.page_title}/{$args.editor_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_title: \\"page-title\\"\\n  project\\n  results {\\n    abs_bytes_diff\\n    timestamp\\n  }\\n}")
+  ): absolute_bytes_difference_per_page @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/per-page/{$args.project}/{$args.page_title}/{$args.editor_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_title: \\"page-title\\"\\n  project\\n  results {\\n    abs_bytes_diff\\n    timestamp\\n  }\\n}"})
   """
   Given a Mediawiki project and a date range, returns a timeseries of bytes difference net
   sums. You can filter by editors-type (all-editor-types, anonymous, group-bot, name-bot,
@@ -184,7 +180,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): net_bytes_difference @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/net/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    net_bytes_diff\\n    timestamp\\n  }\\n}")
+  ): net_bytes_difference @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/bytes-difference/net/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    net_bytes_diff\\n    timestamp\\n  }\\n}"})
   """
   Given a Mediawiki project, a page-title prefixed with canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
@@ -216,7 +212,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): net_bytes_difference_per_page @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/net/per-page/{$args.project}/{$args.page_title}/{$args.editor_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_title: \\"page-title\\"\\n  project\\n  results {\\n    net_bytes_diff\\n    timestamp\\n  }\\n}")
+  ): net_bytes_difference_per_page @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/bytes-difference/net/per-page/{$args.project}/{$args.page_title}/{$args.editor_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_title: \\"page-title\\"\\n  project\\n  results {\\n    net_bytes_diff\\n    timestamp\\n  }\\n}"})
   """
   Given a Mediawiki project and a date range, returns a timeseries of its edited-pages counts.
   You can filter by editor-type (all-editor-types, anonymous, group-bot, name-bot, user),
@@ -246,7 +242,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): edited_pages @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.activity_level}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  activity_level: \\"activity-level\\"\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    edited_pages\\n    timestamp\\n  }\\n}")
+  ): edited_pages @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/edited-pages/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.activity_level}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  activity_level: \\"activity-level\\"\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    edited_pages\\n    timestamp\\n  }\\n}"})
   """
   Given a Mediawiki project and a date range, returns a timeseries of its new pages counts.
   You can filter by editor type (all-editor-types, anonymous, group-bot, name-bot, user)
@@ -275,7 +271,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): new_pages @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/new/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    new_pages\\n    timestamp\\n  }\\n}")
+  ): new_pages @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/edited-pages/new/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    new_pages\\n    timestamp\\n  }\\n}"})
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   edited-pages by absolute bytes-difference. You can filter by editor-type (all-editor-types,
@@ -309,7 +305,7 @@ type Query @join__type(graph: WIKI) {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_edited_pages_by_abs_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
+  ): top_edited_pages_by_abs_bytes_diff @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}"})
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
   100 edited-pages by edits count. You can filter by editor-type (all-editor-types,
@@ -344,7 +340,7 @@ type Query @join__type(graph: WIKI) {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_edited_pages_by_edits @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-edits/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
+  ): top_edited_pages_by_edits @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-edits/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}"})
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   edited-pages by net bytes-difference. You can filter by editor-type (all-editor-types,
@@ -378,7 +374,7 @@ type Query @join__type(graph: WIKI) {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_edited_pages_by_net_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-net-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
+  ): top_edited_pages_by_net_bytes_diff @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-net-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}"})
   """
   Given a Mediawiki project and a date range, returns a timeseries of its editors counts.
   You can filter by editory-type (all-editor-types, anonymous, group-bot, name-bot, user),
@@ -408,7 +404,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): editors @connect(source: "Wiki", http: {GET: "/metrics/editors/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.activity_level}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  activity_level: \\"activity-level\\"\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    editors\\n    timestamp\\n  }\\n}")
+  ): editors @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/editors/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.activity_level}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  activity_level: \\"activity-level\\"\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    editors\\n    timestamp\\n  }\\n}"})
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   editors by absolute bytes-difference. You can filter by editor-type (all-editor-types,
@@ -444,7 +440,7 @@ type Query @join__type(graph: WIKI) {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_editors_by_abs_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
+  ): top_editors_by_abs_bytes_diff @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/editors/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}"})
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
   100 editors by edits count. You can filter by editor-type (all-editor-types,
@@ -480,7 +476,7 @@ type Query @join__type(graph: WIKI) {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_editors_by_edits @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-edits/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
+  ): top_editors_by_edits @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/editors/top-by-edits/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}"})
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   editors by net bytes-difference. You can filter by editor-type (all-editor-types, anonymous,
@@ -516,7 +512,7 @@ type Query @join__type(graph: WIKI) {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_editors_by_net_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-net-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
+  ): top_editors_by_net_bytes_diff @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/editors/top-by-net-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}"})
   """
   Given a Mediawiki project and a date range, returns a timeseries of edits counts.
   You can filter by editors-type (all-editor-types, anonymous, bot, registered) and
@@ -545,7 +541,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): edits @connect(source: "Wiki", http: {GET: "/metrics/edits/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    edits\\n    timestamp\\n  }\\n}")
+  ): edits @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/edits/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    edits\\n    timestamp\\n  }\\n}"})
   """
   Given a Mediawiki project, a page-title prefixed with its canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of edit counts.
@@ -577,7 +573,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): edits_per_page @connect(source: "Wiki", http: {GET: "/metrics/edits/per-page/{$args.project}/{$args.page_title}/{$args.editor_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_title: \\"page-title\\"\\n  project\\n  results {\\n    edits\\n    timestamp\\n  }\\n}")
+  ): edits_per_page @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/edits/per-page/{$args.project}/{$args.page_title}/{$args.editor_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_title: \\"page-title\\"\\n  project\\n  results {\\n    edits\\n    timestamp\\n  }\\n}"})
   """
   Given a project and a date range, returns a timeseries of pagecounts.
   You can filter by access site (mobile or desktop) and you can choose between monthly,
@@ -607,7 +603,7 @@ type Query @join__type(graph: WIKI) {
     this value is exclusive.
     """
     end: String!
-  ): pagecounts_project @connect(source: "Wiki", http: {GET: "/metrics/legacy/pagecounts/aggregate/{$args.project}/{$args.access_site}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access_site: \\"access-site\\"\\n  count\\n  granularity\\n  project\\n  timestamp\\n}")
+  ): pagecounts_project @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/legacy/pagecounts/aggregate/{$args.project}/{$args.access_site}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access_site: \\"access-site\\"\\n  count\\n  granularity\\n  project\\n  timestamp\\n}"})
   """
   Given a date range, returns a timeseries of pageview counts. You can filter by project,
   access method and/or agent type. You can choose between daily and hourly granularity
@@ -636,7 +632,7 @@ type Query @join__type(graph: WIKI) {
     The timestamp of the last hour/day/month to include, in YYYYMMDDHH format
     """
     end: String!
-  ): pageview_project @connect(source: "Wiki", http: {GET: "/metrics/pageviews/aggregate/{$args.project}/{$args.access}/{$args.agent}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access\\n  agent\\n  granularity\\n  project\\n  timestamp\\n  views\\n}")
+  ): pageview_project @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/pageviews/aggregate/{$args.project}/{$args.access}/{$args.agent}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access\\n  agent\\n  granularity\\n  project\\n  timestamp\\n  views\\n}"})
   """
   Given a Mediawiki article and a date range, returns a daily timeseries of its pageview
   counts. You can also filter by access method and/or agent type.
@@ -665,7 +661,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD or YYYYMMDDHH format"""
     end: String!
-  ): pageview_article @connect(source: "Wiki", http: {GET: "/metrics/pageviews/per-article/{$args.project}/{$args.access}/{$args.agent}/{$args.article}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access\\n  agent\\n  article\\n  granularity\\n  project\\n  timestamp\\n  views\\n}")
+  ): pageview_article @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/pageviews/per-article/{$args.project}/{$args.access}/{$args.agent}/{$args.article}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access\\n  agent\\n  article\\n  granularity\\n  project\\n  timestamp\\n  views\\n}"})
   """
   Lists the pageviews to this project, split by country of origin for a given month.
   Because of privacy reasons, pageviews are given in a bucketed format, and countries
@@ -690,7 +686,7 @@ type Query @join__type(graph: WIKI) {
     The month of the date for which to retrieve top countries, in MM format.
     """
     month: String!
-  ): by_country @connect(source: "Wiki", http: {GET: "/metrics/pageviews/top-by-country/{$args.project}/{$args.access}/{$args.year}/{$args.month}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access\\n  countries {\\n    country\\n    rank\\n    views\\n  }\\n  month\\n  project\\n  year\\n}")
+  ): by_country @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/pageviews/top-by-country/{$args.project}/{$args.access}/{$args.year}/{$args.month}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access\\n  countries {\\n    country\\n    rank\\n    views\\n  }\\n  month\\n  project\\n  year\\n}"})
   """
   Lists the 1000 most viewed articles for a given project and timespan (month or day).
   You can filter by access method.
@@ -718,7 +714,7 @@ type Query @join__type(graph: WIKI) {
     month: String!
     """The day of the date for which to retrieve top articles, in DD format."""
     day: String!
-  ): pageview_tops @connect(source: "Wiki", http: {GET: "/metrics/pageviews/top/{$args.project}/{$args.access}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access\\n  articles {\\n    article\\n    rank\\n    views\\n  }\\n  day\\n  month\\n  project\\n  year\\n}")
+  ): pageview_tops @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/pageviews/top/{$args.project}/{$args.access}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access\\n  articles {\\n    article\\n    rank\\n    views\\n  }\\n  day\\n  month\\n  project\\n  year\\n}"})
   """
   Given a Mediawiki project and a date range, returns a timeseries of its newly registered
   users counts. You can choose between daily and monthly granularity. The newly registered
@@ -744,7 +740,7 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): new_registered_users @connect(source: "Wiki", http: {GET: "/metrics/registered-users/new/{$args.project}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  granularity\\n  project\\n  results {\\n    new_registered_users\\n    timestamp\\n  }\\n}")
+  ): new_registered_users @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/registered-users/new/{$args.project}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  granularity\\n  project\\n  results {\\n    new_registered_users\\n    timestamp\\n  }\\n}"})
   """
   Given a project and a date range, returns a timeseries of unique devices counts.
   You need to specify a project, and can filter by accessed site (mobile or desktop).
@@ -767,13 +763,13 @@ type Query @join__type(graph: WIKI) {
     start: String!
     """The timestamp of the last day/month to include, in YYYYMMDD format"""
     end: String!
-  ): unique_devices @connect(source: "Wiki", http: {GET: "/metrics/unique-devices/{$args.project}/{$args.access_site}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access_site: \\"access-site\\"\\n  devices\\n  granularity\\n  project\\n  timestamp\\n}")
+  ): unique_devices @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/metrics/unique-devices/{$args.project}/{$args.access_site}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  access_site: \\"access-site\\"\\n  devices\\n  granularity\\n  project\\n  timestamp\\n}"})
   """
   Fetches the list of language pairs the back-end service can translate
   
   Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
   """
-  transform_list_languagepairs: cx_languagepairs @connect(source: "Wiki", http: {GET: "/transform/list/languagepairs/", headers: [{name: "Accept", value: "application/json"}]}, selection: "source\\ntarget")
+  transform_list_languagepairs: cx_languagepairs @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/transform/list/languagepairs/", headers: [{name: "Accept", value: "application/json"}]}, selection: "source\\ntarget"})
   """
   Fetches the list of tools that are available for the given pair of languages.
   
@@ -784,13 +780,13 @@ type Query @join__type(graph: WIKI) {
     from: String!
     """The target language code"""
     to: String!
-  ): cx_list_tools @connect(source: "Wiki", http: {GET: "/transform/list/pair/{$args.from}/{$args.to}/", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "tools")
+  ): cx_list_tools @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/transform/list/pair/{$args.from}/{$args.to}/", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "tools"})
   """
   Fetches the list of tools and all of the language pairs it can translate
   
   Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
   """
-  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): JSON @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$")
+  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): JSON @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$"})
   """
   Fetches the list of tools and all of the language pairs it can translate
   
@@ -800,7 +796,7 @@ type Query @join__type(graph: WIKI) {
     tool: queryInput_transform_list_tool_by_tool_by_from_tool!
     """The source language code"""
     from: String!
-  ): JSON @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$")
+  ): JSON @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$"})
   """
   Fetches the list of tools and all of the language pairs it can translate
   
@@ -812,7 +808,7 @@ type Query @join__type(graph: WIKI) {
     from: String!
     """The target language code"""
     to: String!
-  ): JSON @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}/{$args.to}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$")
+  ): JSON @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}/{$args.to}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$"})
   """
   Fetches the dictionary meaning of a word from a language and displays
   it in the target language.
@@ -826,7 +822,7 @@ type Query @join__type(graph: WIKI) {
     to_lang: String!
     """The word to lookup"""
     word: String!
-  ): cx_dict @connect(source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "source\\ntranslations {\\n  info\\n  phrase\\n  sources\\n}")
+  ): cx_dict @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "source\\ntranslations {\\n  info\\n  phrase\\n  sources\\n}"})
   """
   Fetches the dictionary meaning of a word from a language and displays
   it in the target language.
@@ -841,7 +837,7 @@ type Query @join__type(graph: WIKI) {
     """The word to lookup"""
     word: String!
     provider: queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider!
-  ): cx_dict @connect(source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}/{$args.provider}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "source\\ntranslations {\\n  info\\n  phrase\\n  sources\\n}")
+  ): cx_dict @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}/{$args.provider}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "source\\ntranslations {\\n  info\\n  phrase\\n  sources\\n}"})
   viewsInPastMonth(project: String!): BigInt! @additionalField
 }
 
@@ -873,9 +869,9 @@ type absolute_bytes_difference @join__type(graph: WIKI) {
 }
 
 type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items]
 }
@@ -890,9 +886,9 @@ type absolute_bytes_difference_per_page @join__type(graph: WIKI) {
 }
 
 type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_title: String @resolveRootField(subgraph: "Wiki", field: "page-title")
+  page_title: String
   project: String
   results: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items_results_items]
 }
@@ -907,9 +903,9 @@ type net_bytes_difference @join__type(graph: WIKI) {
 }
 
 type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items]
 }
@@ -924,9 +920,9 @@ type net_bytes_difference_per_page @join__type(graph: WIKI) {
 }
 
 type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_title: String @resolveRootField(subgraph: "Wiki", field: "page-title")
+  page_title: String
   project: String
   results: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items_results_items]
 }
@@ -941,10 +937,10 @@ type edited_pages @join__type(graph: WIKI) {
 }
 
 type query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  activity_level: String @resolveRootField(subgraph: "Wiki", field: "activity-level")
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  activity_level: String
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items_results_items]
 }
@@ -959,9 +955,9 @@ type new_pages @join__type(graph: WIKI) {
 }
 
 type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items]
 }
@@ -976,9 +972,9 @@ type top_edited_pages_by_abs_bytes_diff @join__type(graph: WIKI) {
 }
 
 type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items]
 }
@@ -999,9 +995,9 @@ type top_edited_pages_by_edits @join__type(graph: WIKI) {
 }
 
 type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items]
 }
@@ -1022,9 +1018,9 @@ type top_edited_pages_by_net_bytes_diff @join__type(graph: WIKI) {
 }
 
 type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items]
 }
@@ -1045,10 +1041,10 @@ type editors @join__type(graph: WIKI) {
 }
 
 type query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  activity_level: String @resolveRootField(subgraph: "Wiki", field: "activity-level")
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  activity_level: String
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_items_items_results_items]
 }
@@ -1063,9 +1059,9 @@ type top_editors_by_abs_bytes_diff @join__type(graph: WIKI) {
 }
 
 type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items]
 }
@@ -1086,9 +1082,9 @@ type top_editors_by_edits @join__type(graph: WIKI) {
 }
 
 type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items]
 }
@@ -1109,9 +1105,9 @@ type top_editors_by_net_bytes_diff @join__type(graph: WIKI) {
 }
 
 type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_items_items_results_items]
 }
@@ -1132,9 +1128,9 @@ type edits @join__type(graph: WIKI) {
 }
 
 type query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_items_items_results_items]
 }
@@ -1149,9 +1145,9 @@ type edits_per_page @join__type(graph: WIKI) {
 }
 
 type query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_title: String @resolveRootField(subgraph: "Wiki", field: "page-title")
+  page_title: String
   project: String
   results: [query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_items_items_results_items]
 }
@@ -1166,7 +1162,7 @@ type pagecounts_project @join__type(graph: WIKI) {
 }
 
 type query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  access_site: String @resolveRootField(subgraph: "Wiki", field: "access-site")
+  access_site: String
   count: BigInt
   granularity: String
   project: String
@@ -1257,7 +1253,7 @@ type unique_devices @join__type(graph: WIKI) {
 }
 
 type query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_items_items @join__type(graph: WIKI) {
-  access_site: String @resolveRootField(subgraph: "Wiki", field: "access-site")
+  access_site: String
   devices: BigInt
   granularity: String
   project: String
@@ -1304,7 +1300,7 @@ type Mutation @join__type(graph: WIKI) {
   
   Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
   """
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): JSON @connect(source: "Wiki", http: {POST: "/media/math/check/{$args.type}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$")
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): JSON @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {POST: "/media/math/check/{$args.type}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "$"})
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -1317,7 +1313,7 @@ type Mutation @join__type(graph: WIKI) {
     """The target language code"""
     to_lang: String!
     html: JSON!
-  ): cx_mt @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "contents")
+  ): cx_mt @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "contents"})
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -1331,7 +1327,7 @@ type Mutation @join__type(graph: WIKI) {
     to_lang: String!
     provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
     html: JSON!
-  ): cx_mt @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}/{$args.provider}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "contents")
+  ): cx_mt @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}/{$args.provider}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "contents"})
 }
 
 type cx_mt @join__type(graph: WIKI) {
@@ -1975,38 +1971,9 @@ enum mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provid
   Youdao @join__enumValue(graph: WIKI)
 }
 
-input ConnectHTTP @join__type(graph: WIKI) {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping @join__type(graph: WIKI) {
-  name: String!
-  value: String
-  from: String
-}
-
-input ConnectorErrors @join__type(graph: WIKI) {
-  message: String
-  extensions: String
-}
-
-input SourceHTTP @join__type(graph: WIKI) {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
-}
-
 scalar ObjMap
+
+scalar join__DirectiveArguments
 "
 `;
 
