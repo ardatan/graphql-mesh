@@ -325,7 +325,7 @@ export function toConnectLinkExpression(interpolation: unknown): string {
 
   // HATEOAS / OpenAPI link args: `{root['id']}` / `{root["supplierId"]}` / `{root.id}`
   // → Apollo `{$this.id}` (parent object field after @connect selection).
-  const rootBracket = raw.match(/^\{root\[['\"]([^'\"]+)['\"]\]\}$/);
+  const rootBracket = raw.match(/^\{root\[['"]([^'"]+)['"]\]\}$/);
   if (rootBracket) {
     const field = sanitizeNameForGraphQL(rootBracket[1]);
     return `{$this.${field}}`;
@@ -343,7 +343,7 @@ export function toConnectLinkExpression(interpolation: unknown): string {
     .replace(/\{\$this\.\$response\.body\.([^}]+)\}/g, (_, pointer: string) => {
       return `{$this.${toThisPath(pointer)}}`;
     })
-    .replace(/\{root\[['\"]([^'\"]+)['\"]\]\}/g, (_, key: string) => {
+    .replace(/\{root\[['"]([^'"]+)['"]\]\}/g, (_, key: string) => {
       return `{$this.${sanitizeNameForGraphQL(key)}}`;
     })
     .replace(/\{root\.([A-Za-z_][\w]*)\}/g, '{$this.$1}');

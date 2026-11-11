@@ -6,8 +6,6 @@ exports[`example_api should generate the schema correctly 1`] = `
   mutation: Mutation
 }
 
-directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
@@ -357,9 +355,9 @@ type Mutation {
   """
   postPaper(input: String): String @connect(source: "example_api", http: {POST: "/papers", headers: [{name: "Content-Type", value: "text/plain"}, {name: "accept", value: "text/plain"}], body: "$args.input"}, selection: "$")
   """Endpoint to test unsanitized parameters and data."""
-  post_product_with_id(input: product_with_id_Input): product_with_id @connect(source: "example_api", http: {POST: "/products", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "product_name: $[\\"product-name\\"] product_id: $[\\"product-id\\"] product_tag: $[\\"product-tag\\"]")
+  post_product_with_id(input: product_with_id_Input): product_with_id @connect(source: "example_api", http: {POST: "/products", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input { \\"product-name\\": product_name \\"product-id\\": product_id \\"product-tag\\": product_tag }"}, selection: "product_name: $[\\"product-name\\"] product_id: $[\\"product-id\\"] product_tag: $[\\"product-tag\\"]")
   """An endpoint to test authenticated POST requests."""
-  post_project_with_id(input: project_with_id_Input): project_with_id @connect(source: "example_api", http: {POST: "/projects", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "project_id: $[\\"project-id\\"] lead_id: $[\\"lead-id\\"] active patentId")
+  post_project_with_id(input: project_with_id_Input): project_with_id @connect(source: "example_api", http: {POST: "/projects", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input { \\"project-id\\": project_id \\"lead-id\\": lead_id active patentId }"}, selection: "project_id: $[\\"project-id\\"] lead_id: $[\\"lead-id\\"] active patentId")
   """Used to test link parameters with variables"""
   postScanner(path: String!, query: String, input: String): postScanner_200_response @connect(source: "example_api", http: {POST: "/scanner/{$args.path}", headers: [{name: "Content-Type", value: "text/plain"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
   """Endpoint to test placeholder objects to wrap response objects."""
@@ -412,19 +410,19 @@ input familyObject_Input {
 """A product"""
 input product_with_id_Input {
   """The name of the product"""
-  product_name: String @resolveRootField(subgraph: "example_api", field: "product-name")
+  product_name: String
   """The id of the product"""
-  product_id: String @resolveRootField(subgraph: "example_api", field: "product-id")
+  product_id: String
   """A tag associated with the product"""
-  product_tag: String @resolveRootField(subgraph: "example_api", field: "product-tag")
+  product_tag: String
 }
 
 """A project"""
 input project_with_id_Input {
   """The id of the project"""
-  project_id: Int @resolveRootField(subgraph: "example_api", field: "project-id")
+  project_id: Int
   """The id of the lead"""
-  lead_id: String @resolveRootField(subgraph: "example_api", field: "lead-id")
+  lead_id: String
   """Whether the project is active"""
   active: Boolean
   """The patent associated with a project if applicable"""

@@ -1107,7 +1107,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                           const meshEntityRef: Record<string, string> = {};
                           for (const [keyField, interp] of Object.entries(args)) {
                             const raw = String(interp);
-                            const fromBracket = raw.match(/^\{root\[['\"]([^'\"]+)['\"]\]\}$/);
+                            const fromBracket = raw.match(/^\{root\[['"]([^'"]+)['"]\]\}$/);
                             const fromDot = raw.match(/^\{root\.([^}]+)\}$/);
                             const from =
                               fromBracket?.[1] || fromDot?.[1] || paramsInLink[0] || keyField;
