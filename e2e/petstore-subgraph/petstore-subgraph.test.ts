@@ -1,8 +1,6 @@
-import { parse } from 'graphql';
-import { createTenv, type Container } from '@e2e/tenv';
-import { composeServices } from '@theguild/federation-composition';
+import { createTenv, type Container, type ServeRunner } from '@e2e/tenv';
 
-const { compose, fs, serve, container } = createTenv(__dirname);
+const { compose, serve, container } = createTenv(__dirname);
 
 let petstore!: Container;
 beforeAll(async () => {
@@ -23,45 +21,32 @@ it('should generate the subgraph schema correctly', async () => {
   expect(result).toMatchSnapshot();
 });
 
-it('should be composable with Hive composition and serve correctly', async () => {
-  const subgraphSdlGeneration = await compose({
-    services: [petstore],
-    args: ['--subgraph=petstore'],
-  });
-  const compositionResult = composeServices([
-    {
-      name: 'petstore',
-      url: `http://localhost:${petstore.port}/api/v3`,
-      typeDefs: parse(subgraphSdlGeneration.result),
-    },
-  ]);
-  if (compositionResult.errors) {
-    for (const error of compositionResult.errors) {
-      console.error(error);
-    }
-    throw new Error('Composition failed');
-  }
-  if (!compositionResult.supergraphSdl) {
-    throw new Error('Composition did not return a supergraph');
-  }
-  const supergraphFile = await fs.tempfile('supergraph.graphql', compositionResult.supergraphSdl);
-  const { execute } = await serve({
-    supergraph: supergraphFile,
-  });
-  const executionResult = await execute({
-    query: /* GraphQL */ `
-      query {
-        getPetById(petId: 1) {
-          id
+describe.each(['hive', 'apollo-router'] as ServeRunner[])('compose + serve with %s', runner => {
+  it('should execute getPetById', async () => {
+    const composition = await compose({
+      services: [petstore],
+      output: 'graphql',
+    });
+    const { execute } = await serve({
+      runner,
+      supergraph: composition.output,
+      subgraphs: composition.subgraphs,
+    });
+    const executionResult = await execute({
+      query: /* GraphQL */ `
+        query {
+          getPetById(petId: 1) {
+            id
+          }
         }
-      }
-    `,
-  });
-  expect(executionResult).toEqual({
-    data: {
-      getPetById: {
-        id: 1,
+      `,
+    });
+    expect(executionResult).toEqual({
+      data: {
+        getPetById: {
+          id: 1,
+        },
       },
-    },
+    });
   });
 });

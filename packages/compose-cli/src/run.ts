@@ -10,7 +10,7 @@ import module from 'node:module';
 import { isAbsolute, join } from 'node:path';
 // eslint-disable-next-line import/no-nodejs-modules
 import { pathToFileURL } from 'node:url';
-import { parse } from 'graphql';
+import { parse, print } from 'graphql';
 import { Command, Option } from '@commander-js/extra-typings';
 import { ConsoleLogWriter, Logger } from '@graphql-hive/logger';
 import { getComposedResultFromConfig } from './getComposedSchemaFromConfig.js';
@@ -35,7 +35,11 @@ let program = new Command()
     ).env('CONFIG_PATH'),
   )
   .option('--subgraph <name>', 'name of the subgraph to compose')
-  .option('-o, --output <path>', 'path to the output file');
+  .option('-o, --output <path>', 'path to the output file')
+  .option(
+    '--subgraphs-dir <path>',
+    'write each annotated subgraph SDL (and subgraphs.json manifest) into this directory',
+  );
 
 export interface RunOptions extends ReturnType<typeof program.opts> {
   /** @default new Logger() */
@@ -147,36 +151,58 @@ export async function run({
     } else {
       console.log(supergraphSdl);
     }
-    log.info('Done!');
-    return;
-  }
-
-  log.info(`Writing schema to ${output}`);
-
-  output = isAbsolute(output) ? output : join(globalThis.process?.cwd?.() ?? '.', output);
-  let writtenData: string;
-  if (output.endsWith('.json')) {
-    writtenData = JSON.stringify(parse(supergraphSdl, { noLocation: true }), null, 2);
-  } else if (
-    output.endsWith('.graphql') ||
-    output.endsWith('.gql') ||
-    output.endsWith('.graphqls') ||
-    output.endsWith('.gqls')
-  ) {
-    writtenData = supergraphSdl;
-  } else if (
-    output.endsWith('.ts') ||
-    output.endsWith('.cts') ||
-    output.endsWith('.mts') ||
-    output.endsWith('.js') ||
-    output.endsWith('.cjs') ||
-    output.endsWith('.mjs')
-  ) {
-    writtenData = `export default ${JSON.stringify(supergraphSdl)}`;
   } else {
-    throw new Error(`Unsupported file extension for ${output}`);
+    log.info(`Writing schema to ${output}`);
+
+    output = isAbsolute(output) ? output : join(globalThis.process?.cwd?.() ?? '.', output);
+    let writtenData: string;
+    if (output.endsWith('.json')) {
+      writtenData = JSON.stringify(parse(supergraphSdl, { noLocation: true }), null, 2);
+    } else if (
+      output.endsWith('.graphql') ||
+      output.endsWith('.gql') ||
+      output.endsWith('.graphqls') ||
+      output.endsWith('.gqls')
+    ) {
+      writtenData = supergraphSdl;
+    } else if (
+      output.endsWith('.ts') ||
+      output.endsWith('.cts') ||
+      output.endsWith('.mts') ||
+      output.endsWith('.js') ||
+      output.endsWith('.cjs') ||
+      output.endsWith('.mjs')
+    ) {
+      writtenData = `export default ${JSON.stringify(supergraphSdl)}`;
+    } else {
+      throw new Error(`Unsupported file extension for ${output}`);
+    }
+    await fsPromises.writeFile(output, writtenData, 'utf8');
   }
-  await fsPromises.writeFile(output, writtenData, 'utf8');
+
+  if (opts.subgraphsDir) {
+    const subgraphsDir = isAbsolute(opts.subgraphsDir)
+      ? opts.subgraphsDir
+      : join(globalThis.process?.cwd?.() ?? '.', opts.subgraphsDir);
+    await fsPromises.mkdir(subgraphsDir, { recursive: true });
+    const manifest: { name: string; file: string; url: string }[] = [];
+    for (const subgraph of subgraphs) {
+      const fileName = `${subgraph.name}.graphql`;
+      const filePath = join(subgraphsDir, fileName);
+      await fsPromises.writeFile(filePath, print(subgraph.typeDefs), 'utf8');
+      manifest.push({
+        name: subgraph.name,
+        file: fileName,
+        url: subgraph.url || '',
+      });
+    }
+    await fsPromises.writeFile(
+      join(subgraphsDir, 'subgraphs.json'),
+      JSON.stringify(manifest, null, 2),
+      'utf8',
+    );
+    log.info(`Wrote ${manifest.length} subgraph SDL(s) to ${subgraphsDir}`);
+  }
 
   log.info('Done!');
 }

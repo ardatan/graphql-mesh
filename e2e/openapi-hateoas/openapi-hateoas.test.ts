@@ -19,14 +19,18 @@ describe('OpenAPI HATEOAS', () => {
     expect(result).toMatchSnapshot();
   });
 
+  // Absolute `$this` link URLs + Mesh entity/@merge keys are not yet Apollo Connectors-valid;
+  // keep Hive coverage here. Dual-runtime for HATEOAS needs entity connector emit follow-up.
   it('should execute and follow HATEOAS links', async () => {
-    const { output } = await compose({
+    const composition = await compose({
       output: 'graphql',
       services: [oasService],
     });
 
     const { execute } = await serve({
-      supergraph: output,
+      runner: 'hive',
+      supergraph: composition.output,
+      subgraphs: composition.subgraphs,
     });
     const queryResult = await execute({
       query: /* GraphQL */ `
