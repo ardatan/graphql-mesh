@@ -21,6 +21,7 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     queryParams,
     queryStringOptions,
     handlerName = 'rest',
+    connectSelection,
   } = opts;
   log.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
   const visitorResult = await getComposerFromJSONSchema({
@@ -50,5 +51,6 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     queryParams,
     queryStringOptions,
     handlerName,
+    connectSelection,
   });
 }

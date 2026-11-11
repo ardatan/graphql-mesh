@@ -51,6 +51,37 @@ enum QueryStringArrayFormat {
   comma
 }
 
+"""
+How `@connect(selection:)` is built for REST responses (JSON Schema / OpenAPI / RAML).
+
+Large schemas (FHIR, K8s, Stripe) can produce multi-MB selections. Choose the
+limit and what happens when it is exceeded — Mesh does not silently pick for you.
+"""
+type ConnectSelectionOptions @md {
+  """
+  Max characters for one `@connect(selection:)` string.
+  Default: 12000. Use `0` for no limit (emit the full selection).
+  """
+  maxLength: Int
+  """
+  Nesting depth after which object fields emit scalar/enum leaves only
+  (Router rejects bare object names without `{ … }` subselection).
+  Default: 2. Use `-1` to disable the soft depth switch.
+  """
+  softDepth: Int
+  """
+  When a selection exceeds `maxLength`:
+  - `leavesOnly` (default): rebuild with scalar/enum leaves (Router-friendlier)
+  - `passthrough`: emit empty so Mesh attaches `$` (Hive raw JSON passthrough; not Router-safe for object types)
+  """
+  overLimit: ConnectSelectionOverLimit
+}
+
+enum ConnectSelectionOverLimit {
+  leavesOnly
+  passthrough
+}
+
 type JsonSchemaHandler @md {
   source: String
   endpoint: String
@@ -65,6 +96,11 @@ type JsonSchemaHandler @md {
   Timeout for the HTTP request in milliseconds
   """
   timeout: Int
+
+  """
+  Policy for Federation Connectors `@connect(selection:)` size and depth.
+  """
+  connectSelection: ConnectSelectionOptions
 }
 
 enum JsonSchemaOperationType {

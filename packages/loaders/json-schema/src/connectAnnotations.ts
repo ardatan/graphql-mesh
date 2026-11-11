@@ -26,7 +26,45 @@ import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { getMeshEntityRef } from './entityRefs.js';
-import type { JSONSchemaHTTPJSONOperationConfig, JSONSchemaOperationConfig } from './types.js';
+import type {
+  ConnectSelectionOptions,
+  ConnectSelectionOverLimit,
+  JSONSchemaHTTPJSONOperationConfig,
+  JSONSchemaOperationConfig,
+} from './types.js';
+
+export type { ConnectSelectionOptions, ConnectSelectionOverLimit };
+
+export interface ResolvedConnectSelectionPolicy {
+  maxLength: number;
+  softDepth: number;
+  overLimit: ConnectSelectionOverLimit;
+}
+
+const DEFAULT_CONNECT_SELECTION_MAX_LENGTH = 12_000;
+const DEFAULT_CONNECT_SELECTION_SOFT_DEPTH = 2;
+
+/**
+ * Resolve user `connectSelection` options with defaults.
+ * `maxLength: 0` → no limit; `softDepth: -1` → no soft-depth leaves switch.
+ */
+export function resolveConnectSelectionPolicy(
+  input?: ConnectSelectionOptions | null,
+): ResolvedConnectSelectionPolicy {
+  const maxLength =
+    input?.maxLength === 0
+      ? Number.POSITIVE_INFINITY
+      : (input?.maxLength ?? DEFAULT_CONNECT_SELECTION_MAX_LENGTH);
+  const softDepth =
+    input?.softDepth === -1
+      ? Number.POSITIVE_INFINITY
+      : (input?.softDepth ?? DEFAULT_CONNECT_SELECTION_SOFT_DEPTH);
+  return {
+    maxLength,
+    softDepth,
+    overLimit: input?.overLimit ?? 'leavesOnly',
+  };
+}
 
 const JSONSelectionScalar = GraphQLString;
 const URLPathTemplateScalar = GraphQLString;
@@ -637,16 +675,6 @@ export function buildStatusUnionConnectExtras(
  * Build a Connectors selection that maps JSON fields with matching GraphQL names.
  * Skips fields that already have their own `@connect` (e.g. links).
  */
-/**
- * Soft cap so huge OpenAPI schemas (K8s/Stripe) don't emit multi-MB `@connect` selections.
- *
- * Over-cap must NOT silently become a bare `$` passthrough for object returns: Apollo Router
- * requires every object field to be mapped (leaf selections must be scalars). Prefer a
- * `leavesOnly` rebuild first; only give up (caller may fall back to `$` for Hive) when even
- * scalar leaves exceed the cap.
- */
-const MAX_CONNECT_SELECTION_CHARS = 12_000;
-
 function objectTypeHasDictionaryField(named: GraphQLNamedOutputType): boolean {
   if (!isObjectType(named) && !isInterfaceType(named)) {
     return false;
@@ -670,14 +698,22 @@ export function buildSelectionForType(
      * Used past the soft depth cap so Router never sees bare object field names.
      */
     leavesOnly?: boolean;
+    /** Resolved size/depth/over-limit policy (defaults applied if omitted). */
+    policy?: ResolvedConnectSelectionPolicy;
   } = {},
 ): string {
+  const policy = options.policy ?? resolveConnectSelectionPolicy();
   const { skipFields = new Set(), depth = 0, implementations = [], leavesOnly = false } = options;
+  const childOpts = {
+    skipFields,
+    implementations,
+    policy,
+  };
   // Soft depth: deeper levels still emit scalar/enum leaves (Router rejects bare
   // object names like `top` without `{ … }` subselection — wiki metrics Eof follow-on).
   const named = unwrapType(type);
-  if (!leavesOnly && depth > 2) {
-    return buildSelectionForType(type, { skipFields, depth, implementations, leavesOnly: true });
+  if (!leavesOnly && depth > policy.softDepth) {
+    return buildSelectionForType(type, { ...childOpts, depth, leavesOnly: true });
   }
   if (isScalarType(named) || named.name === 'Void') {
     return '';
@@ -685,7 +721,7 @@ export function buildSelectionForType(
   if (isUnionType(named)) {
     const members = named.getTypes();
     if (members.length === 1) {
-      return buildSelectionForType(members[0], { skipFields, depth: depth + 1 });
+      return buildSelectionForType(members[0], { ...childOpts, depth: depth + 1 });
     }
     // Status-code unions: emit `__typename: $status->match(...)` + flattened member fields.
     // Only walk members when status mappings exist — otherwise getFields() during emit can
@@ -700,7 +736,7 @@ export function buildSelectionForType(
     // drop subsequent `}` closers and corrupt nested selections.
     const merged = new Map<string, string>();
     for (const member of members) {
-      const part = buildSelectionForType(member, { skipFields, depth: depth + 1 });
+      const part = buildSelectionForType(member, { ...childOpts, depth: depth + 1 });
       if (!part) continue;
       for (const [key, block] of extractTopLevelSelectionFields(part)) {
         if (!merged.has(key)) {
@@ -711,15 +747,17 @@ export function buildSelectionForType(
     const mergedSelection = [statusExtras?.typenameSelection || discTypename, ...merged.values()]
       .filter(Boolean)
       .join(' ');
-    if (mergedSelection.length > MAX_CONNECT_SELECTION_CHARS) {
+    if (mergedSelection.length > policy.maxLength) {
       // Prefer `__typename` bake alone over `$` so status unions stay Connectors-native
-      // after `@statusCodeTypeName` is stripped (no Mesh runtime fallback). Router still
-      // needs mapped fields when possible — try leaves-only member picks under the bake.
+      // after `@statusCodeTypeName` is stripped (no Mesh runtime fallback).
+      if (policy.overLimit === 'passthrough') {
+        return statusExtras?.typenameSelection || discTypename || '';
+      }
       if (!leavesOnly) {
         const leafMerged = new Map<string, string>();
         for (const member of members) {
           const part = buildSelectionForType(member, {
-            skipFields,
+            ...childOpts,
             depth: depth + 1,
             leavesOnly: true,
           });
@@ -736,7 +774,7 @@ export function buildSelectionForType(
           .join(' ');
         if (
           leafSelection &&
-          leafSelection.length <= MAX_CONNECT_SELECTION_CHARS &&
+          leafSelection.length <= policy.maxLength &&
           leafSelection !== (statusExtras?.typenameSelection || discTypename || '')
         ) {
           return leafSelection;
@@ -908,7 +946,7 @@ export function buildSelectionForType(
       if (leavesOnly && isObjectLike) {
         continue;
       }
-      const nested = buildSelectionForType(field.type, { skipFields, depth: depth + 1 });
+      const nested = buildSelectionForType(field.type, { ...childOpts, depth: depth + 1 });
       if (nested) {
         lines.push(`${aliasPrefix} { ${nested} }`);
       } else if (isObjectLike) {
@@ -931,13 +969,16 @@ export function buildSelectionForType(
   // Spaces are enough for Connectors mapping (newlines are optional sugar).
   // Avoid `\n` escapes in printed SDL (`selection: "id name"` vs `"id\\nname"`).
   const joined = lines.join(' ');
-  if (joined.length > MAX_CONNECT_SELECTION_CHARS) {
-    // Router-safe degrade: scalar/enum leaves only (never empty→`$` for object maps).
+  if (joined.length > policy.maxLength) {
+    if (policy.overLimit === 'passthrough') {
+      // Caller attaches `$` — Hive raw JSON; not Router-safe for object types.
+      return '';
+    }
+    // leavesOnly (default): scalar/enum leaves under the cap when possible.
     if (!leavesOnly) {
       return buildSelectionForType(type, {
-        skipFields,
+        ...childOpts,
         depth,
-        implementations,
         leavesOnly: true,
       });
     }

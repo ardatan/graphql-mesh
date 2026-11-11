@@ -2,6 +2,7 @@ import { OperationTypeNode, parse } from 'graphql';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
+import { resolveConnectSelectionPolicy } from '../src/connectAnnotations.js';
 import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
 
 describe('Federation Connectors annotations', () => {
@@ -101,5 +102,73 @@ describe('Federation Connectors annotations', () => {
         pets: [{ id: '1' }],
       },
     });
+  });
+
+  it('resolveConnectSelectionPolicy: defaults, 0 maxLength, -1 softDepth', () => {
+    expect(resolveConnectSelectionPolicy()).toEqual({
+      maxLength: 12_000,
+      softDepth: 2,
+      overLimit: 'leavesOnly',
+    });
+    expect(
+      resolveConnectSelectionPolicy({ maxLength: 0, softDepth: -1, overLimit: 'passthrough' }),
+    ).toMatchObject({
+      maxLength: Number.POSITIVE_INFINITY,
+      softDepth: Number.POSITIVE_INFINITY,
+      overLimit: 'passthrough',
+    });
+  });
+
+  it('connectSelection.overLimit passthrough emits $ when over maxLength', async () => {
+    const deepSample: Record<string, unknown> = { id: '1', name: 'n' };
+    // Enough nested object fields to exceed a tiny maxLength when expanded.
+    for (let i = 0; i < 40; i++) {
+      deepSample[`obj${i}`] = { a: 'x', b: 'y', c: 'z' };
+    }
+    const schema = await loadGraphQLSchemaFromJSONSchemas('big', {
+      endpoint: 'http://localhost:3000',
+      connectSelection: { maxLength: 80, overLimit: 'passthrough' },
+      operations: [
+        {
+          type: OperationTypeNode.QUERY,
+          field: 'thing',
+          path: '/thing',
+          method: 'GET',
+          responseSample: deepSample,
+        },
+      ],
+      async fetch() {
+        return Response.json(deepSample);
+      },
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatch(/thing[^\n]*selection: "\$"/);
+  });
+
+  it('connectSelection.overLimit leavesOnly keeps scalar leaves under maxLength', async () => {
+    const deepSample: Record<string, unknown> = { id: '1', name: 'n' };
+    for (let i = 0; i < 40; i++) {
+      deepSample[`obj${i}`] = { a: 'x', b: 'y', c: 'z' };
+    }
+    const schema = await loadGraphQLSchemaFromJSONSchemas('big', {
+      endpoint: 'http://localhost:3000',
+      connectSelection: { maxLength: 80, overLimit: 'leavesOnly' },
+      operations: [
+        {
+          type: OperationTypeNode.QUERY,
+          field: 'thing',
+          path: '/thing',
+          method: 'GET',
+          responseSample: deepSample,
+        },
+      ],
+      async fetch() {
+        return Response.json(deepSample);
+      },
+    });
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toMatch(/thing[^\n]*selection: "/);
+    expect(sdl).not.toMatch(/thing[^\n]*selection: "\$"/);
+    expect(sdl).toMatch(/selection: "[^"]*\bid\b/);
   });
 });

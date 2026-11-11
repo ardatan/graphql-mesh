@@ -8,6 +8,31 @@ import type { ResolverData } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import type { BaseLoaderOptions } from '@graphql-tools/utils';
 
+/**
+ * How `@connect(selection:)` is built for REST responses.
+ * Large schemas (FHIR / K8s / Stripe) need an explicit size/depth policy.
+ */
+export type ConnectSelectionOverLimit = 'leavesOnly' | 'passthrough';
+
+export interface ConnectSelectionOptions {
+  /**
+   * Max characters for one `@connect(selection:)` string.
+   * Default: `12000`. Use `0` for no limit.
+   */
+  maxLength?: number;
+  /**
+   * Nesting depth after which object fields emit scalar/enum leaves only.
+   * Default: `2`. Use `-1` to disable.
+   */
+  softDepth?: number;
+  /**
+   * When a selection exceeds `maxLength`:
+   * - `leavesOnly` (default): scalar/enum leaves (Router-friendlier)
+   * - `passthrough`: empty selection → `$` at attach (Hive; not Router-safe for objects)
+   */
+  overLimit?: ConnectSelectionOverLimit;
+}
+
 export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   endpoint?: string;
   operationHeaders?: OperationHeadersConfiguration;
@@ -24,6 +49,8 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   handlerName?: string;
   bundle?: boolean;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
+  /** Policy for Federation Connectors `@connect(selection:)` size and depth. */
+  connectSelection?: ConnectSelectionOptions;
 }
 
 export interface JSONSchemaOperationResponseConfig {

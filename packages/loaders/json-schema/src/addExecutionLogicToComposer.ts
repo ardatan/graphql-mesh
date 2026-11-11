@@ -35,6 +35,7 @@ import {
   LinkDirective,
   MESH_SPEC_LINK_URL,
   MeshRestOptionsDirective,
+  resolveConnectSelectionPolicy,
   rewriteConnectPathEnumArgs,
   SourceDirective,
   toConnectLinkExpression,
@@ -46,6 +47,7 @@ import {
   ResponseMetadataDirective,
 } from './directives.js';
 import type {
+  ConnectSelectionOptions,
   JSONSchemaHTTPJSONOperationConfig,
   JSONSchemaLinkConfig,
   JSONSchemaOperationConfig,
@@ -144,6 +146,7 @@ export interface AddExecutionLogicToComposerOptions {
   queryStringOptions?: IStringifyOptions;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
   handlerName?: string;
+  connectSelection?: ConnectSelectionOptions;
 }
 
 const responseMetadataType = new GraphQLObjectType({
@@ -169,8 +172,10 @@ export function addExecutionDirectivesToComposer(
     queryParams,
     queryStringOptions,
     handlerName,
+    connectSelection,
   }: AddExecutionLogicToComposerOptions,
 ) {
+  const selectionPolicy = resolveConnectSelectionPolicy(connectSelection);
   log.debug(`Attaching execution directives to the schema`);
   type PendingLinks = {
     linkMap: Record<string, JSONSchemaLinkConfig>;
@@ -305,6 +310,7 @@ export function addExecutionDirectivesToComposer(
               typeof targetField.type === 'function'
                 ? (targetField.type as any)()
                 : (targetField.type as any),
+              { policy: selectionPolicy },
             )
           : '$') ||
         '$';
@@ -435,6 +441,7 @@ ${operationConfig.description || ''}
         buildSelectionForType(field.type.getType(), {
           skipFields,
           implementations: interfaceImplementations,
+          policy: selectionPolicy,
         }) ||
         // Scalar / empty responses still need a non-empty Connectors selection
         `$`;
