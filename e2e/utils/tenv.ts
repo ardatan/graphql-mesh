@@ -758,7 +758,7 @@ async function serveWithApolloRouter(opts: {
   const { cwd, port, pipeLogs, env, subgraphs, tenv } = opts;
   if (!subgraphs.length) {
     throw new Error(
-      'serve({ runner: "apollo-router" }) requires `subgraphs` from compose() — Mesh Hive supergraphs are not Apollo Router Connectors supergraphs',
+      'serve({ runner: "apollo-router" }) requires `subgraphs` from compose() — Mesh/Hive Guild supergraphs load in Router but do not activate Connectors (Router treats join__Graph URLs as HTTP subgraphs → 405). Rover-compose the Mesh subgraphs instead.',
     );
   }
 
