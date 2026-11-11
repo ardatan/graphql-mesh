@@ -290,24 +290,34 @@ export function buildStatusUnionConnectExtras(unionType: GraphQLUnionType): {
     return Number.isFinite(asNum) && String(asNum) === code ? String(asNum) : JSON.stringify(code);
   };
   const memberNames = new Set(unionType.getTypes().map(t => t.name));
+  const hasDefault = mappings.some(m => m.statusCode === 'default');
+  const explicitMappings = mappings.filter(m => m.statusCode !== 'default');
   const concreteMappings = mappings.filter(m => memberNames.has(m.typeName));
-  const successArms = mappings.map(m => `[${toMatchKey(m.statusCode)}, true]`).join(', ');
+  const concreteExplicit = concreteMappings.filter(m => m.statusCode !== 'default');
+  const successArms = explicitMappings.map(m => `[${toMatchKey(m.statusCode)}, true]`).join(', ');
   let typenameSelection: string | null = null;
-  if (concreteMappings.length === mappings.length) {
-    const typenameArms = concreteMappings
+  if (concreteExplicit.length && concreteMappings.length === mappings.length) {
+    const typenameArms = concreteExplicit
       .map(m => `[${toMatchKey(m.statusCode)}, ${JSON.stringify(m.typeName)}]`)
       .join(', ');
-    const defaultType = concreteMappings[0]?.typeName;
+    const defaultType =
+      concreteMappings.find(m => m.statusCode === 'default')?.typeName ??
+      concreteExplicit[0]?.typeName;
     typenameSelection = `__typename: $status->match(${typenameArms}, [@, ${JSON.stringify(defaultType)}])`;
-  } else if (concreteMappings.length) {
-    const typenameArms = concreteMappings
+  } else if (concreteExplicit.length || concreteMappings.some(m => m.statusCode === 'default')) {
+    const typenameArms = concreteExplicit
       .map(m => `[${toMatchKey(m.statusCode)}, ${JSON.stringify(m.typeName)}]`)
       .join(', ');
-    // Null default leaves `__typename` unset for abstract-mapped statuses.
-    typenameSelection = `__typename: $status->match(${typenameArms}, [@, null])`;
+    const defaultType = concreteMappings.find(m => m.statusCode === 'default')?.typeName;
+    // Null default leaves `__typename` unset for abstract-mapped / unlisted statuses.
+    typenameSelection = typenameArms
+      ? `__typename: $status->match(${typenameArms}, [@, ${defaultType != null ? JSON.stringify(defaultType) : 'null'}])`
+      : defaultType != null
+        ? `__typename: $status->match([@, ${JSON.stringify(defaultType)}])`
+        : null;
   }
   return {
-    isSuccess: `$status->match(${successArms}, [@, false])`,
+    isSuccess: `$status->match(${successArms ? `${successArms}, ` : ''}[@, ${hasDefault}])`,
     typenameSelection,
   };
 }
@@ -530,7 +540,7 @@ export function inferBodySelection(operationConfig: JSONSchemaOperationConfig): 
     return `$args.input`;
   }
   if (httpOp.requestBaseBody != null) {
-    return `$({ ... })`;
+    return `$(${JSON.stringify(httpOp.requestBaseBody)})`;
   }
   return undefined;
 }

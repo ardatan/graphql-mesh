@@ -34,16 +34,21 @@ export function rewriteConnectArgReferences(
       return value;
     }
     let out = value;
-    for (const [from, to] of argRenameMap) {
-      if (from === to) continue;
-      out = out
-        .replaceAll(`{$args.${from}}`, `{$args.${to}}`)
-        .replaceAll(`$args.${from}`, `$args.${to}`);
+    // Single-pass, whole-name matches so `id` does not rewrite `$args.identifier`
+    // and `a→b` + `b→c` does not chain into `$args.c`.
+    if (argRenameMap.size) {
+      const names = [...argRenameMap.keys()].map(escapeRegExp).join('|');
+      out = out.replace(
+        new RegExp(`\\$args\\.(${names})(?![\\w])`, 'g'),
+        (_m, name: string) => `$args.${argRenameMap.get(name) ?? name}`,
+      );
     }
+    // `fieldRenameMap` rewrites nested response-field picks in a selection
+    // (`name` → `fullName`). Do not pass the connector field's own rename here —
+    // that would rewrite response keys incorrectly (e.g. Query.user → person).
     if (fieldRenameMap?.size) {
       for (const [from, to] of fieldRenameMap) {
         if (from === to) continue;
-        // `from {` / `from:` / bare `from` at line starts in selection
         out = out
           .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
           .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`);

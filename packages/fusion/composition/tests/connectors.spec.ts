@@ -1,4 +1,4 @@
-import { buildSchema, parse, print } from 'graphql';
+import { buildSchema, print } from 'graphql';
 import { getAnnotatedSubgraphs, isApolloConnectorsSubgraph } from '../src/index.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
 
@@ -95,10 +95,9 @@ describe('Apollo Connectors composition', () => {
       },
     ]);
     const sdl = print(annotated[0].typeDefs);
-    // Either printed on schema or carried via Mesh extraSchemaDefinitionDirective
-    expect(
-      sdl.includes('baseURL') || sdl.includes('extraSchemaDefinitionDirective') || parse(sdl),
-    ).toBeTruthy();
+    // Apollo `@source` is carried via Mesh `@extraSchemaDefinitionDirective` on Query.
+    expect(sdl).toContain('extraSchemaDefinitionDirective');
+    expect(sdl).toContain('https://api.example.com');
   });
 
   it('rewrites @connect $args when rename transform renames arguments', () => {

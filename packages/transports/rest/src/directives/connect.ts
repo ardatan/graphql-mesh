@@ -230,17 +230,21 @@ function applyQueryParams(
   if (!Object.keys(params).length) {
     return fullPath;
   }
-  const { jsonStringify, ...restQs } = qsOptions;
-  if (jsonStringify) {
-    for (const key of Object.keys(params)) {
-      const value = params[key];
-      if (value != null && typeof value === 'object') {
-        params[key] = JSON.stringify(value);
-      }
+  const { jsonStringify: globalJsonStringify, ...restQs } = qsOptions;
+  const byParam = queryStringOptionsByParam || {};
+  // Per-param `jsonStringify` overrides the global flag (Mesh httpOperation semantics).
+  for (const key of Object.keys(params)) {
+    const value = params[key];
+    if (value == null || typeof value !== 'object') continue;
+    const paramJson =
+      byParam[key] && 'jsonStringify' in byParam[key]
+        ? Boolean(byParam[key].jsonStringify)
+        : Boolean(globalJsonStringify);
+    if (paramJson) {
+      params[key] = JSON.stringify(value);
     }
   }
   // Serialize per-param when options differ; otherwise one qs pass.
-  const byParam = queryStringOptionsByParam || {};
   const hasPerParam = Object.keys(byParam).some(k => k in params);
   let serialized: string;
   if (hasPerParam) {
@@ -812,10 +816,11 @@ export function addConnectFieldResolver(
   const picked = pickHttp(connectArgs.http);
   const schemaMeshRestOptions = (schema.extensions as any)?.meshRestOptions || {};
   const fieldMeshRestOptions = (field.extensions as any)?.meshRestOptions || {};
+  // Operation/field meshRestOptions override serve-time globals (httpOperation parity).
   const queryStringOptions: MeshQsOptions = {
+    ...opts.queryStringOptions,
     ...schemaMeshRestOptions.queryStringOptions,
     ...fieldMeshRestOptions.queryStringOptions,
-    ...opts.queryStringOptions,
   };
   const queryStringOptionsByParam =
     fieldMeshRestOptions.queryStringOptionsByParam ||
@@ -1038,8 +1043,10 @@ export function addConnectFieldResolver(
         !Array.isArray(customExtensionsRaw)
           ? { ...customExtensionsRaw }
           : {};
-      // Apollo Connectors: custom extensions overlay defaults; code/service/coordinate/http.status
-      // remain present (router always adds them after customizations).
+      // Apollo Connectors: `extensions.http.status` is the upstream status.
+      // GraphQL Yoga also promotes that path to the gateway HTTP status (hence
+      // e2e may see ResponseError on partial field failures) — Mesh still emits
+      // the Apollo shape and mirrors status on `response` / top-level `status`.
       const httpExt = {
         status: response.status,
         ...(customExtensions.http && typeof customExtensions.http === 'object'

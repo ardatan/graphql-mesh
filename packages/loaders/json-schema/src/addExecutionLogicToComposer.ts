@@ -146,6 +146,7 @@ export function addExecutionDirectivesToComposer(
         : {
             GET: '/',
           };
+      const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const rewriteArgsExpr = (template: string) => {
         let out = template;
         for (const [argName, connectExpr] of Object.entries(linkArgExprs)) {
@@ -155,22 +156,69 @@ export function addExecutionDirectivesToComposer(
               ? connectExpr
               : `$(${JSON.stringify(connectExpr)})`;
           out = out.replaceAll(`{$args.${argName}}`, replacement);
-          out = out.replaceAll(`$args.${argName}`, replacement);
+          out = out.replace(
+            new RegExp(`\\$args\\.${escapeRegExp(argName)}(?![\\w])`, 'g'),
+            () => replacement,
+          );
           out = out.replaceAll(`{args.${argName}}`, replacement);
         }
         return out;
+      };
+      const dropUnmappedArgEntries = (selection: string): string | undefined => {
+        // Keep entries that no longer reference `$args`, or only reference mapped args.
+        // Drop only lines/entries still pointing at unmapped `$args.*`.
+        const trimmed = selection.trim();
+        if (!trimmed.includes('$args')) {
+          return selection;
+        }
+        // Object-literal form: `{ key: expr, ... }`
+        if (trimmed.startsWith('{')) {
+          try {
+            // Soft parse via line-ish split of `key: value` pairs inside braces.
+            const inner = trimmed.slice(1, trimmed.lastIndexOf('}'));
+            const kept: string[] = [];
+            for (const rawPart of inner.split(',')) {
+              const part = rawPart.trim();
+              if (!part) continue;
+              if (part.includes('$args')) continue;
+              kept.push(part);
+            }
+            if (!kept.length) return undefined;
+            return `{\n  ${kept.join(',\n  ')}\n}`;
+          } catch {
+            return undefined;
+          }
+        }
+        // Line form: `key: $args.foo`
+        const keptLines = selection
+          .split('\n')
+          .map(l => l.trimEnd())
+          .filter(line => line.trim() && !line.includes('$args'));
+        if (!keptLines.length) return undefined;
+        return keptLines.join('\n');
       };
       // Rewrite target `$args.*` in queryParams / body / headers to link expressions.
       if (typeof linkHttp.queryParams === 'string' && Object.keys(linkArgExprs).length) {
         linkHttp.queryParams = rewriteArgsExpr(String(linkHttp.queryParams));
       }
-      if (typeof linkHttp.queryParams === 'string' && linkHttp.queryParams.includes('$args')) {
-        delete linkHttp.queryParams;
+      // Only strip leftover `$args` when the link mapped some args (unmapped remainders).
+      // Links with no args mapping expose target args to the caller — keep selections.
+      if (
+        linkObj.args &&
+        typeof linkHttp.queryParams === 'string' &&
+        linkHttp.queryParams.includes('$args')
+      ) {
+        const cleaned = dropUnmappedArgEntries(String(linkHttp.queryParams));
+        if (cleaned == null) {
+          delete linkHttp.queryParams;
+        } else {
+          linkHttp.queryParams = cleaned;
+        }
       }
       if (typeof linkHttp.body === 'string' && Object.keys(linkArgExprs).length) {
         linkHttp.body = rewriteArgsExpr(String(linkHttp.body));
       }
-      if (typeof linkHttp.body === 'string' && linkHttp.body.includes('$args')) {
+      if (linkObj.args && typeof linkHttp.body === 'string' && linkHttp.body.includes('$args')) {
         delete linkHttp.body;
       }
       if (Array.isArray(linkHttp.headers) && Object.keys(linkArgExprs).length) {
