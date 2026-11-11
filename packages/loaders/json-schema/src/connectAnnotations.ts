@@ -3,6 +3,7 @@ import {
   GraphQLBoolean,
   GraphQLDirective,
   GraphQLInputObjectType,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLString,
@@ -15,6 +16,7 @@ import {
   type GraphQLOutputType,
   type GraphQLUnionType,
 } from 'graphql';
+import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import type { JSONSchemaHTTPJSONOperationConfig, JSONSchemaOperationConfig } from './types.js';
 
@@ -99,6 +101,25 @@ export const LinkDirective = new GraphQLDirective({
   },
   isRepeatable: true,
 });
+
+/**
+ * Mesh-only field options that must survive compose → SDL → reload.
+ * Apollo Connectors SDL has no home for qs/timeout/binary/requestBaseBody;
+ * store them here and restore into `field.extensions.meshRestOptions` at process time.
+ */
+export const MeshRestOptionsDirective = new GraphQLDirective({
+  name: 'meshRestOptions',
+  locations: [DirectiveLocation.FIELD_DEFINITION],
+  args: {
+    queryStringOptions: { type: ObjMapScalar },
+    queryStringOptionsByParam: { type: ObjMapScalar },
+    requestBaseBody: { type: ObjMapScalar },
+    timeout: { type: GraphQLInt },
+    isBinary: { type: GraphQLBoolean },
+  },
+});
+
+export const MESH_SPEC_LINK_URL = 'https://the-guild.dev/graphql/mesh/spec/v1.0';
 
 export const CONNECT_LINK_URL = 'https://specs.apollo.dev/connect/v0.4';
 

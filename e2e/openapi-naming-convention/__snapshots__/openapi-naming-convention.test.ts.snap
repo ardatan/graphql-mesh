@@ -3,7 +3,7 @@
 exports[`should compose 1`] = `
 "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@enum", "@extraSchemaDefinitionDirective"]
+  import: ["@meshRestOptions", "@enum", "@extraSchemaDefinitionDirective"]
 ) {
   query: Query
 }
@@ -57,6 +57,14 @@ enum join__Graph {
 
 directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
 
+directive @meshRestOptions(
+  queryStringOptions: ObjMap
+  queryStringOptionsByParam: ObjMap
+  requestBaseBody: ObjMap
+  timeout: Int
+  isBinary: Boolean
+) on FIELD_DEFINITION
+
 directive @connect(
   source: String
   http: ConnectHTTP
@@ -67,6 +75,8 @@ directive @connect(
 ) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
+
+scalar ObjMap @join__type(graph: WIKI)
 
 scalar _DirectiveExtensions @join__type(graph: WIKI)
 

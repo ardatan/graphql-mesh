@@ -11,7 +11,8 @@ describe('Date parameter in header and path', () => {
         const urlObj = new URL(url);
         const path = urlObj.pathname;
         const body = options?.body ? JSON.parse(options.body.toString()) : null;
-        const dateInPathVariable = path.split('/')[3];
+        // Path template values are percent-encoded; decode like a real HTTP server.
+        const dateInPathVariable = decodeURIComponent(path.split('/')[3]);
         const headers = new Headers(options?.headers);
         return Response.json({
           success: true,

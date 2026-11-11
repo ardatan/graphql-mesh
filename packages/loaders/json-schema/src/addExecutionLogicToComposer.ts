@@ -27,6 +27,8 @@ import {
   ConnectDirective,
   inferBodySelection,
   LinkDirective,
+  MESH_SPEC_LINK_URL,
+  MeshRestOptionsDirective,
   SourceDirective,
   toConnectLinkExpression,
 } from './connectAnnotations.js';
@@ -417,8 +419,8 @@ ${operationConfig.description || ''}
           }),
         ),
       });
-      // Hive-only per-param qs options (brackets/indices/destructObject/deepObject) +
-      // requestBaseBody merge for transport-rest (extensions survive in-memory schemas).
+      // Mesh-only options: emit `@meshRestOptions` so compose→SDL→reload keeps them
+      // (field.extensions alone are dropped when the schema is printed).
       const operationQueryStringOptions = operationConfig.queryStringOptions;
       const httpOpForRest =
         'path' in operationConfig
@@ -432,22 +434,32 @@ ${operationConfig.description || ''}
         httpOpForRest.requestBaseBody != null
           ? httpOpForRest.requestBaseBody
           : undefined;
-      if (
-        operationConfig.queryStringOptionsByParam ||
-        operationQueryStringOptions ||
-        queryStringOptions ||
-        requestBaseBody !== undefined
-      ) {
+      const isBinary = 'binary' in operationConfig && Boolean((operationConfig as any).binary);
+      const operationTimeout =
+        'timeout' in operationConfig && typeof (operationConfig as any).timeout === 'number'
+          ? (operationConfig as any).timeout
+          : undefined;
+      const meshRestArgs: Record<string, unknown> = {
+        ...(operationConfig.queryStringOptionsByParam
+          ? { queryStringOptionsByParam: operationConfig.queryStringOptionsByParam }
+          : {}),
+        ...((operationQueryStringOptions || queryStringOptions) && {
+          queryStringOptions: operationQueryStringOptions ?? queryStringOptions,
+        }),
+        ...(requestBaseBody !== undefined ? { requestBaseBody } : {}),
+        ...(isBinary ? { isBinary: true } : {}),
+        ...(operationTimeout !== undefined ? { timeout: operationTimeout } : {}),
+      };
+      if (Object.keys(meshRestArgs).length) {
+        schemaComposer.addDirective(MeshRestOptionsDirective);
+        field.directives.push({
+          name: 'meshRestOptions',
+          args: JSON.parse(JSON.stringify(meshRestArgs)),
+        });
         field.extensions = field.extensions || {};
         (field.extensions as any).meshRestOptions = {
           ...((field.extensions as any).meshRestOptions || {}),
-          ...(operationConfig.queryStringOptionsByParam
-            ? { queryStringOptionsByParam: operationConfig.queryStringOptionsByParam }
-            : {}),
-          ...((operationQueryStringOptions || queryStringOptions) && {
-            queryStringOptions: operationQueryStringOptions ?? queryStringOptions,
-          }),
-          ...(requestBaseBody !== undefined ? { requestBaseBody } : {}),
+          ...meshRestArgs,
         };
       }
 
@@ -563,6 +575,7 @@ ${operationConfig.description || ''}
   schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
+  schemaComposer.addDirective(MeshRestOptionsDirective);
   let schema = schemaComposer.buildSchema();
   const schemaExtensions: any = (schema.extensions = schema.extensions || {});
   schemaExtensions.directives = schemaExtensions.directives || {};
@@ -584,10 +597,14 @@ ${operationConfig.description || ''}
       url: CONNECT_LINK_URL,
       import: ['@connect', '@source'],
     },
+    {
+      url: MESH_SPEC_LINK_URL,
+      import: ['@meshRestOptions'],
+    },
   ];
   // Keep handlerName available for debugging without Mesh @transport
   schemaExtensions.meshHandlerName = handlerName;
-  // Hive-only runtime options (not part of Apollo Connectors SDL)
+  // Schema-level qs defaults (also mirrored per-field via @meshRestOptions when set)
   if (queryStringOptions) {
     schemaExtensions.meshRestOptions = {
       ...(schemaExtensions.meshRestOptions || {}),

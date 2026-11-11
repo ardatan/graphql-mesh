@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Calendly should generate the correct schema 1`] = `
-"schema @source(name: "calendly", http: {baseURL: "https://api.calendly.com"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "calendly", http: {baseURL: "https://api.calendly.com"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
   query: Query
   mutation: Mutation
 }
@@ -21,6 +21,8 @@ directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
@@ -330,7 +332,7 @@ type Query {
     namespace: [String]
     """The action(s) associated with the entries"""
     action: [String]
-  ): activityLog_response @connect(source: "calendly", http: {GET: "/activity_log_entries", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  search_term: $args.search_term\\n  actor: $args.actor->joinNotNull(\\",\\")\\n  sort: $args.sort->joinNotNull(\\",\\")\\n  min_occurred_at: $args.min_occurred_at\\n  max_occurred_at: $args.max_occurred_at\\n  page_token: $args.page_token\\n  count: $args.count\\n  namespace: $args.namespace->joinNotNull(\\",\\")\\n  action: $args.action->joinNotNull(\\",\\")\\n}"}, selection: "__typename: $status->match([200, \\"activityLog_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"activityLog_200_response\\"])\\ncollection {\\n  occurred_at\\n  actor\\n  details\\n  fully_qualified_name\\n  uri\\n  namespace\\n  action\\n  organization\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n}\\nlast_event_time\\ntotal_count\\nexceeds_max_total_count\\ntitle\\nmessage\\ndetails {\\n  parameter\\n  message\\n}", isSuccess: "$status->match([200, true], [400, true], [403, true], [404, true], [500, true], [@, false])")
+  ): activityLog_response @connect(source: "calendly", http: {GET: "/activity_log_entries", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  search_term: $args.search_term\\n  actor: $args.actor->joinNotNull(\\",\\")\\n  sort: $args.sort->joinNotNull(\\",\\")\\n  min_occurred_at: $args.min_occurred_at\\n  max_occurred_at: $args.max_occurred_at\\n  page_token: $args.page_token\\n  count: $args.count\\n  namespace: $args.namespace->joinNotNull(\\",\\")\\n  action: $args.action->joinNotNull(\\",\\")\\n}"}, selection: "__typename: $status->match([200, \\"activityLog_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"activityLog_200_response\\"])\\ncollection {\\n  occurred_at\\n  actor\\n  details\\n  fully_qualified_name\\n  uri\\n  namespace\\n  action\\n  organization\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n}\\nlast_event_time\\ntotal_count\\nexceeds_max_total_count\\ntitle\\nmessage\\ndetails {\\n  parameter\\n  message\\n}", isSuccess: "$status->match([200, true], [400, true], [403, true], [404, true], [500, true], [@, false])") @meshRestOptions(queryStringOptionsByParam: "{\\"actor\\":{\\"arrayFormat\\":\\"comma\\"},\\"sort\\":{\\"arrayFormat\\":\\"comma\\"},\\"namespace\\":{\\"arrayFormat\\":\\"comma\\"},\\"action\\":{\\"arrayFormat\\":\\"comma\\"}}")
 }
 
 union getInvitees_response @statusCodeTypeName(subgraph: "calendly", statusCode: "200", typeName: "getInvitees_200_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "400", typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "401", typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "403", typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "404", typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "500", typeName: "UNKNOWN_response") = getInvitees_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response

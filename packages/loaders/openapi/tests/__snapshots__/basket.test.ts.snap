@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Basket should generate the correct schema 1`] = `
-"schema @source(name: "basket", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "basket", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
   query: Query
   mutation: Mutation
 }
@@ -17,6 +17,8 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
+directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   customers_by_customerId(
@@ -108,5 +110,7 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}"
+}
+
+scalar ObjMap"
 `;

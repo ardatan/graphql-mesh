@@ -277,7 +277,16 @@ function applyQueryParams(
   if (hasPerParam) {
     const parts: string[] = [];
     for (const key of Object.keys(params)) {
-      const { destructObject: _d, jsonStringify: _j, ...paramQs } = byParam[key] || {};
+      const {
+        destructObject: _d,
+        deepObject: _deep,
+        jsonStringify: _j,
+        ...paramQs
+      } = (byParam[key] || {}) as MeshQsOptions & {
+        destructObject?: boolean;
+        deepObject?: boolean;
+        jsonStringify?: boolean;
+      };
       parts.push(
         qsStringify(
           { [key]: params[key] },
@@ -794,7 +803,9 @@ function buildBody(
   if (trimmed === '$args.input' || trimmed.startsWith('$args.input')) {
     let input = recoverInput(vars.args.input, 'input');
     // Merge Mesh `requestBaseBody` under the GraphQL `input` arg when both exist.
-    const baseBody = (opts.field?.extensions as any)?.meshRestOptions?.requestBaseBody;
+    const baseBody = parseObjMapArg(
+      (opts.field?.extensions as any)?.meshRestOptions?.requestBaseBody,
+    );
     if (baseBody != null && typeof baseBody === 'object' && !Array.isArray(baseBody)) {
       input =
         input != null && typeof input === 'object' && !Array.isArray(input)
@@ -850,16 +861,23 @@ export function addConnectFieldResolver(
   const source = connectArgs.source ? sources.get(connectArgs.source) : undefined;
   const picked = pickHttp(connectArgs.http);
   const schemaMeshRestOptions = (schema.extensions as any)?.meshRestOptions || {};
-  const fieldMeshRestOptions = (field.extensions as any)?.meshRestOptions || {};
+  const rawFieldMeshRestOptions = (field.extensions as any)?.meshRestOptions || {};
+  // ObjMap args may still be JSON strings if hydrate did not run (direct processConnect).
+  const fieldMeshRestOptions = {
+    ...rawFieldMeshRestOptions,
+    queryStringOptions: parseObjMapArg(rawFieldMeshRestOptions.queryStringOptions),
+    queryStringOptionsByParam: parseObjMapArg(rawFieldMeshRestOptions.queryStringOptionsByParam),
+    requestBaseBody: parseObjMapArg(rawFieldMeshRestOptions.requestBaseBody),
+  } as Record<string, any>;
   // Operation/field meshRestOptions override serve-time globals (httpOperation parity).
   const queryStringOptions: MeshQsOptions = {
     ...opts.queryStringOptions,
-    ...schemaMeshRestOptions.queryStringOptions,
-    ...fieldMeshRestOptions.queryStringOptions,
+    ...(parseObjMapArg(schemaMeshRestOptions.queryStringOptions) as MeshQsOptions),
+    ...(fieldMeshRestOptions.queryStringOptions as MeshQsOptions),
   };
   const queryStringOptionsByParam =
     fieldMeshRestOptions.queryStringOptionsByParam ||
-    schemaMeshRestOptions.queryStringOptionsByParam;
+    parseObjMapArg(schemaMeshRestOptions.queryStringOptionsByParam);
   const timeout = opts.timeout ?? fieldMeshRestOptions.timeout ?? schemaMeshRestOptions.timeout;
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
@@ -970,8 +988,21 @@ export function addConnectFieldResolver(
       const contentType = Object.entries(headers).find(
         ([k]) => k.toLowerCase() === 'content-type',
       )?.[1];
-      // Multipart needs the live File/Blob values from args (not JSON round-trip).
-      if (contentType?.includes('multipart/form-data')) {
+      // Raw binary upload (Mesh `binary: true` → `@meshRestOptions(isBinary: true)`).
+      if (fieldMeshRestOptions.isBinary) {
+        const binaryUpload = await rawArgs.input;
+        if (isFileUpload(binaryUpload)) {
+          requestInit.body = binaryUpload.createReadStream() as any;
+          const hasContentType = Object.keys(headers).some(k => k.toLowerCase() === 'content-type');
+          if (!hasContentType) {
+            headers['content-type'] = binaryUpload.mimetype;
+          }
+        } else {
+          requestInit.body = binaryUpload;
+        }
+        requestBody = requestInit.body;
+      } else if (contentType?.includes('multipart/form-data')) {
+        // Multipart needs the live File/Blob values from args (not JSON round-trip).
         delete headers['content-type'];
         delete headers['Content-Type'];
         const input =
@@ -1361,6 +1392,45 @@ function attachResponseMetadata(
   return decorate(selected);
 }
 
+function parseObjMapArg(value: unknown): unknown {
+  if (typeof value === 'string') {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+  return value;
+}
+
+/**
+ * Restore Mesh-only `@meshRestOptions` into `field.extensions.meshRestOptions`.
+ * ObjMap directive args are often JSON strings after SDL round-trip.
+ */
+function hydrateMeshRestOptionsFromDirective(field: GraphQLField<any, any>) {
+  const dirs = getDirectiveExtensions(field)?.meshRestOptions as
+    Array<Record<string, any>> | undefined;
+  const fromDirective = dirs?.[0];
+  if (!fromDirective) {
+    return;
+  }
+  const normalized: Record<string, any> = { ...fromDirective };
+  for (const key of [
+    'queryStringOptions',
+    'queryStringOptionsByParam',
+    'requestBaseBody',
+  ] as const) {
+    if (key in normalized) {
+      normalized[key] = parseObjMapArg(normalized[key]);
+    }
+  }
+  field.extensions = field.extensions || {};
+  (field.extensions as any).meshRestOptions = {
+    ...((field.extensions as any).meshRestOptions || {}),
+    ...normalized,
+  };
+}
+
 export function processConnectDirectives(
   schema: GraphQLSchema,
   opts: {
@@ -1394,6 +1464,7 @@ export function processConnectDirectives(
     const fields = type.getFields();
     for (const fieldName in fields) {
       const field = fields[fieldName];
+      hydrateMeshRestOptionsFromDirective(field as GraphQLField<any, any>);
       const directives = getDirectiveExtensions(field)?.connect as ConnectArgs[] | undefined;
       if (!directives?.length) continue;
       // First connect wins for execution (repeatable for schema merge cases)

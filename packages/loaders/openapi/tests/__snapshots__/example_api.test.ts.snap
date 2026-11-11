@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`example_api should generate the schema correctly 1`] = `
-"schema @source(name: "example_api", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "example_api", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
   query: Query
   mutation: Mutation
 }
@@ -11,6 +11,8 @@ directive @enum(subgraph: String, value: String) on ENUM_VALUE
 directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
@@ -60,7 +62,7 @@ type Query {
   """Used to test empty responses"""
   getBonuses: Void @connect(source: "example_api", http: {GET: "/bonuses"}, selection: "$")
   """Used to test query parameters with form style and explode"""
-  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office] @connect(source: "example_api", http: {GET: "/offices", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  parameters: $args.parameters\\n}"}, selection: "employeeId\\nroom_number: \\"room number\\"\\nemployerId")
+  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office] @connect(source: "example_api", http: {GET: "/offices", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  parameters: $args.parameters\\n}"}, selection: "employeeId\\nroom_number: \\"room number\\"\\nemployerId") @meshRestOptions(queryStringOptionsByParam: "{\\"parameters\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
   """Return an office."""
   getOffice(
     """Office ID"""
@@ -471,6 +473,8 @@ input ConnectorErrors {
   message: String
   extensions: String
 }
+
+scalar ObjMap
 
 input SourceHTTP {
   baseURL: String!

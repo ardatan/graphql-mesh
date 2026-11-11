@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI HATEOAS should compose 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@discriminator", "@extraSchemaDefinitionDirective", "@merge"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions", "@discriminator", "@extraSchemaDefinitionDirective", "@merge"]) {
   query: Query
 }
 
@@ -20,6 +20,8 @@ directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on
 directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
 directive @discriminator(subgraph: String, field: String, mapping: [[String]]) repeatable on INTERFACE | UNION
+
+directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -46,6 +48,8 @@ enum join__Graph {
   PRODUCTS @join__graph(name: "Products", url: "http://localhost:<OASService_port>")
   SUPPLIERS @join__graph(name: "Suppliers", url: "http://localhost:<OASService_port>")
 }
+
+scalar ObjMap @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS)
 
 scalar _DirectiveExtensions @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS)
 
