@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(
-  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@meshRestOptions", "@extraSchemaDefinitionDirective"]
-) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @source(name: "greetings", http: {baseURL: "http://localhost:<greetings_port>"}) @transport(subgraph: "greetings", kind: "rest", location: "http://localhost:<greetings_port>") {
   query: Query
 }
 
@@ -12,25 +9,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -56,39 +39,12 @@ enum join__Graph {
   HELLOER @join__graph(name: "helloer", url: "http://localhost:<helloer_port>/graphql")
 }
 
-directive @meshRestOptions(
-  queryStringOptions: ObjMap
-  queryStringOptionsByParam: ObjMap
-  requestBaseBody: ObjMap
-  timeout: Int
-  isBinary: Boolean
-) on FIELD_DEFINITION
-
-directive @connect(
-  source: String
-  http: ConnectHTTP
-  selection: String!
-  entity: Boolean
-  errors: ConnectorErrors
-  isSuccess: String
-) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
-
-scalar ObjMap @join__type(graph: GREETINGS)
-
-scalar _DirectiveExtensions @join__type(graph: GREETINGS)
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 scalar TransportOptions @join__type(graph: HELLOER)
 
-type Query @extraSchemaDefinitionDirective(
-  directives: {source: [{name: "greetings", http: {baseURL: "http://localhost:<greetings_port>"}}], transport: [{subgraph: "greetings", kind: "rest", location: "http://localhost:<greetings_port>"}]}
-) @join__type(graph: GREETINGS) @join__type(graph: HELLOER) {
-  greet(name: String!): greet_200_response @connect(
-    source: "greetings"
-    http: {GET: "/greet/{$args.name}", headers: [{name: "accept", value: "application/json"}]}
-    selection: "greeting"
-  ) @join__field(graph: GREETINGS)
+type Query @join__type(graph: GREETINGS) @join__type(graph: HELLOER) {
+  greet(name: String!): greet_200_response @connect(source: "greetings", http: {GET: "/greet/{$args.name}", headers: [{name: "accept", value: "application/json"}]}, selection: "greeting") @join__field(graph: GREETINGS)
   hello: String! @join__field(graph: HELLOER)
 }
 
@@ -126,6 +82,12 @@ input SourceHTTP @join__type(graph: GREETINGS) {
   errors: ConnectorErrors
   isSuccess: String
 }
+
+scalar ObjMap
+
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+
+directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA
 "
 `;
 

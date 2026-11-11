@@ -228,7 +228,11 @@ export async function getComposedResultFromConfig(
           [Kind.FIELD_DEFINITION](node, __key, __parent, __path, ancestors) {
             const directiveNames = node.directives?.map(directive => directive.name.value);
             if (directiveNames.includes('additionalField')) {
-              if (directiveNames.includes('join__field') || directiveNames.includes('source')) {
+              if (
+                directiveNames.includes('join__field') ||
+                directiveNames.includes('source') ||
+                directiveNames.includes('meshSource')
+              ) {
                 return {
                   ...node,
                   directives: node.directives?.filter(

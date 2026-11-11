@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(
-  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@meshRestOptions", "@merge", "@extraSchemaDefinitionDirective"]
-) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@transport"]) @source(name: "accounts", http: {baseURL: "http://localhost:<accounts_port>"}) @transport(subgraph: "accounts", kind: "rest", location: "http://localhost:<accounts_port>") {
   query: Query
 }
 
@@ -12,25 +9,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -58,59 +41,16 @@ enum join__Graph {
   REVIEWS @join__graph(name: "reviews", url: "http://localhost:<reviews_port>/graphql")
 }
 
-directive @merge(
-  subgraph: String!
-  argsExpr: String
-  keyArg: String
-  keyField: String
-  key: [String]
-  additionalArgs: String
-) repeatable on FIELD_DEFINITION
+directive @merge(subgraph: String!, argsExpr: String, keyArg: String, keyField: String, key: [String], additionalArgs: String) repeatable on FIELD_DEFINITION
 
-directive @meshRestOptions(
-  queryStringOptions: ObjMap
-  queryStringOptionsByParam: ObjMap
-  requestBaseBody: ObjMap
-  timeout: Int
-  isBinary: Boolean
-) on FIELD_DEFINITION
-
-directive @connect(
-  source: String
-  http: ConnectHTTP
-  selection: String!
-  entity: Boolean
-  errors: ConnectorErrors
-  isSuccess: String
-) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
-
-scalar ObjMap @join__type(graph: ACCOUNTS)
-
-scalar _DirectiveExtensions @join__type(graph: ACCOUNTS)
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 scalar TransportOptions @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS)
 
-type Query @extraSchemaDefinitionDirective(
-  directives: {source: [{name: "accounts", http: {baseURL: "http://localhost:<accounts_port>"}}], transport: [{subgraph: "accounts", kind: "rest", location: "http://localhost:<accounts_port>"}]}
-) @join__type(graph: ACCOUNTS) @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS) {
-  me: User @connect(
-    source: "accounts"
-    http: {GET: "/me", headers: [{name: "accept", value: "application/json"}]}
-    selection: "id\\nname\\nusername"
-  ) @join__field(graph: ACCOUNTS)
-  user(id: String!): User @connect(
-    source: "accounts"
-    http: {GET: "/users/{$args.id}", headers: [{name: "accept", value: "application/json"}]}
-    selection: "id\\nname\\nusername"
-    entity: true
-  ) @merge(subgraph: "accounts", keyField: "id", keyArg: "id") @join__field(graph: ACCOUNTS)
-  users: [User] @connect(
-    source: "accounts"
-    http: {GET: "/users", headers: [{name: "accept", value: "application/json"}]}
-    selection: "id\\nname\\nusername"
-  ) @join__field(graph: ACCOUNTS)
+type Query @join__type(graph: ACCOUNTS) @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS) {
+  me: User @connect(source: "accounts", http: {GET: "/me", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nusername") @join__field(graph: ACCOUNTS)
+  user(id: String!): User @connect(source: "accounts", http: {GET: "/users/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nusername", entity: true) @merge(subgraph: "accounts", keyField: "id", keyArg: "id") @join__field(graph: ACCOUNTS)
+  users: [User] @connect(source: "accounts", http: {GET: "/users", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nusername") @join__field(graph: ACCOUNTS)
   topProducts(first: Int = 5): [Product] @join__field(graph: PRODUCTS)
 }
 
@@ -168,6 +108,12 @@ input SourceHTTP @join__type(graph: ACCOUNTS) {
   errors: ConnectorErrors
   isSuccess: String
 }
+
+scalar ObjMap
+
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+
+directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA
 "
 `;
 

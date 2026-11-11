@@ -97,7 +97,7 @@ export function withOriginalKeyFallback<T extends Record<string, any>>(
 
 /**
  * Rewrite Apollo Connectors `@connect` `$args.<name>` references after GraphQL
- * argument renames. Mesh stitching used `@source(name:)` for this; Connectors
+ * argument renames. Mesh stitching used `@meshSource(name:)` for this; Connectors
  * bind args by the GraphQL argument name in path/body/query/headers expressions.
  *
  * When `fieldRenameMap` is set, also rewrite selection aliases of the form

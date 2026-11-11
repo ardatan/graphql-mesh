@@ -32,7 +32,9 @@ import {
   importFederationDirectives,
   importMeshDirectives,
   normalizeDirectiveExtensions,
+  type MeshDirectiveImport,
 } from './federation-utils.js';
+import { liftExtraSchemaDefinitionDirectives } from './lift-extra-schema-directives.js';
 
 export interface SubgraphConfig {
   name: string;
@@ -78,7 +80,7 @@ function isEmptyObject(obj: any) {
 /**
  * Apollo Connectors subgraphs use `@link(url: "https://specs.apollo.dev/connect/...")`
  * and/or schema `@source(http: { baseURL })`. They must not get Mesh `@transport`
- * or stitching `@source(subgraph:)` annotations — transforms rewrite connect SDL instead.
+ * or stitching `@meshSource(subgraph:)` annotations — transforms rewrite connect SDL instead.
  */
 export function isApolloConnectorsSubgraph(schema: GraphQLSchema): boolean {
   const directives = getDirectiveExtensions(schema);
@@ -134,9 +136,11 @@ export function getAnnotatedSubgraphs(
     }
 
     let mergeDirectiveUsed = false;
-    // Stitching `@source` is only for non-connectors transforms. Connectors transforms
-    // rewrite `@connect` selection/http instead of adding Mesh source annotations.
+    // Stitching `@meshSource` is only for non-connectors transforms. Connectors
+    // transforms rewrite `@connect` selection/http instead of adding Mesh source annotations.
     const sourceDirectiveUsed = !isConnectorsSubgraph && transforms?.length > 0;
+    /** Mesh stitching source directive — distinct from Apollo SCHEMA `@source`. */
+    const meshSourceDirectiveName = 'meshSource';
     const normalizedSchema = normalizeDirectiveExtensions(schema);
     if (isConnectorsSubgraph) {
       const extensions: Record<string, any> = (normalizedSchema.extensions ||= {});
@@ -161,7 +165,8 @@ export function getAnnotatedSubgraphs(
           return type;
         }
         const existingDirectives = getDirectiveExtensions(type);
-        const existingSourceDirectives = existingDirectives?.source || [];
+        const existingSourceDirectives =
+          existingDirectives?.[meshSourceDirectiveName] || existingDirectives?.source || [];
         if (existingSourceDirectives.length > 1) {
           throw new Error(
             `Type ${type.name} already has source directives from multiple subgraphs: ${existingSourceDirectives
@@ -172,7 +177,7 @@ export function getAnnotatedSubgraphs(
         const existingSourceDirective = existingSourceDirectives[0] || {};
         const directives: Record<string, any> = {
           ...existingDirectives,
-          source: {
+          [meshSourceDirectiveName]: {
             name: type.name,
             ...existingSourceDirective,
             subgraph: subgraphName,
@@ -196,7 +201,8 @@ export function getAnnotatedSubgraphs(
           for (const argName in fieldConfig.args) {
             const arg = fieldConfig.args[argName];
             const directives = getDirectiveExtensions(arg);
-            const existingSourceDirectives = directives.source || [];
+            const existingSourceDirectives =
+              directives[meshSourceDirectiveName] || directives.source || [];
             if (existingSourceDirectives.length > 1) {
               throw new Error(
                 `Argument ${argName} of field ${fieldName} already has source directives from multiple subgraphs: ${existingSourceDirectives
@@ -211,7 +217,7 @@ export function getAnnotatedSubgraphs(
                 ...arg.extensions,
                 directives: {
                   ...directives,
-                  source: {
+                  [meshSourceDirectiveName]: {
                     name: argName,
                     type: arg.type.toString(),
                     ...existingSourceDirective,
@@ -224,7 +230,8 @@ export function getAnnotatedSubgraphs(
           }
         }
         const existingDirectives = getDirectiveExtensions(fieldConfig);
-        const existingSourceDirectives = existingDirectives.source || [];
+        const existingSourceDirectives =
+          existingDirectives[meshSourceDirectiveName] || existingDirectives.source || [];
         if (existingSourceDirectives.length > 1) {
           throw new Error(
             `Field ${fieldName} already has source directives from multiple subgraphs: ${existingSourceDirectives
@@ -240,7 +247,7 @@ export function getAnnotatedSubgraphs(
             ...fieldConfig.extensions,
             directives: {
               ...existingDirectives,
-              source: {
+              [meshSourceDirectiveName]: {
                 name: fieldName,
                 type: fieldConfig.type.toString(),
                 ...existingSourceDirective,
@@ -256,7 +263,8 @@ export function getAnnotatedSubgraphs(
           return valueConfig;
         }
         const existingDirectives = getDirectiveExtensions(valueConfig);
-        const existingSourceDirectives = existingDirectives.source || [];
+        const existingSourceDirectives =
+          existingDirectives[meshSourceDirectiveName] || existingDirectives.source || [];
         if (existingSourceDirectives.length > 1) {
           throw new Error(
             `Enum value ${externalValue} already has source directives from multiple subgraphs: ${existingSourceDirectives
@@ -271,7 +279,7 @@ export function getAnnotatedSubgraphs(
             ...valueConfig.extensions,
             directives: {
               ...existingDirectives,
-              source: {
+              [meshSourceDirectiveName]: {
                 name: externalValue,
                 ...existingSourceDirective,
                 subgraph: subgraphName,
@@ -283,7 +291,7 @@ export function getAnnotatedSubgraphs(
       },
       [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
         const directiveExtensions = getDirectiveExtensions(fieldConfig);
-        // Connectors must never get stitching `@source` (Apollo owns SCHEMA `@source`).
+        // Connectors must never get stitching `@meshSource` (Apollo owns SCHEMA `@source`).
         if (!sourceDirectiveUsed) {
           if (!transforms?.length && !options.ignoreSemanticConventions) {
             addAnnotationsForSemanticConventions({
@@ -311,7 +319,8 @@ export function getAnnotatedSubgraphs(
           for (const argName in fieldConfig.args) {
             const arg = fieldConfig.args[argName];
             const directives = getDirectiveExtensions(arg);
-            const existingSourceDirectives = directives.source || [];
+            const existingSourceDirectives =
+              directives[meshSourceDirectiveName] || directives.source || [];
             if (existingSourceDirectives.length > 1) {
               throw new Error(
                 `Argument ${argName} of field ${fieldName} already has source directives from multiple subgraphs: ${existingSourceDirectives
@@ -326,7 +335,7 @@ export function getAnnotatedSubgraphs(
                 ...arg.extensions,
                 directives: {
                   ...directives,
-                  source: {
+                  [meshSourceDirectiveName]: {
                     name: argName,
                     type: arg.type.toString(),
                     ...existingSourceDirective,
@@ -338,7 +347,8 @@ export function getAnnotatedSubgraphs(
             };
           }
         }
-        const existingSourceDirectives = directiveExtensions.source || [];
+        const existingSourceDirectives =
+          directiveExtensions[meshSourceDirectiveName] || directiveExtensions.source || [];
         if (existingSourceDirectives.length > 1) {
           throw new Error(
             `Field ${fieldName} already has source directives from multiple subgraphs: ${existingSourceDirectives
@@ -353,7 +363,7 @@ export function getAnnotatedSubgraphs(
             ...fieldConfig.extensions,
             directives: {
               ...directiveExtensions,
-              source: {
+              [meshSourceDirectiveName]: {
                 name: fieldName,
                 type: fieldConfig.type.toString(),
                 ...existingSourceDirective,
@@ -369,12 +379,10 @@ export function getAnnotatedSubgraphs(
         if (directive.name === 'transport' && removeTransportDirectiveDefinition) {
           return null;
         }
-        // Mesh composition carries Apollo `@source` via `@extraSchemaDefinitionDirective`
-        // so Mesh stitching `@source` (composeDirective) does not clash on the name.
-        if (directive.name === 'source') {
-          if (isConnectorsSubgraph || !sourceDirectiveUsed) {
-            return null;
-          }
+        // Stitching uses `@meshSource`. Keep Apollo SCHEMA `@source` on connectors
+        // subgraphs; drop any leftover Mesh `@source` def on non-connectors.
+        if (directive.name === 'source' && !isConnectorsSubgraph) {
+          return null;
         }
       },
     });
@@ -421,17 +429,19 @@ export function getAnnotatedSubgraphs(
     }
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
     transformedSubgraph = detectAndAddMeshDirectives(transformedSubgraph);
-    const importedDirectives = new Set<string>();
+    const importedDirectives: MeshDirectiveImport[] = [];
     if (mergeDirectiveUsed) {
-      importedDirectives.add('@merge');
+      importedDirectives.push('@merge');
     }
     if (sourceDirectiveUsed) {
-      importedDirectives.add('@source');
+      // Distinct Mesh-spec name (not an alias of `@source`) so Guild compose does not
+      // clash with Apollo Connectors SCHEMA `@source` across subgraphs.
+      importedDirectives.push('@meshSource');
     }
-    // Preserve Apollo `@connect` through federation via `@composeDirective`, while keeping
-    // the Apollo connect `@link` as the sole feature that imports `@connect` (not Mesh spec).
-    // Drop `@source` from the connect `@link` import — SCHEMA source args live in
-    // `@extraSchemaDefinitionDirective` so they don't collide with Mesh stitching `@source`.
+    // Preserve Apollo `@connect` (and `@source`) through federation via `@composeDirective`.
+    // Mesh stitching uses the distinct `@meshSource` name so it does not clash with Apollo
+    // SCHEMA `@source`. SCHEMA usages still ride in extras for Guild compose; post-process
+    // lifts them onto `schema @…`.
     if (isConnectorsSubgraph) {
       const schemaDirectives = getDirectiveExtensions(transformedSubgraph) || {};
       const composeDirectives = (schemaDirectives.composeDirective =
@@ -439,53 +449,30 @@ export function getAnnotatedSubgraphs(
       if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
         composeDirectives.push({ name: '@connect' });
       }
-      if (Array.isArray(schemaDirectives.link)) {
-        schemaDirectives.link = schemaDirectives.link.map(
-          (link: { url?: string; import?: any[] }) => {
-            if (
-              typeof link?.url === 'string' &&
-              link.url.includes('specs.apollo.dev/connect') &&
-              Array.isArray(link.import)
-            ) {
-              return {
-                ...link,
-                import: link.import.filter(item => {
-                  if (typeof item === 'string') {
-                    return item !== '@source' && item !== 'source';
-                  }
-                  if (item && typeof item === 'object' && 'name' in item) {
-                    const name = String((item as { name?: string }).name || '');
-                    return name !== '@source' && name !== 'source';
-                  }
-                  return true;
-                }),
-              };
-            }
-            return link;
-          },
-        );
-      }
       const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
       extensions.directives = schemaDirectives;
       transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@composeDirective']);
     }
     const fieldMapper: FieldMapper = (fieldConfig, fieldName) => {
       const fieldDirectives = getDirectiveExtensions(fieldConfig);
-      const sourceDirectives = fieldDirectives?.source;
+      const sourceDirectives =
+        fieldDirectives?.[meshSourceDirectiveName] || fieldDirectives?.source;
       if (sourceDirectives?.length) {
         const filteredSourceDirectives = sourceDirectives.filter(
           sourceDirective =>
             sourceDirective.name !== fieldName ||
             sourceDirective.type !== fieldConfig.type.toString(),
         );
-        fieldDirectives.source = filteredSourceDirectives;
+        fieldDirectives[meshSourceDirectiveName] = filteredSourceDirectives;
+        delete fieldDirectives.source;
       }
       if ('args' in fieldConfig) {
         const newArgs: GraphQLFieldConfigArgumentMap = {};
         for (const argName in fieldConfig.args) {
           const arg = fieldConfig.args[argName];
           const argDirectives = getDirectiveExtensions(arg);
-          const sourceDirectives = argDirectives?.source;
+          const sourceDirectives =
+            argDirectives?.[meshSourceDirectiveName] || argDirectives?.source;
           if (sourceDirectives?.length) {
             const filteredSourceDirectives = sourceDirectives.filter(
               sourceDirective =>
@@ -497,7 +484,7 @@ export function getAnnotatedSubgraphs(
                 ...arg.extensions,
                 directives: {
                   ...argDirectives,
-                  source: filteredSourceDirectives,
+                  [meshSourceDirectiveName]: filteredSourceDirectives,
                 },
               },
             };
@@ -524,11 +511,12 @@ export function getAnnotatedSubgraphs(
         astNode: undefined,
       };
     };
-    // Remove unnecessary @source directives
+    // Remove unnecessary @meshSource directives
     transformedSubgraph = mapSchema(transformedSubgraph, {
       [MapperKind.TYPE]: type => {
         const typeDirectives = getDirectiveExtensions(type);
-        const sourceDirectives = typeDirectives?.source;
+        const sourceDirectives =
+          typeDirectives?.[meshSourceDirectiveName] || typeDirectives?.source;
         if (sourceDirectives?.length) {
           const filteredSourceDirectives = sourceDirectives.filter(
             sourceDirective => sourceDirective.name !== type.name,
@@ -536,8 +524,9 @@ export function getAnnotatedSubgraphs(
           const typeExtensions: Record<string, any> = (type.extensions ||= {});
           typeExtensions.directives = {
             ...typeDirectives,
-            source: filteredSourceDirectives,
+            [meshSourceDirectiveName]: filteredSourceDirectives,
           };
+          delete typeExtensions.directives.source;
         }
         return type;
       },
@@ -545,7 +534,8 @@ export function getAnnotatedSubgraphs(
       [MapperKind.FIELD]: fieldMapper as any,
       [MapperKind.ENUM_VALUE]: (valueConfig, _typeName, _schema, externalValue) => {
         const valueDirectives = getDirectiveExtensions(valueConfig);
-        const sourceDirectives = valueDirectives?.source;
+        const sourceDirectives =
+          valueDirectives?.[meshSourceDirectiveName] || valueDirectives?.source;
         if (sourceDirectives?.length) {
           const filteredSourceDirectives = sourceDirectives.filter(
             sourceDirective => sourceDirective.name !== externalValue,
@@ -553,8 +543,9 @@ export function getAnnotatedSubgraphs(
           const valueExtensions: Record<string, any> = (valueConfig.extensions ||= {});
           valueExtensions.directives = {
             ...valueDirectives,
-            source: filteredSourceDirectives,
+            [meshSourceDirectiveName]: filteredSourceDirectives,
           };
+          delete valueExtensions.directives.source;
         }
         return valueConfig;
       },
@@ -603,7 +594,7 @@ export function getAnnotatedSubgraphs(
     }
     if (sourceDirectiveUsed) {
       importedDirectivesAST.add(/* GraphQL */ `
-        directive @source(
+        directive @meshSource(
           name: String!
           type: String
           subgraph: String!
@@ -616,7 +607,7 @@ export function getAnnotatedSubgraphs(
       const queryTypeDirectives = getDirectiveExtensions(queryType) || {};
 
       if (extraSchemaDefinitionDirectives) {
-        importedDirectives.add('@extraSchemaDefinitionDirective');
+        importedDirectives.push('@extraSchemaDefinitionDirective');
         importedDirectivesAST.add(/* GraphQL */ `
           scalar _DirectiveExtensions
         `);
@@ -635,8 +626,8 @@ export function getAnnotatedSubgraphs(
       queryTypeExtensions.directives = queryTypeDirectives;
     }
 
-    if (importedDirectives.size) {
-      transformedSubgraph = importMeshDirectives(transformedSubgraph, [...importedDirectives]);
+    if (importedDirectives.length) {
+      transformedSubgraph = importMeshDirectives(transformedSubgraph, importedDirectives);
     }
 
     let subgraphAST = getDocumentNodeFromSchema(transformedSubgraph);
@@ -684,9 +675,12 @@ export function composeSubgraphs(
 
 export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[]) {
   const composedSupergraphSdl = composeServices(annotatedSubgraphs);
+  const rawSupergraphSdl = composedSupergraphSdl.supergraphSdl?.trim();
   return {
     ...composedSupergraphSdl,
-    supergraphSdl: composedSupergraphSdl.supergraphSdl?.trim(),
+    supergraphSdl: rawSupergraphSdl
+      ? liftExtraSchemaDefinitionDirectives(rawSupergraphSdl)
+      : rawSupergraphSdl,
     annotatedSubgraphs,
   };
 }

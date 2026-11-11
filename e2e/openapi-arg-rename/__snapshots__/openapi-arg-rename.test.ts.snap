@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI Arg Rename composes the schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(
-  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@meshRestOptions", "@extraSchemaDefinitionDirective"]
-) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @source(name: "Wiki", http: {baseURL: "http://localhost:<Wiki_port>"}) @transport(subgraph: "Wiki", kind: "rest", location: "http://localhost:<Wiki_port>") {
   query: Query
   mutation: Mutation
 }
@@ -13,25 +10,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -56,46 +39,15 @@ enum join__Graph {
   WIKI @join__graph(name: "Wiki", url: "http://localhost:<Wiki_port>")
 }
 
-directive @meshRestOptions(
-  queryStringOptions: ObjMap
-  queryStringOptionsByParam: ObjMap
-  requestBaseBody: ObjMap
-  timeout: Int
-  isBinary: Boolean
-) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @connect(
-  source: String
-  http: ConnectHTTP
-  selection: String!
-  entity: Boolean
-  errors: ConnectorErrors
-  isSuccess: String
-) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
-
-scalar ObjMap @join__type(graph: WIKI)
-
-scalar _DirectiveExtensions @join__type(graph: WIKI)
-
-type Query @extraSchemaDefinitionDirective(
-  directives: {source: [{name: "Wiki", http: {baseURL: "http://localhost:<Wiki_port>"}}], transport: [{subgraph: "Wiki", kind: "rest", location: "http://localhost:<Wiki_port>"}]}
-) @join__type(graph: WIKI) {
+type Query @join__type(graph: WIKI) {
   dummy: String
 }
 
 type Mutation @join__type(graph: WIKI) {
-  postGood(input: RequestBody_Input): [ResponseBody] @connect(
-    source: "Wiki"
-    http: {POST: "/good", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
-    selection: "apple"
-  )
-  postBad(requestBody: RequestBody_Input): [ResponseBody] @connect(
-    source: "Wiki"
-    http: {POST: "/bad", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.requestBody"}
-    selection: "apple"
-  )
+  postGood(input: RequestBody_Input): [ResponseBody] @connect(source: "Wiki", http: {POST: "/good", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "apple")
+  postBad(requestBody: RequestBody_Input): [ResponseBody] @connect(source: "Wiki", http: {POST: "/bad", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.requestBody"}, selection: "apple")
 }
 
 type ResponseBody @join__type(graph: WIKI) {
@@ -135,5 +87,11 @@ input SourceHTTP @join__type(graph: WIKI) {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}"
+}
+
+scalar ObjMap
+
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+
+directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA"
 `;

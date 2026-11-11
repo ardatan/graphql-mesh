@@ -65,7 +65,7 @@ describe('Hoist Field', () => {
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
 "directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+directive @meshSource(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(limit: Int!, page: Int): [User!]!
@@ -111,7 +111,7 @@ scalar _HoistConfig"
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
 "directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+directive @meshSource(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(limit: Int!, page: Int): [User!]!
@@ -155,7 +155,7 @@ scalar _HoistConfig"
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
 "directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+directive @meshSource(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users: [User!]!
@@ -205,7 +205,7 @@ scalar _HoistConfig"
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
 "directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+directive @meshSource(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(page: Int): [User!]!
@@ -258,7 +258,7 @@ scalar _HoistConfig"
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
 "directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+directive @meshSource(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(page: Int): [User!]!
@@ -339,7 +339,7 @@ scalar _HoistConfig"
     expect(printSortedSchema(newSchema)).toMatchInlineSnapshot(`
 "directive @hoist(pathConfig: _HoistConfig, subgraph: String) on FIELD_DEFINITION
 
-directive @source(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+directive @meshSource(name: String!, subgraph: String!, type: String) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 
 type Query {
   users(limit: Int!, page: Int): UserSearchResult

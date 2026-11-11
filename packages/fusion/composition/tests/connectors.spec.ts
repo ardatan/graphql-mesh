@@ -62,14 +62,14 @@ describe('Apollo Connectors composition', () => {
     ).toBe(false);
   });
 
-  it('does not add Mesh @transport or stitching @source for connectors subgraphs', () => {
+  it('does not add Mesh @transport or stitching @meshSource for connectors subgraphs', () => {
     const annotated = getAnnotatedSubgraphs([
       {
         name: 'REST',
         schema: connectorsSchema,
         transforms: [
           schema =>
-            // noop transform — still must not inject stitching @source
+            // noop transform — still must not inject stitching @meshSource
             schema,
         ],
       },
@@ -79,11 +79,11 @@ describe('Apollo Connectors composition', () => {
     expect(annotated[0].url).toBe('https://api.example.com');
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).not.toMatch(/@transport\b/);
-    // Stitching source uses `subgraph:`; Apollo SCHEMA source is moved to extras
-    // so Mesh composeDirective `@source` can coexist in mixed supergraphs.
+    // Stitching uses `@meshSource(subgraph:)`; Apollo SCHEMA `@source` stays on the connect link.
+    expect(sdl).not.toMatch(/@meshSource\b/);
     expect(sdl).not.toMatch(/@source\([^)]*subgraph:/);
-    expect(sdl).not.toMatch(/import:\s*\[[^\]]*@source/);
     expect(sdl).toContain('specs.apollo.dev/connect/v0.4');
+    expect(sdl).toMatch(/import:\s*\[[^\]]*@source/);
     expect(sdl).toContain('@connect');
   });
 
@@ -95,7 +95,8 @@ describe('Apollo Connectors composition', () => {
       },
     ]);
     const sdl = print(annotated[0].typeDefs);
-    // Apollo `@source` is carried via Mesh `@extraSchemaDefinitionDirective` on Query.
+    // Apollo `@source` is carried via Mesh `@extraSchemaDefinitionDirective` on Query
+    // until compose post-process lifts it onto `schema @source`.
     expect(sdl).toContain('extraSchemaDefinitionDirective');
     expect(sdl).toContain('https://api.example.com');
   });

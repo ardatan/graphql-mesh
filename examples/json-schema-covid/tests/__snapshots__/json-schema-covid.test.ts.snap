@@ -8,8 +8,6 @@ directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, 
 
 directive @link(import: [String], url: String!) repeatable on SCHEMA
 
-directive @meshRestOptions(isBinary: Boolean, queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int) on FIELD_DEFINITION
-
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
 
 directive @responseMetadata(subgraph: String) on FIELD_DEFINITION
@@ -149,8 +147,6 @@ input HTTPHeaderMapping {
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON
-
-scalar ObjMap
 
 type Query {
   """"""

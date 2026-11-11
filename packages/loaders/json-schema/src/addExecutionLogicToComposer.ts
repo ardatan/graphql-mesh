@@ -169,6 +169,7 @@ export function addExecutionDirectivesToComposer(
     typeTC: ObjectTypeComposer | InterfaceTypeComposer;
   };
   const pendingLinks: PendingLinks[] = [];
+  let meshRestOptionsFieldUsed = false;
 
   const handleLinkMap = (
     linkMap: Record<string, JSONSchemaLinkConfig>,
@@ -451,6 +452,7 @@ ${operationConfig.description || ''}
         ...(operationTimeout !== undefined ? { timeout: operationTimeout } : {}),
       };
       if (Object.keys(meshRestArgs).length) {
+        meshRestOptionsFieldUsed = true;
         schemaComposer.addDirective(MeshRestOptionsDirective);
         field.directives.push({
           name: 'meshRestOptions',
@@ -572,10 +574,15 @@ ${operationConfig.description || ''}
     });
   }
 
+  // Only declare/import `@meshRestOptions` when a field emitted it or schema-level qs is set.
+  const meshRestOptionsUsed = meshRestOptionsFieldUsed || Boolean(queryStringOptions);
+
   schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
-  schemaComposer.addDirective(MeshRestOptionsDirective);
+  if (meshRestOptionsUsed) {
+    schemaComposer.addDirective(MeshRestOptionsDirective);
+  }
   let schema = schemaComposer.buildSchema();
   const schemaExtensions: any = (schema.extensions = schema.extensions || {});
   schemaExtensions.directives = schemaExtensions.directives || {};
@@ -591,16 +598,21 @@ ${operationConfig.description || ''}
       queryParams,
     }),
   ];
-  schemaExtensions.directives.link = [
-    ...(schemaExtensions.directives.link || []),
+  const linkDirectives: Array<{ url: string; import: string[] }> = [
     {
       url: CONNECT_LINK_URL,
       import: ['@connect', '@source'],
     },
-    {
+  ];
+  if (meshRestOptionsUsed) {
+    linkDirectives.push({
       url: MESH_SPEC_LINK_URL,
       import: ['@meshRestOptions'],
-    },
+    });
+  }
+  schemaExtensions.directives.link = [
+    ...(schemaExtensions.directives.link || []),
+    ...linkDirectives,
   ];
   // Keep handlerName available for debugging without Mesh @transport
   schemaExtensions.meshHandlerName = handlerName;

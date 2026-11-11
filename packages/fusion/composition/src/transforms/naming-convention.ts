@@ -190,7 +190,7 @@ export function createNamingConventionTransform(
         return [newExternalValue, valueConfig];
       }
       // Keep the original JSON/wire value when the GraphQL enum name changes.
-      // Connectors subgraphs cannot use Mesh stitching `@source(name:)` for this.
+      // Connectors subgraphs cannot use Mesh stitching `@meshSource(name:)` for this.
       const nextValue =
         valueConfig.value !== undefined && valueConfig.value !== externalValue
           ? valueConfig.value

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions", "@extraSchemaDefinitionDirective"]) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @source(name: "API", http: {baseURL: "http://localhost:<api_port>"}) @transport(subgraph: "API", kind: "rest", location: "http://localhost:<api_port>") {
   query: Query
   mutation: Mutation
 }
@@ -20,11 +20,11 @@ directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on
 
 directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+
+directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA
 
 directive @additionalField on FIELD_DEFINITION
 
@@ -47,11 +47,7 @@ enum join__Graph {
   API @join__graph(name: "API", url: "http://localhost:<api_port>")
 }
 
-scalar ObjMap @join__type(graph: API)
-
-scalar _DirectiveExtensions @join__type(graph: API)
-
-type Query @extraSchemaDefinitionDirective(directives: {source: [{name: "API", http: {baseURL: "http://localhost:<api_port>"}}], transport: [{subgraph: "API", kind: "rest", location: "http://localhost:<api_port>"}]}) @join__type(graph: API) {
+type Query @join__type(graph: API) {
   dummy: String
   user(id: Float!): User @additionalField
 }
@@ -103,6 +99,8 @@ input SourceHTTP @join__type(graph: API) {
   errors: ConnectorErrors
   isSuccess: String
 }
+
+scalar ObjMap
 "
 `;
 

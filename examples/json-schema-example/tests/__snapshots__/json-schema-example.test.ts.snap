@@ -16,8 +16,6 @@ directive @source(name: String!, http: SourceHttp!, errors: ConnectorErrors, isS
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
-
 type Query {
   me: User @connect(source: "FakeAPI", http: {GET: "/me"}, selection: "firstName\\nlastName\\njobTitle\\ncompanyId\\nbirthDate\\nfoos {\\n  id\\n}")
   company(id: String!): Company @connect(source: "FakeAPI", http: {GET: "/company/{$args.id}"}, selection: "name\\ntype")

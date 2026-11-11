@@ -33,6 +33,7 @@ export type ApolloConnectorsSubgraph = {
 const STRIP_USAGE_NAMES = new Set([
   'extraSchemaDefinitionDirective',
   'meshRestOptions',
+  'meshSource',
   'merge',
   'enum',
   'resolveRootField',

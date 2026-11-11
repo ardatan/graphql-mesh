@@ -17,8 +17,6 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
-
 directive @live on QUERY
 
 type Query {
