@@ -1481,7 +1481,6 @@ export function addConnectFieldResolver(
         http: mappedHttp,
         connector: mappedConnector,
         code: mappedCode,
-        service: mappedService,
         serviceName: mappedServiceName,
         ...customExtensions
       } = mappedExtensions;
@@ -1502,12 +1501,9 @@ export function addConnectFieldResolver(
           : {}),
       };
       const code = mappedCode ?? 'CONNECTOR_FETCH';
-      // Mesh transports use `serviceName` (grpc/soap/httpOperation). Accept Apollo-style
-      // `service` from `errors.extensions` mapping but only emit `serviceName`.
+      // Mesh transports use `serviceName` (grpc/soap/httpOperation).
       const resolvedServiceName =
-        (typeof mappedServiceName === 'string' && mappedServiceName) ||
-        (typeof mappedService === 'string' && mappedService) ||
-        serviceName;
+        (typeof mappedServiceName === 'string' && mappedServiceName) || serviceName;
       // Match httpOperation: expose the unresolved path template (Mesh `{args.x}` form).
       const pathForMessage = picked.path.replace(/\{\$/g, '{');
       const defaultMessage = `Upstream HTTP Error: ${response.status}, Could not invoke operation ${method} ${pathForMessage}`;
