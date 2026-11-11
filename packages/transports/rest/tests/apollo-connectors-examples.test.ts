@@ -302,8 +302,7 @@ describe('Apollo Connectors error shape', () => {
 
   it('emits Apollo default CONNECTOR_FETCH extensions on HTTP failure', async () => {
     const schema = processConnectDirectives(buildSchema(errorSchemaSdl), {
-      globalFetch: (async () =>
-        new Response(JSON.stringify({ message: 'boom' }), { status: 500 })) as any,
+      globalFetch: (async () => Response.json({ message: 'boom' }, { status: 500 })) as any,
     });
     const result = await execute({
       schema,
@@ -332,9 +331,7 @@ describe('Apollo Connectors error shape', () => {
   it('applies errors.message / errors.extensions customizations', async () => {
     const schema = processConnectDirectives(buildSchema(errorSchemaSdl), {
       globalFetch: (async () =>
-        new Response(JSON.stringify({ error: { message: 'Nope!', code: 'USER_GONE' } }), {
-          status: 404,
-        })) as any,
+        Response.json({ error: { message: 'Nope!', code: 'USER_GONE' } }, { status: 404 })) as any,
     });
     const result = await execute({
       schema,
@@ -358,7 +355,7 @@ describe('Apollo Connectors error shape', () => {
   it('honors isSuccess for selected status codes', async () => {
     const schema = processConnectDirectives(buildSchema(errorSchemaSdl), {
       globalFetch: (async () =>
-        new Response(JSON.stringify({ id: 'missing', name: null }), { status: 404 })) as any,
+        Response.json({ id: 'missing', name: null }, { status: 404 })) as any,
     });
     const result = await execute({
       schema,
