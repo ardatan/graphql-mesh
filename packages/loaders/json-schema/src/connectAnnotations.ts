@@ -637,7 +637,14 @@ export function buildStatusUnionConnectExtras(
  * Build a Connectors selection that maps JSON fields with matching GraphQL names.
  * Skips fields that already have their own `@connect` (e.g. links).
  */
-/** Soft cap so huge OpenAPI schemas (K8s/Stripe) don't emit multi‑MB `@connect` selections. */
+/**
+ * Soft cap so huge OpenAPI schemas (K8s/Stripe) don't emit multi-MB `@connect` selections.
+ *
+ * Over-cap must NOT silently become a bare `$` passthrough for object returns: Apollo Router
+ * requires every object field to be mapped (leaf selections must be scalars). Prefer a
+ * `leavesOnly` rebuild first; only give up (caller may fall back to `$` for Hive) when even
+ * scalar leaves exceed the cap.
+ */
 const MAX_CONNECT_SELECTION_CHARS = 12_000;
 
 function objectTypeHasDictionaryField(named: GraphQLNamedOutputType): boolean {
@@ -706,7 +713,35 @@ export function buildSelectionForType(
       .join(' ');
     if (mergedSelection.length > MAX_CONNECT_SELECTION_CHARS) {
       // Prefer `__typename` bake alone over `$` so status unions stay Connectors-native
-      // after `@statusCodeTypeName` is stripped (no Mesh runtime fallback).
+      // after `@statusCodeTypeName` is stripped (no Mesh runtime fallback). Router still
+      // needs mapped fields when possible — try leaves-only member picks under the bake.
+      if (!leavesOnly) {
+        const leafMerged = new Map<string, string>();
+        for (const member of members) {
+          const part = buildSelectionForType(member, {
+            skipFields,
+            depth: depth + 1,
+            leavesOnly: true,
+          });
+          if (!part) continue;
+          for (const [key, block] of extractTopLevelSelectionFields(part)) {
+            if (!leafMerged.has(key)) leafMerged.set(key, block);
+          }
+        }
+        const leafSelection = [
+          statusExtras?.typenameSelection || discTypename,
+          ...leafMerged.values(),
+        ]
+          .filter(Boolean)
+          .join(' ');
+        if (
+          leafSelection &&
+          leafSelection.length <= MAX_CONNECT_SELECTION_CHARS &&
+          leafSelection !== (statusExtras?.typenameSelection || discTypename || '')
+        ) {
+          return leafSelection;
+        }
+      }
       return statusExtras?.typenameSelection || discTypename || '';
     }
     return mergedSelection;
@@ -897,6 +932,15 @@ export function buildSelectionForType(
   // Avoid `\n` escapes in printed SDL (`selection: "id name"` vs `"id\\nname"`).
   const joined = lines.join(' ');
   if (joined.length > MAX_CONNECT_SELECTION_CHARS) {
+    // Router-safe degrade: scalar/enum leaves only (never empty→`$` for object maps).
+    if (!leavesOnly) {
+      return buildSelectionForType(type, {
+        skipFields,
+        depth,
+        implementations,
+        leavesOnly: true,
+      });
+    }
     return '';
   }
   return joined;

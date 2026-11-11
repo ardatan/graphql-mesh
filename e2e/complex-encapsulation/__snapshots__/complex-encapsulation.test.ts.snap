@@ -73,7 +73,7 @@ type SubgraphASubgraphAQuery @join__type(graph: SUBGRAPH_A) {
 }
 
 type SubgraphBSubgraphBQuery @join__type(graph: SUBGRAPH_B) {
-  headers(xCustomHeader: String): SubgraphBheaders_200_response @join__directive(graphs: [SUBGRAPH_B], name: "connect", args: {source: "subgraph-b", http: {GET: "/headers", headers: [{name: "accept", value: "application/json"}]}, selection: "x_custom_header: $[\\"x-custom-header\\"]"})
+  headers(xCustomHeader: String): SubgraphBheaders_200_response @join__directive(graphs: [SUBGRAPH_B], name: "connect", args: {source: "subgraph-b", http: {GET: "/headers", headers: [{name: "accept", value: "application/json"}]}, selection: "x_custom_header: $->get(\\"x-custom-header\\")"})
 }
 
 type SubgraphBheaders_200_response @join__type(graph: SUBGRAPH_B) {
