@@ -1494,9 +1494,7 @@ export function addConnectFieldResolver(
                 : {}),
             },
             code: mappedExtensions.code ?? 'CONNECTOR_FETCH',
-            serviceName:
-              (typeof mappedExtensions.serviceName === 'string' && mappedExtensions.serviceName) ||
-              serviceName,
+            serviceName: mappedExtensions.serviceName ?? serviceName,
             // Mesh OpenAPI tests still assert extensions.request.url
             request: {
               url: requestUrlForMeta.href,
@@ -1508,8 +1506,6 @@ export function addConnectFieldResolver(
               headers: getHeadersObj(response.headers),
               body,
             },
-            headers: getHeadersObj(response.headers),
-            responseJson: body,
             ...(parseError ? { originalError: parseError } : {}),
           },
         },
