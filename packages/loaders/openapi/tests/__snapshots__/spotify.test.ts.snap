@@ -6,15 +6,11 @@ exports[`Spotify should generate correct schema: spotify-schema 1`] = `
   mutation: Mutation
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
-
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
@@ -965,7 +961,7 @@ type Query {
     for the track.
     """
     id: String!
-  ): AudioAnalysisObject @connect(source: "test", http: {GET: "/audio-analysis/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "meta { analyzer_version platform detailed_status status_code timestamp analysis_time input_process } track { num_samples duration sample_md5 offset_seconds window_seconds analysis_sample_rate analysis_channels end_of_fade_in start_of_fade_out loudness tempo tempo_confidence time_signature time_signature_confidence key key_confidence mode mode_confidence codestring code_version echoprintstring echoprint_version synchstring synch_version rhythmstring rhythm_version } bars { start duration confidence } beats { start duration confidence } sections { start duration confidence loudness tempo tempo_confidence key key_confidence mode mode_confidence time_signature time_signature_confidence } segments { start duration confidence loudness_start loudness_max loudness_max_time loudness_end pitches timbre } tatums { start duration confidence }")
+  ): AudioAnalysisObject @connect(source: "test", http: {GET: "/audio-analysis/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "meta { analyzer_version platform detailed_status status_code timestamp analysis_time input_process } track { num_samples duration sample_md5 offset_seconds window_seconds analysis_sample_rate analysis_channels end_of_fade_in start_of_fade_out loudness tempo tempo_confidence time_signature time_signature_confidence key key_confidence mode mode_confidence codestring code_version echoprintstring echoprint_version synchstring synch_version rhythmstring rhythm_version } bars { start duration confidence } beats { start duration confidence } sections { start duration confidence loudness tempo tempo_confidence key key_confidence mode: mode->match([-1, \\"NEGATIVE_1\\"], [0, \\"_0\\"], [1, \\"_1\\"], [@, mode]) mode_confidence time_signature time_signature_confidence } segments { start duration confidence loudness_start loudness_max loudness_max_time loudness_end pitches timbre } tatums { start duration confidence }")
   """
   Recommendations are generated based on the available information for a given seed entity and matched against similar artists and tracks. If there is sufficient information about the provided seeds, a list of tracks will be returned together with pool size details.
   
@@ -1346,7 +1342,7 @@ enum query_get_an_album_allOf_0_restrictions_reason {
 }
 
 enum album_const @typescript(subgraph: "test", type: "\\"album\\"") @example(subgraph: "test", value: "album") {
-  album @enum(subgraph: "test", value: "\\"album\\"")
+  album
 }
 
 """
@@ -1417,7 +1413,7 @@ type FollowersObject {
 }
 
 enum artist_const @typescript(subgraph: "test", type: "\\"artist\\"") @example(subgraph: "test", value: "artist") {
-  artist @enum(subgraph: "test", value: "\\"artist\\"")
+  artist
 }
 
 """Pages of tracks"""
@@ -1698,7 +1694,7 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 enum track_const @typescript(subgraph: "test", type: "\\"track\\"") @example(subgraph: "test", value: "track") {
-  track @enum(subgraph: "test", value: "\\"track\\"")
+  track
 }
 
 """A show"""
@@ -1753,7 +1749,7 @@ type ShowObject {
 }
 
 enum show_const @typescript(subgraph: "test", type: "\\"show\\"") @example(subgraph: "test", value: "show") {
-  show @enum(subgraph: "test", value: "\\"show\\"")
+  show
 }
 
 """Pages of episodes"""
@@ -1850,7 +1846,7 @@ type ResumePointObject {
 }
 
 enum episode_const @typescript(subgraph: "test", type: "\\"episode\\"") @example(subgraph: "test", value: "episode") {
-  episode @enum(subgraph: "test", value: "\\"episode\\"")
+  episode
 }
 
 type EpisodeRestrictionObject {
@@ -2048,7 +2044,7 @@ type NarratorObject {
 }
 
 enum audiobook_const @typescript(subgraph: "test", type: "\\"audiobook\\"") @example(subgraph: "test", value: "audiobook") {
-  audiobook @enum(subgraph: "test", value: "\\"audiobook\\"")
+  audiobook
 }
 
 """Pages of chapters"""
@@ -2420,7 +2416,7 @@ type PlaylistOwnerObject {
 }
 
 enum user_const @typescript(subgraph: "test", type: "\\"user\\"") @example(subgraph: "test", value: "user") {
-  user @enum(subgraph: "test", value: "\\"user\\"")
+  user
 }
 
 type PlaylistTracksRefObject {
@@ -2464,7 +2460,7 @@ enum queryInput_search_type_items {
 }
 
 enum Include_External @typescript(subgraph: "test", type: "\\"audio\\"") @example(subgraph: "test", value: "audio") {
-  audio @enum(subgraph: "test", value: "\\"audio\\"")
+  audio
 }
 
 """A user"""
@@ -2611,7 +2607,7 @@ type PlaylistUserObject {
 }
 
 """Information about the track or episode."""
-union query_get_playlist_tracks_allOf_1_items_items_track @discriminator(subgraph: "test", field: "type") = TrackObject | EpisodeObject
+union query_get_playlist_tracks_allOf_1_items_items_track = TrackObject | EpisodeObject
 
 """Pages of albums"""
 type PagingSavedAlbumObject {
@@ -2758,7 +2754,7 @@ type PagingArtistOrTrackObject_response {
   items: [query_get_users_top_artists_and_tracks_allOf_1_items_items]
 }
 
-union query_get_users_top_artists_and_tracks_allOf_1_items_items @discriminator(subgraph: "test", field: "type") = ArtistObject | TrackObject
+union query_get_users_top_artists_and_tracks_allOf_1_items_items = ArtistObject | TrackObject
 
 """The type of entity to return. Valid values: \`artists\` or \`tracks\`"""
 enum Type {
@@ -2867,7 +2863,7 @@ type CursorObject {
 }
 
 enum Item_Type @typescript(subgraph: "test", type: "\\"artist\\"") @example(subgraph: "test", value: "artist") {
-  artist @enum(subgraph: "test", value: "\\"artist\\"")
+  artist
 }
 
 """The ID type: either \`artist\` or \`user\`."""
@@ -2950,7 +2946,7 @@ type AudioFeaturesObject {
 scalar PositiveInt
 
 enum audio_features_const @typescript(subgraph: "test", type: "\\"audio_features\\"") @example(subgraph: "test", value: "audio_features") {
-  audio_features @enum(subgraph: "test", value: "\\"audio_features\\"")
+  audio_features
 }
 
 """Audio analysis for one track"""
@@ -3149,9 +3145,9 @@ type SectionObject {
 Indicates the modality (major or minor) of a section, the type of scale from which its melodic content is derived. This field will contain a 0 for "minor", a 1 for "major", or a -1 for no result. Note that the major key (e.g. C major) could more likely be confused with the minor key at 3 semitones lower (e.g. A minor) as both keys carry the same pitches.
 """
 enum query_get_audio_analysis_sections_items_mode {
-  NEGATIVE_1 @enum(subgraph: "test", value: "-1")
-  _0 @enum(subgraph: "test", value: "0")
-  _1 @enum(subgraph: "test", value: "1")
+  NEGATIVE_1
+  _0
+  _1
 }
 
 type SegmentObject {
@@ -3294,7 +3290,7 @@ type ContextObject {
 }
 
 """The currently playing track or episode. Can be \`null\`."""
-union query_get_information_about_the_users_current_playback_oneOf_0_item @discriminator(subgraph: "test", field: "type") = TrackObject | EpisodeObject
+union query_get_information_about_the_users_current_playback_oneOf_0_item = TrackObject | EpisodeObject
 
 type DisallowsObject {
   """Interrupting playback. Optional field."""
@@ -3364,9 +3360,9 @@ type QueueObject {
 }
 
 """The currently playing track or episode. Can be \`null\`."""
-union query_get_queue_currently_playing @discriminator(subgraph: "test", field: "type") = TrackObject | EpisodeObject
+union query_get_queue_currently_playing = TrackObject | EpisodeObject
 
-union query_get_queue_queue_items @discriminator(subgraph: "test", field: "type") = TrackObject | EpisodeObject
+union query_get_queue_queue_items = TrackObject | EpisodeObject
 
 type get_available_markets_200_response {
   markets: [String]

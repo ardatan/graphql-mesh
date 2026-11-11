@@ -6,8 +6,6 @@ exports[`Merge attributes correctly in allOfs should generate correct schema: al
   mutation: Mutation
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
-
 directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
@@ -25,7 +23,7 @@ type Admin implements User {
   admin: Boolean
 }
 
-interface User @discriminator(subgraph: "test", field: "type") {
+interface User {
   """The name"""
   name: query_getAdmin_allOf_0_name
   """The type"""

@@ -46,9 +46,9 @@ export function getTypeResolverForAbstractType({
       if (typeName) {
         const type = info.schema.getType(typeName);
         if (isAbstractType(type)) {
-          const typeName = type.resolveType(data, _ctx, info, type);
-          if (typeName) {
-            return typeName;
+          const resolved = type.resolveType?.(data, _ctx, info, type);
+          if (resolved) {
+            return resolved;
           }
         }
         return typeName;

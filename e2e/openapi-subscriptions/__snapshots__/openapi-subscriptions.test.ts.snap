@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(
-  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@meshRestOptions", "@pubsubOperation", "@extraSchemaDefinitionDirective"]
-) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@pubsubOperation", "@transport"]) @transport(subgraph: "OpenAPICallbackExample", kind: "rest", location: "http://localhost:<api_port>") @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "source", args: {name: "OpenAPICallbackExample", http: {baseURL: "http://localhost:<api_port>"}}) {
   query: Query
   mutation: Mutation
   subscription: Subscription
@@ -14,25 +11,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -59,25 +42,6 @@ enum join__Graph {
 
 directive @pubsubOperation(subgraph: String, pubsubTopic: String) repeatable on FIELD_DEFINITION
 
-directive @meshRestOptions(
-  queryStringOptions: ObjMap
-  queryStringOptionsByParam: ObjMap
-  requestBaseBody: ObjMap
-  timeout: Int
-  isBinary: Boolean
-) on FIELD_DEFINITION
-
-directive @connect(
-  source: String
-  http: ConnectHTTP
-  selection: String!
-  entity: Boolean
-  errors: ConnectorErrors
-  isSuccess: String
-) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
-
 """
 A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.
 """
@@ -88,45 +52,24 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`da
 """
 scalar DateTime @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
 
-scalar ObjMap @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
-
-scalar _DirectiveExtensions @join__type(graph: OPEN_API_CALLBACK_EXAMPLE)
-
-type Query @extraSchemaDefinitionDirective(
-  directives: {source: [{name: "OpenAPICallbackExample", http: {baseURL: "http://localhost:<api_port>"}}], transport: [{subgraph: "OpenAPICallbackExample", kind: "rest", location: "http://localhost:<api_port>"}]}
-) @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
-  dummy: String
+type Query @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
+  dummy: String @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "connect", args: {selection: "$(\\"dummy\\")"})
 }
 
 type Mutation @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
-  """
-  subscribes a client to receive out-of-band data
-  """
-  post_streams(input: post_streams_request_Input): SubscriptionInfo @connect(
-    source: "OpenAPICallbackExample"
-    http: {POST: "/streams", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
-    selection: "subscriptionId"
-  )
+  """subscribes a client to receive out-of-band data"""
+  post_streams(input: post_streams_request_Input): SubscriptionInfo @join__directive(graphs: [OPEN_API_CALLBACK_EXAMPLE], name: "connect", args: {source: "OpenAPICallbackExample", http: {POST: "/streams", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "subscriptionId"})
 }
 
-"""
-subscription information
-"""
+"""subscription information"""
 type SubscriptionInfo @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
-  """
-  this unique identifier allows management of the subscription
-  """
+  """this unique identifier allows management of the subscription"""
   subscriptionId: String!
 }
 
 type Subscription @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
-  """
-  PubSub Topic: webhook:post:/callback/{args.subscriptionId}
-  """
-  onData(subscriptionId: String): SubscriptionPayload @pubsubOperation(
-    subgraph: "OpenAPICallbackExample"
-    pubsubTopic: "webhook:post:/callback/{args.subscriptionId}"
-  )
+  """PubSub Topic: webhook:post:/callback/{args.subscriptionId}"""
+  onData(subscriptionId: String): SubscriptionPayload @pubsubOperation(subgraph: "OpenAPICallbackExample", pubsubTopic: "webhook:post:/callback/{args.subscriptionId}")
 }
 
 type SubscriptionPayload @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
@@ -142,35 +85,12 @@ input post_streams_request_Input @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
   callbackUrl: URL
 }
 
-input ConnectHTTP @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
+scalar ObjMap
 
-input HTTPHeaderMapping @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
-  name: String!
-  value: String
-  from: String
-}
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
-input ConnectorErrors @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
-  message: String
-  extensions: String
-}
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
-input SourceHTTP @join__type(graph: OPEN_API_CALLBACK_EXAMPLE) {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
-}
+scalar join__DirectiveArguments
 "
 `;

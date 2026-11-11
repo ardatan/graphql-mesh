@@ -5,8 +5,6 @@ exports[`Example API Combined should generate correct schema: example_oas_combin
   query: Query
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
@@ -15,7 +13,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Returns information about all employee cars"""
-  getAllCars: [query_getAllCars_items] @connect(source: "example_api_combined", http: {GET: "/cars", headers: [{name: "accept", value: "application/json"}]}, selection: "model color features tags kind rating")
+  getAllCars: [query_getAllCars_items] @connect(source: "example_api_combined", http: {GET: "/cars", headers: [{name: "accept", value: "application/json"}]}, selection: "model color features tags kind rating: rating->match([100, \\"_100\\"], [101, \\"_101\\"], [200, \\"_200\\"], [@, rating])")
 }
 
 type query_getAllCars_items {
@@ -45,9 +43,9 @@ enum query_getAllCars_items_allOf_0_kind {
 
 """The rating of the car."""
 enum query_getAllCars_items_allOf_0_rating {
-  _100 @enum(subgraph: "example_api_combined", value: "100")
-  _101 @enum(subgraph: "example_api_combined", value: "101")
-  _200 @enum(subgraph: "example_api_combined", value: "200")
+  _100
+  _101
+  _200
 }
 
 input ConnectHTTP {

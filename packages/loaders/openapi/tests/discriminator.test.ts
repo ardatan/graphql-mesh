@@ -446,9 +446,8 @@ describe('Inline Discriminator Mapping (callback)', () => {
     });
     const schemaWithDirectives = printSchemaWithDirectives(schema);
     expect(schemaWithDirectives).toContain('type Subscription');
-    expect(schemaWithDirectives).toContain(
-      '@discriminator(subgraph: "test", field: "type", mapping: [["cat", "Cat"], ["dog", "Dog"]])',
-    );
+    // Discriminator is baked into Connectors selection when present; Mesh `@discriminator` is gone.
+    expect(schemaWithDirectives).not.toContain('@discriminator');
   });
 });
 

@@ -6,8 +6,6 @@ exports[`example_api should generate the schema correctly 1`] = `
   mutation: Mutation
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
@@ -35,7 +33,7 @@ type Query {
   getUserCar(
     """Identifier of a user."""
     username: String!
-  ): car @connect(source: "example_api", http: {GET: "/users/{$args.username}/car", headers: [{name: "accept", value: "application/json"}]}, selection: "model color features tags kind rating")
+  ): car @connect(source: "example_api", http: {GET: "/users/{$args.username}/car", headers: [{name: "accept", value: "application/json"}]}, selection: "model color features tags kind rating: rating->match([100, \\"_100\\"], [101, \\"_101\\"], [200, \\"_200\\"], [@, rating])")
   """Returns a user's friends to test pagination"""
   getUserFriends(
     """Identifier of a user."""
@@ -44,11 +42,11 @@ type Query {
   """Returns all company assets"""
   getAllAssets(companyId: String!): [query_getAllAssets_items] @connect(source: "example_api", http: {GET: "/assets/{$args.companyId}", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """Returns information about all employee cars"""
-  getAllCars: [car] @connect(source: "example_api", http: {GET: "/cars", headers: [{name: "accept", value: "application/json"}]}, selection: "model color features tags kind rating")
+  getAllCars: [car] @connect(source: "example_api", http: {GET: "/cars", headers: [{name: "accept", value: "application/json"}]}, selection: "model color features tags kind rating: rating->match([100, \\"_100\\"], [101, \\"_101\\"], [200, \\"_200\\"], [@, rating])")
   """Returns the profile of a company with the given ID."""
   getCompanyById(id: String!): company @connect(source: "example_api", http: {GET: "/companies/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name legalForm ceoUsername offices { street city }")
   """Used to test cookies."""
-  getCookie(cookie_type: queryInput_getCookie_cookie_type!, cookie_size: queryInput_getCookie_cookie_size!): String @connect(source: "example_api", http: {GET: "/cookie", headers: [{name: "cookie", value: "cookie_type={$args.cookie_type}; cookie_size={$args.cookie_size};"}, {name: "accept", value: "text/plain"}]}, selection: "$")
+  getCookie(cookie_type: queryInput_getCookie_cookie_type!, cookie_size: queryInput_getCookie_cookie_size!): String @connect(source: "example_api", http: {GET: "/cookie", headers: [{name: "cookie", value: "cookie_type={$args.cookie_type->match([\\"chocolate_chip\\", \\"chocolate chip\\"], [\\"oatmeal_raisin\\", \\"oatmeal raisin\\"], [@, $args.cookie_type])}; cookie_size={$args.cookie_size->match([\\"bite_sized\\", \\"bite-sized\\"], [\\"mega_sized\\", \\"mega-sized\\"], [@, $args.cookie_size])};"}, {name: "accept", value: "text/plain"}]}, selection: "$")
   """
   Used to find the nearest coffee machine based on the user's coordinates. Used to test the content field in parameter objects.
   """
@@ -62,22 +60,22 @@ type Query {
   """Used to test empty responses"""
   getBonuses: Void @connect(source: "example_api", http: {GET: "/bonuses"}, selection: "$")
   """Used to test query parameters with form style and explode"""
-  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office] @connect(source: "example_api", http: {GET: "/offices", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  parameters: $args.parameters\\n}"}, selection: "employeeId room_number: \\"room number\\" employerId") @meshRestOptions(queryStringOptionsByParam: "{\\"parameters\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
+  returnAllOffices(parameters: queryInput_returnAllOffices_parameters_Input!): [office] @connect(source: "example_api", http: {GET: "/offices", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  parameters: $args.parameters\\n}"}, selection: "employeeId room_number: $[\\"room number\\"] employerId") @meshRestOptions(queryStringOptionsByParam: "{\\"parameters\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
   """Return an office."""
   getOffice(
     """Office ID"""
     id: Int!
-  ): office @connect(source: "example_api", http: {GET: "/offices/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "employeeId room_number: \\"room number\\" employerId")
+  ): office @connect(source: "example_api", http: {GET: "/offices/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "employeeId room_number: $[\\"room number\\"] employerId")
   """Return a list of papers. Endpoint to test 2XX status code."""
   getPapers: [paper] @connect(source: "example_api", http: {GET: "/papers", headers: [{name: "accept", value: "application/json"}]}, selection: "name published")
   """Another endpoint to test unsanitized parameters and data."""
-  get_product_with_id(product_id: String!, product_tag: String!): product_with_id @connect(source: "example_api", http: {GET: "/products/{$args.product_id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  \\"product-tag\\": $args.product_tag\\n}"}, selection: "product_name: \\"product-name\\" product_id: \\"product-id\\" product_tag: \\"product-tag\\"")
+  get_product_with_id(product_id: String!, product_tag: String!): product_with_id @connect(source: "example_api", http: {GET: "/products/{$args.product_id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  \\"product-tag\\": $args.product_tag\\n}"}, selection: "product_name: $[\\"product-name\\"] product_id: $[\\"product-id\\"] product_tag: $[\\"product-tag\\"]")
   """Obtain reviews for a product."""
   getProductReviews(id: String!, product_tag: String! = "sport"): [query_getProductReviews_items] @connect(source: "example_api", http: {GET: "/products/{$args.id}/reviews", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  \\"product-tag\\": $args.product_tag\\n}"}, selection: "text timestamp")
   """An endpoint to test authentication."""
-  get_patent_with_id(patent_id: String!): patent_with_id @connect(source: "example_api", http: {GET: "/patents/{$args.patent_id}", headers: [{name: "accept", value: "application/json"}]}, selection: "patent_id: \\"patent-id\\" inventor_id: \\"inventor-id\\" patent_name: \\"patent-name\\"")
+  get_patent_with_id(patent_id: String!): patent_with_id @connect(source: "example_api", http: {GET: "/patents/{$args.patent_id}", headers: [{name: "accept", value: "application/json"}]}, selection: "patent_id: $[\\"patent-id\\"] inventor_id: $[\\"inventor-id\\"] patent_name: $[\\"patent-name\\"]")
   """Another endpoint to test authentication."""
-  get_project_with_id(project_id: Int!): project_with_id @connect(source: "example_api", http: {GET: "/projects/{$args.project_id}", headers: [{name: "accept", value: "application/json"}]}, selection: "project_id: \\"project-id\\" lead_id: \\"lead-id\\" active patentId")
+  get_project_with_id(project_id: Int!): project_with_id @connect(source: "example_api", http: {GET: "/projects/{$args.project_id}", headers: [{name: "accept", value: "application/json"}]}, selection: "project_id: $[\\"project-id\\"] lead_id: $[\\"lead-id\\"] active patentId")
   """Used to test link parameters with variables"""
   getScanner(query: String): getScanner_200_response @connect(source: "example_api", http: {GET: "/scanner", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
   """Endpoint to test sending of headers."""
@@ -195,9 +193,9 @@ enum query_getUserCar_kind {
 
 """The rating of the car."""
 enum query_getUserCar_rating {
-  _100 @enum(subgraph: "example_api", value: "100")
-  _101 @enum(subgraph: "example_api", value: "101")
-  _200 @enum(subgraph: "example_api", value: "200")
+  _100
+  _101
+  _200
 }
 
 union query_getAllAssets_items = car | user | trashcan
@@ -208,15 +206,15 @@ type trashcan {
 }
 
 enum queryInput_getCookie_cookie_type {
-  chocolate_chip @enum(subgraph: "example_api", value: "\\"chocolate chip\\"")
-  oatmeal_raisin @enum(subgraph: "example_api", value: "\\"oatmeal raisin\\"")
+  chocolate_chip
+  oatmeal_raisin
   sugar
 }
 
 enum queryInput_getCookie_cookie_size {
-  bite_sized @enum(subgraph: "example_api", value: "\\"bite-sized\\"")
+  bite_sized
   regular
-  mega_sized @enum(subgraph: "example_api", value: "\\"mega-sized\\"")
+  mega_sized
 }
 
 type coordinates {
@@ -316,7 +314,7 @@ type project_with_id {
   """Allows to fetch the user leading a project."""
   projectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.leadId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username name address { street city } address2 { street city } employerId hobbies status nomenclature { suborder family familyCircular { family familyCircular } genus species }")
   """Allows to fetch a patent."""
-  patent: patent_with_id @connect(source: "example_api", http: {GET: "/patents/{$this.patentId}", headers: [{name: "accept", value: "application/json"}]}, selection: "patent_id: \\"patent-id\\" inventor_id: \\"inventor-id\\" patent_name: \\"patent-name\\"")
+  patent: patent_with_id @connect(source: "example_api", http: {GET: "/patents/{$this.patentId}", headers: [{name: "accept", value: "application/json"}]}, selection: "patent_id: $[\\"patent-id\\"] inventor_id: $[\\"inventor-id\\"] patent_name: $[\\"patent-name\\"]")
 }
 
 type getScanner_200_response {
@@ -359,9 +357,9 @@ type Mutation {
   """
   postPaper(input: String): String @connect(source: "example_api", http: {POST: "/papers", headers: [{name: "Content-Type", value: "text/plain"}, {name: "accept", value: "text/plain"}], body: "$args.input"}, selection: "$")
   """Endpoint to test unsanitized parameters and data."""
-  post_product_with_id(input: product_with_id_Input): product_with_id @connect(source: "example_api", http: {POST: "/products", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "product_name: \\"product-name\\" product_id: \\"product-id\\" product_tag: \\"product-tag\\"")
+  post_product_with_id(input: product_with_id_Input): product_with_id @connect(source: "example_api", http: {POST: "/products", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "product_name: $[\\"product-name\\"] product_id: $[\\"product-id\\"] product_tag: $[\\"product-tag\\"]")
   """An endpoint to test authenticated POST requests."""
-  post_project_with_id(input: project_with_id_Input): project_with_id @connect(source: "example_api", http: {POST: "/projects", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "project_id: \\"project-id\\" lead_id: \\"lead-id\\" active patentId")
+  post_project_with_id(input: project_with_id_Input): project_with_id @connect(source: "example_api", http: {POST: "/projects", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "project_id: $[\\"project-id\\"] lead_id: $[\\"lead-id\\"] active patentId")
   """Used to test link parameters with variables"""
   postScanner(path: String!, query: String, input: String): postScanner_200_response @connect(source: "example_api", http: {POST: "/scanner/{$args.path}", headers: [{name: "Content-Type", value: "text/plain"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
   """Endpoint to test placeholder objects to wrap response objects."""

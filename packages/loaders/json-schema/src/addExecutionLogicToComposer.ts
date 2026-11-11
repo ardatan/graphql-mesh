@@ -1,10 +1,14 @@
-import type { GraphQLScalarType } from 'graphql';
+import type { GraphQLFieldConfig, GraphQLScalarType, GraphQLSchema } from 'graphql';
 import {
   getNamedType,
   GraphQLInt,
+  GraphQLInterfaceType,
   GraphQLObjectType,
   GraphQLString,
+  GraphQLUnionType,
+  isEnumType,
   isInterfaceType,
+  isObjectType,
   isUnionType,
 } from 'graphql';
 import type {
@@ -17,7 +21,7 @@ import { GraphQLJSON } from 'graphql-compose';
 import type { IStringifyOptions } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
-import { MapperKind, mapSchema } from '@graphql-tools/utils';
+import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
   buildConnectHttpArgs,
   buildSelectionForType,
@@ -29,8 +33,10 @@ import {
   LinkDirective,
   MESH_SPEC_LINK_URL,
   MeshRestOptionsDirective,
+  rewriteConnectPathEnumArgs,
   SourceDirective,
   toConnectLinkExpression,
+  wrapArgExprWithEnumMatch,
 } from './connectAnnotations.js';
 import {
   PubSubOperationDirective,
@@ -389,8 +395,29 @@ ${operationConfig.description || ''}
         }
       }
       const returnNamedType = getNamedType(field.type.getType());
+      const interfaceImplementations =
+        isInterfaceType(returnNamedType) && 'getInterfaceImplementors' in (schemaComposer as any)
+          ? ((schemaComposer as any).getInterfaceImplementors?.(returnNamedType.name) || []).map(
+              (tc: any) => tc.getType?.() || tc,
+            )
+          : isInterfaceType(returnNamedType)
+            ? [...schemaComposer.types.values()]
+                .filter((tc: any) => {
+                  try {
+                    return tc.getInterfaces?.()?.some?.(
+                      (i: any) => i.getTypeName?.() === returnNamedType.name,
+                    );
+                  } catch {
+                    return false;
+                  }
+                })
+                .map((tc: any) => tc.getType())
+            : [];
       const selection =
-        buildSelectionForType(field.type.getType(), { skipFields }) ||
+        buildSelectionForType(field.type.getType(), {
+          skipFields,
+          implementations: interfaceImplementations,
+        }) ||
         // Scalar / empty responses still need a non-empty Connectors selection
         `$`;
       const http = buildConnectHttpArgs({
@@ -566,9 +593,22 @@ ${operationConfig.description || ''}
 
   log.debug(`Building the executable schema.`);
   if (schemaComposer.Query.getFieldNames().length === 0) {
+    // Mutation-only OpenAPI: GraphQL still requires a Query type. A plain `dummy`
+    // field is marked @inaccessible by Apollo Router Connectors (no @connect),
+    // which then rejects an empty Query API schema. Emit a virtual connector so
+    // the same Mesh SG works on Hive and Router.
+    schemaComposer.addDirective(ConnectDirective);
     schemaComposer.Query.addFields({
       dummy: {
         type: 'String',
+        directives: [
+          {
+            name: 'connect',
+            args: {
+              selection: '$("dummy")',
+            },
+          },
+        ],
         resolve: () => 'dummy',
       },
     });
@@ -623,10 +663,7 @@ ${operationConfig.description || ''}
       queryStringOptions,
     };
   }
-  // Fix orphaned interfaces; drop Mesh `@resolveRootField` from *output* fields —
-  // JSON key remapping is already folded into `@connect(selection:)` aliases
-  // (`foo_bar: foo-bar`). Keep it on input/argument fields so request bodies still
-  // de-sanitize GraphQL names → JSON property names via resolveDataByUnionInputType.
+  // Fix orphaned interfaces; bake Connectors equivalents while `@enum` is still present.
   schema = mapSchema(schema, {
     [MapperKind.TYPE]: type => {
       if (isInterfaceType(type)) {
@@ -637,82 +674,171 @@ ${operationConfig.description || ''}
       }
       return type;
     },
-    // Use OBJECT/INTERFACE field mappers — MapperKind.FIELD also matches input fields.
-    [MapperKind.OBJECT_FIELD]: fieldConfig => stripResolveRootFieldFromConfig(fieldConfig),
-    [MapperKind.INTERFACE_FIELD]: fieldConfig => stripResolveRootFieldFromConfig(fieldConfig),
+    [MapperKind.OBJECT_FIELD]: (fieldConfig, _fieldName, typeName) =>
+      finalizeConnectorsField(fieldConfig, typeName),
+    [MapperKind.INTERFACE_FIELD]: (fieldConfig, _fieldName, typeName) =>
+      finalizeConnectorsField(fieldConfig, typeName),
   });
-  // Drop the directive definition when nothing references it anymore (GET-only APIs).
-  if (!schemaHasResolveRootFieldUsage(schema)) {
-    schema = mapSchema(schema, {
-      [MapperKind.DIRECTIVE]: directive =>
-        directive.name === 'resolveRootField' ? null : directive,
-    });
-  }
+  // Strip Mesh execution directives now that connect selections/paths carry the remap.
+  schema = mapSchema(schema, {
+    [MapperKind.ENUM_VALUE]: enumValueConfig => stripDirectiveFromConfig(enumValueConfig, 'enum'),
+    [MapperKind.OBJECT_TYPE]: type => stripTypeDirective(type, 'discriminator'),
+    [MapperKind.INTERFACE_TYPE]: type => stripTypeDirective(type, 'discriminator'),
+    [MapperKind.UNION_TYPE]: type => stripTypeDirective(type, 'discriminator'),
+  });
+  // Drop unused Mesh directive definitions when nothing references them.
+  schema = mapSchema(schema, {
+    [MapperKind.DIRECTIVE]: directive => {
+      if (
+        (directive.name === 'enum' ||
+          directive.name === 'discriminator' ||
+          directive.name === 'resolveRootField') &&
+        !schemaHasDirectiveUsage(schema, directive.name)
+      ) {
+        return null;
+      }
+      return directive;
+    },
+  });
   return schema;
 }
 
-function schemaHasResolveRootFieldUsage(schema: import('graphql').GraphQLSchema): boolean {
+function finalizeConnectorsField(
+  fieldConfig: GraphQLFieldConfig<any, any>,
+  typeName: string,
+): GraphQLFieldConfig<any, any> {
+  let next = fieldConfig;
+  const ext = (next.extensions || {}) as { directives?: Record<string, any[]> };
+  // After `schemaComposer.buildSchema()`, directives often live on `astNode` only —
+  // `getDirectiveExtensions` merges AST + extensions (extensions alone miss `@connect`).
+  const directives = {
+    ...(getDirectiveExtensions(next) || {}),
+    ...(ext.directives || {}),
+  };
+
+  // Root HTTP `@connect`: rewrite enum args in path/queryParams/headers to `->match`.
+  if (directives.connect?.length && next.args) {
+    directives.connect = directives.connect.map((connectArgs: any) => {
+      if (!connectArgs?.http) return connectArgs;
+      const http = { ...connectArgs.http };
+      for (const method of ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']) {
+        if (typeof http[method] === 'string') {
+          http[method] = rewriteConnectPathEnumArgs(http[method], next.args as any);
+        }
+      }
+      if (typeof http.queryParams === 'string') {
+        http.queryParams = rewriteQueryParamsEnumArgs(http.queryParams, next.args as any);
+      }
+      if (Array.isArray(http.headers)) {
+        http.headers = http.headers.map((h: any) =>
+          h?.value != null
+            ? { ...h, value: rewriteConnectPathEnumArgs(String(h.value), next.args as any) }
+            : h,
+        );
+      }
+      return { ...connectArgs, http };
+    });
+    next = {
+      ...next,
+      extensions: { ...ext, directives: { ...directives } },
+      astNode: undefined,
+    };
+  }
+
+  // Output `@resolveRootField` is baked into parent `@connect(selection:)` aliases
+  // (`patent_id: $["patent-id"]`). Do not also emit a virtual `$this[...]` connect —
+  // that double-remaps after the parent selection already GraphQL-named the payload.
+  // Keep input/arg `@resolveRootField` for request-body key de-sanitization.
+  const isRootOperation =
+    typeName === 'Query' || typeName === 'Mutation' || typeName === 'Subscription';
+  if (directives.resolveRootField && !isRootOperation) {
+    delete directives.resolveRootField;
+    next = {
+      ...next,
+      extensions: { ...ext, directives },
+      astNode: undefined,
+    };
+  }
+
+  return next;
+}
+
+function rewriteQueryParamsEnumArgs(
+  queryParams: string,
+  args: Record<string, { type: any }>,
+): string {
+  let next = queryParams;
+  for (const [argName, arg] of Object.entries(args || {})) {
+    const named = getNamedType(arg.type);
+    if (!isEnumType(named)) continue;
+    const bare = `$args.${argName}`;
+    if (!next.includes(bare) || next.includes(`${bare}->match(`)) continue;
+    const wrapped = wrapArgExprWithEnumMatch(bare, named);
+    next = next.replaceAll(bare, wrapped);
+  }
+  return next;
+}
+
+function stripDirectiveFromConfig<T extends { extensions?: any; astNode?: any }>(
+  config: T,
+  directiveName: string,
+): T {
+  const ext = config.extensions as { directives?: Record<string, unknown> } | undefined;
+  if (!ext?.directives?.[directiveName] && !config.astNode?.directives?.some((d: any) => d.name.value === directiveName)) {
+    return config;
+  }
+  const directives = { ...(ext?.directives || {}) };
+  delete directives[directiveName];
+  return {
+    ...config,
+    extensions: { ...ext, directives },
+    astNode: undefined,
+  };
+}
+
+function stripTypeDirective(type: any, directiveName: string): any {
+  const ext = type.extensions as { directives?: Record<string, unknown> } | undefined;
+  const hasExt = Boolean(ext?.directives?.[directiveName]);
+  const hasAst = Boolean(type.astNode?.directives?.some((d: any) => d.name.value === directiveName));
+  if (!hasExt && !hasAst) return type;
+  const directives = { ...(ext?.directives || {}) };
+  delete directives[directiveName];
+  const config = type.toConfig();
+  const nextConfig = {
+    ...config,
+    extensions: { ...ext, directives },
+    astNode: undefined,
+  };
+  if (isObjectType(type)) return new GraphQLObjectType(nextConfig);
+  if (isInterfaceType(type)) return new GraphQLInterfaceType(nextConfig);
+  if (isUnionType(type)) return new GraphQLUnionType(nextConfig);
+  return type;
+}
+
+function schemaHasDirectiveUsage(schema: GraphQLSchema, name: string): boolean {
   for (const type of Object.values(schema.getTypeMap())) {
     if (type.name.startsWith('__')) continue;
+    const typeExt = (type.extensions as any)?.directives?.[name];
+    if (typeExt) return true;
+    if (type.astNode?.directives?.some((d: any) => d.name.value === name)) return true;
+    if ('getValues' in type && typeof (type as any).getValues === 'function') {
+      for (const ev of (type as any).getValues()) {
+        if ((ev.extensions as any)?.directives?.[name]) return true;
+        if (ev.astNode?.directives?.some((d: any) => d.name.value === name)) return true;
+      }
+    }
     if ('getFields' in type) {
-      for (const field of Object.values(type.getFields())) {
-        const ext = (field as any).extensions?.directives?.resolveRootField;
-        if (ext?.length) return true;
-        if (
-          (field as any).astNode?.directives?.some((d: any) => d.name.value === 'resolveRootField')
-        ) {
+      for (const field of Object.values((type as any).getFields())) {
+        if ((field as any).extensions?.directives?.[name]) return true;
+        if ((field as any).astNode?.directives?.some((d: any) => d.name.value === name)) {
           return true;
         }
-        if ('args' in field) {
-          for (const arg of (field as any).args || []) {
-            if (arg.extensions?.directives?.resolveRootField?.length) return true;
-            if (arg.astNode?.directives?.some((d: any) => d.name.value === 'resolveRootField')) {
-              return true;
-            }
-          }
+        for (const arg of (field as any).args || []) {
+          if (arg.extensions?.directives?.[name]) return true;
+          if (arg.astNode?.directives?.some((d: any) => d.name.value === name)) return true;
         }
       }
     }
   }
   return false;
-}
-
-function stripResolveRootFieldFromConfig<
-  T extends {
-    astNode?: { directives?: readonly { name: { value: string } }[] } | null;
-    extensions?: unknown;
-  },
->(config: T): T {
-  const ext = config.extensions as { directives?: Record<string, unknown> } | undefined;
-  const hasExt = Boolean(ext?.directives?.resolveRootField);
-  const hasAst = Boolean(
-    config.astNode?.directives?.some(d => d.name.value === 'resolveRootField'),
-  );
-  if (!hasExt && !hasAst) {
-    return config;
-  }
-  const nextExt = ext
-    ? {
-        ...ext,
-        directives: ext.directives
-          ? Object.fromEntries(
-              Object.entries(ext.directives).filter(([name]) => name !== 'resolveRootField'),
-            )
-          : ext.directives,
-      }
-    : config.extensions;
-  const nextAst =
-    config.astNode && hasAst
-      ? {
-          ...config.astNode,
-          directives: (config.astNode.directives || []).filter(
-            d => d.name.value !== 'resolveRootField',
-          ),
-        }
-      : config.astNode;
-  return {
-    ...config,
-    extensions: nextExt,
-    astNode: nextAst as T['astNode'],
-  };
 }

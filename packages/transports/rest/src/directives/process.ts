@@ -18,9 +18,6 @@ import { processDictionaryDirective } from './dictionary.js';
 import { processDiscriminatorAnnotations } from './discriminator.js';
 import { processFlattenAnnotations } from './flatten.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
-import type { GlobalOptions } from './httpOperation.js';
-import { addHTTPRootFieldResolver } from './httpOperation.js';
-import { processLinkFieldAnnotations } from './link.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { processResolveRootAnnotations } from './resolveRoot.js';
 import { processResolveRootFieldAnnotations } from './resolveRootField.js';
@@ -49,7 +46,7 @@ export function processDirectives(
   const schemaDirectives = getDirectiveExtensions(schema);
   const transportDirectives = schemaDirectives?.transport;
   const joinSources = (
-    (schemaDirectives?.['join__directive'] as Array<{
+    (schemaDirectives?.join__directive as Array<{
       name?: string;
       args?: { http?: { headers?: Array<{ name: string; value?: string }>; baseURL?: string } };
     }>) || []
@@ -218,59 +215,9 @@ export function processDirectives(
                 globalPubsub: pubsub,
               });
               break;
-            case 'httpOperation': {
-              let operationSpecificHeaders = directiveAnnotation.args.operationSpecificHeaders;
-              if (typeof directiveAnnotation.args.operationSpecificHeaders === 'string') {
-                operationSpecificHeaders = JSON.parse(
-                  directiveAnnotation.args.operationSpecificHeaders,
-                );
-              }
-              if (Array.isArray(directiveAnnotation.args.operationSpecificHeaders)) {
-                operationSpecificHeaders = Object.fromEntries(
-                  directiveAnnotation.args.operationSpecificHeaders,
-                );
-              }
-              addHTTPRootFieldResolver(
-                schema,
-                field as GraphQLField<any, any>,
-                log,
-                globalFetch,
-                // TODO: Fix JSON parsing here for queryParams and headers
-                {
-                  sourceName: directiveAnnotation.args.sourceName,
-                  endpoint: directiveAnnotation.args.endpoint,
-                  path: directiveAnnotation.args.path,
-                  httpMethod: directiveAnnotation.args.httpMethod,
-                  operationSpecificHeaders,
-                  isBinary: directiveAnnotation.args.isBinary,
-                  requestBaseBody:
-                    typeof directiveAnnotation.args.requestBaseBody === 'string'
-                      ? JSON.parse(directiveAnnotation.args.requestBaseBody)
-                      : directiveAnnotation.args.requestBaseBody,
-                  queryParamArgMap:
-                    typeof directiveAnnotation.args.queryParamArgMap === 'string'
-                      ? JSON.parse(directiveAnnotation.args.queryParamArgMap)
-                      : directiveAnnotation.args.queryParamArgMap,
-                  queryStringOptionsByParam:
-                    typeof directiveAnnotation.args.queryStringOptionsByParam === 'string'
-                      ? JSON.parse(directiveAnnotation.args.queryStringOptionsByParam)
-                      : directiveAnnotation.args.queryStringOptionsByParam,
-                  jsonApiFields: directiveAnnotation.args.jsonApiFields,
-                  queryStringOptions: directiveAnnotation.args.queryStringOptions,
-                },
-                globalOptions as GlobalOptions,
-              );
-              break;
-            }
+            // Legacy `@httpOperation` / `@oas_link` were replaced by `@connect` (breaking).
             case 'responseMetadata':
               processResponseMetadataAnnotations(field as GraphQLField<any, any>);
-              break;
-            case 'oas_link':
-              processLinkFieldAnnotations(
-                field as GraphQLField<any, any>,
-                directiveAnnotation.args.defaultRootType,
-                directiveAnnotation.args.defaultField,
-              );
               break;
             case 'dictionary':
               processDictionaryDirective(

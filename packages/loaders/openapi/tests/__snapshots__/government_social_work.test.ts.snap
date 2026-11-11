@@ -6,8 +6,6 @@ exports[`openAPI loader: government_social_work should generate the schema corre
   mutation: Mutation
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
@@ -378,7 +376,7 @@ type Query {
     offset: String!
     """limit for pagination (e.g. 20 at a time)"""
     limit: String!
-  ): [getRelationshipTypes_response] @connect(source: "example_api", http: {GET: "/client_relationship_types", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  offset: $args.offset\\n  limit: $args.limit\\n}"}, selection: "__typename: $status->match([200, \\"getRelationshipTypes_200_response\\"], [@, \\"Error\\"]) errors { id message level } data { relationId relationName category } pagination { count first last limit next offset previous } id message level", isSuccess: "$status->match([200, true], [@, true])")
+  ): [getRelationshipTypes_response] @connect(source: "example_api", http: {GET: "/client_relationship_types", headers: [{name: "Content-Type", value: "{$args.Content_Type}"}, {name: "Accept-Language", value: "{$args.Accept_Language}"}, {name: "User-Agent", value: "{$args.User_Agent:iPad}"}, {name: "Api-Version", value: "{$args.Api_Version:1.1.0}"}, {name: "accept", value: "application/json"}], queryParams: "{\\n  offset: $args.offset\\n  limit: $args.limit\\n}"}, selection: "__typename: $status->match([200, \\"getRelationshipTypes_200_response\\"], [@, \\"Error\\"]) errors { id message level } data { relationId relationName category: category->match([\\"Non-household\\", \\"Non_household\\"], [@, category]) } pagination { count first last limit next offset previous } id message level", isSuccess: "$status->match([200, true], [@, true])")
   """Gets all score categories"""
   getScoreCategories(
     """to support API localization"""
@@ -461,7 +459,7 @@ type AssessmentFactorQuestionTemplate {
 enum query_getAssessmentTypes_oneOf_0_data_items_factorsTemplate_items_factorQuestionsTemplate_items_answerType {
   Yes
   No
-  N_A @enum(subgraph: "example_api", value: "\\"N/A\\"")
+  N_A
 }
 
 """
@@ -680,7 +678,7 @@ type ClientRelationshipType {
 """Household/Non-household grouping"""
 enum query_getWorkersProfile_oneOf_0_data_items_family_items_client_items_participants_items_relationshipType_category {
   Household
-  Non_household @enum(subgraph: "example_api", value: "\\"Non-household\\"")
+  Non_household
 }
 
 union getWorkersCases_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "getWorkersCases_200_response") @statusCodeTypeName(subgraph: "example_api", statusCode: "default", typeName: "Error") = getWorkersCases_200_response | Error

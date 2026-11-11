@@ -40,7 +40,7 @@ enum join__Graph {
 }
 
 type Query @join__type(graph: WIKI) {
-  dummy: String
+  dummy: String @join__directive(graphs: [WIKI], name: "connect", args: {selection: "$(\\"dummy\\")"})
 }
 
 type Mutation @join__type(graph: WIKI) {

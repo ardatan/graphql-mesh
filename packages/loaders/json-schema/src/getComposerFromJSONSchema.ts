@@ -464,9 +464,11 @@ export function getComposerFromJSONSchema({
               },
             });
           }
+          // GraphQL wire name === `.value` so Apollo Router + Hive agree after SDL reload.
+          // JSON remap lives on `@enum` until connect emit bakes `->match`, then strips it.
           values[enumKey] = {
             directives,
-            value: enumValue,
+            value: enumKey,
           };
         }
         const directives = [];

@@ -405,23 +405,24 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               argsExpr = argsExprElems.join(', ');
             }
           }
-          // Apollo Connectors: `entity: true` is the entity resolver signal — do not
-          // also emit Mesh `@merge` (redundant for Hive+Router connectors path).
+          // Apollo Connectors: `entity: true` is the Router entity-resolver signal.
+          // Hive Gateway still needs Mesh `@merge` on the REST transport path to
+          // fetch entity fields (e.g. User.name) — without it, entity references
+          // only keep the key/`@provides` fields and other fields resolve to null.
           if (fieldDirectives.connect?.length) {
             fieldDirectives.connect = fieldDirectives.connect.map((connectArgs: any) => ({
               ...connectArgs,
               entity: true,
             }));
-          } else {
-            mergeDirectiveExtensions.push({
-              subgraph: subgraphConfig.name,
-              key: mergeDirectiveConfig.key,
-              keyField: mergeDirectiveConfig.keyField,
-              keyArg: mergeDirectiveConfig.keyArg,
-              argsExpr,
-            });
-            mergeDirectiveUsed = true;
           }
+          mergeDirectiveExtensions.push({
+            subgraph: subgraphConfig.name,
+            key: mergeDirectiveConfig.key,
+            keyField: mergeDirectiveConfig.keyField,
+            keyArg: mergeDirectiveConfig.keyArg,
+            argsExpr,
+          });
+          mergeDirectiveUsed = true;
         }
         for (const directiveName of federationDirectiveNames) {
           if (fieldDirectives[directiveName]?.length) {

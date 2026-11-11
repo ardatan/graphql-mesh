@@ -6,8 +6,6 @@ exports[`Calendly should generate the correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
@@ -45,7 +43,7 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getInvitees_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.uuid}/invitees", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n  sort: $args.sort\\n  email: $args.email\\n  page_token: $args.page_token\\n  count: $args.count\\n}"}, selection: "__typename: $status->match([200, \\"getInvitees_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getInvitees_200_response\\"]) collection { uri email first_name last_name name status questions_and_answers timezone event created_at updated_at tracking text_reminder_number rescheduled old_invitee new_invitee cancel_url reschedule_url routing_form_submission cancellation payment no_show reconfirmation } pagination { count next_page previous_page next_page_token previous_page_token } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): getInvitees_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.uuid}/invitees", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n  sort: $args.sort\\n  email: $args.email\\n  page_token: $args.page_token\\n  count: $args.count\\n}"}, selection: "__typename: $status->match([200, \\"getInvitees_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getInvitees_200_response\\"]) collection { uri email first_name last_name name status questions_and_answers timezone event created_at updated_at tracking text_reminder_number rescheduled old_invitee new_invitee cancel_url reschedule_url routing_form_submission cancellation payment no_show reconfirmation } pagination { count next_page previous_page next_page_token previous_page_token } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   Returns a list of  Events.
   
@@ -91,7 +89,7 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getScheduledEvents_response @connect(source: "calendly", http: {GET: "/scheduled_events", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  user: $args.user\\n  organization: $args.organization\\n  invitee_email: $args.invitee_email\\n  status: $args.status\\n  sort: $args.sort\\n  min_start_time: $args.min_start_time\\n  max_start_time: $args.max_start_time\\n  page_token: $args.page_token\\n  count: $args.count\\n}"}, selection: "__typename: $status->match([200, \\"getScheduledEvents_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getScheduledEvents_200_response\\"]) collection { uri name status start_time end_time event_type location invitees_counter created_at updated_at event_memberships event_guests cancellation } pagination { count next_page previous_page next_page_token previous_page_token } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): getScheduledEvents_response @connect(source: "calendly", http: {GET: "/scheduled_events", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  user: $args.user\\n  organization: $args.organization\\n  invitee_email: $args.invitee_email\\n  status: $args.status\\n  sort: $args.sort\\n  min_start_time: $args.min_start_time\\n  max_start_time: $args.max_start_time\\n  page_token: $args.page_token\\n  count: $args.count\\n}"}, selection: "__typename: $status->match([200, \\"getScheduledEvents_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getScheduledEvents_200_response\\"]) collection { uri name status start_time end_time event_type location invitees_counter created_at updated_at event_memberships event_guests cancellation } pagination { count next_page previous_page next_page_token previous_page_token } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   Returns all Event Types associated with a specified User. Use:
   
@@ -126,14 +124,14 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getEventTypes_response @connect(source: "calendly", http: {GET: "/event_types", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  active: $args.active\\n  organization: $args.organization\\n  user: $args.user\\n  sort: $args.sort\\n  page_token: $args.page_token\\n  count: $args.count\\n}"}, selection: "__typename: $status->match([200, \\"getEventTypes_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getEventTypes_200_response\\"]) collection { uri name active slug scheduling_url duration kind pooling_type type color created_at updated_at internal_note description_plain description_html profile secret booking_method custom_questions deleted_at } pagination { count next_page previous_page next_page_token previous_page_token } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): getEventTypes_response @connect(source: "calendly", http: {GET: "/event_types", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  active: $args.active\\n  organization: $args.organization\\n  user: $args.user\\n  sort: $args.sort\\n  page_token: $args.page_token\\n  count: $args.count\\n}"}, selection: "__typename: $status->match([200, \\"getEventTypes_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getEventTypes_200_response\\"]) collection { uri name active slug scheduling_url duration kind pooling_type type color created_at updated_at internal_note description_plain description_html profile secret booking_method custom_questions deleted_at } pagination { count next_page previous_page next_page_token previous_page_token } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Returns information about a specified User."""
   getUser(
     """User unique identifier, or the constant "me" to reference the caller"""
     uuid: String!
-  ): getUser_response @connect(source: "calendly", http: {GET: "/users/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"getUser_200_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getUser_200_response\\"]) resource { uri name slug email scheduling_url timezone avatar_url created_at updated_at current_organization } title message details { parameter message }", isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): getUser_response @connect(source: "calendly", http: {GET: "/users/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"getUser_200_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getUser_200_response\\"]) resource { uri name slug email scheduling_url timezone avatar_url created_at updated_at current_organization } title message: message->match([\\"The access token is invalid\\", \\"The_access_token_is_invalid\\"], [\\"The access token expired\\", \\"The_access_token_expired\\"], [\\"The access token was revoked\\", \\"The_access_token_was_revoked\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Returns basic information about your user account."""
-  getMyUserAccount: getMyUserAccount_response @connect(source: "calendly", http: {GET: "/users/me", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"getMyUserAccount_200_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getMyUserAccount_200_response\\"]) resource { uri name slug email scheduling_url timezone avatar_url created_at updated_at current_organization } title message details { parameter message }", isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  getMyUserAccount: getMyUserAccount_response @connect(source: "calendly", http: {GET: "/users/me", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"getMyUserAccount_200_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getMyUserAccount_200_response\\"]) resource { uri name slug email scheduling_url timezone avatar_url created_at updated_at current_organization } title message: message->match([\\"The access token is invalid\\", \\"The_access_token_is_invalid\\"], [\\"The access token expired\\", \\"The_access_token_expired\\"], [\\"The access token was revoked\\", \\"The_access_token_was_revoked\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   Returns information about a specified Invitee (person invited to an event).
   """
@@ -142,14 +140,14 @@ type Query {
     event_uuid: String!
     """The invitee's unique identifier"""
     invitee_uuid: String!
-  ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.event_uuid}/invitees/{$args.invitee_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"Error_Response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response\\"]) resource { uri email first_name last_name name status questions_and_answers timezone event created_at updated_at tracking text_reminder_number rescheduled old_invitee new_invitee cancel_url reschedule_url routing_form_submission cancellation payment no_show reconfirmation } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.event_uuid}/invitees/{$args.invitee_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"Error_Response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response\\"]) resource { uri email first_name last_name name status questions_and_answers timezone event created_at updated_at tracking text_reminder_number rescheduled old_invitee new_invitee cancel_url reschedule_url routing_form_submission cancellation payment no_show reconfirmation } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Returns information about a specified Event."""
   get_scheduled_events_uuid(
     """The event's unique identifier"""
     uuid: String!
-  ): get_scheduled_events_uuid_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_scheduled_events_uuid_200_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_scheduled_events_uuid_200_response\\"]) resource { uri name status start_time end_time event_type location invitees_counter created_at updated_at event_memberships event_guests cancellation } title message details { parameter message }", isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): get_scheduled_events_uuid_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_scheduled_events_uuid_200_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_scheduled_events_uuid_200_response\\"]) resource { uri name status start_time end_time event_type location invitees_counter created_at updated_at event_memberships event_guests cancellation } title message: message->match([\\"The access token is invalid\\", \\"The_access_token_is_invalid\\"], [\\"The access token expired\\", \\"The_access_token_expired\\"], [\\"The access token was revoked\\", \\"The_access_token_was_revoked\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Returns information about a specified Event Type."""
-  get_event_types_uuid(uuid: String!): get_event_types_uuid_response @connect(source: "calendly", http: {GET: "/event_types/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_event_types_uuid_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_event_types_uuid_200_response\\"]) resource { uri name active slug scheduling_url duration kind pooling_type type color created_at updated_at internal_note description_plain description_html profile secret booking_method custom_questions deleted_at } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  get_event_types_uuid(uuid: String!): get_event_types_uuid_response @connect(source: "calendly", http: {GET: "/event_types/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_event_types_uuid_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_event_types_uuid_200_response\\"]) resource { uri name active slug scheduling_url duration kind pooling_type type color created_at updated_at internal_note description_plain description_html profile secret booking_method custom_questions deleted_at } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   Returns a list of Organization Invitations that were sent to the organization's members.
   """
@@ -169,7 +167,7 @@ type Query {
     """Indicates if the results should be filtered by email address"""
     email: EmailAddress
     status: queryInput_get_organizations_uuid_invitations_status
-  ): get_organizations_uuid_invitations_response @connect(source: "calendly", http: {GET: "/organizations/{$args.uuid}/invitations", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  count: $args.count\\n  page_token: $args.page_token\\n  sort: $args.sort\\n  email: $args.email\\n  status: $args.status\\n}"}, selection: "__typename: $status->match([200, \\"get_organizations_uuid_invitations_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_organizations_uuid_invitations_200_response\\"]) collection { uri organization email status created_at updated_at last_sent_at user } pagination { count next_page previous_page next_page_token previous_page_token } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): get_organizations_uuid_invitations_response @connect(source: "calendly", http: {GET: "/organizations/{$args.uuid}/invitations", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  count: $args.count\\n  page_token: $args.page_token\\n  sort: $args.sort\\n  email: $args.email\\n  status: $args.status\\n}"}, selection: "__typename: $status->match([200, \\"get_organizations_uuid_invitations_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_organizations_uuid_invitations_200_response\\"]) collection { uri organization email status created_at updated_at last_sent_at user } pagination { count next_page previous_page next_page_token previous_page_token } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   Returns an Organization Invitation that was sent to the organization's members.
   """
@@ -178,12 +176,12 @@ type Query {
     org_uuid: String!
     """The organization invitation's unique identifier"""
     uuid: String!
-  ): get_organizations_org_uuid_invitations_uuid_response @connect(source: "calendly", http: {GET: "/organizations/{$args.org_uuid}/invitations/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_organizations_org_uuid_invitations_uuid_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_organizations_org_uuid_invitations_uuid_200_response\\"]) resource { uri organization email status created_at updated_at last_sent_at user } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): get_organizations_org_uuid_invitations_uuid_response @connect(source: "calendly", http: {GET: "/organizations/{$args.org_uuid}/invitations/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_organizations_org_uuid_invitations_uuid_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_organizations_org_uuid_invitations_uuid_200_response\\"]) resource { uri organization email status created_at updated_at last_sent_at user } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Returns information about a user's Organization Membership"""
   get_organizations_uuid_memberships(
     """The organization membership's unique identifier"""
     uuid: String!
-  ): get_organizations_uuid_memberships_response @connect(source: "calendly", http: {GET: "/organization_memberships/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_organizations_uuid_memberships_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"Error_Response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_organizations_uuid_memberships_200_response\\"]) resource { uri role user organization updated_at created_at } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): get_organizations_uuid_memberships_response @connect(source: "calendly", http: {GET: "/organization_memberships/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_organizations_uuid_memberships_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"Error_Response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_organizations_uuid_memberships_200_response\\"]) resource { uri role user organization updated_at created_at } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   Use this to list the Organization Memberships for all users belonging to an organization, use:
   
@@ -206,7 +204,7 @@ type Query {
     organization: URL
     """Indicates if the results should be filtered by user"""
     user: URL
-  ): get_organization_memberships_response @connect(source: "calendly", http: {GET: "/organization_memberships", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  page_token: $args.page_token\\n  count: $args.count\\n  email: $args.email\\n  organization: $args.organization\\n  user: $args.user\\n}"}, selection: "__typename: $status->match([200, \\"get_organization_memberships_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"Error_Response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_organization_memberships_200_response\\"]) collection { uri role user organization updated_at created_at } pagination { count next_page previous_page next_page_token previous_page_token } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): get_organization_memberships_response @connect(source: "calendly", http: {GET: "/organization_memberships", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  page_token: $args.page_token\\n  count: $args.count\\n  email: $args.email\\n  organization: $args.organization\\n  user: $args.user\\n}"}, selection: "__typename: $status->match([200, \\"get_organization_memberships_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"Error_Response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_organization_memberships_200_response\\"]) collection { uri role user organization updated_at created_at } pagination { count next_page previous_page next_page_token previous_page_token } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   Get a list of Webhook Subscriptions for a specified Organization or User.
   """
@@ -230,11 +228,11 @@ type Query {
     """
     sort: String
     scope: queryInput_get_webhooks_scope!
-  ): get_webhooks_response @connect(source: "calendly", http: {GET: "/webhook_subscriptions", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  user: $args.user\\n  page_token: $args.page_token\\n  count: $args.count\\n  sort: $args.sort\\n  scope: $args.scope\\n}"}, selection: "__typename: $status->match([200, \\"get_webhooks_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [@, \\"get_webhooks_200_response\\"]) collection { uri callback_url created_at updated_at retry_started_at state events scope organization user creator } pagination { count next_page previous_page next_page_token previous_page_token } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [@, false])")
+  ): get_webhooks_response @connect(source: "calendly", http: {GET: "/webhook_subscriptions", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  user: $args.user\\n  page_token: $args.page_token\\n  count: $args.count\\n  sort: $args.sort\\n  scope: $args.scope\\n}"}, selection: "__typename: $status->match([200, \\"get_webhooks_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [@, \\"get_webhooks_200_response\\"]) collection { uri callback_url created_at updated_at retry_started_at state events: events->match([\\"invitee.created\\", \\"invitee_created\\"], [\\"invitee.canceled\\", \\"invitee_canceled\\"], [\\"routing_form_submission.created\\", \\"routing_form_submission_created\\"], [@, events]) scope organization user creator } pagination { count next_page previous_page next_page_token previous_page_token } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [@, false])")
   """Get a specified Webhook Subscription."""
-  get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response @connect(source: "calendly", http: {GET: "/webhook_subscriptions/{$args.webhook_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_users_user_uuid_webhooks_webhook_uuid_200_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [@, \\"get_users_user_uuid_webhooks_webhook_uuid_200_response\\"]) resource { uri callback_url created_at updated_at retry_started_at state events scope organization user creator } title message details { parameter message }", isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [@, false])")
+  get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response @connect(source: "calendly", http: {GET: "/webhook_subscriptions/{$args.webhook_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_users_user_uuid_webhooks_webhook_uuid_200_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [@, \\"get_users_user_uuid_webhooks_webhook_uuid_200_response\\"]) resource { uri callback_url created_at updated_at retry_started_at state events: events->match([\\"invitee.created\\", \\"invitee_created\\"], [\\"invitee.canceled\\", \\"invitee_canceled\\"], [\\"routing_form_submission.created\\", \\"routing_form_submission_created\\"], [@, events]) scope organization user creator } title message: message->match([\\"The access token is invalid\\", \\"The_access_token_is_invalid\\"], [\\"The access token expired\\", \\"The_access_token_expired\\"], [\\"The access token was revoked\\", \\"The_access_token_was_revoked\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [401, true], [403, true], [404, true], [@, false])")
   """Returns information about a specified Invitee No Show."""
-  getInviteeNoShow(uuid: String!): getInviteeNoShow_response @connect(source: "calendly", http: {GET: "/invitee_no_shows/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"getInviteeNoShow_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [@, \\"getInviteeNoShow_200_response\\"]) resource { uri invitee created_at } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [@, false])")
+  getInviteeNoShow(uuid: String!): getInviteeNoShow_response @connect(source: "calendly", http: {GET: "/invitee_no_shows/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"getInviteeNoShow_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [@, \\"getInviteeNoShow_200_response\\"]) resource { uri invitee created_at } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [@, false])")
   """Get a list of Routing Forms for a specified Organization."""
   get_routing_forms(
     """
@@ -251,9 +249,9 @@ type Query {
     Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.
     """
     sort: String
-  ): get_routing_forms_response @connect(source: "calendly", http: {GET: "/routing_forms", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  count: $args.count\\n  page_token: $args.page_token\\n  sort: $args.sort\\n}"}, selection: "__typename: $status->match([200, \\"get_routing_forms_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_routing_forms_200_response\\"]) collection { uri organization name status questions created_at updated_at } pagination { count next_page previous_page next_page_token previous_page_token } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): get_routing_forms_response @connect(source: "calendly", http: {GET: "/routing_forms", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  count: $args.count\\n  page_token: $args.page_token\\n  sort: $args.sort\\n}"}, selection: "__typename: $status->match([200, \\"get_routing_forms_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_routing_forms_200_response\\"]) collection { uri organization name status questions created_at updated_at } pagination { count next_page previous_page next_page_token previous_page_token } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Get a specified Routing Form."""
-  get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response @connect(source: "calendly", http: {GET: "/routing_forms/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_routing_forms_uuid_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_routing_forms_uuid_200_response\\"]) resource { uri organization name status questions created_at updated_at } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response @connect(source: "calendly", http: {GET: "/routing_forms/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_routing_forms_uuid_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_routing_forms_uuid_200_response\\"]) resource { uri organization name status questions created_at updated_at } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Get a list of Routing Form Submissions for a specified Routing Form."""
   get_routing_form_submissions(
     """View routing form submissions associated with the routing form's URI."""
@@ -268,9 +266,9 @@ type Query {
     Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.
     """
     sort: String
-  ): get_routing_form_submissions_response @connect(source: "calendly", http: {GET: "/routing_form_submissions", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  form: $args.form\\n  count: $args.count\\n  page_token: $args.page_token\\n  sort: $args.sort\\n}"}, selection: "__typename: $status->match([200, \\"get_routing_form_submissions_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_routing_form_submissions_200_response\\"]) collection { uri routing_form questions_and_answers tracking result submitter submitter_type created_at updated_at } pagination { count next_page previous_page next_page_token previous_page_token } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): get_routing_form_submissions_response @connect(source: "calendly", http: {GET: "/routing_form_submissions", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  form: $args.form\\n  count: $args.count\\n  page_token: $args.page_token\\n  sort: $args.sort\\n}"}, selection: "__typename: $status->match([200, \\"get_routing_form_submissions_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_routing_form_submissions_200_response\\"]) collection { uri routing_form questions_and_answers tracking result submitter submitter_type created_at updated_at } pagination { count next_page previous_page next_page_token previous_page_token } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Get a specified Routing Form Submission."""
-  get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @connect(source: "calendly", http: {GET: "/routing_form_submissions/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_routing_form_submissions_uuid_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_routing_form_submissions_uuid_200_response\\"]) resource { uri routing_form questions_and_answers tracking result submitter submitter_type created_at updated_at } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @connect(source: "calendly", http: {GET: "/routing_form_submissions/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"get_routing_form_submissions_uuid_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"get_routing_form_submissions_uuid_200_response\\"]) resource { uri routing_form questions_and_answers tracking result submitter submitter_type created_at updated_at } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   Returns a list of available times for an event type within a specified date range.
   
@@ -286,7 +284,7 @@ type Query {
     start_time: String
     """End time of the requested availability range."""
     end_time: String
-  ): getEventTypeAvailableTimes_response @connect(source: "calendly", http: {GET: "/event_type_available_times", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  event_type: $args.event_type\\n  start_time: $args.start_time\\n  end_time: $args.end_time\\n}"}, selection: "__typename: $status->match([200, \\"getEventTypeAvailableTimes_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getEventTypeAvailableTimes_200_response\\"]) collection { status invitees_remaining start_time scheduling_url } title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): getEventTypeAvailableTimes_response @connect(source: "calendly", http: {GET: "/event_type_available_times", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  event_type: $args.event_type\\n  start_time: $args.start_time\\n  end_time: $args.end_time\\n}"}, selection: "__typename: $status->match([200, \\"getEventTypeAvailableTimes_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"getEventTypeAvailableTimes_200_response\\"]) collection { status invitees_remaining start_time scheduling_url } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   <!-- theme: info -->
     > This endpoint requires an <strong>Enterprise</strong> subscription.
@@ -315,7 +313,7 @@ type Query {
     """
     Order results by the specified field and direction. List of {field}:{direction} values.
     """
-    sort: [queryInput_activityLog_sort_items] = [occurred_at_desc]
+    sort: [queryInput_activityLog_sort_items] = [occurred_at:desc]
     """
     Include entries that occurred after this time (sample time format: "2020-01-02T03:04:05.678Z"). This time should use the UTC timezone.
     """
@@ -332,7 +330,7 @@ type Query {
     namespace: [String]
     """The action(s) associated with the entries"""
     action: [String]
-  ): activityLog_response @connect(source: "calendly", http: {GET: "/activity_log_entries", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  search_term: $args.search_term\\n  actor: $args.actor->joinNotNull(\\",\\")\\n  sort: $args.sort->joinNotNull(\\",\\")\\n  min_occurred_at: $args.min_occurred_at\\n  max_occurred_at: $args.max_occurred_at\\n  page_token: $args.page_token\\n  count: $args.count\\n  namespace: $args.namespace->joinNotNull(\\",\\")\\n  action: $args.action->joinNotNull(\\",\\")\\n}"}, selection: "__typename: $status->match([200, \\"activityLog_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"activityLog_200_response\\"]) collection { occurred_at actor details fully_qualified_name uri namespace action organization } pagination { count next_page previous_page next_page_token previous_page_token } last_event_time total_count exceeds_max_total_count title message details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [403, true], [404, true], [500, true], [@, false])") @meshRestOptions(queryStringOptionsByParam: "{\\"actor\\":{\\"arrayFormat\\":\\"comma\\"},\\"sort\\":{\\"arrayFormat\\":\\"comma\\"},\\"namespace\\":{\\"arrayFormat\\":\\"comma\\"},\\"action\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): activityLog_response @connect(source: "calendly", http: {GET: "/activity_log_entries", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  search_term: $args.search_term\\n  actor: $args.actor->joinNotNull(\\",\\")\\n  sort: $args.sort->match([\\"action_asc\\", \\"action:asc\\"], [\\"action_desc\\", \\"action:desc\\"], [\\"actor_display_name_asc\\", \\"actor.display_name:asc\\"], [\\"actor_display_name_desc\\", \\"actor.display_name:desc\\"], [\\"actor_uri_asc\\", \\"actor.uri:asc\\"], [\\"actor_uri_desc\\", \\"actor.uri:desc\\"], [\\"namespace_asc\\", \\"namespace:asc\\"], [\\"namespace_desc\\", \\"namespace:desc\\"], [\\"occurred_at_asc\\", \\"occurred_at:asc\\"], [\\"occurred_at_desc\\", \\"occurred_at:desc\\"], [@, $args.sort])->joinNotNull(\\",\\")\\n  min_occurred_at: $args.min_occurred_at\\n  max_occurred_at: $args.max_occurred_at\\n  page_token: $args.page_token\\n  count: $args.count\\n  namespace: $args.namespace->joinNotNull(\\",\\")\\n  action: $args.action->joinNotNull(\\",\\")\\n}"}, selection: "__typename: $status->match([200, \\"activityLog_200_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"activityLog_200_response\\"]) collection { occurred_at actor details fully_qualified_name uri namespace action organization } pagination { count next_page previous_page next_page_token previous_page_token } last_event_time total_count exceeds_max_total_count title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([200, true], [400, true], [403, true], [404, true], [500, true], [@, false])") @meshRestOptions(queryStringOptionsByParam: "{\\"actor\\":{\\"arrayFormat\\":\\"comma\\"},\\"sort\\":{\\"arrayFormat\\":\\"comma\\"},\\"namespace\\":{\\"arrayFormat\\":\\"comma\\"},\\"action\\":{\\"arrayFormat\\":\\"comma\\"}}")
 }
 
 union getInvitees_response @statusCodeTypeName(subgraph: "calendly", statusCode: "200", typeName: "getInvitees_200_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "400", typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "401", typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "403", typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "404", typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "500", typeName: "UNKNOWN_response") = getInvitees_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
@@ -545,11 +543,11 @@ type INVALID_ARGUMENT_response {
 }
 
 enum Invalid_Argument_const @typescript(subgraph: "calendly", type: "\\"Invalid Argument\\"") @example(subgraph: "calendly", value: "Invalid Argument") {
-  Invalid_Argument @enum(subgraph: "calendly", value: "\\"Invalid Argument\\"")
+  Invalid_Argument
 }
 
 enum The_supplied_parameters_are_invalid__const @typescript(subgraph: "calendly", type: "\\"The supplied parameters are invalid.\\"") @example(subgraph: "calendly", value: "The supplied parameters are invalid.") {
-  The_supplied_parameters_are_invalid_ @enum(subgraph: "calendly", value: "\\"The supplied parameters are invalid.\\"")
+  The_supplied_parameters_are_invalid_
 }
 
 type query_getInvitees_oneOf_1_allOf_0_details_items {
@@ -565,13 +563,13 @@ type UNAUTHENTICATED_response {
 }
 
 enum Unauthenticated_const @typescript(subgraph: "calendly", type: "\\"Unauthenticated\\"") @example(subgraph: "calendly", value: "Unauthenticated") {
-  Unauthenticated @enum(subgraph: "calendly", value: "\\"Unauthenticated\\"")
+  Unauthenticated
 }
 
 enum query_getInvitees_oneOf_2_allOf_1_message {
-  The_access_token_is_invalid @enum(subgraph: "calendly", value: "\\"The access token is invalid\\"")
-  The_access_token_expired @enum(subgraph: "calendly", value: "\\"The access token expired\\"")
-  The_access_token_was_revoked @enum(subgraph: "calendly", value: "\\"The access token was revoked\\"")
+  The_access_token_is_invalid
+  The_access_token_expired
+  The_access_token_was_revoked
 }
 
 """Caller not authorized to perform this action"""
@@ -582,19 +580,19 @@ type PERMISSION_DENIED_response {
 }
 
 enum Permission_Denied_const @typescript(subgraph: "calendly", type: "\\"Permission Denied\\"") @example(subgraph: "calendly", value: "Permission Denied") {
-  Permission_Denied @enum(subgraph: "calendly", value: "\\"Permission Denied\\"")
+  Permission_Denied
 }
 
 enum query_getInvitees_oneOf_3_allOf_1_message {
-  This_user_is_not_in_your_organization @enum(subgraph: "calendly", value: "\\"This user is not in your organization\\"")
-  You_do_not_have_permission @enum(subgraph: "calendly", value: "\\"You do not have permission\\"")
-  You_do_not_have_permission_to_access_this_resource_ @enum(subgraph: "calendly", value: "\\"You do not have permission to access this resource.\\"")
-  You_are_not_allowed_to_view_this_event @enum(subgraph: "calendly", value: "\\"You are not allowed to view this event\\"")
-  Please_upgrade_your_Calendly_account_to_Professional @enum(subgraph: "calendly", value: "\\"Please upgrade your Calendly account to Professional\\"")
-  Please_upgrade_your_Calendly_account_to_Enterprise_ @enum(subgraph: "calendly", value: "\\"Please upgrade your Calendly account to Enterprise.\\"")
-  Please_also_specify_organization_when_requesting_events_for_a_user_within_your_organization_ @enum(subgraph: "calendly", value: "\\"Please also specify organization when requesting events for a user within your organization.\\"")
+  This_user_is_not_in_your_organization
+  You_do_not_have_permission
+  You_do_not_have_permission_to_access_this_resource_
+  You_are_not_allowed_to_view_this_event
+  Please_upgrade_your_Calendly_account_to_Professional
+  Please_upgrade_your_Calendly_account_to_Enterprise_
+  Please_also_specify_organization_when_requesting_events_for_a_user_within_your_organization_
   Unauthorized
-  You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_ @enum(subgraph: "calendly", value: "\\"You cannot perform this action for an organization with SCIM enabled.\\"")
+  You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_
 }
 
 """Requested resource not found"""
@@ -605,11 +603,11 @@ type NOT_FOUND_response {
 }
 
 enum Resource_Not_Found_const @typescript(subgraph: "calendly", type: "\\"Resource Not Found\\"") @example(subgraph: "calendly", value: "Resource Not Found") {
-  Resource_Not_Found @enum(subgraph: "calendly", value: "\\"Resource Not Found\\"")
+  Resource_Not_Found
 }
 
 enum The_server_could_not_find_the_requested_resource__const @typescript(subgraph: "calendly", type: "\\"The server could not find the requested resource.\\"") @example(subgraph: "calendly", value: "The server could not find the requested resource.") {
-  The_server_could_not_find_the_requested_resource_ @enum(subgraph: "calendly", value: "\\"The server could not find the requested resource.\\"")
+  The_server_could_not_find_the_requested_resource_
 }
 
 """An error has occurred on the server"""
@@ -620,11 +618,11 @@ type UNKNOWN_response {
 }
 
 enum Internal_Server_Error_const @typescript(subgraph: "calendly", type: "\\"Internal Server Error\\"") @example(subgraph: "calendly", value: "Internal Server Error") {
-  Internal_Server_Error @enum(subgraph: "calendly", value: "\\"Internal Server Error\\"")
+  Internal_Server_Error
 }
 
 enum The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request__const @typescript(subgraph: "calendly", type: "\\"The server encountered an unexpected condition that prevented it from fulfilling the request.\\"") @example(subgraph: "calendly", value: "The server encountered an unexpected condition that prevented it from fulfilling the request.") {
-  The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request_ @enum(subgraph: "calendly", value: "\\"The server encountered an unexpected condition that prevented it from fulfilling the request.\\"")
+  The_server_encountered_an_unexpected_condition_that_prevented_it_from_fulfilling_the_request_
 }
 
 """
@@ -700,7 +698,7 @@ type In_Person_Meeting {
 }
 
 enum physical_const @typescript(subgraph: "calendly", type: "\\"physical\\"") @example(subgraph: "calendly", value: "physical") {
-  physical @enum(subgraph: "calendly", value: "\\"physical\\"")
+  physical
 }
 
 """Meeting publisher will call the Invitee"""
@@ -713,7 +711,7 @@ type Outbound_Call {
 }
 
 enum outbound_call_const @typescript(subgraph: "calendly", type: "\\"outbound_call\\"") @example(subgraph: "calendly", value: "outbound_call") {
-  outbound_call @enum(subgraph: "calendly", value: "\\"outbound_call\\"")
+  outbound_call
 }
 
 """Invitee will call meeting publisher at the specified phone number"""
@@ -726,7 +724,7 @@ type Inbound_Call {
 }
 
 enum inbound_call_const @typescript(subgraph: "calendly", type: "\\"inbound_call\\"") @example(subgraph: "calendly", value: "inbound_call") {
-  inbound_call @enum(subgraph: "calendly", value: "\\"inbound_call\\"")
+  inbound_call
 }
 
 """
@@ -740,7 +738,7 @@ type Google_Conference {
 }
 
 enum google_conference_const @typescript(subgraph: "calendly", type: "\\"google_conference\\"") @example(subgraph: "calendly", value: "google_conference") {
-  google_conference @enum(subgraph: "calendly", value: "\\"google_conference\\"")
+  google_conference
 }
 
 """Indicates the current status of the Google conference"""
@@ -761,7 +759,7 @@ type Zoom_Conference {
 }
 
 enum zoom_conference_const @typescript(subgraph: "calendly", type: "\\"zoom_conference\\"") @example(subgraph: "calendly", value: "zoom_conference") {
-  zoom_conference @enum(subgraph: "calendly", value: "\\"zoom_conference\\"")
+  zoom_conference
 }
 
 """Indicates the current status of the Zoom conference"""
@@ -813,7 +811,7 @@ type GoToMeeting_Conference {
 }
 
 enum gotomeeting_const @typescript(subgraph: "calendly", type: "\\"gotomeeting\\"") @example(subgraph: "calendly", value: "gotomeeting") {
-  gotomeeting @enum(subgraph: "calendly", value: "\\"gotomeeting\\"")
+  gotomeeting
 }
 
 """Indicates the current status of the GoToMeeting conference"""
@@ -841,7 +839,7 @@ type Microsoft_Teams_Conference {
 }
 
 enum microsoft_teams_conference_const @typescript(subgraph: "calendly", type: "\\"microsoft_teams_conference\\"") @example(subgraph: "calendly", value: "microsoft_teams_conference") {
-  microsoft_teams_conference @enum(subgraph: "calendly", value: "\\"microsoft_teams_conference\\"")
+  microsoft_teams_conference
 }
 
 """Indicates the current status of the Microsoft Teams conference"""
@@ -873,7 +871,7 @@ type Custom_Location {
 }
 
 enum custom_const @typescript(subgraph: "calendly", type: "\\"custom\\"") @example(subgraph: "calendly", value: "custom") {
-  custom @enum(subgraph: "calendly", value: "\\"custom\\"")
+  custom
 }
 
 """Information about an event location that’s specified by the invitee."""
@@ -884,7 +882,7 @@ type Invitee_Specified_Location {
 }
 
 enum ask_invitee_const @typescript(subgraph: "calendly", type: "\\"ask_invitee\\"") @example(subgraph: "calendly", value: "ask_invitee") {
-  ask_invitee @enum(subgraph: "calendly", value: "\\"ask_invitee\\"")
+  ask_invitee
 }
 
 """Details about an Event that will take place using a WebEx conference"""
@@ -897,7 +895,7 @@ type WebEx_Conference {
 }
 
 enum webex_conference_const @typescript(subgraph: "calendly", type: "\\"webex_conference\\"") @example(subgraph: "calendly", value: "webex_conference") {
-  webex_conference @enum(subgraph: "calendly", value: "\\"webex_conference\\"")
+  webex_conference
 }
 
 """Indicates the current status of the WebEx conference"""
@@ -1347,9 +1345,9 @@ enum query_get_webhooks_oneOf_0_collection_items_state {
 }
 
 enum query_get_webhooks_oneOf_0_collection_items_events_items {
-  invitee_created @enum(subgraph: "calendly", value: "\\"invitee.created\\"")
-  invitee_canceled @enum(subgraph: "calendly", value: "\\"invitee.canceled\\"")
-  routing_form_submission_created @enum(subgraph: "calendly", value: "\\"routing_form_submission.created\\"")
+  invitee_created
+  invitee_canceled
+  routing_form_submission_created
 }
 
 """The scope of the webhook subscription"""
@@ -1530,7 +1528,7 @@ type Routing_Form_Submission_Event_Type_Result {
 }
 
 enum event_type_const @typescript(subgraph: "calendly", type: "\\"event_type\\"") @example(subgraph: "calendly", value: "event_type") {
-  event_type @enum(subgraph: "calendly", value: "\\"event_type\\"")
+  event_type
 }
 
 """Information about the external URL Routing Form Submission result."""
@@ -1541,7 +1539,7 @@ type Routing_Form_Submission_External_URL_Result {
 }
 
 enum external_url_const @typescript(subgraph: "calendly", type: "\\"external_url\\"") @example(subgraph: "calendly", value: "external_url") {
-  external_url @enum(subgraph: "calendly", value: "\\"external_url\\"")
+  external_url
 }
 
 """Information about the custom message Routing Form Submission result."""
@@ -1551,7 +1549,7 @@ type Routing_Form_Submission_Custom_Message_Result {
 }
 
 enum custom_message_const @typescript(subgraph: "calendly", type: "\\"custom_message\\"") @example(subgraph: "calendly", value: "custom_message") {
-  custom_message @enum(subgraph: "calendly", value: "\\"custom_message\\"")
+  custom_message
 }
 
 """Contains an object with custom message headline and body."""
@@ -1563,7 +1561,7 @@ type query_get_routing_form_submissions_oneOf_0_collection_items_result_oneOf_2_
 }
 
 enum Invitee_const @typescript(subgraph: "calendly", type: "\\"Invitee\\"") @example(subgraph: "calendly", value: "Invitee") {
-  Invitee @enum(subgraph: "calendly", value: "\\"Invitee\\"")
+  Invitee
 }
 
 union get_routing_form_submissions_uuid_response @statusCodeTypeName(subgraph: "calendly", statusCode: "200", typeName: "get_routing_form_submissions_uuid_200_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "400", typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "401", typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "403", typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "404", typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "500", typeName: "UNKNOWN_response") = get_routing_form_submissions_uuid_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
@@ -1727,16 +1725,16 @@ Supported operators:
 scalar queryInput_activityLog_search_term @length(subgraph: "calendly", max: 300)
 
 enum queryInput_activityLog_sort_items {
-  action_asc @enum(subgraph: "calendly", value: "\\"action:asc\\"")
-  action_desc @enum(subgraph: "calendly", value: "\\"action:desc\\"")
-  actor_display_name_asc @enum(subgraph: "calendly", value: "\\"actor.display_name:asc\\"")
-  actor_display_name_desc @enum(subgraph: "calendly", value: "\\"actor.display_name:desc\\"")
-  actor_uri_asc @enum(subgraph: "calendly", value: "\\"actor.uri:asc\\"")
-  actor_uri_desc @enum(subgraph: "calendly", value: "\\"actor.uri:desc\\"")
-  namespace_asc @enum(subgraph: "calendly", value: "\\"namespace:asc\\"")
-  namespace_desc @enum(subgraph: "calendly", value: "\\"namespace:desc\\"")
-  occurred_at_asc @enum(subgraph: "calendly", value: "\\"occurred_at:asc\\"")
-  occurred_at_desc @enum(subgraph: "calendly", value: "\\"occurred_at:desc\\"")
+  action_asc
+  action_desc
+  actor_display_name_asc
+  actor_display_name_desc
+  actor_uri_asc
+  actor_uri_desc
+  namespace_asc
+  namespace_desc
+  occurred_at_asc
+  occurred_at_desc
 }
 
 """Integers that will have a value greater than 0."""
@@ -1773,7 +1771,7 @@ type Mutation {
   delete_organizations_uuid_memberships(
     """The organization membership's unique identifier"""
     uuid: String!
-  ): delete_organizations_uuid_memberships_response @connect(source: "calendly", http: {DELETE: "/organization_memberships/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([204, \\"Void_container\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"Error_Response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"Void_container\\"]) Void title message details { parameter message }", isSuccess: "$status->match([204, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): delete_organizations_uuid_memberships_response @connect(source: "calendly", http: {DELETE: "/organization_memberships/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([204, \\"Void_container\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"Error_Response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"Void_container\\"]) Void title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([204, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   Create a Webhook Subscription for an Organization or User.
   
@@ -1786,28 +1784,28 @@ type Mutation {
   | <pre>invitee.canceled</pre> | \`organization\` \`user\` |
   | <pre>routing_form_submission.created</pre> | \`organization\` <br /> <small>Create separate Webhook Subscriptions for events with different subscription scopes.</small> |
   """
-  post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response @connect(source: "calendly", http: {POST: "/webhook_subscriptions", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([201, \\"post_users_uuid_webhooks_201_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [409, \\"post_users_uuid_webhooks_409_response\\"], [@, \\"post_users_uuid_webhooks_201_response\\"]) resource { uri callback_url created_at updated_at retry_started_at state events scope organization user creator } title message details { parameter message }", isSuccess: "$status->match([201, true], [400, true], [401, true], [403, true], [404, true], [409, true], [@, false])")
+  post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response @connect(source: "calendly", http: {POST: "/webhook_subscriptions", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([201, \\"post_users_uuid_webhooks_201_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [409, \\"post_users_uuid_webhooks_409_response\\"], [@, \\"post_users_uuid_webhooks_201_response\\"]) resource { uri callback_url created_at updated_at retry_started_at state events: events->match([\\"invitee.created\\", \\"invitee_created\\"], [\\"invitee.canceled\\", \\"invitee_canceled\\"], [\\"routing_form_submission.created\\", \\"routing_form_submission_created\\"], [@, events]) scope organization user creator } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([201, true], [400, true], [401, true], [403, true], [404, true], [409, true], [@, false])")
   """Delete a Webhook Subscription."""
-  delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response @connect(source: "calendly", http: {DELETE: "/webhook_subscriptions/{$args.webhook_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([204, \\"Void_container\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"Void_container\\"]) Void title message details { parameter message }", isSuccess: "$status->match([204, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response @connect(source: "calendly", http: {DELETE: "/webhook_subscriptions/{$args.webhook_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([204, \\"Void_container\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"Void_container\\"]) Void title message: message->match([\\"The access token is invalid\\", \\"The_access_token_is_invalid\\"], [\\"The access token expired\\", \\"The_access_token_expired\\"], [\\"The access token was revoked\\", \\"The_access_token_was_revoked\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([204, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Creates a single-use scheduling link."""
-  post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response @connect(source: "calendly", http: {POST: "/scheduling_links", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([201, \\"post_scheduling_links_201_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"post_scheduling_links_201_response\\"]) resource { booking_url owner owner_type } title message details { parameter message }", isSuccess: "$status->match([201, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response @connect(source: "calendly", http: {POST: "/scheduling_links", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([201, \\"post_scheduling_links_201_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"post_scheduling_links_201_response\\"]) resource { booking_url owner owner_type } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([201, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """
   <!-- theme: info -->
     > This endpoint requires an <strong>Enterprise</strong> subscription.
   
   To submit a request to remove invitee data from all previously booked events in your organization, use this endpoint. Requests for data deletion can take up to 7 days to complete.
   """
-  post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @connect(source: "calendly", http: {POST: "/data_compliance/deletion/invitees", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([202, \\"JSON_container\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"Error_Response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"JSON_container\\"]) JSON title message details { parameter message }", isSuccess: "$status->match([202, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @connect(source: "calendly", http: {POST: "/data_compliance/deletion/invitees", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([202, \\"JSON_container\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"Error_Response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"JSON_container\\"]) JSON title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([202, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Undoes marking an Invitee as a No Show."""
-  deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response @connect(source: "calendly", http: {DELETE: "/invitee_no_shows/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([204, \\"Void_container\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"Void_container\\"]) Void title message details { parameter message }", isSuccess: "$status->match([204, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response @connect(source: "calendly", http: {DELETE: "/invitee_no_shows/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([204, \\"Void_container\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"Void_container\\"]) Void title message: message->match([\\"The access token is invalid\\", \\"The_access_token_is_invalid\\"], [\\"The access token expired\\", \\"The_access_token_expired\\"], [\\"The access token was revoked\\", \\"The_access_token_was_revoked\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([204, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Marks an Invitee as a No Show."""
-  postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response @connect(source: "calendly", http: {POST: "/invitee_no_shows", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([201, \\"postInviteeNoShow_201_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"postInviteeNoShow_201_response\\"]) resource { uri invitee created_at } title message details { parameter message }", isSuccess: "$status->match([201, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response @connect(source: "calendly", http: {POST: "/invitee_no_shows", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([201, \\"postInviteeNoShow_201_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"PERMISSION_DENIED_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"postInviteeNoShow_201_response\\"]) resource { uri invitee created_at } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([201, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
   """Cancels specified event."""
   post_scheduled_events_uuid_cancellation(
     """The event's unique indentifier"""
     uuid: String!
     input: post_scheduled_events_uuid_cancellation_request_Input
-  ): post_scheduled_events_uuid_cancellation_response @connect(source: "calendly", http: {POST: "/scheduled_events/{$args.uuid}/cancellation", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([201, \\"post_scheduled_events_uuid_cancellation_201_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"post_scheduled_events_uuid_cancellation_403_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"post_scheduled_events_uuid_cancellation_201_response\\"]) resource { canceled_by reason canceler_type } title message details { parameter message }", isSuccess: "$status->match([201, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
+  ): post_scheduled_events_uuid_cancellation_response @connect(source: "calendly", http: {POST: "/scheduled_events/{$args.uuid}/cancellation", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([201, \\"post_scheduled_events_uuid_cancellation_201_response\\"], [400, \\"INVALID_ARGUMENT_response\\"], [401, \\"UNAUTHENTICATED_response\\"], [403, \\"post_scheduled_events_uuid_cancellation_403_response\\"], [404, \\"NOT_FOUND_response\\"], [500, \\"UNKNOWN_response\\"], [@, \\"post_scheduled_events_uuid_cancellation_201_response\\"]) resource { canceled_by reason canceler_type } title: title->match([\\"Invalid Argument\\", \\"Invalid_Argument\\"], [@, title]) message: message->match([\\"The supplied parameters are invalid.\\", \\"The_supplied_parameters_are_invalid_\\"], [@, message]) details { parameter message }", isSuccess: "$status->match([201, true], [400, true], [401, true], [403, true], [404, true], [500, true], [@, false])")
 }
 
 union post_organizations_uuid_invitations_response @statusCodeTypeName(subgraph: "calendly", statusCode: "201", typeName: "post_organizations_uuid_invitations_201_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "400", typeName: "Error_Response") @statusCodeTypeName(subgraph: "calendly", statusCode: "401", typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "403", typeName: "post_organizations_uuid_invitations_403_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "404", typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "500", typeName: "UNKNOWN_response") = post_organizations_uuid_invitations_201_response | Error_Response | UNAUTHENTICATED_response | post_organizations_uuid_invitations_403_response | NOT_FOUND_response | UNKNOWN_response
@@ -1822,10 +1820,10 @@ type post_organizations_uuid_invitations_403_response {
 }
 
 enum mutation_post_organizations_uuid_invitations_oneOf_3_message {
-  You_already_sent_all_the_invitations_you_SINGLE_QUOTE_re_allotted_based_upon_the_number_of_seats_purchased_with_your_account__Please_purchase_more_seats_to_send_more_invitations_ @enum(subgraph: "calendly", value: "\\"You already sent all the invitations you're allotted based upon the number of seats purchased with your account. Please purchase more seats to send more invitations.\\"")
-  You_already_sent_all_the_invitations_allotted_to_you_with_a_trial_account_ @enum(subgraph: "calendly", value: "\\"You already sent all the invitations allotted to you with a trial account.\\"")
-  You_do_not_have_permission @enum(subgraph: "calendly", value: "\\"You do not have permission\\"")
-  You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_ @enum(subgraph: "calendly", value: "\\"You cannot perform this action for an organization with SCIM enabled.\\"")
+  You_already_sent_all_the_invitations_you_SINGLE_QUOTE_re_allotted_based_upon_the_number_of_seats_purchased_with_your_account__Please_purchase_more_seats_to_send_more_invitations_
+  You_already_sent_all_the_invitations_allotted_to_you_with_a_trial_account_
+  You_do_not_have_permission
+  You_cannot_perform_this_action_for_an_organization_with_SCIM_enabled_
 }
 
 input post_organizations_uuid_invitations_request_Input {
@@ -1857,11 +1855,11 @@ type post_users_uuid_webhooks_409_response {
 }
 
 enum Already_Exists_const @typescript(subgraph: "calendly", type: "\\"Already Exists\\"") @example(subgraph: "calendly", value: "Already Exists") {
-  Already_Exists @enum(subgraph: "calendly", value: "\\"Already Exists\\"")
+  Already_Exists
 }
 
 enum Hook_with_this_url_already_exists_const @typescript(subgraph: "calendly", type: "\\"Hook with this url already exists\\"") @example(subgraph: "calendly", value: "Hook with this url already exists") {
-  Hook_with_this_url_already_exists @enum(subgraph: "calendly", value: "\\"Hook with this url already exists\\"")
+  Hook_with_this_url_already_exists
 }
 
 input post_users_uuid_webhooks_request_Input {
@@ -1885,9 +1883,9 @@ input post_users_uuid_webhooks_request_Input {
 }
 
 enum mutationInput_post_users_uuid_webhooks_input_events_items {
-  invitee_canceled @enum(subgraph: "calendly", value: "\\"invitee.canceled\\"")
-  invitee_created @enum(subgraph: "calendly", value: "\\"invitee.created\\"")
-  routing_form_submission_created @enum(subgraph: "calendly", value: "\\"routing_form_submission.created\\"")
+  invitee_canceled
+  invitee_created
+  routing_form_submission_created
 }
 
 """
@@ -1917,7 +1915,7 @@ type mutation_post_scheduling_links_oneOf_0_resource {
 }
 
 enum EventType_const @typescript(subgraph: "calendly", type: "\\"EventType\\"") @example(subgraph: "calendly", value: "EventType") {
-  EventType @enum(subgraph: "calendly", value: "\\"EventType\\"")
+  EventType
 }
 
 input post_scheduling_links_request_Input {
@@ -1930,7 +1928,7 @@ input post_scheduling_links_request_Input {
 }
 
 enum _1_const @typescript(subgraph: "calendly", type: "1") @example(subgraph: "calendly", value: "1") {
-  _1 @enum(subgraph: "calendly", value: "1")
+  _1
 }
 
 union post_data_compliance_deletion_invitees_response @statusCodeTypeName(subgraph: "calendly", statusCode: "202", typeName: "JSON_container") @statusCodeTypeName(subgraph: "calendly", statusCode: "400", typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "401", typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "403", typeName: "Error_Response") @statusCodeTypeName(subgraph: "calendly", statusCode: "404", typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "500", typeName: "UNKNOWN_response") = JSON_container | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | Error_Response | NOT_FOUND_response | UNKNOWN_response
@@ -1967,9 +1965,9 @@ type post_scheduled_events_uuid_cancellation_403_response {
 }
 
 enum mutation_post_scheduled_events_uuid_cancellation_oneOf_3_message {
-  You_are_not_allowed_to_cancel_this_event @enum(subgraph: "calendly", value: "\\"You are not allowed to cancel this event\\"")
-  Event_in_the_past @enum(subgraph: "calendly", value: "\\"Event in the past\\"")
-  Event_is_already_canceled @enum(subgraph: "calendly", value: "\\"Event is already canceled\\"")
+  You_are_not_allowed_to_cancel_this_event
+  Event_in_the_past
+  Event_is_already_canceled
 }
 
 input post_scheduled_events_uuid_cancellation_request_Input {

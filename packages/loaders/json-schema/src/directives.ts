@@ -1,8 +1,6 @@
 import {
   DirectiveLocation,
-  GraphQLBoolean,
   GraphQLDirective,
-  GraphQLEnumType,
   GraphQLInt,
   GraphQLList,
   GraphQLString,
@@ -107,91 +105,12 @@ export const TypeScriptDirective = new GraphQLDirective({
   },
 });
 
-export const HTTPOperationDirective = new GraphQLDirective({
-  name: 'httpOperation',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-    path: {
-      type: GraphQLString,
-    },
-    operationSpecificHeaders: {
-      type: new GraphQLList(new GraphQLList(GraphQLString)),
-    },
-    httpMethod: {
-      type: new GraphQLEnumType({
-        name: 'HTTPMethod',
-        values: {
-          GET: { value: 'GET' },
-          HEAD: { value: 'HEAD' },
-          POST: { value: 'POST' },
-          PUT: { value: 'PUT' },
-          DELETE: { value: 'DELETE' },
-          CONNECT: { value: 'CONNECT' },
-          OPTIONS: { value: 'OPTIONS' },
-          TRACE: { value: 'TRACE' },
-          PATCH: { value: 'PATCH' },
-        },
-      }),
-    },
-    isBinary: {
-      type: GraphQLBoolean,
-    },
-    requestBaseBody: {
-      type: ObjMapScalar,
-    },
-    queryParamArgMap: {
-      type: ObjMapScalar,
-    },
-    queryStringOptionsByParam: {
-      type: ObjMapScalar,
-    },
-    jsonApiFields: {
-      type: GraphQLBoolean,
-    },
-    queryStringOptions: {
-      type: ObjMapScalar,
-    },
-  },
-});
-
 export const ResponseMetadataDirective = new GraphQLDirective({
   name: 'responseMetadata',
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
     subgraph: {
       type: GraphQLString,
-    },
-  },
-});
-
-export const OasLinkDirective = new GraphQLDirective({
-  name: 'oas_link',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-    defaultRootType: {
-      type: GraphQLString,
-    },
-    defaultField: {
-      type: GraphQLString,
-    },
-  },
-});
-
-export const LinkResolverDirective = new GraphQLDirective({
-  name: 'linkResolver',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-    linkResolverMap: {
-      type: ObjMapScalar,
     },
   },
 });
@@ -272,31 +191,5 @@ export const ExampleDirective = new GraphQLDirective({
       type: ObjMapScalar,
     },
   },
-  isRepeatable: true,
-});
-
-export const TransportDirective = new GraphQLDirective({
-  name: 'transport',
-  args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-    kind: {
-      type: GraphQLString,
-    },
-    location: {
-      type: GraphQLString,
-    },
-    headers: {
-      type: new GraphQLList(new GraphQLList(GraphQLString)),
-    },
-    queryStringOptions: {
-      type: ObjMapScalar,
-    },
-    queryParams: {
-      type: new GraphQLList(new GraphQLList(GraphQLString)),
-    },
-  },
-  locations: [DirectiveLocation.SCHEMA],
   isRepeatable: true,
 });

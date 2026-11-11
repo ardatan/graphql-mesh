@@ -6,15 +6,11 @@ exports[`Reproduction #9106 should generate correct schema: reprod-9106 1`] = `
   mutation: Mutation
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
-
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -48,7 +44,7 @@ type OAuth_Client_Credentials_Request implements Base_Token_Request {
 """
 The base object for an OAuth token request, in accordance with OAuth industry standards.
 """
-interface Base_Token_Request @discriminator(subgraph: "test", field: "grant_type", mapping: [["client_credentials", "OAuth_Client_Credentials_Request"], ["authorization_code", "OAuth_Authorization_Code_Credentials_Request"], ["refresh_token", "OAuth_Refresh_Token_Credentials_Request"]]) {
+interface Base_Token_Request {
   grant_type: mutationInput_post_token_input_oneOf_0_allOf_0_grant_type!
   """
   The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
@@ -65,7 +61,7 @@ enum mutationInput_post_token_input_oneOf_0_allOf_0_grant_type {
 }
 
 type Query {
-  dummy: String
+  dummy: String @connect(selection: "$(\\"dummy\\")")
 }
 
 type Mutation {
@@ -122,7 +118,7 @@ type Provider_specific_Access_Token_Response {
 }
 
 enum Bearer_const @typescript(subgraph: "test", type: "\\"Bearer\\"") @example(subgraph: "test", value: "Bearer") {
-  Bearer @enum(subgraph: "test", value: "\\"Bearer\\"")
+  Bearer
 }
 
 """

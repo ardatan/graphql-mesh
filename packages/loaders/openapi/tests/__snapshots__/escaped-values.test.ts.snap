@@ -5,8 +5,6 @@ exports[`Escaped Values should generate the correct schema: escaped_values-schem
   query: Query
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
@@ -14,7 +12,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  test: test_200_response @connect(source: "escaped_values", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "test")
+  test: test_200_response @connect(source: "escaped_values", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "test: test->match([-1, \\"NEGATIVE_1\\"], [0, \\"_0\\"], [10, \\"_10\\"], [15, \\"_15\\"], [30, \\"_30\\"], [45, \\"_45\\"], [60, \\"_60\\"], [@, test])")
 }
 
 type test_200_response {
@@ -22,13 +20,13 @@ type test_200_response {
 }
 
 enum query_test_test {
-  NEGATIVE_1 @enum(subgraph: "escaped_values", value: "-1")
-  _0 @enum(subgraph: "escaped_values", value: "0")
-  _10 @enum(subgraph: "escaped_values", value: "10")
-  _15 @enum(subgraph: "escaped_values", value: "15")
-  _30 @enum(subgraph: "escaped_values", value: "30")
-  _45 @enum(subgraph: "escaped_values", value: "45")
-  _60 @enum(subgraph: "escaped_values", value: "60")
+  NEGATIVE_1
+  _0
+  _10
+  _15
+  _30
+  _45
+  _60
 }
 
 input ConnectHTTP {

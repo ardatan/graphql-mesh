@@ -5,8 +5,6 @@ exports[`Discriminator Mapping should generate correct schema: discriminator-map
   query: Query
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
@@ -14,10 +12,10 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
+  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $.petType->match([\\"Dog\\", \\"DogDifferent\\"], [\\"Cat\\", \\"Cat\\"]) petType cat_exclusive")
 }
 
-union Pet @discriminator(subgraph: "test", field: "petType", mapping: [["Dog", "DogDifferent"], ["Cat", "Cat"]]) = Cat | DogDifferent
+union Pet = Cat | DogDifferent
 
 type Cat {
   petType: String
@@ -67,8 +65,6 @@ exports[`Inline Discriminator Mapping (request body) should generate correct sch
   mutation: Mutation
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
@@ -76,7 +72,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  dummy: String
+  dummy: String @connect(selection: "$(\\"dummy\\")")
 }
 
 type Mutation {
@@ -143,8 +139,6 @@ exports[`Inline Discriminator Mapping should generate correct schema: discrimina
   query: Query
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
@@ -152,10 +146,10 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  things: [query_things_items] @connect(source: "test", http: {GET: "/things", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
+  things: [query_things_items] @connect(source: "test", http: {GET: "/things", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $.type->match([\\"cat\\", \\"Cat\\"], [\\"dog\\", \\"Dog\\"]) id type name data")
 }
 
-union query_things_items @discriminator(subgraph: "test", field: "type", mapping: [["cat", "Cat"], ["dog", "Dog"]]) = Cat | Dog
+union query_things_items = Cat | Dog
 
 type Cat {
   id: String

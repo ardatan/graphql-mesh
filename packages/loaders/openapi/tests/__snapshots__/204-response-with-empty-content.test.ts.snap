@@ -13,7 +13,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  dummy: String
+  dummy: String @connect(selection: "$(\\"dummy\\")")
 }
 
 type Mutation {

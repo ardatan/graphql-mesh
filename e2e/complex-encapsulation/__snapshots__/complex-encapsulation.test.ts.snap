@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@resolveTo", {name: "@source", as: "@meshSource"}, "@resolveRootField", "@transport"]) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @source(name: "subgraph-b", http: {baseURL: "http://localhost:<subgraph-b_port>", headers: [{name: "x-custom-header", value: "{$args.xCustomHeader}"}]}) @transport(subgraph: "subgraph-b", kind: "rest", location: "http://localhost:<subgraph-b_port>") {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@resolveTo", {name: "@source", as: "@meshSource"}, "@transport"]) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @transport(subgraph: "subgraph-b", kind: "rest", location: "http://localhost:<subgraph-b_port>") @join__directive(graphs: [SUBGRAPH_B], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [SUBGRAPH_B], name: "source", args: {name: "subgraph-b", http: {baseURL: "http://localhost:<subgraph-b_port>", headers: [{name: "x-custom-header", value: "{$args.xCustomHeader}"}]}}) {
   query: Query
 }
 
@@ -47,10 +47,6 @@ directive @resolveTo(additionalArgs: SubgraphAResolveToSourceArgs, filterBy: Str
 
 directive @meshSource(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
-directive @resolveRootField(subgraph: String, field: String) repeatable on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
-
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
-
 scalar SubgraphAResolveToSourceArgs @join__type(graph: SUBGRAPH_A)
 
 scalar SubgraphBResolveToSourceArgs @join__type(graph: SUBGRAPH_B)
@@ -61,7 +57,7 @@ type Query @join__type(graph: SUBGRAPH_A) @join__type(graph: SUBGRAPH_B) {
   _encapsulated_SubgraphA_echoInt(argument: Int): Int @meshSource(name: "echoInt", type: "Int", subgraph: "subgraph-a") @join__field(graph: SUBGRAPH_A) @inaccessible
   _encapsulated_SubgraphA_echoBoolean(argument: Boolean): Boolean @meshSource(name: "echoBoolean", type: "Boolean", subgraph: "subgraph-a") @join__field(graph: SUBGRAPH_A) @inaccessible
   SubgraphA: SubgraphASubgraphAQuery! @resolveTo(sourceName: "subgraph-a", sourceTypeName: "Query", sourceFieldName: "__typename") @join__field(graph: SUBGRAPH_A)
-  SubgraphB: SubgraphBSubgraphBQuery! @connect(source: "subgraph-b", selection: "$({})") @join__field(graph: SUBGRAPH_B)
+  SubgraphB: SubgraphBSubgraphBQuery! @join__field(graph: SUBGRAPH_B) @join__directive(graphs: [SUBGRAPH_B], name: "connect", args: {source: "subgraph-b", selection: "$({})"})
 }
 
 type SubgraphAFoo @meshSource(name: "Foo", subgraph: "subgraph-a") @join__type(graph: SUBGRAPH_A, key: "id") {
@@ -77,48 +73,19 @@ type SubgraphASubgraphAQuery @join__type(graph: SUBGRAPH_A) {
 }
 
 type SubgraphBSubgraphBQuery @join__type(graph: SUBGRAPH_B) {
-  headers(xCustomHeader: String): SubgraphBheaders_200_response @connect(source: "subgraph-b", http: {GET: "/headers", headers: [{name: "accept", value: "application/json"}]}, selection: "x_custom_header: \\"x-custom-header\\"")
+  headers(xCustomHeader: String): SubgraphBheaders_200_response @join__directive(graphs: [SUBGRAPH_B], name: "connect", args: {source: "subgraph-b", http: {GET: "/headers", headers: [{name: "accept", value: "application/json"}]}, selection: "x_custom_header: $[\\"x-custom-header\\"]"})
 }
 
 type SubgraphBheaders_200_response @join__type(graph: SUBGRAPH_B) {
-  x_custom_header: String @resolveRootField(subgraph: "subgraph-b", field: "x-custom-header")
-}
-
-input ConnectHTTP @join__type(graph: SUBGRAPH_B) {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping @join__type(graph: SUBGRAPH_B) {
-  name: String!
-  value: String
-  from: String
-}
-
-input ConnectorErrors @join__type(graph: SUBGRAPH_B) {
-  message: String
-  extensions: String
-}
-
-input SourceHTTP @join__type(graph: SUBGRAPH_B) {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  x_custom_header: String
 }
 
 scalar ObjMap
 
 directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
-directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments
 "
 `;

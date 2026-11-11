@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @source(name: "API", http: {baseURL: "http://localhost:<api_port>"}) @transport(subgraph: "API", kind: "rest", location: "http://localhost:<api_port>") {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(subgraph: "API", kind: "rest", location: "http://localhost:<api_port>") @join__directive(graphs: [API], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [API], name: "source", args: {name: "API", http: {baseURL: "http://localhost:<api_port>"}}) {
   query: Query
   mutation: Mutation
 }
@@ -20,11 +20,9 @@ directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on
 
 directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
-
 directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
-directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
 directive @additionalField on FIELD_DEFINITION
 
@@ -48,12 +46,12 @@ enum join__Graph {
 }
 
 type Query @join__type(graph: API) {
-  dummy: String
+  dummy: String @join__directive(graphs: [API], name: "connect", args: {selection: "$(\\"dummy\\")"})
   user(id: Float!): User @additionalField
 }
 
 type Mutation @join__type(graph: API) {
-  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @connect(source: "API", http: {POST: "/users_by_ids", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "results {\\n  id\\n  name\\n}")
+  usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @join__directive(graphs: [API], name: "connect", args: {source: "API", http: {POST: "/users_by_ids", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "results { id name }"})
 }
 
 type UsersByIdResponse @join__type(graph: API) {
@@ -69,38 +67,9 @@ input UsersByIdRequest_Input @join__type(graph: API) {
   ids: [Float]!
 }
 
-input ConnectHTTP @join__type(graph: API) {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping @join__type(graph: API) {
-  name: String!
-  value: String
-  from: String
-}
-
-input ConnectorErrors @join__type(graph: API) {
-  message: String
-  extensions: String
-}
-
-input SourceHTTP @join__type(graph: API) {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
-}
-
 scalar ObjMap
+
+scalar join__DirectiveArguments
 "
 `;
 

@@ -7,17 +7,22 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLString,
+  isEnumType,
+  isInterfaceType,
   isListType,
   isNonNullType,
   isObjectType,
   isScalarType,
   isUnionType,
+  type GraphQLArgument,
+  type GraphQLEnumType,
   type GraphQLNamedOutputType,
   type GraphQLOutputType,
   type GraphQLUnionType,
 } from 'graphql';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { JSONSchemaHTTPJSONOperationConfig, JSONSchemaOperationConfig } from './types.js';
 
 const JSONSelectionScalar = GraphQLString;
@@ -136,6 +141,133 @@ export function toConnectPathTemplate(path: string | undefined | null): string {
     .replace(/\{this\./g, '{$this.')
     .replace(/\{env\./g, '{$env.')
     .replace(/\{context\./g, '{$context.');
+}
+
+/**
+ * Read GraphQL-name → JSON-value remaps from `@enum` (or enum `.value` ≠ `.name`).
+ * Used to emit Apollo `$args.x->match(...)` so Router remaps without Mesh `@enum`.
+ */
+export function getEnumNameToJsonRemap(enumType: GraphQLEnumType): Array<[string, unknown]> {
+  const pairs: Array<[string, unknown]> = [];
+  for (const ev of enumType.getValues()) {
+    // Prefer getDirectiveExtensions (AST + extensions); fallback for partial configs.
+    const fromDirs = getDirectiveExtensions(ev)?.enum?.[0]?.value;
+    const fromExt = fromDirs ?? (ev.extensions as any)?.directives?.enum?.[0]?.value;
+    const fromAst = ev.astNode?.directives
+      ?.find(d => d.name.value === 'enum')
+      ?.arguments?.find(a => a.name.value === 'value');
+    let jsonValue: unknown = ev.value;
+    if (typeof fromExt === 'string') {
+      try {
+        jsonValue = JSON.parse(fromExt);
+      } catch {
+        jsonValue = fromExt;
+      }
+    } else if (fromExt != null && typeof fromExt !== 'string') {
+      jsonValue = fromExt;
+    } else if (fromAst && 'value' in fromAst.value) {
+      const raw = (fromAst.value as any).value;
+      try {
+        jsonValue = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      } catch {
+        jsonValue = raw;
+      }
+    }
+    if (jsonValue != null && String(jsonValue) !== ev.name) {
+      pairs.push([ev.name, jsonValue]);
+    }
+  }
+  return pairs;
+}
+
+/**
+ * `$args.foo` → `$args.foo->match(["GQL", $("json")], …, [@, $args.foo])` when remapped.
+ */
+export function wrapArgExprWithEnumMatch(argExpr: string, enumType: GraphQLEnumType): string {
+  const pairs = getEnumNameToJsonRemap(enumType);
+  if (!pairs.length) {
+    return argExpr;
+  }
+  // Use JSON literals (not `$()`) so path/header templates can eval `->match` after
+  // global `$("…")` literal expansion in `resolveTemplate`.
+  const arms = pairs
+    .map(([gql, json]) => `[${JSON.stringify(gql)}, ${JSON.stringify(json)}]`)
+    .join(', ');
+  return `${argExpr}->match(${arms}, [@, ${argExpr}])`;
+}
+
+/**
+ * Rewrite `{$args.x}` in a Connectors path when `x` is a remapped enum argument.
+ */
+export function rewriteConnectPathEnumArgs(
+  path: string,
+  args:
+    | ReadonlyArray<GraphQLArgument>
+    | Record<string, { type: any; name?: string }>
+    | undefined,
+): string {
+  if (!path || !args) {
+    return path;
+  }
+  const argList = Array.isArray(args)
+    ? args
+    : Object.entries(args).map(([name, arg]) => ({ ...arg, name: arg.name || name }));
+  let next = path;
+  for (const arg of argList) {
+    let t = arg.type;
+    while (isNonNullType(t) || isListType(t)) {
+      t = t.ofType;
+    }
+    if (!isEnumType(t)) continue;
+    const pairs = getEnumNameToJsonRemap(t);
+    if (!pairs.length) continue;
+    const bare = `$args.${arg.name}`;
+    const wrapped = wrapArgExprWithEnumMatch(bare, t);
+    // {$args.x} → {$args.x->match(...)}
+    next = next.replaceAll(`{${bare}}`, `{${wrapped}}`);
+  }
+  return next;
+}
+
+/**
+ * `@discriminator(field, mapping)` → `__typename: $[field]->match([json, Type], …)`.
+ */
+export function buildDiscriminatorTypenameSelection(type: {
+  getFields?: () => Record<string, unknown>;
+  astNode?: { directives?: readonly any[] } | null;
+  extensions?: unknown;
+}): string {
+  const ext = ((type.extensions as any)?.directives?.discriminator || []) as Array<{
+    field?: string;
+    mapping?: [string, string][];
+  }>;
+  const fromExt = ext[0];
+  const fromAst = type.astNode?.directives?.find((d: any) => d.name.value === 'discriminator');
+  let field = fromExt?.field;
+  let mapping = fromExt?.mapping;
+  if (!field && fromAst) {
+    for (const arg of fromAst.arguments || []) {
+      if (arg.name.value === 'field' && arg.value.kind === 'StringValue') {
+        field = arg.value.value;
+      }
+      if (arg.name.value === 'mapping' && arg.value.kind === 'ListValue') {
+        mapping = arg.value.values
+          .filter((v: any) => v.kind === 'ListValue' && v.values.length >= 2)
+          .map((v: any) => [
+            v.values[0].value ?? String(v.values[0]),
+            v.values[1].value ?? String(v.values[1]),
+          ]);
+      }
+    }
+  }
+  if (!field || !mapping?.length) {
+    return '';
+  }
+  const fieldPath = /^[A-Za-z_][\w]*$/.test(field) ? `$.${field}` : `$[${JSON.stringify(field)}]`;
+  const arms = mapping
+    .map(([json, typeName]) => `[${JSON.stringify(json)}, ${JSON.stringify(typeName)}]`)
+    .join(', ');
+  return `__typename: ${fieldPath}->match(${arms})`;
 }
 
 /**
@@ -337,11 +469,14 @@ export function getStatusCodeTypeNameMappings(
 /**
  * Apollo Connectors status-union helpers: `isSuccess` + `__typename` via `$status->match`.
  *
- * `__typename` arms only use concrete union members. Mappings that point at an
- * interface / non-member (e.g. OpenAPI discriminator parent) are omitted so
- * Hive `resolveType` can finish via `$statusCode` + discriminator.
+ * Concrete status→type arms use type names. Statuses that map to a discriminator
+ * interface / abstract parent use that type's `@discriminator` `->match` expr as the
+ * arm/default value so Router+Hive resolve without Mesh `@discriminator` at runtime.
  */
-export function buildStatusUnionConnectExtras(unionType: GraphQLUnionType): {
+export function buildStatusUnionConnectExtras(
+  unionType: GraphQLUnionType,
+  schemaTypes?: Map<string, { astNode?: any; extensions?: any }>,
+): {
   isSuccess: string;
   typenameSelection: string | null;
 } | null {
@@ -356,30 +491,57 @@ export function buildStatusUnionConnectExtras(unionType: GraphQLUnionType): {
   const memberNames = new Set(unionType.getTypes().map(t => t.name));
   const hasDefault = mappings.some(m => m.statusCode === 'default');
   const explicitMappings = mappings.filter(m => m.statusCode !== 'default');
-  const concreteMappings = mappings.filter(m => memberNames.has(m.typeName));
-  const concreteExplicit = concreteMappings.filter(m => m.statusCode !== 'default');
+  const resolveTypenameExpr = (typeName: string): string => {
+    if (memberNames.has(typeName)) {
+      return JSON.stringify(typeName);
+    }
+    // Abstract / discriminator parent — prefer property match over the interface name.
+    const abstractType =
+      schemaTypes?.get(typeName) ||
+      unionType.getTypes().find(t => t.name === typeName) ||
+      // Interface may not be a union member; look at implementations' interfaces via extensions.
+      null;
+    // Try reading discriminator from any schema type named `typeName` via union's parent schema is
+    // unavailable here — callers pass schemaTypes when available. Fall back: scan member parents.
+    let disc = abstractType ? buildDiscriminatorTypenameSelection(abstractType) : '';
+    if (!disc) {
+      for (const member of unionType.getTypes()) {
+        const ifaces = (member as any).getInterfaces?.() || [];
+        for (const iface of ifaces) {
+          if (iface.name === typeName) {
+            disc = buildDiscriminatorTypenameSelection(iface);
+            if (disc) break;
+          }
+        }
+        if (disc) break;
+      }
+    }
+    // `buildDiscriminatorTypenameSelection` returns `__typename: <expr>`; take `<expr>`.
+    if (disc.startsWith('__typename:')) {
+      return disc.slice('__typename:'.length).trim();
+    }
+    return JSON.stringify(typeName);
+  };
   const successArms = explicitMappings.map(m => `[${toMatchKey(m.statusCode)}, true]`).join(', ');
-  let typenameSelection: string | null = null;
-  if (concreteExplicit.length && concreteMappings.length === mappings.length) {
-    const typenameArms = concreteExplicit
-      .map(m => `[${toMatchKey(m.statusCode)}, ${JSON.stringify(m.typeName)}]`)
-      .join(', ');
-    const defaultType =
-      concreteMappings.find(m => m.statusCode === 'default')?.typeName ??
-      concreteExplicit[0]?.typeName;
-    typenameSelection = `__typename: $status->match(${typenameArms}, [@, ${JSON.stringify(defaultType)}])`;
-  } else if (concreteExplicit.length || concreteMappings.some(m => m.statusCode === 'default')) {
-    const typenameArms = concreteExplicit
-      .map(m => `[${toMatchKey(m.statusCode)}, ${JSON.stringify(m.typeName)}]`)
-      .join(', ');
-    const defaultType = concreteMappings.find(m => m.statusCode === 'default')?.typeName;
-    // Null default leaves `__typename` unset for abstract-mapped / unlisted statuses.
-    typenameSelection = typenameArms
-      ? `__typename: $status->match(${typenameArms}, [@, ${defaultType != null ? JSON.stringify(defaultType) : 'null'}])`
-      : defaultType != null
-        ? `__typename: $status->match([@, ${JSON.stringify(defaultType)}])`
-        : null;
-  }
+  const typenameArms = explicitMappings
+    .map(m => `[${toMatchKey(m.statusCode)}, ${resolveTypenameExpr(m.typeName)}]`)
+    .join(', ');
+  const defaultMapping = mappings.find(m => m.statusCode === 'default');
+  const defaultExpr = defaultMapping
+    ? resolveTypenameExpr(defaultMapping.typeName)
+    : explicitMappings.length
+      ? // Prefer abstract/success mapping when mixed; else first concrete.
+        resolveTypenameExpr(
+          explicitMappings.find(m => !memberNames.has(m.typeName))?.typeName ||
+            explicitMappings[0].typeName,
+        )
+      : 'null';
+  // When every non-default arm is concrete and equals default, keep the simple form.
+  const typenameSelection = typenameArms
+    ? `__typename: $status->match(${typenameArms}, [@, ${defaultExpr}])`
+    : defaultExpr !== 'null'
+      ? `__typename: $status->match([@, ${defaultExpr}])`
+      : null;
   return {
     isSuccess: `$status->match(${successArms ? `${successArms}, ` : ''}[@, ${hasDefault}])`,
     typenameSelection,
@@ -395,9 +557,14 @@ const MAX_CONNECT_SELECTION_CHARS = 12_000;
 
 export function buildSelectionForType(
   type: GraphQLOutputType,
-  options: { skipFields?: Set<string>; depth?: number } = {},
+  options: {
+    skipFields?: Set<string>;
+    depth?: number;
+    /** Implementing object types when `type` is an interface (exclusive fields). */
+    implementations?: ReadonlyArray<GraphQLOutputType>;
+  } = {},
 ): string {
-  const { skipFields = new Set(), depth = 0 } = options;
+  const { skipFields = new Set(), depth = 0, implementations = [] } = options;
   // Depth 2: root fields + one nested object level. Deeper nests pass through as bare names.
   if (depth > 2) {
     return '';
@@ -415,8 +582,9 @@ export function buildSelectionForType(
     // Only walk members when status mappings exist — otherwise getFields() during emit can
     // finalize graphql-compose object types before pending link fields are attached.
     const statusExtras = buildStatusUnionConnectExtras(named);
-    if (!statusExtras) {
-      // Non-status unions: pass through raw payload for Hive discriminator / resolveType.
+    const discTypename = buildDiscriminatorTypenameSelection(named);
+    if (!statusExtras && !discTypename) {
+      // Non-status / non-discriminator unions: pass through (`$`) for Hive resolveType.
       return '';
     }
     // Merge by top-level field block (brace-aware). Line-by-line dedupe would
@@ -431,19 +599,30 @@ export function buildSelectionForType(
         }
       }
     }
-    const mergedSelection = [statusExtras.typenameSelection, ...merged.values()]
+    const mergedSelection = [
+      statusExtras?.typenameSelection || discTypename,
+      ...merged.values(),
+    ]
       .filter(Boolean)
       .join(' ');
     if (mergedSelection.length > MAX_CONNECT_SELECTION_CHARS) {
-      // Fall back to `$` (caller); runtime still resolves via `@statusCodeTypeName`.
+      // Fall back to `$` (caller); runtime still resolves via Mesh directives if present.
       return '';
     }
     return mergedSelection;
   }
-  if (!isObjectType(named)) {
+  if (!isObjectType(named) && !isInterfaceType(named)) {
     return '';
   }
-  const fields = named.getFields();
+  const fields = { ...named.getFields() };
+  // Interface selections must also pick implementor-only fields (e.g. Dog.age).
+  if (isInterfaceType(named)) {
+    for (const impl of implementations) {
+      const implNamed = unwrapType(impl);
+      if (!isObjectType(implNamed)) continue;
+      Object.assign(fields, implNamed.getFields());
+    }
+  }
   // Types with `@dictionary` (additionalProperties) must pass through the raw JSON object
   // so dictionary resolvers can see unknown keys. Nested field picking would drop them.
   const hasDictionaryField = Object.values(fields).some(field => {
@@ -455,6 +634,10 @@ export function buildSelectionForType(
     return '';
   }
   const lines: string[] = [];
+  const discTypename = buildDiscriminatorTypenameSelection(named);
+  if (discTypename) {
+    lines.push(discTypename);
+  }
   for (const rawFieldName of Object.keys(fields)) {
     const fieldName = String(rawFieldName);
     if (skipFields.has(fieldName) || fieldName.startsWith('__')) {
@@ -467,12 +650,7 @@ export function buildSelectionForType(
     >;
     const fieldDirectives = (field.astNode?.directives || []).map(d => d.name.value);
     const extDirectiveNames = Object.keys(directiveExt);
-    if (
-      fieldDirectives.includes('connect') ||
-      extDirectiveNames.includes('connect') ||
-      fieldDirectives.includes('oas_link') ||
-      extDirectiveNames.includes('oas_link')
-    ) {
+    if (fieldDirectives.includes('connect') || extDirectiveNames.includes('connect')) {
       continue;
     }
     // `@resolveRootField(field: "foo-bar")` → GraphQL `foo_bar` from JSON `foo-bar`
@@ -488,13 +666,32 @@ export function buildSelectionForType(
       const v = (resolveRootField as any).value;
       jsonName = v?.value ?? v;
     }
-    const aliasPrefix: string =
+    // Apollo Connectors: safe idents are bare paths; hyphenated/odd keys need `$["…"]`.
+    // (A bare JSON string like `"patent-id"` is a literal, not a path, on Router.)
+    const jsonPath =
       jsonName && jsonName !== fieldName
-        ? `${fieldName}: ${/^[A-Za-z_][\w]*$/.test(jsonName) ? jsonName : JSON.stringify(jsonName)}`
+        ? /^[A-Za-z_][\w]*$/.test(jsonName)
+          ? jsonName
+          : `$[${JSON.stringify(jsonName)}]`
         : fieldName;
+    const aliasPrefix =
+      jsonName && jsonName !== fieldName ? `${fieldName}: ${jsonPath}` : fieldName;
     const fieldNamed = unwrapType(field.type);
+    // Response enums: JSON value → GraphQL enum name via `->match` (Apollo has no `@enum`).
+    if (isEnumType(fieldNamed)) {
+      const pairs = getEnumNameToJsonRemap(fieldNamed);
+      if (pairs.length) {
+        // Keep JSON literal types (0 not "0") so `$x->match` compares correctly.
+        const arms = pairs
+          .map(([gql, json]) => `[${JSON.stringify(json)}, ${JSON.stringify(gql)}]`)
+          .join(', ');
+        lines.push(`${fieldName}: ${jsonPath}->match(${arms}, [@, ${jsonPath}])`);
+        continue;
+      }
+    }
     if (
       isObjectType(fieldNamed) ||
+      isInterfaceType(fieldNamed) ||
       isUnionType(fieldNamed) ||
       isListType(field.type) ||
       (isNonNullType(field.type) &&

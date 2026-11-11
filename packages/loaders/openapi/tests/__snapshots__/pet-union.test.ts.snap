@@ -5,8 +5,6 @@ exports[`Pet should generate the correct schema: schema 1`] = `
   query: Query
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
-
 directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
@@ -21,7 +19,7 @@ type Dog implements Pet {
   petType: String
 }
 
-interface Pet @discriminator(subgraph: "Pet", field: "petType", mapping: [["Dog", "Dog"], ["Cat", "Cat"]]) {
+interface Pet {
   name: String!
   petType: String
 }
@@ -33,7 +31,7 @@ type Cat implements Pet {
 }
 
 type Query {
-  pets_by_id(id: String!): pets_by_id_response @connect(source: "Pet", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([400, \\"ApiError\\"], [@, null]) dog_exclusive name petType cat_exclusive name petType code description", isSuccess: "$status->match([200, true], [400, true], [@, false])")
+  pets_by_id(id: String!): pets_by_id_response @connect(source: "Pet", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, $.petType->match([\\"Dog\\", \\"Dog\\"], [\\"Cat\\", \\"Cat\\"])], [400, \\"ApiError\\"], [@, $.petType->match([\\"Dog\\", \\"Dog\\"], [\\"Cat\\", \\"Cat\\"])]) dog_exclusive name petType cat_exclusive name petType code description", isSuccess: "$status->match([200, true], [400, true], [@, false])")
 }
 
 union pets_by_id_response @statusCodeTypeName(subgraph: "Pet", statusCode: "200", typeName: "Pet") @statusCodeTypeName(subgraph: "Pet", statusCode: "400", typeName: "ApiError") = Dog | Cat | ApiError

@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(
-  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@enum", "@merge", "@extraSchemaDefinitionDirective", "@source"]
-) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions", "@merge", {name: "@source", as: "@meshSource"}, "@transport"]) @transport(subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3") @join__directive(graphs: [PETSTORE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PETSTORE], name: "source", args: {name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}) {
   query: Query
   mutation: Mutation
 }
@@ -13,25 +10,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -59,29 +42,11 @@ enum join__Graph {
   VACCINATION @join__graph(name: "vaccination", url: "http://localhost:<vaccination_port>/graphql")
 }
 
-directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
+directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
-directive @connect(
-  source: String
-  http: ConnectHTTP
-  selection: String!
-  entity: Boolean
-  errors: ConnectorErrors
-  isSuccess: String
-) repeatable on FIELD_DEFINITION | OBJECT
+directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
 
-directive @merge(
-  subgraph: String
-  argsExpr: String
-  keyArg: String
-  keyField: String
-  key: [String!]
-  additionalArgs: String
-) repeatable on FIELD_DEFINITION
-
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
-
-directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+directive @meshSource(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
@@ -91,9 +56,7 @@ scalar BigInt @join__type(graph: PETSTORE) @join__type(graph: VACCINATION)
 """
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
-scalar JSON @join__type(graph: PETSTORE) @inaccessible @specifiedBy(
-  url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf"
-)
+scalar JSON @join__type(graph: PETSTORE) @inaccessible @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
@@ -105,107 +68,55 @@ A field whose value conforms to the standard internet email address format as sp
 """
 scalar EmailAddress @join__type(graph: PETSTORE) @inaccessible @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
-"""
-The \`File\` scalar type represents a file upload.
-"""
+"""The \`File\` scalar type represents a file upload."""
 scalar File @join__type(graph: PETSTORE) @inaccessible
 
-scalar _DirectiveExtensions @join__type(graph: PETSTORE)
+scalar ObjMap @join__type(graph: PETSTORE)
 
 scalar TransportOptions @join__type(graph: VACCINATION)
 
-type Query @extraSchemaDefinitionDirective(
-  directives: {source: [{name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}], transport: [{subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3"}]}
-) @join__type(graph: PETSTORE) @join__type(graph: VACCINATION) {
-  """
-  Multiple status values can be provided with comma separated strings
-  """
-  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @connect(
-    source: "petstore"
-    http: {GET: "/pet/findByStatus", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n}"}
-    selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus"
-  ) @join__field(graph: PETSTORE) @inaccessible
+type Query @join__type(graph: PETSTORE) @join__type(graph: VACCINATION) {
+  """Multiple status values can be provided with comma separated strings"""
+  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @meshRestOptions(queryStringOptionsByParam: "{\\"status\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}") @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/pet/findByStatus", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status"})
   """
   Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
   """
-  findPetsByTags("""
-  Tags to filter by
-  """
-  tags: [String]): [Pet] @connect(
-    source: "petstore"
-    http: {GET: "/pet/findByTags", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tags: $args.tags\\n}"}
-    selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus"
-  ) @join__field(graph: PETSTORE) @inaccessible
-  """
-  Returns a single pet
-  """
-  getPetById("""
-  ID of pet to return
-  """
-  petId: BigInt!): Pet @connect(
-    source: "petstore"
-    http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}
-    selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus"
-  ) @merge(subgraph: "petstore", keyField: "id", keyArg: "petId") @join__field(graph: PETSTORE)
-  """
-  Returns a map of status codes to quantities
-  """
-  getInventory: JSON @connect(
-    source: "petstore"
-    http: {GET: "/store/inventory", headers: [{name: "accept", value: "application/json"}]}
-    selection: "$"
-  ) @join__field(graph: PETSTORE) @inaccessible
+  findPetsByTags(
+    """Tags to filter by"""
+    tags: [String]
+  ): [Pet] @meshRestOptions(queryStringOptionsByParam: "{\\"tags\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}") @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/pet/findByTags", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tags: $args.tags\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status"})
+  """Returns a single pet"""
+  getPetById(
+    """ID of pet to return"""
+    petId: BigInt!
+  ): Pet @merge(subgraph: "petstore", keyField: "id", keyArg: "petId") @join__field(graph: PETSTORE) @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name category { id name } photoUrls tags { id name } status"})
+  """Returns a map of status codes to quantities"""
+  getInventory: JSON @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/store/inventory", headers: [{name: "accept", value: "application/json"}]}, selection: "$"})
   """
   For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
   """
-  getOrderById("""
-  ID of order that needs to be fetched
-  """
-  orderId: BigInt!): Order @connect(
-    source: "petstore"
-    http: {GET: "/store/order/{$args.orderId}", headers: [{name: "accept", value: "application/json"}]}
-    selection: "id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete"
-  ) @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId") @join__field(graph: PETSTORE) @inaccessible
-  """
-  Logs user into the system
-  """
+  getOrderById(
+    """ID of order that needs to be fetched"""
+    orderId: BigInt!
+  ): Order @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId") @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/store/order/{$args.orderId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id petId quantity shipDate status complete"})
+  """Logs user into the system"""
   loginUser(
-    """
-    The user name for login
-    """
+    """The user name for login"""
     username: String
-    """
-    The password for login in clear text
-    """
+    """The password for login in clear text"""
     password: String
-  ): String @connect(
-    source: "petstore"
-    http: {GET: "/user/login", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  username: $args.username\\n  password: $args.password\\n}"}
-    selection: "$"
-  ) @join__field(graph: PETSTORE) @inaccessible
-  """
-  Logs out current logged in user session
-  """
-  logoutUser: JSON @connect(source: "petstore", http: {GET: "/user/logout"}, selection: "$") @join__field(graph: PETSTORE) @inaccessible
-  """
-  Get user by user name
-  """
+  ): String @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/user/login", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  username: $args.username\\n  password: $args.password\\n}"}, selection: "$"})
+  """Logs out current logged in user session"""
+  logoutUser: JSON @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/user/logout"}, selection: "$"})
+  """Get user by user name"""
   getUserByName(
-    """
-    The name that needs to be fetched. Use user1 for testing.
-    """
+    """The name that needs to be fetched. Use user1 for testing."""
     username: String!
-  ): User @connect(
-    source: "petstore"
-    http: {GET: "/user/{$args.username}", headers: [{name: "accept", value: "application/json"}]}
-    selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus"
-  ) @join__field(graph: PETSTORE) @inaccessible
-  petById(id: BigInt!): Pet @source(name: "pet_by_id", type: "Pet", subgraph: "vaccination") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id") @join__field(graph: VACCINATION)
+  ): User @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/user/{$args.username}", headers: [{name: "accept", value: "application/json"}]}, selection: "id username firstName lastName email password phone userStatus"})
+  petById(id: BigInt!): Pet @meshSource(name: "pet_by_id", type: "Pet", subgraph: "vaccination") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id") @join__field(graph: VACCINATION)
 }
 
-"""
-Pet object that needs to be added to the store
-"""
+"""Pet object that needs to be added to the store"""
 type Pet @join__type(graph: PETSTORE, key: "id") @join__type(graph: VACCINATION, key: "id") {
   id: BigInt @join__field(graph: PETSTORE, type: "BigInt") @join__field(graph: VACCINATION, type: "BigInt!")
   name: String! @join__field(graph: PETSTORE)
@@ -243,132 +154,62 @@ type User @join__type(graph: PETSTORE) @inaccessible {
   email: EmailAddress
   password: String
   phone: String
-  """
-  User Status
-  """
+  """User Status"""
   userStatus: Int
 }
 
 type Mutation @join__type(graph: PETSTORE) @inaccessible {
-  """
-  Update an existing pet by Id
-  """
-  updatePet(input: Pet_Input): Pet @connect(
-    source: "petstore"
-    http: {PUT: "/pet", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
-    selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus"
-  ) @inaccessible
-  """
-  Add a new pet to the store
-  """
-  addPet(input: Pet_Input): Pet @connect(
-    source: "petstore"
-    http: {POST: "/pet", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
-    selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus"
-  ) @inaccessible
-  """
-  Updates a pet in the store with form data
-  """
+  """Update an existing pet by Id"""
+  updatePet(input: Pet_Input): Pet @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {PUT: "/pet", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id name category { id name } photoUrls tags { id name } status"})
+  """Add a new pet to the store"""
+  addPet(input: Pet_Input): Pet @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {POST: "/pet", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id name category { id name } photoUrls tags { id name } status"})
+  """Updates a pet in the store with form data"""
   updatePetWithForm(
-    """
-    ID of pet that needs to be updated
-    """
+    """ID of pet that needs to be updated"""
     petId: BigInt!
-    """
-    Name of pet that needs to be updated
-    """
+    """Name of pet that needs to be updated"""
     name: String
-    """
-    Status of pet that needs to be updated
-    """
+    """Status of pet that needs to be updated"""
     status: String
-  ): JSON @connect(
-    source: "petstore"
-    http: {POST: "/pet/{$args.petId}", queryParams: "{\\n  name: $args.name\\n  status: $args.status\\n}"}
-    selection: "$"
-  ) @inaccessible
-  """
-  Deletes a pet
-  """
-  deletePet(api_key: String, """
-  Pet id to delete
-  """
-  petId: BigInt!): JSON @connect(
-    source: "petstore"
-    http: {DELETE: "/pet/{$args.petId}", headers: [{name: "api_key", value: "{$args.api_key}"}]}
-    selection: "$"
-  ) @inaccessible
-  """
-  uploads an image
-  """
-  uploadFile(
-    """
-    ID of pet to update
-    """
+  ): JSON @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {POST: "/pet/{$args.petId}", queryParams: "{\\n  name: $args.name\\n  status: $args.status\\n}"}, selection: "$"})
+  """Deletes a pet"""
+  deletePet(
+    api_key: String
+    """Pet id to delete"""
     petId: BigInt!
-    """
-    Additional Metadata
-    """
+  ): JSON @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {DELETE: "/pet/{$args.petId}", headers: [{name: "api_key", value: "{$args.api_key}"}]}, selection: "$"})
+  """uploads an image"""
+  uploadFile(
+    """ID of pet to update"""
+    petId: BigInt!
+    """Additional Metadata"""
     additionalMetadata: String
     input: File
-  ): ApiResponse @connect(
-    source: "petstore"
-    http: {POST: "/pet/{$args.petId}/uploadImage", headers: [{name: "Content-Type", value: "application/octet-stream"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  additionalMetadata: $args.additionalMetadata\\n}"}
-    selection: "code\\ntype\\nmessage"
-  ) @inaccessible
-  """
-  Place a new order in the store
-  """
-  placeOrder(input: Order_Input): Order @connect(
-    source: "petstore"
-    http: {POST: "/store/order", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
-    selection: "id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete"
-  ) @inaccessible
+  ): ApiResponse @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {POST: "/pet/{$args.petId}/uploadImage", headers: [{name: "Content-Type", value: "application/octet-stream"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  additionalMetadata: $args.additionalMetadata\\n}"}, selection: "code type message"})
+  """Place a new order in the store"""
+  placeOrder(input: Order_Input): Order @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {POST: "/store/order", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id petId quantity shipDate status complete"})
   """
   For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
   """
-  deleteOrder("""
-  ID of the order that needs to be deleted
-  """
-  orderId: BigInt!): JSON @connect(
-    source: "petstore"
-    http: {DELETE: "/store/order/{$args.orderId}"}
-    selection: "$"
-  ) @inaccessible
-  """
-  This can only be done by the logged in user.
-  """
-  createUser(input: User_Input): User @connect(
-    source: "petstore"
-    http: {POST: "/user", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
-    selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus"
-  ) @inaccessible
-  """
-  Creates list of users with given input array
-  """
-  createUsersWithListInput(input: [User_Input]): User @connect(
-    source: "petstore"
-    http: {POST: "/user/createWithList", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
-    selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus"
-  ) @inaccessible
-  """
-  This can only be done by the logged in user.
-  """
-  updateUser("""
-  name that need to be deleted
-  """
-  username: String!, input: User_Input): JSON @connect(
-    source: "petstore"
-    http: {PUT: "/user/{$args.username}", headers: [{name: "Content-Type", value: "application/json"}], body: "$args.input"}
-    selection: "$"
-  ) @inaccessible
-  """
-  This can only be done by the logged in user.
-  """
-  deleteUser("""
-  The name that needs to be deleted
-  """
-  username: String!): JSON @connect(source: "petstore", http: {DELETE: "/user/{$args.username}"}, selection: "$") @inaccessible
+  deleteOrder(
+    """ID of the order that needs to be deleted"""
+    orderId: BigInt!
+  ): JSON @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {DELETE: "/store/order/{$args.orderId}"}, selection: "$"})
+  """This can only be done by the logged in user."""
+  createUser(input: User_Input): User @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {POST: "/user", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id username firstName lastName email password phone userStatus"})
+  """Creates list of users with given input array"""
+  createUsersWithListInput(input: [User_Input]): User @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {POST: "/user/createWithList", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id username firstName lastName email password phone userStatus"})
+  """This can only be done by the logged in user."""
+  updateUser(
+    """name that need to be deleted"""
+    username: String!
+    input: User_Input
+  ): JSON @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {PUT: "/user/{$args.username}", headers: [{name: "Content-Type", value: "application/json"}], body: "$args.input"}, selection: "$"})
+  """This can only be done by the logged in user."""
+  deleteUser(
+    """The name that needs to be deleted"""
+    username: String!
+  ): JSON @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {DELETE: "/user/{$args.username}"}, selection: "$"})
 }
 
 type ApiResponse @join__type(graph: PETSTORE) @inaccessible {
@@ -377,36 +218,28 @@ type ApiResponse @join__type(graph: PETSTORE) @inaccessible {
   message: String
 }
 
-"""
-Status values that need to be considered for filter
-"""
+"""Status values that need to be considered for filter"""
 enum queryInput_findPetsByStatus_status @join__type(graph: PETSTORE) {
   available @join__enumValue(graph: PETSTORE)
   pending @join__enumValue(graph: PETSTORE)
   sold @join__enumValue(graph: PETSTORE)
 }
 
-"""
-pet status in the store
-"""
+"""pet status in the store"""
 enum mutation_updatePet_status @join__type(graph: PETSTORE) {
   available @join__enumValue(graph: PETSTORE)
   pending @join__enumValue(graph: PETSTORE)
   sold @join__enumValue(graph: PETSTORE)
 }
 
-"""
-Order Status
-"""
+"""Order Status"""
 enum mutation_placeOrder_status @join__type(graph: PETSTORE) {
   placed @join__enumValue(graph: PETSTORE)
   approved @join__enumValue(graph: PETSTORE)
   delivered @join__enumValue(graph: PETSTORE)
 }
 
-"""
-Pet object that needs to be added to the store
-"""
+"""Pet object that needs to be added to the store"""
 input Pet_Input @join__type(graph: PETSTORE) @inaccessible {
   id: BigInt
   name: String!
@@ -443,42 +276,15 @@ input User_Input @join__type(graph: PETSTORE) @inaccessible {
   email: EmailAddress
   password: String
   phone: String
-  """
-  User Status
-  """
+  """User Status"""
   userStatus: Int
 }
 
-input ConnectHTTP @join__type(graph: PETSTORE) {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
-input HTTPHeaderMapping @join__type(graph: PETSTORE) {
-  name: String!
-  value: String
-  from: String
-}
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
-input ConnectorErrors @join__type(graph: PETSTORE) {
-  message: String
-  extensions: String
-}
-
-input SourceHTTP @join__type(graph: PETSTORE) {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
-}
+scalar join__DirectiveArguments
 "
 `;
 

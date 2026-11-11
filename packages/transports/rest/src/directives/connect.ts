@@ -101,7 +101,7 @@ function getJoinDirectivePayloads(
   extensions: Record<string, unknown> | undefined,
   directiveName: 'connect' | 'source',
 ): Record<string, unknown>[] {
-  const joins = extensions?.['join__directive'] as JoinDirectiveArgs[] | undefined;
+  const joins = extensions?.join__directive as JoinDirectiveArgs[] | undefined;
   if (!joins?.length) {
     return [];
   }
@@ -171,7 +171,18 @@ function resolveTemplate(
     /\$\(\s*(true|false|null|-?\d+(?:\.\d+)?)\s*\)/g,
     (_, value: string) => value,
   );
-  // Normalize Connectors `{$args.x|base64}` / `{$context.headers['x-port']:4001}` to Mesh
+  // `{$args.x->match(...)}` / `{$this["a.b"]}` — evaluate as Connectors exprs (Apollo parity).
+  resolved = resolved.replace(/\{\$([^{}]+)\}/g, (full, expr: string) => {
+    if (!expr.includes('->') && !expr.includes('[')) {
+      return full;
+    }
+    const value = evalConnectorsVarExpr(`$${expr}`, vars);
+    if (value == null || value === '') {
+      return '';
+    }
+    return options.encodeValues ? encodeURIComponent(String(value)) : String(value);
+  });
+  // Normalize remaining Connectors `{$args.x|base64}` / `{$context.headers['x-port']:4001}` to Mesh
   // `{args.x|base64}` / `{context.headers['x-port']:4001}` so stringInterpolator modifiers work.
   // Use `[^{}]+` (not `\w` only) so bracket accessors and `:default` values are preserved.
   const meshForm = resolved.replace(/\{\$([^{}]+)\}/g, (_, path: string) => {
@@ -200,6 +211,57 @@ function resolveTemplate(
   });
 }
 
+/**
+ * Evaluate `$args.x->match(...)` / `$this["key"]` style Connectors variable expressions.
+ */
+function evalConnectorsVarExpr(
+  expr: string,
+  vars: {
+    args: Record<string, any>;
+    thisValue: any;
+    env: Record<string, string | undefined>;
+    context: any;
+    config?: Record<string, any>;
+    batch?: Record<string, any>;
+  },
+): any {
+  const trimmed = expr.trim();
+  if (trimmed.startsWith('$(') && trimmed.endsWith(')')) {
+    try {
+      return JSON.parse(trimmed.slice(2, -1));
+    } catch {
+      return trimmed.slice(2, -1);
+    }
+  }
+  const methodMatch = trimmed.match(/^(.*?)->([A-Za-z_][\w]*)\((.*)\)$/);
+  if (methodMatch) {
+    const left = evalConnectorsVarExpr(methodMatch[1].trim(), vars);
+    const method = methodMatch[2];
+    const rawArgs = methodMatch[3].trim();
+    if (method === 'match') {
+      // Prefer `$args`/`$this` lookup for match-arm values (e.g. `[@, $args.agent]`).
+      // Do not use `thisValue || args` — an empty `{}` thisValue is truthy and hides args.
+      return evalMatchMethod(left, rawArgs, vars.thisValue ?? {}, {}, vars);
+    }
+    if (method === 'joinNotNull') {
+      if (!Array.isArray(left)) return left;
+      const sepMatch = rawArgs.match(/^["'](.*)["']$/);
+      const sep = sepMatch ? sepMatch[1] : ',';
+      return left.filter(v => v != null).join(sep);
+    }
+    if (method === 'jsonStringify') {
+      return JSON.stringify(left);
+    }
+    if (method === 'toString') {
+      return left == null ? '' : String(left);
+    }
+  }
+  if (trimmed.startsWith('$')) {
+    return lookupVar(trimmed, vars);
+  }
+  return trimmed;
+}
+
 function lookupVar(
   path: string,
   vars: {
@@ -211,8 +273,11 @@ function lookupVar(
     batch?: Record<string, any>;
   },
 ): any {
-  const parts = path.split('.');
-  const root = parts[0];
+  const rootMatch = path.match(/^(\$[A-Za-z_][\w]*)([\s\S]*)$/);
+  if (!rootMatch) {
+    return undefined;
+  }
+  const root = rootMatch[1];
   let cur: any;
   switch (root) {
     case '$args':
@@ -237,11 +302,60 @@ function lookupVar(
     default:
       return undefined;
   }
-  for (let i = 1; i < parts.length; i++) {
+  for (const segment of tokenizeVarPath(rootMatch[2])) {
     if (cur == null) return undefined;
-    cur = cur[parts[i]];
+    cur = cur[segment];
   }
   return cur;
+}
+
+/** `.foo`, `["a.b"]`, `['x']` path segments after `$args` / `$this`. */
+function tokenizeVarPath(rest: string): string[] {
+  const segments: string[] = [];
+  let i = 0;
+  while (i < rest.length) {
+    if (rest[i] === '.') {
+      i++;
+      let ident = '';
+      while (i < rest.length && /[A-Za-z0-9_]/.test(rest[i])) {
+        ident += rest[i];
+        i++;
+      }
+      if (ident) segments.push(ident);
+      continue;
+    }
+    if (rest[i] === '[') {
+      i++;
+      const quote = rest[i] === '"' || rest[i] === "'" ? rest[i] : null;
+      if (quote) {
+        i++;
+        let key = '';
+        while (i < rest.length && rest[i] !== quote) {
+          if (rest[i] === '\\' && i + 1 < rest.length) {
+            key += rest[i + 1];
+            i += 2;
+            continue;
+          }
+          key += rest[i];
+          i++;
+        }
+        if (rest[i] === quote) i++;
+        if (rest[i] === ']') i++;
+        segments.push(key);
+      } else {
+        let key = '';
+        while (i < rest.length && rest[i] !== ']') {
+          key += rest[i];
+          i++;
+        }
+        if (rest[i] === ']') i++;
+        segments.push(key);
+      }
+      continue;
+    }
+    break;
+  }
+  return segments;
 }
 
 type MeshQsOptions = IStringifyOptions & { jsonStringify?: boolean };
@@ -428,6 +542,9 @@ function evalQueryParamExpr(
     const left = evalQueryParamExpr(methodMatch[1].trim(), vars);
     const method = methodMatch[2];
     const rawArgs = methodMatch[3].trim();
+    if (method === 'match') {
+      return evalMatchMethod(left, rawArgs, vars.args || {}, {});
+    }
     if (method === 'joinNotNull') {
       // Only arrays are joined; objects fall through for qs object serialization.
       if (!Array.isArray(left)) {
@@ -543,7 +660,7 @@ function evalPath(
       return path.slice(2, -1);
     }
   }
-  // Method calls: `$status->match(...)`, `$response.headers.x->first`
+  // Method calls: `$status->match(...)`, `$response.headers.x->first`, `$["a"]->match(...)`
   const methodMatch = path.match(/^(.*?)->([A-Za-z_][\w]*)\((.*)\)$/);
   if (methodMatch) {
     const left = evalPath(methodMatch[1].trim(), root, extras);
@@ -553,7 +670,7 @@ function evalPath(
       return Array.isArray(left) ? left[0] : left;
     }
     if (method === 'match') {
-      return evalMatchMethod(left, rawArgs);
+      return evalMatchMethod(left, rawArgs, root, extras);
     }
     if (method === 'joinNotNull') {
       if (!Array.isArray(left)) return left;
@@ -568,6 +685,22 @@ function evalPath(
       return left == null ? '' : String(left);
     }
   }
+  // `$["TLSv1.3"]` / `$.foo["bar"]` — bracket keys (dots / reserved chars in JSON names).
+  if (/^\$(\.|\[)/.test(path) || path === '$') {
+    let rest = path === '$' || path === '$root' ? '' : path.replace(/^\$\.?/, '');
+    if (path.startsWith('$[') || path.startsWith('$["') || path.startsWith("$['")) {
+      rest = path.slice(1); // keep leading `[...]`
+    }
+    let cur: any = root;
+    if (!rest) return cur;
+    // Normalize `.a["b"]` / `["a"].b` into tokenizeVarPath shape
+    const normalized = rest.startsWith('[') ? rest : `.${rest}`;
+    for (const segment of tokenizeVarPath(normalized)) {
+      if (cur == null) return undefined;
+      cur = cur[segment];
+    }
+    return cur;
+  }
   const parts = path.replace(/^\$\.?/, '').split('.');
   let cur = root;
   for (const part of parts) {
@@ -579,9 +712,23 @@ function evalPath(
 
 /**
  * Apollo Connectors `$x->match([key, value], …, [@, default])`.
+ * Values may be nested exprs (e.g. `$.petType->match(...)`) for discriminator defaults.
  */
-function evalMatchMethod(left: any, rawArgs: string): any {
-  // Split top-level `[...]` groups
+function evalMatchMethod(
+  left: any,
+  rawArgs: string,
+  root: any = {},
+  extras: { status?: number; responseHeaders?: Headers } = {},
+  vars?: {
+    args: Record<string, any>;
+    thisValue: any;
+    env: Record<string, string | undefined>;
+    context: any;
+    config?: Record<string, any>;
+    batch?: Record<string, any>;
+  },
+): any {
+  // Split top-level `[...]` groups (ignore brackets inside nested match args).
   const groups: string[] = [];
   let depth = 0;
   let start = -1;
@@ -603,23 +750,62 @@ function evalMatchMethod(left: any, rawArgs: string): any {
     const inner = group.slice(1, -1).trim();
     // [@, value] default arm
     if (inner.startsWith('@')) {
-      const comma = inner.indexOf(',');
-      fallback = parseMatchValue(comma >= 0 ? inner.slice(comma + 1).trim() : 'null');
+      const comma = findTopLevelComma(inner);
+      fallback = parseMatchValue(
+        comma >= 0 ? inner.slice(comma + 1).trim() : 'null',
+        root,
+        extras,
+        vars,
+      );
       continue;
     }
-    const comma = inner.indexOf(',');
+    const comma = findTopLevelComma(inner);
     if (comma < 0) continue;
-    const key = parseMatchValue(inner.slice(0, comma).trim());
-    const value = parseMatchValue(inner.slice(comma + 1).trim());
-    if (Object.is(key, left) || key === left) {
+    const key = parseMatchValue(inner.slice(0, comma).trim(), root, extras, vars);
+    const value = parseMatchValue(inner.slice(comma + 1).trim(), root, extras, vars);
+    if (Object.is(key, left) || key === left || String(key) === String(left)) {
       return value;
     }
   }
   return fallback;
 }
 
-function parseMatchValue(raw: string): any {
+function findTopLevelComma(inner: string): number {
+  let depth = 0;
+  for (let i = 0; i < inner.length; i++) {
+    const ch = inner[i];
+    if (ch === '[' || ch === '(') depth++;
+    else if (ch === ']' || ch === ')') depth--;
+    else if (ch === ',' && depth === 0) return i;
+  }
+  return -1;
+}
+
+function parseMatchValue(
+  raw: string,
+  root: any = {},
+  extras: { status?: number; responseHeaders?: Headers } = {},
+  vars?: {
+    args: Record<string, any>;
+    thisValue: any;
+    env: Record<string, string | undefined>;
+    context: any;
+    config?: Record<string, any>;
+    batch?: Record<string, any>;
+  },
+): any {
   if (raw === '@') return undefined;
+  // Path/arg templates: `$args.x` / `$this.y` need the Connectors var map, not the
+  // selection root (which is often `{}` for request-path matches).
+  if (
+    vars &&
+    /^\$args\b|^\$this\b|^\$env\b|^\$context\b|^\$batch\b|^\$config\b/.test(raw)
+  ) {
+    return evalConnectorsVarExpr(raw, vars);
+  }
+  if (raw.startsWith('$') || raw.includes('->')) {
+    return evalPath(raw, root, extras);
+  }
   try {
     return JSON.parse(raw);
   } catch {
@@ -718,11 +904,27 @@ function readSelectionIdent(s: string, start: number): { value: string; end: num
     if (s[i] === quote) i++;
     return { value, end: i };
   }
-  // `$status->match([200, "User"], …)` and similar path/method expressions.
+  // `$status->match([200, "User"], …)`, `$["patent-id"]`, `$.foo["bar"]->match(...)`.
   if (s[i] === '$') {
     i++;
     // Don't consume the `-` of `->` into the path segment.
     while (i < s.length && /[A-Za-z0-9_.]/.test(s[i])) i++;
+    // Bracket accessors: `["key"]` / `['key']` / `[0]`
+    while (s[i] === '[') {
+      i++;
+      if (s[i] === '"' || s[i] === "'") {
+        const quote = s[i++];
+        while (i < s.length && s[i] !== quote) {
+          if (s[i] === '\\' && i + 1 < s.length) i += 2;
+          else i++;
+        }
+        if (s[i] === quote) i++;
+      } else {
+        while (i < s.length && s[i] !== ']') i++;
+      }
+      if (s[i] === ']') i++;
+      while (i < s.length && /[A-Za-z0-9_.]/.test(s[i])) i++;
+    }
     while (s.slice(i, i + 2) === '->') {
       i += 2;
       while (i < s.length && /[A-Za-z0-9_]/.test(s[i])) i++;
@@ -742,7 +944,25 @@ function readSelectionIdent(s: string, start: number): { value: string; end: num
     }
     return { value: s.slice(start, i), end: i };
   }
-  while (i < s.length && /[A-Za-z0-9_$.-]/.test(s[i])) i++;
+  // Plain field / path, optionally with `->method(...)` (e.g. `test->match([0, "_0"], …)`).
+  while (i < s.length && /[A-Za-z0-9_$.]/.test(s[i])) i++;
+  while (s.slice(i, i + 2) === '->') {
+    i += 2;
+    while (i < s.length && /[A-Za-z0-9_]/.test(s[i])) i++;
+    if (s[i] === '(') {
+      let depth = 0;
+      for (; i < s.length; i++) {
+        if (s[i] === '(') depth++;
+        else if (s[i] === ')') {
+          depth--;
+          if (depth === 0) {
+            i++;
+            break;
+          }
+        }
+      }
+    }
+  }
   return { value: s.slice(start, i), end: i };
 }
 
@@ -940,10 +1160,18 @@ export function addConnectFieldResolver(
           { extensions: { code: 'CONNECTOR_VALIDATE' } },
         );
       }
+      // `$this` is the parent object; `$args` are field args. Evaluate via var exprs when
+      // present so `$this["TLSv1.3"]` works (Apollo virtual-connector rename pattern).
       if (selection.includes('$args') || selection.includes('$this')) {
-        return applySelection(selection, { ...(root || {}), ...(args || {}) }, {});
+        return evalConnectorsVarExpr(selection.trim(), {
+          args: args || {},
+          thisValue: root,
+          env: process.env,
+          context: context || {},
+          config: {},
+        });
       }
-      return applySelection(selection, {}, {});
+      return applySelection(selection, root || {}, {});
     }
 
     // Serialize scalars (DateTime → ISO, etc.) before path/header/query interpolation —

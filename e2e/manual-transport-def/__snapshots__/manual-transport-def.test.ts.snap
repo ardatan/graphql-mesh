@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @source(name: "greetings", http: {baseURL: "http://localhost:<greetings_port>"}) @transport(subgraph: "greetings", kind: "rest", location: "http://localhost:<greetings_port>") {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(subgraph: "greetings", kind: "rest", location: "http://localhost:<greetings_port>") @join__directive(graphs: [GREETINGS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [GREETINGS], name: "source", args: {name: "greetings", http: {baseURL: "http://localhost:<greetings_port>"}}) {
   query: Query
 }
 
@@ -39,12 +39,10 @@ enum join__Graph {
   HELLOER @join__graph(name: "helloer", url: "http://localhost:<helloer_port>/graphql")
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
-
 scalar TransportOptions @join__type(graph: HELLOER)
 
 type Query @join__type(graph: GREETINGS) @join__type(graph: HELLOER) {
-  greet(name: String!): greet_200_response @connect(source: "greetings", http: {GET: "/greet/{$args.name}", headers: [{name: "accept", value: "application/json"}]}, selection: "greeting") @join__field(graph: GREETINGS)
+  greet(name: String!): greet_200_response @join__field(graph: GREETINGS) @join__directive(graphs: [GREETINGS], name: "connect", args: {source: "greetings", http: {GET: "/greet/{$args.name}", headers: [{name: "accept", value: "application/json"}]}, selection: "greeting"})
   hello: String! @join__field(graph: HELLOER)
 }
 
@@ -52,42 +50,13 @@ type greet_200_response @join__type(graph: GREETINGS) {
   greeting: String!
 }
 
-input ConnectHTTP @join__type(graph: GREETINGS) {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
-  headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
-}
-
-input HTTPHeaderMapping @join__type(graph: GREETINGS) {
-  name: String!
-  value: String
-  from: String
-}
-
-input ConnectorErrors @join__type(graph: GREETINGS) {
-  message: String
-  extensions: String
-}
-
-input SourceHTTP @join__type(graph: GREETINGS) {
-  baseURL: String!
-  headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
-}
-
 scalar ObjMap
 
 directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
-directive @source(name: String!, http: SourceHTTP) repeatable on SCHEMA
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments
 "
 `;
 

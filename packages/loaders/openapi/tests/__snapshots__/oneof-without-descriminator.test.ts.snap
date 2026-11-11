@@ -6,8 +6,6 @@ exports[`oneOf without discriminator should generate correct schema: discriminat
   mutation: Mutation
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
@@ -21,7 +19,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  dummy: String
+  dummy: String @connect(selection: "$(\\"dummy\\")")
 }
 
 type Mutation {
@@ -35,7 +33,7 @@ type A_const_container {
 }
 
 enum A_const @typescript(subgraph: "test", type: "\\"A\\"") @example(subgraph: "test", value: "A") {
-  A @enum(subgraph: "test", value: "\\"A\\"")
+  A
 }
 
 type mutation_test_endpoint_oneOf_1 {

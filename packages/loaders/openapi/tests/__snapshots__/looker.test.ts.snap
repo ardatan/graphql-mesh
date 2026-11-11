@@ -6,8 +6,6 @@ exports[`Looker.4.0.oas should generate correct schema: Looker.4.0.oas-schema 1`
   mutation: Mutation
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
@@ -3976,7 +3974,7 @@ type AlertFieldFilter {
 }
 
 enum dashboard_const @typescript(subgraph: "test", type: "\\"dashboard\\"") @example(subgraph: "test", value: "dashboard") {
-  dashboard @enum(subgraph: "test", value: "\\"dashboard\\"")
+  dashboard
 }
 
 type AlertConditionState {
