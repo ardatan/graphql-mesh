@@ -102,6 +102,15 @@ export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
   options: GetAnnotatedSubgraphsOptions = {},
 ) {
+  // Alias Mesh stitching `@source` as `@meshSource` only when the composition also
+  // has Apollo Connectors (SCHEMA `@source`). Mesh-only graphs keep plain `@source`.
+  const compositionHasConnectors = subgraphs.some(({ schema }) =>
+    isApolloConnectorsSubgraph(schema),
+  );
+  const compositionHasMeshStitchingSource = subgraphs.some(
+    ({ schema, transforms }) => !isApolloConnectorsSubgraph(schema) && !!transforms?.length,
+  );
+
   const annotatedSubgraphs: ServiceDefinition[] = [];
   for (const subgraphConfig of subgraphs) {
     const { name: subgraphName, schema, transforms } = subgraphConfig;
@@ -137,12 +146,13 @@ export function getAnnotatedSubgraphs(
     }
 
     let mergeDirectiveUsed = false;
-    // Stitching `@meshSource` (Mesh `@source` aliased via `@link`) is only for
-    // non-connectors transforms. Connectors transforms rewrite `@connect`
-    // selection/http instead of adding Mesh source annotations.
+    // Stitching source is only for non-connectors transforms. Connectors transforms
+    // rewrite `@connect` selection/http instead of adding Mesh source annotations.
     const sourceDirectiveUsed = !isConnectorsSubgraph && transforms?.length > 0;
-    /** Local name after Mesh `@link` alias `{ name: "@source", as: "@meshSource" }`. */
-    const meshSourceDirectiveName = 'meshSource';
+    // When Connectors are in the same composition, alias to `@meshSource` so Guild
+    // does not treat Mesh + Apollo `@source` as one composed directive.
+    const aliasMeshSource = sourceDirectiveUsed && compositionHasConnectors;
+    const meshSourceDirectiveName = aliasMeshSource ? 'meshSource' : 'source';
     const normalizedSchema = normalizeDirectiveExtensions(schema);
     if (isConnectorsSubgraph) {
       const extensions: Record<string, any> = (normalizedSchema.extensions ||= {});
@@ -381,9 +391,9 @@ export function getAnnotatedSubgraphs(
         if (directive.name === 'transport' && removeTransportDirectiveDefinition) {
           return null;
         }
-        // Stitching uses `@meshSource`. Keep Apollo SCHEMA `@source` on connectors
-        // subgraphs; drop any leftover Mesh `@source` def on non-connectors.
-        if (directive.name === 'source' && !isConnectorsSubgraph) {
+        // Keep Apollo SCHEMA `@source` on connectors. When aliasing to `@meshSource`,
+        // drop any leftover Mesh `@source` def on non-connectors.
+        if (directive.name === 'source' && !isConnectorsSubgraph && aliasMeshSource) {
           return null;
         }
       },
@@ -436,17 +446,17 @@ export function getAnnotatedSubgraphs(
       importedDirectives.push('@merge');
     }
     if (sourceDirectiveUsed) {
-      // Alias Mesh-spec `@source` as `@meshSource` so Apollo SCHEMA `@source` can coexist
-      // after compose. Guild treats Mesh `@source` and Apollo connect `@source` as the same
-      // composed name — so we strip Apollo `@source` from the connect `@link` import below
-      // (args stay in extras) and post-process restores it on the supergraph.
-      importedDirectives.push({ name: '@source', as: '@meshSource' });
+      if (aliasMeshSource) {
+        // Coexist with Apollo SCHEMA `@source` in mixed compositions.
+        importedDirectives.push({ name: '@source', as: '@meshSource' });
+      } else {
+        importedDirectives.push('@source');
+      }
     }
     // Preserve Apollo `@connect` through federation via `@composeDirective`.
-    // Drop `@source` from the connect `@link` import during annotate so it does not clash
-    // with Mesh `{ name: "@source", as: "@meshSource" }` across subgraphs. SCHEMA `@source`
-    // / `@transport` still ride in extras; post-process lifts them onto `schema @…` and
-    // restores `@source` on the connect `@link`.
+    // When Mesh stitching `@source` is also in the composition, drop `@source` from the
+    // connect `@link` import so Guild does not clash (args stay in extras; post-process
+    // restores `@source` on the connect `@link` after lifting SCHEMA directives).
     if (isConnectorsSubgraph) {
       const schemaDirectives = getDirectiveExtensions(transformedSubgraph) || {};
       const composeDirectives = (schemaDirectives.composeDirective =
@@ -454,7 +464,7 @@ export function getAnnotatedSubgraphs(
       if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
         composeDirectives.push({ name: '@connect' });
       }
-      if (Array.isArray(schemaDirectives.link)) {
+      if (compositionHasMeshStitchingSource && Array.isArray(schemaDirectives.link)) {
         schemaDirectives.link = schemaDirectives.link.map(
           (link: { url?: string; import?: any[] }) => {
             if (
@@ -495,7 +505,9 @@ export function getAnnotatedSubgraphs(
             sourceDirective.type !== fieldConfig.type.toString(),
         );
         fieldDirectives[meshSourceDirectiveName] = filteredSourceDirectives;
-        delete fieldDirectives.source;
+        if (aliasMeshSource) {
+          delete fieldDirectives.source;
+        }
       }
       if ('args' in fieldConfig) {
         const newArgs: GraphQLFieldConfigArgumentMap = {};
@@ -557,7 +569,9 @@ export function getAnnotatedSubgraphs(
             ...typeDirectives,
             [meshSourceDirectiveName]: filteredSourceDirectives,
           };
-          delete typeExtensions.directives.source;
+          if (aliasMeshSource) {
+            delete typeExtensions.directives.source;
+          }
         }
         return type;
       },
@@ -576,7 +590,9 @@ export function getAnnotatedSubgraphs(
             ...valueDirectives,
             [meshSourceDirectiveName]: filteredSourceDirectives,
           };
-          delete valueExtensions.directives.source;
+          if (aliasMeshSource) {
+            delete valueExtensions.directives.source;
+          }
         }
         return valueConfig;
       },
@@ -625,7 +641,7 @@ export function getAnnotatedSubgraphs(
     }
     if (sourceDirectiveUsed) {
       importedDirectivesAST.add(/* GraphQL */ `
-        directive @meshSource(
+        directive @${meshSourceDirectiveName}(
           name: String!
           type: String
           subgraph: String!

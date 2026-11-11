@@ -67,14 +67,14 @@ describe('Apollo Connectors composition', () => {
     ).toBe(false);
   });
 
-  it('does not add Mesh @transport or stitching @meshSource for connectors subgraphs', () => {
+  it('does not add Mesh @transport or stitching @source for connectors subgraphs', () => {
     const annotated = getAnnotatedSubgraphs([
       {
         name: 'REST',
         schema: connectorsSchema,
         transforms: [
           schema =>
-            // noop transform — still must not inject stitching @meshSource
+            // noop transform — still must not inject stitching @source
             schema,
         ],
       },
@@ -84,12 +84,10 @@ describe('Apollo Connectors composition', () => {
     expect(annotated[0].url).toBe('https://api.example.com');
     const sdl = print(annotated[0].typeDefs);
     expect(sdl).not.toMatch(/@transport\b/);
-    // Stitching uses `@meshSource(subgraph:)`; Apollo SCHEMA `@source` is moved to extras
-    // (and dropped from the connect `@link` import) so Mesh `{ name: "@source", as: "@meshSource" }`
-    // can coexist in mixed supergraphs.
     expect(sdl).not.toMatch(/@meshSource\b/);
     expect(sdl).not.toMatch(/@source\([^)]*subgraph:/);
-    expect(sdl).not.toMatch(/import:\s*\[[^\]]*@source/);
+    // Connectors-only: keep Apollo `@source` on the connect `@link` import.
+    expect(sdl).toMatch(/import:\s*\[[^\]]*@source/);
     expect(sdl).toContain('specs.apollo.dev/connect/v0.4');
     expect(sdl).toContain('@connect');
   });
@@ -195,7 +193,7 @@ describe('Apollo Connectors composition', () => {
     expect(sdl).toMatch(/import: \["@connect", "@source"\]/);
   });
 
-  it('aliases Mesh stitching @source as @meshSource when transforms are present', () => {
+  it('uses plain Mesh @source when composition has no Connectors', () => {
     const restSchema = buildSchema(/* GraphQL */ `
       type Query {
         user(id: ID!): User
@@ -229,10 +227,9 @@ describe('Apollo Connectors composition', () => {
       },
     ]);
     const annotatedSdl = print(annotated[0].typeDefs);
-    expect(annotatedSdl).toContain('@meshSource');
-    expect(annotatedSdl).toMatch(/name:\s*"@source"/);
-    expect(annotatedSdl).toMatch(/as:\s*"@meshSource"/);
-    expect(annotatedSdl).not.toMatch(/directive @source\(/);
+    expect(annotatedSdl).not.toContain('@meshSource');
+    expect(annotatedSdl).toMatch(/@source\([^)]*subgraph:/);
+    expect(annotatedSdl).toMatch(/import:\s*\[[^\]]*@source/);
 
     const result = composeSubgraphs([
       {
@@ -247,8 +244,65 @@ describe('Apollo Connectors composition', () => {
     ]);
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
-    expect(sdl).toContain('@meshSource');
+    expect(sdl).not.toContain('@meshSource');
+    expect(sdl).toMatch(/@source\([^)]*subgraph:/);
     expect(sdl).toMatch(/@transport\(subgraph: "REST"/);
     expect(sdl).not.toContain('extraSchemaDefinitionDirective');
+  });
+
+  it('aliases Mesh @source as @meshSource only in mixed Connectors compositions', () => {
+    const meshSchema = buildSchema(/* GraphQL */ `
+      type Query {
+        user(id: ID!): User
+      }
+      type User {
+        id: ID!
+        name: String
+      }
+    `);
+
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'MESH',
+        schema: meshSchema,
+        transforms: [
+          createRenameTransform({
+            fieldRenamer: ({ fieldName }) => (fieldName === 'user' ? 'person' : fieldName),
+          }),
+        ],
+      },
+      {
+        name: 'REST',
+        schema: connectorsSchema,
+      },
+    ]);
+    const meshSdl = print(annotated[0].typeDefs);
+    const restSdl = print(annotated[1].typeDefs);
+    expect(meshSdl).toContain('@meshSource');
+    expect(meshSdl).toMatch(/name:\s*"@source"/);
+    expect(meshSdl).toMatch(/as:\s*"@meshSource"/);
+    // Connect `@source` import stripped while Mesh stitching source is present.
+    expect(restSdl).not.toMatch(/connect\/v0\.4", import: \[[^\]]*@source/);
+
+    const result = composeSubgraphs([
+      {
+        name: 'MESH',
+        schema: meshSchema,
+        transforms: [
+          createRenameTransform({
+            fieldRenamer: ({ fieldName }) => (fieldName === 'user' ? 'person' : fieldName),
+          }),
+        ],
+      },
+      {
+        name: 'REST',
+        schema: connectorsSchema,
+      },
+    ]);
+    expect(result.errors).toBeUndefined();
+    const sdl = result.supergraphSdl!;
+    expect(sdl).toContain('@meshSource');
+    expect(sdl).toMatch(/@source\(name: "rest"/);
+    expect(sdl).toMatch(/import: \["@connect", "@source"\]/);
   });
 });
