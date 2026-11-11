@@ -79,8 +79,11 @@ export const CONNECT_LINK_URL = 'https://specs.apollo.dev/connect/v0.4';
 /**
  * Mesh path templates use `{args.foo}`; Connectors use `{$args.foo}`.
  */
-export function toConnectPathTemplate(path: string): string {
-  return path
+export function toConnectPathTemplate(path: string | undefined | null): string {
+  if (path == null) {
+    return '';
+  }
+  return String(path)
     .replace(/\{args\./g, '{$args.')
     .replace(/\{root\./g, '{$this.')
     .replace(/\{this\./g, '{$this.')
@@ -111,6 +114,8 @@ export function headersToConnectMappings(
 
 export function buildQueryParamsSelection(
   queryParamArgMap?: Record<string, string>,
+  queryStringOptionsByParam?: Record<string, { arrayFormat?: string; destructObject?: boolean }>,
+  argTypeMap?: Record<string, { type?: string }>,
 ): string | undefined {
   if (!queryParamArgMap || !Object.keys(queryParamArgMap).length) {
     return undefined;
@@ -120,7 +125,14 @@ export function buildQueryParamsSelection(
     const key = /^[A-Za-z_][\w]*$/.test(queryParam)
       ? queryParam
       : JSON.stringify(queryParam);
-    return `  ${key}: $args.${argName}`;
+    let expr = `$args.${argName}`;
+    const paramOpts = queryStringOptionsByParam?.[queryParam];
+    const argType = argTypeMap?.[argName]?.type || argTypeMap?.[queryParam]?.type;
+    // Apollo Connectors: explode:false / form style arrays → comma-joined list
+    if (paramOpts?.arrayFormat === 'comma' && argType === 'array') {
+      expr = `$args.${argName}->joinNotNull(",")`;
+    }
+    return `  ${key}: ${expr}`;
   });
   return `{\n${lines.join('\n')}\n}`;
 }
@@ -175,31 +187,53 @@ export function buildSelectionForType(
       continue;
     }
     const field = fields[fieldName];
+    const directiveExt = ((field.extensions as any)?.directives || {}) as Record<
+      string,
+      Array<{ field?: string }> | undefined
+    >;
     const fieldDirectives = (field.astNode?.directives || []).map(d => d.name.value);
-    const extDirectives = Object.keys(
-      ((field.extensions as any)?.directives as Record<string, unknown>) || {},
-    );
+    const extDirectiveNames = Object.keys(directiveExt);
     if (
       fieldDirectives.includes('connect') ||
-      extDirectives.includes('connect') ||
+      extDirectiveNames.includes('connect') ||
       fieldDirectives.includes('oas_link') ||
-      extDirectives.includes('oas_link')
+      extDirectiveNames.includes('oas_link')
     ) {
       continue;
     }
+    // `@resolveRootField(field: "foo-bar")` → GraphQL `foo_bar` from JSON `foo-bar`
+    const resolveRootField =
+      directiveExt.resolveRootField?.[0]?.field ||
+      field.astNode?.directives?.find(d => d.name.value === 'resolveRootField')?.arguments?.find(
+        a => a.name.value === 'field',
+      );
+    let jsonName: string | undefined;
+    if (typeof resolveRootField === 'string') {
+      jsonName = resolveRootField;
+    } else if (resolveRootField && 'value' in resolveRootField) {
+      const v = (resolveRootField as any).value;
+      jsonName = v?.value ?? v;
+    }
+    const aliasPrefix =
+      jsonName && jsonName !== fieldName
+        ? `${fieldName}: ${/^[A-Za-z_][\w]*$/.test(jsonName) ? jsonName : JSON.stringify(jsonName)}`
+        : fieldName;
     const fieldNamed = unwrapType(field.type);
-    if (isObjectType(fieldNamed) || isUnionType(fieldNamed) || isListType(field.type) || isNonNullType(field.type) && (isListType(field.type.ofType) || isObjectType(unwrapType(field.type)))) {
+    if (
+      isObjectType(fieldNamed) ||
+      isUnionType(fieldNamed) ||
+      isListType(field.type) ||
+      (isNonNullType(field.type) &&
+        (isListType(field.type.ofType) || isObjectType(unwrapType(field.type))))
+    ) {
       const nested = buildSelectionForType(field.type, { skipFields, depth: depth + 1 });
       if (nested) {
-        lines.push(`${fieldName} {\n${indent(nested, 2)}\n}`);
-      } else if (isScalarType(unwrapType(field.type))) {
-        lines.push(fieldName);
+        lines.push(`${aliasPrefix} {\n${indent(nested, 2)}\n}`);
       } else {
-        // object with no selectable fields yet
-        lines.push(fieldName);
+        lines.push(aliasPrefix);
       }
     } else {
-      lines.push(fieldName);
+      lines.push(aliasPrefix);
     }
   }
   return lines.join('\n');
@@ -218,6 +252,11 @@ export function buildConnectHttpArgs(opts: {
   path: string;
   headers?: Record<string, string> | [string, string][];
   queryParamArgMap?: Record<string, string>;
+  queryStringOptionsByParam?: Record<
+    string,
+    { arrayFormat?: string; destructObject?: boolean; [key: string]: unknown }
+  >;
+  argTypeMap?: Record<string, { type?: string }>;
   bodySelection?: string;
 }): Record<string, unknown> {
   const method = opts.httpMethod.toUpperCase();
@@ -228,7 +267,11 @@ export function buildConnectHttpArgs(opts: {
   if (headers) {
     http.headers = headers;
   }
-  const queryParams = buildQueryParamsSelection(opts.queryParamArgMap);
+  const queryParams = buildQueryParamsSelection(
+    opts.queryParamArgMap,
+    opts.queryStringOptionsByParam,
+    opts.argTypeMap,
+  );
   if (queryParams) {
     http.queryParams = queryParams;
   }
@@ -249,13 +292,13 @@ export function inferBodySelection(
   if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
     return undefined;
   }
-  // Prefer a single request input arg when present via requestTypeName / conventional name
-  if (httpOp.requestTypeName) {
-    // GraphQL arg is often named after the field or "input"
-    return `$args`;
-  }
-  if (httpOp.requestSample != null || httpOp.requestSchema != null) {
-    return `$args`;
+  // Conventional Mesh/OpenAPI request arg is `input`; Connectors body maps from it.
+  if (
+    httpOp.requestTypeName ||
+    httpOp.requestSample != null ||
+    httpOp.requestSchema != null
+  ) {
+    return `$args.input`;
   }
   if (httpOp.requestBaseBody != null) {
     return `$({ ... })`;
@@ -270,7 +313,7 @@ export function buildSourceDirectiveArgs(opts: {
   queryParams?: Record<string, string | number | boolean>;
 }): { name: string; http: Record<string, unknown> } {
   const http: Record<string, unknown> = {
-    baseURL: opts.endpoint,
+    baseURL: toConnectPathTemplate(opts.endpoint),
   };
   const headers = headersToConnectMappings(opts.headers);
   if (headers) {
@@ -278,7 +321,14 @@ export function buildSourceDirectiveArgs(opts: {
   }
   if (opts.queryParams && Object.keys(opts.queryParams).length) {
     http.queryParams = Object.entries(opts.queryParams)
-      .map(([key, value]) => `${key}: $(${JSON.stringify(value)})`)
+      .map(([key, value]) => {
+        const raw = String(value);
+        // `{args.apiKey}` → `$args.apiKey`; constants use `$()` literals
+        const normalized = /[{$]/.test(raw)
+          ? toConnectPathTemplate(raw).replace(/^\{(.*)\}$/, '$1')
+          : `$(${JSON.stringify(value)})`;
+        return `${key}: ${normalized}`;
+      })
       .join('\n');
   }
   return {

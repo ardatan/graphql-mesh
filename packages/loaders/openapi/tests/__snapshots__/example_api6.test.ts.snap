@@ -1,44 +1,40 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`example_api6 should generate the schema correctly 1`] = `
-"schema @transport(subgraph: "example_api6", kind: "rest", location: "http://localhost:3000/api") {
+"schema @source(name: "example_api6", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @linkResolver(subgraph: String, linkResolverMap: ObjMap) on FIELD_DEFINITION
-
-directive @oas_link(subgraph: String, defaultRootType: String, defaultField: String) on FIELD_DEFINITION
-
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 type Query {
   """An arbitrary object"""
-  object: object_200_response @httpOperation(subgraph: "example_api6", path: "/object", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @linkResolver(subgraph: "example_api6", linkResolverMap: "{\\"object2Link\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"getObject2\\"}}")
+  object: object_200_response @connect(source: "example_api6", http: {GET: "/object", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
   """Serves as a link of GET /object"""
   getObject2(
     """HTTP headers are case-insensitive"""
     specialheader: String
-  ): getObject2_200_response @httpOperation(subgraph: "example_api6", path: "/object2", operationSpecificHeaders: [["specialheader", "{args.specialheader}"], ["accept", "application/json"]], httpMethod: GET)
+  ): getObject2_200_response @connect(source: "example_api6", http: {GET: "/object2", headers: [{name: "specialheader", value: "{$args.specialheader}"}, {name: "accept", value: "application/json"}]}, selection: "data")
   """A particular car"""
-  cars_by_id(id: String!): String @httpOperation(subgraph: "example_api6", path: "/cars/{args.id}", operationSpecificHeaders: [["accept", "text/html"]], httpMethod: GET)
+  cars_by_id(id: String!): String @connect(source: "example_api6", http: {GET: "/cars/{$args.id}", headers: [{name: "accept", value: "text/html"}]}, selection: "$")
   """A particular cactus"""
-  cacti_by_cactusId(cactusId: String!): String @httpOperation(subgraph: "example_api6", path: "/cacti/{args.cactusId}", operationSpecificHeaders: [["accept", "text/html"]], httpMethod: GET)
-  eateries_by_eatery_breads_by_breadName_dishes_by_dishKey(eatery: String!, breadName: String!, dishKey: String!): String @httpOperation(subgraph: "example_api6", path: "/eateries/{args.eatery}/breads/{args.breadName}/dishes/{args.dishKey}", operationSpecificHeaders: [["accept", "text/html"]], httpMethod: GET)
+  cacti_by_cactusId(cactusId: String!): String @connect(source: "example_api6", http: {GET: "/cacti/{$args.cactusId}", headers: [{name: "accept", value: "text/html"}]}, selection: "$")
+  eateries_by_eatery_breads_by_breadName_dishes_by_dishKey(eatery: String!, breadName: String!, dishKey: String!): String @connect(source: "example_api6", http: {GET: "/eateries/{$args.eatery}/breads/{$args.breadName}/dishes/{$args.dishKey}", headers: [{name: "accept", value: "text/html"}]}, selection: "$")
   """Resolve a nested reference in the parameter schema"""
-  nestedReferenceInParameter(russianDoll: russianDoll_Input): String @httpOperation(subgraph: "example_api6", path: "/nestedReferenceInParameter", operationSpecificHeaders: [["accept", "text/html"]], httpMethod: GET, queryParamArgMap: "{\\"russianDoll\\":\\"russianDoll\\"}")
+  nestedReferenceInParameter(russianDoll: russianDoll_Input): String @connect(source: "example_api6", http: {GET: "/nestedReferenceInParameter", headers: [{name: "accept", value: "text/html"}], queryParams: "{\\n  russianDoll: $args.russianDoll\\n}"}, selection: "$")
   """An arbitrary object"""
-  strictGetOperation: String @httpOperation(subgraph: "example_api6", path: "/strictGetOperation", operationSpecificHeaders: [["accept", "text/plain"]], httpMethod: GET)
+  strictGetOperation: String @connect(source: "example_api6", http: {GET: "/strictGetOperation", headers: [{name: "accept", value: "text/plain"}]}, selection: "$")
   """No provided response schema test"""
-  noResponseSchema: String @httpOperation(subgraph: "example_api6", path: "/noResponseSchema", operationSpecificHeaders: [["accept", "text/plain"]], httpMethod: GET)
+  noResponseSchema: String @connect(source: "example_api6", http: {GET: "/noResponseSchema", headers: [{name: "accept", value: "text/plain"}]}, selection: "$")
   """Return a number from the request header."""
-  returnNumber(number: Float!): Float @httpOperation(subgraph: "example_api6", path: "/returnNumber", operationSpecificHeaders: [["number", "{args.number}"], ["accept", "text/plain"]], httpMethod: GET)
+  returnNumber(number: Float!): Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "{$args.number}"}, {name: "accept", value: "text/plain"}]}, selection: "$")
   """Test link object with non-string parameter."""
-  testLinkWithNonStringParam: testLinkWithNonStringParam_200_response @httpOperation(subgraph: "example_api6", path: "/testLinkWithNonStringParam", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @linkResolver(subgraph: "example_api6", linkResolverMap: "{\\"return5\\":{\\"linkObjArgs\\":{\\"number\\":5},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"returnNumber\\"}}")
+  testLinkWithNonStringParam: testLinkWithNonStringParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkWithNonStringParam", headers: [{name: "accept", value: "application/json"}]}, selection: "hello")
   """Test link object with nested parameter."""
-  testLinkwithNestedParam: testLinkwithNestedParam_200_response @httpOperation(subgraph: "example_api6", path: "/testLinkwithNestedParam", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @linkResolver(subgraph: "example_api6", linkResolverMap: "{\\"returnNestedNumber\\":{\\"linkObjArgs\\":{\\"number\\":\\"{root.$response.body#/nesting1/nesting2}\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"returnNumber\\"}}")
+  testLinkwithNestedParam: testLinkwithNestedParam_200_response @connect(source: "example_api6", http: {GET: "/testLinkwithNestedParam", headers: [{name: "accept", value: "application/json"}]}, selection: "nesting1 {\\n  nesting2\\n}")
 }
 
 type object_200_response {
@@ -47,7 +43,7 @@ type object_200_response {
   object2Link(
     """HTTP headers are case-insensitive"""
     specialheader: String
-  ): getObject2_200_response @oas_link(subgraph: "example_api6", defaultRootType: "Query", defaultField: "object")
+  ): getObject2_200_response @connect(source: "example_api6", http: {GET: "/"}, selection: "$")
 }
 
 type getObject2_200_response {
@@ -64,13 +60,13 @@ input russianDoll_Input {
 type testLinkWithNonStringParam_200_response {
   hello: String
   """Return a number from the request header."""
-  return5: Float @oas_link(subgraph: "example_api6", defaultRootType: "Query", defaultField: "testLinkWithNonStringParam")
+  return5: Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "{$args.number}"}, {name: "accept", value: "text/plain"}]}, selection: "$")
 }
 
 type testLinkwithNestedParam_200_response {
   nesting1: query_testLinkwithNestedParam_nesting1
   """Return a number from the request header."""
-  returnNestedNumber: Float @oas_link(subgraph: "example_api6", defaultRootType: "Query", defaultField: "testLinkwithNestedParam")
+  returnNestedNumber: Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "{$args.number}"}, {name: "accept", value: "text/plain"}]}, selection: "$")
 }
 
 type query_testLinkwithNestedParam_nesting1 {
@@ -79,8 +75,8 @@ type query_testLinkwithNestedParam_nesting1 {
 
 type Mutation {
   """Basic application/x-www-form-urlencoded test"""
-  post_formUrlEncoded(input: pet_Input): pet @httpOperation(subgraph: "example_api6", path: "/formUrlEncoded", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["accept", "application/json"]], httpMethod: POST)
-  post_inputUnion(input: post_inputUnion_request_Input): String @httpOperation(subgraph: "example_api6", path: "/inputUnion", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "text/html"]], httpMethod: POST)
+  post_formUrlEncoded(input: pet_Input): pet @connect(source: "example_api6", http: {POST: "/formUrlEncoded", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "name\\nstatus\\nweight\\nprevious_owner\\nhistory {\\n  data\\n}\\nhistory2")
+  post_inputUnion(input: post_inputUnion_request_Input): String @connect(source: "example_api6", http: {POST: "/inputUnion", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "text/html"}], body: "$args.input"}, selection: "$")
 }
 
 type pet {
@@ -137,17 +133,27 @@ input mutationInput_post_inputUnion_input_oneOf_1_Input {
   catBreed: String
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+}"
 `;

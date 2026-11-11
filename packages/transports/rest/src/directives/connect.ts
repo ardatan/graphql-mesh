@@ -1,15 +1,20 @@
-import type {
-  GraphQLField,
-  GraphQLResolveInfo,
-  GraphQLSchema,
+import {
+  GraphQLError,
+  type GraphQLField,
+  type GraphQLResolveInfo,
+  type GraphQLSchema,
 } from 'graphql';
+import type { IStringifyOptions } from 'qs';
+import { stringify as qsStringify } from 'qs';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj } from '@graphql-mesh/utils';
-import { createGraphQLError, getDirectiveExtensions } from '@graphql-tools/utils';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import urlJoin from 'url-join';
+import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 
 
 type ConnectHttp = {
@@ -63,10 +68,23 @@ function resolveTemplate(
     config?: Record<string, any>;
   },
 ): string {
-  return template.replace(/\{(\$[a-zA-Z_][\w.]*)\}/g, (_, path: string) => {
-    const value = lookupVar(path, vars);
-    return value == null ? '' : String(value);
+  if (!template) {
+    return '';
+  }
+  // Normalize Connectors `{$args.x|base64}` to Mesh `{args.x|base64}` so modifiers work.
+  const meshForm = template.replace(/\{\$([a-zA-Z_][\w.|:]*)\}/g, (_, path: string) => {
+    const normalized = path.replace(/^root\b/, 'this');
+    return `{${normalized}}`;
   });
+  const interpolated = stringInterpolator.parse(meshForm, {
+    args: vars.args,
+    context: vars.context,
+    env: vars.env,
+    root: vars.thisValue,
+    this: vars.thisValue,
+    config: vars.config,
+  });
+  return interpolated == null ? '' : String(interpolated);
 }
 
 function lookupVar(
@@ -108,12 +126,18 @@ function lookupVar(
   return cur;
 }
 
+type MeshQsOptions = IStringifyOptions & { jsonStringify?: boolean };
+
+const defaultQsOptions: IStringifyOptions = {
+  indices: false,
+};
+
 /**
  * Minimal queryParams mapping.
  * Supports:
  * - object literal: `{ "foo:bar": $args.foo_bar, limit: $args.limit }`
  * - line form: `limit: $args.limit`
- * Arrays repeat the key. Null values are omitted.
+ * Null values are omitted. Array/object encoding follows Hive qs options.
  */
 function applyQueryParams(
   url: URL,
@@ -124,22 +148,77 @@ function applyQueryParams(
     env: Record<string, string | undefined>;
     context: any;
   },
+  qsOptions: MeshQsOptions = {},
+  queryStringOptionsByParam?: Record<string, MeshQsOptions & { destructObject?: boolean }>,
+  resolveArg?: (argName: string, value: any) => any,
 ) {
   if (!queryParamsSelection) {
     return;
   }
   const entries = parseQueryParamsEntries(queryParamsSelection);
+  const params: Record<string, any> = {};
   for (const [key, expr] of entries) {
-    const value = evalQueryParamExpr(expr, vars);
+    let value = evalQueryParamExpr(expr, vars);
     if (value == null) continue;
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        url.searchParams.append(key, String(item));
+    // Recover oneOf / sanitized input shapes before serializing
+    const argNameMatch = expr.match(/\$args\.(\w+)/);
+    if (argNameMatch && resolveArg) {
+      value = resolveArg(argNameMatch[1], value);
+    }
+    const paramOpts = queryStringOptionsByParam?.[key];
+    if (paramOpts?.destructObject && value && typeof value === 'object' && !Array.isArray(value)) {
+      for (const [nestedKey, nestedVal] of Object.entries(value)) {
+        if (nestedVal != null) {
+          params[nestedKey] = nestedVal;
+        }
       }
-    } else {
-      url.searchParams.set(key, String(value));
+      continue;
+    }
+    params[key] = value;
+  }
+  if (!Object.keys(params).length) {
+    return;
+  }
+  const { jsonStringify, ...restQs } = qsOptions;
+  if (jsonStringify) {
+    for (const key of Object.keys(params)) {
+      const value = params[key];
+      if (value != null && typeof value === 'object') {
+        params[key] = JSON.stringify(value);
+      }
     }
   }
+  // Serialize per-param when options differ; otherwise one qs pass.
+  const byParam = queryStringOptionsByParam || {};
+  const hasPerParam = Object.keys(byParam).some(k => k in params);
+  let serialized: string;
+  if (hasPerParam) {
+    const parts: string[] = [];
+    for (const key of Object.keys(params)) {
+      const { destructObject: _d, jsonStringify: _j, ...paramQs } = byParam[key] || {};
+      parts.push(
+        qsStringify(
+          { [key]: params[key] },
+          {
+            ...defaultQsOptions,
+            ...restQs,
+            ...paramQs,
+          },
+        ),
+      );
+    }
+    serialized = parts.filter(Boolean).join('&');
+  } else {
+    serialized = qsStringify(params, {
+      ...defaultQsOptions,
+      ...restQs,
+    });
+  }
+  if (!serialized) {
+    return;
+  }
+  const existing = url.search.startsWith('?') ? url.search.slice(1) : url.search;
+  url.search = existing ? `?${existing}&${serialized}` : `?${serialized}`;
 }
 
 function parseQueryParamsEntries(selection: string): Array<[string, string]> {
@@ -189,6 +268,29 @@ function evalQueryParamExpr(
       return expr.slice(2, -1);
     }
   }
+  // Support a small method subset used in emitted Connectors mappings, e.g.
+  // `$args.id__in->joinNotNull(",")`
+  const methodMatch = expr.match(/^(.*?)->([A-Za-z_][\w]*)\((.*)\)$/);
+  if (methodMatch) {
+    const left = evalQueryParamExpr(methodMatch[1].trim(), vars);
+    const method = methodMatch[2];
+    const rawArgs = methodMatch[3].trim();
+    if (method === 'joinNotNull') {
+      // Only arrays are joined; objects fall through for qs object serialization.
+      if (!Array.isArray(left)) {
+        return left;
+      }
+      const sepMatch = rawArgs.match(/^["'](.*)["']$/);
+      const sep = sepMatch ? sepMatch[1] : ',';
+      return left.filter(v => v != null).join(sep);
+    }
+    if (method === 'jsonStringify') {
+      return JSON.stringify(left);
+    }
+    if (method === 'toString') {
+      return left == null ? '' : String(left);
+    }
+  }
   if (expr.startsWith('$')) {
     return lookupVar(expr, vars);
   }
@@ -216,10 +318,14 @@ function applyHeaders(
         headers[mapping.name.toLowerCase()] = String(incoming);
       }
     } else if (mapping.value != null) {
-      headers[mapping.name.toLowerCase()] = resolveTemplate(mapping.value, {
+      const resolved = resolveTemplate(mapping.value, {
         ...vars,
         config: {},
       });
+      // Match Mesh httpOperation: skip null/empty header values
+      if (resolved != null && resolved !== '') {
+        headers[mapping.name.toLowerCase()] = resolved;
+      }
     }
   }
 }
@@ -309,6 +415,28 @@ function evalSubSelection(
 
 type SelectionToken = { alias: string; source: string; sub?: string };
 
+function readSelectionIdent(s: string, start: number): { value: string; end: number } {
+  let i = start;
+  if (s[i] === '"' || s[i] === "'") {
+    const quote = s[i];
+    i++;
+    let value = '';
+    while (i < s.length && s[i] !== quote) {
+      if (s[i] === '\\' && i + 1 < s.length) {
+        value += s[i + 1];
+        i += 2;
+        continue;
+      }
+      value += s[i];
+      i++;
+    }
+    if (s[i] === quote) i++;
+    return { value, end: i };
+  }
+  while (i < s.length && /[A-Za-z0-9_$.\-]/.test(s[i])) i++;
+  return { value: s.slice(start, i), end: i };
+}
+
 function tokenizeSelection(selection: string): SelectionToken[] {
   const tokens: SelectionToken[] = [];
   let i = 0;
@@ -317,18 +445,18 @@ function tokenizeSelection(selection: string): SelectionToken[] {
     while (i < s.length && /\s/.test(s[i])) i++;
     if (i >= s.length) break;
     // alias or field
-    let start = i;
-    while (i < s.length && /[A-Za-z0-9_$.]/.test(s[i])) i++;
-    let name = s.slice(start, i);
+    let read = readSelectionIdent(s, i);
+    let name = read.value;
+    i = read.end;
     while (i < s.length && /\s/.test(s[i])) i++;
     let alias = name;
     let source = name;
     if (s[i] === ':') {
       i++;
       while (i < s.length && /\s/.test(s[i])) i++;
-      start = i;
-      while (i < s.length && /[A-Za-z0-9_$.]/.test(s[i])) i++;
-      source = s.slice(start, i);
+      read = readSelectionIdent(s, i);
+      source = read.value;
+      i = read.end;
       alias = name;
       while (i < s.length && /\s/.test(s[i])) i++;
     }
@@ -372,20 +500,51 @@ function buildBody(
     env: Record<string, string | undefined>;
     context: any;
   },
+  opts: {
+    schema?: GraphQLSchema;
+    field?: GraphQLField<any, any>;
+  } = {},
 ): string | undefined {
   if (!bodySelection) return undefined;
   const trimmed = bodySelection.trim();
+
+  const recoverInput = (value: any, argName: string) => {
+    if (value == null || !opts.schema || !opts.field) {
+      return value;
+    }
+    const argDef = opts.field.args?.find(arg => arg.name === argName);
+    if (!argDef) {
+      return value;
+    }
+    return resolveDataByUnionInputType(
+      value && typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value,
+      argDef.type,
+      opts.schema,
+    );
+  };
+
   if (trimmed === '$args') {
     return JSON.stringify(vars.args);
   }
-  if (trimmed.startsWith('$args')) {
-    // `$args` or `$args.input { ... }` — for now send args / args.input
-    if (trimmed === '$args' || trimmed.startsWith('$args ')) {
-      return JSON.stringify(vars.args);
+  if (trimmed === '$args.input' || trimmed.startsWith('$args.input')) {
+    const input = recoverInput(vars.args.input, 'input');
+    // `$args.input { alias: field }` subselection
+    const subMatch = trimmed.match(/^\$args\.input\s*\{([\s\S]*)\}$/);
+    if (subMatch) {
+      return JSON.stringify(applySelection(subMatch[1], input, {}));
     }
-    const pathMatch = trimmed.match(/^\$args\.(\w+)/);
+    if (trimmed === '$args.input') {
+      return JSON.stringify(input);
+    }
+  }
+  if (trimmed.startsWith('$args.')) {
+    const pathMatch = trimmed.match(/^\$args\.(\w+)(\s*\{([\s\S]*)\})?$/);
     if (pathMatch) {
-      return JSON.stringify(vars.args[pathMatch[1]]);
+      const value = recoverInput(vars.args[pathMatch[1]], pathMatch[1]);
+      if (pathMatch[3] != null) {
+        return JSON.stringify(applySelection(pathMatch[3], value, {}));
+      }
+      return JSON.stringify(value);
     }
   }
   if (trimmed.startsWith('$({') && trimmed.endsWith('})')) {
@@ -395,7 +554,6 @@ function buildBody(
       /* fall through */
     }
   }
-  // Fallback: evaluate as subselection over args
   try {
     return JSON.stringify(applySelection(trimmed.replace(/^\$args\s*/, ''), vars.args, {}));
   } catch {
@@ -410,12 +568,26 @@ export function addConnectFieldResolver(
   opts: {
     globalFetch?: MeshFetch;
     log?: Logger;
+    timeout?: number;
+    queryStringOptions?: MeshQsOptions;
   } = {},
 ) {
   const log = opts.log || new DefaultLogger('connect');
   const sources = getSourceMap(schema);
   const source = connectArgs.source ? sources.get(connectArgs.source) : undefined;
   const picked = pickHttp(connectArgs.http);
+  const schemaMeshRestOptions = (schema.extensions as any)?.meshRestOptions || {};
+  const fieldMeshRestOptions = (field.extensions as any)?.meshRestOptions || {};
+  const queryStringOptions: MeshQsOptions = {
+    ...schemaMeshRestOptions.queryStringOptions,
+    ...fieldMeshRestOptions.queryStringOptions,
+    ...opts.queryStringOptions,
+  };
+  const queryStringOptionsByParam =
+    fieldMeshRestOptions.queryStringOptionsByParam ||
+    schemaMeshRestOptions.queryStringOptionsByParam;
+  const timeout =
+    opts.timeout ?? fieldMeshRestOptions.timeout ?? schemaMeshRestOptions.timeout;
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // Virtual connector: no http
@@ -436,17 +608,48 @@ export function addConnectFieldResolver(
       config: {},
     };
 
-    const baseURL = source?.http?.baseURL || '';
+    const baseURL = resolveTemplate(source?.http?.baseURL || '', vars);
     const path = resolveTemplate(picked.path, vars);
     let fullUrl: URL;
     try {
-      fullUrl = new URL(path, baseURL || undefined);
+      if (/^https?:\/\//i.test(path)) {
+        fullUrl = new URL(path);
+      } else if (baseURL) {
+        fullUrl = new URL(path.replace(/^\//, ''), baseURL.endsWith('/') ? baseURL : baseURL + '/');
+      } else {
+        fullUrl = new URL(path, 'http://localhost');
+      }
     } catch {
-      fullUrl = new URL(urlJoin(baseURL, path));
+      fullUrl = new URL(urlJoin(baseURL || 'http://localhost', path));
     }
 
-    applyQueryParams(fullUrl, source?.http?.queryParams, vars);
-    applyQueryParams(fullUrl, connectArgs.http?.queryParams, vars);
+    const resolveArg = (argName: string, value: any) => {
+      const argDef = field.args?.find(arg => arg.name === argName);
+      if (!argDef || value == null || typeof value !== 'object') {
+        return value;
+      }
+      return resolveDataByUnionInputType(
+        JSON.parse(JSON.stringify(value)),
+        argDef.type,
+        schema,
+      );
+    };
+    applyQueryParams(
+      fullUrl,
+      source?.http?.queryParams,
+      vars,
+      queryStringOptions,
+      queryStringOptionsByParam,
+      resolveArg,
+    );
+    applyQueryParams(
+      fullUrl,
+      connectArgs.http?.queryParams,
+      vars,
+      queryStringOptions,
+      queryStringOptionsByParam,
+      resolveArg,
+    );
 
     const headers: Record<string, string> = {};
     applyHeaders(headers, source?.http?.headers, vars);
@@ -457,12 +660,38 @@ export function addConnectFieldResolver(
       method,
       headers,
     };
+    if (timeout) {
+      requestInit.signal = AbortSignal.timeout(timeout);
+    }
     if (method !== 'GET' && method !== 'HEAD') {
-      const body = buildBody(connectArgs.http?.body, vars);
-      if (body != null) {
-        requestInit.body = body;
-        if (!headers['content-type']) {
-          headers['content-type'] = 'application/json';
+      const bodyJson = buildBody(connectArgs.http?.body, vars, { schema, field });
+      if (bodyJson != null) {
+        const contentType = Object.entries(headers).find(
+          ([k]) => k.toLowerCase() === 'content-type',
+        )?.[1];
+        if (
+          contentType?.includes('application/x-www-form-urlencoded') ||
+          contentType?.includes('multipart/form-data')
+        ) {
+          try {
+            const parsed = JSON.parse(bodyJson);
+            if (contentType.includes('application/x-www-form-urlencoded')) {
+              requestInit.body = qsStringify(parsed, {
+                ...defaultQsOptions,
+                ...queryStringOptions,
+              });
+            } else {
+              // multipart: leave JSON string for now; File/FormData path is Hive-only later
+              requestInit.body = bodyJson;
+            }
+          } catch {
+            requestInit.body = bodyJson;
+          }
+        } else {
+          requestInit.body = bodyJson;
+          if (!contentType) {
+            headers['content-type'] = 'application/json';
+          }
         }
       }
     }
@@ -485,7 +714,7 @@ export function addConnectFieldResolver(
 
     if (!response.ok && connectArgs.selection && !connectArgs.selection.includes('$status')) {
       // Default: non-2xx becomes GraphQL error unless selection handles $status
-      throw createGraphQLError(`Connect HTTP ${response.status}: ${response.statusText}`, {
+      throw new GraphQLError(`Connect HTTP ${response.status}: ${response.statusText}`, {
         extensions: {
           status: response.status,
           headers: getHeadersObj(response.headers),
@@ -505,6 +734,8 @@ export function processConnectDirectives(
   opts: {
     globalFetch?: MeshFetch;
     log?: Logger;
+    timeout?: number;
+    queryStringOptions?: MeshQsOptions;
   } = {},
 ) {
   const typeMap = schema.getTypeMap();

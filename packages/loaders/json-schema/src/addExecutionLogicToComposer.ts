@@ -126,6 +126,8 @@ ${operationConfig.description || ''}
         path: operationConfig.path,
         headers: operationConfig.headers,
         queryParamArgMap: operationConfig.queryParamArgMap,
+        queryStringOptionsByParam: operationConfig.queryStringOptionsByParam,
+        argTypeMap: operationConfig.argTypeMap as Record<string, { type?: string }> | undefined,
         bodySelection: inferBodySelection(operationConfig),
       });
       field.directives.push({
@@ -138,6 +140,21 @@ ${operationConfig.description || ''}
           }),
         ),
       });
+      // Hive-only per-param qs options (brackets/indices/destructObject) for transport-rest
+      if (operationConfig.queryStringOptionsByParam) {
+        field.extensions = field.extensions || {};
+        (field.extensions as any).meshRestOptions = {
+          ...((field.extensions as any).meshRestOptions || {}),
+          queryStringOptionsByParam: operationConfig.queryStringOptionsByParam,
+          queryStringOptions: operationConfig.queryStringOptions ?? queryStringOptions,
+        };
+      } else if (operationConfig.queryStringOptions || queryStringOptions) {
+        field.extensions = field.extensions || {};
+        (field.extensions as any).meshRestOptions = {
+          ...((field.extensions as any).meshRestOptions || {}),
+          queryStringOptions: operationConfig.queryStringOptions ?? queryStringOptions,
+        };
+      }
 
       const handleLinkMap = (
         linkMap: Record<string, JSONSchemaLinkConfig>,
@@ -376,6 +393,13 @@ ${operationConfig.description || ''}
   ];
   // Keep handlerName available for debugging without Mesh @transport
   schemaExtensions.meshHandlerName = handlerName;
+  // Hive-only runtime options (not part of Apollo Connectors SDL)
+  if (queryStringOptions) {
+    schemaExtensions.meshRestOptions = {
+      ...(schemaExtensions.meshRestOptions || {}),
+      queryStringOptions,
+    };
+  }
   // Fix orphaned interfaces
   schema = mapSchema(schema, {
     [MapperKind.TYPE]: type => {

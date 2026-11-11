@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Multiple Responses Swagger should create correct response types with 204 empty response: schema 1`] = `
-"schema @transport(subgraph: "test", kind: "rest", location: "https://api.example.com/v1") {
+"schema @source(name: "test", http: {baseURL: "https://api.example.com/v1"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -10,13 +10,13 @@ directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: St
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 type Query {
   """Optional extended description in Markdown."""
-  foo_by_id: foo_by_id_response @httpOperation(subgraph: "test", path: "/{id}", operationSpecificHeaders: [["Accept", "application/json"]], httpMethod: GET)
+  foo_by_id: foo_by_id_response @connect(source: "test", http: {GET: "/{id}", headers: [{name: "Accept", value: "application/json"}]}, selection: "... on Foo { id }\\n... on Error { message\\nstack }")
 }
 
 union foo_by_id_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "Foo") @statusCodeTypeName(subgraph: "test", statusCode: "500", typeName: "Error") = Foo | Error
@@ -32,7 +32,7 @@ type Error {
 
 type Mutation {
   """Optional extended description in Markdown."""
-  post: post_response @httpOperation(subgraph: "test", path: "/", operationSpecificHeaders: [["Accept", "application/json"]], httpMethod: POST)
+  post: post_response @connect(source: "test", http: {POST: "/", headers: [{name: "Accept", value: "application/json"}]}, selection: "... on Void_container { Void }\\n... on Error { message\\nstack }")
 }
 
 union post_response @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") @statusCodeTypeName(subgraph: "test", statusCode: "500", typeName: "Error") = Void_container | Error
@@ -44,17 +44,27 @@ type Void_container {
 """Represents empty values"""
 scalar Void
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+}"
 `;

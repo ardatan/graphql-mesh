@@ -75,6 +75,26 @@ function isEmptyObject(obj: any) {
   return true;
 }
 
+/**
+ * Apollo Connectors subgraphs use `@link(url: "https://specs.apollo.dev/connect/...")`
+ * and/or schema `@source(http: { baseURL })`. They must not get Mesh `@transport`
+ * or stitching `@source(subgraph:)` annotations — transforms rewrite connect SDL instead.
+ */
+export function isApolloConnectorsSubgraph(schema: GraphQLSchema): boolean {
+  const directives = getDirectiveExtensions(schema);
+  const links = directives?.link || [];
+  if (
+    links.some(
+      (link: { url?: string }) =>
+        typeof link?.url === 'string' && link.url.includes('specs.apollo.dev/connect'),
+    )
+  ) {
+    return true;
+  }
+  const sources = directives?.source || [];
+  return sources.some((source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null);
+}
+
 export function getAnnotatedSubgraphs(
   subgraphs: SubgraphConfig[],
   options: GetAnnotatedSubgraphsOptions = {},
@@ -84,10 +104,23 @@ export function getAnnotatedSubgraphs(
     const { name: subgraphName, schema, transforms } = subgraphConfig;
     let url: string = subgraphConfig.url;
     const subgraphSchemaExtensions = getDirectiveExtensions(schema);
+    const isConnectorsSubgraph = isApolloConnectorsSubgraph(schema);
     const transportDirectives = subgraphSchemaExtensions?.transport;
     const transportDirective = transportDirectives?.[0];
-    let removeTransportDirective = false;
-    if (transportDirective) {
+    const apolloSource = (subgraphSchemaExtensions?.source || []).find(
+      (source: { http?: { baseURL?: string } }) => source?.http?.baseURL != null,
+    );
+    // Strip Mesh `@transport` from printed subgraph SDL (directive definition / schema AST).
+    // Connectors still keep a rest transport *entry* in schema extensions so Hive Gateway
+    // can resolve `@graphql-mesh/transport-rest` via `@extraSchemaDefinitionDirective`.
+    let removeTransportDirectiveDefinition = false;
+    let removeTransportFromExtras = false;
+    if (isConnectorsSubgraph) {
+      removeTransportDirectiveDefinition = true;
+      if (apolloSource?.http?.baseURL) {
+        url = apolloSource.http.baseURL;
+      }
+    } else if (transportDirective) {
       url = transportDirective.location;
       if (
         !options.alwaysAddTransportDirective &&
@@ -95,14 +128,31 @@ export function getAnnotatedSubgraphs(
         !transportDirective.headers &&
         isEmptyObject(transportDirective.options)
       ) {
-        removeTransportDirective = true;
+        removeTransportDirectiveDefinition = true;
+        removeTransportFromExtras = true;
       }
     }
 
     let mergeDirectiveUsed = false;
-    const sourceDirectiveUsed = transforms?.length > 0;
+    // Stitching `@source` is only for non-connectors transforms. Connectors transforms
+    // rewrite `@connect` selection/http instead of adding Mesh source annotations.
+    const sourceDirectiveUsed = !isConnectorsSubgraph && transforms?.length > 0;
     const normalizedSchema = normalizeDirectiveExtensions(schema);
-    if (removeTransportDirective && (normalizedSchema.extensions?.directives as any)?.transport) {
+    if (isConnectorsSubgraph) {
+      const extensions: Record<string, any> = (normalizedSchema.extensions ||= {});
+      extensions.directives = extensions.directives || {};
+      // Hive execution hint — not part of the Apollo Connectors subgraph contract
+      extensions.directives.transport = [
+        {
+          subgraph: subgraphName,
+          kind: 'rest',
+          location: url || apolloSource?.http?.baseURL || '',
+        },
+      ];
+    } else if (
+      removeTransportFromExtras &&
+      (normalizedSchema.extensions?.directives as any)?.transport
+    ) {
       delete (normalizedSchema.extensions?.directives as any).transport;
     }
     const annotatedSubgraph = mapSchema(normalizedSchema, {
@@ -312,10 +362,15 @@ export function getAnnotatedSubgraphs(
         };
       },
       [MapperKind.DIRECTIVE]: directive => {
-        if (directive.name === 'transport' && removeTransportDirective) {
+        if (directive.name === 'transport' && removeTransportDirectiveDefinition) {
           return null;
         }
-        if (!sourceDirectiveUsed && directive.name === 'source') {
+        // Keep Apollo Connectors `@source`; only strip unused stitching `@source`.
+        if (
+          !sourceDirectiveUsed &&
+          !isConnectorsSubgraph &&
+          directive.name === 'source'
+        ) {
           return null;
         }
       },
@@ -369,6 +424,19 @@ export function getAnnotatedSubgraphs(
     }
     if (sourceDirectiveUsed) {
       importedDirectives.add('@source');
+    }
+    // Preserve Apollo `@connect` through federation via `@composeDirective`, while keeping
+    // the Apollo connect `@link` as the sole feature that imports `@connect` (not Mesh spec).
+    if (isConnectorsSubgraph) {
+      const schemaDirectives = getDirectiveExtensions(transformedSubgraph) || {};
+      const composeDirectives = (schemaDirectives.composeDirective =
+        schemaDirectives.composeDirective?.filter(Boolean) || []);
+      if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
+        composeDirectives.push({ name: '@connect' });
+      }
+      const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
+      extensions.directives = schemaDirectives;
+      transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@composeDirective']);
     }
     const fieldMapper: FieldMapper = (fieldConfig, fieldName) => {
       const fieldDirectives = getDirectiveExtensions(fieldConfig);
@@ -469,7 +537,7 @@ export function getAnnotatedSubgraphs(
         ([dirName]) =>
           dirName !== 'link' &&
           dirName !== 'composeDirective' &&
-          (removeTransportDirective ? dirName !== 'transport' : true),
+          (removeTransportFromExtras ? dirName !== 'transport' : true),
       );
       if (schemaDirectiveExtraEntries.length) {
         transformedSubgraph = new GraphQLSchema({

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Calendly should generate the correct schema 1`] = `
-"schema @transport(subgraph: "calendly", kind: "rest", location: "https://api.calendly.com") {
+"schema @source(name: "calendly", http: {baseURL: "https://api.calendly.com"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -20,9 +20,9 @@ directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 type Query {
   """Returns a list of Invitees for an event."""
@@ -41,7 +41,7 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getInvitees_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.uuid}/invitees", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
+  ): getInvitees_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.uuid}/invitees", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n  sort: $args.sort\\n  email: $args.email\\n  page_token: $args.page_token\\n  count: $args.count\\n}"}, selection: "... on getInvitees_200_response { collection {\\n  uri\\n  email\\n  first_name\\n  last_name\\n  name\\n  status\\n  questions_and_answers {\\n    question\\n    answer\\n    position\\n  }\\n  timezone\\n  event\\n  created_at\\n  updated_at\\n  tracking {\\n    utm_campaign\\n    utm_source\\n    utm_medium\\n    utm_content\\n    utm_term\\n    salesforce_uuid\\n  }\\n  text_reminder_number\\n  rescheduled\\n  old_invitee\\n  new_invitee\\n  cancel_url\\n  reschedule_url\\n  routing_form_submission\\n  cancellation {\\n    canceled_by\\n    reason\\n    canceler_type\\n  }\\n  payment {\\n    external_id\\n    provider\\n    amount\\n    currency\\n    terms\\n    successful\\n  }\\n  no_show {\\n    uri\\n    created_at\\n  }\\n  reconfirmation {\\n    created_at\\n    confirmed_at\\n  }\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Returns a list of  Events.
   
@@ -87,7 +87,7 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getScheduledEvents_response @httpOperation(subgraph: "calendly", path: "/scheduled_events", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"user\\":\\"user\\",\\"organization\\":\\"organization\\",\\"invitee_email\\":\\"invitee_email\\",\\"status\\":\\"status\\",\\"sort\\":\\"sort\\",\\"min_start_time\\":\\"min_start_time\\",\\"max_start_time\\":\\"max_start_time\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
+  ): getScheduledEvents_response @connect(source: "calendly", http: {GET: "/scheduled_events", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  user: $args.user\\n  organization: $args.organization\\n  invitee_email: $args.invitee_email\\n  status: $args.status\\n  sort: $args.sort\\n  min_start_time: $args.min_start_time\\n  max_start_time: $args.max_start_time\\n  page_token: $args.page_token\\n  count: $args.count\\n}"}, selection: "... on getScheduledEvents_200_response { collection {\\n  uri\\n  name\\n  status\\n  start_time\\n  end_time\\n  event_type\\n  location {\\n    ... on In_Person_Meeting { type\\n    location }\\n    ... on Outbound_Call { type\\n    location }\\n    ... on Inbound_Call { type\\n    location }\\n    ... on Google_Conference { type\\n    status\\n    join_url }\\n    ... on Zoom_Conference { type\\n    status\\n    join_url\\n    data {\\n      id\\n      settings {\\n        global_dial_in_numbers {\\n          number\\n          country\\n          type\\n          city\\n          country_name\\n        }\\n      }\\n      extra {\\n        intl_numbers_url\\n      }\\n      password\\n    } }\\n    ... on GoToMeeting_Conference { type\\n    status\\n    join_url\\n    data {\\n      uniqueMeetingId\\n      conferenceCallInfo\\n    } }\\n    ... on Microsoft_Teams_Conference { type\\n    status\\n    join_url\\n    data {\\n      id\\n      audioConferencing {\\n        conferenceId\\n        dialinUrl\\n        tollNumber\\n      }\\n    } }\\n    ... on Custom_Location { type\\n    location }\\n    ... on Invitee_Specified_Location { type\\n    location }\\n    ... on WebEx_Conference { type\\n    status\\n    join_url\\n    data {\\n      id\\n      telephony {\\n        callInNumbers {\\n          label\\n          callInNumber\\n          tollType\\n        }\\n      }\\n      password\\n    } }\\n  }\\n  invitees_counter {\\n    total\\n    active\\n    limit\\n  }\\n  created_at\\n  updated_at\\n  event_memberships {\\n    user\\n  }\\n  event_guests {\\n    email\\n    created_at\\n    updated_at\\n  }\\n  cancellation {\\n    canceled_by\\n    reason\\n    canceler_type\\n  }\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Returns all Event Types associated with a specified User. Use:
   
@@ -122,14 +122,14 @@ type Query {
     page_token: String
     """The number of rows to return"""
     count: PositiveFloat = 20
-  ): getEventTypes_response @httpOperation(subgraph: "calendly", path: "/event_types", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"active\\":\\"active\\",\\"organization\\":\\"organization\\",\\"user\\":\\"user\\",\\"sort\\":\\"sort\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\"}")
+  ): getEventTypes_response @connect(source: "calendly", http: {GET: "/event_types", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  active: $args.active\\n  organization: $args.organization\\n  user: $args.user\\n  sort: $args.sort\\n  page_token: $args.page_token\\n  count: $args.count\\n}"}, selection: "... on getEventTypes_200_response { collection {\\n  uri\\n  name\\n  active\\n  slug\\n  scheduling_url\\n  duration\\n  kind\\n  pooling_type\\n  type\\n  color\\n  created_at\\n  updated_at\\n  internal_note\\n  description_plain\\n  description_html\\n  profile {\\n    type\\n    name\\n    owner\\n  }\\n  secret\\n  booking_method\\n  custom_questions {\\n    name\\n    type\\n    position\\n    enabled\\n    required\\n    answer_choices\\n    include_other\\n  }\\n  deleted_at\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Returns information about a specified User."""
   getUser(
     """User unique identifier, or the constant "me" to reference the caller"""
     uuid: String!
-  ): getUser_response @httpOperation(subgraph: "calendly", path: "/users/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  ): getUser_response @connect(source: "calendly", http: {GET: "/users/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on getUser_200_response { resource {\\n  uri\\n  name\\n  slug\\n  email\\n  scheduling_url\\n  timezone\\n  avatar_url\\n  created_at\\n  updated_at\\n  current_organization\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Returns basic information about your user account."""
-  getMyUserAccount: getMyUserAccount_response @httpOperation(subgraph: "calendly", path: "/users/me", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  getMyUserAccount: getMyUserAccount_response @connect(source: "calendly", http: {GET: "/users/me", headers: [{name: "accept", value: "application/json"}]}, selection: "... on getMyUserAccount_200_response { resource {\\n  uri\\n  name\\n  slug\\n  email\\n  scheduling_url\\n  timezone\\n  avatar_url\\n  created_at\\n  updated_at\\n  current_organization\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Returns information about a specified Invitee (person invited to an event).
   """
@@ -138,14 +138,14 @@ type Query {
     event_uuid: String!
     """The invitee's unique identifier"""
     invitee_uuid: String!
-  ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.event_uuid}/invitees/{args.invitee_uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  ): get_scheduled_events_event_uuid_invitees_invitee_uuid_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.event_uuid}/invitees/{$args.invitee_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on get_scheduled_events_event_uuid_invitees_invitee_uuid_200_response { resource {\\n  uri\\n  email\\n  first_name\\n  last_name\\n  name\\n  status\\n  questions_and_answers {\\n    question\\n    answer\\n    position\\n  }\\n  timezone\\n  event\\n  created_at\\n  updated_at\\n  tracking {\\n    utm_campaign\\n    utm_source\\n    utm_medium\\n    utm_content\\n    utm_term\\n    salesforce_uuid\\n  }\\n  text_reminder_number\\n  rescheduled\\n  old_invitee\\n  new_invitee\\n  cancel_url\\n  reschedule_url\\n  routing_form_submission\\n  cancellation {\\n    canceled_by\\n    reason\\n    canceler_type\\n  }\\n  payment {\\n    external_id\\n    provider\\n    amount\\n    currency\\n    terms\\n    successful\\n  }\\n  no_show {\\n    uri\\n    created_at\\n  }\\n  reconfirmation {\\n    created_at\\n    confirmed_at\\n  }\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on Error_Response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Returns information about a specified Event."""
   get_scheduled_events_uuid(
     """The event's unique identifier"""
     uuid: String!
-  ): get_scheduled_events_uuid_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  ): get_scheduled_events_uuid_response @connect(source: "calendly", http: {GET: "/scheduled_events/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on get_scheduled_events_uuid_200_response { resource {\\n  uri\\n  name\\n  status\\n  start_time\\n  end_time\\n  event_type\\n  location {\\n    ... on In_Person_Meeting { type\\n    location }\\n    ... on Outbound_Call { type\\n    location }\\n    ... on Inbound_Call { type\\n    location }\\n    ... on Google_Conference { type\\n    status\\n    join_url }\\n    ... on Zoom_Conference { type\\n    status\\n    join_url\\n    data {\\n      id\\n      settings {\\n        global_dial_in_numbers {\\n          number\\n          country\\n          type\\n          city\\n          country_name\\n        }\\n      }\\n      extra {\\n        intl_numbers_url\\n      }\\n      password\\n    } }\\n    ... on GoToMeeting_Conference { type\\n    status\\n    join_url\\n    data {\\n      uniqueMeetingId\\n      conferenceCallInfo\\n    } }\\n    ... on Microsoft_Teams_Conference { type\\n    status\\n    join_url\\n    data {\\n      id\\n      audioConferencing {\\n        conferenceId\\n        dialinUrl\\n        tollNumber\\n      }\\n    } }\\n    ... on Custom_Location { type\\n    location }\\n    ... on Invitee_Specified_Location { type\\n    location }\\n    ... on WebEx_Conference { type\\n    status\\n    join_url\\n    data {\\n      id\\n      telephony {\\n        callInNumbers {\\n          label\\n          callInNumber\\n          tollType\\n        }\\n      }\\n      password\\n    } }\\n  }\\n  invitees_counter {\\n    total\\n    active\\n    limit\\n  }\\n  created_at\\n  updated_at\\n  event_memberships {\\n    user\\n  }\\n  event_guests {\\n    email\\n    created_at\\n    updated_at\\n  }\\n  cancellation {\\n    canceled_by\\n    reason\\n    canceler_type\\n  }\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Returns information about a specified Event Type."""
-  get_event_types_uuid(uuid: String!): get_event_types_uuid_response @httpOperation(subgraph: "calendly", path: "/event_types/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  get_event_types_uuid(uuid: String!): get_event_types_uuid_response @connect(source: "calendly", http: {GET: "/event_types/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on get_event_types_uuid_200_response { resource {\\n  uri\\n  name\\n  active\\n  slug\\n  scheduling_url\\n  duration\\n  kind\\n  pooling_type\\n  type\\n  color\\n  created_at\\n  updated_at\\n  internal_note\\n  description_plain\\n  description_html\\n  profile {\\n    type\\n    name\\n    owner\\n  }\\n  secret\\n  booking_method\\n  custom_questions {\\n    name\\n    type\\n    position\\n    enabled\\n    required\\n    answer_choices\\n    include_other\\n  }\\n  deleted_at\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Returns a list of Organization Invitations that were sent to the organization's members.
   """
@@ -165,7 +165,7 @@ type Query {
     """Indicates if the results should be filtered by email address"""
     email: EmailAddress
     status: queryInput_get_organizations_uuid_invitations_status
-  ): get_organizations_uuid_invitations_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.uuid}/invitations", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\",\\"email\\":\\"email\\",\\"status\\":\\"status\\"}")
+  ): get_organizations_uuid_invitations_response @connect(source: "calendly", http: {GET: "/organizations/{$args.uuid}/invitations", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  count: $args.count\\n  page_token: $args.page_token\\n  sort: $args.sort\\n  email: $args.email\\n  status: $args.status\\n}"}, selection: "... on get_organizations_uuid_invitations_200_response { collection {\\n  uri\\n  organization\\n  email\\n  status\\n  created_at\\n  updated_at\\n  last_sent_at\\n  user\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Returns an Organization Invitation that was sent to the organization's members.
   """
@@ -174,12 +174,12 @@ type Query {
     org_uuid: String!
     """The organization invitation's unique identifier"""
     uuid: String!
-  ): get_organizations_org_uuid_invitations_uuid_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  ): get_organizations_org_uuid_invitations_uuid_response @connect(source: "calendly", http: {GET: "/organizations/{$args.org_uuid}/invitations/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on get_organizations_org_uuid_invitations_uuid_200_response { resource {\\n  uri\\n  organization\\n  email\\n  status\\n  created_at\\n  updated_at\\n  last_sent_at\\n  user\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Returns information about a user's Organization Membership"""
   get_organizations_uuid_memberships(
     """The organization membership's unique identifier"""
     uuid: String!
-  ): get_organizations_uuid_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  ): get_organizations_uuid_memberships_response @connect(source: "calendly", http: {GET: "/organization_memberships/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on get_organizations_uuid_memberships_200_response { resource {\\n  uri\\n  role\\n  user {\\n    uri\\n    name\\n    slug\\n    email\\n    scheduling_url\\n    timezone\\n    avatar_url\\n    created_at\\n    updated_at\\n  }\\n  organization\\n  updated_at\\n  created_at\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on Error_Response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Use this to list the Organization Memberships for all users belonging to an organization, use:
   
@@ -202,7 +202,7 @@ type Query {
     organization: URL
     """Indicates if the results should be filtered by user"""
     user: URL
-  ): get_organization_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"email\\":\\"email\\",\\"organization\\":\\"organization\\",\\"user\\":\\"user\\"}")
+  ): get_organization_memberships_response @connect(source: "calendly", http: {GET: "/organization_memberships", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  page_token: $args.page_token\\n  count: $args.count\\n  email: $args.email\\n  organization: $args.organization\\n  user: $args.user\\n}"}, selection: "... on get_organization_memberships_200_response { collection {\\n  uri\\n  role\\n  user {\\n    uri\\n    name\\n    slug\\n    email\\n    scheduling_url\\n    timezone\\n    avatar_url\\n    created_at\\n    updated_at\\n  }\\n  organization\\n  updated_at\\n  created_at\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on Error_Response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Get a list of Webhook Subscriptions for a specified Organization or User.
   """
@@ -226,11 +226,11 @@ type Query {
     """
     sort: String
     scope: queryInput_get_webhooks_scope!
-  ): get_webhooks_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"user\\":\\"user\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"sort\\":\\"sort\\",\\"scope\\":\\"scope\\"}")
+  ): get_webhooks_response @connect(source: "calendly", http: {GET: "/webhook_subscriptions", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  user: $args.user\\n  page_token: $args.page_token\\n  count: $args.count\\n  sort: $args.sort\\n  scope: $args.scope\\n}"}, selection: "... on get_webhooks_200_response { collection {\\n  uri\\n  callback_url\\n  created_at\\n  updated_at\\n  retry_started_at\\n  state\\n  events\\n  scope\\n  organization\\n  user\\n  creator\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Get a specified Webhook Subscription."""
-  get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions/{args.webhook_uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  get_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): get_users_user_uuid_webhooks_webhook_uuid_response @connect(source: "calendly", http: {GET: "/webhook_subscriptions/{$args.webhook_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on get_users_user_uuid_webhooks_webhook_uuid_200_response { resource {\\n  uri\\n  callback_url\\n  created_at\\n  updated_at\\n  retry_started_at\\n  state\\n  events\\n  scope\\n  organization\\n  user\\n  creator\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Returns information about a specified Invitee No Show."""
-  getInviteeNoShow(uuid: String!): getInviteeNoShow_response @httpOperation(subgraph: "calendly", path: "/invitee_no_shows/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  getInviteeNoShow(uuid: String!): getInviteeNoShow_response @connect(source: "calendly", http: {GET: "/invitee_no_shows/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on getInviteeNoShow_200_response { resource {\\n  uri\\n  invitee\\n  created_at\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Get a list of Routing Forms for a specified Organization."""
   get_routing_forms(
     """
@@ -247,9 +247,9 @@ type Query {
     Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.
     """
     sort: String
-  ): get_routing_forms_response @httpOperation(subgraph: "calendly", path: "/routing_forms", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\"}")
+  ): get_routing_forms_response @connect(source: "calendly", http: {GET: "/routing_forms", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  count: $args.count\\n  page_token: $args.page_token\\n  sort: $args.sort\\n}"}, selection: "... on get_routing_forms_200_response { collection {\\n  uri\\n  organization\\n  name\\n  status\\n  questions {\\n    uuid\\n    name\\n    type\\n    required\\n    answer_choices\\n  }\\n  created_at\\n  updated_at\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Get a specified Routing Form."""
-  get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response @httpOperation(subgraph: "calendly", path: "/routing_forms/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  get_routing_forms_uuid(uuid: String!): get_routing_forms_uuid_response @connect(source: "calendly", http: {GET: "/routing_forms/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on get_routing_forms_uuid_200_response { resource {\\n  uri\\n  organization\\n  name\\n  status\\n  questions {\\n    uuid\\n    name\\n    type\\n    required\\n    answer_choices\\n  }\\n  created_at\\n  updated_at\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Get a list of Routing Form Submissions for a specified Routing Form."""
   get_routing_form_submissions(
     """View routing form submissions associated with the routing form's URI."""
@@ -264,9 +264,9 @@ type Query {
     Order results by the specified field and direction. Accepts comma-separated list of {field}:{direction} values. Supported fields are: created_at. Sort direction is specified as: asc, desc.
     """
     sort: String
-  ): get_routing_form_submissions_response @httpOperation(subgraph: "calendly", path: "/routing_form_submissions", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"form\\":\\"form\\",\\"count\\":\\"count\\",\\"page_token\\":\\"page_token\\",\\"sort\\":\\"sort\\"}")
+  ): get_routing_form_submissions_response @connect(source: "calendly", http: {GET: "/routing_form_submissions", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  form: $args.form\\n  count: $args.count\\n  page_token: $args.page_token\\n  sort: $args.sort\\n}"}, selection: "... on get_routing_form_submissions_200_response { collection {\\n  uri\\n  routing_form\\n  questions_and_answers {\\n    question_uuid\\n    question\\n    answer\\n  }\\n  tracking {\\n    utm_campaign\\n    utm_source\\n    utm_medium\\n    utm_content\\n    utm_term\\n    salesforce_uuid\\n  }\\n  result {\\n    ... on Routing_Form_Submission_Event_Type_Result { type\\n    value }\\n    ... on Routing_Form_Submission_External_URL_Result { type\\n    value }\\n    ... on Routing_Form_Submission_Custom_Message_Result { type\\n    value {\\n      headline\\n      body\\n    } }\\n  }\\n  submitter\\n  submitter_type\\n  created_at\\n  updated_at\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Get a specified Routing Form Submission."""
-  get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @httpOperation(subgraph: "calendly", path: "/routing_form_submissions/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  get_routing_form_submissions_uuid(uuid: String!): get_routing_form_submissions_uuid_response @connect(source: "calendly", http: {GET: "/routing_form_submissions/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on get_routing_form_submissions_uuid_200_response { resource {\\n  uri\\n  routing_form\\n  questions_and_answers {\\n    question_uuid\\n    question\\n    answer\\n  }\\n  tracking {\\n    utm_campaign\\n    utm_source\\n    utm_medium\\n    utm_content\\n    utm_term\\n    salesforce_uuid\\n  }\\n  result {\\n    ... on Routing_Form_Submission_Event_Type_Result { type\\n    value }\\n    ... on Routing_Form_Submission_External_URL_Result { type\\n    value }\\n    ... on Routing_Form_Submission_Custom_Message_Result { type\\n    value {\\n      headline\\n      body\\n    } }\\n  }\\n  submitter\\n  submitter_type\\n  created_at\\n  updated_at\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Returns a list of available times for an event type within a specified date range.
   
@@ -282,7 +282,7 @@ type Query {
     start_time: String
     """End time of the requested availability range."""
     end_time: String
-  ): getEventTypeAvailableTimes_response @httpOperation(subgraph: "calendly", path: "/event_type_available_times", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"event_type\\":\\"event_type\\",\\"start_time\\":\\"start_time\\",\\"end_time\\":\\"end_time\\"}")
+  ): getEventTypeAvailableTimes_response @connect(source: "calendly", http: {GET: "/event_type_available_times", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  event_type: $args.event_type\\n  start_time: $args.start_time\\n  end_time: $args.end_time\\n}"}, selection: "... on getEventTypeAvailableTimes_200_response { collection {\\n  status\\n  invitees_remaining\\n  start_time\\n  scheduling_url\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   <!-- theme: info -->
     > This endpoint requires an <strong>Enterprise</strong> subscription.
@@ -328,7 +328,7 @@ type Query {
     namespace: [String]
     """The action(s) associated with the entries"""
     action: [String]
-  ): activityLog_response @httpOperation(subgraph: "calendly", path: "/activity_log_entries", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"organization\\":\\"organization\\",\\"search_term\\":\\"search_term\\",\\"actor\\":\\"actor\\",\\"sort\\":\\"sort\\",\\"min_occurred_at\\":\\"min_occurred_at\\",\\"max_occurred_at\\":\\"max_occurred_at\\",\\"page_token\\":\\"page_token\\",\\"count\\":\\"count\\",\\"namespace\\":\\"namespace\\",\\"action\\":\\"action\\"}", queryStringOptionsByParam: "{\\"actor\\":{\\"arrayFormat\\":\\"comma\\"},\\"sort\\":{\\"arrayFormat\\":\\"comma\\"},\\"namespace\\":{\\"arrayFormat\\":\\"comma\\"},\\"action\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): activityLog_response @connect(source: "calendly", http: {GET: "/activity_log_entries", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  organization: $args.organization\\n  search_term: $args.search_term\\n  actor: $args.actor\\n  sort: $args.sort\\n  min_occurred_at: $args.min_occurred_at\\n  max_occurred_at: $args.max_occurred_at\\n  page_token: $args.page_token\\n  count: $args.count\\n  namespace: $args.namespace\\n  action: $args.action\\n}"}, selection: "... on activityLog_200_response { collection {\\n  occurred_at\\n  actor {\\n    uri\\n    type\\n    organization {\\n      uri\\n      role\\n    }\\n    group {\\n      uri\\n      name\\n      role\\n    }\\n    display_name\\n    alternative_identifier\\n  }\\n  details\\n  fully_qualified_name\\n  uri\\n  namespace\\n  action\\n  organization\\n}\\npagination {\\n  count\\n  next_page\\n  previous_page\\n  next_page_token\\n  previous_page_token\\n}\\nlast_event_time\\ntotal_count\\nexceeds_max_total_count }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
 }
 
 union getInvitees_response @statusCodeTypeName(subgraph: "calendly", statusCode: "200", typeName: "getInvitees_200_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "400", typeName: "INVALID_ARGUMENT_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "401", typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "403", typeName: "PERMISSION_DENIED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "404", typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "500", typeName: "UNKNOWN_response") = getInvitees_200_response | INVALID_ARGUMENT_response | UNAUTHENTICATED_response | PERMISSION_DENIED_response | NOT_FOUND_response | UNKNOWN_response
@@ -1747,7 +1747,7 @@ type Mutation {
     """The organization's unique identifier"""
     uuid: String!
     input: post_organizations_uuid_invitations_request_Input
-  ): post_organizations_uuid_invitations_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.uuid}/invitations", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  ): post_organizations_uuid_invitations_response @connect(source: "calendly", http: {POST: "/organizations/{$args.uuid}/invitations", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on post_organizations_uuid_invitations_201_response { resource {\\n  uri\\n  organization\\n  email\\n  status\\n  created_at\\n  updated_at\\n  last_sent_at\\n  user\\n} }\\n... on Error_Response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on post_organizations_uuid_invitations_403_response { title\\nmessage }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Use this to revoke an Organization Invitation to an organization. Once revoked, the invitation link that was sent to the invitee is no longer valid.
   """
@@ -1756,7 +1756,7 @@ type Mutation {
     org_uuid: String!
     """The organization invitation's unique identifier"""
     uuid: String!
-  ): revoke_users_organization_invitation_response @httpOperation(subgraph: "calendly", path: "/organizations/{args.org_uuid}/invitations/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
+  ): revoke_users_organization_invitation_response @connect(source: "calendly", http: {DELETE: "/organizations/{$args.org_uuid}/invitations/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on Void_container { Void }\\n... on Error_Response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Removes a user from an organization.
   
@@ -1769,7 +1769,7 @@ type Mutation {
   delete_organizations_uuid_memberships(
     """The organization membership's unique identifier"""
     uuid: String!
-  ): delete_organizations_uuid_memberships_response @httpOperation(subgraph: "calendly", path: "/organization_memberships/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
+  ): delete_organizations_uuid_memberships_response @connect(source: "calendly", http: {DELETE: "/organization_memberships/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on Void_container { Void }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on Error_Response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   Create a Webhook Subscription for an Organization or User.
   
@@ -1782,28 +1782,28 @@ type Mutation {
   | <pre>invitee.canceled</pre> | \`organization\` \`user\` |
   | <pre>routing_form_submission.created</pre> | \`organization\` <br /> <small>Create separate Webhook Subscriptions for events with different subscription scopes.</small> |
   """
-  post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  post_users_uuid_webhooks(input: post_users_uuid_webhooks_request_Input): post_users_uuid_webhooks_response @connect(source: "calendly", http: {POST: "/webhook_subscriptions", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on post_users_uuid_webhooks_201_response { resource {\\n  uri\\n  callback_url\\n  created_at\\n  updated_at\\n  retry_started_at\\n  state\\n  events\\n  scope\\n  organization\\n  user\\n  creator\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on post_users_uuid_webhooks_409_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Delete a Webhook Subscription."""
-  delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response @httpOperation(subgraph: "calendly", path: "/webhook_subscriptions/{args.webhook_uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
+  delete_users_user_uuid_webhooks_webhook_uuid(webhook_uuid: String!): delete_users_user_uuid_webhooks_webhook_uuid_response @connect(source: "calendly", http: {DELETE: "/webhook_subscriptions/{$args.webhook_uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on Void_container { Void }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Creates a single-use scheduling link."""
-  post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response @httpOperation(subgraph: "calendly", path: "/scheduling_links", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  post_scheduling_links(input: post_scheduling_links_request_Input): post_scheduling_links_response @connect(source: "calendly", http: {POST: "/scheduling_links", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on post_scheduling_links_201_response { resource {\\n  booking_url\\n  owner\\n  owner_type\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """
   <!-- theme: info -->
     > This endpoint requires an <strong>Enterprise</strong> subscription.
   
   To submit a request to remove invitee data from all previously booked events in your organization, use this endpoint. Requests for data deletion can take up to 7 days to complete.
   """
-  post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @httpOperation(subgraph: "calendly", path: "/data_compliance/deletion/invitees", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  post_data_compliance_deletion_invitees(input: post_data_compliance_deletion_invitees_request_Input): post_data_compliance_deletion_invitees_response @connect(source: "calendly", http: {POST: "/data_compliance/deletion/invitees", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on JSON_container { JSON }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on Error_Response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Undoes marking an Invitee as a No Show."""
-  deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response @httpOperation(subgraph: "calendly", path: "/invitee_no_shows/{args.uuid}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: DELETE)
+  deleteInviteeNoShow(uuid: String!): deleteInviteeNoShow_response @connect(source: "calendly", http: {DELETE: "/invitee_no_shows/{$args.uuid}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on Void_container { Void }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Marks an Invitee as a No Show."""
-  postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response @httpOperation(subgraph: "calendly", path: "/invitee_no_shows", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  postInviteeNoShow(input: postInviteeNoShow_request_Input): postInviteeNoShow_response @connect(source: "calendly", http: {POST: "/invitee_no_shows", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on postInviteeNoShow_201_response { resource {\\n  uri\\n  invitee\\n  created_at\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on PERMISSION_DENIED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
   """Cancels specified event."""
   post_scheduled_events_uuid_cancellation(
     """The event's unique indentifier"""
     uuid: String!
     input: post_scheduled_events_uuid_cancellation_request_Input
-  ): post_scheduled_events_uuid_cancellation_response @httpOperation(subgraph: "calendly", path: "/scheduled_events/{args.uuid}/cancellation", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  ): post_scheduled_events_uuid_cancellation_response @connect(source: "calendly", http: {POST: "/scheduled_events/{$args.uuid}/cancellation", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on post_scheduled_events_uuid_cancellation_201_response { resource {\\n  canceled_by\\n  reason\\n  canceler_type\\n} }\\n... on INVALID_ARGUMENT_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNAUTHENTICATED_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on post_scheduled_events_uuid_cancellation_403_response { title\\nmessage }\\n... on NOT_FOUND_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }\\n... on UNKNOWN_response { title\\nmessage\\ndetails {\\n  parameter\\n  message\\n} }")
 }
 
 union post_organizations_uuid_invitations_response @statusCodeTypeName(subgraph: "calendly", statusCode: "201", typeName: "post_organizations_uuid_invitations_201_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "400", typeName: "Error_Response") @statusCodeTypeName(subgraph: "calendly", statusCode: "401", typeName: "UNAUTHENTICATED_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "403", typeName: "post_organizations_uuid_invitations_403_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "404", typeName: "NOT_FOUND_response") @statusCodeTypeName(subgraph: "calendly", statusCode: "500", typeName: "UNKNOWN_response") = post_organizations_uuid_invitations_201_response | Error_Response | UNAUTHENTICATED_response | post_organizations_uuid_invitations_403_response | NOT_FOUND_response | UNKNOWN_response
@@ -1978,15 +1978,27 @@ scalar mutationInput_post_scheduled_events_uuid_cancellation_input_reason @lengt
 
 scalar ObjMap
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
 }"
 `;

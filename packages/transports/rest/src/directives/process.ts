@@ -60,15 +60,23 @@ export function processDirectives(
         ]),
       )
     : undefined;
+  const meshRestOptions = (schema.extensions as any)?.meshRestOptions || {};
   const globalOptions = {
     endpoint: sourceDirective?.http?.baseURL ?? currDirective?.location,
     operationHeaders: sourceHeaders ?? currDirective?.headers,
     queryParams: currDirective?.queryParams,
-    queryStringOptions: currDirective?.queryStringOptions,
+    queryStringOptions:
+      currDirective?.queryStringOptions ?? meshRestOptions.queryStringOptions,
+    timeout: meshRestOptions.timeout,
     ...extraGlobalOptions,
   };
   // Wire @connect resolvers (Apollo Connectors)
-  processConnectDirectives(schema, { globalFetch, log });
+  processConnectDirectives(schema, {
+    globalFetch,
+    log,
+    timeout: globalOptions.timeout,
+    queryStringOptions: globalOptions.queryStringOptions,
+  });
   if (typeof globalOptions.operationHeaders === 'string') {
     globalOptions.operationHeaders = JSON.parse(globalOptions.operationHeaders);
   }
