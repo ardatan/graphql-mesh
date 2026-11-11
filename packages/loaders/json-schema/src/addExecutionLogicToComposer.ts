@@ -36,6 +36,7 @@ import {
   LinkDirective,
   MESH_SPEC_LINK_URL,
   MeshRestOptionsDirective,
+  flushConnectSelectionPassthroughWarnings,
   resolveConnectSelectionLimit,
   rewriteConnectPathEnumArgs,
   SourceDirective,
@@ -475,6 +476,8 @@ ${operationConfig.description || ''}
             : [];
       const statusUnionExtras =
         isUnionType(returnNamedType) && buildStatusUnionConnectExtras(returnNamedType);
+      // Fresh visit budget per field so one Stripe op cannot starve the rest.
+      selectionLimit.passthroughVisits = 0;
       const builtSelection = buildSelectionForType(field.type.getType(), {
         skipFields,
         implementations: interfaceImplementations,
@@ -801,6 +804,7 @@ ${operationConfig.description || ''}
       return directive;
     },
   });
+  flushConnectSelectionPassthroughWarnings(selectionLimit);
   return schema;
 }
 

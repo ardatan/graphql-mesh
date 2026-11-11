@@ -110,6 +110,7 @@ describe('Federation Connectors annotations', () => {
       maxLength: 12_000,
       softDepth: 2,
       overLimit: 'passthrough',
+      passthroughVisitBudget: 250,
     });
     expect(
       resolveConnectSelectionLimit({ maxLength: 0, softDepth: -1, overLimit: 'leavesOnly' }),

@@ -46,12 +46,21 @@ export interface ResolvedConnectSelectionLimit {
   overLimit: ConnectSelectionOverLimit;
   /** Optional logger for Router/Hive policy warnings. */
   log?: Logger;
-  /** Dedupe passthrough warnings per type name within one load. */
+  /** Collect passthrough types; flushed once per schema load. */
   warnedPassthrough?: Set<string>;
+  /**
+   * Mutable visit counter for one root `buildSelectionForType` call.
+   * Reset by the caller before each root build. Caps Stripe-scale blowups.
+   */
+  passthroughVisits?: number;
+  /** Max type visits per root build before forcing `$` passthrough. */
+  passthroughVisitBudget: number;
 }
 
 const DEFAULT_CONNECT_SELECTION_MAX_LENGTH = 12_000;
 const DEFAULT_CONNECT_SELECTION_SOFT_DEPTH = 2;
+/** Stop expanding after this many type visits (Hive `$` is fine; Router needs leavesOnly). */
+const DEFAULT_PASSTHROUGH_VISIT_BUDGET = 250;
 
 export const CONNECT_SELECTION_PASSTHROUGH_ROUTER_WARNING = `connect(selection: "$") was used because the response mapping could not be fully expanded under connectSelection limits. Hive Gateway will pass through the raw JSON. Apollo Router requires explicit scalar leaf mappings for object types — set connectSelection: { overLimit: "leavesOnly" } (and/or raise maxLength) or model foreign keys as entity stubs to run this subgraph on Router.`;
 
@@ -77,22 +86,51 @@ export function resolveConnectSelectionLimit(
     softDepth,
     overLimit: input?.overLimit ?? 'passthrough',
     log,
+    passthroughVisitBudget: DEFAULT_PASSTHROUGH_VISIT_BUDGET,
   };
 }
 
+/**
+ * Record a type that fell back to `$` passthrough. Call
+ * {@link flushConnectSelectionPassthroughWarnings} once per schema load.
+ */
 export function warnConnectSelectionPassthrough(
   limit: ResolvedConnectSelectionLimit,
   typeName: string,
 ): void {
-  if (!limit.log) {
-    return;
-  }
   limit.warnedPassthrough ??= new Set();
-  if (limit.warnedPassthrough.has(typeName)) {
+  limit.warnedPassthrough.add(typeName);
+}
+
+const PASSTHROUGH_WARN_PREVIEW = 3;
+const PASSTHROUGH_WARN_NAME_MAX = 80;
+
+function formatPassthroughTypeName(typeName: string): string {
+  if (typeName.length <= PASSTHROUGH_WARN_NAME_MAX) {
+    return typeName;
+  }
+  return `${typeName.slice(0, PASSTHROUGH_WARN_NAME_MAX - 1)}…`;
+}
+
+/** Emit one aggregated passthrough warning for the schema (avoids Stripe-scale spam). */
+export function flushConnectSelectionPassthroughWarnings(
+  limit: ResolvedConnectSelectionLimit,
+): void {
+  const types = limit.warnedPassthrough;
+  if (!limit.log || !types?.size) {
     return;
   }
-  limit.warnedPassthrough.add(typeName);
-  limit.log.warn(`${CONNECT_SELECTION_PASSTHROUGH_ROUTER_WARNING} (type: ${typeName})`);
+  const names = [...types];
+  const preview = names
+    .slice(0, PASSTHROUGH_WARN_PREVIEW)
+    .map(formatPassthroughTypeName)
+    .join(', ');
+  const overflow = names.length - PASSTHROUGH_WARN_PREVIEW;
+  const more = overflow > 0 ? ` --- more --- (+${overflow})` : '';
+  limit.log.warn(
+    `${CONNECT_SELECTION_PASSTHROUGH_ROUTER_WARNING} (${names.length} type(s): ${preview}${more})`,
+  );
+  types.clear();
 }
 
 const JSONSelectionScalar = GraphQLString;
@@ -740,8 +778,19 @@ export function buildSelectionForType(
     visited,
   };
   // Soft depth only applies for `leavesOnly` overLimit (Router-oriented). With
-  // default `passthrough`, expand until maxLength then fall back to `$`.
+  // default `passthrough`, expand until maxLength / visit budget then `$`.
   const named = unwrapType(type);
+  if (
+    !leavesOnly &&
+    limit.overLimit === 'passthrough' &&
+    (isObjectType(named) || isInterfaceType(named) || isUnionType(named))
+  ) {
+    limit.passthroughVisits = (limit.passthroughVisits ?? 0) + 1;
+    if (limit.passthroughVisits > limit.passthroughVisitBudget) {
+      warnConnectSelectionPassthrough(limit, named.name);
+      return '';
+    }
+  }
   if (!leavesOnly && limit.overLimit === 'leavesOnly' && depth > limit.softDepth) {
     return buildSelectionForType(type, { ...childOpts, depth, leavesOnly: true });
   }

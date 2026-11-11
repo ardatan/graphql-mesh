@@ -150,7 +150,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     operationHeaders,
     queryParams = {},
     selectQueryOrMutationField = [],
-    log = new Logger({ prefix: 'getJSONSchemaOptionsFromOpenAPIOptions' }),
+    log = new Logger({
+      prefix: 'getJSONSchemaOptionsFromOpenAPIOptions',
+      ...(process.env.JEST ? { level: false as const } : {}),
+    }),
     jsonApi,
     HATEOAS,
   }: GetJSONSchemaOptionsFromOpenAPIOptionsParams,
@@ -1416,10 +1419,12 @@ export async function getJSONSchemaOptionsFromMultipleOpenAPIOptions(
 
   // Log remaining unresolved links
   if (hateoasContext.futureLinks.size > 0) {
-    const log = new Logger({ prefix: 'getJSONSchemaOptionsFromMultipleOpenAPIOptions' });
-    log.warn(
-      `${hateoasContext.futureLinks.size} HATEOAS links could not be resolved after loading all schemas. This may indicate missing operations or circular dependencies.`,
-    );
+    if (!process.env.JEST) {
+      const log = new Logger({ prefix: 'getJSONSchemaOptionsFromMultipleOpenAPIOptions' });
+      log.warn(
+        `${hateoasContext.futureLinks.size} HATEOAS links could not be resolved after loading all schemas. This may indicate missing operations or circular dependencies.`,
+      );
+    }
   }
 
   return results;
