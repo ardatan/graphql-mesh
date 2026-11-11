@@ -1496,9 +1496,9 @@ export function addConnectFieldResolver(
           : {}),
       };
       delete customExtensions.connector;
-      // Prefer Apollo `errors.extensions.code` when set; otherwise Mesh
-      // `DOWNSTREAM_SERVICE_ERROR` so Hive/Yoga don't mask the message.
-      const code = customExtensions.code ?? 'DOWNSTREAM_SERVICE_ERROR';
+      // Prefer `@connect(errors.extensions:)` / `@source` `code` when set; otherwise
+      // Apollo Connectors default `CONNECTOR_FETCH` (Router uses the same for HTTP failures).
+      const code = customExtensions.code ?? 'CONNECTOR_FETCH';
       delete customExtensions.code;
       const service = customExtensions.service ?? serviceName;
       delete customExtensions.service;

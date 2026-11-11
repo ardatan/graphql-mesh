@@ -68,7 +68,7 @@ describe('OpenAPI rest transport Union Error Handling', () => {
     const secondError = noErrorHandlingResult.errors?.[1];
 
     expect(firstError?.extensions).toMatchObject({
-      code: 'DOWNSTREAM_SERVICE_ERROR',
+      code: 'CONNECTOR_FETCH',
       service: 'ErrorAPI',
       serviceName: 'ErrorAPI',
       request: {
@@ -83,7 +83,7 @@ describe('OpenAPI rest transport Union Error Handling', () => {
     expect(firstError?.extensions?.http?.status).toBeUndefined();
 
     expect(secondError?.extensions).toMatchObject({
-      code: 'DOWNSTREAM_SERVICE_ERROR',
+      code: 'CONNECTOR_FETCH',
       service: 'ErrorAPI',
       serviceName: 'ErrorAPI',
       request: {

@@ -121,7 +121,7 @@ export function getTypeResolverForAbstractType({
     if (data.$response) {
       const error = new GraphQLError(`Upstream HTTP Error: ${data.$statusCode}`, {
         extensions: {
-          code: 'DOWNSTREAM_SERVICE_ERROR',
+          code: 'CONNECTOR_FETCH',
           serviceName,
           request: {
             url: data.$url,

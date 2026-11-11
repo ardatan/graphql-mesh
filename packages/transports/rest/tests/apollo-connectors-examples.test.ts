@@ -319,7 +319,7 @@ describe('Federation Connectors error shape', () => {
     const err = result.errors![0];
     expect(err.message).toBe('Upstream HTTP Error: 500, Could not invoke operation GET /products');
     expect(err.extensions).toMatchObject({
-      code: 'DOWNSTREAM_SERVICE_ERROR',
+      code: 'CONNECTOR_FETCH',
       service: 'ecomm',
       serviceName: 'ecomm',
       connector: { coordinate: 'ecomm:Query.products@connect[0]' },
