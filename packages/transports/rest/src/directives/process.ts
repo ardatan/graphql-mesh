@@ -17,7 +17,6 @@ import type { MeshFetch } from '@graphql-mesh/types';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
-import { processDictionaryDirective } from './dictionary.js';
 import { processDiscriminatorAnnotations } from './discriminator.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
@@ -184,11 +183,7 @@ export function processDirectives(
             case 'responseMetadata':
               processResponseMetadataAnnotations(field as GraphQLField<any, any>);
               break;
-            case 'dictionary':
-              processDictionaryDirective(
-                fields as Record<string, GraphQLField<any, any>>,
-                field as GraphQLField<any, any>,
-              );
+            // `@dictionary` is baked into `@connect(selection:)` as `$->entries->filter(...)`.
           }
         }
         // Former `@flatten`: OpenAPI oneOf(string|array) → `[Scalar]` needs deep-flatten.

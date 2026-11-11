@@ -704,17 +704,6 @@ export function buildStatusUnionConnectExtras(
  * Build a Connectors selection that maps JSON fields with matching GraphQL names.
  * Skips fields that already have their own `@connect` (e.g. links).
  */
-function objectTypeHasDictionaryField(named: GraphQLNamedOutputType): boolean {
-  if (!isObjectType(named) && !isInterfaceType(named)) {
-    return false;
-  }
-  return Object.values(named.getFields()).some(field => {
-    const ext = (field.extensions as any)?.directives || {};
-    if (ext.dictionary) return true;
-    return Boolean(field.astNode?.directives?.some(d => d.name.value === 'dictionary'));
-  });
-}
-
 export function buildSelectionForType(
   type: GraphQLOutputType,
   options: {
@@ -889,12 +878,6 @@ export function buildSelectionForType(
       Object.assign(fields, implNamed.getFields());
     }
   }
-  // Types with `@dictionary` (additionalProperties) must pass through the raw JSON object
-  // so dictionary resolvers can see unknown keys. Nested field picking would drop them.
-  // Parent emits a bare field name for these (Hive passthrough); see object-like branch below.
-  if (objectTypeHasDictionaryField(named)) {
-    return '';
-  }
   const lines: string[] = [];
   // Non-interface (or no disc) object types may still carry @discriminator — emit spread first.
   if (!discInfo) {
@@ -903,6 +886,10 @@ export function buildSelectionForType(
       lines.push(discTypename);
     }
   }
+  // Sibling GraphQL field names to exclude from `$->entries` (Mesh `@dictionary` semantics).
+  const dictionaryExcludeKeys = Object.keys(fields)
+    .map(String)
+    .filter(n => !n.startsWith('__'));
   for (const rawFieldName of Object.keys(fields)) {
     const fieldName = String(rawFieldName);
     if (skipFields.has(fieldName) || fieldName.startsWith('__')) {
@@ -917,6 +904,29 @@ export function buildSelectionForType(
       Array<{ field?: string }> | undefined
     >;
     const fieldDirectives = (field.astNode?.directives || []).map(d => d.name.value);
+    // Mesh `@dictionary` (additionalProperties) → Connectors `$->entries->filter(...)`.
+    if (Boolean(directiveExt.dictionary?.length) || fieldDirectives.includes('dictionary')) {
+      if (leavesOnly) {
+        continue;
+      }
+      const filters = dictionaryExcludeKeys
+        .map(k => `->filter(@.key->ne(${JSON.stringify(k)}))`)
+        .join('');
+      let valueSel = '';
+      const entryType = unwrapType(field.type);
+      if (isObjectType(entryType)) {
+        const valueField = entryType.getFields().value;
+        if (valueField) {
+          valueSel = buildSelectionForType(valueField.type, {
+            ...nestedOpts,
+            depth: depth + 1,
+          });
+        }
+      }
+      const valuePart = valueSel ? ` value { ${valueSel} }` : ' value';
+      lines.push(`${fieldName}: $->entries${filters} { key${valuePart} }`);
+      continue;
+    }
     const extDirectiveNames = Object.keys(directiveExt);
     if (fieldDirectives.includes('connect') || extDirectiveNames.includes('connect')) {
       continue;
@@ -996,13 +1006,6 @@ export function buildSelectionForType(
     const isListLike =
       isListType(field.type) || (isNonNullType(field.type) && isListType(field.type.ofType));
     if (isObjectLike || isListLike) {
-      // `@dictionary` types: bare field name so Hive keeps unknown JSON keys for the
-      // dictionary resolver. Nested `{ … }` picking would drop them. (Router has no
-      // `@dictionary`; bare names are Hive-only for this Mesh directive.)
-      if (isObjectLike && objectTypeHasDictionaryField(fieldNamed)) {
-        lines.push(aliasPrefix);
-        continue;
-      }
       // Past soft depth: still emit scalar/enum lists; omit object-like nests (Router rejects
       // bare object names without `{ … }` subselection).
       if (leavesOnly && isObjectLike) {

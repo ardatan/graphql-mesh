@@ -5,8 +5,6 @@ exports[`additionalProperties should generate the schema correctly: schema 1`] =
   query: Query
 }
 
-directive @dictionary(subgraph: String) on FIELD_DEFINITION
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
@@ -14,7 +12,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  test: test_200_response @connect(source: "additionalPropertiesTest", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "id foo { bar } qux")
+  test: test_200_response @connect(source: "additionalPropertiesTest", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "id foo { bar } qux { quux additionalProperties: $->entries->filter(@.key->ne(\\"quux\\"))->filter(@.key->ne(\\"additionalProperties\\")) { key value { corge } } }")
 }
 
 type test_200_response {
@@ -29,7 +27,7 @@ type query_test_foo {
 
 type query_test_qux {
   quux: String
-  additionalProperties: [query_test_qux_additionalProperties_entry] @dictionary(subgraph: "additionalPropertiesTest")
+  additionalProperties: [query_test_qux_additionalProperties_entry]
 }
 
 type query_test_qux_additionalProperties_entry {

@@ -765,12 +765,14 @@ ${operationConfig.description || ''}
       let next = stripDirectiveFromConfig(fieldConfig, 'resolveRoot');
       next = stripDirectiveFromConfig(next, 'flatten');
       next = stripDirectiveFromConfig(next, 'resolveRootField');
+      next = stripDirectiveFromConfig(next, 'dictionary');
       return next;
     },
     [MapperKind.INTERFACE_FIELD]: fieldConfig => {
       let next = stripDirectiveFromConfig(fieldConfig, 'resolveRoot');
       next = stripDirectiveFromConfig(next, 'flatten');
       next = stripDirectiveFromConfig(next, 'resolveRootField');
+      next = stripDirectiveFromConfig(next, 'dictionary');
       return next;
     },
     [MapperKind.INPUT_OBJECT_FIELD]: fieldConfig =>
@@ -786,7 +788,8 @@ ${operationConfig.description || ''}
           directive.name === 'resolveRootField' ||
           directive.name === 'resolveRoot' ||
           directive.name === 'flatten' ||
-          directive.name === 'statusCodeTypeName') &&
+          directive.name === 'statusCodeTypeName' ||
+          directive.name === 'dictionary') &&
         !schemaHasDirectiveUsage(schema, directive.name)
       ) {
         return null;
@@ -870,6 +873,11 @@ function finalizeConnectorsField(
   }
   if (directives.flatten) {
     delete directives.flatten;
+    fieldDirsChanged = true;
+  }
+  // `@dictionary` baked into parent `@connect(selection:)` as `$->entries->filter(...)`.
+  if (directives.dictionary) {
+    delete directives.dictionary;
     fieldDirsChanged = true;
   }
   if (fieldDirsChanged) {

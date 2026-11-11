@@ -656,12 +656,14 @@ function evalPath(
       return path.slice(2, -1);
     }
   }
-  // Method calls: `$status->match(...)`, `$->map(@->match(...))`, `$["a"]->first`
-  const methodMatch = path.match(/^(.*?)->([A-Za-z_][\w]*)\((.*)\)$/);
-  if (methodMatch) {
-    const left = evalPath(methodMatch[1].trim(), root, extras);
-    const method = methodMatch[2];
-    const rawArgs = methodMatch[3].trim();
+  // Method calls: `$status->match(...)`, `$->map(@->match(...))`, `$->entries`,
+  // `$->entries->filter(@.key->ne("x"))`. Split on the last `->` at paren-depth 0 so
+  // nested `->` inside args (and chained filters) stay intact.
+  const methodCall = splitConnectorsMethodCall(path);
+  if (methodCall) {
+    const left = evalPath(methodCall.left.trim(), root, extras);
+    const method = methodCall.method;
+    const rawArgs = methodCall.args.trim();
     if (method === 'first') {
       return Array.isArray(left) ? left[0] : left;
     }
@@ -670,6 +672,29 @@ function evalPath(
     }
     if (method === 'get') {
       return evalGetMethod(left, rawArgs);
+    }
+    // Object → `[{ key, value }, …]` (Apollo Connectors; replaces Mesh `@dictionary`).
+    if (method === 'entries') {
+      if (left == null || typeof left !== 'object' || Array.isArray(left)) return [];
+      return Object.keys(left).map(key => ({ key, value: left[key] }));
+    }
+    // Keep list elements for which `expr` is truthy (`@.key->ne("fixed")`).
+    if (method === 'filter') {
+      if (!Array.isArray(left)) return left;
+      const elementExpr = rawArgs.trim();
+      return left.filter(item => {
+        if (elementExpr === '@') return Boolean(item);
+        if (elementExpr.startsWith('@')) {
+          return Boolean(evalPath(elementExpr.replace(/^@/, '$'), item, extras));
+        }
+        return Boolean(evalPath(elementExpr, item, extras));
+      });
+    }
+    if (method === 'ne') {
+      return left !== parseConnectorsLiteralArg(rawArgs);
+    }
+    if (method === 'eq') {
+      return left === parseConnectorsLiteralArg(rawArgs);
     }
     // `$->map(@->match(...))` / `$->map(@.id)` — Apollo list element transform.
     if (method === 'map') {
@@ -724,19 +749,58 @@ function evalPath(
 }
 
 /**
+ * Split `left->method` / `left->method(args)` on the last `->` outside parentheses.
+ */
+function splitConnectorsMethodCall(
+  path: string,
+): { left: string; method: string; args: string } | null {
+  let depth = 0;
+  let lastArrow = -1;
+  for (let i = 0; i < path.length; i++) {
+    const c = path[i];
+    if (c === '(') depth++;
+    else if (c === ')') depth--;
+    else if (depth === 0 && c === '-' && path[i + 1] === '>') {
+      lastArrow = i;
+    }
+  }
+  if (lastArrow < 0) return null;
+  const after = path.slice(lastArrow + 2);
+  const nameMatch = after.match(/^([A-Za-z_][\w]*)/);
+  if (!nameMatch) return null;
+  const method = nameMatch[1];
+  const rest = after.slice(method.length);
+  if (rest === '') {
+    return { left: path.slice(0, lastArrow), method, args: '' };
+  }
+  if (rest.startsWith('(') && rest.endsWith(')')) {
+    return { left: path.slice(0, lastArrow), method, args: rest.slice(1, -1) };
+  }
+  return null;
+}
+
+/**
  * Federation Connectors `$->get("key")` / `$args->get("special-key")` / `arr->get(0)`.
  * Preferred over `$["key"]` which Apollo Router's selection parser rejects with Eof.
  */
 function evalGetMethod(left: any, rawArgs: string): any {
   if (left == null) return undefined;
+  return left[parseConnectorsLiteralArg(rawArgs) as any];
+}
+
+/** Parse a Connectors method arg literal (`"x"`, `'x'`, `0`, `true`) or raw string. */
+function parseConnectorsLiteralArg(rawArgs: string): any {
   const trimmed = rawArgs.trim();
   try {
-    return left[JSON.parse(trimmed)];
+    return JSON.parse(trimmed);
   } catch {
     const quoted = trimmed.match(/^["'](.*)["']$/);
-    if (quoted) return left[quoted[1]];
-    if (/^-?\d+$/.test(trimmed)) return left[Number(trimmed)];
-    return left[trimmed];
+    if (quoted) return quoted[1];
+    if (/^-?\d+$/.test(trimmed)) return Number(trimmed);
+    if (trimmed === 'true') return true;
+    if (trimmed === 'false') return false;
+    if (trimmed === 'null') return null;
+    return trimmed;
   }
 }
 
