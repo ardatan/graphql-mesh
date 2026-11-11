@@ -320,7 +320,6 @@ describe('Federation Connectors error shape', () => {
     expect(err.message).toBe('Upstream HTTP Error: 500, Could not invoke operation GET /products');
     expect(err.extensions).toMatchObject({
       code: 'CONNECTOR_FETCH',
-      service: 'ecomm',
       serviceName: 'ecomm',
       connector: { coordinate: 'ecomm:Query.products@connect[0]' },
       request: { method: 'GET' },
@@ -329,6 +328,7 @@ describe('Federation Connectors error shape', () => {
     });
     // Yoga promotes `extensions.http.status` to the gateway HTTP status — omit it.
     expect((err.extensions as any).http?.status).toBeUndefined();
+    expect((err.extensions as any).service).toBeUndefined();
     expect((err.extensions as any).request.url).toContain('/products');
   });
 
@@ -350,12 +350,13 @@ describe('Federation Connectors error shape', () => {
     expect(result.errors![0].message).toBe('Nope!');
     expect(result.errors![0].extensions).toMatchObject({
       code: 'USER_GONE',
-      service: 'ecomm',
+      serviceName: 'ecomm',
       connector: { coordinate: 'ecomm:Query.users@connect[0]' },
       response: { status: 404 },
       status: 404,
     });
     expect((result.errors![0].extensions as any).http?.status).toBeUndefined();
+    expect((result.errors![0].extensions as any).service).toBeUndefined();
   });
 
   it('honors isSuccess for selected status codes', async () => {

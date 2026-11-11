@@ -1500,7 +1500,13 @@ export function addConnectFieldResolver(
       // Apollo Connectors default `CONNECTOR_FETCH` (Router uses the same for HTTP failures).
       const code = customExtensions.code ?? 'CONNECTOR_FETCH';
       delete customExtensions.code;
-      const service = customExtensions.service ?? serviceName;
+      // Mesh transports use `serviceName` (grpc/soap/httpOperation). Accept Apollo-style
+      // `service` from `errors.extensions` mapping but only emit `serviceName`.
+      const resolvedServiceName =
+        (typeof customExtensions.serviceName === 'string' && customExtensions.serviceName) ||
+        (typeof customExtensions.service === 'string' && customExtensions.service) ||
+        serviceName;
+      delete customExtensions.serviceName;
       delete customExtensions.service;
       // Match httpOperation: expose the unresolved path template (Mesh `{args.x}` form).
       const pathForMessage = picked.path.replace(/\{\$/g, '{');
@@ -1513,9 +1519,7 @@ export function addConnectFieldResolver(
             ...(customHttp && Object.keys(customHttp).length ? { http: customHttp } : {}),
             connector: connectorExt,
             code,
-            service,
-            // Mesh Hive e2e historically asserted `serviceName`
-            serviceName: service,
+            serviceName: resolvedServiceName,
             // Mesh OpenAPI tests still assert extensions.request.url
             request: {
               url: requestUrlForMeta.href,

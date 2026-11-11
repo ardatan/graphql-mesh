@@ -69,7 +69,6 @@ describe('OpenAPI rest transport Union Error Handling', () => {
 
     expect(firstError?.extensions).toMatchObject({
       code: 'CONNECTOR_FETCH',
-      service: 'ErrorAPI',
       serviceName: 'ErrorAPI',
       request: {
         method: 'GET',
@@ -81,10 +80,10 @@ describe('OpenAPI rest transport Union Error Handling', () => {
     });
     // Must not set `extensions.http.status` — Yoga would promote it to gateway HTTP 400.
     expect(firstError?.extensions?.http?.status).toBeUndefined();
+    expect(firstError?.extensions?.service).toBeUndefined();
 
     expect(secondError?.extensions).toMatchObject({
       code: 'CONNECTOR_FETCH',
-      service: 'ErrorAPI',
       serviceName: 'ErrorAPI',
       request: {
         method: 'GET',
@@ -95,6 +94,7 @@ describe('OpenAPI rest transport Union Error Handling', () => {
       status: 400,
     });
     expect(secondError?.extensions?.http?.status).toBeUndefined();
+    expect(secondError?.extensions?.service).toBeUndefined();
   });
 
   it('should be able to cast error responses to Error type when error handling is in OpenAPI schema', async () => {
