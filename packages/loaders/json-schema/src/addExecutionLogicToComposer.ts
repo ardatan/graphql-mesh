@@ -36,6 +36,7 @@ import {
   ResponseMetadataDirective,
 } from './directives.js';
 import type {
+  JSONSchemaHTTPJSONOperationConfig,
   JSONSchemaLinkConfig,
   JSONSchemaOperationConfig,
   OperationHeadersConfiguration,
@@ -421,7 +422,7 @@ ${operationConfig.description || ''}
       const operationQueryStringOptions = operationConfig.queryStringOptions;
       const httpOpForRest =
         'path' in operationConfig
-          ? (operationConfig as import('./types.js').JSONSchemaHTTPJSONOperationConfig)
+          ? (operationConfig as JSONSchemaHTTPJSONOperationConfig)
           : undefined;
       const requestBaseBody =
         httpOpForRest &&
