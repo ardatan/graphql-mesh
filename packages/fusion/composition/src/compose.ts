@@ -88,7 +88,8 @@ export function isApolloConnectorsSubgraph(schema: GraphQLSchema): boolean {
   if (
     links.some(
       (link: { url?: string }) =>
-        typeof link?.url === 'string' && link.url.includes('specs.apollo.dev/connect'),
+        typeof link?.url === 'string' &&
+        link.url.startsWith('https://specs.apollo.dev/connect'),
     )
   ) {
     return true;

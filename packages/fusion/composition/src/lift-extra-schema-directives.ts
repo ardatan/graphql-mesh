@@ -285,7 +285,7 @@ function rewriteSchemaLinks<T extends { directives?: readonly ConstDirectiveNode
       if (url.startsWith(MESH_SPEC_PREFIX)) {
         return rewriteMeshLink(directive, opts);
       }
-      if (url.includes(CONNECT_SPEC_PREFIX) && opts.liftedSource) {
+      if (url.startsWith(CONNECT_SPEC_PREFIX) && opts.liftedSource) {
         return ensureImport(directive, '@source');
       }
       return directive;
