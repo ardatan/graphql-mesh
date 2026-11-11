@@ -235,6 +235,9 @@ function evalConnectorsVarExpr(
       // Do not use `thisValue || args` — an empty `{}` thisValue is truthy and hides args.
       return evalMatchMethod(left, rawArgs, vars.thisValue ?? {}, {}, vars);
     }
+    if (method === 'get') {
+      return evalGetMethod(left, rawArgs);
+    }
     if (method === 'joinNotNull') {
       if (!Array.isArray(left)) return left;
       const sepMatch = rawArgs.match(/^["'](.*)["']$/);
@@ -664,6 +667,9 @@ function evalPath(
     if (method === 'match') {
       return evalMatchMethod(left, rawArgs, root, extras);
     }
+    if (method === 'get') {
+      return evalGetMethod(left, rawArgs);
+    }
     // `$->map(@->match(...))` / `$->map(@.id)` — Apollo list element transform.
     if (method === 'map') {
       if (!Array.isArray(left)) return left;
@@ -714,6 +720,23 @@ function evalPath(
     cur = cur[part];
   }
   return cur;
+}
+
+/**
+ * Federation Connectors `$->get("key")` / `$args->get("special-key")` / `arr->get(0)`.
+ * Preferred over `$["key"]` which Apollo Router's selection parser rejects with Eof.
+ */
+function evalGetMethod(left: any, rawArgs: string): any {
+  if (left == null) return undefined;
+  const trimmed = rawArgs.trim();
+  try {
+    return left[JSON.parse(trimmed)];
+  } catch {
+    const quoted = trimmed.match(/^["'](.*)["']$/);
+    if (quoted) return left[quoted[1]];
+    if (/^-?\d+$/.test(trimmed)) return left[Number(trimmed)];
+    return left[trimmed];
+  }
 }
 
 /**

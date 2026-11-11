@@ -230,7 +230,19 @@ export function rewriteConnectPathEnumArgs(
 }
 
 /**
- * `@discriminator(field, mapping)` → `__typename: $[field]->match([json, Type], …)`.
+ * Path to a JSON property in Connectors selection/mapping language.
+ * Safe idents stay bare (`foo` / `$.foo`); reserved/hyphenated keys use
+ * `$->get("…")` — Apollo Router's selection parser hits `Eof` on `$["…"]`.
+ */
+export function connectorsJsonKeyPath(jsonName: string, opts?: { rootDollar?: boolean }): string {
+  if (/^[A-Za-z_][\w]*$/.test(jsonName)) {
+    return opts?.rootDollar ? `$.${jsonName}` : jsonName;
+  }
+  return `$->get(${JSON.stringify(jsonName)})`;
+}
+
+/**
+ * `@discriminator(field, mapping)` → `__typename: $.field->match([json, Type], …)`.
  */
 export function buildDiscriminatorTypenameSelection(type: {
   getFields?: () => Record<string, unknown>;
@@ -263,7 +275,7 @@ export function buildDiscriminatorTypenameSelection(type: {
   if (!field || !mapping?.length) {
     return '';
   }
-  const fieldPath = /^[A-Za-z_][\w]*$/.test(field) ? `$.${field}` : `$[${JSON.stringify(field)}]`;
+  const fieldPath = connectorsJsonKeyPath(field, { rootDollar: true });
   const arms = mapping
     .map(([json, typeName]) => `[${JSON.stringify(json)}, ${JSON.stringify(typeName)}]`)
     .join(', ');
@@ -578,14 +590,20 @@ export function buildSelectionForType(
     depth?: number;
     /** Implementing object types when `type` is an interface (exclusive fields). */
     implementations?: ReadonlyArray<GraphQLOutputType>;
+    /**
+     * When true, only emit scalar/enum leaves (no nested object braces).
+     * Used past the soft depth cap so Router never sees bare object field names.
+     */
+    leavesOnly?: boolean;
   } = {},
 ): string {
-  const { skipFields = new Set(), depth = 0, implementations = [] } = options;
-  // Depth 2: root fields + one nested object level. Deeper nests pass through as bare names.
-  if (depth > 2) {
-    return '';
-  }
+  const { skipFields = new Set(), depth = 0, implementations = [], leavesOnly = false } = options;
+  // Soft depth: deeper levels still emit scalar/enum leaves (Router rejects bare
+  // object names like `top` without `{ … }` subselection — wiki metrics Eof follow-on).
   const named = unwrapType(type);
+  if (!leavesOnly && depth > 2) {
+    return buildSelectionForType(type, { skipFields, depth, implementations, leavesOnly: true });
+  }
   if (isScalarType(named) || named.name === 'Void') {
     return '';
   }
@@ -708,14 +726,10 @@ export function buildSelectionForType(
       const v = (resolveRootField as any).value;
       jsonName = v?.value ?? v;
     }
-    // Federation Connectors: safe idents are bare paths; hyphenated/odd keys need `$["…"]`.
-    // (A bare JSON string like `"patent-id"` is a literal, not a path, on Router.)
+    // Federation Connectors: safe idents are bare paths; hyphenated/odd keys use `$->get("…")`
+    // (Router's selection parser returns `nom::Eof` on `$["…"]`; a bare `"patent-id"` is a literal).
     const jsonPath =
-      jsonName && jsonName !== fieldName
-        ? /^[A-Za-z_][\w]*$/.test(jsonName)
-          ? jsonName
-          : `$[${JSON.stringify(jsonName)}]`
-        : fieldName;
+      jsonName && jsonName !== fieldName ? connectorsJsonKeyPath(jsonName) : fieldName;
     const aliasPrefix =
       jsonName && jsonName !== fieldName ? `${fieldName}: ${jsonPath}` : fieldName;
     const fieldNamed = unwrapType(field.type);
@@ -731,18 +745,24 @@ export function buildSelectionForType(
         continue;
       }
     }
-    if (
-      isObjectType(fieldNamed) ||
-      isInterfaceType(fieldNamed) ||
-      isUnionType(fieldNamed) ||
-      isListType(field.type) ||
-      (isNonNullType(field.type) &&
-        (isListType(field.type.ofType) || isObjectType(unwrapType(field.type))))
-    ) {
+    const isObjectLike =
+      isObjectType(fieldNamed) || isInterfaceType(fieldNamed) || isUnionType(fieldNamed);
+    const isListLike =
+      isListType(field.type) || (isNonNullType(field.type) && isListType(field.type.ofType));
+    if (isObjectLike || isListLike) {
+      // Past soft depth: still emit scalar/enum lists; omit object-like nests (Router rejects
+      // bare object names without `{ … }` subselection).
+      if (leavesOnly && isObjectLike) {
+        continue;
+      }
       const nested = buildSelectionForType(field.type, { skipFields, depth: depth + 1 });
       if (nested) {
         lines.push(`${aliasPrefix} { ${nested} }`);
+      } else if (isObjectLike) {
+        // Empty object/interface/union expansion (dictionary / unresolved union): omit —
+        // a bare object name is invalid Connectors selection on Router.
       } else {
+        // List of scalars/enums — emit the field with no subselection.
         lines.push(aliasPrefix);
       }
     } else {
