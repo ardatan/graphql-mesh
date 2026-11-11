@@ -917,7 +917,7 @@ type Query {
     When set to **true**, the tab information associated with the recipient is included in the response.
     """
     include_tabs: String
-  ): EnvelopeRecipients @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients", queryParams: "{\\n  include_anchor_tab_locations: $args.include_anchor_tab_locations\\n  include_extended: $args.include_extended\\n  include_metadata: $args.include_metadata\\n  include_tabs: $args.include_tabs\\n}"}, selection: "$")
+  ): EnvelopeRecipients @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients", queryParams: "{\\n  include_anchor_tab_locations: $args.include_anchor_tab_locations\\n  include_extended: $args.include_extended\\n  include_metadata: $args.include_metadata\\n  include_tabs: $args.include_tabs\\n}"}, selection: "currentRoutingOrder recipientCount")
   """
   Retrieves the bulk recipient file information from an envelope that has a bulk recipient.
   """
@@ -1612,7 +1612,7 @@ type Query {
     When set to **true**, the tab information associated with the recipient is included in the response.
     """
     include_tabs: String
-  ): TemplateRecipients @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients", queryParams: "{\\n  include_anchor_tab_locations: $args.include_anchor_tab_locations\\n  include_extended: $args.include_extended\\n  include_tabs: $args.include_tabs\\n}"}, selection: "$")
+  ): TemplateRecipients @connect(source: "test", http: {GET: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients", queryParams: "{\\n  include_anchor_tab_locations: $args.include_anchor_tab_locations\\n  include_extended: $args.include_extended\\n  include_tabs: $args.include_tabs\\n}"}, selection: "currentRoutingOrder recipientCount")
   """
   Retrieves the bulk recipient file information from a template that has a bulk recipient.
   """
@@ -14089,7 +14089,7 @@ type Mutation {
     """When set to **true**, sends the specified envelope again."""
     resend_envelope: String
     input: Envelopes_Input
-  ): envelopeUpdateSummary @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}", body: "$args.input", queryParams: "{\\n  advanced_update: $args.advanced_update\\n  resend_envelope: $args.resend_envelope\\n}"}, selection: "$")
+  ): envelopeUpdateSummary @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}", body: "$args.input", queryParams: "{\\n  advanced_update: $args.advanced_update\\n  resend_envelope: $args.resend_envelope\\n}"}, selection: "envelopeId")
   """Delete one or more attachments from a DRAFT envelope."""
   Attachments_DeleteAttachments(
     """The external account number (int) or account ID Guid."""
@@ -14348,7 +14348,7 @@ type Mutation {
     """The envelope's GUID. Eg 93be49ab-afa0-4adf-933c-f752070d71ec"""
     envelopeId: String!
     input: EnvelopeRecipients_Input
-  ): EnvelopeRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients", body: "$args.input"}, selection: "$")
+  ): EnvelopeRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients", body: "$args.input"}, selection: "currentRoutingOrder recipientCount")
   """
   Adds one or more recipients to an envelope.
   
@@ -14364,7 +14364,7 @@ type Mutation {
     """
     resend_envelope: String
     input: EnvelopeRecipients_Input
-  ): EnvelopeRecipients @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients", body: "$args.input", queryParams: "{\\n  resend_envelope: $args.resend_envelope\\n}"}, selection: "$")
+  ): EnvelopeRecipients @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients", body: "$args.input", queryParams: "{\\n  resend_envelope: $args.resend_envelope\\n}"}, selection: "currentRoutingOrder recipientCount")
   """
   Updates recipients in a draft envelope or corrects recipient information for an in process envelope. 
   
@@ -14405,7 +14405,7 @@ type Mutation {
     envelopeId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): EnvelopeRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}"}, selection: "$")
+  ): EnvelopeRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}"}, selection: "currentRoutingOrder recipientCount")
   """
   Deletes the bulk recipient file from an envelope. This cannot be used if the envelope has been sent.
   
@@ -14418,7 +14418,7 @@ type Mutation {
     envelopeId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): bulkRecipientsUpdateResponse @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/bulk_recipients"}, selection: "$")
+  ): bulkRecipientsUpdateResponse @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/envelopes/{$args.envelopeId}/recipients/{$args.recipientId}/bulk_recipients"}, selection: "signer { accessCode addAccessCodeToEmail autoNavigation bulkRecipientsUri canSignOffline clientUserId creationReason customFields declinedDateTime declinedReason defaultRecipient deliveredDateTime deliveryMethod email emailRecipientPostSigningURL embeddedRecipientStartURL excludedDocuments faxNumber idCheckConfigurationName inheritEmailNotificationConfiguration isBulkRecipient name note recipientId recipientIdGuid recipientSuppliesTabs requireIdLookup requireSignOnPaper requireSignerCertificate roleName routingOrder sentDateTime signInEachLocation signedDateTime signingGroupId signingGroupName status templateLocked templateRequired totalTabCount userId }")
   """
   Updates the bulk recipients in a draft envelope using a file upload. The Content-Type supported for uploading a bulk recipient file is CSV (text/csv).
   
@@ -14858,7 +14858,7 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: Templates_Input
-  ): templateUpdateSummary @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}", body: "$args.input"}, selection: "$")
+  ): templateUpdateSummary @connect(source: "test", http: {PUT: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}", body: "$args.input"}, selection: "envelopeId")
   """Deletes envelope custom fields in a template."""
   CustomFields_DeleteTemplateCustomFields(
     """The external account number (int) or account ID Guid."""
@@ -15033,7 +15033,7 @@ type Mutation {
     """The ID of the template being accessed."""
     templateId: String!
     input: templateRecipients_Input
-  ): TemplateRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients", body: "$args.input"}, selection: "$")
+  ): TemplateRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients", body: "$args.input"}, selection: "currentRoutingOrder recipientCount")
   """Adds one or more recipients to a template."""
   Recipients_PostTemplateRecipients(
     """The external account number (int) or account ID Guid."""
@@ -15045,7 +15045,7 @@ type Mutation {
     """
     resend_envelope: String
     input: templateRecipients_Input
-  ): TemplateRecipients @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients", body: "$args.input", queryParams: "{\\n  resend_envelope: $args.resend_envelope\\n}"}, selection: "$")
+  ): TemplateRecipients @connect(source: "test", http: {POST: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients", body: "$args.input", queryParams: "{\\n  resend_envelope: $args.resend_envelope\\n}"}, selection: "currentRoutingOrder recipientCount")
   """
   Updates recipients in a template. 
   
@@ -15079,7 +15079,7 @@ type Mutation {
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
     input: templateRecipients_Input
-  ): TemplateRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}", body: "$args.input"}, selection: "$")
+  ): TemplateRecipients @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}", body: "$args.input"}, selection: "currentRoutingOrder recipientCount")
   """Deletes the bulk recipient list on a template."""
   Recipients_DeleteTemplateBulkRecipientsFile(
     """The external account number (int) or account ID Guid."""
@@ -15088,7 +15088,7 @@ type Mutation {
     templateId: String!
     """The \`recipientId\` used when the envelope or template was created."""
     recipientId: String!
-  ): bulkRecipientsUpdateResponse @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/bulk_recipients"}, selection: "$")
+  ): bulkRecipientsUpdateResponse @connect(source: "test", http: {DELETE: "/v2/accounts/{$args.accountId}/templates/{$args.templateId}/recipients/{$args.recipientId}/bulk_recipients"}, selection: "signer { accessCode addAccessCodeToEmail autoNavigation bulkRecipientsUri canSignOffline clientUserId creationReason customFields declinedDateTime declinedReason defaultRecipient deliveredDateTime deliveryMethod email emailRecipientPostSigningURL embeddedRecipientStartURL excludedDocuments faxNumber idCheckConfigurationName inheritEmailNotificationConfiguration isBulkRecipient name note recipientId recipientIdGuid recipientSuppliesTabs requireIdLookup requireSignOnPaper requireSignerCertificate roleName routingOrder sentDateTime signInEachLocation signedDateTime signingGroupId signingGroupName status templateLocked templateRequired totalTabCount userId }")
   """
   Updates the bulk recipients in a template using a file upload. The Content-Type supported for uploading a bulk recipient file is CSV (text/csv).
   

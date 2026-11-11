@@ -417,7 +417,6 @@ export interface JsonSchemaHandler {
    * Timeout for the HTTP request in milliseconds
    */
   timeout?: number;
-  connectSelection?: ConnectSelectionOptions;
 }
 export interface JsonSchemaHTTPOperation {
   /**
@@ -588,28 +587,6 @@ export interface QueryStringOptions {
    * (default: false)
    */
   jsonStringify?: boolean;
-}
-/**
- * Policy for Federation Connectors `@connect(selection:)` size and depth.
- */
-export interface ConnectSelectionOptions {
-  /**
-   * Max characters for one `@connect(selection:)` string.
-   * Default: 12000. Use `0` for no limit (emit the full selection).
-   */
-  maxLength?: number;
-  /**
-   * Nesting depth after which object fields emit scalar/enum leaves only
-   * (Router rejects bare object names without `{ … }` subselection).
-   * Default: 2. Use `-1` to disable the soft depth switch.
-   */
-  softDepth?: number;
-  /**
-   * When a selection exceeds `maxLength`:
-   * - `leavesOnly` (default): rebuild with scalar/enum leaves (Router-friendlier)
-   * - `passthrough`: emit empty so Mesh attaches `$` (Hive raw JSON passthrough; not Router-safe for object types) (Allowed values: leavesOnly, passthrough)
-   */
-  overLimit?: 'leavesOnly' | 'passthrough';
 }
 export interface MongooseHandler {
   connectionString?: string;
@@ -981,30 +958,6 @@ export interface OpenapiHandler {
    * Timeout for the HTTP request in milliseconds
    */
   timeout?: number;
-  connectSelection?: ConnectSelectionOptions1;
-}
-/**
- * Policy for Federation Connectors `@connect(selection:)` size and depth.
- * See `ConnectSelectionOptions` on the JSON Schema handler.
- */
-export interface ConnectSelectionOptions1 {
-  /**
-   * Max characters for one `@connect(selection:)` string.
-   * Default: 12000. Use `0` for no limit (emit the full selection).
-   */
-  maxLength?: number;
-  /**
-   * Nesting depth after which object fields emit scalar/enum leaves only
-   * (Router rejects bare object names without `{ … }` subselection).
-   * Default: 2. Use `-1` to disable the soft depth switch.
-   */
-  softDepth?: number;
-  /**
-   * When a selection exceeds `maxLength`:
-   * - `leavesOnly` (default): rebuild with scalar/enum leaves (Router-friendlier)
-   * - `passthrough`: emit empty so Mesh attaches `$` (Hive raw JSON passthrough; not Router-safe for object types) (Allowed values: leavesOnly, passthrough)
-   */
-  overLimit?: 'leavesOnly' | 'passthrough';
 }
 /**
  * Handler for Postgres database, based on `postgraphile`
@@ -1067,30 +1020,6 @@ export interface RAMLHandler {
    * Timeout for the HTTP request in milliseconds
    */
   timeout?: number;
-  connectSelection?: ConnectSelectionOptions2;
-}
-/**
- * Policy for Federation Connectors `@connect(selection:)` size and depth.
- * See `ConnectSelectionOptions` on the JSON Schema handler.
- */
-export interface ConnectSelectionOptions2 {
-  /**
-   * Max characters for one `@connect(selection:)` string.
-   * Default: 12000. Use `0` for no limit (emit the full selection).
-   */
-  maxLength?: number;
-  /**
-   * Nesting depth after which object fields emit scalar/enum leaves only
-   * (Router rejects bare object names without `{ … }` subselection).
-   * Default: 2. Use `-1` to disable the soft depth switch.
-   */
-  softDepth?: number;
-  /**
-   * When a selection exceeds `maxLength`:
-   * - `leavesOnly` (default): rebuild with scalar/enum leaves (Router-friendlier)
-   * - `passthrough`: emit empty so Mesh attaches `$` (Hive raw JSON passthrough; not Router-safe for object types) (Allowed values: leavesOnly, passthrough)
-   */
-  overLimit?: 'leavesOnly' | 'passthrough';
 }
 /**
  * Handler for SOAP

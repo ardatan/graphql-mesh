@@ -80,6 +80,8 @@ export default class JsonSchemaHandler implements MeshHandler {
         fetch: this.fetchFn,
         log: this.log,
         pubsub: this.pubsub,
+        // Mesh v0 (.meshrc) is Hive-only: `$` passthrough for oversized selections.
+        connectSelection: { overLimit: 'passthrough' },
       });
     });
   }

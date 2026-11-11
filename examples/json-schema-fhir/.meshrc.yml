@@ -3,9 +3,6 @@ sources:
     handler:
       jsonSchema:
         endpoint: http://hapi.fhir.org/baseR4
-        # Huge FHIR trees: prefer `$` passthrough over truncated leaves (Hive).
-        connectSelection:
-          overLimit: passthrough
         operations:
           - type: Query
             field: resourceById

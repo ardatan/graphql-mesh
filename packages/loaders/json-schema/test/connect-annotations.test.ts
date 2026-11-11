@@ -2,7 +2,7 @@ import { OperationTypeNode, parse } from 'graphql';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
-import { resolveConnectSelectionPolicy } from '../src/connectAnnotations.js';
+import { resolveConnectSelectionLimit } from '../src/connectAnnotations.js';
 import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
 
 describe('Federation Connectors annotations', () => {
@@ -104,14 +104,14 @@ describe('Federation Connectors annotations', () => {
     });
   });
 
-  it('resolveConnectSelectionPolicy: defaults, 0 maxLength, -1 softDepth', () => {
-    expect(resolveConnectSelectionPolicy()).toEqual({
+  it('resolveConnectSelectionLimit: defaults, 0 maxLength, -1 softDepth', () => {
+    expect(resolveConnectSelectionLimit()).toEqual({
       maxLength: 12_000,
       softDepth: 2,
       overLimit: 'leavesOnly',
     });
     expect(
-      resolveConnectSelectionPolicy({ maxLength: 0, softDepth: -1, overLimit: 'passthrough' }),
+      resolveConnectSelectionLimit({ maxLength: 0, softDepth: -1, overLimit: 'passthrough' }),
     ).toMatchObject({
       maxLength: Number.POSITIVE_INFINITY,
       softDepth: Number.POSITIVE_INFINITY,

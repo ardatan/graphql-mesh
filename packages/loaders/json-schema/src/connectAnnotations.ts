@@ -35,7 +35,7 @@ import type {
 
 export type { ConnectSelectionOptions, ConnectSelectionOverLimit };
 
-export interface ResolvedConnectSelectionPolicy {
+export interface ResolvedConnectSelectionLimit {
   maxLength: number;
   softDepth: number;
   overLimit: ConnectSelectionOverLimit;
@@ -45,12 +45,14 @@ const DEFAULT_CONNECT_SELECTION_MAX_LENGTH = 12_000;
 const DEFAULT_CONNECT_SELECTION_SOFT_DEPTH = 2;
 
 /**
- * Resolve user `connectSelection` options with defaults.
+ * Resolve programmatic `connectSelection` limit options with defaults.
  * `maxLength: 0` → no limit; `softDepth: -1` → no soft-depth leaves switch.
+ * Mesh v0 handlers force `overLimit: 'passthrough'`; compose/Router dual-run
+ * keeps the default `leavesOnly`.
  */
-export function resolveConnectSelectionPolicy(
+export function resolveConnectSelectionLimit(
   input?: ConnectSelectionOptions | null,
-): ResolvedConnectSelectionPolicy {
+): ResolvedConnectSelectionLimit {
   const maxLength =
     input?.maxLength === 0
       ? Number.POSITIVE_INFINITY
@@ -698,21 +700,21 @@ export function buildSelectionForType(
      * Used past the soft depth cap so Router never sees bare object field names.
      */
     leavesOnly?: boolean;
-    /** Resolved size/depth/over-limit policy (defaults applied if omitted). */
-    policy?: ResolvedConnectSelectionPolicy;
+    /** Resolved size/depth/over-limit rule (defaults applied if omitted). */
+    limit?: ResolvedConnectSelectionLimit;
   } = {},
 ): string {
-  const policy = options.policy ?? resolveConnectSelectionPolicy();
+  const limit = options.limit ?? resolveConnectSelectionLimit();
   const { skipFields = new Set(), depth = 0, implementations = [], leavesOnly = false } = options;
   const childOpts = {
     skipFields,
     implementations,
-    policy,
+    limit,
   };
   // Soft depth: deeper levels still emit scalar/enum leaves (Router rejects bare
   // object names like `top` without `{ … }` subselection — wiki metrics Eof follow-on).
   const named = unwrapType(type);
-  if (!leavesOnly && depth > policy.softDepth) {
+  if (!leavesOnly && depth > limit.softDepth) {
     return buildSelectionForType(type, { ...childOpts, depth, leavesOnly: true });
   }
   if (isScalarType(named) || named.name === 'Void') {
@@ -747,10 +749,10 @@ export function buildSelectionForType(
     const mergedSelection = [statusExtras?.typenameSelection || discTypename, ...merged.values()]
       .filter(Boolean)
       .join(' ');
-    if (mergedSelection.length > policy.maxLength) {
+    if (mergedSelection.length > limit.maxLength) {
       // Prefer `__typename` bake alone over `$` so status unions stay Connectors-native
       // after `@statusCodeTypeName` is stripped (no Mesh runtime fallback).
-      if (policy.overLimit === 'passthrough') {
+      if (limit.overLimit === 'passthrough') {
         return statusExtras?.typenameSelection || discTypename || '';
       }
       if (!leavesOnly) {
@@ -774,7 +776,7 @@ export function buildSelectionForType(
           .join(' ');
         if (
           leafSelection &&
-          leafSelection.length <= policy.maxLength &&
+          leafSelection.length <= limit.maxLength &&
           leafSelection !== (statusExtras?.typenameSelection || discTypename || '')
         ) {
           return leafSelection;
@@ -969,8 +971,8 @@ export function buildSelectionForType(
   // Spaces are enough for Connectors mapping (newlines are optional sugar).
   // Avoid `\n` escapes in printed SDL (`selection: "id name"` vs `"id\\nname"`).
   const joined = lines.join(' ');
-  if (joined.length > policy.maxLength) {
-    if (policy.overLimit === 'passthrough') {
+  if (joined.length > limit.maxLength) {
+    if (limit.overLimit === 'passthrough') {
       // Caller attaches `$` — Hive raw JSON; not Router-safe for object types.
       return '';
     }

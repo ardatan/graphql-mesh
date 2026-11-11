@@ -9,8 +9,9 @@ import type { MeshFetch } from '@graphql-mesh/types';
 import type { BaseLoaderOptions } from '@graphql-tools/utils';
 
 /**
- * How `@connect(selection:)` is built for REST responses.
- * Large schemas (FHIR / K8s / Stripe) need an explicit size/depth policy.
+ * Programmatic limit/rule for `@connect(selection:)` size and depth.
+ * Mesh v0 YAML handlers always use `overLimit: 'passthrough'` (Hive).
+ * Compose / dual-run loaders keep the default `leavesOnly` (Router-friendlier).
  */
 export type ConnectSelectionOverLimit = 'leavesOnly' | 'passthrough';
 
@@ -49,7 +50,7 @@ export interface JSONSchemaLoaderOptions extends BaseLoaderOptions {
   handlerName?: string;
   bundle?: boolean;
   getScalarForFormat?: (format: string) => GraphQLScalarType | void;
-  /** Policy for Federation Connectors `@connect(selection:)` size and depth. */
+  /** Limit/rule for Federation Connectors `@connect(selection:)` size and depth. */
   connectSelection?: ConnectSelectionOptions;
 }
 

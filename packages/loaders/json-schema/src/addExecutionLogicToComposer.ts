@@ -35,7 +35,7 @@ import {
   LinkDirective,
   MESH_SPEC_LINK_URL,
   MeshRestOptionsDirective,
-  resolveConnectSelectionPolicy,
+  resolveConnectSelectionLimit,
   rewriteConnectPathEnumArgs,
   SourceDirective,
   toConnectLinkExpression,
@@ -175,7 +175,7 @@ export function addExecutionDirectivesToComposer(
     connectSelection,
   }: AddExecutionLogicToComposerOptions,
 ) {
-  const selectionPolicy = resolveConnectSelectionPolicy(connectSelection);
+  const selectionLimit = resolveConnectSelectionLimit(connectSelection);
   log.debug(`Attaching execution directives to the schema`);
   type PendingLinks = {
     linkMap: Record<string, JSONSchemaLinkConfig>;
@@ -310,7 +310,7 @@ export function addExecutionDirectivesToComposer(
               typeof targetField.type === 'function'
                 ? (targetField.type as any)()
                 : (targetField.type as any),
-              { policy: selectionPolicy },
+              { limit: selectionLimit },
             )
           : '$') ||
         '$';
@@ -441,7 +441,7 @@ ${operationConfig.description || ''}
         buildSelectionForType(field.type.getType(), {
           skipFields,
           implementations: interfaceImplementations,
-          policy: selectionPolicy,
+          limit: selectionLimit,
         }) ||
         // Scalar / empty responses still need a non-empty Connectors selection
         `$`;

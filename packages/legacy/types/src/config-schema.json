@@ -1225,26 +1225,6 @@
         }
       }
     },
-    "ConnectSelectionOptions": {
-      "additionalProperties": false,
-      "type": "object",
-      "title": "ConnectSelectionOptions",
-      "properties": {
-        "maxLength": {
-          "type": "integer",
-          "description": "Max characters for one `@connect(selection:)` string.\nDefault: 12000. Use `0` for no limit (emit the full selection)."
-        },
-        "softDepth": {
-          "type": "integer",
-          "description": "Nesting depth after which object fields emit scalar/enum leaves only\n(Router rejects bare object names without `{ … }` subselection).\nDefault: 2. Use `-1` to disable the soft depth switch."
-        },
-        "overLimit": {
-          "type": "string",
-          "enum": ["leavesOnly", "passthrough"],
-          "description": "When a selection exceeds `maxLength`:\n- `leavesOnly` (default): rebuild with scalar/enum leaves (Router-friendlier)\n- `passthrough`: emit empty so Mesh attaches `$` (Hive raw JSON passthrough; not Router-safe for object types) (Allowed values: leavesOnly, passthrough)"
-        }
-      }
-    },
     "JsonSchemaHandler": {
       "additionalProperties": false,
       "type": "object",
@@ -1304,10 +1284,6 @@
         "timeout": {
           "type": "integer",
           "description": "Timeout for the HTTP request in milliseconds"
-        },
-        "connectSelection": {
-          "$ref": "#/definitions/ConnectSelectionOptions",
-          "description": "Policy for Federation Connectors `@connect(selection:)` size and depth."
         }
       }
     },
@@ -2201,10 +2177,6 @@
         "timeout": {
           "type": "integer",
           "description": "Timeout for the HTTP request in milliseconds"
-        },
-        "connectSelection": {
-          "$ref": "#/definitions/ConnectSelectionOptions",
-          "description": "Policy for Federation Connectors `@connect(selection:)` size and depth.\nSee `ConnectSelectionOptions` on the JSON Schema handler."
         }
       },
       "required": ["source"]
@@ -3218,10 +3190,6 @@
         "timeout": {
           "type": "integer",
           "description": "Timeout for the HTTP request in milliseconds"
-        },
-        "connectSelection": {
-          "$ref": "#/definitions/ConnectSelectionOptions",
-          "description": "Policy for Federation Connectors `@connect(selection:)` size and depth.\nSee `ConnectSelectionOptions` on the JSON Schema handler."
         }
       },
       "required": ["source"]
