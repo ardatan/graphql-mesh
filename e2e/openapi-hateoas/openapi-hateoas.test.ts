@@ -30,7 +30,6 @@ describe('OpenAPI HATEOAS', () => {
     const { execute } = await serve({
       runner: 'hive',
       supergraph: composition.output,
-      subgraphs: composition.subgraphs,
     });
     const queryResult = await execute({
       query: /* GraphQL */ `

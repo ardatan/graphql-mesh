@@ -45,7 +45,6 @@ it.concurrent.each([
   const { execute } = await serve({
     runner: 'hive',
     supergraph: composition.output,
-    subgraphs: composition.subgraphs,
   });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });

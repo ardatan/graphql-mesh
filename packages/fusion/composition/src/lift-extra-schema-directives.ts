@@ -66,10 +66,7 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
       existingDirectiveNames.add(def.name.value);
     } else if (def.kind === Kind.SCALAR_TYPE_DEFINITION && def.name.value === 'ObjMap') {
       hasObjMap = true;
-    } else if (
-      def.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION &&
-      def.name.value === 'SourceHTTP'
-    ) {
+    } else if (def.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION && def.name.value === 'SourceHTTP') {
       hasSourceHTTP = true;
     }
   }

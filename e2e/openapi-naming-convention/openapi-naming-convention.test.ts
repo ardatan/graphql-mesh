@@ -14,7 +14,6 @@ describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', run
     const { execute } = await serve({
       runner,
       supergraph: composition.output,
-      subgraphs: composition.subgraphs,
     });
     const queryResult = await execute({
       query: /* GraphQL */ `

@@ -17,12 +17,7 @@ import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { fakeRejectPromise } from '@whatwg-node/promise-helpers';
 import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
-import { toApolloRouterConnectorsSupergraph } from '@graphql-mesh/fusion-composition';
-import {
-  composeApolloConnectorsSupergraph,
-  ensureApolloRouterBinary,
-  type ApolloConnectorsSubgraph,
-} from './apolloConnectors.js';
+import { ensureApolloRouterBinary } from './apolloConnectors.js';
 import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';
@@ -80,17 +75,13 @@ export interface ServeOptions extends ProcOptions {
   subgraph?: string;
   /**
    * Gateway binary to run the (super)graph.
-   * - `hive` (default): `@graphql-hive/gateway` (raw Mesh `@connect` / `@source` SDL)
-   * - `apollo-router`: Apollo Router. Prefer {@link ServeOptions.supergraph} (Mesh Guild
-   *   SDL rewritten in-process to Rover-shaped `@join__directive` Connectors metadata).
-   *   Falls back to Rover compose from {@link ServeOptions.subgraphs} when no supergraph.
+   * - `hive` (default): `@graphql-hive/gateway`
+   * - `apollo-router`: Apollo Router
+   *
+   * Both consume the Mesh-composed supergraph as-is (Connectors are emitted as
+   * `@join__directive` metadata that both runtimes understand).
    */
   runner?: ServeRunner;
-  /**
-   * Mesh-annotated connector subgraphs from {@link Tenv.compose}.
-   * Used by `apollo-router` only when {@link ServeOptions.supergraph} is omitted (Rover fallback).
-   */
-  subgraphs?: ApolloConnectorsSubgraph[];
 }
 
 export interface Serve extends Server {
@@ -148,10 +139,6 @@ export interface Compose extends Proc {
    */
   output: string;
   result: string;
-  /**
-   * Annotated subgraph SDLs written alongside the supergraph (for Apollo Router dual-runtime).
-   */
-  subgraphs: ApolloConnectorsSubgraph[];
 }
 
 export interface ContainerOptions extends ProcOptions {
@@ -270,7 +257,6 @@ export function createTenv(cwd: string): Tenv {
         env,
         args = [],
         runner = 'hive',
-        subgraphs = [],
       } = opts || {};
 
       if (runner === 'apollo-router') {
@@ -279,7 +265,6 @@ export function createTenv(cwd: string): Tenv {
           port,
           pipeLogs,
           env,
-          subgraphs,
           supergraph,
           tenv,
         });
@@ -351,12 +336,11 @@ export function createTenv(cwd: string): Tenv {
         args = [],
       } = opts || {};
       let output = '';
-      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
-      leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
       if (opts?.output) {
+        const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_compose'));
+        leftoverStack.defer(() => fs.rm(tempDir, { recursive: true }));
         output = path.join(tempDir, `${Math.random().toString(32).slice(2)}.${opts.output}`);
       }
-      const subgraphsDir = path.join(tempDir, 'subgraphs');
       const [proc, waitForExit] = await spawn(
         { cwd, pipeLogs, env },
         'node',
@@ -364,7 +348,6 @@ export function createTenv(cwd: string): Tenv {
         'tsx',
         path.resolve(__project, 'packages', 'compose-cli', 'src', 'bin.ts'),
         output && createOpt('output', output),
-        createOpt('subgraphs-dir', subgraphsDir),
         ...services.map(({ name, port }) => createServicePortOpt(name, port)),
         ...(subgraph ? ['--subgraph', subgraph] : []),
         ...args,
@@ -386,39 +369,19 @@ export function createTenv(cwd: string): Tenv {
         result = proc.getStd('out');
       }
 
-      let composedSubgraphs: ApolloConnectorsSubgraph[] = [];
-      try {
-        const manifestRaw = await fs.readFile(path.join(subgraphsDir, 'subgraphs.json'), 'utf8');
-        const manifest = JSON.parse(manifestRaw) as { name: string; file: string; url: string }[];
-        composedSubgraphs = await Promise.all(
-          manifest.map(async entry => ({
-            name: entry.name,
-            url: entry.url,
-            sdl: await fs.readFile(path.join(subgraphsDir, entry.file), 'utf8'),
-          })),
-        );
-      } catch {
-        composedSubgraphs = [];
-      }
-
       if (trimHostPaths || maskServicePorts) {
         if (trimHostPaths) {
           result = result.replaceAll(__project, '');
         }
         if (maskServicePorts) {
           result = applyMaskServicePorts(result, opts.services);
-          composedSubgraphs = composedSubgraphs.map(sg => ({
-            ...sg,
-            sdl: applyMaskServicePorts(sg.sdl, opts.services || []),
-            url: opts.services ? applyMaskServicePorts(sg.url || '', opts.services) : sg.url,
-          }));
         }
         if (output) {
           await fs.writeFile(output, result, 'utf8');
         }
       }
 
-      return { ...proc, output, result, subgraphs: composedSubgraphs };
+      return { ...proc, output, result };
     },
     async service(name, { port, servePort, pipeLogs = boolEnv('DEBUG'), args = [] } = {}) {
       port ||= await getAvailablePort();
@@ -755,38 +718,29 @@ async function serveWithApolloRouter(opts: {
   port: number;
   pipeLogs: boolean;
   env?: Record<string, string | number>;
-  subgraphs: ApolloConnectorsSubgraph[];
-  /**
-   * Mesh/Hive Guild supergraph. When set, rewritten in-process to Rover-shaped
-   * `@join__directive` Connectors metadata (no Rover binary). Falls back to
-   * Rover compose from {@link subgraphs} when omitted.
-   */
+  /** Mesh-composed supergraph path or inline SDL (Connectors already `@join__directive`). */
   supergraph?: string;
   tenv: Tenv;
 }): Promise<Serve> {
-  const { cwd, port, pipeLogs, env, subgraphs, supergraph, tenv } = opts;
+  const { cwd, port, pipeLogs, env, supergraph, tenv } = opts;
+  if (!supergraph) {
+    throw new Error('serve({ runner: "apollo-router" }) requires `supergraph` from compose()');
+  }
 
   const workDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_apollo_router'));
   leftoverStack.defer(() => fs.rm(workDir, { recursive: true }));
 
+  const resolved = path.isAbsolute(supergraph) ? supergraph : path.join(cwd, supergraph);
   let apolloSupergraph: string;
-  if (supergraph) {
-    const resolved = path.isAbsolute(supergraph) ? supergraph : path.join(cwd, supergraph);
-    let meshSdl: string;
-    try {
-      meshSdl = await fs.readFile(resolved, 'utf8');
-    } catch {
-      meshSdl = supergraph; // inline SDL
-    }
-    apolloSupergraph = path.join(workDir, 'mesh-router-connectors.graphql');
-    await fs.writeFile(apolloSupergraph, toApolloRouterConnectorsSupergraph(meshSdl), 'utf8');
-  } else if (subgraphs.length) {
-    apolloSupergraph = await composeApolloConnectorsSupergraph(subgraphs, workDir);
-  } else {
-    throw new Error(
-      'serve({ runner: "apollo-router" }) requires `supergraph` (Mesh SDL, rewritten to @join__directive) or `subgraphs` (Rover compose)',
-    );
+  try {
+    await fs.access(resolved);
+    apolloSupergraph = resolved;
+  } catch {
+    // Inline SDL
+    apolloSupergraph = path.join(workDir, 'supergraph.graphql');
+    await fs.writeFile(apolloSupergraph, supergraph, 'utf8');
   }
+
   const routerBin = await ensureApolloRouterBinary();
   const configPath = path.join(workDir, 'router.yaml');
   const healthPort = await getAvailablePort();

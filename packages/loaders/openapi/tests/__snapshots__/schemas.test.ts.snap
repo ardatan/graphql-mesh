@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Schemas BlockFrost 1`] = `
-"schema @source(name: "BlockFrost", http: {baseURL: "https://cardano-mainnet.blockfrost.io/api/v0"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "BlockFrost", http: {baseURL: "https://cardano-mainnet.blockfrost.io/api/v0"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -25,8 +25,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """
@@ -2911,7 +2909,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas CloudFlare 1`] = `
-"schema @source(name: "CloudFlare", http: {baseURL: "https://api.cloudflare.com/client/v4"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "CloudFlare", http: {baseURL: "https://api.cloudflare.com/client/v4"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -2937,8 +2935,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """List all accounts you have ownership or verified access to."""
@@ -46276,7 +46272,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas DeepL 1`] = `
-"schema @source(name: "DeepL", http: {baseURL: "https://api.deepl.com/v2"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "DeepL", http: {baseURL: "https://api.deepl.com/v2"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -46296,8 +46292,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """Retrieve the list of language pairs supported by the glossary feature."""
@@ -46973,7 +46967,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas Default Value as Integer 1`] = `
-"schema @source(name: "Default Value as Integer", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Default Value as Integer", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -46984,8 +46978,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """Get all Samples"""
@@ -47045,13 +47037,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas DefaultValues 1`] = `
-"schema @source(name: "DefaultValues", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "DefaultValues", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -47061,8 +47051,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   Retrieve_list_of_stacks: StacksResponse @connect(source: "DefaultValues", http: {GET: "/stacks"}, selection: "data {\\n  name\\n  description\\n  items {\\n    item\\n  }\\n}")
@@ -47137,13 +47125,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas Dictionary 1`] = `
-"schema @source(name: "Dictionary", http: {baseURL: "http://localhost:{$args.port:3002}/{$args.basePath:api}"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Dictionary", http: {baseURL: "http://localhost:{$args.port:3002}/{$args.basePath:api}"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -47152,8 +47138,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """Return a user."""
@@ -47199,13 +47183,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas Different fields with the same type 1`] = `
-"schema @source(name: "Different fields with the same type", http: {baseURL: "https://dev.url.com/api/v5"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Different fields with the same type", http: {baseURL: "https://dev.url.com/api/v5"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -47218,8 +47200,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """## Behavior"""
@@ -47291,13 +47271,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas GitHub 1`] = `
-"schema @source(name: "GitHub", http: {baseURL: "https://api.github.com/"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "GitHub", http: {baseURL: "https://api.github.com/"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -47321,8 +47299,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """Lists all the emojis available to use on GitHub."""
@@ -55283,7 +55259,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas Headers 1`] = `
-"schema @source(name: "Headers", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Headers", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -55293,8 +55269,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   dummy: String
@@ -55340,13 +55314,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas IBMLanguageTranslator 1`] = `
-"schema @source(name: "IBMLanguageTranslator", http: {baseURL: "https://gateway.watsonplatform.net/language-translator/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "IBMLanguageTranslator", http: {baseURL: "https://gateway.watsonplatform.net/language-translator/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -55360,8 +55332,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """
@@ -55623,13 +55593,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas InfiniteRecursion 1`] = `
-"schema @source(name: "InfiniteRecursion", http: {baseURL: "/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "InfiniteRecursion", http: {baseURL: "/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -55647,8 +55615,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   UsersGetUser(userId: String!): UserGet @connect(source: "InfiniteRecursion", http: {GET: "/users/{$args.userId}", headers: [{name: "accept", value: "application/json"}]}, selection: "_resolveType\\nid")
@@ -55744,7 +55710,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas Instagram 1`] = `
-"schema @source(name: "Instagram", http: {baseURL: "https://api.instagram.com/v1"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Instagram", http: {baseURL: "https://api.instagram.com/v1"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -55756,8 +55722,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """
@@ -56403,13 +56367,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas Int64 with Defaults 1`] = `
-"schema @source(name: "Int64 with Defaults", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Int64 with Defaults", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -56420,8 +56382,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """Get all Samples"""
@@ -56481,13 +56441,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas Jira 1`] = `
-"schema @source(name: "Jira", http: {baseURL: "https://your-domain.atlassian.net"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Jira", http: {baseURL: "https://your-domain.atlassian.net"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -56513,8 +56471,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """
@@ -76409,7 +76365,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas Kubernetes 1`] = `
-"schema @source(name: "Kubernetes", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Kubernetes", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -76421,8 +76377,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """
@@ -121856,13 +121810,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas MeiliSearch 1`] = `
-"schema @source(name: "MeiliSearch", http: {baseURL: "{$args.protocol:https}://{$args.domain:example.meilisearch.com}:{$args.port:7700}"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "MeiliSearch", http: {baseURL: "{$args.protocol:https}://{$args.domain:example.meilisearch.com}:{$args.port:7700}"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -121886,8 +121838,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """Get health of the Meilisearch instance."""
@@ -123758,7 +123708,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas Relative Dereference 1`] = `
-"schema @source(name: "Relative Dereference", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Relative Dereference", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -123767,8 +123717,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """Get example data"""
@@ -123808,13 +123756,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas Slack 1`] = `
-"schema @source(name: "Slack", http: {baseURL: "https://slack.com/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Slack", http: {baseURL: "https://slack.com/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -123836,8 +123782,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """List approved apps for an org or workspace."""
@@ -130718,7 +130662,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas SmallRye UUID 1`] = `
-"schema @source(name: "SmallRye UUID", http: {baseURL: "https://example.com"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "SmallRye UUID", http: {baseURL: "https://example.com"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -130727,8 +130671,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   getItem: Item @connect(source: "SmallRye UUID", http: {GET: "/items", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nparent_id")
@@ -130773,13 +130715,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas StackExchange 1`] = `
-"schema @source(name: "StackExchange", http: {baseURL: "https://api.stackexchange.com/2.2"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "StackExchange", http: {baseURL: "https://api.stackexchange.com/2.2"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -130790,8 +130730,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """
@@ -131152,9 +131090,7 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas Stripe 1`] = `
@@ -207247,7 +207183,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas SubscriptionType 1`] = `
-"schema @source(name: "SubscriptionType", http: {baseURL: "http://api.example.com/v1"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "SubscriptionType", http: {baseURL: "http://api.example.com/v1"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
   subscription: Subscription
@@ -207260,8 +207196,6 @@ directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFIN
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   a(
@@ -207333,9 +207267,7 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas TeachersTraining 1`] = `
@@ -208375,7 +208307,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas Toto 1`] = `
-"schema @source(name: "Toto", http: {baseURL: "https://dev-api.test.com/api/v1"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "Toto", http: {baseURL: "https://dev-api.test.com/api/v1"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -208397,8 +208329,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """List Resources At Any Folder Level"""
@@ -208849,7 +208779,7 @@ input SourceHTTP {
 `;
 
 exports[`Schemas WeatherUnderground 1`] = `
-"schema @source(name: "WeatherUnderground", http: {baseURL: "http://api.wunderground.com/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "WeatherUnderground", http: {baseURL: "http://api.wunderground.com/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -208858,8 +208788,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """Get current weather conditions for a given place."""
@@ -209173,13 +209101,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas YouTrack 1`] = `
-"schema @source(name: "YouTrack", http: {baseURL: "https://graphqlmeshdemo.youtrack.cloud:443/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "YouTrack", http: {baseURL: "https://graphqlmeshdemo.youtrack.cloud:443/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -209195,8 +209121,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 """
 Represents unlimited visibility. When access to an entity is not restricted, the visibility attribute of this entity has the type \`UnlimitedVisibility\`. Entities of this type do not have any attributes.
@@ -212558,13 +212482,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Schemas algolia-refs-subset 1`] = `
-"schema @source(name: "algolia-refs-subset", http: {baseURL: "https://{$args.appId:myAppId}.algolia.net"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "algolia-refs-subset", http: {baseURL: "https://{$args.appId:myAppId}.algolia.net"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -212578,8 +212500,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   """This method allow you to send requests to the Algolia REST API."""
@@ -212653,7 +212573,5 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;

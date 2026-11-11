@@ -20,7 +20,6 @@ const JOIN_DIRECTIVE_DEFS = /* GraphQL */ `
   scalar join__DirectiveArguments
 `;
 
-const MESH_ONLY_DIRECTIVES = new Set(['transport', 'length', 'meshSource']);
 const CONNECT_INPUT_TYPES = new Set([
   'ConnectHTTP',
   'SourceHTTP',
@@ -30,18 +29,22 @@ const CONNECT_INPUT_TYPES = new Set([
 ]);
 
 /**
- * Apollo Router activates Connectors from `@join__directive(name: "connect"|"source")`
- * metadata produced by Rover — not from raw `@connect` / `@source` usages that Guild
- * composeDirective keeps on the Mesh/Hive supergraph.
+ * Finalize a Mesh Guild connectors supergraph into the Rover-shaped
+ * `@join__directive(name: "connect"|"source")` form.
  *
- * Rewrite a Mesh Guild connectors supergraph into the Rover-shaped form so Router
- * can execute Connectors without a separate Rover compose step.
- *
- * Hive Gateway still consumes the raw `@connect` / `@source` Mesh SDL; only call this
- * when feeding Apollo Router.
+ * That is the canonical Mesh connectors supergraph consumed as-is by both
+ * Apollo Router and Hive Gateway. Raw `@connect` / `@source` are rewritten
+ * (Router rejects them when the connect `@link` is `for: EXECUTION` without
+ * imports). Mesh directives (`@transport`, `@length`, `@meshSource`, …) are
+ * kept — Router accepts them when defined/linked, and Hive needs `@transport`
+ * to select the REST transport.
  */
 export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): string {
-  if (!supergraphSdl.includes('specs.apollo.dev/connect') || !supergraphSdl.includes('@connect')) {
+  if (!supergraphSdl.includes('specs.apollo.dev/connect')) {
+    return supergraphSdl;
+  }
+  // Already finalized (join__directive import lists still mention "@connect" as a string).
+  if (!/@connect\s*\(/.test(supergraphSdl) && !/@source\s*\(/.test(supergraphSdl)) {
     return supergraphSdl;
   }
 
@@ -51,8 +54,7 @@ export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): strin
   for (const [enumVal, name] of graphEnumToName) {
     nameToGraphEnum.set(name, enumVal);
   }
-  const singleGraphEnum =
-    graphEnumToName.size === 1 ? [...graphEnumToName.keys()][0] : undefined;
+  const singleGraphEnum = graphEnumToName.size === 1 ? [...graphEnumToName.keys()][0] : undefined;
 
   const pendingSources: Array<Record<string, unknown>> = [];
   const sourceNameToGraph = new Map<string, string>();
@@ -65,9 +67,6 @@ export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): strin
         if (dir.name.value === 'source') {
           // Apollo SCHEMA `@source` — rewrite later to `@join__directive`
           pendingSources.push(constDirectiveArgsToJs(dir));
-          continue;
-        }
-        if (MESH_ONLY_DIRECTIVES.has(dir.name.value)) {
           continue;
         }
         if (dir.name.value === 'link') {
@@ -92,9 +91,6 @@ export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): strin
             });
             continue;
           }
-          if (url?.startsWith('https://the-guild.dev/graphql/mesh/spec/')) {
-            continue; // drop Mesh spec link for Router
-          }
         }
         kept.push(dir);
       }
@@ -103,12 +99,10 @@ export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): strin
     FieldDefinition(node) {
       const connectDirs = (node.directives || []).filter(d => d.name.value === 'connect');
       if (!connectDirs.length) {
-        return stripMeshDirectives(node);
+        return node;
       }
 
-      const otherDirs = (node.directives || []).filter(
-        d => d.name.value !== 'connect' && !MESH_ONLY_DIRECTIVES.has(d.name.value),
-      );
+      const otherDirs = (node.directives || []).filter(d => d.name.value !== 'connect');
       const joinDirs: ConstDirectiveNode[] = [];
 
       for (const connectDir of connectDirs) {
@@ -135,39 +129,15 @@ export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): strin
         directives: [...otherDirs, ...joinDirs],
       };
     },
-    ScalarTypeDefinition(node) {
-      // ObjMap only exists for Mesh @transport
-      if (node.name.value === 'ObjMap') {
-        return null;
-      }
-      return stripMeshDirectives(node);
-    },
-    ObjectTypeDefinition(node) {
-      return stripMeshDirectives(node);
-    },
-    InterfaceTypeDefinition(node) {
-      return stripMeshDirectives(node);
-    },
-    EnumTypeDefinition(node) {
-      return stripMeshDirectives(node);
-    },
-    UnionTypeDefinition(node) {
-      return stripMeshDirectives(node);
-    },
     InputObjectTypeDefinition(node) {
       if (CONNECT_INPUT_TYPES.has(node.name.value)) {
         return null;
       }
-      return stripMeshDirectives(node);
+      return node;
     },
     DirectiveDefinition(node) {
-      // Drop Apollo connect/source defs — Router uses join__directive metadata only.
-      // Drop Mesh-only directive defs left after stripping usages.
-      if (
-        node.name.value === 'connect' ||
-        node.name.value === 'source' ||
-        MESH_ONLY_DIRECTIVES.has(node.name.value)
-      ) {
+      // Drop Apollo connect/source defs — execution uses join__directive metadata.
+      if (node.name.value === 'connect' || node.name.value === 'source') {
         return null;
       }
       return node;
@@ -226,19 +196,6 @@ export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): strin
   }
 
   return print(nextDoc).trim();
-}
-
-function stripMeshDirectives<T extends { directives?: readonly ConstDirectiveNode[] }>(
-  node: T,
-): T {
-  const dirs = node.directives;
-  if (!dirs?.some(d => MESH_ONLY_DIRECTIVES.has(d.name.value))) {
-    return node;
-  }
-  return {
-    ...node,
-    directives: dirs.filter(d => !MESH_ONLY_DIRECTIVES.has(d.name.value)),
-  };
 }
 
 function readJoinGraphMap(document: DocumentNode): Map<string, string> {

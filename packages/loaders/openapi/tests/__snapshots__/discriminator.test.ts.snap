@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Discriminator Mapping should generate correct schema: discriminator-mapping 1`] = `
-"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -12,8 +12,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
@@ -60,13 +58,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Inline Discriminator Mapping (request body) should generate correct schema: discriminator-inline-request 1`] = `
-"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -78,8 +74,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   dummy: String
@@ -141,13 +135,11 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;
 
 exports[`Inline Discriminator Mapping should generate correct schema: discriminator-inline 1`] = `
-"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
@@ -158,8 +150,6 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 type Query {
   things: [query_things_items] @connect(source: "test", http: {GET: "/things", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
@@ -215,7 +205,5 @@ input SourceHTTP {
   queryParams: String
   errors: ConnectorErrors
   isSuccess: String
-}
-
-scalar ObjMap"
+}"
 `;

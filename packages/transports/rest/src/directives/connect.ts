@@ -87,8 +87,39 @@ type SourceArgs = {
 
 const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 
+type JoinDirectiveArgs = {
+  graphs?: string[];
+  name?: string;
+  args?: Record<string, unknown>;
+};
+
+/**
+ * Mesh compose emits Apollo Router-shaped `@join__directive(name: "connect"|"source")`
+ * on the supergraph. Hive Gateway reads those the same way as raw `@connect` / `@source`.
+ */
+function getJoinDirectivePayloads(
+  extensions: Record<string, unknown> | undefined,
+  directiveName: 'connect' | 'source',
+): Record<string, unknown>[] {
+  const joins = extensions?.['join__directive'] as JoinDirectiveArgs[] | undefined;
+  if (!joins?.length) {
+    return [];
+  }
+  const out: Record<string, unknown>[] = [];
+  for (const join of joins) {
+    if (join?.name === directiveName && join.args && typeof join.args === 'object') {
+      out.push(join.args as Record<string, unknown>);
+    }
+  }
+  return out;
+}
+
 function getSourceMap(schema: GraphQLSchema): Map<string, SourceArgs> {
-  const sources = getDirectiveExtensions(schema)?.source as SourceArgs[] | undefined;
+  const schemaExt = getDirectiveExtensions(schema);
+  const sources = [
+    ...((schemaExt?.source as SourceArgs[] | undefined) || []),
+    ...(getJoinDirectivePayloads(schemaExt as Record<string, unknown>, 'source') as SourceArgs[]),
+  ];
   const map = new Map<string, SourceArgs>();
   for (const source of sources || []) {
     if (source?.name) {
@@ -96,6 +127,20 @@ function getSourceMap(schema: GraphQLSchema): Map<string, SourceArgs> {
     }
   }
   return map;
+}
+
+function getConnectArgsFromNode(node: {
+  name?: string;
+  astNode?: unknown;
+  extensions?: unknown;
+}): ConnectArgs[] {
+  const ext = getDirectiveExtensions(node as any);
+  const raw = (ext?.connect as ConnectArgs[] | undefined) || [];
+  const fromJoin = getJoinDirectivePayloads(
+    ext as Record<string, unknown>,
+    'connect',
+  ) as ConnectArgs[];
+  return [...raw, ...fromJoin];
 }
 
 /**
@@ -1443,8 +1488,8 @@ export function processConnectDirectives(
   const typeMap = schema.getTypeMap();
   for (const typeName in typeMap) {
     const type = typeMap[typeName];
-    // Type-level `@connect` (Apollo entity / `$batch` readers) → resolveReference.
-    const typeDirectives = getDirectiveExtensions(type)?.connect as ConnectArgs[] | undefined;
+    // Type-level `@connect` / `@join__directive(name: "connect")` → resolveReference.
+    const typeDirectives = getConnectArgsFromNode(type as any);
     if (typeDirectives?.length) {
       const connectArgs = typeDirectives[0];
       const syntheticField = {
@@ -1465,7 +1510,7 @@ export function processConnectDirectives(
     for (const fieldName in fields) {
       const field = fields[fieldName];
       hydrateMeshRestOptionsFromDirective(field as GraphQLField<any, any>);
-      const directives = getDirectiveExtensions(field)?.connect as ConnectArgs[] | undefined;
+      const directives = getConnectArgsFromNode(field as any);
       if (!directives?.length) continue;
       // First connect wins for execution (repeatable for schema merge cases)
       addConnectFieldResolver(schema, field as GraphQLField<any, any>, directives[0], opts);

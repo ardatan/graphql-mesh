@@ -48,10 +48,23 @@ export function processDirectives(
   }
   const schemaDirectives = getDirectiveExtensions(schema);
   const transportDirectives = schemaDirectives?.transport;
-  const sourceDirectives = schemaDirectives?.source;
+  const joinSources = (
+    (schemaDirectives?.['join__directive'] as Array<{
+      name?: string;
+      args?: { http?: { headers?: Array<{ name: string; value?: string }>; baseURL?: string } };
+    }>) || []
+  )
+    .filter(d => d?.name === 'source')
+    .map(d => d.args);
+  const sourceDirectives = [
+    ...((schemaDirectives?.source as
+      | Array<{ http?: { headers?: Array<{ name: string; value?: string }>; baseURL?: string } }>
+      | undefined) || []),
+    ...joinSources,
+  ];
   const currDirective = transportDirectives?.[0];
   const sourceDirective = sourceDirectives?.[0];
-  // Prefer Apollo @source; fall back to legacy Mesh @transport
+  // Prefer Apollo @source / join__directive source; fall back to legacy Mesh @transport
   const sourceHeaders = sourceDirective?.http?.headers
     ? Object.fromEntries(
         (sourceDirective.http.headers as Array<{ name: string; value?: string }>).map(h => [

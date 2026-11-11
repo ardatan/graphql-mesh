@@ -22,7 +22,6 @@ describe('OpenAPI w/ Prune Transform', () => {
       const { execute } = await serve({
         runner,
         supergraph: composition.output,
-        subgraphs: composition.subgraphs,
       });
       const queryResult = await execute({
         query: /* GraphQL */ `

@@ -152,7 +152,9 @@ describe('Apollo Connectors composition', () => {
         EXECUTION
       }
 
-      directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
+      directive @extraSchemaDefinitionDirective(
+        directives: _DirectiveExtensions
+      ) repeatable on OBJECT
       scalar _DirectiveExtensions
 
       directive @connect(source: String, selection: String!) repeatable on FIELD_DEFINITION
@@ -184,14 +186,22 @@ describe('Apollo Connectors composition', () => {
     expect(() => buildSchema(lifted, { assumeValidSDL: true })).not.toThrow();
   });
 
-  it('composes connectors with schema @source/@transport and no extras', () => {
+  it('composes connectors as Router-shaped @join__directive supergraph (no extras)', () => {
     const result = composeSubgraphs([{ name: 'REST', schema: connectorsSchema }]);
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toContain('extraSchemaDefinitionDirective');
-    expect(sdl).toMatch(/@source\(name: "rest"/);
+    // Canonical Mesh connectors SG is Apollo Router form — same SDL for Hive + Router.
+    expect(sdl).toMatch(/@join__directive\([^)]*name: "source"/);
+    expect(sdl).toMatch(/@join__directive\([^)]*name: "connect"/);
+    expect(sdl).toContain('specs.apollo.dev/join/v0.5');
+    expect(sdl).toMatch(
+      /@link\(url: "https:\/\/specs\.apollo\.dev\/connect\/v0\.4", for: EXECUTION\)/,
+    );
+    expect(sdl).not.toMatch(/@connect\(/);
+    expect(sdl).not.toMatch(/@source\(/);
+    // Mesh `@transport` stays so Hive can select the REST transport; Router tolerates it.
     expect(sdl).toMatch(/@transport\(subgraph: "REST"/);
-    expect(sdl).toMatch(/import: \["@connect", "@source"\]/);
   });
 
   it('uses plain Mesh @source when composition has no Connectors', () => {
@@ -303,42 +313,18 @@ describe('Apollo Connectors composition', () => {
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
     expect(sdl).toContain('@meshSource');
-    expect(sdl).toMatch(/@source\(name: "rest"/);
-    expect(sdl).toMatch(/import: \["@connect", "@source"\]/);
+    expect(sdl).toMatch(/@join__directive\([\s\S]*name: "source"[\s\S]*name: "rest"/);
+    expect(sdl).toMatch(/@join__directive\([\s\S]*name: "connect"/);
+    expect(sdl).not.toMatch(/@connect\(/);
   });
 
-  it('rewrites Mesh Guild Connectors SG to Rover-shaped @join__directive for Apollo Router', () => {
-    const result = composeSubgraphs([
-      {
-        name: 'Wiki',
-        schema: connectorsSchema,
-      },
-    ]);
+  it('toApolloRouterConnectorsSupergraph is idempotent on composed connectors SG', () => {
+    const result = composeSubgraphs([{ name: 'Wiki', schema: connectorsSchema }]);
     expect(result.errors).toBeUndefined();
     const meshSdl = result.supergraphSdl!;
-    // Hive path keeps raw @connect / @source
-    expect(meshSdl).toMatch(/@connect\(/);
-    expect(meshSdl).toMatch(/@source\(name:/);
-
-    const routerSdl = toApolloRouterConnectorsSupergraph(meshSdl);
-    expect(routerSdl).toContain('specs.apollo.dev/join/v0.5');
-    expect(routerSdl).toMatch(
-      /@link\(url: "https:\/\/specs\.apollo\.dev\/connect\/v0\.4", for: EXECUTION\)/,
-    );
-    expect(routerSdl).toMatch(
-      /@join__directive\(graphs: \[WIKI\], name: "link", args: \{url: "https:\/\/specs\.apollo\.dev\/connect\/v0\.4"/,
-    );
-    expect(routerSdl).toMatch(
-      /@join__directive\(graphs: \[WIKI\], name: "source", args: \{name: "rest"/,
-    );
-    expect(routerSdl).toMatch(/@join__directive\(graphs: \[WIKI\], name: "connect"/);
-    expect(routerSdl).not.toMatch(/@connect\(/);
-    expect(routerSdl).not.toMatch(/@source\(/);
-    expect(routerSdl).not.toContain('@transport');
-    expect(routerSdl).not.toContain('directive @connect');
-    expect(routerSdl).not.toContain('directive @source');
-    expect(routerSdl).toContain('directive @join__directive');
-    // Hive still uses the original Mesh SDL unchanged
-    expect(meshSdl).toMatch(/@connect\(/);
+    expect(meshSdl).toMatch(/@join__directive\([^)]*name: "connect"/);
+    const again = toApolloRouterConnectorsSupergraph(meshSdl);
+    // Already finalized — early-return when no raw @connect remains
+    expect(again).toBe(meshSdl);
   });
 });

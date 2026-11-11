@@ -22,7 +22,6 @@ describe('OpenAPI Arg Rename', () => {
       const { execute } = await serve({
         runner,
         supergraph: composition.output,
-        subgraphs: composition.subgraphs,
       });
       const queryResult = await execute({
         query: /* GraphQL */ `
@@ -54,7 +53,6 @@ describe('OpenAPI Arg Rename', () => {
       const { execute } = await serve({
         runner,
         supergraph: composition.output,
-        subgraphs: composition.subgraphs,
       });
       const queryResult = await execute({
         query: /* GraphQL */ `

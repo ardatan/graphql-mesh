@@ -26,6 +26,7 @@ import {
 } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
+import { toApolloRouterConnectorsSupergraph } from './apollo-router-connectors-supergraph.js';
 import {
   convertSubgraphToFederationv2,
   detectAndAddMeshDirectives,
@@ -88,8 +89,7 @@ export function isApolloConnectorsSubgraph(schema: GraphQLSchema): boolean {
   if (
     links.some(
       (link: { url?: string }) =>
-        typeof link?.url === 'string' &&
-        link.url.startsWith('https://specs.apollo.dev/connect'),
+        typeof link?.url === 'string' && link.url.startsWith('https://specs.apollo.dev/connect'),
     )
   ) {
     return true;
@@ -723,11 +723,15 @@ export function composeSubgraphs(
 export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[]) {
   const composedSupergraphSdl = composeServices(annotatedSubgraphs);
   const rawSupergraphSdl = composedSupergraphSdl.supergraphSdl?.trim();
+  // Lift SCHEMA extras, then rewrite Connectors to Rover-shaped `@join__directive`
+  // metadata so the same Mesh supergraph runs on Apollo Router and Hive Gateway
+  // (Hive's REST transport reads join__directive; Router requires it).
+  const lifted = rawSupergraphSdl
+    ? liftExtraSchemaDefinitionDirectives(rawSupergraphSdl)
+    : rawSupergraphSdl;
   return {
     ...composedSupergraphSdl,
-    supergraphSdl: rawSupergraphSdl
-      ? liftExtraSchemaDefinitionDirectives(rawSupergraphSdl)
-      : rawSupergraphSdl,
+    supergraphSdl: lifted ? toApolloRouterConnectorsSupergraph(lifted) : lifted,
     annotatedSubgraphs,
   };
 }
