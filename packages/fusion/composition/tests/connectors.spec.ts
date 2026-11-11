@@ -4,6 +4,7 @@ import {
   getAnnotatedSubgraphs,
   isApolloConnectorsSubgraph,
   liftExtraSchemaDefinitionDirectives,
+  toApolloRouterConnectorsSupergraph,
 } from '../src/index.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
 
@@ -304,5 +305,40 @@ describe('Apollo Connectors composition', () => {
     expect(sdl).toContain('@meshSource');
     expect(sdl).toMatch(/@source\(name: "rest"/);
     expect(sdl).toMatch(/import: \["@connect", "@source"\]/);
+  });
+
+  it('rewrites Mesh Guild Connectors SG to Rover-shaped @join__directive for Apollo Router', () => {
+    const result = composeSubgraphs([
+      {
+        name: 'Wiki',
+        schema: connectorsSchema,
+      },
+    ]);
+    expect(result.errors).toBeUndefined();
+    const meshSdl = result.supergraphSdl!;
+    // Hive path keeps raw @connect / @source
+    expect(meshSdl).toMatch(/@connect\(/);
+    expect(meshSdl).toMatch(/@source\(name:/);
+
+    const routerSdl = toApolloRouterConnectorsSupergraph(meshSdl);
+    expect(routerSdl).toContain('specs.apollo.dev/join/v0.5');
+    expect(routerSdl).toMatch(
+      /@link\(url: "https:\/\/specs\.apollo\.dev\/connect\/v0\.4", for: EXECUTION\)/,
+    );
+    expect(routerSdl).toMatch(
+      /@join__directive\(graphs: \[WIKI\], name: "link", args: \{url: "https:\/\/specs\.apollo\.dev\/connect\/v0\.4"/,
+    );
+    expect(routerSdl).toMatch(
+      /@join__directive\(graphs: \[WIKI\], name: "source", args: \{name: "rest"/,
+    );
+    expect(routerSdl).toMatch(/@join__directive\(graphs: \[WIKI\], name: "connect"/);
+    expect(routerSdl).not.toMatch(/@connect\(/);
+    expect(routerSdl).not.toMatch(/@source\(/);
+    expect(routerSdl).not.toContain('@transport');
+    expect(routerSdl).not.toContain('directive @connect');
+    expect(routerSdl).not.toContain('directive @source');
+    expect(routerSdl).toContain('directive @join__directive');
+    // Hive still uses the original Mesh SDL unchanged
+    expect(meshSdl).toMatch(/@connect\(/);
   });
 });

@@ -17,6 +17,7 @@ import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { fakeRejectPromise } from '@whatwg-node/promise-helpers';
 import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
+import { toApolloRouterConnectorsSupergraph } from '@graphql-mesh/fusion-composition';
 import {
   composeApolloConnectorsSupergraph,
   ensureApolloRouterBinary,
@@ -79,14 +80,15 @@ export interface ServeOptions extends ProcOptions {
   subgraph?: string;
   /**
    * Gateway binary to run the (super)graph.
-   * - `hive` (default): `@graphql-hive/gateway`
-   * - `apollo-router`: Apollo Router executing Mesh-generated Connectors subgraphs
-   *   (Rover-composed). Requires {@link ServeOptions.subgraphs} from {@link Tenv.compose}.
+   * - `hive` (default): `@graphql-hive/gateway` (raw Mesh `@connect` / `@source` SDL)
+   * - `apollo-router`: Apollo Router. Prefer {@link ServeOptions.supergraph} (Mesh Guild
+   *   SDL rewritten in-process to Rover-shaped `@join__directive` Connectors metadata).
+   *   Falls back to Rover compose from {@link ServeOptions.subgraphs} when no supergraph.
    */
   runner?: ServeRunner;
   /**
    * Mesh-annotated connector subgraphs from {@link Tenv.compose}.
-   * Required when {@link ServeOptions.runner} is `apollo-router`.
+   * Used by `apollo-router` only when {@link ServeOptions.supergraph} is omitted (Rover fallback).
    */
   subgraphs?: ApolloConnectorsSubgraph[];
 }
@@ -278,6 +280,7 @@ export function createTenv(cwd: string): Tenv {
           pipeLogs,
           env,
           subgraphs,
+          supergraph,
           tenv,
         });
       }
@@ -753,19 +756,37 @@ async function serveWithApolloRouter(opts: {
   pipeLogs: boolean;
   env?: Record<string, string | number>;
   subgraphs: ApolloConnectorsSubgraph[];
+  /**
+   * Mesh/Hive Guild supergraph. When set, rewritten in-process to Rover-shaped
+   * `@join__directive` Connectors metadata (no Rover binary). Falls back to
+   * Rover compose from {@link subgraphs} when omitted.
+   */
+  supergraph?: string;
   tenv: Tenv;
 }): Promise<Serve> {
-  const { cwd, port, pipeLogs, env, subgraphs, tenv } = opts;
-  if (!subgraphs.length) {
-    throw new Error(
-      'serve({ runner: "apollo-router" }) requires `subgraphs` from compose() — Mesh/Hive Guild supergraphs load in Router but do not activate Connectors (Router treats join__Graph URLs as HTTP subgraphs → 405). Rover-compose the Mesh subgraphs instead.',
-    );
-  }
+  const { cwd, port, pipeLogs, env, subgraphs, supergraph, tenv } = opts;
 
   const workDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_apollo_router'));
   leftoverStack.defer(() => fs.rm(workDir, { recursive: true }));
 
-  const apolloSupergraph = await composeApolloConnectorsSupergraph(subgraphs, workDir);
+  let apolloSupergraph: string;
+  if (supergraph) {
+    const resolved = path.isAbsolute(supergraph) ? supergraph : path.join(cwd, supergraph);
+    let meshSdl: string;
+    try {
+      meshSdl = await fs.readFile(resolved, 'utf8');
+    } catch {
+      meshSdl = supergraph; // inline SDL
+    }
+    apolloSupergraph = path.join(workDir, 'mesh-router-connectors.graphql');
+    await fs.writeFile(apolloSupergraph, toApolloRouterConnectorsSupergraph(meshSdl), 'utf8');
+  } else if (subgraphs.length) {
+    apolloSupergraph = await composeApolloConnectorsSupergraph(subgraphs, workDir);
+  } else {
+    throw new Error(
+      'serve({ runner: "apollo-router" }) requires `supergraph` (Mesh SDL, rewritten to @join__directive) or `subgraphs` (Rover compose)',
+    );
+  }
   const routerBin = await ensureApolloRouterBinary();
   const configPath = path.join(workDir, 'router.yaml');
   const healthPort = await getAvailablePort();
