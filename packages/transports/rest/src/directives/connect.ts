@@ -1,6 +1,11 @@
 import {
+  getNamedType,
   GraphQLError,
+  isListType,
+  isNonNullType,
+  isScalarType,
   type GraphQLField,
+  type GraphQLOutputType,
   type GraphQLResolveInfo,
   type GraphQLSchema,
 } from 'graphql';
@@ -11,10 +16,19 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import { DefaultLogger, getHeadersObj } from '@graphql-mesh/utils';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
+import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import urlJoin from 'url-join';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
+
+const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListType(
+  type: GraphQLOutputType,
+) {
+  if (isNonNullType(type)) {
+    return isListType(type.ofType);
+  }
+  return isListType(type);
+});
 
 
 type ConnectHttp = {
@@ -222,6 +236,10 @@ function applyQueryParams(
   }
   if (!serialized) {
     return;
+  }
+  // Field-level queryParams override source/global keys (Mesh httpOperation semantics).
+  for (const key of Object.keys(params)) {
+    url.searchParams.delete(key);
   }
   const existing = url.search.startsWith('?') ? url.search.slice(1) : url.search;
   url.search = existing ? `?${existing}&${serialized}` : `?${serialized}`;
@@ -673,6 +691,7 @@ export function addConnectFieldResolver(
     if (timeout) {
       requestInit.signal = AbortSignal.timeout(timeout);
     }
+    let requestBody: any;
     if (method !== 'GET' && method !== 'HEAD') {
       const bodyJson = buildBody(connectArgs.http?.body, vars, { schema, field });
       if (bodyJson != null) {
@@ -686,23 +705,32 @@ export function addConnectFieldResolver(
           try {
             const parsed = JSON.parse(bodyJson);
             if (contentType.includes('application/x-www-form-urlencoded')) {
-              requestInit.body = qsStringify(parsed, {
+              requestBody = qsStringify(parsed, {
                 ...defaultQsOptions,
                 ...queryStringOptions,
               });
             } else {
               // multipart: leave JSON string for now; File/FormData path is Hive-only later
-              requestInit.body = bodyJson;
+              requestBody = bodyJson;
             }
           } catch {
-            requestInit.body = bodyJson;
+            requestBody = bodyJson;
+          }
+        } else if (contentType?.startsWith('text/')) {
+          // text/plain (and other text/*): send the raw scalar, not a JSON-encoded string
+          try {
+            const parsed = JSON.parse(bodyJson);
+            requestBody = typeof parsed === 'string' ? parsed : bodyJson;
+          } catch {
+            requestBody = bodyJson;
           }
         } else {
-          requestInit.body = bodyJson;
+          requestBody = bodyJson;
           if (!contentType) {
             headers['content-type'] = 'application/json';
           }
         }
+        requestInit.body = requestBody;
       }
     }
 
@@ -712,43 +740,73 @@ export function addConnectFieldResolver(
 
     const response = await fetchFn(fullUrl.toString(), requestInit, context, info as any);
     const contentType = response.headers.get('content-type') || '';
+    const returnNamedGraphQLType = getNamedType(field.type);
     let responseData: any;
     const text = await response.text();
+    const handlesStatus = connectArgs.selection?.includes('$status');
+    const httpErrorExtensions = (body: any) => ({
+      request: {
+        url: fullUrl.toString(),
+        method,
+      },
+      response: {
+        status: response.status,
+        statusText: response.statusText,
+        headers: getHeadersObj(response.headers),
+        body,
+      },
+      // Legacy Mesh shape
+      status: response.status,
+      headers: getHeadersObj(response.headers),
+      responseJson: body,
+    });
+
     if (!text) {
       // Preserve legacy Mesh behavior for empty / 204 responses (e.g. String fields → "")
-      responseData = '';
-    } else if (contentType.includes('json') || (!contentType && /^[\[{]/.test(text.trim()))) {
+      responseData = isScalarType(returnNamedGraphQLType) ? '' : {};
+    } else {
       try {
         responseData = JSON.parse(text);
-      } catch {
-        responseData = text;
+      } catch (error) {
+        if (isScalarType(returnNamedGraphQLType)) {
+          responseData = text;
+        } else if (response.status === 204 || (response.status === 200 && text === '')) {
+          responseData = {};
+        } else if (response.status.toString().startsWith('2')) {
+          // Match httpOperation: unexpected non-JSON 2xx for object/list fields
+          throw new GraphQLError(`Unexpected response in ${field.name}`, {
+            extensions: {
+              ...httpErrorExtensions(text),
+              originalError: error,
+            },
+          });
+        } else if (!handlesStatus) {
+          throw new GraphQLError(
+            `Connect HTTP ${response.status}: ${response.statusText}`,
+            { extensions: httpErrorExtensions(text) },
+          );
+        } else {
+          responseData = text;
+        }
       }
-    } else if (contentType.startsWith('text/') || !contentType) {
-      responseData = text;
-    } else {
-      responseData = text;
     }
 
-    if (!response.ok && connectArgs.selection && !connectArgs.selection.includes('$status')) {
+    if (
+      !response.status.toString().startsWith('2') &&
+      !handlesStatus
+    ) {
       // Default: non-2xx becomes GraphQL error unless selection handles $status
       throw new GraphQLError(`Connect HTTP ${response.status}: ${response.statusText}`, {
-        extensions: {
-          request: {
-            url: fullUrl.toString(),
-            method,
-          },
-          response: {
-            status: response.status,
-            statusText: response.statusText,
-            headers: getHeadersObj(response.headers),
-            body: responseData,
-          },
-          // Legacy Mesh shape
-          status: response.status,
-          headers: getHeadersObj(response.headers),
-          responseJson: responseData,
-        },
+        extensions: httpErrorExtensions(responseData),
       });
+    }
+
+    // Normalize array vs list return type like Mesh httpOperation
+    const isListReturnType = isListTypeOrNonNullListType(field.type);
+    if (isListReturnType && !Array.isArray(responseData)) {
+      responseData = [responseData];
+    } else if (!isListReturnType && Array.isArray(responseData)) {
+      responseData = responseData[0];
     }
 
     const selected = applySelection(connectArgs.selection || '$', responseData, {
@@ -762,9 +820,12 @@ export function addConnectFieldResolver(
     const pathArgs: Record<string, any> = { ...args };
     const parentPath = root?.$request?.path;
     if (parentPath && typeof parentPath === 'object') {
+      // Include Proxy-only keys (pathless resources expose path params via object fallback).
       for (const key of Object.keys(parentPath)) {
-        if (pathArgs[key] == null && parentPath[key] != null) {
-          pathArgs[key] = parentPath[key];
+        if (key.startsWith('$')) continue;
+        const value = parentPath[key];
+        if (pathArgs[key] == null && value != null && typeof value !== 'object') {
+          pathArgs[key] = value;
         }
       }
     }
@@ -776,6 +837,7 @@ export function addConnectFieldResolver(
       headers: getHeadersObj(response.headers),
       requestHeaders: headers,
       args: pathArgs,
+      requestBody,
       responseData,
       query: Object.fromEntries(fullUrl.searchParams.entries()),
     });
@@ -796,55 +858,109 @@ function attachResponseMetadata(
     headers: Record<string, string>;
     requestHeaders: Record<string, string>;
     args: Record<string, any>;
+    requestBody?: any;
     responseData: any;
     query?: Record<string, string>;
   },
 ): any {
+  const pathWithObjectFallback = (obj: any) => {
+    const args = meta.args || {};
+    const read = (prop: string) => args[prop] ?? args.input?.[prop] ?? obj?.[prop];
+    return new Proxy(args, {
+      get(_, prop) {
+        if (typeof prop !== 'string') return undefined;
+        return read(prop);
+      },
+      has(_, prop) {
+        if (typeof prop !== 'string') return false;
+        return prop in args || (args.input != null && prop in args.input) || (obj != null && prop in obj);
+      },
+      // So Object.keys / inheritance see pathless fallbacks like `username` on the resource.
+      ownKeys() {
+        const keys = new Set<string>([
+          ...Object.keys(args),
+          ...(args.input && typeof args.input === 'object' ? Object.keys(args.input) : []),
+        ]);
+        if (obj && typeof obj === 'object') {
+          for (const key of Object.keys(obj)) {
+            if (key.startsWith('$')) continue;
+            const value = obj[key];
+            // Only scalar-ish fields are meaningful as path params
+            if (value == null || typeof value === 'object') continue;
+            keys.add(key);
+          }
+        }
+        return [...keys];
+      },
+      getOwnPropertyDescriptor(target, prop) {
+        if (typeof prop !== 'string') return undefined;
+        if (!(prop in target) && read(prop) === undefined) return undefined;
+        return {
+          enumerable: true,
+          configurable: true,
+          writable: false,
+          value: read(prop),
+        };
+      },
+    });
+  };
+
   const decorate = (obj: any) => {
     if (obj == null || typeof obj !== 'object') {
       return obj;
     }
     const requestQuery = meta.query || {};
-    const metadata = {
-      get $url() {
-        return meta.url;
+    // Object.defineProperties defaults enumerable:false — keep Mesh `$…` metadata
+    // off JSON / Object.keys (OpenAPI "arbitrary JSON" / no _openAPIToGraphQL).
+    Object.defineProperties(obj, {
+      $url: {
+        get() {
+          return meta.url;
+        },
       },
-      get $method() {
-        return meta.method;
+      $method: {
+        get() {
+          return meta.method;
+        },
       },
-      get $statusCode() {
-        return meta.status;
+      $statusCode: {
+        get() {
+          return meta.status;
+        },
       },
-      get $statusText() {
-        return meta.statusText;
+      $statusText: {
+        get() {
+          return meta.statusText;
+        },
       },
-      get $headers() {
-        return meta.requestHeaders;
+      $headers: {
+        get() {
+          return meta.requestHeaders;
+        },
       },
-      get $request() {
-        return {
-          query: requestQuery,
-          path: meta.args,
-          header: meta.requestHeaders,
-          body: meta.args?.input,
-        };
+      $request: {
+        get() {
+          return {
+            query: requestQuery,
+            // Pathless OpenAPI links use `$request.path.username` where username
+            // lives on the parent resource object, not the list query args.
+            path: pathWithObjectFallback(obj),
+            header: meta.requestHeaders,
+            body: meta.requestBody ?? meta.args?.input,
+          };
+        },
       },
-      get $response() {
-        return {
-          header: meta.headers,
-          body: meta.responseData,
-          query: requestQuery,
-          path: meta.args,
-        };
+      $response: {
+        get() {
+          return {
+            header: meta.headers,
+            body: meta.responseData,
+            query: requestQuery,
+            path: pathWithObjectFallback(obj),
+          };
+        },
       },
-    };
-    for (const [key, descriptor] of Object.entries(
-      Object.getOwnPropertyDescriptors(metadata),
-    )) {
-      if (!(key in obj)) {
-        Object.defineProperty(obj, key, descriptor);
-      }
-    }
+    });
     return obj;
   };
   if (Array.isArray(selected)) {
