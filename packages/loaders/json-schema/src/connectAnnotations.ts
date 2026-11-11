@@ -606,8 +606,9 @@ export function buildSelectionForType(
       .filter(Boolean)
       .join(' ');
     if (mergedSelection.length > MAX_CONNECT_SELECTION_CHARS) {
-      // Fall back to `$` (caller); runtime still resolves via Mesh directives if present.
-      return '';
+      // Prefer `__typename` bake alone over `$` so status unions stay Connectors-native
+      // after `@statusCodeTypeName` is stripped (no Mesh runtime fallback).
+      return statusExtras?.typenameSelection || discTypename || '';
     }
     return mergedSelection;
   }
@@ -651,6 +652,11 @@ export function buildSelectionForType(
     const fieldDirectives = (field.astNode?.directives || []).map(d => d.name.value);
     const extDirectiveNames = Object.keys(directiveExt);
     if (fieldDirectives.includes('connect') || extDirectiveNames.includes('connect')) {
+      continue;
+    }
+    // `@resolveRoot` → virtual `@connect(selection: "$")` on the field (finalize step).
+    // Skip here so parent `$` passthrough keeps the scalar/object root intact.
+    if (Boolean(directiveExt.resolveRoot?.length) || fieldDirectives.includes('resolveRoot')) {
       continue;
     }
     // `@resolveRootField(field: "foo-bar")` → GraphQL `foo_bar` from JSON `foo-bar`

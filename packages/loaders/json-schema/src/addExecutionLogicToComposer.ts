@@ -413,13 +413,29 @@ ${operationConfig.description || ''}
                 })
                 .map((tc: any) => tc.getType())
             : [];
-      const selection =
+      const statusUnionExtras =
+        isUnionType(returnNamedType) && buildStatusUnionConnectExtras(returnNamedType);
+      let selection =
         buildSelectionForType(field.type.getType(), {
           skipFields,
           implementations: interfaceImplementations,
         }) ||
         // Scalar / empty responses still need a non-empty Connectors selection
         `$`;
+      // Ensure status-union `__typename` bake is present even when field pick was `$`/empty.
+      if (
+        statusUnionExtras?.typenameSelection &&
+        selection === '$' &&
+        !selection.includes('__typename')
+      ) {
+        selection = statusUnionExtras.typenameSelection;
+      } else if (
+        statusUnionExtras?.typenameSelection &&
+        selection !== '$' &&
+        !selection.includes('__typename')
+      ) {
+        selection = `${statusUnionExtras.typenameSelection} ${selection}`;
+      }
       const http = buildConnectHttpArgs({
         httpMethod,
         path: operationConfig.path,
@@ -434,8 +450,6 @@ ${operationConfig.description || ''}
         argTypeMap: operationConfig.argTypeMap as Record<string, { type?: string }> | undefined,
         bodySelection: inferBodySelection(operationConfig),
       });
-      const statusUnionExtras =
-        isUnionType(returnNamedType) && buildStatusUnionConnectExtras(returnNamedType);
       field.directives.push({
         name: 'connect',
         args: JSON.parse(
@@ -684,7 +698,21 @@ ${operationConfig.description || ''}
     [MapperKind.ENUM_VALUE]: enumValueConfig => stripDirectiveFromConfig(enumValueConfig, 'enum'),
     [MapperKind.OBJECT_TYPE]: type => stripTypeDirective(type, 'discriminator'),
     [MapperKind.INTERFACE_TYPE]: type => stripTypeDirective(type, 'discriminator'),
-    [MapperKind.UNION_TYPE]: type => stripTypeDirective(type, 'discriminator'),
+    [MapperKind.UNION_TYPE]: type => {
+      let next = stripTypeDirective(type, 'discriminator');
+      next = stripTypeDirective(next, 'statusCodeTypeName');
+      return next;
+    },
+    [MapperKind.OBJECT_FIELD]: fieldConfig => {
+      let next = stripDirectiveFromConfig(fieldConfig, 'resolveRoot');
+      next = stripDirectiveFromConfig(next, 'flatten');
+      return next;
+    },
+    [MapperKind.INTERFACE_FIELD]: fieldConfig => {
+      let next = stripDirectiveFromConfig(fieldConfig, 'resolveRoot');
+      next = stripDirectiveFromConfig(next, 'flatten');
+      return next;
+    },
   });
   // Drop unused Mesh directive definitions when nothing references them.
   schema = mapSchema(schema, {
@@ -692,7 +720,10 @@ ${operationConfig.description || ''}
       if (
         (directive.name === 'enum' ||
           directive.name === 'discriminator' ||
-          directive.name === 'resolveRootField') &&
+          directive.name === 'resolveRootField' ||
+          directive.name === 'resolveRoot' ||
+          directive.name === 'flatten' ||
+          directive.name === 'statusCodeTypeName') &&
         !schemaHasDirectiveUsage(schema, directive.name)
       ) {
         return null;
@@ -745,14 +776,29 @@ function finalizeConnectorsField(
     };
   }
 
-  // Output `@resolveRootField` is baked into parent `@connect(selection:)` aliases
-  // (`patent_id: $["patent-id"]`). Do not also emit a virtual `$this[...]` connect —
-  // that double-remaps after the parent selection already GraphQL-named the payload.
+  // Output Mesh dirs → Connectors / drop.
   // Keep input/arg `@resolveRootField` for request-body key de-sanitization.
   const isRootOperation =
     typeName === 'Query' || typeName === 'Mutation' || typeName === 'Subscription';
+  let fieldDirsChanged = false;
   if (directives.resolveRootField && !isRootOperation) {
     delete directives.resolveRootField;
+    fieldDirsChanged = true;
+  }
+  // `@resolveRoot` → virtual `@connect(selection: "$")` (parent value IS the field).
+  if (directives.resolveRoot?.length && !directives.connect?.length) {
+    directives.connect = [{ selection: '$' }];
+    delete directives.resolveRoot;
+    fieldDirsChanged = true;
+  } else if (directives.resolveRoot) {
+    delete directives.resolveRoot;
+    fieldDirsChanged = true;
+  }
+  if (directives.flatten) {
+    delete directives.flatten;
+    fieldDirsChanged = true;
+  }
+  if (fieldDirsChanged) {
     next = {
       ...next,
       extensions: { ...ext, directives },

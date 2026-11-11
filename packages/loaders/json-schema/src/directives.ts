@@ -125,16 +125,6 @@ export const DictionaryDirective = new GraphQLDirective({
   },
 });
 
-export const FlattenDirective = new GraphQLDirective({
-  name: 'flatten',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-  },
-});
-
 export const StatusCodeTypeNameDirective = new GraphQLDirective({
   name: 'statusCodeTypeName',
   locations: [DirectiveLocation.UNION],

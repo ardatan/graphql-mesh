@@ -5,8 +5,6 @@ exports[`OpanAPI: nested objects should generate the schema correctly 1`] = `
   query: Query
 }
 
-directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
@@ -24,7 +22,7 @@ type Query {
   ): searchCollection_response @connect(source: "example_api", http: {GET: "/collections/{$args.collectionName}/documents/search", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  searchParameters: $args.searchParameters\\n}"}, selection: "__typename: $status->match([200, \\"SearchResult\\"], [400, \\"ApiResponse\\"], [404, \\"ApiResponse\\"], [@, \\"SearchResult\\"]) facet_counts { counts field_name stats } found search_time_ms out_of search_cutoff page grouped_hits { group_key hits } hits { highlights document text_match geo_distance_meters } request_params { collection_name q per_page } message", isSuccess: "$status->match([200, true], [400, true], [404, true], [@, false])") @meshRestOptions(queryStringOptions: "{\\"allowDots\\":true}")
 }
 
-union searchCollection_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "SearchResult") @statusCodeTypeName(subgraph: "example_api", statusCode: "400", typeName: "ApiResponse") @statusCodeTypeName(subgraph: "example_api", statusCode: "404", typeName: "ApiResponse") = SearchResult | ApiResponse
+union searchCollection_response = SearchResult | ApiResponse
 
 type SearchResult {
   facet_counts: [FacetCounts]

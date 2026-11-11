@@ -7,8 +7,6 @@ exports[`Links on non-object fields should generate the correct schema 1`] = `
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
-
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -19,7 +17,7 @@ type Query {
 }
 
 type test_200_response {
-  String: String @resolveRoot(subgraph: "toto")
+  String: String @connect(selection: "$")
   testLink: testLink_200_response @connect(source: "toto", http: {GET: "/test-link", headers: [{name: "accept", value: "application/json"}]}, selection: "foo")
 }
 

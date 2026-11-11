@@ -4,12 +4,10 @@ import {
   isListType,
   isNonNullType,
   isScalarType,
-  isUnionType,
   type GraphQLField,
   type GraphQLOutputType,
   type GraphQLResolveInfo,
   type GraphQLSchema,
-  type GraphQLUnionType,
 } from 'graphql';
 import type { IStringifyOptions } from 'qs';
 import { stringify as qsStringify } from 'qs';
@@ -19,7 +17,7 @@ import { process } from '@graphql-mesh/cross-helpers';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
-import { getDirective, getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
+import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
 import { Blob, fetch as defaultFetch, File, FormData } from '@whatwg-node/fetch';
 import { isFileUpload } from './isFileUpload.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
@@ -33,18 +31,6 @@ const isListTypeOrNonNullListType = memoize1(function isListTypeOrNonNullListTyp
   }
   return isListType(type);
 });
-
-function hasStatusCodeMapping(
-  schema: GraphQLSchema,
-  unionType: GraphQLUnionType,
-  statusCode: string,
-) {
-  const mappings = getDirective(schema, unionType, 'statusCodeTypeName') || [];
-  return mappings.some(d => {
-    const codes = Array.isArray(d?.statusCode) ? d.statusCode : [d?.statusCode];
-    return codes?.some(code => String(code) === String(statusCode));
-  });
-}
 
 type ConnectHttp = {
   GET?: string;
@@ -1447,18 +1433,6 @@ export function addConnectFieldResolver(
         return Boolean(evalMappingExpression(String(isSuccessExpr), body, selectionExtras));
       }
       if (handlesStatus) {
-        return true;
-      }
-      // OpenAPI status unions map non-2xx payloads into union members via
-      // `@statusCodeTypeName` — treat those statuses as successful for selection.
-      if (
-        isUnionType(returnNamedGraphQLType) &&
-        hasStatusCodeMapping(
-          schema,
-          returnNamedGraphQLType as GraphQLUnionType,
-          String(response.status),
-        )
-      ) {
         return true;
       }
       return response.status.toString().startsWith('2');

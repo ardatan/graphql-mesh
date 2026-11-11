@@ -1,8 +1,11 @@
 import type { GraphQLField, GraphQLSchema } from 'graphql';
 import {
+  getNamedType,
   isEnumType,
   isInterfaceType,
   isIntrospectionType,
+  isListType,
+  isNonNullType,
   isScalarType,
   isSpecifiedScalarType,
   isUnionType,
@@ -16,10 +19,8 @@ import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
 import { processDictionaryDirective } from './dictionary.js';
 import { processDiscriminatorAnnotations } from './discriminator.js';
-import { processFlattenAnnotations } from './flatten.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
-import { processResolveRootAnnotations } from './resolveRoot.js';
 import { processResolveRootFieldAnnotations } from './resolveRootField.js';
 import { processResponseMetadataAnnotations } from './responseMetadata.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
@@ -133,28 +134,22 @@ export function processDirectives(
       }
     }
     if (isUnionType(type)) {
+      // `@statusCodeTypeName` / `@discriminator` are baked into `@connect(selection:)`
+      // as `__typename: $status->match(...)` / property `->match`. resolveType only
+      // needs `__typename` (and structural fallback for non-Connectors unions).
       const directiveAnnotations = getDefDirectives(schema, type);
-      let statusCodeTypeNameIndexMap: Record<number, string>;
       let discriminatorField: string;
       let discriminatorMapping: [string, string][];
       for (const directiveAnnotation of directiveAnnotations) {
-        switch (directiveAnnotation.name) {
-          case 'statusCodeTypeName':
-            statusCodeTypeNameIndexMap = statusCodeTypeNameIndexMap || {};
-            statusCodeTypeNameIndexMap[directiveAnnotation.args.statusCode] =
-              directiveAnnotation.args.typeName;
-            break;
-          case 'discriminator':
-            discriminatorField = directiveAnnotation.args.field;
-            discriminatorMapping = directiveAnnotation.args.mapping;
-            break;
+        if (directiveAnnotation.name === 'discriminator') {
+          discriminatorField = directiveAnnotation.args.field;
+          discriminatorMapping = directiveAnnotation.args.mapping;
         }
       }
       type.resolveType = getTypeResolverForAbstractType({
         possibleTypes: type.getTypes(),
         discriminatorField,
         discriminatorMapping,
-        statusCodeTypeNameMap: statusCodeTypeNameIndexMap,
         serviceName: currDirective?.subgraph,
       });
     }
@@ -196,17 +191,12 @@ export function processDirectives(
         const directiveAnnotations = getDefDirectives(schema, field);
         for (const directiveAnnotation of directiveAnnotations) {
           switch (directiveAnnotation.name) {
-            case 'resolveRoot':
-              processResolveRootAnnotations(field as GraphQLField<any, any>);
-              break;
+            // `@resolveRoot` / `@flatten` / `@statusCodeTypeName` baked into `@connect`.
             case 'resolveRootField':
               processResolveRootFieldAnnotations(
                 field as GraphQLField<any, any>,
                 directiveAnnotation.args.field,
               );
-              break;
-            case 'flatten':
-              processFlattenAnnotations(field as GraphQLField<any, any>);
               break;
             case 'pubsubOperation':
               processPubSubOperationAnnotations({
@@ -226,8 +216,30 @@ export function processDirectives(
               );
           }
         }
+        // Former `@flatten`: OpenAPI oneOf(string|array) → `[Scalar]` needs deep-flatten.
+        // No Connectors expression for this — coerce list-of-leaf fields without a directive.
+        installListFlattenCoercion(field as GraphQLField<any, any>);
       }
     }
   }
   return schema;
+}
+
+/** `[Scalar]` fields: normalize nested arrays / singular values (ex-`@flatten`). */
+function installListFlattenCoercion(field: GraphQLField<any, any>) {
+  let t = field.type;
+  while (isNonNullType(t)) t = t.ofType;
+  if (!isListType(t)) return;
+  const leaf = getNamedType(t.ofType);
+  if (!isScalarType(leaf) && !isEnumType(leaf)) return;
+  if (field.resolve && field.resolve.name !== 'defaultFieldResolver') return;
+  const fieldName = field.name;
+  field.resolve = function listFlattenCoercion(root) {
+    let result = root?.[fieldName];
+    if (result == null) return result;
+    if (!Array.isArray(result)) {
+      result = [result];
+    }
+    return result.flat(Infinity);
+  };
 }

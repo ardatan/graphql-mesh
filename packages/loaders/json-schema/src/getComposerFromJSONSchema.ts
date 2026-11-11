@@ -61,7 +61,6 @@ import {
   DiscriminatorDirective,
   EnumDirective,
   ExampleDirective,
-  FlattenDirective,
   LengthDirective,
   OneOfDirective,
   RegExpDirective,
@@ -1462,15 +1461,8 @@ export function getComposerFromJSONSchema({
                   },
                 });
               }
-              if (subSchemaAndTypeComposers.properties[propertyName].flatten) {
-                schemaComposer.addDirective(FlattenDirective);
-                fieldDirectives.push({
-                  name: 'flatten',
-                  args: {
-                    subgraph: subgraphName,
-                  },
-                });
-              }
+              // Former `@flatten`: list-of-scalar coercion is installed at transport
+              // process time for `[Scalar]` fields (no directive — Connectors has no flatten).
               fieldMap[fieldName] = {
                 type: () => {
                   const typeComposers = subSchemaAndTypeComposers.properties[propertyName];

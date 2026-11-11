@@ -10,8 +10,6 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
@@ -97,7 +95,7 @@ type Provider_specific_Access_Token_Response {
   The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
   """
   scope: String
-  additionalProperties: JSON @resolveRoot(subgraph: "test")
+  additionalProperties: JSON @connect(selection: "$")
   """
   The date and time the access token was issued, expressed in Unix epoch time in milliseconds.
   """
@@ -148,7 +146,7 @@ type Provider_specific_Tokens_Response {
   The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
   """
   scope: String
-  additionalProperties: JSON @resolveRoot(subgraph: "test")
+  additionalProperties: JSON @connect(selection: "$")
   """The refresh token."""
   refresh_token: String!
   """

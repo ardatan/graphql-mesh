@@ -10,10 +10,6 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
-
-directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
-
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
@@ -2259,7 +2255,7 @@ type Query {
     project_id: String!
     """Requested fields"""
     fields: String
-  ): project_validation_results_response @connect(source: "test", http: {GET: "/projects/{$args.project_id}/validate", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "__typename: $status->match([200, \\"ProjectValidationCache\\"], [204, \\"Void_container\\"], [@, \\"ProjectValidationCache\\"]) errors { code severity kind message field_name file_path line_number model_id explore help_url params sanitized_message } project_digest models_not_validated { name project_file_id } computation_time stale Void", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): project_validation_results_response @connect(source: "test", http: {GET: "/projects/{$args.project_id}/validate", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "__typename: $status->match([200, \\"ProjectValidationCache\\"], [204, \\"Void_container\\"], [@, \\"ProjectValidationCache\\"]) errors { code severity kind message field_name file_path line_number model_id explore help_url params sanitized_message } project_digest models_not_validated { name project_file_id } computation_time stale", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Get Project Workspace
   
@@ -7455,7 +7451,7 @@ type LocalizationSettings {
   localization_level: String
 }
 
-union project_validation_results_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "ProjectValidationCache") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = ProjectValidationCache | Void_container
+union project_validation_results_response = ProjectValidationCache | Void_container
 
 type ProjectValidationCache {
   """A list of project errors"""
@@ -7513,7 +7509,7 @@ type ModelsNotValidated {
 }
 
 type Void_container {
-  Void: Void @resolveRoot(subgraph: "test")
+  Void: Void @connect(selection: "$")
 }
 
 """Represents empty values"""
@@ -9432,7 +9428,7 @@ type Mutation {
     project_id: String!
     """Requested fields"""
     fields: String
-  ): lock_all_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/manifest/lock_all", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"]) String Void", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): lock_all_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/manifest/lock_all", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Update the setting for enabling/disabling digest emails
   
@@ -10260,7 +10256,7 @@ type Mutation {
     user_id: String!
     """Requested fields."""
     fields: String
-  ): activate_app_user_response @connect(source: "test", http: {POST: "/oauth_client_apps/{$args.client_guid}/users/{$args.user_id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"]) String Void", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): activate_app_user_response @connect(source: "test", http: {POST: "/oauth_client_apps/{$args.client_guid}/users/{$args.user_id}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n}"}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Deactivate an app for a user
   
@@ -10370,7 +10366,7 @@ type Mutation {
     branch: String
     """Ref to deploy to production"""
     ref: String
-  ): deploy_ref_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/deploy_ref_to_production", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  branch: $args.branch\\n  ref: $args.ref\\n}"}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"]) String Void", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): deploy_ref_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/deploy_ref_to_production", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  branch: $args.branch\\n  ref: $args.ref\\n}"}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Deploy LookML from this Development Mode Project to Production
   
@@ -10390,7 +10386,7 @@ type Mutation {
   deploy_to_production(
     """Id of project"""
     project_id: String!
-  ): deploy_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/deploy_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"]) String Void", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): deploy_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/deploy_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Reset a project to the revision of the project that is in production.
   
@@ -10400,7 +10396,7 @@ type Mutation {
   reset_project_to_production(
     """Id of project"""
     project_id: String!
-  ): reset_project_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"]) String Void", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): reset_project_to_production_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_production", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Reset a project development branch to the revision of the project that is on the remote.
   
@@ -10410,7 +10406,7 @@ type Mutation {
   reset_project_to_remote(
     """Id of project"""
     project_id: String!
-  ): reset_project_to_remote_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_remote", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"]) String Void", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): reset_project_to_remote_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/reset_to_remote", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $status->match([200, \\"String_container\\"], [204, \\"Void_container\\"], [@, \\"String_container\\"])", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Create A Project
   
@@ -10506,7 +10502,7 @@ type Mutation {
     """(Optional): Tag Message"""
     tag_message: String
     input: Project_Input
-  ): tag_ref_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/tag", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  commit_sha: $args.commit_sha\\n  tag_name: $args.tag_name\\n  tag_message: $args.tag_message\\n}"}, selection: "__typename: $status->match([200, \\"Project\\"], [204, \\"Void_container\\"], [@, \\"Project\\"]) can id name uses_git git_remote_url git_username git_password git_production_branch_name use_git_cookie_auth git_username_user_attribute git_password_user_attribute git_service_name git_application_server_http_port git_application_server_http_scheme deploy_secret unset_deploy_secret pull_request_mode validation_required git_release_mgmt_enabled allow_warnings is_example dependency_status Void", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  ): tag_ref_response @connect(source: "test", http: {POST: "/projects/{$args.project_id}/tag", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  commit_sha: $args.commit_sha\\n  tag_name: $args.tag_name\\n  tag_message: $args.tag_message\\n}"}, selection: "__typename: $status->match([200, \\"Project\\"], [204, \\"Void_container\\"], [@, \\"Project\\"]) can id name uses_git git_remote_url git_username git_password git_production_branch_name use_git_cookie_auth git_username_user_attribute git_password_user_attribute git_service_name git_application_server_http_port git_application_server_http_scheme deploy_secret unset_deploy_secret pull_request_mode validation_required git_release_mgmt_enabled allow_warnings is_example dependency_status", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Create a new task to render a look to an image.
   
@@ -11153,7 +11149,7 @@ type Mutation {
   
   
   """
-  validate_theme(input: Theme_Input): validate_theme_response @connect(source: "test", http: {POST: "/themes/validate", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([200, \\"ValidationError\\"], [204, \\"String_container\\"], [@, \\"ValidationError\\"]) message errors { field code message documentation_url } documentation_url String", isSuccess: "$status->match([200, true], [204, true], [@, false])")
+  validate_theme(input: Theme_Input): validate_theme_response @connect(source: "test", http: {POST: "/themes/validate", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "__typename: $status->match([200, \\"ValidationError\\"], [204, \\"String_container\\"], [@, \\"ValidationError\\"]) message errors { field code message documentation_url } documentation_url", isSuccess: "$status->match([200, true], [204, true], [@, false])")
   """
   ### Update the theme by id.
   
@@ -12861,10 +12857,10 @@ type DBConnectionTestResult {
   status: String
 }
 
-union lock_all_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
+union lock_all_response = String_container | Void_container
 
 type String_container {
-  String: String @resolveRoot(subgraph: "test")
+  String: String @connect(selection: "$")
 }
 
 input DigestEmails_Input {
@@ -13857,9 +13853,9 @@ input LegacyFeature_Input {
   has_disabled_on_upgrade: Boolean
 }
 
-union copy_look_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "LookWithQuery") @statusCodeTypeName(subgraph: "test", statusCode: "201", typeName: "Look") = LookWithQuery | Look
+union copy_look_response = LookWithQuery | Look
 
-union move_look_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "LookWithQuery") @statusCodeTypeName(subgraph: "test", statusCode: "201", typeName: "Look") = LookWithQuery | Look
+union move_look_response = LookWithQuery | Look
 
 input LookmlModel_Input {
   """Operations the current user is able to perform on this object"""
@@ -14020,7 +14016,7 @@ input UserPublic_Input {
   url: UriReference
 }
 
-union activate_app_user_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
+union activate_app_user_response = String_container | Void_container
 
 input OIDCConfig_Input {
   """Operations the current user is able to perform on this object"""
@@ -14176,13 +14172,13 @@ input PasswordConfig_Input {
   require_special: Boolean!
 }
 
-union deploy_ref_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
+union deploy_ref_to_production_response = String_container | Void_container
 
-union deploy_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
+union deploy_to_production_response = String_container | Void_container
 
-union reset_project_to_production_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
+union reset_project_to_production_response = String_container | Void_container
 
-union reset_project_to_remote_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "String_container") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = String_container | Void_container
+union reset_project_to_remote_response = String_container | Void_container
 
 input Project_Input {
   """Operations the current user is able to perform on this object"""
@@ -14259,7 +14255,7 @@ type ProjectValidation {
   computation_time: Float
 }
 
-union tag_ref_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "Project") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "Void_container") = Project | Void_container
+union tag_ref_response = Project | Void_container
 
 input CreateDashboardRenderTask_Input {
   """Filter values to apply to the dashboard queries, in URL query format"""
@@ -14892,7 +14888,7 @@ input ThemeSettings_Input {
   box_shadow: String!
 }
 
-union validate_theme_response @statusCodeTypeName(subgraph: "test", statusCode: "200", typeName: "ValidationError") @statusCodeTypeName(subgraph: "test", statusCode: "204", typeName: "String_container") = ValidationError | String_container
+union validate_theme_response = ValidationError | String_container
 
 input SshServer_Input {
   """A unique id used to identify this SSH Server"""
