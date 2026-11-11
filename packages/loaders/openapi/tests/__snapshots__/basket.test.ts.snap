@@ -21,7 +21,7 @@ type Query {
     """Authentication Token"""
     x_auth_token: String!
   ): CustomerAttributes @connect(source: "basket", http: {GET: "/customers/{customerId}", headers: [{name: "x-auth-token", value: "{$args.x_auth_token}"}, {name: "accept", value: "application/json"}]}, selection: "attributes { name more }")
-  Locations: [LocationModel] @connect(source: "basket", http: {GET: "/Locations", headers: [{name: "accept", value: "application/json,application/custom-thingy.v3+json"}]}, selection: "email parents { email parents { email parents { email } } }")
+  Locations: [LocationModel] @connect(source: "basket", http: {GET: "/Locations", headers: [{name: "accept", value: "application/json,application/custom-thingy.v3+json"}]}, selection: "email")
   Cards: [CardModel] @connect(source: "basket", http: {GET: "/Cards", headers: [{name: "accept", value: "application/json,application/custom.v3+json"}]}, selection: "id")
 }
 
