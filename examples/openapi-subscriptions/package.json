@@ -12,7 +12,7 @@
     "@types/node": "^26.2.0",
     "@whatwg-node/fetch": "^0.12.1",
     "concurrently": "10.0.6",
-    "fets": "^0.8.8",
+    "fets": "^0.8.13",
     "graphql": "16.14.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "2.0.0",

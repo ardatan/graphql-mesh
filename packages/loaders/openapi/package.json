@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@whatwg-node/fetch": "^0.12.1",
-    "fets": "0.8.8",
+    "fets": "0.8.13",
     "graphql": "16.14.0",
     "graphql-yoga": "^6.0.1",
     "json-bigint-patch": "0.0.9"
