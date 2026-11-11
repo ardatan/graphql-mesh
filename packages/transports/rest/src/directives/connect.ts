@@ -1073,9 +1073,7 @@ export function addConnectFieldResolver(
       const pathForMessage = picked.path.replace(/\{\$/g, '{');
       const defaultMessage = `Upstream HTTP Error: ${response.status}, Could not invoke operation ${method} ${pathForMessage}`;
       return new GraphQLError(
-        typeof customMessage === 'string' && customMessage.length
-          ? customMessage
-          : defaultMessage,
+        typeof customMessage === 'string' && customMessage.length ? customMessage : defaultMessage,
         {
           extensions: {
             ...customExtensions,

@@ -317,9 +317,7 @@ describe('Apollo Connectors error shape', () => {
     expect(result.data).toEqual({ products: null });
     expect(result.errors).toHaveLength(1);
     const err = result.errors![0];
-    expect(err.message).toBe(
-      'Upstream HTTP Error: 500, Could not invoke operation GET /products',
-    );
+    expect(err.message).toBe('Upstream HTTP Error: 500, Could not invoke operation GET /products');
     expect(err.extensions).toMatchObject({
       code: 'DOWNSTREAM_SERVICE_ERROR',
       service: 'ecomm',
@@ -382,20 +380,17 @@ describe('Apollo Connectors error shape', () => {
     const urls: string[] = [];
     const sdl = /* GraphQL */ `
       ${CONNECTOR_DIRECTIVES}
-      schema @source(
-        name: "Pets"
-        http: { baseURL: "http://localhost:{$context.headers['x-upstream-port']:4001}" }
-      ) {
+      schema
+        @source(
+          name: "Pets"
+          http: { baseURL: "http://localhost:{$context.headers['x-upstream-port']:4001}" }
+        ) {
         query: Query
       }
 
       type Query {
         pet(petId: String!): Pet
-          @connect(
-            source: "Pets"
-            http: { GET: "/pet/{$args.petId}" }
-            selection: "name"
-          )
+          @connect(source: "Pets", http: { GET: "/pet/{$args.petId}" }, selection: "name")
       }
 
       type Pet {
