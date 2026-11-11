@@ -197,4 +197,70 @@ describe('Federation Connectors annotations', () => {
     expect(selection).toMatch(/\bname\b/);
     clearMeshEntityRegistries();
   });
+
+  it('bakes exposeResponseMetadata into @connect selection (no @responseMetadata)', async () => {
+    const schema = await loadGraphQLSchemaFromJSONSchemas('meta', {
+      endpoint: 'http://localhost:3000',
+      operations: [
+        {
+          type: OperationTypeNode.QUERY,
+          field: 'thing',
+          path: '/thing',
+          method: 'GET',
+          exposeResponseMetadata: true,
+          responseSample: { id: '1', name: 'n' },
+        },
+      ],
+      async fetch() {
+        return Response.json(
+          { id: '1', name: 'n' },
+          { status: 201, statusText: 'Created', headers: { 'x-trace': 'abc' } },
+        );
+      },
+    });
+
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).toContain('_response:');
+    expect(sdl).toContain('$request.url');
+    expect(sdl).toContain('$request.method');
+    expect(sdl).toContain('$statusText');
+    expect(sdl).toContain('$response.header');
+    expect(sdl).not.toContain('@responseMetadata');
+
+    const result = await normalizedExecutor({
+      schema,
+      document: parse(/* GraphQL */ `
+        query {
+          thing {
+            id
+            name
+            _response {
+              url
+              method
+              status
+              statusText
+              headers
+              body
+            }
+          }
+        }
+      `),
+    });
+    expect(result).toEqual({
+      data: {
+        thing: {
+          id: '1',
+          name: 'n',
+          _response: {
+            url: 'http://localhost:3000/thing',
+            method: 'GET',
+            status: 201,
+            statusText: 'Created',
+            headers: expect.objectContaining({ 'x-trace': 'abc' }),
+            body: { id: '1', name: 'n' },
+          },
+        },
+      },
+    });
+  });
 });

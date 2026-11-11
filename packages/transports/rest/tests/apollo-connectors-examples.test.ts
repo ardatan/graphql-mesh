@@ -674,4 +674,73 @@ describe('Federation Connectors error shape', () => {
       'https://api.example.com/customers/c1',
     ]);
   });
+
+  it('bakes Mesh _response metadata via selection ($request.url / $statusText / …)', async () => {
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      scalar JSON
+      schema @source(name: "meta", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+      type Query {
+        thing: Thing
+          @connect(
+            source: "meta"
+            http: { GET: "/thing" }
+            selection: "$ _response: { url: $request.url method: $request.method status: $status statusText: $statusText headers: $response.header body: $ }"
+          )
+      }
+      type Thing {
+        id: ID
+        _response: ResponseMetadata
+      }
+      type ResponseMetadata {
+        url: String
+        method: String
+        status: Int
+        statusText: String
+        headers: JSON
+        body: JSON
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async () =>
+        Response.json(
+          { id: '1' },
+          { status: 201, statusText: 'Created', headers: { 'x-trace': 'abc' } },
+        )) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          thing {
+            id
+            _response {
+              url
+              method
+              status
+              statusText
+              headers
+              body
+            }
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      thing: {
+        id: '1',
+        _response: {
+          url: 'https://api.example.com/thing',
+          method: 'GET',
+          status: 201,
+          statusText: 'Created',
+          headers: expect.objectContaining({ 'x-trace': 'abc' }),
+          body: { id: '1' },
+        },
+      },
+    });
+  });
 });

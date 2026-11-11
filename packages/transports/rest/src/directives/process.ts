@@ -18,7 +18,6 @@ import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
-import { processResponseMetadataAnnotations } from './responseMetadata.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
 
@@ -155,10 +154,7 @@ export function processDirectives(
               });
               break;
             // Legacy `@httpOperation` / `@oas_link` were replaced by `@connect` (breaking).
-            case 'responseMetadata':
-              processResponseMetadataAnnotations(field as GraphQLField<any, any>);
-              break;
-            // `@dictionary` is baked into `@connect(selection:)` as `$->entries->filter(...)`.
+            // `@dictionary` / `@responseMetadata` are baked into `@connect(selection:)`.
           }
         }
         // Former `@flatten`: OpenAPI oneOf(string|array) → `[Scalar]` needs deep-flatten.

@@ -608,26 +608,45 @@ function applyHeaders(
   }
 }
 
+/** Runtime values available to Connectors selection / errors mapping (Mesh extras beyond Apollo). */
+export type ConnectSelectionExtras = {
+  status?: number;
+  statusText?: string;
+  responseHeaders?: Headers;
+  /** Flat string map for Mesh `_response.headers` (`$response.header`). */
+  responseHeaderMap?: Record<string, string>;
+  requestUrl?: string;
+  requestMethod?: string;
+};
+
 /**
  * Minimal selection evaluator:
  * - `id name` field picks
  * - `alias: path` aliases
  * - nested `field { a b }`
  * - `$` / `$root` for root
- * - `$status`
- * - `$response.headers.x` (first value)
+ * - `$status` / `$statusText`
+ * - `$request.url` / `$request.method` (Mesh; for `_response` bake)
+ * - `$response.header` (Mesh flat map) / `$response.headers.x` (Apollo first value)
+ * - `$ <fields>` — merge root object with mapped fields (Mesh `exposeResponseMetadata`)
  */
-export function applySelection(
-  selection: string,
-  root: any,
-  extras: { status?: number; responseHeaders?: Headers },
-): any {
+export function applySelection(selection: string, root: any, extras: ConnectSelectionExtras): any {
   const trimmed = selection.trim();
   if (!trimmed) {
     return root;
   }
   if (trimmed === '$' || trimmed === '$root') {
     return root;
+  }
+  // Mesh: `$ _response: { … }` — keep JSON body fields and overlay mapped keys.
+  // Only when `$` is followed by whitespace (not `$status` / `$.x` / `$->…`).
+  if (/^\$\s+\S/.test(trimmed)) {
+    const rest = trimmed.replace(/^\$\s+/, '').trim();
+    const mapped = rest ? evalSubSelection(rest, root, extras) : {};
+    if (root != null && typeof root === 'object' && !Array.isArray(root)) {
+      return { ...root, ...mapped };
+    }
+    return mapped;
   }
   // Connectors literals / single path expressions (not multi-field selections).
   // `$status->match(...)` may contain spaces inside the argument list.
@@ -637,13 +656,16 @@ export function applySelection(
   return evalSubSelection(trimmed, root, extras);
 }
 
-function evalPath(
-  path: string,
-  root: any,
-  extras: { status?: number; responseHeaders?: Headers },
-): any {
+function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any {
   if (path === '$' || path === '$root') return root;
   if (path === '$status') return extras.status;
+  if (path === '$statusText') return extras.statusText;
+  if (path === '$request.url' || path === '$url') return extras.requestUrl;
+  if (path === '$request.method' || path === '$method') return extras.requestMethod;
+  // Mesh flat response header map (exposeResponseMetadata → `_response.headers`).
+  if (path === '$response.header' || path === '$response.headers') {
+    return extras.responseHeaderMap ?? {};
+  }
   if (path.startsWith('$response.headers.')) {
     const name = path.slice('$response.headers.'.length).replace(/^['"]|['"]$/g, '');
     const values = extras.responseHeaders?.get(name);
@@ -812,7 +834,7 @@ function evalMatchMethod(
   left: any,
   rawArgs: string,
   root: any = {},
-  extras: { status?: number; responseHeaders?: Headers } = {},
+  extras: ConnectSelectionExtras = {},
   vars?: {
     args: Record<string, any>;
     thisValue: any;
@@ -887,7 +909,7 @@ function findTopLevelComma(inner: string): number {
 function parseMatchValue(
   raw: string,
   root: any = {},
-  extras: { status?: number; responseHeaders?: Headers } = {},
+  extras: ConnectSelectionExtras = {},
   vars?: {
     args: Record<string, any>;
     thisValue: any;
@@ -930,7 +952,7 @@ function parseMatchValue(
 function evalMappingExpression(
   expr: string | undefined,
   root: any,
-  extras: { status?: number; responseHeaders?: Headers },
+  extras: ConnectSelectionExtras,
 ): any {
   if (expr == null || expr === '') return undefined;
   const trimmed = expr.trim();
@@ -957,11 +979,7 @@ function evalMappingExpression(
   return trimmed;
 }
 
-function evalSubSelection(
-  selection: string,
-  root: any,
-  extras: { status?: number; responseHeaders?: Headers },
-): any {
+function evalSubSelection(selection: string, root: any, extras: ConnectSelectionExtras): any {
   if (Array.isArray(root)) {
     return root.map(item => evalSubSelection(selection, item, extras));
   }
@@ -1510,9 +1528,14 @@ export function addConnectFieldResolver(
     const returnNamedGraphQLType = getNamedType(field.type);
     let responseData: any;
     const text = await response.text();
-    const selectionExtras = {
+    const responseHeaderMap = getHeadersObj(response.headers);
+    const selectionExtras: ConnectSelectionExtras = {
       status: response.status,
+      statusText: response.statusText,
       responseHeaders: response.headers,
+      responseHeaderMap,
+      requestUrl: requestUrlForMeta.originPath,
+      requestMethod: method,
     };
     // Mesh OpenAPI status unions put `$status` in selection; treat as success so mapping runs.
     const handlesStatus = connectArgs.selection?.includes('$status');
@@ -1657,7 +1680,8 @@ export function addConnectFieldResolver(
 
 /**
  * Attach Mesh-compatible `$url` / `$request` / `$response` metadata used by link
- * interpolations and `@responseMetadata`. Hidden from enumerations / JSON.
+ * interpolations. Hidden from enumerations / JSON. `_response` for
+ * `exposeResponseMetadata` is baked into `@connect(selection:)` instead.
  */
 function attachResponseMetadata(
   selected: any,

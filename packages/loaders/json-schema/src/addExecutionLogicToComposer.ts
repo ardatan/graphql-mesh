@@ -43,11 +43,7 @@ import {
   warnConnectSelectionPassthrough,
   wrapArgExprWithEnumMatch,
 } from './connectAnnotations.js';
-import {
-  PubSubOperationDirective,
-  ResolveRootDirective,
-  ResponseMetadataDirective,
-} from './directives.js';
+import { PubSubOperationDirective, ResolveRootDirective } from './directives.js';
 import { registerMeshEntityType } from './entityRefs.js';
 import type {
   ConnectSelectionOptions,
@@ -163,6 +159,10 @@ const responseMetadataType = new GraphQLObjectType({
     body: { type: GraphQLJSON },
   },
 });
+
+/** Mesh-only Connectors selection for `exposeResponseMetadata` → `_response`. */
+const RESPONSE_METADATA_CONNECT_SELECTION =
+  '_response: { url: $request.url method: $request.method status: $status statusText: $statusText headers: $response.header body: $ }';
 
 export function addExecutionDirectivesToComposer(
   subgraphName: string,
@@ -429,6 +429,7 @@ ${operationConfig.description || ''}
           skipFields.add(linkName);
         }
       }
+      // `_response` is baked into selection below — never expand as a normal JSON field.
       skipFields.add('_response');
       if ('responseByStatusCode' in operationConfig) {
         for (const statusCode in operationConfig.responseByStatusCode) {
@@ -440,6 +441,13 @@ ${operationConfig.description || ''}
           }
         }
       }
+      const exposeResponseMetadata =
+        Boolean(
+          'exposeResponseMetadata' in operationConfig && operationConfig.exposeResponseMetadata,
+        ) ||
+        Object.values(
+          ('responseByStatusCode' in operationConfig && operationConfig.responseByStatusCode) || {},
+        ).some(responseConfig => Boolean(responseConfig?.exposeResponseMetadata));
       const returnNamedType = getNamedType(field.type.getType());
       const interfaceImplementations =
         isInterfaceType(returnNamedType) && 'getInterfaceImplementors' in (schemaComposer as any)
@@ -493,6 +501,13 @@ ${operationConfig.description || ''}
           isUnionType(returnNamedType))
       ) {
         warnConnectSelectionPassthrough(selectionLimit, returnNamedType.name);
+      }
+      // Bake Mesh `_response` into selection (Hive-only vars: $request.url / $statusText / …).
+      if (exposeResponseMetadata && !selection.includes('_response:')) {
+        selection =
+          selection === '$' || selection === '$root'
+            ? `$ ${RESPONSE_METADATA_CONNECT_SELECTION}`
+            : `${selection} ${RESPONSE_METADATA_CONNECT_SELECTION}`;
       }
       const http = buildConnectHttpArgs({
         httpMethod,
@@ -574,18 +589,9 @@ ${operationConfig.description || ''}
 
       if ('exposeResponseMetadata' in operationConfig && operationConfig.exposeResponseMetadata) {
         const typeTC = schemaComposer.getOTC(field.type.getTypeName());
-        schemaComposer.addDirective(ResponseMetadataDirective);
         typeTC.addFields({
           _response: {
             type: responseMetadataType,
-            directives: [
-              {
-                name: 'responseMetadata',
-                args: {
-                  subgraph: subgraphName,
-                },
-              },
-            ],
           },
         });
       }
@@ -631,18 +637,9 @@ ${operationConfig.description || ''}
               field.type = typeTC;
             }
             if (responseConfig.exposeResponseMetadata) {
-              schemaComposer.addDirective(ResponseMetadataDirective);
               typeTC.addFields({
                 _response: {
                   type: responseMetadataType,
-                  directives: [
-                    {
-                      name: 'responseMetadata',
-                      args: {
-                        subgraph: subgraphName,
-                      },
-                    },
-                  ],
                 },
               });
             }
