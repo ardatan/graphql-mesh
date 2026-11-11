@@ -17,6 +17,7 @@ import { processDictionaryDirective } from './dictionary.js';
 import { processDiscriminatorAnnotations } from './discriminator.js';
 import { processFlattenAnnotations } from './flatten.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
+import { processConnectDirectives } from './connect.js';
 import type { GlobalOptions } from './httpOperation.js';
 import { addHTTPRootFieldResolver } from './httpOperation.js';
 import { processLinkFieldAnnotations } from './link.js';
@@ -45,15 +46,29 @@ export function processDirectives(
   if (nonExecutableObjMapScalar && isScalarType(nonExecutableObjMapScalar)) {
     addExecutionLogicToScalar(nonExecutableObjMapScalar, ObjMapScalar);
   }
-  const transportDirectives = getDirectiveExtensions(schema)?.transport;
+  const schemaDirectives = getDirectiveExtensions(schema);
+  const transportDirectives = schemaDirectives?.transport;
+  const sourceDirectives = schemaDirectives?.source;
   const currDirective = transportDirectives?.[0];
+  const sourceDirective = sourceDirectives?.[0];
+  // Prefer Apollo @source; fall back to legacy Mesh @transport
+  const sourceHeaders = sourceDirective?.http?.headers
+    ? Object.fromEntries(
+        (sourceDirective.http.headers as Array<{ name: string; value?: string }>).map(h => [
+          h.name,
+          h.value,
+        ]),
+      )
+    : undefined;
   const globalOptions = {
-    endpoint: currDirective?.location,
-    operationHeaders: currDirective?.headers,
+    endpoint: sourceDirective?.http?.baseURL ?? currDirective?.location,
+    operationHeaders: sourceHeaders ?? currDirective?.headers,
     queryParams: currDirective?.queryParams,
     queryStringOptions: currDirective?.queryStringOptions,
     ...extraGlobalOptions,
   };
+  // Wire @connect resolvers (Apollo Connectors)
+  processConnectDirectives(schema, { globalFetch, log });
   if (typeof globalOptions.operationHeaders === 'string') {
     globalOptions.operationHeaders = JSON.parse(globalOptions.operationHeaders);
   }
