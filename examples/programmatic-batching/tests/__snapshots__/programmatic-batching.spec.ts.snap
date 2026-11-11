@@ -10,6 +10,8 @@ directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, 
 
 directive @link(import: [String], url: String!) repeatable on SCHEMA
 
+directive @meshRestOptions(isBinary: Boolean, queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int) on FIELD_DEFINITION
+
 directive @source(errors: ConnectorErrors, http: SourceHTTP!, isSuccess: String, name: String!) repeatable on SCHEMA
 
 input ConnectHTTP {
@@ -38,6 +40,8 @@ input HTTPHeaderMapping {
 type Mutation {
   usersByIds(input: UsersByIdRequest_Input): UsersByIdResponse @connect(source: "ExampleAPI", http: {POST: "/users_by_ids", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "results {\\n  id\\n  name\\n}")
 }
+
+scalar ObjMap
 
 type Query {
   dummy: String

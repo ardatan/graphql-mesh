@@ -38,7 +38,8 @@ describe('JSON Schema Complex URL', () => {
       data: {
         getData: {
           authorization: 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=',
-          url: `/?request=GetData&some_arg=${some_arg}&some_val=0`,
+          // Path/query template interpolations are percent-encoded (Connectors parity).
+          url: `/?request=GetData&some_arg=${encodeURIComponent(some_arg)}&some_val=0`,
         },
       },
     });

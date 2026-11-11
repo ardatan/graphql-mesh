@@ -7,6 +7,8 @@ directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
 directive @link(import: [String], url: String!) repeatable on SCHEMA
 
+directive @meshRestOptions(isBinary: Boolean, queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int) on FIELD_DEFINITION
+
 directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
@@ -1829,6 +1831,8 @@ type NormalsObj {
   """Average 10m wind speed"""
   wind_spd: Float
 }
+
+scalar ObjMap
 
 """Minimal populated-place info"""
 type PopulatedPlaceSummary {
