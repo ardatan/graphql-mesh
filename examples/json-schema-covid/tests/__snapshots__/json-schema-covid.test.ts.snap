@@ -10,8 +10,6 @@ directive @link(import: [String], url: String!) repeatable on SCHEMA
 
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
 
-directive @responseMetadata(subgraph: String) on FIELD_DEFINITION
-
 directive @source(errors: ConnectorErrors, http: SourceHTTP!, isSuccess: String, name: String!) repeatable on SCHEMA
 
 """Desc Api Population"""
