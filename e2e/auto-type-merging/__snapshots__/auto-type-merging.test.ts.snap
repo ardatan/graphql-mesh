@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect"]) @link(
   url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@enum", "@httpOperation", "@transport", "@merge", "@source", "@extraSchemaDefinitionDirective"]
+  import: ["@enum", "@merge", "@extraSchemaDefinitionDirective", "@source"]
 ) {
   query: Query
   mutation: Mutation
@@ -61,27 +61,14 @@ enum join__Graph {
 
 directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
 
-directive @httpOperation(
-  subgraph: String
-  path: String
-  operationSpecificHeaders: [[String]]
-  httpMethod: HTTPMethod
-  isBinary: Boolean
-  requestBaseBody: ObjMap
-  queryParamArgMap: ObjMap
-  queryStringOptionsByParam: ObjMap
-  jsonApiFields: Boolean
-  queryStringOptions: ObjMap
-) repeatable on FIELD_DEFINITION
-
-directive @transport(
-  subgraph: String
-  kind: String
-  location: String
-  headers: [[String]]
-  queryStringOptions: ObjMap
-  queryParams: [[String]]
-) repeatable on SCHEMA
+directive @connect(
+  source: String
+  http: ConnectHTTP
+  selection: String!
+  entity: Boolean
+  errors: ConnectorErrors
+  isSuccess: String
+) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @merge(
   subgraph: String
@@ -92,9 +79,9 @@ directive @merge(
   additionalArgs: String
 ) repeatable on FIELD_DEFINITION
 
-directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
-
 directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
+
+directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
@@ -123,25 +110,20 @@ The \`File\` scalar type represents a file upload.
 """
 scalar File @join__type(graph: PETSTORE) @inaccessible
 
-scalar ObjMap @join__type(graph: PETSTORE)
-
 scalar _DirectiveExtensions @join__type(graph: PETSTORE)
 
 scalar TransportOptions @join__type(graph: VACCINATION)
 
 type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3"}]}
+  directives: {source: [{name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}], transport: [{subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3"}]}
 ) @join__type(graph: PETSTORE) @join__type(graph: VACCINATION) {
   """
   Multiple status values can be provided with comma separated strings
   """
-  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @httpOperation(
-    subgraph: "petstore"
-    path: "/pet/findByStatus"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
-    queryParamArgMap: "{\\"status\\":\\"status\\"}"
-    queryStringOptionsByParam: "{\\"status\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}"
+  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @connect(
+    source: "petstore"
+    http: {GET: "/pet/findByStatus", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n}"}
+    selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus"
   ) @join__field(graph: PETSTORE) @inaccessible
   """
   Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
@@ -149,13 +131,10 @@ type Query @extraSchemaDefinitionDirective(
   findPetsByTags("""
   Tags to filter by
   """
-  tags: [String]): [Pet] @httpOperation(
-    subgraph: "petstore"
-    path: "/pet/findByTags"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
-    queryParamArgMap: "{\\"tags\\":\\"tags\\"}"
-    queryStringOptionsByParam: "{\\"tags\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}"
+  tags: [String]): [Pet] @connect(
+    source: "petstore"
+    http: {GET: "/pet/findByTags", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tags: $args.tags\\n}"}
+    selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus"
   ) @join__field(graph: PETSTORE) @inaccessible
   """
   Returns a single pet
@@ -163,20 +142,18 @@ type Query @extraSchemaDefinitionDirective(
   getPetById("""
   ID of pet to return
   """
-  petId: BigInt!): Pet @httpOperation(
-    subgraph: "petstore"
-    path: "/pet/{args.petId}"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
+  petId: BigInt!): Pet @connect(
+    source: "petstore"
+    http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}
+    selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus"
   ) @merge(subgraph: "petstore", keyField: "id", keyArg: "petId") @join__field(graph: PETSTORE)
   """
   Returns a map of status codes to quantities
   """
-  getInventory: JSON @httpOperation(
-    subgraph: "petstore"
-    path: "/store/inventory"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
+  getInventory: JSON @connect(
+    source: "petstore"
+    http: {GET: "/store/inventory", headers: [{name: "accept", value: "application/json"}]}
+    selection: "$"
   ) @join__field(graph: PETSTORE) @inaccessible
   """
   For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
@@ -184,11 +161,10 @@ type Query @extraSchemaDefinitionDirective(
   getOrderById("""
   ID of order that needs to be fetched
   """
-  orderId: BigInt!): Order @httpOperation(
-    subgraph: "petstore"
-    path: "/store/order/{args.orderId}"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
+  orderId: BigInt!): Order @connect(
+    source: "petstore"
+    http: {GET: "/store/order/{$args.orderId}", headers: [{name: "accept", value: "application/json"}]}
+    selection: "id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete"
   ) @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId") @join__field(graph: PETSTORE) @inaccessible
   """
   Logs user into the system
@@ -202,17 +178,15 @@ type Query @extraSchemaDefinitionDirective(
     The password for login in clear text
     """
     password: String
-  ): String @httpOperation(
-    subgraph: "petstore"
-    path: "/user/login"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
-    queryParamArgMap: "{\\"username\\":\\"username\\",\\"password\\":\\"password\\"}"
+  ): String @connect(
+    source: "petstore"
+    http: {GET: "/user/login", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  username: $args.username\\n  password: $args.password\\n}"}
+    selection: "$"
   ) @join__field(graph: PETSTORE) @inaccessible
   """
   Logs out current logged in user session
   """
-  logoutUser: JSON @httpOperation(subgraph: "petstore", path: "/user/logout", httpMethod: GET) @join__field(graph: PETSTORE) @inaccessible
+  logoutUser: JSON @connect(source: "petstore", http: {GET: "/user/logout"}, selection: "$") @join__field(graph: PETSTORE) @inaccessible
   """
   Get user by user name
   """
@@ -221,11 +195,10 @@ type Query @extraSchemaDefinitionDirective(
     The name that needs to be fetched. Use user1 for testing.
     """
     username: String!
-  ): User @httpOperation(
-    subgraph: "petstore"
-    path: "/user/{args.username}"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
+  ): User @connect(
+    source: "petstore"
+    http: {GET: "/user/{$args.username}", headers: [{name: "accept", value: "application/json"}]}
+    selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus"
   ) @join__field(graph: PETSTORE) @inaccessible
   petById(id: BigInt!): Pet @source(name: "pet_by_id", type: "Pet", subgraph: "vaccination") @merge(subgraph: "vaccination", keyField: "id", keyArg: "id") @join__field(graph: VACCINATION)
 }
@@ -280,20 +253,18 @@ type Mutation @join__type(graph: PETSTORE) @inaccessible {
   """
   Update an existing pet by Id
   """
-  updatePet(input: Pet_Input): Pet @httpOperation(
-    subgraph: "petstore"
-    path: "/pet"
-    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
-    httpMethod: PUT
+  updatePet(input: Pet_Input): Pet @connect(
+    source: "petstore"
+    http: {PUT: "/pet", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
+    selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus"
   ) @inaccessible
   """
   Add a new pet to the store
   """
-  addPet(input: Pet_Input): Pet @httpOperation(
-    subgraph: "petstore"
-    path: "/pet"
-    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
-    httpMethod: POST
+  addPet(input: Pet_Input): Pet @connect(
+    source: "petstore"
+    http: {POST: "/pet", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
+    selection: "id\\nname\\ncategory {\\n  id\\n  name\\n}\\nphotoUrls\\ntags {\\n  id\\n  name\\n}\\nstatus"
   ) @inaccessible
   """
   Updates a pet in the store with form data
@@ -311,11 +282,10 @@ type Mutation @join__type(graph: PETSTORE) @inaccessible {
     Status of pet that needs to be updated
     """
     status: String
-  ): JSON @httpOperation(
-    subgraph: "petstore"
-    path: "/pet/{args.petId}"
-    httpMethod: POST
-    queryParamArgMap: "{\\"name\\":\\"name\\",\\"status\\":\\"status\\"}"
+  ): JSON @connect(
+    source: "petstore"
+    http: {POST: "/pet/{$args.petId}", queryParams: "{\\n  name: $args.name\\n  status: $args.status\\n}"}
+    selection: "$"
   ) @inaccessible
   """
   Deletes a pet
@@ -323,11 +293,10 @@ type Mutation @join__type(graph: PETSTORE) @inaccessible {
   deletePet(api_key: String, """
   Pet id to delete
   """
-  petId: BigInt!): JSON @httpOperation(
-    subgraph: "petstore"
-    path: "/pet/{args.petId}"
-    operationSpecificHeaders: [["api_key", "{args.api_key}"]]
-    httpMethod: DELETE
+  petId: BigInt!): JSON @connect(
+    source: "petstore"
+    http: {DELETE: "/pet/{$args.petId}", headers: [{name: "api_key", value: "{$args.api_key}"}]}
+    selection: "$"
   ) @inaccessible
   """
   uploads an image
@@ -342,21 +311,18 @@ type Mutation @join__type(graph: PETSTORE) @inaccessible {
     """
     additionalMetadata: String
     input: File
-  ): ApiResponse @httpOperation(
-    subgraph: "petstore"
-    path: "/pet/{args.petId}/uploadImage"
-    operationSpecificHeaders: [["Content-Type", "application/octet-stream"], ["accept", "application/json"]]
-    httpMethod: POST
-    queryParamArgMap: "{\\"additionalMetadata\\":\\"additionalMetadata\\"}"
+  ): ApiResponse @connect(
+    source: "petstore"
+    http: {POST: "/pet/{$args.petId}/uploadImage", headers: [{name: "Content-Type", value: "application/octet-stream"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  additionalMetadata: $args.additionalMetadata\\n}"}
+    selection: "code\\ntype\\nmessage"
   ) @inaccessible
   """
   Place a new order in the store
   """
-  placeOrder(input: Order_Input): Order @httpOperation(
-    subgraph: "petstore"
-    path: "/store/order"
-    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
-    httpMethod: POST
+  placeOrder(input: Order_Input): Order @connect(
+    source: "petstore"
+    http: {POST: "/store/order", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
+    selection: "id\\npetId\\nquantity\\nshipDate\\nstatus\\ncomplete"
   ) @inaccessible
   """
   For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
@@ -364,24 +330,26 @@ type Mutation @join__type(graph: PETSTORE) @inaccessible {
   deleteOrder("""
   ID of the order that needs to be deleted
   """
-  orderId: BigInt!): JSON @httpOperation(subgraph: "petstore", path: "/store/order/{args.orderId}", httpMethod: DELETE) @inaccessible
+  orderId: BigInt!): JSON @connect(
+    source: "petstore"
+    http: {DELETE: "/store/order/{$args.orderId}"}
+    selection: "$"
+  ) @inaccessible
   """
   This can only be done by the logged in user.
   """
-  createUser(input: User_Input): User @httpOperation(
-    subgraph: "petstore"
-    path: "/user"
-    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
-    httpMethod: POST
+  createUser(input: User_Input): User @connect(
+    source: "petstore"
+    http: {POST: "/user", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
+    selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus"
   ) @inaccessible
   """
   Creates list of users with given input array
   """
-  createUsersWithListInput(input: [User_Input]): User @httpOperation(
-    subgraph: "petstore"
-    path: "/user/createWithList"
-    operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]]
-    httpMethod: POST
+  createUsersWithListInput(input: [User_Input]): User @connect(
+    source: "petstore"
+    http: {POST: "/user/createWithList", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}
+    selection: "id\\nusername\\nfirstName\\nlastName\\nemail\\npassword\\nphone\\nuserStatus"
   ) @inaccessible
   """
   This can only be done by the logged in user.
@@ -389,11 +357,10 @@ type Mutation @join__type(graph: PETSTORE) @inaccessible {
   updateUser("""
   name that need to be deleted
   """
-  username: String!, input: User_Input): JSON @httpOperation(
-    subgraph: "petstore"
-    path: "/user/{args.username}"
-    operationSpecificHeaders: [["Content-Type", "application/json"]]
-    httpMethod: PUT
+  username: String!, input: User_Input): JSON @connect(
+    source: "petstore"
+    http: {PUT: "/user/{$args.username}", headers: [{name: "Content-Type", value: "application/json"}], body: "$args.input"}
+    selection: "$"
   ) @inaccessible
   """
   This can only be done by the logged in user.
@@ -401,7 +368,7 @@ type Mutation @join__type(graph: PETSTORE) @inaccessible {
   deleteUser("""
   The name that needs to be deleted
   """
-  username: String!): JSON @httpOperation(subgraph: "petstore", path: "/user/{args.username}", httpMethod: DELETE) @inaccessible
+  username: String!): JSON @connect(source: "petstore", http: {DELETE: "/user/{$args.username}"}, selection: "$") @inaccessible
 }
 
 type ApiResponse @join__type(graph: PETSTORE) @inaccessible {
@@ -435,18 +402,6 @@ enum mutation_placeOrder_status @join__type(graph: PETSTORE) {
   placed @join__enumValue(graph: PETSTORE)
   approved @join__enumValue(graph: PETSTORE)
   delivered @join__enumValue(graph: PETSTORE)
-}
-
-enum HTTPMethod @join__type(graph: PETSTORE) {
-  GET @join__enumValue(graph: PETSTORE)
-  HEAD @join__enumValue(graph: PETSTORE)
-  POST @join__enumValue(graph: PETSTORE)
-  PUT @join__enumValue(graph: PETSTORE)
-  DELETE @join__enumValue(graph: PETSTORE)
-  CONNECT @join__enumValue(graph: PETSTORE)
-  OPTIONS @join__enumValue(graph: PETSTORE)
-  TRACE @join__enumValue(graph: PETSTORE)
-  PATCH @join__enumValue(graph: PETSTORE)
 }
 
 """
@@ -492,6 +447,37 @@ input User_Input @join__type(graph: PETSTORE) @inaccessible {
   User Status
   """
   userStatus: Int
+}
+
+input ConnectHTTP @join__type(graph: PETSTORE) {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping @join__type(graph: PETSTORE) {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors @join__type(graph: PETSTORE) {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP @join__type(graph: PETSTORE) {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }
 "
 `;
