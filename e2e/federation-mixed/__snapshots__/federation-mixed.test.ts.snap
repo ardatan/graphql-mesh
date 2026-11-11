@@ -94,6 +94,7 @@ type Query @extraSchemaDefinitionDirective(
     source: "accounts"
     http: {GET: "/users/{$args.id}", headers: [{name: "accept", value: "application/json"}]}
     selection: "id\\nname\\nusername"
+    entity: true
   ) @merge(subgraph: "accounts", keyField: "id", keyArg: "id") @join__field(graph: ACCOUNTS)
   users: [User] @connect(
     source: "accounts"

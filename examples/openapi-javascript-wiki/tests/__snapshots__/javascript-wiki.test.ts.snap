@@ -14,9 +14,11 @@ directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """
@@ -25,7 +27,7 @@ type Query {
   Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
   
   """
-  feed_availability: feed_availability_response @httpOperation(subgraph: "Wiki", path: "/feed/availability", operationSpecificHeaders: [["Accept", "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"]], httpMethod: GET)
+  feed_availability: feed_availability_response @connect(source: "Wiki", http: {GET: "/feed/availability", headers: [{name: "Accept", value: "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"}]}, selection: "__typename: $status->match([200, \\"availability\\"], [@, \\"problem\\"])\\nin_the_news\\nmost_read\\non_this_day\\npicture_of_the_day\\ntodays_featured_article\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Returns the previously-stored formula via \`/media/math/check/{type}\` for
   the given hash.
@@ -36,7 +38,7 @@ type Query {
   media_math_formula_by_hash(
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): problem @httpOperation(subgraph: "Wiki", path: "/media/math/formula/{args.hash}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): problem @connect(source: "Wiki", http: {GET: "/media/math/formula/{$args.hash}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "detail\\nmethod\\nstatus\\ntitle\\ntype\\nuri")
   """
   Given a request hash, renders a TeX formula into its mathematic
   representation in the given format. When a request is issued to the
@@ -51,7 +53,7 @@ type Query {
     format: queryInput_media_math_render_by_format_by_hash_format!
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): problem @httpOperation(subgraph: "Wiki", path: "/media/math/render/{args.format}/{args.hash}", operationSpecificHeaders: [["Accept", "image/svg+xml, application/mathml+xml, image/png, application/problem+json"]], httpMethod: GET)
+  ): problem @connect(source: "Wiki", http: {GET: "/media/math/render/{$args.format}/{$args.hash}", headers: [{name: "Accept", value: "image/svg+xml, application/mathml+xml, image/png, application/problem+json"}]}, selection: "detail\\nmethod\\nstatus\\ntitle\\ntype\\nuri")
   """
   Given a Mediawiki project and a date range, returns a timeseries of absolute bytes
   difference sums. You can filter by editors-type (all-editor-types, anonymous, group-bot,
@@ -81,7 +83,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/absolute/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"absolute_bytes_difference\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project, a page-title prefixed with canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
@@ -114,7 +116,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/absolute/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/per-page/{$args.project}/{$args.page_title}/{$args.editor_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"absolute_bytes_difference_per_page\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_title: \\"page-title\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of bytes difference net
   sums. You can filter by editors-type (all-editor-types, anonymous, group-bot, name-bot,
@@ -144,7 +146,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/net/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/net/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"net_bytes_difference\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project, a page-title prefixed with canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
@@ -177,7 +179,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/net/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/net/per-page/{$args.project}/{$args.page_title}/{$args.editor_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"net_bytes_difference_per_page\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_title: \\"page-title\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its edited-pages counts.
   You can filter by editor-type (all-editor-types, anonymous, group-bot, name-bot, user),
@@ -208,7 +210,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.activity_level}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.activity_level}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"edited_pages\\"], [@, \\"problem\\"])\\nitems {\\n  activity_level: \\"activity-level\\"\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its new pages counts.
   You can filter by editor type (all-editor-types, anonymous, group-bot, name-bot, user)
@@ -238,7 +240,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/new/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/new/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"new_pages\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   edited-pages by absolute bytes-difference. You can filter by editor-type (all-editor-types,
@@ -273,7 +275,7 @@ type Query {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/top-by-absolute-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_edited_pages_by_abs_bytes_diff\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
   100 edited-pages by edits count. You can filter by editor-type (all-editor-types,
@@ -309,7 +311,7 @@ type Query {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/top-by-edits/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-edits/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_edited_pages_by_edits\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   edited-pages by net bytes-difference. You can filter by editor-type (all-editor-types,
@@ -344,7 +346,7 @@ type Query {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/top-by-net-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-net-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_edited_pages_by_net_bytes_diff\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its editors counts.
   You can filter by editory-type (all-editor-types, anonymous, group-bot, name-bot, user),
@@ -375,7 +377,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/editors/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.activity_level}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/editors/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.activity_level}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"editors\\"], [@, \\"problem\\"])\\nitems {\\n  activity_level: \\"activity-level\\"\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   editors by absolute bytes-difference. You can filter by editor-type (all-editor-types,
@@ -412,7 +414,7 @@ type Query {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/editors/top-by-absolute-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_editors_by_abs_bytes_diff\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
   100 editors by edits count. You can filter by editor-type (all-editor-types,
@@ -449,7 +451,7 @@ type Query {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/editors/top-by-edits/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-edits/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_editors_by_edits\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   editors by net bytes-difference. You can filter by editor-type (all-editor-types, anonymous,
@@ -486,7 +488,7 @@ type Query {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/editors/top-by-net-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-net-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_editors_by_net_bytes_diff\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of edits counts.
   You can filter by editors-type (all-editor-types, anonymous, bot, registered) and
@@ -516,7 +518,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/edits/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edits/aggregate/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"edits\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project, a page-title prefixed with its canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of edit counts.
@@ -549,7 +551,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/edits/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edits/per-page/{$args.project}/{$args.page_title}/{$args.editor_type}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"edits_per_page\\"], [@, \\"problem\\"])\\nitems {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_title: \\"page-title\\"\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a project and a date range, returns a timeseries of pagecounts.
   You can filter by access site (mobile or desktop) and you can choose between monthly,
@@ -580,7 +582,7 @@ type Query {
     this value is exclusive.
     """
     end: String!
-  ): metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/legacy/pagecounts/aggregate/{args.project}/{args.access_site}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/legacy/pagecounts/aggregate/{$args.project}/{$args.access_site}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pagecounts_project\\"], [@, \\"problem\\"])\\nitems {\\n  access_site: \\"access-site\\"\\n  count\\n  granularity\\n  project\\n  timestamp\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a date range, returns a timeseries of pageview counts. You can filter by project,
   access method and/or agent type. You can choose between daily and hourly granularity
@@ -610,7 +612,7 @@ type Query {
     The timestamp of the last hour/day/month to include, in YYYYMMDDHH format
     """
     end: String!
-  ): metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/aggregate/{args.project}/{args.access}/{args.agent}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/aggregate/{$args.project}/{$args.access}/{$args.agent}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pageview_project\\"], [@, \\"problem\\"])\\nitems {\\n  access\\n  agent\\n  granularity\\n  project\\n  timestamp\\n  views\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki article and a date range, returns a daily timeseries of its pageview
   counts. You can also filter by access method and/or agent type.
@@ -640,7 +642,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD or YYYYMMDDHH format"""
     end: String!
-  ): metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/per-article/{args.project}/{args.access}/{args.agent}/{args.article}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/per-article/{$args.project}/{$args.access}/{$args.agent}/{$args.article}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pageview_article\\"], [@, \\"problem\\"])\\nitems {\\n  access\\n  agent\\n  article\\n  granularity\\n  project\\n  timestamp\\n  views\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Lists the pageviews to this project, split by country of origin for a given month.
   Because of privacy reasons, pageviews are given in a bucketed format, and countries
@@ -666,7 +668,7 @@ type Query {
     The month of the date for which to retrieve top countries, in MM format.
     """
     month: String!
-  ): metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/top-by-country/{args.project}/{args.access}/{args.year}/{args.month}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/top-by-country/{$args.project}/{$args.access}/{$args.year}/{$args.month}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"by_country\\"], [@, \\"problem\\"])\\nitems {\\n  access\\n  countries\\n  month\\n  project\\n  year\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Lists the 1000 most viewed articles for a given project and timespan (month or day).
   You can filter by access method.
@@ -695,7 +697,7 @@ type Query {
     month: String!
     """The day of the date for which to retrieve top articles, in DD format."""
     day: String!
-  ): metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/top/{args.project}/{args.access}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/top/{$args.project}/{$args.access}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pageview_tops\\"], [@, \\"problem\\"])\\nitems {\\n  access\\n  articles\\n  day\\n  month\\n  project\\n  year\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its newly registered
   users counts. You can choose between daily and monthly granularity. The newly registered
@@ -722,7 +724,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/registered-users/new/{args.project}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/registered-users/new/{$args.project}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"new_registered_users\\"], [@, \\"problem\\"])\\nitems {\\n  granularity\\n  project\\n  results\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a project and a date range, returns a timeseries of unique devices counts.
   You need to specify a project, and can filter by accessed site (mobile or desktop).
@@ -746,14 +748,14 @@ type Query {
     start: String!
     """The timestamp of the last day/month to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/unique-devices/{args.project}/{args.access_site}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/unique-devices/{$args.project}/{$args.access_site}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"unique_devices\\"], [@, \\"problem\\"])\\nitems {\\n  access_site: \\"access-site\\"\\n  devices\\n  granularity\\n  project\\n  timestamp\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of language pairs the back-end service can translate
   
   Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
   
   """
-  transform_list_languagepairs: cx_languagepairs @httpOperation(subgraph: "Wiki", path: "/transform/list/languagepairs/", operationSpecificHeaders: [["Accept", "application/json"]], httpMethod: GET)
+  transform_list_languagepairs: cx_languagepairs @connect(source: "Wiki", http: {GET: "/transform/list/languagepairs/", headers: [{name: "Accept", value: "application/json"}]}, selection: "source\\ntarget")
   """
   Fetches the list of tools that are available for the given pair of languages.
   
@@ -765,14 +767,14 @@ type Query {
     from: String!
     """The target language code"""
     to: String!
-  ): transform_list_pair_by_from_by_to_response @httpOperation(subgraph: "Wiki", path: "/transform/list/pair/{args.from}/{args.to}/", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): transform_list_pair_by_from_by_to_response @connect(source: "Wiki", http: {GET: "/transform/list/pair/{$args.from}/{$args.to}/", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_list_tools\\"], [@, \\"problem\\"])\\ntools\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of tools and all of the language pairs it can translate
   
   Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
   
   """
-  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): transform_list_tool_by_tool_response @httpOperation(subgraph: "Wiki", path: "/transform/list/tool/{args.tool}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): transform_list_tool_by_tool_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"JSON_container\\"], [@, \\"problem\\"])\\nJSON\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of tools and all of the language pairs it can translate
   
@@ -783,7 +785,7 @@ type Query {
     tool: queryInput_transform_list_tool_by_tool_by_from_tool!
     """The source language code"""
     from: String!
-  ): transform_list_tool_by_tool_by_from_response @httpOperation(subgraph: "Wiki", path: "/transform/list/tool/{args.tool}/{args.from}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): transform_list_tool_by_tool_by_from_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"JSON_container\\"], [@, \\"problem\\"])\\nJSON\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of tools and all of the language pairs it can translate
   
@@ -796,7 +798,7 @@ type Query {
     from: String!
     """The target language code"""
     to: String!
-  ): transform_list_tool_by_tool_by_from_by_to_response @httpOperation(subgraph: "Wiki", path: "/transform/list/tool/{args.tool}/{args.from}/{args.to}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): transform_list_tool_by_tool_by_from_by_to_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}/{$args.to}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"JSON_container\\"], [@, \\"problem\\"])\\nJSON\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the dictionary meaning of a word from a language and displays
   it in the target language.
@@ -811,7 +813,7 @@ type Query {
     to_lang: String!
     """The word to lookup"""
     word: String!
-  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_response @httpOperation(subgraph: "Wiki", path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_response @connect(source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_dict\\"], [@, \\"problem\\"])\\nsource\\ntranslations {\\n  info\\n  phrase\\n  sources\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the dictionary meaning of a word from a language and displays
   it in the target language.
@@ -827,7 +829,7 @@ type Query {
     """The word to lookup"""
     word: String!
     provider: queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider!
-  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response @httpOperation(subgraph: "Wiki", path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}/{args.provider}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response @connect(source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}/{$args.provider}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_dict\\"], [@, \\"problem\\"])\\nsource\\ntranslations {\\n  info\\n  phrase\\n  sources\\n}\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   viewsInPastMonth(project: String!): Int!
 }
 
@@ -1997,7 +1999,7 @@ type Mutation {
   Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
   
   """
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): problem @httpOperation(subgraph: "Wiki", path: "/media/math/check/{args.type}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: POST)
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): problem @connect(source: "Wiki", http: {POST: "/media/math/check/{$args.type}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "detail\\nmethod\\nstatus\\ntitle\\ntype\\nuri")
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -2011,7 +2013,7 @@ type Mutation {
     """The target language code"""
     to_lang: String!
     html: JSON!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @httpOperation(subgraph: "Wiki", path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["Accept", "application/json, application/problem+json"]], httpMethod: POST)
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_mt\\"], [@, \\"problem\\"])\\ncontents\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -2026,7 +2028,7 @@ type Mutation {
     to_lang: String!
     provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
     html: JSON!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @httpOperation(subgraph: "Wiki", path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}/{args.provider}", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["Accept", "application/json, application/problem+json"]], httpMethod: POST)
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}/{$args.provider}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_mt\\"], [@, \\"problem\\"])\\ncontents\\ndetail\\nmethod\\nstatus\\ntitle\\ntype\\nuri", isSuccess: "$status->match([200, true], [@, true])")
 }
 
 """The input type of the given formula; can be tex or inline-tex"""
@@ -2052,19 +2054,36 @@ enum mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provid
   Youdao
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;
 
 exports[`JavaScript Wiki should give correct response for wikipediaMetrics within specific range: wikipedia-metrics-result 1`] = `

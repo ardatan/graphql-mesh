@@ -13,16 +13,18 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 directive @resolveTo(requiredSelectionSet: String, sourceName: String, sourceTypeName: String, sourceFieldName: String, sourceSelectionSet: String, sourceArgs: ResolveToSourceArgs, keyField: String, keysArg: String, valueKeyField: String, pubsubTopic: String, filterBy: String, additionalArgs: ResolveToSourceArgs, result: String, resultType: String) on FIELD_DEFINITION
 
 type Query {
-  resourceById(resourceType: String, id: String): ResourceList @httpOperation(subgraph: "FHIR", path: "/{args.resourceType}/{args.id}?_format=application/json", httpMethod: GET)
-  resourceByName(resourceType: String, name: String): Bundle @httpOperation(subgraph: "FHIR", path: "/{args.resourceType}/?name={args.name}?_format=application/json", httpMethod: GET)
-  resourceByOtherResourceId(resourceType: String, otherResourceType: String, otherResourceId: String): Bundle @httpOperation(subgraph: "FHIR", path: "/{args.resourceType}?subject={args.otherResourceType}/{args.otherResourceId}", httpMethod: GET)
+  resourceById(resourceType: String, id: String): ResourceList @connect(source: "FHIR", http: {GET: "/{$args.resourceType}/{$args.id}?_format=application/json"}, selection: "$")
+  resourceByName(resourceType: String, name: String): Bundle @connect(source: "FHIR", http: {GET: "/{$args.resourceType}/?name={$args.name}?_format=application/json"}, selection: "$")
+  resourceByOtherResourceId(resourceType: String, otherResourceType: String, otherResourceId: String): Bundle @connect(source: "FHIR", http: {GET: "/{$args.resourceType}?subject={$args.otherResourceType}/{$args.otherResourceId}"}, selection: "$")
 }
 
 union ResourceList = Account | ActivityDefinition | AdministrableProductDefinition | AdverseEvent | AllergyIntolerance | Appointment | AppointmentResponse | AuditEvent | Basic | Binary | BiologicallyDerivedProduct | BodyStructure | Bundle | CapabilityStatement | CarePlan | CareTeam | CatalogEntry | ChargeItem | ChargeItemDefinition | Citation | Claim | ClaimResponse | ClinicalImpression | ClinicalUseDefinition | CodeSystem | Communication | CommunicationRequest | CompartmentDefinition | Composition | ConceptMap | Condition | Consent | Contract | Coverage | CoverageEligibilityRequest | CoverageEligibilityResponse | DetectedIssue | Device | DeviceDefinition | DeviceMetric | DeviceRequest | DeviceUseStatement | DiagnosticReport | DocumentManifest | DocumentReference | Encounter | Endpoint | EnrollmentRequest | EnrollmentResponse | EpisodeOfCare | EventDefinition | Evidence | EvidenceReport | EvidenceVariable | ExampleScenario | ExplanationOfBenefit | FamilyMemberHistory | Flag | Goal | GraphDefinition | Group | GuidanceResponse | HealthcareService | ImagingStudy | Immunization | ImmunizationEvaluation | ImmunizationRecommendation | ImplementationGuide | Ingredient | InsurancePlan | Invoice | Library | Linkage | List | Location | ManufacturedItemDefinition | Measure | MeasureReport | Media | Medication | MedicationAdministration | MedicationDispense | MedicationKnowledge | MedicationRequest | MedicationStatement | MedicinalProductDefinition | MessageDefinition | MessageHeader | MolecularSequence | NamingSystem | NutritionOrder | NutritionProduct | Observation | ObservationDefinition | OperationDefinition | OperationOutcome | Organization | OrganizationAffiliation | PackagedProductDefinition | Parameters | Patient | PaymentNotice | PaymentReconciliation | Person | PlanDefinition | Practitioner | PractitionerRole | Procedure | Provenance | Questionnaire | QuestionnaireResponse | RegulatedAuthorization | RelatedPerson | RequestGroup | ResearchDefinition | ResearchElementDefinition | ResearchStudy | ResearchSubject | RiskAssessment | Schedule | SearchParameter | ServiceRequest | Slot | Specimen | SpecimenDefinition | StructureDefinition | StructureMap | Subscription_ | SubscriptionStatus | SubscriptionTopic | Substance | SubstanceDefinition | SupplyDelivery | SupplyRequest | Task | TerminologyCapabilities | TestReport | TestScript | ValueSet | VerificationResult | VisionPrescription
@@ -25880,16 +25882,35 @@ type VisionPrescription_Prism {
 
 scalar ObjMap
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }
 
 scalar ResolveToSourceArgs"

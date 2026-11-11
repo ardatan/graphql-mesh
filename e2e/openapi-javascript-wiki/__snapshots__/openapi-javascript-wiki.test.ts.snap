@@ -309,7 +309,7 @@ type Query @extraSchemaDefinitionDirective(directives: {source: [{name: "Wiki", 
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_edited_pages_by_abs_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top {\\n      abs_bytes_diff\\n      page_title\\n      rank\\n    }\\n  }\\n}")
+  ): top_edited_pages_by_abs_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
   100 edited-pages by edits count. You can filter by editor-type (all-editor-types,
@@ -344,7 +344,7 @@ type Query @extraSchemaDefinitionDirective(directives: {source: [{name: "Wiki", 
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_edited_pages_by_edits @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-edits/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top {\\n      edits\\n      page_title\\n      rank\\n    }\\n  }\\n}")
+  ): top_edited_pages_by_edits @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-edits/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   edited-pages by net bytes-difference. You can filter by editor-type (all-editor-types,
@@ -378,7 +378,7 @@ type Query @extraSchemaDefinitionDirective(directives: {source: [{name: "Wiki", 
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_edited_pages_by_net_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-net-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top {\\n      net_bytes_diff\\n      page_title\\n      rank\\n    }\\n  }\\n}")
+  ): top_edited_pages_by_net_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-net-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its editors counts.
   You can filter by editory-type (all-editor-types, anonymous, group-bot, name-bot, user),
@@ -444,7 +444,7 @@ type Query @extraSchemaDefinitionDirective(directives: {source: [{name: "Wiki", 
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_editors_by_abs_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top {\\n      abs_bytes_diff\\n      rank\\n      user_text\\n    }\\n  }\\n}")
+  ): top_editors_by_abs_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
   100 editors by edits count. You can filter by editor-type (all-editor-types,
@@ -480,7 +480,7 @@ type Query @extraSchemaDefinitionDirective(directives: {source: [{name: "Wiki", 
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_editors_by_edits @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-edits/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top {\\n      edits\\n      rank\\n      user_text\\n    }\\n  }\\n}")
+  ): top_editors_by_edits @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-edits/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   editors by net bytes-difference. You can filter by editor-type (all-editor-types, anonymous,
@@ -516,7 +516,7 @@ type Query @extraSchemaDefinitionDirective(directives: {source: [{name: "Wiki", 
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): top_editors_by_net_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-net-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top {\\n      net_bytes_diff\\n      rank\\n      user_text\\n    }\\n  }\\n}")
+  ): top_editors_by_net_bytes_diff @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-net-bytes-difference/{$args.project}/{$args.editor_type}/{$args.page_type}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "items {\\n  editor_type: \\"editor-type\\"\\n  granularity\\n  page_type: \\"page-type\\"\\n  project\\n  results {\\n    timestamp\\n    top\\n  }\\n}")
   """
   Given a Mediawiki project and a date range, returns a timeseries of edits counts.
   You can filter by editors-type (all-editor-types, anonymous, bot, registered) and
