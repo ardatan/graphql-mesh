@@ -23,6 +23,10 @@ directive @transport(subgraph: String, kind: String, location: String, headers: 
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
+directive @additionalField on FIELD_DEFINITION
+
+directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
+
 scalar join__FieldSet
 
 scalar link__Import
@@ -53,7 +57,7 @@ type Electronics implements Product @join__type(graph: PRODUCTS) @join__implemen
   supplierId: Int
   supplier: Supplier
   """Get a product by ID"""
-  self: Product @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $._type->match([\\"ELECTRONICS\\", \\"Electronics\\"], [\\"CLOTHING\\", \\"Clothing\\"]) _links { supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } warranty material"})
+  self: Product @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "_links { supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } ... $._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\", warranty }], [\\"CLOTHING\\", { __typename: \\"Clothing\\", material }])"})
 }
 
 type ProductLinks @join__type(graph: PRODUCTS) {
@@ -81,17 +85,17 @@ type Clothing implements Product @join__type(graph: PRODUCTS) @join__implements(
   supplierId: Int
   supplier: Supplier
   """Get a product by ID"""
-  self: Product @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $._type->match([\\"ELECTRONICS\\", \\"Electronics\\"], [\\"CLOTHING\\", \\"Clothing\\"]) _links { supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } warranty material"})
+  self: Product @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "_links { supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } ... $._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\", warranty }], [\\"CLOTHING\\", { __typename: \\"Clothing\\", material }])"})
 }
 
 type Query @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS) {
   """Get all the products"""
-  getProducts: ProductList @join__field(graph: PRODUCTS) @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/", headers: [{name: "accept", value: "application/json"}]}, selection: "items { __typename: $._type->match([\\"ELECTRONICS\\", \\"Electronics\\"], [\\"CLOTHING\\", \\"Clothing\\"]) _links { self supplier } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } }"})
+  getProducts: ProductList @join__field(graph: PRODUCTS) @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/", headers: [{name: "accept", value: "application/json"}]}, selection: "items { _links { self { href } supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } ... $._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\" }], [\\"CLOTHING\\", { __typename: \\"Clothing\\" }]) }"})
   """Get a product by ID"""
   getProductById(
     """The product ID"""
     id: Int!
-  ): Product @join__field(graph: PRODUCTS) @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $._type->match([\\"ELECTRONICS\\", \\"Electronics\\"], [\\"CLOTHING\\", \\"Clothing\\"]) _links { supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } warranty material"})
+  ): Product @join__field(graph: PRODUCTS) @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "_links { supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } ... $._type->match([\\"ELECTRONICS\\", { __typename: \\"Electronics\\", warranty }], [\\"CLOTHING\\", { __typename: \\"Clothing\\", material }])"})
   """Get a supplier by ID"""
   getSupplierById(
     """The supplier ID"""
@@ -110,12 +114,12 @@ interface Product @join__type(graph: PRODUCTS) {
   name: String
   price: Float
   supplierId: Int
-  supplier: Supplier @additionalField @resolveTo(sourceTypeName: "Query", sourceFieldName: "getSupplierById", sourceName: "Suppliers", sourceArgs: {id: "{root['supplierId']}"}, requiredSelectionSet: "{ supplierId }")
-  """Get a product by ID"""
-  self: Product @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/products/{$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $._type->match([\\"ELECTRONICS\\", \\"Electronics\\"], [\\"CLOTHING\\", \\"Clothing\\"]) _links { supplier { href } } _type id name price supplierId supplier: { __typename: $(\\"Supplier\\") id: supplierId } warranty material"})
+  supplier: Supplier @resolveTo(sourceTypeName: "Query", sourceFieldName: "getSupplierById", sourceName: "Suppliers", sourceArgs: {id: "{root['supplierId']}"}, requiredSelectionSet: "{ supplierId }")
 }
 
 scalar ObjMap
 
-scalar join__DirectiveArguments"
+scalar join__DirectiveArguments
+
+scalar ResolveToSourceArgs"
 `;

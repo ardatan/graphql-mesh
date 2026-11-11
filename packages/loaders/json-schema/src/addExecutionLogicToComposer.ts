@@ -308,39 +308,53 @@ export function addExecutionDirectivesToComposer(
             )
           : '$') ||
         '$';
-      const fields = {
-        [linkName]: {
-          ...targetField,
-          directives: [
-            {
-              name: 'connect',
-              args: {
-                source: subgraphName,
-                http: linkHttp,
-                selection: linkSelection,
-              },
-            },
-          ],
-          get args() {
-            return linkObj.args ? {} : targetField?.args;
-          },
-          get description() {
-            return linkObj.description || targetField?.description;
-          },
+      const connectDirective = {
+        name: 'connect',
+        args: {
+          source: subgraphName,
+          http: linkHttp,
+          selection: linkSelection,
         },
       };
-      typeTC.addFields(fields);
+      const fieldBase = {
+        ...targetField,
+        get args() {
+          return linkObj.args ? {} : targetField?.args;
+        },
+        get description() {
+          return linkObj.description || targetField?.description;
+        },
+      };
+      // Apollo Router rejects `@connect` on interface fields, and putting the same
+      // `@connect` on every implementor while the field remains on the interface
+      // breaks Connectors subgraph extraction ("Electronics missing field self").
+      // So for interface link maps: emit `@connect` only on concrete implementors
+      // and do *not* declare the link field on the interface itself. Object types
+      // keep the previous behaviour.
       if (schemaComposer.isInterfaceType(typeTC)) {
         const iFaceTC = typeTC as InterfaceTypeComposer;
+        const implementorFields = {
+          [linkName]: {
+            ...fieldBase,
+            directives: [connectDirective],
+          },
+        };
         for (const subTC of schemaComposer.types.values()) {
           if ('getInterfaces' in subTC) {
             if (
               subTC.getInterfaces().some(iFace => iFace.getTypeName() === iFaceTC.getTypeName())
             ) {
-              subTC.addFields(fields);
+              subTC.addFields(implementorFields);
             }
           }
         }
+      } else {
+        typeTC.addFields({
+          [linkName]: {
+            ...fieldBase,
+            directives: [connectDirective],
+          },
+        });
       }
     }
   };

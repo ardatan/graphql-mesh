@@ -1124,9 +1124,10 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                           if (schemaObj.title && Object.keys(meshEntityRef).length) {
                             setMeshEntityRef(schemaObj.title, linkName, meshEntityRef);
                           }
-                          // Hive Gateway still resolves cross-subgraph HATEOAS via Mesh
-                          // `@resolveTo` stitching; entity-ref selection covers Router when
-                          // abstract `__typename` bake is Connectors-valid.
+                          // Always emit Mesh `@resolveTo` for Hive cross-subgraph HATEOAS
+                          // resolution (entity stubs alone do not fill `name` on Hive today).
+                          // Entity-ref selection still covers Apollo Router entity planning.
+                          // Directive definitions are ensured in compose so Router can parse SDL.
                           futureAdditions.push({
                             targetTypeName: schemaObj.title,
                             targetFieldName: linkName,

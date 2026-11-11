@@ -241,14 +241,17 @@ export function connectorsJsonKeyPath(jsonName: string, opts?: { rootDollar?: bo
   return `$->get(${JSON.stringify(jsonName)})`;
 }
 
-/**
- * `@discriminator(field, mapping)` → `__typename: $.field->match([json, Type], …)`.
- */
-export function buildDiscriminatorTypenameSelection(type: {
+export type DiscriminatorInfo = {
+  field: string;
+  /** JSON discriminator value → GraphQL concrete type name */
+  mapping: [string, string][];
+};
+
+export function getDiscriminatorInfo(type: {
   getFields?: () => Record<string, unknown>;
   astNode?: { directives?: readonly any[] } | null;
   extensions?: unknown;
-}): string {
+}): DiscriminatorInfo | null {
   const ext = ((type.extensions as any)?.directives?.discriminator || []) as Array<{
     field?: string;
     mapping?: [string, string][];
@@ -273,13 +276,69 @@ export function buildDiscriminatorTypenameSelection(type: {
     }
   }
   if (!field || !mapping?.length) {
-    return '';
+    return null;
   }
-  const fieldPath = connectorsJsonKeyPath(field, { rootDollar: true });
-  const arms = mapping
+  return { field, mapping };
+}
+
+/**
+ * Property-discriminator match that yields GraphQL type *names* (string arms).
+ * Used when embedding into `$status->match` defaults — not for abstract field selections.
+ */
+export function buildDiscriminatorStringMatchExpr(type: {
+  getFields?: () => Record<string, unknown>;
+  astNode?: { directives?: readonly any[] } | null;
+  extensions?: unknown;
+}): string {
+  const info = getDiscriminatorInfo(type);
+  if (!info) return '';
+  const fieldPath = connectorsJsonKeyPath(info.field, { rootDollar: true });
+  const arms = info.mapping
     .map(([json, typeName]) => `[${JSON.stringify(json)}, ${JSON.stringify(typeName)}]`)
     .join(', ');
-  return `__typename: ${fieldPath}->match(${arms})`;
+  return `${fieldPath}->match(${arms})`;
+}
+
+/**
+ * Federation Connectors v0.4 abstract-type spread:
+ * `... $_type->match(["JSON", { __typename: "GqlType", exclusiveField }], …)`
+ *
+ * Router rejects `__typename: $._type->match([…, "Type"])` (non-literal Shape).
+ * `exclusiveFieldsByType` maps GraphQL type name → selection fragment inside the branch object.
+ */
+export function buildDiscriminatorAbstractSpread(
+  type: {
+    getFields?: () => Record<string, unknown>;
+    astNode?: { directives?: readonly any[] } | null;
+    extensions?: unknown;
+  },
+  exclusiveFieldsByType: Record<string, string> = {},
+): string {
+  const info = getDiscriminatorInfo(type);
+  if (!info) return '';
+  const fieldPath = connectorsJsonKeyPath(info.field, { rootDollar: true });
+  const arms = info.mapping
+    .map(([json, typeName]) => {
+      const exclusive = exclusiveFieldsByType[typeName]?.trim();
+      const objectLit = exclusive
+        ? `{ __typename: ${JSON.stringify(typeName)}, ${exclusive} }`
+        : `{ __typename: ${JSON.stringify(typeName)} }`;
+      return `[${JSON.stringify(json)}, ${objectLit}]`;
+    })
+    .join(', ');
+  return `... ${fieldPath}->match(${arms})`;
+}
+
+/**
+ * @deprecated Prefer {@link buildDiscriminatorAbstractSpread} for selections.
+ * Kept as a thin wrapper that returns the abstract spread (Router-safe).
+ */
+export function buildDiscriminatorTypenameSelection(type: {
+  getFields?: () => Record<string, unknown>;
+  astNode?: { directives?: readonly any[] } | null;
+  extensions?: unknown;
+}): string {
+  return buildDiscriminatorAbstractSpread(type);
 }
 
 /**
@@ -529,24 +588,22 @@ export function buildStatusUnionConnectExtras(
       unionType.getTypes().find(t => t.name === typeName) ||
       // Interface may not be a union member; look at implementations' interfaces via extensions.
       null;
-    // Try reading discriminator from any schema type named `typeName` via union's parent schema is
-    // unavailable here — callers pass schemaTypes when available. Fall back: scan member parents.
-    let disc = abstractType ? buildDiscriminatorTypenameSelection(abstractType) : '';
+    // Nested `$status->match` arms need a *string* typename expr, not an abstract spread.
+    let disc = abstractType ? buildDiscriminatorStringMatchExpr(abstractType) : '';
     if (!disc) {
       for (const member of unionType.getTypes()) {
         const ifaces = (member as any).getInterfaces?.() || [];
         for (const iface of ifaces) {
           if (iface.name === typeName) {
-            disc = buildDiscriminatorTypenameSelection(iface);
+            disc = buildDiscriminatorStringMatchExpr(iface);
             if (disc) break;
           }
         }
         if (disc) break;
       }
     }
-    // `buildDiscriminatorTypenameSelection` returns `__typename: <expr>`; take `<expr>`.
-    if (disc.startsWith('__typename:')) {
-      return disc.slice('__typename:'.length).trim();
+    if (disc) {
+      return disc;
     }
     return JSON.stringify(typeName);
   };
@@ -582,6 +639,17 @@ export function buildStatusUnionConnectExtras(
  */
 /** Soft cap so huge OpenAPI schemas (K8s/Stripe) don't emit multi‑MB `@connect` selections. */
 const MAX_CONNECT_SELECTION_CHARS = 12_000;
+
+function objectTypeHasDictionaryField(named: GraphQLNamedOutputType): boolean {
+  if (!isObjectType(named) && !isInterfaceType(named)) {
+    return false;
+  }
+  return Object.values(named.getFields()).some(field => {
+    const ext = (field.extensions as any)?.directives || {};
+    if (ext.dictionary) return true;
+    return Boolean(field.astNode?.directives?.some(d => d.name.value === 'dictionary'));
+  });
+}
 
 export function buildSelectionForType(
   type: GraphQLOutputType,
@@ -647,8 +715,49 @@ export function buildSelectionForType(
     return '';
   }
   const fields = { ...named.getFields() };
-  // Interface selections must also pick implementor-only fields (e.g. Dog.age).
-  if (isInterfaceType(named)) {
+  // Interface + property discriminator: exclusive implementor fields go in the abstract
+  // spread branches (Router requires literal `__typename` in each arm). Shared interface
+  // fields stay outside the spread.
+  const discInfo = isInterfaceType(named) ? getDiscriminatorInfo(named) : null;
+  const exclusiveFieldsByType: Record<string, string> = {};
+  const exclusiveFieldNames = new Set<string>();
+  if (discInfo && isInterfaceType(named)) {
+    for (const impl of implementations) {
+      const implNamed = unwrapType(impl);
+      if (!isObjectType(implNamed)) continue;
+      const exclusiveLines: string[] = [];
+      for (const rawImplFieldName of Object.keys(implNamed.getFields())) {
+        const implFieldName = String(rawImplFieldName);
+        if (named.getFields()[implFieldName] || skipFields.has(implFieldName)) continue;
+        exclusiveFieldNames.add(implFieldName);
+        const implField = implNamed.getFields()[implFieldName];
+        const implExt = ((implField.extensions as any)?.directives || {}) as Record<
+          string,
+          Array<{ field?: string }> | undefined
+        >;
+        const rrf =
+          implExt.resolveRootField?.[0]?.field ||
+          implField.astNode?.directives
+            ?.find(d => d.name.value === 'resolveRootField')
+            ?.arguments?.find(a => a.name.value === 'field');
+        let jsonName: string | undefined;
+        if (typeof rrf === 'string') jsonName = rrf;
+        else if (rrf && 'value' in rrf) {
+          const v = (rrf as any).value;
+          jsonName = v?.value ?? v;
+        }
+        const jsonPath =
+          jsonName && jsonName !== implFieldName ? connectorsJsonKeyPath(jsonName) : implFieldName;
+        exclusiveLines.push(
+          jsonName && jsonName !== implFieldName ? `${implFieldName}: ${jsonPath}` : implFieldName,
+        );
+      }
+      if (exclusiveLines.length) {
+        exclusiveFieldsByType[implNamed.name] = exclusiveLines.join(' ');
+      }
+    }
+  } else if (isInterfaceType(named)) {
+    // No discriminator: keep legacy flatten of implementor-only fields into the selection.
     for (const impl of implementations) {
       const implNamed = unwrapType(impl);
       if (!isObjectType(implNamed)) continue;
@@ -657,22 +766,24 @@ export function buildSelectionForType(
   }
   // Types with `@dictionary` (additionalProperties) must pass through the raw JSON object
   // so dictionary resolvers can see unknown keys. Nested field picking would drop them.
-  const hasDictionaryField = Object.values(fields).some(field => {
-    const ext = (field.extensions as any)?.directives || {};
-    if (ext.dictionary) return true;
-    return field.astNode?.directives?.some(d => d.name.value === 'dictionary');
-  });
-  if (hasDictionaryField) {
+  // Parent emits a bare field name for these (Hive passthrough); see object-like branch below.
+  if (objectTypeHasDictionaryField(named)) {
     return '';
   }
   const lines: string[] = [];
-  const discTypename = buildDiscriminatorTypenameSelection(named);
-  if (discTypename) {
-    lines.push(discTypename);
+  // Non-interface (or no disc) object types may still carry @discriminator — emit spread first.
+  if (!discInfo) {
+    const discTypename = buildDiscriminatorTypenameSelection(named);
+    if (discTypename) {
+      lines.push(discTypename);
+    }
   }
   for (const rawFieldName of Object.keys(fields)) {
     const fieldName = String(rawFieldName);
     if (skipFields.has(fieldName) || fieldName.startsWith('__')) {
+      continue;
+    }
+    if (exclusiveFieldNames.has(fieldName)) {
       continue;
     }
     const field = fields[fieldName];
@@ -750,6 +861,13 @@ export function buildSelectionForType(
     const isListLike =
       isListType(field.type) || (isNonNullType(field.type) && isListType(field.type.ofType));
     if (isObjectLike || isListLike) {
+      // `@dictionary` types: bare field name so Hive keeps unknown JSON keys for the
+      // dictionary resolver. Nested `{ … }` picking would drop them. (Router has no
+      // `@dictionary`; bare names are Hive-only for this Mesh directive.)
+      if (isObjectLike && objectTypeHasDictionaryField(fieldNamed)) {
+        lines.push(aliasPrefix);
+        continue;
+      }
       // Past soft depth: still emit scalar/enum lists; omit object-like nests (Router rejects
       // bare object names without `{ … }` subselection).
       if (leavesOnly && isObjectLike) {
@@ -759,7 +877,7 @@ export function buildSelectionForType(
       if (nested) {
         lines.push(`${aliasPrefix} { ${nested} }`);
       } else if (isObjectLike) {
-        // Empty object/interface/union expansion (dictionary / unresolved union): omit —
+        // Empty object/interface/union expansion (unresolved union / soft-depth): omit —
         // a bare object name is invalid Connectors selection on Router.
       } else {
         // List of scalars/enums — emit the field with no subselection.
@@ -767,6 +885,12 @@ export function buildSelectionForType(
       }
     } else {
       lines.push(aliasPrefix);
+    }
+  }
+  if (discInfo) {
+    const spread = buildDiscriminatorAbstractSpread(named, exclusiveFieldsByType);
+    if (spread) {
+      lines.push(spread);
     }
   }
   // Spaces are enough for Connectors mapping (newlines are optional sugar).

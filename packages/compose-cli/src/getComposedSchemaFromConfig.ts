@@ -164,9 +164,34 @@ export async function getComposedResultFromConfig(
   }
   let composedSchema: GraphQLSchema;
   if (futureAdditions.length) {
+    additionalTypeDefs ||= [];
+    // Ensure Mesh stitching directives exist in the final SDL so Apollo Router can
+    // parse HATEOAS `@resolveTo` / `@additionalField` applications (Hive executes them;
+    // Router entity-ref selection covers the same edges for Connectors).
+    additionalTypeDefs.unshift(
+      parse(/* GraphQL */ `
+        directive @additionalField on FIELD_DEFINITION
+        scalar ResolveToSourceArgs
+        directive @resolveTo(
+          additionalArgs: ResolveToSourceArgs
+          filterBy: String
+          keyField: String
+          keysArg: String
+          pubsubTopic: String
+          requiredSelectionSet: String
+          result: String
+          resultType: String
+          sourceArgs: ResolveToSourceArgs
+          sourceFieldName: String
+          sourceName: String
+          sourceSelectionSet: String
+          sourceTypeName: String
+          valueKeyField: String
+        ) on FIELD_DEFINITION
+      `),
+    );
     let futureAddition: FutureAddition;
     while ((futureAddition = futureAdditions.pop())) {
-      additionalTypeDefs ||= [];
       composedSchema ||= buildSchema(result.supergraphSdl, {
         noLocation: true,
         assumeValid: true,

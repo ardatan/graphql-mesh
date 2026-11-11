@@ -12,7 +12,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $.petType->match([\\"Dog\\", \\"DogDifferent\\"], [\\"Cat\\", \\"Cat\\"]) petType cat_exclusive")
+  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "... $.petType->match([\\"Dog\\", { __typename: \\"DogDifferent\\" }], [\\"Cat\\", { __typename: \\"Cat\\" }]) petType cat_exclusive")
 }
 
 union Pet = Cat | DogDifferent
@@ -146,7 +146,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  things: [query_things_items] @connect(source: "test", http: {GET: "/things", headers: [{name: "accept", value: "application/json"}]}, selection: "__typename: $.type->match([\\"cat\\", \\"Cat\\"], [\\"dog\\", \\"Dog\\"]) id type name data")
+  things: [query_things_items] @connect(source: "test", http: {GET: "/things", headers: [{name: "accept", value: "application/json"}]}, selection: "... $.type->match([\\"cat\\", { __typename: \\"Cat\\" }], [\\"dog\\", { __typename: \\"Dog\\" }]) id type name data")
 }
 
 union query_things_items = Cat | Dog

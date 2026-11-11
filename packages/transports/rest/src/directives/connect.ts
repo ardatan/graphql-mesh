@@ -799,8 +799,21 @@ function findTopLevelComma(inner: string): number {
   let depth = 0;
   for (let i = 0; i < inner.length; i++) {
     const ch = inner[i];
-    if (ch === '[' || ch === '(') depth++;
-    else if (ch === ']' || ch === ')') depth--;
+    if (ch === '"' || ch === "'") {
+      const quote = ch;
+      i++;
+      while (i < inner.length) {
+        if (inner[i] === '\\') {
+          i += 2;
+          continue;
+        }
+        if (inner[i] === quote) break;
+        i++;
+      }
+      continue;
+    }
+    if (ch === '[' || ch === '(' || ch === '{') depth++;
+    else if (ch === ']' || ch === ')' || ch === '}') depth--;
     else if (ch === ',' && depth === 0) return i;
   }
   return -1;
@@ -820,6 +833,16 @@ function parseMatchValue(
   },
 ): any {
   if (raw === '@') return undefined;
+  // Abstract-type branch objects: `{ __typename: "Electronics", warranty }`
+  // Rewrite string literals to `$("…")` so selection eval can resolve them.
+  if (raw.startsWith('{') && raw.endsWith('}')) {
+    const inner = raw.slice(1, -1).trim();
+    const rewritten = inner.replace(
+      /:(\s*)("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g,
+      (_m, sp: string, lit: string) => `:${sp}$(${lit})`,
+    );
+    return evalSubSelection(rewritten, root, extras);
+  }
   // Path/arg templates: `$args.x` / `$this.y` need the Connectors var map, not the
   // selection root (which is often `{}` for request-path matches).
   if (vars && /^\$args\b|^\$this\b|^\$env\b|^\$context\b|^\$batch\b|^\$config\b/.test(raw)) {
@@ -896,6 +919,13 @@ function evalSubSelection(
   }
   const result: Record<string, any> = {};
   for (const token of tokens) {
+    if (token.spread) {
+      const spreadValue = evalPath(token.source, root, extras);
+      if (spreadValue && typeof spreadValue === 'object' && !Array.isArray(spreadValue)) {
+        Object.assign(result, spreadValue);
+      }
+      continue;
+    }
     if (token.sub) {
       const source = token.source === '$' ? root : evalPath(token.source, root, extras);
       result[token.alias] = evalSubSelection(token.sub, source, extras);
@@ -905,8 +935,6 @@ function evalSubSelection(
   }
   return result;
 }
-
-type SelectionToken = { alias: string; source: string; sub?: string };
 
 function readSelectionIdent(s: string, start: number): { value: string; end: number } {
   let i = start;
@@ -926,9 +954,26 @@ function readSelectionIdent(s: string, start: number): { value: string; end: num
     if (s[i] === quote) i++;
     return { value, end: i };
   }
-  // `$status->match([200, "User"], …)`, `$["patent-id"]`, `$.foo["bar"]->match(...)`.
+  // `$status->match([200, "User"], …)`, `$["patent-id"]`, `$.foo["bar"]->match(...)`,
+  // `$("literal")` / `$('literal')` Connectors string/number literals.
   if (s[i] === '$') {
     i++;
+    // `$("…")` / `$('…')` / `$(123)` / `$(true)` — consume before path segments.
+    if (s[i] === '(') {
+      i++;
+      if (s[i] === '"' || s[i] === "'") {
+        const quote = s[i++];
+        while (i < s.length && s[i] !== quote) {
+          if (s[i] === '\\' && i + 1 < s.length) i += 2;
+          else i++;
+        }
+        if (s[i] === quote) i++;
+      } else {
+        while (i < s.length && s[i] !== ')') i++;
+      }
+      if (s[i] === ')') i++;
+      return { value: s.slice(start, i), end: i };
+    }
     // Don't consume the `-` of `->` into the path segment.
     while (i < s.length && /[A-Za-z0-9_.]/.test(s[i])) i++;
     // Bracket accessors: `["key"]` / `['key']` / `[0]`
@@ -988,6 +1033,8 @@ function readSelectionIdent(s: string, start: number): { value: string; end: num
   return { value: s.slice(start, i), end: i };
 }
 
+type SelectionToken = { alias: string; source: string; sub?: string; spread?: boolean };
+
 function tokenizeSelection(selection: string): SelectionToken[] {
   const tokens: SelectionToken[] = [];
   let i = 0;
@@ -996,6 +1043,19 @@ function tokenizeSelection(selection: string): SelectionToken[] {
     while (i < s.length && /\s/.test(s[i])) i++;
     if (i >= s.length) break;
     const start = i;
+    // Abstract-type spread: `... $_type->match([...])` merges into the parent object.
+    if (s.slice(i, i + 3) === '...') {
+      i += 3;
+      while (i < s.length && /\s/.test(s[i])) i++;
+      const readSpread = readSelectionIdent(s, i);
+      if (!readSpread.value) {
+        i = Math.max(i, start + 1);
+        continue;
+      }
+      i = readSpread.end;
+      tokens.push({ alias: '', source: readSpread.value, spread: true });
+      continue;
+    }
     // alias or field
     let read = readSelectionIdent(s, i);
     if (!read.value) {
