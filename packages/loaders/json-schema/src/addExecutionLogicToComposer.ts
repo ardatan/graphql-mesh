@@ -18,13 +18,19 @@ import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
-  HTTPOperationDirective,
-  LinkResolverDirective,
-  OasLinkDirective,
+  buildConnectHttpArgs,
+  buildSelectionForType,
+  buildSourceDirectiveArgs,
+  ConnectDirective,
+  CONNECT_LINK_URL,
+  inferBodySelection,
+  SourceDirective,
+  toConnectPathTemplate,
+} from './connectAnnotations.js';
+import {
   PubSubOperationDirective,
   ResolveRootDirective,
   ResponseMetadataDirective,
-  TransportDirective,
 } from './directives.js';
 import type {
   JSONSchemaLinkConfig,
@@ -103,27 +109,32 @@ ${operationConfig.description || ''}
       }
 
       field.directives = field.directives || [];
-      schemaComposer.addDirective(HTTPOperationDirective);
+      schemaComposer.addDirective(ConnectDirective);
+      const skipFields = new Set<string>();
+      if ('links' in operationConfig && operationConfig.links) {
+        for (const linkName of Object.keys(operationConfig.links)) {
+          skipFields.add(linkName);
+        }
+      }
+      skipFields.add('_response');
+      const selection =
+        buildSelectionForType(field.type.getType(), { skipFields }) ||
+        // Scalar / empty responses still need a non-empty Connectors selection
+        `$`;
+      const http = buildConnectHttpArgs({
+        httpMethod,
+        path: operationConfig.path,
+        headers: operationConfig.headers,
+        queryParamArgMap: operationConfig.queryParamArgMap,
+        bodySelection: inferBodySelection(operationConfig),
+      });
       field.directives.push({
-        name: 'httpOperation',
+        name: 'connect',
         args: JSON.parse(
           JSON.stringify({
-            subgraph: subgraphName,
-            path: operationConfig.path,
-            operationSpecificHeaders: operationConfig.headers
-              ? Object.entries(operationConfig.headers)
-              : undefined,
-            httpMethod,
-            isBinary: 'binary' in operationConfig ? operationConfig.binary : undefined,
-            requestBaseBody:
-              'requestBaseBody' in operationConfig ? operationConfig.requestBaseBody : undefined,
-            queryParamArgMap: operationConfig.queryParamArgMap,
-            queryStringOptionsByParam: operationConfig.queryStringOptionsByParam,
-            jsonApiFields: operationConfig.jsonApiFields,
-            queryStringOptions:
-              'queryStringOptions' in operationConfig
-                ? operationConfig.queryStringOptions
-                : queryStringOptions,
+            source: subgraphName,
+            http,
+            selection,
           }),
         ),
       });
@@ -134,29 +145,12 @@ ${operationConfig.description || ''}
       ) => {
         for (const linkName in linkMap) {
           const linkObj = linkMap[linkName];
-          field.directives = field.directives || [];
-          let linkResolverMapDirective = field.directives.find(d => d.name === 'linkResolver');
-          if (!linkResolverMapDirective) {
-            schemaComposer.addDirective(LinkResolverDirective);
-            linkResolverMapDirective = {
-              name: 'linkResolver',
-              args: {
-                subgraph: subgraphName,
-                linkResolverMap: {},
-              },
-            };
-            field.directives.push(linkResolverMapDirective);
-          }
-          const linkResolverFieldMap = linkResolverMapDirective.args.linkResolverMap;
           let targetField: ObjectTypeComposerFieldConfig<any, any> | undefined;
-          let fieldTypeName: string;
           try {
             targetField = schemaComposer.Query.getField(linkObj.fieldName);
-            fieldTypeName = 'Query';
           } catch {
             try {
               targetField = schemaComposer.Mutation.getField(linkObj.fieldName);
-              fieldTypeName = 'Mutation';
             } catch {}
           }
           if (!targetField) {
@@ -164,22 +158,73 @@ ${operationConfig.description || ''}
               `Field ${linkObj.fieldName} not found in ${subgraphName} for link ${linkName}`,
             );
           }
-          linkResolverFieldMap[linkName] = {
-            linkObjArgs: linkObj.args,
-            targetTypeName: fieldTypeName,
-            targetFieldName: linkObj.fieldName,
-          };
-          schemaComposer.addDirective(OasLinkDirective);
+          schemaComposer.addDirective(ConnectDirective);
+          // Reuse the target field's @connect http config, rewriting args -> $this via link args
+          const targetConnect = targetField?.directives?.find(d => d.name === 'connect');
+          const targetHttp = targetConnect?.args?.http
+            ? { ...targetConnect.args.http }
+            : undefined;
+          let pathTemplate: string | undefined;
+          if (targetHttp) {
+            for (const method of ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD']) {
+              if (targetHttp[method]) {
+                pathTemplate = String(targetHttp[method]);
+                break;
+              }
+            }
+          }
+          if (pathTemplate && linkObj.args) {
+            for (const [argName, interpolation] of Object.entries(linkObj.args)) {
+              const connectExpr = toConnectPathTemplate(
+                String(interpolation).replace(/\{root\./g, '{$this.').replace(/\{args\./g, '{$this.'),
+              );
+              // Replace {$args.argName} in target path with the link expression
+              pathTemplate = pathTemplate.replaceAll(`{$args.${argName}}`, connectExpr);
+            }
+          }
+          const linkHttp = targetHttp
+            ? {
+                ...targetHttp,
+                ...(pathTemplate
+                  ? {
+                      GET: targetHttp.GET ? pathTemplate : undefined,
+                      POST: targetHttp.POST ? pathTemplate : undefined,
+                      PUT: targetHttp.PUT ? pathTemplate : undefined,
+                      PATCH: targetHttp.PATCH ? pathTemplate : undefined,
+                      DELETE: targetHttp.DELETE ? pathTemplate : undefined,
+                      HEAD: targetHttp.HEAD ? pathTemplate : undefined,
+                    }
+                  : {}),
+              }
+            : {
+                GET: '/',
+              };
+          // Clean undefined method keys
+          for (const key of Object.keys(linkHttp)) {
+            if (linkHttp[key] == null) {
+              delete linkHttp[key];
+            }
+          }
+          const linkSelection =
+            targetConnect?.args?.selection ||
+            (targetField?.type
+              ? buildSelectionForType(
+                  typeof targetField.type === 'function'
+                    ? (targetField.type as any)()
+                    : (targetField.type as any),
+                )
+              : '$') ||
+            '$';
           const fields = {
             [linkName]: {
               ...targetField,
               directives: [
                 {
-                  name: 'oas_link',
+                  name: 'connect',
                   args: {
-                    subgraph: subgraphName,
-                    defaultRootType: rootTypeName,
-                    defaultField: operationConfig.field,
+                    source: subgraphName,
+                    http: linkHttp,
+                    selection: linkSelection,
                   },
                 },
               ],
@@ -305,18 +350,32 @@ ${operationConfig.description || ''}
     });
   }
 
-  schemaComposer.addDirective(TransportDirective);
+  schemaComposer.addDirective(ConnectDirective);
+  schemaComposer.addDirective(SourceDirective);
   let schema = schemaComposer.buildSchema();
   const schemaExtensions: any = (schema.extensions = schema.extensions || {});
   schemaExtensions.directives = schemaExtensions.directives || {};
-  schemaExtensions.directives.transport = {
-    subgraph: subgraphName,
-    kind: handlerName,
-    location: endpoint,
-    headers: operationHeaders ? Object.entries(operationHeaders) : undefined,
-    queryParams: queryParams ? Object.entries(queryParams) : undefined,
-    queryStringOptions,
-  };
+  // Apollo Connectors source — replaces Mesh @transport for REST subgraphs
+  schemaExtensions.directives.source = [
+    buildSourceDirectiveArgs({
+      name: subgraphName,
+      endpoint,
+      headers:
+        typeof operationHeaders === 'object' && operationHeaders
+          ? (operationHeaders as Record<string, string>)
+          : undefined,
+      queryParams,
+    }),
+  ];
+  schemaExtensions.directives.link = [
+    ...(schemaExtensions.directives.link || []),
+    {
+      url: CONNECT_LINK_URL,
+      import: ['@connect', '@source'],
+    },
+  ];
+  // Keep handlerName available for debugging without Mesh @transport
+  schemaExtensions.meshHandlerName = handlerName;
   // Fix orphaned interfaces
   schema = mapSchema(schema, {
     [MapperKind.TYPE]: type => {

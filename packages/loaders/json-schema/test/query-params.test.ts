@@ -39,12 +39,9 @@ describe('Query Params', () => {
     });
   });
 
-  it('uses global queryStringOptions in httpOperation directive when operation option is missing', async () => {
+  it('emits connect queryParams from queryParamArgMap', async () => {
     const schema = await loadGraphQLSchemaFromJSONSchemas('test', {
       endpoint: 'http://localhost:3000',
-      queryStringOptions: {
-        arrayFormat: 'brackets',
-      },
       operations: [
         {
           type: OperationTypeNode.QUERY,
@@ -63,7 +60,7 @@ describe('Query Params', () => {
             },
           },
           responseSample: {
-            url: 'http://localhost:3000/test?foo[]=bar',
+            url: 'http://localhost:3000/test?foo=bar',
           },
         },
       ],
@@ -73,6 +70,7 @@ describe('Query Params', () => {
     });
 
     const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toContain('queryStringOptions: "{\\"arrayFormat\\":\\"brackets\\"}"');
+    expect(sdl).toContain('@connect');
+    expect(sdl).toContain('foo: $args.foo');
   });
 });
