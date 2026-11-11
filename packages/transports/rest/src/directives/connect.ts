@@ -1473,27 +1473,18 @@ export function addConnectFieldResolver(
         !Array.isArray(customExtensionsRaw)
           ? (customExtensionsRaw as Record<string, unknown>)
           : {};
-      // Only `http` is peeled off: later keys overwrite `code` / `connector` /
-      // `serviceName`, but a mapped `http.status` must not survive the spread —
-      // Yoga promotes it to the gateway HTTP status.
-      const { http: mappedHttpRaw, ...customExtensions } = mappedExtensions;
-      const customHttp =
-        mappedHttpRaw && typeof mappedHttpRaw === 'object' && !Array.isArray(mappedHttpRaw)
-          ? { ...(mappedHttpRaw as Record<string, unknown>) }
-          : undefined;
-      if (customHttp && 'status' in customHttp) {
-        delete customHttp.status;
-      }
       const mappedConnector = mappedExtensions.connector;
       // Match httpOperation: expose the unresolved path template (Mesh `{args.x}` form).
       const pathForMessage = picked.path.replace(/\{\$/g, '{');
       const defaultMessage = `Upstream HTTP Error: ${response.status}, Could not invoke operation ${method} ${pathForMessage}`;
+      // Spread mapped `@connect(errors.extensions:)` first, then overwrite Mesh
+      // defaults. Do not invent `http.status` here — Yoga would promote it to the
+      // gateway HTTP status — but keep it if the mapping set it explicitly.
       return new GraphQLError(
         typeof customMessage === 'string' && customMessage.length ? customMessage : defaultMessage,
         {
           extensions: {
-            ...customExtensions,
-            ...(customHttp && Object.keys(customHttp).length ? { http: customHttp } : {}),
+            ...mappedExtensions,
             connector: {
               coordinate: connectorCoordinate,
               ...(mappedConnector &&
