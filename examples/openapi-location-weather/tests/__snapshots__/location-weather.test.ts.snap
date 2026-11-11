@@ -3,17 +3,11 @@
 exports[`Location Weather should generate correct schema: location-weather-schema 1`] = `
 "directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, isSuccess: String, selection: String!, source: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @link(import: [String], url: String!) repeatable on SCHEMA
-
-directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
 
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
 
 directive @source(errors: ConnectorErrors, http: SourceHTTP!, isSuccess: String, name: String!) repeatable on SCHEMA
-
-directive @statusCodeTypeName(statusCode: String, subgraph: String, typeName: String) repeatable on UNION
 
 type AQCurrent {
   """Cloud cover as a percentage (%)"""

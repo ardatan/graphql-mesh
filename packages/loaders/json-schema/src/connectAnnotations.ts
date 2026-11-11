@@ -8,6 +8,7 @@ import {
   GraphQLNonNull,
   GraphQLString,
   isEnumType,
+  isInputObjectType,
   isInterfaceType,
   isListType,
   isNonNullType,
@@ -16,6 +17,7 @@ import {
   isUnionType,
   type GraphQLArgument,
   type GraphQLEnumType,
+  type GraphQLInputType,
   type GraphQLNamedOutputType,
   type GraphQLOutputType,
   type GraphQLUnionType,
@@ -23,6 +25,7 @@ import {
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
+import { getMeshEntityRef } from './entityRefs.js';
 import type { JSONSchemaHTTPJSONOperationConfig, JSONSchemaOperationConfig } from './types.js';
 
 const JSONSelectionScalar = GraphQLString;
@@ -201,10 +204,7 @@ export function wrapArgExprWithEnumMatch(argExpr: string, enumType: GraphQLEnumT
  */
 export function rewriteConnectPathEnumArgs(
   path: string,
-  args:
-    | ReadonlyArray<GraphQLArgument>
-    | Record<string, { type: any; name?: string }>
-    | undefined,
+  args: ReadonlyArray<GraphQLArgument> | Record<string, { type: any; name?: string }> | undefined,
 ): string {
   if (!path || !args) {
     return path;
@@ -323,6 +323,18 @@ export function toConnectLinkExpression(interpolation: unknown): string {
     return raw;
   }
 
+  // HATEOAS / OpenAPI link args: `{root['id']}` / `{root["supplierId"]}` / `{root.id}`
+  // → Apollo `{$this.id}` (parent object field after @connect selection).
+  const rootBracket = raw.match(/^\{root\[['\"]([^'\"]+)['\"]\]\}$/);
+  if (rootBracket) {
+    const field = sanitizeNameForGraphQL(rootBracket[1]);
+    return `{$this.${field}}`;
+  }
+  const rootDot = raw.match(/^\{root\.([A-Za-z_][\w]*)\}$/);
+  if (rootDot) {
+    return `{$this.${rootDot[1]}}`;
+  }
+
   // Fall back: normalize Mesh → Connectors, then rewrite leftover response body pointers.
   return toConnectPathTemplate(raw)
     .replace(/\{\$this\.\$response\.body#\/([^}]+)\}/g, (_, pointer: string) => {
@@ -330,7 +342,11 @@ export function toConnectLinkExpression(interpolation: unknown): string {
     })
     .replace(/\{\$this\.\$response\.body\.([^}]+)\}/g, (_, pointer: string) => {
       return `{$this.${toThisPath(pointer)}}`;
-    });
+    })
+    .replace(/\{root\[['\"]([^'\"]+)['\"]\]\}/g, (_, key: string) => {
+      return `{$this.${sanitizeNameForGraphQL(key)}}`;
+    })
+    .replace(/\{root\.([A-Za-z_][\w]*)\}/g, '{$this.$1}');
 }
 
 export function headersToConnectMappings(
@@ -599,10 +615,7 @@ export function buildSelectionForType(
         }
       }
     }
-    const mergedSelection = [
-      statusExtras?.typenameSelection || discTypename,
-      ...merged.values(),
-    ]
+    const mergedSelection = [statusExtras?.typenameSelection || discTypename, ...merged.values()]
       .filter(Boolean)
       .join(' ');
     if (mergedSelection.length > MAX_CONNECT_SELECTION_CHARS) {
@@ -657,6 +670,29 @@ export function buildSelectionForType(
     // `@resolveRoot` → virtual `@connect(selection: "$")` on the field (finalize step).
     // Skip here so parent `$` passthrough keeps the scalar/object root intact.
     if (Boolean(directiveExt.resolveRoot?.length) || fieldDirectives.includes('resolveRoot')) {
+      continue;
+    }
+    // HATEOAS cross-subgraph entity ref: `supplier: { id: supplierId }`
+    let entityRef =
+      ((field.extensions as any)?.meshEntityRef as Record<string, string> | undefined) ||
+      getMeshEntityRef(named.name, fieldName);
+    if (!entityRef && isObjectType(named)) {
+      for (const iface of named.getInterfaces()) {
+        entityRef = getMeshEntityRef(iface.name, fieldName);
+        if (entityRef) break;
+      }
+    }
+    if (entityRef && Object.keys(entityRef).length) {
+      // Apollo entity references need a string-literal `__typename` plus key fields:
+      // `supplier: { __typename: $("Supplier") id: supplierId }`
+      const entityTypeName = unwrapType(field.type).name;
+      const parts = [
+        `__typename: $(${JSON.stringify(entityTypeName)})`,
+        ...Object.entries(entityRef).map(([keyField, fromField]) =>
+          keyField === fromField ? keyField : `${keyField}: ${fromField}`,
+        ),
+      ];
+      lines.push(`${fieldName}: { ${parts.join(' ')} }`);
       continue;
     }
     // `@resolveRootField(field: "foo-bar")` → GraphQL `foo_bar` from JSON `foo-bar`
@@ -809,6 +845,102 @@ export function inferBodySelection(operationConfig: JSONSchemaOperationConfig): 
     return `$(${JSON.stringify(httpOp.requestBaseBody)})`;
   }
   return undefined;
+}
+
+/**
+ * Walk an input type for `@resolveRootField` remaps and build an explicit Connectors
+ * body subselection: `$args.input { "product-name": product_name plainField }`.
+ * Returns undefined when no remaps exist (bare `$args.input` is enough).
+ */
+export function buildInputBodySelection(
+  inputType: GraphQLInputType,
+  depth = 0,
+): string | undefined {
+  if (depth > 4) return undefined;
+  let t: GraphQLInputType = inputType;
+  while (isNonNullType(t) || isListType(t)) {
+    t = t.ofType as GraphQLInputType;
+  }
+  if (!isInputObjectType(t)) return undefined;
+  const lines: string[] = [];
+  let hasRemap = false;
+  for (const field of Object.values(t.getFields())) {
+    const dirs = getDirectiveExtensions(field);
+    const rrf = dirs?.resolveRootField?.[0]?.field;
+    const jsonName =
+      typeof rrf === 'string'
+        ? rrf
+        : (field.extensions as any)?.directives?.resolveRootField?.[0]?.field;
+    const nested = buildInputBodySelection(field.type, depth + 1);
+    if (jsonName && jsonName !== field.name) {
+      hasRemap = true;
+      const lhs = /^[A-Za-z_][\w]*$/.test(jsonName) ? jsonName : JSON.stringify(jsonName);
+      if (nested) {
+        lines.push(`${lhs}: ${field.name} { ${nested} }`);
+      } else {
+        lines.push(`${lhs}: ${field.name}`);
+      }
+    } else if (nested) {
+      hasRemap = true;
+      lines.push(`${field.name} { ${nested} }`);
+    } else {
+      lines.push(field.name);
+    }
+  }
+  if (!hasRemap) return undefined;
+  return lines.join(' ');
+}
+
+/**
+ * When a root `@connect(selection: "$")` returns an enum or `[Enum]` whose JSON
+ * values differ from GraphQL names, bake `$->match` / `$->map(@->match)` so Mesh
+ * `@enum` can be stripped from the SDL.
+ */
+export function bakeEnumRootSelection(selection: string, returnType: GraphQLOutputType): string {
+  if (selection !== '$') return selection;
+  let t: GraphQLOutputType = returnType;
+  let isList = false;
+  while (isNonNullType(t)) t = t.ofType;
+  if (isListType(t)) {
+    isList = true;
+    t = t.ofType;
+    while (isNonNullType(t)) t = t.ofType;
+  }
+  if (!isEnumType(t)) return selection;
+  const pairs = getEnumNameToJsonRemap(t);
+  if (!pairs.length) return selection;
+  // JSON value → GraphQL enum name (response direction).
+  const arms = pairs
+    .map(([gql, json]) => `[${JSON.stringify(json)}, ${JSON.stringify(gql)}]`)
+    .join(', ');
+  if (isList) {
+    return `$->map(@->match(${arms}, [@, @]))`;
+  }
+  return `$->match(${arms}, [@, $])`;
+}
+
+/**
+ * Rewrite `$args.input` body to include baked `@resolveRootField` key remaps.
+ */
+export function bakeInputBodySelection(
+  body: string | undefined,
+  args: Record<string, { type: GraphQLInputType }> | ReadonlyArray<GraphQLArgument> | undefined,
+): string | undefined {
+  if (!body || !args) return body;
+  const trimmed = body.trim();
+  if (trimmed !== '$args.input' && !trimmed.startsWith('$args.input {')) {
+    return body;
+  }
+  // Already has an explicit subselection — leave it.
+  if (trimmed.includes('{')) return body;
+  const argList = Array.isArray(args)
+    ? args
+    : Object.entries(args).map(([name, arg]) => ({ ...arg, name }));
+  const inputArg = argList.find(a => a.name === 'input');
+  if (!inputArg) return body;
+  const sub = buildInputBodySelection(inputArg.type);
+  if (!sub) return body;
+  return `$args.input { ${sub} }`;
 }
 
 export function buildSourceDirectiveArgs(opts: {

@@ -543,11 +543,7 @@ describe('Apollo Connectors error shape', () => {
 
       type Product
         @key(fields: "id")
-        @connect(
-          source: "ecomm"
-          http: { GET: "/products/{$this.id}" }
-          selection: "id title"
-        ) {
+        @connect(source: "ecomm", http: { GET: "/products/{$this.id}" }, selection: "id title") {
         id: ID!
         title: String
       }
@@ -595,9 +591,6 @@ describe('Apollo Connectors error shape', () => {
         { id: '9', title: 'Widget' },
       ],
     });
-    expect(urls).toEqual([
-      'https://api.example.com/users/5',
-      'https://api.example.com/products/9',
-    ]);
+    expect(urls).toEqual(['https://api.example.com/users/5', 'https://api.example.com/products/9']);
   });
 });

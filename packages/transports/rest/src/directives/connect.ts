@@ -652,7 +652,7 @@ function evalPath(
       return path.slice(2, -1);
     }
   }
-  // Method calls: `$status->match(...)`, `$response.headers.x->first`, `$["a"]->match(...)`
+  // Method calls: `$status->match(...)`, `$->map(@->match(...))`, `$["a"]->first`
   const methodMatch = path.match(/^(.*?)->([A-Za-z_][\w]*)\((.*)\)$/);
   if (methodMatch) {
     const left = evalPath(methodMatch[1].trim(), root, extras);
@@ -663,6 +663,20 @@ function evalPath(
     }
     if (method === 'match') {
       return evalMatchMethod(left, rawArgs, root, extras);
+    }
+    // `$->map(@->match(...))` / `$->map(@.id)` — Apollo list element transform.
+    if (method === 'map') {
+      if (!Array.isArray(left)) return left;
+      const elementExpr = rawArgs.trim();
+      return left.map(item => {
+        if (elementExpr === '@') return item;
+        // `@->match(...)` / `@->first` — treat `@` as the element root.
+        if (elementExpr.startsWith('@')) {
+          const rewritten = elementExpr.replace(/^@/, '$');
+          return evalPath(rewritten, item, extras);
+        }
+        return evalPath(elementExpr, item, extras);
+      });
     }
     if (method === 'joinNotNull') {
       if (!Array.isArray(left)) return left;
@@ -740,15 +754,11 @@ function evalMatchMethod(
   let fallback: any;
   for (const group of groups) {
     const inner = group.slice(1, -1).trim();
-    // [@, value] default arm
+    // [@, value] default arm — `[@, @]` means pass through the unmatched left value.
     if (inner.startsWith('@')) {
       const comma = findTopLevelComma(inner);
-      fallback = parseMatchValue(
-        comma >= 0 ? inner.slice(comma + 1).trim() : 'null',
-        root,
-        extras,
-        vars,
-      );
+      const valueRaw = comma >= 0 ? inner.slice(comma + 1).trim() : 'null';
+      fallback = valueRaw === '@' ? left : parseMatchValue(valueRaw, root, extras, vars);
       continue;
     }
     const comma = findTopLevelComma(inner);
@@ -789,10 +799,7 @@ function parseMatchValue(
   if (raw === '@') return undefined;
   // Path/arg templates: `$args.x` / `$this.y` need the Connectors var map, not the
   // selection root (which is often `{}` for request-path matches).
-  if (
-    vars &&
-    /^\$args\b|^\$this\b|^\$env\b|^\$context\b|^\$batch\b|^\$config\b/.test(raw)
-  ) {
+  if (vars && /^\$args\b|^\$this\b|^\$env\b|^\$context\b|^\$batch\b|^\$config\b/.test(raw)) {
     return evalConnectorsVarExpr(raw, vars);
   }
   if (raw.startsWith('$') || raw.includes('->')) {
@@ -981,11 +988,18 @@ function tokenizeSelection(selection: string): SelectionToken[] {
     if (s[i] === ':') {
       i++;
       while (i < s.length && /\s/.test(s[i])) i++;
-      read = readSelectionIdent(s, i);
-      source = read.value;
-      i = read.end;
-      alias = name;
-      while (i < s.length && /\s/.test(s[i])) i++;
+      // Apollo entity-ref / object literal: `supplier: { id: supplierId }` —
+      // fields are relative to the *parent* root, not `$.supplier`.
+      if (s[i] === '{') {
+        source = '$';
+        alias = name;
+      } else {
+        read = readSelectionIdent(s, i);
+        source = read.value;
+        i = read.end;
+        alias = name;
+        while (i < s.length && /\s/.test(s[i])) i++;
+      }
     }
     let sub: string | undefined;
     if (s[i] === '{') {
@@ -1729,11 +1743,7 @@ export function processConnectDirectives(
         const returnType = getNamedType(field.type) as GraphQLObjectType;
         if (typeof (returnType as any).resolveReference !== 'function') {
           const entityField = field as GraphQLField<any, any>;
-          (returnType as any).resolveReference = (
-            reference: any,
-            context: any,
-            info: any,
-          ) => {
+          (returnType as any).resolveReference = (reference: any, context: any, info: any) => {
             const args: Record<string, any> = {};
             for (const arg of entityField.args) {
               args[arg.name] = reference?.[arg.name];
@@ -1800,8 +1810,7 @@ function ensureFederationEntitiesField(schema: GraphQLSchema) {
 
   queryFields._entities = {
     name: '_entities',
-    description:
-      'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
+    description: 'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
     type: new GraphQLNonNull(new GraphQLList(entityUnion)),
     args: [
       {

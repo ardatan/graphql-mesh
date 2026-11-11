@@ -69,11 +69,7 @@ export function getTypeResolverForAbstractType({
           typeof connectSel === 'string' &&
           (connectSel.trim() === '$' || connectSel.trim() === `${field.name}: $`);
         const fieldType = field.type;
-        if (
-          (isRootAlias || 'parseValue' in fieldType) &&
-          fieldType &&
-          'parseValue' in fieldType
-        ) {
+        if ((isRootAlias || 'parseValue' in fieldType) && fieldType && 'parseValue' in fieldType) {
           try {
             fieldType.parseValue(data);
             return possibleType.name;

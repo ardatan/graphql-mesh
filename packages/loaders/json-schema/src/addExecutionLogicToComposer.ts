@@ -23,6 +23,8 @@ import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import {
+  bakeEnumRootSelection,
+  bakeInputBodySelection,
   buildConnectHttpArgs,
   buildSelectionForType,
   buildSourceDirectiveArgs,
@@ -404,9 +406,9 @@ ${operationConfig.description || ''}
             ? [...schemaComposer.types.values()]
                 .filter((tc: any) => {
                   try {
-                    return tc.getInterfaces?.()?.some?.(
-                      (i: any) => i.getTypeName?.() === returnNamedType.name,
-                    );
+                    return tc
+                      .getInterfaces?.()
+                      ?.some?.((i: any) => i.getTypeName?.() === returnNamedType.name);
                   } catch {
                     return false;
                   }
@@ -706,13 +708,18 @@ ${operationConfig.description || ''}
     [MapperKind.OBJECT_FIELD]: fieldConfig => {
       let next = stripDirectiveFromConfig(fieldConfig, 'resolveRoot');
       next = stripDirectiveFromConfig(next, 'flatten');
+      next = stripDirectiveFromConfig(next, 'resolveRootField');
       return next;
     },
     [MapperKind.INTERFACE_FIELD]: fieldConfig => {
       let next = stripDirectiveFromConfig(fieldConfig, 'resolveRoot');
       next = stripDirectiveFromConfig(next, 'flatten');
+      next = stripDirectiveFromConfig(next, 'resolveRootField');
       return next;
     },
+    [MapperKind.INPUT_OBJECT_FIELD]: fieldConfig =>
+      stripDirectiveFromConfig(fieldConfig, 'resolveRootField'),
+    [MapperKind.ARGUMENT]: argConfig => stripDirectiveFromConfig(argConfig, 'resolveRootField'),
   });
   // Drop unused Mesh directive definitions when nothing references them.
   schema = mapSchema(schema, {
@@ -747,27 +754,41 @@ function finalizeConnectorsField(
     ...(ext.directives || {}),
   };
 
-  // Root HTTP `@connect`: rewrite enum args in path/queryParams/headers to `->match`.
-  if (directives.connect?.length && next.args) {
+  // Root HTTP `@connect`: rewrite enum args, bake input RRF body, bake enum `$` roots.
+  if (directives.connect?.length) {
     directives.connect = directives.connect.map((connectArgs: any) => {
-      if (!connectArgs?.http) return connectArgs;
-      const http = { ...connectArgs.http };
-      for (const method of ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']) {
-        if (typeof http[method] === 'string') {
-          http[method] = rewriteConnectPathEnumArgs(http[method], next.args as any);
+      let nextConnect = { ...connectArgs };
+      if (nextConnect.http) {
+        const http = { ...nextConnect.http };
+        if (next.args) {
+          for (const method of ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE']) {
+            if (typeof http[method] === 'string') {
+              http[method] = rewriteConnectPathEnumArgs(http[method], next.args as any);
+            }
+          }
+          if (typeof http.queryParams === 'string') {
+            http.queryParams = rewriteQueryParamsEnumArgs(http.queryParams, next.args as any);
+          }
+          if (Array.isArray(http.headers)) {
+            http.headers = http.headers.map((h: any) =>
+              h?.value != null
+                ? { ...h, value: rewriteConnectPathEnumArgs(String(h.value), next.args as any) }
+                : h,
+            );
+          }
+          if (typeof http.body === 'string') {
+            http.body = bakeInputBodySelection(http.body, next.args as any);
+          }
         }
+        nextConnect = { ...nextConnect, http };
       }
-      if (typeof http.queryParams === 'string') {
-        http.queryParams = rewriteQueryParamsEnumArgs(http.queryParams, next.args as any);
+      if (typeof nextConnect.selection === 'string' && next.type) {
+        nextConnect = {
+          ...nextConnect,
+          selection: bakeEnumRootSelection(nextConnect.selection, next.type as any),
+        };
       }
-      if (Array.isArray(http.headers)) {
-        http.headers = http.headers.map((h: any) =>
-          h?.value != null
-            ? { ...h, value: rewriteConnectPathEnumArgs(String(h.value), next.args as any) }
-            : h,
-        );
-      }
-      return { ...connectArgs, http };
+      return nextConnect;
     });
     next = {
       ...next,
@@ -776,12 +797,9 @@ function finalizeConnectorsField(
     };
   }
 
-  // Output Mesh dirs → Connectors / drop.
-  // Keep input/arg `@resolveRootField` for request-body key de-sanitization.
-  const isRootOperation =
-    typeName === 'Query' || typeName === 'Mutation' || typeName === 'Subscription';
+  // Output Mesh dirs → Connectors / drop (input RRF baked into http.body above).
   let fieldDirsChanged = false;
-  if (directives.resolveRootField && !isRootOperation) {
+  if (directives.resolveRootField) {
     delete directives.resolveRootField;
     fieldDirsChanged = true;
   }
@@ -830,7 +848,10 @@ function stripDirectiveFromConfig<T extends { extensions?: any; astNode?: any }>
   directiveName: string,
 ): T {
   const ext = config.extensions as { directives?: Record<string, unknown> } | undefined;
-  if (!ext?.directives?.[directiveName] && !config.astNode?.directives?.some((d: any) => d.name.value === directiveName)) {
+  if (
+    !ext?.directives?.[directiveName] &&
+    !config.astNode?.directives?.some((d: any) => d.name.value === directiveName)
+  ) {
     return config;
   }
   const directives = { ...(ext?.directives || {}) };
@@ -845,7 +866,9 @@ function stripDirectiveFromConfig<T extends { extensions?: any; astNode?: any }>
 function stripTypeDirective(type: any, directiveName: string): any {
   const ext = type.extensions as { directives?: Record<string, unknown> } | undefined;
   const hasExt = Boolean(ext?.directives?.[directiveName]);
-  const hasAst = Boolean(type.astNode?.directives?.some((d: any) => d.name.value === directiveName));
+  const hasAst = Boolean(
+    type.astNode?.directives?.some((d: any) => d.name.value === directiveName),
+  );
   if (!hasExt && !hasAst) return type;
   const directives = { ...(ext?.directives || {}) };
   delete directives[directiveName];

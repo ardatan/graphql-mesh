@@ -27,10 +27,8 @@ import {
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import { toApolloRouterConnectorsSupergraph } from './apollo-router-connectors-supergraph.js';
-import {
-  hasEquivalentTypeConnect,
-  toTypeLevelEntityConnect,
-} from './connect-entity.js';
+import { bakeConnectEnumDirectives } from './bake-connect-enums.js';
+import { hasEquivalentTypeConnect, toTypeLevelEntityConnect } from './connect-entity.js';
 import {
   convertSubgraphToFederationv2,
   detectAndAddMeshDirectives,
@@ -442,6 +440,11 @@ export function getAnnotatedSubgraphs(
           }
         },
       });
+    }
+    // Naming-convention (and similar) transforms may re-add Mesh `@enum` after the
+    // loader already baked/stripped it — re-bake into `@connect(selection:)` here.
+    if (isConnectorsSubgraph) {
+      transformedSubgraph = bakeConnectEnumDirectives(transformedSubgraph);
     }
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
     transformedSubgraph = detectAndAddMeshDirectives(transformedSubgraph);

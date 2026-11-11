@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@enum", "@transport"]) @transport(subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io") @join__directive(graphs: [WIKI], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [WIKI], name: "source", args: {name: "Wiki", http: {baseURL: "https://api.chucknorris.io"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io") @join__directive(graphs: [WIKI], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [WIKI], name: "source", args: {name: "Wiki", http: {baseURL: "https://api.chucknorris.io"}}) {
   query: Query
 }
 
@@ -38,29 +38,27 @@ enum join__Graph {
   WIKI @join__graph(name: "Wiki", url: "https://api.chucknorris.io")
 }
 
-directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
-
 type Query @join__type(graph: WIKI) {
-  jokes_categories: [Category] @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/jokes/categories", headers: [{name: "accept", value: "application/json"}]}, selection: "$"})
+  jokes_categories: [Category] @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/jokes/categories", headers: [{name: "accept", value: "application/json"}]}, selection: "$->map(@->match([\\"animal\\", \\"ANIMAL\\"], [\\"career\\", \\"CAREER\\"], [\\"celebrity\\", \\"CELEBRITY\\"], [\\"dev\\", \\"DEV\\"], [\\"explicit\\", \\"EXPLICIT\\"], [\\"fashion\\", \\"FASHION\\"], [\\"food\\", \\"FOOD\\"], [\\"history\\", \\"HISTORY\\"], [\\"money\\", \\"MONEY\\"], [\\"movie\\", \\"MOVIE\\"], [\\"music\\", \\"MUSIC\\"], [\\"political\\", \\"POLITICAL\\"], [\\"religion\\", \\"RELIGION\\"], [\\"science\\", \\"SCIENCE\\"], [\\"sport\\", \\"SPORT\\"], [\\"travel\\", \\"TRAVEL\\"], [@, @]))"})
 }
 
 enum Category @join__type(graph: WIKI) {
-  ANIMAL @enum(value: "\\"animal\\"") @join__enumValue(graph: WIKI)
-  CAREER @enum(value: "\\"career\\"") @join__enumValue(graph: WIKI)
-  CELEBRITY @enum(value: "\\"celebrity\\"") @join__enumValue(graph: WIKI)
-  DEV @enum(value: "\\"dev\\"") @join__enumValue(graph: WIKI)
-  EXPLICIT @enum(value: "\\"explicit\\"") @join__enumValue(graph: WIKI)
-  FASHION @enum(value: "\\"fashion\\"") @join__enumValue(graph: WIKI)
-  FOOD @enum(value: "\\"food\\"") @join__enumValue(graph: WIKI)
-  HISTORY @enum(value: "\\"history\\"") @join__enumValue(graph: WIKI)
-  MONEY @enum(value: "\\"money\\"") @join__enumValue(graph: WIKI)
-  MOVIE @enum(value: "\\"movie\\"") @join__enumValue(graph: WIKI)
-  MUSIC @enum(value: "\\"music\\"") @join__enumValue(graph: WIKI)
-  POLITICAL @enum(value: "\\"political\\"") @join__enumValue(graph: WIKI)
-  RELIGION @enum(value: "\\"religion\\"") @join__enumValue(graph: WIKI)
-  SCIENCE @enum(value: "\\"science\\"") @join__enumValue(graph: WIKI)
-  SPORT @enum(value: "\\"sport\\"") @join__enumValue(graph: WIKI)
-  TRAVEL @enum(value: "\\"travel\\"") @join__enumValue(graph: WIKI)
+  ANIMAL @join__enumValue(graph: WIKI)
+  CAREER @join__enumValue(graph: WIKI)
+  CELEBRITY @join__enumValue(graph: WIKI)
+  DEV @join__enumValue(graph: WIKI)
+  EXPLICIT @join__enumValue(graph: WIKI)
+  FASHION @join__enumValue(graph: WIKI)
+  FOOD @join__enumValue(graph: WIKI)
+  HISTORY @join__enumValue(graph: WIKI)
+  MONEY @join__enumValue(graph: WIKI)
+  MOVIE @join__enumValue(graph: WIKI)
+  MUSIC @join__enumValue(graph: WIKI)
+  POLITICAL @join__enumValue(graph: WIKI)
+  RELIGION @join__enumValue(graph: WIKI)
+  SCIENCE @join__enumValue(graph: WIKI)
+  SPORT @join__enumValue(graph: WIKI)
+  TRAVEL @join__enumValue(graph: WIKI)
 }
 
 scalar ObjMap

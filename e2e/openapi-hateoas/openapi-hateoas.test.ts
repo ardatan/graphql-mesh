@@ -19,8 +19,9 @@ describe('OpenAPI HATEOAS', () => {
     expect(result).toMatchSnapshot();
   });
 
-  // Absolute `$this` link URLs + Mesh entity/@merge keys are not yet Apollo Connectors-valid;
-  // keep Hive coverage here. Dual-runtime for HATEOAS needs entity connector emit follow-up.
+  // Router rejects abstract `__typename: $._type->match(...)` (wants a string literal
+  // Shape). Entity-ref selection is baked for Connectors; dual-run once Router accepts
+  // discriminator match on interface returns. Hive covers self `$this` + supplier links.
   it('should execute and follow HATEOAS links', async () => {
     const composition = await compose({
       output: 'graphql',

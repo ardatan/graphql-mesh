@@ -18,10 +18,7 @@ import {
   mapSchema,
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
-import {
-  hasEquivalentTypeConnect,
-  toTypeLevelEntityConnect,
-} from '../connect-entity.js';
+import { hasEquivalentTypeConnect, toTypeLevelEntityConnect } from '../connect-entity.js';
 import {
   addFederation2DirectivesToSubgraph,
   importFederationDirectives,
@@ -423,17 +420,12 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 const typeDirectives = getDirectiveExtensions(returnNamedType) || {};
                 typeDirectives.connect ||= [];
                 for (const connectArgs of fieldDirectives.connect) {
-                  const typeConnect = toTypeLevelEntityConnect(
-                    connectArgs,
-                    keyArg,
-                    keyField,
-                  );
+                  const typeConnect = toTypeLevelEntityConnect(connectArgs, keyArg, keyField);
                   if (!hasEquivalentTypeConnect(typeDirectives.connect, typeConnect)) {
                     typeDirectives.connect.push(typeConnect);
                   }
                 }
-                const typeExtensions: Record<string, unknown> = (returnNamedType.extensions ||=
-                  {});
+                const typeExtensions: Record<string, unknown> = (returnNamedType.extensions ||= {});
                 typeExtensions.directives = typeDirectives;
               }
             } else {

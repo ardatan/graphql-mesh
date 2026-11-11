@@ -6,8 +6,6 @@ exports[`JSON Schema Example should generate correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
 directive @connect(source: String, http: ConnectHttp, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
@@ -17,8 +15,8 @@ directive @source(name: String!, http: SourceHttp!, errors: ConnectorErrors, isS
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  me: User @connect(source: "FakeAPI", http: {GET: "/me"}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
-  company(id: String!): Company @connect(source: "FakeAPI", http: {GET: "/company/{$args.id}"}, selection: "name type")
+  me: User @connect(source: "FakeAPI", http: {}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
+  company(id: String!): Company @connect(source: "FakeAPI", http: {}, selection: "name type: type->match([\\"Public Limited\\", \\"Public_Limited\\"], [\\"Private Limited\\", \\"Private_Limited\\"], [\\"One Person\\", \\"One_Person\\"], [@, type])")
 }
 
 """Fake User Object"""
@@ -47,15 +45,15 @@ type Company {
 }
 
 enum CompanyType {
-  Public_Limited @enum(subgraph: "FakeAPI", value: "\\"Public Limited\\"")
-  Private_Limited @enum(subgraph: "FakeAPI", value: "\\"Private Limited\\"")
-  One_Person @enum(subgraph: "FakeAPI", value: "\\"One Person\\"")
+  Public_Limited
+  Private_Limited
+  One_Person
 }
 
 type Mutation {
-  createUser(input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {PUT: "/user", body: "$args.input"}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
-  updateUser(id: String!, input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {POST: "/user/{$args.id}", body: "$args.input"}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
-  deleteUser(id: String!): JSON @connect(source: "FakeAPI", http: {DELETE: "/user/{$args.id}"}, selection: "$")
+  createUser(input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {body: "$args.input"}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
+  updateUser(id: String!, input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {body: "$args.input"}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
+  deleteUser(id: String!): JSON @connect(source: "FakeAPI", http: {}, selection: "$")
 }
 
 input CreateUpdateUserInput @example(subgraph: "FakeAPI", value: "{\\"firstName\\":\\"John\\",\\"lastName\\":\\"Doe\\",\\"jobTitle\\":\\"Software Developer\\"}") {

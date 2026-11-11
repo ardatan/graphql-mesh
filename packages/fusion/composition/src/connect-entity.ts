@@ -11,11 +11,7 @@
 const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 
 /** Replace `$args.<keyArg>` with `$this.<keyField>` in Connectors path/body/header exprs. */
-export function rewriteArgsToThis(
-  value: string,
-  keyArg: string,
-  keyField: string,
-): string {
+export function rewriteArgsToThis(value: string, keyArg: string, keyField: string): string {
   if (!value || !keyArg) {
     return value;
   }

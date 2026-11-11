@@ -21,7 +21,6 @@ import { processDictionaryDirective } from './dictionary.js';
 import { processDiscriminatorAnnotations } from './discriminator.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
-import { processResolveRootFieldAnnotations } from './resolveRootField.js';
 import { processResponseMetadataAnnotations } from './responseMetadata.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
@@ -162,27 +161,8 @@ export function processDirectives(
             break;
         }
       }
-      const enumValues = type.getValues();
-      for (const enumValue of enumValues) {
-        const directiveAnnotations = getDefDirectives(schema, enumValue);
-        for (const directiveAnnotation of directiveAnnotations) {
-          switch (directiveAnnotation.name) {
-            case 'enum': {
-              const realValue = JSON.parse(directiveAnnotation.args.value);
-              enumValue.value = realValue;
-              let valueLookup = (type as any)._valueLookup;
-              if (!valueLookup) {
-                valueLookup = new Map(
-                  type.getValues().map(enumValue => [enumValue.value, enumValue]),
-                );
-                (type as any)._valueLookup = valueLookup;
-              }
-              valueLookup.set(realValue, enumValue);
-              break;
-            }
-          }
-        }
-      }
+      // `@enum` JSON remaps are baked into `@connect(selection:)` as `->match` /
+      // `$->map(@->match)` and stripped from the SDL — no runtime enum wiring.
     }
     if ('getFields' in type) {
       const fields = type.getFields();
@@ -191,13 +171,8 @@ export function processDirectives(
         const directiveAnnotations = getDefDirectives(schema, field);
         for (const directiveAnnotation of directiveAnnotations) {
           switch (directiveAnnotation.name) {
-            // `@resolveRoot` / `@flatten` / `@statusCodeTypeName` baked into `@connect`.
-            case 'resolveRootField':
-              processResolveRootFieldAnnotations(
-                field as GraphQLField<any, any>,
-                directiveAnnotation.args.field,
-              );
-              break;
+            // `@resolveRoot` / `@flatten` / `@resolveRootField` / `@statusCodeTypeName`
+            // / `@enum` are baked into `@connect` selections / http.body.
             case 'pubsubOperation':
               processPubSubOperationAnnotations({
                 field: field as GraphQLField<any, any>,

@@ -355,11 +355,7 @@ describe('Apollo Connectors composition', () => {
 
       type Query {
         getUserById(userId: ID!): User
-          @connect(
-            source: "rest"
-            http: { GET: "/users/{$args.userId}" }
-            selection: "id name"
-          )
+          @connect(source: "rest", http: { GET: "/users/{$args.userId}" }, selection: "id name")
       }
 
       type User {

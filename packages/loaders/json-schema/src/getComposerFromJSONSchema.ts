@@ -1486,6 +1486,9 @@ export function getComposerFromJSONSchema({
                 directives: fieldDirectives,
                 extensions: {
                   nullable: subSchemaAndTypeComposers.properties?.[propertyName]?.nullable,
+                  // HATEOAS cross-subgraph entity ref: `{ id: supplierId }` selection bake
+                  meshEntityRef:
+                    subSchemaAndTypeComposers.properties?.[propertyName]?.meshEntityRef,
                 },
                 description:
                   subSchemaAndTypeComposers.properties[propertyName].description ||

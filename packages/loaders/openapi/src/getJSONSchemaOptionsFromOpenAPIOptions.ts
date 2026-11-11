@@ -13,13 +13,14 @@ import {
 import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { asArray } from '@graphql-tools/utils';
-import type {
-  HTTPMethod,
-  JSONSchemaHTTPJSONOperationConfig,
-  JSONSchemaOperationConfig,
-  JSONSchemaOperationResponseConfig,
-  JSONSchemaPubSubOperationConfig,
-  OperationHeadersConfiguration,
+import {
+  setMeshEntityRef,
+  type HTTPMethod,
+  type JSONSchemaHTTPJSONOperationConfig,
+  type JSONSchemaOperationConfig,
+  type JSONSchemaOperationResponseConfig,
+  type JSONSchemaPubSubOperationConfig,
+  type OperationHeadersConfiguration,
 } from '@omnigraph/json-schema';
 import type { SelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
@@ -131,10 +132,11 @@ export interface HATEOASContext {
 
 /**
  * Process-local fallback when no `HATEOASContext` is passed (compose loads each
- * OpenAPI subgraph independently). Not exported — use `HATEOASContext` /
- * `getJSONSchemaOptionsFromMultipleOpenAPIOptions` for isolated loads.
+ * OpenAPI subgraph independently). Shared so sequential `loadOpenAPISubgraph`
+ * calls in one compose process can resolve cross-schema HATEOAS links.
  */
 const defaultFutureLinks = new Set<FutureLink>();
+const defaultLoadedSchemas: HATEOASContext['loadedSchemas'] = new Map();
 
 export async function getJSONSchemaOptionsFromOpenAPIOptions(
   name: string,
@@ -155,7 +157,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
   hateoasContext?: HATEOASContext,
 ) {
   const contextFutureLinks = hateoasContext?.futureLinks ?? defaultFutureLinks;
-  const loadedSchemas = hateoasContext?.loadedSchemas ?? new Map();
+  const loadedSchemas = hateoasContext?.loadedSchemas ?? defaultLoadedSchemas;
 
   const hateOasConfig: HATEOASConfig | false =
     HATEOAS === true
@@ -1099,10 +1101,32 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                               properties[paramName] = propInTarget;
                             }
                           }
+                          // Map entity key fields → parent JSON fields for Connectors
+                          // selection `supplier: { id: supplierId }` (Federation entity ref).
+                          // `{root['supplierId']}` / `{root.supplierId}` → `supplierId`.
+                          const meshEntityRef: Record<string, string> = {};
+                          for (const [keyField, interp] of Object.entries(args)) {
+                            const raw = String(interp);
+                            const fromBracket = raw.match(/^\{root\[['\"]([^'\"]+)['\"]\]\}$/);
+                            const fromDot = raw.match(/^\{root\.([^}]+)\}$/);
+                            const from =
+                              fromBracket?.[1] || fromDot?.[1] || paramsInLink[0] || keyField;
+                            meshEntityRef[keyField] = sanitizeNameForGraphQL(from);
+                          }
                           schemaObj.properties[linkName] = {
                             ...objectSchema,
                             properties,
+                            meshEntityRef,
                           };
+                          // Survives JSON→GraphQL composers (extensions often drop custom keys).
+                          // Also bake `supplier: { __typename: $("Supplier") id: supplierId }`
+                          // into parent `@connect(selection:)` for Apollo entity references.
+                          if (schemaObj.title && Object.keys(meshEntityRef).length) {
+                            setMeshEntityRef(schemaObj.title, linkName, meshEntityRef);
+                          }
+                          // Hive Gateway still resolves cross-subgraph HATEOAS via Mesh
+                          // `@resolveTo` stitching; entity-ref selection covers Router when
+                          // abstract `__typename` bake is Connectors-valid.
                           futureAdditions.push({
                             targetTypeName: schemaObj.title,
                             targetFieldName: linkName,
@@ -1120,14 +1144,35 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                       }
                     }
                     contextFutureLinks.delete(findActualOperationAndPath);
+                    if (timeout) clearTimeout(timeout);
                     deferred.resolve();
                     return true;
                   }
                   return false;
                 }
+                let timeout: ReturnType<typeof setTimeout> | undefined;
+                const tryResolveAgainstLoaded = () => {
+                  if (findActualOperationAndPath(name, oasOrSwagger, methodObjFieldMap)) {
+                    return true;
+                  }
+                  // Other subgraphs may have finished first (compose uses Promise.all).
+                  for (const [schemaName, schemaData] of loadedSchemas) {
+                    if (schemaName === name) continue;
+                    if (
+                      findActualOperationAndPath(
+                        schemaName,
+                        schemaData.oasDoc,
+                        schemaData.methodObjFieldMap,
+                      )
+                    ) {
+                      return true;
+                    }
+                  }
+                  return false;
+                };
                 // Only set timeout if we're not in batch mode (no context provided)
                 if (!hateoasContext) {
-                  setTimeout(() => {
+                  timeout = setTimeout(() => {
                     log.warn(
                       `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
                     );
@@ -1135,7 +1180,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                     deferred.resolve();
                   }, 5000);
                 }
-                if (!findActualOperationAndPath(name, oasOrSwagger, methodObjFieldMap)) {
+                if (!tryResolveAgainstLoaded()) {
                   contextFutureLinks.add(findActualOperationAndPath);
                 }
 
@@ -1288,12 +1333,19 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     }
   }
 
-  // Register this schema in the context for future cross-references
-  if (hateoasContext) {
-    loadedSchemas.set(name, {
-      oasDoc: oasOrSwagger,
-      methodObjFieldMap,
-    });
+  // Register for cross-schema HATEOAS (shared process map or explicit context).
+  loadedSchemas.set(name, {
+    oasDoc: oasOrSwagger,
+    methodObjFieldMap,
+  });
+
+  // Resolve any deferred cross-schema links now that this schema is available.
+  if (contextFutureLinks.size) {
+    for (const futureLink of Array.from(contextFutureLinks)) {
+      if (futureLink(name, oasOrSwagger, methodObjFieldMap)) {
+        contextFutureLinks.delete(futureLink);
+      }
+    }
   }
 
   return {
