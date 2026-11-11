@@ -71,8 +71,14 @@ function resolveTemplate(
   if (!template) {
     return '';
   }
+  // Expand Connectors literals: $("Charles"), $(true), $(42)
+  let resolved = template.replace(/\$\(\s*(["'])(.*?)\1\s*\)/g, (_, _q, value: string) => value);
+  resolved = resolved.replace(
+    /\$\(\s*(true|false|null|-?\d+(?:\.\d+)?)\s*\)/g,
+    (_, value: string) => value,
+  );
   // Normalize Connectors `{$args.x|base64}` to Mesh `{args.x|base64}` so modifiers work.
-  const meshForm = template.replace(/\{\$([a-zA-Z_][\w.|:]*)\}/g, (_, path: string) => {
+  const meshForm = resolved.replace(/\{\$([a-zA-Z_][\w.|:]*)\}/g, (_, path: string) => {
     const normalized = path.replace(/^root\b/, 'this');
     return `{${normalized}}`;
   });
@@ -267,6 +273,10 @@ function evalQueryParamExpr(
     } catch {
       return expr.slice(2, -1);
     }
+  }
+  // Mesh / Connectors templates: `{root.$request.query.x}`, `{$this.id}`, …
+  if (expr.includes('{')) {
+    return resolveTemplate(expr, { ...vars, config: {} });
   }
   // Support a small method subset used in emitted Connectors mappings, e.g.
   // `$args.id__in->joinNotNull(",")`
@@ -703,30 +713,144 @@ export function addConnectFieldResolver(
     const response = await fetchFn(fullUrl.toString(), requestInit, context, info as any);
     const contentType = response.headers.get('content-type') || '';
     let responseData: any;
-    if (contentType.includes('json') || !contentType) {
-      const text = await response.text();
-      responseData = text ? JSON.parse(text) : null;
-    } else if (contentType.startsWith('text/')) {
-      responseData = await response.text();
+    const text = await response.text();
+    if (!text) {
+      // Preserve legacy Mesh behavior for empty / 204 responses (e.g. String fields → "")
+      responseData = '';
+    } else if (contentType.includes('json') || (!contentType && /^[\[{]/.test(text.trim()))) {
+      try {
+        responseData = JSON.parse(text);
+      } catch {
+        responseData = text;
+      }
+    } else if (contentType.startsWith('text/') || !contentType) {
+      responseData = text;
     } else {
-      responseData = null;
+      responseData = text;
     }
 
     if (!response.ok && connectArgs.selection && !connectArgs.selection.includes('$status')) {
       // Default: non-2xx becomes GraphQL error unless selection handles $status
       throw new GraphQLError(`Connect HTTP ${response.status}: ${response.statusText}`, {
         extensions: {
+          request: {
+            url: fullUrl.toString(),
+            method,
+          },
+          response: {
+            status: response.status,
+            statusText: response.statusText,
+            headers: getHeadersObj(response.headers),
+            body: responseData,
+          },
+          // Legacy Mesh shape
           status: response.status,
           headers: getHeadersObj(response.headers),
+          responseJson: responseData,
         },
       });
     }
 
-    return applySelection(connectArgs.selection || '$', responseData, {
+    const selected = applySelection(connectArgs.selection || '$', responseData, {
       status: response.status,
       responseHeaders: response.headers,
     });
+    // Mesh `$url` historically excluded the query string (path/base only).
+    const urlForMeta = `${fullUrl.origin}${fullUrl.pathname}`;
+    // Inherit parent `$request.path` so nested OpenAPI links keep the same path
+    // args as the request that produced the parent (Mesh linkResolver semantics).
+    const pathArgs: Record<string, any> = { ...args };
+    const parentPath = root?.$request?.path;
+    if (parentPath && typeof parentPath === 'object') {
+      for (const key of Object.keys(parentPath)) {
+        if (pathArgs[key] == null && parentPath[key] != null) {
+          pathArgs[key] = parentPath[key];
+        }
+      }
+    }
+    return attachResponseMetadata(selected, {
+      url: urlForMeta,
+      method,
+      status: response.status,
+      statusText: response.statusText,
+      headers: getHeadersObj(response.headers),
+      requestHeaders: headers,
+      args: pathArgs,
+      responseData,
+      query: Object.fromEntries(fullUrl.searchParams.entries()),
+    });
   };
+}
+
+/**
+ * Attach Mesh-compatible `$url` / `$request` / `$response` metadata used by link
+ * interpolations and `@responseMetadata`. Hidden from enumerations / JSON.
+ */
+function attachResponseMetadata(
+  selected: any,
+  meta: {
+    url: string;
+    method: string;
+    status: number;
+    statusText: string;
+    headers: Record<string, string>;
+    requestHeaders: Record<string, string>;
+    args: Record<string, any>;
+    responseData: any;
+    query?: Record<string, string>;
+  },
+): any {
+  const decorate = (obj: any) => {
+    if (obj == null || typeof obj !== 'object') {
+      return obj;
+    }
+    const requestQuery = meta.query || {};
+    const metadata = {
+      get $url() {
+        return meta.url;
+      },
+      get $method() {
+        return meta.method;
+      },
+      get $statusCode() {
+        return meta.status;
+      },
+      get $statusText() {
+        return meta.statusText;
+      },
+      get $headers() {
+        return meta.requestHeaders;
+      },
+      get $request() {
+        return {
+          query: requestQuery,
+          path: meta.args,
+          header: meta.requestHeaders,
+          body: meta.args?.input,
+        };
+      },
+      get $response() {
+        return {
+          header: meta.headers,
+          body: meta.responseData,
+          query: requestQuery,
+          path: meta.args,
+        };
+      },
+    };
+    for (const [key, descriptor] of Object.entries(
+      Object.getOwnPropertyDescriptors(metadata),
+    )) {
+      if (!(key in obj)) {
+        Object.defineProperty(obj, key, descriptor);
+      }
+    }
+    return obj;
+  };
+  if (Array.isArray(selected)) {
+    return selected.map(decorate);
+  }
+  return decorate(selected);
 }
 
 export function processConnectDirectives(

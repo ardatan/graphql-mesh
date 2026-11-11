@@ -31,11 +31,11 @@ type Query {
 type o_d_d___n_a_m_e_200_response {
   data: String
   """Basic link"""
-  w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/"}, selection: "$")
+  w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
   """Hardcoded link parameter"""
-  w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/"}, selection: "$")
+  w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e2/$(\\"Charles\\")", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
   """Exposed link parameter"""
-  w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/"}, selection: "$")
+  w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
 }
 
 type w_e_i_r_d___n_a_m_e_200_response {

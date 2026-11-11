@@ -25,7 +25,7 @@ import {
   CONNECT_LINK_URL,
   inferBodySelection,
   SourceDirective,
-  toConnectPathTemplate,
+  toConnectLinkExpression,
 } from './connectAnnotations.js';
 import {
   PubSubOperationDirective,
@@ -77,6 +77,166 @@ export function addExecutionDirectivesToComposer(
   }: AddExecutionLogicToComposerOptions,
 ) {
   log.debug(`Attaching execution directives to the schema`);
+  type PendingLinks = {
+    linkMap: Record<string, JSONSchemaLinkConfig>;
+    typeTC: ObjectTypeComposer | InterfaceTypeComposer;
+  };
+  const pendingLinks: PendingLinks[] = [];
+
+  const handleLinkMap = (
+    linkMap: Record<string, JSONSchemaLinkConfig>,
+    typeTC: ObjectTypeComposer | InterfaceTypeComposer,
+  ) => {
+    for (const linkName in linkMap) {
+      const linkObj = linkMap[linkName];
+      let targetField: ObjectTypeComposerFieldConfig<any, any> | undefined;
+      try {
+        targetField = schemaComposer.Query.getField(linkObj.fieldName);
+      } catch {
+        try {
+          targetField = schemaComposer.Mutation.getField(linkObj.fieldName);
+        } catch {}
+      }
+      if (!targetField) {
+        log.debug(`Field ${linkObj.fieldName} not found in ${subgraphName} for link ${linkName}`);
+      }
+      schemaComposer.addDirective(ConnectDirective);
+      // Reuse the target field's @connect http config, rewriting args -> $this via link args
+      const targetConnect = targetField?.directives?.find(d => d.name === 'connect');
+      const targetHttp = targetConnect?.args?.http ? { ...targetConnect.args.http } : undefined;
+      let pathTemplate: string | undefined;
+      if (targetHttp) {
+        for (const method of ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD']) {
+          if (targetHttp[method]) {
+            pathTemplate = String(targetHttp[method]);
+            break;
+          }
+        }
+      }
+      const linkArgExprs: Record<string, string> = {};
+      if (linkObj.args) {
+        for (const [argName, interpolation] of Object.entries(linkObj.args)) {
+          linkArgExprs[argName] = toConnectLinkExpression(interpolation);
+        }
+      }
+      if (pathTemplate && Object.keys(linkArgExprs).length) {
+        for (const [argName, connectExpr] of Object.entries(linkArgExprs)) {
+          pathTemplate = pathTemplate.replaceAll(`{$args.${argName}}`, connectExpr);
+          // Also support unconverted Mesh `{args.x}` left in some paths
+          pathTemplate = pathTemplate.replaceAll(`{args.${argName}}`, connectExpr);
+        }
+      }
+      const linkHttp: Record<string, unknown> = targetHttp
+        ? {
+            ...targetHttp,
+            ...(pathTemplate
+              ? {
+                  GET: targetHttp.GET ? pathTemplate : undefined,
+                  POST: targetHttp.POST ? pathTemplate : undefined,
+                  PUT: targetHttp.PUT ? pathTemplate : undefined,
+                  PATCH: targetHttp.PATCH ? pathTemplate : undefined,
+                  DELETE: targetHttp.DELETE ? pathTemplate : undefined,
+                  HEAD: targetHttp.HEAD ? pathTemplate : undefined,
+                }
+              : {}),
+          }
+        : {
+            GET: '/',
+          };
+      const rewriteArgsExpr = (template: string) => {
+        let out = template;
+        for (const [argName, connectExpr] of Object.entries(linkArgExprs)) {
+          // Keep templates with `{...}` interpolations intact for resolveTemplate.
+          const replacement =
+            connectExpr.includes('{') ||
+            connectExpr.startsWith('$(') ||
+            connectExpr.startsWith('$')
+              ? connectExpr
+              : `$(${JSON.stringify(connectExpr)})`;
+          out = out.replaceAll(`{$args.${argName}}`, replacement);
+          out = out.replaceAll(`$args.${argName}`, replacement);
+          out = out.replaceAll(`{args.${argName}}`, replacement);
+        }
+        return out;
+      };
+      // Rewrite target `$args.*` in queryParams / body / headers to link expressions.
+      if (typeof linkHttp.queryParams === 'string' && Object.keys(linkArgExprs).length) {
+        linkHttp.queryParams = rewriteArgsExpr(String(linkHttp.queryParams));
+      }
+      if (typeof linkHttp.queryParams === 'string' && linkHttp.queryParams.includes('$args')) {
+        delete linkHttp.queryParams;
+      }
+      if (typeof linkHttp.body === 'string' && Object.keys(linkArgExprs).length) {
+        linkHttp.body = rewriteArgsExpr(String(linkHttp.body));
+      }
+      if (typeof linkHttp.body === 'string' && linkHttp.body.includes('$args')) {
+        delete linkHttp.body;
+      }
+      if (Array.isArray(linkHttp.headers) && Object.keys(linkArgExprs).length) {
+        linkHttp.headers = linkHttp.headers.map(
+          (h: { name: string; value?: string; from?: string }) =>
+            h?.value
+              ? {
+                  ...h,
+                  value: rewriteArgsExpr(String(h.value)),
+                }
+              : h,
+        );
+      }
+      for (const key of Object.keys(linkHttp)) {
+        if (linkHttp[key] == null) {
+          delete linkHttp[key];
+        }
+      }
+
+      const linkSelection =
+        targetConnect?.args?.selection ||
+        (targetField?.type
+          ? buildSelectionForType(
+              typeof targetField.type === 'function'
+                ? (targetField.type as any)()
+                : (targetField.type as any),
+            )
+          : '$') ||
+        '$';
+      const fields = {
+        [linkName]: {
+          ...targetField,
+          directives: [
+            {
+              name: 'connect',
+              args: {
+                source: subgraphName,
+                http: linkHttp,
+                selection: linkSelection,
+              },
+            },
+          ],
+          get args() {
+            return linkObj.args ? {} : targetField?.args;
+          },
+          get description() {
+            return linkObj.description || targetField?.description;
+          },
+        },
+      };
+      typeTC.addFields(fields);
+      if (schemaComposer.isInterfaceType(typeTC)) {
+        const iFaceTC = typeTC as InterfaceTypeComposer;
+        for (const subTC of schemaComposer.types.values()) {
+          if ('getInterfaces' in subTC) {
+            if (
+              subTC.getInterfaces().some(iFace => iFace.getTypeName() === iFaceTC.getTypeName())
+            ) {
+              subTC.addFields(fields);
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Pass 1: attach @connect on root fields so link targets exist before pass 2.
   for (const operationConfig of operations) {
     const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
 
@@ -117,6 +277,16 @@ ${operationConfig.description || ''}
         }
       }
       skipFields.add('_response');
+      if ('responseByStatusCode' in operationConfig) {
+        for (const statusCode in operationConfig.responseByStatusCode) {
+          const responseConfig = operationConfig.responseByStatusCode[statusCode];
+          if (responseConfig.links) {
+            for (const linkName of Object.keys(responseConfig.links)) {
+              skipFields.add(linkName);
+            }
+          }
+        }
+      }
       const selection =
         buildSelectionForType(field.type.getType(), { skipFields }) ||
         // Scalar / empty responses still need a non-empty Connectors selection
@@ -156,122 +326,12 @@ ${operationConfig.description || ''}
         };
       }
 
-      const handleLinkMap = (
-        linkMap: Record<string, JSONSchemaLinkConfig>,
-        typeTC: ObjectTypeComposer | InterfaceTypeComposer,
-      ) => {
-        for (const linkName in linkMap) {
-          const linkObj = linkMap[linkName];
-          let targetField: ObjectTypeComposerFieldConfig<any, any> | undefined;
-          try {
-            targetField = schemaComposer.Query.getField(linkObj.fieldName);
-          } catch {
-            try {
-              targetField = schemaComposer.Mutation.getField(linkObj.fieldName);
-            } catch {}
-          }
-          if (!targetField) {
-            log.debug(
-              `Field ${linkObj.fieldName} not found in ${subgraphName} for link ${linkName}`,
-            );
-          }
-          schemaComposer.addDirective(ConnectDirective);
-          // Reuse the target field's @connect http config, rewriting args -> $this via link args
-          const targetConnect = targetField?.directives?.find(d => d.name === 'connect');
-          const targetHttp = targetConnect?.args?.http
-            ? { ...targetConnect.args.http }
-            : undefined;
-          let pathTemplate: string | undefined;
-          if (targetHttp) {
-            for (const method of ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD']) {
-              if (targetHttp[method]) {
-                pathTemplate = String(targetHttp[method]);
-                break;
-              }
-            }
-          }
-          if (pathTemplate && linkObj.args) {
-            for (const [argName, interpolation] of Object.entries(linkObj.args)) {
-              const connectExpr = toConnectPathTemplate(
-                String(interpolation).replace(/\{root\./g, '{$this.').replace(/\{args\./g, '{$this.'),
-              );
-              // Replace {$args.argName} in target path with the link expression
-              pathTemplate = pathTemplate.replaceAll(`{$args.${argName}}`, connectExpr);
-            }
-          }
-          const linkHttp = targetHttp
-            ? {
-                ...targetHttp,
-                ...(pathTemplate
-                  ? {
-                      GET: targetHttp.GET ? pathTemplate : undefined,
-                      POST: targetHttp.POST ? pathTemplate : undefined,
-                      PUT: targetHttp.PUT ? pathTemplate : undefined,
-                      PATCH: targetHttp.PATCH ? pathTemplate : undefined,
-                      DELETE: targetHttp.DELETE ? pathTemplate : undefined,
-                      HEAD: targetHttp.HEAD ? pathTemplate : undefined,
-                    }
-                  : {}),
-              }
-            : {
-                GET: '/',
-              };
-          // Clean undefined method keys
-          for (const key of Object.keys(linkHttp)) {
-            if (linkHttp[key] == null) {
-              delete linkHttp[key];
-            }
-          }
-          const linkSelection =
-            targetConnect?.args?.selection ||
-            (targetField?.type
-              ? buildSelectionForType(
-                  typeof targetField.type === 'function'
-                    ? (targetField.type as any)()
-                    : (targetField.type as any),
-                )
-              : '$') ||
-            '$';
-          const fields = {
-            [linkName]: {
-              ...targetField,
-              directives: [
-                {
-                  name: 'connect',
-                  args: {
-                    source: subgraphName,
-                    http: linkHttp,
-                    selection: linkSelection,
-                  },
-                },
-              ],
-              get args() {
-                return linkObj.args ? {} : targetField?.args;
-              },
-              get description() {
-                return linkObj.description || targetField?.description;
-              },
-            },
-          };
-          typeTC.addFields(fields);
-          if (schemaComposer.isInterfaceType(typeTC)) {
-            const iFaceTC = typeTC as InterfaceTypeComposer;
-            for (const subTC of schemaComposer.types.values()) {
-              if ('getInterfaces' in subTC) {
-                if (
-                  subTC.getInterfaces().some(iFace => iFace.getTypeName() === iFaceTC.getTypeName())
-                ) {
-                  subTC.addFields(fields);
-                }
-              }
-            }
-          }
-        }
-      };
-
-      if ('links' in operationConfig) {
+      if ('links' in operationConfig && operationConfig.links) {
         const typeTC = schemaComposer.getAnyTC(field.type.getTypeName());
-        handleLinkMap(operationConfig.links, typeTC as ObjectTypeComposer);
+        pendingLinks.push({
+          linkMap: operationConfig.links,
+          typeTC: typeTC as ObjectTypeComposer,
+        });
       }
 
       if ('exposeResponseMetadata' in operationConfig && operationConfig.exposeResponseMetadata) {
@@ -349,12 +409,20 @@ ${operationConfig.description || ''}
               });
             }
             if (responseConfig.links) {
-              handleLinkMap(responseConfig.links, typeTC as ObjectTypeComposer);
+              pendingLinks.push({
+                linkMap: responseConfig.links,
+                typeTC: typeTC as ObjectTypeComposer,
+              });
             }
           }
         }
       }
     }
+  }
+
+  // Pass 2: wire link fields after every target @connect exists.
+  for (const { linkMap, typeTC } of pendingLinks) {
+    handleLinkMap(linkMap, typeTC);
   }
 
   log.debug(`Building the executable schema.`);
