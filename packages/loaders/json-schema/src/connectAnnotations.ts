@@ -14,6 +14,7 @@ import {
   type GraphQLNamedOutputType,
   type GraphQLOutputType,
 } from 'graphql';
+import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import type { JSONSchemaHTTPJSONOperationConfig, JSONSchemaOperationConfig } from './types.js';
 
 const JSONSelectionScalar = GraphQLString;
@@ -91,6 +92,69 @@ export function toConnectPathTemplate(path: string | undefined | null): string {
     .replace(/\{context\./g, '{$context.');
 }
 
+/**
+ * Convert Mesh/OpenAPI link parameter interpolations into Connectors path expressions.
+ * Examples:
+ * - `{root.$response.body#/employerId}` → `{$this.employerId}`
+ * - `{root.$request.path.username}` → `{$this.username}`
+ * - `acme` → `$("acme")`
+ */
+export function toConnectLinkExpression(interpolation: unknown): string {
+  if (interpolation == null) {
+    return '$("")';
+  }
+  if (typeof interpolation !== 'string') {
+    return `$(${JSON.stringify(interpolation)})`;
+  }
+  const raw = interpolation.trim();
+  if (!raw) {
+    return '$("")';
+  }
+  if (!raw.includes('{') && !raw.startsWith('$')) {
+    return `$(${JSON.stringify(raw)})`;
+  }
+
+  const toThisPath = (pointer: string) =>
+    pointer
+      .split('/')
+      .filter(Boolean)
+      .map(segment => sanitizeNameForGraphQL(segment))
+      .join('.');
+
+  // Response body fields are present on the parent object after @connect selection.
+  const bodyPointer = raw.match(/^\{root\.\$response\.body(?:#\/|\.)(.+)\}$/);
+  if (bodyPointer) {
+    return `{$this.${toThisPath(bodyPointer[1])}}`;
+  }
+  // `$request.path|query` must read Mesh response metadata from the request that
+  // produced the parent object (legacy OpenAPI-to-GraphQL link semantics), not `$this`.
+  const requestPathOrQuery = raw.match(/^\{root\.\$request\.(path|query)\.(.+)\}$/);
+  if (requestPathOrQuery) {
+    const loc = requestPathOrQuery[1];
+    const pointer = requestPathOrQuery[2];
+    // Path args are GraphQL-sanitized on the parent request; query keys stay as in the URL.
+    const key = loc === 'path' ? toThisPath(pointer) : pointer;
+    return `{root.$request.${loc}.${key}}`;
+  }
+  // Global Mesh response/request interpolations used by scanner/link fixtures
+  if (
+    /\{root\.\$\w+/.test(raw) ||
+    /\{root\.\$request\./.test(raw) ||
+    /\{root\.\$response\./.test(raw)
+  ) {
+    return raw;
+  }
+
+  // Fall back: normalize Mesh → Connectors, then rewrite leftover response body pointers.
+  return toConnectPathTemplate(raw)
+    .replace(/\{\$this\.\$response\.body#\/([^}]+)\}/g, (_, pointer: string) => {
+      return `{$this.${toThisPath(pointer)}}`;
+    })
+    .replace(/\{\$this\.\$response\.body\.([^}]+)\}/g, (_, pointer: string) => {
+      return `{$this.${toThisPath(pointer)}}`;
+    });
+}
+
 export function headersToConnectMappings(
   headers?: Record<string, string> | [string, string][],
 ): Array<{ name: string; value?: string; from?: string }> | undefined {
@@ -162,26 +226,30 @@ export function buildSelectionForType(
     return '';
   }
   if (isUnionType(named)) {
-    // Status-code / abstract unions need $status->match; leave a placeholder leaf selection
-    // so the connector is valid. Concrete mapping is filled when status branches are known.
     const members = named.getTypes();
     if (members.length === 1) {
       return buildSelectionForType(members[0], { skipFields, depth: depth + 1 });
     }
-    return members
-      .map(member => {
-        const inner = buildSelectionForType(member, { skipFields, depth: depth + 1 });
-        return inner
-          ? `... on ${member.name} { ${inner} }`
-          : `__typename: $("${member.name}")`;
-      })
-      .join('\n');
+    // Pass through the raw payload (`$` at field level). Hive `@discriminator` /
+    // `resolveType` and field resolvers map concrete members; emitting `... on`
+    // fragments here is not executable by our selection subset yet.
+    return '';
   }
   if (!isObjectType(named)) {
     return '';
   }
-  const lines: string[] = [];
   const fields = named.getFields();
+  // Types with `@dictionary` (additionalProperties) must pass through the raw JSON object
+  // so dictionary resolvers can see unknown keys. Nested field picking would drop them.
+  const hasDictionaryField = Object.values(fields).some(field => {
+    const ext = (field.extensions as any)?.directives || {};
+    if (ext.dictionary) return true;
+    return field.astNode?.directives?.some(d => d.name.value === 'dictionary');
+  });
+  if (hasDictionaryField) {
+    return '';
+  }
+  const lines: string[] = [];
   for (const fieldName of Object.keys(fields)) {
     if (skipFields.has(fieldName) || fieldName.startsWith('__')) {
       continue;

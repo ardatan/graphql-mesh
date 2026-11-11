@@ -43,7 +43,7 @@ type object_200_response {
   object2Link(
     """HTTP headers are case-insensitive"""
     specialheader: String
-  ): getObject2_200_response @connect(source: "example_api6", http: {GET: "/"}, selection: "$")
+  ): getObject2_200_response @connect(source: "example_api6", http: {GET: "/object2", headers: [{name: "specialheader", value: "{$args.specialheader}"}, {name: "accept", value: "application/json"}]}, selection: "data")
 }
 
 type getObject2_200_response {
@@ -60,13 +60,13 @@ input russianDoll_Input {
 type testLinkWithNonStringParam_200_response {
   hello: String
   """Return a number from the request header."""
-  return5: Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "{$args.number}"}, {name: "accept", value: "text/plain"}]}, selection: "$")
+  return5: Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "$(5)"}, {name: "accept", value: "text/plain"}]}, selection: "$")
 }
 
 type testLinkwithNestedParam_200_response {
   nesting1: query_testLinkwithNestedParam_nesting1
   """Return a number from the request header."""
-  returnNestedNumber: Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "{$args.number}"}, {name: "accept", value: "text/plain"}]}, selection: "$")
+  returnNestedNumber: Float @connect(source: "example_api6", http: {GET: "/returnNumber", headers: [{name: "number", value: "{$this.nesting1.nesting2}"}, {name: "accept", value: "text/plain"}]}, selection: "$")
 }
 
 type query_testLinkwithNestedParam_nesting1 {

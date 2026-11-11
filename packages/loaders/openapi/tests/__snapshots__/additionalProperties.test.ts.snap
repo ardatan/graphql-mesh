@@ -12,7 +12,7 @@ directive @connect(source: String, http: ConnectHTTP, selection: String!, entity
 directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 type Query {
-  test: test_200_response @connect(source: "additionalPropertiesTest", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nfoo {\\n  bar\\n}\\nqux {\\n  quux\\n  additionalProperties {\\n    key\\n    value {\\n      corge\\n    }\\n  }\\n}")
+  test: test_200_response @connect(source: "additionalPropertiesTest", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nfoo {\\n  bar\\n}\\nqux")
 }
 
 type test_200_response {

@@ -38,7 +38,7 @@ type Query {
     username: String!
   ): [user] @connect(source: "example_api", http: {GET: "/users/{$args.username}/friends", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
   """Returns all company assets"""
-  getAllAssets(companyId: String!): [query_getAllAssets_items] @connect(source: "example_api", http: {GET: "/assets/{$args.companyId}", headers: [{name: "accept", value: "application/json"}]}, selection: "... on car { model\\ncolor\\nfeatures\\ntags\\nkind\\nrating }\\n... on user { username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n} }\\n... on trashcan { brand\\ncontents }")
+  getAllAssets(companyId: String!): [query_getAllAssets_items] @connect(source: "example_api", http: {GET: "/assets/{$args.companyId}", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """Returns information about all employee cars"""
   getAllCars: [car] @connect(source: "example_api", http: {GET: "/cars", headers: [{name: "accept", value: "application/json"}]}, selection: "model\\ncolor\\nfeatures\\ntags\\nkind\\nrating")
   """Returns the profile of a company with the given ID."""
@@ -90,7 +90,7 @@ type Query {
     username: String!
   ): trashcan @connect(source: "example_api", http: {GET: "/trashcans/{$args.username}", headers: [{name: "accept", value: "application/json"}]}, selection: "brand\\ncontents")
   """It could be anything!"""
-  mystery: mystery_200_response @connect(source: "example_api", http: {GET: "/mystery", headers: [{name: "accept", value: "application/json"}]}, selection: "... on query_mystery_oneOf_0 { common_attribute }\\n... on query_mystery_oneOf_1 { different_attribute }")
+  mystery: mystery_200_response @connect(source: "example_api", http: {GET: "/mystery", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
   """Returns an arbitrary JSON object"""
   random: JSON @connect(source: "example_api", http: {GET: "/random", headers: [{name: "accept", value: "application/json"}]}, selection: "$")
 }
@@ -110,9 +110,9 @@ type user {
   status: query_getUsers_items_status
   nomenclature: query_getUsers_items_nomenclature
   """Allows to fetch the user's employer company."""
-  employerCompany: company @connect(source: "example_api", http: {GET: "/"}, selection: "$")
+  employerCompany: company @connect(source: "example_api", http: {GET: "/companies/{$this.employerId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nlegalForm\\nceoUsername\\noffices {\\n  street\\n  city\\n}")
   """Allows to fetch the user's friends."""
-  friends: [user] @connect(source: "example_api", http: {GET: "/"}, selection: "$")
+  friends: [user] @connect(source: "example_api", http: {GET: "/users/{root.$request.path.username}/friends", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
 }
 
 """The legal address of a user"""
@@ -155,7 +155,7 @@ type company {
   """The offices of a company"""
   offices: [address]
   """Allows to fetch the company's CEO user."""
-  ceoUser: user @connect(source: "example_api", http: {GET: "/users/{$this.$response.body#/ceoUsername}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  input: $args.input\\n}"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  ceoUser: user @connect(source: "example_api", http: {GET: "/users/{$this.ceoUsername}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
 }
 
 """
@@ -223,13 +223,13 @@ type coordinates {
 type getCopier_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  basicLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: {root.$request.query.query}\\n}"}, selection: "body")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  constantLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $(\\"123\\")\\n}"}, selection: "body")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  variableLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: _{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123\\n}"}, selection: "body")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  everythingLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}\\n}"}, selection: "body")
 }
 
 """Represents empty values"""
@@ -244,9 +244,9 @@ type office {
   """The identifier of the company a user works for"""
   employerId: String
   """Allows to fetch the user who invented a product."""
-  owner: user @connect(source: "example_api", http: {GET: "/users/{$this.$response.body#/employeeId}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  input: $args.input\\n}"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  owner: user @connect(source: "example_api", http: {GET: "/users/{$this.employeeId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
   """Allows to fetch the user's employer company."""
-  company: company @connect(source: "example_api", http: {GET: "/companies/{$this.$response.body#/employerId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nlegalForm\\nceoUsername\\noffices {\\n  street\\n  city\\n}")
+  company: company @connect(source: "example_api", http: {GET: "/companies/{$this.employerId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id\\nname\\nlegalForm\\nceoUsername\\noffices {\\n  street\\n  city\\n}")
 }
 
 input queryInput_returnAllOffices_parameters_Input {
@@ -270,8 +270,10 @@ type product_with_id {
   product_id: String @resolveRootField(subgraph: "example_api", field: "product-id")
   """A tag associated with the product"""
   product_tag: String @resolveRootField(subgraph: "example_api", field: "product-tag")
-  reviews: [query_getProductReviews_items] @connect(source: "example_api", http: {GET: "/"}, selection: "$")
-  reviewsWithOperationRef: [query_getProductReviews_items] @connect(source: "example_api", http: {GET: "/"}, selection: "$")
+  """Obtain reviews for a product."""
+  reviews: [query_getProductReviews_items] @connect(source: "example_api", http: {GET: "/products/{root.$request.path.product_id}/reviews", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  \\"product-tag\\": {root.$request.query.product-tag}\\n}"}, selection: "text\\ntimestamp")
+  """Obtain reviews for a product."""
+  reviewsWithOperationRef: [query_getProductReviews_items] @connect(source: "example_api", http: {GET: "/products/{root.$request.path.product_id}/reviews", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  \\"product-tag\\": {root.$request.query.product-tag}\\n}"}, selection: "text\\ntimestamp")
 }
 
 type query_getProductReviews_items {
@@ -292,7 +294,7 @@ type patent_with_id {
   inventor_id: String @resolveRootField(subgraph: "example_api", field: "inventor-id")
   patent_name: JSON! @resolveRootField(subgraph: "example_api", field: "patent-name")
   """Allows to fetch the user who invented a product."""
-  inventor: user @connect(source: "example_api", http: {GET: "/users/{$this.$response.body#/inventorId}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  input: $args.input\\n}"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  inventor: user @connect(source: "example_api", http: {GET: "/users/{$this.inventorId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
 }
 
 """A project"""
@@ -306,23 +308,23 @@ type project_with_id {
   """The patent associated with a project if applicable"""
   patentId: String
   """Allows to fetch the user leading a project."""
-  ProjectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.$response.body#/leadId}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  input: $args.input\\n}"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  ProjectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.leadId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
   """Allows to fetch the user leading a project."""
-  projectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.$response.body#/leadId}", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  input: $args.input\\n}"}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
+  projectLead: user @connect(source: "example_api", http: {GET: "/users/{$this.leadId}", headers: [{name: "accept", value: "application/json"}]}, selection: "username\\nname\\naddress {\\n  street\\n  city\\n}\\naddress2 {\\n  street\\n  city\\n}\\nemployerId\\nhobbies\\nstatus\\nnomenclature {\\n  suborder\\n  family\\n  familyCircular {\\n    family\\n    familyCircular {\\n      family\\n      familyCircular {\\n        family\\n        familyCircular {\\n          family\\n          familyCircular {\\n            family\\n            familyCircular {\\n              family\\n              familyCircular {\\n                family\\n                familyCircular\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n  genus\\n  species\\n}")
   """Allows to fetch a patent."""
-  patent: patent_with_id @connect(source: "example_api", http: {GET: "/patents/{$this.$response.body#/patentId}", headers: [{name: "accept", value: "application/json"}]}, selection: "patent_id: \\"patent-id\\"\\ninventor_id: \\"inventor-id\\"\\npatent_name: \\"patent-name\\"")
+  patent: patent_with_id @connect(source: "example_api", http: {GET: "/patents/{$this.patentId}", headers: [{name: "accept", value: "application/json"}]}, selection: "patent_id: \\"patent-id\\"\\ninventor_id: \\"inventor-id\\"\\npatent_name: \\"patent-name\\"")
 }
 
 type getScanner_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  basicLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: {root.$request.query.query}\\n}"}, selection: "body")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  constantLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $(\\"123\\")\\n}"}, selection: "body")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  variableLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: _{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123\\n}"}, selection: "body")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  everythingLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}\\n}"}, selection: "body")
 }
 
 enum queryInput_getSnack_snack_type {
@@ -430,15 +432,15 @@ input project_with_id_Input {
 type postScanner_200_response {
   body: String
   """Used to test link parameters with variables"""
-  basicLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  basicLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: {root.$request.query.query}\\n}"}, selection: "body")
   """Used to test link parameters with variables"""
-  constantLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  constantLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $(\\"123\\")\\n}"}, selection: "body")
   """Used to test link parameters with variables"""
-  variableLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  variableLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: _{root.$request.query.query}_{root.$request.query.query}{root.$request.query.query}abc{root.$request.query.query}123\\n}"}, selection: "body")
   """Used to test link parameters with variables"""
-  everythingLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  everythingLink: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.query.query}_{root.$request.header.accept}_{root.$response.header.connection}\\n}"}, selection: "body")
   """Used to test link parameters with variables"""
-  everythingLink2: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: $args.query\\n}"}, selection: "body")
+  everythingLink2: getCopier_200_response @connect(source: "example_api", http: {GET: "/copier", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query: {root.$url}_{root.$method}_{root.$statusCode}_{root.$request.body}_{root.$request.query.query}_{root.$request.path.path}_{root.$request.header.accept}_{root.$response.body#/body}_{root.$response.query.query}_{root.$response.path.path}_{root.$response.header.connection}\\n}"}, selection: "body")
 }
 
 input post_status_request_Input {
