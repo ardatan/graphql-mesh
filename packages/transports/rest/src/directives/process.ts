@@ -2,7 +2,6 @@ import type { GraphQLField, GraphQLSchema } from 'graphql';
 import {
   getNamedType,
   isEnumType,
-  isInterfaceType,
   isIntrospectionType,
   isListType,
   isNonNullType,
@@ -17,7 +16,6 @@ import type { MeshFetch } from '@graphql-mesh/types';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
-import { processDiscriminatorAnnotations } from './discriminator.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { processResponseMetadataAnnotations } from './responseMetadata.js';
@@ -117,37 +115,14 @@ export function processDirectives(
     if (isScalarType(type)) {
       processScalarType(type);
     }
-    if (isInterfaceType(type)) {
-      const directiveAnnotations = getDefDirectives(schema, type);
-      for (const directiveAnnotation of directiveAnnotations) {
-        switch (directiveAnnotation.name) {
-          case 'discriminator':
-            processDiscriminatorAnnotations({
-              interfaceType: type,
-              discriminatorField: directiveAnnotation.args.field,
-              discriminatorMapping: directiveAnnotation.args.mapping,
-            });
-            break;
-        }
-      }
-    }
+    // `@discriminator` on interfaces/unions is baked into `@connect(selection:)` as
+    // `... $.field->match(...)` / `__typename: $status->match(...)` and stripped —
+    // no Mesh interface resolveType installer.
     if (isUnionType(type)) {
-      // `@statusCodeTypeName` / `@discriminator` are baked into `@connect(selection:)`
-      // as `__typename: $status->match(...)` / property `->match`. resolveType only
-      // needs `__typename` (and structural fallback for non-Connectors unions).
-      const directiveAnnotations = getDefDirectives(schema, type);
-      let discriminatorField: string;
-      let discriminatorMapping: [string, string][];
-      for (const directiveAnnotation of directiveAnnotations) {
-        if (directiveAnnotation.name === 'discriminator') {
-          discriminatorField = directiveAnnotation.args.field;
-          discriminatorMapping = directiveAnnotation.args.mapping;
-        }
-      }
+      // resolveType: prefer `__typename` from Connectors selection; structural /
+      // scalar fallback for non-Connectors / `$` passthrough unions.
       type.resolveType = getTypeResolverForAbstractType({
         possibleTypes: type.getTypes(),
-        discriminatorField,
-        discriminatorMapping,
         serviceName: currDirective?.subgraph,
       });
     }
