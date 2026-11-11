@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`required-ref-param should generate the schema correctly: schema 1`] = `
-"schema @transport(subgraph: "TestAPI", kind: "rest", location: "http://localhost:3000") {
+"schema @source(name: "TestAPI", http: {baseURL: "http://localhost:3000"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 type Query {
-  getFoo(id: UUID!): getFoo_200_response @httpOperation(subgraph: "TestAPI", path: "/v1/foo", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"id\\":\\"id\\"}")
-  getBar(id: UUID): getBar_200_response @httpOperation(subgraph: "TestAPI", path: "/v1/bar", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"id\\":\\"id\\"}")
+  getFoo(id: UUID!): getFoo_200_response @connect(source: "TestAPI", http: {GET: "/v1/foo", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  id: $args.id\\n}"}, selection: "result")
+  getBar(id: UUID): getBar_200_response @connect(source: "TestAPI", http: {GET: "/v1/bar", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  id: $args.id\\n}"}, selection: "result")
 }
 
 type getFoo_200_response {
@@ -27,17 +27,27 @@ type getBar_200_response {
   result: String
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+}"
 `;

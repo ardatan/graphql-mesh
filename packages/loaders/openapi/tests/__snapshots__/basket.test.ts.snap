@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Basket should generate the correct schema 1`] = `
-"schema @transport(subgraph: "basket", kind: "rest") {
+"schema @source(name: "basket", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -12,17 +12,17 @@ directive @regexp(subgraph: String, pattern: String) on SCALAR
 
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
 
 type Query {
   customers_by_customerId(
     """Authentication Token"""
     x_auth_token: String!
-  ): CustomerAttributes @httpOperation(subgraph: "basket", path: "/customers/{customerId}", operationSpecificHeaders: [["x-auth-token", "{args.x_auth_token}"], ["accept", "application/json"]], httpMethod: GET)
-  Locations: [LocationModel] @httpOperation(subgraph: "basket", path: "/Locations", operationSpecificHeaders: [["accept", "application/json,application/custom-thingy.v3+json"]], httpMethod: GET)
-  Cards: [CardModel] @httpOperation(subgraph: "basket", path: "/Cards", operationSpecificHeaders: [["accept", "application/json,application/custom.v3+json"]], httpMethod: GET)
+  ): CustomerAttributes @connect(source: "basket", http: {GET: "/customers/{customerId}", headers: [{name: "x-auth-token", value: "{$args.x_auth_token}"}, {name: "accept", value: "application/json"}]}, selection: "attributes {\\n  name\\n  more\\n}")
+  Locations: [LocationModel] @connect(source: "basket", http: {GET: "/Locations", headers: [{name: "accept", value: "application/json,application/custom-thingy.v3+json"}]}, selection: "email\\nparents {\\n  email\\n  parents {\\n    email\\n    parents {\\n      email\\n      parents {\\n        email\\n        parents {\\n          email\\n          parents {\\n            email\\n            parents {\\n              email\\n              parents {\\n                email\\n                parents\\n              }\\n            }\\n          }\\n        }\\n      }\\n    }\\n  }\\n}")
+  Cards: [CardModel] @connect(source: "basket", http: {GET: "/Cards", headers: [{name: "accept", value: "application/json,application/custom.v3+json"}]}, selection: "id")
 }
 
 type CustomerAttributes {
@@ -51,7 +51,7 @@ type CardModel {
 }
 
 type Mutation {
-  post_basket(input: String): [post_basket_response] @httpOperation(subgraph: "basket", path: "/basket", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  post_basket(input: String): [post_basket_response] @connect(source: "basket", http: {POST: "/basket", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "... on BasketResponse { products {\\n  ... on ApiProduct { co2EmissionInGramsPerPassenger\\n  eligibleForVouchers }\\n  ... on ApiReservedProduct { co2EmissionInGramsPerPassenger\\n  reservationExpiresAt }\\n} }\\n... on ApiError { code\\ndescription }")
 }
 
 union post_basket_response @statusCodeTypeName(subgraph: "basket", statusCode: "200", typeName: "BasketResponse") @statusCodeTypeName(subgraph: "basket", statusCode: "400", typeName: "ApiError") = BasketResponse | ApiError
@@ -77,17 +77,27 @@ type ApiError {
   description: JSON!
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+}"
 `;

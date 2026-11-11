@@ -27,12 +27,13 @@ describe('Loaders', () => {
       cwd: globalThis.process?.cwd?.(),
       log,
     });
-    const { supergraphSdl } = composeSubgraphs([
+    const { supergraphSdl, errors } = composeSubgraphs([
       {
         name: loadedSubgraph.name,
         schema: await loadedSubgraph.schema$,
       },
     ]);
+    expect(errors).toBeUndefined();
     const mockFetch = jest.fn(async (_url: string) =>
       Response.json({
         id: 1,
@@ -40,7 +41,7 @@ describe('Loaders', () => {
       }),
     );
     const runtime = createGatewayRuntime({
-      supergraph: supergraphSdl,
+      supergraph: supergraphSdl!,
       plugins() {
         return [useCustomFetch(mockFetch)];
       },
