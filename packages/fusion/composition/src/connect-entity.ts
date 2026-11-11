@@ -1,11 +1,18 @@
 /**
- * Federation Connectors entity helpers.
+ * Federation Connectors entity helpers (shared contract).
+ *
+ * Used by fusion composition (`entity: true` / type-level `$this.<key>`) and by
+ * REST loaders (selection stubs like `supplier: { id: supplierId }`) so both
+ * sides agree on key/FK naming and stub shape.
  *
  * When a Query field arg name differs from the entity `@key` field (e.g.
  * `getPetById(petId)` → `Pet.id`), `entity: true` is invalid — Connectors
  * require arg names to match key fields. Apollo's pattern for that case is a
  * **type-level** `@connect` using `$this.<keyField>`:
  * https://www.apollographql.com/docs/graphos/connectors/entities/patterns
+ *
+ * Entity stubs across connectors:
+ * https://www.apollographql.com/docs/graphos/connectors/entities/across-subgraphs
  */
 
 const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
@@ -84,4 +91,88 @@ function connectPrimaryPath(connectArgs: Record<string, any>): string {
     }
   }
   return '';
+}
+
+/**
+ * From a GET path template, find the entity key field whose `$args.<key>` appears
+ * and exists on the return type (e.g. `/customers/{$args.id}` + type field `id`).
+ */
+export function entityKeyFieldsFromHttpPath(
+  path: string,
+  typeFieldNames: Iterable<string>,
+): string[] | undefined {
+  if (!path) {
+    return undefined;
+  }
+  const pathWithoutQuery = path.split('?')[0];
+  const fieldSet = typeFieldNames instanceof Set ? typeFieldNames : new Set(typeFieldNames);
+  for (const key of fieldSet) {
+    // Accept Connectors (`$args.id` / `{$args.id}`) and Mesh OpenAPI (`{args.id}`) forms.
+    if (
+      pathWithoutQuery.includes(`{$args.${key}}`) ||
+      pathWithoutQuery.includes(`$args.${key}`) ||
+      pathWithoutQuery.includes(`{args.${key}}`)
+    ) {
+      return [key];
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Candidate parent JSON/GraphQL field names for a foreign key next to `fieldName`
+ * (e.g. `supplier` → `supplierId`, `supplier_id`, …).
+ */
+export function parentFkFieldCandidates(fieldName: string, keyField = 'id'): string[] {
+  const candidates = [
+    `${fieldName}Id`,
+    `${fieldName}_id`,
+    `${fieldName}ID`,
+    `${fieldName}_${keyField}`,
+  ];
+  if (keyField !== 'id') {
+    candidates.push(`${fieldName}${keyField[0].toUpperCase()}${keyField.slice(1)}`);
+  }
+  return candidates;
+}
+
+/**
+ * Infer ` { id: supplierId }` style entity-ref map when the parent has a scalar FK
+ * beside an entity-typed object field. Composite keys need an explicit link map.
+ */
+export function inferEntityRefFromParentFkNames(
+  parentFieldNames: Iterable<string>,
+  fieldName: string,
+  keyFields: string[],
+): Record<string, string> | undefined {
+  if (keyFields.length !== 1) {
+    return undefined;
+  }
+  const keyField = keyFields[0];
+  const parentSet =
+    parentFieldNames instanceof Set ? parentFieldNames : new Set(parentFieldNames);
+  for (const fromField of parentFkFieldCandidates(fieldName, keyField)) {
+    if (parentSet.has(fromField)) {
+      return { [keyField]: fromField };
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Connectors selection fragment for an entity stub:
+ * `supplier: { __typename: $("Supplier") id: supplierId }`
+ */
+export function formatEntityStubSelection(
+  fieldName: string,
+  entityTypeName: string,
+  entityRef: Record<string, string>,
+): string {
+  const parts = [
+    `__typename: $(${JSON.stringify(entityTypeName)})`,
+    ...Object.entries(entityRef).map(([keyField, fromField]) =>
+      keyField === fromField ? keyField : `${keyField}: ${fromField}`,
+    ),
+  ];
+  return `${fieldName}: { ${parts.join(' ')} }`;
 }

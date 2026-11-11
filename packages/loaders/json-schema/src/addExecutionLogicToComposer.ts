@@ -19,6 +19,7 @@ import type {
 } from 'graphql-compose';
 import { GraphQLJSON } from 'graphql-compose';
 import type { IStringifyOptions } from 'qs';
+import { entityKeyFieldsFromHttpPath } from '@graphql-mesh/fusion-composition';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
@@ -39,6 +40,7 @@ import {
   rewriteConnectPathEnumArgs,
   SourceDirective,
   toConnectLinkExpression,
+  warnConnectSelectionPassthrough,
   wrapArgExprWithEnumMatch,
 } from './connectAnnotations.js';
 import {
@@ -46,6 +48,7 @@ import {
   ResolveRootDirective,
   ResponseMetadataDirective,
 } from './directives.js';
+import { registerMeshEntityType } from './entityRefs.js';
 import type {
   ConnectSelectionOptions,
   JSONSchemaHTTPJSONOperationConfig,
@@ -175,7 +178,7 @@ export function addExecutionDirectivesToComposer(
     connectSelection,
   }: AddExecutionLogicToComposerOptions,
 ) {
-  const selectionLimit = resolveConnectSelectionLimit(connectSelection);
+  const selectionLimit = resolveConnectSelectionLimit(connectSelection, log);
   log.debug(`Attaching execution directives to the schema`);
   type PendingLinks = {
     linkMap: Record<string, JSONSchemaLinkConfig>;
@@ -183,6 +186,30 @@ export function addExecutionDirectivesToComposer(
   };
   const pendingLinks: PendingLinks[] = [];
   let meshRestOptionsFieldUsed = false;
+
+  // Pass 0: register GET-by-key return types as entity-resolvable so later
+  // selections can emit `field: { id: fieldId }` stubs instead of huge trees.
+  for (const operationConfig of operations) {
+    if (!('path' in operationConfig) || !operationConfig.path) {
+      continue;
+    }
+    if (isPubSubOperationConfig(operationConfig)) {
+      continue;
+    }
+    const { httpMethod, rootTypeName, fieldName } = getOperationMetadata(operationConfig);
+    if (rootTypeName !== 'Query' || String(httpMethod).toUpperCase() !== 'GET') {
+      continue;
+    }
+    const rootTypeComposer = schemaComposer[rootTypeName];
+    if (!rootTypeComposer?.hasField?.(fieldName)) {
+      continue;
+    }
+    const field = rootTypeComposer.getField(fieldName);
+    registerEntityTypeFromGetPath(
+      getNamedType(field.type.getType()),
+      String(operationConfig.path),
+    );
+  }
 
   const handleLinkMap = (
     linkMap: Record<string, JSONSchemaLinkConfig>,
@@ -437,12 +464,13 @@ ${operationConfig.description || ''}
             : [];
       const statusUnionExtras =
         isUnionType(returnNamedType) && buildStatusUnionConnectExtras(returnNamedType);
+      const builtSelection = buildSelectionForType(field.type.getType(), {
+        skipFields,
+        implementations: interfaceImplementations,
+        limit: selectionLimit,
+      });
       let selection =
-        buildSelectionForType(field.type.getType(), {
-          skipFields,
-          implementations: interfaceImplementations,
-          limit: selectionLimit,
-        }) ||
+        builtSelection ||
         // Scalar / empty responses still need a non-empty Connectors selection
         `$`;
       // Ensure status-union `__typename` bake is present even when field pick was `$`/empty.
@@ -458,6 +486,16 @@ ${operationConfig.description || ''}
         !selection.includes('__typename')
       ) {
         selection = `${statusUnionExtras.typenameSelection} ${selection}`;
+      }
+      if (
+        !builtSelection &&
+        selection === '$' &&
+        selectionLimit.overLimit === 'passthrough' &&
+        (isObjectType(returnNamedType) ||
+          isInterfaceType(returnNamedType) ||
+          isUnionType(returnNamedType))
+      ) {
+        warnConnectSelectionPassthrough(selectionLimit, returnNamedType.name);
       }
       const http = buildConnectHttpArgs({
         httpMethod,
@@ -862,6 +900,27 @@ function rewriteQueryParamsEnumArgs(
     next = next.replaceAll(bare, wrapped);
   }
   return next;
+}
+
+/**
+ * Register object/interface return types of Query GET-by-key operations so
+ * parent selections can emit entity stubs (`supplier: { id: supplierId }`).
+ * Key detection is shared with fusion composition (`entityKeyFieldsFromHttpPath`).
+ */
+function registerEntityTypeFromGetPath(
+  returnNamedType: ReturnType<typeof getNamedType>,
+  path: string,
+): void {
+  if (!isObjectType(returnNamedType) && !isInterfaceType(returnNamedType)) {
+    return;
+  }
+  const keyFields = entityKeyFieldsFromHttpPath(
+    path,
+    Object.keys(returnNamedType.getFields()).map(String),
+  );
+  if (keyFields?.length) {
+    registerMeshEntityType(returnNamedType.name, keyFields);
+  }
 }
 
 function stripDirectiveFromConfig<T extends { extensions?: any; astNode?: any }>(

@@ -10,8 +10,10 @@ import type { BaseLoaderOptions } from '@graphql-tools/utils';
 
 /**
  * Programmatic limit/rule for `@connect(selection:)` size and depth.
- * Mesh v0 YAML handlers always use `overLimit: 'passthrough'` (Hive).
- * Compose / dual-run loaders keep the default `leavesOnly` (Router-friendlier).
+ * Default `overLimit` is `passthrough` (Hive-correct `$` when a selection cannot
+ * be fully expanded). Use `leavesOnly` for Apollo Router–friendly scalar leaves.
+ * Where OpenAPI links / entity keys exist, the loader prefers entity stubs
+ * (`supplier: { id: supplierId }`) before falling back to either policy.
  */
 export type ConnectSelectionOverLimit = 'leavesOnly' | 'passthrough';
 
@@ -22,14 +24,16 @@ export interface ConnectSelectionOptions {
    */
   maxLength?: number;
   /**
-   * Nesting depth after which object fields emit scalar/enum leaves only.
+   * Nesting depth after which — only when `overLimit: 'leavesOnly'` — object
+   * fields emit scalar/enum leaves only. Ignored for `passthrough` (default).
    * Default: `2`. Use `-1` to disable.
    */
   softDepth?: number;
   /**
-   * When a selection exceeds `maxLength`:
-   * - `leavesOnly` (default): scalar/enum leaves (Router-friendlier)
-   * - `passthrough`: empty selection → `$` at attach (Hive; not Router-safe for objects)
+   * When a selection exceeds `maxLength` (or cannot be safely expanded):
+   * - `passthrough` (default): empty selection → `$` at attach (Hive-correct;
+   *   not Router-safe for object types — a warning is logged)
+   * - `leavesOnly`: scalar/enum leaves (Router-friendlier; may omit nested objects)
    */
   overLimit?: ConnectSelectionOverLimit;
 }

@@ -25,6 +25,7 @@ import type { MeshFetch, MeshFetchRequestInit } from '@graphql-mesh/types';
 import { getHeadersObj } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
 import { Blob, fetch as defaultFetch, File, FormData } from '@whatwg-node/fetch';
+import { fakePromise } from '@whatwg-node/promise-helpers';
 import { isFileUpload } from './isFileUpload.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
@@ -1472,17 +1473,22 @@ export function addConnectFieldResolver(
         !Array.isArray(customExtensionsRaw)
           ? { ...customExtensionsRaw }
           : {};
-      // Federation Connectors: `extensions.http.status` is the upstream status.
-      // GraphQL Yoga also promotes that path to the gateway HTTP status (hence
-      // e2e may see ResponseError on partial field failures) — Mesh still emits
-      // the Apollo shape and mirrors status on `response` / top-level `status`.
-      const httpExt = {
-        status: response.status,
-        ...(customExtensions.http && typeof customExtensions.http === 'object'
-          ? customExtensions.http
-          : {}),
-      };
+      // Upstream status belongs on `response.status` / top-level `status`.
+      // Do NOT set `extensions.http.status`: GraphQL Yoga (Hive Gateway) promotes
+      // that path to the *gateway* HTTP status, turning field-level upstream
+      // failures into non-2xx GraphQL responses. Apollo Router emits
+      // `extensions.http.status` itself for native Connectors; this transport
+      // only runs on Hive.
+      // Allow `@connect(errors.extensions:)` / `@source` to set custom `http` /
+      // `connector` blobs, but strip a bare `http.status` that would trip Yoga.
+      const customHttp =
+        customExtensions.http && typeof customExtensions.http === 'object'
+          ? { ...customExtensions.http }
+          : undefined;
       delete customExtensions.http;
+      if (customHttp && 'status' in customHttp) {
+        delete customHttp.status;
+      }
       const connectorExt = {
         coordinate: connectorCoordinate,
         ...(customExtensions.connector && typeof customExtensions.connector === 'object'
@@ -1504,7 +1510,7 @@ export function addConnectFieldResolver(
         {
           extensions: {
             ...customExtensions,
-            http: httpExt,
+            ...(customHttp && Object.keys(customHttp).length ? { http: customHttp } : {}),
             connector: connectorExt,
             code,
             service,
@@ -1840,7 +1846,56 @@ export function processConnectDirectives(
   // Hive stitches `@key` entities via `Query._entities`. Apollo Router uses `@connect`
   // natively and never calls this field — but without it Hive needed Mesh `@merge`.
   ensureFederationEntitiesField(schema);
+  // Same-subgraph Connectors stubs (`customer: { id: customerId }`) leave a partial
+  // object in Hive — unlike Router, the gateway won't auto `_entities` for missing
+  // fields on that object. Fill them via `resolveReference` when a field is absent.
+  hydrateEntityStubFieldResolvers(schema);
   return schema;
+}
+
+const MESH_ENTITY_FILL = Symbol.for('mesh.connectors.entityFill');
+
+/**
+ * For types with `resolveReference`, resolve missing fields by fetching the entity
+ * once per parent object (deduped). Lets Hive honor entity stubs the way Router does.
+ */
+function hydrateEntityStubFieldResolvers(schema: GraphQLSchema) {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) || type.name.startsWith('__')) {
+      continue;
+    }
+    const resolveReference = (type as any).resolveReference;
+    if (typeof resolveReference !== 'function') {
+      continue;
+    }
+    const fields = type.getFields();
+    for (const fieldName of Object.keys(fields)) {
+      const field = fields[fieldName] as GraphQLField<any, any>;
+      if (typeof field.resolve === 'function') {
+        continue;
+      }
+      field.resolve = (parent, _args, context, info) => {
+        if (parent == null || typeof parent !== 'object') {
+          return parent?.[fieldName];
+        }
+        if (Object.prototype.hasOwnProperty.call(parent, fieldName)) {
+          return parent[fieldName];
+        }
+        let fill = (parent as any)[MESH_ENTITY_FILL];
+        if (!fill) {
+          // fakePromise: sync resolveReference avoids an extra microtask tick.
+          fill = fakePromise(resolveReference(parent, context, info)).then((full: any) => {
+            if (full && typeof full === 'object') {
+              Object.assign(parent, full);
+            }
+            return parent;
+          });
+          (parent as any)[MESH_ENTITY_FILL] = fill;
+        }
+        return fakePromise(fill).then(() => parent[fieldName]);
+      };
+    }
+  }
 }
 
 /**

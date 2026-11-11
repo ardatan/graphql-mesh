@@ -30,40 +30,29 @@ describe('OpenAPI rest transport Union Error Handling', () => {
 
     // Test endpoints WITHOUT error handling in OpenAPI schema - should get GraphQL errors
     // This is the case when using ignoreErrorResponses: true
-    // Apollo `extensions.http.status` is also GraphQL Yoga's response-status hook, so the
-    // HTTP status may be 400 (graphql-response+json) while the body still carries errors.
-    let noErrorHandlingResult: Awaited<ReturnType<typeof execute>>;
-    try {
-      noErrorHandlingResult = await execute({
-        query: /* GraphQL */ `
-          query TestNoErrorHandling {
-            getUserNoErrorHandling {
+    const noErrorHandlingResult = await execute({
+      query: /* GraphQL */ `
+        query TestNoErrorHandling {
+          getUserNoErrorHandling {
+            id
+            name
+            email
+          }
+          getUserUnionNoErrorHandling {
+            ... on User {
               id
               name
               email
             }
-            getUserUnionNoErrorHandling {
-              ... on User {
-                id
-                name
-                email
-              }
-              ... on AsyncJob {
-                asynchronous_job_id
-                status
-                estimated_completion
-              }
+            ... on AsyncJob {
+              asynchronous_job_id
+              status
+              estimated_completion
             }
           }
-        `,
-      });
-    } catch (err: any) {
-      if (err?.name !== 'ResponseError') {
-        throw err;
-      }
-      const body = String(err.message).split('\n').slice(1).join('\n');
-      noErrorHandlingResult = JSON.parse(body);
-    }
+        }
+      `,
+    });
 
     // Should get GraphQL errors since these endpoints don't have 400 in their OpenAPI spec
     expect(noErrorHandlingResult.errors).toHaveLength(2);
@@ -88,9 +77,10 @@ describe('OpenAPI rest transport Union Error Handling', () => {
       response: {
         status: 400,
       },
+      status: 400,
     });
-    // Yoga may promote `extensions.http` into the GraphQL HTTP status; keep either shape.
-    expect(firstError?.extensions?.http?.status ?? firstError?.extensions?.status).toBe(400);
+    // Must not set `extensions.http.status` — Yoga would promote it to gateway HTTP 400.
+    expect(firstError?.extensions?.http?.status).toBeUndefined();
 
     expect(secondError?.extensions).toMatchObject({
       code: 'DOWNSTREAM_SERVICE_ERROR',
@@ -102,8 +92,9 @@ describe('OpenAPI rest transport Union Error Handling', () => {
       response: {
         status: 400,
       },
+      status: 400,
     });
-    expect(secondError?.extensions?.http?.status ?? secondError?.extensions?.status).toBe(400);
+    expect(secondError?.extensions?.http?.status).toBeUndefined();
   });
 
   it('should be able to cast error responses to Error type when error handling is in OpenAPI schema', async () => {

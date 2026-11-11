@@ -1,0 +1,8 @@
+{
+  "name": "@e2e/openapi-entity-stubs",
+  "private": true,
+  "dependencies": {
+    "@graphql-hive/gateway": "^2.15.4",
+    "graphql": "16.14.0"
+  }
+}

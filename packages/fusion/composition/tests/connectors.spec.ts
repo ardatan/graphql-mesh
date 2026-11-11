@@ -1,7 +1,10 @@
 import { buildSchema, print } from 'graphql';
 import {
   composeSubgraphs,
+  entityKeyFieldsFromHttpPath,
+  formatEntityStubSelection,
   getAnnotatedSubgraphs,
+  inferEntityRefFromParentFkNames,
   isFederationConnectorsSubgraph,
   liftExtraSchemaDefinitionDirectives,
   toApolloRouterConnectorsSupergraph,
@@ -394,5 +397,65 @@ describe('Federation Connectors composition', () => {
       /type User[\s\S]*@join__directive\([\s\S]*name:\s*"connect"[\s\S]*\$this\.id/,
     );
     expect(sdl).not.toMatch(/@connect\(/);
+  });
+
+  it('marks getCustomer(id:) with entity: true (get_<Type> + single key-typed arg)', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "rest", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      type Query {
+        getCustomer(id: ID!): Customer
+          @connect(source: "rest", http: { GET: "/customers/{$args.id}" }, selection: "id name")
+      }
+
+      type Customer {
+        id: ID!
+        name: String
+      }
+    `);
+
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'rest',
+        schema,
+        transforms: [s => s],
+      },
+    ]);
+    const annotatedSdl = print(annotated[0].typeDefs);
+    expect(annotatedSdl).toMatch(/getCustomer\(id:[\s\S]*entity:\s*true/);
+    expect(annotatedSdl).toMatch(/type Customer[\s\S]*@key\(fields: "id"\)/);
+    expect(annotatedSdl).not.toMatch(/@merge\(/);
+  });
+
+  it('shared entity contract helpers match loader stub / path key rules', () => {
+    expect(entityKeyFieldsFromHttpPath('/customers/{$args.id}', ['id', 'name'])).toEqual(['id']);
+    expect(entityKeyFieldsFromHttpPath('/customers/{args.id}', ['id', 'name'])).toEqual(['id']);
+    expect(entityKeyFieldsFromHttpPath('/pets/{$args.petId}', ['id', 'name'])).toBeUndefined();
+    expect(inferEntityRefFromParentFkNames(['id', 'customerId', 'customer'], 'customer', ['id'])).toEqual({
+      id: 'customerId',
+    });
+    expect(formatEntityStubSelection('customer', 'Customer', { id: 'customerId' })).toBe(
+      'customer: { __typename: $("Customer") id: customerId }',
+    );
   });
 });

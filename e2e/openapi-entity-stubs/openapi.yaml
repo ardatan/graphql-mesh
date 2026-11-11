@@ -1,0 +1,62 @@
+openapi: 3.0.3
+info:
+  title: Entity stubs demo
+  version: 1.0.0
+paths:
+  /customers/{id}:
+    get:
+      # `getCustomer(id:)` is enough: single key-typed arg + Customer return (see fusion semantic conventions).
+      operationId: getCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+  /invoices/{id}:
+    get:
+      operationId: getInvoice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invoice
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+components:
+  schemas:
+    Customer:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    Invoice:
+      type: object
+      required: [id, total, customerId]
+      properties:
+        id:
+          type: string
+        total:
+          type: number
+        customerId:
+          type: string
+        # Same $ref as getCustomer — loader registers Customer as entity-resolvable
+        # and emits `customer: { __typename id: customerId }` instead of inlining.
+        customer:
+          $ref: '#/components/schemas/Customer'

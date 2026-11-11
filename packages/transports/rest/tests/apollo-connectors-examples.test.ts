@@ -322,11 +322,13 @@ describe('Federation Connectors error shape', () => {
       code: 'DOWNSTREAM_SERVICE_ERROR',
       service: 'ecomm',
       serviceName: 'ecomm',
-      http: { status: 500 },
       connector: { coordinate: 'ecomm:Query.products@connect[0]' },
       request: { method: 'GET' },
-      response: { body: { message: 'boom' } },
+      response: { status: 500, body: { message: 'boom' } },
+      status: 500,
     });
+    // Yoga promotes `extensions.http.status` to the gateway HTTP status — omit it.
+    expect((err.extensions as any).http?.status).toBeUndefined();
     expect((err.extensions as any).request.url).toContain('/products');
   });
 
@@ -349,9 +351,11 @@ describe('Federation Connectors error shape', () => {
     expect(result.errors![0].extensions).toMatchObject({
       code: 'USER_GONE',
       service: 'ecomm',
-      http: { status: 404 },
       connector: { coordinate: 'ecomm:Query.users@connect[0]' },
+      response: { status: 404 },
+      status: 404,
     });
+    expect((result.errors![0].extensions as any).http?.status).toBeUndefined();
   });
 
   it('honors isSuccess for selected status codes', async () => {
@@ -593,4 +597,79 @@ describe('Federation Connectors error shape', () => {
     });
     expect(urls).toEqual(['https://api.example.com/users/5', 'https://api.example.com/products/9']);
   });
+
+  it('fills missing fields on entity stubs via resolveReference (Hive same-subgraph path)', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "billing", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      type Query {
+        getCustomer(id: ID!): Customer
+          @connect(
+            source: "billing"
+            http: { GET: "/customers/{$args.id}" }
+            selection: "id name"
+            entity: true
+          )
+        getInvoice(id: ID!): Invoice
+          @connect(
+            source: "billing"
+            http: { GET: "/invoices/{$args.id}" }
+            selection: "id customerId customer: { __typename: $(\\"Customer\\") id: customerId }"
+          )
+      }
+
+      type Customer @key(fields: "id") {
+        id: ID!
+        name: String
+      }
+
+      type Invoice {
+        id: ID!
+        customerId: ID!
+        customer: Customer
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        if (String(url).includes('/customers/')) {
+          return Response.json({ id: 'c1', name: 'Ada Lovelace' });
+        }
+        return Response.json({ id: 'inv1', customerId: 'c1' });
+      }) as any,
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        query {
+          getInvoice(id: "inv1") {
+            id
+            customerId
+            customer {
+              id
+              name
+            }
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      getInvoice: {
+        id: 'inv1',
+        customerId: 'c1',
+        customer: { id: 'c1', name: 'Ada Lovelace' },
+      },
+    });
+    expect(urls).toEqual([
+      'https://api.example.com/invoices/inv1',
+      'https://api.example.com/customers/c1',
+    ]);
+  });
 });
+

@@ -850,6 +850,8 @@ function addAnnotationsForSemanticConventions({
         };
         switch (queryFieldNameSnakeCase) {
           case snakeCase(type.name):
+          // `getCustomer(id:)` — single key-typed arg already matched above; no `_by_id` suffix required.
+          case snakeCase(`get_${type.name}`):
           case snakeCase(`get_${type.name}_by_${fieldName}`):
           case snakeCase(`${type.name}_by_${fieldName}`): {
             if (isNonNullType(arg.type)) {

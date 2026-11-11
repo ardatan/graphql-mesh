@@ -1,8 +1,15 @@
-import { OperationTypeNode, parse } from 'graphql';
+import { buildSchema, OperationTypeNode, parse } from 'graphql';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Response } from '@whatwg-node/fetch';
-import { resolveConnectSelectionLimit } from '../src/connectAnnotations.js';
+import {
+  buildSelectionForType,
+  resolveConnectSelectionLimit,
+} from '../src/connectAnnotations.js';
+import {
+  clearMeshEntityRegistries,
+  registerMeshEntityType,
+} from '../src/entityRefs.js';
 import { loadGraphQLSchemaFromJSONSchemas } from '../src/loadGraphQLSchemaFromJSONSchemas.js';
 
 describe('Federation Connectors annotations', () => {
@@ -108,14 +115,14 @@ describe('Federation Connectors annotations', () => {
     expect(resolveConnectSelectionLimit()).toEqual({
       maxLength: 12_000,
       softDepth: 2,
-      overLimit: 'leavesOnly',
+      overLimit: 'passthrough',
     });
     expect(
-      resolveConnectSelectionLimit({ maxLength: 0, softDepth: -1, overLimit: 'passthrough' }),
+      resolveConnectSelectionLimit({ maxLength: 0, softDepth: -1, overLimit: 'leavesOnly' }),
     ).toMatchObject({
       maxLength: Number.POSITIVE_INFINITY,
       softDepth: Number.POSITIVE_INFINITY,
-      overLimit: 'passthrough',
+      overLimit: 'leavesOnly',
     });
   });
 
@@ -171,4 +178,32 @@ describe('Federation Connectors annotations', () => {
     expect(sdl).not.toMatch(/thing[^\n]*selection: "\$"/);
     expect(sdl).toMatch(/selection: "[^"]*\bid\b/);
   });
+
+  it('infers entity stubs from parent FK when target type is resolvable', () => {
+    clearMeshEntityRegistries();
+    registerMeshEntityType('Supplier');
+    const schema = buildSchema(/* GraphQL */ `
+      type Supplier {
+        id: ID
+        name: String
+      }
+      type Product {
+        id: ID
+        name: String
+        supplierId: Int
+        supplier: Supplier
+      }
+    `);
+    const selection = buildSelectionForType(schema.getType('Product') as any, {
+      limit: resolveConnectSelectionLimit(),
+    });
+    expect(selection).toContain(
+      'supplier: { __typename: $("Supplier") id: supplierId }',
+    );
+    expect(selection).not.toMatch(/supplier: \{[^}]*\bname\b/);
+    expect(selection).toMatch(/\bid\b/);
+    expect(selection).toMatch(/\bname\b/);
+    clearMeshEntityRegistries();
+  });
 });
+

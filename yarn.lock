@@ -5331,6 +5331,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/openapi-entity-stubs@workspace:e2e/openapi-entity-stubs":
+  version: 0.0.0-use.local
+  resolution: "@e2e/openapi-entity-stubs@workspace:e2e/openapi-entity-stubs"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^2.15.4"
+    graphql: "npm:16.14.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/openapi-hateoas@workspace:e2e/openapi-hateoas":
   version: 0.0.0-use.local
   resolution: "@e2e/openapi-hateoas@workspace:e2e/openapi-hateoas"
@@ -9889,6 +9898,7 @@ __metadata:
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/utils": "npm:^13.2.2"
     "@whatwg-node/fetch": "npm:^0.12.1"
+    "@whatwg-node/promise-helpers": "npm:^2.0.1"
     dset: "npm:^3.1.3"
     graphql: "npm:16.14.0"
     graphql-fields: "npm:^2.0.3"
@@ -13773,6 +13783,7 @@ __metadata:
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
+    "@graphql-mesh/fusion-composition": "npm:^0.11.4"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
     "@graphql-mesh/transport-common": "npm:^1.1.1"
     "@graphql-mesh/transport-rest": "npm:^0.12.4"

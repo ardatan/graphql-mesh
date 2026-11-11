@@ -77,8 +77,6 @@ export default class RAMLHandler implements MeshHandler {
           }),
         ),
         pubsub: this.pubsub,
-        // Mesh v0 (.meshrc) is Hive-only: `$` passthrough for oversized selections.
-        connectSelection: { overLimit: 'passthrough' },
       });
       return schema;
     });
