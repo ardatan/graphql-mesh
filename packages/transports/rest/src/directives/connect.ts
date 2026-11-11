@@ -1,10 +1,16 @@
 import {
   getNamedType,
   GraphQLError,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLScalarType,
+  GraphQLUnionType,
   isListType,
   isNonNullType,
+  isObjectType,
   isScalarType,
   type GraphQLField,
+  type GraphQLObjectType,
   type GraphQLOutputType,
   type GraphQLResolveInfo,
   type GraphQLSchema,
@@ -1687,6 +1693,7 @@ export function processConnectDirectives(
     queryStringOptions?: MeshQsOptions;
   } = {},
 ) {
+  const queryType = schema.getQueryType();
   const typeMap = schema.getTypeMap();
   for (const typeName in typeMap) {
     const type = typeMap[typeName];
@@ -1715,8 +1722,127 @@ export function processConnectDirectives(
       const directives = getConnectArgsFromNode(field as any);
       if (!directives?.length) continue;
       // First connect wins for execution (repeatable for schema merge cases)
-      addConnectFieldResolver(schema, field as GraphQLField<any, any>, directives[0], opts);
+      const connectArgs = directives[0];
+      addConnectFieldResolver(schema, field as GraphQLField<any, any>, connectArgs, opts);
+      // Query `@connect(entity: true)` → type.resolveReference (Federation `_entities`).
+      if (connectArgs.entity && type === queryType && isObjectType(getNamedType(field.type))) {
+        const returnType = getNamedType(field.type) as GraphQLObjectType;
+        if (typeof (returnType as any).resolveReference !== 'function') {
+          const entityField = field as GraphQLField<any, any>;
+          (returnType as any).resolveReference = (
+            reference: any,
+            context: any,
+            info: any,
+          ) => {
+            const args: Record<string, any> = {};
+            for (const arg of entityField.args) {
+              args[arg.name] = reference?.[arg.name];
+            }
+            return entityField.resolve?.(null, args, context, info);
+          };
+        }
+      }
     }
   }
+  // Hive stitches `@key` entities via `Query._entities`. Apollo Router uses `@connect`
+  // natively and never calls this field — but without it Hive needed Mesh `@merge`.
+  ensureFederationEntitiesField(schema);
   return schema;
+}
+
+/**
+ * Add Federation `Query._entities` that dispatches to type `resolveReference`
+ * (from type-level `@connect` or `entity: true`). Lets Hive Gateway resolve
+ * entities without Mesh `@merge`.
+ */
+function ensureFederationEntitiesField(schema: GraphQLSchema) {
+  const queryType = schema.getQueryType();
+  if (!queryType) {
+    return;
+  }
+  const queryFields = queryType.getFields();
+  if (queryFields._entities) {
+    return;
+  }
+  const entityTypes = Object.values(schema.getTypeMap()).filter(
+    (t): t is GraphQLObjectType =>
+      isObjectType(t) &&
+      !t.name.startsWith('__') &&
+      typeof (t as any).resolveReference === 'function',
+  );
+  if (!entityTypes.length) {
+    return;
+  }
+
+  const typeMap = schema.getTypeMap() as Record<string, any>;
+  let anyType = typeMap._Any as GraphQLScalarType | undefined;
+  if (!anyType) {
+    // Federation `_Any` — representations arrive as variables (parseValue), not literals.
+    anyType = new GraphQLScalarType({
+      name: '_Any',
+      serialize: value => value,
+      parseValue: value => value,
+    });
+    typeMap._Any = anyType;
+  }
+
+  let entityUnion = typeMap._Entity as GraphQLUnionType | undefined;
+  if (!entityUnion) {
+    entityUnion = new GraphQLUnionType({
+      name: '_Entity',
+      types: entityTypes,
+      resolveType(obj) {
+        return obj?.__typename || undefined;
+      },
+    });
+    typeMap._Entity = entityUnion;
+  }
+
+  queryFields._entities = {
+    name: '_entities',
+    description:
+      'Federation entity resolver for Connectors REST transport (Hive `_entities` path)',
+    type: new GraphQLNonNull(new GraphQLList(entityUnion)),
+    args: [
+      {
+        name: 'representations',
+        description: undefined,
+        type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(anyType))),
+        defaultValue: undefined,
+        deprecationReason: undefined,
+        extensions: {},
+        astNode: undefined,
+      },
+    ],
+    resolve(_root, args, context, info) {
+      const representations = args?.representations;
+      if (!Array.isArray(representations)) {
+        return [];
+      }
+      return representations.map(async (representation: any) => {
+        const typeName = representation?.__typename;
+        if (!typeName) {
+          return representation;
+        }
+        const type = info.schema.getType(typeName);
+        if (!isObjectType(type)) {
+          return representation;
+        }
+        const resolveReference = (type as any).resolveReference;
+        if (typeof resolveReference !== 'function') {
+          return representation;
+        }
+        const resolved = await resolveReference(representation, context, info);
+        // Preserve __typename for `_Entity.resolveType`.
+        if (resolved && typeof resolved === 'object' && !resolved.__typename) {
+          resolved.__typename = typeName;
+        }
+        return resolved ?? representation;
+      });
+    },
+    subscribe: undefined,
+    deprecationReason: undefined,
+    extensions: {},
+    astNode: undefined,
+  };
 }

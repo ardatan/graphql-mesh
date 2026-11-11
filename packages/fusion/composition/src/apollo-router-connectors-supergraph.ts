@@ -97,37 +97,35 @@ export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): strin
       return { ...node, directives: kept };
     },
     FieldDefinition(node) {
-      const connectDirs = (node.directives || []).filter(d => d.name.value === 'connect');
-      if (!connectDirs.length) {
-        return node;
-      }
-
-      const otherDirs = (node.directives || []).filter(d => d.name.value !== 'connect');
-      const joinDirs: ConstDirectiveNode[] = [];
-
-      for (const connectDir of connectDirs) {
-        const args = constDirectiveArgsToJs(connectDir);
-        const sourceName = typeof args.source === 'string' ? args.source : undefined;
-        const graphEnum =
-          getJoinFieldGraph(node.directives) ||
-          (sourceName ? nameToGraphEnum.get(sourceName) : undefined) ||
-          (sourceName ? sourceNameToGraph.get(sourceName) : undefined) ||
-          singleGraphEnum;
-        if (!graphEnum) {
-          // Keep raw @connect if we cannot attribute a graph (should not happen for Mesh SG)
-          return node;
-        }
-        graphsWithConnect.add(graphEnum);
-        if (sourceName) {
-          sourceNameToGraph.set(sourceName, graphEnum);
-        }
-        joinDirs.push(buildJoinDirective(graphEnum, 'connect', args));
-      }
-
-      return {
-        ...node,
-        directives: [...otherDirs, ...joinDirs],
-      };
+      return rewriteConnectDirectivesOnNode(node, {
+        graphEnumToName,
+        nameToGraphEnum,
+        sourceNameToGraph,
+        graphsWithConnect,
+        singleGraphEnum,
+        graphFromNodeDirectives: getJoinFieldGraph,
+      });
+    },
+    // Type-level `@connect` (Apollo entity pattern with `$this.<key>`)
+    ObjectTypeDefinition(node) {
+      return rewriteConnectDirectivesOnNode(node, {
+        graphEnumToName,
+        nameToGraphEnum,
+        sourceNameToGraph,
+        graphsWithConnect,
+        singleGraphEnum,
+        graphFromNodeDirectives: getJoinTypeGraph,
+      });
+    },
+    ObjectTypeExtension(node) {
+      return rewriteConnectDirectivesOnNode(node, {
+        graphEnumToName,
+        nameToGraphEnum,
+        sourceNameToGraph,
+        graphsWithConnect,
+        singleGraphEnum,
+        graphFromNodeDirectives: getJoinTypeGraph,
+      });
     },
     InputObjectTypeDefinition(node) {
       if (CONNECT_INPUT_TYPES.has(node.name.value)) {
@@ -218,15 +216,78 @@ function readJoinGraphMap(document: DocumentNode): Map<string, string> {
 function getJoinFieldGraph(
   directives: readonly ConstDirectiveNode[] | undefined,
 ): string | undefined {
-  const joinField = directives?.find(d => d.name.value === 'join__field');
-  if (!joinField) {
+  return getJoinGraphArg(directives, 'join__field');
+}
+
+function getJoinTypeGraph(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): string | undefined {
+  return getJoinGraphArg(directives, 'join__type');
+}
+
+function getJoinGraphArg(
+  directives: readonly ConstDirectiveNode[] | undefined,
+  directiveName: string,
+): string | undefined {
+  const joinDir = directives?.find(d => d.name.value === directiveName);
+  if (!joinDir) {
     return undefined;
   }
-  const graphArg = joinField.arguments?.find(a => a.name.value === 'graph');
+  const graphArg = joinDir.arguments?.find(a => a.name.value === 'graph');
   if (graphArg?.value.kind === Kind.ENUM) {
     return graphArg.value.value;
   }
   return undefined;
+}
+
+function rewriteConnectDirectivesOnNode<
+  T extends {
+    directives?: readonly ConstDirectiveNode[];
+  },
+>(
+  node: T,
+  ctx: {
+    graphEnumToName: Map<string, string>;
+    nameToGraphEnum: Map<string, string>;
+    sourceNameToGraph: Map<string, string>;
+    graphsWithConnect: Set<string>;
+    singleGraphEnum: string | undefined;
+    graphFromNodeDirectives: (
+      directives: readonly ConstDirectiveNode[] | undefined,
+    ) => string | undefined;
+  },
+): T {
+  const connectDirs = (node.directives || []).filter(d => d.name.value === 'connect');
+  if (!connectDirs.length) {
+    return node;
+  }
+
+  const otherDirs = (node.directives || []).filter(d => d.name.value !== 'connect');
+  const joinDirs: ConstDirectiveNode[] = [];
+
+  for (const connectDir of connectDirs) {
+    const args = constDirectiveArgsToJs(connectDir);
+    const sourceName = typeof args.source === 'string' ? args.source : undefined;
+    const graphEnum =
+      ctx.graphFromNodeDirectives(node.directives) ||
+      (sourceName ? ctx.nameToGraphEnum.get(sourceName) : undefined) ||
+      (sourceName ? ctx.sourceNameToGraph.get(sourceName) : undefined) ||
+      ctx.singleGraphEnum;
+    if (!graphEnum) {
+      // Keep raw @connect if we cannot attribute a graph
+      return node;
+    }
+    ctx.graphsWithConnect.add(graphEnum);
+    if (sourceName) {
+      ctx.sourceNameToGraph.set(sourceName, graphEnum);
+    }
+    joinDirs.push(buildJoinDirective(graphEnum, 'connect', args));
+  }
+
+  return {
+    ...node,
+    directives: [...otherDirs, ...joinDirs],
+  };
 }
 
 function buildJoinDirective(

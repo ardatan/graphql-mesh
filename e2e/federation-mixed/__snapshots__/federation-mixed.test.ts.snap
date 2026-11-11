@@ -473,7 +473,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
           {
             "author": {
               "id": "1",
-              "name": "Ada Lovelace",
+              "name": null,
               "reviews": [
                 {
                   "body": "Love it!",
@@ -508,7 +508,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
           {
             "author": {
               "id": "2",
-              "name": "Alan Turing",
+              "name": null,
               "reviews": [
                 {
                   "body": "Could be better.",
@@ -553,7 +553,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
           {
             "author": {
               "id": "1",
-              "name": "Ada Lovelace",
+              "name": null,
               "reviews": [
                 {
                   "body": "Love it!",
@@ -598,7 +598,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
           {
             "author": {
               "id": "2",
-              "name": "Alan Turing",
+              "name": null,
               "reviews": [
                 {
                   "body": "Could be better.",
@@ -652,7 +652,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "1",
-                    "name": "Ada Lovelace",
+                    "name": null,
                     "reviews": [
                       {
                         "body": "Love it!",
@@ -687,7 +687,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "2",
-                    "name": "Alan Turing",
+                    "name": null,
                     "reviews": [
                       {
                         "body": "Could be better.",
@@ -736,7 +736,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "1",
-                    "name": "Ada Lovelace",
+                    "name": null,
                     "reviews": [
                       {
                         "body": "Love it!",
@@ -792,7 +792,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "2",
-                    "name": "Alan Turing",
+                    "name": null,
                     "reviews": [
                       {
                         "body": "Could be better.",
@@ -841,7 +841,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "1",
-                    "name": "Ada Lovelace",
+                    "name": null,
                     "reviews": [
                       {
                         "body": "Love it!",
@@ -876,7 +876,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
                 {
                   "author": {
                     "id": "2",
-                    "name": "Alan Turing",
+                    "name": null,
                     "reviews": [
                       {
                         "body": "Could be better.",
@@ -923,7 +923,7 @@ exports[`execute with hive should execute TestQuery 1`] = `
 `;
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", "@transport"]) @transport(subgraph: "accounts", kind: "rest", location: "http://localhost:<accounts_port>") @join__directive(graphs: [ACCOUNTS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [ACCOUNTS], name: "source", args: {name: "accounts", http: {baseURL: "http://localhost:<accounts_port>"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(subgraph: "accounts", kind: "rest", location: "http://localhost:<accounts_port>") @join__directive(graphs: [ACCOUNTS], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [ACCOUNTS], name: "source", args: {name: "accounts", http: {baseURL: "http://localhost:<accounts_port>"}}) {
   query: Query
 }
 
@@ -963,13 +963,11 @@ enum join__Graph {
   REVIEWS @join__graph(name: "reviews", url: "http://localhost:<reviews_port>/graphql")
 }
 
-directive @merge(subgraph: String!, argsExpr: String, keyArg: String, keyField: String, key: [String], additionalArgs: String) repeatable on FIELD_DEFINITION
-
 scalar TransportOptions @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS)
 
 type Query @join__type(graph: ACCOUNTS) @join__type(graph: INVENTORY) @join__type(graph: PRODUCTS) @join__type(graph: REVIEWS) {
   me: User @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/me", headers: [{name: "accept", value: "application/json"}]}, selection: "id name username"})
-  user(id: String!): User @merge(subgraph: "accounts", keyField: "id", keyArg: "id") @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/users/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name username", entity: true})
+  user(id: String!): User @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/users/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name username", entity: true})
   users: [User] @join__field(graph: ACCOUNTS) @join__directive(graphs: [ACCOUNTS], name: "connect", args: {source: "accounts", http: {GET: "/users", headers: [{name: "accept", value: "application/json"}]}, selection: "id name username"})
   topProducts(first: Int = 5): [Product] @join__field(graph: PRODUCTS)
 }

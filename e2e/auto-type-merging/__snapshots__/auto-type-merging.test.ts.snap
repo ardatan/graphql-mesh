@@ -89,7 +89,7 @@ type Query @join__type(graph: PETSTORE) @join__type(graph: VACCINATION) {
   getPetById(
     """ID of pet to return"""
     petId: BigInt!
-  ): Pet @merge(subgraph: "petstore", keyField: "id", keyArg: "petId") @join__field(graph: PETSTORE) @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name category { id name } photoUrls tags { id name } status"})
+  ): Pet @join__field(graph: PETSTORE) @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/pet/{$args.petId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name category { id name } photoUrls tags { id name } status"})
   """Returns a map of status codes to quantities"""
   getInventory: JSON @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/store/inventory", headers: [{name: "accept", value: "application/json"}]}, selection: "$"})
   """
@@ -98,7 +98,7 @@ type Query @join__type(graph: PETSTORE) @join__type(graph: VACCINATION) {
   getOrderById(
     """ID of order that needs to be fetched"""
     orderId: BigInt!
-  ): Order @merge(subgraph: "petstore", keyField: "id", keyArg: "orderId") @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/store/order/{$args.orderId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id petId quantity shipDate status complete"})
+  ): Order @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/store/order/{$args.orderId}", headers: [{name: "accept", value: "application/json"}]}, selection: "id petId quantity shipDate status complete"})
   """Logs user into the system"""
   loginUser(
     """The user name for login"""
@@ -117,7 +117,7 @@ type Query @join__type(graph: PETSTORE) @join__type(graph: VACCINATION) {
 }
 
 """Pet object that needs to be added to the store"""
-type Pet @join__type(graph: PETSTORE, key: "id") @join__type(graph: VACCINATION, key: "id") {
+type Pet @join__type(graph: PETSTORE, key: "id") @join__type(graph: VACCINATION, key: "id") @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", selection: "id name category { id name } photoUrls tags { id name } status", http: {GET: "/pet/{$this.id}", headers: [{name: "accept", value: "application/json"}]}}) {
   id: BigInt @join__field(graph: PETSTORE, type: "BigInt") @join__field(graph: VACCINATION, type: "BigInt!")
   name: String! @join__field(graph: PETSTORE)
   category: Category @join__field(graph: PETSTORE)
@@ -137,7 +137,7 @@ type Tag @join__type(graph: PETSTORE) {
   name: String
 }
 
-type Order @join__type(graph: PETSTORE, key: "id") @inaccessible {
+type Order @join__type(graph: PETSTORE, key: "id") @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", selection: "id petId quantity shipDate status complete", http: {GET: "/store/order/{$this.id}", headers: [{name: "accept", value: "application/json"}]}}) {
   id: BigInt
   petId: BigInt
   quantity: Int

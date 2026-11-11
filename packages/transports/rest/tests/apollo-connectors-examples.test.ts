@@ -26,7 +26,7 @@ const CONNECTOR_DIRECTIVES = /* GraphQL */ `
     entity: Boolean
     errors: ConnectorErrors
     isSuccess: String
-  ) repeatable on FIELD_DEFINITION
+  ) repeatable on FIELD_DEFINITION | OBJECT
 
   input ConnectHTTP {
     GET: String
@@ -516,5 +516,88 @@ describe('Apollo Connectors error shape', () => {
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({ pet: { name: 'Bob' } });
     expect(urls).toEqual(['http://localhost:5555/pet/pet200']);
+  });
+
+  it('exposes Query._entities from entity:true and type-level @connect (Hive path)', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "ecomm", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      type Query {
+        user(id: ID!): User
+          @connect(
+            source: "ecomm"
+            http: { GET: "/users/{$args.id}" }
+            selection: "id name"
+            entity: true
+          )
+      }
+
+      type User @key(fields: "id") {
+        id: ID!
+        name: String
+      }
+
+      type Product
+        @key(fields: "id")
+        @connect(
+          source: "ecomm"
+          http: { GET: "/products/{$this.id}" }
+          selection: "id title"
+        ) {
+        id: ID!
+        title: String
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        if (String(url).includes('/users/')) {
+          return Response.json({ id: '5', name: 'Ada' });
+        }
+        return Response.json({ id: '9', title: 'Widget' });
+      }) as any,
+    });
+
+    expect(schema.getQueryType()?.getFields()._entities).toBeDefined();
+    expect(schema.getType('_Entity')).toBeDefined();
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        query ($representations: [_Any!]!) {
+          _entities(representations: $representations) {
+            ... on User {
+              id
+              name
+            }
+            ... on Product {
+              id
+              title
+            }
+          }
+        }
+      `),
+      variableValues: {
+        representations: [
+          { __typename: 'User', id: '5' },
+          { __typename: 'Product', id: '9' },
+        ],
+      },
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      _entities: [
+        { id: '5', name: 'Ada' },
+        { id: '9', title: 'Widget' },
+      ],
+    });
+    expect(urls).toEqual([
+      'https://api.example.com/users/5',
+      'https://api.example.com/products/9',
+    ]);
   });
 });

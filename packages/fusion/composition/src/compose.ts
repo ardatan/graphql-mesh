@@ -28,6 +28,10 @@ import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import { toApolloRouterConnectorsSupergraph } from './apollo-router-connectors-supergraph.js';
 import {
+  hasEquivalentTypeConnect,
+  toTypeLevelEntityConnect,
+} from './connect-entity.js';
+import {
   convertSubgraphToFederationv2,
   detectAndAddMeshDirectives,
   importFederationDirectives,
@@ -802,10 +806,13 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
           }
         };
-        // Connectors: Apollo `entity: true` keys the entity by *argument names*, which
-        // must match the `@key` fields. When `keyArg !== keyField` (e.g. petId → id),
-        // keep Mesh `@merge` for Hive remapping instead of emitting a broken entity connector.
-        // Federation transform may already set `entity: true` when args align.
+        // Connectors entity patterns
+        // (https://www.apollographql.com/docs/graphos/connectors/entities/patterns):
+        // - arg name === key field → Query `@connect(entity: true)`
+        // - arg name !== key field (e.g. petId → id) → type-level `@connect` with
+        //   `$this.<keyField>` (entity:true would be invalid / ENTITY_RESOLVER_ARGUMENT_MISMATCH)
+        // Hive resolves these via REST transport `Query._entities` → resolveReference;
+        // no Mesh `@merge` needed for Connectors subgraphs.
         const markConnectEntityOrMerge = () => {
           if (directiveExtensions.connect?.length) {
             const alreadyEntity = directiveExtensions.connect.some((c: any) => c?.entity === true);
@@ -819,7 +826,21 @@ function addAnnotationsForSemanticConventions({
               }));
               return;
             }
+            // Type-level entity connector: `/pet/{$args.petId}` → `/pet/{$this.id}`
+            const typeConnects = directiveExtensions.connect.map((c: any) =>
+              toTypeLevelEntityConnect(c, argName, fieldName),
+            );
+            typeDirectives.connect ||= [];
+            for (const tc of typeConnects) {
+              if (!hasEquivalentTypeConnect(typeDirectives.connect, tc)) {
+                typeDirectives.connect.push(tc);
+              }
+            }
+            const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
+            typeExtensions.directives = typeDirectives;
+            return;
           }
+          // Non-Connectors subgraphs still use Mesh `@merge` for type merging.
           directiveExtensions.merge ||= [];
           directiveExtensions.merge.push({
             subgraph: subgraphName,

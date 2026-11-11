@@ -23,7 +23,7 @@ describe('Apollo Connectors composition', () => {
       http: ConnectHTTP
       selection: String!
       entity: Boolean
-    ) repeatable on FIELD_DEFINITION
+    ) repeatable on FIELD_DEFINITION | OBJECT
 
     input ConnectHTTP {
       GET: String
@@ -326,5 +326,77 @@ describe('Apollo Connectors composition', () => {
     const again = toApolloRouterConnectorsSupergraph(meshSdl);
     // Already finalized — early-return when no raw @connect remains
     expect(again).toBe(meshSdl);
+  });
+
+  it('emits type-level @connect with $this when keyArg !== keyField (Apollo entity pattern)', () => {
+    // OpenAPI-style: getUserById(userId) → User.id — entity:true would be invalid.
+    const schema = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "rest", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      type Query {
+        getUserById(userId: ID!): User
+          @connect(
+            source: "rest"
+            http: { GET: "/users/{$args.userId}" }
+            selection: "id name"
+          )
+      }
+
+      type User {
+        id: ID!
+        name: String
+      }
+    `);
+
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'rest',
+        schema,
+        transforms: [s => s],
+      },
+    ]);
+    const annotatedSdl = print(annotated[0].typeDefs);
+    // Query field keeps $args.userId (client entrypoint); no entity: true.
+    expect(annotatedSdl).toMatch(/getUserById\(userId:[\s\S]*\$args\.userId/);
+    expect(annotatedSdl).not.toMatch(/entity:\s*true/);
+    // Type-level entity connector uses $this.id (Apollo patterns doc).
+    expect(annotatedSdl).toMatch(/type User[\s\S]*@connect\([\s\S]*\$this\.id/);
+    // Connectors entity → REST `_entities`; no Mesh `@merge`.
+    expect(annotatedSdl).not.toMatch(/@merge\(/);
+
+    const result = composeSubgraphs([
+      {
+        name: 'rest',
+        schema,
+        transforms: [s => s],
+      },
+    ]);
+    expect(result.errors).toBeUndefined();
+    const sdl = result.supergraphSdl!;
+    // Supergraph: type-level connect rewritten to join__directive on User.
+    expect(sdl).toMatch(
+      /type User[\s\S]*@join__directive\([\s\S]*name:\s*"connect"[\s\S]*\$this\.id/,
+    );
+    expect(sdl).not.toMatch(/@connect\(/);
   });
 });
