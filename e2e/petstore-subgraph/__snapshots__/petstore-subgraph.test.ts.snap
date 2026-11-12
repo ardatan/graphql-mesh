@@ -1,14 +1,12 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should generate the subgraph schema correctly 1`] = `
-"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions", "@extraSchemaDefinitionDirective"]) @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@provides", "@requires", "@external", "@inaccessible", "@shareable", "@extends", "@tag", "@composeDirective"]) @composeDirective(name: "@meshRestOptions") @composeDirective(name: "@connect") @composeDirective(name: "@extraSchemaDefinitionDirective") {
+"schema @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@provides", "@requires", "@external", "@inaccessible", "@shareable", "@extends", "@tag", "@composeDirective"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@extraSchemaDefinitionDirective"]) @composeDirective(name: "@connect") @composeDirective(name: "@extraSchemaDefinitionDirective") {
   query: Query
   mutation: Mutation
 }
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
@@ -16,14 +14,14 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query @shareable @extraSchemaDefinitionDirective(directives: {source: [{name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}], transport: [{subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3"}]}) {
   """Multiple status values can be provided with comma separated strings"""
-  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByStatus", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status") @meshRestOptions(queryStringOptionsByParam: "{\\"status\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
+  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByStatus", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status")
   """
   Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
   """
   findPetsByTags(
     """Tags to filter by"""
     tags: [String]
-  ): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByTags", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tags: $args.tags\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status") @meshRestOptions(queryStringOptionsByParam: "{\\"tags\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}")
+  ): [Pet] @connect(source: "petstore", http: {GET: "/pet/findByTags", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tags: $args.tags\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status")
   """Returns a single pet"""
   getPetById(
     """ID of pet to return"""
@@ -262,8 +260,6 @@ input ConnectorErrors {
   message: String
   extensions: String
 }
-
-scalar ObjMap
 
 input SourceHTTP {
   baseURL: String!

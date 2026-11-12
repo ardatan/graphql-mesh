@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions", "@merge", {name: "@source", as: "@meshSource"}, "@transport"]) @transport(subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3") @join__directive(graphs: [PETSTORE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PETSTORE], name: "source", args: {name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@merge", {name: "@source", as: "@meshSource"}, "@transport"]) @transport(subgraph: "petstore", kind: "rest", location: "http://localhost:<petstore_port>/api/v3") @join__directive(graphs: [PETSTORE], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [PETSTORE], name: "source", args: {name: "petstore", http: {baseURL: "http://localhost:<petstore_port>/api/v3"}}) {
   query: Query
   mutation: Mutation
 }
@@ -42,8 +42,6 @@ enum join__Graph {
   VACCINATION @join__graph(name: "vaccination", url: "http://localhost:<vaccination_port>/graphql")
 }
 
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
-
 directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
 
 directive @meshSource(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
@@ -71,20 +69,18 @@ scalar EmailAddress @join__type(graph: PETSTORE) @inaccessible @specifiedBy(url:
 """The \`File\` scalar type represents a file upload."""
 scalar File @join__type(graph: PETSTORE) @inaccessible
 
-scalar ObjMap @join__type(graph: PETSTORE)
-
 scalar TransportOptions @join__type(graph: VACCINATION)
 
 type Query @join__type(graph: PETSTORE) @join__type(graph: VACCINATION) {
   """Multiple status values can be provided with comma separated strings"""
-  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @meshRestOptions(queryStringOptionsByParam: "{\\"status\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}") @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/pet/findByStatus", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status"})
+  findPetsByStatus(status: queryInput_findPetsByStatus_status = available): [Pet] @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/pet/findByStatus", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  status: $args.status\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status"})
   """
   Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
   """
   findPetsByTags(
     """Tags to filter by"""
     tags: [String]
-  ): [Pet] @meshRestOptions(queryStringOptionsByParam: "{\\"tags\\":{\\"arrayFormat\\":\\"repeat\\",\\"destructObject\\":true}}") @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/pet/findByTags", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tags: $args.tags\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status"})
+  ): [Pet] @join__field(graph: PETSTORE) @inaccessible @join__directive(graphs: [PETSTORE], name: "connect", args: {source: "petstore", http: {GET: "/pet/findByTags", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tags: $args.tags\\n}"}, selection: "id name category { id name } photoUrls tags { id name } status"})
   """Returns a single pet"""
   getPetById(
     """ID of pet to return"""
@@ -280,7 +276,9 @@ input User_Input @join__type(graph: PETSTORE) @inaccessible {
   userStatus: Int
 }
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+scalar ObjMap
+
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap, timeout: Int) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 

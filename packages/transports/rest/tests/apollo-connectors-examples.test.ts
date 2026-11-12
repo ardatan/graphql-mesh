@@ -409,18 +409,9 @@ describe('Federation Connectors error shape', () => {
         name: String
       }
     `;
-    const rawSchema = buildSchema(sdl);
-    // Attach per-param deepObject options the OpenAPI loader would emit (before wiring).
-    const field = rawSchema.getQueryType()!.getFields().search;
-    (field.extensions as any) = {
-      ...field.extensions,
-      meshRestOptions: {
-        queryStringOptionsByParam: {
-          created: { destructObject: true, deepObject: true },
-        },
-      },
-    };
-    const schema = processConnectDirectives(rawSchema, {
+    // Nested object query values stringify as deepObject via qs defaults — no
+    // `@meshRestOptions` / field extensions required.
+    const schema = processConnectDirectives(buildSchema(sdl), {
       globalFetch: (async (url: string) => {
         urls.push(String(url));
         return Response.json([{ name: 'Bob' }]);

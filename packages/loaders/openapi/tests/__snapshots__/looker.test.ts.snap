@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Looker.4.0.oas should generate correct schema: Looker.4.0.oas-schema 1`] = `
-"schema @source(name: "test", http: {baseURL: "http://dummy"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@meshRestOptions"]) {
+"schema @source(name: "test", http: {baseURL: "http://dummy"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
@@ -11,8 +11,6 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
 directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
-
-directive @meshRestOptions(queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, timeout: Int, isBinary: Boolean) on FIELD_DEFINITION
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
@@ -32,7 +30,7 @@ type Query {
   query_task_multi_results(
     """List of Query Task IDs"""
     query_task_ids: [String]!
-  ): JSON @connect(source: "test", http: {GET: "/query_tasks/multi_results", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query_task_ids: $args.query_task_ids->joinNotNull(\\",\\")\\n}"}, selection: "$") @meshRestOptions(queryStringOptionsByParam: "{\\"query_task_ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): JSON @connect(source: "test", http: {GET: "/query_tasks/multi_results", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  query_task_ids: $args.query_task_ids->joinNotNull(\\",\\")\\n}"}, selection: "$")
   """
   ### Get Query Task details
   
@@ -1214,7 +1212,7 @@ type Query {
     content_metadata_id: String
     """Select only groups that either can/cannot be given access to content."""
     can_add_to_content_metadata: Boolean
-  ): [Group] @connect(source: "test", http: {GET: "/groups", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n  page: $args.page\\n  per_page: $args.per_page\\n  limit: $args.limit\\n  offset: $args.offset\\n  sorts: $args.sorts\\n  ids: $args.ids->joinNotNull(\\",\\")\\n  content_metadata_id: $args.content_metadata_id\\n  can_add_to_content_metadata: $args.can_add_to_content_metadata\\n}"}, selection: "can can_add_to_content_metadata contains_current_user external_group_id externally_managed id include_by_default name user_count") @meshRestOptions(queryStringOptionsByParam: "{\\"ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): [Group] @connect(source: "test", http: {GET: "/groups", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n  page: $args.page\\n  per_page: $args.per_page\\n  limit: $args.limit\\n  offset: $args.offset\\n  sorts: $args.sorts\\n  ids: $args.ids->joinNotNull(\\",\\")\\n  content_metadata_id: $args.content_metadata_id\\n  can_add_to_content_metadata: $args.can_add_to_content_metadata\\n}"}, selection: "can can_add_to_content_metadata contains_current_user external_group_id externally_managed id include_by_default name user_count")
   """
   ### Search groups
   
@@ -2427,7 +2425,7 @@ type Query {
     fields: String
     """Optional list of ids to get specific roles."""
     ids: [String]
-  ): [Role] @connect(source: "test", http: {GET: "/roles", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n  ids: $args.ids->joinNotNull(\\",\\")\\n}"}, selection: "can id name permission_set { can all_access built_in id name permissions url } permission_set_id model_set { can all_access built_in id models name url } model_set_id url users_url") @meshRestOptions(queryStringOptionsByParam: "{\\"ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): [Role] @connect(source: "test", http: {GET: "/roles", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n  ids: $args.ids->joinNotNull(\\",\\")\\n}"}, selection: "can id name permission_set { can all_access built_in id name permissions url } permission_set_id model_set { can all_access built_in id models name url } model_set_id url users_url")
   """
   ### Search roles
   
@@ -3238,7 +3236,7 @@ type Query {
     sorts: String
     """Optional list of ids to get specific users."""
     ids: [String]
-  ): [User] @connect(source: "test", http: {GET: "/users", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n  page: $args.page\\n  per_page: $args.per_page\\n  limit: $args.limit\\n  offset: $args.offset\\n  sorts: $args.sorts\\n  ids: $args.ids->joinNotNull(\\",\\")\\n}"}, selection: "can avatar_url avatar_url_without_sizing credentials_api3 { can id client_id created_at is_disabled type url } credentials_email { can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url } credentials_embed { can created_at external_group_id external_user_id id is_disabled logged_in_at type url } credentials_google { can created_at domain email google_user_id is_disabled logged_in_at type url } credentials_ldap { can created_at email is_disabled ldap_dn ldap_id logged_in_at type url } credentials_looker_openid { can created_at email is_disabled logged_in_at logged_in_ip type url user_url } credentials_oidc { can created_at email is_disabled logged_in_at oidc_user_id type url } credentials_saml { can created_at email is_disabled logged_in_at saml_user_id type url } credentials_totp { can created_at is_disabled type verified url } display_name email embed_group_space_id first_name group_ids home_folder_id id is_disabled last_name locale looker_versions models_dir_validated personal_folder_id presumed_looker_employee role_ids sessions { can id ip_address browser operating_system city state country credentials_type extended_at extended_count sudo_user_id created_at expires_at url } ui_state verified_looker_employee roles_externally_managed allow_direct_roles allow_normal_group_membership allow_roles_from_normal_groups embed_group_folder_id is_iam_admin url") @meshRestOptions(queryStringOptionsByParam: "{\\"ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): [User] @connect(source: "test", http: {GET: "/users", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n  page: $args.page\\n  per_page: $args.per_page\\n  limit: $args.limit\\n  offset: $args.offset\\n  sorts: $args.sorts\\n  ids: $args.ids->joinNotNull(\\",\\")\\n}"}, selection: "can avatar_url avatar_url_without_sizing credentials_api3 { can id client_id created_at is_disabled type url } credentials_email { can created_at email forced_password_reset_at_next_login user_id is_disabled logged_in_at password_reset_url account_setup_url type url user_url } credentials_embed { can created_at external_group_id external_user_id id is_disabled logged_in_at type url } credentials_google { can created_at domain email google_user_id is_disabled logged_in_at type url } credentials_ldap { can created_at email is_disabled ldap_dn ldap_id logged_in_at type url } credentials_looker_openid { can created_at email is_disabled logged_in_at logged_in_ip type url user_url } credentials_oidc { can created_at email is_disabled logged_in_at oidc_user_id type url } credentials_saml { can created_at email is_disabled logged_in_at saml_user_id type url } credentials_totp { can created_at is_disabled type verified url } display_name email embed_group_space_id first_name group_ids home_folder_id id is_disabled last_name locale looker_versions models_dir_validated personal_folder_id presumed_looker_employee role_ids sessions { can id ip_address browser operating_system city state country credentials_type extended_at extended_count sudo_user_id created_at expires_at url } ui_state verified_looker_employee roles_externally_managed allow_direct_roles allow_normal_group_membership allow_roles_from_normal_groups embed_group_folder_id is_iam_admin url")
   """
   ### Search users
   
@@ -3614,7 +3612,7 @@ type Query {
     If true, returns an empty record for each requested attribute that has no user, group, or default value.
     """
     include_unset: Boolean
-  ): [UserAttributeWithValue] @connect(source: "test", http: {GET: "/users/{$args.user_id}/attribute_values", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n  user_attribute_ids: $args.user_attribute_ids->joinNotNull(\\",\\")\\n  all_values: $args.all_values\\n  include_unset: $args.include_unset\\n}"}, selection: "can name label rank value user_id user_can_edit value_is_hidden user_attribute_id source hidden_value_domain_whitelist") @meshRestOptions(queryStringOptionsByParam: "{\\"user_attribute_ids\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): [UserAttributeWithValue] @connect(source: "test", http: {GET: "/users/{$args.user_id}/attribute_values", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  fields: $args.fields\\n  user_attribute_ids: $args.user_attribute_ids->joinNotNull(\\",\\")\\n  all_values: $args.all_values\\n  include_unset: $args.include_unset\\n}"}, selection: "can name label rank value user_id user_can_edit value_is_hidden user_attribute_id source hidden_value_domain_whitelist")
   """
   ### Get a vector image representing the contents of a dashboard or look.
   
@@ -9395,7 +9393,7 @@ type Mutation {
     connection_name: String!
     """Array of names of tests to run"""
     tests: [String]
-  ): [DBConnectionTestResult] @connect(source: "test", http: {PUT: "/connections/{$args.connection_name}/test", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tests: $args.tests->joinNotNull(\\",\\")\\n}"}, selection: "can connection_string message name status") @meshRestOptions(queryStringOptionsByParam: "{\\"tests\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): [DBConnectionTestResult] @connect(source: "test", http: {PUT: "/connections/{$args.connection_name}/test", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  tests: $args.tests->joinNotNull(\\",\\")\\n}"}, selection: "can connection_string message name status")
   """
   ### Test a connection configuration.
   
@@ -9411,7 +9409,7 @@ type Mutation {
     """Array of names of tests to run"""
     tests: [String]
     input: DBConnection_Input
-  ): [DBConnectionTestResult] @connect(source: "test", http: {PUT: "/connections/test", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  tests: $args.tests->joinNotNull(\\",\\")\\n}"}, selection: "can connection_string message name status") @meshRestOptions(queryStringOptionsByParam: "{\\"tests\\":{\\"arrayFormat\\":\\"comma\\"}}")
+  ): [DBConnectionTestResult] @connect(source: "test", http: {PUT: "/connections/test", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input", queryParams: "{\\n  tests: $args.tests->joinNotNull(\\",\\")\\n}"}, selection: "can connection_string message name status")
   """
         ### Generate Lockfile for All LookML Dependencies
   

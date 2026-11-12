@@ -402,6 +402,13 @@ function tokenizeVarPath(rest: string): string[] {
 
 type MeshQsOptions = IStringifyOptions & { jsonStringify?: boolean };
 
+/**
+ * Connectors qs defaults match OpenAPI explode / deepObject:
+ * - `indices: false` → arrays as `a=1&a=2` (repeat-style)
+ * - plain objects → `a[b]=1` (deepObject brackets) unless `allowDots`
+ * Form-urlencoded bodies reuse the same defaults.
+ * Do not set `arrayFormat` here — it would override loader `indices: true`.
+ */
 const defaultQsOptions: IStringifyOptions = {
   indices: false,
 };
@@ -412,6 +419,9 @@ const defaultQsOptions: IStringifyOptions = {
  * - object literal: `{ "foo:bar": $args.foo_bar, limit: $args.limit }`
  * - line form: `limit: $args.limit`
  * Null values are omitted. Array/object encoding follows Hive qs options.
+ *
+ * Prefer baking OpenAPI styles into `queryParams` at emit time. Legacy
+ * `queryStringOptionsByParam.destructObject` remains for older SDLs.
  */
 function applyQueryParams(
   fullPath: string,
@@ -441,6 +451,7 @@ function applyQueryParams(
     }
     const paramOpts = queryStringOptionsByParam?.[key] as
       (MeshQsOptions & { destructObject?: boolean; deepObject?: boolean }) | undefined;
+    // Legacy `@meshRestOptions` path — new schemas bake this into queryParams.
     if (paramOpts?.destructObject && value && typeof value === 'object' && !Array.isArray(value)) {
       for (const [nestedKey, nestedVal] of Object.entries(value)) {
         if (nestedVal == null) continue;
