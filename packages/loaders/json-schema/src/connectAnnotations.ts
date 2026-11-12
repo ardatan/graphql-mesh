@@ -567,9 +567,7 @@ function oneOfBranchInputFieldName(branch: { title?: string } | undefined): stri
  */
 function collectPropertyPaths(
   argName: string,
-  argSchema:
-    | { properties?: Record<string, unknown>; anyOf?: any[]; oneOf?: any[] }
-    | undefined,
+  argSchema: { properties?: Record<string, unknown>; anyOf?: any[]; oneOf?: any[] } | undefined,
 ): Array<{ prop: string; path: string }> {
   if (argSchema?.properties && typeof argSchema.properties === 'object') {
     return Object.keys(argSchema.properties).map(prop => ({
