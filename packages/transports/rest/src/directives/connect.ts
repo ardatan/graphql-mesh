@@ -487,6 +487,8 @@ function applyQueryParams(
     parts.push(
       qsStringify(preBracketed, {
         ...defaultQsOptions,
+        ...restQs,
+        // Override only array encoding so baked `[]` keys are not doubled.
         indices: false,
         arrayFormat: 'repeat',
       }),

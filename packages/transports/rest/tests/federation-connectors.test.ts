@@ -478,6 +478,54 @@ describe('Federation Connectors queryParams / qs bake', () => {
     expect(urls[0]).not.toContain('ids%5B%5D%5B%5D');
     expect(urls[0]).not.toContain('ids%5B%5D%5B0%5D');
   });
+
+  it('preserves qs charset for pre-bracketed keys', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "api", http: { baseURL: "http://localhost:3000" }) {
+        query: Query
+      }
+
+      type Query {
+        search(tags: [String]): [Pet]
+          @connect(
+            source: "api"
+            http: { GET: "/search", queryParams: "{ \\"tags[]\\": $args.tags }" }
+            selection: "name"
+          )
+      }
+
+      type Pet {
+        name: String
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      queryStringOptions: {
+        arrayFormat: 'brackets',
+        indices: true,
+        charset: 'iso-8859-1',
+      },
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json([{ name: 'Bob' }]);
+      }) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          search(tags: ["æ"]) {
+            name
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    // iso-8859-1 encodes æ as %E6 (not UTF-8 %C3%A6), without doubling [].
+    expect(urls[0]).toContain('tags%5B%5D=%E6');
+    expect(urls[0]).not.toContain('%C3%A6');
+  });
 });
 
 describe('Federation Connectors HTTP / templates', () => {
