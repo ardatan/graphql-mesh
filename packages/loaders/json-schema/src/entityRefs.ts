@@ -8,6 +8,18 @@ const meshEntityRefsByTypeField = new Map<string, Record<string, string>>();
 /** Types that have a GET-by-key connector (Query `entity: true` or equivalent). */
 const meshEntityTypes = new Map<string, string[]>();
 
+/**
+ * Type-level `@connect` for entity types referenced via cross-schema HATEOAS stubs.
+ * Keyed by entity type name (e.g. `Supplier`) so the linking subgraph can hydrate
+ * stubs without Mesh `@resolveTo`.
+ */
+export type MeshTypeConnectArgs = {
+  source: string;
+  http: Record<string, unknown>;
+  selection?: string;
+};
+const meshTypeConnectByEntity = new Map<string, MeshTypeConnectArgs>();
+
 export function setMeshEntityRef(
   typeName: string,
   fieldName: string,
@@ -45,8 +57,20 @@ export function isMeshEntityType(typeName: string): boolean {
   return meshEntityTypes.has(typeName);
 }
 
+export function setMeshTypeConnect(entityTypeName: string, connect: MeshTypeConnectArgs): void {
+  if (!entityTypeName || !connect?.http) {
+    return;
+  }
+  meshTypeConnectByEntity.set(entityTypeName, { ...connect, http: { ...connect.http } });
+}
+
+export function getMeshTypeConnect(entityTypeName: string): MeshTypeConnectArgs | undefined {
+  return meshTypeConnectByEntity.get(entityTypeName);
+}
+
 /** Test helper — clear registries between unit tests when needed. */
 export function clearMeshEntityRegistries(): void {
   meshEntityRefsByTypeField.clear();
   meshEntityTypes.clear();
+  meshTypeConnectByEntity.clear();
 }

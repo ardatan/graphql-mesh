@@ -45,7 +45,7 @@ import {
   wrapArgExprWithEnumMatch,
 } from './connectAnnotations.js';
 import { PubSubOperationDirective, ResolveRootDirective } from './directives.js';
-import { registerMeshEntityType } from './entityRefs.js';
+import { getMeshTypeConnect, registerMeshEntityType } from './entityRefs.js';
 import type {
   ConnectSelectionOptions,
   JSONSchemaHTTPJSONOperationConfig,
@@ -668,6 +668,39 @@ ${operationConfig.description || ''}
   // Pass 2: wire link fields after every target @connect exists.
   for (const { linkMap, typeTC } of pendingLinks) {
     handleLinkMap(linkMap, typeTC);
+  }
+
+  // Pass 2b: cross-schema HATEOAS — type-level `@connect` on entity stub targets
+  // so Hive hydrateEntityStub works inside this subgraph (no Mesh `@resolveTo`).
+  schemaComposer.addDirective(ConnectDirective);
+  for (const tc of schemaComposer.types.values()) {
+    if (!('getTypeName' in tc) || typeof (tc as any).getDirectives !== 'function') {
+      continue;
+    }
+    const typeName = (tc as ObjectTypeComposer).getTypeName();
+    const meshTypeConnect = getMeshTypeConnect(typeName);
+    if (!meshTypeConnect?.http) {
+      continue;
+    }
+    const typeDirectives = [...((tc as ObjectTypeComposer).getDirectives() || [])];
+    const already = typeDirectives.some(
+      d =>
+        d.name === 'connect' &&
+        JSON.stringify(d.args?.http) === JSON.stringify(meshTypeConnect.http),
+    );
+    if (already) {
+      continue;
+    }
+    typeDirectives.push({
+      name: 'connect',
+      args: {
+        source: meshTypeConnect.source || subgraphName,
+        http: meshTypeConnect.http,
+        selection: meshTypeConnect.selection || 'id',
+      },
+    });
+    (tc as ObjectTypeComposer).setDirectives(typeDirectives);
+    registerMeshEntityType(typeName, ['id']);
   }
 
   log.debug(`Building the executable schema.`);

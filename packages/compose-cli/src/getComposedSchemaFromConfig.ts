@@ -1,23 +1,17 @@
 import {
   buildSchema,
-  getNamedType,
-  isInterfaceType,
-  isNamedType,
   Kind,
   parse,
   print,
   visit,
   type DocumentNode,
-  type GraphQLObjectType,
   type GraphQLSchema,
   type ObjectTypeDefinitionNode,
 } from 'graphql';
 import { type Logger } from '@graphql-hive/logger';
 import {
   composeAnnotatedSubgraphs,
-  futureAdditions,
   getAnnotatedSubgraphs,
-  type FutureAddition,
   type SubgraphConfig,
 } from '@graphql-mesh/fusion-composition';
 import { parseWithCache } from '@graphql-mesh/utils';
@@ -25,11 +19,7 @@ import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
-import {
-  astFromValueUntyped,
-  getDocumentNodeFromSchema,
-  printSchemaWithDirectives,
-} from '@graphql-tools/utils';
+import { getDocumentNodeFromSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
@@ -163,75 +153,8 @@ export async function getComposedResultFromConfig(
     globalThis.process?.exit(1);
   }
   let composedSchema: GraphQLSchema;
-  if (futureAdditions.length) {
-    additionalTypeDefs ||= [];
-    // Declare Mesh stitching directives so futureAdditions `@resolveTo` /
-    // `@additionalField` applications stay valid GraphQL SDL (Hive executes them;
-    // Apollo Router uses Connectors entity-ref selection for the same edges).
-    additionalTypeDefs.unshift(
-      parse(/* GraphQL */ `
-        directive @additionalField on FIELD_DEFINITION
-        scalar ResolveToSourceArgs
-        directive @resolveTo(
-          additionalArgs: ResolveToSourceArgs
-          filterBy: String
-          keyField: String
-          keysArg: String
-          pubsubTopic: String
-          requiredSelectionSet: String
-          result: String
-          resultType: String
-          sourceArgs: ResolveToSourceArgs
-          sourceFieldName: String
-          sourceName: String
-          sourceSelectionSet: String
-          sourceTypeName: String
-          valueKeyField: String
-        ) on FIELD_DEFINITION
-      `),
-    );
-    let futureAddition: FutureAddition;
-    while ((futureAddition = futureAdditions.pop())) {
-      composedSchema ||= buildSchema(result.supergraphSdl, {
-        noLocation: true,
-        assumeValid: true,
-        assumeValidSDL: true,
-      });
-      const sourceType = composedSchema.getType(futureAddition.sourceTypeName) as GraphQLObjectType;
-      if (!sourceType) {
-        log.error(`Target type ${futureAddition.sourceTypeName} not found`);
-        globalThis.process?.exit(1);
-      }
-      const sourceField = sourceType.getFields()[futureAddition.sourceFieldName];
-      if (!sourceField) {
-        log.error(`Target field ${futureAddition.sourceFieldName} not found`);
-        globalThis.process?.exit(1);
-      }
-      const sourceReturnType = getNamedType(sourceField.type);
-      if (!isNamedType(sourceReturnType)) {
-        log.error(`Target field ${futureAddition.sourceFieldName} has no return type`);
-        globalThis.process?.exit(1);
-      }
-      const interfaceOrType = isInterfaceType(composedSchema.getType(futureAddition.targetTypeName))
-        ? 'interface'
-        : 'type';
-      additionalTypeDefs.push(
-        parse(/* GraphQL */ `
-          extend ${interfaceOrType} ${futureAddition.targetTypeName} {
-            ${futureAddition.targetFieldName}: ${sourceReturnType}
-            @additionalField
-            @resolveTo(
-              sourceTypeName: "${futureAddition.sourceTypeName}",
-              sourceFieldName: "${futureAddition.sourceFieldName}",
-              sourceName: "${futureAddition.sourceName}",
-              sourceArgs: ${print(astFromValueUntyped(futureAddition.sourceArgs))},
-              requiredSelectionSet: "${futureAddition.requiredSelectionSet}"
-            )
-          }
-        `),
-      );
-    }
-  }
+  // Cross-subgraph HATEOAS uses Connectors entity stubs + `@connect(entity: true)` —
+  // not Mesh `@resolveTo` / futureAdditions.
   if (additionalTypeDefs?.length /* TODO || config.transforms?.length */) {
     composedSchema ||= buildSchema(result.supergraphSdl, {
       noLocation: true,

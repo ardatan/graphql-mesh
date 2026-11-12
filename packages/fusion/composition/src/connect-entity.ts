@@ -1,3 +1,12 @@
+import {
+  getNamedType,
+  GraphQLObjectType,
+  isInterfaceType,
+  isObjectType,
+  type GraphQLSchema,
+} from 'graphql';
+import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
+
 /**
  * Federation Connectors entity helpers (shared contract).
  *
@@ -16,6 +25,13 @@
  */
 
 const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
+
+/**
+ * Connectors entity-stub fragments in `@connect(selection:)`:
+ * `supplier: { __typename: $("Supplier") id: supplierId }`
+ */
+const ENTITY_STUB_IN_SELECTION_RE =
+  /\w+\s*:\s*\{\s*__typename\s*:\s*\$\(\s*"([^"]+)"\s*\)\s+([^}]*)\}/g;
 
 /** Replace `$args.<keyArg>` with `$this.<keyField>` in Connectors path/body/header exprs. */
 export function rewriteArgsToThis(value: string, keyArg: string, keyField: string): string {
@@ -174,4 +190,136 @@ export function formatEntityStubSelection(
     ),
   ];
   return `${fieldName}: { ${parts.join(' ')} }`;
+}
+
+/**
+ * Parse entity type → key fields from Connectors stub fragments in a selection.
+ */
+export function parseEntityStubTypesFromSelection(
+  selection: string | undefined | null,
+): Map<string, string[]> {
+  const out = new Map<string, string[]>();
+  if (!selection) {
+    return out;
+  }
+  ENTITY_STUB_IN_SELECTION_RE.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = ENTITY_STUB_IN_SELECTION_RE.exec(selection))) {
+    const typeName = match[1];
+    // Stub body is `id: supplierId` / `id sku: sku` — left-hand names are entity keys.
+    const keyFields: string[] = [];
+    const body = match[2];
+    const pairRe = /(\w+)\s*:/g;
+    let pair: RegExpExecArray | null;
+    while ((pair = pairRe.exec(body))) {
+      keyFields.push(pair[1]);
+    }
+    if (!typeName || !keyFields.length) {
+      continue;
+    }
+    const existing = out.get(typeName);
+    if (!existing) {
+      out.set(typeName, keyFields);
+    } else {
+      for (const k of keyFields) {
+        if (!existing.includes(k)) {
+          existing.push(k);
+        }
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * Subgraphs that only *reference* an entity via Connectors stubs need
+ * `@key(fields: "…", resolvable: false)` so Hive Federation plans `_entities`
+ * against the owning subgraph. Apollo Router resolves stubs natively; without
+ * the non-resolvable key Hive leaves stub fields (e.g. `supplier.name`) null.
+ *
+ * Skips types that already have `@key` (resolvable owners from `entity: true`).
+ * https://www.apollographql.com/docs/graphos/connectors/entities/across-subgraphs
+ */
+export function ensureNonResolvableKeysForEntityStubs(schema: GraphQLSchema): GraphQLSchema {
+  const stubTypes = new Map<string, string[]>();
+
+  const absorbConnectSelections = (directives: Record<string, any[]> | undefined) => {
+    for (const connect of directives?.connect || []) {
+      const fromSelection = parseEntityStubTypesFromSelection(connect?.selection);
+      for (const [typeName, keyFields] of fromSelection) {
+        const existing = stubTypes.get(typeName);
+        if (!existing) {
+          stubTypes.set(typeName, [...keyFields]);
+        } else {
+          for (const k of keyFields) {
+            if (!existing.includes(k)) {
+              existing.push(k);
+            }
+          }
+        }
+      }
+    }
+  };
+
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) && !isInterfaceType(type)) {
+      continue;
+    }
+    absorbConnectSelections(getDirectiveExtensions(type));
+    for (const field of Object.values(type.getFields())) {
+      absorbConnectSelections(getDirectiveExtensions(field));
+      const meshEntityRef = (field.extensions as { meshEntityRef?: Record<string, string> } | undefined)
+        ?.meshEntityRef;
+      if (meshEntityRef && Object.keys(meshEntityRef).length) {
+        const named = getNamedType(field.type);
+        if (isObjectType(named) || isInterfaceType(named)) {
+          const keys = Object.keys(meshEntityRef);
+          const existing = stubTypes.get(named.name);
+          if (!existing) {
+            stubTypes.set(named.name, keys);
+          } else {
+            for (const k of keys) {
+              if (!existing.includes(k)) {
+                existing.push(k);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (!stubTypes.size) {
+    return schema;
+  }
+
+  return mapSchema(schema, {
+    [MapperKind.OBJECT_TYPE]: type => {
+      const keyFields = stubTypes.get(type.name);
+      if (!keyFields?.length) {
+        return type;
+      }
+      const typeDirectives = getDirectiveExtensions(type) || {};
+      if (typeDirectives.key?.length) {
+        // Owning subgraph already has a resolvable `@key` from `entity: true`.
+        return type;
+      }
+      // Type-level `@connect` means this subgraph can resolve the entity (Hive hydrate /
+      // Router entity fill) — use a normal `@key`, not `resolvable: false`.
+      const hasTypeConnect = Boolean(typeDirectives.connect?.length);
+      typeDirectives.key = [
+        {
+          fields: keyFields.join(' '),
+          ...(hasTypeConnect ? {} : { resolvable: false }),
+        },
+      ];
+      const extensions: Record<string, unknown> = { ...(type.extensions || {}) };
+      extensions.directives = typeDirectives;
+      return new GraphQLObjectType({
+        ...type.toConfig(),
+        extensions,
+        astNode: undefined,
+      });
+    },
+  });
 }

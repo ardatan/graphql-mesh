@@ -13,7 +13,17 @@ export * from './loadGraphQLSchemaFromJSONSchemas.js';
 export * from './getComposerFromJSONSchema.js';
 export * from './getDereferencedJSONSchemaFromOperations.js';
 export * from './getGraphQLSchemaFromDereferencedJSONSchema.js';
-export * from './entityRefs.js';
+export {
+  clearMeshEntityRegistries,
+  getMeshEntityKeyFields,
+  getMeshEntityRef,
+  getMeshTypeConnect,
+  isMeshEntityType,
+  registerMeshEntityType,
+  setMeshEntityRef,
+  setMeshTypeConnect,
+  type MeshTypeConnectArgs,
+} from './entityRefs.js';
 export type * from './types.js';
 
 export function loadJSONSchemaSubgraph(name: string, options: JSONSchemaLoaderOptions) {

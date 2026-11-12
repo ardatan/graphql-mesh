@@ -4,5 +4,4 @@ export * from './lift-extra-schema-directives.js';
 export * from './apollo-router-connectors-supergraph.js';
 export * from './connect-entity.js';
 export * from './transforms.js';
-export * from './future-additions.js';
 export * from './suggestionList/index.js';

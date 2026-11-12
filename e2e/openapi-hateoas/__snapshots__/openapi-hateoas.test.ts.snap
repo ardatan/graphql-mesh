@@ -17,17 +17,9 @@ directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boole
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
-directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
-
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
-
-directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
-
-directive @additionalField on FIELD_DEFINITION
-
-directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
-
 scalar join__FieldSet
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
 scalar link__Import
 
@@ -69,10 +61,10 @@ type Link @join__type(graph: PRODUCTS) {
   href: String!
 }
 
-type Supplier @join__type(graph: PRODUCTS) @join__type(graph: SUPPLIERS, key: "id") {
+type Supplier @join__type(graph: PRODUCTS, key: "id") @join__type(graph: SUPPLIERS, key: "id") @join__directive(graphs: [PRODUCTS], name: "connect", args: {source: "Products", http: {GET: "/suppliers/{$this.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "id name address"}) {
   id: Int
-  name: String @join__field(graph: SUPPLIERS)
-  address: String @join__field(graph: SUPPLIERS)
+  name: String
+  address: String
 }
 
 type Clothing implements Product @join__type(graph: PRODUCTS) @join__implements(graph: PRODUCTS, interface: "Product") {
@@ -114,12 +106,14 @@ interface Product @join__type(graph: PRODUCTS) {
   name: String
   price: Float
   supplierId: Int
-  supplier: Supplier @resolveTo(sourceTypeName: "Query", sourceFieldName: "getSupplierById", sourceName: "Suppliers", sourceArgs: {id: "{root['supplierId']}"}, requiredSelectionSet: "{ supplierId }")
+  supplier: Supplier
 }
 
 scalar ObjMap
 
-scalar join__DirectiveArguments
+directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
 
-scalar ResolveToSourceArgs"
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments"
 `;

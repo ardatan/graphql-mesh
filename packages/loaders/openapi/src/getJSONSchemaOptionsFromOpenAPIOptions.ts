@@ -4,7 +4,6 @@ import { dereferenceObject, handleUntitledDefinitions, resolvePath } from 'json-
 import type { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
-import { futureAdditions } from '@graphql-mesh/fusion-composition';
 import {
   getInterpolatedHeadersFactory,
   getInterpolationKeys,
@@ -15,6 +14,7 @@ import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql
 import { asArray } from '@graphql-tools/utils';
 import {
   setMeshEntityRef,
+  setMeshTypeConnect,
   type HTTPMethod,
   type JSONSchemaHTTPJSONOperationConfig,
   type JSONSchemaOperationConfig,
@@ -1097,13 +1097,6 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                           }
                         }
                         if (objectSchema) {
-                          const properties: Record<string, JSONSchemaObject> = {};
-                          for (const paramName of paramsInTarget) {
-                            const propInTarget = objectSchema.properties[paramName];
-                            if (propInTarget) {
-                              properties[paramName] = propInTarget;
-                            }
-                          }
                           // Map entity key fields → parent JSON fields for Connectors
                           // selection `supplier: { id: supplierId }` (Federation entity ref).
                           // `{root['supplierId']}` / `{root.supplierId}` → `supplierId`.
@@ -1116,34 +1109,58 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                               fromBracket?.[1] || fromDot?.[1] || paramsInLink[0] || keyField;
                             meshEntityRef[keyField] = sanitizeNameForGraphQL(from);
                           }
+                          // Prefer Mesh operation path (`/suppliers/{args.id}`); fall back to
+                          // OpenAPI path (`/suppliers/{id}`) — normalize both to `$this.<key>`
+                          // without relying on methodObjFieldMap identity (Promise.all races).
+                          const linkOperationConfig =
+                            possibleMethodObjFieldMap.get(actualOperation);
+                          let typeConnectPath = String(
+                            (linkOperationConfig &&
+                              'path' in linkOperationConfig &&
+                              linkOperationConfig.path) ||
+                              actualPath,
+                          );
+                          for (const keyField of Object.keys(args)) {
+                            typeConnectPath = typeConnectPath
+                              .replaceAll(`{${keyField}}`, `{$this.${keyField}}`)
+                              .replaceAll(`{args.${keyField}}`, `{$this.${keyField}}`)
+                              .replaceAll(`{$args.${keyField}}`, `{$this.${keyField}}`);
+                          }
+                          const leafNames = Object.keys(objectSchema.properties || {}).filter(
+                            prop => {
+                              const p = objectSchema.properties?.[prop];
+                              return (
+                                p &&
+                                typeof p === 'object' &&
+                                !('$ref' in p) &&
+                                (p as JSONSchemaObject).type !== 'object' &&
+                                (p as JSONSchemaObject).type !== 'array'
+                              );
+                            },
+                          );
+                          // Full target type on this subgraph + entity stub in parent selection.
+                          // Type-level `@connect` lets Hive `hydrateEntityStubFieldResolvers`
+                          // fill `name` inside the Products subgraph (same-subgraph path).
                           schemaObj.properties[linkName] = {
                             ...objectSchema,
-                            properties,
                             meshEntityRef,
                           };
+                          if (objectSchema.title) {
+                            setMeshTypeConnect(objectSchema.title, {
+                              source: name,
+                              http: {
+                                GET: typeConnectPath,
+                                headers: [{ name: 'accept', value: 'application/json' }],
+                              },
+                              selection: leafNames.length ? leafNames.join(' ') : 'id',
+                            });
+                          }
                           // Survives JSON→GraphQL composers (extensions often drop custom keys).
-                          // Also bake `supplier: { __typename: $("Supplier") id: supplierId }`
-                          // into parent `@connect(selection:)` for Apollo entity references.
+                          // Bake `supplier: { __typename: $("Supplier") id: supplierId }` into
+                          // parent `@connect(selection:)`.
                           if (schemaObj.title && Object.keys(meshEntityRef).length) {
                             setMeshEntityRef(schemaObj.title, linkName, meshEntityRef);
                           }
-                          // Always emit Mesh `@resolveTo` for Hive cross-subgraph HATEOAS
-                          // resolution (entity stubs alone do not fill `name` on Hive today).
-                          // Entity-ref selection still covers Apollo Router entity planning.
-                          // Compose declares `@resolveTo` so the supergraph SDL stays valid.
-                          futureAdditions.push({
-                            targetTypeName: schemaObj.title,
-                            targetFieldName: linkName,
-                            sourceName: possibleName,
-                            sourceTypeName: 'Query',
-                            requiredSelectionSet: `{ ${paramsInLink.join(' ')} }`,
-                            get sourceFieldName() {
-                              const linkOperationConfig =
-                                possibleMethodObjFieldMap.get(actualOperation);
-                              return linkOperationConfig.field;
-                            },
-                            sourceArgs: args,
-                          });
                         }
                       }
                     }

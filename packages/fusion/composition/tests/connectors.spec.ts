@@ -460,4 +460,99 @@ describe('Federation Connectors composition', () => {
       'customer: { __typename: $("Customer") id: customerId }',
     );
   });
+
+  it('marks stub-only entity types with @key(resolvable: false)', () => {
+    const products = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "Products", http: { baseURL: "https://products.example.com" }) {
+        query: Query
+      }
+
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      type Query {
+        getProduct(id: ID!): Product
+          @connect(
+            source: "Products"
+            http: { GET: "/products/{$args.id}" }
+            selection: "id name supplier: { __typename: $(\\"Supplier\\") id: supplierId }"
+          )
+      }
+
+      type Product {
+        id: ID!
+        name: String
+        supplierId: ID
+        supplier: Supplier
+      }
+
+      type Supplier {
+        id: ID!
+      }
+    `);
+
+    const suppliers = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "Suppliers", http: { baseURL: "https://suppliers.example.com" }) {
+        query: Query
+      }
+
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: String!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      type Query {
+        getSupplier(id: ID!): Supplier
+          @connect(
+            source: "Suppliers"
+            http: { GET: "/suppliers/{$args.id}" }
+            selection: "id name"
+          )
+      }
+
+      type Supplier {
+        id: ID!
+        name: String
+      }
+    `);
+
+    const result = composeSubgraphs([
+      { name: 'Products', schema: products, transforms: [s => s] },
+      { name: 'Suppliers', schema: suppliers, transforms: [s => s] },
+    ]);
+    expect(result.errors ?? []).toEqual([]);
+    expect(result.supergraphSdl).toMatch(
+      /type Supplier[\s\S]*@join__type\(graph: PRODUCTS,\s*key: "id",\s*resolvable: false\)/,
+    );
+    expect(result.supergraphSdl).toMatch(/@join__type\(graph: SUPPLIERS,\s*key: "id"\)/);
+    expect(result.supergraphSdl).not.toMatch(/@resolveTo/);
+  });
 });

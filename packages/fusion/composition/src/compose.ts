@@ -27,7 +27,11 @@ import {
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import { toApolloRouterConnectorsSupergraph } from './apollo-router-connectors-supergraph.js';
-import { hasEquivalentTypeConnect, toTypeLevelEntityConnect } from './connect-entity.js';
+import {
+  ensureNonResolvableKeysForEntityStubs,
+  hasEquivalentTypeConnect,
+  toTypeLevelEntityConnect,
+} from './connect-entity.js';
 import {
   convertSubgraphToFederationv2,
   detectAndAddMeshDirectives,
@@ -442,6 +446,12 @@ export function getAnnotatedSubgraphs(
           }
         },
       });
+    }
+    // Cross-subgraph Connectors stubs → `@key(..., resolvable: false)` so Hive
+    // plans `_entities` (Router already resolves stubs from selection). Runs for
+    // OpenAPI subgraphs with no transforms as well as transform pipelines.
+    if (isConnectorsSubgraph && !options.ignoreSemanticConventions) {
+      transformedSubgraph = ensureNonResolvableKeysForEntityStubs(transformedSubgraph);
     }
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph);
     transformedSubgraph = detectAndAddMeshDirectives(transformedSubgraph);
