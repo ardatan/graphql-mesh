@@ -561,6 +561,38 @@ function oneOfBranchInputFieldName(branch: { title?: string } | undefined): stri
 }
 
 /**
+ * Property → `$args` path pairs for object / `@oneOf` / `anyOf` args.
+ * URL keys keep the original OpenAPI property name; value paths use the
+ * GraphQL-sanitized field name (and oneOf branch wrapper when present).
+ */
+function collectPropertyPaths(
+  argName: string,
+  argSchema:
+    | { properties?: Record<string, unknown>; anyOf?: any[]; oneOf?: any[] }
+    | undefined,
+): Array<{ prop: string; path: string }> {
+  if (argSchema?.properties && typeof argSchema.properties === 'object') {
+    return Object.keys(argSchema.properties).map(prop => ({
+      prop,
+      path: `$args.${argName}.${sanitizeNameForGraphQL(prop)}`,
+    }));
+  }
+  const paths: Array<{ prop: string; path: string }> = [];
+  for (const branch of [...(argSchema?.oneOf || []), ...(argSchema?.anyOf || [])]) {
+    const branchField = oneOfBranchInputFieldName(branch);
+    const props = branch?.properties as Record<string, unknown> | undefined;
+    if (!branchField || !props || typeof props !== 'object') continue;
+    for (const prop of Object.keys(props)) {
+      paths.push({
+        prop,
+        path: `$args.${argName}.${branchField}.${sanitizeNameForGraphQL(prop)}`,
+      });
+    }
+  }
+  return paths;
+}
+
+/**
  * form+explode on a `@oneOf` / `anyOf` object: emit every branch property as a
  * sibling query key via `$args.arg.Branch_Input.prop`. Null paths are omitted at
  * runtime, so only the selected GraphQL oneOf variant contributes.
@@ -569,18 +601,13 @@ function buildFormExplodeOneOfLines(
   argName: string,
   argSchema: { oneOf?: any[]; anyOf?: any[]; properties?: Record<string, unknown> } | undefined,
 ): string[] | undefined {
-  const branches = [...(argSchema?.oneOf || []), ...(argSchema?.anyOf || [])];
-  if (!branches.length) return undefined;
-  const lines: string[] = [];
-  for (const branch of branches) {
-    const branchField = oneOfBranchInputFieldName(branch);
-    const props = branch?.properties as Record<string, unknown> | undefined;
-    if (!branchField || !props || typeof props !== 'object') continue;
-    for (const prop of Object.keys(props)) {
-      lines.push(`  ${formatQueryParamKey(prop)}: $args.${argName}.${branchField}.${prop}`);
-    }
-  }
-  return lines.length ? lines : undefined;
+  // Direct `properties` are handled by the caller; only emit branch wrappers here.
+  const branchPaths = collectPropertyPaths(argName, {
+    oneOf: argSchema?.oneOf,
+    anyOf: argSchema?.anyOf,
+  });
+  if (!branchPaths.length) return undefined;
+  return branchPaths.map(({ prop, path }) => `  ${formatQueryParamKey(prop)}: ${path}`);
 }
 
 /**
@@ -617,26 +644,25 @@ export function buildQueryParamsSelection(
     const paramOpts = queryStringOptionsByParam?.[queryParam];
     const argSchema = argTypeMap?.[argName] || argTypeMap?.[queryParam];
     const argType = argSchema?.type;
-    // deepObject / allowDots may read anyOf property lists (Stripe `created`).
-    const propNames = collectObjectPropertyNames(argSchema);
+    const propPaths = collectPropertyPaths(argName, argSchema);
     const directPropNames = collectObjectPropertyNames(argSchema, {
       includeUnionBranches: false,
     });
 
-    // Loader-level allowDots → dotted keys on the URL (Typesense-style).
-    if (queryStringOptions?.allowDots && propNames.length) {
-      for (const prop of propNames) {
-        const dottedKey = `${queryParam}.${prop}`;
-        lines.push(`  ${formatQueryParamKey(dottedKey)}: $args.${argName}.${prop}`);
+    // Param-level deepObject wins over loader-level allowDots (OpenAPI style).
+    if (paramOpts?.deepObject && propPaths.length) {
+      for (const { prop, path } of propPaths) {
+        const deepKey = `${queryParam}[${prop}]`;
+        lines.push(`  ${formatQueryParamKey(deepKey)}: ${path}`);
       }
       continue;
     }
 
-    // OpenAPI deepObject with known properties → Apollo-friendly expanded keys.
-    if (paramOpts?.deepObject && propNames.length) {
-      for (const prop of propNames) {
-        const deepKey = `${queryParam}[${prop}]`;
-        lines.push(`  ${formatQueryParamKey(deepKey)}: $args.${argName}.${prop}`);
+    // Loader-level allowDots → dotted keys on the URL (Typesense-style).
+    if (queryStringOptions?.allowDots && propPaths.length) {
+      for (const { prop, path } of propPaths) {
+        const dottedKey = `${queryParam}.${prop}`;
+        lines.push(`  ${formatQueryParamKey(dottedKey)}: ${path}`);
       }
       continue;
     }
@@ -645,7 +671,9 @@ export function buildQueryParamsSelection(
     if (paramOpts?.destructObject && !paramOpts?.deepObject) {
       if (directPropNames.length) {
         for (const prop of directPropNames) {
-          lines.push(`  ${formatQueryParamKey(prop)}: $args.${argName}.${prop}`);
+          lines.push(
+            `  ${formatQueryParamKey(prop)}: $args.${argName}.${sanitizeNameForGraphQL(prop)}`,
+          );
         }
         continue;
       }

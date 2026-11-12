@@ -98,4 +98,66 @@ describe('buildQueryParamsSelection', () => {
     );
     expect(selection).toContain('ids: $args.ids->joinNotNull(",")');
   });
+
+  it('sanitizes GraphQL field names in $args while keeping URL keys', () => {
+    const selection = buildQueryParamsSelection(
+      { filter: 'filter' },
+      { filter: { deepObject: true, destructObject: true } },
+      {
+        filter: {
+          type: 'object',
+          properties: {
+            'min-price': { type: 'integer' },
+          },
+        },
+      },
+    );
+    expect(selection).toContain('"filter[min-price]": $args.filter.min_price');
+  });
+
+  it('gives deepObject precedence over allowDots', () => {
+    const selection = buildQueryParamsSelection(
+      { created: 'created' },
+      { created: { deepObject: true, destructObject: true } },
+      {
+        created: {
+          type: 'object',
+          properties: {
+            gt: { type: 'integer' },
+          },
+        },
+      },
+      { allowDots: true },
+    );
+    expect(selection).toContain('"created[gt]": $args.created.gt');
+    expect(selection).not.toContain('"created.gt"');
+  });
+
+  it('emits branch-aware deepObject paths for oneOf args', () => {
+    const selection = buildQueryParamsSelection(
+      { intent: 'intent' },
+      { intent: { deepObject: true, destructObject: true } },
+      {
+        intent: {
+          type: 'object',
+          oneOf: [
+            {
+              title: 'User Intent',
+              properties: {
+                idtype: { type: 'string' },
+              },
+            },
+            {
+              title: 'Wallet Intent',
+              properties: {
+                wallet_id: { type: 'string' },
+              },
+            },
+          ],
+        },
+      },
+    );
+    expect(selection).toContain('"intent[idtype]": $args.intent.User_Intent_Input.idtype');
+    expect(selection).toContain('"intent[wallet_id]": $args.intent.Wallet_Intent_Input.wallet_id');
+  });
 });
