@@ -240,8 +240,7 @@ export function parseEntityStubTypesFromSelection(
 function parseStubKeyFields(body: string): string[] {
   const keyFields: string[] = [];
   let i = 0;
-  const isIdentStart = (c: string) =>
-    (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c === '_';
+  const isIdentStart = (c: string) => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c === '_';
   const isIdent = (c: string) => isIdentStart(c) || (c >= '0' && c <= '9');
   while (i < body.length) {
     while (i < body.length && body.charCodeAt(i) <= 32) {
@@ -316,8 +315,9 @@ export function ensureNonResolvableKeysForEntityStubs(schema: GraphQLSchema): Gr
     absorbConnectSelections(getDirectiveExtensions(type));
     for (const field of Object.values(type.getFields())) {
       absorbConnectSelections(getDirectiveExtensions(field));
-      const meshEntityRef = (field.extensions as { meshEntityRef?: Record<string, string> } | undefined)
-        ?.meshEntityRef;
+      const meshEntityRef = (
+        field.extensions as { meshEntityRef?: Record<string, string> } | undefined
+      )?.meshEntityRef;
       if (meshEntityRef && Object.keys(meshEntityRef).length) {
         const named = getNamedType(field.type);
         if (isObjectType(named) || isInterfaceType(named)) {
