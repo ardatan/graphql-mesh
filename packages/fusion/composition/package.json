@@ -64,7 +64,7 @@
   },
   "devDependencies": {
     "@graphql-hive/gateway-runtime": "^2.13.4",
-    "@graphql-mesh/fusion-runtime": "patch:@graphql-mesh/fusion-runtime@npm%3A1.13.3#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.3-efe60c8c1c.patch",
+    "@graphql-mesh/fusion-runtime": "patch:@graphql-mesh/fusion-runtime@npm%3A1.13.4#~/.yarn/patches/@graphql-mesh-fusion-runtime-npm-1.13.4-b65967c225.patch",
     "@graphql-tools/delegate": "^12.3.3",
     "@graphql-tools/executor": "4.1.7",
     "@repeaterjs/repeater": "3.1.0",
