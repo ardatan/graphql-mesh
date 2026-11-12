@@ -7,6 +7,7 @@ import {
   inferEntityRefFromParentFkNames,
   isFederationConnectorsSubgraph,
   liftExtraSchemaDefinitionDirectives,
+  parseEntityStubTypesFromSelection,
   toApolloRouterConnectorsSupergraph,
 } from '../src/index.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
@@ -459,6 +460,10 @@ describe('Federation Connectors composition', () => {
     expect(formatEntityStubSelection('customer', 'Customer', { id: 'customerId' })).toBe(
       'customer: { __typename: $("Customer") id: customerId }',
     );
+    const stubs = parseEntityStubTypesFromSelection(
+      'id name supplier: { __typename: $("Supplier") id: supplierId } price',
+    );
+    expect(Object.fromEntries(stubs)).toEqual({ Supplier: ['id'] });
   });
 
   it('marks stub-only entity types with @key(resolvable: false)', () => {

@@ -26,12 +26,8 @@ import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/ut
 
 const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 
-/**
- * Connectors entity-stub fragments in `@connect(selection:)`:
- * `supplier: { __typename: $("Supplier") id: supplierId }`
- */
-const ENTITY_STUB_IN_SELECTION_RE =
-  /\w+\s*:\s*\{\s*__typename\s*:\s*\$\(\s*"([^"]+)"\s*\)\s+([^}]*)\}/g;
+/** Marker for Connectors entity-stub `__typename: $("…")` fragments (linear scan). */
+const ENTITY_STUB_TYPENAME_MARKER = '__typename: $("';
 
 /** Replace `$args.<keyArg>` with `$this.<keyField>` in Connectors path/body/header exprs. */
 export function rewriteArgsToThis(value: string, keyArg: string, keyField: string): string {
@@ -194,6 +190,7 @@ export function formatEntityStubSelection(
 
 /**
  * Parse entity type → key fields from Connectors stub fragments in a selection.
+ * Linear `indexOf` scan (no nested/ambiguous regex — avoids ReDoS on large selections).
  */
 export function parseEntityStubTypesFromSelection(
   selection: string | undefined | null,
@@ -202,18 +199,26 @@ export function parseEntityStubTypesFromSelection(
   if (!selection) {
     return out;
   }
-  ENTITY_STUB_IN_SELECTION_RE.lastIndex = 0;
-  let match: RegExpExecArray | null;
-  while ((match = ENTITY_STUB_IN_SELECTION_RE.exec(selection))) {
-    const typeName = match[1];
-    // Stub body is `id: supplierId` / `id sku: sku` — left-hand names are entity keys.
-    const keyFields: string[] = [];
-    const body = match[2];
-    const pairRe = /(\w+)\s*:/g;
-    let pair: RegExpExecArray | null;
-    while ((pair = pairRe.exec(body))) {
-      keyFields.push(pair[1]);
+  let from = 0;
+  while (from < selection.length) {
+    const typIdx = selection.indexOf(ENTITY_STUB_TYPENAME_MARKER, from);
+    if (typIdx < 0) {
+      break;
     }
+    const nameStart = typIdx + ENTITY_STUB_TYPENAME_MARKER.length;
+    const nameEnd = selection.indexOf('")', nameStart);
+    if (nameEnd < 0) {
+      break;
+    }
+    const typeName = selection.slice(nameStart, nameEnd);
+    const afterTypename = nameEnd + 2;
+    const closeIdx = selection.indexOf('}', afterTypename);
+    if (closeIdx < 0) {
+      break;
+    }
+    // Stub body after `__typename: $("Type")` — `id: supplierId` pairs.
+    const keyFields = parseStubKeyFields(selection.slice(afterTypename, closeIdx));
+    from = closeIdx + 1;
     if (!typeName || !keyFields.length) {
       continue;
     }
@@ -229,6 +234,49 @@ export function parseEntityStubTypesFromSelection(
     }
   }
   return out;
+}
+
+/** Extract left-hand names from `id: supplierId sku: sku` stub bodies (O(n)). */
+function parseStubKeyFields(body: string): string[] {
+  const keyFields: string[] = [];
+  let i = 0;
+  const isIdentStart = (c: string) =>
+    (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c === '_';
+  const isIdent = (c: string) => isIdentStart(c) || (c >= '0' && c <= '9');
+  while (i < body.length) {
+    while (i < body.length && body.charCodeAt(i) <= 32) {
+      i++;
+    }
+    if (i >= body.length) {
+      break;
+    }
+    if (!isIdentStart(body[i])) {
+      i++;
+      continue;
+    }
+    const start = i;
+    i++;
+    while (i < body.length && isIdent(body[i])) {
+      i++;
+    }
+    const name = body.slice(start, i);
+    while (i < body.length && body.charCodeAt(i) <= 32) {
+      i++;
+    }
+    if (body[i] !== ':') {
+      continue;
+    }
+    keyFields.push(name);
+    i++; // skip ':'
+    while (i < body.length && body.charCodeAt(i) <= 32) {
+      i++;
+    }
+    // Skip value token (identifier / path); stop before next `name:`.
+    while (i < body.length && body.charCodeAt(i) > 32 && body[i] !== ':') {
+      i++;
+    }
+  }
+  return keyFields;
 }
 
 /**
