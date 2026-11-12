@@ -14,7 +14,7 @@ directive @relationship(direction: _RelationDirections, properties: String, type
 
 directive @relationshipProperties on OBJECT
 
-directive @transport(kind: String, location: String, options: TransportOptions, subgraph: String) on SCHEMA
+directive @transport(headers: [[String]], kind: String!, location: String, options: TransportOptions, subgraph: String!) repeatable on SCHEMA
 
 """
 The edge properties for the following fields:

@@ -6,7 +6,7 @@ exports[`MySQL Employees should generate correct schema: schema 1`] = `
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -481,7 +481,9 @@ input v_full_employees_UpdateInput {
   gender: v_full_employees_gender
   hire_date: Date
   department: String
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`MySQL Employees should give correct response for example queries: example-query.graphql-query-result 1`] = `
