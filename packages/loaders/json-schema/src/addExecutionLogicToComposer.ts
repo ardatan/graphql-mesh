@@ -35,9 +35,6 @@ import {
   flushConnectSelectionPassthroughWarnings,
   inferBodySelection,
   LinkDirective,
-  MESH_SPEC_LINK_URL,
-  MeshRestOptionsDirective,
-  remainingQueryStringOptionsByParam,
   resolveConnectSelectionLimit,
   rewriteConnectPathEnumArgs,
   SourceDirective,
@@ -192,7 +189,6 @@ export function addExecutionDirectivesToComposer(
     typeTC: ObjectTypeComposer | InterfaceTypeComposer;
   };
   const pendingLinks: PendingLinks[] = [];
-  let meshRestOptionsFieldUsed = false;
 
   // Pass 0: register GET-by-key return types as entity-resolvable so later
   // selections can emit `field: { id: fieldId }` stubs instead of huge trees.
@@ -531,7 +527,7 @@ ${operationConfig.description || ''}
             >
           | undefined,
         argTypeMap: operationConfig.argTypeMap as Record<string, { type?: string }> | undefined,
-        // Prefer baking QS into queryParams; only unbaked form+explode remains below.
+        // QS styles bake into queryParams (incl. form+explode `@oneOf` branches).
         queryStringOptions: operationConfig.queryStringOptions ?? queryStringOptions,
         bodySelection: inferBodySelection(operationConfig),
       });
@@ -546,34 +542,6 @@ ${operationConfig.description || ''}
           }),
         ),
       });
-      // Rare leftover: form+explode on `@oneOf` / open objects cannot be written
-      // onto queryParams keys; keep `@meshRestOptions` for runtime destructObject.
-      const leftoverByParam = remainingQueryStringOptionsByParam(
-        operationConfig.queryStringOptionsByParam as
-          | Record<string, { arrayFormat?: string; destructObject?: boolean; deepObject?: boolean }>
-          | undefined,
-        operationConfig.queryParamArgMap,
-        operationConfig.argTypeMap as
-          | Record<
-              string,
-              { type?: string; properties?: Record<string, unknown>; anyOf?: any[]; oneOf?: any[] }
-            >
-          | undefined,
-      );
-      if (leftoverByParam) {
-        meshRestOptionsFieldUsed = true;
-        schemaComposer.addDirective(MeshRestOptionsDirective);
-        const meshRestArgs = { queryStringOptionsByParam: leftoverByParam };
-        field.directives.push({
-          name: 'meshRestOptions',
-          args: structuredClone(meshRestArgs),
-        });
-        field.extensions = field.extensions || {};
-        (field.extensions as any).meshRestOptions = {
-          ...((field.extensions as any).meshRestOptions || {}),
-          ...meshRestArgs,
-        };
-      }
 
       if ('links' in operationConfig && operationConfig.links) {
         const typeTC = schemaComposer.getAnyTC(field.type.getTypeName());
@@ -715,9 +683,6 @@ ${operationConfig.description || ''}
   schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
-  if (meshRestOptionsFieldUsed) {
-    schemaComposer.addDirective(MeshRestOptionsDirective);
-  }
   let schema = schemaComposer.buildSchema();
   const schemaExtensions: any = (schema.extensions = schema.extensions || {});
   schemaExtensions.directives = schemaExtensions.directives || {};
@@ -733,26 +698,17 @@ ${operationConfig.description || ''}
       queryParams,
     }),
   ];
-  const linkDirectives: Array<{ url: string; import: string[] }> = [
+  schemaExtensions.directives.link = [
+    ...(schemaExtensions.directives.link || []),
     {
       url: CONNECT_LINK_URL,
       import: ['@connect', '@source'],
     },
   ];
-  if (meshRestOptionsFieldUsed) {
-    linkDirectives.push({
-      url: MESH_SPEC_LINK_URL,
-      import: ['@meshRestOptions'],
-    });
-  }
-  schemaExtensions.directives.link = [
-    ...(schemaExtensions.directives.link || []),
-    ...linkDirectives,
-  ];
   // Keep handlerName available for debugging without Mesh @transport
   schemaExtensions.meshHandlerName = handlerName;
-  // Schema-level qs defaults for form-urlencoded bodies / any unbaked nested objects.
-  // Query-string shapes are preferred baked into `@connect(http.queryParams:)`.
+  // Schema-level qs defaults for form-urlencoded bodies (query shapes bake into queryParams).
+  // Stored on extensions only — no field `@meshRestOptions` SDL.
   if (queryStringOptions) {
     schemaExtensions.meshRestOptions = {
       ...(schemaExtensions.meshRestOptions || {}),

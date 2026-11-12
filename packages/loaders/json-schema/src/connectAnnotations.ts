@@ -215,9 +215,8 @@ export const LinkDirective = new GraphQLDirective({
 });
 
 /**
- * Legacy Mesh-only field directive. Connectors bake QS into `http.queryParams`
- * (and form-urlencoded bodies via qs defaults); new schemas no longer emit this.
- * Kept for hydrating older SDLs that still carry `@meshRestOptions`.
+ * Legacy only — new schemas never emit `@meshRestOptions` (QS bakes into
+ * `http.queryParams`). Kept so older SDLs can still declare/hydrate the directive.
  */
 export const MeshRestOptionsDirective = new GraphQLDirective({
   name: 'meshRestOptions',
@@ -228,7 +227,7 @@ export const MeshRestOptionsDirective = new GraphQLDirective({
   },
 });
 
-/** @deprecated Mesh spec link was only needed for `@meshRestOptions`. */
+/** @deprecated Only needed when hydrating legacy `@meshRestOptions` SDL. */
 export const MESH_SPEC_LINK_URL = 'https://the-guild.dev/graphql/mesh/spec/v1.0';
 
 export const CONNECT_LINK_URL = 'https://specs.apollo.dev/connect/v0.4';
@@ -570,49 +569,35 @@ function formatQueryParamKey(queryParam: string): string {
 }
 
 /**
- * QS options that cannot be fully baked into `http.queryParams` and still need
- * runtime / `@meshRestOptions` — today: form+explode on `@oneOf` / open objects
- * (no direct `properties` to expand as sibling keys).
+ * GraphQL `@oneOf` input field name for a JSON Schema branch — matches
+ * `getValidTypeName({ isInput: true })` (`sanitize(title + '_Input')`).
  */
-export function remainingQueryStringOptionsByParam(
-  queryStringOptionsByParam?: Record<
-    string,
-    { arrayFormat?: string; destructObject?: boolean; deepObject?: boolean }
-  >,
-  queryParamArgMap?: Record<string, string>,
-  argTypeMap?: Record<
-    string,
-    { type?: string; properties?: Record<string, unknown>; anyOf?: any[]; oneOf?: any[] }
-  >,
-):
-  | Record<string, { arrayFormat?: string; destructObject?: boolean; deepObject?: boolean }>
-  | undefined {
-  if (!queryStringOptionsByParam) {
-    return undefined;
-  }
-  const remaining: Record<
-    string,
-    { arrayFormat?: string; destructObject?: boolean; deepObject?: boolean }
-  > = {};
-  for (const [queryParam, paramOpts] of Object.entries(queryStringOptionsByParam)) {
-    // comma / deepObject / repeat are baked or match qs defaults.
-    if (!(paramOpts?.destructObject && !paramOpts?.deepObject)) {
-      continue;
-    }
-    const argName = queryParamArgMap?.[queryParam] || queryParam;
-    const argSchema = argTypeMap?.[argName] || argTypeMap?.[queryParam];
-    // OpenAPI sets destructObject on explode arrays too; runtime only flattens objects.
-    if (argSchema?.type && argSchema.type !== 'object') {
-      continue;
-    }
-    const directPropNames = collectObjectPropertyNames(argSchema, {
-      includeUnionBranches: false,
-    });
-    if (!directPropNames.length) {
-      remaining[queryParam] = paramOpts;
+function oneOfBranchInputFieldName(branch: { title?: string } | undefined): string | undefined {
+  if (!branch?.title) return undefined;
+  return sanitizeNameForGraphQL(String(branch.title) + '_Input');
+}
+
+/**
+ * form+explode on a `@oneOf` / `anyOf` object: emit every branch property as a
+ * sibling query key via `$args.arg.Branch_Input.prop`. Null paths are omitted at
+ * runtime, so only the selected GraphQL oneOf variant contributes.
+ */
+function buildFormExplodeOneOfLines(
+  argName: string,
+  argSchema: { oneOf?: any[]; anyOf?: any[]; properties?: Record<string, unknown> } | undefined,
+): string[] | undefined {
+  const branches = [...(argSchema?.oneOf || []), ...(argSchema?.anyOf || [])];
+  if (!branches.length) return undefined;
+  const lines: string[] = [];
+  for (const branch of branches) {
+    const branchField = oneOfBranchInputFieldName(branch);
+    const props = branch?.properties as Record<string, unknown> | undefined;
+    if (!branchField || !props || typeof props !== 'object') continue;
+    for (const prop of Object.keys(props)) {
+      lines.push(`  ${formatQueryParamKey(prop)}: $args.${argName}.${branchField}.${prop}`);
     }
   }
-  return Object.keys(remaining).length ? remaining : undefined;
+  return lines.length ? lines : undefined;
 }
 
 /**
@@ -621,6 +606,7 @@ export function remainingQueryStringOptionsByParam(
  * Bake OpenAPI/qs options into the mapping so `@meshRestOptions` is unnecessary:
  * - deepObject + known props → `filter[name]: $args.filter.name`
  * - form explode (destructObject, not deepObject) + known props → top-level keys
+ * - form explode + `@oneOf` → `$args.arg.Branch_Input.prop` siblings (nulls omitted)
  * - allowDots + known props → `"param.prop": $args.param.prop`
  * - arrayFormat:comma → `->joinNotNull(",")`
  *
@@ -650,9 +636,6 @@ export function buildQueryParamsSelection(
     const argType = argSchema?.type;
     // deepObject / allowDots may read anyOf property lists (Stripe `created`).
     const propNames = collectObjectPropertyNames(argSchema);
-    // form+explode must NOT read oneOf branches — GraphQL `@oneOf` wraps the
-    // chosen variant (`$args.intent.User_Intent_Input`), so baking `idtype:
-    // $args.intent.idtype` would be wrong; leave runtime destructObject.
     const directPropNames = collectObjectPropertyNames(argSchema, {
       includeUnionBranches: false,
     });
@@ -676,11 +659,18 @@ export function buildQueryParamsSelection(
     }
 
     // OpenAPI form+explode on objects → sibling query keys (not `param[prop]`).
-    if (paramOpts?.destructObject && !paramOpts?.deepObject && directPropNames.length) {
-      for (const prop of directPropNames) {
-        lines.push(`  ${formatQueryParamKey(prop)}: $args.${argName}.${prop}`);
+    if (paramOpts?.destructObject && !paramOpts?.deepObject) {
+      if (directPropNames.length) {
+        for (const prop of directPropNames) {
+          lines.push(`  ${formatQueryParamKey(prop)}: $args.${argName}.${prop}`);
+        }
+        continue;
       }
-      continue;
+      const oneOfLines = buildFormExplodeOneOfLines(argName, argSchema);
+      if (oneOfLines) {
+        lines.push(...oneOfLines);
+        continue;
+      }
     }
 
     const key = formatQueryParamKey(queryParam);

@@ -38,7 +38,7 @@ describe('buildQueryParamsSelection', () => {
     expect(selection).not.toContain('parameters:');
   });
 
-  it('does not bake form explode oneOf props onto $args.intent.idtype', () => {
+  it('bakes form explode oneOf props via $args.intent.Branch_Input.prop', () => {
     const selection = buildQueryParamsSelection(
       { intent: 'intent' },
       { intent: { destructObject: true, arrayFormat: 'repeat' } },
@@ -47,18 +47,28 @@ describe('buildQueryParamsSelection', () => {
           type: 'object',
           oneOf: [
             {
+              title: 'User Intent',
               properties: {
                 idtype: { type: 'string' },
                 user_id: { type: 'string' },
+              },
+            },
+            {
+              title: 'Wallet Intent',
+              properties: {
+                idtype: { type: 'string' },
+                wallet_id: { type: 'string' },
               },
             },
           ],
         },
       },
     );
-    // GraphQL @oneOf wraps the variant; leave `intent: $args.intent` for runtime.
-    expect(selection).toContain('intent: $args.intent');
-    expect(selection).not.toContain('idtype:');
+    expect(selection).toContain('idtype: $args.intent.User_Intent_Input.idtype');
+    expect(selection).toContain('user_id: $args.intent.User_Intent_Input.user_id');
+    expect(selection).toContain('idtype: $args.intent.Wallet_Intent_Input.idtype');
+    expect(selection).toContain('wallet_id: $args.intent.Wallet_Intent_Input.wallet_id');
+    expect(selection).not.toContain('intent: $args.intent');
   });
 
   it('expands allowDots object params to dotted keys', () => {
