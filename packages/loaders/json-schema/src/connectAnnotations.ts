@@ -1371,7 +1371,55 @@ export function bakeEnumRootSelection(selection: string, returnType: GraphQLOutp
 }
 
 /**
+ * Object-body entries for remapped `$args.input` fields (used when
+ * `requestBaseBody` was baked as `{ …base, ...$args.input }`).
+ * Example: `"product-name": $args.input.product_name`.
+ */
+function buildRemappedInputObjectEntries(
+  inputType: GraphQLInputType,
+  inputPath = '$args.input',
+  depth = 0,
+): string[] | undefined {
+  if (depth > 4) return undefined;
+  let t: GraphQLInputType = inputType;
+  while (isNonNullType(t) || isListType(t)) {
+    t = t.ofType as GraphQLInputType;
+  }
+  if (!isInputObjectType(t)) return undefined;
+  const lines: string[] = [];
+  let hasRemap = false;
+  for (const field of Object.values(t.getFields())) {
+    const dirs = getDirectiveExtensions(field);
+    const rrf = dirs?.resolveRootField?.[0]?.field;
+    const jsonName =
+      typeof rrf === 'string'
+        ? rrf
+        : (field.extensions as any)?.directives?.resolveRootField?.[0]?.field;
+    const nested = buildInputBodySelection(field.type, depth + 1);
+    const valuePath = `${inputPath}.${field.name}`;
+    if (jsonName && jsonName !== field.name) {
+      hasRemap = true;
+      const lhs = /^[A-Za-z_][\w]*$/.test(jsonName) ? jsonName : JSON.stringify(jsonName);
+      if (nested) {
+        lines.push(`${lhs}: ${valuePath} { ${nested} }`);
+      } else {
+        lines.push(`${lhs}: ${valuePath}`);
+      }
+    } else if (nested) {
+      hasRemap = true;
+      lines.push(`${field.name}: ${valuePath} { ${nested} }`);
+    } else {
+      lines.push(`${field.name}: ${valuePath}`);
+    }
+  }
+  if (!hasRemap) return undefined;
+  return lines;
+}
+
+/**
  * Rewrite `$args.input` body to include baked `@resolveRootField` key remaps.
+ * Also expands `...$args.input` inside requestBaseBody object selections so
+ * remapped JSON names are not lost when a base body is present.
  */
 export function bakeInputBodySelection(
   body: string | undefined,
@@ -1379,16 +1427,24 @@ export function bakeInputBodySelection(
 ): string | undefined {
   if (!body || !args) return body;
   const trimmed = body.trim();
-  if (trimmed !== '$args.input' && !trimmed.startsWith('$args.input {')) {
-    return body;
-  }
-  // Already has an explicit subselection — leave it.
-  if (trimmed.includes('{')) return body;
   const argList = Array.isArray(args)
     ? args
     : Object.entries(args).map(([name, arg]) => ({ ...arg, name }));
   const inputArg = argList.find(a => a.name === 'input');
   if (!inputArg) return body;
+
+  // `{ base… ...$args.input }` from inferBodySelection — expand remapped input fields.
+  if (trimmed.includes('...$args.input')) {
+    const entries = buildRemappedInputObjectEntries(inputArg.type);
+    if (!entries?.length) return body;
+    return trimmed.replace(/\.\.\.\$args\.input\b/, entries.join('\n  '));
+  }
+
+  if (trimmed !== '$args.input' && !trimmed.startsWith('$args.input {')) {
+    return body;
+  }
+  // Already has an explicit subselection — leave it.
+  if (trimmed.includes('{')) return body;
   const sub = buildInputBodySelection(inputArg.type);
   if (!sub) return body;
   return `$args.input { ${sub} }`;

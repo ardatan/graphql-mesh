@@ -566,7 +566,7 @@ ${operationConfig.description || ''}
         const meshRestArgs = { queryStringOptionsByParam: leftoverByParam };
         field.directives.push({
           name: 'meshRestOptions',
-          args: JSON.parse(JSON.stringify(meshRestArgs)),
+          args: structuredClone(meshRestArgs),
         });
         field.extensions = field.extensions || {};
         (field.extensions as any).meshRestOptions = {

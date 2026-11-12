@@ -1328,7 +1328,7 @@ function buildBody(
       return value;
     }
     return resolveDataByUnionInputType(
-      value && typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value,
+      value && typeof value === 'object' ? structuredClone(value) : value,
       argDef.type,
       opts.schema,
     );
@@ -1491,7 +1491,7 @@ export function addConnectFieldResolver(
       if (!argDef || value == null || typeof value !== 'object') {
         return value;
       }
-      return resolveDataByUnionInputType(JSON.parse(JSON.stringify(value)), argDef.type, schema);
+      return resolveDataByUnionInputType(structuredClone(value), argDef.type, schema);
     };
     fullPath = applyQueryParams(
       fullPath,
