@@ -42,7 +42,7 @@
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/delegate": "^12.3.2",
+    "@graphql-tools/delegate": "^12.3.3",
     "@whatwg-node/disposablestack": "^0.1.0",
     "pg": "^8.23.1",
     "postgraphile": "^4.13.0",
