@@ -213,8 +213,6 @@ export const LinkDirective = new GraphQLDirective({
   isRepeatable: true,
 });
 
-export const MESH_SPEC_LINK_URL = 'https://the-guild.dev/graphql/mesh/spec/v1.0';
-
 export const CONNECT_LINK_URL = 'https://specs.apollo.dev/connect/v0.4';
 
 /**
