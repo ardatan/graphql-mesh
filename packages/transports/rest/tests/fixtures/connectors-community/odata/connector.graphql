@@ -1,0 +1,163 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "TripPin"
+    http: {
+      # https://www.odata.org/getting-started/basic-tutorial/
+      baseURL: "https://services.odata.org/V4/"
+    }
+  )
+
+type Person {
+  id: ID!
+  firstName: String
+  lastName: String
+  gender: String
+  emails: [String]
+  address: Address
+  concurrency: Float
+  trips(limit: Int = 5, offset: Int = 0): [Trip]
+    @connect(
+      source: "TripPin"
+      http: {
+        GET: "(S(jl4zbkgydqfv3qjad3f3xmrb))/TripPinServiceRW/People('{$this.id}')/Trips"
+        queryParams: """
+        '$top': $args.limit
+        '$skip': $args.offset
+        """
+      }
+      selection: """
+      $.value {
+        id: TripId
+        name: Name
+        description: Description
+        budget: Budget
+        start: StartsAt
+        end: EndsAt
+        tags: Tags
+      }
+      """
+    )
+}
+
+type Address {
+  state: String
+  city: String
+  country: String
+  street: String
+}
+
+type Trip {
+  id: ID!
+  name: String
+  description: String
+  start: String
+  end: String
+  budget: Float
+  tags: [String]
+}
+
+type Query {
+  person(id: ID!): Person
+    @connect(
+      source: "TripPin"
+      http: { GET: "(S(unfmciiartlvloowd54bozof))/TripPinServiceRW/People('{$args.id}')" }
+      selection: """
+      # JSON Example Response 👇
+      # https://services.odata.org/V4/(S(upwrd1sjjfgvtldusskzpafr))/TripPinServiceRW/People('russellwhyte')
+      id: UserName
+      firstName: FirstName
+      lastName: LastName
+      gender: Gender
+      emails: Emails
+      address: AddressInfo->first {
+        street: Address
+        country: City.CountryRegion
+        city: City.Name
+        state: City.Region
+      }
+      concurrency: Concurrency
+      """
+      entity: true
+    )
+  people(limit: Int = 5, offset: Int = 0): [Person]
+    @connect(
+      source: "TripPin"
+      http: {
+        GET: "(S(unfmciiartlvloowd54bozof))/TripPinServiceRW/People"
+        queryParams: """
+        '$top': $args.limit
+        '$skip': $args.offset
+        """
+      }
+      selection: """
+      # JSON Example Response 👇
+      # https://services.odata.org/V4/(S(upwrd1sjjfgvtldusskzpafr))/TripPinServiceRW/People
+        $.value {
+          id: UserName
+          firstName: FirstName
+          lastName: LastName
+          gender: Gender
+          emails: Emails
+          address: AddressInfo->first {
+            street: Address
+            country: City.CountryRegion
+            city: City.Name
+            state: City.Region
+          }
+          concurrency: Concurrency
+        }
+      """
+    )
+}
+type Mutation {
+  createPerson(username: ID!, firstName: String, lastName: String): Person
+    @connect(
+      source: "TripPin"
+      http: {
+        POST: "(S(unfmciiartlvloowd54bozof))/TripPinServiceRW/People/"
+        body: """
+        Username: $args.username
+        FirstName: $args.firstName
+        LastName: $args.lastName
+        """
+      }
+      selection: """
+      $.value {
+        id: UserName
+        firstName: FirstName
+        lastName: LastName
+        emails: Emails
+      }
+      """
+    )
+  updatePerson(username: ID!, updates: PersonUpdates): PersonUpdatesResponse
+    @connect(
+      source: "TripPin"
+      http: {
+        PATCH: "(S(unfmciiartlvloowd54bozof))/TripPinServiceRW/People('{$args.username}')"
+        body: """
+        Username: $args.username
+        FirstName: $args.updates.firstName
+        LastName: $args.updates.lastName
+        """
+      }
+      selection: """
+      $.value {
+        success: $(true)
+        message: $("User deleted")
+      }
+      """
+    )
+}
+
+type PersonUpdatesResponse {
+  success: Boolean
+  message: String
+}
+
+input PersonUpdates {
+  firstName: String
+  lastName: String
+}

@@ -1,0 +1,123 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(name: "pokeapi", http: { baseURL: "https://pokeapi.co/api/v2/" })
+
+type LocationsConnection {
+  total: Int
+  results: [Location]
+}
+type Location @key(fields: "name") {
+  name: String
+  gameIndices: [GenerationGameIndex]
+}
+
+type GenerationGameIndex @shareable {
+  gameIndex: Int
+  generation: Generation
+}
+
+type Generation @key(fields: "name", resolvable: false) {
+  name: String
+}
+type LocationArea @key(fields: "name") {
+  name: String
+  pokemonEncounters: [PokemonEncounter]
+}
+
+type PokemonEncounter {
+  pokemon: Pokemon
+  versionDetails: [VersionDetail]
+}
+
+type Pokemon @key(fields: "name", resolvable: false) {
+  name: String
+}
+
+type VersionDetail {
+  version: Version
+  maxChance: Int
+  encounterDetails: [EncounterDetail]
+}
+
+type Version @key(fields: "name", resolvable: false) {
+  name: String
+}
+
+type EncounterDetail {
+  chance: Int
+  method: EncounterMethod
+}
+
+type EncounterMethod @key(fields: "name", resolvable: false) {
+  name: String
+}
+type Query {
+  location(name: String!): Location
+    @connect(
+      source: "pokeapi"
+      http: { GET: "location/{$args.name}" }
+      selection: """
+      name
+      gameIndices: game_indices {
+        gameIndex: game_index
+        generation {
+          name
+        }
+      }
+      # Circular references
+      # areas {
+      #   name
+      # }
+      # region {
+      #   name
+      # }
+      """
+      entity: true
+    )
+  locations(name: String!): LocationsConnection
+    @connect(
+      source: "pokeapi"
+      http: { GET: "location" }
+      selection: """
+      total: count
+      results {
+        name
+      }
+      """
+    )
+  locationArea(name: String!): LocationArea
+    @connect(
+      source: "pokeapi"
+      http: { GET: "location-area/{$args.name}" }
+      selection: """
+      name
+      pokemonEncounters: pokemon_encounters {
+        pokemon { name }
+        versionDetails: version_details {
+          version {
+            name
+          }
+          maxChance: max_chance
+          encounterDetails: encounter_details {
+            chance: chance
+            method {
+              name
+            }
+          }
+        }
+      }
+      # Circular references
+      # areas {
+      #   name
+      # }
+      # region {
+      #   name
+      # }
+      """
+      entity: true
+    )
+}

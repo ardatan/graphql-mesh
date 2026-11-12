@@ -1,0 +1,113 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable", "@external"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "stripe"
+    http: {
+      baseURL: "https://api.stripe.com/v1"
+      headers: [
+        { name: "Authorization", value: "Bearer {$config.apiKey}" }
+        { name: "Stripe-Version", value: "2024-06-20" }
+        { name: "Content-Type", value: "application/x-www-form-urlencoded" }
+      ]
+    }
+  )
+
+type Price @key(fields: "id", resolvable: false) @shareable {
+  id: ID!
+  active: Boolean
+  currency: String
+  unitAmount: Float
+}
+
+type Session @key(fields: "id") {
+  id: ID!
+  subtotal: Float
+  shipping: Float
+  total: Float
+  paymentUrl: String
+  items: [LineItem]
+    @connect(
+      source: "stripe"
+      http: { GET: "/checkout/sessions/{$this.id}/line_items" }
+      selection: """
+      # https://docs.stripe.com/api/checkout/sessions/line_items
+        $.data {
+          id
+          price {
+            id
+            active
+            currency
+            unitAmount: unit_amount
+          }
+          quantity
+        }
+      """
+    )
+}
+
+type Query {
+  session(id: ID!): Session
+    @connect(
+      source: "stripe"
+      http: { GET: "/checkout/sessions/{$args.id}" }
+      selection: """
+      # https://docs.stripe.com/api/checkout/sessions/retrieve
+        id
+        subtotal: amount_subtotal
+        shipping: shipping_cost
+        total: amount_total
+        paymentUrl: url
+      """
+      entity: true
+    )
+  sessions(limit: Int = 3): [Session]
+    @connect(
+      source: "stripe"
+      http: { GET: "/checkout/sessions?limit={$args.limit}" }
+      selection: """
+      # https://docs.stripe.com/api/checkout/sessions/list
+        $.data {
+        id
+          subtotal: amount_subtotal
+          shipping: shipping_cost
+          total: amount_total
+          paymentUrl: url
+        }
+      """
+    )
+}
+
+type Mutation {
+  createSession(items: [LineItemInput!]!): Session
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/checkout/sessions"
+        body: """
+        mode: $("payment")
+        line_items: $args.items
+        success_url: $("https://my-website.com")
+        """
+      }
+      selection: """
+      # https://docs.stripe.com/api/checkout/sessions/create
+        id
+        paymentUrl: url
+      """
+    )
+}
+
+input LineItemInput {
+  price: ID!
+  quantity: Int
+}
+
+type LineItem {
+  id: ID
+  price: Price!
+  quantity: Int
+}

@@ -1,0 +1,112 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@external", "@provides", "@shareable"]
+  ) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  #this api is blocked on localhost without a user agent header, it can be any value you like
+  @source(
+    name: "metmuseum"
+    http: { baseURL: "https://collectionapi.metmuseum.org/public/collection/v1/" }
+  )
+
+type Query {
+  # Search for artworks by natural language, returns an array of iDs
+  getMetArtworkIds(searchTerm: String!): ArtworkSearchResult
+    @connect(
+      source: "metmuseum"
+      http: { GET: "search?q={$args.searchTerm}" }
+      selection: """
+      total
+      objectIDs
+      """
+    )
+
+  # Direct query by specific ID
+  getMetArtworkDetailsById(objectId: Int!): ArtworkDetails
+    @connect(
+      source: "metmuseum"
+      http: { GET: "objects/{$args.objectId}" }
+      selection: """
+              objectID
+      accessionYear
+      isPublicDomain
+      primaryImage
+      additionalImages
+      department
+      objectName
+      title
+      artistDisplayName
+      artistDisplayBio
+      artistNationality
+      artistBeginDate
+      artistEndDate
+      artistGender
+      artistWikidata: artistWikidata_URL
+      objectDate
+      objectBeginDate
+      objectEndDate
+      medium
+      classification
+      objectURL
+      """
+    )
+}
+
+type ArtworkSearchResult {
+  total: Int
+  objectIDs: [Int]
+  # Automatically fetch the first artwork details
+  firstArtwork: ArtworkDetails
+    @connect(
+      source: "metmuseum"
+      http: { GET: "objects/{$this.objectIDs->first}" }
+      selection: """
+      objectID
+      accessionYear
+      isPublicDomain
+      primaryImage
+      additionalImages
+      department
+      objectName
+      title
+      artistDisplayName
+      artistDisplayBio
+      artistNationality
+      artistBeginDate
+      artistEndDate
+      artistGender
+      artistWikidata: artistWikidata_URL
+      objectDate
+      objectBeginDate
+      objectEndDate
+      medium
+      classification
+      objectURL
+      """
+    )
+}
+
+type ArtworkDetails @shareable {
+  objectID: Int
+  accessionYear: String
+  isPublicDomain: Boolean
+  primaryImage: String
+  additionalImages: [String]
+  department: String
+  objectName: String
+  title: String
+  artistDisplayName: String
+  artistDisplayBio: String
+  artistNationality: String
+  artistBeginDate: Int
+  artistEndDate: Int
+  artistGender: String
+  artistWikidata: String
+  objectDate: String
+  objectBeginDate: Int
+  objectEndDate: Int
+  medium: String
+  classification: String
+  objectURL: String
+}

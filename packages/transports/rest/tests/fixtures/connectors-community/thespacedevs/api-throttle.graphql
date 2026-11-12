@@ -1,0 +1,30 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(name: "llv2", http: { baseURL: "https://ll.thespacedevs.com/2.3.0/" })
+
+type ApiThrottle {
+  yourRequestLimit: Int
+  limitFrequencySecs: Int
+  currentUse: Int
+  nextUseSecs: Int
+  ident: String
+}
+
+type Query {
+  apiThrottle: ApiThrottle
+    @connect(
+      source: "llv2"
+      http: { GET: "/api-throttle/?format=json" }
+      selection: """
+      yourRequestLimit: your_request_limit
+      limitFrequencySecs: limit_frequency_secs
+      currentUse: current_use
+      nextUseSecs: next_use_secs
+      ident
+      """
+    )
+}

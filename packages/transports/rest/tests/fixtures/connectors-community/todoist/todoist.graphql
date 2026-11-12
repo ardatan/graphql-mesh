@@ -1,0 +1,370 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key"]) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  @source(
+    name: "todoist"
+    http: {
+      baseURL: "https://api.todoist.com/api/v1"
+      headers: [{ name: "Authorization", value: "Bearer {$config.todoistKey}" }]
+    }
+  )
+
+#post projects https://developer.todoist.com/api/v1/projects
+#get projects https://developer.todoist.com/api/v1/projects
+#post tasks https://developer.todoist.com/api/v1/tasks
+#get tasks https://developer.todoist.com/api/v1/tasks
+#close task https://developer.todoist.com/api/v1/tasks/{task_id}/close
+#update taks https://developer.todoist.com/api/v1/tasks/{task_id}
+
+scalar JSON
+
+input CreateTaskInput {
+  content: String!
+  description: String
+  projectId: String
+  deadlineDate: String
+}
+
+type ProjectAccess {
+  visibility: String!
+  configuration: JSON
+}
+
+type ProjectsResponse {
+  results: [Project!]!
+  nextCursor: String
+}
+
+type Project @key(fields: "id") {
+  id: ID!
+  childOrder: Int
+  color: String
+  creatorUid: String
+  createdAt: String
+  isArchived: Boolean
+  isDeleted: Boolean
+  isFavorite: Boolean
+  isFrozen: Boolean
+  name: String
+  updatedAt: String
+  viewStyle: String
+  defaultOrder: Int
+  description: String
+  access: ProjectAccess
+  role: String
+  parentId: String
+  inboxProject: Boolean
+  isCollapsed: Boolean
+  isShared: Boolean
+}
+
+type Task @key(fields: "id") {
+  userId: ID!
+  id: ID!
+  projectId: String!
+  sectionId: String
+  parentId: String
+  addedByUid: String
+  assignedByUid: String
+  responsibleUid: String
+  labels: [String]
+  checked: Boolean
+  isDeleted: Boolean
+  addedAt: String
+  completedAt: String
+  updatedAt: String
+  priority: Int
+  childOrder: Int
+  content: String
+  description: String
+  noteCount: Int
+  dayOrder: Int
+}
+
+type TasksResponse {
+  results: [Task!]!
+  nextCursor: String
+}
+
+type Query {
+  # Project queries
+  getProjectById(id: ID!): Project
+    @connect(
+      source: "todoist"
+      http: { GET: "/projects/{$args.id}" }
+      selection: """
+       id
+      childOrder: child_order
+      color
+      creatorUid: creator_uid
+      createdAt: created_at
+      isArchived: is_archived
+      isDeleted: is_deleted
+      isFavorite: is_favorite
+      isFrozen: is_frozen
+      name
+      updatedAt: updated_at
+      viewStyle: view_style
+      defaultOrder: default_order
+      description
+      access {
+        visibility
+        configuration
+      }
+      role
+      parentId: parent_id
+      inboxProject: inbox_project
+      isCollapsed: is_collapsed
+      isShared: is_shared
+      """
+      entity: true
+    )
+
+  getAllProjects: ProjectsResponse!
+    @connect(
+      source: "todoist"
+      http: { GET: "/projects" }
+      selection: """
+      results{
+      id
+       childOrder: child_order
+       color
+       creatorUid: creator_uid
+       createdAt: created_at
+       isArchived: is_archived
+       isDeleted: is_deleted
+       isFavorite: is_favorite
+       isFrozen: is_frozen
+       name
+       updatedAt: updated_at
+       viewStyle: view_style
+       defaultOrder: default_order
+       description
+       access {
+         visibility
+         configuration
+       }
+       role
+       parentId: parent_id
+       inboxProject: inbox_project
+       isCollapsed: is_collapsed
+       isShared: is_shared
+       }
+       nextCursor: next_cursor
+      """
+    )
+
+  # Task queries
+  getTaskById(id: ID!): Task
+    @connect(
+      source: "todoist"
+      http: { GET: "/tasks/{$args.id}" }
+      selection: """
+      userId: user_id
+       id
+       projectId: project_id
+       sectionId: section_id
+       parentId: parent_id
+       addedByUid: added_by_uid
+       assignedByUid: assigned_by_uid
+       responsibleUid: responsible_uid
+       labels
+       checked
+       isDeleted: is_deleted
+       addedAt: added_at
+       completedAt: completed_at
+       updatedAt: updated_at
+       priority
+       childOrder: child_order
+       content
+       description
+       noteCount: note_count
+       dayOrder: day_order
+      """
+      entity: true
+    )
+
+  #returns tasks in inbox, not by project
+  getAllTasks(cursor: String): TasksResponse!
+    @connect(
+      source: "todoist"
+      http: { GET: "/tasks", queryParams: "cursor: $args.cursor" }
+      selection: """
+      results {
+        userId: user_id
+        id
+        projectId: project_id
+        sectionId: section_id
+        parentId: parent_id
+        addedByUid: added_by_uid
+        assignedByUid: assigned_by_uid
+        responsibleUid: responsible_uid
+        labels
+        checked
+        isDeleted: is_deleted
+        addedAt: added_at
+        completedAt: completed_at
+        updatedAt: updated_at
+        priority
+        childOrder: child_order
+        content
+        description
+        noteCount: note_count
+        dayOrder: day_order
+      }
+      nextCursor: next_cursor
+      """
+    )
+
+  getTasksByProject(projectId: String!, cursor: String): TasksResponse!
+    @connect(
+      source: "todoist"
+      http: {
+        GET: "/tasks"
+        queryParams: """
+        project_id: $args.projectId
+        cursor: $args.cursor
+        """
+      }
+      selection: """
+      results {
+        userId: user_id
+        id
+        projectId: project_id
+        sectionId: section_id
+        parentId: parent_id
+        addedByUid: added_by_uid
+        assignedByUid: assigned_by_uid
+        responsibleUid: responsible_uid
+        labels
+        checked
+        isDeleted: is_deleted
+        addedAt: added_at
+        completedAt: completed_at
+        updatedAt: updated_at
+        priority
+        childOrder: child_order
+        content
+        description
+        noteCount: note_count
+        dayOrder: day_order
+      }
+      nextCursor: next_cursor
+      """
+    )
+}
+
+type Mutation {
+  # Project mutations
+  createProject(name: String!, description: String): Project!
+    @connect(
+      source: "todoist"
+      http: {
+        POST: "/projects"
+        body: """
+        name: $args.name
+        description: $args.description
+        """
+      }
+      selection: """
+      id
+      childOrder: child_order
+      color
+      creatorUid: creator_uid
+      createdAt: created_at
+      isArchived: is_archived
+      isDeleted: is_deleted
+      isFavorite: is_favorite
+      isFrozen: is_frozen
+      name
+      updatedAt: updated_at
+      viewStyle: view_style
+      defaultOrder: default_order
+      description
+      access {
+        visibility
+        configuration
+      }
+      role
+      parentId: parent_id
+      inboxProject: inbox_project
+      isCollapsed: is_collapsed
+      isShared: is_shared
+      """
+    )
+
+  updateProject(id: String!, name: String, description: String): Project!
+    @connect(
+      source: "todoist"
+      http: {
+        POST: "/projects/$args.id"
+        body: """
+        name: $args.name
+        description: $args.description
+        """
+      }
+      selection: """
+      id
+       childOrder: child_order
+       color
+       creatorUid: creator_uid
+       createdAt: created_at
+       isArchived: is_archived
+       isDeleted: is_deleted
+       isFavorite: is_favorite
+       isFrozen: is_frozen
+       name
+       updatedAt: updated_at
+       viewStyle: view_style
+       defaultOrder: default_order
+       description
+       access {
+         visibility
+         configuration
+       }
+       role
+       parentId: parent_id
+       inboxProject: inbox_project
+       isCollapsed: is_collapsed
+       isShared: is_shared
+      """
+    )
+
+  # Task mutations
+  createTask(input: CreateTaskInput!): Task!
+    @connect(
+      source: "todoist"
+      http: { POST: "/tasks", body: "$args.input" }
+      selection: """
+      userId: user_id
+      id
+      projectId: project_id
+      sectionId: section_id
+      parentId: parent_id
+      addedByUid: added_by_uid
+      assignedByUid: assigned_by_uid
+      responsibleUid: responsible_uid
+      labels
+      checked
+      isDeleted: is_deleted
+      addedAt: added_at
+      completedAt: completed_at
+      updatedAt: updated_at
+      priority
+      childOrder: child_order
+      content
+      description
+      noteCount: note_count
+      dayOrder: day_order
+      """
+    )
+
+  closeTask(id: String!): Boolean!
+    @connect(
+      source: "todoist"
+      http: { POST: "/tasks/$args.id/close" }
+      selection: """
+      success
+      """
+    )
+}

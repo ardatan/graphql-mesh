@@ -1,0 +1,520 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable", "@external"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "stripe"
+    http: {
+      baseURL: "https://api.stripe.com/v1"
+      headers: [
+        { name: "Authorization", value: "Bearer {$config.apiKey}" }
+        { name: "Stripe-Version", value: "2024-06-20" }
+        { name: "Content-Type", value: "application/x-www-form-urlencoded" }
+      ]
+    }
+  )
+
+enum AccountType {
+  CHECKING
+  SAVINGS
+}
+enum AccountHolderType {
+  INDIVIDUAL
+  COMPANY
+}
+type Address @shareable {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postalCode: String
+  state: String
+}
+input AddressInput {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postalCode: String
+  state: String
+}
+type BillingDetails {
+  address: Address
+  email: String
+  name: String
+  phone: String
+}
+input BillingDetailsInput {
+  address: AddressInput
+  email: String
+  name: String
+  phone: String
+}
+type Card {
+  brand: CardBrand
+  checks: CardChecks
+  country: String
+  expMonth: Int
+  expYear: Int
+  fingerprint: String
+  funding: String
+  last4: String
+}
+enum CardBrand {
+  AMERICAN_EXPRESS
+  DINERS_CLUB
+  DISCOVER
+  JCB
+  MASTERCARD
+  UNION_PAY
+  VISA
+}
+type CardChecks {
+  addressLine1Check: String
+  addressPostalCodeCheck: String
+  cvcCheck: String
+}
+input CardChecksInput {
+  addressLine1Check: String
+  addressPostalCodeCheck: String
+  cvcCheck: String
+}
+input CardInput {
+  brand: CardBrand
+  checks: CardChecksInput
+  country: String
+  expMonth: Int
+  expYear: Int
+  fingerprint: String
+  funding: String
+  last4: String
+}
+type Customer @key(fields: "id", resolvable: false) {
+  id: ID!
+  paymentMethod(id: ID!): PaymentMethod
+    @connect(
+      source: "stripe"
+      http: { GET: "/customers/{$this.id}/payment_methods/{$args.id}" }
+      selection: """
+      # https://stripe.com/docs/api/payment_methods/retrieve
+        id
+        billingDetails: $.billing_details {
+          address {
+            city
+            country
+            line1
+            line2
+            postalCode: postal_code
+            state
+          }
+          email
+          name
+          phone
+        }
+        card {
+          brand: $.brand->match(
+            ["amex","AMERICAN_EXPRESS"],
+            ["diners","DINERS_CLUB"],
+            ["discover","DISCOVER"],
+            ["jcb","JCB"],
+            ["mastercard","MASTERCARD"],
+            ["unionpay","UNION_PAY"],
+            ["visa","VISA"]
+          )
+          checks {
+            addressLine1Check: address_line1_check
+            addressPostalCodeCheck: address_postal_code_check
+            cvcCheck: cvc_check
+          }
+          country
+          expMonth
+          expYear
+          fingerprint
+          funding
+          last4
+        }
+        usBankAccount {
+          accountHolderType: account_holder_type
+          accountType: account_type
+          bankName: bank_name
+          fingerprint
+          last4
+          routingNumber: routing_number
+        }
+      """
+    )
+  paymentMethods: [PaymentMethod]
+    @connect(
+      source: "stripe"
+      http: { GET: "/customers/{$this.id}/payment_methods" }
+      selection: """
+      # https://stripe.com/docs/api/payment_methods/retrieve
+        $.data {
+          id
+          type
+          billingDetails: $.billing_details {
+            address {
+              city
+              country
+              line1
+              line2
+              postalCode: postal_code
+              state
+            }
+            email
+            name
+            phone
+          }
+          card {
+            brand: $.brand->match(
+              ["amex","AMERICAN_EXPRESS"],
+              ["diners","DINERS_CLUB"],
+              ["discover","DISCOVER"],
+              ["jcb","JCB"],
+              ["mastercard","MASTERCARD"],
+              ["unionpay","UNION_PAY"],
+              ["visa","VISA"]
+            )
+            checks {
+              addressLine1Check: address_line1_check
+              addressPostalCodeCheck: address_postal_code_check
+              cvcCheck: cvc_check
+            }
+            country
+            expMonth
+            expYear
+            fingerprint
+            funding
+            last4
+          }
+          usBankAccount {
+            accountHolderType: account_holder_type
+            accountType: account_type
+            bankName: bank_name
+            fingerprint
+            last4
+            routingNumber: routing_number
+          }
+        }
+      """
+    )
+}
+type Mutation {
+  createCardPaymentMethod(
+    customer: ID!
+    billingDetails: BillingDetailsInput!
+    card: CardInput!
+  ): PaymentMethod
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/payment_methods"
+        body: """
+        type: $("card")
+        customer: $args.customer
+        billing_details: {
+          address: $args.billingDetails.address {
+            city
+            country
+            line1
+            line2
+            postal_code: postalCode
+            state
+          }
+          email: $args.billingDetails.email
+          name: $args.billingDetails.name
+          phone: $args.billingDetails.phone
+        }
+        card: $args.card {
+          brand: $.brand->match(
+          ["AMERICAN_EXPRESS", "amex"],
+          ["DINERS_CLUB", "diners"],
+          ["DISCOVER", "discover"],
+          ["JCB", "jcb"],
+          ["MASTERCARD", "mastercard"],
+          ["UNION_PAY", "unionpay"],
+          ["VISA", "visa"]
+        )
+          checks {
+            address_line1_check: addressLine1Check
+            address_postal_code_check: addressPostalCodeCheck
+            cvc_check: cvcCheck
+          }
+          country
+          exp_month: expMonth
+          exp_year: expYear
+          fingerprint
+          funding
+          last4
+        }
+        """
+      }
+      selection: """
+      # https://stripe.com/docs/api/payment_methods/create
+        id
+        type
+        customer {
+          id
+        }
+        billingDetails: $.billing_details {
+          address {
+            city
+            country
+            line1
+            line2
+            postalCode: postal_code
+            state
+          }
+          email
+          name
+          phone
+        }
+        card {
+          brand: $.brand->match(
+            ["amex","AMERICAN_EXPRESS"],
+            ["diners","DINERS_CLUB"],
+            ["discover","DISCOVER"],
+            ["jcb","JCB"],
+            ["mastercard","MASTERCARD"],
+            ["unionpay","UNION_PAY"],
+            ["visa","VISA"]
+          )
+          checks {
+            addressLine1Check: address_line1_check
+            addressPostalCodeCheck: address_postal_code_check
+            cvcCheck: cvc_check
+          }
+          country
+          expMonth
+          expYear
+          fingerprint
+          funding
+          last4
+        }
+      """
+    )
+  createUsBankAccountPaymentMethod(
+    customer: ID!
+    billingDetails: BillingDetailsInput!
+    usBankAccount: UsBankAccountInput!
+  ): PaymentMethod
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/payment_methods"
+        body: """
+        type: $("us_bank_account")
+        customer: $args.customer
+        billing_details: $args.billingDetails {
+          address {
+            city
+            country
+            line1
+            line2
+            postal_code: postalCode
+            state
+          }
+          email
+          name
+          phone
+        }
+        us_bank_account: $args.usBankAccount {
+          account_holder_type: accountHolderType
+          account_type: accountType
+          bank_name: bankName
+          fingerprint
+          last4
+          routing_number: routingNumber
+        }
+        """
+      }
+      selection: """
+      # https://stripe.com/docs/api/payment_methods/create
+        id
+        type
+        customer {
+          id
+        }
+        billingDetails: $.billing_details {
+          address {
+            city
+            country
+            line1
+            line2
+            postalCode: postal_code
+            state
+          }
+          email
+          name
+          phone
+        }
+        usBankAccount {
+          accountHolderType: account_holder_type
+          accountType: account_type
+          bankName: bank_name
+          fingerprint
+          last4
+          routingNumber: routing_number
+        }
+      """
+    )
+  detachPaymentMethod(id: ID!): PaymentMethod
+    @connect(
+      source: "stripe"
+      http: {
+        DELETE: "/payment_methods/{$args.id}"
+        body: """
+        id: $args.id
+        """
+      }
+      selection: """
+      # https://stripe.com/docs/api/payment_methods/detach
+        id
+        type
+        customer {
+          id
+        }
+        billingDetails: $.billing_details {
+          address {
+            city
+            country
+            line1
+            line2
+            postalCode: postal_code
+            state
+          }
+          email
+          name
+          phone
+        }
+      """
+    )
+  updatePaymentMethodBillingDetails(id: ID!, billingDetails: BillingDetailsInput!): PaymentMethod
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/payment_methods/{$args.id}"
+        body: """
+        billing_details: $args.billingDetails{
+          address {
+            city
+            country
+            line1
+            line2
+            postal_code: postalCode
+            state
+          }
+          email
+          name
+          phone
+        }
+        """
+      }
+      selection: """
+      # https://stripe.com/docs/api/payment_methods/update
+        id
+        type
+        customer {
+          id
+        }
+        billingDetails: $.billing_details {
+          address {
+            city
+            country
+            line1
+            line2
+            postalCode: postal_code
+            state
+          }
+          email
+          name
+          phone
+        }
+      """
+    )
+}
+type PaymentMethod @key(fields: "id") {
+  id: ID!
+  type: String
+  customer: Customer
+  billingDetails: BillingDetails
+  card: Card
+  usBankAccount: UsBankAccount
+}
+type Query {
+  paymentMethod(id: ID!): PaymentMethod
+    @connect(
+      source: "stripe"
+      http: { GET: "/payment_methods/{$args.id}" }
+      selection: """
+      # https://stripe.com/docs/api/payment_methods/retrieve
+        id
+        type
+        customer {
+          id
+        }
+        billingDetails: $.billing_details {
+          address {
+            city
+            country
+            line1
+            line2
+            postalCode: postal_code
+            state
+          }
+          email
+          name
+          phone
+        }
+        card {
+          brand: $.brand->match(
+            ["amex","AMERICAN_EXPRESS"],
+            ["diners","DINERS_CLUB"],
+            ["discover","DISCOVER"],
+            ["jcb","JCB"],
+            ["mastercard","MASTERCARD"],
+            ["unionpay","UNION_PAY"],
+            ["visa","VISA"]
+          )
+          checks {
+            addressLine1Check: address_line1_check
+            addressPostalCodeCheck: address_postal_code_check
+            cvcCheck: cvc_check
+          }
+          country
+          expMonth
+          expYear
+          fingerprint
+          funding
+          last4
+        }
+        usBankAccount {
+          accountHolderType: account_holder_type
+          accountType: account_type
+          bankName: bank_name
+          fingerprint
+          last4
+          routingNumber: routing_number
+        }
+      """
+      entity: true
+    )
+}
+type UsBankAccount {
+  accountHolderType: AccountHolderType
+  accountType: AccountType
+  bankName: String
+  fingerprint: String
+  last4: String
+  routingNumber: String
+}
+input UsBankAccountInput {
+  accountHolderType: AccountHolderType
+  accountType: AccountType
+  bankName: String
+  fingerprint: String
+  last4: String
+  routingNumber: String
+}

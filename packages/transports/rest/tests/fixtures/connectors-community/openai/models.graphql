@@ -1,0 +1,44 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "openai"
+    http: {
+      baseURL: "https://api.openai.com/v1/"
+      headers: [{ name: "Authorization", value: "Bearer {$config.apiKey}" }]
+    }
+  )
+
+type Model {
+  id: ID!
+  created: Float
+  ownedBy: String
+}
+
+type Query {
+  models: [Model]
+    @connect(
+      source: "openai"
+      http: { GET: "/models" }
+      selection: """
+      $.data {
+        id
+        created
+        ownedBy: owned_by
+      }
+      """
+    )
+  model(id: ID!): Model
+    @connect(
+      source: "openai"
+      http: { GET: "/models/{$args.id}" }
+      selection: """
+      $.data {
+        id
+        created
+        ownedBy: owned_by
+      }
+      """
+      entity: true
+    )
+}

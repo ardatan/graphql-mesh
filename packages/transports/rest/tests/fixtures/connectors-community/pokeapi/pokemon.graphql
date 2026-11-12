@@ -1,0 +1,534 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(name: "pokeapi", http: { baseURL: "https://pokeapi.co/api/v2/" })
+
+type GameIndex @shareable {
+  gameIndex: Int
+  version: Version
+}
+type HeldItem {
+  name: String
+}
+type LocationAreaEncounter {
+  locationArea: LocationArea
+  versionDetails: [VersionDetails]
+}
+type LocationArea @key(fields: "name", resolvable: false) {
+  name: String
+}
+type VersionDetails {
+  maxChance: Int
+  version: Version
+  encounterDetails: [EncounterDetails]
+}
+type EncounterDetails {
+  chance: Int
+  conditionValues: [ConditionValue]
+  maxLevel: Int
+  method: EncounterMethod
+}
+type ConditionValue {
+  name: String
+}
+type EncounterMethod @key(fields: "name", resolvable: false) {
+  name: String
+}
+type Move @key(fields: "name", resolvable: false) {
+  name: String
+}
+type VersionGroupDetails {
+  levelLearnedAt: Int
+  moveLearnMethod: MoveLearnMethod
+  order: Int
+  versionGroup: VersionGroup
+}
+type MoveLearnMethod {
+  name: String
+}
+type VersionGroup @key(fields: "name", resolvable: false) {
+  name: String
+}
+type Pokemon @key(fields: "name") {
+  id: ID!
+  name: String
+  height: Int
+  weight: Int
+  "The base experience gained for defeating this Pokémon."
+  baseExperience: Int
+  "A list of abilities this Pokémon could potentially have."
+  abilities: [PokemonAbility]
+  "A set of cries used to depict this Pokémon in the game. "
+  cries: [PokemonCry]
+  "A list of game indices relevent to Pokémon item by generation."
+  gameIndices: [GameIndex]
+  "A list of items this Pokémon may be holding when encountered."
+  heldItems: [HeldItem]
+  isDefault: Boolean
+  locationAreaEncounters: [LocationAreaEncounter]
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon/{$this.name}/encounters" }
+      selection: """
+      locationArea: $.location_area {
+        name
+      }
+      versionDetails: $.version_details {
+        maxChance: max_chance
+        version {
+          name
+        }
+        encounterDetails: $.encounter_details {
+          chance
+          conditionValues: condition_values {
+            name
+          }
+          maxLevel: max_level
+          method {
+            name
+          }
+        }
+      }
+      """
+    )
+  moves: [MoveDetails]
+  species: PokemonSpecies
+  sprites: PokemonSprites
+  stats: [PokemonStat]
+}
+type MoveDetails {
+  name: String
+  versionGroupDetails: [VersionGroupDetails]
+}
+type PokemonAbility {
+  slot: Int
+  isHidden: Boolean
+  ability: PokemonAbilityDetails
+}
+type PokemonCry {
+  latest: String
+  legacy: String
+}
+type PokemonAbilityDetails {
+  name: String
+}
+type PokemonConnection {
+  total: Int
+  results: [Pokemon]
+}
+type PokemonSpecies {
+  baseHappiness: Int
+  captureRate: Int
+  color: PokedexColor
+  eggGroups: [EggGroup]
+  generation: Generation
+  growthRate: GrowthRate
+  habitat: String
+  hasGenderDifferences: Boolean
+  hatchCounter: Int
+  isBaby: Boolean
+  isLegendary: Boolean
+  isMythical: Boolean
+  name: String
+  order: Int
+  palParkEncounters: [PalParkEncounter]
+  pokedexNumber: [PokedexNumber]
+}
+type EggGroup {
+  name: String
+}
+type Generation @key(fields: "name", resolvable: false) {
+  name: String
+}
+type GrowthRate {
+  name: String
+}
+type PalParkEncounter {
+  rate: Int
+  baseScore: Int
+  area: Area
+}
+type Area {
+  name: String
+}
+type PokedexNumber {
+  entryNumber: Int
+  pokedex: Pokedex
+}
+type Pokedex {
+  name: String
+}
+type PokemonSprites {
+  backDefault: String
+  backFemale: String
+  backShiny: String
+  backShinyFemale: String
+  frontDefault: String
+  frontFemale: String
+  frontShiny: String
+  frontShinyFemale: String
+  other: PokemonOtherSprites
+}
+type PokemonOtherSprites {
+  dreamWorld: ImageOptions
+  home: ImageOptions
+  showdown: ShowdownImageOptions
+}
+type ImageOptions {
+  frontDefault: String
+  frontFemale: String
+  frontShiny: String
+  frontShinyFemale: String
+}
+type ShowdownImageOptions {
+  frontDefault: String
+  frontFemale: String
+  frontShiny: String
+  frontShinyFemale: String
+  backDefault: String
+  backFemale: String
+  backShiny: String
+  backShinyFemale: String
+}
+type PokedexColor {
+  name: String
+  species: [PokemonSpecies]
+}
+type Query {
+  pokemon(limit: Int = 20, offset: Int = 0): PokemonConnection
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon?limit={$args.limit}&offset={$args.offset}" }
+      selection: """
+      total: count
+      results {
+        name
+      }
+      """
+    )
+  "Colors used for sorting Pokémon in a Pokédex. The color listed in the Pokédex is usually the color most apparent or covering each Pokémon's body. No orange category exists; Pokémon that are primarily orange are listed as red or brown."
+  pokemonColors(limit: Int = 20, offset: Int = 0): [PokedexColor]
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon-color?limit={$args.limit}&offset={$args.offset}" }
+      selection: """
+      $.results {
+        name
+      }
+      """
+    )
+  "Colors used for sorting Pokémon in a Pokédex. The color listed in the Pokédex is usually the color most apparent or covering each Pokémon's body. No orange category exists; Pokémon that are primarily orange are listed as red or brown."
+  pokemonColor(name: String!): PokedexColor
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon-color/{$args.name}" }
+      selection: """
+      name
+      species: $.pokemon_species {
+        name
+      }
+      """
+      entity: true
+    )
+  pokemonByName(name: String!): Pokemon
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon/{$args.name}" }
+      selection: """
+      id
+      name
+      height
+      weight
+      baseExperience: base_experience
+      abilities {
+        slot
+        isHidden: is_hidden
+        ability {
+          name
+        }
+      }
+      cries {
+        latest
+        legacy
+      }
+      gameIndices: $.game_indices {
+        gameIndex: game_index
+        version {
+          name
+        }
+      }
+      heldItems: $.held_items {
+        name
+      }
+      isDefault: is_default
+      moves {
+        name
+        versionGroupDetails: version_group_details {
+          levelLearnedAt: level_learned_at
+          moveLearnMethod: move_learn_method {
+            name
+          }
+          order
+          versionGroup: $.version_group {
+            name
+          }
+        }
+      }
+      species {
+        name
+      }
+      sprites {
+        backDefault: back_default
+        backFemale: back_female
+        backShiny: back_shiny
+        backShinyFemale: back_shiny_female
+        frontDefault: front_default
+        frontFemale: front_female
+        frontShiny: front_shiny
+        frontShinyFemale: front_shiny_female
+        other {
+          dreamWorld: dream_world {
+            frontDefault: front_default
+            frontFemale: front_female
+            frontShiny: front_shiny
+            frontShinyFemale: front_shiny_female
+          }
+          home {
+            frontDefault: front_default
+            frontFemale: front_female
+            frontShiny: front_shiny
+            frontShinyFemale: front_shiny_female
+          }
+          showdown {
+            frontDefault: front_default
+            frontFemale: front_female
+            frontShiny: front_shiny
+            frontShinyFemale: front_shiny_female
+            backDefault: back_default
+            backFemale: back_female
+            backShiny: back_shiny
+            backShinyFemale: back_shiny_female
+          }
+        }
+      }
+      stats {
+        # baseStat: base_stat
+        # effort
+        name: stat.name
+      }
+      """
+      entity: true
+    )
+  "Some Pokémon may appear in one of multiple, visually different forms. These differences are purely cosmetic. For variations within a Pokémon species, which do differ in more than just visuals, the 'Pokémon' entity is used to represent such a variety."
+  pokemonForm(name: String!): PokemonForm
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon-form/{$args.name}" }
+      selection: """
+      name
+      formOrder: form_order
+      isBattleOnly: is_battle_only
+      isDefault: is_default
+      isMega: is_mega
+      order
+      pokemon {
+        name
+      }
+      sprites {
+        frontDefault: front_default
+        frontFemale: front_female
+        frontShiny: front_shiny
+        frontShinyFemale: front_shiny_female
+        backDefault: back_default
+        backFemale: back_female
+        backShiny: back_shiny
+        backShinyFemale: back_shiny_female
+      }
+      types {
+        slot
+        name: type.name
+      }
+      versionGroup: $.version_group {
+        name
+      }
+      """
+      entity: true
+    )
+  "Habitats are generally different terrain Pokémon can be found in but can also be areas designated for rare or legendary Pokémon."
+  pokemonHabitat(name: String!): PokemonHabitat
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon-habitat/{$args.name}" }
+      selection: """
+      name
+      pokemonSpecies: $.pokemon_species {
+        name
+      }
+      """
+      entity: true
+    )
+  "Shapes used for sorting Pokémon in a Pokédex."
+  pokemonShape(name: String!): PokemonShape
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon-shape/{$args.name}" }
+      selection: """
+      name
+      pokemonSpecies: $.pokemon_species {
+        name
+      }
+      """
+      entity: true
+    )
+  "A Pokémon Species forms the basis for at least one Pokémon. Attributes of a Pokémon species are shared across all varieties of Pokémon within the species. A good example is Wormadam; Wormadam is the species which can be found in three different varieties, Wormadam-Trash, Wormadam-Sandy and Wormadam-Plant."
+  pokemonSpecies(name: String!): PokemonSpecies
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon-species/{$args.name}" }
+      selection: """
+      baseHappiness: base_happiness
+      captureRate: capture_rate
+      color {
+        name
+      }
+      eggGroups: $.egg_groups {
+        name
+      }
+      generation {
+        name
+      }
+      growthRate: growth_rate {
+        name
+      }
+      habitat
+      hasGenderDifferences: has_gender_differences
+      hatchCounter: hatch_counter
+      isBaby: is_baby
+      isLegendary: is_legendary
+      isMythical: is_mythical
+      name
+      order
+      palParkEncounters: pal_park_encounters {
+        rate
+        baseScore: base_score
+        area {
+          name
+        }
+      }
+      pokedexNumber: $.pokedex_numbers {
+        entryNumber: entry_number
+        pokedex {
+          name
+        }
+      }
+      """
+      entity: true
+    )
+  stats: [PokemonStat]
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon-stat" }
+      selection: """
+      $.results {
+        name
+      }
+      """
+    )
+  stat(name: String!): PokemonStat
+    @connect(
+      source: "pokeapi"
+      http: { GET: "/pokemon-stat/{$args.name}" }
+      selection: """
+      affectingMoves: affecting_moves {
+        decrease {
+          change
+          move {
+            name
+          }
+        }
+        increase {
+          change
+          move {
+            name
+          }
+        }
+      }
+      affectingNatures: affecting_natures {
+        decrease {
+          name
+        }
+        increase {
+          name
+        }
+      }
+      gameIndex: game_index
+      isBattleOnly: is_battle_only
+      moveDamageClass: $.move_damage_class {
+        name
+      }
+      name
+      """
+      entity: true
+    )
+}
+type PokemonShape {
+  name: String
+  pokemonSpecies: [PokemonSpecies]
+}
+type PokemonHabitat {
+  name: String
+  pokemonSpecies: [PokemonSpecies]
+}
+type PokemonForm {
+  name: String
+  formOrder: Int
+  isBattleOnly: Boolean
+  isDefault: Boolean
+  isMega: Boolean
+  order: Int
+  pokemon: Pokemon
+  sprites: ShowdownImageOptions
+  types: [PokemonType]
+  versionGroup: VersionGroup
+}
+type PokemonType {
+  slot: Int
+  name: String
+}
+# type PokemonStat {
+#   baseStat: Int
+#   effort: Int
+#   name: String
+# }
+type PokemonStat {
+  name: String
+  affectingMoves: AffectingMoves
+  affectingNatures: AffectingNatures
+  gameIndex: Int
+  isBattleOnly: Boolean
+  moveDamageClass: MoveDamageClass
+}
+type AffectingMoves {
+  decrease: [AffectingMove]
+  increase: [AffectingMove]
+}
+type AffectingMove {
+  change: Int
+  move: Move
+}
+type AffectingNatures {
+  decrease: [Nature]
+  increase: [Nature]
+}
+type Nature {
+  name: String
+}
+type MoveDamageClass {
+  name: String
+}
+type Version @key(fields: "name", resolvable: false) {
+  name: String
+}

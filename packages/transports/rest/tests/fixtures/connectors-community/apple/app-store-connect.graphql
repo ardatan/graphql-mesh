@@ -1,0 +1,94 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "connect-api"
+    http: {
+      # https://developer.apple.com/documentation/appstoreconnectapi
+      # https://developer.apple.com/sample-code/app-store-connect/app-store-connect-openapi-specification.zip
+      baseURL: "https://api.appstoreconnect.apple.com/v1"
+      headers: [{ name: "Authorization", value: "Bearer {$config.apiKey}" }]
+    }
+  )
+
+type App {
+  id: ID!
+  name: String
+  bundleId: String
+  sku: String
+  builds: [Build]
+    @connect(
+      source: "connect-api"
+      http: { GET: "/apps/{$this.id}/builds" }
+      selection: """
+      $.data {
+        id
+        $.attributes {
+          version
+          expired
+          minOsVersion
+        }
+      }
+      """
+    )
+  pricePoints: [AppPricePoint]
+    @connect(
+      source: "connect-api"
+      http: { GET: "/apps/{$this.id}/appPricePoints" }
+      selection: """
+      $.data {
+        id
+        $.attributes {
+          customerPrice
+          proceeds
+        }
+      }
+      """
+    )
+}
+
+type AppPricePoint {
+  id: ID!
+  customerPrice: String
+  proceeds: String
+}
+
+type Build {
+  id: ID!
+  expired: Boolean
+  version: String
+  minOsVersion: String
+}
+
+type Query {
+  apps: [App]
+    @connect(
+      source: "connect-api"
+      http: { GET: "/apps" }
+      selection: """
+      $.data {
+        id
+        $.attributes {
+          name
+          bundleId
+          sku
+        }
+      }
+      """
+    )
+  app(id: ID!): App
+    @connect(
+      source: "connect-api"
+      http: { GET: "/apps/{$args.id}" }
+      selection: """
+      $.data {
+        id
+        $.attributes {
+          name
+          bundleId
+          sku
+        }
+      }
+      """
+    )
+}

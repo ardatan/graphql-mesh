@@ -1,0 +1,593 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key"]) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  #change the user agent header value to something meaningful. NWS reccomends putting a contact there in case they have security concerns
+  @source(
+    name: "nws"
+    http: {
+      baseURL: "https://api.weather.gov/"
+      headers: [{ name: "User-Agent", value: "apollo-nws-connector" }]
+    }
+  )
+
+scalar JSON
+
+enum AlertStatus {
+  actual
+  exercise
+  system
+  test
+  draft
+}
+
+enum AlertMessageType {
+  alert
+  update
+  cancel
+}
+
+enum AlertRegionCode {
+  AL
+  AT
+  GL
+  GM
+  PA
+  PI
+}
+
+enum AlertRegionType {
+  land
+  marine
+}
+
+enum AlertUrgency {
+  Immediate
+  Expected
+  Future
+  Past
+  Unknown
+}
+
+enum AlertSeverity {
+  Extreme
+  Severe
+  Moderate
+  Minor
+  Unknown
+}
+
+enum AlertCertainty {
+  Observed
+  Likely
+  Possible
+  Unlikely
+  Unknown
+}
+
+enum AlertArea {
+  AL
+  AK
+  AS
+  AR
+  AZ
+  CA
+  CO
+  CT
+  DE
+  DC
+  FL
+  GA
+  GU
+  HI
+  ID
+  IL
+  IN
+  IA
+  KS
+  KY
+  LA
+  ME
+  MD
+  MA
+  MI
+  MN
+  MS
+  MO
+  MT
+  NE
+  NV
+  NH
+  NJ
+  NM
+  NY
+  NC
+  ND
+  OH
+  OK
+  OR
+  PA
+  PR
+  RI
+  SC
+  SD
+  TN
+  TX
+  UT
+  VT
+  VI
+  VA
+  WA
+  WV
+  WI
+  WY
+  MP
+  PW
+  FM
+  MH
+}
+
+type AlertZone {
+  title: String
+  updated: String
+  features: [Alert!]!
+}
+
+type EventTypeList {
+  eventTypes: [String!]!
+}
+
+type AlertCount {
+  total: Int!
+  land: Int!
+  marine: Int!
+  regions: JSON
+  areas: JSON
+  zones: JSON
+}
+
+type AlertConnection {
+  features: [Alert!]!
+  pagination: AlertPagination
+}
+
+type AlertPagination {
+  next: String
+}
+
+type Alert {
+  id: ID!
+  type: String!
+  geometry: JSON
+  properties: AlertProperties!
+}
+
+type Geocode {
+  SAME: [String!]!
+  UGC: [String!]!
+}
+
+type AlertReference {
+  sender: String!
+  sent: String!
+}
+
+type AlertProperties {
+  id: String!
+  areaDesc: String!
+  geocode: Geocode!
+  affectedZones: [String!]!
+  references: [AlertReference]
+  sent: String!
+  effective: String
+  onset: String
+  expires: String
+  ends: String
+  status: String!
+  messageType: String!
+  category: String
+  severity: String
+  certainty: String
+  urgency: String
+  event: String!
+  sender: String!
+  senderName: String
+  headline: String
+  description: String
+  instruction: String
+  response: String
+  parameters: JSON
+  scope: String
+  code: String
+  language: String
+  web: String
+  eventCode: JSON
+}
+
+input AlertQueryInput {
+  start: String # ISO date-time
+  end: String # ISO date-time
+  status: [AlertStatus]
+  messageType: [AlertMessageType]
+  event: String
+  code: String
+  area: AlertArea
+  point: String
+  region: [AlertRegionCode]
+  regionType: AlertRegionType
+  zone: String
+  urgency: [AlertUrgency]
+  severity: [AlertSeverity]
+  certainty: [AlertCertainty]
+  limit: Int = 50
+  cursor: String
+}
+
+type Query {
+  """
+  Returns all alerts
+  """
+  alerts(input: AlertQueryInput): AlertConnection
+    @connect(
+      source: "nws"
+      http: {
+        GET: "/alerts"
+        queryParams: """
+        $args.input{
+        start
+        end
+        status
+        messageType
+        event
+        code
+        area
+        point
+        region
+        regionType
+        zone
+        urgency
+        certainty
+        severity
+        limit
+        cursor
+        }
+        """
+      }
+      selection: """
+      pagination {
+        next
+      }
+      features {
+        id
+        type
+        geometry
+        properties {
+          id
+          areaDesc
+          headline
+          severity
+          certainty
+          urgency
+          event
+          effective
+          onset
+          expires
+          ends
+          status
+          messageType
+          senderName
+          description
+          instruction
+          response
+          references {
+            sender
+            sent
+          }
+          sent
+          category
+          sender
+          scope
+          code
+          language
+          web
+          eventCode
+          geocode {
+            SAME
+            UGC
+          }
+          affectedZones
+          parameters
+        }
+      }
+      """
+    )
+
+  """
+  Returns all currently active alerts
+  """
+  activeAlert(next: String!): AlertConnection
+    @connect(
+      source: "nws"
+      http: { GET: "/alerts/active", queryParams: "cursor: $args.next" }
+      selection: """
+      pagination {
+        next
+      }
+      features {
+        id
+        type
+        geometry
+        properties {
+          id
+          areaDesc
+          headline
+          severity
+          certainty
+          urgency
+          event
+          effective
+          onset
+          expires
+          ends
+          status
+          messageType
+          senderName
+          description
+          instruction
+          response
+          references {
+            sender
+            sent
+          }
+          sent
+          category
+          sender
+          scope
+          code
+          language
+          web
+          eventCode
+          geocode {
+            SAME
+            UGC
+          }
+          affectedZones
+          parameters
+        }
+      }
+      """
+    )
+
+  """
+  Returns info on the number of active alerts
+  """
+  countActiveAlerts: AlertCount
+    @connect(
+      source: "nws"
+      http: { GET: "/alerts/active/count" }
+      selection: """
+       total
+      land
+      marine
+      regions
+      areas
+      zones
+      """
+    )
+
+  """
+  Returns a list of alert types
+  """
+  listEventTypes: EventTypeList
+    @connect(
+      source: "nws"
+      http: { GET: "/alerts/types" }
+      selection: """
+      eventTypes
+      """
+    )
+  """
+  Returns active alerts for the given NWS public zone or county. Valid zone ids can be found at this endpoint
+  """
+  alertsByZone(zoneID: String!): AlertZone
+    @connect(
+      source: "nws"
+      http: { GET: "/alerts/active/zone/{$args.zoneID}" }
+      selection: """
+       title
+       updated
+      features {
+        id
+        type
+        geometry
+        properties {
+          id
+          areaDesc
+          headline
+          severity
+          certainty
+          urgency
+          event
+          effective
+          onset
+          expires
+          ends
+          status
+          messageType
+          senderName
+          description
+          instruction
+          response
+          references {
+            sender
+            sent
+          }
+          sent
+          category
+          sender
+          scope
+          code
+          language
+          web
+          eventCode
+          geocode {
+            SAME
+            UGC
+          }
+          affectedZones
+          parameters
+        }
+      }
+      """
+    )
+  """
+  Returns active alerts for the given marine region
+  """
+  alertsByRegion(region: AlertRegionCode!): Alert
+    @connect(
+      source: "nws"
+      http: { GET: "/alerts/active/region/{$args.region}" }
+      selection: """
+      id
+      type
+      geometry
+      properties {
+        id
+        areaDesc
+        headline
+        severity
+        certainty
+        urgency
+        event
+        effective
+        onset
+        expires
+        ends
+        status
+        messageType
+        senderName
+        description
+        instruction
+        response
+        references {
+          sender
+          sent
+        }
+        sent
+        category
+        sender
+        scope
+        code
+        language
+        web
+        eventCode
+        geocode {
+          SAME
+          UGC
+        }
+        affectedZones
+        parameters
+      }
+      """
+    )
+  """
+  Returns active alerts for the given area (state or marine area)
+  """
+  alertsByArea(area: AlertArea!): Alert
+    @connect(
+      source: "nws"
+      http: { GET: "/alerts/active/region/{$args.area}" }
+      selection: """
+      id
+      type
+      geometry
+      properties {
+        id
+        areaDesc
+        headline
+        severity
+        certainty
+        urgency
+        event
+        effective
+        onset
+        expires
+        ends
+        status
+        messageType
+        senderName
+        description
+        instruction
+        response
+        references {
+          sender
+          sent
+        }
+        sent
+        category
+        sender
+        scope
+        code
+        language
+        web
+        eventCode
+        geocode {
+          SAME
+          UGC
+        }
+        affectedZones
+        parameters
+      }
+      """
+    )
+
+  """
+  Returns a specific alert
+  """
+  alertsById(id: ID!): Alert
+    @connect(
+      source: "nws"
+      http: { GET: "/alerts/{$args.id}" }
+      selection: """
+      id
+      type
+      geometry
+      properties {
+        id
+        areaDesc
+        headline
+        severity
+        certainty
+        urgency
+        event
+        effective
+        onset
+        expires
+        ends
+        status
+        messageType
+        senderName
+        description
+        instruction
+        response
+        references {
+          sender
+          sent
+        }
+        sent
+        category
+        sender
+        scope
+        code
+        language
+        web
+        eventCode
+        geocode {
+          SAME
+          UGC
+        }
+        affectedZones
+        parameters
+      }
+      """
+    )
+}

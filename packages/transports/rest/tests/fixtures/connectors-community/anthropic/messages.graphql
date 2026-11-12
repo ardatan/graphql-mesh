@@ -1,0 +1,252 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "anthropic"
+    http: {
+      baseURL: "https://api.anthropic.com/v1/"
+      headers: [
+        { name: "x-api-key", value: "{$config.apiKey}" }
+        { name: "anthropic-version", value: "2023-06-01" }
+      ]
+    }
+  )
+
+type ContentBlock {
+  text: String
+  type: String
+  id: ID
+  name: String
+  input: JSON
+}
+enum ContentBlockType {
+  TEXT
+  TOOL
+}
+type Message {
+  id: ID!
+  model: String
+  content: [ContentBlock]
+  role: MessageRole
+  stopReason: String
+  stopSequence: [String]
+  usage: TokenUsage
+  metadata: Metadata
+}
+input MessageInput {
+  content: String
+  role: MessageRole
+}
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+type Metadata {
+  userId: ID
+}
+input MetadataInput {
+  userId: ID
+}
+type Model {
+  id: ID!
+  name: String
+  createdAt: String
+}
+type Mutation {
+  createMessage(
+    messages: [MessageInput]!
+    "The model that will complete your prompt."
+    model: String = "claude-3-7-sonnet-20250219"
+    "The maximum number of tokens to generate before stopping."
+    max_tokens: Int = 1024
+    options: MessageOptionsInput
+  ): Message
+    @connect(
+      #https://docs.anthropic.com/en/api/messages
+      source: "anthropic"
+      http: {
+        POST: "/messages"
+        body: """
+        model: $args.model
+        max_tokens: $args.max_tokens
+        messages: $args.messages {
+          role: role->match(
+            ['USER','user'],
+            ['ASSISTANT','assistant']
+          )
+          content
+        }
+        metadata: $args.options.metadata {
+          user_id: userId
+        }
+        stop_sequences: $args.options.stopSequences
+        system: $args.options.systemPrompt
+        temperature: $args.options.temperature
+        thinking: $args.options.thinking {
+          type: type->match(
+            ['DISABLED', 'disabled'],
+            ['ENABLED', 'enabled']
+          )
+          budget_tokens: budgetTokens
+        }
+        tool_choice: $args.options.toolChoice {
+          type: type->match(
+            ['NONE', 'none'],
+            ['TOOL', 'tool'],
+            ['ANY', 'any'],
+            ['AUTO', 'auto']
+          )
+          disable_parallel_tool_use: disableParallelToolUse
+          name
+        }
+        tools: $args.options.tools {
+          name
+          description
+          input_schema: inputSchema
+        }
+        """
+      }
+      selection: """
+      id
+      model
+      role: role->match(
+        ['user','USER'],
+        ['assistant','ASSISTANT']
+      )
+      content {
+        type: type->match(
+          ['text','TEXT'],
+          ['tool','TOOL']
+        )
+        text
+        id
+        name
+        input
+      }
+      stopReason: stop_reason
+      stopSequence: stop_sequence
+      usage {
+        inputTokens: input_tokens
+        outputTokens: output_tokens
+        cacheReadInputTokens: cache_read_input_tokens
+        cacheCreationInputTokens: cache_creation_input_tokens
+      }
+      metadata {
+        userId: user_id
+      }
+      """
+    )
+}
+input MessageOptionsInput {
+  "An object describing metadata about the request."
+  metadata: MetadataInput
+  """
+  If you want the model to stop generating when it encounters custom strings of text, you can use the stop_sequences parameter. If the model encounters one of the custom sequences, the response stop_reason value will be "stop_sequence" and the response stop_sequence value will contain the matched stop sequence.
+  """
+  stopSequences: [String]
+  "A system prompt is a way of providing context and instructions to Claude, such as specifying a particular goal or role."
+  systemPrompt: String
+  "Amount of randomness injected into the response. Ranges from 0.0 to 1.0."
+  temperature: Float = 1.0
+  """
+  Configuration for enabling Claude's extended thinking.
+
+  When enabled, responses include thinking content blocks showing Claude's thinking process before the final answer. Requires a minimum budget of 1,024 tokens and counts towards your max_tokens limit.
+  """
+  thinking: ThinkingInput
+  "How the model should use the provided tools. The model can use a specific tool, any available tool, decide by itself, or not use tools at all."
+  toolChoice: ToolChoiceInput
+  "Definitions of tools that the model may use."
+  tools: [ToolInput]
+  "Only sample from the top K options for each subsequent token. Recommended for advanced use cases only. You usually only need to use temperature."
+  topK: Float
+  """
+  Use nucleus sampling.
+  In nucleus sampling, we compute the cumulative distribution over all the options for each subsequent token in decreasing probability order and cut it off once it reaches a particular probability specified by top_p. You should either alter temperature or top_p, but not both.
+
+  Recommended for advanced use cases only. You usually only need to use temperature. Required range: 0 < x < 1.
+  """
+  topP: Float
+}
+type Query {
+  countTokens(messages: [MessageInput]!, model: String = "claude-3-7-sonnet-20250219"): Int
+    @connect(
+      #https://docs.anthropic.com/en/api/messages-count-tokens
+      source: "anthropic"
+      http: {
+        POST: "/messages/count_tokens"
+        body: """
+        model: $args.model
+        messages: $args.messages {
+          role: role->match(
+            ['USER','user'],
+            ['ASSISTANT','assistant']
+          )
+          content
+        }
+        """
+      }
+      selection: """
+      $.input_tokens
+      """
+    )
+  model(id: String!): Model
+    @connect(
+      #https://docs.anthropic.com/en/api/models
+      source: "anthropic"
+      http: { GET: "/models/$args.id" }
+      selection: """
+      id
+      name
+      createdAt: created_at
+      """
+    )
+  models: [Model]
+    @connect(
+      #https://docs.anthropic.com/en/api/models-list
+      source: "anthropic"
+      http: { GET: "/models" }
+      selection: """
+      id
+      name
+      createdAt: created_at
+      """
+    )
+}
+input ThinkingInput {
+  type: ThinkingType = DISABLED
+  "Determines how many tokens Claude can use for its internal reasoning process. Larger budgets can enable more thorough analysis for complex problems, improving response quality. Must be ≥1024 and less than max_tokens"
+  budgetTokens: Int = 1024
+}
+type TokenUsage @shareable {
+  inputTokens: Int
+  cacheReadInputTokens: Int
+  cacheCreationInputTokens: Int
+  outputTokens: Int
+}
+enum ThinkingType {
+  DISABLED
+  ENABLED
+}
+input ToolChoiceInput {
+  type: ToolChoiceType = NONE
+  "Whether to disable parallel tool use."
+  disableParallelToolUse: Boolean = false
+  "The name of the tool to use."
+  name: String
+}
+enum ToolChoiceType {
+  NONE
+  TOOL
+  ANY
+  AUTO
+}
+input ToolInput {
+  name: String
+  description: String
+  inputSchema: JSON
+}
+scalar JSON

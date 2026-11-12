@@ -1,0 +1,124 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@shareable", "@external"]
+  ) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  #to use this prebuilt connector, you must create at least one table in your supabase project
+  #and replace <YOUR_TABLE_NAME> with the name of your table
+  #field names here are examples, you can change them to match your table schema
+  # to use this connector, you must also set the anonKey in the config
+  @source(
+    name: "supabase"
+    http: {
+      baseURL: "<YOUR_SUPABASE_URL>/rest/v1/"
+      headers: [
+        { name: "Authorization", value: "Bearer {$config.anonKey}" }
+        { name: "apiKey", value: "{$config.anonKey}" }
+      ]
+    }
+  )
+
+type Query {
+  # Get all rows with pagination - pagination in supabase is a range of rows starting from 0.
+  #if null is passed, all rows will return
+  # single arguments will result in either all rows returned or an error
+  getAllRows(start: Int, end: Int): [Columns]
+    @connect(
+      source: "supabase"
+      http: {
+        GET: "<YOUR_TABLE_NAME>"
+        headers: [{ name: "Range", value: "{$args.start}-{$args.end}" }]
+      }
+      selection: """
+      name
+      """
+    )
+
+  # Get filtered rows with pagination - pagination in supabase is a range of rows starting from 0.
+  #if null is passed, all rows will return
+  # single arguments will result in either all rows returned or an error
+  #see supbase documentation for more details on filtering
+  #https://supabase.com/docs/reference/javascript/using-filters
+  getFilteredRows(start: Int, end: Int): [Columns]
+    @connect(
+      source: "supabase"
+      http: {
+        GET: "<YOUR_TABLE_NAME>?select=<COLUMN_NAME>"
+        headers: [{ name: "Range", value: "{$args.start}-{$args.end}" }]
+      }
+      selection: """
+      name
+      """
+    )
+}
+
+type Mutation {
+  insertRow(input: InputRow!): Submission!
+    @connect(
+      source: "supabase"
+      http: {
+        POST: "<YOUR_TABLE_NAME>"
+        body: """
+        name: $args.input.name
+        """
+      }
+      selection: """
+      id
+      name
+      """
+    )
+
+  # for supabase this will return 204 no content unless you specify a header to return the row
+  updateRow(id: ID!, input: UpdateRow!): UpdateResponse!
+    @connect(
+      source: "supabase"
+      http: {
+        PATCH: "<YOUR_TABLE_NAME>?id=eq.{$args.id}"
+        body: """
+        name: $args.input.name
+        """
+      }
+      selection: """
+      submission {
+        id
+        name
+      }
+      """
+    )
+
+  # for supabase this will return 204 no content unless you specify a header to return the row
+  deleteRow(id: ID!): DeleteResponse!
+    @connect(
+      source: "supabase"
+      http: { DELETE: "<YOUR_TABLE_NAME>?id=eq.{$args.id}" }
+      selection: """
+      message
+      """
+    )
+}
+
+input InputRow {
+  name: String!
+}
+
+input UpdateRow {
+  name: String
+}
+
+type Columns {
+  name: String
+}
+
+type Submission {
+  id: ID!
+  name: String!
+}
+
+type UpdateResponse {
+  submission: Submission!
+}
+
+type DeleteResponse {
+  message: String!
+}

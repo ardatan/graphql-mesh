@@ -1,0 +1,76 @@
+# These are the necessary federation and connector directives you will be using
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10")
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"])
+  # A @source directive defines a shared data source for multiple connectors.
+
+  @source(
+    name: "heygen-v2"
+    http: {
+      baseURL: "https://api.heygen.com/v2"
+      headers: [{ name: "X-API-KEY", value: "{$config.apiKey}" }]
+    }
+  )
+
+scalar Timestamp
+
+enum GroupType {
+  PUBLIC_PHOTO
+  PRIVATE
+}
+
+enum TrainStatus {
+  empty
+}
+
+type Avatar {
+  id: ID!
+  name: String
+  gender: String
+  previewImageUrl: String
+  previewVideoUrl: String
+}
+
+type AvatarGroup {
+  id: ID!
+  name: String!
+  createdAt: Timestamp
+  numLooks: Int
+  previewImageUrl: String
+  groupType: GroupType
+  trainStatus: TrainStatus
+}
+
+type Query {
+  listAvatars: [Avatar!]!
+    @connect(
+      source: "heygen-v2"
+      http: { GET: "/avatars" }
+      selection: """
+      $.data.avatars {
+        id: avatar_id
+        name: avatar_name
+        gender
+        previewImageUrl: preview_image_url
+        previewVideoUrl: preview_video_url
+      }
+      """
+    )
+
+  listAvatarGroups(includePublic: Boolean = false): [AvatarGroup!]!
+    @connect(
+      source: "heygen-v2"
+      http: { GET: "/avatar_group.list?include_public={$args.includePublic}" }
+      selection: """
+      $.data.avatar_group_list {
+        id
+        name
+        createdAt: created_at
+        numLooks: num_looks
+        previewImageUrl: preview_image_url
+        groupType: group_type
+        trainStatus: train_status
+      }
+      """
+    )
+}

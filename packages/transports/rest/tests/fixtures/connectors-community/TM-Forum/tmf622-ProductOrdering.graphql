@@ -1,0 +1,297 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "tmf"
+    http: {
+      # https://github.com/tmforum-apis/TMF622_ProductOrder/blob/master/TMF622-ProductOrder-v4.0.0.swagger.json
+      baseURL: "http://127.0.0.1:4010"
+    }
+  )
+
+type ProductOrder @key(fields: "id") {
+  id: ID!
+  category: String
+  description: String
+  priority: String
+  """
+  Related channels used for order capture
+  """
+  channels: [Channel]
+  notes: [Note]
+  items: [ProductOrderItem]
+}
+
+type ProductOrderItem @key(fields: "id") {
+  id: ID
+  quantity: Int
+  action: String
+  state: String
+  billingAccount: BillingAccount
+  product: Product
+  offer: ProductOffering
+  price: ProductPrice
+  term: ProductTerm
+}
+
+type ProductTerm {
+  name: String
+  description: String
+  duration: TermDuration
+}
+
+type TermDuration {
+  amount: Int
+  units: String
+}
+
+type BillingAccount @key(fields: "id") {
+  id: ID!
+  href: String
+}
+
+type ProductPrice {
+  name: String
+  description: String
+  taxRate: Float
+  subtotal: Money
+  total: Money
+  type: PriceType
+  paymentInterval: PriceInterval
+}
+
+enum PriceInterval {
+  ONE_TIME
+  MONTHLY
+  ANNUALY
+}
+
+enum PriceType {
+  RECURRING
+  NON_RECURRING
+}
+
+type Money @shareable {
+  currency: String
+  amount: Float
+}
+
+type ProductOffering @key(fields: "id") {
+  id: ID
+  name: String
+  href: String
+}
+
+type Product @key(fields: "id") {
+  id: ID
+  name: String
+  version: String
+  href: String
+  characteristics: [ProductCharacteristic]
+}
+
+type ProductCharacteristic {
+  id: ID
+  name: String
+  value: String
+}
+
+type Note @key(fields: "id") {
+  id: ID
+  author: String
+  date: String
+  text: String
+}
+
+type Channel @key(fields: "id") {
+  id: ID
+  name: String
+}
+
+type Query {
+  """
+  List or find ProductOrder objects
+  """
+  productOrders(limit: Int = 25, offset: Int = 0): [ProductOrder]
+    @connect(
+      source: "tmf"
+      http: {
+        GET: "/productOrder"
+        queryParams: """
+        limit: $args.limit
+        offset: $args.offset
+        """
+      }
+      selection: """
+      id
+      category
+      description
+      priority
+      channels: $.channel {
+        id: channel.id
+        name: channel.name
+      }
+      notes: $.note {
+        id
+        author
+        date
+        text
+      }
+      items: $.productOrderItem {
+        id
+        quantity
+        action
+        state
+        billingAccount: $.billingAccount {
+          id
+          href
+        }
+        product: $.product {
+          id: productSpecification.id
+          name: productSpecification.name
+          version: productSpecification.version
+          href: productSpecification.href
+          characteristics: $.productCharacteristic {
+            id
+            name
+            value
+          }
+        }
+        offer: $.productOffering {
+          id
+          name
+          href
+        }
+        price: $.itemPrice->first {
+          name
+          description
+          taxRate: price.taxRate
+          subtotal: $.price.dutyFreeAmount {
+            currency: unit
+            amount: value
+          }
+          total: $.price.taxIncludedAmount {
+            currency: unit
+            amount: value
+          }
+          type: priceType->match(["nonRecurring", "NON_RECURRING"], ["recurring", "RECURRING"])
+          paymentInterval: recurringChargePeriod->match(
+            ["month","MONTHLY"],
+            ["year","ANNUALY"],
+            [null,"ONE_TIME"],
+          )
+        }
+        term: $.itemTerm->first {
+          name
+          description
+          duration: $.duration {
+            amount
+            units
+          }
+        }
+      }
+      """
+    )
+  """
+  List or find ProductOrder objects
+  """
+  productOrder(id: ID!): ProductOrder
+    @connect(
+      source: "tmf"
+      http: { GET: "/productOrder/{$args.id}" }
+      entity: true
+      selection: """
+      id
+      category
+      description
+      priority
+      channels: $.channel {
+        id: channel.id
+        name: channel.name
+      }
+      notes: $.note {
+        id
+        author
+        date
+        text
+      }
+      items: $.productOrderItem {
+        id
+        quantity
+        action
+        state
+        billingAccount: $.billingAccount {
+          id
+          href
+        }
+        product: $.product {
+          id: productSpecification.id
+          name: productSpecification.name
+          version: productSpecification.version
+          href: productSpecification.href
+          characteristics: $.productCharacteristic {
+            id
+            name
+            value
+          }
+        }
+        offer: $.productOffering {
+          id
+          name
+          href
+        }
+        price: $.itemPrice->first {
+          name
+          description
+          taxRate: price.taxRate
+          subtotal: $.price.dutyFreeAmount {
+            currency: unit
+            amount: value
+          }
+          total: $.price.taxIncludedAmount {
+            currency: unit
+            amount: value
+          }
+          type: priceType->match(["nonRecurring", "NON_RECURRING"], ["recurring", "RECURRING"])
+          paymentInterval: recurringChargePeriod->match(
+            ["month","MONTHLY"],
+            ["year","ANNUALY"],
+          )
+        }
+        term: $.itemTerm->first {
+          name
+          description
+          duration: $.duration {
+            amount
+            units
+          }
+        }
+      }
+      """
+    )
+}
+
+type Mutation {
+  productOrder(order: ProductOrderInput): ProductOrder
+    @connect(
+      source: "tmf"
+      http: {
+        POST: "/productOrder"
+        body: """
+        $args {
+          id
+        }
+        """
+      }
+      selection: """
+      id
+      """
+    )
+}
+
+input ProductOrderInput {
+  id: ID!
+}

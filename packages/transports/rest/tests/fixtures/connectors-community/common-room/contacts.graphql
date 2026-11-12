@@ -1,0 +1,135 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "common-room"
+    http: {
+      # https://api.commonroom.io/docs
+      baseURL: "https://api.commonroom.io/community/v1"
+      headers: [{ name: "Authorization", value: "Bearer {$config.apiKey}" }]
+    }
+  )
+
+type Contact {
+  email: String!
+  fullName: String
+  activities: Int
+  avatar: String
+  bio: String
+  organization: Organization
+  title: String
+  firstSeen: String
+  lastActive: String
+  location: Location
+  tags: [MemberTag]
+  segments: [Segment]
+  emails: [Email]
+}
+
+type Email {
+  email: String
+  sources: [String]
+}
+
+type Segment {
+  id: ID
+  name: String
+}
+
+type MemberTag {
+  id: ID
+  name: String
+}
+
+type Location {
+  full: String
+  city: String
+  region: String
+  country: String
+}
+
+type Organization {
+  name: String
+  url: String
+}
+
+type Query {
+  contact(email: String!): Contact
+    @connect(
+      source: "common-room"
+      http: { GET: "/members?email={$args.email}" }
+      selection: """
+      # JSON Example Response 👇
+      # https://github.com/apollographql/connectors-community/tree/main/connectors/common-room/json-responses/members%3Femail%3D.json
+      $->first {
+        email: $args.email
+        fullName
+        activities: activities_count
+        avatar
+        bio
+        organization: {
+          name: organization
+          url: organization_domain
+        }
+        title
+        firstSeen: first_seen
+        lastActive: last_active
+        location {
+          full: raw
+          city
+          region
+          country
+        }
+        tags: member_tags {
+          id
+          name
+        }
+        segments {
+          id
+          name
+        }
+        emails: email {
+          email
+          sources
+        }
+      }
+      """
+      entity: true
+    )
+}
+
+type Mutation {
+  addNoteToContact(social: SocialType!, id: ID!, note: String!): Boolean
+    @connect(
+      source: "common-room"
+      http: {
+        POST: "/members/note"
+        body: """
+        socialType: $args.social->match(
+          ["EMAIL","email"],
+          ["TWITTER","twitter"],
+          ["GITHUB","github"],
+          ["LINKEDIN","linkedin"],
+        )
+        value: $args.id
+        note: $args.note
+        """
+      }
+      selection: """
+      # JSON Example Response 👇 - It's the Common Room user id
+      # {
+      #   "id": [
+      #     123456789
+      #   ]
+      # }
+      $(true)
+      """
+    )
+}
+
+enum SocialType {
+  EMAIL
+  TWITTER
+  GITHUB
+  LINKEDIN
+}

@@ -1,0 +1,149 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@shareable", "@external", "@requires"]
+  ) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  #this connector uses the legacy ditance API.  To enable this in Google, you must create an API key and give permissions to this API
+  @source(name: "distance", http: { baseURL: "https://maps.googleapis.com/maps/api/" })
+
+type Query {
+  # Direct distance calculation between two named locations
+  getDistanceByLocation(from: String!, to: String!): TravelEstimate
+    @connect(
+      source: "distance"
+      http: {
+        GET: "/distancematrix/json?origins={$args.from}&destinations={$args.to}&key=YOUR_API_KEY"
+      }
+      selection: """
+      destinationAddresses: destination_addresses
+      originAddresses: origin_addresses
+      rows {
+        elements {
+          distance {
+            text
+            value
+          }
+          duration {
+            text
+            value
+          }
+          status
+        }
+      }
+      status
+      """
+    )
+
+  # Direct distance calculation between two place IDs
+  getDistanceByPlaceId(fromPlaceId: String!, toPlaceId: String!): TravelEstimate
+    @connect(
+      source: "distance"
+      http: {
+        GET: "/distancematrix/json?origins=place_id:{$args.fromPlaceId}&destinations=place_id:{$args.toPlaceId}&key=YOUR_API_KEY"
+      }
+      selection: """
+      destinationAddresses: destination_addresses
+      originAddresses: origin_addresses
+      rows {
+        elements {
+          distance {
+            text
+            value
+          }
+          duration {
+            text
+            value
+          }
+          status
+        }
+      }
+      status
+      """
+    )
+}
+
+type TravelEstimate {
+  destinationAddresses: [String]
+  originAddresses: [String]
+  rows: [TravelEstimateRow]
+  status: String
+}
+
+type TravelEstimateRow {
+  elements: [TravelEstimateElement]
+}
+
+type TravelEstimateElement {
+  distance: TravelEstimateDistance
+  duration: TravelEstimateDuration
+  status: String
+}
+
+type TravelEstimateDistance {
+  text: String
+  value: Int
+}
+
+type TravelEstimateDuration {
+  text: String
+  value: Int
+}
+
+type Place @key(fields: "id", resolvable: false) {
+  id: String @external
+
+  # Get travel distance and duration to another place by id
+  travelTo(destinationPlaceId: String!): TravelEstimate
+    @connect(
+      source: "distance"
+      http: {
+        GET: "/distancematrix/json?origins=place_id:{$this.id}&destinations=place_id:{$args.destinationPlaceId}&key=YOUR_API_KEY"
+      }
+      selection: """
+      destinationAddresses: destination_addresses
+      originAddresses: origin_addresses
+      rows {
+        elements {
+          distance {
+            text
+            value
+          }
+          duration {
+            text
+            value
+          }
+          status
+        }
+      }
+      status
+      """
+    )
+
+  # Get travel distance and duration to a named location
+  travelToLocation(destination: String!): TravelEstimate
+    @connect(
+      source: "distance"
+      http: {
+        GET: "/distancematrix/json?origins=place_id:{$this.id}&destinations={$args.destination}&key=YOUR_API_KEY"
+      }
+      selection: """
+      destinationAddresses: destination_addresses
+      originAddresses: origin_addresses
+      rows {
+        elements {
+          distance {
+            text
+            value
+          }
+          duration {
+            text
+            value
+          }
+          status
+        }
+      }
+      status
+      """
+    )
+}

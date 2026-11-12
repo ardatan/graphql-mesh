@@ -1,0 +1,194 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"])
+  @source(
+    name: "confluence_pages"
+    http: {
+      # https://developer.atlassian.com/cloud/jira/platform/rest/v2/intro/
+      # baseURL: "https://<site-url>/rest/api/2"
+      baseURL: "https://{your_domain}.atlassian.net/rest/api/2"
+      headers: [{ name: "Authorization", value: "Basic {$config.apiKey}" }]
+    }
+  )
+
+type Query {
+  issue(id: String): Issue
+    @connect(
+      source: "confluence_pages"
+      http: { GET: "/issue/{$args.id}" }
+      selection: """
+      $.fields {
+        description
+        assignee {
+            id: accountId
+        }
+        reporter {
+            id: accountId
+        }
+        type: issuetype.name
+        summary
+        createdAt: created
+        key
+        priority: priority.name
+        status: status.name
+        creator {
+            id: accountId
+        }
+        comments: $.comment.comments {
+            id
+            body
+            author {
+                id: accountId
+            }
+        }
+      }
+      """
+    )
+
+  projects: [Project]
+    @connect(
+      source: "confluence_pages"
+      http: { GET: "/project" }
+      selection: """
+      id
+      self
+      key
+      name
+      projectCategory {
+          id
+          name
+          description
+      }
+      """
+    )
+
+  project(id: String): Project
+    @connect(
+      source: "confluence_pages"
+      http: { GET: "/project/{$args.id}" }
+      selection: """
+      id
+      self
+      key
+      name
+      projectCategory {
+          id
+          name
+          description
+      }
+      """
+    )
+}
+
+type Comment {
+  id: String
+  body: String
+  author: User
+    @connect(
+      source: "confluence_pages"
+      http: { GET: "/user?accountId={$this.author.id}" }
+      selection: """
+      id: accountId
+      displayName
+      active
+      emailAddress
+      """
+    )
+}
+
+type Issue {
+  description: String
+  summary: String
+  type: String
+  createdAt: String
+  key: String
+  priority: String
+  status: String
+  comments: [Comment]
+  creator: User
+    @connect(
+      source: "confluence_pages"
+      http: { GET: "/user?accountId={$this.reporter.id}" }
+      selection: """
+      id: $.accountId
+      displayName
+      active
+      emailAddress
+      """
+    )
+  reporter: User
+    @connect(
+      source: "confluence_pages"
+      http: { GET: "/user?accountId={$this.reporter.id}" }
+      selection: """
+      id: $.accountId
+      displayName
+      active
+      emailAddress
+      """
+    )
+  assignee: User
+    @connect(
+      source: "confluence_pages"
+      http: { GET: "/user?accountId={$this.assignee.id}" }
+      selection: """
+      id: $.accountId
+      displayName
+      active
+      emailAddress
+      """
+    )
+}
+
+type User {
+  id: String
+  displayName: String
+  active: Boolean
+  emailAddress: String
+}
+
+type Project {
+  self: String
+  id: String
+  key: String
+  name: String
+  projectCategory: ProjectCategory
+  issues: [Issue]
+    @connect(
+      source: "confluence_pages"
+      http: { GET: "/search?jql=project={$this.key}" }
+      selection: """
+      $.issues.fields {
+        description
+        assignee {
+            id: accountId
+        }
+        reporter {
+            id: accountId
+        }
+        type: issuetype.name
+        summary
+        createdAt: created
+        key
+        priority: priority.name
+        status: status.name
+        creator {
+            id: accountId
+        }
+        comments: $.fields.comment.comments {
+            id
+            body
+            author {
+                id: accountId
+            }
+        }
+      }
+      """
+    )
+}
+
+type ProjectCategory {
+  id: String
+  name: String
+  description: String
+}

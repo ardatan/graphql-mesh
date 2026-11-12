@@ -1,0 +1,234 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(name: "llv2", http: { baseURL: "https://ll.thespacedevs.com/2.3.0/" })
+type Agency @key(fields: "id", resolvable: false) {
+  id: ID!
+  name: String @shareable
+  abbrev: String @shareable
+  type: String @shareable
+}
+type Astronaut @key(fields: "id") {
+  id: ID!
+  name: String
+  status: String
+  agency: Agency
+  image: Image
+  type: String
+  inSpace: Boolean
+  timeInSpace: String
+  evaTime: String
+  age: Int
+  dateOfBirth: String
+  dateOfDeath: String
+  nationality: Country
+  bio: String
+  wiki: String
+  lastFlight: String
+  firstFlight: String
+  socialMediaLinks: [SocialMediaLink]
+}
+
+type AstronautConnection {
+  pageInfo: PageInfo
+  results: [Astronaut]
+}
+type Country @shareable {
+  id: ID!
+  name: String
+  alpha2Code: String
+  alpha3Code: String
+  nationalityName: String
+  nationalityNameComposed: String
+}
+type Image @shareable {
+  id: ID!
+  name: String
+  url: String
+  thumbnail: String
+  credit: String
+  singleUse: Boolean
+  license: ImageLicense
+}
+type ImageLicense @shareable {
+  name: String
+  link: String
+}
+type PageInfo @shareable {
+  count: Int
+  next: String
+  previous: String
+}
+input AstronautFilters {
+  search: String
+  inSpace: Boolean
+}
+type Query {
+  astronaut(id: ID!): Astronaut
+    @connect(
+      source: "llv2"
+      entity: true
+      http: { GET: "/astronauts/{$args.id}/?format=json" }
+      selection: """
+      id
+      name
+      status: status.name
+      agency {
+        id
+        name
+        abbrev
+        type: type.name
+      }
+      image {
+        id
+        name
+        url: image_url
+        thumbnail: thumbnail_url
+        credit
+        license {
+          name
+          link
+        }
+        singleUse: single_use
+      }
+      type: type.name
+      inSpace: in_space
+      timeInSpace: time_in_space
+      evaTime: eva_time
+      age
+      dateOfBirth: date_of_birth
+      dateOfDeath: date_of_death
+      nationality {
+        id
+        name
+        alpha2Code: alpha_2_code
+        alpha3Code: alpha_3_code
+        nationalityName: nationality_name
+        nationalityNameComposed: nationality_name_composed
+      }
+      bio
+      wiki
+      lastFlight: last_flight
+      firstFlight: first_flight
+      socialMediaLinks: social_media_links {
+        id
+        url
+        socialMedia: social_media {
+          id
+          name
+          url
+          logo {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+        }
+      }
+      """
+    )
+  astronauts(filters: AstronautFilters, offset: Int = 0, limit: Int = 20): AstronautConnection
+    @connect(
+      source: "llv2"
+      http: {
+        GET: "/astronauts/"
+        queryParams: """
+        in_space: $args.filters.inSpace
+        search: $args.filters.search
+        limit: $args.limit
+        offset: $args.offset
+        format: $('json')
+        """
+      }
+      selection: """
+      pageInfo {
+        count
+        next
+        previous
+      }
+      results {
+        id
+        name
+        status: status.name
+        agency {
+          id
+          name
+          abbrev
+          type: type.name
+        }
+        image {
+          id
+          name
+          url: image_url
+          thumbnail: thumbnail_url
+          credit
+          license {
+            name
+            link
+          }
+          singleUse: single_use
+        }
+        type: type.name
+        inSpace: in_space
+        timeInSpace: time_in_space
+        evaTime: eva_time
+        age
+        dateOfBirth: date_of_birth
+        dateOfDeath: date_of_death
+        nationality {
+          id
+          name
+          alpha2Code: alpha_2_code
+          alpha3Code: alpha_3_code
+          nationalityName: nationality_name
+          nationalityNameComposed: nationality_name_composed
+        }
+        bio
+        wiki
+        lastFlight: last_flight
+        firstFlight: first_flight
+        socialMediaLinks: social_media_links {
+          id
+          url
+          socialMedia: social_media {
+            id
+            name
+            url
+            logo {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+          }
+        }
+      }
+      """
+    )
+}
+type SocialMediaLink @shareable {
+  id: ID!
+  url: String
+  socialMedia: SocialMedia
+}
+type SocialMedia @shareable {
+  id: ID!
+  name: String
+  url: String
+  logo: Image
+}

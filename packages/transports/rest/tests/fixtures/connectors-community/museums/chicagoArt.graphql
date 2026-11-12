@@ -1,0 +1,149 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@external", "@provides"]
+  ) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  #this api is blocked on localhost without a user agent header, it can be any value you like
+  @source(
+    name: "artic"
+    http: {
+      baseURL: "https://api.artic.edu/api/v1/"
+      headers: [
+        { name: "Content-Type", value: "application/json" }
+        { name: "User-Agent", value: "Apollo-Connect" }
+      ]
+    }
+  )
+
+type Query {
+  # Fetch artworks by artist name or title or general term like sunflowers
+  searchArtwork(searchTerm: String!, limit: Int = 5): ArtworkSearchResponse
+    @connect(
+      source: "artic"
+      http: { GET: "artworks/search?q={$args.searchTerm}&limit={$args.limit}" }
+      selection: """
+      pagination {
+        limit
+        totalPages: total_pages
+        currentPage: current_page
+      }
+      data {
+        id
+        apiModel: api_model
+        title
+        thumbnail {
+          imgData: lqip
+          width
+          height
+          altText: alt_text
+        }
+        timestamp
+      }
+      info {
+        licenseText: license_text
+        licenseLinks: license_links
+        version
+      }
+      """
+    )
+
+  searchArtworkById(artId: String!): ArtworkDetailResponse
+    @connect(
+      source: "artic"
+      http: { GET: "artworks/{$args.artId}" }
+      selection: """
+      data {
+        id
+        apiModel: api_model
+        title
+        thumbnail {
+          imgData: lqip
+          width
+          height
+          altText: alt_text
+        }
+        dateStart: date_start
+        dateEnd: date_end
+        dateDisplay: date_display
+        artistDisplay: artist_display
+        placeOfOrigin: place_of_origin
+        description
+        dimensions
+        mediumDisplay: medium_display
+        inscriptions
+        artworkTypeTitle: artwork_type_title
+        departmentTitle: department_title
+        artistTitle: artist_title
+        styleTitle: style_title
+        timestamp
+      }
+      info {
+        licenseText: license_text
+        licenseLinks: license_links
+        version
+      }
+      """
+    )
+}
+
+type ArtworkSearchResponse {
+  pagination: Pagination
+  data: [Artwork]
+  info: Info
+}
+
+type ArtworkDetailResponse {
+  data: ArtworkDetail
+  info: Info
+}
+
+type Artwork {
+  id: ID!
+  apiModel: String
+  title: String
+  thumbnail: Thumbnail
+  timestamp: String
+}
+
+type ArtworkDetail {
+  id: ID!
+  apiModel: String
+  title: String
+  thumbnail: Thumbnail
+  timestamp: String
+
+  # Detail-specific fields
+  dateStart: Int
+  dateEnd: Int
+  dateDisplay: String
+  artistDisplay: String
+  placeOfOrigin: String
+  description: String
+  dimensions: String
+  mediumDisplay: String
+  inscriptions: String
+  artworkTypeTitle: String
+  departmentTitle: String
+  artistTitle: String
+  styleTitle: String
+}
+
+type Thumbnail {
+  imgData: String
+  width: Int
+  height: Int
+  altText: String
+}
+
+type Pagination {
+  limit: Int
+  totalPages: Int
+  currentPage: Int
+}
+
+type Info {
+  licenseText: String
+  licenseLinks: [String]
+  version: String
+}

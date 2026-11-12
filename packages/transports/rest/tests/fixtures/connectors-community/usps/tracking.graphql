@@ -1,0 +1,115 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  # http://developers.usps.com/trackingv3
+  # https://developers.usps.com/sites/default/files/apidoc_specs/tracking_v3.yaml
+  @source(
+    name: "usps-tracking"
+    http: {
+      baseURL: "https://apis.usps.com/tracking/v3"
+      headers: [{ name: "Authorization", value: "Bearer {$config.apiKey}" }]
+    }
+  )
+
+type TrackingStatus @key(fields: "trackingNumber") {
+  trackingNumber: ID!
+  expectedDeliveryDate: String
+  expectedDeliveryTime: String
+  guaranteedDeliveryDate: String
+  eventSummaries: [String]
+}
+
+type Query {
+  tracking(trackingNumber: ID!): TrackingStatus
+    # https://developers.usps.com/trackingv3#tag/Resources/operation/get-package-tracking
+    @connect(
+      source: "usps-tracking"
+      http: { GET: "/tracking/{$args.trackingNumber}" }
+      selection: """
+      trackingNumber
+      expectedDeliveryDate
+      expectedDeliveryTime
+      guaranteedDeliveryDate
+      eventSummaries
+      """
+      entity: true
+    )
+}
+
+type Mutation {
+  registerForNotifications(trackingNumber: ID!, options: NotificationsInput!): TrackingResponse
+    @connect(
+      source: "usps-tracking"
+      http: {
+        POST: "/tracking/{$args.trackingNumber}/notifications"
+        body: """
+        notifications: $args.options.emails
+        $args.options {
+          firstName
+          lastName
+          uniqueMailPieceId
+          mailPieceIntakeDate
+          notifyEventTypes
+        }
+        """
+      }
+      selection: """
+      result: resultText
+      code: returnCode
+      """
+    )
+  proofOfDelivery(trackingNumber: ID!, options: ProofOfDeliveryInput!): TrackingResponse
+    @connect(
+      source: "usps-tracking"
+      http: {
+        POST: "/tracking/{$args.trackingNumber}/proof-of-delivery"
+        body: """
+        $args.options
+        """
+      }
+      selection: """
+      result: resultText
+      code: returnCode
+      """
+    )
+}
+
+enum NotifyEventTypes {
+  EMAIL_ALERT
+  EMAIL_FUTURE_DELIVERY
+  EMAIL_TODAY_DELIVERY
+  EMAIL_AVAILABLE_FOR_PICKUP
+  OTHER_ACTIVITY
+}
+
+input ProofOfDeliveryInput {
+  uniqueMailPieceID: String!
+  mailPieceIntakeDate: String!
+  tableCode: String!
+  requestType: String!
+  firstName: String!
+  lastName: String!
+  email: [String!]!
+  faxNumber: String
+  streetAddress: String
+  secondaryAddress: String
+  city: String
+  state: String
+  ZIPCode: String
+  ZIPPlus4: String
+  CRID: String
+}
+
+input NotificationsInput {
+  emails: [String!]!
+  firstName: String
+  lastName: String
+  uniqueMailPieceId: String
+  mailPieceIntakeDate: String
+  notifyEventTypes: [NotifyEventTypes]
+}
+
+type TrackingResponse {
+  result: String
+  code: String
+}

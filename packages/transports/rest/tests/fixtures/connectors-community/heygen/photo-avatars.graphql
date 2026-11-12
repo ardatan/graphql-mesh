@@ -1,0 +1,451 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10")
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"])
+  @source(
+    name: "heygen-v2"
+    http: {
+      baseURL: "https://api.heygen.com/v2"
+      headers: [{ name: "X-API-KEY", value: "{$config.apiKey}" }]
+    }
+  )
+
+scalar Timestamp
+
+"""
+Unix timestamp in seconds
+"""
+scalar UnixTimestamp
+
+"""
+URL string for images and videos
+"""
+scalar URL
+
+"""
+Status string for various operations
+"""
+scalar Status
+
+enum AvatarAge {
+  YOUNG_ADULT
+  EARLY_MIDDLE_AGE
+  LATE_MIDDLE_AGE
+  SENIOR
+  UNSPECIFIED
+}
+
+enum AvatarGender {
+  WOMAN
+  MAN
+  UNSPECIFIED
+}
+
+enum AvatarEthnicity {
+  WHITE
+  BLACK
+  ASIAN_AMERICAN
+  EAST_ASIAN
+  SOUTH_EAST_ASIAN
+  SOUTH_ASIAN
+  MIDDLE_EASTERN
+  PACIFIC
+  HISPANIC
+  UNSPECIFIED
+}
+
+enum PhotoOrientation {
+  SQUARE
+  HORIZONTAL
+  VERTICAL
+}
+
+enum PhotoPose {
+  HALF_BODY
+  CLOSE_UP
+  FULL_BODY
+}
+
+enum PhotoStyle {
+  REALISTIC
+  PIXAR
+  CINEMATIC
+  VINTAGE
+  NOIR
+  CYBERPUNK
+  UNSPECIFIED
+}
+
+input GeneratePhotoInput {
+  name: String!
+  age: AvatarAge
+  gender: AvatarGender
+  ethnicity: AvatarEthnicity
+  orientation: PhotoOrientation
+  pose: PhotoPose
+  style: PhotoStyle
+  appearance: String
+}
+
+input CreatePhotoGroupInput {
+  name: String!
+  imageKey: String
+  generationId: String
+}
+
+input AddLooksInput {
+  groupId: String!
+  imageKeys: [String!]!
+  name: String!
+  generationId: String
+}
+
+input AddMotionInput {
+  id: ID!
+}
+
+input GenerateLooksInput {
+  groupId: String!
+  prompt: String!
+  orientation: PhotoOrientation!
+  pose: PhotoPose!
+  style: PhotoStyle!
+}
+
+input AddSoundEffectInput {
+  id: ID!
+}
+
+input UpscaleAvatarInput {
+  id: ID!
+}
+
+input TrainPhotoGroupInput {
+  groupId: String!
+}
+
+type PhotoAvatar {
+  id: ID!
+  groupId: String
+  name: String
+  imageUrl: URL
+  createdAt: UnixTimestamp
+  status: Status
+  isMotion: Boolean
+  motionPreviewUrl: URL
+  businessType: String
+  upscaled: Boolean
+  backgroundSoundEffect: String
+  upscaleAvailability: UpscaleAvailability
+}
+
+type UpscaleAvailability {
+  available: Boolean
+  reason: String
+}
+
+type AddMotionResponse {
+  id: ID!
+}
+
+type UpscaleAvatarResponse {
+  id: ID!
+}
+
+type GeneratePhotoResponse {
+  generationId: String!
+}
+
+type AddSoundEffectResponse {
+  soundEffectId: String!
+}
+
+type GenerateLooksResponse {
+  generationId: String!
+}
+
+type TrainingJobStatus {
+  status: Status!
+  errorMsg: String
+  createdAt: UnixTimestamp!
+  updatedAt: UnixTimestamp
+}
+
+type GenerationStatusResponse {
+  id: ID!
+  status: Status!
+  msg: String
+  imageUrlList: [URL!]!
+  imageKeyList: [String!]!
+}
+
+type Query {
+  getPhotoAvatar(id: ID!): PhotoAvatar!
+    @connect(
+      source: "heygen-v2"
+      http: { GET: "/photo_avatar/{$args.id}" }
+      selection: """
+      $.data {
+        id
+        groupId: group_id
+        name
+        imageUrl: image_url
+        createdAt: created_at
+        status
+        isMotion: is_motion
+        motionPreviewUrl: motion_preview_url
+        businessType: business_type
+        upscaled
+        backgroundSoundEffect: background_sound_effect
+        upscaleAvailability: $.upscale_availability {
+          available
+          reason
+        }
+      }
+      """
+      entity: true
+    )
+
+  getPhotoAvatarGroup(groupId: ID!): [PhotoAvatar!]!
+    @connect(
+      source: "heygen-v2"
+      http: { GET: "/avatar_group/{$args.groupId}/avatars" }
+      selection: """
+      $.data.avatar_list {
+        id
+        groupId: group_id
+        name
+        imageUrl: image_url
+        createdAt: created_at
+        status
+        isMotion: is_motion
+        motionPreviewUrl: motion_preview_url
+        businessType: business_type
+        upscaled
+        backgroundSoundEffect: background_sound_effect
+        upscaleAvailability: $.upscale_availability {
+          available
+          reason
+        }
+      }
+      """
+    )
+
+  getTrainingStatus(groupId: ID!): TrainingJobStatus!
+    @connect(
+      source: "heygen-v2"
+      http: { GET: "/photo_avatar/train/status/{$args.groupId}" }
+      selection: """
+      $.data {
+        status
+        errorMsg: error_msg
+        createdAt: created_at
+        updatedAt: updated_at
+      }
+      """
+    )
+
+  checkGenerationStatus(generationId: ID!): GenerationStatusResponse!
+    @connect(
+      source: "heygen-v2"
+      http: { GET: "/photo_avatar/generation/{$args.generationId}" }
+      selection: """
+      $.data {
+        id
+        status
+        msg
+        imageUrlList: image_url_list
+        imageKeyList: image_key_list
+      }
+      """
+    )
+}
+
+type Mutation {
+  generatePhoto(input: GeneratePhotoInput!): GeneratePhotoResponse!
+    @connect(
+      source: "heygen-v2"
+      http: {
+        POST: "/photo_avatar/photo/generate"
+        body: """
+        $args.input {
+          name
+          age
+          gender
+          ethnicity
+          orientation
+          pose
+          style
+          appearance
+        }
+        """
+      }
+      selection: """
+      $.data {
+        generationId: generation_id
+      }
+      """
+    )
+
+  createPhotoGroup(input: CreatePhotoGroupInput!): PhotoAvatar!
+    @connect(
+      source: "heygen-v2"
+      http: {
+        POST: "/photo_avatar/avatar_group/create"
+        body: """
+        $args.input {
+          name
+          image_key: imageKey
+          generation_id: generationId
+        }
+        """
+      }
+      selection: """
+      $.data {
+        id
+        groupId: group_id
+        name
+        imageUrl: image_url
+        createdAt: created_at
+        status
+        isMotion: is_motion
+        motionPreviewUrl: motion_preview_url
+        businessType: business_type
+        upscaled
+        backgroundSoundEffect: background_sound_effect
+        upscaleAvailability: $.upscale_availability {
+          available
+          reason
+        }
+      }
+      """
+    )
+
+  addLooks(input: AddLooksInput!): [PhotoAvatar!]!
+    @connect(
+      source: "heygen-v2"
+      http: {
+        POST: "/photo_avatar/avatar_group/add"
+        body: """
+        $args.input {
+          group_id: groupId
+          image_keys: imageKeys
+          name
+          generation_id: generationId
+        }
+        """
+      }
+      selection: """
+      $.data.photo_avatar_list {
+        id
+        groupId: group_id
+        name
+        imageUrl: image_url
+        createdAt: created_at
+        status
+        isMotion: is_motion
+        motionPreviewUrl: motion_preview_url
+        businessType: business_type
+        upscaled
+        backgroundSoundEffect: background_sound_effect
+        upscaleAvailability: $.upscale_availability {
+          available
+          reason
+        }
+      }
+      """
+    )
+
+  addMotion(input: AddMotionInput!): AddMotionResponse!
+    @connect(
+      source: "heygen-v2"
+      http: {
+        POST: "/photo_avatar/add_motion"
+        body: """
+        $args.input {
+          id
+        }
+        """
+      }
+      selection: """
+      $.data{
+        id
+      }
+      """
+    )
+
+  addSoundEffect(input: AddSoundEffectInput!): AddSoundEffectResponse!
+    @connect(
+      source: "heygen-v2"
+      http: {
+        POST: "/photo_avatar/add_sound_effect"
+        body: """
+        $args.input {
+          id
+        }
+        """
+      }
+      selection: """
+      $.data{
+        soundEffectId: sound_effect_id
+      }
+      """
+    )
+
+  upscaleAvatar(input: UpscaleAvatarInput!): UpscaleAvatarResponse!
+    @connect(
+      source: "heygen-v2"
+      http: {
+        POST: "/photo_avatar/upscale"
+        body: """
+        $args.input {
+          id
+        }
+        """
+      }
+      selection: """
+      $.data{
+        id
+      }
+      """
+    )
+
+  trainPhotoGroup(input: TrainPhotoGroupInput!): Boolean!
+    @connect(
+      source: "heygen-v2"
+      http: {
+        POST: "/photo_avatar/train"
+        body: """
+        $args.input {
+          group_id: groupId
+        }
+        """
+      }
+      selection: """
+      $.data {
+        id
+      }
+      """
+    )
+
+  generateLooks(input: GenerateLooksInput!): GenerateLooksResponse!
+    @connect(
+      source: "heygen-v2"
+      http: {
+        POST: "/photo_avatar/look/generate"
+        body: """
+        $args.input {
+          group_id: groupId
+          prompt
+          orientation
+          pose
+          style
+        }
+        """
+      }
+      selection: """
+      $.data {
+        generationId: generation_id
+      }
+      """
+    )
+}
