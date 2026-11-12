@@ -72,7 +72,9 @@ export function processDirectives(
     operationHeaders: sourceHeaders ?? currDirective?.headers,
     queryParams: currDirective?.queryParams,
     queryStringOptions: currDirective?.queryStringOptions ?? meshRestOptions.queryStringOptions,
-    timeout: meshRestOptions.timeout,
+    // Prefer explicit transport / loader timeout over legacy schema meshRestOptions.
+    timeout:
+      (currDirective as { timeout?: number } | undefined)?.timeout ?? meshRestOptions.timeout,
     ...extraGlobalOptions,
   };
   // Wire @connect resolvers (Federation Connectors)

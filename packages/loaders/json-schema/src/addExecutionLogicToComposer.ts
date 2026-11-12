@@ -48,7 +48,6 @@ import { PubSubOperationDirective, ResolveRootDirective } from './directives.js'
 import { getMeshTypeConnect, registerMeshEntityType } from './entityRefs.js';
 import type {
   ConnectSelectionOptions,
-  JSONSchemaHTTPJSONOperationConfig,
   JSONSchemaLinkConfig,
   JSONSchemaOperationConfig,
   OperationHeadersConfiguration,
@@ -544,26 +543,9 @@ ${operationConfig.description || ''}
           }),
         ),
       });
-      // Mesh-only options: emit `@meshRestOptions` so compose→SDL→reload keeps them
-      // (field.extensions alone are dropped when the schema is printed).
+      // Mesh-only QS options: emit `@meshRestOptions` so compose→SDL→reload keeps them.
+      // timeout → transport options; binary → value/Content-Type; requestBaseBody → http.body.
       const operationQueryStringOptions = operationConfig.queryStringOptions;
-      const httpOpForRest =
-        'path' in operationConfig
-          ? (operationConfig as JSONSchemaHTTPJSONOperationConfig)
-          : undefined;
-      const requestBaseBody =
-        httpOpForRest &&
-        (httpOpForRest.requestTypeName ||
-          httpOpForRest.requestSample != null ||
-          httpOpForRest.requestSchema != null) &&
-        httpOpForRest.requestBaseBody != null
-          ? httpOpForRest.requestBaseBody
-          : undefined;
-      const isBinary = 'binary' in operationConfig && Boolean((operationConfig as any).binary);
-      const operationTimeout =
-        'timeout' in operationConfig && typeof (operationConfig as any).timeout === 'number'
-          ? (operationConfig as any).timeout
-          : undefined;
       const meshRestArgs: Record<string, unknown> = {
         ...(operationConfig.queryStringOptionsByParam
           ? { queryStringOptionsByParam: operationConfig.queryStringOptionsByParam }
@@ -571,9 +553,6 @@ ${operationConfig.description || ''}
         ...((operationQueryStringOptions || queryStringOptions) && {
           queryStringOptions: operationQueryStringOptions ?? queryStringOptions,
         }),
-        ...(requestBaseBody !== undefined ? { requestBaseBody } : {}),
-        ...(isBinary ? { isBinary: true } : {}),
-        ...(operationTimeout !== undefined ? { timeout: operationTimeout } : {}),
       };
       if (Object.keys(meshRestArgs).length) {
         meshRestOptionsFieldUsed = true;

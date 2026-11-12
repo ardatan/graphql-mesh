@@ -20,6 +20,7 @@ const DEFAULT_TRANSPORT_DIRECTIVE_SDL = /* GraphQL */ `
     headers: ObjMap
     queryStringOptions: ObjMap
     queryParams: ObjMap
+    timeout: Int
   ) repeatable on SCHEMA
 `;
 

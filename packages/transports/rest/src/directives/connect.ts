@@ -1259,6 +1259,39 @@ function pickHttp(http: ConnectHttp | undefined): { method: string; path: string
   return undefined;
 }
 
+/**
+ * Detect raw binary request bodies without Mesh `@meshRestOptions(isBinary)`.
+ * Prefer the runtime value shape and Content-Type — not GraphQL scalar names.
+ */
+function isRawBinaryConnectBody(input: unknown, contentType: string | undefined): boolean {
+  // Value shape: graphql-upload streams, Blob/File, Buffer — not GraphQL type names.
+  if (isFileUpload(input)) {
+    return true;
+  }
+  if (typeof Blob !== 'undefined' && input instanceof Blob) {
+    return true;
+  }
+  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(input)) {
+    return true;
+  }
+  if (!contentType) {
+    return false;
+  }
+  const ct = contentType.toLowerCase();
+  // Structured body encodings keep the JSON / form paths below.
+  if (
+    ct.includes('json') ||
+    ct.includes('xml') ||
+    ct.startsWith('text/') ||
+    ct.includes('form-urlencoded') ||
+    ct.includes('multipart/form-data')
+  ) {
+    return false;
+  }
+  // Any other explicit Content-Type (octet-stream, image/*, …) → raw body.
+  return true;
+}
+
 function buildBody(
   bodySelection: string | undefined,
   vars: {
@@ -1290,21 +1323,28 @@ function buildBody(
     );
   };
 
+  const selectionVars = {
+    args: vars.args,
+    thisValue: vars.thisValue,
+    env: vars.env,
+    context: vars.context,
+    config: {},
+  };
+  // Object body with baked base literals + `...$args.input` (Connectors-friendly merge).
+  if (trimmed.startsWith('{') && trimmed.includes('$args')) {
+    const recoveredArgs = { ...vars.args };
+    if ('input' in recoveredArgs) {
+      recoveredArgs.input = recoverInput(recoveredArgs.input, 'input');
+    }
+    return JSON.stringify(
+      applySelection(trimmed, {}, { vars: { ...selectionVars, args: recoveredArgs } }),
+    );
+  }
   if (trimmed === '$args') {
     return JSON.stringify(vars.args);
   }
   if (trimmed === '$args.input' || trimmed.startsWith('$args.input')) {
-    let input = recoverInput(vars.args.input, 'input');
-    // Merge Mesh `requestBaseBody` under the GraphQL `input` arg when both exist.
-    const baseBody = parseObjMapArg(
-      (opts.field?.extensions as any)?.meshRestOptions?.requestBaseBody,
-    );
-    if (baseBody != null && typeof baseBody === 'object' && !Array.isArray(baseBody)) {
-      input =
-        input != null && typeof input === 'object' && !Array.isArray(input)
-          ? { ...baseBody, ...input }
-          : { ...baseBody };
-    }
+    const input = recoverInput(vars.args.input, 'input');
     // `$args.input { alias: field }` subselection
     const subMatch = trimmed.match(/^\$args\.input\s*\{([\s\S]*)\}$/);
     if (subMatch) {
@@ -1360,7 +1400,6 @@ export function addConnectFieldResolver(
     ...rawFieldMeshRestOptions,
     queryStringOptions: parseObjMapArg(rawFieldMeshRestOptions.queryStringOptions),
     queryStringOptionsByParam: parseObjMapArg(rawFieldMeshRestOptions.queryStringOptionsByParam),
-    requestBaseBody: parseObjMapArg(rawFieldMeshRestOptions.requestBaseBody),
   } as Record<string, any>;
   // Operation/field meshRestOptions override serve-time globals (httpOperation parity).
   const queryStringOptions: MeshQsOptions = {
@@ -1371,8 +1410,8 @@ export function addConnectFieldResolver(
   const queryStringOptionsByParam =
     fieldMeshRestOptions.queryStringOptionsByParam ||
     parseObjMapArg(schemaMeshRestOptions.queryStringOptionsByParam);
-  // Field > schema > serve-time global (same precedence as queryStringOptions).
-  const timeout = fieldMeshRestOptions.timeout ?? schemaMeshRestOptions.timeout ?? opts.timeout;
+  // Timeout is a REST transport option (serve-time / transportEntry), not field SDL.
+  const timeout = opts.timeout ?? schemaMeshRestOptions.timeout;
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // Virtual connector: no http — selection may only use $args / $this / literals.
@@ -1495,9 +1534,9 @@ export function addConnectFieldResolver(
       const contentType = Object.entries(headers).find(
         ([k]) => k.toLowerCase() === 'content-type',
       )?.[1];
-      // Raw binary upload (Mesh `binary: true` → `@meshRestOptions(isBinary: true)`).
-      if (fieldMeshRestOptions.isBinary) {
-        const binaryUpload = await rawArgs.input;
+      // Raw binary upload: stream/Blob/Buffer value or non-structured Content-Type.
+      const binaryUpload = rawArgs.input !== undefined ? await rawArgs.input : undefined;
+      if (isRawBinaryConnectBody(binaryUpload, contentType)) {
         if (isFileUpload(binaryUpload)) {
           requestInit.body = binaryUpload.createReadStream() as any;
           const hasContentType = Object.keys(headers).some(k => k.toLowerCase() === 'content-type');
@@ -1945,11 +1984,7 @@ function hydrateMeshRestOptionsFromDirective(field: GraphQLField<any, any>) {
     return;
   }
   const normalized: Record<string, any> = { ...fromDirective };
-  for (const key of [
-    'queryStringOptions',
-    'queryStringOptionsByParam',
-    'requestBaseBody',
-  ] as const) {
+  for (const key of ['queryStringOptions', 'queryStringOptionsByParam'] as const) {
     if (key in normalized) {
       normalized[key] = parseObjMapArg(normalized[key]);
     }

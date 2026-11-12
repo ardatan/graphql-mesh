@@ -889,4 +889,57 @@ describe('Federation Connectors error shape', () => {
       },
     });
   });
+
+  it('merges baked requestBaseBody literals under $args.input in http.body', async () => {
+    const bodies: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "API", http: { baseURL: "http://localhost" }) {
+        query: Query
+      }
+
+      type Query {
+        create(input: CreateInput!): Ok
+          @connect(
+            source: "API"
+            http: {
+              POST: "/items"
+              body: """
+              {
+                api_key: $("secret")
+                ...$args.input
+              }
+              """
+            }
+            selection: "ok"
+          )
+      }
+
+      input CreateInput {
+        name: String
+      }
+
+      type Ok {
+        ok: Boolean
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (_url: string, init?: RequestInit) => {
+        bodies.push(String(init?.body ?? ''));
+        return Response.json({ ok: true });
+      }) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          create(input: { name: "Ada" }) {
+            ok
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(JSON.parse(bodies[0])).toEqual({ api_key: 'secret', name: 'Ada' });
+  });
 });

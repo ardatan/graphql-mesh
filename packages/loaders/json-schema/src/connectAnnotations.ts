@@ -3,7 +3,6 @@ import {
   GraphQLBoolean,
   GraphQLDirective,
   GraphQLInputObjectType,
-  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLString,
@@ -217,8 +216,9 @@ export const LinkDirective = new GraphQLDirective({
 
 /**
  * Mesh-only field options that must survive compose → SDL → reload.
- * Federation Connectors SDL has no home for qs/timeout/binary/requestBaseBody;
- * store them here and restore into `field.extensions.meshRestOptions` at process time.
+ * QS serialization styles have no home in Federation Connectors SDL yet.
+ * timeout → REST transport options; binary → upload value shape / Content-Type;
+ * requestBaseBody → baked into `@connect(http.body:)`.
  */
 export const MeshRestOptionsDirective = new GraphQLDirective({
   name: 'meshRestOptions',
@@ -226,9 +226,6 @@ export const MeshRestOptionsDirective = new GraphQLDirective({
   args: {
     queryStringOptions: { type: ObjMapScalar },
     queryStringOptionsByParam: { type: ObjMapScalar },
-    requestBaseBody: { type: ObjMapScalar },
-    timeout: { type: GraphQLInt },
-    isBinary: { type: GraphQLBoolean },
   },
 });
 
@@ -1173,8 +1170,8 @@ export function buildConnectHttpArgs(opts: {
 
 /**
  * Infer `@connect(http.body:)` from Mesh operation request config.
- * When both `requestSchema`/`input` and `requestBaseBody` exist, emit `$args.input`
- * and stash the base body on `meshRestOptions` for runtime merge (see transport-rest).
+ * When both `requestSchema`/`input` and `requestBaseBody` exist, bake base literals
+ * into the body selection and spread `$args.input` so input overrides (Mesh merge).
  */
 export function inferBodySelection(operationConfig: JSONSchemaOperationConfig): string | undefined {
   if (!('path' in operationConfig)) {
@@ -1185,8 +1182,26 @@ export function inferBodySelection(operationConfig: JSONSchemaOperationConfig): 
   if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
     return undefined;
   }
+  const hasInput =
+    httpOp.requestTypeName || httpOp.requestSample != null || httpOp.requestSchema != null;
+  const baseBody =
+    httpOp.requestBaseBody != null &&
+    typeof httpOp.requestBaseBody === 'object' &&
+    !Array.isArray(httpOp.requestBaseBody)
+      ? (httpOp.requestBaseBody as Record<string, unknown>)
+      : null;
+  if (hasInput && baseBody && Object.keys(baseBody).length) {
+    const lines: string[] = [];
+    for (const [key, value] of Object.entries(baseBody)) {
+      const keyOut = /^[A-Za-z_][\w]*$/.test(key) ? key : JSON.stringify(key);
+      lines.push(`  ${keyOut}: $(${JSON.stringify(value)})`);
+    }
+    // Spread last so GraphQL `input` overrides fixed base keys (Mesh `{...base,...input}`).
+    lines.push(`  ...$args.input`);
+    return `{\n${lines.join('\n')}\n}`;
+  }
   // Conventional Mesh/OpenAPI request arg is `input`; Connectors body maps from it.
-  if (httpOp.requestTypeName || httpOp.requestSample != null || httpOp.requestSchema != null) {
+  if (hasInput) {
     return `$args.input`;
   }
   if (httpOp.requestBaseBody != null) {
