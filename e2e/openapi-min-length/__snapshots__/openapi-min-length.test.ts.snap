@@ -46,9 +46,9 @@ type Query @join__type(graph: WIKI) {
   jokes_categories: [Category] @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/jokes/categories", headers: [{name: "accept", value: "application/json"}]}, selection: "$"})
 }
 
-scalar ObjMap
+scalar TransportOptions
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 

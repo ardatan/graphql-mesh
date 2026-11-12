@@ -392,7 +392,7 @@ directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on
 
 directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
@@ -2341,7 +2341,7 @@ enum mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provid
   Youdao @join__enumValue(graph: WIKI)
 }
 
-scalar ObjMap
+scalar TransportOptions
 
 scalar join__DirectiveArguments
 "

@@ -430,9 +430,9 @@ type GenericResponse @join__type(graph: CHINOOK) {
   success: Boolean
 }
 
-scalar ObjMap
+scalar TransportOptions
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 "
 `;
 

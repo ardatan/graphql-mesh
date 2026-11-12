@@ -61,9 +61,9 @@ enum Category @join__type(graph: WIKI) {
   TRAVEL @join__enumValue(graph: WIKI)
 }
 
-scalar ObjMap
+scalar TransportOptions
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 

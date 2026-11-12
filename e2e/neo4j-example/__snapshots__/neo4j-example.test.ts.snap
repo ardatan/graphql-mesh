@@ -47,7 +47,7 @@ directive @introspection(subgraph: String) repeatable on ENUM | OBJECT | INTERFA
 
 directive @node on OBJECT
 
-directive @transport(kind: String, subgraph: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 scalar TransportOptions @join__type(graph: MOVIES)
 

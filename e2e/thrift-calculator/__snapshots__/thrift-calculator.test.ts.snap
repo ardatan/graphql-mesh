@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@fieldTypeMap", "@transport"]) @transport(subgraph: "calculator", kind: "thrift", location: "http://localhost:<calculator_port>/thrift", headers: {}, options: {clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@fieldTypeMap", "@transport"]) @transport(subgraph: "calculator", kind: "thrift", location: "http://localhost:<calculator_port>/thrift", headers: [], options: {clientAnnotations: {serviceName: "Calculator", annotations: {}, methodNames: ["add", "subtract"], methodAnnotations: {add: {annotations: {}, fieldAnnotations: {}}, subtract: {annotations: {}, fieldAnnotations: {}}}, methodParameters: {add: 2, subtract: 3}}, topTypeMap: {AddRequest: {id: 0, name: "AddRequest", type: 12, fields: {left: {type: 8, id: 1}, right: {type: 8, id: 2}}}}}) {
   query: Query
 }
 
@@ -52,9 +52,9 @@ input AddRequestInput @join__type(graph: CALCULATOR) {
   right: Int!
 }
 
-scalar ObjMap
+scalar TransportOptions
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 "
 `;
 

@@ -72,9 +72,9 @@ union getUserErrorHandling_response @join__type(graph: ERROR_API) @join__unionMe
 
 union getUserUnionErrorHandling_response @join__type(graph: ERROR_API) @join__unionMember(graph: ERROR_API, member: "User") @join__unionMember(graph: ERROR_API, member: "AsyncJob") @join__unionMember(graph: ERROR_API, member: "Error") = User | AsyncJob | Error
 
-scalar ObjMap
+scalar TransportOptions
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 

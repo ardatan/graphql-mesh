@@ -39,7 +39,7 @@ enum join__Graph {
   EMPLOYEES @join__graph(name: "Employees", url: "mysql://root:passwd@localhost:<employees_port>/employees")
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) repeatable on FIELD_DEFINITION
 
@@ -57,6 +57,8 @@ directive @mysqlCount(subgraph: String, table: String) repeatable on FIELD_DEFIN
 A date string, such as 2007-12-03, compliant with the \`full-date\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar Date @join__type(graph: EMPLOYEES)
+
+scalar TransportOptions @join__type(graph: EMPLOYEES)
 
 type Query @join__type(graph: EMPLOYEES) {
   current_dept_emp(limit: Int, offset: Int, where: current_dept_emp_WhereInput, orderBy: current_dept_emp_OrderByInput): [current_dept_emp] @mysqlSelect(subgraph: "Employees", table: "current_dept_emp")

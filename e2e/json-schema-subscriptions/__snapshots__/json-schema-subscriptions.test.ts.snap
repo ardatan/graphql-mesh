@@ -25,7 +25,7 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @pubsubOperation(subgraph: String, pubsubTopic: String) repeatable on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, headers: ObjMap, queryStringOptions: ObjMap, queryParams: ObjMap) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
 
@@ -104,6 +104,8 @@ input mutationInput_updateTodo_input_Input @example(subgraph: "API", value: "{\\
   name: String
   content: String
 }
+
+scalar TransportOptions
 
 scalar join__DirectiveArguments
 "

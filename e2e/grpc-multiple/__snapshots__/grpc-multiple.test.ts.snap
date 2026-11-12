@@ -43,7 +43,7 @@ directive @grpcMethod(subgraph: String, rootJsonName: String, objPath: String, m
 
 directive @grpcConnectivityState(subgraph: String, rootJsonName: String, objPath: String) repeatable on FIELD_DEFINITION
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
