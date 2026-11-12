@@ -431,6 +431,52 @@ describe('Federation Connectors error shape', () => {
     expect(urls[0]).toContain('created%5Blt%5D=10');
   });
 
+  it('does not double-suffix baked ids[] when global arrayFormat is brackets', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema @source(name: "api", http: { baseURL: "http://localhost:3000" }) {
+        query: Query
+      }
+
+      type Query {
+        search(ids: [String]): [Pet]
+          @connect(
+            source: "api"
+            http: { GET: "/search", queryParams: "{ \\"ids[]\\": $args.ids }" }
+            selection: "name"
+          )
+      }
+
+      type Pet {
+        name: String
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      queryStringOptions: { arrayFormat: 'brackets', indices: true },
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json([{ name: 'Bob' }]);
+      }) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          search(ids: ["a", "b"]) {
+            name
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    // Decoded: ids[]=a&ids[]=b — not ids[][] / ids[][0]
+    expect(urls[0]).toContain('ids%5B%5D=a');
+    expect(urls[0]).toContain('ids%5B%5D=b');
+    expect(urls[0]).not.toContain('ids%5B%5D%5B%5D');
+    expect(urls[0]).not.toContain('ids%5B%5D%5B0%5D');
+  });
+
   it('percent-encodes path template expression values', async () => {
     const urls: string[] = [];
     const sdl = /* GraphQL */ `

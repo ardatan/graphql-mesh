@@ -462,10 +462,37 @@ function applyQueryParams(
       }
     }
   }
-  const serialized = qsStringify(params, {
-    ...defaultQsOptions,
-    ...restQs,
-  });
+  // Keys already baked with a `[]` suffix (per-param arrayFormat:brackets) must
+  // stringify as repeat without indices — otherwise global `arrayFormat:'brackets'`
+  // / `indices:true` produce `ids[][]` or `ids[][0]`.
+  const preBracketed: Record<string, any> = {};
+  const regular: Record<string, any> = {};
+  for (const [key, value] of Object.entries(params)) {
+    if (key.endsWith('[]')) {
+      preBracketed[key] = value;
+    } else {
+      regular[key] = value;
+    }
+  }
+  const parts: string[] = [];
+  if (Object.keys(regular).length) {
+    parts.push(
+      qsStringify(regular, {
+        ...defaultQsOptions,
+        ...restQs,
+      }),
+    );
+  }
+  if (Object.keys(preBracketed).length) {
+    parts.push(
+      qsStringify(preBracketed, {
+        ...defaultQsOptions,
+        indices: false,
+        arrayFormat: 'repeat',
+      }),
+    );
+  }
+  const serialized = parts.filter(Boolean).join('&');
   if (!serialized) {
     return fullPath;
   }
