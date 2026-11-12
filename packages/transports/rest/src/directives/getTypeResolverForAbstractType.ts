@@ -6,7 +6,7 @@ import {
   type GraphQLResolveInfo,
   type GraphQLTypeResolver,
 } from 'graphql';
-import { getDirective } from '@graphql-tools/utils';
+import { getConnectArgsFromNode } from './connect.js';
 
 export function getTypeResolverForAbstractType({
   possibleTypes,
@@ -66,7 +66,8 @@ export function getTypeResolverForAbstractType({
           const fields = Object.values(possibleType.getFields());
           if (fields.length !== 1) continue;
           const field = fields[0];
-          const connectSel = getDirective(info.schema, field, 'connect')?.[0]?.selection;
+          // Prefer shared reader so composed `@join__directive(name: "connect")` still works.
+          const connectSel = getConnectArgsFromNode(field)[0]?.selection;
           const isRootAlias =
             typeof connectSel === 'string' &&
             (connectSel.trim() === '$' || connectSel.trim() === `${field.name}: $`);

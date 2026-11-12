@@ -122,7 +122,7 @@ function getSourceMap(schema: GraphQLSchema): Map<string, SourceArgs> {
   return map;
 }
 
-function getConnectArgsFromNode(node: {
+export function getConnectArgsFromNode(node: {
   name?: string;
   astNode?: unknown;
   extensions?: unknown;
@@ -211,20 +211,16 @@ function resolveTemplate(
 }
 
 /**
- * Evaluate `$args.x->match(...)` / `$this["key"]` style Connectors variable expressions.
- */
-/**
  * Split Mesh `{path:default}` suffix from a Connectors `{$…}` body.
+ * Uses the first top-level `:` so defaults like `https://example.com:8443` keep their colons.
  * Does not treat `->method(...)` colons inside args as defaults.
  */
 function splitMeshTemplateDefault(expr: string): { path: string; defaultValue?: string } {
   if (expr.includes('->')) {
     return { path: expr };
   }
-  // Default starts at the last `:` that is outside quotes/brackets.
   let depth = 0;
   let inQuote: string | null = null;
-  let lastColon = -1;
   for (let i = 0; i < expr.length; i++) {
     const c = expr[i];
     if (inQuote) {
@@ -248,16 +244,13 @@ function splitMeshTemplateDefault(expr: string): { path: string; defaultValue?: 
       continue;
     }
     if (c === ':' && depth === 0) {
-      lastColon = i;
+      return {
+        path: expr.slice(0, i),
+        defaultValue: expr.slice(i + 1),
+      };
     }
   }
-  if (lastColon < 0) {
-    return { path: expr };
-  }
-  return {
-    path: expr.slice(0, lastColon),
-    defaultValue: expr.slice(lastColon + 1),
-  };
+  return { path: expr };
 }
 
 function evalConnectorsVarExpr(
@@ -718,8 +711,12 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
 function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any {
   if (path === '$' || path === '$root') return root;
   if (path === '$status') return extras.status;
+  // Bare `$args.x` / `$this.y` (no `->method`) — look up via vars. Method chains like
+  // `$args.ids->first` fall through so `first`/`map`/`filter` handlers below still run;
+  // their left operand then hits this branch.
   if (
     extras.vars &&
+    !path.includes('->') &&
     /^\$args\b|^\$this\b|^\$env\b|^\$context\b|^\$batch\b|^\$config\b/.test(path)
   ) {
     return evalConnectorsVarExpr(path, extras.vars);

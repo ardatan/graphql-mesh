@@ -525,6 +525,48 @@ describe('Federation Connectors error shape', () => {
     expect(urls).toEqual(['http://localhost:5555/pet/pet200']);
   });
 
+  it('preserves colons inside Mesh :default URL values', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema
+        @source(
+          name: "Pets"
+          http: { baseURL: "{$context.headers['x-upstream-origin']:https://example.com:8443}" }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        pet(petId: String!): Pet
+          @connect(source: "Pets", http: { GET: "/pet/{$args.petId}" }, selection: "name")
+      }
+
+      type Pet {
+        name: String
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json({ name: 'Bob' });
+      }) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          pet(petId: "pet200") {
+            name
+          }
+        }
+      `),
+      contextValue: { headers: {} },
+    });
+    expect(result.errors).toBeUndefined();
+    expect(urls).toEqual(['https://example.com:8443/pet/pet200']);
+  });
+
   it('uses Mesh :default when $context.headers bracket accessor is missing', async () => {
     const urls: string[] = [];
     const sdl = /* GraphQL */ `
@@ -595,6 +637,36 @@ describe('Federation Connectors error shape', () => {
     });
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({ rename: { id: 'abc' } });
+  });
+
+  it('applies selection methods on virtual $args paths (ids->first)', async () => {
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema {
+        query: Query
+      }
+
+      type Query {
+        firstId(ids: [ID!]!): Renamed @connect(selection: "id: $args.ids->first")
+      }
+
+      type Renamed {
+        id: ID
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {});
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          firstId(ids: ["a", "b"]) {
+            id
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ firstId: { id: 'a' } });
   });
 
   it('exposes Query._entities from entity:true and type-level @connect (Hive path)', async () => {
