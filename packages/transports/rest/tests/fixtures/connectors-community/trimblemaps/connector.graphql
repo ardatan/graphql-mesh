@@ -1,0 +1,60 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "trimblemaps"
+    http: {
+      baseURL: "https://singlesearch.alk.com/"
+      headers: [{ name: "Authorization", value: "{$config.api}" }]
+    }
+  )
+
+type Address {
+  shortFormatted: String
+  timezone: String!
+}
+
+type Geo {
+  lat: String!
+  long: String!
+}
+
+type Query {
+  """
+  PC*Miler Web Services - Single Search - https://developer.trimblemaps.com/restful-apis/location/single-search/single-search-api/
+  """
+  addressByGeo(lat: String!, long: String!): Address
+    @connect(
+      source: "trimblemaps"
+      http: {
+        GET: "ww/api/search"
+        queryParams: """
+        query: $([$args.lat, $args.long])->joinNotNull(",")
+        matchNamedRoadsOnly: $('true')
+        maxCleanupMiles: $('0.2')
+        """
+      }
+      selection: """
+      # https://developer.trimblemaps.com/restful-apis/location/single-search/single-search-api/#kbd-classkbd-get-roundedgetkbd-search
+      shortFormatted:Locations->first.ShortString
+      timezone:Locations->first.TimeZone
+      """
+    )
+  locationByAddress(address: String!, city: String!, state: String!): Geo
+    @connect(
+      source: "trimblemaps"
+      http: {
+        GET: "na/api/search"
+        queryParams: """
+        query: $([$args.address, $args.city])->joinNotNull(",")
+        states: $args.state
+        countries: $('US')
+        """
+      }
+      selection: """
+      # https://developer.trimblemaps.com/restful-apis/location/single-search/single-search-api/#kbd-classkbd-get-roundedgetkbd-search
+      lat:Locations->first.Coords.Lat
+      long:Locations->first.Coords.Lon
+      """
+    )
+}

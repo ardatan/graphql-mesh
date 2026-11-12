@@ -7,13 +7,16 @@ const server = http.createServer((req, res) => {
   const u = new URL(req.url, 'http://localhost');
   if (u.pathname === '/main') {
     if (req.method === 'POST') {
-      return res
-        .setHeader('content-type', 'application/json')
-        .end(JSON.stringify({ apple: 'correct' }));
+      return (
+        res
+          .setHeader('content-type', 'application/json')
+          // OpenAPI declares an array response; Federation Connectors selection expects a JSON array.
+          .end(JSON.stringify([{ apple: 'correct' }]))
+      );
     } else {
       return res
         .setHeader('content-type', 'application/json')
-        .end(JSON.stringify({ apple: 'bad' }));
+        .end(JSON.stringify([{ apple: 'bad' }]));
     }
   }
   return res.writeHead(404).end();

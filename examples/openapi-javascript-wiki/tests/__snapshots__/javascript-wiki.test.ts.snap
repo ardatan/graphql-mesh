@@ -6,17 +6,11 @@ exports[`JavaScript Wiki should generate correct schema: javascript-wiki-schema 
   mutation: Mutation
 }
 
-directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
-directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
-
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
-
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """
@@ -25,7 +19,7 @@ type Query {
   Stability: [experimental](https://www.mediawiki.org/wiki/API_versioning#Experimental)
   
   """
-  feed_availability: feed_availability_response @httpOperation(subgraph: "Wiki", path: "/feed/availability", operationSpecificHeaders: [["Accept", "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"]], httpMethod: GET)
+  feed_availability: feed_availability_response @connect(source: "Wiki", http: {GET: "/feed/availability", headers: [{name: "Accept", value: "application/json; charset=utf-8; profile=\\"https://www.mediawiki.org/wiki/Specs/Availability/1.0.1\\", application/problem+json"}]}, selection: "__typename: $status->match([200, \\"availability\\"], [@, \\"problem\\"]) in_the_news most_read on_this_day picture_of_the_day todays_featured_article detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Returns the previously-stored formula via \`/media/math/check/{type}\` for
   the given hash.
@@ -36,7 +30,7 @@ type Query {
   media_math_formula_by_hash(
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): problem @httpOperation(subgraph: "Wiki", path: "/media/math/formula/{args.hash}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): problem @connect(source: "Wiki", http: {GET: "/media/math/formula/{$args.hash}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "detail method status title type uri")
   """
   Given a request hash, renders a TeX formula into its mathematic
   representation in the given format. When a request is issued to the
@@ -51,7 +45,7 @@ type Query {
     format: queryInput_media_math_render_by_format_by_hash_format!
     """The hash string of the previous POST data"""
     hash: NonEmptyString!
-  ): problem @httpOperation(subgraph: "Wiki", path: "/media/math/render/{args.format}/{args.hash}", operationSpecificHeaders: [["Accept", "image/svg+xml, application/mathml+xml, image/png, application/problem+json"]], httpMethod: GET)
+  ): problem @connect(source: "Wiki", http: {GET: "/media/math/render/{$args.format}/{$args.hash}", headers: [{name: "Accept", value: "image/svg+xml, application/mathml+xml, image/png, application/problem+json"}]}, selection: "detail method status title type uri")
   """
   Given a Mediawiki project and a date range, returns a timeseries of absolute bytes
   difference sums. You can filter by editors-type (all-editor-types, anonymous, group-bot,
@@ -81,7 +75,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/absolute/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"absolute_bytes_difference\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { abs_bytes_diff timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project, a page-title prefixed with canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
@@ -114,7 +108,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/absolute/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/absolute/per-page/{$args.project}/{$args.page_title}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"absolute_bytes_difference_per_page\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_title: $->get(\\"page-title\\") project results { abs_bytes_diff timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of bytes difference net
   sums. You can filter by editors-type (all-editor-types, anonymous, group-bot, name-bot,
@@ -144,7 +138,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/net/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/net/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"net_bytes_difference\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { net_bytes_diff timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project, a page-title prefixed with canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of bytes
@@ -177,7 +171,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/bytes-difference/net/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/bytes-difference/net/per-page/{$args.project}/{$args.page_title}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"net_bytes_difference_per_page\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_title: $->get(\\"page-title\\") project results { net_bytes_diff timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its edited-pages counts.
   You can filter by editor-type (all-editor-types, anonymous, group-bot, name-bot, user),
@@ -208,7 +202,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.activity_level}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.activity_level->match([\\"all_activity_levels\\", \\"all-activity-levels\\"], [\\"_1__4_edits\\", \\"1..4-edits\\"], [\\"_5__24_edits\\", \\"5..24-edits\\"], [\\"_25__99_edits\\", \\"25..99-edits\\"], [\\"_100___edits\\", \\"100..-edits\\"], [@, $args.activity_level])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"edited_pages\\"], [@, \\"problem\\"]) items { activity_level: $->get(\\"activity-level\\") editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { edited_pages timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its new pages counts.
   You can filter by editor type (all-editor-types, anonymous, group-bot, name-bot, user)
@@ -238,7 +232,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/new/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/new/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"new_pages\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { new_pages timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   edited-pages by absolute bytes-difference. You can filter by editor-type (all-editor-types,
@@ -273,7 +267,7 @@ type Query {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/top-by-absolute-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_edited_pages_by_abs_bytes_diff\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { abs_bytes_diff page_title rank } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
   100 edited-pages by edits count. You can filter by editor-type (all-editor-types,
@@ -309,7 +303,7 @@ type Query {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/top-by-edits/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-edits/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_edited_pages_by_edits\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { edits page_title rank } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   edited-pages by net bytes-difference. You can filter by editor-type (all-editor-types,
@@ -344,7 +338,7 @@ type Query {
     The day of the date for which to retrieve top edited-pages, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/edited-pages/top-by-net-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/edited-pages/top-by-net-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_edited_pages_by_net_bytes_diff\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { net_bytes_diff page_title rank } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its editors counts.
   You can filter by editory-type (all-editor-types, anonymous, group-bot, name-bot, user),
@@ -375,7 +369,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/editors/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.activity_level}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/editors/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.activity_level->match([\\"all_activity_levels\\", \\"all-activity-levels\\"], [\\"_1__4_edits\\", \\"1..4-edits\\"], [\\"_5__24_edits\\", \\"5..24-edits\\"], [\\"_25__99_edits\\", \\"25..99-edits\\"], [\\"_100___edits\\", \\"100..-edits\\"], [@, $args.activity_level])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"editors\\"], [@, \\"problem\\"]) items { activity_level: $->get(\\"activity-level\\") editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { editors timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   editors by absolute bytes-difference. You can filter by editor-type (all-editor-types,
@@ -412,7 +406,7 @@ type Query {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/editors/top-by-absolute-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-absolute-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_editors_by_abs_bytes_diff\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { abs_bytes_diff rank user_text } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top
   100 editors by edits count. You can filter by editor-type (all-editor-types,
@@ -449,7 +443,7 @@ type Query {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/editors/top-by-edits/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-edits/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_editors_by_edits\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { edits rank user_text } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date (day or month), returns a timeseries of the top 100
   editors by net bytes-difference. You can filter by editor-type (all-editor-types, anonymous,
@@ -486,7 +480,7 @@ type Query {
     The day of the date for which to retrieve top editors, in DD format, or all-days for a monthly value.
     """
     day: String!
-  ): metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/editors/top-by-net-bytes-difference/{args.project}/{args.editor_type}/{args.page_type}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/editors/top-by-net-bytes-difference/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"top_editors_by_net_bytes_diff\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { timestamp top { net_bytes_diff rank user_text } } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of edits counts.
   You can filter by editors-type (all-editor-types, anonymous, bot, registered) and
@@ -516,7 +510,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/edits/aggregate/{args.project}/{args.editor_type}/{args.page_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edits/aggregate/{$args.project}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.page_type->match([\\"all_page_types\\", \\"all-page-types\\"], [\\"non_content\\", \\"non-content\\"], [@, $args.page_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"edits\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_type: $->get(\\"page-type\\") project results { edits timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project, a page-title prefixed with its canonical namespace (for
   instance 'User:Jimbo_Wales') and a date range, returns a timeseries of edit counts.
@@ -549,7 +543,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/edits/per-page/{args.project}/{args.page_title}/{args.editor_type}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/edits/per-page/{$args.project}/{$args.page_title}/{$args.editor_type->match([\\"all_editor_types\\", \\"all-editor-types\\"], [\\"group_bot\\", \\"group-bot\\"], [\\"name_bot\\", \\"name-bot\\"], [@, $args.editor_type])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"edits_per_page\\"], [@, \\"problem\\"]) items { editor_type: $->get(\\"editor-type\\") granularity page_title: $->get(\\"page-title\\") project results { edits timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a project and a date range, returns a timeseries of pagecounts.
   You can filter by access site (mobile or desktop) and you can choose between monthly,
@@ -580,7 +574,7 @@ type Query {
     this value is exclusive.
     """
     end: String!
-  ): metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/legacy/pagecounts/aggregate/{args.project}/{args.access_site}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/legacy/pagecounts/aggregate/{$args.project}/{$args.access_site->match([\\"all_sites\\", \\"all-sites\\"], [\\"desktop_site\\", \\"desktop-site\\"], [\\"mobile_site\\", \\"mobile-site\\"], [@, $args.access_site])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pagecounts_project\\"], [@, \\"problem\\"]) items { access_site: $->get(\\"access-site\\") count granularity project timestamp } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a date range, returns a timeseries of pageview counts. You can filter by project,
   access method and/or agent type. You can choose between daily and hourly granularity
@@ -610,7 +604,7 @@ type Query {
     The timestamp of the last hour/day/month to include, in YYYYMMDDHH format
     """
     end: String!
-  ): metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/aggregate/{args.project}/{args.access}/{args.agent}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/aggregate/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.agent->match([\\"all_agents\\", \\"all-agents\\"], [@, $args.agent])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pageview_project\\"], [@, \\"problem\\"]) items { access agent granularity project timestamp views } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki article and a date range, returns a daily timeseries of its pageview
   counts. You can also filter by access method and/or agent type.
@@ -640,7 +634,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD or YYYYMMDDHH format"""
     end: String!
-  ): metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/per-article/{args.project}/{args.access}/{args.agent}/{args.article}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/per-article/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.agent->match([\\"all_agents\\", \\"all-agents\\"], [@, $args.agent])}/{$args.article}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pageview_article\\"], [@, \\"problem\\"]) items { access agent article granularity project timestamp views } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Lists the pageviews to this project, split by country of origin for a given month.
   Because of privacy reasons, pageviews are given in a bucketed format, and countries
@@ -666,7 +660,7 @@ type Query {
     The month of the date for which to retrieve top countries, in MM format.
     """
     month: String!
-  ): metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/top-by-country/{args.project}/{args.access}/{args.year}/{args.month}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/top-by-country/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.year}/{$args.month}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"by_country\\"], [@, \\"problem\\"]) items { access countries { country rank views } month project year } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Lists the 1000 most viewed articles for a given project and timespan (month or day).
   You can filter by access method.
@@ -695,7 +689,7 @@ type Query {
     month: String!
     """The day of the date for which to retrieve top articles, in DD format."""
     day: String!
-  ): metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @httpOperation(subgraph: "Wiki", path: "/metrics/pageviews/top/{args.project}/{args.access}/{args.year}/{args.month}/{args.day}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @connect(source: "Wiki", http: {GET: "/metrics/pageviews/top/{$args.project}/{$args.access->match([\\"all_access\\", \\"all-access\\"], [\\"mobile_app\\", \\"mobile-app\\"], [\\"mobile_web\\", \\"mobile-web\\"], [@, $args.access])}/{$args.year}/{$args.month}/{$args.day}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"pageview_tops\\"], [@, \\"problem\\"]) items { access articles { article rank views } day month project year } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a Mediawiki project and a date range, returns a timeseries of its newly registered
   users counts. You can choose between daily and monthly granularity. The newly registered
@@ -722,7 +716,7 @@ type Query {
     start: String!
     """The date of the last day to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/registered-users/new/{args.project}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/registered-users/new/{$args.project}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"new_registered_users\\"], [@, \\"problem\\"]) items { granularity project results { new_registered_users timestamp } } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Given a project and a date range, returns a timeseries of unique devices counts.
   You need to specify a project, and can filter by accessed site (mobile or desktop).
@@ -746,14 +740,14 @@ type Query {
     start: String!
     """The timestamp of the last day/month to include, in YYYYMMDD format"""
     end: String!
-  ): metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @httpOperation(subgraph: "Wiki", path: "/metrics/unique-devices/{args.project}/{args.access_site}/{args.granularity}/{args.start}/{args.end}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @connect(source: "Wiki", http: {GET: "/metrics/unique-devices/{$args.project}/{$args.access_site->match([\\"all_sites\\", \\"all-sites\\"], [\\"desktop_site\\", \\"desktop-site\\"], [\\"mobile_site\\", \\"mobile-site\\"], [@, $args.access_site])}/{$args.granularity}/{$args.start}/{$args.end}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"unique_devices\\"], [@, \\"problem\\"]) items { access_site: $->get(\\"access-site\\") devices granularity project timestamp } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of language pairs the back-end service can translate
   
   Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
   
   """
-  transform_list_languagepairs: cx_languagepairs @httpOperation(subgraph: "Wiki", path: "/transform/list/languagepairs/", operationSpecificHeaders: [["Accept", "application/json"]], httpMethod: GET)
+  transform_list_languagepairs: cx_languagepairs @connect(source: "Wiki", http: {GET: "/transform/list/languagepairs/", headers: [{name: "Accept", value: "application/json"}]}, selection: "source target")
   """
   Fetches the list of tools that are available for the given pair of languages.
   
@@ -765,14 +759,14 @@ type Query {
     from: String!
     """The target language code"""
     to: String!
-  ): transform_list_pair_by_from_by_to_response @httpOperation(subgraph: "Wiki", path: "/transform/list/pair/{args.from}/{args.to}/", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): transform_list_pair_by_from_by_to_response @connect(source: "Wiki", http: {GET: "/transform/list/pair/{$args.from}/{$args.to}/", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_list_tools\\"], [@, \\"problem\\"]) tools detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of tools and all of the language pairs it can translate
   
   Stability: [unstable](https://www.mediawiki.org/wiki/API_versioning#Unstable)
   
   """
-  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): transform_list_tool_by_tool_response @httpOperation(subgraph: "Wiki", path: "/transform/list/tool/{args.tool}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  transform_list_tool_by_tool(tool: queryInput_transform_list_tool_by_tool_tool!): transform_list_tool_by_tool_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"JSON_container\\"], [@, \\"problem\\"]) detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of tools and all of the language pairs it can translate
   
@@ -783,7 +777,7 @@ type Query {
     tool: queryInput_transform_list_tool_by_tool_by_from_tool!
     """The source language code"""
     from: String!
-  ): transform_list_tool_by_tool_by_from_response @httpOperation(subgraph: "Wiki", path: "/transform/list/tool/{args.tool}/{args.from}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): transform_list_tool_by_tool_by_from_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"JSON_container\\"], [@, \\"problem\\"]) detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the list of tools and all of the language pairs it can translate
   
@@ -796,7 +790,7 @@ type Query {
     from: String!
     """The target language code"""
     to: String!
-  ): transform_list_tool_by_tool_by_from_by_to_response @httpOperation(subgraph: "Wiki", path: "/transform/list/tool/{args.tool}/{args.from}/{args.to}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): transform_list_tool_by_tool_by_from_by_to_response @connect(source: "Wiki", http: {GET: "/transform/list/tool/{$args.tool}/{$args.from}/{$args.to}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"JSON_container\\"], [@, \\"problem\\"]) detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the dictionary meaning of a word from a language and displays
   it in the target language.
@@ -811,7 +805,7 @@ type Query {
     to_lang: String!
     """The word to lookup"""
     word: String!
-  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_response @httpOperation(subgraph: "Wiki", path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_response @connect(source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_dict\\"], [@, \\"problem\\"]) source translations { info phrase sources } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the dictionary meaning of a word from a language and displays
   it in the target language.
@@ -827,11 +821,11 @@ type Query {
     """The word to lookup"""
     word: String!
     provider: queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider!
-  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response @httpOperation(subgraph: "Wiki", path: "/transform/word/from/{args.from_lang}/to/{args.to_lang}/{args.word}/{args.provider}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: GET)
+  ): transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response @connect(source: "Wiki", http: {GET: "/transform/word/from/{$args.from_lang}/to/{$args.to_lang}/{$args.word}/{$args.provider}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_dict\\"], [@, \\"problem\\"]) source translations { info phrase sources } detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   viewsInPastMonth(project: String!): Int!
 }
 
-union feed_availability_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "availability") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = availability | problem
+union feed_availability_response = availability | problem
 
 type availability {
   """
@@ -875,16 +869,16 @@ enum queryInput_media_math_render_by_format_by_hash_format {
   png
 }
 
-union metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "absolute_bytes_difference") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = absolute_bytes_difference | problem
+union metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response = absolute_bytes_difference | problem
 
 type absolute_bytes_difference {
   items: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
@@ -907,10 +901,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -920,9 +914,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
 """
@@ -933,16 +927,16 @@ enum queryInput_metrics_bytes_difference_absolute_aggregate_by_project_by_editor
   monthly
 }
 
-union metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "absolute_bytes_difference_per_page") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = absolute_bytes_difference_per_page | problem
+union metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response = absolute_bytes_difference_per_page | problem
 
 type absolute_bytes_difference_per_page {
   items: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_title: String @resolveRootField(subgraph: "Wiki", field: "page-title")
+  page_title: String
   project: String
   results: [query_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
@@ -960,10 +954,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -975,16 +969,16 @@ enum queryInput_metrics_bytes_difference_absolute_per_page_by_project_by_page_ti
   monthly
 }
 
-union metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "net_bytes_difference") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = net_bytes_difference | problem
+union metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response = net_bytes_difference | problem
 
 type net_bytes_difference {
   items: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
@@ -1002,10 +996,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1015,9 +1009,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
 """
@@ -1028,16 +1022,16 @@ enum queryInput_metrics_bytes_difference_net_aggregate_by_project_by_editor_type
   monthly
 }
 
-union metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "net_bytes_difference_per_page") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = net_bytes_difference_per_page | problem
+union metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response = net_bytes_difference_per_page | problem
 
 type net_bytes_difference_per_page {
   items: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_title: String @resolveRootField(subgraph: "Wiki", field: "page-title")
+  page_title: String
   project: String
   results: [query_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
@@ -1055,10 +1049,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1070,17 +1064,17 @@ enum queryInput_metrics_bytes_difference_net_per_page_by_project_by_page_title_b
   monthly
 }
 
-union metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "edited_pages") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = edited_pages | problem
+union metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response = edited_pages | problem
 
 type edited_pages {
   items: [query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items {
-  activity_level: String @resolveRootField(subgraph: "Wiki", field: "activity-level")
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  activity_level: String
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
@@ -1098,10 +1092,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1111,9 +1105,9 @@ namespaces) or non-content (edited-pages in non-content namespaces). If you are
 interested in edited-pages regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
 """
@@ -1122,11 +1116,11 @@ If you want to filter by activity-level, use one of 1..4-edits, 5..24-edits,
 of their activity level, use all-activity-levels.
 """
 enum queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level {
-  all_activity_levels @enum(subgraph: "Wiki", value: "\\"all-activity-levels\\"")
-  _1__4_edits @enum(subgraph: "Wiki", value: "\\"1..4-edits\\"")
-  _5__24_edits @enum(subgraph: "Wiki", value: "\\"5..24-edits\\"")
-  _25__99_edits @enum(subgraph: "Wiki", value: "\\"25..99-edits\\"")
-  _100___edits @enum(subgraph: "Wiki", value: "\\"100..-edits\\"")
+  all_activity_levels
+  _1__4_edits
+  _5__24_edits
+  _25__99_edits
+  _100___edits
 }
 
 """
@@ -1138,16 +1132,16 @@ enum queryInput_metrics_edited_pages_aggregate_by_project_by_editor_type_by_page
   monthly
 }
 
-union metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "new_pages") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = new_pages | problem
+union metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response = new_pages | problem
 
 type new_pages {
   items: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
@@ -1165,10 +1159,10 @@ group nor having bot-like name). If you are interested in edits regardless of
 their editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1178,9 +1172,9 @@ namespaces) or non-content (new pages in non-content namespaces). If you are
 interested in new-articles regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
 """
@@ -1192,16 +1186,16 @@ enum queryInput_metrics_edited_pages_new_by_project_by_editor_type_by_page_type_
   monthly
 }
 
-union metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "top_edited_pages_by_abs_bytes_diff") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_edited_pages_by_abs_bytes_diff | problem
+union metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response = top_edited_pages_by_abs_bytes_diff | problem
 
 type top_edited_pages_by_abs_bytes_diff {
   items: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
 }
 
 type query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
 }
@@ -1225,10 +1219,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1238,21 +1232,21 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edited_pages_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
-union metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "top_edited_pages_by_edits") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_edited_pages_by_edits | problem
+union metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response = top_edited_pages_by_edits | problem
 
 type top_edited_pages_by_edits {
   items: [query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
 }
 
 type query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
 }
@@ -1276,10 +1270,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1289,21 +1283,21 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edited_pages_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
-union metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "top_edited_pages_by_net_bytes_diff") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_edited_pages_by_net_bytes_diff | problem
+union metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response = top_edited_pages_by_net_bytes_diff | problem
 
 type top_edited_pages_by_net_bytes_diff {
   items: [query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
 }
 
 type query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
 }
@@ -1327,10 +1321,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1340,22 +1334,22 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edited_pages_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
-union metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "editors") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = editors | problem
+union metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_response = editors | problem
 
 type editors {
   items: [query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items {
-  activity_level: String @resolveRootField(subgraph: "Wiki", field: "activity-level")
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  activity_level: String
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
@@ -1373,10 +1367,10 @@ group nor having bot-like name). If you are interested in edits regardless
 of their editor-type, use all-editor-types.
 """
 enum queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1386,9 +1380,9 @@ namespaces) or non-content (edits made in non-content namespaces). If you are
 interested in editors regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
 """
@@ -1397,11 +1391,11 @@ If you want to filter by activity-level, use one of 1..4-edits, 5..24-edits,
 of their activity-level, use all-activity-levels.
 """
 enum queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type_by_activity_level_by_granularity_by_start_by_end_activity_level {
-  all_activity_levels @enum(subgraph: "Wiki", value: "\\"all-activity-levels\\"")
-  _1__4_edits @enum(subgraph: "Wiki", value: "\\"1..4-edits\\"")
-  _5__24_edits @enum(subgraph: "Wiki", value: "\\"5..24-edits\\"")
-  _25__99_edits @enum(subgraph: "Wiki", value: "\\"25..99-edits\\"")
-  _100___edits @enum(subgraph: "Wiki", value: "\\"100..-edits\\"")
+  all_activity_levels
+  _1__4_edits
+  _5__24_edits
+  _25__99_edits
+  _100___edits
 }
 
 """
@@ -1413,16 +1407,16 @@ enum queryInput_metrics_editors_aggregate_by_project_by_editor_type_by_page_type
   monthly
 }
 
-union metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "top_editors_by_abs_bytes_diff") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_editors_by_abs_bytes_diff | problem
+union metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response = top_editors_by_abs_bytes_diff | problem
 
 type top_editors_by_abs_bytes_diff {
   items: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
 }
 
 type query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
 }
@@ -1446,10 +1440,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1459,21 +1453,21 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_editors_top_by_absolute_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
-union metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "top_editors_by_edits") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_editors_by_edits | problem
+union metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response = top_editors_by_edits | problem
 
 type top_editors_by_edits {
   items: [query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
 }
 
 type query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
 }
@@ -1497,10 +1491,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1510,21 +1504,21 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_editors_top_by_edits_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
-union metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "top_editors_by_net_bytes_diff") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = top_editors_by_net_bytes_diff | problem
+union metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_response = top_editors_by_net_bytes_diff | problem
 
 type top_editors_by_net_bytes_diff {
   items: [query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items]
 }
 
 type query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_oneOf_0_items_items_results_items]
 }
@@ -1548,10 +1542,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1561,21 +1555,21 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_editors_top_by_net_bytes_difference_by_project_by_editor_type_by_page_type_by_year_by_month_by_day_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
-union metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "edits") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = edits | problem
+union metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_response = edits | problem
 
 type edits {
   items: [query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_type: String @resolveRootField(subgraph: "Wiki", field: "page-type")
+  page_type: String
   project: String
   results: [query_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
@@ -1593,10 +1587,10 @@ group nor having bot-like name). If you are interested in edits regardless
 of their editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1606,9 +1600,9 @@ namespaces) or non-content (edits on pages in non-content namespaces). If you ar
 interested in edits regardless of their page-type, use all-page-types.
 """
 enum queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_by_granularity_by_start_by_end_page_type {
-  all_page_types @enum(subgraph: "Wiki", value: "\\"all-page-types\\"")
+  all_page_types
   content
-  non_content @enum(subgraph: "Wiki", value: "\\"non-content\\"")
+  non_content
 }
 
 """
@@ -1620,16 +1614,16 @@ enum queryInput_metrics_edits_aggregate_by_project_by_editor_type_by_page_type_b
   monthly
 }
 
-union metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "edits_per_page") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = edits_per_page | problem
+union metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_response = edits_per_page | problem
 
 type edits_per_page {
   items: [query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items {
-  editor_type: String @resolveRootField(subgraph: "Wiki", field: "editor-type")
+  editor_type: String
   granularity: String
-  page_title: String @resolveRootField(subgraph: "Wiki", field: "page-title")
+  page_title: String
   project: String
   results: [query_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_oneOf_0_items_items_results_items]
 }
@@ -1647,10 +1641,10 @@ nor having bot-like name). If you are interested in edits regardless of their
 editor-type, use all-editor-types.
 """
 enum queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_by_granularity_by_start_by_end_editor_type {
-  all_editor_types @enum(subgraph: "Wiki", value: "\\"all-editor-types\\"")
+  all_editor_types
   anonymous
-  group_bot @enum(subgraph: "Wiki", value: "\\"group-bot\\"")
-  name_bot @enum(subgraph: "Wiki", value: "\\"name-bot\\"")
+  group_bot
+  name_bot
   user
 }
 
@@ -1662,14 +1656,14 @@ enum queryInput_metrics_edits_per_page_by_project_by_page_title_by_editor_type_b
   monthly
 }
 
-union metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "pagecounts_project") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = pagecounts_project | problem
+union metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_response = pagecounts_project | problem
 
 type pagecounts_project {
   items: [query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items {
-  access_site: String @resolveRootField(subgraph: "Wiki", field: "access-site")
+  access_site: String
   count: BigInt
   granularity: String
   project: String
@@ -1680,9 +1674,9 @@ type query_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_gran
 If you want to filter by access site, use one of desktop-site or mobile-site. If you are interested in pagecounts regardless of access site use all-sites.
 """
 enum queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by_granularity_by_start_by_end_access_site {
-  all_sites @enum(subgraph: "Wiki", value: "\\"all-sites\\"")
-  desktop_site @enum(subgraph: "Wiki", value: "\\"desktop-site\\"")
-  mobile_site @enum(subgraph: "Wiki", value: "\\"mobile-site\\"")
+  all_sites
+  desktop_site
+  mobile_site
 }
 
 """
@@ -1695,7 +1689,7 @@ enum queryInput_metrics_legacy_pagecounts_aggregate_by_project_by_access_site_by
   monthly
 }
 
-union metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "pageview_project") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = pageview_project | problem
+union metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_response = pageview_project | problem
 
 type pageview_project {
   items: [query_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_oneOf_0_items_items]
@@ -1715,10 +1709,10 @@ If you want to filter by access method, use one of desktop, mobile-app or mobile
 If you are interested in pageviews regardless of access method, use all-access.
 """
 enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_access {
-  all_access @enum(subgraph: "Wiki", value: "\\"all-access\\"")
+  all_access
   desktop
-  mobile_app @enum(subgraph: "Wiki", value: "\\"mobile-app\\"")
-  mobile_web @enum(subgraph: "Wiki", value: "\\"mobile-web\\"")
+  mobile_app
+  mobile_web
 }
 
 """
@@ -1726,7 +1720,7 @@ If you want to filter by agent type, use one of user or spider. If you are inter
 in pageviews regardless of agent type, use all-agents.
 """
 enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end_agent {
-  all_agents @enum(subgraph: "Wiki", value: "\\"all-agents\\"")
+  all_agents
   user
   spider
 }
@@ -1741,7 +1735,7 @@ enum queryInput_metrics_pageviews_aggregate_by_project_by_access_by_agent_by_gra
   monthly
 }
 
-union metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "pageview_article") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = pageview_article | problem
+union metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_response = pageview_article | problem
 
 type pageview_article {
   items: [query_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_oneOf_0_items_items]
@@ -1763,10 +1757,10 @@ or mobile-web. If you are interested in pageviews regardless of access method,
 use all-access.
 """
 enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_access {
-  all_access @enum(subgraph: "Wiki", value: "\\"all-access\\"")
+  all_access
   desktop
-  mobile_app @enum(subgraph: "Wiki", value: "\\"mobile-app\\"")
-  mobile_web @enum(subgraph: "Wiki", value: "\\"mobile-web\\"")
+  mobile_app
+  mobile_web
 }
 
 """
@@ -1774,7 +1768,7 @@ If you want to filter by agent type, use one of user, bot or spider. If you are
 interested in pageviews regardless of agent type, use all-agents.
 """
 enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_article_by_granularity_by_start_by_end_agent {
-  all_agents @enum(subgraph: "Wiki", value: "\\"all-agents\\"")
+  all_agents
   user
   spider
   bot
@@ -1789,7 +1783,7 @@ enum queryInput_metrics_pageviews_per_article_by_project_by_access_by_agent_by_a
   monthly
 }
 
-union metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "by_country") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = by_country | problem
+union metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_response = by_country | problem
 
 type by_country {
   items: [query_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_oneOf_0_items_items]
@@ -1814,13 +1808,13 @@ If you want to filter by access method, use one of desktop, mobile-app or mobile
 If you are interested in pageviews regardless of access method, use all-access.
 """
 enum queryInput_metrics_pageviews_top_by_country_by_project_by_access_by_year_by_month_access {
-  all_access @enum(subgraph: "Wiki", value: "\\"all-access\\"")
+  all_access
   desktop
-  mobile_app @enum(subgraph: "Wiki", value: "\\"mobile-app\\"")
-  mobile_web @enum(subgraph: "Wiki", value: "\\"mobile-web\\"")
+  mobile_app
+  mobile_web
 }
 
-union metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "pageview_tops") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = pageview_tops | problem
+union metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_response = pageview_tops | problem
 
 type pageview_tops {
   items: [query_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_oneOf_0_items_items]
@@ -1846,13 +1840,13 @@ If you want to filter by access method, use one of desktop, mobile-app or mobile
 If you are interested in pageviews regardless of access method, use all-access.
 """
 enum queryInput_metrics_pageviews_top_by_project_by_access_by_year_by_month_by_day_access {
-  all_access @enum(subgraph: "Wiki", value: "\\"all-access\\"")
+  all_access
   desktop
-  mobile_app @enum(subgraph: "Wiki", value: "\\"mobile-app\\"")
-  mobile_web @enum(subgraph: "Wiki", value: "\\"mobile-web\\"")
+  mobile_app
+  mobile_web
 }
 
-union metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "new_registered_users") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = new_registered_users | problem
+union metrics_registered_users_new_by_project_by_granularity_by_start_by_end_response = new_registered_users | problem
 
 type new_registered_users {
   items: [query_metrics_registered_users_new_by_project_by_granularity_by_start_by_end_oneOf_0_items_items]
@@ -1878,14 +1872,14 @@ enum queryInput_metrics_registered_users_new_by_project_by_granularity_by_start_
   monthly
 }
 
-union metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "unique_devices") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = unique_devices | problem
+union metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_response = unique_devices | problem
 
 type unique_devices {
   items: [query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items]
 }
 
 type query_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_oneOf_0_items_items {
-  access_site: String @resolveRootField(subgraph: "Wiki", field: "access-site")
+  access_site: String
   devices: BigInt
   granularity: String
   project: String
@@ -1897,9 +1891,9 @@ If you want to filter by accessed site, use one of desktop-site or mobile-site.
 If you are interested in unique devices regardless of accessed site, use or all-sites.
 """
 enum queryInput_metrics_unique_devices_by_project_by_access_site_by_granularity_by_start_by_end_access_site {
-  all_sites @enum(subgraph: "Wiki", value: "\\"all-sites\\"")
-  desktop_site @enum(subgraph: "Wiki", value: "\\"desktop-site\\"")
-  mobile_site @enum(subgraph: "Wiki", value: "\\"mobile-site\\"")
+  all_sites
+  desktop_site
+  mobile_site
 }
 
 """
@@ -1918,17 +1912,17 @@ type cx_languagepairs {
   target: [String]
 }
 
-union transform_list_pair_by_from_by_to_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "cx_list_tools") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = cx_list_tools | problem
+union transform_list_pair_by_from_by_to_response = cx_list_tools | problem
 
 type cx_list_tools {
   """the list of tools available for the given language pair"""
   tools: [String]
 }
 
-union transform_list_tool_by_tool_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "JSON_container") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = JSON_container | problem
+union transform_list_tool_by_tool_response = JSON_container | problem
 
 type JSON_container {
-  JSON: JSON @resolveRoot(subgraph: "Wiki")
+  JSON: JSON @connect(selection: "$")
 }
 
 """
@@ -1942,7 +1936,7 @@ enum queryInput_transform_list_tool_by_tool_tool {
   dictionary
 }
 
-union transform_list_tool_by_tool_by_from_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "JSON_container") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = JSON_container | problem
+union transform_list_tool_by_tool_by_from_response = JSON_container | problem
 
 """The tool category to list tools and language pairs for"""
 enum queryInput_transform_list_tool_by_tool_by_from_tool {
@@ -1950,7 +1944,7 @@ enum queryInput_transform_list_tool_by_tool_by_from_tool {
   dictionary
 }
 
-union transform_list_tool_by_tool_by_from_by_to_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "JSON_container") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = JSON_container | problem
+union transform_list_tool_by_tool_by_from_by_to_response = JSON_container | problem
 
 """The tool category to list tools and language pairs for"""
 enum queryInput_transform_list_tool_by_tool_by_from_by_to_tool {
@@ -1958,7 +1952,7 @@ enum queryInput_transform_list_tool_by_tool_by_from_by_to_tool {
   dictionary
 }
 
-union transform_word_from_by_from_lang_to_by_to_lang_by_word_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "cx_dict") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = cx_dict | problem
+union transform_word_from_by_from_lang_to_by_to_lang_by_word_response = cx_dict | problem
 
 type cx_dict {
   """the original word to look up"""
@@ -1976,7 +1970,7 @@ type query_transform_word_from_by_from_lang_to_by_to_lang_by_word_oneOf_0_transl
   sources: String
 }
 
-union transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "cx_dict") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = cx_dict | problem
+union transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_response = cx_dict | problem
 
 """The dictionary provider id"""
 enum queryInput_transform_word_from_by_from_lang_to_by_to_lang_by_word_by_provider_provider {
@@ -1997,7 +1991,7 @@ type Mutation {
   Stability: [stable](https://www.mediawiki.org/wiki/API_versioning#Stable).
   
   """
-  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): problem @httpOperation(subgraph: "Wiki", path: "/media/math/check/{args.type}", operationSpecificHeaders: [["Accept", "application/json, application/problem+json"]], httpMethod: POST)
+  post_media_math_check_by_type(type: mutationInput_post_media_math_check_by_type_type!, q: JSON!): problem @connect(source: "Wiki", http: {POST: "/media/math/check/{$args.type->match([\\"inline_tex\\", \\"inline-tex\\"], [@, $args.type])}", headers: [{name: "Accept", value: "application/json, application/problem+json"}]}, selection: "detail method status title type uri")
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -2011,7 +2005,7 @@ type Mutation {
     """The target language code"""
     to_lang: String!
     html: JSON!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @httpOperation(subgraph: "Wiki", path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["Accept", "application/json, application/problem+json"]], httpMethod: POST)
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_mt\\"], [@, \\"problem\\"]) contents detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
   """
   Fetches the machine translation for the posted content from the source
   to the destination language.
@@ -2026,24 +2020,24 @@ type Mutation {
     to_lang: String!
     provider: mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider!
     html: JSON!
-  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @httpOperation(subgraph: "Wiki", path: "/transform/html/from/{args.from_lang}/to/{args.to_lang}/{args.provider}", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["Accept", "application/json, application/problem+json"]], httpMethod: POST)
+  ): post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @connect(source: "Wiki", http: {POST: "/transform/html/from/{$args.from_lang}/to/{$args.to_lang}/{$args.provider}", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "Accept", value: "application/json, application/problem+json"}]}, selection: "__typename: $status->match([200, \\"cx_mt\\"], [@, \\"problem\\"]) contents detail method status title type uri", isSuccess: "$status->match([200, true], [@, true])")
 }
 
 """The input type of the given formula; can be tex or inline-tex"""
 enum mutationInput_post_media_math_check_by_type_type {
   tex
-  inline_tex @enum(subgraph: "Wiki", value: "\\"inline-tex\\"")
+  inline_tex
   chem
 }
 
-union post_transform_html_from_by_from_lang_to_by_to_lang_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "cx_mt") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = cx_mt | problem
+union post_transform_html_from_by_from_lang_to_by_to_lang_response = cx_mt | problem
 
 type cx_mt {
   """the translated content"""
   contents: String
 }
 
-union post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response @statusCodeTypeName(subgraph: "Wiki", statusCode: "200", typeName: "cx_mt") @statusCodeTypeName(subgraph: "Wiki", statusCode: "default", typeName: "problem") = cx_mt | problem
+union post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_response = cx_mt | problem
 
 """The machine translation provider id"""
 enum mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provider_provider {
@@ -2052,19 +2046,36 @@ enum mutationInput_post_transform_html_from_by_from_lang_to_by_to_lang_by_provid
   Youdao
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;
 
 exports[`JavaScript Wiki should give correct response for wikipediaMetrics within specific range: wikipedia-metrics-result 1`] = `

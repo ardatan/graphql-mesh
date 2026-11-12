@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpanAPI: nested objects should generate the schema correctly 1`] = `
-"schema @transport(subgraph: "example_api", kind: "rest", location: "http://localhost:3000", queryStringOptions: "{\\"allowDots\\":true}") {
+"schema @source(name: "example_api", http: {baseURL: "http://localhost:3000"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @transport(subgraph: "example_api", kind: "rest", location: "http://localhost:3000", options: {queryStringOptions: {allowDots: true}}) {
   query: Query
 }
 
-directive @statusCodeTypeName(subgraph: String, typeName: String, statusCode: String) repeatable on UNION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Search for documents in a collection that match the search criteria."""
@@ -17,10 +17,10 @@ type Query {
     """The name of the collection to search for the document under"""
     collectionName: String!
     searchParameters: SearchParameters_Input!
-  ): searchCollection_response @httpOperation(subgraph: "example_api", path: "/collections/{args.collectionName}/documents/search", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET, queryParamArgMap: "{\\"searchParameters\\":\\"searchParameters\\"}", queryStringOptions: "{\\"allowDots\\":true}")
+  ): searchCollection_response @connect(source: "example_api", http: {GET: "/collections/{$args.collectionName}/documents/search", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  \\"searchParameters.q\\": $args.searchParameters.q\\n  \\"searchParameters.query_by\\": $args.searchParameters.query_by\\n  \\"searchParameters.query_by_weights\\": $args.searchParameters.query_by_weights\\n  \\"searchParameters.prefix\\": $args.searchParameters.prefix\\n  \\"searchParameters.filter_by\\": $args.searchParameters.filter_by\\n  \\"searchParameters.sort_by\\": $args.searchParameters.sort_by\\n  \\"searchParameters.facet_by\\": $args.searchParameters.facet_by\\n  \\"searchParameters.max_facet_values\\": $args.searchParameters.max_facet_values\\n  \\"searchParameters.facet_query\\": $args.searchParameters.facet_query\\n  \\"searchParameters.num_typos\\": $args.searchParameters.num_typos\\n  \\"searchParameters.page\\": $args.searchParameters.page\\n  \\"searchParameters.per_page\\": $args.searchParameters.per_page\\n  \\"searchParameters.group_by\\": $args.searchParameters.group_by\\n  \\"searchParameters.group_limit\\": $args.searchParameters.group_limit\\n  \\"searchParameters.include_fields\\": $args.searchParameters.include_fields\\n  \\"searchParameters.exclude_fields\\": $args.searchParameters.exclude_fields\\n  \\"searchParameters.highlight_full_fields\\": $args.searchParameters.highlight_full_fields\\n  \\"searchParameters.highlight_affix_num_tokens\\": $args.searchParameters.highlight_affix_num_tokens\\n  \\"searchParameters.highlight_start_tag\\": $args.searchParameters.highlight_start_tag\\n  \\"searchParameters.highlight_end_tag\\": $args.searchParameters.highlight_end_tag\\n  \\"searchParameters.snippet_threshold\\": $args.searchParameters.snippet_threshold\\n  \\"searchParameters.drop_tokens_threshold\\": $args.searchParameters.drop_tokens_threshold\\n  \\"searchParameters.typo_tokens_threshold\\": $args.searchParameters.typo_tokens_threshold\\n  \\"searchParameters.pinned_hits\\": $args.searchParameters.pinned_hits\\n  \\"searchParameters.hidden_hits\\": $args.searchParameters.hidden_hits\\n  \\"searchParameters.highlight_fields\\": $args.searchParameters.highlight_fields\\n  \\"searchParameters.pre_segmented_query\\": $args.searchParameters.pre_segmented_query\\n  \\"searchParameters.enable_overrides\\": $args.searchParameters.enable_overrides\\n  \\"searchParameters.prioritize_exact_match\\": $args.searchParameters.prioritize_exact_match\\n  \\"searchParameters.exhaustive_search\\": $args.searchParameters.exhaustive_search\\n  \\"searchParameters.search_cutoff_ms\\": $args.searchParameters.search_cutoff_ms\\n  \\"searchParameters.use_cache\\": $args.searchParameters.use_cache\\n  \\"searchParameters.cache_ttl\\": $args.searchParameters.cache_ttl\\n  \\"searchParameters.min_len_1typo\\": $args.searchParameters.min_len_1typo\\n  \\"searchParameters.min_len_2typo\\": $args.searchParameters.min_len_2typo\\n}"}, selection: "__typename: $status->match([200, \\"SearchResult\\"], [400, \\"ApiResponse\\"], [404, \\"ApiResponse\\"], [@, \\"SearchResult\\"]) facet_counts { counts { count highlighted value } field_name stats { max min sum total_values avg } } found search_time_ms out_of search_cutoff page grouped_hits { group_key hits { highlights { field snippet snippets indices matched_tokens } document text_match geo_distance_meters } } hits { highlights { field snippet snippets indices matched_tokens } document text_match geo_distance_meters } request_params { collection_name q per_page } message", isSuccess: "$status->match([200, true], [400, true], [404, true], [@, false])")
 }
 
-union searchCollection_response @statusCodeTypeName(subgraph: "example_api", statusCode: "200", typeName: "SearchResult") @statusCodeTypeName(subgraph: "example_api", statusCode: "400", typeName: "ApiResponse") @statusCodeTypeName(subgraph: "example_api", statusCode: "404", typeName: "ApiResponse") = SearchResult | ApiResponse
+union searchCollection_response = SearchResult | ApiResponse
 
 type SearchResult {
   facet_counts: [FacetCounts]
@@ -239,17 +239,34 @@ input SearchParameters_Input {
   min_len_2typo: Int
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;

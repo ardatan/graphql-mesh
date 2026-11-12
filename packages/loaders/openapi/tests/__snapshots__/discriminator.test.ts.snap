@@ -1,21 +1,21 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Discriminator Mapping should generate correct schema: discriminator-mapping 1`] = `
-"schema @transport(subgraph: "test", kind: "rest") {
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  pets_by_id(id: String!): Pet @httpOperation(subgraph: "test", path: "/pets/{args.id}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  pets_by_id(id: String!): Pet @connect(source: "test", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "... $.petType->match([\\"Dog\\", { __typename: \\"DogDifferent\\" }], [\\"Cat\\", { __typename: \\"Cat\\" }]) petType cat_exclusive")
 }
 
-union Pet @discriminator(subgraph: "test", field: "petType", mapping: [["Dog", "DogDifferent"], ["Cat", "Cat"]]) = Cat | DogDifferent
+union Pet = Cat | DogDifferent
 
 type Cat {
   petType: String
@@ -27,39 +27,56 @@ type DogDifferent {
   dog_exclusive: String
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;
 
 exports[`Inline Discriminator Mapping (request body) should generate correct schema: discriminator-inline-request 1`] = `
-"schema @transport(subgraph: "test", kind: "rest") {
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  dummy: String
+  dummy: String @connect(selection: "$(\\"dummy\\")")
 }
 
 type Mutation {
-  createThing(input: createThing_request_Input): Thing @httpOperation(subgraph: "test", path: "/things", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: POST)
+  createThing(input: createThing_request_Input): Thing @connect(source: "test", http: {POST: "/things", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "id type name")
 }
 
 type Thing {
@@ -85,37 +102,54 @@ input CreateDogInput_Input {
   bark: String
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;
 
 exports[`Inline Discriminator Mapping should generate correct schema: discriminator-inline 1`] = `
-"schema @transport(subgraph: "test", kind: "rest") {
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  things: [query_things_items] @httpOperation(subgraph: "test", path: "/things", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  things: [query_things_items] @connect(source: "test", http: {GET: "/things", headers: [{name: "accept", value: "application/json"}]}, selection: "... $.type->match([\\"cat\\", { __typename: \\"Cat\\" }], [\\"dog\\", { __typename: \\"Dog\\" }]) id type name data")
 }
 
-union query_things_items @discriminator(subgraph: "test", field: "type", mapping: [["cat", "Cat"], ["dog", "Dog"]]) = Cat | Dog
+union query_things_items = Cat | Dog
 
 type Cat {
   id: String
@@ -136,17 +170,34 @@ type Dog {
   data: JSON
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;

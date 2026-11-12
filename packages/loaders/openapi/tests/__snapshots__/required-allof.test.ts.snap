@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Merge required attributes correctly in allOfs should generate correct schema: required-allof-schema 1`] = `
-"schema @transport(subgraph: "test", kind: "rest") {
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
-
 directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Admin implements User {
   """The Name."""
@@ -22,7 +22,7 @@ type Admin implements User {
   admin: Boolean
 }
 
-interface User @discriminator(subgraph: "test", field: "type") {
+interface User {
   """The Name."""
   name: query_getAdmin_allOf_0_name
   """The type"""
@@ -41,22 +41,39 @@ type Editor implements User {
 
 type Query {
   """Get admin"""
-  getAdmin: Admin @httpOperation(subgraph: "test", path: "/admin", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  getAdmin: Admin @connect(source: "test", http: {GET: "/admin", headers: [{name: "accept", value: "application/json"}]}, selection: "name type admin")
   """Get editor"""
-  getEditor: Editor @httpOperation(subgraph: "test", path: "/editor", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  getEditor: Editor @connect(source: "test", http: {GET: "/editor", headers: [{name: "accept", value: "application/json"}]}, selection: "name type")
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;

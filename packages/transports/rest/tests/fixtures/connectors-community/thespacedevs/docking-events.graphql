@@ -1,0 +1,3453 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(name: "llv2", http: { baseURL: "https://ll.thespacedevs.com/2.3.0/" })
+
+type DockingEvent @key(fields: "id") {
+  id: ID!
+  docking: String @shareable
+  departure: String @shareable
+  dockingLocation: DockingLocation @shareable
+  spaceStationTarget: SpaceStationTarget @shareable
+  flightVehicleTarget: FlightVehicleTarget @shareable
+  payloadFlightTarget: PayloadFlightTarget @shareable
+  flightVehicleChaser: FlightVehicleChaser @shareable
+  spaceStationChaser: SpaceStationChaser @shareable
+  payloadFlightChaser: PayloadFlightChaser @shareable
+}
+type Landing @shareable {
+  id: ID!
+  type: LandingType
+  attempt: Boolean
+  success: Boolean
+  description: String
+  downrangeDistance: String
+  landingLocation: LandingLocation
+}
+type LandingType {
+  id: ID!
+  name: String
+  abbrev: String
+  description: String
+}
+type LandingLocation {
+  id: ID!
+  name: String
+  active: Boolean
+  abbrev: String
+  description: String
+  location: Location
+  longitude: String
+  latitude: String
+  image: Image
+  landings: SuccessCount
+  celestialBody: CelestialBody
+}
+type SuccessCount @shareable {
+  total: Int
+  successful: Int
+  failed: Int
+}
+type Location @shareable {
+  id: ID!
+  name: String
+  active: Boolean
+  country: Country
+  image: Image
+  mapImage: String
+  longitude: String
+  latitude: String
+  totalLaunchCount: Int
+  totalLandingCount: Int
+  description: String
+  timezone: String
+}
+type DockingLocation @shareable {
+  id: ID!
+  name: String
+  spacestation: SpaceStation @shareable
+  spacecraft: Spacecraft @shareable
+  payload: Payload @shareable
+}
+type SpaceStation @shareable {
+  id: ID!
+  name: String
+  image: Image @shareable
+}
+type SpaceStationTarget @shareable {
+  id: ID!
+  name: String
+  image: Image @shareable
+}
+type FlightVehicleTarget @shareable {
+  id: ID!
+  destination: String
+  missionEnd: String
+  spacecraft: Spacecraft @shareable
+}
+type PayloadFlightTarget @shareable {
+  id: ID!
+  destination: String
+  amount: String
+  payload: Payload @shareable
+  launch: Launch @shareable
+  landing: Landing @shareable
+}
+type FlightVehicleChaser @shareable {
+  id: ID!
+  destination: String
+  missionEnd: String
+  spacecraft: Spacecraft
+  launch: Launch
+  landing: Landing
+}
+type SpaceStationChaser @shareable {
+  id: ID!
+  name: String
+  image: Image @shareable
+  status: String
+  founded: String
+  deorbited: String
+  description: String
+  orbit: String
+  type: String
+}
+type PayloadFlightChaser @shareable {
+  id: ID!
+  url: String
+  destination: String
+  amount: String
+  payload: Payload
+  launch: Launch
+  landing: Landing
+}
+type Agency @key(fields: "id", resolvable: false) {
+  id: ID!
+  name: String @shareable
+  abbrev: String @shareable
+  type: String @shareable
+  featured: Boolean @shareable
+  country: [Country] @shareable
+  description: String @shareable
+  administrator: String @shareable
+  foundingYear: Int @shareable
+  spacecraft: String @shareable
+  image: Image @shareable
+  logo: Image @shareable
+  socialLogo: Image @shareable
+  totalLaunchCount: Int
+  consecutiveSuccessfulLaunches: Int
+  successfulLaunches: Int
+  failedLaunches: Int
+  pendingLaunches: Int
+  consecutiveSuccessfulLandings: Int
+  successfulLandings: Int
+  failedLandings: Int
+  attemptedLandings: Int
+  successfulLandingsSpacecraft: Int
+  failedLandingsSpacecraft: Int
+  attemptedLandingsSpacecraft: Int
+  successfulLandingsPayload: Int
+  failedLandingsPayload: Int
+  attemptedLandingsPayload: Int
+  infoUrl: String
+  wikiUrl: String
+  socialMediaLinks: [SocialMediaLink]
+}
+type SocialMediaLink @shareable {
+  id: ID!
+  url: String
+  socialMedia: SocialMedia
+}
+type SocialMedia @shareable {
+  id: ID!
+  name: String
+  url: String
+  logo: Image
+}
+type Country @shareable {
+  id: ID!
+  name: String
+  alpha2Code: String
+  alpha3Code: String
+  nationalityName: String
+  nationalityNameComposed: String
+}
+type Spacecraft @shareable {
+  id: ID!
+  name: String
+  type: String
+  agency: Agency
+  family: SpacecraftFamily
+  inUse: Boolean
+  serialNumber: String
+  isPlaceholder: Boolean
+  image: Image @shareable
+  inSpace: Boolean
+  timeInSpace: String
+  timeDocked: String
+  flightsCount: Int
+  missionEndsCount: Int
+  status: String @shareable
+  description: String @shareable
+  spacecraftConfig: SpacecraftConfig @shareable
+  fastestTurnaround: String
+}
+type SpacecraftConfig @shareable {
+  id: ID!
+  name: String
+  type: String
+  agency: Agency @shareable
+  family: SpacecraftFamily @shareable
+  inUse: Boolean
+  image: Image @shareable
+}
+type SpacecraftFamily @shareable {
+  id: ID!
+  name: String
+  description: String
+  manufacturer: Manufacturer @shareable
+  maidenFlight: String
+}
+type Manufacturer @shareable {
+  id: ID!
+  name: String
+  abbrev: String
+  type: String
+  featured: Boolean
+  country: Country
+  description: String
+  administrator: String
+  foundingYear: Int
+  spacecraft: String
+  image: Image
+  logo: Image
+  socialLogo: Image
+}
+type Payload @shareable {
+  id: ID!
+  name: String
+  type: String
+  manufacturer: Manufacturer
+  operator: Agency
+  image: Image
+  wikiLink: String
+  infoLink: String
+  program: Program
+  cost: Float
+  mass: Float
+  description: String
+}
+type Launch @key(fields: "id", resolvable: false) @shareable {
+  id: ID!
+  name: String
+  launchDesignator: String
+  status: LaunchStatus
+  lastUpdated: String
+  net: String
+  netPrecision: String
+  window: LaunchWindow
+  image: Image
+  infographic: String
+  probability: Float
+  weatherConcerns: String
+  failreason: String
+  hashtag: String
+  provider: Agency
+  rocket: Rocket
+  mission: Mission
+  pad: Pad
+  webcastLive: Boolean
+  program: Program
+  orbitalLaunchAttemps: Int
+  locationLaunchAttemps: Int
+  padLaunchAttemps: Int
+  agencyLaunchAttemps: Int
+  orbitalLaunchAttempsYear: Int
+  locationLaunchAttempsYear: Int
+  padLaunchAttempsYear: Int
+  agencyLaunchAttempsYear: Int
+}
+type Program @shareable {
+  id: ID!
+  name: String
+  image: Image
+  infoUrl: String
+  wikiUrl: String
+  description: String
+  agencies: [Agency]
+  startDate: String
+  endDate: String
+  missionPatches: [MissionPatch]
+}
+type MissionPatch @shareable {
+  id: ID!
+  name: String
+  priority: Int
+  imageUrl: String
+  agency: Agency
+}
+type Pad @shareable {
+  id: ID!
+  active: Boolean
+  agencies: [Agency]
+  name: String
+  image: Image
+  description: String
+  infoUrl: String
+  wikiUrl: String
+  mapUrl: String
+  latitude: Float
+  longitude: Float
+  country: Country
+  mapImage: String
+  launchTotalCount: Int
+  orbitalLaunchAttemptCount: Int
+  fastestTurnaround: String
+  location: Location
+}
+type LaunchStatus @shareable {
+  id: ID!
+  name: String
+  abbrev: String
+  description: String
+}
+type LaunchWindow @shareable {
+  start: String
+  end: String
+}
+type Image @shareable {
+  id: ID!
+  name: String
+  url: String
+  thumbnail: String
+  credit: String
+  singleUse: Boolean
+  license: ImageLicense @shareable
+}
+type ImageLicense @shareable {
+  name: String
+  link: String
+}
+type Rocket @shareable {
+  id: ID!
+  configuration: RocketLaunchConfigurations
+}
+type RocketLaunchConfigurations @shareable {
+  id: ID!
+  name: String
+  fullName: String
+  variant: String
+  families: [RocketFamily]
+}
+type Mission @shareable {
+  id: ID!
+  name: String
+  type: String
+  description: String
+  image: Image
+  orbit: Orbit
+  agencies: [Agency]
+  infoUrls: [InfoUrl]
+  vidUrls: [VideoUrl]
+}
+type Orbit @shareable {
+  id: ID!
+  name: String
+  abbrev: String
+  celestialBody: CelestialBody
+}
+type CelestialBody @key(fields: "id", resolvable: false) {
+  id: ID!
+  name: String @shareable
+  type: CelestialType @shareable
+  diameter: Float @shareable
+  mass: Float @shareable
+  gravity: Float @shareable
+  lengthOfDay: String @shareable
+  atmosphere: Boolean @shareable
+  image: Image @shareable
+  description: String @shareable
+  wikiUrl: String @shareable
+}
+type CelestialType @shareable {
+  id: ID!
+  name: String
+}
+type RocketFamily @shareable {
+  id: ID!
+  name: String
+}
+type InfoUrl @shareable {
+  priority: Int
+  source: String
+  title: String
+  description: String
+  featureImage: String
+  url: String
+  type: String
+  language: Language
+}
+type Language @shareable {
+  id: ID!
+  name: String
+  code: String
+}
+type VideoUrl @shareable {
+  priority: Int
+  source: String
+  publisher: String
+  title: String
+  description: String
+  featureImage: String
+  url: String
+  type: String
+  language: Language
+  startTime: String
+  endTime: String
+  live: Boolean
+}
+type DockingEventConnection {
+  pageInfo: PageInfo
+  results: [DockingEvent]
+}
+type PageInfo @shareable {
+  count: Int
+  next: String
+  previous: String
+}
+type Query {
+  dockingEvent(id: ID!): DockingEvent
+    @connect(
+      source: "llv2"
+      entity: true
+      http: { GET: "/docking_events/{$args.id}/?format=json" }
+      selection: """
+      id
+      docking
+      departure
+      dockingLocation: docking_location {
+        id
+        name
+        spacestation {
+          id
+          name
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+        }
+        spacecraft {
+          id
+          name
+          type: type.name
+          agency {
+            id
+            name
+            abbrev
+            type: type.name
+          }
+          family {
+            id
+            name
+            description
+            manufacturer {
+              id
+              name
+              abbrev
+              type: type.name
+            }
+            maidenFlight: maiden_flight
+          }
+          inUse: in_use
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+        }
+        payload {
+          id
+          name
+          type: type.name
+          manufacturer {
+            id
+            name
+            abbrev
+            type: type.name
+          }
+          operator {
+            id
+            name
+            abbrev
+            type: type.name
+          }
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+        }
+      }
+      spaceStationTarget: space_station_target {
+        id
+        name
+        image {
+          id
+          name
+          url: image_url
+          thumbnail: thumbnail_url
+          credit
+          license {
+            name
+            link
+          }
+          singleUse: single_use
+        }
+      }
+      flightVehicleTarget: flight_vehicle_target {
+        id
+        destination
+        missionEnd: mission_end
+        spacecraft {
+          id
+          name
+          serialNumber: serial_number
+          isPlaceholder: is_placeholder
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+          inSpace: in_space
+          timeInSpace: time_in_space
+          timeDocked: time_docked
+          flightsCount: flights_count
+          missionEndsCount: mission_ends_count
+          status: status.name
+          description
+          spacecraftConfig: spacecraft_config {
+            id
+            name
+            type: type.name
+            agency {
+              id
+              name
+              abbrev
+              type: type.name
+            }
+            family {
+              id
+              name
+              description
+              manufacturer {
+                id
+                name
+                abbrev
+                type: type.name
+              }
+              maidenFlight: maiden_flight
+            }
+            inUse: in_use
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+          }
+          fastestTurnaround: fastest_turnaround
+        }
+      }
+      payloadFlightTarget: payload_flight_target {
+        id
+        destination
+        amount
+        payload {
+          id
+          name
+          type: type.name
+          manufacturer {
+            id
+            name
+            abbrev
+            type: type.name
+          }
+          operator {
+            id
+            name
+            abbrev
+            type: type.name
+          }
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+        }
+        launch {
+          id
+          name
+        }
+        landing {
+          id
+          attempt
+          success
+          description
+          downrangeDistance: downrange_distance
+          landingLocation: landing_location {
+            id
+            name
+            active
+            abbrev
+            description
+            location {
+              id
+              name
+              description
+              active
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              mapImage: map_image
+              longitude
+              latitude
+              timezone: timezone_name
+              totalLaunchCount: total_launch_count
+              totalLandingCount: total_landing_count
+            }
+            longitude
+            latitude
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            landings: {
+              total: attempted_landings
+              successful: successful_landings
+              failed: failed_landings
+            }
+            celestialBody: $.celestial_body {
+              id
+              name
+              type {
+                id
+                name
+              }
+              diameter
+              mass
+              gravity
+              lengthOfDay: length_of_day
+              atmosphere
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              description
+              wikiUrl: wiki_url
+            }
+          }
+          type {
+            id
+            name
+            abbrev
+            description
+          }
+        }
+      }
+      flightVehicleChaser: flight_vehicle_chaser {
+        id
+        destination
+        missionEnd: mission_end
+        spacecraft {
+          id
+          name
+          serialNumber: serial_number
+          isPlaceholder: is_placeholder
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+          inSpace: in_space
+          timeInSpace: time_in_space
+          timeDocked: time_docked
+          flightsCount: flights_count
+          missionEndsCount: mission_ends_count
+          status: status.name
+          description
+          spacecraftConfig: spacecraft_config {
+            id
+            name
+            type: type.name
+            agency {
+              id
+              name
+              abbrev
+              type: type.name
+            }
+            family {
+              id
+              name
+              description
+              manufacturer {
+                id
+                name
+                abbrev
+                type: type.name
+              }
+              maidenFlight: maiden_flight
+            }
+            inUse: in_use
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+          }
+          fastestTurnaround: fastest_turnaround
+        }
+        launch {
+          id
+          name
+          launchDesignator: launch_designator
+          status {
+            id
+            name
+            abbrev
+            description
+          }
+          lastUpdated: last_updated
+          net
+          netPrecision: net_precision
+          window: {
+            start: window_start
+            end: window_end
+          }
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+          infographic
+          probability
+          weatherConcerns: weather_concerns
+          failreason
+          hashtag
+          provider: $.launch_service_provider {
+            id
+            name
+            abbrev
+            type: $.type.name
+          }
+          rocket {
+            id
+            configuration {
+              id
+              name
+              fullName: full_name
+              variant
+              families {
+                id
+                name
+              }
+            }
+          }
+          mission {
+            id
+            name
+            type
+            description
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            orbit {
+              id
+              name
+              abbrev
+              celestialBody: $.celestial_body {
+                id
+                name
+              }
+            }
+            agencies {
+              id
+              name
+              abbrev
+              type: type.name
+              featured
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              description
+              administrator
+              foundingYear: founding_year
+              spacecraft
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              logo {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              socialLogo: social_logo {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              totalLaunchCount: total_launch_count
+              consecutiveSuccessfulLaunches: consecutive_successful_launches
+              successfulLaunches: successful_launches
+              failedLaunches: failed_launches
+              pendingLaunches: pending_launches
+              consecutiveSuccessfulLandings: consecutive_successful_landings
+              successfulLandings: successful_landings
+              failedLandings: failed_landings
+              attemptedLandings: attempted_landings
+              successfulLandingsSpacecraft: successful_landings_spacecraft
+              failedLandingsSpacecraft: failed_landings_spacecraft
+              attemptedLandingsSpacecraft: attempted_landings_spacecraft
+              successfulLandingsPayload: successful_landings_payload
+              failedLandingsPayload: failed_landings_payload
+              attemptedLandingsPayload: attempted_landings_payload
+              infoUrl: info_url
+              wikiUrl: wiki_url
+              socialMediaLinks: social_media_links {
+                id
+                url
+                socialMedia: social_media {
+                  id
+                  name
+                  url
+                  logo {
+                    id
+                    name
+                    url: image_url
+                    thumbnail: thumbnail_url
+                    credit
+                    license {
+                      name
+                      link
+                    }
+                    singleUse: single_use
+                  }
+                }
+              }
+            }
+
+            infoUrls: info_urls {
+              priority
+              source
+              title
+              description
+              featureImage: feature_image
+              url
+              type: type.name
+              language {
+                id
+                name
+                code
+              }
+            }
+            vidUrls: vid_urls {
+              priority
+              source
+              publisher
+              title
+              description
+              featureImage: feature_image
+              url
+              type: type.name
+              language {
+                id
+                name
+                code
+              }
+              startTime: start_time
+              endTime: end_time
+              live
+            }
+          }
+          pad {
+            id
+            active
+            agencies {
+               id
+                name
+                abbrev
+                type: type.name
+                featured
+                country {
+                  id
+                  name
+                  alpha2Code: alpha_2_code
+                  alpha3Code: alpha_3_code
+                  nationalityName: nationality_name
+                  nationalityNameComposed: nationality_name_composed
+                }
+                description
+                administrator
+                foundingYear: founding_year
+                spacecraft
+                image {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+                logo {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+                socialLogo: social_logo {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+            }
+            name
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            description
+            infoUrl: info_url
+            wikiUrl: wiki_url
+            mapUrl: map_url
+            latitude
+            longitude
+            country {
+              id
+              name
+              alpha2Code: alpha_2_code
+              alpha3Code: alpha_3_code
+              nationalityName: nationality_name
+              nationalityNameComposed: nationality_name_composed
+            }
+            mapImage: map_image
+            launchTotalCount: total_launch_count
+            orbitalLaunchAttemptCount: orbital_launch_attempt_count
+            fastestTurnaround: fastest_turnaround
+            location {
+              id
+              name
+              active
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              description
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              mapImage: map_image
+              longitude
+              latitude
+              timezone: timezone_name
+              totalLaunchCount: total_launch_count
+              totalLandingCount: total_landing_count
+            }
+          }
+          webcastLive: webcast_live
+          program {
+            id
+            name
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            infoUrl: info_url
+            wikiUrl: wiki_url
+            description
+            agencies {
+              id
+              name
+              abbrev
+              type: type.name
+            }
+            startDate: start_date
+            endDate: end_date
+            missionPatches: mission_patches {
+              id
+              name
+              priority
+              imageUrl: image_url
+              agency {
+                id
+                name
+                abbrev
+                type: type.name
+              }
+            }
+          }
+          orbitalLaunchAttemps: orbital_launch_attempt_count
+          locationLaunchAttemps: location_launch_attempt_count
+          padLaunchAttemps: pad_launch_attempt_count
+          agencyLaunchAttemps: agency_launch_attempt_count
+          orbitalLaunchAttempsYear: orbital_launch_attempt_count_year
+          locationLaunchAttempsYear: location_launch_attempt_count_year
+          padLaunchAttempsYear: pad_launch_attempt_count_year
+          agencyLaunchAttempsYear: agency_launch_attempt_count_year
+        }
+        landing {
+          id
+          attempt
+          success
+          description
+          downrangeDistance: downrange_distance
+          landingLocation: landing_location {
+            id
+            name
+            active
+            abbrev
+            description
+            location {
+              id
+              name
+              description
+              active
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              mapImage: map_image
+              longitude
+              latitude
+              timezone: timezone_name
+              totalLaunchCount: total_launch_count
+              totalLandingCount: total_landing_count
+            }
+            longitude
+            latitude
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            landings: {
+              total: attempted_landings
+              successful: successful_landings
+              failed: failed_landings
+            }
+            celestialBody: $.celestial_body {
+              id
+              name
+              type {
+                id
+                name
+              }
+              diameter
+              mass
+              gravity
+              lengthOfDay: length_of_day
+              atmosphere
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              description
+              wikiUrl: wiki_url
+            }
+          }
+          type {
+            id
+            name
+            abbrev
+            description
+          }
+        }
+      }
+      spaceStationChaser: space_station_chaser {
+        id
+        name
+        image {
+          id
+          name
+          url: image_url
+          thumbnail: thumbnail_url
+          credit
+          license {
+            name
+            link
+          }
+          singleUse: single_use
+        }
+        status: status.name
+        founded
+        deorbited
+        description
+        orbit
+        type: type.name
+      }
+      payloadFlightChaser: payload_flight_chaser {
+        id
+        url
+        destination
+        amount
+        payload {
+          id
+          name
+          type: type.name
+          manufacturer {
+            id
+            name
+            abbrev
+            type: type.name
+            featured
+            country {
+              id
+              name
+              alpha2Code: alpha_2_code
+              alpha3Code: alpha_3_code
+              nationalityName: nationality_name
+              nationalityNameComposed: nationality_name_composed
+            }
+            description
+            administrator
+            foundingYear: founding_year
+            spacecraft
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            logo {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            socialLogo: social_logo {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+          }
+          operator {
+            id
+            name
+            abbrev
+            type: type.name
+            featured
+            country {
+              id
+              name
+              alpha2Code: alpha_2_code
+              alpha3Code: alpha_3_code
+              nationalityName: nationality_name
+              nationalityNameComposed: nationality_name_composed
+            }
+            description
+            administrator
+            foundingYear: founding_year
+            spacecraft
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            logo {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            socialLogo: social_logo {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+          }
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+          wikiLink: wiki_link
+          infoLink: info_link
+          program {
+            id
+            name
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            infoUrl: info_url
+            wikiUrl: wiki_url
+          }
+          cost
+          mass
+          description
+        }
+        launch {
+          id
+          name
+          launchDesignator: launch_designator
+          status {
+            id
+            name
+            abbrev
+            description
+          }
+          lastUpdated: last_updated
+          net
+          netPrecision: net_precision
+          window: {
+            start: window_start
+            end: window_end
+          }
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+          infographic
+          probability
+          weatherConcerns: weather_concerns
+          failreason
+          hashtag
+          provider: $.launch_service_provider {
+            id
+            name
+            abbrev
+            type: $.type.name
+          }
+          rocket {
+            id
+            configuration {
+              id
+              name
+              fullName: full_name
+              variant
+              families {
+                id
+                name
+              }
+            }
+          }
+          mission {
+            id
+            name
+            type
+            description
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            orbit {
+              id
+              name
+              abbrev
+              celestialBody: $.celestial_body {
+                id
+                name
+              }
+            }
+            agencies {
+              id
+              name
+              abbrev
+              type: type.name
+              featured
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              description
+              administrator
+              foundingYear: founding_year
+              spacecraft
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              logo {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              socialLogo: social_logo {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              totalLaunchCount: total_launch_count
+              consecutiveSuccessfulLaunches: consecutive_successful_launches
+              successfulLaunches: successful_launches
+              failedLaunches: failed_launches
+              pendingLaunches: pending_launches
+              consecutiveSuccessfulLandings: consecutive_successful_landings
+              successfulLandings: successful_landings
+              failedLandings: failed_landings
+              attemptedLandings: attempted_landings
+              successfulLandingsSpacecraft: successful_landings_spacecraft
+              failedLandingsSpacecraft: failed_landings_spacecraft
+              attemptedLandingsSpacecraft: attempted_landings_spacecraft
+              successfulLandingsPayload: successful_landings_payload
+              failedLandingsPayload: failed_landings_payload
+              attemptedLandingsPayload: attempted_landings_payload
+              infoUrl: info_url
+              wikiUrl: wiki_url
+              socialMediaLinks: social_media_links {
+                id
+                url
+                socialMedia: social_media {
+                  id
+                  name
+                  url
+                  logo {
+                    id
+                    name
+                    url: image_url
+                    thumbnail: thumbnail_url
+                    credit
+                    license {
+                      name
+                      link
+                    }
+                    singleUse: single_use
+                  }
+                }
+              }
+            }
+
+            infoUrls: info_urls {
+              priority
+              source
+              title
+              description
+              featureImage: feature_image
+              url
+              type: type.name
+              language {
+                id
+                name
+                code
+              }
+            }
+            vidUrls: vid_urls {
+              priority
+              source
+              publisher
+              title
+              description
+              featureImage: feature_image
+              url
+              type: type.name
+              language {
+                id
+                name
+                code
+              }
+              startTime: start_time
+              endTime: end_time
+              live
+            }
+          }
+          pad {
+            id
+            active
+            agencies {
+               id
+                name
+                abbrev
+                type: type.name
+                featured
+                country {
+                  id
+                  name
+                  alpha2Code: alpha_2_code
+                  alpha3Code: alpha_3_code
+                  nationalityName: nationality_name
+                  nationalityNameComposed: nationality_name_composed
+                }
+                description
+                administrator
+                foundingYear: founding_year
+                spacecraft
+                image {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+                logo {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+                socialLogo: social_logo {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+            }
+            name
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            description
+            infoUrl: info_url
+            wikiUrl: wiki_url
+            mapUrl: map_url
+            latitude
+            longitude
+            country {
+              id
+              name
+              alpha2Code: alpha_2_code
+              alpha3Code: alpha_3_code
+              nationalityName: nationality_name
+              nationalityNameComposed: nationality_name_composed
+            }
+            mapImage: map_image
+            launchTotalCount: total_launch_count
+            orbitalLaunchAttemptCount: orbital_launch_attempt_count
+            fastestTurnaround: fastest_turnaround
+            location {
+              id
+              name
+              active
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              description
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              mapImage: map_image
+              longitude
+              latitude
+              timezone: timezone_name
+              totalLaunchCount: total_launch_count
+              totalLandingCount: total_landing_count
+            }
+          }
+          webcastLive: webcast_live
+          program {
+            id
+            name
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            infoUrl: info_url
+            wikiUrl: wiki_url
+            description
+            agencies {
+              id
+              name
+              abbrev
+              type: type.name
+            }
+            startDate: start_date
+            endDate: end_date
+            missionPatches: mission_patches {
+              id
+              name
+              priority
+              imageUrl: image_url
+              agency {
+                id
+                name
+                abbrev
+                type: type.name
+              }
+            }
+          }
+          orbitalLaunchAttemps: orbital_launch_attempt_count
+          locationLaunchAttemps: location_launch_attempt_count
+          padLaunchAttemps: pad_launch_attempt_count
+          agencyLaunchAttemps: agency_launch_attempt_count
+          orbitalLaunchAttempsYear: orbital_launch_attempt_count_year
+          locationLaunchAttempsYear: location_launch_attempt_count_year
+          padLaunchAttempsYear: pad_launch_attempt_count_year
+          agencyLaunchAttempsYear: agency_launch_attempt_count_year
+        }
+        landing {
+          id
+          attempt
+          success
+          description
+          downrangeDistance: downrange_distance
+          landingLocation: landing_location {
+            id
+            name
+            active
+            abbrev
+            description
+            location {
+              id
+              name
+              active
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              mapImage: map_image
+              longitude
+              latitude
+              timezone: timezone_name
+              totalLaunchCount: total_launch_count
+              totalLandingCount: total_landing_count
+            }
+            longitude
+            latitude
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            landings: {
+              total: attempted_landings
+              successful: successful_landings
+              failed: failed_landings
+            }
+            celestialBody: $.celestial_body {
+              id
+              name
+              type {
+                id
+                name
+              }
+              diameter
+              mass
+              gravity
+              lengthOfDay: length_of_day
+              atmosphere
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              description
+              wikiUrl: wiki_url
+            }
+          }
+          type {
+            id
+            name
+            abbrev
+            description
+          }
+        }
+      }
+      """
+    )
+  dockingEvents(search: String, offset: Int = 0, limit: Int = 20): DockingEventConnection
+    @connect(
+      source: "llv2"
+      http: {
+        GET: "/docking_events/"
+        queryParams: """
+        search: $args.filters.search
+        limit: $args.limit
+        offset: $args.offset
+        format: $('json')
+        """
+      }
+      selection: """
+            pageInfo {
+              count
+              next
+              previous
+            }
+            results {
+              id
+      docking
+      departure
+      dockingLocation: docking_location {
+        id
+        name
+        spacestation {
+          id
+          name
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+        }
+        spacecraft {
+          id
+          name
+          type: type.name
+          agency {
+            id
+            name
+            abbrev
+            type: type.name
+          }
+          family {
+            id
+            name
+            description
+            manufacturer {
+              id
+              name
+              abbrev
+              type: type.name
+            }
+            maidenFlight: maiden_flight
+          }
+          inUse: in_use
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+        }
+        payload {
+          id
+          name
+          type: type.name
+          manufacturer {
+            id
+            name
+            abbrev
+            type: type.name
+          }
+          operator {
+            id
+            name
+            abbrev
+            type: type.name
+          }
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+        }
+      }
+      spaceStationTarget: space_station_target {
+        id
+        name
+        image {
+          id
+          name
+          url: image_url
+          thumbnail: thumbnail_url
+          credit
+          license {
+            name
+            link
+          }
+          singleUse: single_use
+        }
+      }
+      flightVehicleTarget: flight_vehicle_target {
+        id
+        destination
+        missionEnd: mission_end
+        spacecraft {
+          id
+          name
+          serialNumber: serial_number
+          isPlaceholder: is_placeholder
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+          inSpace: in_space
+          timeInSpace: time_in_space
+          timeDocked: time_docked
+          flightsCount: flights_count
+          missionEndsCount: mission_ends_count
+          status: status.name
+          description
+          spacecraftConfig: spacecraft_config {
+            id
+            name
+            type: type.name
+            agency {
+              id
+              name
+              abbrev
+              type: type.name
+            }
+            family {
+              id
+              name
+              description
+              manufacturer {
+                id
+                name
+                abbrev
+                type: type.name
+              }
+              maidenFlight: maiden_flight
+            }
+            inUse: in_use
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+          }
+          fastestTurnaround: fastest_turnaround
+        }
+      }
+      payloadFlightTarget: payload_flight_target {
+        id
+        destination
+        amount
+        payload {
+          id
+          name
+          type: type.name
+          manufacturer {
+            id
+            name
+            abbrev
+            type: type.name
+          }
+          operator {
+            id
+            name
+            abbrev
+            type: type.name
+          }
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+        }
+        launch {
+          id
+          name
+        }
+        landing {
+          id
+          attempt
+          success
+          description
+          downrangeDistance: downrange_distance
+          landingLocation: landing_location {
+            id
+            name
+            active
+            abbrev
+            description
+            location {
+              id
+              name
+              active
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              mapImage: map_image
+              longitude
+              latitude
+              timezone: timezone_name
+              totalLaunchCount: total_launch_count
+              totalLandingCount: total_landing_count
+            }
+            longitude
+            latitude
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            landings: {
+              total: attempted_landings
+              successful: successful_landings
+              failed: failed_landings
+            }
+            celestialBody: $.celestial_body {
+              id
+              name
+              type {
+                id
+                name
+              }
+              diameter
+              mass
+              gravity
+              lengthOfDay: length_of_day
+              atmosphere
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              description
+              wikiUrl: wiki_url
+            }
+          }
+          type {
+            id
+            name
+            abbrev
+            description
+          }
+        }
+      }
+      flightVehicleChaser: flight_vehicle_chaser {
+        id
+        destination
+        missionEnd: mission_end
+        spacecraft {
+          id
+          name
+          serialNumber: serial_number
+          isPlaceholder: is_placeholder
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+          inSpace: in_space
+          timeInSpace: time_in_space
+          timeDocked: time_docked
+          flightsCount: flights_count
+          missionEndsCount: mission_ends_count
+          status: status.name
+          description
+          spacecraftConfig: spacecraft_config {
+            id
+            name
+            type: type.name
+            agency {
+              id
+              name
+              abbrev
+              type: type.name
+            }
+            family {
+              id
+              name
+              description
+              manufacturer {
+                id
+                name
+                abbrev
+                type: type.name
+              }
+              maidenFlight: maiden_flight
+            }
+            inUse: in_use
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+          }
+          fastestTurnaround: fastest_turnaround
+        }
+        launch {
+          id
+          name
+          launchDesignator: launch_designator
+          status {
+            id
+            name
+            abbrev
+            description
+          }
+          lastUpdated: last_updated
+          net
+          netPrecision: net_precision
+          window: {
+            start: window_start
+            end: window_end
+          }
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+          infographic
+          probability
+          weatherConcerns: weather_concerns
+          failreason
+          hashtag
+          provider: $.launch_service_provider {
+            id
+            name
+            abbrev
+            type: $.type.name
+          }
+          rocket {
+            id
+            configuration {
+              id
+              name
+              fullName: full_name
+              variant
+              families {
+                id
+                name
+              }
+            }
+          }
+          mission {
+            id
+            name
+            type
+            description
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            orbit {
+              id
+              name
+              abbrev
+              celestialBody: $.celestial_body {
+                id
+                name
+              }
+            }
+            agencies {
+              id
+              name
+              abbrev
+              type: type.name
+              featured
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              description
+              administrator
+              foundingYear: founding_year
+              spacecraft
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              logo {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              socialLogo: social_logo {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              totalLaunchCount: total_launch_count
+              consecutiveSuccessfulLaunches: consecutive_successful_launches
+              successfulLaunches: successful_launches
+              failedLaunches: failed_launches
+              pendingLaunches: pending_launches
+              consecutiveSuccessfulLandings: consecutive_successful_landings
+              successfulLandings: successful_landings
+              failedLandings: failed_landings
+              attemptedLandings: attempted_landings
+              successfulLandingsSpacecraft: successful_landings_spacecraft
+              failedLandingsSpacecraft: failed_landings_spacecraft
+              attemptedLandingsSpacecraft: attempted_landings_spacecraft
+              successfulLandingsPayload: successful_landings_payload
+              failedLandingsPayload: failed_landings_payload
+              attemptedLandingsPayload: attempted_landings_payload
+              infoUrl: info_url
+              wikiUrl: wiki_url
+              socialMediaLinks: social_media_links {
+                id
+                url
+                socialMedia: social_media {
+                  id
+                  name
+                  url
+                  logo {
+                    id
+                    name
+                    url: image_url
+                    thumbnail: thumbnail_url
+                    credit
+                    license {
+                      name
+                      link
+                    }
+                    singleUse: single_use
+                  }
+                }
+              }
+            }
+
+            infoUrls: info_urls {
+              priority
+              source
+              title
+              description
+              featureImage: feature_image
+              url
+              type: type.name
+              language {
+                id
+                name
+                code
+              }
+            }
+            vidUrls: vid_urls {
+              priority
+              source
+              publisher
+              title
+              description
+              featureImage: feature_image
+              url
+              type: type.name
+              language {
+                id
+                name
+                code
+              }
+              startTime: start_time
+              endTime: end_time
+              live
+            }
+          }
+          pad {
+            id
+            active
+            agencies {
+               id
+                name
+                abbrev
+                type: type.name
+                featured
+                country {
+                  id
+                  name
+                  alpha2Code: alpha_2_code
+                  alpha3Code: alpha_3_code
+                  nationalityName: nationality_name
+                  nationalityNameComposed: nationality_name_composed
+                }
+                description
+                administrator
+                foundingYear: founding_year
+                spacecraft
+                image {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+                logo {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+                socialLogo: social_logo {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+            }
+            name
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            description
+            infoUrl: info_url
+            wikiUrl: wiki_url
+            mapUrl: map_url
+            latitude
+            longitude
+            country {
+              id
+              name
+              alpha2Code: alpha_2_code
+              alpha3Code: alpha_3_code
+              nationalityName: nationality_name
+              nationalityNameComposed: nationality_name_composed
+            }
+            mapImage: map_image
+            launchTotalCount: total_launch_count
+            orbitalLaunchAttemptCount: orbital_launch_attempt_count
+            fastestTurnaround: fastest_turnaround
+            location {
+              id
+              name
+              active
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              description
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              mapImage: map_image
+              longitude
+              latitude
+              timezone: timezone_name
+              totalLaunchCount: total_launch_count
+              totalLandingCount: total_landing_count
+            }
+          }
+          webcastLive: webcast_live
+          program {
+            id
+            name
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            infoUrl: info_url
+            wikiUrl: wiki_url
+            description
+            agencies {
+              id
+              name
+              abbrev
+              type: type.name
+            }
+            startDate: start_date
+            endDate: end_date
+            missionPatches: mission_patches {
+              id
+              name
+              priority
+              imageUrl: image_url
+              agency {
+                id
+                name
+                abbrev
+                type: type.name
+              }
+            }
+          }
+          orbitalLaunchAttemps: orbital_launch_attempt_count
+          locationLaunchAttemps: location_launch_attempt_count
+          padLaunchAttemps: pad_launch_attempt_count
+          agencyLaunchAttemps: agency_launch_attempt_count
+          orbitalLaunchAttempsYear: orbital_launch_attempt_count_year
+          locationLaunchAttempsYear: location_launch_attempt_count_year
+          padLaunchAttempsYear: pad_launch_attempt_count_year
+          agencyLaunchAttempsYear: agency_launch_attempt_count_year
+        }
+        landing {
+          id
+          attempt
+          success
+          description
+          downrangeDistance: downrange_distance
+          landingLocation: landing_location {
+            id
+            name
+            active
+            abbrev
+            description
+            location {
+              id
+              name
+              active
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              mapImage: map_image
+              longitude
+              latitude
+              timezone: timezone_name
+              totalLaunchCount: total_launch_count
+              totalLandingCount: total_landing_count
+            }
+            longitude
+            latitude
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            landings: {
+              total: attempted_landings
+              successful: successful_landings
+              failed: failed_landings
+            }
+            celestialBody: $.celestial_body {
+              id
+              name
+              type {
+                id
+                name
+              }
+              diameter
+              mass
+              gravity
+              lengthOfDay: length_of_day
+              atmosphere
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              description
+              wikiUrl: wiki_url
+            }
+          }
+          type {
+            id
+            name
+            abbrev
+            description
+          }
+        }
+      }
+      spaceStationChaser: space_station_chaser {
+        id
+        name
+        image {
+          id
+          name
+          url: image_url
+          thumbnail: thumbnail_url
+          credit
+          license {
+            name
+            link
+          }
+          singleUse: single_use
+        }
+        status: status.name
+        founded
+        deorbited
+        description
+        orbit
+        type: type.name
+      }
+      payloadFlightChaser: payload_flight_chaser {
+        id
+        url
+        destination
+        amount
+        payload {
+          id
+          name
+          type: type.name
+          manufacturer {
+            id
+            name
+            abbrev
+            type: type.name
+            featured
+            country {
+              id
+              name
+              alpha2Code: alpha_2_code
+              alpha3Code: alpha_3_code
+              nationalityName: nationality_name
+              nationalityNameComposed: nationality_name_composed
+            }
+            description
+            administrator
+            foundingYear: founding_year
+            spacecraft
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            logo {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            socialLogo: social_logo {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+          }
+          operator {
+            id
+            name
+            abbrev
+            type: type.name
+            featured
+            country {
+              id
+              name
+              alpha2Code: alpha_2_code
+              alpha3Code: alpha_3_code
+              nationalityName: nationality_name
+              nationalityNameComposed: nationality_name_composed
+            }
+            description
+            administrator
+            foundingYear: founding_year
+            spacecraft
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            logo {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            socialLogo: social_logo {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+          }
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+          wikiLink: wiki_link
+          infoLink: info_link
+          program {
+            id
+            name
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            infoUrl: info_url
+            wikiUrl: wiki_url
+          }
+          cost
+          mass
+          description
+        }
+        launch {
+          id
+          name
+          launchDesignator: launch_designator
+          status {
+            id
+            name
+            abbrev
+            description
+          }
+          lastUpdated: last_updated
+          net
+          netPrecision: net_precision
+          window: {
+            start: window_start
+            end: window_end
+          }
+          image {
+            id
+            name
+            url: image_url
+            thumbnail: thumbnail_url
+            credit
+            license {
+              name
+              link
+            }
+            singleUse: single_use
+          }
+          infographic
+          probability
+          weatherConcerns: weather_concerns
+          failreason
+          hashtag
+          provider: $.launch_service_provider {
+            id
+            name
+            abbrev
+            type: $.type.name
+          }
+          rocket {
+            id
+            configuration {
+              id
+              name
+              fullName: full_name
+              variant
+              families {
+                id
+                name
+              }
+            }
+          }
+          mission {
+            id
+            name
+            type
+            description
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            orbit {
+              id
+              name
+              abbrev
+              celestialBody: $.celestial_body {
+                id
+                name
+              }
+            }
+            agencies {
+              id
+              name
+              abbrev
+              type: type.name
+              featured
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              description
+              administrator
+              foundingYear: founding_year
+              spacecraft
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              logo {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              socialLogo: social_logo {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              totalLaunchCount: total_launch_count
+              consecutiveSuccessfulLaunches: consecutive_successful_launches
+              successfulLaunches: successful_launches
+              failedLaunches: failed_launches
+              pendingLaunches: pending_launches
+              consecutiveSuccessfulLandings: consecutive_successful_landings
+              successfulLandings: successful_landings
+              failedLandings: failed_landings
+              attemptedLandings: attempted_landings
+              successfulLandingsSpacecraft: successful_landings_spacecraft
+              failedLandingsSpacecraft: failed_landings_spacecraft
+              attemptedLandingsSpacecraft: attempted_landings_spacecraft
+              successfulLandingsPayload: successful_landings_payload
+              failedLandingsPayload: failed_landings_payload
+              attemptedLandingsPayload: attempted_landings_payload
+              infoUrl: info_url
+              wikiUrl: wiki_url
+              socialMediaLinks: social_media_links {
+                id
+                url
+                socialMedia: social_media {
+                  id
+                  name
+                  url
+                  logo {
+                    id
+                    name
+                    url: image_url
+                    thumbnail: thumbnail_url
+                    credit
+                    license {
+                      name
+                      link
+                    }
+                    singleUse: single_use
+                  }
+                }
+              }
+            }
+
+            infoUrls: info_urls {
+              priority
+              source
+              title
+              description
+              featureImage: feature_image
+              url
+              type: type.name
+              language {
+                id
+                name
+                code
+              }
+            }
+            vidUrls: vid_urls {
+              priority
+              source
+              publisher
+              title
+              description
+              featureImage: feature_image
+              url
+              type: type.name
+              language {
+                id
+                name
+                code
+              }
+              startTime: start_time
+              endTime: end_time
+              live
+            }
+          }
+          pad {
+            id
+            active
+            agencies {
+               id
+                name
+                abbrev
+                type: type.name
+                featured
+                country {
+                  id
+                  name
+                  alpha2Code: alpha_2_code
+                  alpha3Code: alpha_3_code
+                  nationalityName: nationality_name
+                  nationalityNameComposed: nationality_name_composed
+                }
+                description
+                administrator
+                foundingYear: founding_year
+                spacecraft
+                image {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+                logo {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+                socialLogo: social_logo {
+                  id
+                  name
+                  url: image_url
+                  thumbnail: thumbnail_url
+                  credit
+                  license {
+                    name
+                    link
+                  }
+                  singleUse: single_use
+                }
+            }
+            name
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            description
+            infoUrl: info_url
+            wikiUrl: wiki_url
+            mapUrl: map_url
+            latitude
+            longitude
+            country {
+              id
+              name
+              alpha2Code: alpha_2_code
+              alpha3Code: alpha_3_code
+              nationalityName: nationality_name
+              nationalityNameComposed: nationality_name_composed
+            }
+            mapImage: map_image
+            launchTotalCount: total_launch_count
+            orbitalLaunchAttemptCount: orbital_launch_attempt_count
+            fastestTurnaround: fastest_turnaround
+            location {
+              id
+              name
+              active
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              description
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              mapImage: map_image
+              longitude
+              latitude
+              timezone: timezone_name
+              totalLaunchCount: total_launch_count
+              totalLandingCount: total_landing_count
+            }
+          }
+          webcastLive: webcast_live
+          program {
+            id
+            name
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            infoUrl: info_url
+            wikiUrl: wiki_url
+            description
+            agencies {
+              id
+              name
+              abbrev
+              type: type.name
+            }
+            startDate: start_date
+            endDate: end_date
+            missionPatches: mission_patches {
+              id
+              name
+              priority
+              imageUrl: image_url
+              agency {
+                id
+                name
+                abbrev
+                type: type.name
+              }
+            }
+          }
+          orbitalLaunchAttemps: orbital_launch_attempt_count
+          locationLaunchAttemps: location_launch_attempt_count
+          padLaunchAttemps: pad_launch_attempt_count
+          agencyLaunchAttemps: agency_launch_attempt_count
+          orbitalLaunchAttempsYear: orbital_launch_attempt_count_year
+          locationLaunchAttempsYear: location_launch_attempt_count_year
+          padLaunchAttempsYear: pad_launch_attempt_count_year
+          agencyLaunchAttempsYear: agency_launch_attempt_count_year
+        }
+        landing {
+          id
+          attempt
+          success
+          description
+          downrangeDistance: downrange_distance
+          landingLocation: landing_location {
+            id
+            name
+            active
+            abbrev
+            description
+            location {
+              id
+              name
+              active
+              country {
+                id
+                name
+                alpha2Code: alpha_2_code
+                alpha3Code: alpha_3_code
+                nationalityName: nationality_name
+                nationalityNameComposed: nationality_name_composed
+              }
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              mapImage: map_image
+              longitude
+              latitude
+              timezone: timezone_name
+              totalLaunchCount: total_launch_count
+              totalLandingCount: total_landing_count
+            }
+            longitude
+            latitude
+            image {
+              id
+              name
+              url: image_url
+              thumbnail: thumbnail_url
+              credit
+              license {
+                name
+                link
+              }
+              singleUse: single_use
+            }
+            landings: {
+              total: attempted_landings
+              successful: successful_landings
+              failed: failed_landings
+            }
+            celestialBody: $.celestial_body {
+              id
+              name
+              type {
+                id
+                name
+              }
+              diameter
+              mass
+              gravity
+              lengthOfDay: length_of_day
+              atmosphere
+              image {
+                id
+                name
+                url: image_url
+                thumbnail: thumbnail_url
+                credit
+                license {
+                  name
+                  link
+                }
+                singleUse: single_use
+              }
+              description
+              wikiUrl: wiki_url
+            }
+          }
+          type {
+            id
+            name
+            abbrev
+            description
+          }
+        }
+      }
+            }
+      """
+    )
+}

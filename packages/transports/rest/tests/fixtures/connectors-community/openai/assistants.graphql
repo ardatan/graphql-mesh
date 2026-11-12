@@ -1,0 +1,282 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "openai"
+    http: {
+      baseURL: "https://api.openai.com/v1/"
+      headers: [
+        { name: "Authorization", value: "Bearer {$config.apiKey}" }
+        { name: "OpenAI-Beta", value: "assistants=v2" }
+      ]
+    }
+  )
+
+type Assistant {
+  id: ID!
+  createdAt: Float
+  name: String
+  description: String
+  model: String
+  instructions: String
+  topP: Float
+  temperature: Float
+  ownedBy: String
+}
+type PageInfo @shareable {
+  first: ID
+  last: ID
+  hasMore: Boolean
+}
+type AssistantConnection {
+  pageInfo: PageInfo
+  items: [Assistant]
+}
+type MessagesConnection {
+  pageInfo: PageInfo
+  items: [Message]
+}
+type RunsConnection {
+  pageInfo: PageInfo
+  items: [Run]
+}
+type Run {
+  id: ID!
+  createdAt: Float
+  startedAt: Float
+  expiresAt: Float
+  cancelledAt: Float
+  failedAt: Float
+  completedAt: Float
+  assistant: Assistant
+  status: String
+  model: String
+  instructions: String
+  topP: Float
+  temperature: Float
+  usage: TokenUsage
+}
+type TokenUsage @shareable {
+  promptTokens: Int
+  completionTokens: Int
+  totalTokens: Int
+}
+type Query {
+  assistants(before: ID, after: ID, limit: Int = 20): AssistantConnection
+    @connect(
+      source: "openai"
+      http: {
+        GET: "/assistants"
+        queryParams: """
+        before: $args.before
+        after: $args.after
+        limit: $args.limit
+        """
+      }
+      selection: """
+      pageInfo: {
+        first: first_id
+        last: last_id
+        hasMore: has_more
+      }
+      items: $.data {
+        id
+        createdAt: created_at
+        name
+        description
+        model
+        instructions
+        topP: top_P
+        temperature
+        ownedBy: owned_by
+      }
+      """
+    )
+  assistant(id: ID!): Assistant
+    @connect(
+      source: "openai"
+      http: { GET: "/assistant/{$args.id}" }
+      selection: """
+      $.data {
+        id
+        createdAt: created_at
+        name
+        description
+        model
+        instructions
+        topP: top_P
+        temperature
+        ownedBy: owned_by
+      }
+      """
+      entity: true
+    )
+  thread(id: ID!): Thread
+    @connect(
+      source: "openai"
+      http: { GET: "/thread/{$args.id}" }
+      selection: """
+      id
+      createdAt: created_at
+      """
+      entity: true
+    )
+}
+
+type Mutation {
+  createMessage(thread: ID!, content: String): Thread
+    @connect(
+      source: "openai"
+      http: {
+        POST: "/threads/{$args.thread}/messages"
+        body: """
+        content: $args.content
+        role: $args.role->match(
+          ['USER','user'],
+          ['ASSISTANT','assistant']
+        )
+        """
+      }
+      selection: """
+      id: $args.thread
+      """
+    )
+  createThread(input: MessagesInput): Thread
+    @connect(
+      source: "openai"
+      http: {
+        POST: "/threads"
+        body: """
+        $args.input.messages {
+          content
+          role: role->match(
+            ['USER','user'],
+            ['ASSISTANT','assistant']
+          )
+        }
+        """
+      }
+      selection: """
+      id
+      createdAt: created_at
+      """
+    )
+}
+input MessagesInput {
+  messages: [MessageInput]
+}
+input MessageInput {
+  content: String
+  role: MessageRole
+}
+type Message {
+  id: ID!
+  createdAt: Float
+  assistant: Assistant
+  role: MessageRole
+  content: [String]
+}
+type Thread {
+  id: ID!
+  createdAt: Float
+  message(id: ID!): Message
+    @connect(
+      source: "openai"
+      http: { GET: "/threads/{$this.id}/messages/{$args.id}" }
+      selection: """
+      id
+      createdAt: created_at
+      assistant: {
+        id: assistant_id
+      }
+      role: role->match(
+        ['USER','user'],
+        ['ASSISTANT','assistant']
+      )
+      content: content->map(@.text.value)
+      """
+    )
+  messages(before: ID, after: ID, limit: Int = 20): MessagesConnection
+    @connect(
+      source: "openai"
+      http: {
+        GET: "/threads/{$this.id}/messages"
+        queryParams: """
+        before: $args.before
+        after: $args.after
+        limit: $args.limit
+        """
+      }
+      selection: """
+      pageInfo: {
+        first: first_id
+        last: last_id
+        hasMore: has_more
+      }
+      items: $.data {
+        id
+        createdAt: created_at
+        assistant: {
+          id: assistant_id
+        }
+        role: role->match(
+          ['USER','user'],
+          ['ASSISTANT','assistant']
+        )
+        content: content->map(@.text.value)
+      }
+      """
+    )
+  runs(before: ID, after: ID, limit: Int = 20): RunsConnection
+    @connect(
+      source: "openai"
+      http: {
+        GET: "/threads/{$this.id}/runs"
+        queryParams: """
+        before: $args.before
+        after: $args.after
+        limit: $args.limit
+        """
+      }
+      selection: """
+      pageInfo: {
+        first: first_id
+        last: last_id
+        hasMore: has_more
+      }
+      items: $.data {
+        id
+        createdAt: created_at
+        assistant: {
+          id: assistant_id
+        }
+        status
+        startedAt: started_at
+        expiresAt: expires_at
+        cancelledAt: cancelled_at
+        failedAt: failed_at
+        completedAt: completed_at
+        model
+        instructions
+        usage {
+          promptTokens: prompt_tokens
+          completionTokens: completion_tokens
+          totalTokens: total_tokens
+        }
+        temperature
+        topP: top_p
+      }
+      """
+    )
+}
+enum MessageRole {
+  SYSTEM
+  ASSISTANT
+  USER
+  FUNCTION
+  TOOL
+  DEVELOPER
+}

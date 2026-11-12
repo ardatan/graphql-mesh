@@ -1,0 +1,28 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10")
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"])
+  @source(
+    name: "magento"
+    http: {
+      # https://developer.adobe.com/commerce/webapi/rest/quick-reference/
+      baseURL: "http://127.0.0.1:4010/V1"
+      headers: [
+        { name: "Content-Type", value: "application/json" }
+        { name: "Authorization", from: "Authorization" }
+      ]
+    }
+  )
+
+type Mutation {
+  """
+  Delete customer address by ID.
+  Returns true on success.
+  """
+  deleteAddress(addressId: ID!): Boolean!
+    @connect(
+      source: "magento"
+      http: { DELETE: "/addresses/{$args.addressId}" }
+      # https://adobe-commerce.redoc.ly/2.4.7-admin/tag/addressesaddressId#operation/DeleteV1AddressesAddressId
+      selection: "data.deleteAddress"
+    )
+}

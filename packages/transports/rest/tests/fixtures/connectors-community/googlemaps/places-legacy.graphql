@@ -1,0 +1,107 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@shareable", "@external"]
+  ) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  @source(name: "places", http: { baseURL: "https://maps.googleapis.com/maps/api/place/" })
+
+type Query {
+  searchForPlace(query: String): [Place]
+    @connect(
+      source: "places"
+      http: { GET: "textsearch/json?query={$args.query}&key=YOUR_API_KEY" }
+      selection: """
+       $.results {
+        businessStatus: business_status
+        formattedAddress: formatted_address
+        location: $.geometry.location {
+          latitude: lat
+          longitude: lng
+        }
+        openingHours: opening_hours {
+          openNow: open_now
+        }
+        photos {
+          photoReference: photo_reference
+          htmlAttributions: html_attributions
+        }
+        id: place_id
+        rating
+        reference
+        types
+        userRatingsTotal: user_ratings_total
+      }
+      """
+    )
+
+  getPlaceDetailsById(id: String!): Place
+    @connect(
+      source: "places"
+      http: { GET: "details/json?place_id={$args.id}&key=YOUR_API_KEY" }
+      entity: true
+      selection: """
+        $.result {
+        businessStatus: business_status
+        formattedAddress: formatted_address
+        location: $.geometry.location {
+          latitude: lat
+          longitude: lng
+        }
+        openingHours: opening_hours {
+          openNow: open_now
+        }
+        photos {
+          photoReference: photo_reference
+          htmlAttributions: html_attributions
+        }
+        id: place_id
+        rating
+        reference
+        types
+        userRatingsTotal: user_ratings_total
+      }
+      """
+    )
+}
+
+type Place @key(fields: "id") {
+  id: String
+  businessStatus: String
+  formattedAddress: String
+  location: Location
+  openingHours: OpeningHours
+  photos: [Photo]
+  rating: Float
+  reference: String
+  types: [String]
+  userRatingsTotal: Int
+}
+type Location {
+  latitude: Float
+  longitude: Float
+}
+type OpeningHours {
+  openNow: Boolean
+}
+type Photo {
+  photoReference: String
+  htmlAttributions: [String]
+  url(height: Int = 720, width: Int = 1280): String
+    @connect(
+      source: "places"
+      http: {
+        GET: "/photo"
+        queryParams: """
+        photo_reference: $this.photoReference
+        maxwidth: $args.width
+        maxheight: $args.height
+        key:$(config.key)
+        skipHttpRedirect: $(true)
+        """
+      }
+      selection: """
+      url
+      """
+    )
+}

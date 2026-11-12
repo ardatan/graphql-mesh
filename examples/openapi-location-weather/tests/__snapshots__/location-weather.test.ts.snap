@@ -1,17 +1,13 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Location Weather should generate correct schema: location-weather-schema 1`] = `
-"directive @enum(subgraph: String, value: String) on ENUM_VALUE
+"directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, isSuccess: String, selection: String!, source: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, jsonApiFields: Boolean, operationSpecificHeaders: [[String]], path: String, queryParamArgMap: ObjMap, queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, subgraph: String) on FIELD_DEFINITION
-
-directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
+directive @link(import: [String], url: String!) repeatable on SCHEMA
 
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
 
-directive @statusCodeTypeName(statusCode: String, subgraph: String, typeName: String) repeatable on UNION
-
-directive @transport(headers: [[String]], kind: String, location: String, queryParams: [[String]], queryStringOptions: ObjMap, subgraph: String) repeatable on SCHEMA
+directive @source(errors: ConnectorErrors, http: SourceHTTP!, isSuccess: String, name: String!) repeatable on SCHEMA
 
 type AQCurrent {
   """Cloud cover as a percentage (%)"""
@@ -142,6 +138,23 @@ scalar BigInt
 """An error that occurred processing the request"""
 type CitiesError {
   code: ErrorCode
+  message: String
+}
+
+input ConnectHTTP {
+  DELETE: String
+  GET: String
+  HEAD: String
+  PATCH: String
+  POST: String
+  PUT: String
+  body: String
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+}
+
+input ConnectorErrors {
+  extensions: String
   message: String
 }
 
@@ -1135,16 +1148,10 @@ type GeocodeResult {
   timezone: String
 }
 
-enum HTTPMethod {
-  CONNECT
-  DELETE
-  GET
-  HEAD
-  OPTIONS
-  PATCH
-  POST
-  PUT
-  TRACE
+input HTTPHeaderMapping {
+  from: String
+  name: String!
+  value: String
 }
 
 type History {
@@ -1816,8 +1823,6 @@ type NormalsObj {
   """Average 10m wind speed"""
   wind_spd: Float
 }
-
-scalar ObjMap
 
 """Minimal populated-place info"""
 type PopulatedPlaceSummary {
@@ -3338,6 +3343,14 @@ scalar ResolveToSourceArgs
 type RevisionVersion {
   """Current finalized historical data revision version."""
   revision_version: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  errors: ConnectorErrors
+  headers: [HTTPHeaderMapping!]
+  isSuccess: String
+  queryParams: String
 }
 
 type SubscriptionUsage {

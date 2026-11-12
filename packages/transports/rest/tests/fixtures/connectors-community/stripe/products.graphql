@@ -1,0 +1,163 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "stripe"
+    http: {
+      baseURL: "https://api.stripe.com/v1"
+      headers: [
+        { name: "Authorization", value: "Bearer {$config.apiKey}" }
+        { name: "Stripe-Version", value: "2024-06-20" }
+        { name: "Content-Type", value: "application/x-www-form-urlencoded" }
+      ]
+    }
+  )
+
+type Product
+  @key(fields: "id")
+  @connect(
+    source: "stripe"
+    http: {
+      GET: "/products" # /product/:id would be one product at a time and this without an array retrieves all products
+      queryParams: """
+      "ids[]": $batch.id
+      """
+    }
+    selection: """
+    id
+    active
+    name
+    description
+    price: {
+          id: default_price
+        }
+    """
+  ) {
+  id: ID!
+  active: Boolean
+  name: String
+  description: String
+  price: Price
+}
+type Price @key(fields: "id", resolvable: false) @shareable {
+  id: ID!
+  active: Boolean
+  currency: String
+  unitAmount: Float
+}
+type PageInfo @shareable {
+  hasMore: Boolean
+  startCursor: String
+  endCursor: String
+}
+type ProductConnection {
+  pageInfo: PageInfo
+  items: [Product]
+}
+type Query {
+  price(id: ID!): Price
+    @connect(
+      source: "stripe"
+      http: { GET: "/prices/{$args.id}" }
+      selection: """
+      # https://docs.stripe.com/api/prices/retrieve
+        id
+        active
+        currency
+        unitAmount: unit_amount
+      """
+      entity: true
+    )
+  product(ids: [ID!]!): [Product]
+    @connect(
+      source: "stripe"
+      http: {
+        GET: "/products"
+        queryParams: """
+        "ids[]": $args.ids
+        """
+      }
+      selection: """
+      # https://docs.stripe.com/api/products/retrieve
+        $.data {
+        id
+        active
+        name
+        price: {
+          id: default_price
+        }
+      }
+      """
+    )
+  products(limit: Int = 10, cursor: String): ProductConnection
+    @connect(
+      source: "stripe"
+      http: {
+        GET: "/products"
+        queryParams: """
+        limit: $args.limit
+        starting_after: $args.cursor
+        """
+      }
+      selection: """
+      # https://docs.stripe.com/api/products/list
+        pageInfo: {
+          hasMore: has_more
+          startCursor: has_more->match(
+            ["true", data.first->id],
+            ["false", null]
+          )
+          endCursor: has_more->match(
+            ["true", data.last->id],
+            ["false", null]
+          )
+        }
+        items: $.data {
+          id
+          active
+          name
+          price: {
+            id: default_price
+          }
+        }
+      """
+    )
+}
+
+type Mutation {
+  createProductInStripe(input: CreateProductInput!): Product
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/products"
+        body: """
+        # https://docs.stripe.com/api/products/create
+        $args.input {
+          id
+          name
+          metadata: { is_featured: isFeatured }
+          default_price_data: defaultPrice {
+            unit_amount: unitAmount
+            currency
+          }
+        }
+        """
+      }
+      selection: "id"
+    )
+}
+
+input CreateProductInput {
+  id: ID!
+  name: String!
+  isFeatured: Boolean
+  defaultPrice: PriceInput
+}
+
+input PriceInput {
+  unitAmount: Int!
+  currency: String!
+}

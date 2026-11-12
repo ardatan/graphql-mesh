@@ -147,36 +147,34 @@ export async function run({
     } else {
       console.log(supergraphSdl);
     }
-    log.info('Done!');
-    return;
-  }
-
-  log.info(`Writing schema to ${output}`);
-
-  output = isAbsolute(output) ? output : join(globalThis.process?.cwd?.() ?? '.', output);
-  let writtenData: string;
-  if (output.endsWith('.json')) {
-    writtenData = JSON.stringify(parse(supergraphSdl, { noLocation: true }), null, 2);
-  } else if (
-    output.endsWith('.graphql') ||
-    output.endsWith('.gql') ||
-    output.endsWith('.graphqls') ||
-    output.endsWith('.gqls')
-  ) {
-    writtenData = supergraphSdl;
-  } else if (
-    output.endsWith('.ts') ||
-    output.endsWith('.cts') ||
-    output.endsWith('.mts') ||
-    output.endsWith('.js') ||
-    output.endsWith('.cjs') ||
-    output.endsWith('.mjs')
-  ) {
-    writtenData = `export default ${JSON.stringify(supergraphSdl)}`;
   } else {
-    throw new Error(`Unsupported file extension for ${output}`);
+    log.info(`Writing schema to ${output}`);
+
+    output = isAbsolute(output) ? output : join(globalThis.process?.cwd?.() ?? '.', output);
+    let writtenData: string;
+    if (output.endsWith('.json')) {
+      writtenData = JSON.stringify(parse(supergraphSdl, { noLocation: true }), null, 2);
+    } else if (
+      output.endsWith('.graphql') ||
+      output.endsWith('.gql') ||
+      output.endsWith('.graphqls') ||
+      output.endsWith('.gqls')
+    ) {
+      writtenData = supergraphSdl;
+    } else if (
+      output.endsWith('.ts') ||
+      output.endsWith('.cts') ||
+      output.endsWith('.mts') ||
+      output.endsWith('.js') ||
+      output.endsWith('.cjs') ||
+      output.endsWith('.mjs')
+    ) {
+      writtenData = `export default ${JSON.stringify(supergraphSdl)}`;
+    } else {
+      throw new Error(`Unsupported file extension for ${output}`);
+    }
+    await fsPromises.writeFile(output, writtenData, 'utf8');
   }
-  await fsPromises.writeFile(output, writtenData, 'utf8');
 
   log.info('Done!');
 }

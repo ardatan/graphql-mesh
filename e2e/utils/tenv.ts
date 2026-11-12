@@ -17,9 +17,12 @@ import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { fakeRejectPromise } from '@whatwg-node/promise-helpers';
 import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
+import { ensureApolloRouterBinary } from './apolloConnectors.js';
 import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';
+
+export type ServeRunner = 'hive' | 'apollo-router';
 
 export const retries = 120,
   interval = 500,
@@ -70,13 +73,15 @@ export interface ServeOptions extends ProcOptions {
   port?: number;
   supergraph?: string;
   subgraph?: string;
-  /** {@link serveRunner Serve runner} specific options. */
-  runner?: {
-    /** "docker" specific options. */
-    docker?: {
-      volumes?: ContainerOptions['volumes'];
-    };
-  };
+  /**
+   * Gateway binary to run the (super)graph.
+   * - `hive` (default): `@graphql-hive/gateway`
+   * - `apollo-router`: Apollo Router
+   *
+   * Both consume the Mesh-composed supergraph as-is (Connectors are emitted as
+   * `@join__directive` metadata that both runtimes understand).
+   */
+  runner?: ServeRunner;
 }
 
 export interface Serve extends Server {
@@ -251,7 +256,19 @@ export function createTenv(cwd: string): Tenv {
         pipeLogs = boolEnv('DEBUG'),
         env,
         args = [],
+        runner = 'hive',
       } = opts || {};
+
+      if (runner === 'apollo-router') {
+        return serveWithApolloRouter({
+          cwd,
+          port,
+          pipeLogs,
+          env,
+          supergraph,
+          tenv,
+        });
+      }
 
       const [proc, waitForExit] = await spawn(
         { env, cwd, pipeLogs },
@@ -694,6 +711,110 @@ export function createTenv(cwd: string): Tenv {
     },
   };
   return tenv;
+}
+
+async function serveWithApolloRouter(opts: {
+  cwd: string;
+  port: number;
+  pipeLogs: boolean;
+  env?: Record<string, string | number>;
+  /** Mesh-composed supergraph path or inline SDL (Connectors already `@join__directive`). */
+  supergraph?: string;
+  tenv: Tenv;
+}): Promise<Serve> {
+  const { cwd, port, pipeLogs, env, supergraph, tenv } = opts;
+  if (!supergraph) {
+    throw new Error('serve({ runner: "apollo-router" }) requires `supergraph` from compose()');
+  }
+
+  const workDir = await fs.mkdtemp(path.join(os.tmpdir(), 'graphql-mesh_e2e_apollo_router'));
+  leftoverStack.defer(() => fs.rm(workDir, { recursive: true }));
+
+  const resolved = path.isAbsolute(supergraph) ? supergraph : path.join(cwd, supergraph);
+  let apolloSupergraph: string;
+  try {
+    await fs.access(resolved);
+    apolloSupergraph = resolved;
+  } catch {
+    // Inline SDL
+    apolloSupergraph = path.join(workDir, 'supergraph.graphql');
+    await fs.writeFile(apolloSupergraph, supergraph, 'utf8');
+  }
+
+  const routerBin = await ensureApolloRouterBinary();
+  const configPath = path.join(workDir, 'router.yaml');
+  const healthPort = await getAvailablePort();
+  await fs.writeFile(
+    configPath,
+    [
+      'supergraph:',
+      `  listen: 127.0.0.1:${port}`,
+      '  path: /',
+      'health_check:',
+      `  listen: 127.0.0.1:${healthPort}`,
+      'include_subgraph_errors:',
+      '  all: true',
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+
+  const [proc, waitForExit] = await spawn(
+    { cwd, pipeLogs, env },
+    routerBin,
+    '--supergraph',
+    apolloSupergraph,
+    '--config',
+    configPath,
+  );
+
+  let hostName: string;
+  const serve: Serve = {
+    ...proc,
+    port,
+    get hostname() {
+      return hostName;
+    },
+    async execute({ headers, ...args }) {
+      // Apollo Router serves GraphQL at `/` (not `/graphql`).
+      const res = await fetch(`http://${hostName || '127.0.0.1'}:${port}/`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json',
+          ...headers,
+        },
+        body: JSON.stringify(args),
+      });
+      if (!res.ok) {
+        const err = new Error(`${res.status} ${res.statusText}\n${await res.text()}`);
+        err.name = 'ResponseError';
+        throw err;
+      }
+      const resBody: ExecutionResult = await res.json();
+      if (resBody?.errors?.some(error => error.message.includes('Unexpected'))) {
+        process.stderr.write(proc.getStd('both'));
+      }
+      return resBody;
+    },
+  };
+  const ctrl = new AbortController();
+  const hostnames = await Promise.race([
+    waitForExit
+      ?.then(() =>
+        fakeRejectPromise(
+          new Error(
+            `Apollo Router exited successfully, but shouldn't have\n${proc.getStd('both')}`,
+          ),
+        ),
+      )
+      .finally(() => ctrl.abort()),
+    waitForReachable(serve, ctrl.signal),
+  ]);
+  hostName = hostnames?.[0];
+  // Silence unused binding (tenv reserved for future tempfile helpers).
+  void tenv;
+  return serve;
 }
 
 interface SpawnOptions extends ProcOptions {

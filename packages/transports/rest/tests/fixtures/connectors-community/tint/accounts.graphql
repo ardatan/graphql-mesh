@@ -1,0 +1,63 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "tint"
+    http: {
+      # https://developers.tintup.com/v2/
+      baseURL: "https://api.tintup.dev/v2/"
+      headers: [{ name: "Authorization", value: "Bearer {$config.apiKey}" }]
+    }
+  )
+
+type Account {
+  id: ID!
+  externalId: ID!
+  type: String
+  status: String
+  name: String
+  username: String
+  image: String
+}
+
+type Query {
+  account(id: ID!): Account
+    # https://developers.tintup.com/v2/#tag/accounts/paths/~1v2~1teams~1%7Bteam_id%7D~1accounts~1%7Baccount_id%7D/get
+    @connect(
+      source: "tint"
+      http: { GET: "/teams/TeamID/accounts/{$args.id}" }
+      entity: true
+      selection: """
+      $.data {
+        id
+        $.attributes {
+          externalId: external_id
+          type
+          status
+          name
+          username
+          image: image_url
+        }
+      }
+      """
+    )
+  accounts: [Account]
+    # https://developers.tintup.com/v2/#tag/accounts/paths/~1v2~1teams~1%7Bteam_id%7D~1accounts/get
+    @connect(
+      source: "tint"
+      http: { GET: "/teams/TeamID/accounts" }
+      selection: """
+      $.data {
+        id
+        $.attributes {
+          externalId: external_id
+          type
+          status
+          name
+          username
+          image: image_url
+        }
+      }
+      """
+    )
+}

@@ -12,7 +12,11 @@ import {
   isUnionType,
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
-import type { SubgraphConfig, SubgraphTransform } from '../compose.js';
+import {
+  isFederationConnectorsSubgraph,
+  type SubgraphConfig,
+  type SubgraphTransform,
+} from '../compose.js';
 import { importFederationDirectives } from '../federation-utils.js';
 import { addInaccessibleDirective } from './filter-schema.js';
 
@@ -39,6 +43,7 @@ export interface EncapsulateTransformOpts {
 export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}): SubgraphTransform {
   return function encapsulateTransform(schema: GraphQLSchema, subgraphConfig: SubgraphConfig) {
     const groupName = opts.name || subgraphConfig.name;
+    const isConnectors = isFederationConnectorsSubgraph(schema);
     const applyToMap: Record<OperationTypeNode, boolean> = {
       ...DEFAULT_APPLY_TO,
       ...(opts.applyTo || {}),
@@ -67,6 +72,21 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
             wrappedFieldMap[fieldName] = originalFieldConfig;
             continue;
           }
+          // Federation Connectors: move `@connect` onto the namespaced type field.
+          // No `@resolveTo` / inaccessible root copies — namespace root is a virtual connector.
+          if (isConnectors && originalDirectives.connect?.length) {
+            wrappedFieldMap[fieldName] = {
+              ...originalFieldConfig,
+              extensions: {
+                ...originalFieldConfig.extensions,
+                directives: {
+                  ...originalDirectives,
+                },
+              },
+              astNode: undefined,
+            };
+            continue;
+          }
           // Generate sourceArgs to forward all arguments
           const sourceArgs: Record<string, string> = {};
           if (originalFieldConfig.args) {
@@ -91,9 +111,16 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
                 ],
               },
             },
+            astNode: undefined,
           };
           const newOriginalFieldConfig = {
             ...originalFieldConfig,
+            extensions: {
+              ...originalFieldConfig.extensions,
+              directives: {
+                ...originalDirectives,
+              },
+            },
             astNode: undefined,
           };
           addInaccessibleDirective(newOriginalFieldConfig);
@@ -104,23 +131,37 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
           name: wrappedTypeName,
           fields: wrappedFieldMap,
         });
+        // Connectors: namespace root field is a virtual connector (`selection: "$({})"`).
+        // Legacy Mesh path keeps `@resolveTo` → `__typename`.
+        const groupFieldExtensions = isConnectors
+          ? {
+              directives: {
+                connect: [
+                  {
+                    source: subgraphConfig.name,
+                    selection: '$({})',
+                  },
+                ],
+              },
+            }
+          : {
+              directives: {
+                resolveTo: [
+                  {
+                    sourceName: subgraphConfig.name,
+                    sourceTypeName: originalType.name,
+                    sourceFieldName: '__typename',
+                  },
+                ],
+              },
+            };
         newRootTypes[operationType] = new GraphQLObjectType({
           ...originalTypeConfig,
           fields: {
             ...originalFieldMapWithHidden,
             [groupName]: {
               type: new GraphQLNonNull(wrappedType),
-              extensions: {
-                directives: {
-                  resolveTo: [
-                    {
-                      sourceName: subgraphConfig.name,
-                      sourceTypeName: originalType.name,
-                      sourceFieldName: '__typename',
-                    },
-                  ],
-                },
-              },
+              extensions: groupFieldExtensions,
             },
           },
         });
@@ -163,13 +204,9 @@ export function createEncapsulateTransform(opts: EncapsulateTransformOpts = {}):
       directives: newDirectives,
       ...newRootTypes,
     });
-    const schemaLevelDirectives = getDirectiveExtensions(newSchema);
-    const importStatement = schemaLevelDirectives?.link?.find(
-      linkDirectiveArgs =>
-        linkDirectiveArgs.url?.startsWith('https://specs.apollo.dev/federation/') &&
-        linkDirectiveArgs.import,
-    );
-    if (importStatement && inaccessibleDirectiveAdded) {
+    // Always import `@inaccessible` when encapsulate added it. Connectors subgraphs
+    // may only have the Apollo connect `@link` at this point (no federation import yet).
+    if (inaccessibleDirectiveAdded) {
       return importFederationDirectives(newSchema, ['@inaccessible']);
     }
     return newSchema;

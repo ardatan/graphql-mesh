@@ -1,0 +1,84 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@shareable", "@external"]
+  ) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  @source(name: "bored", http: { baseURL: "https://bored-api.appbrewery.com" })
+type Query {
+  getRandomActivity: Activity
+    @connect(
+      source: "bored"
+      http: { GET: "/random" }
+      selection: """
+      activity
+      availability
+      type
+      participants
+      price
+      accessibility
+      duration
+      kidFriendly
+      link
+      key
+      """
+    )
+
+  getActivityByType(type: ActivityType!): [Activity]
+    @connect(
+      source: "bored"
+      http: {
+        GET: "/filter"
+        queryParams: """
+            type: $args.type->match(
+          ["EDUCATION", "education"],
+          ["RECREATIONAL", "recreational"],
+          ["SOCIAL", "social"],
+          ["DIY", "diy"],
+          ["CHARITY", "charity"],
+          ["COOKING", "cooking"],
+          ["RELAXATION", "relaxation"],
+          ["MUSIC", "music"],
+          ["BUSYWORK", "busywork"]
+        )
+        """
+      }
+      selection: """
+      activity
+      availability
+      type
+      participants
+      price
+      accessibility
+      duration
+      kidFriendly
+      link
+      key
+      """
+    )
+}
+
+type Activity {
+  activity: String
+  availability: Float
+  type: String
+  participants: Int
+  price: Float
+  accessibility: String
+  duration: String
+  kidFriendly: Boolean
+  link: String
+  key: String
+}
+
+enum ActivityType {
+  EDUCATION
+  RECREATIONAL
+  SOCIAL
+  DIY
+  CHARITY
+  COOKING
+  RELAXATION
+  MUSIC
+  BUSYWORK
+}

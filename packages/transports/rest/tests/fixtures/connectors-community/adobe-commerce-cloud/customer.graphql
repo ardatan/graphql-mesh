@@ -1,0 +1,72 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10")
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "magento"
+    http: {
+      # https://developer.adobe.com/commerce/webapi/rest/quick-reference/
+      baseURL: "http://127.0.0.1:4010/V1"
+      headers: [
+        { name: "Content-Type", value: "application/json" }
+        { name: "Authorization", from: "Authorization" }
+      ]
+    }
+  )
+
+type Query {
+  customer(id: ID!): Customer
+    @connect(
+      source: "magento"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+      # https://adobe-commerce.redoc.ly/2.4.7-admin/tag/customerscustomerId#operation/GetV1CustomersCustomerId
+      id
+      email
+      firstname
+      lastname
+      # Select other customer fields as needed
+      """
+      entity: true
+    )
+}
+
+type Mutation {
+  createCustomer(input: CustomerInput!): Customer
+    @connect(
+      source: "magento"
+      http: {
+        POST: "/customers"
+        body: """
+        $args.input {
+          email
+          firstname
+          lastname
+          # Map other customer fields as needed
+        }
+        """
+      }
+      selection: """
+      # https://adobe-commerce.redoc.ly/2.4.7-admin/tag/customers#operation/PostV1Customers
+      id
+      email
+      firstname
+      lastname
+      # Select other customer fields as needed
+      """
+    )
+}
+
+type Customer {
+  id: ID!
+  email: String!
+  firstname: String!
+  lastname: String!
+  # Add other customer fields as needed
+}
+
+input CustomerInput {
+  email: String!
+  firstname: String!
+  lastname: String!
+  # Add other input fields as needed
+}

@@ -29,7 +29,11 @@ it.concurrent.each([
     `,
   },
 ])('should execute $name', async ({ query }) => {
-  const { output } = await compose({ output: 'graphql', services: [await service('api')] });
-  const { execute } = await serve({ supergraph: output });
+  // Programmatic batching uses Mesh gateway resolvers, not pure `@connect` fields.
+  const composition = await compose({ output: 'graphql', services: [await service('api')] });
+  const { execute } = await serve({
+    runner: 'hive',
+    supergraph: composition.output,
+  });
   await expect(execute({ query })).resolves.toMatchSnapshot();
 });

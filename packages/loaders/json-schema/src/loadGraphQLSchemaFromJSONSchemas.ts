@@ -9,7 +9,13 @@ export async function loadNonExecutableGraphQLSchemaFromJSONSchemas(
   name: string,
   options: JSONSchemaLoaderOptions,
 ) {
-  options.log = options.log || new Logger({ prefix: name });
+  // Jest: silence default console logger (passthrough / compose noise dominates CI time).
+  options.log =
+    options.log ||
+    new Logger({
+      prefix: name,
+      ...(process.env.JEST ? { level: false as const } : {}),
+    });
   options.cwd = options.cwd || globalThis.process?.cwd?.();
   const fullyDeferencedSchema = await getDereferencedJSONSchemaFromOperations({
     operations: options.operations,
@@ -32,6 +38,7 @@ export async function loadNonExecutableGraphQLSchemaFromJSONSchemas(
     queryStringOptions: options.queryStringOptions,
     getScalarForFormat: options.getScalarForFormat,
     handlerName: options.handlerName,
+    connectSelection: options.connectSelection,
   });
 }
 

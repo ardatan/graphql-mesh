@@ -1,0 +1,218 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "strapi"
+    http: {
+      # https://docs.strapi.io/dev-docs/api/rest#endpoints
+      baseURL: "http://localhost:1337/api" #See router.yaml for environment variable config option
+      headers: [{ name: "Authorization", value: "Bearer {$config.apiKey}" }]
+    }
+  )
+
+type User @key(fields: "id") {
+  id: ID!
+  username: String
+  email: String
+  provider: String
+  confirmed: Boolean
+  blocked: Boolean
+  role: Role
+}
+
+type Query {
+  user(id: ID!): User
+    @connect(
+      source: "strapi"
+      http: { GET: "/users/{$args.id}?populate=role" }
+      entity: true
+      selection: """
+      # https://docs.strapi.io/dev-docs/api/rest#get
+      id
+      username
+      email
+      provider
+      confirmed
+      blocked
+      role {
+        id
+      }
+      """
+    )
+  users(start: Int = 0, limit: Int = 25): [User]
+    @connect(
+      source: "strapi"
+      http: {
+        GET: "/users"
+        queryParams: """
+        pagination[start]: $args.start
+        pagination[limit]: $args.limit
+        """
+      }
+      selection: """
+      # https://docs.strapi.io/dev-docs/api/rest#get-all
+      id
+      username
+      email
+      provider
+      confirmed
+      blocked
+      """
+    )
+  searchUsers(username: String!): User
+    @connect(
+      source: "strapi"
+      http: { GET: "/users?filters[username][$containsi]={$args.username}" }
+      selection: """
+      # https://docs.strapi.io/dev-docs/api/rest/filters-locale-publication#filtering
+      $ ->first {
+        id
+        username
+        email
+        provider
+        confirmed
+        blocked
+      }
+      """
+    )
+}
+
+type DeleteUserResponse {
+  success: Boolean
+  message: String
+}
+
+type Mutation {
+  deleteUser(id: ID!): DeleteUserResponse
+    @connect(
+      source: "strapi"
+      http: { DELETE: "/users/{$args.id}" }
+      selection: """
+      # https://docs.strapi.io/dev-docs/api/rest#delete
+        success: $(true)
+        message: $("User deleted")
+      """
+    )
+  createUser(username: String!, email: String!, password: String!, role: Roles = PUBLIC): User
+    @connect(
+      source: "strapi"
+      http: {
+        POST: "/users"
+        body: """
+        $args {
+          username
+          email
+          password
+        }
+        role: {
+          connect: $([{
+            id: $args.role->match(
+              ["AUTHENTICATED", 1],
+              ["PUBLIC", 2],
+            )
+          }])
+        }
+        """
+      }
+      selection: """
+      # https://docs.strapi.io/dev-docs/api/rest#create
+      id
+      username
+      email
+      provider
+      confirmed
+      blocked
+      """
+    )
+  updateUserPassword(id: ID!, password: String!): User
+    @connect(
+      source: "strapi"
+      http: {
+        PUT: "/users/{$args.id}"
+        body: """
+        $args {
+          id
+          password: $args.password
+        }
+        """
+      }
+      selection: """
+      # https://docs.strapi.io/dev-docs/api/rest#update
+      id
+      """
+    )
+  updateUserUsername(id: ID!, username: String!): User
+    @connect(
+      source: "strapi"
+      http: {
+        PUT: "/users/{$args.id}"
+        body: """
+        $args {
+          id
+          username: $args.username
+        }
+        """
+      }
+      selection: """
+      # https://docs.strapi.io/dev-docs/api/rest#update
+      id
+      """
+    )
+  updateUserEmail(id: ID!, email: String!): User
+    @connect(
+      source: "strapi"
+      http: {
+        PUT: "/users/{$args.id}"
+        body: """
+        $args {
+          id
+          email: $args.email
+        }
+        """
+      }
+      selection: """
+      # https://docs.strapi.io/dev-docs/api/rest#update
+      id
+      """
+    )
+  updateUserRole(id: ID!, role: Roles): User
+    @connect(
+      source: "strapi"
+      http: {
+        POST: "/users"
+        body: """
+        $args {
+          id
+        }
+        role: {
+          connect: $([{
+            id: $args.role->match(
+              ["AUTHENTICATED", 1],
+              ["PUBLIC", 2],
+            )
+          }])
+          disconnect: $([])
+        }
+        """
+      }
+      selection: """
+      # https://docs.strapi.io/dev-docs/api/rest#update
+      id
+      username
+      email
+      provider
+      confirmed
+      blocked
+      role { id }
+      """
+    )
+}
+
+type Role {
+  id: ID!
+}
+
+enum Roles {
+  AUTHENTICATED
+  PUBLIC
+}

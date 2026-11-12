@@ -9,6 +9,7 @@ import {
   getDriverFromOpts,
   getExecutableSchemaFromTypeDefsAndDriver,
 } from '@graphql-mesh/transport-neo4j';
+import { TRANSPORT_DIRECTIVE_SDL } from '@graphql-mesh/utils';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { toGraphQLTypeDefs } from '@neo4j/introspector';
 import { polyfillStrReplaceAll, revertStrReplaceAllPolyfill } from './strReplaceAllPolyfill.js';
@@ -111,13 +112,7 @@ export async function loadGraphQLSchemaFromNeo4J(
           subgraph: String
         ) on ENUM | OBJECT | INTERFACE | UNION | INPUT_OBJECT | FIELD_DEFINITION | SCALAR | ENUM_VALUE | INPUT_FIELD_DEFINITION
         directive @node on OBJECT
-        directive @transport(
-          kind: String
-          subgraph: String
-          location: String
-          options: TransportOptions
-        ) on SCHEMA
-        scalar TransportOptions
+        ${TRANSPORT_DIRECTIVE_SDL}
       `,
       {
         noLocation: true,

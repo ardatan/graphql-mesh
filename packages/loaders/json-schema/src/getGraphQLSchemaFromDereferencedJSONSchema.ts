@@ -21,8 +21,18 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     queryParams,
     queryStringOptions,
     handlerName = 'rest',
+    connectSelection,
   } = opts;
   log.debug(`Generating GraphQL Schema from the bundled JSON Schema`);
+  // Composer mutates shared JSON Schema nodes in place (often circular after
+  // $ref dereference). Clone argTypeMap first so queryParams baking still sees
+  // `properties` / `anyOf`. Prefer structuredClone — it keeps cycles; JSON
+  // stringify would throw on them.
+  for (const operation of operations) {
+    if (operation.argTypeMap) {
+      operation.argTypeMap = structuredClone(operation.argTypeMap);
+    }
+  }
   const visitorResult = await getComposerFromJSONSchema({
     subgraphName,
     schema: fullyDeferencedSchema,
@@ -50,5 +60,6 @@ export async function getGraphQLSchemaFromDereferencedJSONSchema(
     queryParams,
     queryStringOptions,
     handlerName,
+    connectSelection,
   });
 }

@@ -1,0 +1,129 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(name: "llv2", http: { baseURL: "https://ll.thespacedevs.com/2.3.0/" })
+
+type CelestialBody @key(fields: "id") {
+  id: ID!
+  name: String @shareable
+  type: CelestialType @shareable
+  diameter: Float @shareable
+  mass: Float @shareable
+  gravity: Float @shareable
+  lengthOfDay: String @shareable
+  atmosphere: Boolean @shareable
+  image: Image @shareable
+  description: String @shareable
+  wikiUrl: String @shareable
+}
+type CelestialBodyConnection {
+  pageInfo: PageInfo
+  results: [CelestialBody]
+}
+type CelestialType @shareable {
+  id: ID!
+  name: String
+}
+type Image @shareable {
+  id: ID!
+  name: String
+  url: String
+  thumbnail: String
+  credit: String
+  singleUse: Boolean
+  license: ImageLicense
+}
+type ImageLicense @shareable {
+  name: String
+  link: String
+}
+type PageInfo @shareable {
+  count: Int
+  next: String
+  previous: String
+}
+type Query {
+  celestialBody(id: ID!): CelestialBody
+    @connect(
+      source: "llv2"
+      entity: true
+      http: { GET: "/celestial_bodies/{$args.id}/?format=json" }
+      selection: """
+      id
+      name
+      type {
+        id
+        name
+      }
+      diameter
+      mass
+      gravity
+      lengthOfDay: length_of_day
+      atmosphere
+      image {
+        id
+        name
+        url: image_url
+        thumbnail: thumbnail_url
+        credit
+        license {
+          name
+          link
+        }
+        singleUse: single_use
+      }
+      description
+      wikiUrl: wiki_url
+      """
+    )
+  celestialBodies(search: String, offset: Int = 0, limit: Int = 20): CelestialBodyConnection
+    @connect(
+      source: "llv2"
+      http: {
+        GET: "/celestial_bodies/"
+        queryParams: """
+        search: $args.filters.search
+        limit: $args.limit
+        offset: $args.offset
+        format: $('json')
+        """
+      }
+      selection: """
+      pageInfo {
+        count
+        next
+        previous
+      }
+      results {
+        id
+        name
+        type {
+          id
+          name
+        }
+        diameter
+        mass
+        gravity
+        lengthOfDay: length_of_day
+        atmosphere
+        image {
+          id
+          name
+          url: image_url
+          thumbnail: thumbnail_url
+          credit
+          license {
+            name
+            link
+          }
+          singleUse: single_use
+        }
+        description
+        wikiUrl: wiki_url
+      }
+      """
+    )
+}

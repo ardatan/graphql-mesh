@@ -142,7 +142,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   """get all movies"""

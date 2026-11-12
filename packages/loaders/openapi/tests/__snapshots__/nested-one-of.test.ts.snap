@@ -1,22 +1,20 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Algolia schema with nested one Of should generate the correct schema: schema 1`] = `
-"schema @transport(subgraph: "algolia-nested-one-of", kind: "rest", location: "https://{args.appId:myAppId}.algolia.net") {
+"schema @source(name: "algolia-nested-one-of", http: {baseURL: "https://{$args.appId:myAppId}.algolia.net"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
 
-directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @flatten(subgraph: String) on FIELD_DEFINITION
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
-
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Retrieve the Rule with the specified objectID."""
-  getRule(appId: String = "myAppId"): rule @httpOperation(subgraph: "algolia-nested-one-of", path: "/1/indexes/", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  getRule(appId: String = "myAppId"): rule @connect(source: "algolia-nested-one-of", http: {GET: "/1/indexes/", headers: [{name: "accept", value: "application/json"}]}, selection: "consequence { params { facetFilters } }")
 }
 
 """Rule object."""
@@ -30,12 +28,12 @@ type consequence {
 }
 
 type consequenceParams {
-  facetFilters: [String] @flatten(subgraph: "algolia-nested-one-of")
+  facetFilters: [String]
 }
 
 type Mutation {
   """Create or update the Rule with the specified objectID."""
-  saveRule(appId: String = "myAppId", input: rule_Input): String @httpOperation(subgraph: "algolia-nested-one-of", path: "/1/indexes/", operationSpecificHeaders: [["Content-Type", "application/json"], ["accept", "application/json"]], httpMethod: PUT)
+  saveRule(appId: String = "myAppId", input: rule_Input): String @connect(source: "algolia-nested-one-of", http: {PUT: "/1/indexes/", headers: [{name: "Content-Type", value: "application/json"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
 }
 
 """Rule object."""
@@ -57,17 +55,34 @@ input facetFilters_Input @oneOf(subgraph: "algolia-nested-one-of") {
   String: String
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;

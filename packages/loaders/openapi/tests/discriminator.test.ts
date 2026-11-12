@@ -446,9 +446,9 @@ describe('Inline Discriminator Mapping (callback)', () => {
     });
     const schemaWithDirectives = printSchemaWithDirectives(schema);
     expect(schemaWithDirectives).toContain('type Subscription');
-    expect(schemaWithDirectives).toContain(
-      '@discriminator(subgraph: "test", field: "type", mapping: [["cat", "Cat"], ["dog", "Dog"]])',
-    );
+    // Request-body callback discriminators stay in OpenAPI→JSON Schema options (asserted
+    // above); Mesh `@discriminator` is not emitted on the GraphQL SDL.
+    expect(schemaWithDirectives).not.toContain('@discriminator');
   });
 });
 

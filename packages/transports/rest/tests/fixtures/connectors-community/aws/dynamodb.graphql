@@ -1,0 +1,125 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@requires", "@override", "@external", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  # https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html
+  # See router.yaml for Sigv4 configuration
+  @source(
+    name: "dynamodb"
+    http: {
+      # If you want to use multiple regions, see router.yaml for configuration based on environment variables
+      baseURL: "https://dynamodb.us-east-1.amazonaws.com"
+    }
+  )
+
+type DynamoTable {
+  id: ID
+  name: String
+  itemCount: Int
+  tableSizeBytes: Float
+  creationDateTime: Float
+  itemConnection(cursor: String = "", limit: Int = 5): ItemConnection
+    @connect(
+      source: "dynamodb"
+      http: {
+        POST: "/"
+        body: """
+        $args.cursor->match(
+          [null, $({
+            TableName: $this.name,
+            Limit: $args.limit,
+          })],
+          ["", $({
+            TableName: $this.name,
+            Limit: $args.limit,
+          })],
+          [@, $({
+            TableName: $this.name,
+            Limit: $args.limit,
+            ExclusiveStartKey: { id: { S: @ } }
+          })]
+        )
+        """
+        headers: [{ name: "X-Amz-Target", value: "DynamoDB_20120810.Scan" }]
+      }
+      selection: """
+      pageInfo: {
+        count: Count
+        total: ScannedCount
+        next: LastEvaluatedKey.id.S
+      }
+      items: $.Items {
+        id: id.S
+      }
+      """
+    )
+}
+
+type ItemConnection {
+  items: [Item]
+  pageInfo: PageInfo
+}
+type Item {
+  id: ID!
+}
+type Mutation {
+  deleteTable(name: ID!): Boolean
+    @connect(
+      source: "dynamodb"
+      http: {
+        POST: "/"
+        body: """
+        TableName: $args.name
+        """
+        headers: [{ name: "X-Amz-Target", value: "DynamoDB_20120810.DeleteTable" }]
+      }
+      selection: """
+      $(true)
+      """
+    )
+}
+type PageInfo {
+  count: Int
+  total: Int
+  next: String
+}
+
+type Query {
+  tables(limit: Int = 10): [DynamoTable]
+    @connect(
+      source: "dynamodb"
+      http: {
+        POST: "/"
+        body: """
+        Limit: $args.limit
+        """
+        headers: [{ name: "X-Amz-Target", value: "DynamoDB_20120810.ListTables" }]
+      }
+      selection: """
+      $.TableNames->map({name: @}) { name }
+      """
+    )
+  table(name: String!): DynamoTable
+    @connect(
+      source: "dynamodb"
+      http: {
+        POST: "/"
+        body: """
+        TableName: $args.name
+        """
+        headers: [{ name: "X-Amz-Target", value: "DynamoDB_20120810.DescribeTable" }]
+      }
+      selection: """
+      $.Table {
+        id: TableId
+        name: TableName
+        itemCount: ItemCount
+        tableSizeBytes: TableSizeBytes
+        creationDateTime: CreationDateTime
+      }
+      """
+      entity: true
+    )
+}

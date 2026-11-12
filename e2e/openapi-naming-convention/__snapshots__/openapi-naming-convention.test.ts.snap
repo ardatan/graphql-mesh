@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(
-  url: "https://the-guild.dev/graphql/mesh/spec/v1.0"
-  import: ["@enum", "@httpOperation", "@transport", "@source", "@extraSchemaDefinitionDirective"]
-) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io") @join__directive(graphs: [WIKI], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [WIKI], name: "source", args: {name: "Wiki", http: {baseURL: "https://api.chucknorris.io"}}) {
   query: Query
 }
 
@@ -12,25 +9,11 @@ directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
 
 directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
-directive @join__field(
-  graph: join__Graph
-  requires: join__FieldSet
-  provides: join__FieldSet
-  type: String
-  external: Boolean
-  override: String
-  usedOverridden: Boolean
-) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet, type: String, external: Boolean, override: String, usedOverridden: Boolean) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @join__implements(graph: join__Graph!, interface: String!) repeatable on OBJECT | INTERFACE
 
-directive @join__type(
-  graph: join__Graph!
-  key: join__FieldSet
-  extension: Boolean! = false
-  resolvable: Boolean! = true
-  isInterfaceObject: Boolean! = false
-) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+directive @join__type(graph: join__Graph!, key: join__FieldSet, extension: Boolean! = false, resolvable: Boolean! = true, isInterfaceObject: Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
 directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
 
@@ -55,77 +38,34 @@ enum join__Graph {
   WIKI @join__graph(name: "Wiki", url: "https://api.chucknorris.io")
 }
 
-directive @enum(subgraph: String, value: String) repeatable on ENUM_VALUE
-
-directive @httpOperation(
-  subgraph: String
-  path: String
-  operationSpecificHeaders: [[String]]
-  httpMethod: HTTPMethod
-  isBinary: Boolean
-  requestBaseBody: ObjMap
-  queryParamArgMap: ObjMap
-  queryStringOptionsByParam: ObjMap
-  jsonApiFields: Boolean
-  queryStringOptions: ObjMap
-) repeatable on FIELD_DEFINITION
-
-directive @transport(
-  subgraph: String
-  kind: String
-  location: String
-  headers: [[String]]
-  queryStringOptions: ObjMap
-  queryParams: [[String]]
-) repeatable on SCHEMA
-
-directive @source(name: String!, type: String, subgraph: String!) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
-
-directive @extraSchemaDefinitionDirective(directives: _DirectiveExtensions) repeatable on OBJECT
-
-scalar ObjMap @join__type(graph: WIKI)
-
-scalar _DirectiveExtensions @join__type(graph: WIKI)
-
-type Query @extraSchemaDefinitionDirective(
-  directives: {transport: [{subgraph: "Wiki", kind: "rest", location: "https://api.chucknorris.io"}]}
-) @join__type(graph: WIKI) {
-  jokes_categories: [Category] @httpOperation(
-    subgraph: "Wiki"
-    path: "/jokes/categories"
-    operationSpecificHeaders: [["accept", "application/json"]]
-    httpMethod: GET
-  )
+type Query @join__type(graph: WIKI) {
+  jokes_categories: [Category] @join__directive(graphs: [WIKI], name: "connect", args: {source: "Wiki", http: {GET: "/jokes/categories", headers: [{name: "accept", value: "application/json"}]}, selection: "$->map(@->match([\\"animal\\", \\"ANIMAL\\"], [\\"career\\", \\"CAREER\\"], [\\"celebrity\\", \\"CELEBRITY\\"], [\\"dev\\", \\"DEV\\"], [\\"explicit\\", \\"EXPLICIT\\"], [\\"fashion\\", \\"FASHION\\"], [\\"food\\", \\"FOOD\\"], [\\"history\\", \\"HISTORY\\"], [\\"money\\", \\"MONEY\\"], [\\"movie\\", \\"MOVIE\\"], [\\"music\\", \\"MUSIC\\"], [\\"political\\", \\"POLITICAL\\"], [\\"religion\\", \\"RELIGION\\"], [\\"science\\", \\"SCIENCE\\"], [\\"sport\\", \\"SPORT\\"], [\\"travel\\", \\"TRAVEL\\"], [@, @]))"})
 }
 
 enum Category @join__type(graph: WIKI) {
-  ANIMAL @source(name: "animal", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  CAREER @source(name: "career", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  CELEBRITY @source(name: "celebrity", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  DEV @source(name: "dev", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  EXPLICIT @source(name: "explicit", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  FASHION @source(name: "fashion", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  FOOD @source(name: "food", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  HISTORY @source(name: "history", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  MONEY @source(name: "money", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  MOVIE @source(name: "movie", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  MUSIC @source(name: "music", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  POLITICAL @source(name: "political", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  RELIGION @source(name: "religion", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  SCIENCE @source(name: "science", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  SPORT @source(name: "sport", subgraph: "Wiki") @join__enumValue(graph: WIKI)
-  TRAVEL @source(name: "travel", subgraph: "Wiki") @join__enumValue(graph: WIKI)
+  ANIMAL @join__enumValue(graph: WIKI)
+  CAREER @join__enumValue(graph: WIKI)
+  CELEBRITY @join__enumValue(graph: WIKI)
+  DEV @join__enumValue(graph: WIKI)
+  EXPLICIT @join__enumValue(graph: WIKI)
+  FASHION @join__enumValue(graph: WIKI)
+  FOOD @join__enumValue(graph: WIKI)
+  HISTORY @join__enumValue(graph: WIKI)
+  MONEY @join__enumValue(graph: WIKI)
+  MOVIE @join__enumValue(graph: WIKI)
+  MUSIC @join__enumValue(graph: WIKI)
+  POLITICAL @join__enumValue(graph: WIKI)
+  RELIGION @join__enumValue(graph: WIKI)
+  SCIENCE @join__enumValue(graph: WIKI)
+  SPORT @join__enumValue(graph: WIKI)
+  TRAVEL @join__enumValue(graph: WIKI)
 }
 
-enum HTTPMethod @join__type(graph: WIKI) {
-  GET @join__enumValue(graph: WIKI)
-  HEAD @join__enumValue(graph: WIKI)
-  POST @join__enumValue(graph: WIKI)
-  PUT @join__enumValue(graph: WIKI)
-  DELETE @join__enumValue(graph: WIKI)
-  CONNECT @join__enumValue(graph: WIKI)
-  OPTIONS @join__enumValue(graph: WIKI)
-  TRACE @join__enumValue(graph: WIKI)
-  PATCH @join__enumValue(graph: WIKI)
-}"
+scalar TransportOptions
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments"
 `;

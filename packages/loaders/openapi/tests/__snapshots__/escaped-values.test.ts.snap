@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Escaped Values should generate the correct schema: escaped_values-schema 1`] = `
-"schema @transport(subgraph: "escaped_values", kind: "rest", location: "http://localhost:3000/api") {
+"schema @source(name: "escaped_values", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  test: test_200_response @httpOperation(subgraph: "escaped_values", path: "/test", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  test: test_200_response @connect(source: "escaped_values", http: {GET: "/test", headers: [{name: "accept", value: "application/json"}]}, selection: "test: test->match([-1, \\"NEGATIVE_1\\"], [0, \\"_0\\"], [10, \\"_10\\"], [15, \\"_15\\"], [30, \\"_30\\"], [45, \\"_45\\"], [60, \\"_60\\"], [@, test])")
 }
 
 type test_200_response {
@@ -20,26 +20,43 @@ type test_200_response {
 }
 
 enum query_test_test {
-  NEGATIVE_1 @enum(subgraph: "escaped_values", value: "-1")
-  _0 @enum(subgraph: "escaped_values", value: "0")
-  _10 @enum(subgraph: "escaped_values", value: "10")
-  _15 @enum(subgraph: "escaped_values", value: "15")
-  _30 @enum(subgraph: "escaped_values", value: "30")
-  _45 @enum(subgraph: "escaped_values", value: "45")
-  _60 @enum(subgraph: "escaped_values", value: "60")
+  NEGATIVE_1
+  _0
+  _10
+  _15
+  _30
+  _45
+  _60
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;

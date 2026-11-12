@@ -1,0 +1,64 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.11", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(name: "pokeapi", http: { baseURL: "https://pokeapi.co/api/v2/" })
+
+type Generation @key(fields: "name") {
+  name: String
+  moves: [Move]
+}
+
+type Move @key(fields: "name", resolvable: false) {
+  name: String
+}
+type Version @key(fields: "name") {
+  name: String
+  versionGroup: VersionGroup
+}
+type VersionGroup @key(fields: "name") {
+  name: String
+  order: Int
+  regions: [LocationArea]
+}
+type LocationArea @key(fields: "name", resolvable: false) {
+  name: String
+}
+type Query {
+  generation(name: String!): Generation
+    @connect(
+      source: "pokeapi"
+      http: { GET: "generation/{$args.name}" }
+      selection: """
+      name
+      moves {
+        name
+      }
+      """
+      entity: true
+    )
+  version(name: String!): Version
+    @connect(
+      source: "pokeapi"
+      http: { GET: "version/{$args.name}" }
+      selection: """
+      name
+      versionGroup: version_group {
+        name
+      }
+      """
+      entity: true
+    )
+  versionGroup(name: String!): VersionGroup
+    @connect(
+      source: "pokeapi"
+      http: { GET: "version-group/{$args.name}" }
+      selection: """
+      name
+      order
+      regions {
+        name
+      }
+      """
+      entity: true
+    )
+}

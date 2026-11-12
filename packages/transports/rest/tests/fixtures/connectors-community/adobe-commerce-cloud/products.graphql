@@ -1,0 +1,67 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10")
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "magento"
+    http: {
+      # https://developer.adobe.com/commerce/webapi/rest/quick-reference/
+      baseURL: "http://127.0.0.1:4010/V1"
+      headers: [
+        { name: "Content-Type", value: "application/json" }
+        { name: "Authorization", from: "Authorization" }
+      ]
+    }
+  )
+type Query {
+  products: [Product]
+    @connect(
+      source: "magento"
+      http: { GET: "/products" }
+      selection: """
+      $.items {
+        sku
+        price
+        weight
+      }
+      """
+    )
+}
+
+type Mutation {
+  createProduct(product: ProductInput): Product
+    @connect(
+      source: "magento"
+      http: {
+        PUT: "/products/{$args.product.sku}"
+        body: """
+        product: $args.product
+        """
+      }
+      selection: """
+      sku
+      price
+      weight
+      """
+    )
+  deleteProduct(sku: ID!): Boolean
+    @connect(
+      source: "magento"
+      http: { DELETE: "/products/{$args.sku}" }
+      selection: """
+      $
+      """
+    )
+}
+
+input ProductInput {
+  sku: ID!
+  name: String
+  price: Float
+  weight: Float
+}
+
+type Product {
+  sku: String
+  price: Float
+  weight: Float
+}

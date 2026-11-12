@@ -1,45 +1,41 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpenAPI Loader: Testing the naming convention should generate the schema correctly 1`] = `
-"schema @transport(subgraph: "example_api", kind: "rest", location: "http://localhost:3000/api") {
+"schema @source(name: "example_api", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
-directive @linkResolver(subgraph: String, linkResolverMap: ObjMap) on FIELD_DEFINITION
-
-directive @oas_link(subgraph: String, defaultRootType: String, defaultField: String) on FIELD_DEFINITION
-
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Basic simpleNames option test"""
-  o_d_d___n_a_m_e: o_d_d___n_a_m_e_200_response @httpOperation(subgraph: "example_api", path: "/o_d_d___n_a_m_e", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET) @linkResolver(subgraph: "example_api", linkResolverMap: "{\\"w_e_i_r_d___n_a_m_e___l_i_n_k\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"w_e_i_r_d___n_a_m_e\\"},\\"w_e_i_r_d___n_a_m_e2___l_i_n_k\\":{\\"linkObjArgs\\":{\\"f_u_n_k_y___p_a_r_a_m_e_t_e_r\\":\\"Charles\\"},\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r\\"},\\"w_e_i_r_d___n_a_m_e3___l_i_n_k\\":{\\"targetTypeName\\":\\"Query\\",\\"targetFieldName\\":\\"w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r\\"}}")
+  o_d_d___n_a_m_e: o_d_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/o_d_d___n_a_m_e", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
   """Basic simpleNames option test with GraphQL unsafe values"""
-  w_e_i_r_d___n_a_m_e: w_e_i_r_d___n_a_m_e_200_response @httpOperation(subgraph: "example_api", path: "/w-e-i-r-d___n-a-m-e", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  w_e_i_r_d___n_a_m_e: w_e_i_r_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
   """Basic simpleNames option test with links with hard-coded parameters"""
-  w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @httpOperation(subgraph: "example_api", path: "/w-e-i-r-d___n-a-m-e2/{args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e2/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
   """Basic simpleNames option test with links with exposed parameters"""
-  w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @httpOperation(subgraph: "example_api", path: "/w-e-i-r-d___n-a-m-e3/{args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
   """Basic simpleEnumValues option test"""
-  getEnum: getEnum_200_response @httpOperation(subgraph: "example_api", path: "/getEnum", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  getEnum: getEnum_200_response @connect(source: "example_api", http: {GET: "/getEnum", headers: [{name: "accept", value: "application/json"}]}, selection: "data: data->match([\\"r-e-d\\", \\"r_e_d\\"], [\\"a-m-b-e-r\\", \\"a_m_b_e_r\\"], [\\"g-r-e-e-n\\", \\"g_r_e_e_n\\"], [@, data])")
   """Basic simpleEnumValues option test on numerical enum"""
-  getNumericalEnum: getNumericalEnum_200_response @httpOperation(subgraph: "example_api", path: "/getNumericalEnum", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  getNumericalEnum: getNumericalEnum_200_response @connect(source: "example_api", http: {GET: "/getNumericalEnum", headers: [{name: "accept", value: "application/json"}]}, selection: "data: data->match([1, \\"_1\\"], [2, \\"_2\\"], [3, \\"_3\\"], [4, \\"_4\\"], [5, \\"_5\\"], [@, data])")
   """Basic simpleEnumValues option test on object enum"""
-  getObjectEnum: getObjectEnum_200_response @httpOperation(subgraph: "example_api", path: "/getObjectEnum", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  getObjectEnum: getObjectEnum_200_response @connect(source: "example_api", http: {GET: "/getObjectEnum", headers: [{name: "accept", value: "application/json"}]}, selection: "data: data->match([{\\"goodbye\\":\\"world\\"}, \\"_LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_\\"], [@, data])")
 }
 
 type o_d_d___n_a_m_e_200_response {
   data: String
   """Basic link"""
-  w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
+  w_e_i_r_d___n_a_m_e___l_i_n_k: w_e_i_r_d___n_a_m_e_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
   """Hardcoded link parameter"""
-  w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
+  w_e_i_r_d___n_a_m_e2___l_i_n_k: w_e_i_r_d___n_a_m_e2_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e2/$(\\"Charles\\")", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
   """Exposed link parameter"""
-  w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @oas_link(subgraph: "example_api", defaultRootType: "Query", defaultField: "o_d_d___n_a_m_e")
+  w_e_i_r_d___n_a_m_e3___l_i_n_k(f_u_n_k_y___p_a_r_a_m_e_t_e_r: String!): w_e_i_r_d___n_a_m_e3_by_f_u_n_k_y___p_a_r_a_m_e_t_e_r_200_response @connect(source: "example_api", http: {GET: "/w-e-i-r-d___n-a-m-e3/{$args.f_u_n_k_y___p_a_r_a_m_e_t_e_r}", headers: [{name: "accept", value: "application/json"}]}, selection: "data")
 }
 
 type w_e_i_r_d___n_a_m_e_200_response {
@@ -59,9 +55,9 @@ type getEnum_200_response {
 }
 
 enum query_getEnum_data {
-  r_e_d @enum(subgraph: "example_api", value: "\\"r-e-d\\"")
-  a_m_b_e_r @enum(subgraph: "example_api", value: "\\"a-m-b-e-r\\"")
-  g_r_e_e_n @enum(subgraph: "example_api", value: "\\"g-r-e-e-n\\"")
+  r_e_d
+  a_m_b_e_r
+  g_r_e_e_n
 }
 
 type getNumericalEnum_200_response {
@@ -69,11 +65,11 @@ type getNumericalEnum_200_response {
 }
 
 enum query_getNumericalEnum_data {
-  _1 @enum(subgraph: "example_api", value: "1")
-  _2 @enum(subgraph: "example_api", value: "2")
-  _3 @enum(subgraph: "example_api", value: "3")
-  _4 @enum(subgraph: "example_api", value: "4")
-  _5 @enum(subgraph: "example_api", value: "5")
+  _1
+  _2
+  _3
+  _4
+  _5
 }
 
 type getObjectEnum_200_response {
@@ -81,20 +77,37 @@ type getObjectEnum_200_response {
 }
 
 enum query_getObjectEnum_data {
-  _LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_ @enum(subgraph: "example_api", value: "{\\"goodbye\\":\\"world\\"}")
+  _LEFT_SQUARE_BRACE_object_Object_RIGHT_SQUARE_BRACE_
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;

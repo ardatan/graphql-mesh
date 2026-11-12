@@ -1,0 +1,861 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable", "@external"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "stripe"
+    http: {
+      baseURL: "https://api.stripe.com/v1"
+      headers: [
+        { name: "Authorization", value: "Bearer {$config.apiKey}" }
+        { name: "Stripe-Version", value: "2024-06-20" }
+        { name: "Content-Type", value: "application/x-www-form-urlencoded" }
+      ]
+    }
+  )
+
+type Address @shareable {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postalCode: String
+  state: String
+}
+input AddressInput {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postalCode: String
+  state: String
+}
+type Balance {
+  available: [BalanceMoney]
+  connectReserved: [BalanceMoney]
+  livemode: Boolean
+  pending: [BalanceMoney]
+}
+type BalanceMoney {
+  amount: Int
+  currency: String
+  source: BalanceSourceTypes
+}
+type BalanceSourceTypes {
+  card: Int
+  bankAccount: Int
+  fpx: Int
+}
+type BalanceTransaction {
+  id: ID
+  amount: Int
+  availableOn: Int
+  created: Int
+  currency: String
+  description: String
+  exchangeRate: Float
+  fee: Int
+  feeDetails: [FeeDetail]
+  net: Int
+  reportingCategory: String
+  source: String
+  status: String
+  type: String
+}
+enum CancelationReason {
+  DUPLICATE
+  FRAUDULENT
+  REQUESTED_BY_CUSTOMER
+  ABANDONED
+}
+type Customer @key(fields: "id") {
+  id: ID!
+  address: Address
+  balance: Int
+  created: Int
+  currency: String
+  defaultSource: PaymentMethod
+  description: String
+  email: String
+  invoicePrefix: String
+  livemode: Boolean
+  metadata: [Metadata]
+  name: String
+  phone: String
+  shipping: Address
+}
+type CustomerSession {
+  clientSecret: ID!
+  customer: Customer
+  expiresAt: Int
+}
+type FeeDetail {
+  amount: Int
+  application: String
+  description: String
+  type: String
+}
+type Metadata @shareable {
+  key: String
+  value: String
+}
+input MetadataInput {
+  key: String
+  value: String
+}
+type Mutation {
+  cancelPaymentIntent(id: ID!, reason: CancelationReason): PaymentIntent
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/payment_intents/{$args.id}/cancel"
+        body: """
+        cancellation_reason: reason->match(
+          ["DUPLICATE", "duplicate"],
+          ["FRAUDULENT", "fraudulent"],
+          ["REQUESTED_BY_CUSTOMER", "requested_by_customer"],
+          ["ABANDONED", "abandoned"]
+        )
+        """
+      }
+      selection: """
+      id
+      amount
+      clientSecret: client_secret
+      created
+      currency
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+    )
+  capturePaymentIntent(id: ID!, amount: Int!, metadata: MetadataInput): PaymentIntent
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/payment_intents/{$args.id}/capture"
+        body: """
+        amount: $args.amount
+        """
+      }
+      selection: """
+      id
+      amount
+      clientSecret: client_secret
+      created
+      currency
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+    )
+  confirmPaymentIntent(
+    id: ID!
+    paymentMethod: ID!
+    receiptEmail: String
+    setupFutureUsage: Boolean = false
+    shipping: AddressInput
+  ): PaymentIntent
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/payment_intents/{$args.id}/confirm"
+        body: """
+        payment_method: $args.paymentMethod
+        receipt_email: $args.receiptEmail
+        setup_future_usage: $args.setupFutureUsage->match(
+          [false, "off_session"],
+          [true, "on_session"]
+        )
+        shipping: $args.shipping {
+          city
+          country
+          line1
+          line2
+          postal_code: postalCode
+          state
+        }
+        """
+      }
+      selection: """
+      id
+      amount
+      clientSecret: client_secret
+      created
+      currency
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+    )
+  createCustomer(
+    address: AddressInput
+    description: String
+    email: String
+    metadata: [MetadataInput]
+    name: String
+    paymentMethod: ID
+    phone: String
+    shipping: AddressInput
+  ): Customer
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/customers"
+        body: """
+        address: $args.address {
+          city
+          country
+          line1
+          line2
+          postal_code: postalCode
+          state
+        }
+        description: $args.description
+        email: $args.email
+        metadata: $args.metadata
+        name: $args.name
+        payment_method: $args.paymentMethod
+        phone: $args.phone
+        shipping: $args.shipping {
+          city
+          country
+          line1
+          line2
+          postal_code: postalCode
+          state
+        }
+        """
+      }
+      selection: """
+      id
+      address {
+        city
+        country
+        line1
+        line2
+        postalCode: postal_code
+        state
+      }
+      balance
+      created
+      currency
+      defaultSource: {
+        id: default_source
+      }
+      description
+      email
+      invoicePrefix: invoice_prefix
+      livemode
+      metadata {
+        key
+        value
+      }
+      name
+      phone
+      shipping {
+        city
+        country
+        line1
+        line2
+        postalCode: postal_code
+        state
+      }
+      """
+    )
+  createCustomerSession(
+    customer: ID!
+    buyButtonEnabled: Boolean
+    paymentElementEnabled: Boolean
+    paymentTableEnabled: Boolean
+  ): CustomerSession
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/customer_sessions"
+        body: """
+        customer: $args.customer
+        components: $({
+          buy_button: { enabled: $args.buyButtonEnabled },
+          payment_element: { enabled:  $args.paymentElementEnabled },
+          payment_table: { enabled:  $args.paymentTableEnabled },
+        })
+        """
+      }
+      selection: """
+      clientSecret: client_secret
+      customer: {
+        id: customer
+      }
+      expiresAt: expires_at
+      """
+    )
+  createPaymentIntent(
+    amount: Int!
+    currency: String!
+    customer: ID
+    description: String
+    metadata: [MetadataInput]
+  ): PaymentIntent
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/payment_intents"
+        body: """
+        amount: $args.amount
+        currency: $args.currency
+        customer: $args.customer
+        description: $args.description
+        metadata: $args.metadata
+        """
+      }
+      selection: """
+      id
+      amount
+      clientSecret: client_secret
+      created
+      currency
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+    )
+  createSetupIntent(
+    customer: String
+    description: String
+    metadata: [MetadataInput]
+    paymentMethod: String
+    usage: String
+  ): SetupIntent
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/setup_intents"
+        body: """
+        customer: $args.customer
+        description: $args.description
+        metadata: $args.metadata
+        payment_method: $args.paymentMethod
+        usage: $args.usage
+        """
+      }
+      selection: """
+      id
+      clientSecret: client_secret
+      created
+      customer
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+    )
+  deleteCustomer(id: ID!): Boolean
+    @connect(
+      source: "stripe"
+      http: { DELETE: "/customers/{$args.id}" }
+      selection: """
+      deleted
+      """
+    )
+  increamentPaymentIntent(
+    id: ID!
+    amount: Int!
+    description: String
+    customerStatementDescriptor: String
+    metadata: [MetadataInput]
+  ): PaymentIntent
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/payment_intents/{$args.id}/increment_authorization"
+        body: """
+        amount: $args.amount
+        description: $args.description
+        statement_descriptor: $args.customerStatementDescriptor
+        metadata: $args.metadata
+        """
+      }
+      selection: """
+      id
+      amount
+      clientSecret: client_secret
+      created
+      currency
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+    )
+  reconcileCustomerBalanceOnPaymentIntent(
+    id: ID!
+    amount: Int!
+    currency: String = "usd"
+  ): PaymentIntent
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/payment_intents/{$args.id}/apply_customer_balance"
+        body: """
+        amount: $args.amount
+        currency: $args.currency
+        """
+      }
+      selection: """
+      id
+      amount
+      clientSecret: client_secret
+      created
+      currency
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+    )
+  updateCustomer(
+    id: ID!
+    address: AddressInput
+    description: String
+    email: String
+    metadata: [MetadataInput]
+    name: String
+    phone: String
+    shipping: AddressInput
+  ): Customer
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/customers/{$args.id}"
+        body: """
+        address: $args.address {
+          city
+          country
+          line1
+          line2
+          postal_code: postalCode
+          state
+        }
+        description: $args.description
+        email: $args.email
+        metadata: $args.metadata
+        name: $args.name
+        phone: $args.phone
+        shipping: $args.shipping {
+          city
+          country
+          line1
+          line2
+          postal_code: postalCode
+          state
+        }
+        """
+      }
+      selection: """
+      id
+      address {
+        city
+        country
+        line1
+        line2
+        postalCode: postal_code
+        state
+      }
+      balance
+      created
+      currency
+      defaultSource: {
+        id: default_source
+      }
+      description
+      email
+      invoicePrefix: invoice_prefix
+      livemode
+      metadata {
+        key
+        value
+      }
+      name
+      phone
+      shipping {
+        city
+        country
+        line1
+        line2
+        postalCode: postal_code
+        state
+      }
+      """
+    )
+  updatePaymentIntent(
+    id: ID!
+    amount: Int
+    currency: String
+    description: String
+    metadata: [MetadataInput]
+  ): PaymentIntent
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/payment_intents/{$args.id}"
+        body: """
+        amount: $args.amount
+        currency: $args.currency
+        description: $args.description
+        metadata: $args.metadata
+        """
+      }
+      selection: """
+      id
+      amount
+      clientSecret: client_secret
+      created
+      currency
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+    )
+  updateSetupIntent(
+    id: ID!
+    customer: String
+    description: String
+    metadata: [MetadataInput]
+    paymentMethod: ID
+  ): SetupIntent
+    @connect(
+      source: "stripe"
+      http: {
+        POST: "/setup_intents/{$args.id}"
+        body: """
+        customer: $args.customer
+        description: $args.description
+        metadata: $args.metadata
+        payment_method: $args.paymentMethod
+        """
+      }
+      selection: """
+      id
+      clientSecret: client_secret
+      created
+      customer
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+    )
+}
+type PageInfo @shareable {
+  hasMore: Boolean
+  startCursor: String
+  endCursor: String
+}
+type PaymentIntent @key(fields: "id") {
+  id: ID!
+  amount: Int
+  clientSecret: ID
+  created: Int
+  currency: String
+  description: String
+  metadata: [Metadata]
+  status: String
+}
+type PaymentIntentConnection {
+  pageInfo: PageInfo
+  items: [PaymentIntent]
+}
+type PaymentMethod @key(fields: "id", resolvable: false) {
+  id: ID!
+}
+type Query {
+  balance: Balance
+    @connect(
+      source: "stripe"
+      http: { GET: "/balance/" }
+      selection: """
+      available {
+        amount
+        currency
+        source: $.source_types {
+          card
+          bankAccount: bank_account
+          fpx
+        }
+      }
+      connectReserved: $.connect_reserved {
+        amount
+        currency
+      }
+      livemode
+      pending {
+        amount
+        currency
+        source: $.source_types {
+          card
+          bankAccount: bank_account
+          fpx
+        }
+      }
+      """
+    )
+  balanceTransaction(id: ID!): BalanceTransaction
+    @connect(
+      source: "stripe"
+      http: { GET: "/balance_transactions/{$args.id}" }
+      selection: """
+      id
+      amount
+      availableOn: available_on
+      created
+      currency
+      description
+      exchangeRate: exchange_rate
+      fee
+      feeDetails: $.fee_details {
+        amount
+        application
+        description
+        type
+      }
+      net
+      reportingCategory: reporting_category
+      source
+      status
+      type
+      """
+    )
+  balanceTransactions: [BalanceTransaction]
+    @connect(
+      source: "stripe"
+      http: { GET: "/balance_transactions" }
+      selection: """
+      $.data {
+        id
+        amount
+        availableOn: available_on
+        created
+        currency
+        description
+        exchangeRate: exchange_rate
+        fee
+        feeDetails: $.fee_details {
+          amount
+          application
+          description
+          type
+        }
+        net
+        reportingCategory: reporting_category
+        source
+        status
+        type
+      }
+      """
+    )
+  customer(id: ID!): Customer
+    @connect(
+      source: "stripe"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+      id
+      address {
+        city
+        country
+        line1
+        line2
+        postalCode: postal_code
+        state
+      }
+      balance
+      created
+      currency
+      defaultSource: {
+        id: default_source
+      }
+      description
+      email
+      invoicePrefix: invoice_prefix
+      livemode
+      metadata {
+        key
+        value
+      }
+      name
+      phone
+      shipping {
+        city
+        country
+        line1
+        line2
+        postalCode: postal_code
+        state
+      }
+      """
+      entity: true
+    )
+  customers: [Customer]
+    @connect(
+      source: "stripe"
+      http: { GET: "/customers" }
+      selection: """
+      $.data {
+        id
+        address {
+          city
+          country
+          line1
+          line2
+          postalCode: postal_code
+          state
+        }
+        balance
+        created
+        currency
+        defaultSource: {
+          id: default_source
+        }
+        description
+        email
+        invoicePrefix: invoice_prefix
+        livemode
+        metadata {
+          key
+          value
+        }
+        name
+        phone
+        shipping {
+          city
+          country
+          line1
+          line2
+          postalCode: postal_code
+          state
+        }
+      }
+      """
+    )
+  paymentIntents: PaymentIntentConnection
+    @connect(
+      source: "stripe"
+      http: { GET: "/payment_intents" }
+      selection: """
+      pageInfo: {
+        hasMore: has_more
+        startCursor: has_more->match(
+          ["true", data.first->id],
+          ["false", null]
+        )
+        endCursor: has_more->match(
+          ["true", data.last->id],
+          ["false", null]
+        )
+      }
+      items: $.data {
+        id
+        amount
+        clientSecret: client_secret
+        created
+        currency
+        description
+        metadata {
+          key
+          value
+        }
+        status
+      }
+      """
+    )
+  paymentIntent(id: ID!): PaymentIntent
+    @connect(
+      source: "stripe"
+      http: { GET: "/payment_intents/{$args.id}" }
+      selection: """
+      id
+      amount
+      clientSecret: client_secret
+      created
+      currency
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+      entity: true
+    )
+  setupIntents: [SetupIntent]
+    @connect(
+      source: "stripe"
+      http: { GET: "/setup_intents" }
+      selection: """
+      $.data {
+        id
+        clientSecret: client_secret
+        created
+        customer
+        description
+        metadata {
+          key
+          value
+        }
+        status
+      }
+      """
+    )
+  setupIntent(id: ID!): SetupIntent
+    @connect(
+      source: "stripe"
+      http: { GET: "/setup_intents/{$args.id}" }
+      selection: """
+      id
+      clientSecret: client_secret
+      created
+      customer
+      description
+      metadata {
+        key
+        value
+      }
+      status
+      """
+      entity: true
+    )
+}
+type SetupIntent {
+  id: ID!
+  clientSecret: String
+  created: Int
+  customer: String
+  description: String
+  metadata: [Metadata]
+  status: String
+}

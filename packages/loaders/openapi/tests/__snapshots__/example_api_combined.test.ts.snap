@@ -1,19 +1,19 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Example API Combined should generate correct schema: example_oas_combined-schema 1`] = `
-"schema @transport(subgraph: "example_api_combined", kind: "rest", location: "http://localhost:3000/api") {
+"schema @source(name: "example_api_combined", http: {baseURL: "http://localhost:3000/api"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
   """Returns information about all employee cars"""
-  getAllCars: [query_getAllCars_items] @httpOperation(subgraph: "example_api_combined", path: "/cars", operationSpecificHeaders: [["accept", "application/json"]], httpMethod: GET)
+  getAllCars: [query_getAllCars_items] @connect(source: "example_api_combined", http: {GET: "/cars", headers: [{name: "accept", value: "application/json"}]}, selection: "model color features tags kind rating: rating->match([100, \\"_100\\"], [101, \\"_101\\"], [200, \\"_200\\"], [@, rating])")
 }
 
 type query_getAllCars_items {
@@ -43,24 +43,41 @@ enum query_getAllCars_items_allOf_0_kind {
 
 """The rating of the car."""
 enum query_getAllCars_items_allOf_0_rating {
-  _100 @enum(subgraph: "example_api_combined", value: "100")
-  _101 @enum(subgraph: "example_api_combined", value: "101")
-  _200 @enum(subgraph: "example_api_combined", value: "200")
+  _100
+  _101
+  _200
 }
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
 }
 
-scalar ObjMap"
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
 `;
 
 exports[`Example API Combined should handle allOf correctly: example_oas_combined-query-result 1`] = `

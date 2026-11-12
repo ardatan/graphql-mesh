@@ -1,4 +1,4 @@
-import { createTenv } from '@e2e/tenv';
+import { createTenv, type ServeRunner } from '@e2e/tenv';
 
 const { compose, serve, service } = createTenv(__dirname);
 
@@ -11,29 +11,35 @@ describe('OpenAPI w/ Prune Transform', () => {
     });
     expect(result).toMatchSnapshot();
   });
-  it('should work when pruned', async () => {
-    const { output } = await compose({
-      output: 'graphql',
-      services: [await service('Wiki')],
-    });
 
-    const { execute } = await serve({ supergraph: output });
-    const queryResult = await execute({
-      query: /* GraphQL */ `
-        mutation Main {
-          post_main(input: { banana: true }) {
-            apple
+  describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {
+    it('should work when pruned', async () => {
+      const composition = await compose({
+        output: 'graphql',
+        services: [await service('Wiki')],
+      });
+
+      const { execute } = await serve({
+        runner,
+        supergraph: composition.output,
+      });
+      const queryResult = await execute({
+        query: /* GraphQL */ `
+          mutation Main {
+            post_main(input: { banana: true }) {
+              apple
+            }
           }
-        }
-      `,
-    });
+        `,
+      });
 
-    expect(queryResult.data).toEqual({
-      post_main: [
-        {
-          apple: 'correct',
-        },
-      ],
+      expect(queryResult.data).toEqual({
+        post_main: [
+          {
+            apple: 'correct',
+          },
+        ],
+      });
     });
   });
 });

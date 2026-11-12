@@ -1,4 +1,4 @@
-import { createTenv, type Service } from '@e2e/tenv';
+import { createTenv, type ServeRunner, type Service } from '@e2e/tenv';
 
 describe('OpenAPI HATEOAS', () => {
   jest.retryTimes(3);
@@ -19,55 +19,58 @@ describe('OpenAPI HATEOAS', () => {
     expect(result).toMatchSnapshot();
   });
 
-  it('should execute and follow HATEOAS links', async () => {
-    const { output } = await compose({
-      output: 'graphql',
-      services: [oasService],
-    });
+  describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {
+    it('should execute and follow HATEOAS links', async () => {
+      const composition = await compose({
+        output: 'graphql',
+        services: [oasService],
+      });
 
-    const { execute } = await serve({
-      supergraph: output,
-    });
-    const queryResult = await execute({
-      query: /* GraphQL */ `
-        query GetProductsById {
-          getProductById(id: 1) {
-            ... on Electronics {
-              id
-              name
-              supplierId
-              warranty
-              self {
+      const { execute } = await serve({
+        runner,
+        supergraph: composition.output,
+      });
+      const queryResult = await execute({
+        query: /* GraphQL */ `
+          query GetProductsById {
+            getProductById(id: 1) {
+              ... on Electronics {
                 id
                 name
-              }
-              supplier {
-                id
-                name
+                supplierId
+                warranty
+                self {
+                  id
+                  name
+                }
+                supplier {
+                  id
+                  name
+                }
               }
             }
           }
-        }
-      `,
-    });
+        `,
+      });
 
-    expect(queryResult.errors).toBeFalsy();
+      expect(queryResult.errors).toBeFalsy();
 
-    expect(queryResult.data).toEqual({
-      getProductById: {
-        id: 1,
-        name: 'Laptop',
-        supplierId: 11,
-        warranty: '01-01-2027',
-        self: {
+      expect(queryResult.data).toEqual({
+        getProductById: {
           id: 1,
           name: 'Laptop',
+          supplierId: 11,
+          warranty: '01-01-2027',
+          self: {
+            id: 1,
+            name: 'Laptop',
+          },
+          supplier: {
+            id: 11,
+            name: 'Tech Supplier Inc.',
+          },
         },
-        supplier: {
-          id: 11,
-          name: 'Tech Supplier Inc.',
-        },
-      },
+      });
     });
   });
 });

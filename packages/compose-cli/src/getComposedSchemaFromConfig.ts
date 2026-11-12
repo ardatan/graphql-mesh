@@ -1,23 +1,17 @@
 import {
   buildSchema,
-  getNamedType,
-  isInterfaceType,
-  isNamedType,
   Kind,
   parse,
   print,
   visit,
   type DocumentNode,
-  type GraphQLObjectType,
   type GraphQLSchema,
   type ObjectTypeDefinitionNode,
 } from 'graphql';
 import { type Logger } from '@graphql-hive/logger';
 import {
   composeAnnotatedSubgraphs,
-  futureAdditions,
   getAnnotatedSubgraphs,
-  type FutureAddition,
   type SubgraphConfig,
 } from '@graphql-mesh/fusion-composition';
 import { parseWithCache } from '@graphql-mesh/utils';
@@ -25,11 +19,7 @@ import { CodeFileLoader } from '@graphql-tools/code-file-loader';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadTypedefs } from '@graphql-tools/load';
 import { mergeSchemas } from '@graphql-tools/schema';
-import {
-  astFromValueUntyped,
-  getDocumentNodeFromSchema,
-  printSchemaWithDirectives,
-} from '@graphql-tools/utils';
+import { getDocumentNodeFromSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
 import type { LoaderContext, MeshComposeCLIConfig } from './types.js';
@@ -163,50 +153,8 @@ export async function getComposedResultFromConfig(
     globalThis.process?.exit(1);
   }
   let composedSchema: GraphQLSchema;
-  if (futureAdditions.length) {
-    let futureAddition: FutureAddition;
-    while ((futureAddition = futureAdditions.pop())) {
-      additionalTypeDefs ||= [];
-      composedSchema ||= buildSchema(result.supergraphSdl, {
-        noLocation: true,
-        assumeValid: true,
-        assumeValidSDL: true,
-      });
-      const sourceType = composedSchema.getType(futureAddition.sourceTypeName) as GraphQLObjectType;
-      if (!sourceType) {
-        log.error(`Target type ${futureAddition.sourceTypeName} not found`);
-        globalThis.process?.exit(1);
-      }
-      const sourceField = sourceType.getFields()[futureAddition.sourceFieldName];
-      if (!sourceField) {
-        log.error(`Target field ${futureAddition.sourceFieldName} not found`);
-        globalThis.process?.exit(1);
-      }
-      const sourceReturnType = getNamedType(sourceField.type);
-      if (!isNamedType(sourceReturnType)) {
-        log.error(`Target field ${futureAddition.sourceFieldName} has no return type`);
-        globalThis.process?.exit(1);
-      }
-      const interfaceOrType = isInterfaceType(composedSchema.getType(futureAddition.targetTypeName))
-        ? 'interface'
-        : 'type';
-      additionalTypeDefs.push(
-        parse(/* GraphQL */ `
-          extend ${interfaceOrType} ${futureAddition.targetTypeName} {
-            ${futureAddition.targetFieldName}: ${sourceReturnType}
-            @additionalField
-            @resolveTo(
-              sourceTypeName: "${futureAddition.sourceTypeName}",
-              sourceFieldName: "${futureAddition.sourceFieldName}",
-              sourceName: "${futureAddition.sourceName}",
-              sourceArgs: ${print(astFromValueUntyped(futureAddition.sourceArgs))},
-              requiredSelectionSet: "${futureAddition.requiredSelectionSet}"
-            )
-          }
-        `),
-      );
-    }
-  }
+  // Cross-subgraph HATEOAS uses Connectors entity stubs + `@connect(entity: true)` —
+  // not Mesh `@resolveTo` / futureAdditions.
   if (additionalTypeDefs?.length /* TODO || config.transforms?.length */) {
     composedSchema ||= buildSchema(result.supergraphSdl, {
       noLocation: true,
@@ -228,7 +176,11 @@ export async function getComposedResultFromConfig(
           [Kind.FIELD_DEFINITION](node, __key, __parent, __path, ancestors) {
             const directiveNames = node.directives?.map(directive => directive.name.value);
             if (directiveNames.includes('additionalField')) {
-              if (directiveNames.includes('join__field') || directiveNames.includes('source')) {
+              if (
+                directiveNames.includes('join__field') ||
+                directiveNames.includes('source') ||
+                directiveNames.includes('meshSource')
+              ) {
                 return {
                   ...node,
                   directives: node.directives?.filter(

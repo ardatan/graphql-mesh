@@ -1,0 +1,11 @@
+{
+  "name": "@e2e/openapi-entity-stubs",
+  "private": true,
+  "dependencies": {
+    "@graphql-hive/gateway": "^2.15.4",
+    "@graphql-mesh/compose-cli": "workspace:*",
+    "@omnigraph/openapi": "workspace:*",
+    "fets": "^0.8.13",
+    "graphql": "16.14.0"
+  }
+}

@@ -1,0 +1,57 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "tint"
+    http: {
+      # https://developers.tintup.com/v2/
+      baseURL: "https://api.tintup.dev/v2/"
+      headers: [{ name: "Authorization", value: "Bearer {$config.apiKey}" }]
+    }
+  )
+
+type SocialFeed {
+  id: ID!
+  type: String
+  status: String
+  name: String
+  source: String
+}
+
+type Query {
+  socialFeed(id: ID!): SocialFeed
+    # https://developers.tintup.com/v2/#tag/social_feeds/paths/~1v2~1teams~1%7Bteam_id%7D~1social_feeds~1%7Bsocial_feed_id%7D/get
+    @connect(
+      source: "tint"
+      http: { GET: "/teams/TeamID/social_feeds/{$args.id}" }
+      entity: true
+      selection: """
+      $.data {
+        id
+        $.attributes {
+          type
+          status
+          name
+          source
+        }
+      }
+      """
+    )
+  socialFeeds: [SocialFeed]
+    # https://developers.tintup.com/v2/#tag/social_feeds/paths/~1v2~1teams~1%7Bteam_id%7D~1social_feeds/get
+    @connect(
+      source: "tint"
+      http: { GET: "/teams/TeamID/social_feeds" }
+      selection: """
+      $.data {
+        id
+        $.attributes {
+          type
+          status
+          name
+          source
+        }
+      }
+      """
+    )
+}

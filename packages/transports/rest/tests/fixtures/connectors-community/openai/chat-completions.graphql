@@ -1,0 +1,166 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "openai"
+    http: {
+      baseURL: "https://api.openai.com/v1/"
+      headers: [{ name: "Authorization", value: "Bearer {$config.apiKey}" }]
+    }
+  )
+
+type ChatCompletion {
+  id: ID!
+  createdAt: Float
+  model: String
+  messages: [ChatMessage]
+  usage: TokenUsage
+}
+type TokenUsage @shareable {
+  promptTokens: Int
+  completionTokens: Int
+  totalTokens: Int
+}
+type ChatMessage {
+  content: String
+  role: MessageRole
+}
+type PageInfo @shareable {
+  first: ID
+  last: ID
+  hasMore: Boolean
+}
+type CompletionsConnection {
+  pageInfo: PageInfo
+  items: [ChatCompletion]
+}
+type Query {
+  completions(before: ID, after: ID, limit: Int = 20): CompletionsConnection
+    @connect(
+      source: "openai"
+      http: {
+        GET: "/chat/completions"
+        queryParams: """
+        before: $args.before
+        after: $args.after
+        limit: $args.limit
+        """
+      }
+      selection: """
+      pageInfo: {
+        first: first_id
+        last: last_id
+        hasMore: has_more
+      }
+      items: $.data {
+        id
+        createdAt: created
+        model
+        messages: $.data {
+          role: role->match(
+            ['USER','user'],
+            ['ASSISTANT','assistant']
+          )
+          content
+        }
+        usage {
+          promptTokens: prompt_tokens
+          completionTokens: completion_tokens
+          totalTokens: total_tokens
+        }
+      }
+      """
+    )
+  completion(id: ID!): ChatCompletion
+    @connect(
+      source: "openai"
+      http: { GET: "/chat/completions/{$args.id}" }
+      selection: """
+      id
+      createdAt: created
+      model
+      usage {
+        promptTokens: prompt_tokens
+        completionTokens: completion_tokens
+        totalTokens: total_tokens
+      }
+      """
+      entity: true
+    )
+    @connect(
+      source: "openai"
+      http: { GET: "/chat/completions/{$args.id}/messages" }
+      selection: """
+      messages: $.data {
+        role: role->match(
+          ['SYSTEM','system'],
+          ['ASSISTANT','assistant'],
+          ['USER','user'],
+          ['FUNCTION','function'],
+          ['TOOL','tool'],
+          ['DEVELOPER','developer']
+        )
+        content
+      }
+      """
+    )
+}
+type Mutation {
+  createChatCompletion(model: ID!, messages: [MessageInput]!): ChatCompletion
+    @connect(
+      source: "openai"
+      http: {
+        POST: "/chat/completions"
+        body: """
+        model: $args.model
+        messages: $args.messages {
+          role: role->match(
+            ['SYSTEM','system'],
+            ['ASSISTANT','assistant'],
+            ['USER','user'],
+            ['FUNCTION','function'],
+            ['TOOL','tool'],
+            ['DEVELOPER','developer']
+          )
+          content
+        }
+        """
+      }
+      selection: """
+      id
+      createdAt: created
+      model
+      messages: $.choices {
+        role: $.message.role->match(
+          ['system','SYSTEM'],
+          ['assistant','ASSISTANT'],
+          ['user','USER'],
+          ['function','FUNCTION'],
+          ['tool','TOOL'],
+          ['developer','DEVELOPER']
+        )
+        content: $.message.content
+      }
+      usage {
+        promptTokens: prompt_tokens
+        completionTokens: completion_tokens
+        totalTokens: total_tokens
+      }
+      """
+    )
+}
+input MessageInput {
+  content: String
+  role: MessageRole
+}
+enum MessageRole {
+  SYSTEM
+  ASSISTANT
+  USER
+  FUNCTION
+  TOOL
+  DEVELOPER
+}

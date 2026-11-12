@@ -6,7 +6,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -94,7 +94,9 @@ input posts_InsertInput {
 """Post table"""
 input posts_UpdateInput {
   post_id: Int
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when the tables option is provided in order to filter some tables out 1`] = `
@@ -103,7 +105,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -196,7 +198,9 @@ input posts_InsertInput {
 input posts_UpdateInput {
   post_id: Int
   by_user_id: Int
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there are ENUM fields in the mysql definition 1`] = `
@@ -205,7 +209,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -269,7 +273,9 @@ input users_InsertInput {
 input users_UpdateInput {
   user_id: Int
   status: users_status
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there are SET fields in the mysql definition 1`] = `
@@ -278,7 +284,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -352,7 +358,9 @@ input users_UpdateInput {
   user_id: Int
   """User tags"""
   tags: users_tags
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there are json fields in the mysql definition 1`] = `
@@ -361,7 +369,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -434,7 +442,9 @@ input users_UpdateInput {
   user_id: Int
   """JSON data field"""
   data_table_field: JSON
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there are multiple tables and a foreign key relationship 1`] = `
@@ -443,7 +453,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -538,7 +548,9 @@ input posts_InsertInput {
 input posts_UpdateInput {
   post_id: Int
   by_user_id: Int
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is a field with a comment 1`] = `
@@ -547,7 +559,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -610,7 +622,9 @@ input users_UpdateInput {
   """A specific comment for user_id"""
   user_id: Int
   user_name: String
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is a field with a non-nullable value and a default value 1`] = `
@@ -619,7 +633,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -677,7 +691,9 @@ input users_InsertInput {
 input users_UpdateInput {
   user_id: Int
   user_name: String
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is a field with a nullable value and a default value 1`] = `
@@ -686,7 +702,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -744,7 +760,9 @@ input users_InsertInput {
 input users_UpdateInput {
   user_id: Int
   user_name: String
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is a field with a nullable value and no default value 1`] = `
@@ -753,7 +771,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -811,7 +829,9 @@ input users_InsertInput {
 input users_UpdateInput {
   user_id: Int
   user_name: String
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is a single basic mysql table 1`] = `
@@ -820,7 +840,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -873,7 +893,9 @@ input users_InsertInput {
 """User table"""
 input users_UpdateInput {
   user_id: Int
-}"
+}
+
+scalar TransportOptions"
 `;
 
 exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema from a mysql schema when there is an auto increment field in the mysql definition 1`] = `
@@ -882,7 +904,7 @@ exports[`loadGraphQLSchemaFromMySQL should correctly generate graphql schema fro
   mutation: Mutation
 }
 
-directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 directive @mysqlSelect(subgraph: String, table: String, columnMap: [[String]]) on FIELD_DEFINITION
 
@@ -940,5 +962,7 @@ input users_InsertInput {
 input users_UpdateInput {
   user_id: Int
   user_sequence_id: Int
-}"
+}
+
+scalar TransportOptions"
 `;

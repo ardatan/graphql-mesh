@@ -6,6 +6,7 @@ import {
   GraphQLNonNull,
   GraphQLSchema,
   GraphQLString,
+  isObjectType,
   OperationTypeNode,
 } from 'graphql';
 import {
@@ -17,6 +18,7 @@ import {
   mapSchema,
 } from '@graphql-tools/utils';
 import type { SubgraphTransform } from '../compose.js';
+import { hasEquivalentTypeConnect, toTypeLevelEntityConnect } from '../connect-entity.js';
 import {
   addFederation2DirectivesToSubgraph,
   importFederationDirectives,
@@ -384,7 +386,6 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           }
         }
         if (mergeDirectiveConfig) {
-          const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
           let argsExpr = mergeDirectiveConfig.argsExpr;
           if (!argsExpr && fieldConfig.args && !mergeDirectiveConfig.keyArg) {
             const argsExprElems: string[] = [];
@@ -405,14 +406,46 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               argsExpr = argsExprElems.join(', ');
             }
           }
-          mergeDirectiveExtensions.push({
-            subgraph: subgraphConfig.name,
-            key: mergeDirectiveConfig.key,
-            keyField: mergeDirectiveConfig.keyField,
-            keyArg: mergeDirectiveConfig.keyArg,
-            argsExpr,
-          });
-          mergeDirectiveUsed = true;
+          // Federation Connectors entity patterns:
+          // - keyArg === keyField → Query `@connect(entity: true)`
+          // - keyArg !== keyField → type-level `@connect` with `$this.<keyField>`
+          //   (see https://www.apollographql.com/docs/graphos/connectors/entities/patterns)
+          // Hive uses REST transport `Query._entities` — skip Mesh `@merge` when Connectors cover it.
+          if (fieldDirectives.connect?.length) {
+            const keyArg = mergeDirectiveConfig.keyArg;
+            const keyField = mergeDirectiveConfig.keyField;
+            if (keyArg && keyField && keyArg !== keyField) {
+              const returnNamedType = getNamedType(fieldConfig.type);
+              if (isObjectType(returnNamedType)) {
+                const typeDirectives = getDirectiveExtensions(returnNamedType) || {};
+                typeDirectives.connect ||= [];
+                for (const connectArgs of fieldDirectives.connect) {
+                  const typeConnect = toTypeLevelEntityConnect(connectArgs, keyArg, keyField);
+                  if (!hasEquivalentTypeConnect(typeDirectives.connect, typeConnect)) {
+                    typeDirectives.connect.push(typeConnect);
+                  }
+                }
+                const typeExtensions: Record<string, unknown> = (returnNamedType.extensions ||= {});
+                typeExtensions.directives = typeDirectives;
+              }
+            } else {
+              fieldDirectives.connect = fieldDirectives.connect.map((connectArgs: any) => ({
+                ...connectArgs,
+                entity: true,
+              }));
+            }
+            // Connectors entity covered — no `@merge`.
+          } else {
+            const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
+            mergeDirectiveExtensions.push({
+              subgraph: subgraphConfig.name,
+              key: mergeDirectiveConfig.key,
+              keyField: mergeDirectiveConfig.keyField,
+              keyArg: mergeDirectiveConfig.keyArg,
+              argsExpr,
+            });
+            mergeDirectiveUsed = true;
+          }
         }
         for (const directiveName of federationDirectiveNames) {
           if (fieldDirectives[directiveName]?.length) {

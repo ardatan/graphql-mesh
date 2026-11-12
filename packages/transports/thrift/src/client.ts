@@ -36,6 +36,9 @@ export function createGraphQLThriftClient<Context = any>({
     topTypeMap,
   },
 }: GraphQLThriftAnnotations): IGraphQLThriftClient {
+  const httpHeaders: Record<string, string> = Array.isArray(headers)
+    ? Object.fromEntries(headers)
+    : headers || {};
   function getActualType(typeVal: TypeVal): TType {
     if (typeVal.type === 'ref') {
       return getActualType(topTypeMap[typeVal.name]);
@@ -256,7 +259,7 @@ export function createGraphQLThriftClient<Context = any>({
     port: parseInt(locationUrl.port || '80', 10),
     path: locationUrl.pathname,
     requestOptions: {
-      headers,
+      headers: httpHeaders,
     },
   });
 }

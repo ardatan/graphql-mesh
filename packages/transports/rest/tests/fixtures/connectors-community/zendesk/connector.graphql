@@ -1,0 +1,95 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(
+    name: "zendesk-sales-crm"
+    http: {
+      baseURL: "https://api.getbase.com/v2/"
+      headers: [{ name: "Authorization", value: "Bearer {$config.apiKey}" }]
+    }
+  )
+
+type Order {
+  id: ID!
+  discount: String
+  updatedAt: String
+  createdAt: String
+  deal: Deal
+  lineItems: [LineItem]
+    # https://developer.zendesk.com/api-reference/sales-crm/resources/line-items/#retrieve-orders-line-items
+    @connect(
+      source: "zendesk-sales-crm"
+      http: { GET: "/orders/{$this.id}/line_items" }
+      selection: """
+      $.items.data {
+        id
+        name
+        sku
+        description
+        value
+        variation
+        price
+        currency
+        quantity
+        updatedAt: updated_at
+        createdAt: created_at
+      }
+      """
+    )
+}
+
+type LineItem {
+  id: ID!
+  name: String
+  sku: String
+  description: String
+  value: Float
+  variation: Float
+  price: Float
+  currency: String
+  quantity: Int
+  updatedAt: String
+  createdAt: String
+}
+
+type Deal {
+  id: ID!
+}
+
+type Query {
+  order(id: ID!): Order
+    # https://developer.zendesk.com/api-reference/sales-crm/resources/orders/#retrieve-a-single-order
+    @connect(
+      source: "zendesk-sales-crm"
+      http: { GET: "/orders/{$args.id}" }
+      selection: """
+      $.data {
+        id
+        deal: {
+          id: deal_id
+        }
+        discount
+        updatedAt: updated_at
+        createdAt: created_at
+      }
+      ## Example of connecting metadata to USPS tracking
+      ## See connectors/usps/tracking.graphql
+      # $.meta {
+      #   tracking: {
+      #     trackingNumber: trackingId
+      #   }
+      # }
+      """
+      entity: true
+    )
+}
+
+## Example of connecting metadata to USPS tracking
+## See connectors/usps/tracking.graphql
+# extend type Order {
+#   tracking: TrackingStatus
+# }
+
+# type TrackingStatus @key(fields:"trackingNumber", resolvable: false) {
+#   trackingNumber: ID!
+# }

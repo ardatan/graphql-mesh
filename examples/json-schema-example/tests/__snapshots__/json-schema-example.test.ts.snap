@@ -6,17 +6,17 @@ exports[`JSON Schema Example should generate correct schema 1`] = `
   mutation: Mutation
 }
 
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
-
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HttpMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHttp, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHttp!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Query {
-  me: User @httpOperation(subgraph: "FakeAPI", path: "/me", httpMethod: GET)
-  company(id: String!): Company @httpOperation(subgraph: "FakeAPI", path: "/company/{args.id}", httpMethod: GET)
+  me: User @connect(source: "FakeAPI", http: {}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
+  company(id: String!): Company @connect(source: "FakeAPI", http: {}, selection: "name type: type->match([\\"Public Limited\\", \\"Public_Limited\\"], [\\"Private Limited\\", \\"Private_Limited\\"], [\\"One Person\\", \\"One_Person\\"], [@, type])")
 }
 
 """Fake User Object"""
@@ -45,15 +45,15 @@ type Company {
 }
 
 enum CompanyType {
-  Public_Limited @enum(subgraph: "FakeAPI", value: "\\"Public Limited\\"")
-  Private_Limited @enum(subgraph: "FakeAPI", value: "\\"Private Limited\\"")
-  One_Person @enum(subgraph: "FakeAPI", value: "\\"One Person\\"")
+  Public_Limited
+  Private_Limited
+  One_Person
 }
 
 type Mutation {
-  createUser(input: CreateUpdateUserInput): User @httpOperation(subgraph: "FakeAPI", path: "/user", httpMethod: PUT)
-  updateUser(id: String!, input: CreateUpdateUserInput): User @httpOperation(subgraph: "FakeAPI", path: "/user/{args.id}", httpMethod: POST)
-  deleteUser(id: String!): JSON @httpOperation(subgraph: "FakeAPI", path: "/user/{args.id}", httpMethod: DELETE)
+  createUser(input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {body: "$args.input"}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
+  updateUser(id: String!, input: CreateUpdateUserInput): User @connect(source: "FakeAPI", http: {body: "$args.input"}, selection: "firstName lastName jobTitle companyId birthDate foos { id }")
+  deleteUser(id: String!): JSON @connect(source: "FakeAPI", http: {}, selection: "$")
 }
 
 input CreateUpdateUserInput @example(subgraph: "FakeAPI", value: "{\\"firstName\\":\\"John\\",\\"lastName\\":\\"Doe\\",\\"jobTitle\\":\\"Software Developer\\"}") {
@@ -69,15 +69,34 @@ scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/fi
 
 scalar ObjMap
 
-enum HttpMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHttp {
+  get: String
+  head: String
+  post: String
+  put: String
+  patch: String
+  delete: String
+  headers: [HttpHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HttpHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHttp {
+  baseUrl: String!
+  headers: [HttpHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

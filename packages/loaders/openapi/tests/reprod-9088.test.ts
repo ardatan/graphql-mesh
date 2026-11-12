@@ -1,5 +1,5 @@
 import { GraphQLUnionType } from 'graphql';
-import { getDirective, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import loadGraphQLSchemaFromOpenAPI from '@omnigraph/openapi';
 
 describe('Reproduction of #9088', () => {
@@ -11,20 +11,13 @@ describe('Reproduction of #9088', () => {
     const CategoryUnion = schema.getType('Category');
     expect(CategoryUnion).toBeDefined();
     expect(CategoryUnion).toBeInstanceOf(GraphQLUnionType);
-    const unionType = CategoryUnion as GraphQLUnionType;
-    const discriminatorDirective = getDirective(schema, unionType, 'discriminator');
-    expect(discriminatorDirective).toBeDefined();
-    expect(discriminatorDirective![0]).toEqual({
-      subgraph: 'reprod-9088',
-      field: 'template',
-      mapping: [
-        ['categoryListing', 'CategoryCategoryListing'],
-        ['categoryDefault', 'CategoryDefault'],
-        ['categoryRoot', 'CategoryCategoryRoot'],
-        ['categoryAtmosphere', 'CategoryCategoryAtmosphere'],
-        ['categorySuggestions', 'CategoryCategorySuggestions'],
-        ['pillar', 'CategoryPillar'],
-      ],
-    });
+    // Discriminator is baked into Connectors `$.template->match([value, { __typename }])`.
+    const sdl = printSchemaWithDirectives(schema);
+    expect(sdl).not.toContain('@discriminator');
+    expect(sdl).toContain('$.template->match(');
+    // Printed SDL escapes quotes inside the selection string (`\"categoryListing\"`).
+    expect(sdl).toMatch(
+      /\$\.template->match\([\s\S]*categoryListing[\s\S]*__typename:\s*\\"CategoryCategoryListing\\"/,
+    );
   });
 });

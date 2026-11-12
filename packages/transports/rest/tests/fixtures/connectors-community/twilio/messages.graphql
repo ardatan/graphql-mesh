@@ -1,0 +1,104 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@shareable", "@external"]
+  ) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  @source(
+    name: "twilio"
+    http: {
+      baseURL: "https://api.twilio.com/2010-04-01/Accounts/<YOUR_ACCOUNT_ID>/"
+      headers: [
+        {
+          name: "Authorization"
+          value: "Basic {$config.twilioKey}" # Base64(AccountSID:AuthToken)
+        }
+        { name: "Content-Type", value: "application/x-www-form-urlencoded" }
+      ]
+    }
+  )
+
+#this mutation allows you to send to Twilio or personal verified phone numbers
+type Mutation {
+  sendSMS(to: String!, body: String!): SmsResponse
+    @connect(
+      source: "twilio"
+      http: {
+        POST: "Messages.json"
+        body: """
+        MessagingServiceSid: $('<YOUR_MESSAGING_SERVICE_SID>')
+        To: $args.to
+        Body: $args.body
+        """
+      }
+      selection: """
+      sid
+      to
+      from
+      body
+      status
+      """
+      errors: { message: "$.message" }
+    )
+}
+
+#this query retrieves the last 5 messages sent or received from your Twilio account
+type Query {
+  recentMessages(pageSize: Int = 5): [SMSLog]
+    @connect(
+      source: "twilio"
+      http: { GET: "Messages.json?PageSize={$args.pageSize}" }
+      selection: """
+      $.messages{
+      accountSid: account_sid
+       apiVersion: api_version
+       body
+       dateCreated: date_created
+       dateSent: date_sent
+       dateUpdated: date_updated
+       direction
+       errorCode: error_code
+       errorMessage: error_message
+       from
+       messagingServiceSid: messaging_service_sid
+       numMedia: num_media
+       numSegments: num_segments
+       price
+       priceUnit: price_unit
+       sid
+       status
+       to
+       uri
+       }
+      """
+    )
+}
+
+type SmsResponse {
+  sid: String
+  to: String
+  from: String
+  body: String
+  status: String
+}
+type SMSLog {
+  accountSid: String
+  apiVersion: String
+  body: String
+  dateCreated: String
+  dateSent: String
+  dateUpdated: String
+  direction: String
+  errorCode: Int
+  errorMessage: String
+  from: String
+  messagingServiceSid: String
+  numMedia: Int
+  numSegments: Int
+  price: Float
+  priceUnit: String
+  sid: String
+  status: String
+  to: String
+  uri: String
+}

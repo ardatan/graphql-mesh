@@ -1,0 +1,231 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key"]) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  @source(name: "usgs", http: { baseURL: "https://earthquake.usgs.gov/fdsnws/event/1/" })
+
+type EarthquakeProperties {
+  mag: Float
+  place: String
+  time: Float
+  updated: Float
+  tz: Int
+  url: String
+  detail: String #detail contains the direct endpoint for earthquake by id
+  felt: Int
+  cdi: Float
+  mmi: Float
+  alert: String
+  status: String
+  tsunami: Int
+  sig: Int
+  net: String
+  code: String
+  ids: String
+  sources: String
+  types: String
+  nst: Int
+  dmin: Float
+  rms: Float
+  gap: Float
+  magType: String
+  type: String
+  title: String
+  products: [ProductEntry]
+}
+
+type ProductEntry {
+  name: String
+  products: [Product]
+}
+scalar JSON
+
+type Product {
+  id: ID!
+  type: String
+  properties: JSON #data will vary
+  contents: JSON #data will vary
+}
+
+type EarthquakeGeometry {
+  #this returns 3 values - lon,lat,depth in km
+  coordinates: [Float]
+}
+
+type Earthquake @key(fields: "id") {
+  id: ID!
+  properties: EarthquakeProperties
+  geometry: EarthquakeGeometry
+}
+
+type Query {
+  """
+  Returns recent earthquakes with summary properties.
+  """
+  recentEarthquakes(limit: Int = 5): [Earthquake]
+    @connect(
+      source: "usgs"
+      http: {
+        GET: "query"
+        queryParams: """
+        limit: $args.limit
+        format: $('geojson')
+        """
+      }
+      selection: """
+        $.features
+       {
+       id
+        properties{
+          mag
+        place
+        time
+        updated
+        tz
+        url
+        detail
+        felt
+        cdi
+        mmi
+        alert
+        status
+        tsunami
+        sig
+        net
+        code
+        ids
+        sources
+        types
+        nst
+        dmin
+        rms
+        gap
+        magType
+        type
+        title
+        }
+        geometry{
+         coordinates
+        }
+      }
+      """
+    )
+
+  """
+  Returns detailed earthquake data by Id.
+  """
+  earthquakeById(id: ID!): Earthquake
+    @connect(
+      source: "usgs"
+      http: {
+        GET: "query"
+        queryParams: """
+        eventid: $args.id
+        format: $('geojson')
+        """
+      }
+      selection: """
+      id
+       properties {
+       mag
+       place
+       time
+       updated
+       tz
+       url
+       detail
+       felt
+       cdi
+       mmi
+       alert
+       status
+       tsunami
+       sig
+       net
+       code
+       ids
+       sources
+       types
+       nst
+       dmin
+       rms
+       gap
+       magType
+       type
+       title
+       products: products->entries {
+              name: key
+              products: value {
+                id
+                type
+                properties
+                contents
+              }
+            }
+       }
+       geometry{
+        coordinates
+       }
+      """
+      entity: true
+    )
+
+  """
+  Returns detailed earthquake data by a given radius for a locaation.
+  """
+  recentEarthquakesInRadius(
+    limit: Int = 5
+    lat: String!
+    lon: String!
+    maxRadius: Int = 100
+  ): [Earthquake]
+    @connect(
+      source: "usgs"
+      http: {
+        GET: "query"
+        queryParams: """
+        latitude: $args.lat
+        longitude: $args.lon
+        maxradiuskm: $args.maxRadius
+        limit: $args.limit
+        format: $('geojson')
+        """
+      }
+      selection: """
+        $.features
+       {
+       id
+        properties{
+        mag
+        place
+        time
+        updated
+        tz
+        url
+        detail
+        felt
+        cdi
+        mmi
+        alert
+        status
+        tsunami
+        sig
+        net
+        code
+        ids
+        sources
+        types
+        nst
+        dmin
+        rms
+        gap
+        magType
+        type
+        title
+        }
+        geometry{
+         coordinates
+        }
+      }
+      """
+    )
+}

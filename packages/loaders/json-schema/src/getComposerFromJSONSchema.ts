@@ -61,7 +61,6 @@ import {
   DiscriminatorDirective,
   EnumDirective,
   ExampleDirective,
-  FlattenDirective,
   LengthDirective,
   OneOfDirective,
   RegExpDirective,
@@ -464,9 +463,11 @@ export function getComposerFromJSONSchema({
               },
             });
           }
+          // GraphQL wire name === `.value` so Apollo Router + Hive agree after SDL reload.
+          // JSON remap lives on `@enum` until connect emit bakes `->match`, then strips it.
           values[enumKey] = {
             directives,
-            value: enumValue,
+            value: enumKey,
           };
         }
         const directives = [];
@@ -1460,15 +1461,8 @@ export function getComposerFromJSONSchema({
                   },
                 });
               }
-              if (subSchemaAndTypeComposers.properties[propertyName].flatten) {
-                schemaComposer.addDirective(FlattenDirective);
-                fieldDirectives.push({
-                  name: 'flatten',
-                  args: {
-                    subgraph: subgraphName,
-                  },
-                });
-              }
+              // Former `@flatten`: list-of-scalar coercion is installed at transport
+              // process time for `[Scalar]` fields (no directive — Connectors has no flatten).
               fieldMap[fieldName] = {
                 type: () => {
                   const typeComposers = subSchemaAndTypeComposers.properties[propertyName];
@@ -1492,6 +1486,9 @@ export function getComposerFromJSONSchema({
                 directives: fieldDirectives,
                 extensions: {
                   nullable: subSchemaAndTypeComposers.properties?.[propertyName]?.nullable,
+                  // HATEOAS cross-subgraph entity ref: `{ id: supplierId }` selection bake
+                  meshEntityRef:
+                    subSchemaAndTypeComposers.properties?.[propertyName]?.meshEntityRef,
                 },
                 description:
                   subSchemaAndTypeComposers.properties[propertyName].description ||

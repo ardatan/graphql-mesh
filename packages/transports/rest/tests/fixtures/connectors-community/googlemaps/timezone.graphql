@@ -1,0 +1,57 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.11"
+    import: ["@key", "@shareable", "@external", "@requires"]
+  ) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  #this connector uses the legacy timezone API.  To enable this in Google, you must create an API key and give permissions to this API
+
+  @source(name: "timezone", http: { baseURL: "https://maps.googleapis.com/maps/api/timezone/" })
+
+type Query {
+  # Optional fallback query
+  timezoneByCoords(lat: Float!, lng: Float!, timestamp: Int!): TimezoneInfo
+    @connect(
+      source: "timezone"
+      http: {
+        GET: "json?location={$args.lat},{$args.lng}&timestamp={$args.timestamp}&key=YOUR_API_KEY"
+      }
+      selection: """
+      timeZoneId
+      timeZoneName
+      rawOffset
+      dstOffset
+      """
+    )
+}
+
+type TimezoneInfo {
+  timeZoneId: String
+  timeZoneName: String
+  rawOffset: Int
+  dstOffset: Int
+}
+
+type Place @key(fields: "id", resolvable: false) {
+  id: String @external
+  location: Location @external
+  timezone(timestamp: Int!): TimezoneInfo
+    @requires(fields: "location { latitude longitude }")
+    @connect(
+      source: "timezone"
+      http: {
+        GET: "json?location={$this.location.latitude},{$this.location.longitude}&timestamp={$args.timestamp}&key=YOUR_API_KEY"
+      }
+      selection: """
+      timeZoneId
+      timeZoneName
+      rawOffset
+      dstOffset
+      """
+    )
+}
+
+type Location {
+  latitude: Float @external
+  longitude: Float @external
+}

@@ -21,7 +21,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   helloworld_GreetingService_GetGreeting(input: helloworld__GreetingRequest_Input): helloworld__GreetingResult @grpcMethod(subgraph: "gRPC Example", rootJsonName: "Root0", objPath: "helloworld.GreetingService", methodName: "GetGreeting", responseStream: false)

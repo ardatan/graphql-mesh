@@ -1,11 +1,12 @@
 import {
+  getNullableType,
   GraphQLError,
   isAbstractType,
   type GraphQLObjectType,
   type GraphQLResolveInfo,
   type GraphQLTypeResolver,
 } from 'graphql';
-import { getDirective } from '@graphql-tools/utils';
+import { getConnectArgsFromNode } from './connect.js';
 
 export function getTypeResolverForAbstractType({
   possibleTypes,
@@ -25,7 +26,17 @@ export function getTypeResolverForAbstractType({
     : discriminatorMapping;
   return function resolveType(data: any, _ctx: any, info: GraphQLResolveInfo) {
     if (data.__typename) {
-      return data.__typename;
+      const hinted = info.schema.getType(data.__typename);
+      // Connectors/`$status->match` may emit an interface name when OpenAPI maps a
+      // status onto a discriminator parent — finish via that abstract type's resolver.
+      if (isAbstractType(hinted)) {
+        const resolved = hinted.resolveType?.(data, _ctx, info, hinted);
+        if (resolved) {
+          return resolved;
+        }
+      } else {
+        return data.__typename;
+      }
     } else if (discriminatorField != null && data[discriminatorField]) {
       const discriminatorValue = data[discriminatorField];
       return discriminatorMappingObj?.[discriminatorValue] || discriminatorValue;
@@ -36,9 +47,9 @@ export function getTypeResolverForAbstractType({
       if (typeName) {
         const type = info.schema.getType(typeName);
         if (isAbstractType(type)) {
-          const typeName = type.resolveType(data, _ctx, info, type);
-          if (typeName) {
-            return typeName;
+          const resolved = type.resolveType?.(data, _ctx, info, type);
+          if (resolved) {
+            return resolved;
           }
         }
         return typeName;
@@ -48,23 +59,34 @@ export function getTypeResolverForAbstractType({
     const dataTypeOf = typeof data;
 
     if (dataTypeOf !== 'object') {
-      for (const possibleType of possibleTypes) {
-        const fieldMap = possibleType.getFields();
-        const fields = Object.values(fieldMap);
-        if (fields.length === 1) {
+      // Scalar/container members (ex-`@resolveRoot`): prefer Connectors `field: $` root
+      // aliases so permissive scalars (JSON/ObjMap) on non-alias members cannot win first.
+      const tryParseMember = (requireRootAlias: boolean) => {
+        for (const possibleType of possibleTypes) {
+          const fields = Object.values(possibleType.getFields());
+          if (fields.length !== 1) continue;
           const field = fields[0];
-          const directiveObjs = getDirective(info.schema, field, 'resolveRoot');
-          if (directiveObjs?.length) {
-            const fieldType = field.type;
-            if ('parseValue' in fieldType) {
-              try {
-                fieldType.parseValue(data);
-                return possibleType.name;
-              } catch (e) {}
-            }
+          // Prefer shared reader so composed `@join__directive(name: "connect")` still works.
+          const connectSel = getConnectArgsFromNode(field)[0]?.selection;
+          const isRootAlias =
+            typeof connectSel === 'string' &&
+            (connectSel.trim() === '$' || connectSel.trim() === `${field.name}: $`);
+          if (requireRootAlias && !isRootAlias) continue;
+          if (!requireRootAlias && isRootAlias) continue;
+          const fieldType = getNullableType(field.type);
+          if (fieldType && 'parseValue' in fieldType) {
+            try {
+              fieldType.parseValue(data);
+              return possibleType.name;
+            } catch (e) {}
           }
         }
-      }
+        return undefined;
+      };
+      const fromRootAlias = tryParseMember(true);
+      if (fromRootAlias) return fromRootAlias;
+      const fromOther = tryParseMember(false);
+      if (fromOther) return fromOther;
     }
 
     // const validationErrors: Record<string, ErrorObject[]> = {};
@@ -110,7 +132,7 @@ export function getTypeResolverForAbstractType({
     if (data.$response) {
       const error = new GraphQLError(`Upstream HTTP Error: ${data.$statusCode}`, {
         extensions: {
-          code: 'DOWNSTREAM_SERVICE_ERROR',
+          code: 'CONNECTOR_FETCH',
           serviceName,
           request: {
             url: data.$url,

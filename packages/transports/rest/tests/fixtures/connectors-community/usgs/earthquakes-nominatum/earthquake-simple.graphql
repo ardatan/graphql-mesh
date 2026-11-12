@@ -1,0 +1,79 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key"]) # Enable this schema to use Apollo Federation features
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) # Enable this schema to use Apollo Connectors
+  @source(name: "usgs", http: { baseURL: "https://earthquake.usgs.gov/fdsnws/event/1/" })
+  @source(
+    name: "location"
+    http: {
+      baseURL: "https://nominatim.openstreetmap.org/"
+      headers: [{ name: "User-Agent", value: "testing" }]
+    }
+  )
+
+type EarthquakeProperties {
+  mag: Float
+  place: String
+  time: Float
+  updated: Float
+  url: String
+  title: String
+}
+
+type EarthquakeGeometry {
+  #this returns 3 values - lon,lat,depth in km
+  coordinates: [Float]
+}
+
+type Earthquake {
+  id: ID!
+  properties: EarthquakeProperties
+  geometry: EarthquakeGeometry
+  display_name: String
+    @connect(
+      source: "location"
+      http: {
+        GET: "reverse"
+        queryParams: """
+        lat: $this.geometry.coordinates->slice(1,2)->first
+        lon: $this.geometry.coordinates->first
+        format: $('json')
+        """
+      }
+      selection: """
+      $.display_name
+      """
+    )
+}
+
+type Query {
+  recentEarthquakes(limit: Int = 5, lat: String!, lon: String!, maxRadius: Int = 100): [Earthquake]
+    @connect(
+      source: "usgs"
+      http: {
+        GET: "query?format=geojson"
+        queryParams: """
+        latitude: $args.lat
+        longitude: $args.lon
+        maxradiuskm: $args.maxRadius
+        limit: $args.limit
+        """
+      }
+      selection: """
+        $.features
+       {
+        properties{
+          mag
+          place
+          time
+          updated
+          url
+          title
+        }
+        geometry{
+         coordinates
+        }
+        id
+      }
+      """
+    )
+}

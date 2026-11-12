@@ -1184,39 +1184,39 @@ ${printType(GraphQLString)}
     const enumTypeComposer = output as EnumTypeComposer;
     const enumValuesMap = enumTypeComposer.getFields();
     expect(enumValuesMap).toMatchInlineSnapshot(`
+{
+  "NEGATIVE_1": {
+    "deprecationReason": undefined,
+    "description": undefined,
+    "directives": [
       {
-        "NEGATIVE_1": {
-          "deprecationReason": undefined,
-          "description": undefined,
-          "directives": [
-            {
-              "args": {
-                "subgraph": "Test",
-                "value": "-1",
-              },
-              "name": "enum",
-            },
-          ],
-          "extensions": {},
-          "value": -1,
+        "args": {
+          "subgraph": "Test",
+          "value": "-1",
         },
-        "_1": {
-          "deprecationReason": undefined,
-          "description": undefined,
-          "directives": [
-            {
-              "args": {
-                "subgraph": "Test",
-                "value": "1",
-              },
-              "name": "enum",
-            },
-          ],
-          "extensions": {},
-          "value": 1,
+        "name": "enum",
+      },
+    ],
+    "extensions": {},
+    "value": "NEGATIVE_1",
+  },
+  "_1": {
+    "deprecationReason": undefined,
+    "description": undefined,
+    "directives": [
+      {
+        "args": {
+          "subgraph": "Test",
+          "value": "1",
         },
-      }
-    `);
+        "name": "enum",
+      },
+    ],
+    "extensions": {},
+    "value": "_1",
+  },
+}
+`);
   });
   it('should handle strings with non-latin characters', async () => {
     const FooEnum = {
@@ -1234,39 +1234,39 @@ ${printType(GraphQLString)}
     const enumTypeComposer = output as EnumTypeComposer;
     const enumValuesMap = enumTypeComposer.getFields();
     expect(enumValuesMap).toMatchInlineSnapshot(`
+{
+  "_1499__1503_": {
+    "deprecationReason": undefined,
+    "description": undefined,
+    "directives": [
       {
-        "_1499__1503_": {
-          "deprecationReason": undefined,
-          "description": undefined,
-          "directives": [
-            {
-              "args": {
-                "subgraph": "Test",
-                "value": ""כן"",
-              },
-              "name": "enum",
-            },
-          ],
-          "extensions": {},
-          "value": "כן",
+        "args": {
+          "subgraph": "Test",
+          "value": ""כן"",
         },
-        "_1500__1488_": {
-          "deprecationReason": undefined,
-          "description": undefined,
-          "directives": [
-            {
-              "args": {
-                "subgraph": "Test",
-                "value": ""לא"",
-              },
-              "name": "enum",
-            },
-          ],
-          "extensions": {},
-          "value": "לא",
+        "name": "enum",
+      },
+    ],
+    "extensions": {},
+    "value": "_1499__1503_",
+  },
+  "_1500__1488_": {
+    "deprecationReason": undefined,
+    "description": undefined,
+    "directives": [
+      {
+        "args": {
+          "subgraph": "Test",
+          "value": ""לא"",
         },
-      }
-    `);
+        "name": "enum",
+      },
+    ],
+    "extensions": {},
+    "value": "_1500__1488_",
+  },
+}
+`);
   });
   it('should handle invalid property names', async () => {
     const jsonSchema: JSONSchemaObject = {
@@ -1370,8 +1370,9 @@ ${printType(GraphQLString)}
     expect(output instanceof EnumTypeComposer).toBeTruthy();
     const enumTypeComposer = output as EnumTypeComposer;
     const enumValuesMap = enumTypeComposer.getFields();
-    Object.values(enumValuesMap).forEach((valueConfig, i) => {
-      expect(valueConfig.value).toBe(values[i]?.toString());
+    // Enum `.value` matches the GraphQL name (Apollo wire); JSON remap is on `@enum`.
+    Object.entries(enumValuesMap).forEach(([name, valueConfig]) => {
+      expect(valueConfig.value).toBe(name);
     });
     expect.assertions(3);
   });

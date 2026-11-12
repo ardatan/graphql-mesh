@@ -6,12 +6,13 @@ const opts = Opts(process.argv);
 const server = http.createServer((req, res) => {
   if (req.url?.endsWith('good')) {
     res.setHeader('content-type', 'application/json');
-    res.end(JSON.stringify({ apple: 'good' }));
+    // OpenAPI declares an array response; Federation Connectors selection expects a JSON array.
+    res.end(JSON.stringify([{ apple: 'good' }]));
     return;
   }
   if (req.url?.endsWith('bad')) {
     res.setHeader('content-type', 'application/json');
-    res.end(JSON.stringify({ apple: 'bad' }));
+    res.end(JSON.stringify([{ apple: 'bad' }]));
     return;
   }
   res.writeHead(404);

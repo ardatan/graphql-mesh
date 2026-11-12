@@ -1,24 +1,20 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Reproduction #9106 should generate correct schema: reprod-9106 1`] = `
-"schema @transport(subgraph: "test", kind: "rest", location: "https://apis.usps.com/oauth2/v3") {
+"schema @source(name: "test", http: {baseURL: "https://apis.usps.com/oauth2/v3"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
   query: Query
   mutation: Mutation
 }
-
-directive @enum(subgraph: String, value: String) on ENUM_VALUE
 
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @resolveRoot(subgraph: String) on FIELD_DEFINITION
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @discriminator(subgraph: String, field: String, mapping: [[String]]) on INTERFACE | UNION
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
-directive @httpOperation(subgraph: String, path: String, operationSpecificHeaders: [[String]], httpMethod: HTTPMethod, isBinary: Boolean, requestBaseBody: ObjMap, queryParamArgMap: ObjMap, queryStringOptionsByParam: ObjMap, jsonApiFields: Boolean, queryStringOptions: ObjMap) on FIELD_DEFINITION
-
-directive @transport(subgraph: String, kind: String, location: String, headers: [[String]], queryStringOptions: ObjMap, queryParams: [[String]]) repeatable on SCHEMA
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 """
 The credentials of the client application that are verified by the authorization server.
@@ -46,7 +42,7 @@ type OAuth_Client_Credentials_Request implements Base_Token_Request {
 """
 The base object for an OAuth token request, in accordance with OAuth industry standards.
 """
-interface Base_Token_Request @discriminator(subgraph: "test", field: "grant_type", mapping: [["client_credentials", "OAuth_Client_Credentials_Request"], ["authorization_code", "OAuth_Authorization_Code_Credentials_Request"], ["refresh_token", "OAuth_Refresh_Token_Credentials_Request"]]) {
+interface Base_Token_Request {
   grant_type: mutationInput_post_token_input_oneOf_0_allOf_0_grant_type!
   """
   The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
@@ -63,7 +59,7 @@ enum mutationInput_post_token_input_oneOf_0_allOf_0_grant_type {
 }
 
 type Query {
-  dummy: String
+  dummy: String @connect(selection: "$(\\"dummy\\")")
 }
 
 type Mutation {
@@ -75,13 +71,13 @@ type Mutation {
   - **Refresh Token**, see [IETF 6749, section 6](https://datatracker.ietf.org/doc/html/rfc6749#section-6)
   - **Authorization Code Grant**, see [IETF 6749, section 4.1](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1).
   """
-  post_token(input: post_token_request_Input): post_token_200_response @httpOperation(subgraph: "test", path: "/token", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["accept", "application/json"]], httpMethod: POST)
+  post_token(input: post_token_request_Input): post_token_200_response @connect(source: "test", http: {POST: "/token", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
   """
   Prevent tokens from being further used to access APIs by disposing one or more OAuth tokens that are no longer needed. Basic Authentication is used to access this resource, using the issued client Id and client secret. This resource is based on the *OAuth 2.0 Token Revocation* IETF Draft RFC 7009, August 2013.
   * [IETF 7009](https://datatracker.ietf.org/doc/html/rfc7009).
   
   """
-  post_revoke(input: Token_Revocation_Request_Input): JSON @httpOperation(subgraph: "test", path: "/revoke", operationSpecificHeaders: [["Content-Type", "application/x-www-form-urlencoded"], ["accept", "application/json"]], httpMethod: POST)
+  post_revoke(input: Token_Revocation_Request_Input): JSON @connect(source: "test", http: {POST: "/revoke", headers: [{name: "Content-Type", value: "application/x-www-form-urlencoded"}, {name: "accept", value: "application/json"}], body: "$args.input"}, selection: "$")
 }
 
 union post_token_200_response = Provider_specific_Access_Token_Response | Provider_specific_Tokens_Response
@@ -99,7 +95,7 @@ type Provider_specific_Access_Token_Response {
   The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
   """
   scope: String
-  additionalProperties: JSON @resolveRoot(subgraph: "test")
+  additionalProperties: JSON @connect(selection: "$")
   """
   The date and time the access token was issued, expressed in Unix epoch time in milliseconds.
   """
@@ -120,7 +116,7 @@ type Provider_specific_Access_Token_Response {
 }
 
 enum Bearer_const @typescript(subgraph: "test", type: "\\"Bearer\\"") @example(subgraph: "test", value: "Bearer") {
-  Bearer @enum(subgraph: "test", value: "\\"Bearer\\"")
+  Bearer
 }
 
 """
@@ -150,7 +146,7 @@ type Provider_specific_Tokens_Response {
   The OAuth scope being requested by the client application, specified as a list of space-delimited, case-sensitive strings.  If ommitted then the default scope configured for the client application will be used.
   """
   scope: String
-  additionalProperties: JSON @resolveRoot(subgraph: "test")
+  additionalProperties: JSON @connect(selection: "$")
   """The refresh token."""
   refresh_token: String!
   """
@@ -257,15 +253,34 @@ enum mutationInput_post_revoke_input_token_type_hint {
 
 scalar ObjMap
 
-enum HTTPMethod {
-  GET
-  HEAD
-  POST
-  PUT
-  DELETE
-  CONNECT
-  OPTIONS
-  TRACE
-  PATCH
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
 }"
 `;

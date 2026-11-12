@@ -4,13 +4,13 @@ exports[`JSON Schema Covid should generate correct schema: json-schema-covid-sch
 """""""
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | INTERFACE | OBJECT
 
-directive @httpOperation(httpMethod: HTTPMethod, isBinary: Boolean, jsonApiFields: Boolean, operationSpecificHeaders: [[String]], path: String, queryParamArgMap: ObjMap, queryStringOptions: ObjMap, queryStringOptionsByParam: ObjMap, requestBaseBody: ObjMap, subgraph: String) on FIELD_DEFINITION
+directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, isSuccess: String, selection: String!, source: String) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @link(import: [String], url: String!) repeatable on SCHEMA
 
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
 
-directive @responseMetadata(subgraph: String) on FIELD_DEFINITION
-
-directive @transport(headers: [[String]], kind: String, location: String, queryParams: [[String]], queryStringOptions: ObjMap, subgraph: String) repeatable on SCHEMA
+directive @source(errors: ConnectorErrors, http: SourceHTTP!, isSuccess: String, name: String!) repeatable on SCHEMA
 
 """Desc Api Population"""
 type ApiPopulation {
@@ -73,6 +73,23 @@ type Case {
   recovered: Int
 }
 
+input ConnectHTTP {
+  DELETE: String
+  GET: String
+  HEAD: String
+  PATCH: String
+  POST: String
+  PUT: String
+  body: String
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+}
+
+input ConnectorErrors {
+  extensions: String
+  message: String
+}
+
 """"""
 type Count {
   """"""
@@ -118,24 +135,16 @@ type Daily {
 """"""
 scalar Date
 
-enum HTTPMethod {
-  CONNECT
-  DELETE
-  GET
-  HEAD
-  OPTIONS
-  PATCH
-  POST
-  PUT
-  TRACE
+input HTTPHeaderMapping {
+  from: String
+  name: String!
+  value: String
 }
 
 """
 The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON
-
-scalar ObjMap
 
 type Query {
   """"""
@@ -167,6 +176,14 @@ type ResponseMetadata {
 """Result of API"""
 type Result {
   fields: query_population_records_items_fields
+}
+
+input SourceHTTP {
+  baseURL: String!
+  errors: ConnectorErrors
+  headers: [HTTPHeaderMapping!]
+  isSuccess: String
+  queryParams: String
 }
 
 type Stat {

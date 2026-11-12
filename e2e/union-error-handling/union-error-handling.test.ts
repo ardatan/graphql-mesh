@@ -56,15 +56,19 @@ describe('OpenAPI rest transport Union Error Handling', () => {
 
     // Should get GraphQL errors since these endpoints don't have 400 in their OpenAPI spec
     expect(noErrorHandlingResult.errors).toHaveLength(2);
-    expect(noErrorHandlingResult.errors?.[0].message).toContain('Upstream HTTP Error: 400');
-    expect(noErrorHandlingResult.errors?.[1].message).toContain('Upstream HTTP Error: 400');
+    expect(noErrorHandlingResult.errors?.[0].message).toMatch(
+      /^Upstream HTTP Error: 400, Could not invoke operation GET /,
+    );
+    expect(noErrorHandlingResult.errors?.[1].message).toMatch(
+      /^Upstream HTTP Error: 400, Could not invoke operation GET /,
+    );
 
-    // Check that error extensions are properly populated
+    // Check that error extensions are properly populated (Mesh Downstream + Apollo http/connector)
     const firstError = noErrorHandlingResult.errors?.[0];
     const secondError = noErrorHandlingResult.errors?.[1];
 
     expect(firstError?.extensions).toMatchObject({
-      code: 'DOWNSTREAM_SERVICE_ERROR',
+      code: 'CONNECTOR_FETCH',
       serviceName: 'ErrorAPI',
       request: {
         method: 'GET',
@@ -73,9 +77,14 @@ describe('OpenAPI rest transport Union Error Handling', () => {
         status: 400,
       },
     });
+    // Default: `response.status` only — no duplicate top-level `status`.
+    expect(firstError?.extensions?.status).toBeUndefined();
+    // Must not set `extensions.http.status` — Yoga would promote it to gateway HTTP 400.
+    expect(firstError?.extensions?.http?.status).toBeUndefined();
+    expect(firstError?.extensions?.service).toBeUndefined();
 
-    expect(firstError?.extensions).toMatchObject({
-      code: 'DOWNSTREAM_SERVICE_ERROR',
+    expect(secondError?.extensions).toMatchObject({
+      code: 'CONNECTOR_FETCH',
       serviceName: 'ErrorAPI',
       request: {
         method: 'GET',
@@ -84,6 +93,9 @@ describe('OpenAPI rest transport Union Error Handling', () => {
         status: 400,
       },
     });
+    expect(secondError?.extensions?.status).toBeUndefined();
+    expect(secondError?.extensions?.http?.status).toBeUndefined();
+    expect(secondError?.extensions?.service).toBeUndefined();
   });
 
   it('should be able to cast error responses to Error type when error handling is in OpenAPI schema', async () => {

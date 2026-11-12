@@ -1,0 +1,172 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.10"
+    import: ["@key", "@requires", "@override", "@external", "@shareable"]
+  )
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  # https://docs.aws.amazon.com/lambda/latest/api
+  # See router.yaml for Sigv4 configuration
+  @source(
+    name: "lambda"
+    # If you want to use multiple regions, see router.yaml for configuration based on environment variables
+    http: { baseURL: "https://lambda.us-east-1.amazonaws.com" }
+  )
+
+type LambdaFunction {
+  name: String
+  configuration: LambdaFunctionConfiguration
+  concurrency: Int
+  code: LambdaFunctionCode
+}
+type LambdaFunctionCode {
+  sourceKMSKeyArn: String
+  resolvedImageUri: String
+  repositoryType: String
+  error: String
+  imageUri: String
+  location: String
+}
+input LambdaFunctionCodeInput {
+  imageUri: String
+  zipFile: String
+  s3Bucket: String
+  s3Key: String
+  s3ObjectVersion: String
+  publish: Boolean
+}
+type LambdaFunctionConfiguration {
+  description: String
+  tracingConfigMode: String
+  revisionId: String
+  lastModified: String
+  runtime: String
+  version: String
+  packageType: String
+  lastUpdateSuccess: Boolean
+  arn: String
+  kmsKeyArn: String
+  memorySize: Int
+  timeout: Int
+  handler: String
+  codeSha256: String
+  role: String
+  state: String
+  stateReason: String
+  architectures: [String]
+}
+type Mutation {
+  createFunction(name: String!, roleArn: String!, code: LambdaFunctionCodeInput!): LambdaFunction
+    @connect(
+      source: "lambda"
+      http: {
+        POST: "/2015-03-31/functions"
+        body: """
+        FunctionName: $args.name
+        Role: $args.roleArn
+        Code: $args.code
+        """
+      }
+      selection: """
+      name: FunctionName
+      configuration: {
+        description: Description
+        tracingConfigMode: TracingConfig.Mode
+        revisionId: RevisionId
+        lastModified: LastModified
+        runtime: Runtime
+        version: Version
+        packageType: PackageType
+        arn: FunctionArn
+        kmsKeyArn: KMSKeyArn
+        memorySize: MemorySize
+        timeout: Timeout
+        handler: Handler
+        codeSha256: CodeSha256
+        role: Role
+        state: State
+        stateReason: StateReasonCode
+        architectures: Architectures
+      }
+      """
+    )
+  deleteFunction(name: String!): Boolean
+    @connect(
+      source: "lambda"
+      http: { DELETE: "/2015-03-31/functions/{$args.name}" }
+      selection: """
+      $(true)
+      """
+    )
+}
+type Query {
+  getFunction(name: String!): LambdaFunction
+    @connect(
+      source: "lambda"
+      http: { GET: "/2015-03-31/functions/{$args.name}" }
+      selection: """
+      name: $.Configuration.FunctionName
+      configuration: $.Configuration {
+        description: Description
+        tracingConfigMode: TracingConfig.Mode
+        revisionId: RevisionId
+        lastModified: LastModified
+        runtime: Runtime
+        version: Version
+        packageType: PackageType
+        lastUpdateSuccess: LastUpdateStatus->match(
+          ["Successful", true],
+          ["Unsuccessful", false]
+        )
+        arn: FunctionArn
+        kmsKeyArn: KMSKeyArn
+        memorySize: MemorySize
+        timeout: Timeout
+        handler: Handler
+        codeSha256: CodeSha256
+        role: Role
+        state: State
+        stateReason: StateReasonCode
+        architectures: Architectures
+      }
+      concurrency: Concurrency.ReservedConcurrentExecutions
+      code: $.Code {
+        sourceKMSKeyArn: SourceKMSKeyArn
+        resolvedImageUri: ResolvedImageUri
+        repositoryType: RepositoryType
+        error: Error
+        imageUri: ImageUri
+        location: Location
+      }
+      """
+      entity: true
+    )
+  listFunctions(limit: Int = 10, next: String = ""): [LambdaFunction]
+    @connect(
+      source: "lambda"
+      http: { GET: "/2015-03-31/functions" }
+      selection: """
+      $.Functions {
+        name: FunctionName
+        configuration: {
+          description: Description
+          tracingConfigMode: TracingConfig.Mode
+          revisionId: RevisionId
+          lastModified: LastModified
+          runtime: Runtime
+          version: Version
+          packageType: PackageType
+          arn: FunctionArn
+          kmsKeyArn: KMSKeyArn
+          memorySize: MemorySize
+          timeout: Timeout
+          handler: Handler
+          codeSha256: CodeSha256
+          role: Role
+          state: State
+          stateReason: StateReasonCode
+          architectures: Architectures
+        }
+      }
+      """
+    )
+}

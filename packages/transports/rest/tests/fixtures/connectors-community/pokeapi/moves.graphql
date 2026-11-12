@@ -1,0 +1,101 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.11", import: ["@key", "@requires"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@source", "@connect"])
+  @source(name: "pokeapi", http: { baseURL: "https://pokeapi.co/api/v2/" })
+type Move @key(fields: "name") {
+  name: String
+  accuracy: Int
+  effectChance: Int
+  pp: Int
+  priority: Int
+  power: Int
+  damageClass: DamageClass
+  effectEntries: [EffectEntry]
+  generation: Generation
+  target: Target
+  type: Type
+}
+type DamageClass {
+  name: String
+}
+type EffectEntry {
+  effect: String
+  shortEffect: String
+}
+type Generation @key(fields: "name", resolvable: false) {
+  name: String
+}
+type Target {
+  name: String
+}
+type Type {
+  name: String
+}
+type MovesConnection {
+  total: Int
+  results: [Move]
+}
+type Query {
+  move(name: String!): Move
+    @connect(
+      source: "pokeapi"
+      http: { GET: "move/{$args.name}" }
+      selection: """
+      name
+      accuracy
+      effectChance: effect_chance
+      pp
+      priority
+      power
+      damageClass: damage_class {
+        name
+      }
+      effectEntries: effect_entries {
+        effect
+        shortEffect: short_effect
+      }
+      generation {
+        name
+      }
+      target {
+        name
+      }
+      type {
+        name
+      }
+      """
+      entity: true
+    )
+  moves(limit: Int = 20, offset: Int = 0): MovesConnection
+    @connect(
+      source: "pokeapi"
+      http: { GET: "move/?limit={$args.limit}&offset={$args.offset}" }
+      selection: """
+      total: count
+      results {
+        name
+        accuracy
+        effectChance: effect_chance
+        pp
+        priority
+        power
+        damageClass: damage_class {
+          name
+        }
+        effectEntries: effect_entries {
+          effect
+          shortEffect: short_effect
+        }
+        generation {
+          name
+        }
+        target {
+          name
+        }
+        type {
+          name
+        }
+      }
+      """
+    )
+}

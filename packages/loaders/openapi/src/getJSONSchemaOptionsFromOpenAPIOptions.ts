@@ -4,7 +4,6 @@ import { dereferenceObject, handleUntitledDefinitions, resolvePath } from 'json-
 import type { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
-import { futureAdditions } from '@graphql-mesh/fusion-composition';
 import {
   getInterpolatedHeadersFactory,
   getInterpolationKeys,
@@ -13,13 +12,15 @@ import {
 import type { MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { asArray } from '@graphql-tools/utils';
-import type {
-  HTTPMethod,
-  JSONSchemaHTTPJSONOperationConfig,
-  JSONSchemaOperationConfig,
-  JSONSchemaOperationResponseConfig,
-  JSONSchemaPubSubOperationConfig,
-  OperationHeadersConfiguration,
+import {
+  setMeshEntityRef,
+  setMeshTypeConnect,
+  type HTTPMethod,
+  type JSONSchemaHTTPJSONOperationConfig,
+  type JSONSchemaOperationConfig,
+  type JSONSchemaOperationResponseConfig,
+  type JSONSchemaPubSubOperationConfig,
+  type OperationHeadersConfiguration,
 } from '@omnigraph/json-schema';
 import type { SelectQueryOrMutationFieldConfig } from './types.js';
 import { getFieldNameFromPath } from './utils.js';
@@ -131,10 +132,11 @@ export interface HATEOASContext {
 
 /**
  * Process-local fallback when no `HATEOASContext` is passed (compose loads each
- * OpenAPI subgraph independently). Not exported — use `HATEOASContext` /
- * `getJSONSchemaOptionsFromMultipleOpenAPIOptions` for isolated loads.
+ * OpenAPI subgraph independently). Shared so sequential `loadOpenAPISubgraph`
+ * calls in one compose process can resolve cross-schema HATEOAS links.
  */
 const defaultFutureLinks = new Set<FutureLink>();
+const defaultLoadedSchemas: HATEOASContext['loadedSchemas'] = new Map();
 
 export async function getJSONSchemaOptionsFromOpenAPIOptions(
   name: string,
@@ -148,14 +150,17 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     operationHeaders,
     queryParams = {},
     selectQueryOrMutationField = [],
-    log = new Logger({ prefix: 'getJSONSchemaOptionsFromOpenAPIOptions' }),
+    log = new Logger({
+      prefix: 'getJSONSchemaOptionsFromOpenAPIOptions',
+      ...(process.env.JEST ? { level: false as const } : {}),
+    }),
     jsonApi,
     HATEOAS,
   }: GetJSONSchemaOptionsFromOpenAPIOptionsParams,
   hateoasContext?: HATEOASContext,
 ) {
   const contextFutureLinks = hateoasContext?.futureLinks ?? defaultFutureLinks;
-  const loadedSchemas = hateoasContext?.loadedSchemas ?? new Map();
+  const loadedSchemas = hateoasContext?.loadedSchemas ?? defaultLoadedSchemas;
 
   const hateOasConfig: HATEOASConfig | false =
     HATEOAS === true
@@ -699,12 +704,18 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                 }
               }
             }
-            if ('explode' in paramObj) {
+            if ('explode' in paramObj || paramObj.style === 'deepObject') {
               operationConfig.queryStringOptionsByParam =
                 operationConfig.queryStringOptionsByParam || {};
               operationConfig.queryStringOptionsByParam[paramObj.name] =
                 operationConfig.queryStringOptionsByParam[paramObj.name] || {};
-              if (paramObj.explode) {
+              if (paramObj.style === 'deepObject') {
+                // OpenAPI deepObject → `filter[name]=…`. Emit expands known
+                // properties; runtime still flattens via destructObject+deepObject.
+                operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'repeat';
+                operationConfig.queryStringOptionsByParam[paramObj.name].destructObject = true;
+                operationConfig.queryStringOptionsByParam[paramObj.name].deepObject = true;
+              } else if (paramObj.explode) {
                 operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'repeat';
                 operationConfig.queryStringOptionsByParam[paramObj.name].destructObject = true;
               } else {
@@ -1086,42 +1097,103 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                           }
                         }
                         if (objectSchema) {
-                          const properties: Record<string, JSONSchemaObject> = {};
-                          for (const paramName of paramsInTarget) {
-                            const propInTarget = objectSchema.properties[paramName];
-                            if (propInTarget) {
-                              properties[paramName] = propInTarget;
-                            }
+                          // Map entity key fields → parent JSON fields for Connectors
+                          // selection `supplier: { id: supplierId }` (Federation entity ref).
+                          // `{root['supplierId']}` / `{root.supplierId}` → `supplierId`.
+                          const meshEntityRef: Record<string, string> = {};
+                          for (const [keyField, interp] of Object.entries(args)) {
+                            const raw = String(interp);
+                            const fromBracket = raw.match(/^\{root\[['"]([^'"]+)['"]\]\}$/);
+                            const fromDot = raw.match(/^\{root\.([^}]+)\}$/);
+                            const from =
+                              fromBracket?.[1] || fromDot?.[1] || paramsInLink[0] || keyField;
+                            meshEntityRef[keyField] = sanitizeNameForGraphQL(from);
                           }
+                          // Prefer Mesh operation path (`/suppliers/{args.id}`); fall back to
+                          // OpenAPI path (`/suppliers/{id}`) — normalize both to `$this.<key>`
+                          // without relying on methodObjFieldMap identity (Promise.all races).
+                          const linkOperationConfig =
+                            possibleMethodObjFieldMap.get(actualOperation);
+                          let typeConnectPath = String(
+                            (linkOperationConfig &&
+                              'path' in linkOperationConfig &&
+                              linkOperationConfig.path) ||
+                              actualPath,
+                          );
+                          for (const keyField of Object.keys(args)) {
+                            typeConnectPath = typeConnectPath
+                              .replaceAll(`{${keyField}}`, `{$this.${keyField}}`)
+                              .replaceAll(`{args.${keyField}}`, `{$this.${keyField}}`)
+                              .replaceAll(`{$args.${keyField}}`, `{$this.${keyField}}`);
+                          }
+                          const leafNames = Object.keys(objectSchema.properties || {}).filter(
+                            prop => {
+                              const p = objectSchema.properties?.[prop];
+                              return (
+                                p &&
+                                typeof p === 'object' &&
+                                !('$ref' in p) &&
+                                (p as JSONSchemaObject).type !== 'object' &&
+                                (p as JSONSchemaObject).type !== 'array'
+                              );
+                            },
+                          );
+                          // Full target type on this subgraph + entity stub in parent selection.
+                          // Type-level `@connect` lets Hive `hydrateEntityStubFieldResolvers`
+                          // fill `name` inside the Products subgraph (same-subgraph path).
                           schemaObj.properties[linkName] = {
                             ...objectSchema,
-                            properties,
+                            meshEntityRef,
                           };
-                          futureAdditions.push({
-                            targetTypeName: schemaObj.title,
-                            targetFieldName: linkName,
-                            sourceName: possibleName,
-                            sourceTypeName: 'Query',
-                            requiredSelectionSet: `{ ${paramsInLink.join(' ')} }`,
-                            get sourceFieldName() {
-                              const linkOperationConfig =
-                                possibleMethodObjFieldMap.get(actualOperation);
-                              return linkOperationConfig.field;
-                            },
-                            sourceArgs: args,
-                          });
+                          if (objectSchema.title) {
+                            setMeshTypeConnect(objectSchema.title, {
+                              source: name,
+                              http: {
+                                GET: typeConnectPath,
+                                headers: [{ name: 'accept', value: 'application/json' }],
+                              },
+                              selection: leafNames.length ? leafNames.join(' ') : 'id',
+                            });
+                          }
+                          // Survives JSON→GraphQL composers (extensions often drop custom keys).
+                          // Bake `supplier: { __typename: $("Supplier") id: supplierId }` into
+                          // parent `@connect(selection:)`.
+                          if (schemaObj.title && Object.keys(meshEntityRef).length) {
+                            setMeshEntityRef(schemaObj.title, linkName, meshEntityRef);
+                          }
                         }
                       }
                     }
                     contextFutureLinks.delete(findActualOperationAndPath);
+                    if (timeout) clearTimeout(timeout);
                     deferred.resolve();
                     return true;
                   }
                   return false;
                 }
+                let timeout: ReturnType<typeof setTimeout> | undefined;
+                const tryResolveAgainstLoaded = () => {
+                  if (findActualOperationAndPath(name, oasOrSwagger, methodObjFieldMap)) {
+                    return true;
+                  }
+                  // Other subgraphs may have finished first (compose uses Promise.all).
+                  for (const [schemaName, schemaData] of loadedSchemas) {
+                    if (schemaName === name) continue;
+                    if (
+                      findActualOperationAndPath(
+                        schemaName,
+                        schemaData.oasDoc,
+                        schemaData.methodObjFieldMap,
+                      )
+                    ) {
+                      return true;
+                    }
+                  }
+                  return false;
+                };
                 // Only set timeout if we're not in batch mode (no context provided)
                 if (!hateoasContext) {
-                  setTimeout(() => {
+                  timeout = setTimeout(() => {
                     log.warn(
                       `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
                     );
@@ -1129,7 +1201,7 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
                     deferred.resolve();
                   }, 5000);
                 }
-                if (!findActualOperationAndPath(name, oasOrSwagger, methodObjFieldMap)) {
+                if (!tryResolveAgainstLoaded()) {
                   contextFutureLinks.add(findActualOperationAndPath);
                 }
 
@@ -1282,12 +1354,19 @@ export async function getJSONSchemaOptionsFromOpenAPIOptions(
     }
   }
 
-  // Register this schema in the context for future cross-references
-  if (hateoasContext) {
-    loadedSchemas.set(name, {
-      oasDoc: oasOrSwagger,
-      methodObjFieldMap,
-    });
+  // Register for cross-schema HATEOAS (shared process map or explicit context).
+  loadedSchemas.set(name, {
+    oasDoc: oasOrSwagger,
+    methodObjFieldMap,
+  });
+
+  // Resolve any deferred cross-schema links now that this schema is available.
+  if (contextFutureLinks.size) {
+    for (const futureLink of Array.from(contextFutureLinks)) {
+      if (futureLink(name, oasOrSwagger, methodObjFieldMap)) {
+        contextFutureLinks.delete(futureLink);
+      }
+    }
   }
 
   return {
@@ -1357,10 +1436,12 @@ export async function getJSONSchemaOptionsFromMultipleOpenAPIOptions(
 
   // Log remaining unresolved links
   if (hateoasContext.futureLinks.size > 0) {
-    const log = new Logger({ prefix: 'getJSONSchemaOptionsFromMultipleOpenAPIOptions' });
-    log.warn(
-      `${hateoasContext.futureLinks.size} HATEOAS links could not be resolved after loading all schemas. This may indicate missing operations or circular dependencies.`,
-    );
+    if (!process.env.JEST) {
+      const log = new Logger({ prefix: 'getJSONSchemaOptionsFromMultipleOpenAPIOptions' });
+      log.warn(
+        `${hateoasContext.futureLinks.size} HATEOAS links could not be resolved after loading all schemas. This may indicate missing operations or circular dependencies.`,
+      );
+    }
   }
 
   return results;
