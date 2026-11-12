@@ -4,6 +4,7 @@ import { processDirectives, type ProcessDirectiveArgs } from './directives/proce
 export interface RESTTransportOptions {
   timeout?: number;
   queryParams?: Record<string, string>;
+  queryStringOptions?: any;
 }
 
 const transport: Transport<RESTTransportOptions> = {

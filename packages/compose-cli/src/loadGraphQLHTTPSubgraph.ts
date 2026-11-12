@@ -2,16 +2,10 @@ import {
   buildASTSchema,
   buildClientSchema,
   buildSchema,
-  DirectiveLocation,
   getIntrospectionQuery,
   getNamedType,
-  GraphQLDirective,
   GraphQLError,
-  GraphQLList,
-  GraphQLNonNull,
-  GraphQLScalarType,
   GraphQLSchema,
-  GraphQLString,
   isObjectType,
   Kind,
   parse,
@@ -21,7 +15,7 @@ import {
   type IntrospectionQuery,
 } from 'graphql';
 import { stringInterpolator } from '@graphql-mesh/string-interpolation';
-import { isUrl, readFile } from '@graphql-mesh/utils';
+import { isUrl, readFile, TransportDirective as transportDirective } from '@graphql-mesh/utils';
 import { isValidPath, type ExecutionResult } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
@@ -418,19 +412,6 @@ interface GraphQLHTTPTransportEntry {
     timeout: number;
   };
 }
-
-const transportDirective = new GraphQLDirective({
-  name: 'transport',
-  isRepeatable: true,
-  locations: [DirectiveLocation.SCHEMA],
-  args: {
-    kind: { type: new GraphQLNonNull(GraphQLString) },
-    subgraph: { type: new GraphQLNonNull(GraphQLString) },
-    location: { type: new GraphQLNonNull(GraphQLString) },
-    headers: { type: new GraphQLList(new GraphQLList(GraphQLString)) },
-    options: { type: new GraphQLScalarType({ name: 'TransportOptions' }) },
-  },
-});
 
 function addAnnotations(
   transportEntry: GraphQLHTTPTransportEntry,

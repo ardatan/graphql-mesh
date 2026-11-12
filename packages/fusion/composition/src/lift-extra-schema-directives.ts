@@ -12,15 +12,15 @@ import { astFromValueUntyped } from '@graphql-tools/utils';
 const MESH_SPEC_PREFIX = 'https://the-guild.dev/graphql/mesh/spec/';
 const CONNECT_SPEC_PREFIX = 'https://specs.apollo.dev/connect';
 
+// Shared Mesh `@transport` — kind-specific fields live under `options`.
 const DEFAULT_TRANSPORT_DIRECTIVE_SDL = /* GraphQL */ `
+  scalar TransportOptions
   directive @transport(
-    subgraph: String
-    kind: String
+    subgraph: String!
+    kind: String!
     location: String
-    headers: ObjMap
-    queryStringOptions: ObjMap
-    queryParams: ObjMap
-    timeout: Int
+    headers: [[String]]
+    options: TransportOptions
   ) repeatable on SCHEMA
 `;
 
@@ -61,12 +61,18 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
 
   const existingDirectiveNames = new Set<string>();
   let hasObjMap = false;
+  let hasTransportOptions = false;
   let hasSourceHTTP = false;
   for (const def of document.definitions) {
     if (def.kind === Kind.DIRECTIVE_DEFINITION) {
       existingDirectiveNames.add(def.name.value);
     } else if (def.kind === Kind.SCALAR_TYPE_DEFINITION && def.name.value === 'ObjMap') {
       hasObjMap = true;
+    } else if (
+      def.kind === Kind.SCALAR_TYPE_DEFINITION &&
+      def.name.value === 'TransportOptions'
+    ) {
+      hasTransportOptions = true;
     } else if (def.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION && def.name.value === 'SourceHTTP') {
       hasSourceHTTP = true;
     }
@@ -81,13 +87,12 @@ export function liftExtraSchemaDefinitionDirectives(supergraphSdl: string): stri
 
   const definitionsToAppend: DefinitionNode[] = [];
   if (liftedByName.has('transport') && !existingDirectiveNames.has('transport')) {
-    if (!hasObjMap) {
-      definitionsToAppend.push(...parse(`scalar ObjMap`, { noLocation: true }).definitions);
-      hasObjMap = true;
-    }
-    definitionsToAppend.push(
-      ...parse(DEFAULT_TRANSPORT_DIRECTIVE_SDL, { noLocation: true }).definitions,
-    );
+    // Prefer shared TransportOptions; skip duplicate scalar if already present.
+    const transportSdl = hasTransportOptions
+      ? DEFAULT_TRANSPORT_DIRECTIVE_SDL.replace(/^\s*scalar TransportOptions\s*$/m, '')
+      : DEFAULT_TRANSPORT_DIRECTIVE_SDL;
+    definitionsToAppend.push(...parse(transportSdl, { noLocation: true }).definitions);
+    hasTransportOptions = true;
     existingDirectiveNames.add('transport');
   }
   if (liftedByName.has('source') && !existingDirectiveNames.has('source')) {

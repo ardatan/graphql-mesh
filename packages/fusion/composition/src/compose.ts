@@ -165,12 +165,20 @@ export function getAnnotatedSubgraphs(
     if (isConnectorsSubgraph) {
       const extensions: Record<string, any> = (normalizedSchema.extensions ||= {});
       extensions.directives = extensions.directives || {};
-      // Hive execution hint — not part of the Federation Connectors subgraph contract
+      const existingTransport = (extensions.directives.transport || [])[0] || {};
+      // Hive execution hint — not part of the Federation Connectors subgraph contract.
+      // Preserve kind-specific `options` from the loader (qs / timeout / …).
+      const mergedOptions = {
+        ...((extensions as any).meshRestOptions || {}),
+        ...(existingTransport.options || {}),
+      };
       extensions.directives.transport = [
         {
+          ...existingTransport,
           subgraph: subgraphName,
           kind: 'rest',
-          location: url || apolloSource?.http?.baseURL || '',
+          location: url || apolloSource?.http?.baseURL || existingTransport.location || '',
+          ...(Object.keys(mergedOptions).length ? { options: mergedOptions } : {}),
         },
       ];
     } else if (

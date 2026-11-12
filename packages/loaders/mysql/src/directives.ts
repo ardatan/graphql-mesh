@@ -87,19 +87,4 @@ export const MySQLTableForeignDirective = new GraphQLDirective({
   },
 });
 
-export const TransportDirective = new GraphQLDirective({
-  name: 'transport',
-  locations: [DirectiveLocation.SCHEMA],
-  args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-    kind: {
-      type: GraphQLString,
-    },
-    location: {
-      type: GraphQLString,
-    },
-  },
-  isRepeatable: true,
-});
+export { TransportDirective } from '@graphql-mesh/utils';

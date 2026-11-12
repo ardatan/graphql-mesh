@@ -13,7 +13,11 @@ import { type Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import type { MeshFetch } from '@graphql-mesh/types';
-import { getDefDirectives } from '@graphql-mesh/utils';
+import {
+  getDefDirectives,
+  getTransportOptions,
+  type RESTTransportDirectiveOptions,
+} from '@graphql-mesh/utils';
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
@@ -29,6 +33,8 @@ export interface ProcessDirectiveArgs {
   timeout?: number;
   operationHeaders?: Record<string, string>;
   queryParams?: Record<string, any>;
+  /** qs stringify options (form-urlencoded bodies / legacy flat transport). */
+  queryStringOptions?: any;
 }
 
 export function processDirectives(
@@ -66,15 +72,17 @@ export function processDirectives(
         ]),
       )
     : undefined;
+  // Kind-specific REST opts live under `@transport(options:)` (Hive TransportEntry).
+  // Legacy flat directive args + schema.extensions.meshRestOptions still accepted.
+  const transportOpts = getTransportOptions<RESTTransportDirectiveOptions>(currDirective);
   const meshRestOptions = (schema.extensions as any)?.meshRestOptions || {};
   const globalOptions = {
     endpoint: sourceDirective?.http?.baseURL ?? currDirective?.location,
     operationHeaders: sourceHeaders ?? currDirective?.headers,
-    queryParams: currDirective?.queryParams,
-    queryStringOptions: currDirective?.queryStringOptions ?? meshRestOptions.queryStringOptions,
-    // Prefer explicit transport / loader timeout over legacy schema meshRestOptions.
-    timeout:
-      (currDirective as { timeout?: number } | undefined)?.timeout ?? meshRestOptions.timeout,
+    queryParams: transportOpts.queryParams ?? meshRestOptions.queryParams,
+    queryStringOptions:
+      transportOpts.queryStringOptions ?? meshRestOptions.queryStringOptions,
+    timeout: transportOpts.timeout ?? meshRestOptions.timeout,
     ...extraGlobalOptions,
   };
   // Wire @connect resolvers (Federation Connectors)

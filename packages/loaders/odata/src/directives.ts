@@ -4,7 +4,6 @@ import {
   GraphQLDirective,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLScalarType,
   GraphQLString,
   type GraphQLSchema,
 } from 'graphql';
@@ -15,6 +14,10 @@ import {
   type ResolverData,
 } from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
+import {
+  TransportDirective,
+  type TransportDirectiveArgs as SharedTransportDirectiveArgs,
+} from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { getDataloaderFactory } from './getDataloaderFactory.js';
 import { createAbstractTypeResolver } from './resolvers/abstractTypeResolver.js';
@@ -32,6 +35,13 @@ import { createSingularNavResolver } from './resolvers/singularNavResolver.js';
 import { createUnboundActionResolver } from './resolvers/unboundActionResolver.js';
 import { createUnboundFunctionResolver } from './resolvers/unboundFunction.js';
 import { createUpdateEntitySetResolver } from './resolvers/updateEntitySetResolver.js';
+
+export { TransportDirective };
+
+export type TransportDirectiveArgs = SharedTransportDirectiveArgs<{
+  batch: 'none' | 'json' | 'multipart';
+  expandNavProps: boolean;
+}> & { kind: 'odata' };
 
 export const EntityInfoDirective = new GraphQLDirective({
   name: 'entityInfo',
@@ -318,30 +328,6 @@ export interface AbstractTypeDirectiveArgs {
   aliasNamespaceMap: [string, string][];
   multipleSchemas: boolean;
   namespaces: string[];
-}
-
-export const TransportDirective = new GraphQLDirective({
-  name: 'transport',
-  isRepeatable: true,
-  locations: [DirectiveLocation.SCHEMA],
-  args: {
-    kind: { type: new GraphQLNonNull(GraphQLString) },
-    subgraph: { type: new GraphQLNonNull(GraphQLString) },
-    location: { type: new GraphQLNonNull(GraphQLString) },
-    headers: { type: new GraphQLList(new GraphQLList(GraphQLString)) },
-    options: { type: new GraphQLScalarType({ name: 'TransportOptions' }) },
-  },
-});
-
-export interface TransportDirectiveArgs {
-  kind: 'odata';
-  subgraph: string;
-  location: string;
-  headers: [string, string][];
-  options: {
-    batch: 'none' | 'json' | 'multipart';
-    expandNavProps: boolean;
-  };
 }
 
 export interface DirectiveArgsMap {

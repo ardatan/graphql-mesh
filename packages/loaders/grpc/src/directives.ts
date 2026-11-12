@@ -1,10 +1,4 @@
-import {
-  DirectiveLocation,
-  GraphQLBoolean,
-  GraphQLDirective,
-  GraphQLScalarType,
-  GraphQLString,
-} from 'graphql';
+import { DirectiveLocation, GraphQLBoolean, GraphQLDirective, GraphQLString } from 'graphql';
 
 export const grpcMethodDirective = new GraphQLDirective({
   name: 'grpcMethod',
@@ -57,22 +51,4 @@ export const EnumDirective = new GraphQLDirective({
   },
 });
 
-export const transportDirective = new GraphQLDirective({
-  name: 'transport',
-  args: {
-    subgraph: {
-      type: GraphQLString,
-    },
-    kind: {
-      type: GraphQLString,
-    },
-    location: {
-      type: GraphQLString,
-    },
-    options: {
-      type: new GraphQLScalarType({ name: 'TransportOptions' }),
-    },
-  },
-  isRepeatable: true,
-  locations: [DirectiveLocation.SCHEMA],
-});
+export { TransportDirective as transportDirective } from '@graphql-mesh/utils';

@@ -707,13 +707,18 @@ ${operationConfig.description || ''}
   ];
   // Keep handlerName available for debugging without Mesh @transport
   schemaExtensions.meshHandlerName = handlerName;
-  // Schema-level qs defaults for form-urlencoded bodies (query shapes bake into queryParams).
-  // Stored on extensions only — no field `@meshRestOptions` SDL.
+  // Schema-level REST transport options (form-urlencoded qs defaults, etc.).
+  // Hive `TransportEntry.options` — compose merges these onto `@transport(options:)`.
+  // Query-string shapes for fields bake into `@connect(http.queryParams:)`.
   if (queryStringOptions) {
-    schemaExtensions.meshRestOptions = {
-      ...(schemaExtensions.meshRestOptions || {}),
-      queryStringOptions,
-    };
+    schemaExtensions.directives.transport = [
+      {
+        subgraph: subgraphName,
+        kind: 'rest',
+        location: endpoint,
+        options: { queryStringOptions },
+      },
+    ];
   }
   // Fix orphaned interfaces; bake Connectors equivalents while `@enum` is still present.
   schema = mapSchema(schema, {
