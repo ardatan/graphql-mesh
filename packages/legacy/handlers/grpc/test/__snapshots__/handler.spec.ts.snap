@@ -22,7 +22,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   """
@@ -117,7 +117,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   foos_BamService_GetW(input: foos__GetBamRequest_Input): foos__GetFoosResponse @grpcMethod(subgraph: "Custom Message", rootJsonName: "Root0", objPath: "foos.BamService", methodName: "GetW", responseStream: false)
@@ -178,7 +178,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   foo_BamService_GetFOOs(input: foo__GetFOOsRequest_Input): foo__GetFOOsResponse @grpcMethod(subgraph: "Custom Message2", rootJsonName: "Root0", objPath: "foo.BamService", methodName: "GetFOOs", responseStream: false)
@@ -237,7 +237,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   """get all movies"""
@@ -353,7 +353,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   io_xtech_OrganizationService_GetOrganization(input: io__xtech__EmptyRequest_Input): io__xtech__OrganizationProto @grpcMethod(subgraph: "Enums", rootJsonName: "Root0", objPath: "io.xtech.OrganizationService", methodName: "GetOrganization", responseStream: false)
@@ -411,7 +411,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   io_xtech_outer_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @grpcMethod(subgraph: "Import Nested", rootJsonName: "Root0", objPath: "io.xtech.outer.Example", methodName: "Get", responseStream: false)
@@ -468,7 +468,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   TestService_Get(input: TestMessage_Input): TestMessage @grpcMethod(subgraph: "Input bug 5880", rootJsonName: "Root0", objPath: "TestService", methodName: "Get", responseStream: false)
@@ -519,7 +519,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   io_xtech_MapService_GetMap(input: io__xtech__MapRequest_Input): io__xtech__MapResponse @grpcMethod(subgraph: "Map", rootJsonName: "Root0", objPath: "io.xtech.MapService", methodName: "GetMap", responseStream: false)
@@ -574,7 +574,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   """get all movies"""
@@ -685,7 +685,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   io_xtech_Example_Get(input: io__xtech__TopLevel__Nested_Input): io__xtech__Result @grpcMethod(subgraph: "Nested", rootJsonName: "Root0", objPath: "io.xtech.Example", methodName: "Get", responseStream: false)
@@ -740,7 +740,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   Example_Get(input: TopLevel__Nested_Input): Result @grpcMethod(subgraph: "No Package Nested", rootJsonName: "Root0", objPath: "Example", methodName: "Get", responseStream: false)
@@ -798,7 +798,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   io_outside_Example_GetMovies(input: io__outside__MovieRequest_Input): io__outside__MoviesResult @grpcMethod(subgraph: "Outside", rootJsonName: "Root0", objPath: "io.outside.Example", methodName: "GetMovies", responseStream: false)
@@ -919,7 +919,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   Example_Get(input: Item_Input): Result @grpcMethod(subgraph: "With All Values", rootJsonName: "Root0", objPath: "Example", methodName: "Get", responseStream: false)
@@ -1012,7 +1012,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   """get all movies"""
@@ -1127,7 +1127,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   """get all movies"""
@@ -1252,7 +1252,7 @@ directive @stream(
   initialCount: Int = 0
 ) on FIELD
 
-directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
 
 type Query {
   """get all movies"""

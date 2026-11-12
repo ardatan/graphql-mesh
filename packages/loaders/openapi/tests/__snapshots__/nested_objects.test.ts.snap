@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OpanAPI: nested objects should generate the schema correctly 1`] = `
-"schema @source(name: "example_api", http: {baseURL: "http://localhost:3000"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+"schema @source(name: "example_api", http: {baseURL: "http://localhost:3000"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @transport(subgraph: "example_api", kind: "rest", location: "http://localhost:3000", options: {queryStringOptions: {allowDots: true}}) {
   query: Query
 }
 
