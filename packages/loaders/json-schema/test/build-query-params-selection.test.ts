@@ -99,6 +99,15 @@ describe('buildQueryParamsSelection', () => {
     expect(selection).toContain('ids: $args.ids->joinNotNull(",")');
   });
 
+  it('bakes brackets arrayFormat into the query key', () => {
+    const selection = buildQueryParamsSelection(
+      { ids: 'ids' },
+      { ids: { arrayFormat: 'brackets' } },
+      { ids: { type: 'array' } },
+    );
+    expect(selection).toContain('"ids[]": $args.ids');
+  });
+
   it('sanitizes GraphQL field names in $args while keeping URL keys', () => {
     const selection = buildQueryParamsSelection(
       { filter: 'filter' },

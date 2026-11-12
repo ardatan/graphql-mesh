@@ -619,9 +619,11 @@ function buildFormExplodeOneOfLines(
  * - form explode + `@oneOf` → `$args.arg.Branch_Input.prop` siblings (nulls omitted)
  * - allowDots + known props → `"param.prop": $args.param.prop`
  * - arrayFormat:comma → `->joinNotNull(",")`
+ * - arrayFormat:brackets → `"ids[]": $args.ids` (qs defaults keep empty brackets)
  *
  * Remaining plain objects / arrays rely on connect runtime qs defaults
  * (`indices: false` → deepObject brackets + arrayFormat repeat).
+ * Schema-level `queryStringOptions` (e.g. indices) still flow via `@transport(options:)`.
  */
 export function buildQueryParamsSelection(
   queryParamArgMap?: Record<string, string>,
@@ -684,13 +686,17 @@ export function buildQueryParamsSelection(
       }
     }
 
-    const key = formatQueryParamKey(queryParam);
-    let expr = `$args.${argName}`;
     // Federation Connectors: explode:false / form style arrays → comma-joined list
     if (paramOpts?.arrayFormat === 'comma' && argType === 'array') {
-      expr = `$args.${argName}->joinNotNull(",")`;
+      lines.push(`  ${formatQueryParamKey(queryParam)}: $args.${argName}->joinNotNull(",")`);
+      continue;
     }
-    lines.push(`  ${key}: ${expr}`);
+    // qs `arrayFormat: 'brackets'` → bake empty brackets into the key.
+    if (paramOpts?.arrayFormat === 'brackets' && argType === 'array') {
+      lines.push(`  ${formatQueryParamKey(`${queryParam}[]`)}: $args.${argName}`);
+      continue;
+    }
+    lines.push(`  ${formatQueryParamKey(queryParam)}: $args.${argName}`);
   }
   // Newlines required: Hive `parseQueryParamsEntries` splits on `\n` (Apollo accepts both).
   return `{\n${lines.join('\n')}\n}`;

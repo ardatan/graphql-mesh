@@ -369,7 +369,8 @@ export function loadNonExecutableGraphQLSchemaFromThriftDocument({
     subgraph: subgraphName,
     kind: 'thrift',
     location,
-    headers,
+    // Match shared `@transport(headers: [[String]])` / HTTP+OData loaders.
+    headers: Object.entries(headers),
     options: {
       clientAnnotations: {
         serviceName,

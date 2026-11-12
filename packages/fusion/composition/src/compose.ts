@@ -540,14 +540,18 @@ export function getAnnotatedSubgraphs(
               sourceDirective =>
                 sourceDirective.name !== argName || sourceDirective.type !== arg.type.toString(),
             );
+            const argExtensionDirectives: Record<string, any> = {
+              ...argDirectives,
+              [meshSourceDirectiveName]: filteredSourceDirectives,
+            };
+            if (aliasMeshSource) {
+              delete argExtensionDirectives.source;
+            }
             newArgs[argName] = {
               ...arg,
               extensions: {
                 ...arg.extensions,
-                directives: {
-                  ...argDirectives,
-                  [meshSourceDirectiveName]: filteredSourceDirectives,
-                },
+                directives: argExtensionDirectives,
               },
             };
           } else {

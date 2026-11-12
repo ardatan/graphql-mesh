@@ -30,7 +30,7 @@ export interface GraphQLThriftAnnotations {
   kind: 'thrift';
   subgraph: string;
   location: string;
-  headers: Record<string, string>;
+  headers: [string, string][] | Record<string, string>;
   options: {
     clientAnnotations: {
       serviceName: string;

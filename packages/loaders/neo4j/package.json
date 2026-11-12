@@ -39,6 +39,7 @@
     "@graphql-hive/pubsub": "^2.2.1",
     "@graphql-mesh/transport-neo4j": "^0.13.3",
     "@graphql-mesh/types": "^0.107.3",
+    "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/delegate": "^12.3.2",
     "@graphql-tools/schema": "^11.0.8",
     "@neo4j/introspector": "^5.0.0",
