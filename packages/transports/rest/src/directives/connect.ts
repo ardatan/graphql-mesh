@@ -420,8 +420,8 @@ const defaultQsOptions: IStringifyOptions = {
  * - line form: `limit: $args.limit`
  * Null values are omitted. Array/object encoding follows Hive qs options.
  *
- * Prefer baking OpenAPI styles into `queryParams` at emit time. Legacy
- * `queryStringOptionsByParam.destructObject` remains for older SDLs.
+ * OpenAPI styles (deepObject / form explode / comma) are baked into
+ * `queryParams` at emit time — no per-param runtime options.
  */
 function applyQueryParams(
   fullPath: string,
@@ -433,7 +433,6 @@ function applyQueryParams(
     context: any;
   },
   qsOptions: MeshQsOptions = {},
-  queryStringOptionsByParam?: Record<string, MeshQsOptions & { destructObject?: boolean }>,
   resolveArg?: (argName: string, value: any) => any,
 ): string {
   if (!queryParamsSelection) {
@@ -449,74 +448,24 @@ function applyQueryParams(
     if (argNameMatch && resolveArg) {
       value = resolveArg(argNameMatch[1], value);
     }
-    const paramOpts = queryStringOptionsByParam?.[key] as
-      (MeshQsOptions & { destructObject?: boolean; deepObject?: boolean }) | undefined;
-    // Legacy `@meshRestOptions` path — new schemas bake this into queryParams.
-    if (paramOpts?.destructObject && value && typeof value === 'object' && !Array.isArray(value)) {
-      for (const [nestedKey, nestedVal] of Object.entries(value)) {
-        if (nestedVal == null) continue;
-        // OpenAPI `style: deepObject` → `filter[name]=…` (Apollo queryParams form).
-        if (paramOpts.deepObject) {
-          params[`${key}[${nestedKey}]`] = nestedVal;
-        } else {
-          params[nestedKey] = nestedVal;
-        }
-      }
-      continue;
-    }
     params[key] = value;
   }
   if (!Object.keys(params).length) {
     return fullPath;
   }
   const { jsonStringify: globalJsonStringify, ...restQs } = qsOptions;
-  const byParam = queryStringOptionsByParam || {};
-  // Per-param `jsonStringify` overrides the global flag (Mesh httpOperation semantics).
-  for (const key of Object.keys(params)) {
-    const value = params[key];
-    if (value == null || typeof value !== 'object') continue;
-    const paramJson =
-      byParam[key] && 'jsonStringify' in byParam[key]
-        ? Boolean(byParam[key].jsonStringify)
-        : Boolean(globalJsonStringify);
-    if (paramJson) {
-      params[key] = JSON.stringify(value);
-    }
-  }
-  // Serialize per-param when options differ; otherwise one qs pass.
-  const hasPerParam = Object.keys(byParam).some(k => k in params);
-  let serialized: string;
-  if (hasPerParam) {
-    const parts: string[] = [];
+  if (globalJsonStringify) {
     for (const key of Object.keys(params)) {
-      const {
-        destructObject: _d,
-        deepObject: _deep,
-        jsonStringify: _j,
-        ...paramQs
-      } = (byParam[key] || {}) as MeshQsOptions & {
-        destructObject?: boolean;
-        deepObject?: boolean;
-        jsonStringify?: boolean;
-      };
-      parts.push(
-        qsStringify(
-          { [key]: params[key] },
-          {
-            ...defaultQsOptions,
-            ...restQs,
-            ...paramQs,
-          },
-        ),
-      );
+      const value = params[key];
+      if (value != null && typeof value === 'object') {
+        params[key] = JSON.stringify(value);
+      }
     }
-    serialized = parts.filter(Boolean).join('&');
-  } else {
-    serialized = qsStringify(params, {
-      ...defaultQsOptions,
-      ...restQs,
-    });
   }
+  const serialized = qsStringify(params, {
+    ...defaultQsOptions,
+    ...restQs,
+  });
   if (!serialized) {
     return fullPath;
   }
@@ -1271,7 +1220,7 @@ function pickHttp(http: ConnectHttp | undefined): { method: string; path: string
 }
 
 /**
- * Detect raw binary request bodies without Mesh `@meshRestOptions(isBinary)`.
+ * Detect raw binary request bodies (stream / Blob / Buffer / non-JSON Content-Type).
  * Prefer the runtime value shape and Content-Type — not GraphQL scalar names.
  */
 function isRawBinaryConnectBody(input: unknown, contentType: string | undefined): boolean {
@@ -1404,25 +1353,9 @@ export function addConnectFieldResolver(
   const sources = getSourceMap(schema);
   const source = connectArgs.source ? sources.get(connectArgs.source) : undefined;
   const picked = pickHttp(connectArgs.http);
-  const schemaMeshRestOptions = (schema.extensions as any)?.meshRestOptions || {};
-  const rawFieldMeshRestOptions = (field.extensions as any)?.meshRestOptions || {};
-  // ObjMap args may still be JSON strings if hydrate did not run (direct processConnect).
-  const fieldMeshRestOptions = {
-    ...rawFieldMeshRestOptions,
-    queryStringOptions: parseObjMapArg(rawFieldMeshRestOptions.queryStringOptions),
-    queryStringOptionsByParam: parseObjMapArg(rawFieldMeshRestOptions.queryStringOptionsByParam),
-  } as Record<string, any>;
-  // Operation/field meshRestOptions override serve-time globals (httpOperation parity).
-  const queryStringOptions: MeshQsOptions = {
-    ...opts.queryStringOptions,
-    ...(parseObjMapArg(schemaMeshRestOptions.queryStringOptions) as MeshQsOptions),
-    ...(fieldMeshRestOptions.queryStringOptions as MeshQsOptions),
-  };
-  const queryStringOptionsByParam =
-    fieldMeshRestOptions.queryStringOptionsByParam ||
-    parseObjMapArg(schemaMeshRestOptions.queryStringOptionsByParam);
-  // Timeout is a REST transport option (serve-time / transportEntry), not field SDL.
-  const timeout = opts.timeout ?? schemaMeshRestOptions.timeout;
+  // Schema/field qs + timeout come from `@transport(options:)` / serve-time entry.
+  const queryStringOptions: MeshQsOptions = { ...opts.queryStringOptions };
+  const timeout = opts.timeout;
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // Virtual connector: no http — selection may only use $args / $this / literals.
@@ -1498,7 +1431,6 @@ export function addConnectFieldResolver(
       source?.http?.queryParams,
       vars,
       queryStringOptions,
-      queryStringOptionsByParam,
       resolveArg,
     );
     fullPath = applyQueryParams(
@@ -1506,7 +1438,6 @@ export function addConnectFieldResolver(
       connectArgs.http?.queryParams,
       vars,
       queryStringOptions,
-      queryStringOptionsByParam,
       resolveArg,
     );
     const requestUrlForMeta = (() => {
@@ -1972,41 +1903,6 @@ function attachResponseMetadata(
   return decorate(selected);
 }
 
-function parseObjMapArg(value: unknown): unknown {
-  if (typeof value === 'string') {
-    try {
-      return JSON.parse(value);
-    } catch {
-      return value;
-    }
-  }
-  return value;
-}
-
-/**
- * Restore Mesh-only `@meshRestOptions` into `field.extensions.meshRestOptions`.
- * ObjMap directive args are often JSON strings after SDL round-trip.
- */
-function hydrateMeshRestOptionsFromDirective(field: GraphQLField<any, any>) {
-  const dirs = getDirectiveExtensions(field)?.meshRestOptions as
-    Array<Record<string, any>> | undefined;
-  const fromDirective = dirs?.[0];
-  if (!fromDirective) {
-    return;
-  }
-  const normalized: Record<string, any> = { ...fromDirective };
-  for (const key of ['queryStringOptions', 'queryStringOptionsByParam'] as const) {
-    if (key in normalized) {
-      normalized[key] = parseObjMapArg(normalized[key]);
-    }
-  }
-  field.extensions = field.extensions || {};
-  (field.extensions as any).meshRestOptions = {
-    ...((field.extensions as any).meshRestOptions || {}),
-    ...normalized,
-  };
-}
-
 export function processConnectDirectives(
   schema: GraphQLSchema,
   opts: {
@@ -2041,7 +1937,6 @@ export function processConnectDirectives(
     const fields = type.getFields();
     for (const fieldName in fields) {
       const field = fields[fieldName];
-      hydrateMeshRestOptionsFromDirective(field as GraphQLField<any, any>);
       const directives = getConnectArgsFromNode(field as any);
       if (!directives?.length) continue;
       // First connect wins for execution (repeatable for schema merge cases)

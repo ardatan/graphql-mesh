@@ -26,7 +26,6 @@ import {
   formatEntityStubSelection,
   inferEntityRefFromParentFkNames,
 } from '@graphql-mesh/fusion-composition';
-import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { sanitizeNameForGraphQL } from '@graphql-mesh/utils';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { getMeshEntityKeyFields, getMeshEntityRef, isMeshEntityType } from './entityRefs.js';
@@ -214,20 +213,6 @@ export const LinkDirective = new GraphQLDirective({
   isRepeatable: true,
 });
 
-/**
- * Legacy only — new schemas never emit `@meshRestOptions` (QS bakes into
- * `http.queryParams`). Kept so older SDLs can still declare/hydrate the directive.
- */
-export const MeshRestOptionsDirective = new GraphQLDirective({
-  name: 'meshRestOptions',
-  locations: [DirectiveLocation.FIELD_DEFINITION],
-  args: {
-    queryStringOptions: { type: ObjMapScalar },
-    queryStringOptionsByParam: { type: ObjMapScalar },
-  },
-});
-
-/** @deprecated Only needed when hydrating legacy `@meshRestOptions` SDL. */
 export const MESH_SPEC_LINK_URL = 'https://the-guild.dev/graphql/mesh/spec/v1.0';
 
 export const CONNECT_LINK_URL = 'https://specs.apollo.dev/connect/v0.4';
@@ -603,7 +588,7 @@ function buildFormExplodeOneOfLines(
 /**
  * Build Connectors `http.queryParams` mapping from Mesh queryParamArgMap.
  *
- * Bake OpenAPI/qs options into the mapping so `@meshRestOptions` is unnecessary:
+ * Bake OpenAPI/qs options into the mapping (no runtime per-param options):
  * - deepObject + known props → `filter[name]: $args.filter.name`
  * - form explode (destructObject, not deepObject) + known props → top-level keys
  * - form explode + `@oneOf` → `$args.arg.Branch_Input.prop` siblings (nulls omitted)

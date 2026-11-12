@@ -33,7 +33,7 @@ export interface ProcessDirectiveArgs {
   timeout?: number;
   operationHeaders?: Record<string, string>;
   queryParams?: Record<string, any>;
-  /** qs stringify options (form-urlencoded bodies / legacy flat transport). */
+  /** qs stringify options (form-urlencoded bodies). */
   queryStringOptions?: any;
 }
 
@@ -73,16 +73,13 @@ export function processDirectives(
       )
     : undefined;
   // Kind-specific REST opts live under `@transport(options:)` (Hive TransportEntry).
-  // Legacy flat directive args + schema.extensions.meshRestOptions still accepted.
   const transportOpts = getTransportOptions<RESTTransportDirectiveOptions>(currDirective);
-  const meshRestOptions = (schema.extensions as any)?.meshRestOptions || {};
   const globalOptions = {
     endpoint: sourceDirective?.http?.baseURL ?? currDirective?.location,
     operationHeaders: sourceHeaders ?? currDirective?.headers,
-    queryParams: transportOpts.queryParams ?? meshRestOptions.queryParams,
-    queryStringOptions:
-      transportOpts.queryStringOptions ?? meshRestOptions.queryStringOptions,
-    timeout: transportOpts.timeout ?? meshRestOptions.timeout,
+    queryParams: transportOpts.queryParams,
+    queryStringOptions: transportOpts.queryStringOptions,
+    timeout: transportOpts.timeout,
     ...extraGlobalOptions,
   };
   // Wire @connect resolvers (Federation Connectors)

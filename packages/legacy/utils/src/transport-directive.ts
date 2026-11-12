@@ -64,36 +64,9 @@ export type RESTTransportDirectiveOptions = {
   queryStringOptions?: Record<string, any>;
 };
 
-/**
- * Read kind-specific options from a `@transport` usage, accepting the legacy
- * flat REST args (`queryStringOptions` / `queryParams` / `timeout` on the
- * directive itself) for older supergraphs.
- */
+/** Read kind-specific options from `@transport(options:)`. */
 export function getTransportOptions<Options extends Record<string, any> = Record<string, any>>(
-  transport:
-    | (Partial<TransportDirectiveArgs<Options>> & Record<string, unknown>)
-    | null
-    | undefined,
+  transport: Partial<TransportDirectiveArgs<Options>> | null | undefined,
 ): Options {
-  if (!transport) {
-    return {} as Options;
-  }
-  const nested = (transport.options || {}) as Options;
-  const legacy = transport as Partial<TransportDirectiveArgs<Options>> & {
-    queryStringOptions?: unknown;
-    queryParams?: unknown;
-    timeout?: unknown;
-  };
-  return {
-    ...nested,
-    ...(legacy.queryStringOptions != null && (nested as any).queryStringOptions == null
-      ? { queryStringOptions: legacy.queryStringOptions }
-      : {}),
-    ...(legacy.queryParams != null && (nested as any).queryParams == null
-      ? { queryParams: legacy.queryParams }
-      : {}),
-    ...(legacy.timeout != null && (nested as any).timeout == null
-      ? { timeout: legacy.timeout }
-      : {}),
-  } as Options;
+  return (transport?.options || {}) as Options;
 }

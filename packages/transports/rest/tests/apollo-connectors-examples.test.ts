@@ -409,8 +409,7 @@ describe('Federation Connectors error shape', () => {
         name: String
       }
     `;
-    // Nested object query values stringify as deepObject via qs defaults — no
-    // `@meshRestOptions` / field extensions required.
+    // Nested object query values stringify as deepObject via qs defaults.
     const schema = processConnectDirectives(buildSchema(sdl), {
       globalFetch: (async (url: string) => {
         urls.push(String(url));

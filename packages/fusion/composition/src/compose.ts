@@ -168,10 +168,7 @@ export function getAnnotatedSubgraphs(
       const existingTransport = (extensions.directives.transport || [])[0] || {};
       // Hive execution hint — not part of the Federation Connectors subgraph contract.
       // Preserve kind-specific `options` from the loader (qs / timeout / …).
-      const mergedOptions = {
-        ...((extensions as any).meshRestOptions || {}),
-        ...(existingTransport.options || {}),
-      };
+      const mergedOptions = { ...(existingTransport.options || {}) };
       extensions.directives.transport = [
         {
           ...existingTransport,
