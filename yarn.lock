@@ -5336,6 +5336,9 @@ __metadata:
   resolution: "@e2e/openapi-entity-stubs@workspace:e2e/openapi-entity-stubs"
   dependencies:
     "@graphql-hive/gateway": "npm:^2.15.4"
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@omnigraph/openapi": "workspace:*"
+    fets: "npm:^0.8.13"
     graphql: "npm:16.14.0"
   languageName: unknown
   linkType: soft
@@ -5571,6 +5574,7 @@ __metadata:
     "@graphql-hive/gateway": "npm:^2.15.4"
     "@types/dockerode": "npm:^4.0.1"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
+    "@whatwg-node/fetch": "npm:^0.12.1"
     "@whatwg-node/promise-helpers": "npm:^2.0.1"
     dockerode: "npm:^5.0.1"
     glob: "npm:^14.0.4"
@@ -13790,6 +13794,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.3.2"
+    "@graphql-tools/executor": "npm:^4.1.7"
     "@graphql-tools/utils": "npm:^13.2.2"
     "@json-schema-tools/meta-schema": "npm:^1.7.5"
     "@types/qs": "npm:6.15.1"

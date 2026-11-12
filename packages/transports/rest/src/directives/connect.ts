@@ -165,12 +165,18 @@ function resolveTemplate(
     (_, value: string) => value,
   );
   // `{$args.x->match(...)}` / `{$this["a.b"]}` — evaluate as Connectors exprs (Apollo parity).
+  // Mesh `:default` after a path (e.g. `{$context.headers['x-port']:4001}`) is not Connectors
+  // syntax; strip it for eval and apply when the looked-up value is empty.
   resolved = resolved.replace(/\{\$([^{}]+)\}/g, (full, expr: string) => {
-    if (!expr.includes('->') && !expr.includes('[')) {
+    const { path: exprPath, defaultValue } = splitMeshTemplateDefault(expr);
+    if (!exprPath.includes('->') && !exprPath.includes('[')) {
       return full;
     }
-    const value = evalConnectorsVarExpr(`$${expr}`, vars);
+    const value = evalConnectorsVarExpr(`$${exprPath}`, vars);
     if (value == null || value === '') {
+      if (defaultValue != null) {
+        return options.encodeValues ? encodeURIComponent(defaultValue) : defaultValue;
+      }
       return '';
     }
     return options.encodeValues ? encodeURIComponent(String(value)) : String(value);
@@ -207,6 +213,53 @@ function resolveTemplate(
 /**
  * Evaluate `$args.x->match(...)` / `$this["key"]` style Connectors variable expressions.
  */
+/**
+ * Split Mesh `{path:default}` suffix from a Connectors `{$…}` body.
+ * Does not treat `->method(...)` colons inside args as defaults.
+ */
+function splitMeshTemplateDefault(expr: string): { path: string; defaultValue?: string } {
+  if (expr.includes('->')) {
+    return { path: expr };
+  }
+  // Default starts at the last `:` that is outside quotes/brackets.
+  let depth = 0;
+  let inQuote: string | null = null;
+  let lastColon = -1;
+  for (let i = 0; i < expr.length; i++) {
+    const c = expr[i];
+    if (inQuote) {
+      if (c === '\\' && i + 1 < expr.length) {
+        i++;
+        continue;
+      }
+      if (c === inQuote) inQuote = null;
+      continue;
+    }
+    if (c === '"' || c === "'") {
+      inQuote = c;
+      continue;
+    }
+    if (c === '[' || c === '(') {
+      depth++;
+      continue;
+    }
+    if (c === ']' || c === ')') {
+      depth = Math.max(0, depth - 1);
+      continue;
+    }
+    if (c === ':' && depth === 0) {
+      lastColon = i;
+    }
+  }
+  if (lastColon < 0) {
+    return { path: expr };
+  }
+  return {
+    path: expr.slice(0, lastColon),
+    defaultValue: expr.slice(lastColon + 1),
+  };
+}
+
 function evalConnectorsVarExpr(
   expr: string,
   vars: {
@@ -612,6 +665,15 @@ function applyHeaders(
 export type ConnectSelectionExtras = {
   status?: number;
   responseHeaders?: Headers;
+  /** Virtual connectors / path templates: resolve `$args` / `$this` in selections. */
+  vars?: {
+    args: Record<string, any>;
+    thisValue: any;
+    env: Record<string, string | undefined>;
+    context: any;
+    config?: Record<string, any>;
+    batch?: Record<string, any>;
+  };
 };
 
 /**
@@ -656,6 +718,12 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
 function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any {
   if (path === '$' || path === '$root') return root;
   if (path === '$status') return extras.status;
+  if (
+    extras.vars &&
+    /^\$args\b|^\$this\b|^\$env\b|^\$context\b|^\$batch\b|^\$config\b/.test(path)
+  ) {
+    return evalConnectorsVarExpr(path, extras.vars);
+  }
   if (path.startsWith('$response.headers.')) {
     const name = path.slice('$response.headers.'.length).replace(/^['"]|['"]$/g, '');
     const value = extras.responseHeaders?.get(name);
@@ -1306,7 +1374,8 @@ export function addConnectFieldResolver(
   const queryStringOptionsByParam =
     fieldMeshRestOptions.queryStringOptionsByParam ||
     parseObjMapArg(schemaMeshRestOptions.queryStringOptionsByParam);
-  const timeout = opts.timeout ?? fieldMeshRestOptions.timeout ?? schemaMeshRestOptions.timeout;
+  // Field > schema > serve-time global (same precedence as queryStringOptions).
+  const timeout = fieldMeshRestOptions.timeout ?? schemaMeshRestOptions.timeout ?? opts.timeout;
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // Virtual connector: no http — selection may only use $args / $this / literals.
@@ -1323,18 +1392,23 @@ export function addConnectFieldResolver(
           { extensions: { code: 'CONNECTOR_VALIDATE' } },
         );
       }
-      // `$this` is the parent object; `$args` are field args. Evaluate via var exprs when
-      // present so `$this["TLSv1.3"]` works (Apollo virtual-connector rename pattern).
-      if (selection.includes('$args') || selection.includes('$this')) {
-        return evalConnectorsVarExpr(selection.trim(), {
-          args: args || {},
-          thisValue: root,
-          env: process.env,
-          context: context || {},
-          config: {},
-        });
+      // `$this` / `$args` — single expr (`$this["TLSv1.3"]`) or multi-field (`id: $args.id`).
+      const vars = {
+        args: args || {},
+        thisValue: root,
+        env: process.env,
+        context: context || {},
+        config: {},
+      };
+      const trimmedSel = selection.trim();
+      const isSingleVarExpr =
+        /^\$((args|this|env|context|batch|config)\b|\()/.test(trimmedSel) &&
+        !/^[A-Za-z_][\w]*\s*:/.test(trimmedSel) &&
+        !trimmedSel.includes('\n');
+      if (isSingleVarExpr) {
+        return evalConnectorsVarExpr(trimmedSel, vars);
       }
-      return applySelection(selection, root || {}, {});
+      return applySelection(selection, root || {}, { vars });
     }
 
     // Serialize scalars (DateTime → ISO, etc.) before path/header/query interpolation —

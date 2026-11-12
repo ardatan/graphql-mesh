@@ -1,4 +1,5 @@
 import {
+  getNullableType,
   GraphQLError,
   isAbstractType,
   type GraphQLObjectType,
@@ -58,24 +59,33 @@ export function getTypeResolverForAbstractType({
     const dataTypeOf = typeof data;
 
     if (dataTypeOf !== 'object') {
-      // Scalar/container members (ex-`@resolveRoot`): single scalar field, or
-      // Connectors `field: $` selection. Try parseValue to pick the member.
-      for (const possibleType of possibleTypes) {
-        const fields = Object.values(possibleType.getFields());
-        if (fields.length !== 1) continue;
-        const field = fields[0];
-        const connectSel = getDirective(info.schema, field, 'connect')?.[0]?.selection;
-        const isRootAlias =
-          typeof connectSel === 'string' &&
-          (connectSel.trim() === '$' || connectSel.trim() === `${field.name}: $`);
-        const fieldType = field.type;
-        if ((isRootAlias || 'parseValue' in fieldType) && fieldType && 'parseValue' in fieldType) {
-          try {
-            fieldType.parseValue(data);
-            return possibleType.name;
-          } catch (e) {}
+      // Scalar/container members (ex-`@resolveRoot`): prefer Connectors `field: $` root
+      // aliases so permissive scalars (JSON/ObjMap) on non-alias members cannot win first.
+      const tryParseMember = (requireRootAlias: boolean) => {
+        for (const possibleType of possibleTypes) {
+          const fields = Object.values(possibleType.getFields());
+          if (fields.length !== 1) continue;
+          const field = fields[0];
+          const connectSel = getDirective(info.schema, field, 'connect')?.[0]?.selection;
+          const isRootAlias =
+            typeof connectSel === 'string' &&
+            (connectSel.trim() === '$' || connectSel.trim() === `${field.name}: $`);
+          if (requireRootAlias && !isRootAlias) continue;
+          if (!requireRootAlias && isRootAlias) continue;
+          const fieldType = getNullableType(field.type);
+          if (fieldType && 'parseValue' in fieldType) {
+            try {
+              fieldType.parseValue(data);
+              return possibleType.name;
+            } catch (e) {}
+          }
         }
-      }
+        return undefined;
+      };
+      const fromRootAlias = tryParseMember(true);
+      if (fromRootAlias) return fromRootAlias;
+      const fromOther = tryParseMember(false);
+      if (fromOther) return fromOther;
     }
 
     // const validationErrors: Record<string, ErrorObject[]> = {};

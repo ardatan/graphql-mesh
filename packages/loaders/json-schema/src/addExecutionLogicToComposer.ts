@@ -941,9 +941,12 @@ function rewriteQueryParamsEnumArgs(
     const named = getNamedType(arg.type);
     if (!isEnumType(named)) continue;
     const bare = `$args.${argName}`;
-    if (!next.includes(bare) || next.includes(`${bare}->match(`)) continue;
+    // GraphQL argument names are [_A-Za-z0-9]; boundary avoids `$args.sort` → `$args.sortOrder`.
+    const bareRe = new RegExp(`\\$args\\.${argName}(?![\\w])(?!->match\\()`, 'g');
+    if (!bareRe.test(next)) continue;
+    bareRe.lastIndex = 0;
     const wrapped = wrapArgExprWithEnumMatch(bare, named);
-    next = next.replaceAll(bare, wrapped);
+    next = next.replace(bareRe, () => wrapped);
   }
   return next;
 }

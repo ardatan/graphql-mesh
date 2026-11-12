@@ -11,12 +11,13 @@ describe('Reproduction of #9088', () => {
     const CategoryUnion = schema.getType('Category');
     expect(CategoryUnion).toBeDefined();
     expect(CategoryUnion).toBeInstanceOf(GraphQLUnionType);
-    // Discriminator is baked into Connectors `__typename: $.template->match(...)`.
+    // Discriminator is baked into Connectors `$.template->match([value, { __typename }])`.
     const sdl = printSchemaWithDirectives(schema);
     expect(sdl).not.toContain('@discriminator');
-    expect(sdl).toContain('__typename:');
     expect(sdl).toContain('$.template->match(');
-    expect(sdl).toContain('categoryListing');
-    expect(sdl).toContain('CategoryCategoryListing');
+    // Printed SDL escapes quotes inside the selection string (`\"categoryListing\"`).
+    expect(sdl).toMatch(
+      /\$\.template->match\([\s\S]*categoryListing[\s\S]*__typename:\s*\\"CategoryCategoryListing\\"/,
+    );
   });
 });

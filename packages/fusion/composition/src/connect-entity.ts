@@ -118,11 +118,15 @@ export function entityKeyFieldsFromHttpPath(
   }
   const pathWithoutQuery = path.split('?')[0];
   const fieldSet = typeFieldNames instanceof Set ? typeFieldNames : new Set(typeFieldNames);
-  for (const key of fieldSet) {
+  // Longer names first so `id` does not win inside `$args.identifier`.
+  const keys = [...fieldSet].sort((a, b) => b.length - a.length);
+  for (const key of keys) {
     // Accept Connectors (`$args.id` / `{$args.id}`) and Mesh OpenAPI (`{args.id}`) forms.
+    // Braced forms need a closing `}`; bare `$args.*` needs an identifier boundary.
+    const bareArgsRe = new RegExp(`\\$args\\.${key}(?![\\w])`);
     if (
       pathWithoutQuery.includes(`{$args.${key}}`) ||
-      pathWithoutQuery.includes(`$args.${key}`) ||
+      bareArgsRe.test(pathWithoutQuery) ||
       pathWithoutQuery.includes(`{args.${key}}`)
     ) {
       return [key];

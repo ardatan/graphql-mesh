@@ -525,6 +525,78 @@ describe('Federation Connectors error shape', () => {
     expect(urls).toEqual(['http://localhost:5555/pet/pet200']);
   });
 
+  it('uses Mesh :default when $context.headers bracket accessor is missing', async () => {
+    const urls: string[] = [];
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema
+        @source(
+          name: "Pets"
+          http: { baseURL: "http://localhost:{$context.headers['x-upstream-port']:4001}" }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        pet(petId: String!): Pet
+          @connect(source: "Pets", http: { GET: "/pet/{$args.petId}" }, selection: "name")
+      }
+
+      type Pet {
+        name: String
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json({ name: 'Bob' });
+      }) as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          pet(petId: "pet200") {
+            name
+          }
+        }
+      `),
+      contextValue: { headers: {} },
+    });
+    expect(result.errors).toBeUndefined();
+    expect(urls).toEqual(['http://localhost:4001/pet/pet200']);
+  });
+
+  it('evaluates multi-field virtual connector selections with $args', async () => {
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+      schema {
+        query: Query
+      }
+
+      type Query {
+        rename(id: ID!): Renamed @connect(selection: "id: $args.id")
+      }
+
+      type Renamed {
+        id: ID
+      }
+    `;
+    const schema = processConnectDirectives(buildSchema(sdl), {});
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          rename(id: "abc") {
+            id
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ rename: { id: 'abc' } });
+  });
+
   it('exposes Query._entities from entity:true and type-level @connect (Hive path)', async () => {
     const urls: string[] = [];
     const sdl = /* GraphQL */ `
