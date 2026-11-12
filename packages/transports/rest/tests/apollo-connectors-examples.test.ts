@@ -382,7 +382,9 @@ describe('Federation Connectors error shape', () => {
       alwaysOk: { id: 'missing', name: null },
     });
   });
+});
 
+describe('Federation Connectors queryParams / qs bake', () => {
   it('serializes deepObject query params as filter[name]=value', async () => {
     const urls: string[] = [];
     const sdl = /* GraphQL */ `
@@ -476,7 +478,9 @@ describe('Federation Connectors error shape', () => {
     expect(urls[0]).not.toContain('ids%5B%5D%5B%5D');
     expect(urls[0]).not.toContain('ids%5B%5D%5B0%5D');
   });
+});
 
+describe('Federation Connectors HTTP / templates', () => {
   it('percent-encodes path template expression values', async () => {
     const urls: string[] = [];
     const sdl = /* GraphQL */ `
