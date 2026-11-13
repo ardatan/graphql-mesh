@@ -43,34 +43,29 @@ export type TransportDirectiveArgs = SharedTransportDirectiveArgs<{
   expandNavProps: boolean;
 }> & { kind: 'odata' };
 
-export const EntityInfoDirective = new GraphQLDirective({
-  name: 'entityInfo',
+/**
+ * Federation-compatible entity key; OData reads `fields` for URLs / `$select`.
+ * Prefer putting `@key` on type extensions only — Mesh Compose imports Federation’s
+ * `@key` via `@link`, so registering this definition on a composed subgraph duplicates it.
+ */
+export const KeyDirective = new GraphQLDirective({
+  name: 'key',
+  isRepeatable: true,
   args: {
-    actualFields: {
-      type: new GraphQLList(GraphQLString),
+    fields: {
+      type: new GraphQLNonNull(GraphQLString),
     },
-    navigationFields: {
-      type: new GraphQLList(GraphQLString),
-    },
-    identifierFieldName: {
-      type: GraphQLString,
-    },
-    identifierFieldTypeRef: {
-      type: GraphQLString,
-    },
-    isOpenType: {
+    resolvable: {
       type: GraphQLBoolean,
+      defaultValue: true,
     },
   },
   locations: [DirectiveLocation.OBJECT, DirectiveLocation.INTERFACE],
 });
 
-export interface EntityInfoDirectiveArgs {
-  actualFields: string[];
-  navigationFields: string[];
-  identifierFieldName?: string;
-  identifierFieldTypeRef?: string;
-  isOpenType: boolean;
+export interface KeyDirectiveArgs {
+  fields: string;
+  resolvable?: boolean;
 }
 
 export const SingularNavDirective = new GraphQLDirective({
@@ -215,9 +210,6 @@ export const EntitySetByIdentifierDirective = new GraphQLDirective({
     identifierFieldName: {
       type: GraphQLString,
     },
-    identifierFieldTypeRef: {
-      type: GraphQLString,
-    },
   },
   locations: [DirectiveLocation.FIELD_DEFINITION],
 });
@@ -225,7 +217,6 @@ export const EntitySetByIdentifierDirective = new GraphQLDirective({
 export interface EntitySetByIdentifierDirectiveArgs {
   entitySetName: string;
   identifierFieldName: string;
-  identifierFieldTypeRef: string;
 }
 
 export const EntitySetCountDirective = new GraphQLDirective({
@@ -265,9 +256,6 @@ export const DeleteEntitySetDirective = new GraphQLDirective({
     identifierFieldName: {
       type: GraphQLString,
     },
-    identifierFieldTypeRef: {
-      type: GraphQLString,
-    },
   },
   locations: [DirectiveLocation.FIELD_DEFINITION],
 });
@@ -275,7 +263,6 @@ export const DeleteEntitySetDirective = new GraphQLDirective({
 export interface DeleteEntitySetDirectiveArgs {
   entitySetName: string;
   identifierFieldName: string;
-  identifierFieldTypeRef: string;
 }
 
 export const UpdateEntitySetDirective = new GraphQLDirective({
@@ -287,9 +274,6 @@ export const UpdateEntitySetDirective = new GraphQLDirective({
     identifierFieldName: {
       type: GraphQLString,
     },
-    identifierFieldTypeRef: {
-      type: GraphQLString,
-    },
   },
   locations: [DirectiveLocation.FIELD_DEFINITION],
 });
@@ -297,7 +281,6 @@ export const UpdateEntitySetDirective = new GraphQLDirective({
 export interface UpdateEntitySetDirectiveArgs {
   entitySetName: string;
   identifierFieldName: string;
-  identifierFieldTypeRef: string;
 }
 
 export const AbstractTypeDirective = new GraphQLDirective({
@@ -325,13 +308,15 @@ export const AbstractTypeDirective = new GraphQLDirective({
 export interface AbstractTypeDirectiveArgs {
   entityTypeName: string;
   isAbstract: boolean;
-  aliasNamespaceMap: [string, string][];
-  multipleSchemas: boolean;
+  /** Omitted when empty (single-namespace schemas). */
+  aliasNamespaceMap?: [string, string][];
+  /** Omit unless true; runtime treats missing as false. */
+  multipleSchemas?: boolean;
   namespaces: string[];
 }
 
 export interface DirectiveArgsMap {
-  entityInfo?: EntityInfoDirectiveArgs;
+  key?: KeyDirectiveArgs;
   singularNav?: SingularNavDirectiveArgs;
   pluralNav?: PluralNavDirectiveArgs;
   navProp?: NavPropDirectiveArgs;
@@ -401,9 +386,9 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
           resolveType: createAbstractTypeResolver({
             entityTypeName: abstractTypeDirective.entityTypeName,
             isAbstract: abstractTypeDirective.isAbstract,
-            aliasNamespaceMap: new Map(abstractTypeDirective.aliasNamespaceMap),
-            multipleSchemas: abstractTypeDirective.multipleSchemas,
-            namespaces: new Set(abstractTypeDirective.namespaces),
+            aliasNamespaceMap: new Map(abstractTypeDirective.aliasNamespaceMap ?? []),
+            multipleSchemas: abstractTypeDirective.multipleSchemas ?? false,
+            namespaces: new Set(abstractTypeDirective.namespaces ?? []),
           }),
         });
       }
@@ -439,7 +424,6 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
           endpoint,
           entitySetName: deleteEntitySetDirective.entitySetName,
           identifierFieldName: deleteEntitySetDirective.identifierFieldName,
-          identifierFieldTypeRef: deleteEntitySetDirective.identifierFieldTypeRef,
           dataloaderFactory,
           headersFactory,
         });
@@ -449,7 +433,6 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
           endpoint,
           entitySetName: entitySetByIdentifierDirective.entitySetName,
           identifierFieldName: entitySetByIdentifierDirective.identifierFieldName,
-          identifierFieldTypeRef: entitySetByIdentifierDirective.identifierFieldTypeRef,
           expandNavProps: transportDirective.options?.expandNavProps,
           dataloaderFactory,
           headersFactory,
@@ -529,7 +512,6 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
           endpoint,
           entitySetName: updateEntitySetDirective.entitySetName,
           identifierFieldName: updateEntitySetDirective.identifierFieldName,
-          identifierFieldTypeRef: updateEntitySetDirective.identifierFieldTypeRef,
           dataloaderFactory,
           headersFactory,
         });

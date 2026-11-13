@@ -13,7 +13,6 @@ export interface EntitySetByIdentifierResolverConfig {
   endpoint: string;
   entitySetName: string;
   identifierFieldName: string;
-  identifierFieldTypeRef: string;
   dataloaderFactory: DataloaderFactory;
   expandNavProps: boolean;
   headersFactory: (resolverData: any, method: string) => Record<string, string>;
@@ -23,7 +22,6 @@ export function createEntitySetByIdentifierResolver({
   endpoint,
   entitySetName,
   identifierFieldName,
-  identifierFieldTypeRef,
   dataloaderFactory,
   expandNavProps,
   headersFactory,
@@ -31,7 +29,7 @@ export function createEntitySetByIdentifierResolver({
   return function entitySetByIdentifierResolver(root, args, context, info) {
     const url = new URL(endpoint);
     url.href = urljoin(url.href, '/' + entitySetName);
-    addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
+    addIdentifierToUrl(url, identifierFieldName, args);
     const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
     const searchParams = prepareSearchParams({
       fragment: parsedInfoFragment,

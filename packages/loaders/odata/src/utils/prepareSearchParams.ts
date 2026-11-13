@@ -1,11 +1,15 @@
-import { isAbstractType, type GraphQLSchema } from 'graphql';
+import { isAbstractType, isObjectType, type GraphQLObjectType, type GraphQLSchema } from 'graphql';
 import {
   simplifyParsedResolveInfoFragmentWithType,
   type ResolveTree,
 } from 'graphql-parse-resolve-info';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { URLSearchParams } from '@whatwg-node/fetch';
-import type { DirectiveArgsMap } from '../directives.js';
+import {
+  getNavigationPropertyName,
+  isODataEntityPropertyField,
+  isODataExpandableNavigationField,
+} from './entityFieldKind.js';
+import { getEntityKeyFieldName } from './getEntityKeyFieldName.js';
 import { QUERY_OPTIONS_FIELDS } from './QueryOptionsFields.js';
 
 interface PrepareSearchParamsOptions {
@@ -39,29 +43,33 @@ export function prepareSearchParams({
   // implemented types, we cannot use $select
   const isSelectable = !isAbstractType(returnType);
 
-  if (isSelectable) {
-    const returnTypeDirectives = getDirectiveExtensions<DirectiveArgsMap>(returnType);
-    const entityInfo = returnTypeDirectives?.entityInfo?.[0];
+  if (isSelectable && isObjectType(returnType)) {
+    const identifierFieldName = getEntityKeyFieldName(returnType as GraphQLObjectType);
+    const fieldMap = (returnType as GraphQLObjectType).getFields();
     const selectionFields: string[] = [];
     const expandedFields: string[] = [];
     for (const fieldName in fields) {
-      if (entityInfo.actualFields.includes(fieldName)) {
+      const field = fieldMap[fieldName];
+      if (!field) {
+        continue;
+      }
+      if (isODataEntityPropertyField(field)) {
         selectionFields.push(fieldName);
       }
-      if (expandNavProps && entityInfo.navigationFields.includes(fieldName)) {
-        const searchParams = prepareSearchParams({
+      if (expandNavProps && isODataExpandableNavigationField(field)) {
+        const navName = getNavigationPropertyName(field) || fieldName;
+        const nestedSearchParams = prepareSearchParams({
           fragment: fields[fieldName],
           schema,
-
           expandNavProps,
         });
-        const searchParamsStr = decodeURIComponent(searchParams.toString());
-        expandedFields.push(`${fieldName}(${searchParamsStr.split('&').join(';')})`);
-        selectionFields.push(fieldName);
+        const searchParamsStr = decodeURIComponent(nestedSearchParams.toString());
+        expandedFields.push(`${navName}(${searchParamsStr.split('&').join(';')})`);
+        selectionFields.push(navName);
       }
     }
-    if (!selectionFields.includes(entityInfo.identifierFieldName)) {
-      selectionFields.push(entityInfo.identifierFieldName);
+    if (identifierFieldName && !selectionFields.includes(identifierFieldName)) {
+      selectionFields.push(identifierFieldName);
     }
     if (selectionFields.length) {
       searchParams.set('$select', selectionFields.join(','));

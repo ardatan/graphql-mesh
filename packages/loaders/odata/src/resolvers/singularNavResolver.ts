@@ -1,12 +1,11 @@
 import type { GraphQLFieldResolver, GraphQLObjectType } from 'graphql';
 import { parseResolveInfo, type ResolveTree } from 'graphql-parse-resolve-info';
 import urljoin from 'url-join';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { Request } from '@whatwg-node/fetch';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import type { DirectiveArgsMap } from '../directives.js';
 import type { DataloaderFactory } from '../getDataloaderFactory.js';
 import { addIdentifierToUrl } from '../utils/addIdentifierToUrl.js';
+import { getEntityKeyFieldName } from '../utils/getEntityKeyFieldName.js';
 import { getUrlString } from '../utils/getUrlString.js';
 import { handleResponseText } from '../utils/handleResponseText.js';
 import { prepareSearchParams } from '../utils/prepareSearchParams.js';
@@ -31,14 +30,13 @@ export function createSingularNavResolver({
     const url = new URL(root['@odata.id']);
     url.href = urljoin(url.href, '/' + navigationPropertyName);
     const returnType = info.returnType as GraphQLObjectType;
-    const returnTypeDirectives = getDirectiveExtensions<DirectiveArgsMap>(returnType);
-    const entityInfo = returnTypeDirectives.entityInfo[0];
-    addIdentifierToUrl(
-      url,
-      entityInfo.identifierFieldName,
-      entityInfo.identifierFieldTypeRef,
-      args,
-    );
+    const identifierFieldName = getEntityKeyFieldName(returnType);
+    if (!identifierFieldName) {
+      throw new Error(
+        `Missing @key(fields) on ${returnType.name} for singular navigation "${navigationPropertyName}"`,
+      );
+    }
+    addIdentifierToUrl(url, identifierFieldName, args);
     const parsedInfoFragment = parseResolveInfo(info) as ResolveTree;
     const searchParams = prepareSearchParams({
       fragment: parsedInfoFragment,

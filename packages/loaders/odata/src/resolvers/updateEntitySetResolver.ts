@@ -12,7 +12,6 @@ export interface UpdateEntitySetResolverOptions {
   endpoint: string;
   entitySetName: string;
   identifierFieldName: string;
-  identifierFieldTypeRef: string;
   dataloaderFactory: DataloaderFactory;
   headersFactory: (resolverData: any, method: string) => Record<string, string>;
 }
@@ -21,14 +20,13 @@ export function createUpdateEntitySetResolver({
   endpoint,
   entitySetName,
   identifierFieldName,
-  identifierFieldTypeRef,
   dataloaderFactory,
   headersFactory,
 }: UpdateEntitySetResolverOptions): GraphQLFieldResolver<any, any> {
   return function updateEntitySetResolver(root, args, context, info) {
     const url = new URL(endpoint);
     url.href = urljoin(url.href, '/' + entitySetName);
-    addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
+    addIdentifierToUrl(url, identifierFieldName, args);
     const urlString = getUrlString(url);
     rebuildOpenInputObjects(args.input);
     const method = 'PATCH';

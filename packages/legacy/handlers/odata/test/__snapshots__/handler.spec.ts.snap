@@ -6,8 +6,6 @@ exports[`odata should create a GraphQL schema from a simple OData endpoint 1`] =
   mutation: Mutation
 }
 
-directive @entityInfo(actualFields: [String], navigationFields: [String], identifierFieldName: String, identifierFieldTypeRef: String, isOpenType: Boolean) on OBJECT | INTERFACE
-
 directive @abstractType(entityTypeName: String, isAbstract: Boolean, aliasNamespaceMap: [[String]], multipleSchemas: Boolean, namespaces: [String]) on INTERFACE | OBJECT
 
 directive @singularNav(navigationPropertyName: String) on FIELD_DEFINITION
@@ -28,17 +26,17 @@ directive @singleton(singletonName: String) on FIELD_DEFINITION
 
 directive @entitySet(entitySetName: String) on FIELD_DEFINITION
 
-directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
 directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
 
 directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
 
-directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @deleteEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
-directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @updateEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
-type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+type Person implements IPerson @abstractType(entityTypeName: "Person", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "UserName") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -61,7 +59,7 @@ type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
 }
 
-interface IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+interface IPerson @abstractType(entityTypeName: "Person", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "UserName") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -167,19 +165,19 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-type Airline @entityInfo(actualFields: ["AirlineCode", "Name"], navigationFields: [], isOpenType: false, identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") {
+type Airline @key(fields: "AirlineCode") {
   AirlineCode: String!
   Name: String
 }
 
-type Airport @entityInfo(actualFields: ["Name", "IcaoCode", "IataCode", "Location"], navigationFields: [], isOpenType: false, identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") {
+type Airport @key(fields: "IcaoCode") {
   Name: String
   IcaoCode: String!
   IataCode: String
   Location: AirportLocation
 }
 
-type Trip implements ITrip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Description", "Tags", "StartsAt", "EndsAt"], navigationFields: ["PlanItems"], isOpenType: false, identifierFieldName: "TripId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "Trip", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+type Trip implements ITrip @abstractType(entityTypeName: "Trip", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "TripId") {
   TripId: Int!
   ShareId: GUID!
   Name: String
@@ -193,7 +191,7 @@ type Trip implements ITrip @entityInfo(actualFields: ["TripId", "ShareId", "Name
   GetInvolvedPeople(trip: TripInput): [Person] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople")
 }
 
-interface ITrip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Description", "Tags", "StartsAt", "EndsAt"], navigationFields: ["PlanItems"], isOpenType: false, identifierFieldName: "TripId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "Trip", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+interface ITrip @abstractType(entityTypeName: "Trip", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "TripId") {
   TripId: Int!
   ShareId: GUID!
   Name: String
@@ -228,7 +226,7 @@ input TripInput {
   EndsAt: DateTime!
 }
 
-type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+type PlanItem implements IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -236,7 +234,7 @@ type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "Con
   Duration: ISO8601Duration!
 }
 
-interface IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+interface IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -266,7 +264,7 @@ interface IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode",
 """
 scalar ISO8601Duration
 
-type Event implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "OccursAt", "Description"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") {
+type Event implements IPlanItem @key(fields: "PlanItemId") {
   OccursAt: EventLocation
   Description: String
   PlanItemId: Int!
@@ -276,7 +274,7 @@ type Event implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "Confir
   Duration: ISO8601Duration!
 }
 
-type PublicTransportation implements IPublicTransportation & IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+type PublicTransportation implements IPublicTransportation & IPlanItem @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
@@ -285,7 +283,7 @@ type PublicTransportation implements IPublicTransportation & IPlanItem @entityIn
   Duration: ISO8601Duration!
 }
 
-interface IPublicTransportation @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+interface IPublicTransportation @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
@@ -294,7 +292,7 @@ interface IPublicTransportation @entityInfo(actualFields: ["PlanItemId", "Confir
   Duration: ISO8601Duration!
 }
 
-type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber", "FlightNumber"], navigationFields: ["Airline", "From", "To"], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") {
+type Flight implements IPublicTransportation @key(fields: "PlanItemId") {
   FlightNumber: String
   Airline: Airline @navProp(navigationPropertyName: "Airline")
   From: Airport @navProp(navigationPropertyName: "From")
@@ -307,7 +305,7 @@ type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanIte
   Duration: ISO8601Duration!
 }
 
-type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Cost"], navigationFields: ["Peers"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") {
+type Employee implements IPerson @key(fields: "UserName") {
   Cost: BigInt!
   Peers(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Peers")
   PeersById(id: ID): Person @singularNav(navigationPropertyName: "Peers")
@@ -333,7 +331,7 @@ type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstNa
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
 }
 
-type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Budget", "BossOffice"], navigationFields: ["DirectReports"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") {
+type Manager implements IPerson @key(fields: "UserName") {
   Budget: BigInt!
   BossOffice: Location
   DirectReports(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "DirectReports")
@@ -360,29 +358,29 @@ type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstNam
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
 }
 
-type Location implements ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+type Location implements ILocation @abstractType(entityTypeName: "Location", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   Address: String
   City: City
 }
 
-interface ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+interface ILocation @abstractType(entityTypeName: "Location", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   Address: String
   City: City
 }
 
-type City @entityInfo(actualFields: ["Name", "CountryRegion", "Region"], navigationFields: [], isOpenType: false) {
+type City {
   Name: String
   CountryRegion: String
   Region: String
 }
 
-type AirportLocation implements ILocation @entityInfo(actualFields: ["Address", "City", "Loc"], navigationFields: [], isOpenType: false) {
+type AirportLocation implements ILocation {
   Loc: String
   Address: String
   City: City
 }
 
-type EventLocation implements ILocation @entityInfo(actualFields: ["Address", "City", "BuildingInfo"], navigationFields: [], isOpenType: false) {
+type EventLocation implements ILocation {
   BuildingInfo: String
   Address: String
   City: City
@@ -393,41 +391,41 @@ type Query {
   GetNearestAirport(lat: Float!, lon: Float!): Airport @unboundFunction(functionName: "GetNearestAirport")
   Me: Person @singleton(singletonName: "Me")
   People(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "People")
-  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
   Airlines(queryOptions: QueryOptions): [Airline] @entitySet(entitySetName: "Airlines")
-  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode")
   AirlinesCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "Airlines")
   Airports(queryOptions: QueryOptions): [Airport] @entitySet(entitySetName: "Airports")
-  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
+  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode")
   AirportsCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "Airports")
   NewComePeople(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "NewComePeople")
-  NewComePeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "NewComePeople", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  NewComePeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "NewComePeople", identifierFieldName: "UserName")
   NewComePeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "NewComePeople")
 }
 
 type Mutation {
   ResetDataSource: JSON @unboundAction(actionName: "ResetDataSource")
   People(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "People")
-  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   createPeople(input: PersonInput): IPerson @createEntitySet(entitySetName: "People")
-  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName")
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName")
   Airlines(queryOptions: QueryOptions): [Airline] @entitySet(entitySetName: "Airlines")
-  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode")
   createAirlines(input: AirlineInput): Airline @createEntitySet(entitySetName: "Airlines")
-  deleteAirlinesByAirlineCode(AirlineCode: String!): JSON @deleteEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
-  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline @updateEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
+  deleteAirlinesByAirlineCode(AirlineCode: String!): JSON @deleteEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode")
+  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline @updateEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode")
   Airports(queryOptions: QueryOptions): [Airport] @entitySet(entitySetName: "Airports")
-  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
+  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode")
   createAirports(input: AirportInput): Airport @createEntitySet(entitySetName: "Airports")
-  deleteAirportsByIcaoCode(IcaoCode: String!): JSON @deleteEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
-  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @updateEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
+  deleteAirportsByIcaoCode(IcaoCode: String!): JSON @deleteEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode")
+  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @updateEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode")
   NewComePeople(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "NewComePeople")
-  NewComePeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "NewComePeople", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  NewComePeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "NewComePeople", identifierFieldName: "UserName")
   createNewComePeople(input: PersonInput): IPerson @createEntitySet(entitySetName: "NewComePeople")
-  deleteNewComePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "NewComePeople", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
-  updateNewComePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @updateEntitySet(entitySetName: "NewComePeople", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  deleteNewComePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "NewComePeople", identifierFieldName: "UserName")
+  updateNewComePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @updateEntitySet(entitySetName: "NewComePeople", identifierFieldName: "UserName")
 }
 
 input PersonUpdateInput {
@@ -481,23 +479,21 @@ exports[`odata should create correct GraphQL schema for actions bound to entity 
   mutation: Mutation
 }
 
-directive @entityInfo(actualFields: [String], navigationFields: [String], identifierFieldName: String, identifierFieldTypeRef: String, isOpenType: Boolean) on OBJECT | INTERFACE
-
 directive @boundAction(actionRef: String) on FIELD_DEFINITION
 
 directive @entitySet(entitySetName: String) on FIELD_DEFINITION
 
-directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
 directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
 
 directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
 
-directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @deleteEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
-directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @updateEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
-type Person @entityInfo(actualFields: ["UserName"], navigationFields: [], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") {
+type Person @key(fields: "UserName") {
   UserName: String!
   SendMessage(UserName: String!, Message: String!): JSON @boundAction(actionRef: "Sample.Service.SendMessage")
 }
@@ -509,7 +505,7 @@ scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/fi
 
 type Query {
   People(queryOptions: QueryOptions): [Person] @entitySet(entitySetName: "People")
-  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
 }
 
@@ -550,10 +546,10 @@ enum InlineCount {
 
 type Mutation {
   People(queryOptions: QueryOptions): [Person] @entitySet(entitySetName: "People")
-  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   createPeople(input: PersonInput): Person @createEntitySet(entitySetName: "People")
-  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName")
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName")
 }
 
 input PersonInput {
@@ -571,8 +567,6 @@ exports[`odata should create correct GraphQL schema for functions with entity se
   mutation: Mutation
 }
 
-directive @entityInfo(actualFields: [String], navigationFields: [String], identifierFieldName: String, identifierFieldTypeRef: String, isOpenType: Boolean) on OBJECT | INTERFACE
-
 directive @singularNav(navigationPropertyName: String) on FIELD_DEFINITION
 
 directive @pluralNav(navigationPropertyName: String) on FIELD_DEFINITION
@@ -581,17 +575,17 @@ directive @boundFunction(functionRef: String) on FIELD_DEFINITION
 
 directive @entitySet(entitySetName: String) on FIELD_DEFINITION
 
-directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
 directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
 
 directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
 
-directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @deleteEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
-directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @updateEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
-type Person @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Age", "Emails"], navigationFields: ["Messages"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") {
+type Person @key(fields: "UserName") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -652,23 +646,23 @@ input PersonInput {
   Emails: [String]
 }
 
-type Message @entityInfo(actualFields: ["Id", "Contents"], navigationFields: [], isOpenType: false, identifierFieldName: "Id", identifierFieldTypeRef: "Edm.String") {
+type Message @key(fields: "Id") {
   Id: String!
   Contents: String!
 }
 
 type Query {
   People(queryOptions: QueryOptions): [Person] @entitySet(entitySetName: "People")
-  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
 }
 
 type Mutation {
   People(queryOptions: QueryOptions): [Person] @entitySet(entitySetName: "People")
-  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   createPeople(input: PersonInput): Person @createEntitySet(entitySetName: "People")
-  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName")
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName")
 }
 
 """

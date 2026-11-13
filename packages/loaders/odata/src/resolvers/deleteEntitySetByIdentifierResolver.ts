@@ -11,7 +11,6 @@ export interface DeleteEntitySetByIdentifierResolverOpts {
   endpoint: string;
   entitySetName: string;
   identifierFieldName: string;
-  identifierFieldTypeRef: string;
   dataloaderFactory: DataloaderFactory;
   headersFactory: (resolverData: any, method: string) => Record<string, string>;
 }
@@ -20,14 +19,13 @@ export function createDeleteEntitySetByIdentifierResolver({
   endpoint,
   entitySetName,
   identifierFieldName,
-  identifierFieldTypeRef,
   dataloaderFactory,
   headersFactory,
 }: DeleteEntitySetByIdentifierResolverOpts): GraphQLFieldResolver<any, any> {
   return function deleteEntitySetByIdentifierResolver(root, args, context, info) {
     const url = new URL(endpoint);
     url.href = urljoin(url.href, '/' + entitySetName);
-    addIdentifierToUrl(url, identifierFieldName, identifierFieldTypeRef, args);
+    addIdentifierToUrl(url, identifierFieldName, args);
     const urlString = getUrlString(url);
     const method = 'DELETE';
     const request = new Request(urlString, {

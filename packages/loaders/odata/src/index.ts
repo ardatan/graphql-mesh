@@ -33,7 +33,6 @@ import {
   BoundFunctionDirective,
   CreateEntitySetDirective,
   DeleteEntitySetDirective,
-  EntityInfoDirective,
   EntitySetByIdentifierDirective,
   EntitySetCountDirective,
   EntitySetDirective,
@@ -49,6 +48,7 @@ import {
   type TransportDirectiveArgs,
 } from './directives.js';
 import type { EntityTypeExtensions } from './types.js';
+import { getEntityKeyFieldNameFromFields } from './utils/getEntityKeyFieldName.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
 import { QUERY_OPTIONS_FIELDS } from './utils/QueryOptionsFields.js';
 
@@ -206,16 +206,9 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       eventEmitter.setMaxListeners(Infinity);
       eventEmitterSet.add(eventEmitter);
       const extensions: EntityTypeExtensions = {
-        directives: {
-          entityInfo: {
-            actualFields: [],
-            navigationFields: [],
-            isOpenType,
-          },
-        },
+        directives: {},
         eventEmitter,
       };
-      schemaComposer.addDirective(EntityInfoDirective);
       const inputType = schemaComposer.createInputTC({
         name: entityTypeName + 'Input',
         fields: {},
@@ -233,17 +226,26 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           extensions: extensions as any,
         });
         const directiveExtensions: any = ((extensions.directives as any) ||= {});
-        directiveExtensions.abstractType = {
+        const abstractTypeArgs: Record<string, unknown> = {
           entityTypeName,
           isAbstract,
-          get aliasNamespaceMap() {
-            return [...aliasNamespaceMap.entries()];
-          },
-          multipleSchemas,
           get namespaces() {
             return [...namespaces];
           },
         };
+        // Omit empty alias map and false multipleSchemas from hand-authored SDL.
+        if (aliasNamespaceMap.size > 0) {
+          Object.defineProperty(abstractTypeArgs, 'aliasNamespaceMap', {
+            enumerable: true,
+            get() {
+              return [...aliasNamespaceMap.entries()];
+            },
+          });
+        }
+        if (multipleSchemas) {
+          abstractTypeArgs.multipleSchemas = true;
+        }
+        directiveExtensions.abstractType = abstractTypeArgs;
         schemaComposer.addDirective(AbstractTypeDirective);
       }
       const outputType = schemaComposer.createObjectTC({
@@ -257,16 +259,14 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
 
       const propertyRefObj = typeObj.Key && typeObj.Key[0].PropertyRef[0];
       if (propertyRefObj) {
-        extensions.directives.entityInfo.identifierFieldName = propertyRefObj.attributes.Name;
+        extensions.directives.key = {
+          fields: propertyRefObj.attributes.Name,
+        };
       }
 
       typeObj.Property?.forEach((propertyObj: any) => {
         const propertyName = propertyObj.attributes.Name;
-        extensions.directives.entityInfo.actualFields.push(propertyName);
         const propertyTypeRef = propertyObj.attributes.Type;
-        if (propertyName === extensions.directives.entityInfo.identifierFieldName) {
-          extensions.directives.entityInfo.identifierFieldTypeRef = propertyTypeRef;
-        }
         const isRequired = propertyObj.attributes.Nullable === 'false';
         inputType.addFields({
           [propertyName]: {
@@ -303,7 +303,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       });
       typeObj.NavigationProperty?.forEach((navigationPropertyObj: any) => {
         const navigationPropertyName = navigationPropertyObj.attributes.Name;
-        extensions.directives.entityInfo.navigationFields.push(navigationPropertyName);
         const navigationPropertyTypeRef = navigationPropertyObj.attributes.Type;
         const isRequired = navigationPropertyObj.attributes.Nullable === 'false';
         const isList = navigationPropertyTypeRef.startsWith('Collection(');
@@ -401,27 +400,26 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         }
       });
       if (isOpenType || outputType.getFieldNames().length === 0) {
-        extensions.directives.entityInfo.isOpenType = true;
+        // OpenType catch-all: same name as OpenAPI additionalProperties; @resolveRoot on output.
+        schemaComposer.addDirective(ResolveRootDirective);
+        const additionalPropertiesField = {
+          type: 'JSON',
+          extensions: {
+            directives: {
+              resolveRoot: {},
+            } as any,
+          },
+        };
         inputType.addFields({
-          rest: {
+          additionalProperties: {
             type: 'JSON',
           },
         });
         abstractType?.addFields({
-          rest: {
-            type: 'JSON',
-            extensions: {
-              directives: {
-                resolveRoot: {},
-              } as any,
-            },
-          },
+          additionalProperties: additionalPropertiesField,
         });
-        schemaComposer.addDirective(ResolveRootDirective);
         outputType.addFields({
-          rest: {
-            type: 'JSON',
-          },
+          additionalProperties: additionalPropertiesField,
         });
       }
       const updateInputType = inputType.clone(`${entityTypeName}UpdateInput`);
@@ -655,7 +653,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       const entityOutputTC = getTCByTypeNames('I' + boundEntityTypeName, boundEntityTypeName) as
         InterfaceTypeComposer | ObjectTypeComposer;
       const entityTypeExtensions = entityOutputTC.getExtensions() as any as EntityTypeExtensions;
-      const argName = entityTypeExtensions.directives.entityInfo.identifierFieldName;
+      const argName = getEntityKeyFieldNameFromFields(entityTypeExtensions.directives.key?.fields);
       const argType = entityOutputTC.getFieldTypeName(argName);
       return { boundEntityTypeName, argName, argType };
     };
@@ -742,10 +740,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       const abstractType = getTCByTypeNames('I' + typeName, typeName) as InterfaceTypeComposer;
       const outputType = getTCByTypeNames('T' + typeName, typeName) as ObjectTypeComposer;
       const baseTypeRef = typeObj.attributes.BaseType;
-      const {
-        directives: { entityInfo },
-        eventEmitter,
-      } = outputType.getExtensions() as any as EntityTypeExtensions;
+      const { directives, eventEmitter } =
+        outputType.getExtensions() as any as EntityTypeExtensions;
       const baseTypeName = getTypeNameFromRef({
         typeRef: baseTypeRef,
         isInput: false,
@@ -764,17 +760,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         'T' + baseTypeName,
         baseTypeName,
       ) as ObjectTypeComposer;
-      const {
-        directives: { entityInfo: baseEntityInfo },
-        eventEmitter: baseEventEmitter,
-      } = baseOutputType.getExtensions() as any as EntityTypeExtensions;
+      const { directives: baseDirectives, eventEmitter: baseEventEmitter } =
+        baseOutputType.getExtensions() as any as EntityTypeExtensions;
       const baseEventEmitterListener = () => {
         inputType.addFields(baseInputType.getFields());
-        entityInfo.identifierFieldName =
-          baseEntityInfo.identifierFieldName || entityInfo.identifierFieldName;
-        entityInfo.identifierFieldTypeRef =
-          baseEntityInfo.identifierFieldTypeRef || entityInfo.identifierFieldTypeRef;
-        entityInfo.actualFields.unshift(...baseEntityInfo.actualFields);
+        if (!directives.key?.fields && baseDirectives.key?.fields) {
+          directives.key = { fields: baseDirectives.key.fields };
+        }
         abstractType?.addFields(baseAbstractType?.getFields());
         outputType.addFields(baseOutputType.getFields());
         if (baseAbstractType instanceof InterfaceTypeComposer) {
@@ -834,11 +826,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         });
         const entityOutputTC = getTCByTypeNames('I' + entityTypeName, entityTypeName) as
           InterfaceTypeComposer | ObjectTypeComposer;
-        const {
-          directives: { entityInfo },
-        } = entityOutputTC.getExtensions() as any as EntityTypeExtensions;
-        const identifierFieldName = entityInfo.identifierFieldName;
-        const identifierFieldTypeRef = entityInfo.identifierFieldTypeRef;
+        const { directives } = entityOutputTC.getExtensions() as any as EntityTypeExtensions;
+        const identifierFieldName = getEntityKeyFieldNameFromFields(directives.key?.fields);
         const identifierFieldTypeName = entityOutputTC.getFieldTypeName(identifierFieldName);
         const typeName = entityOutputTC.getTypeName();
         schemaComposer.addDirective(EntitySetDirective);
@@ -875,7 +864,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
                 entitySetByIdentifier: {
                   entitySetName,
                   identifierFieldName,
-                  identifierFieldTypeRef,
                 },
               } as any,
             },
@@ -929,7 +917,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
                 deleteEntitySet: {
                   entitySetName,
                   identifierFieldName,
-                  identifierFieldTypeRef,
                 },
               } as any,
             },
@@ -950,7 +937,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
                 updateEntitySet: {
                   entitySetName,
                   identifierFieldName,
-                  identifierFieldTypeRef,
                 },
               } as any,
             },
