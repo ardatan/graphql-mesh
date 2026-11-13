@@ -26,7 +26,7 @@ This does **not** auto-wire Federation `_entities` / entity resolvers; `@key` is
 
 Regenerate OData schemas, or edit hand-written SDL:
 
-1. **Before removing `navigationFields`**, add `@pluralNav` / `@navProp` / `@singularNav` on every listed field. Without a marker, the field goes to `$select` instead of `$expand`.
+1. **Before removing `navigationFields`**, add `@pluralNav` / `@navProp` / `@singularNav` on every listed field. Also add `@singularNav` to every hand-written by-id accessor (e.g. `FriendsById`) even when it was not in that list — the loader never put those names in `navigationFields`. Without a marker, the field goes to `$select` instead of `$expand`.
 2. Delete `navigationFields`, `actualFields`, `identifierFieldTypeRef`, and `isOpenType` from directives.
 3. Replace `@entityInfo(identifierFieldName: "…")` with `@key(fields: "…")`. Drop bare `@entityInfo` on keyless complex types.
 4. Rename open-type bag `rest` → `additionalProperties` and put `@resolveRoot` on the output field.
