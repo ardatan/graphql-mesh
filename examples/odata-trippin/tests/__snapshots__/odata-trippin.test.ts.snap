@@ -127,6 +127,86 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "defaultValue": null,
             "deprecationReason": null,
             "isDeprecated": false,
+            "name": "entity",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "errors",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "ConnectorErrors",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "http",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "ConnectHTTP",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "isSuccess",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSONSelection",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "selection",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "JSONSelection",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "source",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "isRepeatable": true,
+        "locations": [
+          "FIELD_DEFINITION",
+          "OBJECT",
+        ],
+        "name": "connect",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
             "name": "entitySetName",
             "type": {
               "kind": "SCALAR",
@@ -394,6 +474,45 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "defaultValue": null,
             "deprecationReason": null,
             "isDeprecated": false,
+            "name": "import",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "url",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "isRepeatable": true,
+        "locations": [
+          "SCHEMA",
+        ],
+        "name": "link",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
             "name": "navigationPropertyName",
             "type": {
               "kind": "SCALAR",
@@ -501,6 +620,67 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           "INLINE_FRAGMENT",
         ],
         "name": "skip",
+      },
+      {
+        "args": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "errors",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "ConnectorErrors",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "http",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "SourceHTTP",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "isSuccess",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSONSelection",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+        ],
+        "isRepeatable": true,
+        "locations": [
+          "SCHEMA",
+        ],
+        "name": "source",
       },
       {
         "args": [
@@ -1110,6 +1290,159 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "isOneOf": false,
         "kind": "INPUT_OBJECT",
         "name": "CityInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "DELETE",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "GET",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "HEAD",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PATCH",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "POST",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "PUT",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "body",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSONSelection",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "headers",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "HTTPHeaderMapping",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "queryParams",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSONSelection",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "isOneOf": false,
+        "kind": "INPUT_OBJECT",
+        "name": "ConnectHTTP",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "extensions",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSONSelection",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "message",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSONSelection",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "isOneOf": false,
+        "kind": "INPUT_OBJECT",
+        "name": "ConnectorErrors",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
@@ -1990,6 +2323,55 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
       {
         "enumValues": null,
         "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "from",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "value",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "isOneOf": false,
+        "kind": "INPUT_OBJECT",
+        "name": "HTTPHeaderMapping",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
         "inputFields": null,
         "interfaces": null,
         "isOneOf": null,
@@ -2754,6 +3136,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "name": "JSON",
         "possibleTypes": null,
         "specifiedByURL": "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf",
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "isOneOf": null,
+        "kind": "SCALAR",
+        "name": "JSONSelection",
+        "possibleTypes": null,
+        "specifiedByURL": null,
       },
       {
         "enumValues": null,
@@ -5059,6 +5452,49 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               "ofType": null,
             },
           },
+          {
+            "args": [
+              {
+                "defaultValue": null,
+                "deprecationReason": null,
+                "isDeprecated": false,
+                "name": "representations",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "_Any",
+                        "ofType": null,
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_entities",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "UNION",
+                  "name": "_Entity",
+                  "ofType": null,
+                },
+              },
+            },
+          },
         ],
         "inputFields": null,
         "interfaces": [],
@@ -5143,6 +5579,63 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "isOneOf": false,
         "kind": "INPUT_OBJECT",
         "name": "QueryOptions",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "baseURL",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "headers",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "HTTPHeaderMapping",
+                  "ofType": null,
+                },
+              },
+            },
+          },
+          {
+            "defaultValue": null,
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "queryParams",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSONSelection",
+              "ofType": null,
+            },
+          },
+        ],
+        "interfaces": null,
+        "isOneOf": false,
+        "kind": "INPUT_OBJECT",
+        "name": "SourceHTTP",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
@@ -5480,6 +5973,39 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "kind": "INPUT_OBJECT",
         "name": "TripInput",
         "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "isOneOf": null,
+        "kind": "SCALAR",
+        "name": "_Any",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "isOneOf": null,
+        "kind": "UNION",
+        "name": "_Entity",
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "Airline",
+            "ofType": null,
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Airport",
+            "ofType": null,
+          },
+        ],
         "specifiedByURL": null,
       },
       {
@@ -6409,13 +6935,12 @@ exports[`OData TripPin should give correct response for example queries: example
       "FirstName": "April",
       "Gender": "Female",
       "LastName": "Cline",
-      "Trips": [
-        {
-          "Description": "Trip in US",
-        },
-      ],
+      "Trips": null,
       "UserName": "aprilcline",
     },
   },
+  "errors": [
+    [GraphQLError: Invalid URL],
+  ],
 }
 `;

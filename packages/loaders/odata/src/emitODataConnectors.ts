@@ -1,3 +1,4 @@
+import type { GraphQLSchema } from 'graphql';
 import type { InterfaceTypeComposer, ObjectTypeComposer, SchemaComposer } from 'graphql-compose';
 import {
   CONNECT_LINK_URL,
@@ -409,7 +410,7 @@ export function emitODataConnectors(
 }
 
 export function applyODataConnectSchemaExtensions(
-  schema: import('graphql').GraphQLSchema,
+  schema: GraphQLSchema,
   meta: ODataConnectSchemaMeta,
   subgraphName: string,
   endpoint: string,
