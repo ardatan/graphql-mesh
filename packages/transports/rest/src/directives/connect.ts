@@ -27,6 +27,7 @@ import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
 import { Blob, fetch as defaultFetch, File, FormData } from '@whatwg-node/fetch';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { isFileUpload } from './isFileUpload.js';
+import { appendODataSelectExpand, isODataMetadataAccept } from './odataConnectProfile.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
 
@@ -1493,6 +1494,15 @@ export function addConnectFieldResolver(
     applyHeaders(headers, connectArgs.http?.headers, vars);
 
     const method = picked.method;
+    // OData dual-runtime: `Accept: …;odata.metadata=…` is a normal Connectors header
+    // (Router sends it as-is). Hive additionally projects `$select` / `$expand`.
+    if (
+      (method === 'GET' || method === 'HEAD') &&
+      isODataMetadataAccept(headers) &&
+      info
+    ) {
+      fullPath = appendODataSelectExpand(fullPath, info, connectArgs.selection);
+    }
     const requestInit: MeshFetchRequestInit = {
       method,
       headers,
