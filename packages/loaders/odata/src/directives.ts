@@ -358,10 +358,8 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
   const schemaLevelDirectives = getDirectiveExtensions<DirectiveArgsMap>(schema);
   const transportDirective = schemaLevelDirectives?.transport?.[0];
   const sourceDirective = (schemaLevelDirectives as any)?.source?.[0] as
-    | { http?: { baseURL?: string; headers?: Array<{ name: string; value?: string }> } }
-    | undefined;
-  const endpointRaw =
-    sourceDirective?.http?.baseURL || transportDirective?.location || undefined;
+    { http?: { baseURL?: string; headers?: Array<{ name: string; value?: string }> } } | undefined;
+  const endpointRaw = sourceDirective?.http?.baseURL || transportDirective?.location || undefined;
   if (!endpointRaw) {
     throw new Error('Missing @source.http.baseURL or @transport.location for OData');
   }
@@ -402,12 +400,19 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
     batchMode: transportDirective?.options?.batch || 'none',
   });
 
+  /** graphql-compose often stores a single directive args object; `@link` AST uses arrays. */
+  const firstDir = <T>(value: T | T[] | null | undefined): T | undefined => {
+    if (value == null) {
+      return undefined;
+    }
+    return Array.isArray(value) ? value[0] : value;
+  };
+
   return mapSchema(schema, {
     [MapperKind.ABSTRACT_TYPE]: type => {
       const typeDirectives = getDirectiveExtensions<DirectiveArgsMap>(type);
-      const abstractTypeDirectives = typeDirectives?.abstractType;
-      if (abstractTypeDirectives?.length) {
-        const abstractTypeDirective = abstractTypeDirectives[0];
+      const abstractTypeDirective = firstDir(typeDirectives?.abstractType);
+      if (abstractTypeDirective) {
         const typePrototype = Object.getPrototypeOf(type);
         return new typePrototype.constructor({
           ...type.toConfig(),
@@ -425,61 +430,62 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
       const fieldDirectives = getDirectiveExtensions<DirectiveArgsMap>(fieldConfig);
       // Root CRUD `@connect` resolvers win. Mesh-bound ops / nav must overwrite
       // stubs from `hydrateEntityStubFieldResolvers`.
-      const hasConnect = Boolean(fieldDirectives?.connect?.length);
+      const hasConnect = Boolean(firstDir(fieldDirectives?.connect as any));
       if (hasConnect && typeof fieldConfig.resolve === 'function') {
         return fieldConfig;
       }
-      if (fieldDirectives?.boundAction?.length) {
-        const boundActionDirective = fieldDirectives.boundAction[0];
+      const boundActionDirective = firstDir(fieldDirectives?.boundAction);
+      const boundFunctionDirective = firstDir(fieldDirectives?.boundFunction);
+      const navPropDirective = firstDir(fieldDirectives?.navProp);
+      const pluralNavDirective = firstDir(fieldDirectives?.pluralNav);
+      const resolveRootDirective = firstDir(fieldDirectives?.resolveRoot);
+      const singularNavDirective = firstDir(fieldDirectives?.singularNav);
+      const unboundActionDirective = firstDir(fieldDirectives?.unboundAction);
+      const unboundFunctionDirective = firstDir(fieldDirectives?.unboundFunction);
+      if (boundActionDirective) {
         fieldConfig.resolve = createBoundActionResolver({
           actionRef: boundActionDirective.actionRef,
           dataloaderFactory,
           headersFactory,
         });
-      } else if (fieldDirectives?.boundFunction?.length) {
-        const boundFunctionDirective = fieldDirectives.boundFunction[0];
+      } else if (boundFunctionDirective) {
         fieldConfig.resolve = createBoundFunctionResolver({
           functionRef: boundFunctionDirective.functionRef,
           expandNavProps: transportDirective?.options?.expandNavProps,
           dataloaderFactory,
           headersFactory,
         });
-      } else if (fieldDirectives?.navProp?.length) {
-        const navPropDirective = fieldDirectives.navProp[0];
+      } else if (navPropDirective) {
         fieldConfig.resolve = createNavPropResolver({
           navigationPropertyName: navPropDirective.navigationPropertyName,
           expandNavProps: transportDirective?.options?.expandNavProps,
           dataloaderFactory,
           headersFactory,
         });
-      } else if (fieldDirectives?.pluralNav?.length) {
-        const pluralNavDirective = fieldDirectives.pluralNav[0];
+      } else if (pluralNavDirective) {
         fieldConfig.resolve = createNavPropResolver({
           navigationPropertyName: pluralNavDirective.navigationPropertyName,
           expandNavProps: transportDirective?.options?.expandNavProps,
           dataloaderFactory,
           headersFactory,
         });
-      } else if (fieldDirectives?.resolveRoot?.length) {
+      } else if (resolveRootDirective) {
         fieldConfig.resolve = rootResolver;
-      } else if (fieldDirectives?.singularNav?.length) {
-        const singularNavDirective = fieldDirectives.singularNav[0];
+      } else if (singularNavDirective) {
         fieldConfig.resolve = createSingularNavResolver({
           navigationPropertyName: singularNavDirective.navigationPropertyName,
           expandNavProps: transportDirective?.options?.expandNavProps,
           dataloaderFactory,
           headersFactory,
         });
-      } else if (fieldDirectives?.unboundAction?.length) {
-        const unboundActionDirective = fieldDirectives.unboundAction[0];
+      } else if (unboundActionDirective) {
         fieldConfig.resolve = createUnboundActionResolver({
           actionName: unboundActionDirective.actionName,
           endpoint,
           dataloaderFactory,
           headersFactory,
         });
-      } else if (fieldDirectives?.unboundFunction?.length) {
-        const unboundFunctionDirective = fieldDirectives.unboundFunction[0];
+      } else if (unboundFunctionDirective) {
         fieldConfig.resolve = createUnboundFunctionResolver({
           functionName: unboundFunctionDirective.functionName,
           endpoint,

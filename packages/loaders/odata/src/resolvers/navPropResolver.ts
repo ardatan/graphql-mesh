@@ -22,7 +22,14 @@ export function createNavPropResolver({
   headersFactory,
 }: NavPropResolverOptions): GraphQLFieldResolver<any, any> {
   return function navPropResolver(root, args, context, info) {
-    if (navigationPropertyName in root) {
+    // Only reuse an expanded value. Connectors selections can leave nav keys as
+    // `null`/`undefined` when the parent payload omitted them — fall through to fetch.
+    if (
+      root != null &&
+      typeof root === 'object' &&
+      navigationPropertyName in root &&
+      root[navigationPropertyName] != null
+    ) {
       return root[navigationPropertyName];
     }
     const url = new URL(root['@odata.id']);

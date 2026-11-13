@@ -7,16 +7,14 @@ import {
 } from '../src/directives/odataConnectProfile.js';
 
 const CONNECTOR_DIRECTIVES = /* GraphQL */ `
-  directive @source(
-    name: String!
-    http: SourceHTTP!
-  ) repeatable on SCHEMA
+  directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
   directive @connect(
     source: String
     http: ConnectHTTP
     selection: String!
     entity: Boolean
   ) repeatable on FIELD_DEFINITION | OBJECT
+  directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
 
   input ConnectHTTP {
     GET: String
@@ -88,6 +86,11 @@ describe('Connect OData $select / $expand', () => {
             selection: """
             userName: UserName
             firstName: FirstName
+            addressInfo: AddressInfo {
+              city: City {
+                name: Name
+              }
+            }
             friends: Friends {
               userName: UserName
             }
@@ -95,10 +98,19 @@ describe('Connect OData $select / $expand', () => {
           )
       }
 
-      type Person {
+      type Person @key(fields: "userName") {
         userName: String
         firstName: String
+        addressInfo: [Location]
         friends: [Person]
+      }
+
+      type Location {
+        city: City
+      }
+
+      type City {
+        name: String
       }
     `;
 
@@ -109,6 +121,7 @@ describe('Connect OData $select / $expand', () => {
         return Response.json({
           UserName: 'russellwhyte',
           FirstName: 'Russell',
+          AddressInfo: [{ City: { Name: 'Boise' } }],
           Friends: [{ UserName: 'scottketchum' }],
         });
       }) as any,
@@ -121,6 +134,11 @@ describe('Connect OData $select / $expand', () => {
           person(userName: "russellwhyte") {
             userName
             firstName
+            addressInfo {
+              city {
+                name
+              }
+            }
             friends {
               userName
             }
@@ -131,8 +149,10 @@ describe('Connect OData $select / $expand', () => {
 
     expect(result.errors).toBeUndefined();
     const decoded = decodeURIComponent(requestedUrl);
-    expect(decoded).toContain('$select=UserName,FirstName,Friends');
+    // Complex collections (`AddressInfo`) are `$select`ed only; entity nav (`Friends`) `$expand`s.
+    expect(decoded).toContain('$select=UserName,FirstName,AddressInfo,Friends');
     expect(decoded).toContain('$expand=Friends($select=UserName)');
+    expect(decoded).not.toMatch(/\$expand=[^&]*AddressInfo/);
   });
 
   it('does not project when Accept has no odata.metadata', async () => {
@@ -145,11 +165,7 @@ describe('Connect OData $select / $expand', () => {
 
       type Query {
         person(id: ID!): Person
-          @connect(
-            source: "api"
-            http: { GET: "/people/{$args.id}" }
-            selection: "id name"
-          )
+          @connect(source: "api", http: { GET: "/people/{$args.id}" }, selection: "id name")
       }
 
       type Person {

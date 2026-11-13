@@ -1,5 +1,5 @@
-import { createServer } from 'http';
 import { readFileSync } from 'fs';
+import { createServer } from 'http';
 import { join } from 'path';
 import { Opts } from '@e2e/opts';
 

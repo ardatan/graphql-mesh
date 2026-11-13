@@ -1,5 +1,4 @@
-import type { SchemaComposer } from 'graphql-compose';
-import type { ObjectTypeComposer, InterfaceTypeComposer } from 'graphql-compose';
+import type { InterfaceTypeComposer, ObjectTypeComposer, SchemaComposer } from 'graphql-compose';
 import {
   CONNECT_LINK_URL,
   ConnectDirective,
@@ -51,17 +50,26 @@ function entitySelection(
   visited = new Set(visited);
   visited.add(typeName);
 
+  const entityInfo = (entityTC.getExtensions() as any)?.directives?.entityInfo as
+    { actualFields?: string[]; navigationFields?: string[] } | undefined;
+  const navigationFields = new Set(entityInfo?.navigationFields || []);
+
   const lines: string[] = [];
   for (const fieldName of entityTC.getFieldNames()) {
     const field = entityTC.getField(fieldName);
     const fieldDirs = ((field.extensions as any)?.directives || {}) as Record<string, unknown>;
     // Bound/unbound ops stay on Mesh residual resolvers (not in Connectors selection).
+    // Navigation properties are `$expand` / `@pluralNav` / `@navProp` — not inline in the
+    // parent Connectors selection (including them nulls out keys and breaks residual fetch).
     if (
       fieldDirs.boundFunction ||
       fieldDirs.boundAction ||
       fieldDirs.unboundFunction ||
       fieldDirs.unboundAction ||
-      fieldDirs.singularNav // FriendsById(id:) — key lookup, not parent payload
+      fieldDirs.singularNav || // FriendsById(id:) — key lookup, not parent payload
+      fieldDirs.pluralNav ||
+      fieldDirs.navProp ||
+      navigationFields.has(fieldName)
     ) {
       continue;
     }
@@ -69,7 +77,8 @@ function entitySelection(
     let nested = '';
     if (schemaComposer.isObjectType(named) || schemaComposer.isInterfaceType(named)) {
       try {
-        const childTC = schemaComposer.getAnyTC(named) as ObjectTypeComposer | InterfaceTypeComposer;
+        const childTC = schemaComposer.getAnyTC(named) as
+          ObjectTypeComposer | InterfaceTypeComposer;
         nested = entitySelection(schemaComposer, childTC, depth + 1, visited);
       } catch {
         nested = '';
@@ -172,9 +181,7 @@ export function emitODataConnectors(
               GET: `/${entitySetName}`,
               queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS,
             },
-            selection: entityTC
-              ? listSelection(schemaComposer, entityTC)
-              : '$.value',
+            selection: entityTC ? listSelection(schemaComposer, entityTC) : '$.value',
           }),
         );
         continue;
@@ -293,7 +300,11 @@ export function emitODataConnectors(
       continue;
     }
     const typeName = (tc as ObjectTypeComposer).getTypeName();
-    if (typeName.startsWith('__') || typeName.endsWith('Input') || typeName.endsWith('UpdateInput')) {
+    if (
+      typeName.startsWith('__') ||
+      typeName.endsWith('Input') ||
+      typeName.endsWith('UpdateInput')
+    ) {
       continue;
     }
     const extensions = (tc as ObjectTypeComposer).getExtensions() as any as EntityTypeExtensions;

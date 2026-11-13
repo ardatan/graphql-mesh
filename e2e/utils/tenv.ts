@@ -17,10 +17,7 @@ import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { fakeRejectPromise } from '@whatwg-node/promise-helpers';
 import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
-import {
-  ensureApolloRouterBinary,
-  prepareSupergraphForApolloRouter,
-} from './apolloConnectors.js';
+import { ensureApolloRouterBinary, prepareSupergraphForApolloRouter } from './apolloConnectors.js';
 import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';

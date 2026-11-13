@@ -660,6 +660,37 @@ export type ConnectSelectionExtras = {
 };
 
 /**
+ * Copy `@odata.*` control properties from the raw JSON entity onto the Connectors
+ * selection result so Hive residual OData resolvers (nav / bound ops) still see
+ * `@odata.id` when the selection is not bare `$`.
+ */
+export function preserveODataEntityMetadata(selected: any, raw: any): any {
+  if (selected == null || raw == null || typeof selected !== 'object') {
+    return selected;
+  }
+  if (Array.isArray(selected)) {
+    const rawItems = Array.isArray(raw)
+      ? raw
+      : Array.isArray((raw as { value?: unknown })?.value)
+        ? (raw as { value: unknown[] }).value
+        : null;
+    if (!rawItems) {
+      return selected;
+    }
+    return selected.map((item, i) => preserveODataEntityMetadata(item, rawItems[i]));
+  }
+  if (typeof raw !== 'object' || Array.isArray(raw)) {
+    return selected;
+  }
+  for (const key of Object.keys(raw as Record<string, unknown>)) {
+    if (key.startsWith('@odata.') && (selected as Record<string, unknown>)[key] === undefined) {
+      (selected as Record<string, unknown>)[key] = (raw as Record<string, unknown>)[key];
+    }
+  }
+  return selected;
+}
+
+/**
  * Minimal selection evaluator:
  * - `id name` field picks
  * - `alias: path` aliases
@@ -1448,9 +1479,7 @@ export function addConnectFieldResolver(
     // Absolute `@odata.id` (and other absolute connector URLs) skip baseURL join.
     // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
     // so test mocks like `fetch('pets/1')` keep working.
-    let fullPath = /^https?:\/\//i.test(path)
-      ? path
-      : urlJoin(baseURL || '', path) || path;
+    let fullPath = /^https?:\/\//i.test(path) ? path : urlJoin(baseURL || '', path) || path;
 
     const resolveArg = (argName: string, value: any) => {
       const argDef = field.args?.find(arg => arg.name === argName);
@@ -1499,11 +1528,7 @@ export function addConnectFieldResolver(
     const method = picked.method;
     // OData dual-runtime: `Accept: …;odata.metadata=…` is a normal Connectors header
     // (Router sends it as-is). Hive additionally projects `$select` / `$expand`.
-    if (
-      (method === 'GET' || method === 'HEAD') &&
-      isODataMetadataAccept(headers) &&
-      info
-    ) {
+    if ((method === 'GET' || method === 'HEAD') && isODataMetadataAccept(headers) && info) {
       fullPath = appendODataSelectExpand(fullPath, info, connectArgs.selection);
     }
     const requestInit: MeshFetchRequestInit = {
@@ -1728,6 +1753,10 @@ export function addConnectFieldResolver(
     } else if (!isListReturnType && Array.isArray(selected)) {
       selected = selected[0];
     }
+    // OData: keep `@odata.id` / editLink on the selected entity so Mesh residual
+    // `@pluralNav` / `@boundFunction` resolvers can build follow-up URLs after a
+    // non-`$` Connectors selection drops those control properties.
+    selected = preserveODataEntityMetadata(selected, responseData);
     // Fill Mesh-only `_response` fields Apollo selection cannot express.
     selected = fillExposeResponseMetadata(selected, {
       url: requestUrlForMeta.originPath,

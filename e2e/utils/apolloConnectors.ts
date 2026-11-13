@@ -106,31 +106,49 @@ export function prepareSupergraphForApolloRouter(supergraphSdl: string): string 
     return supergraphSdl;
   }
   const doc = parse(supergraphSdl, { noLocation: true });
-  const ifaceMap = new Map<string, (typeof doc.definitions)[number]>();
+  const objectNames = new Set<string>();
   for (const def of doc.definitions) {
-    if (def.kind === Kind.INTERFACE_TYPE_DEFINITION) {
-      ifaceMap.set(def.name.value, def);
+    if (def.kind === Kind.OBJECT_TYPE_DEFINITION) {
+      objectNames.add(def.name.value);
     }
   }
-  if (!ifaceMap.size) {
-    // Still strip non-connect roots when present.
+  // Only flatten OData-style `IFoo` interfaces that have a concrete `Foo` sibling.
+  // OpenAPI HATEOAS (and similar) use real interfaces like `Product` — keep those.
+  const ifaceMap = new Map<string, (typeof doc.definitions)[number]>();
+  for (const def of doc.definitions) {
+    if (def.kind !== Kind.INTERFACE_TYPE_DEFINITION) continue;
+    const name = def.name.value;
+    if (!name.startsWith('I')) continue;
+    const concrete = name.slice(1);
+    if (!concrete || !objectNames.has(concrete)) continue;
+    ifaceMap.set(name, def);
   }
   const ifaceNames = new Set(ifaceMap.keys());
 
   const next = visit(doc, {
-    InterfaceTypeDefinition() {
-      return null;
+    InterfaceTypeDefinition(node) {
+      return ifaceMap.has(node.name.value) ? null : node;
     },
     ObjectTypeDefinition(node) {
       let fields = [...(node.fields || [])];
-      if (node.name.value === 'Query' || node.name.value === 'Mutation') {
+      // Only strip Mesh residual roots when rewriting an OData `I*` schema for Router.
+      const odataFlatten = ifaceNames.size > 0;
+      if (odataFlatten && (node.name.value === 'Query' || node.name.value === 'Mutation')) {
         fields = fields.filter(f => hasConnectJoinDirective(f.directives));
       }
       const impl = (node.interfaces || []).map(i => i.name.value);
       const existing = new Set(fields.map(f => f.name.value));
+      const keptImplements: NamedTypeNode[] = [];
       for (const iname of impl) {
         const idef = ifaceMap.get(iname);
-        if (!idef || idef.kind !== Kind.INTERFACE_TYPE_DEFINITION) continue;
+        if (!idef || idef.kind !== Kind.INTERFACE_TYPE_DEFINITION) {
+          // Non-OData interface (e.g. Product) — keep implements.
+          keptImplements.push({
+            kind: Kind.NAMED_TYPE,
+            name: { kind: Kind.NAME, value: iname },
+          });
+          continue;
+        }
         for (const f of idef.fields || []) {
           if (existing.has(f.name.value)) continue;
           existing.add(f.name.value);
@@ -142,14 +160,21 @@ export function prepareSupergraphForApolloRouter(supergraphSdl: string): string 
       }
       return {
         ...node,
-        interfaces: [],
-        directives: (node.directives || []).filter(d => d.name.value !== 'join__implements'),
+        interfaces: keptImplements,
+        directives: (node.directives || []).filter(d => {
+          if (d.name.value !== 'join__implements') return true;
+          const typeArg = d.arguments?.find(a => a.name.value === 'interface');
+          if (!typeArg || typeArg.value.kind !== Kind.STRING) return true;
+          return !ifaceNames.has(typeArg.value.value);
+        }),
         fields: fields.map(f => ({
           ...f,
           type: mapTypeNode(f.type, ifaceNames),
-          // Drop field args on non-root types — Connectors reject them on entity fields.
+          // OData entity fields with Mesh key-lookup args break Router Connectors.
           arguments:
-            node.name.value === 'Query' || node.name.value === 'Mutation' ? f.arguments : [],
+            !odataFlatten || node.name.value === 'Query' || node.name.value === 'Mutation'
+              ? f.arguments
+              : [],
         })),
       };
     },

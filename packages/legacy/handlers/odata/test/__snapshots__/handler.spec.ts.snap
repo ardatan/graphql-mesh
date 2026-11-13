@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`odata should create a GraphQL schema from a simple OData endpoint 1`] = `
-"schema @source(name: "TripPin", http: {baseURL: "https://services.odata.org/TripPinRESTierService", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}]}, errors: {message: "error.message"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key"]) @transport(kind: "rest", subgraph: "TripPin", location: "https://services.odata.org/TripPinRESTierService", headers: [["Accept", "application/json;odata.metadata=minimal"]], options: {}) {
+"schema @source(name: "TripPin", http: {baseURL: "https://services.odata.org/TripPinRESTierService", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}]}, errors: {message: "error.message"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) @transport(kind: "rest", subgraph: "TripPin", location: "https://services.odata.org/TripPinRESTierService", headers: [["Accept", "application/json;odata.metadata=minimal"]], options: {}) {
   query: Query
   mutation: Mutation
 }
@@ -44,9 +44,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-directive @key(fields: String!, resolvable: Boolean) repeatable on OBJECT | INTERFACE
-
-type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "UserName") {
+type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -175,19 +173,19 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-type Airline @entityInfo(actualFields: ["AirlineCode", "Name"], navigationFields: [], isOpenType: false, identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") @key(fields: "AirlineCode") @connect(source: "TripPin", http: {GET: "/Airlines/{$this.AirlineCode}/"}, selection: "AirlineCode\\nName", errors: {message: "error.message"}) {
+type Airline @entityInfo(actualFields: ["AirlineCode", "Name"], navigationFields: [], isOpenType: false, identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") @key(fields: "AirlineCode") @connect(source: "TripPin", http: {GET: "/Airlines/{$this.AirlineCode}/"}, selection: "AirlineCode Name", errors: {message: "error.message"}) {
   AirlineCode: String!
   Name: String
 }
 
-type Airport @entityInfo(actualFields: ["Name", "IcaoCode", "IataCode", "Location"], navigationFields: [], isOpenType: false, identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") @key(fields: "IcaoCode") @connect(source: "TripPin", http: {GET: "/Airports/{$this.IcaoCode}/"}, selection: "Name\\nIcaoCode\\nIataCode\\nLocation", errors: {message: "error.message"}) {
+type Airport @entityInfo(actualFields: ["Name", "IcaoCode", "IataCode", "Location"], navigationFields: [], isOpenType: false, identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") @key(fields: "IcaoCode") @connect(source: "TripPin", http: {GET: "/Airports/{$this.IcaoCode}/"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", errors: {message: "error.message"}) {
   Name: String
   IcaoCode: String!
   IataCode: String
   Location: AirportLocation
 }
 
-type Trip implements ITrip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Description", "Tags", "StartsAt", "EndsAt"], navigationFields: ["PlanItems"], isOpenType: false, identifierFieldName: "TripId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "Trip", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "TripId") {
+type Trip implements ITrip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Description", "Tags", "StartsAt", "EndsAt"], navigationFields: ["PlanItems"], isOpenType: false, identifierFieldName: "TripId", identifierFieldTypeRef: "Edm.Int32") @key(fields: "TripId") {
   TripId: Int!
   ShareId: GUID!
   Name: String
@@ -236,7 +234,7 @@ input TripInput {
   EndsAt: DateTime!
 }
 
-type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
+type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @key(fields: "PlanItemId") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -284,7 +282,7 @@ type Event implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "Confir
   Duration: ISO8601Duration!
 }
 
-type PublicTransportation implements IPublicTransportation & IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
+type PublicTransportation implements IPublicTransportation & IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @key(fields: "PlanItemId") {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
@@ -368,7 +366,7 @@ type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstNam
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
 }
 
-type Location implements ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+type Location implements ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) {
   Address: String
   City: City
 }
@@ -399,19 +397,19 @@ type EventLocation implements ILocation @entityInfo(actualFields: ["Address", "C
 type Query {
   GetPersonWithMostFriends: Person @unboundFunction(functionName: "GetPersonWithMostFriends")
   GetNearestAirport(lat: Float!, lon: Float!): Airport @unboundFunction(functionName: "GetNearestAirport")
-  Me: Person @connect(source: "TripPin", http: {GET: "/Me"}, selection: "$", errors: {message: "error.message"})
-  People(queryOptions: QueryOptions): [IPerson] @connect(source: "TripPin", http: {GET: "/People", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  PeopleByUserName(UserName: String!): IPerson @connect(source: "TripPin", http: {GET: "/People/{$args.UserName}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  PeopleCount(queryOptions: QueryOptions): Int @connect(source: "TripPin", http: {GET: "/People/$count", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$", errors: {message: "error.message"})
-  Airlines(queryOptions: QueryOptions): [Airline] @connect(source: "TripPin", http: {GET: "/Airlines", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  AirlinesByAirlineCode(AirlineCode: String!): Airline @connect(source: "TripPin", http: {GET: "/Airlines/{$args.AirlineCode}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  AirlinesCount(queryOptions: QueryOptions): Int @connect(source: "TripPin", http: {GET: "/Airlines/$count", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$", errors: {message: "error.message"})
-  Airports(queryOptions: QueryOptions): [Airport] @connect(source: "TripPin", http: {GET: "/Airports", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  AirportsByIcaoCode(IcaoCode: String!): Airport @connect(source: "TripPin", http: {GET: "/Airports/{$args.IcaoCode}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  AirportsCount(queryOptions: QueryOptions): Int @connect(source: "TripPin", http: {GET: "/Airports/$count", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$", errors: {message: "error.message"})
-  NewComePeople(queryOptions: QueryOptions): [IPerson] @connect(source: "TripPin", http: {GET: "/NewComePeople", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  NewComePeopleByUserName(UserName: String!): IPerson @connect(source: "TripPin", http: {GET: "/NewComePeople/{$args.UserName}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  NewComePeopleCount(queryOptions: QueryOptions): Int @connect(source: "TripPin", http: {GET: "/NewComePeople/$count", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$", errors: {message: "error.message"})
+  Me: Person @connect(source: "TripPin", http: {GET: "/Me"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
+  People(queryOptions: QueryOptions): [IPerson] @connect(source: "TripPin", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
+  PeopleByUserName(UserName: String!): IPerson @connect(source: "TripPin", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", entity: true, errors: {message: "error.message"})
+  PeopleCount(queryOptions: QueryOptions): Int @connect(source: "TripPin", http: {GET: "/People/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
+  Airlines(queryOptions: QueryOptions): [Airline] @connect(source: "TripPin", http: {GET: "/Airlines", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { AirlineCode Name }", errors: {message: "error.message"})
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @connect(source: "TripPin", http: {GET: "/Airlines/{$args.AirlineCode}/"}, selection: "AirlineCode Name", entity: true, errors: {message: "error.message"})
+  AirlinesCount(queryOptions: QueryOptions): Int @connect(source: "TripPin", http: {GET: "/Airlines/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
+  Airports(queryOptions: QueryOptions): [Airport] @connect(source: "TripPin", http: {GET: "/Airports", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } } }", errors: {message: "error.message"})
+  AirportsByIcaoCode(IcaoCode: String!): Airport @connect(source: "TripPin", http: {GET: "/Airports/{$args.IcaoCode}/"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", entity: true, errors: {message: "error.message"})
+  AirportsCount(queryOptions: QueryOptions): Int @connect(source: "TripPin", http: {GET: "/Airports/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
+  NewComePeople(queryOptions: QueryOptions): [IPerson] @connect(source: "TripPin", http: {GET: "/NewComePeople", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
+  NewComePeopleByUserName(UserName: String!): IPerson @connect(source: "TripPin", http: {GET: "/NewComePeople/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", entity: true, errors: {message: "error.message"})
+  NewComePeopleCount(queryOptions: QueryOptions): Int @connect(source: "TripPin", http: {GET: "/NewComePeople/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
   """
   Federation entity resolver for Connectors REST transport (Hive \`_entities\` path)
   """
@@ -420,26 +418,26 @@ type Query {
 
 type Mutation {
   ResetDataSource: JSON @unboundAction(actionName: "ResetDataSource")
-  People(queryOptions: QueryOptions): [IPerson] @connect(source: "TripPin", http: {GET: "/People", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  PeopleByUserName(UserName: String!): IPerson @connect(source: "TripPin", http: {GET: "/People/{$args.UserName}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  createPeople(input: PersonInput): IPerson @connect(source: "TripPin", http: {POST: "/People", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
+  People(queryOptions: QueryOptions): [IPerson] @connect(source: "TripPin", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
+  PeopleByUserName(UserName: String!): IPerson @connect(source: "TripPin", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", entity: true, errors: {message: "error.message"})
+  createPeople(input: PersonInput): IPerson @connect(source: "TripPin", http: {POST: "/People", body: "$args.input"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
   deletePeopleByUserName(UserName: String!): JSON @connect(source: "TripPin", http: {DELETE: "/People/{$args.UserName}/"}, selection: "$", errors: {message: "error.message"})
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @connect(source: "TripPin", http: {PATCH: "/People/{$args.UserName}/", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
-  Airlines(queryOptions: QueryOptions): [Airline] @connect(source: "TripPin", http: {GET: "/Airlines", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  AirlinesByAirlineCode(AirlineCode: String!): Airline @connect(source: "TripPin", http: {GET: "/Airlines/{$args.AirlineCode}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  createAirlines(input: AirlineInput): Airline @connect(source: "TripPin", http: {POST: "/Airlines", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @connect(source: "TripPin", http: {PATCH: "/People/{$args.UserName}/", body: "$args.input"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
+  Airlines(queryOptions: QueryOptions): [Airline] @connect(source: "TripPin", http: {GET: "/Airlines", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { AirlineCode Name }", errors: {message: "error.message"})
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @connect(source: "TripPin", http: {GET: "/Airlines/{$args.AirlineCode}/"}, selection: "AirlineCode Name", entity: true, errors: {message: "error.message"})
+  createAirlines(input: AirlineInput): Airline @connect(source: "TripPin", http: {POST: "/Airlines", body: "$args.input"}, selection: "AirlineCode Name", errors: {message: "error.message"})
   deleteAirlinesByAirlineCode(AirlineCode: String!): JSON @connect(source: "TripPin", http: {DELETE: "/Airlines/{$args.AirlineCode}/"}, selection: "$", errors: {message: "error.message"})
-  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline @connect(source: "TripPin", http: {PATCH: "/Airlines/{$args.AirlineCode}/", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
-  Airports(queryOptions: QueryOptions): [Airport] @connect(source: "TripPin", http: {GET: "/Airports", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  AirportsByIcaoCode(IcaoCode: String!): Airport @connect(source: "TripPin", http: {GET: "/Airports/{$args.IcaoCode}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  createAirports(input: AirportInput): Airport @connect(source: "TripPin", http: {POST: "/Airports", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
+  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline @connect(source: "TripPin", http: {PATCH: "/Airlines/{$args.AirlineCode}/", body: "$args.input"}, selection: "AirlineCode Name", errors: {message: "error.message"})
+  Airports(queryOptions: QueryOptions): [Airport] @connect(source: "TripPin", http: {GET: "/Airports", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } } }", errors: {message: "error.message"})
+  AirportsByIcaoCode(IcaoCode: String!): Airport @connect(source: "TripPin", http: {GET: "/Airports/{$args.IcaoCode}/"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", entity: true, errors: {message: "error.message"})
+  createAirports(input: AirportInput): Airport @connect(source: "TripPin", http: {POST: "/Airports", body: "$args.input"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", errors: {message: "error.message"})
   deleteAirportsByIcaoCode(IcaoCode: String!): JSON @connect(source: "TripPin", http: {DELETE: "/Airports/{$args.IcaoCode}/"}, selection: "$", errors: {message: "error.message"})
-  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @connect(source: "TripPin", http: {PATCH: "/Airports/{$args.IcaoCode}/", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
-  NewComePeople(queryOptions: QueryOptions): [IPerson] @connect(source: "TripPin", http: {GET: "/NewComePeople", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  NewComePeopleByUserName(UserName: String!): IPerson @connect(source: "TripPin", http: {GET: "/NewComePeople/{$args.UserName}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  createNewComePeople(input: PersonInput): IPerson @connect(source: "TripPin", http: {POST: "/NewComePeople", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
+  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @connect(source: "TripPin", http: {PATCH: "/Airports/{$args.IcaoCode}/", body: "$args.input"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", errors: {message: "error.message"})
+  NewComePeople(queryOptions: QueryOptions): [IPerson] @connect(source: "TripPin", http: {GET: "/NewComePeople", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
+  NewComePeopleByUserName(UserName: String!): IPerson @connect(source: "TripPin", http: {GET: "/NewComePeople/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", entity: true, errors: {message: "error.message"})
+  createNewComePeople(input: PersonInput): IPerson @connect(source: "TripPin", http: {POST: "/NewComePeople", body: "$args.input"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
   deleteNewComePeopleByUserName(UserName: String!): JSON @connect(source: "TripPin", http: {DELETE: "/NewComePeople/{$args.UserName}/"}, selection: "$", errors: {message: "error.message"})
-  updateNewComePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @connect(source: "TripPin", http: {PATCH: "/NewComePeople/{$args.UserName}/", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
+  updateNewComePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @connect(source: "TripPin", http: {PATCH: "/NewComePeople/{$args.UserName}/", body: "$args.input"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
 }
 
 input PersonUpdateInput {
@@ -523,7 +521,7 @@ union _Entity = Airline | Airport"
 `;
 
 exports[`odata should create correct GraphQL schema for actions bound to entity set 1`] = `
-"schema @source(name: "SampleService", http: {baseURL: "http://sample.service.com", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}]}, errors: {message: "error.message"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key"]) @transport(kind: "rest", subgraph: "SampleService", location: "http://sample.service.com", headers: [["Accept", "application/json;odata.metadata=minimal"]], options: {}) {
+"schema @source(name: "SampleService", http: {baseURL: "http://sample.service.com", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}]}, errors: {message: "error.message"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) @transport(kind: "rest", subgraph: "SampleService", location: "http://sample.service.com", headers: [["Accept", "application/json;odata.metadata=minimal"]], options: {}) {
   query: Query
   mutation: Mutation
 }
@@ -550,8 +548,6 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-directive @key(fields: String!, resolvable: Boolean) repeatable on OBJECT | INTERFACE
-
 type Person @entityInfo(actualFields: ["UserName"], navigationFields: [], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/"}, selection: "UserName", errors: {message: "error.message"}) {
   UserName: String!
   SendMessage(UserName: String!, Message: String!): JSON @boundAction(actionRef: "Sample.Service.SendMessage")
@@ -563,9 +559,9 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type Query {
-  People(queryOptions: QueryOptions): [Person] @connect(source: "SampleService", http: {GET: "/People", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  PeopleByUserName(UserName: String!): Person @connect(source: "SampleService", http: {GET: "/People/{$args.UserName}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  PeopleCount(queryOptions: QueryOptions): Int @connect(source: "SampleService", http: {GET: "/People/$count", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$", errors: {message: "error.message"})
+  People(queryOptions: QueryOptions): [Person] @connect(source: "SampleService", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName }", errors: {message: "error.message"})
+  PeopleByUserName(UserName: String!): Person @connect(source: "SampleService", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName", entity: true, errors: {message: "error.message"})
+  PeopleCount(queryOptions: QueryOptions): Int @connect(source: "SampleService", http: {GET: "/People/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
   """
   Federation entity resolver for Connectors REST transport (Hive \`_entities\` path)
   """
@@ -608,11 +604,11 @@ enum InlineCount {
 }
 
 type Mutation {
-  People(queryOptions: QueryOptions): [Person] @connect(source: "SampleService", http: {GET: "/People", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  PeopleByUserName(UserName: String!): Person @connect(source: "SampleService", http: {GET: "/People/{$args.UserName}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  createPeople(input: PersonInput): Person @connect(source: "SampleService", http: {POST: "/People", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
+  People(queryOptions: QueryOptions): [Person] @connect(source: "SampleService", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName }", errors: {message: "error.message"})
+  PeopleByUserName(UserName: String!): Person @connect(source: "SampleService", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName", entity: true, errors: {message: "error.message"})
+  createPeople(input: PersonInput): Person @connect(source: "SampleService", http: {POST: "/People", body: "$args.input"}, selection: "UserName", errors: {message: "error.message"})
   deletePeopleByUserName(UserName: String!): JSON @connect(source: "SampleService", http: {DELETE: "/People/{$args.UserName}/"}, selection: "$", errors: {message: "error.message"})
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person @connect(source: "SampleService", http: {PATCH: "/People/{$args.UserName}/", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person @connect(source: "SampleService", http: {PATCH: "/People/{$args.UserName}/", body: "$args.input"}, selection: "UserName", errors: {message: "error.message"})
 }
 
 input PersonInput {
@@ -660,7 +656,7 @@ union _Entity = Person"
 `;
 
 exports[`odata should create correct GraphQL schema for functions with entity set paths 1`] = `
-"schema @source(name: "SampleService", http: {baseURL: "http://sample.service.com", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}]}, errors: {message: "error.message"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key"]) @transport(kind: "rest", subgraph: "SampleService", location: "http://sample.service.com", headers: [["Accept", "application/json;odata.metadata=minimal"]], options: {}) {
+"schema @source(name: "SampleService", http: {baseURL: "http://sample.service.com", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}]}, errors: {message: "error.message"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"]) @transport(kind: "rest", subgraph: "SampleService", location: "http://sample.service.com", headers: [["Accept", "application/json;odata.metadata=minimal"]], options: {}) {
   query: Query
   mutation: Mutation
 }
@@ -691,9 +687,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-directive @key(fields: String!, resolvable: Boolean) repeatable on OBJECT | INTERFACE
-
-type Person @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Age", "Emails"], navigationFields: ["Messages"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/"}, selection: "UserName\\nFirstName\\nLastName\\nMiddleName\\nAge\\nEmails\\nMessages", errors: {message: "error.message"}) {
+type Person @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Age", "Emails"], navigationFields: ["Messages"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/"}, selection: "UserName FirstName LastName MiddleName Age Emails", errors: {message: "error.message"}) {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -760,9 +754,9 @@ type Message @entityInfo(actualFields: ["Id", "Contents"], navigationFields: [],
 }
 
 type Query {
-  People(queryOptions: QueryOptions): [Person] @connect(source: "SampleService", http: {GET: "/People", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  PeopleByUserName(UserName: String!): Person @connect(source: "SampleService", http: {GET: "/People/{$args.UserName}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  PeopleCount(queryOptions: QueryOptions): Int @connect(source: "SampleService", http: {GET: "/People/$count", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$", errors: {message: "error.message"})
+  People(queryOptions: QueryOptions): [Person] @connect(source: "SampleService", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Age Emails }", errors: {message: "error.message"})
+  PeopleByUserName(UserName: String!): Person @connect(source: "SampleService", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Age Emails", entity: true, errors: {message: "error.message"})
+  PeopleCount(queryOptions: QueryOptions): Int @connect(source: "SampleService", http: {GET: "/People/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
   """
   Federation entity resolver for Connectors REST transport (Hive \`_entities\` path)
   """
@@ -770,11 +764,11 @@ type Query {
 }
 
 type Mutation {
-  People(queryOptions: QueryOptions): [Person] @connect(source: "SampleService", http: {GET: "/People", queryParams: "$filter: $args.queryOptions.filter\\n$orderby: $args.queryOptions.orderby\\n$top: $args.queryOptions.top\\n$skip: $args.queryOptions.skip\\n$search: $args.queryOptions.search\\n$count: $args.queryOptions.count\\n$inlinecount: $args.queryOptions.inlinecount"}, selection: "$.value", errors: {message: "error.message"})
-  PeopleByUserName(UserName: String!): Person @connect(source: "SampleService", http: {GET: "/People/{$args.UserName}/"}, selection: "$", entity: true, errors: {message: "error.message"})
-  createPeople(input: PersonInput): Person @connect(source: "SampleService", http: {POST: "/People", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
+  People(queryOptions: QueryOptions): [Person] @connect(source: "SampleService", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Age Emails }", errors: {message: "error.message"})
+  PeopleByUserName(UserName: String!): Person @connect(source: "SampleService", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Age Emails", entity: true, errors: {message: "error.message"})
+  createPeople(input: PersonInput): Person @connect(source: "SampleService", http: {POST: "/People", body: "$args.input"}, selection: "UserName FirstName LastName MiddleName Age Emails", errors: {message: "error.message"})
   deletePeopleByUserName(UserName: String!): JSON @connect(source: "SampleService", http: {DELETE: "/People/{$args.UserName}/"}, selection: "$", errors: {message: "error.message"})
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person @connect(source: "SampleService", http: {PATCH: "/People/{$args.UserName}/", body: "$args.input"}, selection: "$", errors: {message: "error.message"})
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): Person @connect(source: "SampleService", http: {PATCH: "/People/{$args.UserName}/", body: "$args.input"}, selection: "UserName FirstName LastName MiddleName Age Emails", errors: {message: "error.message"})
 }
 
 """

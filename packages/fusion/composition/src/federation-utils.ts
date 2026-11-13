@@ -1,10 +1,4 @@
-import {
-  GraphQLDirective,
-  GraphQLInterfaceType,
-  GraphQLObjectType,
-  GraphQLSchema,
-  isSpecifiedDirective,
-} from 'graphql';
+import { GraphQLDirective, GraphQLSchema, isSpecifiedDirective } from 'graphql';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
 export function addFederation2DirectivesToSubgraph(subgraph: GraphQLSchema) {
@@ -205,43 +199,32 @@ export function normalizeDirectiveExtensions(subgraph: GraphQLSchema) {
 function ensureObjectTypesShareable(subgraph: GraphQLSchema) {
   return mapSchema(subgraph, {
     [MapperKind.OBJECT_TYPE]: type => {
-      // Clone directives — OData (and similar) loaders often share the same
-      // `extensions.directives` object between an interface and its implementing
-      // object; mutating in place would also stamp `@shareable` on the interface
-      // (invalid in Federation).
-      const typeDirectives = { ...getDirectiveExtensions(type) };
+      const typeDirectives = getDirectiveExtensions(type);
+      // Prefer mutating extensions in place — recreating GraphQLObjectType breaks
+      // interface identity (OpenAPI HATEOAS / federation-mixed e2es). Clone the
+      // directives bag so a shared interface/object bag cannot get `@shareable`
+      // stamped onto an INTERFACE (invalid in Federation).
+      typeDirectives.shareable ||= [];
       if (!typeDirectives.shareable?.length) {
-        typeDirectives.shareable = [{}];
+        const typeExtensions: Record<string, any> = (type.extensions ||= {});
+        typeExtensions.directives = { ...typeDirectives, shareable: [{}] };
       }
-      return new GraphQLObjectType({
-        ...type.toConfig(),
-        extensions: {
-          ...(type.extensions || {}),
-          directives: typeDirectives,
-        },
-        astNode: undefined,
-        extensionASTNodes: [],
-      });
+      return type;
     },
     [MapperKind.INTERFACE_TYPE]: type => {
-      const typeDirectives = { ...getDirectiveExtensions(type) };
-      if (!typeDirectives.shareable) {
-        return type;
+      const dirs =
+        ((type?.extensions as any)?.directives as Record<string, unknown> | undefined) ||
+        getDirectiveExtensions(type);
+      if (dirs?.shareable) {
+        const typeExtensions: Record<string, any> = (type.extensions ||= {});
+        const cloned = { ...dirs };
+        delete cloned.shareable;
+        typeExtensions.directives = cloned;
       }
-      delete typeDirectives.shareable;
-      return new GraphQLInterfaceType({
-        ...type.toConfig(),
-        extensions: {
-          ...(type.extensions || {}),
-          directives: typeDirectives,
-        },
-        astNode: undefined,
-        extensionASTNodes: [],
-      });
+      return type;
     },
   });
 }
-
 export function convertSubgraphToFederationv2(subgraph: GraphQLSchema) {
   const schemaDirectives = getDirectiveExtensions(subgraph);
   // Only treat as "already v2" when Federation itself is linked. Federation Connectors

@@ -41,6 +41,7 @@ import {
   EntitySetDirective,
   NavPropDirective,
   PluralNavDirective,
+  processDirectives as processODataResidualDirectives,
   ResolveRootDirective,
   SingletonDirective,
   SingularNavDirective,
@@ -48,11 +49,7 @@ import {
   UnboundFunctionDirective,
   UpdateEntitySetDirective,
 } from './directives.js';
-import {
-  applyODataConnectSchemaExtensions,
-  emitODataConnectors,
-} from './emitODataConnectors.js';
-import { processDirectives as processODataResidualDirectives } from './directives.js';
+import { applyODataConnectSchemaExtensions, emitODataConnectors } from './emitODataConnectors.js';
 import type { EntityTypeExtensions } from './types.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
 import { QUERY_OPTIONS_FIELDS } from './utils/QueryOptionsFields.js';
@@ -809,7 +806,9 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         eventEmitter: baseEventEmitter,
       } = baseOutputType.getExtensions() as any as EntityTypeExtensions;
       if (!baseEntityInfo || !baseEventEmitter) {
-        log.warn(`OData: skip base-type merge for ${typeName}; base ${baseTypeName} has no entityInfo`);
+        log.warn(
+          `OData: skip base-type merge for ${typeName}; base ${baseTypeName} has no entityInfo`,
+        );
         return;
       }
       const baseEventEmitterListener = () => {
@@ -1063,9 +1062,8 @@ export async function loadGraphQLSchemaFromOData(
   opts: LoadGraphQLSchemaFromODataOpts,
 ) {
   let schema = await loadNonExecutableGraphQLSchemaFromOData(name, opts);
-  const { processDirectives: processConnectDirectives } = await import(
-    '@graphql-mesh/transport-rest'
-  );
+  const { processDirectives: processConnectDirectives } =
+    await import('@graphql-mesh/transport-rest');
   schema = processConnectDirectives(schema, {
     globalFetch: opts.fetchFn,
     log: opts.log,

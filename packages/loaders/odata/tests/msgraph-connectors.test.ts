@@ -1,7 +1,7 @@
 import { execute, parse } from 'graphql';
+import { Logger } from '@graphql-hive/logger';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fetch as defaultFetch } from '@whatwg-node/fetch';
-import { Logger } from '@graphql-hive/logger';
 import {
   loadGraphQLSchemaFromOData,
   loadNonExecutableGraphQLSchemaFromOData,
@@ -19,33 +19,33 @@ describe('Microsoft Graph + Connectors', () => {
   (process.env.CI && !TOKEN && process.env.MSGRAPH_LIVE !== '1' ? it.skip : it)(
     'emits @source/@connect/@key from live MS Graph $metadata',
     async () => {
-    const schema = await loadNonExecutableGraphQLSchemaFromOData('MicrosoftGraph', {
-      endpoint: MSGRAPH_ENDPOINT,
-      baseDir: __dirname,
-      fetchFn: defaultFetch,
-      log,
-      importFn: async (id: string) => import(id),
-      operationHeaders: TOKEN
-        ? { Authorization: 'Bearer {env.MSGRAPH_ACCESS_TOKEN}' }
-        : undefined,
-      expandNavProps: true,
-    });
+      const schema = await loadNonExecutableGraphQLSchemaFromOData('MicrosoftGraph', {
+        endpoint: MSGRAPH_ENDPOINT,
+        baseDir: __dirname,
+        fetchFn: defaultFetch,
+        log,
+        importFn: async (id: string) => import(id),
+        operationHeaders: TOKEN
+          ? { Authorization: 'Bearer {env.MSGRAPH_ACCESS_TOKEN}' }
+          : undefined,
+        expandNavProps: true,
+      });
 
-    const sdl = printSchemaWithDirectives(schema);
-    expect(sdl).toContain('@source(');
-    expect(sdl).toContain('odata.metadata=minimal');
-    expect(sdl).toContain('@connect(');
-    expect(sdl).toMatch(/me\b[\s\S]*@connect/);
-    expect(sdl).toContain('kind: "rest"');
-    // Entity keys for microsoft.graph.user
-    expect(sdl).toMatch(/@key\(fields:\s*"id"\)/);
+      const sdl = printSchemaWithDirectives(schema);
+      expect(sdl).toContain('@source(');
+      expect(sdl).toContain('odata.metadata=minimal');
+      expect(sdl).toContain('@connect(');
+      expect(sdl).toMatch(/me\b[\s\S]*@connect/);
+      expect(sdl).toContain('kind: "rest"');
+      // Entity keys for microsoft.graph.user
+      expect(sdl).toMatch(/@key\(fields:\s*"id"\)/);
 
-    const sourceExt = (schema.extensions as any)?.directives?.source?.[0];
-    expect(sourceExt?.http?.baseURL).toContain('graph.microsoft.com');
-    const accept = sourceExt?.http?.headers?.find(
-      (h: { name: string }) => h.name.toLowerCase() === 'accept',
-    );
-    expect(accept?.value).toContain('odata.metadata');
+      const sourceExt = (schema.extensions as any)?.directives?.source?.[0];
+      expect(sourceExt?.http?.baseURL).toContain('graph.microsoft.com');
+      const accept = sourceExt?.http?.headers?.find(
+        (h: { name: string }) => h.name.toLowerCase() === 'accept',
+      );
+      expect(accept?.value).toContain('odata.metadata');
     },
   );
 

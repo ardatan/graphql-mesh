@@ -36,7 +36,7 @@ yarn test:e2e e2e/odata-msgraph
 **Unit** (live `$metadata` smoke + optional live `me`):
 
 ```bash
-export MSGRAPH_ACCESS_TOKEN='…'   # or GRAPH_ACCESS_TOKEN — optional for live `me`
+export MSGRAPH_ACCESS_TOKEN='…' # or GRAPH_ACCESS_TOKEN — optional for live `me`
 yarn test packages/loaders/odata/tests/msgraph-connectors.test.ts
 ```
 

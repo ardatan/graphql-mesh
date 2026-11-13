@@ -36,6 +36,9 @@ describe('odata', () => {
     });
     resetMocks();
   });
+  afterEach(async () => {
+    await pubsub.dispose();
+  });
   it('should create a GraphQL schema from a simple OData endpoint', async () => {
     addMock(
       'https://services.odata.org/TripPinRESTierService/$metadata',

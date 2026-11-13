@@ -119,7 +119,8 @@ function collectSelections(
       if (!frag) continue;
       const typeName = frag.typeCondition?.name.value;
       const fragType =
-        (typeName && (info.schema.getType(typeName) as GraphQLObjectType | undefined)) || parentType;
+        (typeName && (info.schema.getType(typeName) as GraphQLObjectType | undefined)) ||
+        parentType;
       if (!isObjectType(fragType)) continue;
       collectSelections(frag.selectionSet.selections, fragType, info, propertyMap, out);
     }
@@ -156,20 +157,29 @@ function isODataStructuralField(fieldDef: GraphQLField<any, any>): boolean {
   return true;
 }
 
-function unwrapNonNull(type: GraphQLOutputType): GraphQLOutputType {
-  return isNonNullType(type) ? type.ofType : type;
+function hasDirective(dirs: Record<string, unknown> | undefined, name: string): boolean {
+  const value = dirs?.[name];
+  if (value == null) {
+    return false;
+  }
+  return Array.isArray(value) ? value.length > 0 : true;
 }
 
 function isODataExpandableField(fieldDef: GraphQLField<any, any>): boolean {
   const dirs = getDirectiveExtensions(fieldDef as any) || {};
-  if (dirs.navProp?.length || dirs.pluralNav?.length) {
+  if (hasDirective(dirs, 'navProp') || hasDirective(dirs, 'pluralNav')) {
     return true;
   }
-  // Connectors-only schemas may omit Mesh `@pluralNav`; still `$expand` list-of-entity.
-  const outer = unwrapNonNull(fieldDef.type);
-  return isListType(outer) && isObjectType(getNamedType(outer));
+  // Connectors-only schemas may omit Mesh `@pluralNav` / `@navProp`. Expand only when
+  // the target type is an entity (`@key`). Complex types (e.g. TripPin `AddressInfo` →
+  // `Location`) are `$select`ed and returned inline — `$expand` is rejected by OData.
+  const namedType = getNamedType(fieldDef.type);
+  if (!isObjectType(namedType)) {
+    return false;
+  }
+  const typeDirs = getDirectiveExtensions(namedType as any) || {};
+  return hasDirective(typeDirs, 'key');
 }
-
 function collectField(
   field: FieldNode,
   parentType: GraphQLObjectType,
@@ -185,7 +195,8 @@ function collectField(
   if (!fieldDef || !isODataStructuralField(fieldDef)) {
     return;
   }
-  const odataName = propertyMap.get(responseName) || propertyMap.get(field.name.value) || field.name.value;
+  const odataName =
+    propertyMap.get(responseName) || propertyMap.get(field.name.value) || field.name.value;
   const namedType = getNamedType(fieldDef.type);
 
   if (isLeafType(namedType)) {
