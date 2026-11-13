@@ -140,7 +140,7 @@ Matches moment.js, Luxon and DateFns implementations
 """
 scalar ISO8601Duration @join__type(graph: TRIPPIN)
 
-type Person implements IPerson @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
+type Person implements IPerson @abstractType(entityTypeName: "Person", isAbstract: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -189,7 +189,7 @@ type Trip @join__type(graph: TRIPPIN, key: "TripId") {
   GetInvolvedPeople(trip: TripInput): [Person] @boundFunction(functionRef: "Trippin.GetInvolvedPeople")
 }
 
-type PlanItem implements IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+type PlanItem implements IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -207,7 +207,7 @@ type Event implements IPlanItem @join__type(graph: TRIPPIN, key: "PlanItemId") @
   Duration: ISO8601Duration!
 }
 
-type PublicTransportation implements IPublicTransportation & IPlanItem @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+type PublicTransportation implements IPublicTransportation & IPlanItem @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
   PlanItemId: Int!
   SeatNumber: String
   ConfirmationCode: String
@@ -282,7 +282,7 @@ type Manager implements IPerson @join__type(graph: TRIPPIN, key: "UserName") @jo
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
 }
 
-type Location implements ILocation @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
+type Location implements ILocation @abstractType(entityTypeName: "Location", isAbstract: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
   Address: String
   City: City
 }
@@ -339,7 +339,7 @@ type Mutation @join__type(graph: TRIPPIN) {
   updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @updateEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode")
 }
 
-interface IPerson @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "UserName") {
+interface IPerson @abstractType(entityTypeName: "Person", isAbstract: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "UserName") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -362,7 +362,7 @@ interface IPerson @abstractType(entityTypeName: "Person", isAbstract: false, ali
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
 }
 
-interface IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") {
+interface IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -370,7 +370,7 @@ interface IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false,
   Duration: ISO8601Duration!
 }
 
-interface IPublicTransportation @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") {
+interface IPublicTransportation @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") {
   PlanItemId: Int!
   SeatNumber: String
   ConfirmationCode: String
@@ -379,7 +379,7 @@ interface IPublicTransportation @abstractType(entityTypeName: "PublicTransportat
   Duration: ISO8601Duration!
 }
 
-interface ILocation @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) {
+interface ILocation @abstractType(entityTypeName: "Location", isAbstract: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) {
   Address: String
   City: City
 }

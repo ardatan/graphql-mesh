@@ -18,6 +18,7 @@ OData `@entityInfo` carried codegen leftovers that hurt hand-authored SDL, and t
 - Removed `@entityInfo` entirely.
 - Entity keys emit Federation-compatible `@key(fields: "…")` (repeatable; optional `resolvable`). Runtime (`$select`, `@odata.id`, singular nav) reads `@key`.
 - OpenType entities emit `additionalProperties: JSON @resolveRoot` (output) and `additionalProperties: JSON` (input) instead of `rest`. `rebuildOpenInputObjects` merges that bag on create/update.
+- `@abstractType`: omit empty `aliasNamespaceMap` and omit `multipleSchemas` unless `true`. Runtime treats omitted args as `[]` / `false`.
 
 This does **not** auto-wire Federation `_entities` / entity resolvers; `@key` is the shared key metadata for OData URLs and for composition when you opt into Federation.
 
@@ -29,6 +30,7 @@ Regenerate OData schemas, or edit hand-written SDL:
 2. Delete `navigationFields`, `actualFields`, `identifierFieldTypeRef`, and `isOpenType` from directives.
 3. Replace `@entityInfo(identifierFieldName: "…")` with `@key(fields: "…")`. Drop bare `@entityInfo` on keyless complex types.
 4. Rename open-type bag `rest` → `additionalProperties` and put `@resolveRoot` on the output field.
+5. On `@abstractType`, drop `aliasNamespaceMap: []` and `multipleSchemas: false` (omit when empty/false).
 
 ### Keys
 

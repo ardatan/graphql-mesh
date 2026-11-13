@@ -36,7 +36,7 @@ directive @deleteEntitySet(entitySetName: String, identifierFieldName: String) o
 
 directive @updateEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
-type Person implements IPerson @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "UserName") {
+type Person implements IPerson @abstractType(entityTypeName: "Person", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "UserName") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -59,7 +59,7 @@ type Person implements IPerson @abstractType(entityTypeName: "Person", isAbstrac
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
 }
 
-interface IPerson @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "UserName") {
+interface IPerson @abstractType(entityTypeName: "Person", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "UserName") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -177,7 +177,7 @@ type Airport @key(fields: "IcaoCode") {
   Location: AirportLocation
 }
 
-type Trip implements ITrip @abstractType(entityTypeName: "Trip", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "TripId") {
+type Trip implements ITrip @abstractType(entityTypeName: "Trip", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "TripId") {
   TripId: Int!
   ShareId: GUID!
   Name: String
@@ -191,7 +191,7 @@ type Trip implements ITrip @abstractType(entityTypeName: "Trip", isAbstract: fal
   GetInvolvedPeople(trip: TripInput): [Person] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople")
 }
 
-interface ITrip @abstractType(entityTypeName: "Trip", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "TripId") {
+interface ITrip @abstractType(entityTypeName: "Trip", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "TripId") {
   TripId: Int!
   ShareId: GUID!
   Name: String
@@ -226,7 +226,7 @@ input TripInput {
   EndsAt: DateTime!
 }
 
-type PlanItem implements IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
+type PlanItem implements IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -234,7 +234,7 @@ type PlanItem implements IPlanItem @abstractType(entityTypeName: "PlanItem", isA
   Duration: ISO8601Duration!
 }
 
-interface IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
+interface IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -274,7 +274,7 @@ type Event implements IPlanItem @key(fields: "PlanItemId") {
   Duration: ISO8601Duration!
 }
 
-type PublicTransportation implements IPublicTransportation & IPlanItem @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
+type PublicTransportation implements IPublicTransportation & IPlanItem @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
@@ -283,7 +283,7 @@ type PublicTransportation implements IPublicTransportation & IPlanItem @abstract
   Duration: ISO8601Duration!
 }
 
-interface IPublicTransportation @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
+interface IPublicTransportation @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) @key(fields: "PlanItemId") {
   SeatNumber: String
   PlanItemId: Int!
   ConfirmationCode: String
@@ -358,12 +358,12 @@ type Manager implements IPerson @key(fields: "UserName") {
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
 }
 
-type Location implements ILocation @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+type Location implements ILocation @abstractType(entityTypeName: "Location", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   Address: String
   City: City
 }
 
-interface ILocation @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
+interface ILocation @abstractType(entityTypeName: "Location", isAbstract: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
   Address: String
   City: City
 }

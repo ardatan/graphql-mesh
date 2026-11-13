@@ -226,17 +226,26 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           extensions: extensions as any,
         });
         const directiveExtensions: any = ((extensions.directives as any) ||= {});
-        directiveExtensions.abstractType = {
+        const abstractTypeArgs: Record<string, unknown> = {
           entityTypeName,
           isAbstract,
-          get aliasNamespaceMap() {
-            return [...aliasNamespaceMap.entries()];
-          },
-          multipleSchemas,
           get namespaces() {
             return [...namespaces];
           },
         };
+        // Omit empty alias map and false multipleSchemas from hand-authored SDL.
+        if (aliasNamespaceMap.size > 0) {
+          Object.defineProperty(abstractTypeArgs, 'aliasNamespaceMap', {
+            enumerable: true,
+            get() {
+              return [...aliasNamespaceMap.entries()];
+            },
+          });
+        }
+        if (multipleSchemas) {
+          abstractTypeArgs.multipleSchemas = true;
+        }
+        directiveExtensions.abstractType = abstractTypeArgs;
         schemaComposer.addDirective(AbstractTypeDirective);
       }
       const outputType = schemaComposer.createObjectTC({

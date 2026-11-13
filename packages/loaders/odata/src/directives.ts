@@ -308,8 +308,10 @@ export const AbstractTypeDirective = new GraphQLDirective({
 export interface AbstractTypeDirectiveArgs {
   entityTypeName: string;
   isAbstract: boolean;
-  aliasNamespaceMap: [string, string][];
-  multipleSchemas: boolean;
+  /** Omitted when empty (single-namespace schemas). */
+  aliasNamespaceMap?: [string, string][];
+  /** Omit unless true; runtime treats missing as false. */
+  multipleSchemas?: boolean;
   namespaces: string[];
 }
 
@@ -384,9 +386,9 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
           resolveType: createAbstractTypeResolver({
             entityTypeName: abstractTypeDirective.entityTypeName,
             isAbstract: abstractTypeDirective.isAbstract,
-            aliasNamespaceMap: new Map(abstractTypeDirective.aliasNamespaceMap),
-            multipleSchemas: abstractTypeDirective.multipleSchemas,
-            namespaces: new Set(abstractTypeDirective.namespaces),
+            aliasNamespaceMap: new Map(abstractTypeDirective.aliasNamespaceMap ?? []),
+            multipleSchemas: abstractTypeDirective.multipleSchemas ?? false,
+            namespaces: new Set(abstractTypeDirective.namespaces ?? []),
           }),
         });
       }
