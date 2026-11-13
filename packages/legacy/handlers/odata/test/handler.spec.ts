@@ -177,7 +177,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(decodeURIComponent(sentRequest!.url)).toBe(correctUrl);
   });
   it('should generate correct HTTP request for requesting a single Entity by ID', async () => {
     using cache = new InMemoryLRUCache();
@@ -223,7 +223,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(decodeURIComponent(sentRequest!.url)).toBe(correctUrl);
   });
   it('should generate correct HTTP request for requesting a complex property', async () => {
     addMock(
@@ -280,7 +280,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(decodeURIComponent(sentRequest!.url)).toBe(correctUrl);
   });
   it('should generate correct HTTP request for query options', async () => {
     addMock(
@@ -820,9 +820,9 @@ describe('odata', () => {
       Message: 'hello',
     };
     let sentRequest: Request;
-    addMock(`https://sample.service.com/People/alice/?$select=UserName`, async () => {
-      return new MockResponse(JSON.stringify(SimplePersonMockData));
-    });
+    const personLoader = async () => new MockResponse(JSON.stringify(SimplePersonMockData));
+    addMock(`https://sample.service.com/People/alice/`, personLoader);
+    addMock(`https://sample.service.com/People/alice/?$select=UserName`, personLoader);
     addMock(correctUrl, async request => {
       sentRequest = request;
       return new MockResponse(JSON.stringify(true));

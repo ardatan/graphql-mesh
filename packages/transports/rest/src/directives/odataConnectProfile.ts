@@ -8,12 +8,14 @@ import {
   Kind,
   type FieldNode,
   type FragmentDefinitionNode,
+  type GraphQLField,
   type GraphQLObjectType,
   type GraphQLOutputType,
   type GraphQLResolveInfo,
   type InlineFragmentNode,
   type SelectionNode,
 } from 'graphql';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 
 const ODATA_METADATA_ACCEPT_RE = /;\s*odata\.metadata\s*=/i;
 
@@ -138,6 +140,36 @@ function collectInlineFragment(
   collectSelections(fragment.selectionSet.selections, parentType, info, propertyMap, out);
 }
 
+/** Bound ops / by-id accessors are not OData `$select` / `$expand` properties. */
+function isODataStructuralField(fieldDef: GraphQLField<any, any>): boolean {
+  const dirs = getDirectiveExtensions(fieldDef as any) || {};
+  if (
+    dirs.boundFunction?.length ||
+    dirs.boundAction?.length ||
+    dirs.singularNav?.length ||
+    dirs.connect?.length
+  ) {
+    return false;
+  }
+  // `@navProp` / `@pluralNav` are expandable; everything else without those and
+  // without bound ops is treated as a structural / nav property.
+  return true;
+}
+
+function unwrapNonNull(type: GraphQLOutputType): GraphQLOutputType {
+  return isNonNullType(type) ? type.ofType : type;
+}
+
+function isODataExpandableField(fieldDef: GraphQLField<any, any>): boolean {
+  const dirs = getDirectiveExtensions(fieldDef as any) || {};
+  if (dirs.navProp?.length || dirs.pluralNav?.length) {
+    return true;
+  }
+  // Connectors-only schemas may omit Mesh `@pluralNav`; still `$expand` list-of-entity.
+  const outer = unwrapNonNull(fieldDef.type);
+  return isListType(outer) && isObjectType(getNamedType(outer));
+}
+
 function collectField(
   field: FieldNode,
   parentType: GraphQLObjectType,
@@ -150,7 +182,7 @@ function collectField(
     return;
   }
   const fieldDef = parentType.getFields()[field.name.value];
-  if (!fieldDef) {
+  if (!fieldDef || !isODataStructuralField(fieldDef)) {
     return;
   }
   const odataName = propertyMap.get(responseName) || propertyMap.get(field.name.value) || field.name.value;
@@ -162,16 +194,21 @@ function collectField(
   }
 
   if (isObjectType(namedType) && field.selectionSet) {
-    const nested = { select: new Set<string>(), expand: [] as string[] };
-    collectSelections(field.selectionSet.selections, namedType, info, propertyMap, nested);
-    const nestedParts: string[] = [];
-    if (nested.select.size) {
-      nestedParts.push(`$select=${[...nested.select].join(',')}`);
+    if (isODataExpandableField(fieldDef)) {
+      const nested = { select: new Set<string>(), expand: [] as string[] };
+      collectSelections(field.selectionSet.selections, namedType, info, propertyMap, nested);
+      const nestedParts: string[] = [];
+      if (nested.select.size) {
+        nestedParts.push(`$select=${[...nested.select].join(',')}`);
+      }
+      if (nested.expand.length) {
+        nestedParts.push(`$expand=${nested.expand.join(',')}`);
+      }
+      out.expand.push(nestedParts.length ? `${odataName}(${nestedParts.join(';')})` : odataName);
+      out.select.add(odataName);
+      return;
     }
-    if (nested.expand.length) {
-      nestedParts.push(`$expand=${nested.expand.join(',')}`);
-    }
-    out.expand.push(nestedParts.length ? `${odataName}(${nestedParts.join(';')})` : odataName);
+    // Complex / structured properties are `$select`ed (not `$expand`).
     out.select.add(odataName);
   }
 }
@@ -194,6 +231,20 @@ export function buildODataSelectExpand(
   for (const fieldNode of info.fieldNodes) {
     if (!fieldNode.selectionSet) continue;
     collectSelections(fieldNode.selectionSet.selections, returnType, info, propertyMap, out);
+  }
+  // Always include `@key` / identifier fields so entity URLs / bound ops keep working.
+  const keyDirs = getDirectiveExtensions(returnType as any)?.key;
+  if (Array.isArray(keyDirs)) {
+    for (const key of keyDirs) {
+      const fields = typeof key?.fields === 'string' ? key.fields.split(/\s+/) : [];
+      for (const f of fields) {
+        if (f) out.select.add(f);
+      }
+    }
+  }
+  const entityInfo = getDirectiveExtensions(returnType as any)?.entityInfo?.[0];
+  if (entityInfo?.identifierFieldName) {
+    out.select.add(entityInfo.identifierFieldName);
   }
   return {
     select: [...out.select],

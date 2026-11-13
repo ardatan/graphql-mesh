@@ -9881,7 +9881,7 @@ __metadata:
   resolution: "@graphql-mesh/transport-odata@workspace:packages/transports/odata"
   dependencies:
     "@graphql-mesh/transport-common": "npm:^1.1.1"
-    "@omnigraph/odata": "npm:^0.5.3"
+    "@graphql-mesh/transport-rest": "npm:^0.12.4"
     graphql: "npm:16.14.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -13872,6 +13872,8 @@ __metadata:
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
     "@graphql-mesh/store": "npm:^0.107.3"
     "@graphql-mesh/string-interpolation": "npm:^0.5.18"
+    "@graphql-mesh/transport-common": "npm:^1.1.1"
+    "@graphql-mesh/transport-rest": "npm:^0.12.4"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.3.2"

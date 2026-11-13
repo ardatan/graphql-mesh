@@ -25,6 +25,8 @@ import urljoin from 'url-join';
 import { type Logger } from '@graphql-hive/logger';
 import { process } from '@graphql-mesh/cross-helpers';
 import { parseInterpolationStrings, stringInterpolator } from '@graphql-mesh/string-interpolation';
+import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-common';
+import transportRest, { type RESTTransportOptions } from '@graphql-mesh/transport-rest';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import {
@@ -39,15 +41,17 @@ import {
   EntitySetDirective,
   NavPropDirective,
   PluralNavDirective,
-  processDirectives,
   ResolveRootDirective,
   SingletonDirective,
   SingularNavDirective,
   UnboundActionDirective,
   UnboundFunctionDirective,
   UpdateEntitySetDirective,
-  type TransportDirectiveArgs,
 } from './directives.js';
+import {
+  applyODataConnectSchemaExtensions,
+  emitODataConnectors,
+} from './emitODataConnectors.js';
 import type { EntityTypeExtensions } from './types.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
 import { QUERY_OPTIONS_FIELDS } from './utils/QueryOptionsFields.js';
@@ -963,19 +967,31 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
   // graphql-compose doesn't add @defer and @stream to the schema
   specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
 
+  // Federation Connectors surface — Hive runs via transport-rest (+ odata.metadata $select).
+  const connectMeta = emitODataConnectors(schemaComposer, {
+    name,
+    endpoint,
+    operationHeaders:
+      typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined,
+  });
+
   const schema = schemaComposer.buildSchema();
+  applyODataConnectSchemaExtensions(
+    schema,
+    connectMeta,
+    name,
+    endpoint,
+    typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined,
+  );
+  // Preserve batch / expand hints for any remaining Mesh-bound ops (bound functions).
   const schemaExtensions: any = (schema.extensions ||= {});
   const directiveExtensions = (schemaExtensions.directives ||= {});
-  directiveExtensions.transport = {
-    kind: 'odata',
-    subgraph: name,
-    location: endpoint,
-    headers: Object.entries(operationHeaders || []),
-    options: {
+  if (directiveExtensions.transport && typeof directiveExtensions.transport === 'object') {
+    directiveExtensions.transport.options = {
       batch,
       expandNavProps,
-    },
-  };
+    };
+  }
   eventEmitterSet.forEach(ee => ee.removeAllListeners());
   eventEmitterSet.clear();
 
@@ -986,14 +1002,27 @@ export async function loadGraphQLSchemaFromOData(
   name: string,
   opts: LoadGraphQLSchemaFromODataOpts,
 ) {
-  const schema = await loadNonExecutableGraphQLSchemaFromOData(name, opts);
-  return processDirectives({
+  let schema = await loadNonExecutableGraphQLSchemaFromOData(name, opts);
+  const { processDirectives: processConnectDirectives } = await import(
+    '@graphql-mesh/transport-rest'
+  );
+  schema = processConnectDirectives(schema, {
+    globalFetch: opts.fetchFn,
+    log: opts.log,
+  });
+  // Bound ops / nav lazy-fetch / `@odata.type` resolveType
+  return processODataResidualDirectives({
     schema,
     fetchFn: opts.fetchFn,
   });
 }
 
-export { processDirectives };
+export { processDirectives as processODataResidualDirectives } from './directives.js';
+export { processDirectives } from '@graphql-mesh/transport-rest';
+
+export const getSubgraphExecutor: TransportGetSubgraphExecutor<RESTTransportOptions> = opts => {
+  return transportRest.getSubgraphExecutor(opts);
+};
 
 export function loadODataSubgraph(
   name: string,

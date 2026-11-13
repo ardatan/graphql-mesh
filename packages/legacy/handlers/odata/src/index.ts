@@ -9,7 +9,11 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import { loadNonExecutableGraphQLSchemaFromOData, processDirectives } from '@omnigraph/odata';
+import {
+  loadNonExecutableGraphQLSchemaFromOData,
+  processDirectives,
+  processODataResidualDirectives,
+} from '@omnigraph/odata';
 
 export default class ODataHandler implements MeshHandler {
   private name: string;
@@ -50,7 +54,11 @@ export default class ODataHandler implements MeshHandler {
         expandNavProps: this.config.expandNavProps,
       }),
     );
-    schema = processDirectives({
+    schema = processDirectives(schema, {
+      globalFetch: fetchFn,
+      log: this.log,
+    });
+    schema = processODataResidualDirectives({
       schema,
       fetchFn,
     });

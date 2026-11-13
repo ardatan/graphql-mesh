@@ -1445,9 +1445,12 @@ export function addConnectFieldResolver(
     const baseURL = resolveTemplate(source?.http?.baseURL || '', vars);
     // Path templates percent-encode expression values; baseURL / headers do not.
     const path = resolveTemplate(picked.path, vars, { encodeValues: true });
+    // Absolute `@odata.id` (and other absolute connector URLs) skip baseURL join.
     // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
     // so test mocks like `fetch('pets/1')` keep working.
-    let fullPath = urlJoin(baseURL || '', path) || path;
+    let fullPath = /^https?:\/\//i.test(path)
+      ? path
+      : urlJoin(baseURL || '', path) || path;
 
     const resolveArg = (argName: string, value: any) => {
       const argDef = field.args?.find(arg => arg.name === argName);

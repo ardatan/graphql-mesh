@@ -23,18 +23,11 @@ import { getDataloaderFactory } from './getDataloaderFactory.js';
 import { createAbstractTypeResolver } from './resolvers/abstractTypeResolver.js';
 import { createBoundActionResolver } from './resolvers/boundActionResolver.js';
 import { createBoundFunctionResolver } from './resolvers/boundFunctionResolver.js';
-import { createCreateEntitySetResolver } from './resolvers/createEntitySetResolver.js';
-import { createDeleteEntitySetByIdentifierResolver } from './resolvers/deleteEntitySetByIdentifierResolver.js';
-import { createEntitySetByIdentifierResolver } from './resolvers/entitySetByIdentifierResolver.js';
-import { createEntitySetCountResolver } from './resolvers/entitySetCountResolver.js';
-import { createEntitySetResolver } from './resolvers/entitySetResolver.js';
 import { createNavPropResolver } from './resolvers/navPropResolver.js';
 import { rootResolver } from './resolvers/rootResolver.js';
-import { createSingletonResolver } from './resolvers/singletonResolver.js';
 import { createSingularNavResolver } from './resolvers/singularNavResolver.js';
 import { createUnboundActionResolver } from './resolvers/unboundActionResolver.js';
 import { createUnboundFunctionResolver } from './resolvers/unboundFunction.js';
-import { createUpdateEntitySetResolver } from './resolvers/updateEntitySetResolver.js';
 
 export { TransportDirective };
 
@@ -357,15 +350,36 @@ export interface ProcessDirectivesArgs {
   fetchFn: MeshFetch;
 }
 
+/**
+ * Residual Mesh OData resolvers (bound ops, nav lazy-fetch, abstract `@odata.type`).
+ * Root entity-set CRUD is handled by Federation `@connect` via `transport-rest`.
+ * Accepts either legacy `@transport(kind: odata)` or Connectors `@source` + `@transport(kind: rest)`.
+ */
 export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
   const schemaLevelDirectives = getDirectiveExtensions<DirectiveArgsMap>(schema);
   const transportDirective = schemaLevelDirectives?.transport?.[0];
-  if (!transportDirective) {
-    throw new Error('Missing transport directive');
+  const sourceDirective = (schemaLevelDirectives as any)?.source?.[0] as
+    | { http?: { baseURL?: string; headers?: Array<{ name: string; value?: string }> } }
+    | undefined;
+  const endpointRaw =
+    sourceDirective?.http?.baseURL || transportDirective?.location || undefined;
+  if (!endpointRaw) {
+    throw new Error('Missing @source.http.baseURL or @transport.location for OData');
   }
-  const operationHeaders = Array.isArray(transportDirective.headers)
-    ? Object.fromEntries(transportDirective.headers)
-    : transportDirective.headers;
+  const headerEntries: [string, string][] = [];
+  if (Array.isArray(transportDirective?.headers)) {
+    headerEntries.push(...(transportDirective.headers as [string, string][]));
+  } else if (transportDirective?.headers && typeof transportDirective.headers === 'object') {
+    headerEntries.push(...Object.entries(transportDirective.headers as Record<string, string>));
+  }
+  if (sourceDirective?.http?.headers) {
+    for (const h of sourceDirective.http.headers) {
+      if (h?.name && h.value != null) {
+        headerEntries.push([h.name, h.value]);
+      }
+    }
+  }
+  const operationHeaders = Object.fromEntries(headerEntries);
   const origHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
   const headersFactory = (resolverData: ResolverData, method: string) => {
     const headers = origHeadersFactory(resolverData);
@@ -378,7 +392,7 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
     return headers;
   };
 
-  const endpoint = stringInterpolator.parse(transportDirective.location, {
+  const endpoint = stringInterpolator.parse(endpointRaw, {
     env: process.env,
   });
 
@@ -386,7 +400,7 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
     endpoint,
     fetchFn,
     headersFactory,
-    batchMode: transportDirective.options?.batch || 'none',
+    batchMode: transportDirective?.options?.batch || 'none',
   });
 
   return mapSchema(schema, {
@@ -401,15 +415,21 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
           resolveType: createAbstractTypeResolver({
             entityTypeName: abstractTypeDirective.entityTypeName,
             isAbstract: abstractTypeDirective.isAbstract,
-            aliasNamespaceMap: new Map(abstractTypeDirective.aliasNamespaceMap),
-            multipleSchemas: abstractTypeDirective.multipleSchemas,
-            namespaces: new Set(abstractTypeDirective.namespaces),
+            aliasNamespaceMap: new Map(abstractTypeDirective.aliasNamespaceMap ?? []),
+            multipleSchemas: abstractTypeDirective.multipleSchemas ?? false,
+            namespaces: new Set(abstractTypeDirective.namespaces ?? []),
           }),
         });
       }
     },
     [MapperKind.COMPOSITE_FIELD]: fieldConfig => {
       const fieldDirectives = getDirectiveExtensions<DirectiveArgsMap>(fieldConfig);
+      // Root CRUD `@connect` resolvers win. Mesh-bound ops / nav must overwrite
+      // stubs from `hydrateEntityStubFieldResolvers`.
+      const hasConnect = Boolean(fieldDirectives?.connect?.length);
+      if (hasConnect && typeof fieldConfig.resolve === 'function') {
+        return fieldConfig;
+      }
       if (fieldDirectives?.boundAction?.length) {
         const boundActionDirective = fieldDirectives.boundAction[0];
         fieldConfig.resolve = createBoundActionResolver({
@@ -421,53 +441,7 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
         const boundFunctionDirective = fieldDirectives.boundFunction[0];
         fieldConfig.resolve = createBoundFunctionResolver({
           functionRef: boundFunctionDirective.functionRef,
-          expandNavProps: transportDirective.options?.expandNavProps,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (fieldDirectives?.createEntitySet?.length) {
-        const createEntitySetDirective = fieldDirectives.createEntitySet[0];
-        fieldConfig.resolve = createCreateEntitySetResolver({
-          endpoint,
-          entitySetName: createEntitySetDirective.entitySetName,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (fieldDirectives?.deleteEntitySet?.length) {
-        const deleteEntitySetDirective = fieldDirectives.deleteEntitySet[0];
-        fieldConfig.resolve = createDeleteEntitySetByIdentifierResolver({
-          endpoint,
-          entitySetName: deleteEntitySetDirective.entitySetName,
-          identifierFieldName: deleteEntitySetDirective.identifierFieldName,
-          identifierFieldTypeRef: deleteEntitySetDirective.identifierFieldTypeRef,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (fieldDirectives?.entitySetByIdentifier?.length) {
-        const entitySetByIdentifierDirective = fieldDirectives.entitySetByIdentifier[0];
-        fieldConfig.resolve = createEntitySetByIdentifierResolver({
-          endpoint,
-          entitySetName: entitySetByIdentifierDirective.entitySetName,
-          identifierFieldName: entitySetByIdentifierDirective.identifierFieldName,
-          identifierFieldTypeRef: entitySetByIdentifierDirective.identifierFieldTypeRef,
-          expandNavProps: transportDirective.options?.expandNavProps,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (fieldDirectives?.entitySetCount?.length) {
-        const entitySetCountDirective = fieldDirectives.entitySetCount[0];
-        fieldConfig.resolve = createEntitySetCountResolver({
-          endpoint,
-          entitySetName: entitySetCountDirective.entitySetName,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (fieldDirectives?.entitySet?.length) {
-        const entitySetDirective = fieldDirectives.entitySet[0];
-        fieldConfig.resolve = createEntitySetResolver({
-          endpoint,
-          entitySetName: entitySetDirective.entitySetName,
-          expandNavProps: transportDirective.options?.expandNavProps,
+          expandNavProps: transportDirective?.options?.expandNavProps,
           dataloaderFactory,
           headersFactory,
         });
@@ -475,7 +449,7 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
         const navPropDirective = fieldDirectives.navProp[0];
         fieldConfig.resolve = createNavPropResolver({
           navigationPropertyName: navPropDirective.navigationPropertyName,
-          expandNavProps: transportDirective.options?.expandNavProps,
+          expandNavProps: transportDirective?.options?.expandNavProps,
           dataloaderFactory,
           headersFactory,
         });
@@ -483,26 +457,17 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
         const pluralNavDirective = fieldDirectives.pluralNav[0];
         fieldConfig.resolve = createNavPropResolver({
           navigationPropertyName: pluralNavDirective.navigationPropertyName,
-          expandNavProps: transportDirective.options?.expandNavProps,
+          expandNavProps: transportDirective?.options?.expandNavProps,
           dataloaderFactory,
           headersFactory,
         });
       } else if (fieldDirectives?.resolveRoot?.length) {
         fieldConfig.resolve = rootResolver;
-      } else if (fieldDirectives?.singleton?.length) {
-        const singletonDirective = fieldDirectives.singleton[0];
-        fieldConfig.resolve = createSingletonResolver({
-          singletonName: singletonDirective.singletonName,
-          endpoint,
-          expandNavProps: transportDirective.options?.expandNavProps,
-          dataloaderFactory,
-          headersFactory,
-        });
       } else if (fieldDirectives?.singularNav?.length) {
         const singularNavDirective = fieldDirectives.singularNav[0];
         fieldConfig.resolve = createSingularNavResolver({
           navigationPropertyName: singularNavDirective.navigationPropertyName,
-          expandNavProps: transportDirective.options?.expandNavProps,
+          expandNavProps: transportDirective?.options?.expandNavProps,
           dataloaderFactory,
           headersFactory,
         });
@@ -519,21 +484,12 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
         fieldConfig.resolve = createUnboundFunctionResolver({
           functionName: unboundFunctionDirective.functionName,
           endpoint,
-          expandNavProps: transportDirective.options?.expandNavProps,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (fieldDirectives?.updateEntitySet?.length) {
-        const updateEntitySetDirective = fieldDirectives.updateEntitySet[0];
-        fieldConfig.resolve = createUpdateEntitySetResolver({
-          endpoint,
-          entitySetName: updateEntitySetDirective.entitySetName,
-          identifierFieldName: updateEntitySetDirective.identifierFieldName,
-          identifierFieldTypeRef: updateEntitySetDirective.identifierFieldTypeRef,
+          expandNavProps: transportDirective?.options?.expandNavProps,
           dataloaderFactory,
           headersFactory,
         });
       }
+      // entitySet* / singleton / create|update|delete → `@connect` (transport-rest)
       return fieldConfig;
     },
   });
