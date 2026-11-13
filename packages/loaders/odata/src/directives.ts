@@ -34,7 +34,7 @@ export { TransportDirective };
 export type TransportDirectiveArgs = SharedTransportDirectiveArgs<{
   batch: 'none' | 'json' | 'multipart';
   expandNavProps: boolean;
-}> & { kind: 'odata' };
+}> & { kind: 'rest' };
 
 export const EntityInfoDirective = new GraphQLDirective({
   name: 'entityInfo',
@@ -353,7 +353,6 @@ export interface ProcessDirectivesArgs {
 /**
  * Residual Mesh OData resolvers (bound ops, nav lazy-fetch, abstract `@odata.type`).
  * Root entity-set CRUD is handled by Federation `@connect` via `transport-rest`.
- * Accepts either legacy `@transport(kind: odata)` or Connectors `@source` + `@transport(kind: rest)`.
  */
 export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
   const schemaLevelDirectives = getDirectiveExtensions<DirectiveArgsMap>(schema);

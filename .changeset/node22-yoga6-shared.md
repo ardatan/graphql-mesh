@@ -64,7 +64,6 @@
 "@graphql-mesh/transport-grpc": minor
 "@graphql-mesh/transport-mysql": minor
 "@graphql-mesh/transport-neo4j": minor
-"@graphql-mesh/transport-odata": minor
 "@graphql-mesh/transport-rest": minor
 "@graphql-mesh/transport-soap": minor
 "@graphql-mesh/transport-sqlite": minor
