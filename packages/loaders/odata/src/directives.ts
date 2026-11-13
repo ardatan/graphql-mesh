@@ -35,7 +35,6 @@ import { createSingularNavResolver } from './resolvers/singularNavResolver.js';
 import { createUnboundActionResolver } from './resolvers/unboundActionResolver.js';
 import { createUnboundFunctionResolver } from './resolvers/unboundFunction.js';
 import { createUpdateEntitySetResolver } from './resolvers/updateEntitySetResolver.js';
-import { ensureODataFederationEntities } from './utils/ensureFederationEntities.js';
 
 export { TransportDirective };
 
@@ -375,7 +374,7 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
     batchMode: transportDirective.options?.batch || 'none',
   });
 
-  const executableSchema = mapSchema(schema, {
+  return mapSchema(schema, {
     [MapperKind.ABSTRACT_TYPE]: type => {
       const typeDirectives = getDirectiveExtensions<DirectiveArgsMap>(type);
       const abstractTypeDirectives = typeDirectives?.abstractType;
@@ -520,5 +519,4 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
       return fieldConfig;
     },
   });
-  return ensureODataFederationEntities(executableSchema);
 }

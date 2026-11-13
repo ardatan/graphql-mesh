@@ -859,10 +859,6 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
             return;
           }
-          // OData `@entitySetByIdentifier` → transport wires resolveReference + Query._entities.
-          if (directiveExtensions.entitySetByIdentifier?.length) {
-            return;
-          }
           // Non-Connectors subgraphs still use Mesh `@merge` for type merging.
           directiveExtensions.merge ||= [];
           directiveExtensions.merge.push({

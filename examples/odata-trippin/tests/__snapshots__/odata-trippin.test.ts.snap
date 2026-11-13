@@ -4953,49 +4953,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               "ofType": null,
             },
           },
-          {
-            "args": [
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "representations",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "_Any",
-                        "ofType": null,
-                      },
-                    },
-                  },
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "_entities",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "UNION",
-                  "name": "_Entity",
-                  "ofType": null,
-                },
-              },
-            },
-          },
         ],
         "inputFields": null,
         "interfaces": [],
@@ -5417,54 +5374,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "kind": "INPUT_OBJECT",
         "name": "TripInput",
         "possibleTypes": null,
-        "specifiedByURL": null,
-      },
-      {
-        "enumValues": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "isOneOf": null,
-        "kind": "SCALAR",
-        "name": "_Any",
-        "possibleTypes": null,
-        "specifiedByURL": null,
-      },
-      {
-        "enumValues": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "isOneOf": null,
-        "kind": "UNION",
-        "name": "_Entity",
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "Airline",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Airport",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Employee",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Manager",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Person",
-            "ofType": null,
-          },
-        ],
         "specifiedByURL": null,
       },
       {

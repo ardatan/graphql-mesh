@@ -402,8 +402,6 @@ type Query {
   NewComePeople(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "NewComePeople")
   NewComePeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "NewComePeople", identifierFieldName: "UserName")
   NewComePeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "NewComePeople")
-  """Federation entity resolver for OData transport (Hive \`_entities\` path)"""
-  _entities(representations: [_Any!]!): [_Entity]!
 }
 
 type Mutation {
@@ -472,11 +470,7 @@ input AirportUpdateInput {
   IcaoCode: String
   IataCode: String
   Location: AirportLocationInput
-}
-
-scalar _Any
-
-union _Entity = Person | Airline | Airport | Employee | Manager"
+}"
 `;
 
 exports[`odata should create correct GraphQL schema for actions bound to entity set 1`] = `
@@ -513,8 +507,6 @@ type Query {
   People(queryOptions: QueryOptions): [Person] @entitySet(entitySetName: "People")
   PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
-  """Federation entity resolver for OData transport (Hive \`_entities\` path)"""
-  _entities(representations: [_Any!]!): [_Entity]!
 }
 
 input QueryOptions {
@@ -566,11 +558,7 @@ input PersonInput {
 
 input PersonUpdateInput {
   UserName: String
-}
-
-scalar _Any
-
-union _Entity = Person"
+}"
 `;
 
 exports[`odata should create correct GraphQL schema for functions with entity set paths 1`] = `
@@ -667,8 +655,6 @@ type Query {
   People(queryOptions: QueryOptions): [Person] @entitySet(entitySetName: "People")
   PeopleByUserName(UserName: String!): Person @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
-  """Federation entity resolver for OData transport (Hive \`_entities\` path)"""
-  _entities(representations: [_Any!]!): [_Entity]!
 }
 
 type Mutation {
@@ -691,9 +677,5 @@ input PersonUpdateInput {
   MiddleName: String
   Age: BigInt
   Emails: [String]
-}
-
-scalar _Any
-
-union _Entity = Person"
+}"
 `;

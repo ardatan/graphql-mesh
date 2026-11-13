@@ -30,7 +30,7 @@ exports[`executes a query 1`] = `
 `;
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@abstractType", "@singularNav", "@pluralNav", "@navProp", "@unboundFunction", "@boundFunction", "@unboundAction", "@boundAction", "@singleton", "@entitySet", "@entitySetByIdentifier", "@entitySetCount", "@createEntitySet", "@deleteEntitySet", "@updateEntitySet", "@transport"]) @transport(kind: "odata", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [["User-Agent", "GraphQL Mesh"]], options: {batch: "multipart", expandNavProps: true}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@abstractType", "@singularNav", "@pluralNav", "@navProp", "@unboundFunction", "@boundFunction", "@unboundAction", "@boundAction", "@singleton", "@entitySet", "@entitySetByIdentifier", "@entitySetCount", "@createEntitySet", "@deleteEntitySet", "@updateEntitySet", "@merge", "@transport"]) @transport(kind: "odata", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [["User-Agent", "GraphQL Mesh"]], options: {batch: "multipart", expandNavProps: true}) {
   query: Query
   mutation: Mutation
 }
@@ -97,6 +97,8 @@ directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
 directive @deleteEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
 directive @updateEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
+
+directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
 
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
@@ -311,10 +313,10 @@ type Query @join__type(graph: TRIPPIN) {
   PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
   Airlines(queryOptions: QueryOptions): [Airline] @entitySet(entitySetName: "Airlines")
-  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode")
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode") @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode")
   AirlinesCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "Airlines")
   Airports(queryOptions: QueryOptions): [Airport] @entitySet(entitySetName: "Airports")
-  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode")
+  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode") @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode")
   AirportsCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "Airports")
 }
 
@@ -326,12 +328,12 @@ type Mutation @join__type(graph: TRIPPIN) {
   deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName")
   updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName")
   Airlines(queryOptions: QueryOptions): [Airline] @entitySet(entitySetName: "Airlines")
-  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode")
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode") @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode")
   createAirlines(input: AirlineInput): Airline @createEntitySet(entitySetName: "Airlines")
   deleteAirlinesByAirlineCode(AirlineCode: String!): JSON @deleteEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode")
   updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline @updateEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode")
   Airports(queryOptions: QueryOptions): [Airport] @entitySet(entitySetName: "Airports")
-  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode")
+  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode") @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode")
   createAirports(input: AirportInput): Airport @createEntitySet(entitySetName: "Airports")
   deleteAirportsByIcaoCode(IcaoCode: String!): JSON @deleteEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode")
   updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @updateEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode")
