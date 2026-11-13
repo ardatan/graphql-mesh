@@ -52,6 +52,7 @@ import {
   applyODataConnectSchemaExtensions,
   emitODataConnectors,
 } from './emitODataConnectors.js';
+import { processDirectives as processODataResidualDirectives } from './directives.js';
 import type { EntityTypeExtensions } from './types.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
 import { QUERY_OPTIONS_FIELDS } from './utils/QueryOptionsFields.js';
@@ -1044,7 +1045,7 @@ export async function loadGraphQLSchemaFromOData(
   });
 }
 
-export { processDirectives as processODataResidualDirectives } from './directives.js';
+export { processODataResidualDirectives };
 export { processDirectives } from '@graphql-mesh/transport-rest';
 
 export const getSubgraphExecutor: TransportGetSubgraphExecutor<RESTTransportOptions> = opts => {

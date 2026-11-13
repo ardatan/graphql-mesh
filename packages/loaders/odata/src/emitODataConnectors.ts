@@ -4,7 +4,6 @@ import {
   CONNECT_LINK_URL,
   ConnectDirective,
   FEDERATION_LINK_URL,
-  KeyDirective,
   LinkDirective,
   ODATA_ACCEPT_METADATA,
   ODATA_ERROR_MAPPING,
@@ -34,34 +33,66 @@ function headersToConnectMappings(
   }));
 }
 
+/**
+ * Connectors JSONSelection for an OData entity/complex type.
+ * Apollo Router requires object/list fields to use `{ … }` groups (bare names fail).
+ * Skip fields with arguments (bound ops / queryOptions nav) — residual Mesh resolvers.
+ */
 function entitySelection(
+  schemaComposer: SchemaComposer,
   entityTC: ObjectTypeComposer | InterfaceTypeComposer,
   depth = 0,
+  visited: Set<string> = new Set(),
 ): string {
-  const extensions = entityTC.getExtensions() as any as EntityTypeExtensions;
-  const entityInfo = extensions?.directives?.entityInfo;
-  const abstractType = extensions?.directives?.abstractType;
+  const typeName = entityTC.getTypeName();
+  if (visited.has(typeName) || depth > 2) {
+    return '';
+  }
+  visited = new Set(visited);
+  visited.add(typeName);
+
   const lines: string[] = [];
-  if (!entityInfo) {
-    // Complex/non-entity return types — pass through JSON.
-    return '$';
-  }
-  // Polymorphism: residual `processODataResidualDirectives` wires `@abstractType` resolveType
-  // from `@odata.type`. Keep selection as structural fields + one-level nav stubs.
-  void abstractType;
-  for (const fieldName of entityInfo.actualFields || []) {
-    lines.push(fieldName);
-  }
-  if (depth < 1) {
-    for (const navName of entityInfo.navigationFields || []) {
-      lines.push(navName);
+  for (const fieldName of entityTC.getFieldNames()) {
+    const field = entityTC.getField(fieldName);
+    const fieldDirs = ((field.extensions as any)?.directives || {}) as Record<string, unknown>;
+    // Bound/unbound ops stay on Mesh residual resolvers (not in Connectors selection).
+    if (
+      fieldDirs.boundFunction ||
+      fieldDirs.boundAction ||
+      fieldDirs.unboundFunction ||
+      fieldDirs.unboundAction ||
+      fieldDirs.singularNav // FriendsById(id:) — key lookup, not parent payload
+    ) {
+      continue;
+    }
+    const named = field.type.getTypeName().replace(/[[\]!]/g, '');
+    let nested = '';
+    if (schemaComposer.isObjectType(named) || schemaComposer.isInterfaceType(named)) {
+      try {
+        const childTC = schemaComposer.getAnyTC(named) as ObjectTypeComposer | InterfaceTypeComposer;
+        nested = entitySelection(schemaComposer, childTC, depth + 1, visited);
+      } catch {
+        nested = '';
+      }
+      if (!nested) {
+        // Empty object expansion (cycle / only-arg fields) — omit; bare name is invalid.
+        continue;
+      }
+      lines.push(`${fieldName} { ${nested} }`);
+    } else {
+      // Scalar / enum / JSON
+      lines.push(fieldName);
     }
   }
-  return lines.join('\n');
+  return lines.join(' ');
 }
 
-function listSelection(entityTC: ObjectTypeComposer | InterfaceTypeComposer): string {
-  return `$.value {\n${entitySelection(entityTC)}\n}`;
+function listSelection(
+  schemaComposer: SchemaComposer,
+  entityTC: ObjectTypeComposer | InterfaceTypeComposer,
+): string {
+  const inner = entitySelection(schemaComposer, entityTC);
+  return inner ? `$.value { ${inner} }` : '$.value';
 }
 
 function connectArgs(opts: {
@@ -103,7 +134,8 @@ export function emitODataConnectors(
   schemaComposer.addDirective(ConnectDirective);
   schemaComposer.addDirective(SourceDirective);
   schemaComposer.addDirective(LinkDirective);
-  schemaComposer.addDirective(KeyDirective);
+  // Do not register a local `@key` directive def — federation `@link` owns it.
+  // Usages are attached on entity types below via `setDirectives`.
 
   const sourceName = opts.name;
   const setConnect = (
@@ -113,7 +145,7 @@ export function emitODataConnectors(
   ) => {
     parent.setFieldExtensions(fieldName, {
       directives: { connect: args },
-    });
+    } as any);
   };
 
   const rewriteRoot = (rootName: 'Query' | 'Mutation') => {
@@ -140,8 +172,9 @@ export function emitODataConnectors(
               GET: `/${entitySetName}`,
               queryParams: ODATA_QUERY_OPTIONS_QUERY_PARAMS,
             },
-            // Unwrap OData collection envelope; leaf mapping via Hive `$select`.
-            selection: '$.value',
+            selection: entityTC
+              ? listSelection(schemaComposer, entityTC)
+              : '$.value',
           }),
         );
         continue;
@@ -158,8 +191,7 @@ export function emitODataConnectors(
               // Trailing slash matches historical Mesh OData URL shape / TripPin mocks.
               GET: `/${entitySetName}/{$args.${identifierFieldName}}/`,
             },
-            // Pass through JSON so `@odata.id` remains for bound ops / nav lazy-fetch.
-            selection: '$',
+            selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
             entity: true,
           }),
         );
@@ -194,7 +226,7 @@ export function emitODataConnectors(
               POST: `/${entitySetName}`,
               body: '$args.input',
             },
-            selection: '$',
+            selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
           }),
         );
         continue;
@@ -227,7 +259,7 @@ export function emitODataConnectors(
               PATCH: `/${entitySetName}/{$args.${identifierFieldName}}/`,
               body: '$args.input',
             },
-            selection: '$',
+            selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
           }),
         );
         continue;
@@ -241,7 +273,7 @@ export function emitODataConnectors(
           connectArgs({
             source: sourceName,
             http: { GET: `/${singletonName}` },
-            selection: '$',
+            selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
           }),
         );
         continue;
@@ -314,7 +346,7 @@ export function emitODataConnectors(
           http: {
             GET: `/${entitySetName}/{$this.${identifierFieldName}}/`,
           },
-          selection: entitySelection(otc as any),
+          selection: entitySelection(schemaComposer, otc as any) || '$',
         }),
       });
     }

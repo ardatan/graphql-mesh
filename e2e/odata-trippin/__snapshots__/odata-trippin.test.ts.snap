@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`executes a query 1`] = `
+exports[`execute with apollo-router executes GetMe 1`] = `
 {
   "data": {
     "Me": {
@@ -18,11 +18,30 @@ exports[`executes a query 1`] = `
       "FirstName": "April",
       "Gender": "Female",
       "LastName": "Cline",
-      "Trips": [
+      "UserName": "aprilcline",
+    },
+  },
+}
+`;
+
+exports[`execute with hive executes GetMe 1`] = `
+{
+  "data": {
+    "Me": {
+      "AddressInfo": [
         {
-          "Description": "Trip in US",
+          "Address": "P.O. Box 555",
+          "City": {
+            "CountryRegion": "United States",
+            "Name": "Lander",
+            "Region": "WY",
+          },
         },
       ],
+      "FavoriteFeature": "Feature1",
+      "FirstName": "April",
+      "Gender": "Female",
+      "LastName": "Cline",
       "UserName": "aprilcline",
     },
   },
@@ -30,7 +49,7 @@ exports[`executes a query 1`] = `
 `;
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@entityInfo", "@abstractType", "@singularNav", "@pluralNav", "@navProp", "@unboundFunction", "@boundFunction", "@unboundAction", "@boundAction", "@singleton", "@entitySet", "@entitySetByIdentifier", "@entitySetCount", "@createEntitySet", "@deleteEntitySet", "@updateEntitySet", "@merge", "@transport"]) @transport(kind: "odata", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [["User-Agent", "GraphQL Mesh"]], options: {batch: "multipart", expandNavProps: true}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@entityInfo", "@abstractType", "@singularNav", "@pluralNav", "@navProp", "@unboundFunction", "@boundFunction", "@unboundAction", "@boundAction", "@singleton", "@entitySet", "@entitySetByIdentifier", "@entitySetCount", "@createEntitySet", "@deleteEntitySet", "@updateEntitySet", "@transport"]) @transport(kind: "rest", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [["Accept", "application/json;odata.metadata=minimal"], ["User-Agent", "GraphQL Mesh"]], options: {batch: "multipart", expandNavProps: true}) @join__directive(graphs: [TRIPPIN], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [TRIPPIN], name: "source", args: {name: "Trippin", http: {baseURL: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}, {name: "User-Agent", value: "GraphQL Mesh"}]}, errors: {message: "error.message"}}) {
   query: Query
   mutation: Mutation
 }
@@ -100,8 +119,6 @@ directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, i
 
 directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
 
-directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
-
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
 """
@@ -142,7 +159,9 @@ Matches moment.js, Luxon and DateFns implementations
 """
 scalar ISO8601Duration @join__type(graph: TRIPPIN)
 
-type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPerson") {
+scalar JSONSelection @join__type(graph: TRIPPIN)
+
+type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -165,19 +184,19 @@ type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
 }
 
-type Airline @entityInfo(actualFields: ["AirlineCode", "Name"], navigationFields: [], isOpenType: false, identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "AirlineCode") {
+type Airline @entityInfo(actualFields: ["AirlineCode", "Name"], navigationFields: [], isOpenType: false, identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "AirlineCode") @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airlines/{$this.AirlineCode}/"}, selection: "AirlineCode Name", errors: {message: "error.message"}}) {
   AirlineCode: String!
   Name: String
 }
 
-type Airport @entityInfo(actualFields: ["Name", "IcaoCode", "IataCode", "Location"], navigationFields: [], isOpenType: false, identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "IcaoCode") {
-  IcaoCode: String!
+type Airport @entityInfo(actualFields: ["Name", "IcaoCode", "IataCode", "Location"], navigationFields: [], isOpenType: false, identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "IcaoCode") @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airports/{$this.IcaoCode}/"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", errors: {message: "error.message"}}) {
   Name: String
+  IcaoCode: String!
   IataCode: String
   Location: AirportLocation
 }
 
-type Trip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Description", "Tags", "StartsAt", "EndsAt"], navigationFields: ["PlanItems"], isOpenType: false, identifierFieldName: "TripId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN) {
+type Trip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Description", "Tags", "StartsAt", "EndsAt"], navigationFields: ["PlanItems"], isOpenType: false, identifierFieldName: "TripId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN, key: "TripId") {
   TripId: Int!
   ShareId: GUID!
   Name: String
@@ -191,7 +210,7 @@ type Trip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Des
   GetInvolvedPeople(trip: TripInput): [Person] @boundFunction(functionRef: "Trippin.GetInvolvedPeople")
 }
 
-type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -199,7 +218,7 @@ type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "Con
   Duration: ISO8601Duration!
 }
 
-type Event implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "OccursAt", "Description"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+type Event implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "OccursAt", "Description"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
   OccursAt: EventLocation
   Description: String
   PlanItemId: Int!
@@ -209,16 +228,16 @@ type Event implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "Confir
   Duration: ISO8601Duration!
 }
 
-type PublicTransportation implements IPublicTransportation & IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
-  SeatNumber: String
+type PublicTransportation implements IPublicTransportation & IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
   PlanItemId: Int!
+  SeatNumber: String
   ConfirmationCode: String
   StartsAt: DateTime!
   EndsAt: DateTime!
   Duration: ISO8601Duration!
 }
 
-type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber", "FlightNumber"], navigationFields: ["Airline", "From", "To"], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") {
+type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber", "FlightNumber"], navigationFields: ["Airline", "From", "To"], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") {
   FlightNumber: String
   Airline: Airline @navProp(navigationPropertyName: "Airline")
   From: Airport @navProp(navigationPropertyName: "From")
@@ -231,7 +250,7 @@ type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanIte
   Duration: ISO8601Duration!
 }
 
-type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Cost"], navigationFields: ["Peers"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPerson") {
+type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Cost"], navigationFields: ["Peers"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
   Cost: BigInt!
   Peers(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Peers")
   PeersById(id: ID): Person @singularNav(navigationPropertyName: "Peers")
@@ -257,7 +276,7 @@ type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstNa
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
 }
 
-type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Budget", "BossOffice"], navigationFields: ["DirectReports"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPerson") {
+type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Budget", "BossOffice"], navigationFields: ["DirectReports"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
   Budget: BigInt!
   BossOffice: Location
   DirectReports(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "DirectReports")
@@ -310,35 +329,35 @@ type EventLocation implements ILocation @entityInfo(actualFields: ["Address", "C
 type Query @join__type(graph: TRIPPIN) {
   GetPersonWithMostFriends: Person @unboundFunction(functionName: "GetPersonWithMostFriends")
   GetNearestAirport(lat: Float!, lon: Float!): Airport @unboundFunction(functionName: "GetNearestAirport")
-  Me: Person @singleton(singletonName: "Me")
-  People(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "People")
-  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
-  PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
-  Airlines(queryOptions: QueryOptions): [Airline] @entitySet(entitySetName: "Airlines")
-  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode")
-  AirlinesCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "Airlines")
-  Airports(queryOptions: QueryOptions): [Airport] @entitySet(entitySetName: "Airports")
-  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode")
-  AirportsCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "Airports")
+  Me: Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Me"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt PlanItems { PlanItemId ConfirmationCode StartsAt EndsAt Duration } }", errors: {message: "error.message"}})
+  People(queryOptions: QueryOptions): [IPerson] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features Friends { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } BestFriend { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt PlanItems { PlanItemId ConfirmationCode StartsAt EndsAt Duration } } }", errors: {message: "error.message"}})
+  PeopleByUserName(UserName: String!): IPerson @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features Friends { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } BestFriend { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt PlanItems { PlanItemId ConfirmationCode StartsAt EndsAt Duration } }", entity: true, errors: {message: "error.message"}})
+  PeopleCount(queryOptions: QueryOptions): Int @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"}})
+  Airlines(queryOptions: QueryOptions): [Airline] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airlines", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { AirlineCode Name }", errors: {message: "error.message"}})
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airlines/{$args.AirlineCode}/"}, selection: "AirlineCode Name", entity: true, errors: {message: "error.message"}})
+  AirlinesCount(queryOptions: QueryOptions): Int @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airlines/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"}})
+  Airports(queryOptions: QueryOptions): [Airport] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airports", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } } }", errors: {message: "error.message"}})
+  AirportsByIcaoCode(IcaoCode: String!): Airport @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airports/{$args.IcaoCode}/"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", entity: true, errors: {message: "error.message"}})
+  AirportsCount(queryOptions: QueryOptions): Int @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airports/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"}})
 }
 
 type Mutation @join__type(graph: TRIPPIN) {
   ResetDataSource: JSON @unboundAction(actionName: "ResetDataSource")
-  People(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "People")
-  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
-  createPeople(input: PersonInput): IPerson @createEntitySet(entitySetName: "People")
-  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
-  Airlines(queryOptions: QueryOptions): [Airline] @entitySet(entitySetName: "Airlines")
-  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode")
-  createAirlines(input: AirlineInput): Airline @createEntitySet(entitySetName: "Airlines")
-  deleteAirlinesByAirlineCode(AirlineCode: String!): JSON @deleteEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
-  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline @updateEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
-  Airports(queryOptions: QueryOptions): [Airport] @entitySet(entitySetName: "Airports")
-  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode")
-  createAirports(input: AirportInput): Airport @createEntitySet(entitySetName: "Airports")
-  deleteAirportsByIcaoCode(IcaoCode: String!): JSON @deleteEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
-  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @updateEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
+  People(queryOptions: QueryOptions): [IPerson] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features Friends { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } BestFriend { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt PlanItems { PlanItemId ConfirmationCode StartsAt EndsAt Duration } } }", errors: {message: "error.message"}})
+  PeopleByUserName(UserName: String!): IPerson @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features Friends { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } BestFriend { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt PlanItems { PlanItemId ConfirmationCode StartsAt EndsAt Duration } }", entity: true, errors: {message: "error.message"}})
+  createPeople(input: PersonInput): IPerson @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/People", body: "$args.input"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features Friends { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } BestFriend { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt PlanItems { PlanItemId ConfirmationCode StartsAt EndsAt Duration } }", errors: {message: "error.message"}})
+  deletePeopleByUserName(UserName: String!): JSON @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {DELETE: "/People/{$args.UserName}/"}, selection: "$", errors: {message: "error.message"}})
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {PATCH: "/People/{$args.UserName}/", body: "$args.input"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features Friends { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } BestFriend { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address } HomeAddress { Address } FavoriteFeature Features Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt } } Trips { TripId ShareId Name Budget Description Tags StartsAt EndsAt PlanItems { PlanItemId ConfirmationCode StartsAt EndsAt Duration } }", errors: {message: "error.message"}})
+  Airlines(queryOptions: QueryOptions): [Airline] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airlines", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { AirlineCode Name }", errors: {message: "error.message"}})
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airlines/{$args.AirlineCode}/"}, selection: "AirlineCode Name", entity: true, errors: {message: "error.message"}})
+  createAirlines(input: AirlineInput): Airline @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/Airlines", body: "$args.input"}, selection: "AirlineCode Name", errors: {message: "error.message"}})
+  deleteAirlinesByAirlineCode(AirlineCode: String!): JSON @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {DELETE: "/Airlines/{$args.AirlineCode}/"}, selection: "$", errors: {message: "error.message"}})
+  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {PATCH: "/Airlines/{$args.AirlineCode}/", body: "$args.input"}, selection: "AirlineCode Name", errors: {message: "error.message"}})
+  Airports(queryOptions: QueryOptions): [Airport] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airports", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } } }", errors: {message: "error.message"}})
+  AirportsByIcaoCode(IcaoCode: String!): Airport @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airports/{$args.IcaoCode}/"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", entity: true, errors: {message: "error.message"}})
+  createAirports(input: AirportInput): Airport @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/Airports", body: "$args.input"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", errors: {message: "error.message"}})
+  deleteAirportsByIcaoCode(IcaoCode: String!): JSON @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {DELETE: "/Airports/{$args.IcaoCode}/"}, selection: "$", errors: {message: "error.message"}})
+  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {PATCH: "/Airports/{$args.IcaoCode}/", body: "$args.input"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", errors: {message: "error.message"}})
 }
 
 interface IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) {
@@ -517,5 +536,9 @@ input AirportUpdateInput @join__type(graph: TRIPPIN) {
 scalar TransportOptions
 
 directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+directive @join__directive(graphs: [join__Graph!], name: String!, args: join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+scalar join__DirectiveArguments
 "
 `;

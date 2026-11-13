@@ -17,7 +17,10 @@ import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { fakeRejectPromise } from '@whatwg-node/promise-helpers';
 import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
-import { ensureApolloRouterBinary } from './apolloConnectors.js';
+import {
+  ensureApolloRouterBinary,
+  prepareSupergraphForApolloRouter,
+} from './apolloConnectors.js';
 import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';
@@ -731,15 +734,16 @@ async function serveWithApolloRouter(opts: {
   leftoverStack.defer(() => fs.rm(workDir, { recursive: true }));
 
   const resolved = path.isAbsolute(supergraph) ? supergraph : path.join(cwd, supergraph);
-  let apolloSupergraph: string;
+  let apolloSupergraph = path.join(workDir, 'supergraph.graphql');
+  let rawSdl: string;
   try {
     await fs.access(resolved);
-    apolloSupergraph = resolved;
+    rawSdl = await fs.readFile(resolved, 'utf8');
   } catch {
     // Inline SDL
-    apolloSupergraph = path.join(workDir, 'supergraph.graphql');
-    await fs.writeFile(apolloSupergraph, supergraph, 'utf8');
+    rawSdl = supergraph;
   }
+  await fs.writeFile(apolloSupergraph, prepareSupergraphForApolloRouter(rawSdl), 'utf8');
 
   const routerBin = await ensureApolloRouterBinary();
   const configPath = path.join(workDir, 'router.yaml');
