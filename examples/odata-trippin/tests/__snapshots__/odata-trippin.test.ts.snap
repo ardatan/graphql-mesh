@@ -165,17 +165,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               "ofType": null,
             },
           },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldTypeRef",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
         ],
         "isRepeatable": false,
         "locations": [
@@ -206,79 +195,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           "INPUT_FIELD_DEFINITION",
         ],
         "name": "deprecated",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "actualFields",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldTypeRef",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "isOpenType",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "navigationFields",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-              },
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "INTERFACE",
-          "OBJECT",
-        ],
-        "name": "entityInfo",
       },
       {
         "args": [
@@ -318,17 +234,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "identifierFieldName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldTypeRef",
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -584,17 +489,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "identifierFieldName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldTypeRef",
             "type": {
               "kind": "SCALAR",
               "name": "String",

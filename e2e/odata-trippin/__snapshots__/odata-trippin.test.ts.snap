@@ -30,7 +30,7 @@ exports[`executes a query 1`] = `
 `;
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@entityInfo", "@abstractType", "@singularNav", "@pluralNav", "@navProp", "@unboundFunction", "@boundFunction", "@unboundAction", "@boundAction", "@singleton", "@entitySet", "@entitySetByIdentifier", "@entitySetCount", "@createEntitySet", "@deleteEntitySet", "@updateEntitySet", "@merge", "@transport"]) @transport(kind: "odata", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [["User-Agent", "GraphQL Mesh"]], options: {batch: "multipart", expandNavProps: true}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@abstractType", "@singularNav", "@pluralNav", "@navProp", "@unboundFunction", "@boundFunction", "@unboundAction", "@boundAction", "@singleton", "@entitySet", "@entitySetByIdentifier", "@entitySetCount", "@createEntitySet", "@deleteEntitySet", "@updateEntitySet", "@merge", "@transport"]) @transport(kind: "odata", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [["User-Agent", "GraphQL Mesh"]], options: {batch: "multipart", expandNavProps: true}) {
   query: Query
   mutation: Mutation
 }
@@ -68,8 +68,6 @@ enum join__Graph {
   TRIPPIN @join__graph(name: "Trippin", url: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/")
 }
 
-directive @entityInfo(actualFields: [String], navigationFields: [String], identifierFieldName: String, identifierFieldTypeRef: String, isOpenType: Boolean) on OBJECT | INTERFACE
-
 directive @abstractType(entityTypeName: String, isAbstract: Boolean, aliasNamespaceMap: [[String]], multipleSchemas: Boolean, namespaces: [String]) on INTERFACE | OBJECT
 
 directive @singularNav(navigationPropertyName: String) on FIELD_DEFINITION
@@ -90,15 +88,15 @@ directive @singleton(singletonName: String) on FIELD_DEFINITION
 
 directive @entitySet(entitySetName: String) on FIELD_DEFINITION
 
-directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
 directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
 
 directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
 
-directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @deleteEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
-directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
+directive @updateEntitySet(entitySetName: String, identifierFieldName: String) on FIELD_DEFINITION
 
 directive @merge(subgraph: String, argsExpr: String, keyArg: String, keyField: String, key: [String!], additionalArgs: String) repeatable on FIELD_DEFINITION
 
@@ -142,7 +140,7 @@ Matches moment.js, Luxon and DateFns implementations
 """
 scalar ISO8601Duration @join__type(graph: TRIPPIN)
 
-type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPerson") {
+type Person implements IPerson @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -165,19 +163,19 @@ type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
 }
 
-type Airline @entityInfo(actualFields: ["AirlineCode", "Name"], navigationFields: [], isOpenType: false, identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "AirlineCode") {
+type Airline @join__type(graph: TRIPPIN, key: "AirlineCode") {
   AirlineCode: String!
   Name: String
 }
 
-type Airport @entityInfo(actualFields: ["Name", "IcaoCode", "IataCode", "Location"], navigationFields: [], isOpenType: false, identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "IcaoCode") {
+type Airport @join__type(graph: TRIPPIN, key: "IcaoCode") {
   IcaoCode: String!
   Name: String
   IataCode: String
   Location: AirportLocation
 }
 
-type Trip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Description", "Tags", "StartsAt", "EndsAt"], navigationFields: ["PlanItems"], isOpenType: false, identifierFieldName: "TripId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN) {
+type Trip @join__type(graph: TRIPPIN, key: "TripId") {
   TripId: Int!
   ShareId: GUID!
   Name: String
@@ -191,7 +189,7 @@ type Trip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Des
   GetInvolvedPeople(trip: TripInput): [Person] @boundFunction(functionRef: "Trippin.GetInvolvedPeople")
 }
 
-type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+type PlanItem implements IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -199,43 +197,43 @@ type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "Con
   Duration: ISO8601Duration!
 }
 
-type Event implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "OccursAt", "Description"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+type Event implements IPlanItem @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+  PlanItemId: Int!
   OccursAt: EventLocation
   Description: String
-  PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
   EndsAt: DateTime!
   Duration: ISO8601Duration!
 }
 
-type PublicTransportation implements IPublicTransportation & IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+type PublicTransportation implements IPublicTransportation & IPlanItem @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+  PlanItemId: Int!
   SeatNumber: String
-  PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
   EndsAt: DateTime!
   Duration: ISO8601Duration!
 }
 
-type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber", "FlightNumber"], navigationFields: ["Airline", "From", "To"], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") {
+type Flight implements IPublicTransportation @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") {
+  PlanItemId: Int!
   FlightNumber: String
   Airline: Airline @navProp(navigationPropertyName: "Airline")
   From: Airport @navProp(navigationPropertyName: "From")
   To: Airport @navProp(navigationPropertyName: "To")
   SeatNumber: String
-  PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
   EndsAt: DateTime!
   Duration: ISO8601Duration!
 }
 
-type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Cost"], navigationFields: ["Peers"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPerson") {
+type Employee implements IPerson @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
+  UserName: String!
   Cost: BigInt!
   Peers(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Peers")
   PeersById(id: ID): Person @singularNav(navigationPropertyName: "Peers")
-  UserName: String!
   FirstName: String!
   LastName: String
   MiddleName: String
@@ -257,12 +255,12 @@ type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstNa
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
 }
 
-type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Budget", "BossOffice"], navigationFields: ["DirectReports"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "IPerson") {
+type Manager implements IPerson @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
+  UserName: String!
   Budget: BigInt!
   BossOffice: Location
   DirectReports(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "DirectReports")
   DirectReportsById(id: ID): Person @singularNav(navigationPropertyName: "DirectReports")
-  UserName: String!
   FirstName: String!
   LastName: String
   MiddleName: String
@@ -284,24 +282,24 @@ type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstNam
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
 }
 
-type Location implements ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
+type Location implements ILocation @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
   Address: String
   City: City
 }
 
-type City @entityInfo(actualFields: ["Name", "CountryRegion", "Region"], navigationFields: [], isOpenType: false) @join__type(graph: TRIPPIN) {
+type City @join__type(graph: TRIPPIN) {
   Name: String
   CountryRegion: String
   Region: String
 }
 
-type AirportLocation implements ILocation @entityInfo(actualFields: ["Address", "City", "Loc"], navigationFields: [], isOpenType: false) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
+type AirportLocation implements ILocation @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
   Loc: String
   Address: String
   City: City
 }
 
-type EventLocation implements ILocation @entityInfo(actualFields: ["Address", "City", "BuildingInfo"], navigationFields: [], isOpenType: false) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
+type EventLocation implements ILocation @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
   BuildingInfo: String
   Address: String
   City: City
@@ -312,36 +310,36 @@ type Query @join__type(graph: TRIPPIN) {
   GetNearestAirport(lat: Float!, lon: Float!): Airport @unboundFunction(functionName: "GetNearestAirport")
   Me: Person @singleton(singletonName: "Me")
   People(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "People")
-  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   PeopleCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "People")
   Airlines(queryOptions: QueryOptions): [Airline] @entitySet(entitySetName: "Airlines")
-  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode")
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode") @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode")
   AirlinesCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "Airlines")
   Airports(queryOptions: QueryOptions): [Airport] @entitySet(entitySetName: "Airports")
-  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode")
+  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode") @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode")
   AirportsCount(queryOptions: QueryOptions): Int @entitySetCount(entitySetName: "Airports")
 }
 
 type Mutation @join__type(graph: TRIPPIN) {
   ResetDataSource: JSON @unboundAction(actionName: "ResetDataSource")
   People(queryOptions: QueryOptions): [IPerson] @entitySet(entitySetName: "People")
-  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  PeopleByUserName(UserName: String!): IPerson @entitySetByIdentifier(entitySetName: "People", identifierFieldName: "UserName")
   createPeople(input: PersonInput): IPerson @createEntitySet(entitySetName: "People")
-  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
-  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String")
+  deletePeopleByUserName(UserName: String!): JSON @deleteEntitySet(entitySetName: "People", identifierFieldName: "UserName")
+  updatePeopleByUserName(UserName: String!, input: PersonUpdateInput): IPerson @updateEntitySet(entitySetName: "People", identifierFieldName: "UserName")
   Airlines(queryOptions: QueryOptions): [Airline] @entitySet(entitySetName: "Airlines")
-  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode")
+  AirlinesByAirlineCode(AirlineCode: String!): Airline @entitySetByIdentifier(entitySetName: "Airlines", identifierFieldName: "AirlineCode") @merge(subgraph: "Trippin", keyField: "AirlineCode", keyArg: "AirlineCode")
   createAirlines(input: AirlineInput): Airline @createEntitySet(entitySetName: "Airlines")
-  deleteAirlinesByAirlineCode(AirlineCode: String!): JSON @deleteEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
-  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline @updateEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String")
+  deleteAirlinesByAirlineCode(AirlineCode: String!): JSON @deleteEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode")
+  updateAirlinesByAirlineCode(AirlineCode: String!, input: AirlineUpdateInput): Airline @updateEntitySet(entitySetName: "Airlines", identifierFieldName: "AirlineCode")
   Airports(queryOptions: QueryOptions): [Airport] @entitySet(entitySetName: "Airports")
-  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode")
+  AirportsByIcaoCode(IcaoCode: String!): Airport @entitySetByIdentifier(entitySetName: "Airports", identifierFieldName: "IcaoCode") @merge(subgraph: "Trippin", keyField: "IcaoCode", keyArg: "IcaoCode")
   createAirports(input: AirportInput): Airport @createEntitySet(entitySetName: "Airports")
-  deleteAirportsByIcaoCode(IcaoCode: String!): JSON @deleteEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
-  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @updateEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String")
+  deleteAirportsByIcaoCode(IcaoCode: String!): JSON @deleteEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode")
+  updateAirportsByIcaoCode(IcaoCode: String!, input: AirportUpdateInput): Airport @updateEntitySet(entitySetName: "Airports", identifierFieldName: "IcaoCode")
 }
 
-interface IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) {
+interface IPerson @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "UserName") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -364,7 +362,7 @@ interface IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName"
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
 }
 
-interface IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) {
+interface IPlanItem @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -372,16 +370,16 @@ interface IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode",
   Duration: ISO8601Duration!
 }
 
-interface IPublicTransportation @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) {
+interface IPublicTransportation @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") {
+  PlanItemId: Int!
   SeatNumber: String
-  PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
   EndsAt: DateTime!
   Duration: ISO8601Duration!
 }
 
-interface ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) {
+interface ILocation @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) {
   Address: String
   City: City
 }
