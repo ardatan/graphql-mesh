@@ -9865,7 +9865,7 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^12.3.2"
     "@graphql-tools/utils": "npm:^13.2.2"
-    "@neo4j/graphql": "npm:^7.6.7"
+    "@neo4j/graphql": "npm:^7.6.8"
     "@whatwg-node/disposablestack": "npm:^0.1.0"
     "@whatwg-node/promise-helpers": "npm:^2.0.1"
     graphql: "npm:16.14.0"
@@ -13364,9 +13364,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neo4j/graphql@npm:^7.6.7":
-  version: 7.6.7
-  resolution: "@neo4j/graphql@npm:7.6.7"
+"@neo4j/graphql@npm:^7.6.8":
+  version: 7.6.8
+  resolution: "@neo4j/graphql@npm:7.6.8"
   dependencies:
     "@apollo/subgraph": "npm:^2.2.3"
     "@graphql-tools/merge": "npm:^9.0.0"
@@ -13388,7 +13388,7 @@ __metadata:
   peerDependencies:
     graphql: ^16.0.0
     neo4j-driver: ^5.8.0 || ^6.0.0
-  checksum: 10c0/47a13dfcab8f9d8cc6f5ea6a89fa198f0734dc00d29d455c25038cca05fa92cd7940d60d9d37c259d7e2b3b514bf70763893407e337099364b9d6c25356e753c
+  checksum: 10c0/671f67aa32cfaaa4a7e0f39c1082317dbd8ba8f448f77e9c22c692304cf9bdd4aa4fa6df58025a6044dc244fc538f3ea76fa25b5673ecd609be308d5a6a750dc
   languageName: node
   linkType: hard
 
