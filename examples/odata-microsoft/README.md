@@ -25,6 +25,18 @@ evaluation as-is.
 4. Configure App Id and redirect URIs in the AppConfiguration of build/index.html
 5. Run `npm start` and go to `localhost:4000`
 
+### Loader / Connectors smoke test (token)
+
+With a Graph delegated or app token:
+
+```bash
+export MSGRAPH_ACCESS_TOKEN='…'   # or GRAPH_ACCESS_TOKEN
+yarn test packages/loaders/odata/tests/msgraph-connectors.test.ts
+```
+
+The suite always loads live `$metadata` (public) and checks `@source` / `@connect` / `@key` emission.
+The live `me { id displayName }` case runs only when a token is set (and asserts Hive `$select` on the upstream URL).
+
 ## Sample requests
 
 #### Fetch recent emails

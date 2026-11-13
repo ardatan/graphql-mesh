@@ -12,3 +12,5 @@ OData subgraphs now emit Federation Connectors (`@source` / `@connect` / `@key`)
 - `@graphql-mesh/transport-odata` is a thin alias to `transport-rest` for older `kind: "odata"` entries.
 
 Bound function/action Mesh directives are still emitted for a follow-up Connectors mapping.
+
+Also hardens MS Graph `$metadata` load: safe enum member names (`null` → `_null`) and resilient base-type field merges when Alias/`graph.entity` Inputs are missing.

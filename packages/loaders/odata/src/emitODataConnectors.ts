@@ -13,13 +13,25 @@ import {
 } from './connectDirectives.js';
 import type { EntityTypeExtensions } from './types.js';
 
+/** Mesh `{env.X}` / `{args.X}` → Connectors `{$env.X}` / `{$args.X}`. */
+function toConnectHeaderValue(value: string): string {
+  return String(value)
+    .replace(/\{env\./g, '{$env.')
+    .replace(/\{args\./g, '{$args.')
+    .replace(/\{context\./g, '{$context.')
+    .replace(/\{this\./g, '{$this.');
+}
+
 function headersToConnectMappings(
   headers?: Record<string, string> | [string, string][],
 ): Array<{ name: string; value: string }> | undefined {
   if (!headers) return undefined;
   const entries = Array.isArray(headers) ? headers : Object.entries(headers);
   if (!entries.length) return undefined;
-  return entries.map(([name, value]) => ({ name, value: String(value) }));
+  return entries.map(([name, value]) => ({
+    name,
+    value: toConnectHeaderValue(String(value)),
+  }));
 }
 
 function entitySelection(

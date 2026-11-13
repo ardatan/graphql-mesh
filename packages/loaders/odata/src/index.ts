@@ -183,14 +183,20 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     schemaObj.EnumType?.forEach((enumObj: any) => {
       const values: Record<string, EnumTypeComposerValueConfigDefinition> = {};
       enumObj.Member?.forEach((memberObj: any) => {
-        const key = memberObj.attributes.Name;
-        // This doesn't work.
-        // const value = memberElement.getAttribute('Value')!;
+        const rawKey = String(memberObj.attributes.Name ?? '');
+        // GraphQL enum values cannot be named `null` / `true` / `false` (MS Graph has these).
+        const key = ['null', 'true', 'false'].includes(rawKey) ? `_${rawKey}` : rawKey;
+        if (!key || !/^[_A-Za-z][_0-9A-Za-z]*$/.test(key)) {
+          return;
+        }
         values[key] = {
-          value: key,
+          value: rawKey,
           extensions: { memberObj },
         };
       });
+      if (!Object.keys(values).length) {
+        return;
+      }
       const enumTypeName = buildName({ schemaNamespace, name: enumObj.attributes.Name });
       schemaComposer.createEnumTC({
         name: enumTypeName,
@@ -742,9 +748,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         schemaNamespace,
         name: typeObj.attributes.Name,
       });
-      const inputType = schemaComposer.getITC(typeName + 'Input') as InputTypeComposer;
+      const inputType = getTCByTypeNames(typeName + 'Input') as InputTypeComposer | null;
       const abstractType = getTCByTypeNames('I' + typeName, typeName) as InterfaceTypeComposer;
       const outputType = getTCByTypeNames('T' + typeName, typeName) as ObjectTypeComposer;
+      if (!outputType) {
+        log.warn(`OData: skip base-type merge for missing output type ${typeName}`);
+        return;
+      }
       const baseTypeRef = typeObj.attributes.BaseType;
       const {
         directives: { entityInfo },
@@ -759,7 +769,12 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         multipleSchemas,
         isEnumType: typeName => schemaComposer.isEnumType(typeName),
       });
-      const baseInputType = schemaComposer.getAnyTC(baseTypeName + 'Input') as InputTypeComposer;
+      // MS Graph (and similar) use Alias in BaseType (`graph.entity`) while Inputs are
+      // registered under buildName(); also some abstract bases may be declared later.
+      const baseInputType = getTCByTypeNames(
+        baseTypeName + 'Input',
+        pascalCase(baseTypeRef.replace(/\./g, '_')) + 'Input',
+      ) as InputTypeComposer | null;
       const baseAbstractType = getTCByTypeNames(
         'I' + baseTypeName,
         baseTypeName,
@@ -768,17 +783,29 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         'T' + baseTypeName,
         baseTypeName,
       ) as ObjectTypeComposer;
+      if (!baseOutputType?.getExtensions) {
+        log.warn(
+          `OData: skip base-type merge for ${typeName}; missing base ${baseTypeRef} (${baseTypeName})`,
+        );
+        return;
+      }
       const {
         directives: { entityInfo: baseEntityInfo },
         eventEmitter: baseEventEmitter,
       } = baseOutputType.getExtensions() as any as EntityTypeExtensions;
+      if (!baseEntityInfo || !baseEventEmitter) {
+        log.warn(`OData: skip base-type merge for ${typeName}; base ${baseTypeName} has no entityInfo`);
+        return;
+      }
       const baseEventEmitterListener = () => {
-        inputType.addFields(baseInputType.getFields());
+        if (inputType && baseInputType?.getFields) {
+          inputType.addFields(baseInputType.getFields());
+        }
         entityInfo.identifierFieldName =
           baseEntityInfo.identifierFieldName || entityInfo.identifierFieldName;
         entityInfo.identifierFieldTypeRef =
           baseEntityInfo.identifierFieldTypeRef || entityInfo.identifierFieldTypeRef;
-        entityInfo.actualFields.unshift(...baseEntityInfo.actualFields);
+        entityInfo.actualFields.unshift(...(baseEntityInfo.actualFields || []));
         abstractType?.addFields(baseAbstractType?.getFields());
         outputType.addFields(baseOutputType.getFields());
         if (baseAbstractType instanceof InterfaceTypeComposer) {
