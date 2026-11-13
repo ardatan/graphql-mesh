@@ -27,25 +27,21 @@ evaluation as-is.
 
 ### Connectors tests
 
-**Unit** (loader smoke):
+**E2E** (fixture metadata + mock Graph, hive + apollo-router — always runs in CI):
+
+```bash
+yarn test:e2e e2e/odata-msgraph
+```
+
+**Unit** (live `$metadata` smoke + optional live `me`):
 
 ```bash
 export MSGRAPH_ACCESS_TOKEN='…'   # or GRAPH_ACCESS_TOKEN — optional for live `me`
 yarn test packages/loaders/odata/tests/msgraph-connectors.test.ts
 ```
 
-**E2E** (compose + Hive / Apollo Router), same token env:
-
-```bash
-# Compose from live $metadata (skipped in CI unless MSGRAPH_LIVE=1 or a token is set)
-MSGRAPH_LIVE=1 yarn test:e2e e2e/odata-msgraph
-
-# Live `me { id displayName }` on hive + apollo-router when token is set
-export MSGRAPH_ACCESS_TOKEN='…'
-yarn test:e2e e2e/odata-msgraph
-```
-
-`$metadata` is public (~1.8MB). Live `me` runs only with a token.
+`$metadata` is public. Live `me { id displayName }` in the unit suite runs only when a token is set
+(and asserts Hive `$select` on the upstream URL).
 
 ## Sample requests
 

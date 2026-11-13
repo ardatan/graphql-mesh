@@ -1,15 +1,21 @@
+import { Opts } from '@e2e/opts';
 import { defineConfig } from '@graphql-mesh/compose-cli';
 import { loadODataSubgraph } from '@omnigraph/odata';
 
+const opts = Opts(process.argv);
+const graphPort = opts.getServicePort('Graph');
+
 /**
  * Microsoft Graph OData → Connectors (mirrors `examples/odata-microsoft`).
- * `$metadata` is public; live `me` needs `MSGRAPH_ACCESS_TOKEN` / `GRAPH_ACCESS_TOKEN`.
+ * Default: fixture metadata + local mock (`services/Graph.ts`).
+ * Live Graph: set `MSGRAPH_LIVE=1` and point at the real endpoint (see test).
  */
 export const composeConfig = defineConfig({
   subgraphs: [
     {
       sourceHandler: loadODataSubgraph('MicrosoftGraph', {
-        endpoint: 'https://graph.microsoft.com/v1.0',
+        source: './fixtures/metadata.xml',
+        endpoint: `http://127.0.0.1:${graphPort}`,
         batch: 'json',
         expandNavProps: true,
         operationHeaders: {
