@@ -12,6 +12,7 @@ import {
   visit,
   type ConstDirectiveNode,
   type NamedTypeNode,
+  type NonNullTypeNode,
   type TypeNode,
 } from 'graphql';
 import { fetch } from '@whatwg-node/fetch';
@@ -84,10 +85,19 @@ function mapTypeNode(node: TypeNode, ifaceNames: Set<string>): TypeNode {
     return mapNamedType(node, ifaceNames);
   }
   if (node.kind === Kind.NON_NULL_TYPE) {
-    return { ...node, type: mapTypeNode(node.type, ifaceNames) };
+    const inner = mapTypeNode(node.type, ifaceNames);
+    // NonNull cannot wrap NonNull in the GraphQL AST.
+    if (inner.kind === Kind.NON_NULL_TYPE) {
+      return inner;
+    }
+    return { kind: Kind.NON_NULL_TYPE, type: inner };
   }
   if (node.kind === Kind.LIST_TYPE) {
-    return { ...node, type: mapTypeNode(node.type, ifaceNames) };
+    const inner = mapTypeNode(node.type, ifaceNames);
+    return {
+      kind: Kind.LIST_TYPE,
+      type: inner as NamedTypeNode | NonNullTypeNode,
+    };
   }
   return node;
 }
