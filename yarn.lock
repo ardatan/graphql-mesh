@@ -9768,7 +9768,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/transport-http-callback@npm:^1.1.2":
+"@graphql-mesh/transport-http-callback@npm:1.1.2":
   version: 1.1.2
   resolution: "@graphql-mesh/transport-http-callback@npm:1.1.2"
   dependencies:
@@ -9787,6 +9787,28 @@ __metadata:
   peerDependencies:
     graphql: ^15.9.0 || ^16.9.0
   checksum: 10c0/a3aa9fbeb32fa90584dc78fdf936823b1e6b1e8fb305751722812b31a186bb71986f36052abc255c21946e88286c86a9c28990c972fd168d320a65c96be70485
+  languageName: node
+  linkType: hard
+
+"@graphql-mesh/transport-http-callback@patch:@graphql-mesh/transport-http-callback@npm%3A1.1.2#~/.yarn/patches/@graphql-mesh-transport-http-callback-npm-1.1.2-b1703038a5.patch":
+  version: 1.1.2
+  resolution: "@graphql-mesh/transport-http-callback@patch:@graphql-mesh/transport-http-callback@npm%3A1.1.2#~/.yarn/patches/@graphql-mesh-transport-http-callback-npm-1.1.2-b1703038a5.patch::version=1.1.2&hash=7dc1d0"
+  dependencies:
+    "@graphql-hive/signal": "npm:^2.1.0"
+    "@graphql-mesh/cross-helpers": "npm:^0.4.16"
+    "@graphql-mesh/string-interpolation": "npm:^0.5.18"
+    "@graphql-mesh/transport-common": "npm:^1.1.2"
+    "@graphql-mesh/types": "npm:^0.107.1"
+    "@graphql-mesh/utils": "npm:^0.107.1"
+    "@graphql-tools/executor-common": "npm:^1.1.1"
+    "@graphql-tools/utils": "npm:^12.1.0"
+    "@repeaterjs/repeater": "npm:^3.0.6"
+    "@whatwg-node/fetch": "npm:^0.10.13"
+    "@whatwg-node/promise-helpers": "npm:^1.3.2"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    graphql: ^15.9.0 || ^16.9.0
+  checksum: 10c0/3880007a1b3f6dc5b79a50d56b2eeb50c6f360f506dc6f08f7ee4804f0f306f90b3c6453bb82c82573a68a53bb5806465a4d43127b44b35ac22d21735c653e6d
   languageName: node
   linkType: hard
 
