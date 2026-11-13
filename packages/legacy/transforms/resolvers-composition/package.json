@@ -38,8 +38,8 @@
     "@graphql-hive/pubsub": "^2.2.1",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/resolvers-composition": "^8.0.8",
-    "@graphql-tools/schema": "^11.0.8",
+    "@graphql-tools/resolvers-composition": "^8.0.9",
+    "@graphql-tools/schema": "^11.0.9",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

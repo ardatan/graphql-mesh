@@ -2,7 +2,7 @@
   "name": "@e2e/openapi-subscriptions",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.15.4",
+    "@graphql-hive/gateway": "^2.15.7",
     "fets": "^0.8.13",
     "graphql": "16.14.0",
     "graphql-sse": "^2.6.3",
