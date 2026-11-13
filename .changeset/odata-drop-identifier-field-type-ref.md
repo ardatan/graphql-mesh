@@ -1,5 +1,6 @@
 ---
 '@omnigraph/odata': minor
+'@graphql-mesh/fusion-composition': patch
 ---
 
 ## Motivation
@@ -19,8 +20,9 @@ OData `@entityInfo` carried codegen leftovers that hurt hand-authored SDL, and t
 - Entity keys emit Federation-compatible `@key(fields: "…")` (repeatable; optional `resolvable`). Runtime (`$select`, `@odata.id`, singular nav) reads `@key`.
 - OpenType entities emit `additionalProperties: JSON @resolveRoot` (output) and `additionalProperties: JSON` (input) instead of `rest`. `rebuildOpenInputObjects` merges that bag on create/update.
 - `@abstractType`: omit empty `aliasNamespaceMap` and omit `multipleSchemas` unless `true`. Runtime treats omitted args as `[]` / `false`.
+- Transport wires Federation `resolveReference` from `@entitySetByIdentifier` and adds `Query._entities` (Hive entity path). Composition skips Mesh `@merge` for those by-id fields.
 
-This does **not** auto-wire Federation `_entities` / entity resolvers; `@key` is the shared key metadata for OData URLs and for composition when you opt into Federation.
+`@key` is the shared key metadata for OData URLs and Federation entity resolution.
 
 ## Migration
 
