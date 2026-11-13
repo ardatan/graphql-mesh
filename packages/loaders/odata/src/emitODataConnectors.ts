@@ -302,21 +302,23 @@ export function emitODataConnectors(
       continue;
     }
     const identifierFieldName = entityInfo.identifierFieldName;
-    if (!schemaComposer.isObjectType(typeName) && !schemaComposer.isInterfaceType(typeName)) {
+    if (!identifierFieldName) {
       continue;
     }
-    // Prefer GraphQL object types (not `I*` interfaces) for type-level connect.
-    const skipTypeConnect =
-      typeName.startsWith('I') && schemaComposer.isObjectType(typeName.slice(1));
+    const isIface = schemaComposer.isInterfaceType(typeName);
+    const isObject = schemaComposer.isObjectType(typeName);
+    if (!isIface && !isObject) {
+      continue;
+    }
+    // Skip redundant `IFoo` when concrete `Foo` exists (non-abstract pattern).
+    if (typeName.startsWith('I') && schemaComposer.isObjectType(typeName.slice(1))) {
+      continue;
+    }
 
     const otc = tc as ObjectTypeComposer;
 
     // Nav fields stay plain GraphQL fields: Hive `$expand` (from Accept odata.metadata)
     // fills them on the parent fetch. Field-level `@connect` would re-fetch and N+1.
-
-    if (!identifierFieldName || skipTypeConnect) {
-      continue;
-    }
 
     const existing = [...(otc.getDirectives() || [])];
     if (!existing.some(d => d.name === 'key')) {
@@ -325,30 +327,44 @@ export function emitODataConnectors(
         args: { fields: identifierFieldName },
       });
     }
-    let entitySetName: string | undefined;
-    for (const qName of schemaComposer.Query.getFieldNames()) {
-      const qField = schemaComposer.Query.getField(qName);
-      const connect = (qField.extensions as any)?.directives?.connect;
-      if (connect?.entity && qField.type.getTypeName().replace(/[[\]!]/g, '') === typeName) {
-        const getPath = connect.http?.GET as string | undefined;
-        const match = getPath?.match(/^\/([^/]+)\//);
-        if (match) {
-          entitySetName = match[1];
-          break;
+
+    // `@connect` is OBJECT-only (Federation Connectors). Abstract OData types use
+    // interface `Foo` + object `TFoo` — put type-level connect on the object.
+    if (isObject && !existing.some(d => d.name === 'connect')) {
+      let entitySetName: string | undefined;
+      for (const qName of schemaComposer.Query.getFieldNames()) {
+        const qField = schemaComposer.Query.getField(qName);
+        const connect = (qField.extensions as any)?.directives?.connect;
+        const returnName = qField.type.getTypeName().replace(/[[\]!]/g, '');
+        // Match entity set by-id returning this object, or its abstract interface name.
+        const abstractIface =
+          typeName.startsWith('T') && schemaComposer.isInterfaceType(typeName.slice(1))
+            ? typeName.slice(1)
+            : undefined;
+        if (
+          connect?.entity &&
+          (returnName === typeName || (abstractIface && returnName === abstractIface))
+        ) {
+          const getPath = connect.http?.GET as string | undefined;
+          const match = getPath?.match(/^\/([^/]+)\//);
+          if (match) {
+            entitySetName = match[1];
+            break;
+          }
         }
       }
-    }
-    if (entitySetName && !existing.some(d => d.name === 'connect')) {
-      existing.push({
-        name: 'connect',
-        args: connectArgs({
-          source: sourceName,
-          http: {
-            GET: `/${entitySetName}/{$this.${identifierFieldName}}/`,
-          },
-          selection: entitySelection(schemaComposer, otc as any) || '$',
-        }),
-      });
+      if (entitySetName) {
+        existing.push({
+          name: 'connect',
+          args: connectArgs({
+            source: sourceName,
+            http: {
+              GET: `/${entitySetName}/{$this.${identifierFieldName}}/`,
+            },
+            selection: entitySelection(schemaComposer, otc as any) || '$',
+          }),
+        });
+      }
     }
     otc.setDirectives(existing);
   }

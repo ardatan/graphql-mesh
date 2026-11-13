@@ -216,13 +216,19 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       const eventEmitter = new EventEmitter();
       eventEmitter.setMaxListeners(Infinity);
       eventEmitterSet.add(eventEmitter);
-      const extensions: EntityTypeExtensions = {
+      // Share `entityInfo` + `eventEmitter` across interface/object/input, but give each
+      // TC its own `directives` bag — otherwise `@connect` / `@key` / `@shareable` stamped
+      // on the object also appear on the interface (Federation rejects those locations).
+      const entityInfo = {
+        actualFields: [] as string[],
+        navigationFields: [] as string[],
+        isOpenType,
+        identifierFieldName: undefined as string | undefined,
+        identifierFieldTypeRef: undefined as string | undefined,
+      };
+      const outputExtensions: EntityTypeExtensions = {
         directives: {
-          entityInfo: {
-            actualFields: [],
-            navigationFields: [],
-            isOpenType,
-          },
+          entityInfo,
         },
         eventEmitter,
       };
@@ -230,7 +236,10 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       const inputType = schemaComposer.createInputTC({
         name: entityTypeName + 'Input',
         fields: {},
-        extensions: () => extensions,
+        extensions: {
+          directives: { entityInfo },
+          eventEmitter,
+        } as any,
       });
       let abstractType: InterfaceTypeComposer;
       if (
@@ -239,27 +248,32 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         ) ||
         isAbstract
       ) {
+        const abstractExtensions: EntityTypeExtensions = {
+          directives: {
+            entityInfo,
+            abstractType: {
+              entityTypeName,
+              isAbstract,
+              get aliasNamespaceMap() {
+                return [...aliasNamespaceMap.entries()];
+              },
+              multipleSchemas,
+              get namespaces() {
+                return [...namespaces];
+              },
+            } as any,
+          },
+          eventEmitter,
+        };
         abstractType = schemaComposer.createInterfaceTC({
           name: isAbstract ? entityTypeName : `I${entityTypeName}`,
-          extensions: extensions as any,
+          extensions: abstractExtensions as any,
         });
-        const directiveExtensions: any = ((extensions.directives as any) ||= {});
-        directiveExtensions.abstractType = {
-          entityTypeName,
-          isAbstract,
-          get aliasNamespaceMap() {
-            return [...aliasNamespaceMap.entries()];
-          },
-          multipleSchemas,
-          get namespaces() {
-            return [...namespaces];
-          },
-        };
         schemaComposer.addDirective(AbstractTypeDirective);
       }
       const outputType = schemaComposer.createObjectTC({
         name: isAbstract ? `T${entityTypeName}` : entityTypeName,
-        extensions: extensions as any,
+        extensions: outputExtensions as any,
         interfaces: abstractType ? [abstractType] : [],
       });
 
@@ -268,15 +282,15 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
 
       const propertyRefObj = typeObj.Key && typeObj.Key[0].PropertyRef[0];
       if (propertyRefObj) {
-        extensions.directives.entityInfo.identifierFieldName = propertyRefObj.attributes.Name;
+        entityInfo.identifierFieldName = propertyRefObj.attributes.Name;
       }
 
       typeObj.Property?.forEach((propertyObj: any) => {
         const propertyName = propertyObj.attributes.Name;
-        extensions.directives.entityInfo.actualFields.push(propertyName);
+        entityInfo.actualFields.push(propertyName);
         const propertyTypeRef = propertyObj.attributes.Type;
-        if (propertyName === extensions.directives.entityInfo.identifierFieldName) {
-          extensions.directives.entityInfo.identifierFieldTypeRef = propertyTypeRef;
+        if (propertyName === entityInfo.identifierFieldName) {
+          entityInfo.identifierFieldTypeRef = propertyTypeRef;
         }
         const isRequired = propertyObj.attributes.Nullable === 'false';
         inputType.addFields({
@@ -314,7 +328,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       });
       typeObj.NavigationProperty?.forEach((navigationPropertyObj: any) => {
         const navigationPropertyName = navigationPropertyObj.attributes.Name;
-        extensions.directives.entityInfo.navigationFields.push(navigationPropertyName);
+        entityInfo.navigationFields.push(navigationPropertyName);
         const navigationPropertyTypeRef = navigationPropertyObj.attributes.Type;
         const isRequired = navigationPropertyObj.attributes.Nullable === 'false';
         const isList = navigationPropertyTypeRef.startsWith('Collection(');
@@ -412,7 +426,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         }
       });
       if (isOpenType || outputType.getFieldNames().length === 0) {
-        extensions.directives.entityInfo.isOpenType = true;
+        entityInfo.isOpenType = true;
         inputType.addFields({
           rest: {
             type: 'JSON',
@@ -994,6 +1008,24 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
 
   // graphql-compose doesn't add @defer and @stream to the schema
   specifiedDirectives.forEach(directive => schemaComposer.addDirective(directive));
+
+  // GraphQL rejects empty input objects (MS Graph has entity/complex types with no
+  // creatable properties). Keep a placeholder so composition can succeed.
+  for (const tc of schemaComposer.types.values()) {
+    // graphql-compose InputTypeComposer (avoid relying on SchemaComposer.isInputType).
+    if ((tc as any)?.constructor?.name !== 'InputTypeComposer') {
+      continue;
+    }
+    const inputTC = tc as InputTypeComposer;
+    if (inputTC.getFieldNames().length === 0) {
+      inputTC.addFields({
+        _empty: {
+          type: 'Boolean',
+          description: 'Placeholder — upstream OData type has no input fields',
+        },
+      });
+    }
+  }
 
   // Federation Connectors surface — Hive runs via transport-rest (+ odata.metadata $select).
   const connectMeta = emitODataConnectors(schemaComposer, {

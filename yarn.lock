@@ -5302,6 +5302,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/odata-msgraph@workspace:e2e/odata-msgraph":
+  version: 0.0.0-use.local
+  resolution: "@e2e/odata-msgraph@workspace:e2e/odata-msgraph"
+  dependencies:
+    "@graphql-hive/gateway": "npm:^2.15.4"
+    graphql: "npm:^16.14.0"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/odata-trippin-example@workspace:e2e/odata-trippin":
   version: 0.0.0-use.local
   resolution: "@e2e/odata-trippin-example@workspace:e2e/odata-trippin"

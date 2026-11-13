@@ -1,6 +1,7 @@
 ---
 '@graphql-mesh/transport-rest': minor
 '@omnigraph/odata': minor
+'@graphql-mesh/fusion-composition': patch
 ---
 
 OData subgraphs now emit Federation Connectors (`@source` / `@connect` / `@key`) instead of Mesh `@transport(kind: "odata")` + `@entitySet*`.
@@ -12,4 +13,4 @@ OData subgraphs now emit Federation Connectors (`@source` / `@connect` / `@key`)
 
 Bound function/action Mesh directives are still emitted for a follow-up Connectors mapping.
 
-Also hardens MS Graph `$metadata` load: safe enum member names (`null` → `_null`) and resilient base-type field merges when Alias/`graph.entity` Inputs are missing.
+Also hardens MS Graph `$metadata` load / compose: safe enum member names (`null` → `_null`), resilient base-type field merges, no shared interface/object directive bags (so `@connect` / `@shareable` stay off interfaces), empty Input placeholders, and an `e2e/odata-msgraph` suite (compose + optional live `me` on hive/apollo-router).

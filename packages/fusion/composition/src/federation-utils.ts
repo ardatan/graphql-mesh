@@ -1,4 +1,10 @@
-import { GraphQLDirective, GraphQLSchema, isSpecifiedDirective } from 'graphql';
+import {
+  GraphQLDirective,
+  GraphQLInterfaceType,
+  GraphQLObjectType,
+  GraphQLSchema,
+  isSpecifiedDirective,
+} from 'graphql';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
 export function addFederation2DirectivesToSubgraph(subgraph: GraphQLSchema) {
@@ -199,20 +205,39 @@ export function normalizeDirectiveExtensions(subgraph: GraphQLSchema) {
 function ensureObjectTypesShareable(subgraph: GraphQLSchema) {
   return mapSchema(subgraph, {
     [MapperKind.OBJECT_TYPE]: type => {
-      const typeDirectives = getDirectiveExtensions(type);
-      typeDirectives.shareable ||= [];
+      // Clone directives — OData (and similar) loaders often share the same
+      // `extensions.directives` object between an interface and its implementing
+      // object; mutating in place would also stamp `@shareable` on the interface
+      // (invalid in Federation).
+      const typeDirectives = { ...getDirectiveExtensions(type) };
       if (!typeDirectives.shareable?.length) {
-        const typeExtensions: Record<string, any> = (type.extensions ||= {});
-        typeExtensions.directives ||= {};
-        typeExtensions.directives.shareable = [{}];
+        typeDirectives.shareable = [{}];
       }
-      return type;
+      return new GraphQLObjectType({
+        ...type.toConfig(),
+        extensions: {
+          ...(type.extensions || {}),
+          directives: typeDirectives,
+        },
+        astNode: undefined,
+        extensionASTNodes: [],
+      });
     },
     [MapperKind.INTERFACE_TYPE]: type => {
-      if ((type?.extensions?.directives as any)?.shareable) {
-        delete (type.extensions.directives as any).shareable;
+      const typeDirectives = { ...getDirectiveExtensions(type) };
+      if (!typeDirectives.shareable) {
+        return type;
       }
-      return type;
+      delete typeDirectives.shareable;
+      return new GraphQLInterfaceType({
+        ...type.toConfig(),
+        extensions: {
+          ...(type.extensions || {}),
+          directives: typeDirectives,
+        },
+        astNode: undefined,
+        extensionASTNodes: [],
+      });
     },
   });
 }

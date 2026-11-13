@@ -25,17 +25,27 @@ evaluation as-is.
 4. Configure App Id and redirect URIs in the AppConfiguration of build/index.html
 5. Run `npm start` and go to `localhost:4000`
 
-### Loader / Connectors smoke test (token)
+### Connectors tests
 
-With a Graph delegated or app token:
+**Unit** (loader smoke):
 
 ```bash
-export MSGRAPH_ACCESS_TOKEN='…'   # or GRAPH_ACCESS_TOKEN
+export MSGRAPH_ACCESS_TOKEN='…'   # or GRAPH_ACCESS_TOKEN — optional for live `me`
 yarn test packages/loaders/odata/tests/msgraph-connectors.test.ts
 ```
 
-The suite always loads live `$metadata` (public) and checks `@source` / `@connect` / `@key` emission.
-The live `me { id displayName }` case runs only when a token is set (and asserts Hive `$select` on the upstream URL).
+**E2E** (compose + Hive / Apollo Router), same token env:
+
+```bash
+# Compose from live $metadata (skipped in CI unless MSGRAPH_LIVE=1 or a token is set)
+MSGRAPH_LIVE=1 yarn test:e2e e2e/odata-msgraph
+
+# Live `me { id displayName }` on hive + apollo-router when token is set
+export MSGRAPH_ACCESS_TOKEN='…'
+yarn test:e2e e2e/odata-msgraph
+```
+
+`$metadata` is public (~1.8MB). Live `me` runs only with a token.
 
 ## Sample requests
 

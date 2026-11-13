@@ -161,7 +161,7 @@ scalar ISO8601Duration @join__type(graph: TRIPPIN)
 
 scalar JSONSelection @join__type(graph: TRIPPIN)
 
-type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
+type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -190,8 +190,8 @@ type Airline @entityInfo(actualFields: ["AirlineCode", "Name"], navigationFields
 }
 
 type Airport @entityInfo(actualFields: ["Name", "IcaoCode", "IataCode", "Location"], navigationFields: [], isOpenType: false, identifierFieldName: "IcaoCode", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "IcaoCode") @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airports/{$this.IcaoCode}/"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", errors: {message: "error.message"}}) {
-  Name: String
   IcaoCode: String!
+  Name: String
   IataCode: String
   Location: AirportLocation
 }
@@ -210,7 +210,7 @@ type Trip @entityInfo(actualFields: ["TripId", "ShareId", "Name", "Budget", "Des
   GetInvolvedPeople(trip: TripInput): [Person] @boundFunction(functionRef: "Trippin.GetInvolvedPeople")
 }
 
-type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
   PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
@@ -219,16 +219,16 @@ type PlanItem implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "Con
 }
 
 type Event implements IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "OccursAt", "Description"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+  PlanItemId: Int!
   OccursAt: EventLocation
   Description: String
-  PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
   EndsAt: DateTime!
   Duration: ISO8601Duration!
 }
 
-type PublicTransportation implements IPublicTransportation & IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PublicTransportation", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
+type PublicTransportation implements IPublicTransportation & IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") @join__implements(graph: TRIPPIN, interface: "IPlanItem") {
   PlanItemId: Int!
   SeatNumber: String
   ConfirmationCode: String
@@ -238,12 +238,12 @@ type PublicTransportation implements IPublicTransportation & IPlanItem @entityIn
 }
 
 type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration", "SeatNumber", "FlightNumber"], navigationFields: ["Airline", "From", "To"], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @join__type(graph: TRIPPIN, key: "PlanItemId") @join__implements(graph: TRIPPIN, interface: "IPublicTransportation") {
+  PlanItemId: Int!
   FlightNumber: String
   Airline: Airline @navProp(navigationPropertyName: "Airline")
   From: Airport @navProp(navigationPropertyName: "From")
   To: Airport @navProp(navigationPropertyName: "To")
   SeatNumber: String
-  PlanItemId: Int!
   ConfirmationCode: String
   StartsAt: DateTime!
   EndsAt: DateTime!
@@ -251,10 +251,10 @@ type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanIte
 }
 
 type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Cost"], navigationFields: ["Peers"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
+  UserName: String!
   Cost: BigInt!
   Peers(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Peers")
   PeersById(id: ID): Person @singularNav(navigationPropertyName: "Peers")
-  UserName: String!
   FirstName: String!
   LastName: String
   MiddleName: String
@@ -277,11 +277,11 @@ type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstNa
 }
 
 type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Budget", "BossOffice"], navigationFields: ["DirectReports"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
+  UserName: String!
   Budget: BigInt!
   BossOffice: Location
   DirectReports(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "DirectReports")
   DirectReportsById(id: ID): Person @singularNav(navigationPropertyName: "DirectReports")
-  UserName: String!
   FirstName: String!
   LastName: String
   MiddleName: String
@@ -303,7 +303,7 @@ type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstNam
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
 }
 
-type Location implements ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) @abstractType(entityTypeName: "Location", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
+type Location implements ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
   Address: String
   City: City
 }
