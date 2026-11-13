@@ -16,27 +16,7 @@ directive @pluralNav(navigationPropertyName: String) on FIELD_DEFINITION
 
 directive @navProp(navigationPropertyName: String) on FIELD_DEFINITION
 
-directive @unboundFunction(functionName: String) on FIELD_DEFINITION
-
 directive @boundFunction(functionRef: String) on FIELD_DEFINITION
-
-directive @unboundAction(actionName: String) on FIELD_DEFINITION
-
-directive @boundAction(actionRef: String) on FIELD_DEFINITION
-
-directive @singleton(singletonName: String) on FIELD_DEFINITION
-
-directive @entitySet(entitySetName: String) on FIELD_DEFINITION
-
-directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
-
-directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
-
-directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
-
-directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
-
-directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
 
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
@@ -44,7 +24,7 @@ directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isS
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
-type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") {
+type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}) {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -56,15 +36,15 @@ type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips")
-  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
+  Friends(queryOptions: QueryOptions): [Person] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Friends", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
+  FriendsById(id: ID): Person @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Friends/{$args.id}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
+  BestFriend: Person @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/BestFriend"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
+  Trips(queryOptions: QueryOptions): [Trip] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Trips", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"})
+  TripsById(id: ID): Trip @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Trips/{$args.id}/"}, selection: "TripId ShareId Name Budget Description Tags StartsAt EndsAt", errors: {message: "error.message"})
+  GetFavoriteAirline(person: PersonInput): Airline @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline()", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "AirlineCode Name", errors: {message: "error.message"})
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips(userName='{$args.userName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"})
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName(lastName='{$args.lastName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @connect(source: "TripPin", http: {POST: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip", body: "$args"}, selection: "$", errors: {message: "error.message"})
 }
 
 interface IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @abstractType(entityTypeName: "Person", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Microsoft.OData.Service.Sample.TrippinInMemory.Models"]) {
@@ -79,15 +59,15 @@ interface IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName"
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips")
-  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
+  Friends(queryOptions: QueryOptions): [Person]
+  FriendsById(id: ID): Person
+  BestFriend: Person
+  Trips(queryOptions: QueryOptions): [Trip]
+  TripsById(id: ID): Trip
+  GetFavoriteAirline(person: PersonInput): Airline
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip]
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
 }
 
 enum PersonGender {
@@ -313,10 +293,10 @@ type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanIte
   Duration: ISO8601Duration!
 }
 
-type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Cost"], navigationFields: ["Peers"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") {
+type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Cost"], navigationFields: ["Peers"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/"}, selection: "Cost UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}) {
   Cost: BigInt!
-  Peers(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Peers")
-  PeersById(id: ID): Person @singularNav(navigationPropertyName: "Peers")
+  Peers(queryOptions: QueryOptions): [Person] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Peers", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
+  PeersById(id: ID): Person @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Peers/{$args.id}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
   UserName: String!
   FirstName: String!
   LastName: String
@@ -328,22 +308,22 @@ type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstNa
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips")
-  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
+  Friends(queryOptions: QueryOptions): [Person] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Friends", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
+  FriendsById(id: ID): Person @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Friends/{$args.id}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
+  BestFriend: Person @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/BestFriend"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
+  Trips(queryOptions: QueryOptions): [Trip] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Trips", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"})
+  TripsById(id: ID): Trip @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Trips/{$args.id}/"}, selection: "TripId ShareId Name Budget Description Tags StartsAt EndsAt", errors: {message: "error.message"})
+  GetFavoriteAirline(person: PersonInput): Airline @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline()", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "AirlineCode Name", errors: {message: "error.message"})
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips(userName='{$args.userName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"})
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName(lastName='{$args.lastName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @connect(source: "TripPin", http: {POST: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip", body: "$args"}, selection: "$", errors: {message: "error.message"})
 }
 
-type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Budget", "BossOffice"], navigationFields: ["DirectReports"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") {
+type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Budget", "BossOffice"], navigationFields: ["DirectReports"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/"}, selection: "Budget BossOffice { Address City { Name CountryRegion Region } } UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}) {
   Budget: BigInt!
   BossOffice: Location
-  DirectReports(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "DirectReports")
-  DirectReportsById(id: ID): Person @singularNav(navigationPropertyName: "DirectReports")
+  DirectReports(queryOptions: QueryOptions): [Person] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/DirectReports", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
+  DirectReportsById(id: ID): Person @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/DirectReports/{$args.id}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
   UserName: String!
   FirstName: String!
   LastName: String
@@ -355,15 +335,15 @@ type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstNam
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips")
-  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @boundFunction(functionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip")
+  Friends(queryOptions: QueryOptions): [Person] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Friends", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
+  FriendsById(id: ID): Person @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Friends/{$args.id}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
+  BestFriend: Person @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/BestFriend"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
+  Trips(queryOptions: QueryOptions): [Trip] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Trips", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"})
+  TripsById(id: ID): Trip @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Trips/{$args.id}/"}, selection: "TripId ShareId Name Budget Description Tags StartsAt EndsAt", errors: {message: "error.message"})
+  GetFavoriteAirline(person: PersonInput): Airline @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFavoriteAirline()", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "AirlineCode Name", errors: {message: "error.message"})
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips(userName='{$args.userName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"})
+  UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName(lastName='{$args.lastName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @connect(source: "TripPin", http: {POST: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip", body: "$args"}, selection: "$", errors: {message: "error.message"})
 }
 
 type Location implements ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) {
@@ -395,8 +375,8 @@ type EventLocation implements ILocation @entityInfo(actualFields: ["Address", "C
 }
 
 type Query {
-  GetPersonWithMostFriends: Person @unboundFunction(functionName: "GetPersonWithMostFriends")
-  GetNearestAirport(lat: Float!, lon: Float!): Airport @unboundFunction(functionName: "GetNearestAirport")
+  GetPersonWithMostFriends: Person @connect(source: "TripPin", http: {GET: "/GetPersonWithMostFriends()", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
+  GetNearestAirport(lat: Float!, lon: Float!): Airport @connect(source: "TripPin", http: {GET: "/GetNearestAirport(lat={$args.lat},lon={$args.lon})", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", errors: {message: "error.message"})
   Me: Person @connect(source: "TripPin", http: {GET: "/Me"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
   People(queryOptions: QueryOptions): [IPerson] @connect(source: "TripPin", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
   PeopleByUserName(UserName: String!): IPerson @connect(source: "TripPin", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", entity: true, errors: {message: "error.message"})
@@ -417,7 +397,7 @@ type Query {
 }
 
 type Mutation {
-  ResetDataSource: JSON @unboundAction(actionName: "ResetDataSource")
+  ResetDataSource: JSON @connect(source: "TripPin", http: {POST: "/ResetDataSource", body: "$args"}, selection: "$", errors: {message: "error.message"})
   People(queryOptions: QueryOptions): [IPerson] @connect(source: "TripPin", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"})
   PeopleByUserName(UserName: String!): IPerson @connect(source: "TripPin", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", entity: true, errors: {message: "error.message"})
   createPeople(input: PersonInput): IPerson @connect(source: "TripPin", http: {POST: "/People", body: "$args.input"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"})
@@ -517,7 +497,7 @@ input SourceHTTP {
 
 scalar _Any
 
-union _Entity = Airline | Airport"
+union _Entity = Person | Airline | Airport | Employee | Manager"
 `;
 
 exports[`odata should create correct GraphQL schema for actions bound to entity set 1`] = `
@@ -528,20 +508,6 @@ exports[`odata should create correct GraphQL schema for actions bound to entity 
 
 directive @entityInfo(actualFields: [String], navigationFields: [String], identifierFieldName: String, identifierFieldTypeRef: String, isOpenType: Boolean) on OBJECT | INTERFACE
 
-directive @boundAction(actionRef: String) on FIELD_DEFINITION
-
-directive @entitySet(entitySetName: String) on FIELD_DEFINITION
-
-directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
-
-directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
-
-directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
-
-directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
-
-directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
-
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
@@ -550,7 +516,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
 type Person @entityInfo(actualFields: ["UserName"], navigationFields: [], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @key(fields: "UserName") @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/"}, selection: "UserName", errors: {message: "error.message"}) {
   UserName: String!
-  SendMessage(UserName: String!, Message: String!): JSON @boundAction(actionRef: "Sample.Service.SendMessage")
+  SendMessage(UserName: String!, Message: String!): JSON @connect(source: "SampleService", http: {POST: "/People/{$this.UserName}/Sample.Service.SendMessage", body: "$args"}, selection: "$", errors: {message: "error.message"})
 }
 
 """
@@ -663,24 +629,6 @@ exports[`odata should create correct GraphQL schema for functions with entity se
 
 directive @entityInfo(actualFields: [String], navigationFields: [String], identifierFieldName: String, identifierFieldTypeRef: String, isOpenType: Boolean) on OBJECT | INTERFACE
 
-directive @singularNav(navigationPropertyName: String) on FIELD_DEFINITION
-
-directive @pluralNav(navigationPropertyName: String) on FIELD_DEFINITION
-
-directive @boundFunction(functionRef: String) on FIELD_DEFINITION
-
-directive @entitySet(entitySetName: String) on FIELD_DEFINITION
-
-directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
-
-directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
-
-directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
-
-directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
-
-directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
-
 directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
@@ -694,9 +642,9 @@ type Person @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "Mid
   MiddleName: String
   Age: BigInt
   Emails: [String]
-  Messages(queryOptions: QueryOptions): [Message] @pluralNav(navigationPropertyName: "Messages")
-  MessagesById(id: ID): Message @singularNav(navigationPropertyName: "Messages")
-  GetAllMessages(bindingParameter: [PersonInput]): [Message] @boundFunction(functionRef: "Sample.Service.GetAllMessages")
+  Messages(queryOptions: QueryOptions): [Message] @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/Messages", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { Id Contents }", errors: {message: "error.message"})
+  MessagesById(id: ID): Message @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/Messages/{$args.id}/"}, selection: "Id Contents", errors: {message: "error.message"})
+  GetAllMessages(bindingParameter: [PersonInput]): [Message] @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/Sample.Service.GetAllMessages()", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { Id Contents }", errors: {message: "error.message"})
 }
 
 """

@@ -548,7 +548,8 @@ describe('odata', () => {
       'https://services.odata.org/TripPinRESTierService/$metadata',
       async () => new MockResponse(TripPinMetadata),
     );
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/GetNearestAirport(lat = 33, lon = -118)?$select=IcaoCode,Name`;
+    // Connectors unbound emit: no spaces around `=` (legacy Mesh used `lat = 33`).
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/GetNearestAirport(lat=33,lon=-118)?$select=IcaoCode,Name`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -606,8 +607,9 @@ describe('odata', () => {
     addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, async () => {
       return new MockResponse(JSON.stringify(PersonMockData));
     });
+    // Connectors queryParams percent-encode spaces as `+` / `%20`.
     addMock(
-      `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips?$filter=TripId eq 0&$select=TripId`,
+      `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips?$filter=TripId+eq+0&$select=TripId`,
       async () => {
         return new MockResponse(JSON.stringify(TripMockData));
       },
@@ -713,7 +715,10 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url.replace(/'/g, '%27')).toBe(correctUrl.replace(/'/g, '%27')); // apostrophe gets percent-encoded
+    // Connectors encode `$` / `,` in the query string; compare decoded forms.
+    expect(decodeURIComponent(sentRequest!.url.replace(/\+/g, ' '))).toBe(
+      decodeURIComponent(correctUrl.replace(/\+/g, ' ')),
+    );
   });
   it('should generate correct HTTP request for invoking unbound actions', async () => {
     addMock(

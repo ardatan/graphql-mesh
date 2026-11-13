@@ -57,8 +57,7 @@ function entitySelection(
   visited.add(typeName);
 
   const entityInfo = (entityTC.getExtensions() as any)?.directives?.entityInfo as
-    | { actualFields?: string[]; navigationFields?: string[] }
-    | undefined;
+    { actualFields?: string[]; navigationFields?: string[] } | undefined;
   const navigationFields = new Set(entityInfo?.navigationFields || []);
 
   const lines: string[] = [];
@@ -84,7 +83,8 @@ function entitySelection(
     let nested = '';
     if (schemaComposer.isObjectType(named) || schemaComposer.isInterfaceType(named)) {
       try {
-        const childTC = schemaComposer.getAnyTC(named) as ObjectTypeComposer | InterfaceTypeComposer;
+        const childTC = schemaComposer.getAnyTC(named) as
+          ObjectTypeComposer | InterfaceTypeComposer;
         nested = entitySelection(schemaComposer, childTC, depth + 1, visited);
       } catch {
         nested = '';
@@ -446,12 +446,18 @@ export function emitODataConnectors(
 
   // typeName → OData entity set (for Apollo-style `/EntitySet/{$this.key}/…` nav connects).
   const entitySetByType = new Map<string, string>();
+  /** First entity set wins — TripPin also exposes `NewComePeople` for `Person`. */
   const rememberEntitySet = (typeName: string, entitySetName: string) => {
     if (!typeName || !entitySetName) return;
-    entitySetByType.set(typeName, entitySetName);
+    const setOnce = (name: string) => {
+      if (!entitySetByType.has(name)) {
+        entitySetByType.set(name, entitySetName);
+      }
+    };
+    setOnce(typeName);
     // PeopleByUserName returns `IPerson` — also stamp concrete `Person` + implementers.
     if (typeName.startsWith('I') && schemaComposer.isObjectType(typeName.slice(1))) {
-      entitySetByType.set(typeName.slice(1), entitySetName);
+      setOnce(typeName.slice(1));
     }
     if (schemaComposer.isInterfaceType(typeName)) {
       // Stamp object types that declare this interface (People → Person/Manager/…).
@@ -460,8 +466,10 @@ export function emitODataConnectors(
         if (typeof otherName !== 'string' || !schemaComposer.isObjectType(otherName)) continue;
         try {
           const ifaces = (other as ObjectTypeComposer).getInterfaces?.() || [];
-          if (ifaces.some((i: any) => (typeof i === 'string' ? i : i.getTypeName?.()) === typeName)) {
-            entitySetByType.set(otherName, entitySetName);
+          if (
+            ifaces.some((i: any) => (typeof i === 'string' ? i : i.getTypeName?.()) === typeName)
+          ) {
+            setOnce(otherName);
           }
         } catch {
           // ignore
