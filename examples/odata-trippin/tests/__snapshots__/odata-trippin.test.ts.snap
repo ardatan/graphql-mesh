@@ -87,26 +87,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "defaultValue": null,
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "actionRef",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "boundAction",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
             "name": "functionRef",
             "type": {
               "kind": "SCALAR",
@@ -204,68 +184,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
       {
         "args": [
           {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "entitySetName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "createEntitySet",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "entitySetName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldTypeRef",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "deleteEntitySet",
-      },
-      {
-        "args": [
-          {
             "defaultValue": ""No longer supported"",
             "deprecationReason": null,
             "isDeprecated": false,
@@ -359,88 +277,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           "OBJECT",
         ],
         "name": "entityInfo",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "entitySetName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "entitySet",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "entitySetName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldTypeRef",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "entitySetByIdentifier",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "entitySetName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "entitySetCount",
       },
       {
         "args": [
@@ -554,26 +390,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           "FIELD_DEFINITION",
         ],
         "name": "pluralNav",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "singletonName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "singleton",
       },
       {
         "args": [
@@ -705,88 +521,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           "SCALAR",
         ],
         "name": "specifiedBy",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "actionName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "unboundAction",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "functionName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "unboundFunction",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "entitySetName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldTypeRef",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "updateEntitySet",
       },
     ],
     "mutationType": {
@@ -6005,6 +5739,21 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "Airport",
             "ofType": null,
           },
+          {
+            "kind": "OBJECT",
+            "name": "Employee",
+            "ofType": null,
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Manager",
+            "ofType": null,
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Person",
+            "ofType": null,
+          },
         ],
         "specifiedByURL": null,
       },
@@ -6935,12 +6684,9 @@ exports[`OData TripPin should give correct response for example queries: example
       "FirstName": "April",
       "Gender": "Female",
       "LastName": "Cline",
-      "Trips": null,
+      "Trips": [],
       "UserName": "aprilcline",
     },
   },
-  "errors": [
-    [GraphQLError: Invalid URL],
-  ],
 }
 `;

@@ -49,7 +49,7 @@ exports[`execute with hive executes GetMe 1`] = `
 `;
 
 exports[`should compose the appropriate schema 1`] = `
-"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@entityInfo", "@abstractType", "@singularNav", "@pluralNav", "@navProp", "@unboundFunction", "@boundFunction", "@unboundAction", "@boundAction", "@singleton", "@entitySet", "@entitySetByIdentifier", "@entitySetCount", "@createEntitySet", "@deleteEntitySet", "@updateEntitySet", "@transport"]) @transport(kind: "rest", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [["Accept", "application/json;odata.metadata=minimal"], ["User-Agent", "GraphQL Mesh"]], options: {batch: "multipart", expandNavProps: true}) @join__directive(graphs: [TRIPPIN], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [TRIPPIN], name: "source", args: {name: "Trippin", http: {baseURL: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}, {name: "User-Agent", value: "GraphQL Mesh"}]}, errors: {message: "error.message"}}) {
+"schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@entityInfo", "@abstractType", "@singularNav", "@pluralNav", "@navProp", "@boundFunction", "@transport"]) @transport(kind: "rest", subgraph: "Trippin", location: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [["Accept", "application/json;odata.metadata=minimal"], ["User-Agent", "GraphQL Mesh"]], options: {batch: "multipart", expandNavProps: true}) @join__directive(graphs: [TRIPPIN], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [TRIPPIN], name: "source", args: {name: "Trippin", http: {baseURL: "https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}, {name: "User-Agent", value: "GraphQL Mesh"}]}, errors: {message: "error.message"}}) {
   query: Query
   mutation: Mutation
 }
@@ -97,27 +97,7 @@ directive @pluralNav(navigationPropertyName: String) on FIELD_DEFINITION
 
 directive @navProp(navigationPropertyName: String) on FIELD_DEFINITION
 
-directive @unboundFunction(functionName: String) on FIELD_DEFINITION
-
 directive @boundFunction(functionRef: String) on FIELD_DEFINITION
-
-directive @unboundAction(actionName: String) on FIELD_DEFINITION
-
-directive @boundAction(actionRef: String) on FIELD_DEFINITION
-
-directive @singleton(singletonName: String) on FIELD_DEFINITION
-
-directive @entitySet(entitySetName: String) on FIELD_DEFINITION
-
-directive @entitySetByIdentifier(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
-
-directive @entitySetCount(entitySetName: String) on FIELD_DEFINITION
-
-directive @createEntitySet(entitySetName: String) on FIELD_DEFINITION
-
-directive @deleteEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
-
-directive @updateEntitySet(entitySetName: String, identifierFieldName: String, identifierFieldTypeRef: String) on FIELD_DEFINITION
 
 """
 The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
@@ -161,7 +141,7 @@ scalar ISO8601Duration @join__type(graph: TRIPPIN)
 
 scalar JSONSelection @join__type(graph: TRIPPIN)
 
-type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
+type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features"], navigationFields: ["Friends", "BestFriend", "Trips"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}}) {
   UserName: String!
   FirstName: String!
   LastName: String
@@ -173,15 +153,15 @@ type Person implements IPerson @entityInfo(actualFields: ["UserName", "FirstName
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips")
-  UpdateLastName(person: PersonInput, lastName: String!): JSON @boundAction(actionRef: "Trippin.UpdateLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
+  Friends(queryOptions: QueryOptions): [Person] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Friends", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"}})
+  FriendsById(id: ID): Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Friends/{$args.id}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
+  BestFriend: Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/BestFriend"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
+  Trips(queryOptions: QueryOptions): [Trip] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trips", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"}})
+  TripsById(id: ID): Trip @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trips/{$args.id}/"}, selection: "TripId ShareId Name Budget Description Tags StartsAt EndsAt", errors: {message: "error.message"}})
+  GetFavoriteAirline(person: PersonInput): Airline @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trippin.GetFavoriteAirline()", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "AirlineCode Name", errors: {message: "error.message"}})
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trippin.GetFriendsTrips(userName='{$args.userName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"}})
+  UpdateLastName(person: PersonInput, lastName: String!): JSON @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/People/{$this.UserName}/Trippin.UpdateLastName", body: "$args"}, selection: "$", errors: {message: "error.message"}})
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/People/{$this.UserName}/Trippin.ShareTrip", body: "$args"}, selection: "$", errors: {message: "error.message"}})
 }
 
 type Airline @entityInfo(actualFields: ["AirlineCode", "Name"], navigationFields: [], isOpenType: false, identifierFieldName: "AirlineCode", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "AirlineCode") @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Airlines/{$this.AirlineCode}/"}, selection: "AirlineCode Name", errors: {message: "error.message"}}) {
@@ -250,11 +230,11 @@ type Flight implements IPublicTransportation @entityInfo(actualFields: ["PlanIte
   Duration: ISO8601Duration!
 }
 
-type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Cost"], navigationFields: ["Peers"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
+type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Cost"], navigationFields: ["Peers"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/"}, selection: "Cost UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}}) {
   UserName: String!
   Cost: BigInt!
-  Peers(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Peers")
-  PeersById(id: ID): Person @singularNav(navigationPropertyName: "Peers")
+  Peers(queryOptions: QueryOptions): [Person] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Peers", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"}})
+  PeersById(id: ID): Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Peers/{$args.id}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
   FirstName: String!
   LastName: String
   MiddleName: String
@@ -265,23 +245,23 @@ type Employee implements IPerson @entityInfo(actualFields: ["UserName", "FirstNa
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips")
-  UpdateLastName(person: PersonInput, lastName: String!): JSON @boundAction(actionRef: "Trippin.UpdateLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
+  Friends(queryOptions: QueryOptions): [Person] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Friends", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"}})
+  FriendsById(id: ID): Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Friends/{$args.id}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
+  BestFriend: Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/BestFriend"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
+  Trips(queryOptions: QueryOptions): [Trip] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trips", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"}})
+  TripsById(id: ID): Trip @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trips/{$args.id}/"}, selection: "TripId ShareId Name Budget Description Tags StartsAt EndsAt", errors: {message: "error.message"}})
+  GetFavoriteAirline(person: PersonInput): Airline @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trippin.GetFavoriteAirline()", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "AirlineCode Name", errors: {message: "error.message"}})
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trippin.GetFriendsTrips(userName='{$args.userName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"}})
+  UpdateLastName(person: PersonInput, lastName: String!): JSON @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/People/{$this.UserName}/Trippin.UpdateLastName", body: "$args"}, selection: "$", errors: {message: "error.message"}})
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/People/{$this.UserName}/Trippin.ShareTrip", body: "$args"}, selection: "$", errors: {message: "error.message"}})
 }
 
-type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Budget", "BossOffice"], navigationFields: ["DirectReports"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") {
+type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName", "MiddleName", "Gender", "Age", "Emails", "AddressInfo", "HomeAddress", "FavoriteFeature", "Features", "Budget", "BossOffice"], navigationFields: ["DirectReports"], isOpenType: false, identifierFieldName: "UserName", identifierFieldTypeRef: "Edm.String") @join__type(graph: TRIPPIN, key: "UserName") @join__implements(graph: TRIPPIN, interface: "IPerson") @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/"}, selection: "Budget BossOffice { Address City { Name CountryRegion Region } } UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}}) {
   UserName: String!
   Budget: BigInt!
   BossOffice: Location
-  DirectReports(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "DirectReports")
-  DirectReportsById(id: ID): Person @singularNav(navigationPropertyName: "DirectReports")
+  DirectReports(queryOptions: QueryOptions): [Person] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/DirectReports", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"}})
+  DirectReportsById(id: ID): Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/DirectReports/{$args.id}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
   FirstName: String!
   LastName: String
   MiddleName: String
@@ -292,15 +272,15 @@ type Manager implements IPerson @entityInfo(actualFields: ["UserName", "FirstNam
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips")
-  UpdateLastName(person: PersonInput, lastName: String!): JSON @boundAction(actionRef: "Trippin.UpdateLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
+  Friends(queryOptions: QueryOptions): [Person] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Friends", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"}})
+  FriendsById(id: ID): Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Friends/{$args.id}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
+  BestFriend: Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/BestFriend"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
+  Trips(queryOptions: QueryOptions): [Trip] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trips", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"}})
+  TripsById(id: ID): Trip @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trips/{$args.id}/"}, selection: "TripId ShareId Name Budget Description Tags StartsAt EndsAt", errors: {message: "error.message"}})
+  GetFavoriteAirline(person: PersonInput): Airline @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trippin.GetFavoriteAirline()", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "AirlineCode Name", errors: {message: "error.message"}})
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/Trippin.GetFriendsTrips(userName='{$args.userName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt }", errors: {message: "error.message"}})
+  UpdateLastName(person: PersonInput, lastName: String!): JSON @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/People/{$this.UserName}/Trippin.UpdateLastName", body: "$args"}, selection: "$", errors: {message: "error.message"}})
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/People/{$this.UserName}/Trippin.ShareTrip", body: "$args"}, selection: "$", errors: {message: "error.message"}})
 }
 
 type Location implements ILocation @entityInfo(actualFields: ["Address", "City"], navigationFields: [], isOpenType: false) @join__type(graph: TRIPPIN) @join__implements(graph: TRIPPIN, interface: "ILocation") {
@@ -327,8 +307,8 @@ type EventLocation implements ILocation @entityInfo(actualFields: ["Address", "C
 }
 
 type Query @join__type(graph: TRIPPIN) {
-  GetPersonWithMostFriends: Person @unboundFunction(functionName: "GetPersonWithMostFriends")
-  GetNearestAirport(lat: Float!, lon: Float!): Airport @unboundFunction(functionName: "GetNearestAirport")
+  GetPersonWithMostFriends: Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/GetPersonWithMostFriends()", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
+  GetNearestAirport(lat: Float!, lon: Float!): Airport @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/GetNearestAirport(lat={$args.lat},lon={$args.lon})", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "Name IcaoCode IataCode Location { Loc Address City { Name CountryRegion Region } }", errors: {message: "error.message"}})
   Me: Person @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/Me"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
   People(queryOptions: QueryOptions): [IPerson] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"}})
   PeopleByUserName(UserName: String!): IPerson @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", entity: true, errors: {message: "error.message"}})
@@ -342,7 +322,7 @@ type Query @join__type(graph: TRIPPIN) {
 }
 
 type Mutation @join__type(graph: TRIPPIN) {
-  ResetDataSource: JSON @unboundAction(actionName: "ResetDataSource")
+  ResetDataSource: JSON @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/ResetDataSource", body: "$args"}, selection: "$", errors: {message: "error.message"}})
   People(queryOptions: QueryOptions): [IPerson] @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features }", errors: {message: "error.message"}})
   PeopleByUserName(UserName: String!): IPerson @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$args.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", entity: true, errors: {message: "error.message"}})
   createPeople(input: PersonInput): IPerson @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {POST: "/People", body: "$args.input"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features", errors: {message: "error.message"}})
@@ -372,15 +352,15 @@ interface IPerson @entityInfo(actualFields: ["UserName", "FirstName", "LastName"
   HomeAddress: Location
   FavoriteFeature: Feature!
   Features: [Feature]!
-  Friends(queryOptions: QueryOptions): [Person] @pluralNav(navigationPropertyName: "Friends")
-  FriendsById(id: ID): Person @singularNav(navigationPropertyName: "Friends")
-  BestFriend: Person @navProp(navigationPropertyName: "BestFriend")
-  Trips(queryOptions: QueryOptions): [Trip] @pluralNav(navigationPropertyName: "Trips")
-  TripsById(id: ID): Trip @singularNav(navigationPropertyName: "Trips")
-  GetFavoriteAirline(person: PersonInput): Airline @boundFunction(functionRef: "Trippin.GetFavoriteAirline")
-  GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @boundFunction(functionRef: "Trippin.GetFriendsTrips")
-  UpdateLastName(person: PersonInput, lastName: String!): JSON @boundAction(actionRef: "Trippin.UpdateLastName")
-  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @boundAction(actionRef: "Trippin.ShareTrip")
+  Friends(queryOptions: QueryOptions): [Person]
+  FriendsById(id: ID): Person
+  BestFriend: Person
+  Trips(queryOptions: QueryOptions): [Trip]
+  TripsById(id: ID): Trip
+  GetFavoriteAirline(person: PersonInput): Airline
+  GetFriendsTrips(person: PersonInput, userName: String!): [Trip]
+  UpdateLastName(person: PersonInput, lastName: String!): JSON
+  ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON
 }
 
 interface IPlanItem @entityInfo(actualFields: ["PlanItemId", "ConfirmationCode", "StartsAt", "EndsAt", "Duration"], navigationFields: [], isOpenType: false, identifierFieldName: "PlanItemId", identifierFieldTypeRef: "Edm.Int32") @abstractType(entityTypeName: "PlanItem", isAbstract: false, aliasNamespaceMap: [], multipleSchemas: false, namespaces: ["Trippin"]) @join__type(graph: TRIPPIN) {

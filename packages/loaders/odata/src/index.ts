@@ -699,13 +699,18 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               ) ?? [],
           ) ?? [],
       )?.[0];
-      const { boundEntityTypeName, argName, argType } = entitySetObj
+      const bindingDetails = entitySetObj
         ? boundActionEntitySetDetails(entitySetObj)
         : entityParameterObj
           ? boundActionEntityParameterDetails(entityParameterObj)
-          : (() => {
-              throw new Error(`EntitySet ${entitySetPath} not found in schema ${schemaNamespace}`);
-            })();
+          : null;
+      if (!bindingDetails) {
+        log.warn(
+          `OData: skip bound action ${actionName}; EntitySet ${entitySetPath} not found in schema ${schemaNamespace}`,
+        );
+        return;
+      }
+      const { boundEntityTypeName, argName, argType } = bindingDetails;
 
       const args: ObjectTypeComposerArgumentConfigMapDefinition<any> = {
         ...commonArgs,
@@ -733,17 +738,29 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         },
       };
       schemaComposer.addDirective(BoundActionDirective);
-      const boundEntityType = schemaComposer.getAnyTC(boundEntityTypeName) as InterfaceTypeComposer;
+      const boundEntityType = getTCByTypeNames(
+        boundEntityTypeName,
+        `I${boundEntityTypeName}`,
+        `T${boundEntityTypeName}`,
+      ) as InterfaceTypeComposer | ObjectTypeComposer | null;
+      if (!boundEntityType) {
+        log.warn(
+          `OData: skip bound action ${actionName}; entity type ${boundEntityTypeName} not found`,
+        );
+        return;
+      }
       boundEntityType.addFields({
         [actionName]: boundField,
       });
       const otherType = getTCByTypeNames(
         `I${boundEntityTypeName}`,
         `T${boundEntityTypeName}`,
-      ) as InterfaceTypeComposer;
-      otherType?.addFields({
-        [actionName]: boundField,
-      });
+      ) as InterfaceTypeComposer | null;
+      if (otherType && otherType !== boundEntityType) {
+        otherType.addFields({
+          [actionName]: boundField,
+        });
+      }
     };
 
     schemaObj.Action?.forEach((actionObj: any) => {
@@ -1042,7 +1059,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     endpoint,
     typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined,
   );
-  // Preserve batch / expand hints for any remaining Mesh-bound ops (bound functions).
+  // Preserve batch / expand hints for residual nested-only nav/bound (no entity set).
   const schemaExtensions: any = (schema.extensions ||= {});
   const directiveExtensions = (schemaExtensions.directives ||= {});
   if (directiveExtensions.transport && typeof directiveExtensions.transport === 'object') {
