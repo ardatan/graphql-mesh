@@ -15,5 +15,8 @@ export const ignoreList = [
   'uri-template',
   'ObjMap',
   'HttpMethod',
+  // Federation Connectors `@link` scalars (keep unprefixed like String/ID)
+  'JSONSelection',
+  'URLPathTemplate',
   ...Object.keys(scalarsResolversMap),
 ];

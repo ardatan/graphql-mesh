@@ -37,6 +37,9 @@ export const ignoreList = [
   'SourceHTTP',
   'HTTPHeaderMapping',
   'ConnectorErrors',
+  // Connect `@link` scalars — must stay unprefixed so finalize can drop exact names
+  'JSONSelection',
+  'URLPathTemplate',
   ...Object.keys(scalarsResolversMap),
 ];
 

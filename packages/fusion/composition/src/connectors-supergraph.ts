@@ -30,38 +30,11 @@ const CONNECT_INPUT_TYPES = new Set([
 
 /**
  * Owned by `@link(url: connect/v0.4)` — must not remain as `scalar X @join__type`.
- * Exact names plus Mesh per-subgraph prefixes (`SubgraphBJSONSelection`), but not
- * application scalars that merely share the suffix (`AuditJSONSelection`).
+ * Prefix/rename transforms ignore these names (like String/ID), so only the exact
+ * link scalars appear; application scalars such as `AuditJSONSelection` stay.
  */
-function isConnectLinkedScalarName(name: string, subgraphNames: Set<string>): boolean {
-  if (name === 'JSONSelection' || name === 'URLPathTemplate') {
-    return true;
-  }
-  for (const subgraph of subgraphNames) {
-    if (name === `${subgraph}JSONSelection` || name === `${subgraph}URLPathTemplate`) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/** Type names referenced from schema fields/args — ignore connect directive/input defs. */
-function collectReferencedTypeNames(document: DocumentNode): Set<string> {
-  const refs = new Set<string>();
-  visit(document, {
-    DirectiveDefinition() {
-      return false;
-    },
-    InputObjectTypeDefinition(node) {
-      if (CONNECT_INPUT_TYPES.has(node.name.value)) {
-        return false;
-      }
-    },
-    NamedType(node) {
-      refs.add(node.name.value);
-    },
-  });
-  return refs;
+function isConnectLinkedScalarName(name: string): boolean {
+  return name === 'JSONSelection' || name === 'URLPathTemplate';
 }
 
 /**
@@ -89,8 +62,6 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
   for (const [enumVal, name] of graphEnumToName) {
     nameToGraphEnum.set(name, enumVal);
   }
-  const subgraphNames = new Set<string>([...graphEnumToName.keys(), ...graphEnumToName.values()]);
-  const referencedTypes = collectReferencedTypeNames(document);
   const singleGraphEnum = graphEnumToName.size === 1 ? [...graphEnumToName.keys()][0] : undefined;
 
   const pendingSources: Array<Record<string, unknown>> = [];
@@ -172,11 +143,7 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
     },
     ScalarTypeDefinition(node) {
       // Drop linked connect scalars — Router resolves them via `@link(connect/v0.4)`.
-      // Keep application scalars that share the suffix when still referenced.
-      if (
-        isConnectLinkedScalarName(node.name.value, subgraphNames) &&
-        !referencedTypes.has(node.name.value)
-      ) {
+      if (isConnectLinkedScalarName(node.name.value)) {
         return null;
       }
       return node;

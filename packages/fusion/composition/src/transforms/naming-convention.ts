@@ -54,6 +54,9 @@ const CONNECTORS_INPUT_TYPES = new Set([
   'ConnectorErrors',
 ]);
 
+/** Connect `@link` scalars — same as String/ID: do not rename/prefix. */
+const CONNECTORS_LINKED_SCALARS = new Set(['JSONSelection', 'URLPathTemplate']);
+
 function schemaUsesConnect(schema: GraphQLSchema): boolean {
   for (const type of Object.values(schema.getTypeMap())) {
     if (!('getFields' in type)) continue;
@@ -122,7 +125,8 @@ export function createNamingConventionTransform(
       if (
         isSpecifiedScalarType(type) ||
         isFromGraphQLScalars(type.name) ||
-        CONNECTORS_INPUT_TYPES.has(type.name)
+        CONNECTORS_INPUT_TYPES.has(type.name) ||
+        CONNECTORS_LINKED_SCALARS.has(type.name)
       ) {
         return type;
       }
