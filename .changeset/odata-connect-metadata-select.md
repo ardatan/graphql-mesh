@@ -11,7 +11,7 @@ OData subgraphs now emit Federation Connectors (`@source` / `@connect` / `@key`)
 - Apollo Router runs the same SDL as plain Connectors (fuller payloads, same GraphQL results).
 - **BREAKING:** `@graphql-mesh/transport-odata` is removed. OData runs on `@graphql-mesh/transport-rest` only (Gateway resolves `kind: "rest"`).
 
-`@abstractType` → `resolveType` (from `@odata.type`) is wired inside `transport-rest` `processDirectives`, so Hive rehydration no longer needs a separate OData residual pass (`processODataResidualDirectives` removed).
+Abstract OData types no longer emit `@abstractType`. `transport-rest` `processDirectives` installs a shared abstract `resolveType` that reads `__typename` or OData `@odata.type` (Hive rehydration; no residual Mesh pass).
 
 Shared Connectors defs use spec scalars `JSONSelection` / `URLPathTemplate`; composition strips them from the finalized supergraph so they do not leak as `scalar … @join__type` (Router owns them via `@link(connect/v0.4)`).
 

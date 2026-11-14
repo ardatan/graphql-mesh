@@ -30,7 +30,6 @@ import transportRest, { type RESTTransportOptions } from '@graphql-mesh/transpor
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
 import {
-  AbstractTypeDirective,
   BoundActionDirective,
   BoundFunctionDirective,
   CreateEntitySetDirective,
@@ -243,20 +242,10 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       // Hive and Router run the same composed SDL.
       let abstractType: InterfaceTypeComposer | undefined;
       if (isAbstract) {
+        // No `@abstractType` directive — transport-rest resolveType reads `@odata.type`.
         const abstractExtensions: EntityTypeExtensions = {
           directives: {
             entityInfo,
-            abstractType: {
-              entityTypeName,
-              isAbstract,
-              get aliasNamespaceMap() {
-                return [...aliasNamespaceMap.entries()];
-              },
-              multipleSchemas,
-              get namespaces() {
-                return [...namespaces];
-              },
-            } as any,
           },
           eventEmitter,
         };
@@ -264,7 +253,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           name: entityTypeName,
           extensions: abstractExtensions as any,
         });
-        schemaComposer.addDirective(AbstractTypeDirective);
       }
       const outputType = schemaComposer.createObjectTC({
         name: isAbstract ? `T${entityTypeName}` : entityTypeName,
@@ -1076,7 +1064,7 @@ export async function loadGraphQLSchemaFromOData(
   opts: LoadGraphQLSchemaFromODataOpts,
 ) {
   const schema = await loadNonExecutableGraphQLSchemaFromOData(name, opts);
-  // transport-rest wires `@connect` + OData `@abstractType` resolveType.
+  // transport-rest wires `@connect` + abstract resolveType (incl. `@odata.type`).
   const { processDirectives } = await import('@graphql-mesh/transport-rest');
   return processDirectives(schema, {
     globalFetch: opts.fetchFn,

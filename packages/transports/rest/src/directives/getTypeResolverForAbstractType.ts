@@ -37,7 +37,29 @@ export function getTypeResolverForAbstractType({
       } else {
         return data.__typename;
       }
-    } else if (discriminatorField != null && data[discriminatorField]) {
+    }
+
+    // OData: `#Namespace.Type` → GraphQL object among possibleTypes (no `@abstractType`).
+    const odataType = data?.['@odata.type'];
+    if (typeof odataType === 'string') {
+      const shortName = odataType.replace(/^#/, '').split('.').pop()!;
+      const match =
+        possibleTypes.find(t => t.name === shortName) ||
+        // Abstract OData entity: interface `Foo` + concrete companion `TFoo`
+        possibleTypes.find(t => t.name === `T${shortName}`) ||
+        possibleTypes.find(
+          t => t.name.endsWith(`_${shortName}`) || t.name.endsWith(`_T${shortName}`),
+        );
+      if (match) {
+        return match.name;
+      }
+      const fromSchema = info.schema.getType(shortName) || info.schema.getType(`T${shortName}`);
+      if (fromSchema && !isAbstractType(fromSchema)) {
+        return fromSchema.name;
+      }
+    }
+
+    if (discriminatorField != null && data[discriminatorField]) {
       const discriminatorValue = data[discriminatorField];
       return discriminatorMappingObj?.[discriminatorValue] || discriminatorValue;
     }

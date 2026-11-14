@@ -276,36 +276,6 @@ export interface UpdateEntitySetDirectiveArgs {
   identifierFieldTypeRef: string;
 }
 
-export const AbstractTypeDirective = new GraphQLDirective({
-  name: 'abstractType',
-  args: {
-    entityTypeName: {
-      type: GraphQLString,
-    },
-    isAbstract: {
-      type: GraphQLBoolean,
-    },
-    aliasNamespaceMap: {
-      type: new GraphQLList(new GraphQLList(GraphQLString)),
-    },
-    multipleSchemas: {
-      type: GraphQLBoolean,
-    },
-    namespaces: {
-      type: new GraphQLList(GraphQLString),
-    },
-  },
-  locations: [DirectiveLocation.INTERFACE, DirectiveLocation.OBJECT],
-});
-
-export interface AbstractTypeDirectiveArgs {
-  entityTypeName: string;
-  isAbstract: boolean;
-  aliasNamespaceMap: [string, string][];
-  multipleSchemas: boolean;
-  namespaces: string[];
-}
-
 export interface DirectiveArgsMap {
   entityInfo?: EntityInfoDirectiveArgs;
   singularNav?: SingularNavDirectiveArgs;
@@ -323,7 +293,6 @@ export interface DirectiveArgsMap {
   createEntitySet?: CreateEntitySetDirectiveArgs;
   deleteEntitySet?: DeleteEntitySetDirectiveArgs;
   updateEntitySet?: UpdateEntitySetDirectiveArgs;
-  abstractType?: AbstractTypeDirectiveArgs;
   transport?: TransportDirectiveArgs;
   [key: string]: unknown;
 }

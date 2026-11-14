@@ -752,8 +752,8 @@ export function emitODataConnectors(
   }
 
   // Drop Mesh directive definitions with no remaining usages.
-  // Keep `@abstractType` only when OData Abstract="true".
   // `@entityInfo` / `@resolveRoot` are not in public SDL (runtime / `rest: $`).
+  // Abstract OData types need no `@abstractType` — resolveType reads `@odata.type`.
   const stillUsed = new Set<string>();
   for (const tc of schemaComposer.types.values()) {
     const typeName = (tc as any).getTypeName?.();

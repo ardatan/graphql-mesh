@@ -22,23 +22,9 @@ import {
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
-import { createODataAbstractTypeResolver } from './odataAbstractType.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
-
-type ODataAbstractTypeDirectiveArgs = {
-  entityTypeName: string;
-  isAbstract: boolean;
-  aliasNamespaceMap: [string, string][];
-  multipleSchemas: boolean;
-  namespaces: string[];
-};
-
-function firstDirectiveArg<T>(value: T | T[] | null | undefined): T | undefined {
-  if (value == null) return undefined;
-  return Array.isArray(value) ? value[0] : value;
-}
 
 export interface ProcessDirectiveArgs {
   pubsub?: PubSub;
@@ -143,28 +129,14 @@ export function processDirectives(
     if (isScalarType(type)) {
       processScalarType(type);
     }
-    // Abstract resolveType: OData `@abstractType` (from `@odata.type`) wins;
-    // otherwise unions get structural / `__typename` fallback. OpenAPI
-    // `@discriminator` is baked into `@connect(selection:)` and stripped.
+    // Abstract resolveType: `__typename`, OData `@odata.type`, then structural /
+    // scalar fallback. OpenAPI `@discriminator` is baked into `@connect(selection:)`
+    // and stripped — no Mesh `@abstractType` directive.
     if (isInterfaceType(type) || isUnionType(type)) {
-      const abstractType = firstDirectiveArg(
-        getDirectiveExtensions<{ abstractType?: ODataAbstractTypeDirectiveArgs }>(type)
-          ?.abstractType,
-      );
-      if (abstractType) {
-        type.resolveType = createODataAbstractTypeResolver({
-          entityTypeName: abstractType.entityTypeName,
-          isAbstract: abstractType.isAbstract,
-          aliasNamespaceMap: new Map(abstractType.aliasNamespaceMap ?? []),
-          multipleSchemas: abstractType.multipleSchemas ?? false,
-          namespaces: new Set(abstractType.namespaces ?? []),
-        });
-      } else if (isUnionType(type)) {
-        type.resolveType = getTypeResolverForAbstractType({
-          possibleTypes: type.getTypes(),
-          serviceName: currDirective?.subgraph,
-        });
-      }
+      type.resolveType = getTypeResolverForAbstractType({
+        possibleTypes: isUnionType(type) ? type.getTypes() : schema.getPossibleTypes(type),
+        serviceName: currDirective?.subgraph,
+      });
     }
     if (isEnumType(type)) {
       const directiveAnnotations = getDefDirectives(schema, type);
