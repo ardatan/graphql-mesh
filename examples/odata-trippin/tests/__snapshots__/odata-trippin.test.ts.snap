@@ -87,26 +87,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "defaultValue": null,
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "functionRef",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "boundFunction",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
             "name": "entity",
             "type": {
               "kind": "SCALAR",
@@ -344,72 +324,12 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "name": "link",
       },
       {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "navigationPropertyName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "navProp",
-      },
-      {
         "args": [],
         "isRepeatable": false,
         "locations": [
           "INPUT_OBJECT",
         ],
         "name": "oneOf",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "navigationPropertyName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "pluralNav",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "navigationPropertyName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-        ],
-        "name": "singularNav",
       },
       {
         "args": [
@@ -562,6 +482,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               "ofType": null,
             },
           },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
         ],
         "inputFields": null,
         "interfaces": [],
@@ -688,6 +619,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "deprecationReason": null,
             "isDeprecated": false,
             "name": "Name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -1679,6 +1621,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               },
             },
           },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
         ],
         "inputFields": null,
         "interfaces": [
@@ -1788,6 +1741,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "name": "DateTime",
                 "ofType": null,
               },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
             },
           },
         ],
@@ -2014,6 +1978,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "type": {
               "kind": "OBJECT",
               "name": "Airport",
+              "ofType": null,
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null,
             },
           },
@@ -2587,6 +2562,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               },
             },
           },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
         ],
         "inputFields": null,
         "interfaces": [],
@@ -2684,6 +2670,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "name": "DateTime",
                 "ofType": null,
               },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
             },
           },
         ],
@@ -2794,6 +2791,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "name": "DateTime",
                 "ofType": null,
               },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
             },
           },
         ],
@@ -3453,6 +3461,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "name": "String",
                 "ofType": null,
               },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
             },
           },
         ],
@@ -4342,6 +4361,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               },
             },
           },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
         ],
         "inputFields": null,
         "interfaces": [
@@ -4768,6 +4798,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               },
             },
           },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
+            },
+          },
         ],
         "inputFields": null,
         "interfaces": [
@@ -4866,6 +4907,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "name": "DateTime",
                 "ofType": null,
               },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
             },
           },
         ],
@@ -5574,6 +5626,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
                 "name": "Int",
                 "ofType": null,
               },
+            },
+          },
+          {
+            "args": [],
+            "deprecationReason": null,
+            "isDeprecated": false,
+            "name": "_odataId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null,
             },
           },
         ],

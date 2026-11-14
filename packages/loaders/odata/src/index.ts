@@ -1059,7 +1059,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     endpoint,
     typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined,
   );
-  // Preserve batch / expand hints for residual nested-only nav/bound (no entity set).
+  // Preserve batch / expand hints (legacy transport options; Connectors ignore these).
   const schemaExtensions: any = (schema.extensions ||= {});
   const directiveExtensions = (schemaExtensions.directives ||= {});
   if (directiveExtensions.transport && typeof directiveExtensions.transport === 'object') {

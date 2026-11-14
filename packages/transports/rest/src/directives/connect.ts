@@ -723,7 +723,14 @@ export function applySelection(selection: string, root: any, extras: ConnectSele
   }
   // Connectors literals / single path expressions (not multi-field selections).
   // `$status->match(...)` may contain spaces inside the argument list.
-  if (trimmed.startsWith('$') && !trimmed.includes('\n') && !/^[A-Za-z_][\w]*\s*:/.test(trimmed)) {
+  // Single-line `$.value { a b }` / `$.foo { alias: x }` must still run as a
+  // subselection — otherwise aliases like `_odataId: $->get("@odata.id")` are dropped.
+  if (
+    trimmed.startsWith('$') &&
+    !trimmed.includes('\n') &&
+    !/^[A-Za-z_][\w]*\s*:/.test(trimmed) &&
+    !/\{\s*[\s\S]+\}/.test(trimmed)
+  ) {
     return evalPath(trimmed, root, extras);
   }
   return evalSubSelection(trimmed, root, extras);
@@ -1474,12 +1481,20 @@ export function addConnectFieldResolver(
     };
 
     const baseURL = resolveTemplate(source?.http?.baseURL || '', vars);
-    // Path templates percent-encode expression values; baseURL / headers do not.
-    const path = resolveTemplate(picked.path, vars, { encodeValues: true });
-    // Absolute `@odata.id` (and other absolute connector URLs) skip baseURL join.
-    // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
-    // so test mocks like `fetch('pets/1')` keep working.
-    let fullPath = /^https?:\/\//i.test(path) ? path : urlJoin(baseURL || '', path) || path;
+    // Absolute URLs from `$this._odataId` (OData nested follow-ups) must not be
+    // percent-encoded — encoding would turn `https://…` into `https%3A%2F%2F…`.
+    const pathUnencoded = resolveTemplate(picked.path, vars, { encodeValues: false });
+    let fullPath: string;
+    if (/^https?:\/\//i.test(pathUnencoded)) {
+      fullPath = pathUnencoded;
+    } else {
+      // Path templates percent-encode expression values; baseURL / headers do not.
+      const path = resolveTemplate(picked.path, vars, { encodeValues: true });
+      // Absolute `@odata.id` (and other absolute connector URLs) skip baseURL join.
+      // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
+      // so test mocks like `fetch('pets/1')` keep working.
+      fullPath = /^https?:\/\//i.test(path) ? path : urlJoin(baseURL || '', path) || path;
+    }
 
     const resolveArg = (argName: string, value: any) => {
       const argDef = field.args?.find(arg => arg.name === argName);

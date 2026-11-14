@@ -659,7 +659,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(decodeURIComponent(sentRequest!.url)).toBe(correctUrl);
   });
   it('should generate correct HTTP request for invoking bound functions with arguments', async () => {
     addMock(

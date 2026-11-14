@@ -79,7 +79,16 @@ function entitySelection(
     ) {
       continue;
     }
-    const named = field.type.getTypeName().replace(/[[\]!]/g, '');
+    // Nested-only entity follow-ups use `$this._odataId` (absolute `@odata.id`).
+    if (fieldName === '_odataId') {
+      lines.push('_odataId: $->get("@odata.id")');
+      continue;
+    }
+    const typeNameStr =
+      typeof (field.type as any)?.getTypeName === 'function'
+        ? (field.type as any).getTypeName()
+        : String(field.type);
+    const named = typeNameStr.replace(/[[\]!]/g, '');
     let nested = '';
     if (schemaComposer.isObjectType(named) || schemaComposer.isInterfaceType(named)) {
       try {
@@ -110,11 +119,17 @@ function listSelection(
   return inner ? `$.value { ${inner} }` : '$.value';
 }
 
+function fieldTypeNameString(field: ObjectTypeComposerFieldConfig<any, any>): string {
+  return typeof (field.type as any)?.getTypeName === 'function'
+    ? (field.type as any).getTypeName()
+    : String(field.type);
+}
+
 function selectionForFieldReturnType(
   schemaComposer: SchemaComposer,
   field: ObjectTypeComposerFieldConfig<any, any>,
 ): string {
-  const typeName = field.type.getTypeName();
+  const typeName = fieldTypeNameString(field);
   const isList = typeName.includes('[');
   const named = typeName.replace(/[[\]!]/g, '');
   if (named === 'JSON' || named === 'Int' || named === 'Float' || named === 'Boolean') {
@@ -144,7 +159,11 @@ function odataCallArgsSuffix(
   const parts: string[] = [];
   for (const [name, argConfig] of Object.entries(args)) {
     if (name === 'queryOptions') continue;
-    const argTypeName = argConfig.type.getTypeName().replace(/[[\]!]/g, '');
+    const argTypeName = (
+      typeof (argConfig.type as any)?.getTypeName === 'function'
+        ? (argConfig.type as any).getTypeName()
+        : String(argConfig.type)
+    ).replace(/[[\]!]/g, '');
     // Binding parameters are Input objects (PersonInput, TripInput) — parent supplies `$this`.
     if (argTypeName.endsWith('Input') || argTypeName.endsWith('UpdateInput')) {
       continue;
@@ -163,6 +182,8 @@ function odataCallArgsSuffix(
       schemaComposer.isEnumType(argTypeName);
     parts.push(isStringish ? `${name}='{$args.${name}}'` : `${name}={$args.${name}}`);
   }
+  // OData omits `()` when there are no parameters (bound-with-only-binding-arg).
+  if (!parts.length) return '';
   return `(${parts.join(',')})`;
 }
 
@@ -197,8 +218,10 @@ const MESH_DIRECTIVES_REPLACED_BY_CONNECT = [
   'boundAction',
   'unboundFunction',
   'unboundAction',
-  // Keep `@entityInfo` — residual nested-only nav/bound resolvers still read it.
 ] as const;
+
+/** Internal GraphQL field holding OData `@odata.id` for nested `@connect` follow-ups. */
+const ODATA_ID_FIELD = '_odataId';
 
 export type ODataConnectSchemaMeta = {
   source: {
@@ -213,8 +236,10 @@ export type ODataConnectSchemaMeta = {
  * Rewrite Mesh OData field directives to Federation Connectors `@connect` / `@source`,
  * and switch the subgraph to `transport-rest` (Hive `$select` via Accept odata.metadata).
  *
- * Navigation / bound ops follow the Apollo OData connector pattern:
- * `GET: /EntitySet/{$this.key}/NavProp` (relative to `@source` baseURL).
+ * Navigation / bound ops:
+ * - Entity-set types → Apollo pattern `GET: /EntitySet/{$this.key}/Nav`
+ * - Nested-only entities → `GET: {$this._odataId}/Nav` (absolute `@odata.id`; Hive
+ *   skips percent-encoding for absolute URLs; Router dual-run is best-effort)
  */
 export function emitODataConnectors(
   schemaComposer: SchemaComposer,
@@ -230,6 +255,29 @@ export function emitODataConnectors(
   // Do not register a local `@key` / `@inaccessible` directive def — federation `@link` owns them.
 
   const sourceName = opts.name;
+
+  // Ensure every keyed entity exposes `_odataId` before root/entity selections are built.
+  for (const tc of schemaComposer.types.values()) {
+    const typeName = (tc as any).getTypeName?.();
+    if (typeof typeName !== 'string') continue;
+    if (!schemaComposer.isObjectType(typeName) && !schemaComposer.isInterfaceType(typeName)) {
+      continue;
+    }
+    const otc = tc as ObjectTypeComposer | InterfaceTypeComposer;
+    const entityInfo = (otc.getExtensions() as any)?.directives?.entityInfo as
+      { identifierFieldName?: string } | undefined;
+    if (!entityInfo?.identifierFieldName) continue;
+    if (otc.hasField(ODATA_ID_FIELD)) continue;
+    otc.addFields({
+      [ODATA_ID_FIELD]: {
+        type: 'String',
+        description: 'OData @odata.id (inaccessible; used by nested @connect follow-ups)',
+        extensions: {
+          directives: { inaccessible: true },
+        },
+      } as any,
+    });
+  }
   const setConnect = (
     parent: ObjectTypeComposer | InterfaceTypeComposer | typeof schemaComposer.Query,
     fieldName: string,
@@ -521,11 +569,12 @@ export function emitODataConnectors(
     const otc = tc as ObjectTypeComposer;
     const entitySetName = entitySetByType.get(typeName);
 
-    // Field-level `@connect` for nav + bound ops (Apollo OData connector pattern).
-    // Requires a known entity set so paths stay relative to `@source` baseURL
-    // (absolute `@odata.id` breaks Router percent-encoding).
-    if (isObject && entitySetName) {
-      const basePath = `/${entitySetName}/{$this.${identifierFieldName}}`;
+    // Field-level `@connect` for nav + bound ops.
+    // Prefer entity-set relative paths (Router-safe); else `$this._odataId` (Hive-safe).
+    if (isObject) {
+      const basePath = entitySetName
+        ? `/${entitySetName}/{$this.${identifierFieldName}}`
+        : `{$this.${ODATA_ID_FIELD}}`;
       for (const fieldName of otc.getFieldNames()) {
         const field = otc.getField(fieldName);
         const dirs = ((field.extensions as any)?.directives || {}) as Record<string, any>;
@@ -607,7 +656,7 @@ export function emitODataConnectors(
           );
         }
       }
-    } else if (isIface && entitySetName) {
+    } else if (isIface) {
       // Interface fields stay bare; implementing objects carry `@connect`.
       for (const fieldName of otc.getFieldNames()) {
         clearMeshFieldDirectives(otc, fieldName);
@@ -661,9 +710,8 @@ export function emitODataConnectors(
   }
 
   // Drop Mesh directive definitions with no remaining usages.
-  // Nested-only entities (e.g. Trip without a root entity set) may still carry
-  // `@pluralNav` / `@boundFunction` for residual Hive resolvers.
-  // Keep `@abstractType` / `@resolveRoot` always.
+  // Keep `@entityInfo` (Hive `$select` / response helpers) and `@abstractType` /
+  // `@resolveRoot`.
   const stillUsed = new Set<string>();
   for (const tc of schemaComposer.types.values()) {
     const typeName = (tc as any).getTypeName?.();
@@ -730,7 +778,7 @@ export function emitODataConnectors(
       },
       {
         url: FEDERATION_LINK_URL,
-        import: ['@key'],
+        import: ['@key', '@inaccessible'],
       },
     ],
   };

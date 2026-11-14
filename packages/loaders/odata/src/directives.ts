@@ -351,10 +351,8 @@ export interface ProcessDirectivesArgs {
 }
 
 /**
- * Residual Mesh OData resolvers for anything not yet emitted as `@connect`:
- * nested-only entity nav/bound ops (no root entity set → no Router-safe relative
- * path), abstract `@odata.type`, and open-type `@resolveRoot`.
- * Entity-set CRUD, unbound ops, and entity-set nav/bound are `@connect` (transport-rest).
+ * Residual Mesh OData resolvers: abstract `@odata.type` and open-type `@resolveRoot`.
+ * CRUD, nav, bound/unbound ops are Federation `@connect` via `transport-rest`.
  */
 export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
   const schemaLevelDirectives = getDirectiveExtensions<DirectiveArgsMap>(schema);

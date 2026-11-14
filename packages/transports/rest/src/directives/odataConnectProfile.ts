@@ -141,8 +141,11 @@ function collectInlineFragment(
   collectSelections(fragment.selectionSet.selections, parentType, info, propertyMap, out);
 }
 
-/** Bound ops / by-id accessors are not OData `$select` / `$expand` properties. */
+/** Bound ops / by-id accessors / `_odataId` are not OData `$select` / `$expand` properties. */
 function isODataStructuralField(fieldDef: GraphQLField<any, any>): boolean {
+  if (fieldDef.name === '_odataId') {
+    return false;
+  }
   const dirs = getDirectiveExtensions(fieldDef as any) || {};
   if (
     dirs.boundFunction?.length ||
