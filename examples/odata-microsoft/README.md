@@ -41,9 +41,9 @@ export MSGRAPH_ACCESS_TOKEN='…' # delegated Bearer (or GRAPH_ACCESS_TOKEN)
 yarn test:e2e e2e/odata-msgraph
 ```
 
-CI runs the live suite via `.github/workflows/odata-msgraph-live.yml` when OData/Connectors
-paths change, if the `MSGRAPH_ACCESS_TOKEN` repository secret is set. Without the secret the
-live describe is skipped.
+CI runs the live suite via `.github/workflows/odata-msgraph-live.yml` when OData/Connectors paths
+change, if the `MSGRAPH_ACCESS_TOKEN` repository secret is set. Without the secret the live describe
+is skipped.
 
 Schema note: live execute keeps the e2e fixture metadata (example-query surface) so Apollo Router
 accepts the supergraph; the HTTP endpoint is real Graph. Full public `$metadata` includes abstract
