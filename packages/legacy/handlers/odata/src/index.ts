@@ -58,10 +58,7 @@ export default class ODataHandler implements MeshHandler {
       globalFetch: fetchFn,
       log: this.log,
     });
-    schema = processODataResidualDirectives({
-      schema,
-      fetchFn,
-    });
+    schema = processODataResidualDirectives({ schema });
     return {
       schema,
     };

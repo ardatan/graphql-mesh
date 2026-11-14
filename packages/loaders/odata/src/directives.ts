@@ -3,31 +3,16 @@ import {
   GraphQLBoolean,
   GraphQLDirective,
   GraphQLList,
-  GraphQLNonNull,
   GraphQLString,
   type GraphQLSchema,
 } from 'graphql';
-import { process } from '@graphql-mesh/cross-helpers';
-import {
-  getInterpolatedHeadersFactory,
-  stringInterpolator,
-  type ResolverData,
-} from '@graphql-mesh/string-interpolation';
 import type { MeshFetch } from '@graphql-mesh/types';
 import {
   TransportDirective,
   type TransportDirectiveArgs as SharedTransportDirectiveArgs,
 } from '@graphql-mesh/utils';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { getDataloaderFactory } from './getDataloaderFactory.js';
 import { createAbstractTypeResolver } from './resolvers/abstractTypeResolver.js';
-import { createBoundActionResolver } from './resolvers/boundActionResolver.js';
-import { createBoundFunctionResolver } from './resolvers/boundFunctionResolver.js';
-import { createNavPropResolver } from './resolvers/navPropResolver.js';
-import { rootResolver } from './resolvers/rootResolver.js';
-import { createSingularNavResolver } from './resolvers/singularNavResolver.js';
-import { createUnboundActionResolver } from './resolvers/unboundActionResolver.js';
-import { createUnboundFunctionResolver } from './resolvers/unboundFunction.js';
 
 export { TransportDirective };
 
@@ -347,60 +332,15 @@ export interface DirectiveArgsMap {
 
 export interface ProcessDirectivesArgs {
   schema: GraphQLSchema;
-  fetchFn: MeshFetch;
+  /** @deprecated Unused — Connectors handle HTTP. Kept for call-site compat. */
+  fetchFn?: MeshFetch;
 }
 
 /**
- * Residual Mesh OData resolvers: abstract `@odata.type` (+ legacy `@resolveRoot` if present).
- * CRUD, nav, bound/unbound ops and open-type `rest` are Federation `@connect` (`rest: $`).
+ * Wire `@abstractType` → `resolveType` from `@odata.type`.
+ * All HTTP (CRUD / nav / bound / unbound) is Federation `@connect` via transport-rest.
  */
-export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
-  const schemaLevelDirectives = getDirectiveExtensions<DirectiveArgsMap>(schema);
-  const transportDirective = schemaLevelDirectives?.transport?.[0];
-  const sourceDirective = (schemaLevelDirectives as any)?.source?.[0] as
-    { http?: { baseURL?: string; headers?: Array<{ name: string; value?: string }> } } | undefined;
-  const endpointRaw = sourceDirective?.http?.baseURL || transportDirective?.location || undefined;
-  if (!endpointRaw) {
-    throw new Error('Missing @source.http.baseURL or @transport.location for OData');
-  }
-  const headerEntries: [string, string][] = [];
-  if (Array.isArray(transportDirective?.headers)) {
-    headerEntries.push(...(transportDirective.headers as [string, string][]));
-  } else if (transportDirective?.headers && typeof transportDirective.headers === 'object') {
-    headerEntries.push(...Object.entries(transportDirective.headers as Record<string, string>));
-  }
-  if (sourceDirective?.http?.headers) {
-    for (const h of sourceDirective.http.headers) {
-      if (h?.name && h.value != null) {
-        headerEntries.push([h.name, h.value]);
-      }
-    }
-  }
-  const operationHeaders = Object.fromEntries(headerEntries);
-  const origHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
-  const headersFactory = (resolverData: ResolverData, method: string) => {
-    const headers = origHeadersFactory(resolverData);
-    if (headers.accept == null) {
-      headers.accept = 'application/json';
-    }
-    if (headers['content-type'] == null && method !== 'GET') {
-      headers['content-type'] = 'application/json';
-    }
-    return headers;
-  };
-
-  const endpoint = stringInterpolator.parse(endpointRaw, {
-    env: process.env,
-  });
-
-  const dataloaderFactory = getDataloaderFactory({
-    endpoint,
-    fetchFn,
-    headersFactory,
-    batchMode: transportDirective?.options?.batch || 'none',
-  });
-
-  /** graphql-compose often stores a single directive args object; `@link` AST uses arrays. */
+export function processDirectives({ schema }: ProcessDirectivesArgs) {
   const firstDir = <T>(value: T | T[] | null | undefined): T | undefined => {
     if (value == null) {
       return undefined;
@@ -425,77 +365,6 @@ export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
           }),
         });
       }
-    },
-    [MapperKind.COMPOSITE_FIELD]: fieldConfig => {
-      const fieldDirectives = getDirectiveExtensions<DirectiveArgsMap>(fieldConfig);
-      // Root CRUD `@connect` resolvers win. Mesh-bound ops / nav must overwrite
-      // stubs from `hydrateEntityStubFieldResolvers`.
-      const hasConnect = Boolean(firstDir(fieldDirectives?.connect as any));
-      if (hasConnect && typeof fieldConfig.resolve === 'function') {
-        return fieldConfig;
-      }
-      const boundActionDirective = firstDir(fieldDirectives?.boundAction);
-      const boundFunctionDirective = firstDir(fieldDirectives?.boundFunction);
-      const navPropDirective = firstDir(fieldDirectives?.navProp);
-      const pluralNavDirective = firstDir(fieldDirectives?.pluralNav);
-      const resolveRootDirective = firstDir(fieldDirectives?.resolveRoot);
-      const singularNavDirective = firstDir(fieldDirectives?.singularNav);
-      const unboundActionDirective = firstDir(fieldDirectives?.unboundAction);
-      const unboundFunctionDirective = firstDir(fieldDirectives?.unboundFunction);
-      if (boundActionDirective) {
-        fieldConfig.resolve = createBoundActionResolver({
-          actionRef: boundActionDirective.actionRef,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (boundFunctionDirective) {
-        fieldConfig.resolve = createBoundFunctionResolver({
-          functionRef: boundFunctionDirective.functionRef,
-          expandNavProps: transportDirective?.options?.expandNavProps,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (navPropDirective) {
-        fieldConfig.resolve = createNavPropResolver({
-          navigationPropertyName: navPropDirective.navigationPropertyName,
-          expandNavProps: transportDirective?.options?.expandNavProps,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (pluralNavDirective) {
-        fieldConfig.resolve = createNavPropResolver({
-          navigationPropertyName: pluralNavDirective.navigationPropertyName,
-          expandNavProps: transportDirective?.options?.expandNavProps,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (resolveRootDirective) {
-        fieldConfig.resolve = rootResolver;
-      } else if (singularNavDirective) {
-        fieldConfig.resolve = createSingularNavResolver({
-          navigationPropertyName: singularNavDirective.navigationPropertyName,
-          expandNavProps: transportDirective?.options?.expandNavProps,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (unboundActionDirective) {
-        fieldConfig.resolve = createUnboundActionResolver({
-          actionName: unboundActionDirective.actionName,
-          endpoint,
-          dataloaderFactory,
-          headersFactory,
-        });
-      } else if (unboundFunctionDirective) {
-        fieldConfig.resolve = createUnboundFunctionResolver({
-          functionName: unboundFunctionDirective.functionName,
-          endpoint,
-          expandNavProps: transportDirective?.options?.expandNavProps,
-          dataloaderFactory,
-          headersFactory,
-        });
-      }
-      // entitySet* / singleton / create|update|delete → `@connect` (transport-rest)
-      return fieldConfig;
     },
   });
 }

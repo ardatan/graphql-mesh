@@ -1814,9 +1814,8 @@ export function addConnectFieldResolver(
     } else if (!isListReturnType && Array.isArray(selected)) {
       selected = selected[0];
     }
-    // OData: keep `@odata.id` / editLink on the selected entity so Mesh residual
-    // `@pluralNav` / `@boundFunction` resolvers can build follow-up URLs after a
-    // non-`$` Connectors selection drops those control properties.
+    // OData: keep `@odata.id` / editLink on the selected entity (Connectors
+    // selections often drop `@odata.*` control properties).
     selected = preserveODataEntityMetadata(selected, responseData);
     // OData `odata.metadata=minimal` often omits `@odata.id`. Fill inaccessible
     // `_odataId` from the request URL so nested `{$this._odataId}/Nav` connects work.

@@ -1080,11 +1080,8 @@ export async function loadGraphQLSchemaFromOData(
     globalFetch: opts.fetchFn,
     log: opts.log,
   });
-  // Bound ops / nav lazy-fetch / `@odata.type` resolveType
-  return processODataResidualDirectives({
-    schema,
-    fetchFn: opts.fetchFn,
-  });
+  // `@abstractType` → resolveType from `@odata.type` (HTTP is `@connect`)
+  return processODataResidualDirectives({ schema });
 }
 
 export { processODataResidualDirectives };
