@@ -238,13 +238,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           eventEmitter,
         } as any,
       });
-      let abstractType: InterfaceTypeComposer;
-      if (
-        typesWithBaseType.some((typeObj: any) =>
-          typeObj.attributes.BaseType.includes(`.${entityTypeName}`),
-        ) ||
-        isAbstract
-      ) {
+      // Connectors / Apollo Router: only emit a GraphQL interface for *abstract*
+      // OData entity types. Non-abstract bases (TripPin `Person` with Manager/Employee
+      // children) used to get a synthetic `IPerson` + `Person implements IPerson`, which
+      // forced an e2e-only supergraph rewrite for Router. Emit concrete objects only so
+      // Hive and Router run the same composed SDL.
+      let abstractType: InterfaceTypeComposer | undefined;
+      if (isAbstract) {
         const abstractExtensions: EntityTypeExtensions = {
           directives: {
             entityInfo,
@@ -263,7 +263,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           eventEmitter,
         };
         abstractType = schemaComposer.createInterfaceTC({
-          name: isAbstract ? entityTypeName : `I${entityTypeName}`,
+          name: entityTypeName,
           extensions: abstractExtensions as any,
         });
         schemaComposer.addDirective(AbstractTypeDirective);

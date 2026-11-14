@@ -10,83 +10,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "defaultValue": null,
             "deprecationReason": null,
             "isDeprecated": false,
-            "name": "aliasNamespaceMap",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                },
-              },
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "entityTypeName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "isAbstract",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "multipleSchemas",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "namespaces",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-              },
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "INTERFACE",
-          "OBJECT",
-        ],
-        "name": "abstractType",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
             "name": "entity",
             "type": {
               "kind": "SCALAR",
@@ -184,79 +107,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           "INPUT_FIELD_DEFINITION",
         ],
         "name": "deprecated",
-      },
-      {
-        "args": [
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "actualFields",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "identifierFieldTypeRef",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "isOpenType",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null,
-            },
-          },
-          {
-            "defaultValue": null,
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "navigationFields",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-              },
-            },
-          },
-        ],
-        "isRepeatable": false,
-        "locations": [
-          "INTERFACE",
-          "OBJECT",
-        ],
-        "name": "entityInfo",
       },
       {
         "args": [
@@ -743,13 +593,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           },
         ],
         "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "ILocation",
-            "ofType": null,
-          },
-        ],
+        "interfaces": [],
         "isOneOf": null,
         "kind": "OBJECT",
         "name": "AirportLocation",
@@ -1634,13 +1478,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           },
         ],
         "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "IPerson",
-            "ofType": null,
-          },
-        ],
+        "interfaces": [],
         "isOneOf": null,
         "kind": "OBJECT",
         "name": "Employee",
@@ -1756,13 +1594,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           },
         ],
         "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "IPlanItem",
-            "ofType": null,
-          },
-        ],
+        "interfaces": [],
         "isOneOf": null,
         "kind": "OBJECT",
         "name": "Event",
@@ -1807,13 +1639,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           },
         ],
         "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "ILocation",
-            "ofType": null,
-          },
-        ],
+        "interfaces": [],
         "isOneOf": null,
         "kind": "OBJECT",
         "name": "EventLocation",
@@ -1994,13 +1820,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           },
         ],
         "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "IPublicTransportation",
-            "ofType": null,
-          },
-        ],
+        "interfaces": [],
         "isOneOf": null,
         "kind": "OBJECT",
         "name": "Flight",
@@ -2087,741 +1907,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "kind": "SCALAR",
         "name": "ID",
         "possibleTypes": null,
-        "specifiedByURL": null,
-      },
-      {
-        "enumValues": null,
-        "fields": [
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "Address",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "City",
-            "type": {
-              "kind": "OBJECT",
-              "name": "City",
-              "ofType": null,
-            },
-          },
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "isOneOf": null,
-        "kind": "INTERFACE",
-        "name": "ILocation",
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "AirportLocation",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "EventLocation",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Location",
-            "ofType": null,
-          },
-        ],
-        "specifiedByURL": null,
-      },
-      {
-        "enumValues": null,
-        "fields": [
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "AddressInfo",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Location",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "Age",
-            "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "BestFriend",
-            "type": {
-              "kind": "OBJECT",
-              "name": "Person",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "Emails",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "FavoriteFeature",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "Feature",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "Features",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "Feature",
-                  "ofType": null,
-                },
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "FirstName",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "queryOptions",
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "QueryOptions",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "Friends",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Person",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "id",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "FriendsById",
-            "type": {
-              "kind": "OBJECT",
-              "name": "Person",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "Gender",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "PersonGender",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "person",
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "PersonInput",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "GetFavoriteAirline",
-            "type": {
-              "kind": "OBJECT",
-              "name": "Airline",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "person",
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "PersonInput",
-                  "ofType": null,
-                },
-              },
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "userName",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "GetFriendsTrips",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Trip",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "HomeAddress",
-            "type": {
-              "kind": "OBJECT",
-              "name": "Location",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "LastName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "MiddleName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "personInstance",
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "PersonInput",
-                  "ofType": null,
-                },
-              },
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "tripId",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                  },
-                },
-              },
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "userName",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "ShareTrip",
-            "type": {
-              "kind": "SCALAR",
-              "name": "JSON",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "queryOptions",
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "QueryOptions",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "Trips",
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Trip",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "id",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "TripsById",
-            "type": {
-              "kind": "OBJECT",
-              "name": "Trip",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "lastName",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                  },
-                },
-              },
-              {
-                "defaultValue": null,
-                "deprecationReason": null,
-                "isDeprecated": false,
-                "name": "person",
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "PersonInput",
-                  "ofType": null,
-                },
-              },
-            ],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "UpdateLastName",
-            "type": {
-              "kind": "SCALAR",
-              "name": "JSON",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "UserName",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "_odataId",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "isOneOf": null,
-        "kind": "INTERFACE",
-        "name": "IPerson",
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "Employee",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Manager",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Person",
-            "ofType": null,
-          },
-        ],
-        "specifiedByURL": null,
-      },
-      {
-        "enumValues": null,
-        "fields": [
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "ConfirmationCode",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "Duration",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ISO8601Duration",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "EndsAt",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "PlanItemId",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "StartsAt",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "_odataId",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "isOneOf": null,
-        "kind": "INTERFACE",
-        "name": "IPlanItem",
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "Event",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "PlanItem",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "PublicTransportation",
-            "ofType": null,
-          },
-        ],
-        "specifiedByURL": null,
-      },
-      {
-        "enumValues": null,
-        "fields": [
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "ConfirmationCode",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "Duration",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ISO8601Duration",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "EndsAt",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "PlanItemId",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "SeatNumber",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "StartsAt",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null,
-              },
-            },
-          },
-          {
-            "args": [],
-            "deprecationReason": null,
-            "isDeprecated": false,
-            "name": "_odataId",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null,
-            },
-          },
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "isOneOf": null,
-        "kind": "INTERFACE",
-        "name": "IPublicTransportation",
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "Flight",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "PublicTransportation",
-            "ofType": null,
-          },
-        ],
         "specifiedByURL": null,
       },
       {
@@ -2917,13 +2002,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           },
         ],
         "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "ILocation",
-            "ofType": null,
-          },
-        ],
+        "interfaces": [],
         "isOneOf": null,
         "kind": "OBJECT",
         "name": "Location",
@@ -3476,13 +2555,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           },
         ],
         "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "IPerson",
-            "ofType": null,
-          },
-        ],
+        "interfaces": [],
         "isOneOf": null,
         "kind": "OBJECT",
         "name": "Manager",
@@ -3621,8 +2694,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "INTERFACE",
-                "name": "IPerson",
+                "kind": "OBJECT",
+                "name": "Person",
                 "ofType": null,
               },
             },
@@ -3649,8 +2722,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "isDeprecated": false,
             "name": "PeopleByUserName",
             "type": {
-              "kind": "INTERFACE",
-              "name": "IPerson",
+              "kind": "OBJECT",
+              "name": "Person",
               "ofType": null,
             },
           },
@@ -3729,8 +2802,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "isDeprecated": false,
             "name": "createPeople",
             "type": {
-              "kind": "INTERFACE",
-              "name": "IPerson",
+              "kind": "OBJECT",
+              "name": "Person",
               "ofType": null,
             },
           },
@@ -3924,8 +2997,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "isDeprecated": false,
             "name": "updatePeopleByUserName",
             "type": {
-              "kind": "INTERFACE",
-              "name": "IPerson",
+              "kind": "OBJECT",
+              "name": "Person",
               "ofType": null,
             },
           },
@@ -4374,13 +3447,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           },
         ],
         "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "IPerson",
-            "ofType": null,
-          },
-        ],
+        "interfaces": [],
         "isOneOf": null,
         "kind": "OBJECT",
         "name": "Person",
@@ -4811,13 +3878,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           },
         ],
         "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "IPlanItem",
-            "ofType": null,
-          },
-        ],
+        "interfaces": [],
         "isOneOf": null,
         "kind": "OBJECT",
         "name": "PlanItem",
@@ -4922,18 +3983,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           },
         ],
         "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "IPlanItem",
-            "ofType": null,
-          },
-          {
-            "kind": "INTERFACE",
-            "name": "IPublicTransportation",
-            "ofType": null,
-          },
-        ],
+        "interfaces": [],
         "isOneOf": null,
         "kind": "OBJECT",
         "name": "PublicTransportation",
@@ -5182,8 +4232,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "INTERFACE",
-                "name": "IPerson",
+                "kind": "OBJECT",
+                "name": "Person",
                 "ofType": null,
               },
             },
@@ -5210,8 +4260,8 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "isDeprecated": false,
             "name": "PeopleByUserName",
             "type": {
-              "kind": "INTERFACE",
-              "name": "IPerson",
+              "kind": "OBJECT",
+              "name": "Person",
               "ofType": null,
             },
           },
@@ -5800,16 +4850,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
           {
             "kind": "OBJECT",
             "name": "Airport",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Employee",
-            "ofType": null,
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Manager",
             "ofType": null,
           },
           {

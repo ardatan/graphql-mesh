@@ -1,12 +1,11 @@
 import type { GraphQLFieldResolver, GraphQLObjectType } from 'graphql';
 import { parseResolveInfo, type ResolveTree } from 'graphql-parse-resolve-info';
 import urljoin from 'url-join';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { Request } from '@whatwg-node/fetch';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import type { DirectiveArgsMap } from '../directives.js';
 import type { DataloaderFactory } from '../getDataloaderFactory.js';
 import { addIdentifierToUrl } from '../utils/addIdentifierToUrl.js';
+import { getEntityInfo } from '../utils/getEntityInfo.js';
 import { getUrlString } from '../utils/getUrlString.js';
 import { handleResponseText } from '../utils/handleResponseText.js';
 import { prepareSearchParams } from '../utils/prepareSearchParams.js';
@@ -31,8 +30,7 @@ export function createSingularNavResolver({
     const url = new URL(root['@odata.id']);
     url.href = urljoin(url.href, '/' + navigationPropertyName);
     const returnType = info.returnType as GraphQLObjectType;
-    const returnTypeDirectives = getDirectiveExtensions<DirectiveArgsMap>(returnType);
-    const entityInfo = returnTypeDirectives.entityInfo[0];
+    const entityInfo = getEntityInfo(returnType);
     addIdentifierToUrl(
       url,
       entityInfo.identifierFieldName,

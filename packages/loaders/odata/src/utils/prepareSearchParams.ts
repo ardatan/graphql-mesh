@@ -3,9 +3,8 @@ import {
   simplifyParsedResolveInfoFragmentWithType,
   type ResolveTree,
 } from 'graphql-parse-resolve-info';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { URLSearchParams } from '@whatwg-node/fetch';
-import type { DirectiveArgsMap } from '../directives.js';
+import { getEntityInfo } from './getEntityInfo.js';
 import { QUERY_OPTIONS_FIELDS } from './QueryOptionsFields.js';
 
 interface PrepareSearchParamsOptions {
@@ -40,8 +39,10 @@ export function prepareSearchParams({
   const isSelectable = !isAbstractType(returnType);
 
   if (isSelectable) {
-    const returnTypeDirectives = getDirectiveExtensions<DirectiveArgsMap>(returnType);
-    const entityInfo = returnTypeDirectives?.entityInfo?.[0];
+    const entityInfo = getEntityInfo(returnType as any);
+    if (!entityInfo) {
+      return searchParams;
+    }
     const selectionFields: string[] = [];
     const expandedFields: string[] = [];
     for (const fieldName in fields) {

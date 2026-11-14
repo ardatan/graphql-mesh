@@ -105,11 +105,12 @@ function mapTypeNode(node: TypeNode, ifaceNames: Set<string>): TypeNode {
 /**
  * Prepare a Mesh connectors supergraph for Apollo Router.
  *
- * Router 2.19 rejects OData-style `implements I*` interfaces in join__directive
- * supergraphs (`Person implements IPerson does not refer to an existing interface`).
- * Hive accepts the same SDL — so we only rewrite for the Router runner:
- * - Flatten `I*` interfaces onto concrete types / rename return types
- * - Drop root fields that are not Connectors-backed (unbound Mesh residuals)
+ * Prefer emitting Router-native subgraph SDL at compose time (OData no longer
+ * synthesizes `IFoo` + `Foo implements IFoo` for non-abstract bases). This helper
+ * remains as a safety net for older composed artifacts that still contain that
+ * pattern — Router 2.19 rejects `Person implements IPerson` in join__directive
+ * supergraphs. When the composed SDL has no such interfaces, this is a no-op so
+ * Hive and Router execute the same supergraph bytes.
  */
 export function prepareSupergraphForApolloRouter(supergraphSdl: string): string {
   if (!supergraphSdl.includes('specs.apollo.dev/connect')) {

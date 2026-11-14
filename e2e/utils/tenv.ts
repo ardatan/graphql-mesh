@@ -78,8 +78,9 @@ export interface ServeOptions extends ProcOptions {
    * - `hive` (default): `@graphql-hive/gateway`
    * - `apollo-router`: Apollo Router
    *
-   * Both consume the Mesh-composed supergraph as-is (Connectors are emitted as
-   * `@join__directive` metadata that both runtimes understand).
+   * Both consume the Mesh-composed Connectors supergraph (`@join__directive`).
+   * Apollo may apply `prepareSupergraphForApolloRouter` as a no-op safety net for
+   * legacy OData `I*` artifacts; current OData emit is Router-native.
    */
   runner?: ServeRunner;
 }

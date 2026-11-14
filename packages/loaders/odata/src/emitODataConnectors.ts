@@ -56,7 +56,8 @@ function entitySelection(
   visited = new Set(visited);
   visited.add(typeName);
 
-  const entityInfo = (entityTC.getExtensions() as any)?.directives?.entityInfo as
+  const extBag = (entityTC.getExtensions() as any) || {};
+  const entityInfo = (extBag.directives?.entityInfo || extBag.odataEntityInfo) as
     { actualFields?: string[]; navigationFields?: string[] } | undefined;
   const navigationFields = new Set(entityInfo?.navigationFields || []);
 
@@ -264,8 +265,10 @@ export function emitODataConnectors(
       continue;
     }
     const otc = tc as ObjectTypeComposer | InterfaceTypeComposer;
-    const entityInfo = (otc.getExtensions() as any)?.directives?.entityInfo as
-      { identifierFieldName?: string } | undefined;
+    const earlyExt = (otc.getExtensions() as any) || {};
+    const entityInfo = (earlyExt.directives?.entityInfo || earlyExt.odataEntityInfo) as
+      | { identifierFieldName?: string }
+      | undefined;
     if (!entityInfo?.identifierFieldName) continue;
     if (otc.hasField(ODATA_ID_FIELD)) continue;
     otc.addFields({
@@ -552,8 +555,9 @@ export function emitODataConnectors(
     ) {
       continue;
     }
-    const extensions = (tc as ObjectTypeComposer).getExtensions() as any as EntityTypeExtensions;
-    const entityInfo = extensions?.directives?.entityInfo;
+    const extensions = (tc as ObjectTypeComposer).getExtensions() as any;
+    const entityInfo = (extensions?.directives?.entityInfo || extensions?.odataEntityInfo) as
+      EntityTypeExtensions['directives']['entityInfo'] | undefined;
     if (!entityInfo) {
       continue;
     }
@@ -709,9 +713,41 @@ export function emitODataConnectors(
     }
   }
 
+  // `@entityInfo` is loader metadata — keep on extensions for any in-process readers,
+  // but strip from SDL (`@key` already carries the identifier for Hive `$select`).
+  for (const tc of schemaComposer.types.values()) {
+    const typeName = (tc as any).getTypeName?.();
+    if (typeof typeName !== 'string') continue;
+    if (!schemaComposer.isObjectType(typeName) && !schemaComposer.isInterfaceType(typeName)) {
+      continue;
+    }
+    const typed = tc as ObjectTypeComposer | InterfaceTypeComposer;
+    const ext = typed.getExtensions() as any;
+    if (ext?.directives?.entityInfo) {
+      ext.odataEntityInfo = ext.directives.entityInfo;
+      delete ext.directives.entityInfo;
+    }
+    typed.setDirectives([...(typed.getDirectives() || [])].filter(d => d.name !== 'entityInfo'));
+  }
+  // Also strip from input types that carried entityInfo.
+  for (const tc of schemaComposer.types.values()) {
+    if ((tc as any)?.constructor?.name !== 'InputTypeComposer') continue;
+    const typed = tc as any;
+    const ext = typed.getExtensions?.() as any;
+    if (ext?.directives?.entityInfo) {
+      ext.odataEntityInfo = ext.directives.entityInfo;
+      delete ext.directives.entityInfo;
+    }
+    if (typeof typed.setDirectives === 'function') {
+      typed.setDirectives(
+        [...(typed.getDirectives?.() || [])].filter((d: any) => d.name !== 'entityInfo'),
+      );
+    }
+  }
+
   // Drop Mesh directive definitions with no remaining usages.
-  // Keep `@entityInfo` (Hive `$select` / response helpers) and `@abstractType` /
-  // `@resolveRoot`.
+  // Keep `@abstractType` (true OData Abstract=true entities) and `@resolveRoot` (open types).
+  // `@entityInfo` is stripped from SDL below (runtime: extensions.odataEntityInfo).
   const stillUsed = new Set<string>();
   for (const tc of schemaComposer.types.values()) {
     const typeName = (tc as any).getTypeName?.();
@@ -745,7 +781,8 @@ export function emitODataConnectors(
       }
     }
   }
-  for (const dirName of MESH_DIRECTIVES_REPLACED_BY_CONNECT) {
+  // entityInfo def always unused in SDL after strip above.
+  for (const dirName of [...MESH_DIRECTIVES_REPLACED_BY_CONNECT, 'entityInfo'] as const) {
     if (stillUsed.has(dirName)) continue;
     try {
       if (schemaComposer.hasDirective(dirName)) {

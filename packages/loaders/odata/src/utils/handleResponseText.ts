@@ -6,9 +6,8 @@ import {
   type GraphQLResolveInfo,
 } from 'graphql';
 import urljoin from 'url-join';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
-import type { DirectiveArgsMap } from '../directives.js';
 import { addIdentifierToUrl } from './addIdentifierToUrl.js';
+import { getEntityInfo } from './getEntityInfo.js';
 import { getUrlString } from './getUrlString.js';
 
 export function handleResponseText(
@@ -47,7 +46,7 @@ export function handleResponseText(
   const urlStringWithoutSearchParams = urlString.split('?')[0];
   if (isListType(info.returnType)) {
     const actualReturnType = getNamedType(info.returnType) as GraphQLObjectType;
-    const entityTypeDirectives = getDirectiveExtensions<DirectiveArgsMap>(actualReturnType);
+    const entityInfo = getEntityInfo(actualReturnType);
     if ('Message' in responseJson && !('value' in responseJson)) {
       return new GraphQLError(responseJson.Message, {
         extensions: {
@@ -62,29 +61,24 @@ export function handleResponseText(
     }
     const returnList: any[] = responseJson.value;
     return returnList.map(element => {
-      if (!entityTypeDirectives?.entityInfo?.[0]) {
+      if (!entityInfo) {
         return element;
       }
       const urlOfElement = new URL(urlStringWithoutSearchParams);
       addIdentifierToUrl(
         urlOfElement,
-        entityTypeDirectives.entityInfo[0].identifierFieldName,
-        entityTypeDirectives.entityInfo[0].identifierFieldTypeRef,
+        entityInfo.identifierFieldName,
+        entityInfo.identifierFieldTypeRef,
         element,
       );
       const identifierUrl = element['@odata.id'] || getUrlString(urlOfElement);
       const fieldMap = actualReturnType.getFields();
       for (const fieldName in element) {
-        if (entityTypeDirectives.entityInfo[0].navigationFields.includes(fieldName)) {
+        if (entityInfo.navigationFields.includes(fieldName)) {
           const field = element[fieldName];
-          let fieldType = fieldMap[fieldName].type;
-          if ('ofType' in fieldType) {
-            fieldType = fieldType.ofType;
-          }
-          const fieldTypeDirectives = getDirectiveExtensions<DirectiveArgsMap>(
-            fieldType as GraphQLObjectType,
+          const fieldEntityInfo = getEntityInfo(
+            getNamedType(fieldMap[fieldName].type) as GraphQLObjectType,
           );
-          const fieldEntityInfo = fieldTypeDirectives?.entityInfo?.[0];
           if (field instanceof Array) {
             for (const fieldElement of field) {
               const urlOfField = new URL(urljoin(identifierUrl, fieldName));
@@ -115,23 +109,18 @@ export function handleResponseText(
     });
   } else {
     const actualReturnType = info.returnType as GraphQLObjectType;
-    const entityTypeDirectives = getDirectiveExtensions<DirectiveArgsMap>(actualReturnType);
-    if (!entityTypeDirectives?.entityInfo?.[0]) {
+    const entityInfo = getEntityInfo(actualReturnType);
+    if (!entityInfo) {
       return responseJson;
     }
     const identifierUrl = responseJson['@odata.id'] || urlStringWithoutSearchParams;
     const fieldMap = actualReturnType.getFields();
     for (const fieldName in responseJson) {
-      if (entityTypeDirectives?.entityInfo?.[0]?.navigationFields.includes(fieldName)) {
+      if (entityInfo.navigationFields.includes(fieldName)) {
         const field = responseJson[fieldName];
-        let fieldType = fieldMap[fieldName].type;
-        if ('ofType' in fieldType) {
-          fieldType = fieldType.ofType;
-        }
-        const fieldTypeDirectives = getDirectiveExtensions<DirectiveArgsMap>(
-          fieldType as GraphQLObjectType,
+        const fieldEntityInfo = getEntityInfo(
+          getNamedType(fieldMap[fieldName].type) as GraphQLObjectType,
         );
-        const fieldEntityInfo = fieldTypeDirectives?.entityInfo?.[0];
         if (field instanceof Array) {
           for (const fieldElement of field) {
             const urlOfField = new URL(urljoin(identifierUrl, fieldName));
