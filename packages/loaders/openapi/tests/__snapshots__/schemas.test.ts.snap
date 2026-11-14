@@ -12,9 +12,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -2876,8 +2876,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -2886,17 +2886,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -2914,9 +2914,9 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -46231,8 +46231,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -46241,17 +46241,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -46265,9 +46265,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -46920,8 +46920,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -46930,17 +46930,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -46951,9 +46951,9 @@ exports[`Schemas Default Value as Integer 1`] = `
 
 directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -46994,8 +46994,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -47004,17 +47004,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -47024,9 +47024,9 @@ exports[`Schemas DefaultValues 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -47082,8 +47082,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -47092,17 +47092,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -47111,9 +47111,9 @@ exports[`Schemas Dictionary 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -47140,8 +47140,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -47150,17 +47150,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -47169,9 +47169,9 @@ exports[`Schemas Different fields with the same type 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -47224,8 +47224,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -47234,17 +47234,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -47260,9 +47260,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -55200,8 +55200,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -55210,17 +55210,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -55230,9 +55230,9 @@ exports[`Schemas Headers 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -55259,8 +55259,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -55269,17 +55269,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -55289,9 +55289,9 @@ exports[`Schemas IBMLanguageTranslator 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -55534,8 +55534,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -55544,17 +55544,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -55568,9 +55568,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -55643,8 +55643,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -55653,17 +55653,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -55673,9 +55673,9 @@ exports[`Schemas Instagram 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -56302,8 +56302,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -56312,17 +56312,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -56333,9 +56333,9 @@ exports[`Schemas Int64 with Defaults 1`] = `
 
 directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -56376,8 +56376,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -56386,17 +56386,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -56412,9 +56412,9 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -76286,8 +76286,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -76296,17 +76296,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -76316,9 +76316,9 @@ exports[`Schemas Kubernetes 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -121733,8 +121733,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -121743,17 +121743,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -121769,9 +121769,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -123619,8 +123619,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -123629,17 +123629,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -123648,9 +123648,9 @@ exports[`Schemas Relative Dereference 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -123671,8 +123671,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -123681,17 +123681,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -123707,9 +123707,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -130567,8 +130567,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -130577,17 +130577,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -130596,9 +130596,9 @@ exports[`Schemas SmallRye UUID 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -130624,8 +130624,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -130634,17 +130634,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -130653,9 +130653,9 @@ exports[`Schemas StackExchange 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -130997,8 +130997,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -131007,17 +131007,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -131035,9 +131035,9 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -207078,8 +207078,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -207088,17 +207088,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -207109,11 +207109,11 @@ exports[`Schemas SubscriptionType 1`] = `
   subscription: Subscription
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFINITION
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -207166,8 +207166,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -207176,17 +207176,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -207201,9 +207201,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -208196,8 +208196,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -208206,17 +208206,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -208232,9 +208232,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -208662,8 +208662,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -208672,17 +208672,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -208691,9 +208691,9 @@ exports[`Schemas WeatherUnderground 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -208988,8 +208988,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -208998,17 +208998,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -209018,9 +209018,9 @@ exports[`Schemas YouTrack 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -212363,8 +212363,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -212373,17 +212373,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -212393,9 +212393,9 @@ exports[`Schemas algolia-refs-subset 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -212450,8 +212450,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
 
 input HTTPHeaderMapping {
@@ -212460,16 +212460,16 @@ input HTTPHeaderMapping {
   from: String
 }
 
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JSONSelection
 }"
 `;

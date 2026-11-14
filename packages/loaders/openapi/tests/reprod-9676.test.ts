@@ -19,7 +19,10 @@ describe('Reproduction #9676', () => {
     expect(printed).toContain(
       'updateItem(id: Int!, input: updateItem_request_Input!): updateItem_200_response',
     );
-    expect(printed).not.toContain('body: JSON');
+    // Field args must not use Mesh `body: JSON` — ConnectHTTP may still declare
+    // `body: JSONSelection` on the `@connect` directive input type.
+    expect(printed).not.toMatch(/\bbody:\s*JSON[!,\s\n]/);
+    expect(updateItem.args.every(arg => arg.name !== 'body')).toBe(true);
 
     const updateItemOptional = mutation.getFields().updateItemOptional;
     expect(updateItemOptional.args.map(arg => arg.name)).toEqual(['id', 'input']);
@@ -47,6 +50,8 @@ describe('Reproduction #9676', () => {
     const mutation = assertObjectType(schema.getMutationType());
     const updateItem = mutation.getFields().updateItem;
     expect(updateItem.args.map(arg => arg.name)).toEqual(['id', 'input']);
-    expect(printSchema(schema)).not.toContain('body: JSON');
+    expect(updateItem.args.every(arg => arg.name !== 'body')).toBe(true);
+    expect(printSchema(schema)).not.toMatch(/\bbody:\s*JSON[!,\s\n]/);
   });
 });
+

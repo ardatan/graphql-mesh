@@ -1814,12 +1814,11 @@ export function addConnectFieldResolver(
     } else if (!isListReturnType && Array.isArray(selected)) {
       selected = selected[0];
     }
-    // OData: keep `@odata.id` / editLink on the selected entity (Connectors
-    // selections often drop `@odata.*` control properties).
-    selected = preserveODataEntityMetadata(selected, responseData);
-    // OData `odata.metadata=minimal` often omits `@odata.id`. Fill inaccessible
-    // `_odataId` from the request URL so nested `{$this._odataId}/Nav` connects work.
-    selected = ensureODataIdField(selected, responseData, requestUrlForMeta.originPath);
+    // OData only: keep `@odata.*` and fill `_odataId` when metadata=minimal omits id.
+    if (isODataMetadataAccept(headers)) {
+      selected = preserveODataEntityMetadata(selected, responseData);
+      selected = ensureODataIdField(selected, responseData, requestUrlForMeta.originPath);
+    }
     // Fill Mesh-only `_response` fields Apollo selection cannot express.
     selected = fillExposeResponseMetadata(selected, {
       url: requestUrlForMeta.originPath,
