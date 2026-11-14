@@ -199,12 +199,13 @@ function connectArgs(opts: {
   selection: string;
   entity?: boolean;
 }) {
+  // Shared `errors` / headers live on `@source` — Connectors inherit them
+  // (Hive: `connect.errors || source.errors`; Apollo Router same).
   return {
     source: opts.source,
     http: opts.http,
     selection: opts.selection,
     ...(opts.entity ? { entity: true } : {}),
-    errors: ODATA_ERROR_MAPPING,
   };
 }
 
