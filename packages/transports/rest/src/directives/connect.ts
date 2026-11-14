@@ -27,11 +27,13 @@ import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
 import { Blob, fetch as defaultFetch, File, FormData } from '@whatwg-node/fetch';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { isFileUpload } from './isFileUpload.js';
+import { createODataBatchFetch, type ODataBatchMode } from './odataBatch.js';
 import {
   appendODataSelectExpand,
   attachExpandedNavFromRaw,
   isODataMetadataAccept,
 } from './odataConnectProfile.js';
+import { rebuildOpenInputObjects } from './odataOpenInput.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
 
@@ -1406,16 +1408,36 @@ function buildBody(
     const recoveredArgs = { ...vars.args };
     if ('input' in recoveredArgs) {
       recoveredArgs.input = recoverInput(recoveredArgs.input, 'input');
+      if (recoveredArgs.input != null && typeof recoveredArgs.input === 'object') {
+        rebuildOpenInputObjects(recoveredArgs.input);
+      }
     }
     return JSON.stringify(
       applySelection(trimmed, {}, { vars: { ...selectionVars, args: recoveredArgs } }),
     );
   }
   if (trimmed === '$args') {
-    return JSON.stringify(vars.args);
+    // Only clone+flatten when open-type `rest` is present — avoid structuredClone on
+    // GraphQL arg proxies used by bound actions.
+    const args = vars.args;
+    const needsFlatten =
+      args != null &&
+      typeof args === 'object' &&
+      ('rest' in args ||
+        (args.input != null && typeof args.input === 'object' && 'rest' in args.input));
+    if (needsFlatten) {
+      const clone = JSON.parse(JSON.stringify(args));
+      rebuildOpenInputObjects(clone);
+      return JSON.stringify(clone);
+    }
+    return JSON.stringify(args);
   }
   if (trimmed === '$args.input' || trimmed.startsWith('$args.input')) {
     const input = recoverInput(vars.args.input, 'input');
+    // Open-type OData inputs carry overflow under `rest` — flatten into the body.
+    if (input != null && typeof input === 'object') {
+      rebuildOpenInputObjects(input);
+    }
     // `$args.input { alias: field }` subselection
     const subMatch = trimmed.match(/^\$args\.input\s*\{([\s\S]*)\}$/);
     if (subMatch) {
@@ -1460,6 +1482,11 @@ export function addConnectFieldResolver(
     queryStringOptions?: MeshQsOptions;
     /** Legacy OData: `$expand` selected nav and prefer embedded values (Hive-only). */
     expandNavProps?: boolean;
+    /** Legacy OData: coalesce Connectors HTTP into `POST /$batch`. */
+    batch?: ODataBatchMode;
+    /** OData service root for `/$batch` (transport location / source baseURL). */
+    endpoint?: string;
+    odataBatchFetch?: ReturnType<typeof createODataBatchFetch>;
   } = {},
 ) {
   const log = opts.log || new Logger({ prefix: 'connect' });
@@ -1470,6 +1497,7 @@ export function addConnectFieldResolver(
   const queryStringOptions: MeshQsOptions = { ...opts.queryStringOptions };
   const timeout = opts.timeout;
   const expandNavProps = Boolean(opts.expandNavProps);
+  const odataBatchFetch = opts.odataBatchFetch;
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // Prefer parent-expanded OData nav (legacy expandNavProps): when `$expand` already
@@ -1747,7 +1775,9 @@ export function addConnectFieldResolver(
       }
     }
 
-    const fetchFn: MeshFetch = context?.fetch || opts.globalFetch || defaultFetch;
+    const fetchFn: MeshFetch = odataBatchFetch
+      ? (odataBatchFetch as MeshFetch)
+      : context?.fetch || opts.globalFetch || defaultFetch;
     const operationLogger =
       log.child?.({ operation: `${info.parentType.name}.${info.fieldName}` }) || log;
     operationLogger.debug?.(`Connect ${method} ${fullPath}`);
@@ -2105,8 +2135,37 @@ export function processConnectDirectives(
     timeout?: number;
     queryStringOptions?: MeshQsOptions;
     expandNavProps?: boolean;
+    batch?: ODataBatchMode;
+    endpoint?: string;
+    /** Shared across all fields so sibling @connect calls coalesce into one $batch. */
+    odataBatchFetch?: ReturnType<typeof createODataBatchFetch>;
   } = {},
 ) {
+  const batchMode = opts.batch;
+  const batchEndpoint =
+    opts.endpoint ||
+    (() => {
+      const sources = getSourceMap(schema);
+      for (const source of sources.values()) {
+        if (typeof source?.http?.baseURL === 'string') {
+          return source.http.baseURL;
+        }
+      }
+      return undefined;
+    })();
+  // Single factory for the whole schema — per-field factories would not coalesce.
+  const odataBatchFetch =
+    opts.odataBatchFetch ||
+    (batchMode && batchMode !== 'none' && batchEndpoint
+      ? createODataBatchFetch({
+          fetchFn: (url, init, ctx, inf) =>
+            (ctx?.fetch || opts.globalFetch || defaultFetch)(url, init, ctx, inf) as any,
+          endpoint: batchEndpoint,
+          batchMode,
+        })
+      : undefined);
+  const fieldOpts = { ...opts, odataBatchFetch };
+
   const queryType = schema.getQueryType();
   const typeMap = schema.getTypeMap();
   for (const typeName in typeMap) {
@@ -2121,7 +2180,7 @@ export function processConnectDirectives(
         args: [],
         extensions: {},
       } as unknown as GraphQLField<any, any>;
-      addConnectFieldResolver(schema, syntheticField, connectArgs, opts);
+      addConnectFieldResolver(schema, syntheticField, connectArgs, fieldOpts);
       const resolve = syntheticField.resolve;
       if (resolve) {
         (type as any).resolveReference = (reference: any, context: any, info: any) =>
@@ -2136,7 +2195,7 @@ export function processConnectDirectives(
       if (!directives?.length) continue;
       // First connect wins for execution (repeatable for schema merge cases)
       const connectArgs = directives[0];
-      addConnectFieldResolver(schema, field as GraphQLField<any, any>, connectArgs, opts);
+      addConnectFieldResolver(schema, field as GraphQLField<any, any>, connectArgs, fieldOpts);
       // Query `@connect(entity: true)` → type.resolveReference (Federation `_entities`).
       if (connectArgs.entity && type === queryType && isObjectType(getNamedType(field.type))) {
         const returnType = getNamedType(field.type) as GraphQLObjectType;

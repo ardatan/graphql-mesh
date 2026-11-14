@@ -83,13 +83,19 @@ export function processDirectives(
     ...extraGlobalOptions,
   };
   // Wire @connect resolvers (Federation Connectors)
+  const odataTransportOpts = transportOpts as {
+    expandNavProps?: boolean;
+    batch?: 'none' | 'json' | 'multipart';
+  };
   processConnectDirectives(schema, {
     globalFetch,
     log,
     timeout: globalOptions.timeout,
     queryStringOptions: globalOptions.queryStringOptions,
-    // OData stamps `expandNavProps` on `@transport(options:)` (Hive-only prefer-embedded).
-    expandNavProps: Boolean((transportOpts as { expandNavProps?: boolean }).expandNavProps),
+    // OData stamps these on `@transport(options:)` (Hive Connectors runtime).
+    expandNavProps: Boolean(odataTransportOpts.expandNavProps),
+    batch: odataTransportOpts.batch,
+    endpoint: typeof globalOptions.endpoint === 'string' ? globalOptions.endpoint : undefined,
   });
   if (typeof globalOptions.operationHeaders === 'string') {
     globalOptions.operationHeaders = JSON.parse(globalOptions.operationHeaders);

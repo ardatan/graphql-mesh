@@ -1054,8 +1054,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     endpoint,
     typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined,
   );
-  // `batch` is still a dead Connectors hint (no OData $batch). `expandNavProps` is
-  // honored by Hive transport-rest (parent `$expand` + prefer-embedded short-circuit).
+  // Hive transport-rest honors both: `expandNavProps` (prefer-embedded) and
+  // `batch` (`json` | `multipart` → POST /$batch via DataLoader).
   const schemaExtensions: any = (schema.extensions ||= {});
   const directiveExtensions = (schemaExtensions.directives ||= {});
   if (directiveExtensions.transport && typeof directiveExtensions.transport === 'object') {
