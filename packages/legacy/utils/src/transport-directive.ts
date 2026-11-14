@@ -61,7 +61,7 @@ export type TransportDirectiveArgs<Options extends Record<string, unknown> = Rec
 export type ODataTransportOptions = {
   /** Coalesce sibling Connectors HTTP into `POST /$batch`. */
   batch?: 'none' | 'json' | 'multipart';
-  /** Prefer parent `$expand` payloads over per-nav HTTP (Hive). */
+  /** Prefer parent `$expand` payloads over per-nav HTTP round-trips. */
   expandNavProps?: boolean;
 };
 

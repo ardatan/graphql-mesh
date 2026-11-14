@@ -206,7 +206,7 @@ function isODataStructuralField(
   if (dirs.boundFunction?.length || dirs.boundAction?.length || dirs.singularNav?.length) {
     return false;
   }
-  // Field-level `@connect` nav: only `$expand` when `expandNavProps` is on (Hive).
+  // Field-level `@connect` nav: only `$expand` when `expandNavProps` is on.
   // Apollo SDL stays unchanged — Router never runs this projection path.
   if (dirs.connect?.length) {
     if (!expandNavProps) {
@@ -385,7 +385,7 @@ function pathAlreadyHasODataProjection(fullPath: string): boolean {
 
 /**
  * When Accept signals OData metadata, append `$select` / `$expand` derived from the
- * GraphQL selection (Hive-only optimization; Router never runs this path).
+ * GraphQL selection (transport-rest path; Apollo Router never runs this).
  */
 export function appendODataSelectExpand(
   fullPath: string,

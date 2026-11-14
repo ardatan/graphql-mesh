@@ -1474,7 +1474,7 @@ function buildBody(
 
 /** OData-only Connectors runtime opts (mirrors `@transport(options: { odata: … })`). */
 export type ConnectODataOptions = {
-  /** `$expand` selected nav and prefer embedded values (Hive-only). */
+  /** `$expand` selected nav and prefer embedded values over per-nav HTTP. */
   expandNavProps?: boolean;
   /** Coalesce sibling `@connect` HTTP into `POST /$batch`. */
   batch?: ODataBatchMode;

@@ -178,7 +178,7 @@ export function processDirectives(
       }
     }
   }
-  // OData `@abstractType` → resolveType from `@odata.type` (Hive rehydration).
+  // OData `@abstractType` → resolveType from `@odata.type` (transport rehydration).
   // After the generic union resolveType pass so `@abstractType` wins on interfaces.
   // In-place — callers historically ignore the return and keep the same schema ref.
   processODataAbstractTypeDirectives(schema);
