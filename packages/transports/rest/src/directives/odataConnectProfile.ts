@@ -108,12 +108,13 @@ function collectSelections(
   info: GraphQLResolveInfo,
   propertyMap: Map<string, string>,
   out: { select: Set<string>; expand: string[] },
+  expandNavProps: boolean,
 ): void {
   for (const selection of selections) {
     if (selection.kind === Kind.FIELD) {
-      collectField(selection, parentType, info, propertyMap, out);
+      collectField(selection, parentType, info, propertyMap, out, expandNavProps);
     } else if (selection.kind === Kind.INLINE_FRAGMENT) {
-      collectInlineFragment(selection, parentType, info, propertyMap, out);
+      collectInlineFragment(selection, parentType, info, propertyMap, out, expandNavProps);
     } else if (selection.kind === Kind.FRAGMENT_SPREAD) {
       const frag = resolveFragment(selection.name.value, info);
       if (!frag) continue;
@@ -122,7 +123,14 @@ function collectSelections(
         (typeName && (info.schema.getType(typeName) as GraphQLObjectType | undefined)) ||
         parentType;
       if (!isObjectType(fragType)) continue;
-      collectSelections(frag.selectionSet.selections, fragType, info, propertyMap, out);
+      collectSelections(
+        frag.selectionSet.selections,
+        fragType,
+        info,
+        propertyMap,
+        out,
+        expandNavProps,
+      );
     }
   }
 }
@@ -133,31 +141,85 @@ function collectInlineFragment(
   info: GraphQLResolveInfo,
   propertyMap: Map<string, string>,
   out: { select: Set<string>; expand: string[] },
+  expandNavProps: boolean,
 ): void {
   // Inherited / abstract branches: OData `$select` is unsafe (same as @omnigraph/odata).
   if (fragment.typeCondition) {
     return;
   }
-  collectSelections(fragment.selectionSet.selections, parentType, info, propertyMap, out);
+  collectSelections(
+    fragment.selectionSet.selections,
+    parentType,
+    info,
+    propertyMap,
+    out,
+    expandNavProps,
+  );
+}
+
+function getODataNavigationFields(parentType: GraphQLObjectType): Set<string> | undefined {
+  const ext = parentType.extensions as
+    | {
+        odataEntityInfo?: { navigationFields?: string[] };
+        directives?: { entityInfo?: Array<{ navigationFields?: string[] }> };
+      }
+    | undefined;
+  const fromExt = ext?.odataEntityInfo?.navigationFields;
+  const fromDir = ext?.directives?.entityInfo?.[0]?.navigationFields;
+  const list = fromExt || fromDir;
+  return list?.length ? new Set(list) : undefined;
 }
 
 /** Bound ops / by-id accessors / `_odataId` are not OData `$select` / `$expand` properties. */
-function isODataStructuralField(fieldDef: GraphQLField<any, any>): boolean {
+function isODataStructuralField(
+  fieldDef: GraphQLField<any, any>,
+  parentType: GraphQLObjectType | undefined,
+  expandNavProps: boolean,
+): boolean {
   if (fieldDef.name === '_odataId') {
     return false;
   }
   const dirs = getDirectiveExtensions(fieldDef as any) || {};
-  if (
-    dirs.boundFunction?.length ||
-    dirs.boundAction?.length ||
-    dirs.singularNav?.length ||
-    dirs.connect?.length
-  ) {
+  if (dirs.boundFunction?.length || dirs.boundAction?.length || dirs.singularNav?.length) {
     return false;
+  }
+  // Field-level `@connect` nav: only `$expand` when `expandNavProps` is on (Hive).
+  // Apollo SDL stays unchanged — Router never runs this projection path.
+  if (dirs.connect?.length) {
+    if (!expandNavProps) {
+      return false;
+    }
+    const navFields = parentType ? getODataNavigationFields(parentType) : undefined;
+    if (navFields?.has(fieldDef.name)) {
+      return true;
+    }
+    return isODataExpandableField(fieldDef) && !connectPathLooksLikeCallable(dirs.connect);
   }
   // `@navProp` / `@pluralNav` are expandable; everything else without those and
   // without bound ops is treated as a structural / nav property.
   return true;
+}
+
+/**
+ * Bound/unbound OData ops are namespace-qualified (`Ns.Operation` / `Ns.Operation(…)`).
+ * Plain nav is a single segment (`Friends`). Do not treat `People('key')` key predicates
+ * as callables — only the last path segment matters.
+ */
+function connectPathLooksLikeCallable(connectDirs: unknown): boolean {
+  const list = Array.isArray(connectDirs) ? connectDirs : [connectDirs];
+  for (const c of list) {
+    const http = (c as { http?: Record<string, string> })?.http;
+    if (!http || typeof http !== 'object') continue;
+    for (const [method, v] of Object.entries(http)) {
+      if (method === 'headers' || method === 'body' || method === 'queryParams') continue;
+      if (typeof v !== 'string') continue;
+      const last = v.split('?')[0].split('/').filter(Boolean).pop() || '';
+      if (last.includes('.')) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 function hasDirective(dirs: Record<string, unknown> | undefined, name: string): boolean {
@@ -189,13 +251,14 @@ function collectField(
   info: GraphQLResolveInfo,
   propertyMap: Map<string, string>,
   out: { select: Set<string>; expand: string[] },
+  expandNavProps: boolean,
 ): void {
   const responseName = field.alias?.value || field.name.value;
   if (responseName === '__typename' || field.name.value.startsWith('__')) {
     return;
   }
   const fieldDef = parentType.getFields()[field.name.value];
-  if (!fieldDef || !isODataStructuralField(fieldDef)) {
+  if (!fieldDef || !isODataStructuralField(fieldDef, parentType, expandNavProps)) {
     return;
   }
   const odataName =
@@ -210,7 +273,14 @@ function collectField(
   if (isObjectType(namedType) && field.selectionSet) {
     if (isODataExpandableField(fieldDef)) {
       const nested = { select: new Set<string>(), expand: [] as string[] };
-      collectSelections(field.selectionSet.selections, namedType, info, propertyMap, nested);
+      collectSelections(
+        field.selectionSet.selections,
+        namedType,
+        info,
+        propertyMap,
+        nested,
+        expandNavProps,
+      );
       const nestedParts: string[] = [];
       if (nested.select.size) {
         nestedParts.push(`$select=${[...nested.select].join(',')}`);
@@ -234,6 +304,7 @@ function collectField(
 export function buildODataSelectExpand(
   info: GraphQLResolveInfo,
   connectSelection?: string,
+  expandNavProps = false,
 ): { select: string[]; expand: string[] } {
   const empty = { select: [] as string[], expand: [] as string[] };
   const returnType = unwrapOutputType(info.returnType);
@@ -244,7 +315,14 @@ export function buildODataSelectExpand(
   const out = { select: new Set<string>(), expand: [] as string[] };
   for (const fieldNode of info.fieldNodes) {
     if (!fieldNode.selectionSet) continue;
-    collectSelections(fieldNode.selectionSet.selections, returnType, info, propertyMap, out);
+    collectSelections(
+      fieldNode.selectionSet.selections,
+      returnType,
+      info,
+      propertyMap,
+      out,
+      expandNavProps,
+    );
   }
   // Always include `@key` / identifier fields so entity URLs / bound ops keep working.
   const keyDirs = getDirectiveExtensions(returnType as any)?.key;
@@ -259,6 +337,12 @@ export function buildODataSelectExpand(
   const entityInfo = getDirectiveExtensions(returnType as any)?.entityInfo?.[0];
   if (entityInfo?.identifierFieldName) {
     out.select.add(entityInfo.identifierFieldName);
+  }
+  // Also read loader-kept `extensions.odataEntityInfo` (SDL strips `@entityInfo`).
+  const extInfo = (returnType.extensions as { odataEntityInfo?: { identifierFieldName?: string } })
+    ?.odataEntityInfo;
+  if (extInfo?.identifierFieldName) {
+    out.select.add(extInfo.identifierFieldName);
   }
   return {
     select: [...out.select],
@@ -284,11 +368,12 @@ export function appendODataSelectExpand(
   fullPath: string,
   info: GraphQLResolveInfo,
   connectSelection?: string,
+  expandNavProps = false,
 ): string {
   if (pathAlreadyHasODataProjection(fullPath)) {
     return fullPath;
   }
-  const { select, expand } = buildODataSelectExpand(info, connectSelection);
+  const { select, expand } = buildODataSelectExpand(info, connectSelection, expandNavProps);
   if (!select.length && !expand.length) {
     return fullPath;
   }
@@ -314,4 +399,75 @@ export function appendODataSelectExpand(
     pathPart = pathPart.slice(1);
   }
   return `${pathPart}${url.search}`;
+}
+
+/**
+ * After Connectors `selection` drops unmapped keys, re-attach `$expand`ed navigation
+ * properties the GraphQL query asked for so field `@connect` resolvers can prefer them.
+ */
+export function attachExpandedNavFromRaw(
+  selected: unknown,
+  raw: unknown,
+  info: GraphQLResolveInfo,
+  expandNavProps: boolean,
+): unknown {
+  if (!expandNavProps || selected == null || typeof selected !== 'object') {
+    return selected;
+  }
+  const returnType = unwrapOutputType(info.returnType);
+  if (!isObjectType(returnType)) {
+    return selected;
+  }
+  const navNames: string[] = [];
+  for (const fieldNode of info.fieldNodes) {
+    if (!fieldNode.selectionSet) continue;
+    for (const sel of fieldNode.selectionSet.selections) {
+      if (sel.kind !== Kind.FIELD) continue;
+      const fieldDef = returnType.getFields()[sel.name.value];
+      if (!fieldDef) continue;
+      if (!isODataStructuralField(fieldDef, returnType, true)) continue;
+      if (!isODataExpandableField(fieldDef)) continue;
+      navNames.push(sel.alias?.value || sel.name.value);
+    }
+  }
+  if (!navNames.length) {
+    return selected;
+  }
+
+  const lookupRaw = (rawEntity: Record<string, unknown>, name: string) => {
+    if (rawEntity[name] != null) return rawEntity[name];
+    // GraphQL field may be camelCase while OData JSON uses PascalCase (`friends` / `Friends`).
+    const found = Object.keys(rawEntity).find(k => k.toLowerCase() === name.toLowerCase());
+    return found != null ? rawEntity[found] : undefined;
+  };
+
+  const attachOne = (sel: Record<string, unknown>, rawEntity: Record<string, unknown>) => {
+    for (const name of navNames) {
+      if (sel[name] != null) continue;
+      const fromRaw = lookupRaw(rawEntity, name);
+      if (fromRaw != null) {
+        sel[name] = fromRaw;
+      }
+    }
+    return sel;
+  };
+
+  if (Array.isArray(selected)) {
+    const rawItems = Array.isArray(raw)
+      ? raw
+      : Array.isArray((raw as { value?: unknown })?.value)
+        ? ((raw as { value: unknown[] }).value as unknown[])
+        : null;
+    return selected.map((item, i) => {
+      if (item == null || typeof item !== 'object') return item;
+      const rawItem = rawItems?.[i];
+      if (rawItem == null || typeof rawItem !== 'object') return item;
+      return attachOne(item as Record<string, unknown>, rawItem as Record<string, unknown>);
+    });
+  }
+
+  if (raw == null || typeof raw !== 'object' || Array.isArray(raw)) {
+    return selected;
+  }
+  return attachOne(selected as Record<string, unknown>, raw as Record<string, unknown>);
 }

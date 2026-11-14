@@ -88,6 +88,8 @@ export function processDirectives(
     log,
     timeout: globalOptions.timeout,
     queryStringOptions: globalOptions.queryStringOptions,
+    // OData stamps `expandNavProps` on `@transport(options:)` (Hive-only prefer-embedded).
+    expandNavProps: Boolean((transportOpts as { expandNavProps?: boolean }).expandNavProps),
   });
   if (typeof globalOptions.operationHeaders === 'string') {
     globalOptions.operationHeaders = JSON.parse(globalOptions.operationHeaders);

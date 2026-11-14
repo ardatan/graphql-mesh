@@ -27,7 +27,11 @@ import { getDirectiveExtensions, memoize1 } from '@graphql-tools/utils';
 import { Blob, fetch as defaultFetch, File, FormData } from '@whatwg-node/fetch';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { isFileUpload } from './isFileUpload.js';
-import { appendODataSelectExpand, isODataMetadataAccept } from './odataConnectProfile.js';
+import {
+  appendODataSelectExpand,
+  attachExpandedNavFromRaw,
+  isODataMetadataAccept,
+} from './odataConnectProfile.js';
 import { resolveDataByUnionInputType } from './resolveDataByUnionInputType.js';
 import { serializeArgumentsForInterpolation } from './utils.js';
 
@@ -1454,6 +1458,8 @@ export function addConnectFieldResolver(
     log?: HiveLogger;
     timeout?: number;
     queryStringOptions?: MeshQsOptions;
+    /** Legacy OData: `$expand` selected nav and prefer embedded values (Hive-only). */
+    expandNavProps?: boolean;
   } = {},
 ) {
   const log = opts.log || new Logger({ prefix: 'connect' });
@@ -1463,8 +1469,61 @@ export function addConnectFieldResolver(
   // Schema/field qs + timeout come from `@transport(options:)` / serve-time entry.
   const queryStringOptions: MeshQsOptions = { ...opts.queryStringOptions };
   const timeout = opts.timeout;
+  const expandNavProps = Boolean(opts.expandNavProps);
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
+    // Prefer parent-expanded OData nav (legacy expandNavProps): when `$expand` already
+    // put this field on `root`, skip the field-level `@connect` HTTP round-trip.
+    // Gated on Accept `odata.metadata` so OpenAPI/REST connectors are unaffected.
+    // Apollo Router may also skip via planner when the parent selection maps the nav;
+    // Hive always invokes the field resolver, so this short-circuit is required here.
+    if (
+      expandNavProps &&
+      root != null &&
+      typeof root === 'object' &&
+      info?.fieldName &&
+      source?.http?.headers &&
+      (() => {
+        const probe: Record<string, string> = {};
+        applyHeaders(probe, source.http?.headers, {
+          args: {},
+          thisValue: root,
+          env: process.env,
+          context: context || {},
+        });
+        return isODataMetadataAccept(probe);
+      })() &&
+      Object.prototype.hasOwnProperty.call(root, info.fieldName) &&
+      (root as Record<string, unknown>)[info.fieldName] != null
+    ) {
+      const embedded = (root as Record<string, unknown>)[info.fieldName];
+      const parentId =
+        typeof (root as Record<string, unknown>)._odataId === 'string'
+          ? ((root as Record<string, unknown>)._odataId as string)
+          : '';
+      const selection = connectArgs.selection || '$';
+      const extras = {
+        status: 200,
+        responseHeaders: new Headers(),
+        vars: {
+          args: args || {},
+          thisValue: root,
+          env: process.env as Record<string, string>,
+          context: context || {},
+        },
+      };
+      // Expanded nav is a raw entity/array; `$.value { … }` selections need a wrapper.
+      let mapped: unknown;
+      if (Array.isArray(embedded) && selection.includes('$.value')) {
+        mapped = applySelection(selection, { value: embedded }, extras);
+      } else if (Array.isArray(embedded)) {
+        mapped = embedded.map(item => applySelection(selection, item, extras));
+      } else {
+        mapped = applySelection(selection, embedded, extras);
+      }
+      return ensureODataIdField(mapped, embedded, parentId);
+    }
+
     // Virtual connector: no http — selection may only use $args / $this / literals.
     if (!picked) {
       const selection = connectArgs.selection || '$({})';
@@ -1588,7 +1647,7 @@ export function addConnectFieldResolver(
     // OData dual-runtime: `Accept: …;odata.metadata=…` is a normal Connectors header
     // (Router sends it as-is). Hive additionally projects `$select` / `$expand`.
     if ((method === 'GET' || method === 'HEAD') && isODataMetadataAccept(headers) && info) {
-      fullPath = appendODataSelectExpand(fullPath, info, connectArgs.selection);
+      fullPath = appendODataSelectExpand(fullPath, info, connectArgs.selection, expandNavProps);
     }
     const requestInit: MeshFetchRequestInit = {
       method,
@@ -1816,6 +1875,10 @@ export function addConnectFieldResolver(
     if (isODataMetadataAccept(headers)) {
       selected = preserveODataEntityMetadata(selected, responseData);
       selected = ensureODataIdField(selected, responseData, requestUrlForMeta.originPath);
+      // Re-attach `$expand`ed nav so child `@connect` can prefer embedded (expandNavProps).
+      if (expandNavProps && info) {
+        selected = attachExpandedNavFromRaw(selected, responseData, info, expandNavProps);
+      }
     }
     // Fill Mesh-only `_response` fields Apollo selection cannot express.
     selected = fillExposeResponseMetadata(selected, {
@@ -2041,6 +2104,7 @@ export function processConnectDirectives(
     log?: HiveLogger;
     timeout?: number;
     queryStringOptions?: MeshQsOptions;
+    expandNavProps?: boolean;
   } = {},
 ) {
   const queryType = schema.getQueryType();

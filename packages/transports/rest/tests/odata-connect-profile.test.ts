@@ -251,4 +251,77 @@ describe('Connect OData $select / $expand', () => {
     expect(requestedUrl).toContain('$select=UserName');
     expect(requestedUrl).not.toMatch(/FirstName/);
   });
+
+  it('prefers parent-expanded nav over a second @connect HTTP fetch when expandNavProps', async () => {
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+
+      schema
+        @source(
+          name: "trippin"
+          http: {
+            baseURL: "https://odata.example.com"
+            headers: [{ name: "Accept", value: "application/json;odata.metadata=minimal" }]
+          }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        person(userName: String!): Person
+          @connect(
+            source: "trippin"
+            http: { GET: "/People('{$args.userName}')" }
+            selection: "userName: UserName"
+          )
+      }
+
+      type Person @key(fields: "userName") {
+        userName: String
+        friends: [Person]
+          @connect(
+            source: "trippin"
+            http: { GET: "/People/{$this.userName}/Friends" }
+            selection: "userName: UserName"
+          )
+      }
+    `;
+
+    const urls: string[] = [];
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      expandNavProps: true,
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json({
+          UserName: 'russellwhyte',
+          Friends: [{ UserName: 'scottketchum' }],
+        });
+      }) as any,
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          person(userName: "russellwhyte") {
+            userName
+            friends {
+              userName
+            }
+          }
+        }
+      `),
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      person: {
+        userName: 'russellwhyte',
+        friends: [{ userName: 'scottketchum' }],
+      },
+    });
+    // Parent fetch only — Friends @connect must not fire a second HTTP call.
+    expect(urls).toHaveLength(1);
+    expect(decodeURIComponent(urls[0])).toMatch(/\$expand=friends/i);
+  });
 });
