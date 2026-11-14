@@ -29,23 +29,6 @@ import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-commo
 import transportRest, { type RESTTransportOptions } from '@graphql-mesh/transport-rest';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
-import {
-  BoundActionDirective,
-  BoundFunctionDirective,
-  CreateEntitySetDirective,
-  DeleteEntitySetDirective,
-  EntityInfoDirective,
-  EntitySetByIdentifierDirective,
-  EntitySetCountDirective,
-  EntitySetDirective,
-  NavPropDirective,
-  PluralNavDirective,
-  SingletonDirective,
-  SingularNavDirective,
-  UnboundActionDirective,
-  UnboundFunctionDirective,
-  UpdateEntitySetDirective,
-} from './directives.js';
 import { applyODataConnectSchemaExtensions, emitODataConnectors } from './emitODataConnectors.js';
 import type { EntityTypeExtensions } from './types.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
@@ -211,8 +194,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       eventEmitter.setMaxListeners(Infinity);
       eventEmitterSet.add(eventEmitter);
       // Share `entityInfo` + `eventEmitter` across interface/object/input, but give each
-      // TC its own `directives` bag — otherwise `@connect` / `@key` / `@shareable` stamped
-      // on the object also appear on the interface (Federation rejects those locations).
+      // TC its own `odata` bag — otherwise object stamps must not leak onto interfaces.
       const entityInfo = {
         actualFields: [] as string[],
         navigationFields: [] as string[],
@@ -221,17 +203,16 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         identifierFieldTypeRef: undefined as string | undefined,
       };
       const outputExtensions: EntityTypeExtensions = {
-        directives: {
+        odata: {
           entityInfo,
         },
         eventEmitter,
       };
-      schemaComposer.addDirective(EntityInfoDirective);
       const inputType = schemaComposer.createInputTC({
         name: entityTypeName + 'Input',
         fields: {},
         extensions: {
-          directives: { entityInfo },
+          odata: { entityInfo },
           eventEmitter,
         } as any,
       });
@@ -244,7 +225,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       if (isAbstract) {
         // No `@abstractType` directive — transport-rest resolveType reads `@odata.type`.
         const abstractExtensions: EntityTypeExtensions = {
-          directives: {
+          odata: {
             entityInfo,
           },
           eventEmitter,
@@ -336,14 +317,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             },
             extensions: {
               navigationPropertyObj,
-              directives: {
+              odata: {
                 singularNav: {
                   navigationPropertyName,
                 },
               } as any,
             },
           };
-          schemaComposer.addDirective(SingularNavDirective);
           const pluralField: ObjectTypeComposerFieldConfigDefinition<any, DataLoaderMap> = {
             type: getTypeNameFromRef({
               typeRef: navigationPropertyTypeRef,
@@ -360,14 +340,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             },
             extensions: {
               navigationPropertyObj,
-              directives: {
+              odata: {
                 pluralNav: {
                   navigationPropertyName,
                 },
               } as any,
             },
           };
-          schemaComposer.addDirective(PluralNavDirective);
           abstractType?.addFields({
             [navigationPropertyName]: pluralField,
             [`${navigationPropertyName}ById`]: singularField,
@@ -392,14 +371,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             },
             extensions: {
               navigationPropertyObj,
-              directives: {
+              odata: {
                 navProp: {
                   navigationPropertyName,
                 },
               } as any,
             },
           };
-          schemaComposer.addDirective(NavPropDirective);
           abstractType?.addFields({
             [navigationPropertyName]: field,
           });
@@ -461,7 +439,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             ...commonArgs,
           },
           extensions: {
-            directives: {
+            odata: {
               unboundFunction: {
                 functionName,
               },
@@ -469,7 +447,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           },
         },
       });
-      schemaComposer.addDirective(UnboundFunctionDirective);
       unboundFunctionObj.Parameter?.forEach((parameterObj: any) => {
         const parameterName = parameterObj.attributes.Name;
         const parameterTypeRef = parameterObj.attributes.Type;
@@ -544,14 +521,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             type: returnType,
             args,
             extensions: {
-              directives: {
+              odata: {
                 boundFunction: {
                   functionRef,
                 },
               } as any,
             },
           };
-          schemaComposer.addDirective(BoundFunctionDirective);
         }
         args[parameterName] = {
           type: parameterTypeName,
@@ -587,7 +563,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             ...commonArgs,
           },
           extensions: {
-            directives: {
+            odata: {
               unboundAction: {
                 actionName,
               },
@@ -595,7 +571,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           },
         },
       });
-      schemaComposer.addDirective(UnboundActionDirective);
 
       unboundActionObj.Parameter?.forEach((parameterObj: any) => {
         const parameterName = parameterObj.attributes.Name;
@@ -659,7 +634,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       const entityOutputTC = getTCByTypeNames('I' + boundEntityTypeName, boundEntityTypeName) as
         InterfaceTypeComposer | ObjectTypeComposer;
       const entityTypeExtensions = entityOutputTC.getExtensions() as any as EntityTypeExtensions;
-      const argName = entityTypeExtensions.directives.entityInfo.identifierFieldName;
+      const argName = entityTypeExtensions.odata!.entityInfo!.identifierFieldName;
       const argType = entityOutputTC.getFieldTypeName(argName);
       return { boundEntityTypeName, argName, argType };
     };
@@ -712,14 +687,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         type: 'JSON',
         args,
         extensions: {
-          directives: {
+          odata: {
             boundAction: {
               actionRef,
             },
           } as any,
         },
       };
-      schemaComposer.addDirective(BoundActionDirective);
       const boundEntityType = getTCByTypeNames(
         boundEntityTypeName,
         `I${boundEntityTypeName}`,
@@ -767,10 +741,13 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         return;
       }
       const baseTypeRef = typeObj.attributes.BaseType;
-      const {
-        directives: { entityInfo },
-        eventEmitter,
-      } = outputType.getExtensions() as any as EntityTypeExtensions;
+      const outputExt = outputType.getExtensions() as any as EntityTypeExtensions;
+      const entityInfo = outputExt.odata?.entityInfo;
+      const eventEmitter = outputExt.eventEmitter;
+      if (!entityInfo || !eventEmitter) {
+        log.warn(`OData: skip base-type merge for ${typeName}; missing entityInfo`);
+        return;
+      }
       const baseTypeName = getTypeNameFromRef({
         typeRef: baseTypeRef,
         isInput: false,
@@ -800,10 +777,9 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         );
         return;
       }
-      const {
-        directives: { entityInfo: baseEntityInfo },
-        eventEmitter: baseEventEmitter,
-      } = baseOutputType.getExtensions() as any as EntityTypeExtensions;
+      const baseExt = baseOutputType.getExtensions() as any as EntityTypeExtensions;
+      const baseEntityInfo = baseExt.odata?.entityInfo;
+      const baseEventEmitter = baseExt.eventEmitter;
       if (!baseEntityInfo || !baseEventEmitter) {
         log.warn(
           `OData: skip base-type merge for ${typeName}; base ${baseTypeName} has no entityInfo`,
@@ -853,7 +829,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               ...commonArgs,
             },
             extensions: {
-              directives: {
+              odata: {
                 singleton: {
                   singletonName,
                 },
@@ -861,7 +837,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             },
           },
         });
-        schemaComposer.addDirective(SingletonDirective);
       });
 
       entityContainerObj?.EntitySet?.forEach((entitySetObj: any) => {
@@ -878,19 +853,15 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         });
         const entityOutputTC = getTCByTypeNames('I' + entityTypeName, entityTypeName) as
           InterfaceTypeComposer | ObjectTypeComposer;
-        const {
-          directives: { entityInfo },
-        } = entityOutputTC.getExtensions() as any as EntityTypeExtensions;
+        const entityInfo = (entityOutputTC.getExtensions() as any as EntityTypeExtensions).odata
+          ?.entityInfo;
+        if (!entityInfo) {
+          return;
+        }
         const identifierFieldName = entityInfo.identifierFieldName;
         const identifierFieldTypeRef = entityInfo.identifierFieldTypeRef;
         const identifierFieldTypeName = entityOutputTC.getFieldTypeName(identifierFieldName);
         const typeName = entityOutputTC.getTypeName();
-        schemaComposer.addDirective(EntitySetDirective);
-        schemaComposer.addDirective(EntitySetByIdentifierDirective);
-        schemaComposer.addDirective(EntitySetCountDirective);
-        schemaComposer.addDirective(CreateEntitySetDirective);
-        schemaComposer.addDirective(DeleteEntitySetDirective);
-        schemaComposer.addDirective(UpdateEntitySetDirective);
         const commonFields: Record<string, ObjectTypeComposerFieldConfigDefinition<any, any>> = {
           [entitySetName]: {
             type: `[${typeName}]`,
@@ -899,7 +870,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               queryOptions: { type: 'QueryOptions' },
             },
             extensions: {
-              directives: {
+              odata: {
                 entitySet: {
                   entitySetName,
                 },
@@ -915,7 +886,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               },
             },
             extensions: {
-              directives: {
+              odata: {
                 entitySetByIdentifier: {
                   entitySetName,
                   identifierFieldName,
@@ -934,7 +905,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               queryOptions: { type: 'QueryOptions' },
             },
             extensions: {
-              directives: {
+              odata: {
                 entitySetCount: {
                   entitySetName,
                 },
@@ -953,7 +924,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               },
             },
             extensions: {
-              directives: {
+              odata: {
                 createEntitySet: {
                   entitySetName,
                 },
@@ -969,7 +940,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               },
             },
             extensions: {
-              directives: {
+              odata: {
                 deleteEntitySet: {
                   entitySetName,
                   identifierFieldName,
@@ -990,7 +961,7 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               },
             },
             extensions: {
-              directives: {
+              odata: {
                 updateEntitySet: {
                   entitySetName,
                   identifierFieldName,

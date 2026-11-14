@@ -15,7 +15,7 @@ import {
   ODATA_QUERY_OPTIONS_QUERY_PARAMS,
   SourceDirective,
 } from './odataConnectors.js';
-import type { EntityTypeExtensions } from './types.js';
+import type { ODataFieldEmit } from './types.js';
 
 /** Mesh `{env.X}` / `{args.X}` → Connectors `{$env.X}` / `{$args.X}`. */
 function toConnectHeaderValue(value: string): string {
@@ -57,24 +57,25 @@ function entitySelection(
   visited.add(typeName);
 
   const extBag = (entityTC.getExtensions() as any) || {};
-  const entityInfo = extBag.directives?.entityInfo as
+  const entityInfo = extBag.odata?.entityInfo as
     { actualFields?: string[]; navigationFields?: string[] } | undefined;
   const navigationFields = new Set(entityInfo?.navigationFields || []);
 
   const lines: string[] = [];
   for (const fieldName of entityTC.getFieldNames()) {
     const field = entityTC.getField(fieldName);
+    const fieldOData = ((field.extensions as any)?.odata || {}) as ODataFieldEmit;
     const fieldDirs = ((field.extensions as any)?.directives || {}) as Record<string, unknown>;
     // Bound/unbound ops and navigation properties get field-level `@connect`
     // (Apollo OData connector pattern) — not inlined into the parent selection.
     if (
-      fieldDirs.boundFunction ||
-      fieldDirs.boundAction ||
-      fieldDirs.unboundFunction ||
-      fieldDirs.unboundAction ||
-      fieldDirs.singularNav ||
-      fieldDirs.pluralNav ||
-      fieldDirs.navProp ||
+      fieldOData.boundFunction ||
+      fieldOData.boundAction ||
+      fieldOData.unboundFunction ||
+      fieldOData.unboundAction ||
+      fieldOData.singularNav ||
+      fieldOData.pluralNav ||
+      fieldOData.navProp ||
       fieldDirs.connect ||
       navigationFields.has(fieldName)
     ) {
@@ -209,24 +210,6 @@ function connectArgs(opts: {
   };
 }
 
-/** Mesh field directives fully replaced by `@connect` — drop defs after emit. */
-const MESH_DIRECTIVES_REPLACED_BY_CONNECT = [
-  'entitySet',
-  'entitySetByIdentifier',
-  'entitySetCount',
-  'createEntitySet',
-  'deleteEntitySet',
-  'updateEntitySet',
-  'singleton',
-  'pluralNav',
-  'singularNav',
-  'navProp',
-  'boundFunction',
-  'boundAction',
-  'unboundFunction',
-  'unboundAction',
-] as const;
-
 /** Internal GraphQL field holding OData `@odata.id` for nested `@connect` absolute URLs. */
 const ODATA_ID_FIELD = '_odataId';
 
@@ -272,8 +255,7 @@ export function emitODataConnectors(
     }
     const otc = tc as ObjectTypeComposer | InterfaceTypeComposer;
     const earlyExt = (otc.getExtensions() as any) || {};
-    const entityInfo = earlyExt.directives?.entityInfo as
-      { identifierFieldName?: string } | undefined;
+    const entityInfo = earlyExt.odata?.entityInfo as { identifierFieldName?: string } | undefined;
     if (!entityInfo?.identifierFieldName) continue;
     if (otc.hasField(ODATA_ID_FIELD)) continue;
     otc.addFields({
@@ -304,28 +286,29 @@ export function emitODataConnectors(
     } as any);
   };
 
-  /** Drop Mesh nav/bound dirs from interface fields — objects own the `@connect`. */
-  const clearMeshFieldDirectives = (
+  /** Drop emit-time odata hints from interface fields — objects own the `@connect`. */
+  const clearODataFieldEmit = (
     parent: ObjectTypeComposer | InterfaceTypeComposer,
     fieldName: string,
   ) => {
     const field = parent.getField(fieldName);
-    const dirs = ((field.extensions as any)?.directives || {}) as Record<string, unknown>;
+    const odata = ((field.extensions as any)?.odata || {}) as ODataFieldEmit;
     if (
-      !dirs.pluralNav &&
-      !dirs.singularNav &&
-      !dirs.navProp &&
-      !dirs.boundFunction &&
-      !dirs.boundAction
+      !odata.pluralNav &&
+      !odata.singularNav &&
+      !odata.navProp &&
+      !odata.boundFunction &&
+      !odata.boundAction
     ) {
       return;
     }
+    const dirs = ((field.extensions as any)?.directives || {}) as Record<string, unknown>;
     parent.setField(fieldName, {
       type: field.type,
       args: field.args,
       description: field.description,
       deprecationReason: field.deprecationReason,
-      extensions: {},
+      extensions: dirs.connect ? { directives: { connect: dirs.connect } } : {},
     } as any);
   };
 
@@ -333,7 +316,7 @@ export function emitODataConnectors(
     const root = schemaComposer[rootName];
     for (const fieldName of root.getFieldNames()) {
       const field = root.getField(fieldName);
-      const dirs = ((field.extensions as any)?.directives || {}) as Record<string, any>;
+      const dirs = ((field.extensions as any)?.odata || {}) as ODataFieldEmit;
       const returnTypeName = field.type.getTypeName().replace(/[[\]!]/g, '');
       let entityTC: ObjectTypeComposer | InterfaceTypeComposer | undefined;
       try {
@@ -561,8 +544,7 @@ export function emitODataConnectors(
       continue;
     }
     const extensions = (tc as ObjectTypeComposer).getExtensions() as any;
-    const entityInfo = extensions?.directives?.entityInfo as
-      EntityTypeExtensions['directives']['entityInfo'] | undefined;
+    const entityInfo = extensions?.odata?.entityInfo;
     if (!entityInfo) {
       continue;
     }
@@ -587,8 +569,9 @@ export function emitODataConnectors(
         : `{$this.${ODATA_ID_FIELD}}`;
       for (const fieldName of otc.getFieldNames()) {
         const field = otc.getField(fieldName);
-        const dirs = ((field.extensions as any)?.directives || {}) as Record<string, any>;
-        if (dirs.connect) {
+        const fieldDirs = ((field.extensions as any)?.directives || {}) as Record<string, any>;
+        const dirs = ((field.extensions as any)?.odata || {}) as ODataFieldEmit;
+        if (fieldDirs.connect) {
           continue;
         }
         if (dirs.pluralNav) {
@@ -669,7 +652,7 @@ export function emitODataConnectors(
     } else if (isIface) {
       // Interface fields stay bare; implementing objects carry `@connect`.
       for (const fieldName of otc.getFieldNames()) {
-        clearMeshFieldDirectives(otc, fieldName);
+        clearODataFieldEmit(otc, fieldName);
       }
     }
 
@@ -719,82 +702,34 @@ export function emitODataConnectors(
     }
   }
 
-  // `@entityInfo` is emit-time only — strip from extensions + SDL (`@key` + `@connect`
-  // heuristics cover Hive `$select` / `$expand`; no `odataEntityInfo` bridge).
+  // Drop emit-time `extensions.odata` (entityInfo + field hints). Public SDL is Connectors-only.
   for (const tc of schemaComposer.types.values()) {
-    const typeName = (tc as any).getTypeName?.();
-    if (typeof typeName !== 'string') continue;
-    if (!schemaComposer.isObjectType(typeName) && !schemaComposer.isInterfaceType(typeName)) {
-      continue;
-    }
-    const typed = tc as ObjectTypeComposer | InterfaceTypeComposer;
-    const ext = typed.getExtensions() as any;
-    if (ext?.directives?.entityInfo) {
-      delete ext.directives.entityInfo;
-    }
-    typed.setDirectives([...(typed.getDirectives() || [])].filter(d => d.name !== 'entityInfo'));
-  }
-  for (const tc of schemaComposer.types.values()) {
-    if ((tc as any)?.constructor?.name !== 'InputTypeComposer') continue;
     const typed = tc as any;
     const ext = typed.getExtensions?.() as any;
-    if (ext?.directives?.entityInfo) {
-      delete ext.directives.entityInfo;
+    if (ext?.odata) {
+      delete ext.odata;
     }
-    if (typeof typed.setDirectives === 'function') {
-      typed.setDirectives(
-        [...(typed.getDirectives?.() || [])].filter((d: any) => d.name !== 'entityInfo'),
-      );
-    }
-  }
-
-  // Drop Mesh directive definitions with no remaining usages.
-  // Abstract OData types need no `@abstractType` — resolveType reads `@odata.type`.
-  const stillUsed = new Set<string>();
-  for (const tc of schemaComposer.types.values()) {
-    const typeName = (tc as any).getTypeName?.();
-    if (typeof typeName !== 'string') continue;
-    if (schemaComposer.isObjectType(typeName) || schemaComposer.isInterfaceType(typeName)) {
-      const typed = tc as ObjectTypeComposer | InterfaceTypeComposer;
-      for (const d of typed.getDirectives() || []) {
-        stillUsed.add(d.name);
-      }
+    // Root Query/Mutation fields may still carry odata hints if setConnect was skipped.
+    if (typeof typed.getFieldNames === 'function' && typeof typed.getField === 'function') {
       for (const fieldName of typed.getFieldNames()) {
-        const fieldDirs = ((typed.getField(fieldName).extensions as any)?.directives ||
-          {}) as Record<string, unknown>;
-        for (const name of Object.keys(fieldDirs)) {
-          stillUsed.add(name);
+        const field = typed.getField(fieldName);
+        const fext = (field.extensions as any) || {};
+        if (fext.odata) {
+          const next = { ...fext };
+          delete next.odata;
+          if (typeof typed.setFieldExtensions === 'function') {
+            typed.setFieldExtensions(fieldName, next);
+          } else if (typeof typed.setField === 'function') {
+            typed.setField(fieldName, {
+              type: field.type,
+              args: field.args,
+              description: field.description,
+              deprecationReason: field.deprecationReason,
+              extensions: next,
+            });
+          }
         }
-        for (const d of typed.getFieldDirectives(fieldName) || []) {
-          stillUsed.add(d.name);
-        }
       }
-    }
-  }
-  for (const rootName of ['Query', 'Mutation'] as const) {
-    const root = schemaComposer[rootName];
-    for (const fieldName of root.getFieldNames()) {
-      const fieldDirs = ((root.getField(fieldName).extensions as any)?.directives || {}) as Record<
-        string,
-        unknown
-      >;
-      for (const name of Object.keys(fieldDirs)) {
-        stillUsed.add(name);
-      }
-    }
-  }
-  for (const dirName of [
-    ...MESH_DIRECTIVES_REPLACED_BY_CONNECT,
-    'entityInfo',
-    'resolveRoot',
-  ] as const) {
-    if (stillUsed.has(dirName)) continue;
-    try {
-      if (schemaComposer.hasDirective(dirName)) {
-        schemaComposer.removeDirective(schemaComposer.getDirective(dirName));
-      }
-    } catch {
-      // ignore
     }
   }
 
