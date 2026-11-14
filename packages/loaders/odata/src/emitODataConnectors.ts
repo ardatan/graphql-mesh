@@ -90,6 +90,11 @@ function entitySelection(
         ? (field.type as any).getTypeName()
         : String(field.type);
     const named = typeNameStr.replace(/[[\]!]/g, '');
+    // Open-type catch-all: Map the whole entity JSON (replaces Mesh `@resolveRoot`).
+    if (fieldName === 'rest' && named === 'JSON') {
+      lines.push('rest: $');
+      continue;
+    }
     let nested = '';
     if (schemaComposer.isObjectType(named) || schemaComposer.isInterfaceType(named)) {
       try {
@@ -746,8 +751,8 @@ export function emitODataConnectors(
   }
 
   // Drop Mesh directive definitions with no remaining usages.
-  // Keep `@abstractType` (true OData Abstract=true entities) and `@resolveRoot` (open types).
-  // `@entityInfo` is stripped from SDL below (runtime: extensions.odataEntityInfo).
+  // Keep `@abstractType` only when OData Abstract="true".
+  // `@entityInfo` / `@resolveRoot` are not in public SDL (runtime / `rest: $`).
   const stillUsed = new Set<string>();
   for (const tc of schemaComposer.types.values()) {
     const typeName = (tc as any).getTypeName?.();
@@ -781,8 +786,11 @@ export function emitODataConnectors(
       }
     }
   }
-  // entityInfo def always unused in SDL after strip above.
-  for (const dirName of [...MESH_DIRECTIVES_REPLACED_BY_CONNECT, 'entityInfo'] as const) {
+  for (const dirName of [
+    ...MESH_DIRECTIVES_REPLACED_BY_CONNECT,
+    'entityInfo',
+    'resolveRoot',
+  ] as const) {
     if (stillUsed.has(dirName)) continue;
     try {
       if (schemaComposer.hasDirective(dirName)) {

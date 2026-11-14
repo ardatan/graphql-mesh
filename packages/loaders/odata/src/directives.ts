@@ -351,8 +351,8 @@ export interface ProcessDirectivesArgs {
 }
 
 /**
- * Residual Mesh OData resolvers: abstract `@odata.type` and open-type `@resolveRoot`.
- * CRUD, nav, bound/unbound ops are Federation `@connect` via `transport-rest`.
+ * Residual Mesh OData resolvers: abstract `@odata.type` (+ legacy `@resolveRoot` if present).
+ * CRUD, nav, bound/unbound ops and open-type `rest` are Federation `@connect` (`rest: $`).
  */
 export function processDirectives({ schema, fetchFn }: ProcessDirectivesArgs) {
   const schemaLevelDirectives = getDirectiveExtensions<DirectiveArgsMap>(schema);

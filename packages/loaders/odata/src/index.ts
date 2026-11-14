@@ -42,7 +42,6 @@ import {
   NavPropDirective,
   PluralNavDirective,
   processDirectives as processODataResidualDirectives,
-  ResolveRootDirective,
   SingletonDirective,
   SingularNavDirective,
   UnboundActionDirective,
@@ -429,21 +428,17 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
             type: 'JSON',
           },
         });
+        // Open-type catch-all `rest: JSON` — Connectors map via `rest: $` (whole entity).
+        // In-process Mesh uses `resolve: root => root` (no `@resolveRoot` directive).
+        const restField = {
+          type: 'JSON' as const,
+          resolve: (root: unknown) => root,
+        };
         abstractType?.addFields({
-          rest: {
-            type: 'JSON',
-            extensions: {
-              directives: {
-                resolveRoot: {},
-              } as any,
-            },
-          },
+          rest: restField,
         });
-        schemaComposer.addDirective(ResolveRootDirective);
         outputType.addFields({
-          rest: {
-            type: 'JSON',
-          },
+          rest: restField,
         });
       }
       const updateInputType = inputType.clone(`${entityTypeName}UpdateInput`);
