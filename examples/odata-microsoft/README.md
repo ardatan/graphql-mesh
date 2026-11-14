@@ -25,23 +25,29 @@ evaluation as-is.
 4. Configure App Id and redirect URIs in the AppConfiguration of build/index.html
 5. Run `npm start` and go to `localhost:4000`
 
-### Connectors tests
+### Connectors e2e
 
-**E2E** (fixture metadata + mock Graph, hive + apollo-router — always runs in CI):
+**Fixture + mock** (always — Hive Gateway + Apollo Router, v0 `example-queries`):
 
 ```bash
 yarn test:e2e e2e/odata-msgraph
 ```
 
-**Unit** (live `$metadata` smoke + optional live `me`):
+**Live Graph** (same example queries through Hive + Apollo Router → `graph.microsoft.com`):
 
 ```bash
-export MSGRAPH_ACCESS_TOKEN='…' # or GRAPH_ACCESS_TOKEN — optional for live `me`
-yarn test packages/loaders/odata/tests/msgraph-connectors.test.ts
+export MSGRAPH_LIVE=1
+export MSGRAPH_ACCESS_TOKEN='…' # delegated Bearer (or GRAPH_ACCESS_TOKEN)
+yarn test:e2e e2e/odata-msgraph
 ```
 
-`$metadata` is public. Live `me { id displayName }` in the unit suite runs only when a token is set
-(and asserts Hive `$select` on the upstream URL).
+CI runs the live suite via `.github/workflows/odata-msgraph-live.yml` when OData/Connectors
+paths change, if the `MSGRAPH_ACCESS_TOKEN` repository secret is set. Without the secret the
+live describe is skipped.
+
+Schema note: live execute keeps the e2e fixture metadata (example-query surface) so Apollo Router
+accepts the supergraph; the HTTP endpoint is real Graph. Full public `$metadata` includes abstract
+`directoryObject` shapes that Router currently rejects in join form.
 
 ## Sample requests
 

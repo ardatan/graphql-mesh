@@ -1,0 +1,55 @@
+# Live Microsoft Graph e2e (v0 example-queries via Hive + Apollo Router).
+# Runs only when OData/Connectors-related paths change — not on every PR.
+# Without `MSGRAPH_ACCESS_TOKEN`, the live describe is skipped (job stays green).
+name: odata-msgraph-live
+on:
+  pull_request:
+    paths:
+      - 'packages/loaders/odata/**'
+      - 'packages/transports/rest/**'
+      - 'packages/fusion/composition/**'
+      - 'e2e/odata-msgraph/**'
+      - 'examples/odata-microsoft/**'
+      - '.github/workflows/odata-msgraph-live.yml'
+  push:
+    branches:
+      - master
+    paths:
+      - 'packages/loaders/odata/**'
+      - 'packages/transports/rest/**'
+      - 'packages/fusion/composition/**'
+      - 'e2e/odata-msgraph/**'
+      - 'examples/odata-microsoft/**'
+      - '.github/workflows/odata-msgraph-live.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+  NODE_TLS_REJECT_UNAUTHORIZED: 0
+  APOLLO_ELV2_LICENSE: accept
+  NODE_NO_WARNINGS: 1
+  YARN_ENABLE_HARDENED_MODE: 0
+  MSGRAPH_LIVE: '1'
+  MSGRAPH_ACCESS_TOKEN: ${{ secrets.MSGRAPH_ACCESS_TOKEN }}
+
+jobs:
+  live-e2e:
+    name: e2e / msgraph live
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+      - name: set up env
+        uses: the-guild-org/shared-config/setup@v1
+        with:
+          node-version-file: .node-version
+      - name: build
+        run: yarn build
+      - name: relink
+        run: yarn install
+      - name: Run live MS Graph e2e
+        run: yarn test:e2e e2e/odata-msgraph --forceExit
