@@ -26,12 +26,12 @@ import {
 } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
-import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
 import {
   ensureNonResolvableKeysForEntityStubs,
   hasEquivalentTypeConnect,
   toTypeLevelEntityConnect,
 } from './connect-entity.js';
+import { finalizeConnectorsSupergraph } from './connectors-supergraph.js';
 import {
   convertSubgraphToFederationv2,
   detectAndAddMeshDirectives,

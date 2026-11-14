@@ -2,13 +2,13 @@ import { buildSchema, print } from 'graphql';
 import {
   composeSubgraphs,
   entityKeyFieldsFromHttpPath,
+  finalizeConnectorsSupergraph,
   formatEntityStubSelection,
   getAnnotatedSubgraphs,
   inferEntityRefFromParentFkNames,
   isFederationConnectorsSubgraph,
   liftExtraSchemaDefinitionDirectives,
   parseEntityStubTypesFromSelection,
-  finalizeConnectorsSupergraph,
 } from '../src/index.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
 
