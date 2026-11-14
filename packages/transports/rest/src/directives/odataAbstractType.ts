@@ -1,11 +1,20 @@
-import { isEnumType, type GraphQLSchema, type GraphQLTypeResolver } from 'graphql';
+import {
+  isEnumType,
+  isInterfaceType,
+  isUnionType,
+  type GraphQLSchema,
+  type GraphQLTypeResolver,
+} from 'graphql';
 import { pascalCase } from 'pascal-case';
-import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 
 /**
  * Wire `@abstractType` → `resolveType` from OData `@odata.type`.
  * Kept in transport-rest so Hive `getSubgraphExecutor` rehydrates it without a
  * separate OData residual processDirectives pass.
+ *
+ * Mutates the given schema in place (same contract as the rest of
+ * `processDirectives`) and returns it.
  */
 
 const SCALARS = new Map<string, string>([
@@ -122,26 +131,24 @@ export function processODataAbstractTypeDirectives(schema: GraphQLSchema): Graph
     return Array.isArray(value) ? value[0] : value;
   };
 
-  return mapSchema(schema, {
-    [MapperKind.ABSTRACT_TYPE]: type => {
-      const typeDirectives = getDirectiveExtensions<{ abstractType?: AbstractTypeDirectiveArgs }>(
-        type,
-      );
-      const abstractTypeDirective = firstDir(typeDirectives?.abstractType);
-      if (!abstractTypeDirective) {
-        return undefined;
-      }
-      const typePrototype = Object.getPrototypeOf(type);
-      return new typePrototype.constructor({
-        ...type.toConfig(),
-        resolveType: createODataAbstractTypeResolver({
-          entityTypeName: abstractTypeDirective.entityTypeName,
-          isAbstract: abstractTypeDirective.isAbstract,
-          aliasNamespaceMap: new Map(abstractTypeDirective.aliasNamespaceMap ?? []),
-          multipleSchemas: abstractTypeDirective.multipleSchemas ?? false,
-          namespaces: new Set(abstractTypeDirective.namespaces ?? []),
-        }),
-      });
-    },
-  });
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isInterfaceType(type) && !isUnionType(type)) {
+      continue;
+    }
+    const typeDirectives = getDirectiveExtensions<{ abstractType?: AbstractTypeDirectiveArgs }>(
+      type,
+    );
+    const abstractTypeDirective = firstDir(typeDirectives?.abstractType);
+    if (!abstractTypeDirective) {
+      continue;
+    }
+    type.resolveType = createODataAbstractTypeResolver({
+      entityTypeName: abstractTypeDirective.entityTypeName,
+      isAbstract: abstractTypeDirective.isAbstract,
+      aliasNamespaceMap: new Map(abstractTypeDirective.aliasNamespaceMap ?? []),
+      multipleSchemas: abstractTypeDirective.multipleSchemas ?? false,
+      namespaces: new Set(abstractTypeDirective.namespaces ?? []),
+    });
+  }
+  return schema;
 }

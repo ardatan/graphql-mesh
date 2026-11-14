@@ -373,6 +373,8 @@ describe('Federation Connectors composition', () => {
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toMatch(/\bscalar JSONSelection\b/);
     expect(sdl).not.toMatch(/\bscalar URLPathTemplate\b/);
+    expect(sdl).not.toMatch(/\bscalar \w*JSONSelection\b/);
+    expect(sdl).not.toMatch(/\bscalar \w*URLPathTemplate\b/);
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "connect"/);
   });
 

@@ -29,7 +29,15 @@ const CONNECT_INPUT_TYPES = new Set([
 ]);
 
 /** Owned by `@link(url: connect/v0.4)` — must not remain as `scalar X @join__type`. */
-const CONNECT_LINKED_SCALARS = new Set(['JSONSelection', 'URLPathTemplate']);
+function isConnectLinkedScalarName(name: string): boolean {
+  return (
+    name === 'JSONSelection' ||
+    name === 'URLPathTemplate' ||
+    // Mesh may prefix per-subgraph: `SubgraphBJSONSelection`
+    name.endsWith('JSONSelection') ||
+    name.endsWith('URLPathTemplate')
+  );
+}
 
 /**
  * Finalize a Mesh Guild connectors supergraph into the Rover-shaped
@@ -138,7 +146,7 @@ export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): strin
     },
     ScalarTypeDefinition(node) {
       // Drop linked connect scalars — Router resolves them via `@link(connect/v0.4)`.
-      if (CONNECT_LINKED_SCALARS.has(node.name.value)) {
+      if (isConnectLinkedScalarName(node.name.value)) {
         return null;
       }
       return node;

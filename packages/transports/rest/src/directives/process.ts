@@ -97,8 +97,6 @@ export function processDirectives(
       endpoint: typeof globalOptions.endpoint === 'string' ? globalOptions.endpoint : undefined,
     },
   });
-  // OData `@abstractType` → resolveType from `@odata.type` (Hive rehydration).
-  schema = processODataAbstractTypeDirectives(schema);
   if (typeof globalOptions.operationHeaders === 'string') {
     globalOptions.operationHeaders = JSON.parse(globalOptions.operationHeaders);
   }
@@ -180,6 +178,10 @@ export function processDirectives(
       }
     }
   }
+  // OData `@abstractType` → resolveType from `@odata.type` (Hive rehydration).
+  // After the generic union resolveType pass so `@abstractType` wins on interfaces.
+  // In-place — callers historically ignore the return and keep the same schema ref.
+  processODataAbstractTypeDirectives(schema);
   return schema;
 }
 
