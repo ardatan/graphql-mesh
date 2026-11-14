@@ -373,9 +373,53 @@ describe('Federation Connectors composition', () => {
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toMatch(/\bscalar JSONSelection\b/);
     expect(sdl).not.toMatch(/\bscalar URLPathTemplate\b/);
-    expect(sdl).not.toMatch(/\bscalar \w*JSONSelection\b/);
-    expect(sdl).not.toMatch(/\bscalar \w*URLPathTemplate\b/);
+    // Mesh may prefix per-subgraph (`RESTJSONSelection`) — those are also stripped.
+    expect(sdl).not.toMatch(/\bscalar RESTJSONSelection\b/);
+    expect(sdl).not.toMatch(/\bscalar RESTURLPathTemplate\b/);
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "connect"/);
+  });
+
+  it('preserves application scalars that share the JSONSelection suffix', () => {
+    const withAppScalar = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "rest", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: JSONSelection!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION
+
+      scalar JSONSelection
+      scalar AuditJSONSelection
+
+      input ConnectHTTP {
+        GET: String
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      type Query {
+        user(id: ID!): User
+          @connect(source: "rest", http: { GET: "/users/{$args.id}" }, selection: "id")
+        audit: AuditJSONSelection
+      }
+      type User {
+        id: ID!
+      }
+    `);
+    const result = composeSubgraphs([{ name: 'REST', schema: withAppScalar }]);
+    expect(result.errors).toBeUndefined();
+    const sdl = result.supergraphSdl!;
+    expect(sdl).not.toMatch(/\bscalar JSONSelection\b/);
+    expect(sdl).toMatch(/\bscalar AuditJSONSelection\b/);
   });
 
   it('emits type-level @connect with $this when keyArg !== keyField (Apollo entity pattern)', () => {

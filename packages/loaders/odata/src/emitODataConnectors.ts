@@ -46,11 +46,12 @@ function headersToConnectMappings(
 function entitySelection(
   schemaComposer: SchemaComposer,
   entityTC: ObjectTypeComposer | InterfaceTypeComposer,
-  depth = 0,
   visited: Set<string> = new Set(),
 ): string {
   const typeName = entityTC.getTypeName();
-  if (visited.has(typeName) || depth > 2) {
+  // Cycle detection only — do not truncate acyclic complex property chains
+  // (depth limits drop nested scalars with no lazy-fetch fallback).
+  if (visited.has(typeName)) {
     return '';
   }
   visited = new Set(visited);
@@ -101,7 +102,7 @@ function entitySelection(
       try {
         const childTC = schemaComposer.getAnyTC(named) as
           ObjectTypeComposer | InterfaceTypeComposer;
-        nested = entitySelection(schemaComposer, childTC, depth + 1, visited);
+        nested = entitySelection(schemaComposer, childTC, visited);
       } catch {
         nested = '';
       }
@@ -139,8 +140,13 @@ function selectionForFieldReturnType(
   const typeName = fieldTypeNameString(field);
   const isList = typeName.includes('[');
   const named = typeName.replace(/[[\]!]/g, '');
-  if (named === 'JSON' || named === 'Int' || named === 'Float' || named === 'Boolean') {
+  // JSON / complex: whole body. Primitive scalars (and lists of them) are wrapped
+  // as `{"value": …}` in OData JSON — unwrap with `$.value`.
+  if (named === 'JSON') {
     return '$';
+  }
+  if (named === 'Int' || named === 'Float' || named === 'Boolean') {
+    return '$.value';
   }
   let entityTC: ObjectTypeComposer | InterfaceTypeComposer | undefined;
   try {
@@ -354,7 +360,8 @@ export function emitODataConnectors(
               GET: `/${entitySetName}/{$args.${identifierFieldName}}/`,
             },
             selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
-            entity: true,
+            // Apollo Router rejects `entity: true` on Mutation (`ENTITY_NOT_ON_ROOT_QUERY`).
+            entity: rootName === 'Query',
           }),
         );
         continue;
@@ -635,6 +642,31 @@ export function emitODataConnectors(
         }
         if (dirs.boundAction) {
           const actionRef = dirs.boundAction.actionRef as string;
+          // OData action bodies exclude the binding parameter (URL identifies the entity).
+          const bodyArgs: string[] = [];
+          for (const [argName, argConfig] of Object.entries(field.args || {})) {
+            if (argName === 'queryOptions') continue;
+            const argTypeName = (
+              typeof (argConfig.type as any)?.getTypeName === 'function'
+                ? (argConfig.type as any).getTypeName()
+                : String(argConfig.type)
+            ).replace(/[[\]!]/g, '');
+            if (argTypeName.endsWith('Input') || argTypeName.endsWith('UpdateInput')) {
+              continue;
+            }
+            try {
+              if (schemaComposer.getITC(argTypeName)) continue;
+            } catch {
+              // scalar / enum arg — include in body
+            }
+            bodyArgs.push(argName);
+          }
+          const body =
+            bodyArgs.length === 0
+              ? '$({})'
+              : bodyArgs.length === Object.keys(field.args || {}).length
+                ? '$args'
+                : `$args { ${bodyArgs.join(' ')} }`;
           setConnect(
             otc,
             fieldName,
@@ -642,7 +674,7 @@ export function emitODataConnectors(
               source: sourceName,
               http: {
                 POST: `${basePath}/${actionRef}`,
-                body: '$args',
+                body,
               },
               selection: selectionForFieldReturnType(schemaComposer, field),
             }),

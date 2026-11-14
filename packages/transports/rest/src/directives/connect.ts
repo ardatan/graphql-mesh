@@ -1427,7 +1427,13 @@ function buildBody(
       ('rest' in args ||
         (args.input != null && typeof args.input === 'object' && 'rest' in args.input));
     if (needsFlatten) {
-      const clone = structuredClone(args);
+      // `vars.args` may be a Proxy (serializeArgumentsForInterpolation) —
+      // structuredClone rejects Proxies, so materialize plain values first.
+      const plain: Record<string, unknown> = {};
+      for (const key of Object.keys(args as object)) {
+        plain[key] = (args as Record<string, unknown>)[key];
+      }
+      const clone = structuredClone(plain);
       rebuildOpenInputObjects(clone);
       return JSON.stringify(clone);
     }
@@ -1605,19 +1611,19 @@ export function addConnectFieldResolver(
     };
 
     const baseURL = resolveTemplate(source?.http?.baseURL || '', vars);
-    // Absolute URLs from `$this._odataId` (OData nested follow-ups) must not be
-    // percent-encoded — encoding would turn `https://…` into `https%3A%2F%2F…`.
-    const pathUnencoded = resolveTemplate(picked.path, vars, { encodeValues: false });
     // `{$this._odataId}/Nav` when `@odata.id` has a trailing slash → `…//Nav`.
     // Collapse those (keep `https://`).
     const collapseExtraSlashes = (u: string) => u.replace(/([^:])\/{2,}/g, '$1/');
     let fullPath: string;
-    if (/^https?:\/\//i.test(pathUnencoded)) {
-      fullPath = collapseExtraSlashes(pathUnencoded);
+    // Absolute `@odata.id` follow-ups must not encode the URL value. Other absolute
+    // templates (e.g. `https://…/items/{$args.id}`) still encode interpolated args.
+    const isODataIdPath = /\$this\._odataId\b/.test(picked.path);
+    if (isODataIdPath) {
+      fullPath = collapseExtraSlashes(resolveTemplate(picked.path, vars, { encodeValues: false }));
     } else {
       // Path templates percent-encode expression values; baseURL / headers do not.
       const path = resolveTemplate(picked.path, vars, { encodeValues: true });
-      // Absolute `@odata.id` (and other absolute connector URLs) skip baseURL join.
+      // Absolute connector URLs skip baseURL join.
       // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
       // so test mocks like `fetch('pets/1')` keep working.
       fullPath = /^https?:\/\//i.test(path)

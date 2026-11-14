@@ -8,10 +8,7 @@ const { compose, serve, service } = createTenv(__dirname);
 const MOCK_TOKEN = 'e2e-msgraph-mock-token';
 
 /** Same GraphQL documents as Mesh v0 `examples/odata-microsoft/example-queries`. */
-const EXAMPLE_QUERIES_DIR = join(
-  __dirname,
-  '../../examples/odata-microsoft/example-queries',
-);
+const EXAMPLE_QUERIES_DIR = join(__dirname, '../../examples/odata-microsoft/example-queries');
 
 function loadExampleQuery(name: string): string {
   return readFileSync(join(EXAMPLE_QUERIES_DIR, name), 'utf8');

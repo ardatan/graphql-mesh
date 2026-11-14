@@ -275,6 +275,12 @@ describe('rebuildOpenInputObjects', () => {
     expect('rest' in input).toBe(false);
   });
 
+  it('preserves scalar rest fields used by non-OData REST inputs', () => {
+    const input = { rest: 'pause', id: 1 };
+    rebuildOpenInputObjects(input);
+    expect(input).toEqual({ rest: 'pause', id: 1 });
+  });
+
   it('is applied when @connect serializes $args.input bodies', async () => {
     const sdl = /* GraphQL */ `
       ${CONNECTOR_DIRECTIVES}

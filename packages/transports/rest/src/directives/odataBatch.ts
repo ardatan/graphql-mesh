@@ -11,6 +11,9 @@ export type ODataBatchMode = 'none' | 'json' | 'multipart';
 
 type BatchableFetch = (url: string, init?: RequestInit, context?: any) => Promise<Response>;
 
+/** Microsoft Graph JSON batch limit; safe default for other OData JSON `$batch` endpoints. */
+const JSON_BATCH_MAX_REQUESTS = 20;
+
 /**
  * Per-GraphQL-context DataLoader that coalesces Connectors HTTP calls into a single
  * OData `POST /$batch` (json or multipart). Mirrors the legacy `@omnigraph/odata`
@@ -35,9 +38,34 @@ export function createODataBatchFetch(opts: {
         method: request.method,
         body: request.body ? await request.text() : undefined,
         headers: getHeadersObj(request.headers),
+        signal: request.signal,
       },
       context,
     ) as Promise<Response>;
+
+  const authHeadersFromRequests = (requests: readonly Request[]): Record<string, string> => {
+    const headers: Record<string, string> = {};
+    const first = requests[0];
+    if (!first) return headers;
+    first.headers?.forEach((value, key) => {
+      const lower = key.toLowerCase();
+      if (lower === 'authorization' || lower === 'cookie' || lower === 'api-key') {
+        headers[key] = value;
+      }
+    });
+    return headers;
+  };
+
+  const batchSignal = (requests: readonly Request[]): AbortSignal | undefined => {
+    const signals = requests.map(r => r.signal).filter((s): s is AbortSignal => s != null);
+    if (!signals.length) return undefined;
+    if (signals.length === 1) return signals[0];
+    const any = (AbortSignal as any).any;
+    if (typeof any === 'function') {
+      return any(signals);
+    }
+    return signals[0];
+  };
 
   const multipartFactory = (context: any) =>
     new DataLoader<Request, Response>(async requests => {
@@ -59,7 +87,8 @@ export function createODataBatchFetch(opts: {
         });
         if (request.body) {
           const bodyAsStr = await request.text();
-          requestBody += `Content-Length: ${bodyAsStr.length}`;
+          requestBody += `Content-Length: ${bodyAsStr.length}\n`;
+          // Empty line terminates embedded HTTP headers before the body (RFC 9112).
           requestBody += `\n`;
           requestBody += bodyAsStr;
         }
@@ -68,6 +97,7 @@ export function createODataBatchFetch(opts: {
       requestBody += `--${requestBoundary}--\n`;
       const batchHeaders: Record<string, string> = {
         'content-type': `multipart/mixed;boundary=${requestBoundary}`,
+        ...authHeadersFromRequests(requests),
       };
       const batchResponse = await fetchFn(
         urljoin(endpointNormalized, '$batch'),
@@ -75,6 +105,7 @@ export function createODataBatchFetch(opts: {
           method: 'POST',
           body: requestBody,
           headers: batchHeaders,
+          signal: batchSignal(requests),
         },
         context,
       );
@@ -89,7 +120,11 @@ export function createODataBatchFetch(opts: {
       const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
       const responseTextArr = actualResponse.split(responseBoundary);
       return responseTextArr.map(responseTextWithContentHeader => {
-        const responseText = responseTextWithContentHeader.split('\n').slice(4).join('\n');
+        // MIME part headers end at the first blank line; keep the embedded HTTP response intact.
+        const normalized = responseTextWithContentHeader.replace(/^\r?\n/, '');
+        const headerEnd = normalized.search(/\r?\n\r?\n/);
+        const responseText =
+          headerEnd === -1 ? normalized : normalized.slice(headerEnd).replace(/^\r?\n\r?\n/, '');
         const { body, headers, statusCode, statusMessage } = parseResponse(responseText);
         return new Response(body, {
           headers,
@@ -99,46 +134,63 @@ export function createODataBatchFetch(opts: {
       });
     });
 
+  async function sendJsonBatch(requests: readonly Request[], context: any): Promise<Response[]> {
+    const batchResponse = await fetchFn(
+      urljoin(endpointNormalized, '$batch'),
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          requests: await Promise.all(
+            requests.map(async (request, index) => {
+              const id = index.toString();
+              const url = request.url.startsWith(endpointNormalized)
+                ? request.url.slice(endpointNormalized.length) || '/'
+                : request.url.replace(endpoint, '');
+              const method = request.method;
+              const headers: Record<string, string> = {};
+              request.headers?.forEach((value, key) => {
+                headers[key] = value;
+              });
+              let body: unknown;
+              if (request.body) {
+                try {
+                  body = await request.json();
+                } catch {
+                  body = await request.text();
+                }
+              }
+              return { id, url, method, body, headers };
+            }),
+          ),
+        }),
+        headers: {
+          'content-type': 'application/json',
+          ...authHeadersFromRequests(requests),
+        },
+        signal: batchSignal(requests),
+      },
+      context,
+    );
+    const batchResponseJson = await batchResponse.json();
+    return handleBatchJsonResults(batchResponseJson, requests);
+  }
+
   const jsonFactory = (context: any) =>
     new DataLoader<Request, Response>(async requests => {
       // Skip /$batch for a lone request — cheaper and keeps simple mocks working.
       if (requests.length === 1) {
         return [await forwardSingle(requests[0], context)];
       }
-      const batchResponse = await fetchFn(
-        urljoin(endpointNormalized, '$batch'),
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            requests: await Promise.all(
-              requests.map(async (request, index) => {
-                const id = index.toString();
-                const url = request.url.startsWith(endpointNormalized)
-                  ? request.url.slice(endpointNormalized.length) || '/'
-                  : request.url.replace(endpoint, '');
-                const method = request.method;
-                const headers: Record<string, string> = {};
-                request.headers?.forEach((value, key) => {
-                  headers[key] = value;
-                });
-                let body: unknown;
-                if (request.body) {
-                  try {
-                    body = await request.json();
-                  } catch {
-                    body = await request.text();
-                  }
-                }
-                return { id, url, method, body, headers };
-              }),
-            ),
-          }),
-          headers: { 'content-type': 'application/json' },
-        },
-        context,
-      );
-      const batchResponseJson = await batchResponse.json();
-      return handleBatchJsonResults(batchResponseJson, requests);
+      // Microsoft Graph caps JSON batch at 20 requests — split larger queues.
+      if (requests.length > JSON_BATCH_MAX_REQUESTS) {
+        const results: Response[] = [];
+        for (let i = 0; i < requests.length; i += JSON_BATCH_MAX_REQUESTS) {
+          const chunk = requests.slice(i, i + JSON_BATCH_MAX_REQUESTS);
+          results.push(...(await sendJsonBatch(chunk, context)));
+        }
+        return results;
+      }
+      return sendJsonBatch(requests, context);
     });
 
   const factory = batchMode === 'multipart' ? multipartFactory : jsonFactory;

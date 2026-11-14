@@ -53,10 +53,9 @@ export function getTypeResolverForAbstractType({
       if (match) {
         return match.name;
       }
-      const fromSchema = info.schema.getType(shortName) || info.schema.getType(`T${shortName}`);
-      if (fromSchema && !isAbstractType(fromSchema)) {
-        return fromSchema.name;
-      }
+      // Do not fall back to schema-wide `getType(shortName)` — an unmatched
+      // `@odata.type` (e.g. `#Service.Error`) must not pick an unrelated type
+      // outside `possibleTypes` (GraphQL rejects that result).
     }
 
     if (discriminatorField != null && data[discriminatorField]) {

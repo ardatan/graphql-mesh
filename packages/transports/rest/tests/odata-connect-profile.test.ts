@@ -73,6 +73,12 @@ describe('odataConnectProfile helpers', () => {
     expect(map.get('userName')).toBe('UserName');
     expect(map.get('friends')).toBe('friends');
   });
+
+  it('maps compact single-line selection aliases', () => {
+    const map = buildConnectPropertyNameMap('userName: UserName firstName: FirstName');
+    expect(map.get('userName')).toBe('UserName');
+    expect(map.get('firstName')).toBe('FirstName');
+  });
 });
 
 describe('Connect OData $select / $expand', () => {

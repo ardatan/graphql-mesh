@@ -59,52 +59,43 @@ export function hasODataMetadataAcceptHeader(
 }
 
 /**
- * Map GraphQL response field names → OData/JSON property names from a Connectors
- * `selection` (simple `alias: prop` lines only; nested blocks inherit GraphQL names).
+ * Map GraphQL field names → OData/JSON property names from a Connectors `selection`.
+ * Accepts both multiline and compact single-line forms:
+ * `userName: UserName firstName: FirstName`.
  */
 export function buildConnectPropertyNameMap(selection?: string): Map<string, string> {
   const map = new Map<string, string>();
   if (!selection) {
     return map;
   }
-  for (const rawLine of selection.split('\n')) {
-    const line = rawLine.trim().replace(/,$/, '');
-    if (!line || line.startsWith('#') || line.startsWith('...') || line.startsWith('$')) {
+  // Strip nested `{ … }` blocks (nav/complex) — only top-level aliases matter here.
+  let depth = 0;
+  let flattened = '';
+  for (const ch of selection) {
+    if (ch === '{') {
+      depth++;
+      flattened += depth === 1 ? ' ' : '';
       continue;
     }
-    // Skip nested block openers handled via GraphQL selection walk.
-    if (line.endsWith('{')) {
-      const before = line.slice(0, -1).trim();
-      const colon = before.indexOf(':');
-      if (colon === -1) {
-        const name = before.trim();
-        if (name && !name.includes(' ')) {
-          map.set(name, name);
-        }
-      } else {
-        const gqlName = before.slice(0, colon).trim();
-        const odataName = before.slice(colon + 1).trim();
-        if (gqlName && /^[A-Za-z_][\w]*$/.test(odataName)) {
-          map.set(gqlName, odataName);
-        }
+    if (ch === '}') {
+      depth = Math.max(0, depth - 1);
+      flattened += depth === 0 ? ' ' : '';
+      continue;
+    }
+    if (depth === 0) {
+      flattened += ch;
+    }
+  }
+  const tokenRe = /([A-Za-z_][\w]*)\s*:\s*([A-Za-z_][\w]*)|([A-Za-z_][\w]*)/g;
+  let match: RegExpExecArray | null;
+  while ((match = tokenRe.exec(flattened))) {
+    if (match[1] && match[2]) {
+      map.set(match[1], match[2]);
+    } else if (match[3] && match[3] !== 'get') {
+      // Bare name (skip JSONSelection helpers like `get` from `$->get(...)`).
+      if (!map.has(match[3])) {
+        map.set(match[3], match[3]);
       }
-      continue;
-    }
-    if (line === '}') {
-      continue;
-    }
-    const colon = line.indexOf(':');
-    if (colon === -1) {
-      if (/^[A-Za-z_][\w]*$/.test(line)) {
-        map.set(line, line);
-      }
-      continue;
-    }
-    const gqlName = line.slice(0, colon).trim();
-    const rhs = line.slice(colon + 1).trim();
-    // `userName: UserName` — not `$args…` / nested exprs.
-    if (gqlName && /^[A-Za-z_][\w]*$/.test(rhs)) {
-      map.set(gqlName, rhs);
     }
   }
   return map;
@@ -145,7 +136,11 @@ function collectSelections(
       const fragType =
         (typeName && (info.schema.getType(typeName) as GraphQLObjectType | undefined)) ||
         parentType;
-      if (!isObjectType(fragType)) continue;
+      if (!isObjectType(fragType) || fragType.name !== parentType.name) {
+        // Abstract / sibling-type fragments make partial `$select` unsafe.
+        out.select.add('__odata_projection_unsafe__');
+        continue;
+      }
       collectSelections(
         frag.selectionSet.selections,
         fragType,
@@ -166,9 +161,14 @@ function collectInlineFragment(
   out: { select: Set<string>; expand: string[] },
   expandNavProps: boolean,
 ): void {
-  // Inherited / abstract branches: OData `$select` is unsafe (same as @omnigraph/odata).
   if (fragment.typeCondition) {
-    return;
+    const typeName = fragment.typeCondition.name.value;
+    // Same concrete type (or typeless) — include fields. Other type conditions
+    // (interfaces / sibling objects) make `$select` unsafe; caller must skip projection.
+    if (typeName !== parentType.name) {
+      out.select.add('__odata_projection_unsafe__');
+      return;
+    }
   }
   collectSelections(
     fragment.selectionSet.selections,
@@ -259,20 +259,25 @@ function collectField(
   out: { select: Set<string>; expand: string[] },
   expandNavProps: boolean,
 ): void {
-  const responseName = field.alias?.value || field.name.value;
-  if (responseName === '__typename' || field.name.value.startsWith('__')) {
+  if (field.name.value.startsWith('__')) {
     return;
   }
   const fieldDef = parentType.getFields()[field.name.value];
   if (!fieldDef || !isODataStructuralField(fieldDef, expandNavProps)) {
     return;
   }
-  const odataName =
-    propertyMap.get(responseName) || propertyMap.get(field.name.value) || field.name.value;
+  // Aliases change the response key only — map by schema field name.
+  const odataName = propertyMap.get(field.name.value) || field.name.value;
   const namedType = getNamedType(fieldDef.type);
 
   if (isLeafType(namedType)) {
     out.select.add(odataName);
+    return;
+  }
+
+  if (isAbstractType(namedType)) {
+    // Abstract-valued fields cannot be projected safely via `$select` alone.
+    out.select.add('__odata_projection_unsafe__');
     return;
   }
 
@@ -287,6 +292,20 @@ function collectField(
         nested,
         expandNavProps,
       );
+      if (nested.select.has('__odata_projection_unsafe__')) {
+        out.select.add('__odata_projection_unsafe__');
+        return;
+      }
+      // Nested entities need their key / identifier for bound ops / @odata.id.
+      const nestedKeyDirs = getDirectiveExtensions(namedType as any)?.key;
+      if (Array.isArray(nestedKeyDirs)) {
+        for (const key of nestedKeyDirs) {
+          const fields = typeof key?.fields === 'string' ? key.fields.split(/\s+/) : [];
+          for (const f of fields) {
+            if (f) nested.select.add(propertyMap.get(f) || f);
+          }
+        }
+      }
       const nestedParts: string[] = [];
       if (nested.select.size) {
         nestedParts.push(`$select=${[...nested.select].join(',')}`);
@@ -330,20 +349,63 @@ export function buildODataSelectExpand(
       expandNavProps,
     );
   }
+  if (out.select.has('__odata_projection_unsafe__')) {
+    return empty;
+  }
   // Always include `@key` / identifier fields so entity URLs / bound ops keep working.
+  // Translate GraphQL key field names through the connector property map.
   const keyDirs = getDirectiveExtensions(returnType as any)?.key;
   if (Array.isArray(keyDirs)) {
     for (const key of keyDirs) {
       const fields = typeof key?.fields === 'string' ? key.fields.split(/\s+/) : [];
       for (const f of fields) {
-        if (f) out.select.add(f);
+        if (f) out.select.add(propertyMap.get(f) || f);
       }
     }
   }
   return {
     select: [...out.select],
-    expand: out.expand,
+    expand: mergeExpandItems(out.expand),
   };
+}
+
+/** OData forbids repeating the same navigation path in `$expand` — merge nested options. */
+function mergeExpandItems(items: string[]): string[] {
+  const byPath = new Map<string, { select: Set<string>; expand: string[] }>();
+  const bare: string[] = [];
+  for (const item of items) {
+    const m = item.match(/^([^(]+)(?:\((.*)\))?$/);
+    if (!m) {
+      bare.push(item);
+      continue;
+    }
+    const path = m[1];
+    const opts = m[2];
+    if (!opts) {
+      if (!byPath.has(path)) byPath.set(path, { select: new Set(), expand: [] });
+      continue;
+    }
+    const entry = byPath.get(path) || { select: new Set<string>(), expand: [] as string[] };
+    for (const part of opts.split(';')) {
+      if (part.startsWith('$select=')) {
+        for (const f of part.slice('$select='.length).split(',')) {
+          if (f) entry.select.add(f);
+        }
+      } else if (part.startsWith('$expand=')) {
+        entry.expand.push(...part.slice('$expand='.length).split(',').filter(Boolean));
+      }
+    }
+    byPath.set(path, entry);
+  }
+  const merged = [...byPath.entries()].map(([path, entry]) => {
+    const nestedParts: string[] = [];
+    if (entry.select.size) nestedParts.push(`$select=${[...entry.select].join(',')}`);
+    if (entry.expand.length) {
+      nestedParts.push(`$expand=${mergeExpandItems(entry.expand).join(',')}`);
+    }
+    return nestedParts.length ? `${path}(${nestedParts.join(';')})` : path;
+  });
+  return [...merged, ...bare];
 }
 
 function pathAlreadyHasODataProjection(fullPath: string): boolean {
@@ -414,7 +476,8 @@ export function attachExpandedNavFromRaw(
   if (!isObjectType(returnType)) {
     return selected;
   }
-  const navNames: string[] = [];
+  // Attach under the schema field name (resolvers read `root.friends`, not the alias).
+  const navFields: Array<{ schemaName: string; responseName: string }> = [];
   for (const fieldNode of info.fieldNodes) {
     if (!fieldNode.selectionSet) continue;
     for (const sel of fieldNode.selectionSet.selections) {
@@ -423,10 +486,13 @@ export function attachExpandedNavFromRaw(
       if (!fieldDef) continue;
       if (!isODataStructuralField(fieldDef, true)) continue;
       if (!isODataExpandableField(fieldDef)) continue;
-      navNames.push(sel.alias?.value || sel.name.value);
+      navFields.push({
+        schemaName: sel.name.value,
+        responseName: sel.alias?.value || sel.name.value,
+      });
     }
   }
-  if (!navNames.length) {
+  if (!navFields.length) {
     return selected;
   }
 
@@ -438,11 +504,11 @@ export function attachExpandedNavFromRaw(
   };
 
   const attachOne = (sel: Record<string, unknown>, rawEntity: Record<string, unknown>) => {
-    for (const name of navNames) {
-      if (sel[name] != null) continue;
-      const fromRaw = lookupRaw(rawEntity, name);
+    for (const { schemaName, responseName } of navFields) {
+      if (sel[schemaName] != null || sel[responseName] != null) continue;
+      const fromRaw = lookupRaw(rawEntity, schemaName) ?? lookupRaw(rawEntity, responseName);
       if (fromRaw != null) {
-        sel[name] = fromRaw;
+        sel[schemaName] = fromRaw;
       }
     }
     return sel;

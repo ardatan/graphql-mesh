@@ -21,10 +21,7 @@ const LIVE = Boolean(TOKEN);
  */
 const LIVE_METADATA = LIVE || process.env.MSGRAPH_LIVE === '1' || !process.env.CI;
 
-const EXAMPLE_QUERIES_DIR = join(
-  __dirname,
-  '../../../../examples/odata-microsoft/example-queries',
-);
+const EXAMPLE_QUERIES_DIR = join(__dirname, '../../../../examples/odata-microsoft/example-queries');
 
 const log = new Logger({ level: false as any, prefix: 'msgraph-test' });
 
@@ -43,10 +40,7 @@ async function loadLiveExecutableSchema(opts?: {
         (init?.headers as HeadersInit) ||
           (typeof input !== 'string' ? (input as Request).headers : undefined),
       );
-      opts.onRequest(
-        url,
-        headers.get('authorization') || headers.get('Authorization') || '',
-      );
+      opts.onRequest(url, headers.get('authorization') || headers.get('Authorization') || '');
     }
     return defaultFetch(input as any, init as any);
   };
@@ -105,73 +99,67 @@ describe('Microsoft Graph + Connectors', () => {
   );
 
   describe('live example queries (v0 examples/odata-microsoft)', () => {
-    (LIVE ? it : it.skip)(
-      'me smoke: id/displayName + Hive $select',
-      async () => {
-        let requestedUrl = '';
-        let requestedAuth = '';
-        const schema = await loadLiveExecutableSchema({
-          onRequest: (url, auth) => {
-            requestedUrl = url;
-            requestedAuth = auth;
-          },
-        });
+    (LIVE ? it : it.skip)('me smoke: id/displayName + Hive $select', async () => {
+      let requestedUrl = '';
+      let requestedAuth = '';
+      const schema = await loadLiveExecutableSchema({
+        onRequest: (url, auth) => {
+          requestedUrl = url;
+          requestedAuth = auth;
+        },
+      });
 
-        const result = await execute({
-          schema,
-          document: parse(/* GraphQL */ `
-            {
-              me {
-                id
-                displayName
-              }
+      const result = await execute({
+        schema,
+        document: parse(/* GraphQL */ `
+          {
+            me {
+              id
+              displayName
             }
-          `),
-        });
+          }
+        `),
+      });
 
-        expect(result.errors).toBeUndefined();
-        expect(result.data?.me).toEqual(
+      expect(result.errors).toBeUndefined();
+      expect(result.data?.me).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          displayName: expect.any(String),
+        }),
+      );
+      expect(requestedAuth.toLowerCase()).toContain('bearer ');
+      expect(requestedAuth).not.toContain('{env.');
+      expect(decodeURIComponent(requestedUrl)).toMatch(/\$select=/);
+      expect(decodeURIComponent(requestedUrl)).toMatch(/id/);
+      expect(decodeURIComponent(requestedUrl)).toMatch(/displayName/);
+    });
+
+    (LIVE ? it : it.skip)('fetchRecentEmails.graphql — same shape as Mesh v0 example', async () => {
+      const schema = await loadLiveExecutableSchema();
+      const result = await execute({
+        schema,
+        document: parse(loadExampleQuery('fetchRecentEmails.graphql')),
+      });
+
+      expect(result.errors).toBeUndefined();
+      const me = result.data?.me as Record<string, unknown> | undefined;
+      expect(me).toEqual(
+        expect.objectContaining({
+          displayName: expect.any(String),
+        }),
+      );
+      // officeLocation may be null; messages may be empty but must be a list
+      expect(Array.isArray(me?.messages)).toBe(true);
+      for (const msg of (me?.messages as any[]) || []) {
+        expect(msg).toEqual(
           expect.objectContaining({
-            id: expect.any(String),
-            displayName: expect.any(String),
+            subject: expect.anything(),
+            isRead: expect.any(Boolean),
           }),
         );
-        expect(requestedAuth.toLowerCase()).toContain('bearer ');
-        expect(requestedAuth).not.toContain('{env.');
-        expect(decodeURIComponent(requestedUrl)).toMatch(/\$select=/);
-        expect(decodeURIComponent(requestedUrl)).toMatch(/id/);
-        expect(decodeURIComponent(requestedUrl)).toMatch(/displayName/);
-      },
-    );
-
-    (LIVE ? it : it.skip)(
-      'fetchRecentEmails.graphql — same shape as Mesh v0 example',
-      async () => {
-        const schema = await loadLiveExecutableSchema();
-        const result = await execute({
-          schema,
-          document: parse(loadExampleQuery('fetchRecentEmails.graphql')),
-        });
-
-        expect(result.errors).toBeUndefined();
-        const me = result.data?.me as Record<string, unknown> | undefined;
-        expect(me).toEqual(
-          expect.objectContaining({
-            displayName: expect.any(String),
-          }),
-        );
-        // officeLocation may be null; messages may be empty but must be a list
-        expect(Array.isArray(me?.messages)).toBe(true);
-        for (const msg of (me?.messages as any[]) || []) {
-          expect(msg).toEqual(
-            expect.objectContaining({
-              subject: expect.anything(),
-              isRead: expect.any(Boolean),
-            }),
-          );
-        }
-      },
-    );
+      }
+    });
 
     (LIVE ? it : it.skip)(
       'fetchGroupsAndMembers.graphql — same shape as Mesh v0 example',
@@ -214,9 +202,7 @@ describe('Microsoft Graph + Connectors', () => {
               remaining: expect.anything(),
             }),
           );
-          expect(drive?.root?.children == null || Array.isArray(drive.root.children)).toBe(
-            true,
-          );
+          expect(drive?.root?.children == null || Array.isArray(drive.root.children)).toBe(true);
         }
       },
     );

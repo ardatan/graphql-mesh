@@ -7,12 +7,14 @@ export function rebuildOpenInputObjects(input: any): void {
   if (input == null || typeof input !== 'object') {
     return;
   }
+  // OData open-type overflow is a plain object under `rest`. A scalar/string
+  // `rest` (valid on non-OData REST inputs) must be left alone.
   if ('rest' in input) {
     const rest = input.rest;
     if (rest != null && typeof rest === 'object' && !Array.isArray(rest)) {
       Object.assign(input, rest);
+      delete input.rest;
     }
-    delete input.rest;
   }
   for (const fieldName in input) {
     rebuildOpenInputObjects(input[fieldName]);
