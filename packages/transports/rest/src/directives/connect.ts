@@ -1506,29 +1506,30 @@ export function addConnectFieldResolver(
   const timeout = opts.timeout;
   const expandNavProps = Boolean(opts.odata?.expandNavProps);
   const odataBatchFetch = opts.odata?.batchFetch;
+  // Prefer-embedded gate is schema-static (expandNavProps + `@source` Accept
+  // `odata.metadata=…`). Probe once here so every resolver call only checks root.
+  const preferEmbeddedNav = (() => {
+    if (!expandNavProps || !source?.http?.headers) {
+      return false;
+    }
+    const probe: Record<string, string> = {};
+    applyHeaders(probe, source.http.headers, {
+      args: {},
+      thisValue: {},
+      env: process.env,
+      context: {},
+    });
+    return isODataMetadataAccept(probe);
+  })();
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
-    // Prefer parent-expanded OData nav (legacy expandNavProps): when `$expand` already
-    // put this field on `root`, skip the field-level `@connect` HTTP round-trip.
-    // Gated on Accept `odata.metadata` so OpenAPI/REST connectors are unaffected.
-    // Apollo Router may also skip via planner when the parent selection maps the nav;
-    // Hive always invokes the field resolver, so this short-circuit is required here.
+    // When `$expand` already put this field on `root`, skip the field-level HTTP trip.
+    // Apollo may skip via planner; Hive always invokes the field resolver.
     if (
-      expandNavProps &&
+      preferEmbeddedNav &&
       root != null &&
       typeof root === 'object' &&
       info?.fieldName &&
-      source?.http?.headers &&
-      (() => {
-        const probe: Record<string, string> = {};
-        applyHeaders(probe, source.http?.headers, {
-          args: {},
-          thisValue: root,
-          env: process.env,
-          context: context || {},
-        });
-        return isODataMetadataAccept(probe);
-      })() &&
       Object.prototype.hasOwnProperty.call(root, info.fieldName) &&
       (root as Record<string, unknown>)[info.fieldName] != null
     ) {
