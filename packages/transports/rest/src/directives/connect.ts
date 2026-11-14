@@ -1417,8 +1417,8 @@ function buildBody(
     );
   }
   if (trimmed === '$args') {
-    // Only clone+flatten when open-type `rest` is present — avoid structuredClone on
-    // GraphQL arg proxies used by bound actions.
+    // Only clone+flatten when open-type `rest` is present — leave bound-action
+    // arg objects alone (no clone); open-type bodies are plain JSON values.
     const args = vars.args;
     const needsFlatten =
       args != null &&
@@ -1426,7 +1426,7 @@ function buildBody(
       ('rest' in args ||
         (args.input != null && typeof args.input === 'object' && 'rest' in args.input));
     if (needsFlatten) {
-      const clone = JSON.parse(JSON.stringify(args));
+      const clone = structuredClone(args);
       rebuildOpenInputObjects(clone);
       return JSON.stringify(clone);
     }
