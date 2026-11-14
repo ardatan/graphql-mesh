@@ -22,8 +22,8 @@ import {
 import {
   CONNECT_LINK_URL,
   ConnectDirective,
-  ConnectorErrorsInput,
   ConnectHTTPInput,
+  ConnectorErrorsInput,
   HTTPHeaderMappingInput,
   LinkDirective,
   SourceDirective,

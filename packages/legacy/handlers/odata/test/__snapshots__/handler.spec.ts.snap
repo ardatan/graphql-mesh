@@ -6,9 +6,9 @@ exports[`odata should create a GraphQL schema from a simple OData endpoint 1`] =
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -421,8 +421,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
+  body: String
+  queryParams: String
 }
 
 input HTTPHeaderMapping {
@@ -431,17 +431,15 @@ input HTTPHeaderMapping {
   from: String
 }
 
-scalar JSONSelection
-
 input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
+  message: String
+  extensions: String
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
+  queryParams: String
 }
 
 scalar _Any
@@ -455,9 +453,9 @@ exports[`odata should create correct GraphQL schema for actions bound to entity 
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -542,8 +540,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
+  body: String
+  queryParams: String
 }
 
 input HTTPHeaderMapping {
@@ -552,17 +550,15 @@ input HTTPHeaderMapping {
   from: String
 }
 
-scalar JSONSelection
-
 input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
+  message: String
+  extensions: String
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
+  queryParams: String
 }
 
 scalar _Any
@@ -576,9 +572,9 @@ exports[`odata should create correct GraphQL schema for functions with entity se
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -692,8 +688,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
+  body: String
+  queryParams: String
 }
 
 input HTTPHeaderMapping {
@@ -702,17 +698,15 @@ input HTTPHeaderMapping {
   from: String
 }
 
-scalar JSONSelection
-
 input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
+  message: String
+  extensions: String
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
+  queryParams: String
 }
 
 scalar _Any

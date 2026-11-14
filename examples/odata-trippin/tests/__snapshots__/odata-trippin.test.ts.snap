@@ -46,7 +46,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "isSuccess",
             "type": {
               "kind": "SCALAR",
-              "name": "JSONSelection",
+              "name": "String",
               "ofType": null,
             },
           },
@@ -60,7 +60,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "JSONSelection",
+                "name": "String",
                 "ofType": null,
               },
             },
@@ -242,7 +242,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "isSuccess",
             "type": {
               "kind": "SCALAR",
-              "name": "JSONSelection",
+              "name": "String",
               "ofType": null,
             },
           },
@@ -890,7 +890,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "body",
             "type": {
               "kind": "SCALAR",
-              "name": "JSONSelection",
+              "name": "String",
               "ofType": null,
             },
           },
@@ -920,7 +920,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "queryParams",
             "type": {
               "kind": "SCALAR",
-              "name": "JSONSelection",
+              "name": "String",
               "ofType": null,
             },
           },
@@ -943,7 +943,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "extensions",
             "type": {
               "kind": "SCALAR",
-              "name": "JSONSelection",
+              "name": "String",
               "ofType": null,
             },
           },
@@ -954,7 +954,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "message",
             "type": {
               "kind": "SCALAR",
-              "name": "JSONSelection",
+              "name": "String",
               "ofType": null,
             },
           },
@@ -1963,17 +1963,6 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "name": "JSON",
         "possibleTypes": null,
         "specifiedByURL": "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf",
-      },
-      {
-        "enumValues": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "isOneOf": null,
-        "kind": "SCALAR",
-        "name": "JSONSelection",
-        "possibleTypes": null,
-        "specifiedByURL": null,
       },
       {
         "enumValues": null,
@@ -4463,7 +4452,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "queryParams",
             "type": {
               "kind": "SCALAR",
-              "name": "JSONSelection",
+              "name": "String",
               "ofType": null,
             },
           },

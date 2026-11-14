@@ -2073,8 +2073,6 @@ input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
   queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
 }"
 `;
 

@@ -5,9 +5,9 @@ exports[`Discriminator Mapping should generate correct schema: discriminator-map
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -35,8 +35,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
+  body: String
+  queryParams: String
 }
 
 input HTTPHeaderMapping {
@@ -45,17 +45,15 @@ input HTTPHeaderMapping {
   from: String
 }
 
-scalar JSONSelection
-
 input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
+  message: String
+  extensions: String
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
+  queryParams: String
 }"
 `;
 
@@ -65,9 +63,9 @@ exports[`Inline Discriminator Mapping (request body) should generate correct sch
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -110,8 +108,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
+  body: String
+  queryParams: String
 }
 
 input HTTPHeaderMapping {
@@ -120,17 +118,15 @@ input HTTPHeaderMapping {
   from: String
 }
 
-scalar JSONSelection
-
 input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
+  message: String
+  extensions: String
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
+  queryParams: String
 }"
 `;
 
@@ -139,9 +135,9 @@ exports[`Inline Discriminator Mapping should generate correct schema: discrimina
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -178,8 +174,8 @@ input ConnectHTTP {
   PATCH: String
   DELETE: String
   headers: [HTTPHeaderMapping!]
-  body: JSONSelection
-  queryParams: JSONSelection
+  body: String
+  queryParams: String
 }
 
 input HTTPHeaderMapping {
@@ -188,16 +184,14 @@ input HTTPHeaderMapping {
   from: String
 }
 
-scalar JSONSelection
-
 input ConnectorErrors {
-  message: JSONSelection
-  extensions: JSONSelection
+  message: String
+  extensions: String
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: JSONSelection
+  queryParams: String
 }"
 `;

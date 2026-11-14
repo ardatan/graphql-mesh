@@ -3347,9 +3347,7 @@ type RevisionVersion {
 
 input SourceHTTP {
   baseURL: String!
-  errors: ConnectorErrors
   headers: [HTTPHeaderMapping!]
-  isSuccess: String
   queryParams: String
 }
 

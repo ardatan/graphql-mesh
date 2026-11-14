@@ -96,7 +96,5 @@ input SourceHttp {
   baseUrl: String!
   headers: [HttpHeaderMapping!]
   queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
 }"
 `;

@@ -54,4 +54,3 @@ describe('Reproduction #9676', () => {
     expect(printSchema(schema)).not.toMatch(/\bbody:\s*JSON[!,\s\n]/);
   });
 });
-

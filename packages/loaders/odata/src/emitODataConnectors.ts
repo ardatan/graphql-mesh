@@ -272,8 +272,7 @@ export function emitODataConnectors(
     const otc = tc as ObjectTypeComposer | InterfaceTypeComposer;
     const earlyExt = (otc.getExtensions() as any) || {};
     const entityInfo = (earlyExt.directives?.entityInfo || earlyExt.odataEntityInfo) as
-      | { identifierFieldName?: string }
-      | undefined;
+      { identifierFieldName?: string } | undefined;
     if (!entityInfo?.identifierFieldName) continue;
     if (otc.hasField(ODATA_ID_FIELD)) continue;
     otc.addFields({

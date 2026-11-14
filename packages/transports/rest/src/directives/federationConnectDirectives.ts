@@ -5,7 +5,6 @@ import {
   GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLScalarType,
   GraphQLString,
 } from 'graphql';
 
@@ -13,15 +12,14 @@ import {
  * Shared Federation Connectors `@connect` / `@source` / `@link` directive defs.
  * Used by `@omnigraph/json-schema` (OpenAPI/REST) and `@omnigraph/odata` so subgraph
  * emit does not duplicate Apollo Connectors v0.4 shapes.
+ *
+ * JSONSelection args are typed as `String` in the local subgraph def so composition
+ * does not emit a synthetic `scalar JSONSelection @join__type(...)` — Apollo’s
+ * `@link(url: connect/v0.4)` owns the real JSONSelection scalar for Router.
  */
 
-/** Opaque Connectors JSONSelection (Apollo connect spec). */
-export const JSONSelectionScalar = new GraphQLScalarType({
-  name: 'JSONSelection',
-  serialize: String,
-  parseValue: String,
-  parseLiteral: ast => ('value' in ast ? String((ast as any).value) : null),
-});
+/** Opaque Connectors JSONSelection — local def uses String (see module doc). */
+export const JSONSelectionScalar = GraphQLString;
 
 export const HTTPHeaderMappingInput = new GraphQLInputObjectType({
   name: 'HTTPHeaderMapping',

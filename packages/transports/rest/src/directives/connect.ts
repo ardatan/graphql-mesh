@@ -708,9 +708,7 @@ export function ensureODataIdField(selected: any, raw: any, requestOriginPath: s
       : Array.isArray((raw as { value?: unknown })?.value)
         ? (raw as { value: unknown[] }).value
         : null;
-    return selected.map((item, i) =>
-      ensureODataIdField(item, rawItems?.[i], requestOriginPath),
-    );
+    return selected.map((item, i) => ensureODataIdField(item, rawItems?.[i], requestOriginPath));
   }
   const record = selected as Record<string, unknown>;
   if (record._odataId == null || record._odataId === '') {

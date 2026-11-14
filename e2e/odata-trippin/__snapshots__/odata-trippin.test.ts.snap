@@ -169,8 +169,6 @@ Matches moment.js, Luxon and DateFns implementations
 """
 scalar ISO8601Duration @join__type(graph: TRIPPIN)
 
-scalar JSONSelection @join__type(graph: TRIPPIN)
-
 type Person @join__type(graph: TRIPPIN, key: "UserName") @join__directive(graphs: [TRIPPIN], name: "connect", args: {source: "Trippin", http: {GET: "/People/{$this.UserName}/"}, selection: "UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features _odataId: $->get(\\"@odata.id\\")", errors: {message: "error.message"}}) {
   UserName: String!
   FirstName: String!
