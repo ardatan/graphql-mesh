@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/openapi",
-  "version": "0.112.7",
+  "version": "0.113.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,11 +37,11 @@
   "dependencies": {
     "@graphql-hive/logger": "^1.1.1",
     "@graphql-hive/pubsub": "^2.2.1",
-    "@graphql-mesh/store": "^0.107.3",
-    "@graphql-mesh/string-interpolation": "^0.5.18",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
-    "@omnigraph/openapi": "^0.112.7",
+    "@graphql-mesh/store": "^0.108.0",
+    "@graphql-mesh/string-interpolation": "^0.6.0",
+    "@graphql-mesh/types": "^0.108.0",
+    "@graphql-mesh/utils": "^0.108.0",
+    "@omnigraph/openapi": "^0.113.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

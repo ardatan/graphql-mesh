@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/apollo-link",
-  "version": "0.109.3",
+  "version": "0.110.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/runtime": "^0.109.3",
+    "@graphql-mesh/runtime": "^0.110.0",
     "@graphql-tools/utils": "^13.2.2",
     "@whatwg-node/promise-helpers": "^2.0.1",
     "tslib": "^2.4.0"
