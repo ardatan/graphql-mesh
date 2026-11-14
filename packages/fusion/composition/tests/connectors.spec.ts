@@ -8,7 +8,7 @@ import {
   isFederationConnectorsSubgraph,
   liftExtraSchemaDefinitionDirectives,
   parseEntityStubTypesFromSelection,
-  toApolloRouterConnectorsSupergraph,
+  finalizeConnectorsSupergraph,
 } from '../src/index.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
 
@@ -195,7 +195,7 @@ describe('Federation Connectors composition', () => {
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toContain('extraSchemaDefinitionDirective');
-    // Canonical Mesh connectors SG is Apollo Router form — same SDL for Hive + Router.
+    // Canonical Mesh connectors SG — same SDL for Hive Gateway + Apollo Router.
     expect(sdl).toMatch(/@join__directive\([^)]*name: "source"/);
     expect(sdl).toMatch(/@join__directive\([^)]*name: "connect"/);
     expect(sdl).toContain('specs.apollo.dev/join/v0.5');
@@ -322,12 +322,12 @@ describe('Federation Connectors composition', () => {
     expect(sdl).not.toMatch(/@connect\(/);
   });
 
-  it('toApolloRouterConnectorsSupergraph is idempotent on composed connectors SG', () => {
+  it('finalizeConnectorsSupergraph is idempotent on composed connectors SG', () => {
     const result = composeSubgraphs([{ name: 'Wiki', schema: connectorsSchema }]);
     expect(result.errors).toBeUndefined();
     const meshSdl = result.supergraphSdl!;
     expect(meshSdl).toMatch(/@join__directive\([^)]*name: "connect"/);
-    const again = toApolloRouterConnectorsSupergraph(meshSdl);
+    const again = finalizeConnectorsSupergraph(meshSdl);
     // Already finalized — early-return when no raw @connect remains
     expect(again).toBe(meshSdl);
   });
