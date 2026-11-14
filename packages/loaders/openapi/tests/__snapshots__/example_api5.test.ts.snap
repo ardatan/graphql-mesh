@@ -5,9 +5,9 @@ exports[`OpenAPI Loader: Testing the naming convention should generate the schem
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -81,16 +81,21 @@ enum query_getObjectEnum_data {
 }
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -98,14 +103,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;

@@ -332,6 +332,50 @@ describe('Federation Connectors composition', () => {
     expect(again).toBe(meshSdl);
   });
 
+  it('strips linked connect scalars so they do not leak as join__type', () => {
+    const withLinkedScalars = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "rest", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: JSONSelection!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION
+
+      scalar JSONSelection
+      scalar URLPathTemplate
+
+      input ConnectHTTP {
+        GET: URLPathTemplate
+        body: JSONSelection
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      type Query {
+        user(id: ID!): User
+          @connect(source: "rest", http: { GET: "/users/{$args.id}" }, selection: "id")
+      }
+      type User {
+        id: ID!
+      }
+    `);
+    const result = composeSubgraphs([{ name: 'REST', schema: withLinkedScalars }]);
+    expect(result.errors).toBeUndefined();
+    const sdl = result.supergraphSdl!;
+    expect(sdl).not.toMatch(/\bscalar JSONSelection\b/);
+    expect(sdl).not.toMatch(/\bscalar URLPathTemplate\b/);
+    expect(sdl).toMatch(/@join__directive\([\s\S]*name: "connect"/);
+  });
+
   it('emits type-level @connect with $this when keyArg !== keyField (Apollo entity pattern)', () => {
     // OpenAPI-style: getUserById(userId) → User.id — entity:true would be invalid.
     const schema = buildSchema(/* GraphQL */ `

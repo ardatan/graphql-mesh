@@ -12,9 +12,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -2869,16 +2869,21 @@ type post_ipfs_pin_remove_by_IPFS_path_200_response {
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -2886,15 +2891,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -2912,9 +2920,9 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -46222,16 +46230,21 @@ input spectrum_applications_update_spectrum_application_configuration_using_a_na
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -46239,15 +46252,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -46261,9 +46277,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -46909,16 +46925,21 @@ scalar Void
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -46926,15 +46947,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -46945,9 +46969,9 @@ exports[`Schemas Default Value as Integer 1`] = `
 
 directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -46981,16 +47005,21 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 scalar BigInt
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -46998,15 +47027,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -47016,9 +47048,9 @@ exports[`Schemas DefaultValues 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -47067,16 +47099,21 @@ input StackItem_Input {
 }
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -47084,15 +47121,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -47101,9 +47141,9 @@ exports[`Schemas Dictionary 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -47123,16 +47163,21 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -47140,15 +47185,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -47157,9 +47205,9 @@ exports[`Schemas Different fields with the same type 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -47205,16 +47253,21 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -47222,15 +47275,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -47246,9 +47302,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -55179,16 +55235,21 @@ input user_update_Input {
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -55196,15 +55257,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -55214,9 +55278,9 @@ exports[`Schemas Headers 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -55236,16 +55300,21 @@ type User {
 }
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -55253,15 +55322,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -55271,9 +55343,9 @@ exports[`Schemas IBMLanguageTranslator 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -55509,16 +55581,21 @@ input TranslateRequest_Input {
 union identify_response = Languages | ErrorResponse
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -55526,15 +55603,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -55548,9 +55628,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -55616,16 +55696,21 @@ input TicketMessagePatch_Input {
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -55633,15 +55718,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -55651,9 +55739,9 @@ exports[`Schemas Instagram 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -56273,16 +56361,21 @@ enum mutationInput_post_users_by_user_id_relationship_action {
 }
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -56290,15 +56383,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -56309,9 +56405,9 @@ exports[`Schemas Int64 with Defaults 1`] = `
 
 directive @length(subgraph: String, min: Int, max: Int) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -56345,16 +56441,21 @@ The \`BigInt\` scalar type represents non-fractional signed whole numeric values
 scalar BigInt
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -56362,15 +56463,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -56386,9 +56490,9 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -76253,16 +76357,21 @@ input WorkflowRulesSearch_Input {
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -76270,15 +76379,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -76288,9 +76400,9 @@ exports[`Schemas Kubernetes 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -121698,16 +121810,21 @@ input io_k8s_api_storage_v1beta1_CSIStorageCapacity_Input {
 }
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -121715,15 +121832,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -121739,9 +121859,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -123582,16 +123702,21 @@ input swapOperation_Input {
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -123599,15 +123724,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -123616,9 +123744,9 @@ exports[`Schemas Relative Dereference 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -123632,16 +123760,21 @@ type example_200_response {
 }
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -123649,15 +123782,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -123673,9 +123809,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -130526,16 +130662,21 @@ enum mutation_users_setPresence_oneOf_1_error {
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -130543,15 +130684,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -130560,9 +130704,9 @@ exports[`Schemas SmallRye UUID 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -130581,16 +130725,21 @@ A field whose value is a generic Universally Unique Identifier: https://en.wikip
 scalar UUID
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -130598,15 +130747,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -130615,9 +130767,9 @@ exports[`Schemas StackExchange 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -130952,16 +131104,21 @@ enum queryInput_listAnswers_order {
 }
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -130969,15 +131126,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -130995,9 +131155,9 @@ directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITI
 
 directive @regexp(subgraph: String, pattern: String) on SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -207031,16 +207191,21 @@ scalar mutationInput_PostWebhookEndpointsWebhookEndpoint_input_expand_items @len
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -207048,15 +207213,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -207067,11 +207235,11 @@ exports[`Schemas SubscriptionType 1`] = `
   subscription: Subscription
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFINITION
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -207117,16 +207285,21 @@ A field whose value is a generic Universally Unique Identifier: https://en.wikip
 scalar UUID
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -207134,15 +207307,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -207157,9 +207333,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -208145,16 +208321,21 @@ type SubjectListResponse {
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -208162,15 +208343,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -208186,9 +208370,9 @@ directive @typescript(subgraph: String, type: String) on SCALAR | ENUM
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -208609,16 +208793,21 @@ scalar mutation_delete_resource_at_the_root_folder_v1_oneOf_1_errors_items_messa
 scalar ObjMap
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -208626,15 +208815,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -208643,9 +208835,9 @@ exports[`Schemas WeatherUnderground 1`] = `
   query: Query
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -208933,16 +209125,21 @@ type query_weatherForecast_by_key_forecast_q_by_state_by_place_json_forecast_sim
 }
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -208950,15 +209147,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -208968,9 +209168,9 @@ exports[`Schemas YouTrack 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -212306,16 +212506,21 @@ input SearchSuggestions_Input {
 }
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -212323,15 +212528,18 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;
 
@@ -212341,9 +212549,9 @@ exports[`Schemas algolia-refs-subset 1`] = `
   mutation: Mutation
 }
 
-directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHTTP, selection: JSONSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: JSONSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -212391,16 +212599,21 @@ type Mutation {
 }
 
 input ConnectHTTP {
-  GET: String
-  HEAD: String
-  POST: String
-  PUT: String
-  PATCH: String
-  DELETE: String
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  PATCH: URLPathTemplate
+  DELETE: URLPathTemplate
   headers: [HTTPHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JSONSelection
+  queryParams: JSONSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 input HTTPHeaderMapping {
   name: String!
@@ -212408,14 +212621,17 @@ input HTTPHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JSONSelection
+  extensions: JSONSelection
 }
 
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }"
 `;

@@ -5,7 +5,10 @@ import {
   GraphQLInputObjectType,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLScalarType,
   GraphQLString,
+  Kind,
+  type ValueNode,
 } from 'graphql';
 
 /**
@@ -13,13 +16,32 @@ import {
  * Used by `@omnigraph/json-schema` (OpenAPI/REST) and `@omnigraph/odata` so subgraph
  * emit does not duplicate Apollo Connectors v0.4 shapes.
  *
- * JSONSelection args are typed as `String` in the local subgraph def so composition
- * does not emit a synthetic `scalar JSONSelection @join__type(...)` — Apollo’s
- * `@link(url: connect/v0.4)` owns the real JSONSelection scalar for Router.
+ * Arg types match https://specs.apollo.dev/connect/v0.4 (`JSONSelection`,
+ * `URLPathTemplate`). Composition strips these linked scalars / inputs from the
+ * finalized supergraph — Apollo’s `@link(url: connect/v0.4)` owns them for Router.
  */
 
-/** Opaque Connectors JSONSelection — local def uses String (see module doc). */
-export const JSONSelectionScalar = GraphQLString;
+function parseStringLiteral(ast: ValueNode): string | null {
+  return ast.kind === Kind.STRING || ast.kind === Kind.ENUM ? String((ast as any).value) : null;
+}
+
+/** Connectors mapping language (opaque string). */
+export const JSONSelectionScalar = new GraphQLScalarType({
+  name: 'JSONSelection',
+  description: 'A custom syntax for mapping JSON data to GraphQL schema',
+  serialize: String,
+  parseValue: String,
+  parseLiteral: parseStringLiteral,
+});
+
+/** HTTP path / URL template with optional `{$args…}` / `{$this…}` interpolations. */
+export const URLPathTemplateScalar = new GraphQLScalarType({
+  name: 'URLPathTemplate',
+  description: 'A URL path with optional parameters, mapping to GraphQL fields or arguments',
+  serialize: String,
+  parseValue: String,
+  parseLiteral: parseStringLiteral,
+});
 
 export const HTTPHeaderMappingInput = new GraphQLInputObjectType({
   name: 'HTTPHeaderMapping',
@@ -33,12 +55,12 @@ export const HTTPHeaderMappingInput = new GraphQLInputObjectType({
 export const ConnectHTTPInput = new GraphQLInputObjectType({
   name: 'ConnectHTTP',
   fields: {
-    GET: { type: GraphQLString },
-    HEAD: { type: GraphQLString },
-    POST: { type: GraphQLString },
-    PUT: { type: GraphQLString },
-    PATCH: { type: GraphQLString },
-    DELETE: { type: GraphQLString },
+    GET: { type: URLPathTemplateScalar },
+    HEAD: { type: URLPathTemplateScalar },
+    POST: { type: URLPathTemplateScalar },
+    PUT: { type: URLPathTemplateScalar },
+    PATCH: { type: URLPathTemplateScalar },
+    DELETE: { type: URLPathTemplateScalar },
     headers: { type: new GraphQLList(new GraphQLNonNull(HTTPHeaderMappingInput)) },
     body: { type: JSONSelectionScalar },
     queryParams: { type: JSONSelectionScalar },

@@ -36,4 +36,5 @@ export {
   LinkDirective,
   SourceDirective,
   SourceHTTPInput,
+  URLPathTemplateScalar,
 } from './directives/federationConnectDirectives.js';

@@ -13,4 +13,6 @@ OData subgraphs now emit Federation Connectors (`@source` / `@connect` / `@key`)
 
 `@abstractType` → `resolveType` (from `@odata.type`) is wired inside `transport-rest` `processDirectives`, so Hive rehydration no longer needs a separate OData residual pass (`processODataResidualDirectives` removed).
 
+Shared Connectors defs use spec scalars `JSONSelection` / `URLPathTemplate`; composition strips them from the finalized supergraph so they do not leak as `scalar … @join__type` (Router owns them via `@link(connect/v0.4)`).
+
 Also hardens MS Graph `$metadata` load / compose: safe enum member names (`null` → `_null`), resilient base-type field merges, no shared interface/object directive bags (so `@connect` / `@shareable` stay off interfaces), empty Input placeholders, and `e2e/odata-msgraph` (fixture metadata + mock Graph, hive + apollo-router GetMe in CI; live `$metadata`/`me` remains in the unit suite with a token).
