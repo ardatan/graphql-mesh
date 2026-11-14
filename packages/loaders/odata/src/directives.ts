@@ -17,8 +17,10 @@ import { createAbstractTypeResolver } from './resolvers/abstractTypeResolver.js'
 export { TransportDirective };
 
 export type TransportDirectiveArgs = SharedTransportDirectiveArgs<{
-  batch: 'none' | 'json' | 'multipart';
-  expandNavProps: boolean;
+  odata?: {
+    batch?: 'none' | 'json' | 'multipart';
+    expandNavProps?: boolean;
+  };
 }> & { kind: 'rest' };
 
 export const EntityInfoDirective = new GraphQLDirective({

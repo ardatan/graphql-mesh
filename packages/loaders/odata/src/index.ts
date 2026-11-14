@@ -1054,15 +1054,17 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     endpoint,
     typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined,
   );
-  // Hive transport-rest honors both: `expandNavProps` (prefer-embedded) and
-  // `batch` (`json` | `multipart` → POST /$batch via DataLoader).
+  // Nest OData-only knobs under `options.odata` so they don't collide with REST
+  // `timeout` / `queryParams` on the shared transport-rest entry.
   const schemaExtensions: any = (schema.extensions ||= {});
   const directiveExtensions = (schemaExtensions.directives ||= {});
   if (directiveExtensions.transport && typeof directiveExtensions.transport === 'object') {
-    directiveExtensions.transport.options = {
-      batch,
-      expandNavProps,
-    };
+    const odataOpts: { batch?: typeof batch; expandNavProps?: boolean } = {};
+    if (batch != null) odataOpts.batch = batch;
+    if (expandNavProps != null) odataOpts.expandNavProps = expandNavProps;
+    if (Object.keys(odataOpts).length) {
+      directiveExtensions.transport.options = { odata: odataOpts };
+    }
   }
   eventEmitterSet.forEach(ee => ee.removeAllListeners());
   eventEmitterSet.clear();
