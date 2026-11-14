@@ -38,7 +38,7 @@
     "@graphql-mesh/merger-stitching": "^0.108.3",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/schema": "^11.0.8",
+    "@graphql-tools/schema": "^11.0.9",
     "@graphql-tools/utils": "^13.2.2",
     "tslib": "^2.4.0"
   },

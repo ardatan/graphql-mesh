@@ -40,8 +40,8 @@
     "@graphql-mesh/transport-neo4j": "^0.13.3",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/delegate": "^12.3.2",
-    "@graphql-tools/schema": "^11.0.8",
+    "@graphql-tools/delegate": "^12.3.3",
+    "@graphql-tools/schema": "^11.0.9",
     "@neo4j/introspector": "^5.0.0",
     "neo4j-driver": "^6.3.0",
     "tslib": "^2.4.0"

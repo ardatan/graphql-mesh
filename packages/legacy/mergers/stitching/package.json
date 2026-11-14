@@ -39,9 +39,9 @@
     "@graphql-mesh/store": "^0.107.3",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/delegate": "^12.3.2",
-    "@graphql-tools/schema": "^11.0.8",
-    "@graphql-tools/stitch": "^10.4.2",
+    "@graphql-tools/delegate": "^12.3.3",
+    "@graphql-tools/schema": "^11.0.9",
+    "@graphql-tools/stitch": "^10.4.3",
     "@graphql-tools/utils": "^13.2.2",
     "tslib": "^2.4.0"
   },
