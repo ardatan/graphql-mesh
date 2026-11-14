@@ -7,7 +7,7 @@
 '@omnigraph/json-schema': patch
 ---
 
-**Breaking (0.x) vs master:** OData subgraphs emit Federation Connectors (`@source` / `@connect` / `@key`) and run on `@graphql-mesh/transport-rest` (`kind: "rest"`). Package `@graphql-mesh/transport-odata` is removed, as are Mesh OData HTTP resolvers and public Mesh OData directives (`@entitySet*`, `@pluralNav`, `@boundFunction`, `@entityInfo`, `@abstractType`, …).
+**Breaking (0.x):** OData subgraphs emit Federation Connectors (`@source` / `@connect` / `@key`) and run on `@graphql-mesh/transport-rest` (`kind: "rest"`). Package `@graphql-mesh/transport-odata` is removed, as are Mesh OData HTTP resolvers and public Mesh OData directives (`@entitySet*`, `@pluralNav`, `@boundFunction`, `@entityInfo`, `@abstractType`, …).
 
 - `@source` sets `Accept: application/json;odata.metadata=minimal`. Hive appends `$select` / `$expand` from the GraphQL selection; Apollo Router runs the same SDL as plain Connectors.
 - Entity-set nav: `/EntitySet/{$this.key}/Nav`; nested-only: `{$this._odataId}/Nav` (`_odataId` from `@odata.id`, `@inaccessible`).
