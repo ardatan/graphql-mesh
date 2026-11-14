@@ -17,7 +17,7 @@ import { DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch } from '@whatwg-node/fetch';
 import { fakeRejectPromise } from '@whatwg-node/promise-helpers';
 import { getLocalHostName, localHostnames } from '../../packages/testing/getLocalHostName';
-import { ensureApolloRouterBinary, prepareSupergraphForApolloRouter } from './apolloConnectors.js';
+import { ensureApolloRouterBinary } from './apolloConnectors.js';
 import { leftoverStack } from './leftoverStack';
 import { createOpt, createPortOpt, createServicePortOpt } from './opts';
 import { trimError } from './trimError';
@@ -78,9 +78,8 @@ export interface ServeOptions extends ProcOptions {
    * - `hive` (default): `@graphql-hive/gateway`
    * - `apollo-router`: Apollo Router
    *
-   * Both consume the Mesh-composed Connectors supergraph (`@join__directive`).
-   * Apollo may apply `prepareSupergraphForApolloRouter` as a no-op safety net for
-   * legacy OData `I*` artifacts; current OData emit is Router-native.
+   * Both consume the same Mesh-composed Connectors supergraph (`@join__directive`)
+   * with no Apollo-only rewrite.
    */
   runner?: ServeRunner;
 }
@@ -741,7 +740,7 @@ async function serveWithApolloRouter(opts: {
     // Inline SDL
     rawSdl = supergraph;
   }
-  await fs.writeFile(apolloSupergraph, prepareSupergraphForApolloRouter(rawSdl), 'utf8');
+  await fs.writeFile(apolloSupergraph, rawSdl, 'utf8');
 
   const routerBin = await ensureApolloRouterBinary();
   const configPath = path.join(workDir, 'router.yaml');
