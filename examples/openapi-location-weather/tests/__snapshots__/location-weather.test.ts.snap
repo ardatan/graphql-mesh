@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Location Weather should generate correct schema: location-weather-schema 1`] = `
-"directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, isSuccess: String, selection: String!, source: String) repeatable on FIELD_DEFINITION | OBJECT
+"directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, isSuccess: JSONSelection, selection: JSONSelection!, source: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @link(import: [String], url: String!) repeatable on SCHEMA
 
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
 
-directive @source(errors: ConnectorErrors, http: SourceHTTP!, isSuccess: String, name: String!) repeatable on SCHEMA
+directive @source(errors: ConnectorErrors, http: SourceHTTP!, isSuccess: JSONSelection, name: String!) repeatable on SCHEMA
 
 type AQCurrent {
   """Cloud cover as a percentage (%)"""
@@ -142,20 +142,20 @@ type CitiesError {
 }
 
 input ConnectHTTP {
-  DELETE: String
-  GET: String
-  HEAD: String
-  PATCH: String
-  POST: String
-  PUT: String
-  body: String
+  DELETE: URLPathTemplate
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  PATCH: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  body: JSONSelection
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }
 
 input ConnectorErrors {
-  extensions: String
-  message: String
+  extensions: JSONSelection
+  message: JSONSelection
 }
 
 """A list of countries"""
@@ -1652,6 +1652,9 @@ type HistorySubhourlyObj {
   """10m wind Speed (Default m/s)"""
   wind_spd: Float
 }
+
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
 
 """A language supported by the service"""
 type Language {
@@ -3348,7 +3351,7 @@ type RevisionVersion {
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }
 
 type SubscriptionUsage {
@@ -3416,6 +3419,11 @@ type Time_Zones_Response {
 A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.
 """
 scalar URL
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 """Represents empty values"""
 scalar Void

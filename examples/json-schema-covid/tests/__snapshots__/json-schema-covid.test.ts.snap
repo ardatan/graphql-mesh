@@ -4,13 +4,13 @@ exports[`JSON Schema Covid should generate correct schema: json-schema-covid-sch
 """""""
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | INTERFACE | OBJECT
 
-directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, isSuccess: String, selection: String!, source: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(entity: Boolean, errors: ConnectorErrors, http: ConnectHTTP, isSuccess: JSONSelection, selection: JSONSelection!, source: String) repeatable on FIELD_DEFINITION | OBJECT
 
 directive @link(import: [String], url: String!) repeatable on SCHEMA
 
 directive @resolveTo(additionalArgs: ResolveToSourceArgs, filterBy: String, keyField: String, keysArg: String, pubsubTopic: String, requiredSelectionSet: String, result: String, resultType: String, sourceArgs: ResolveToSourceArgs, sourceFieldName: String, sourceName: String, sourceSelectionSet: String, sourceTypeName: String, valueKeyField: String) on FIELD_DEFINITION
 
-directive @source(errors: ConnectorErrors, http: SourceHTTP!, isSuccess: String, name: String!) repeatable on SCHEMA
+directive @source(errors: ConnectorErrors, http: SourceHTTP!, isSuccess: JSONSelection, name: String!) repeatable on SCHEMA
 
 """Desc Api Population"""
 type ApiPopulation {
@@ -74,20 +74,20 @@ type Case {
 }
 
 input ConnectHTTP {
-  DELETE: String
-  GET: String
-  HEAD: String
-  PATCH: String
-  POST: String
-  PUT: String
-  body: String
+  DELETE: URLPathTemplate
+  GET: URLPathTemplate
+  HEAD: URLPathTemplate
+  PATCH: URLPathTemplate
+  POST: URLPathTemplate
+  PUT: URLPathTemplate
+  body: JSONSelection
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }
 
 input ConnectorErrors {
-  extensions: String
-  message: String
+  extensions: JSONSelection
+  message: JSONSelection
 }
 
 """"""
@@ -146,6 +146,9 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JSONSelection
+
 type Query {
   """"""
   case(countryRegion: String): Case
@@ -181,7 +184,7 @@ type Result {
 input SourceHTTP {
   baseURL: String!
   headers: [HTTPHeaderMapping!]
-  queryParams: String
+  queryParams: JSONSelection
 }
 
 type Stat {
@@ -190,6 +193,11 @@ type Stat {
   deathRatio: Float
   population: ApiPopulation
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar URLPathTemplate
 
 """The \`Upload\` scalar type represents a file upload."""
 scalar Upload

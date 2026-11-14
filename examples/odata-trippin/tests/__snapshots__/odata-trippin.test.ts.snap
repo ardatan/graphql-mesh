@@ -46,7 +46,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "isSuccess",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "JSONSelection",
               "ofType": null,
             },
           },
@@ -60,7 +60,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "JSONSelection",
                 "ofType": null,
               },
             },
@@ -242,7 +242,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "isSuccess",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "JSONSelection",
               "ofType": null,
             },
           },
@@ -824,7 +824,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "DELETE",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "URLPathTemplate",
               "ofType": null,
             },
           },
@@ -835,7 +835,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "GET",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "URLPathTemplate",
               "ofType": null,
             },
           },
@@ -846,7 +846,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "HEAD",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "URLPathTemplate",
               "ofType": null,
             },
           },
@@ -857,7 +857,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "PATCH",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "URLPathTemplate",
               "ofType": null,
             },
           },
@@ -868,7 +868,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "POST",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "URLPathTemplate",
               "ofType": null,
             },
           },
@@ -879,7 +879,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "PUT",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "URLPathTemplate",
               "ofType": null,
             },
           },
@@ -890,7 +890,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "body",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "JSONSelection",
               "ofType": null,
             },
           },
@@ -920,7 +920,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "queryParams",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "JSONSelection",
               "ofType": null,
             },
           },
@@ -943,7 +943,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "extensions",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "JSONSelection",
               "ofType": null,
             },
           },
@@ -954,7 +954,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "message",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "JSONSelection",
               "ofType": null,
             },
           },
@@ -1963,6 +1963,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "name": "JSON",
         "possibleTypes": null,
         "specifiedByURL": "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf",
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "isOneOf": null,
+        "kind": "SCALAR",
+        "name": "JSONSelection",
+        "possibleTypes": null,
+        "specifiedByURL": null,
       },
       {
         "enumValues": null,
@@ -4452,7 +4463,7 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
             "name": "queryParams",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "JSONSelection",
               "ofType": null,
             },
           },
@@ -4808,6 +4819,17 @@ exports[`OData TripPin should generate correct schema: odata-trippin-schema 1`] 
         "isOneOf": false,
         "kind": "INPUT_OBJECT",
         "name": "TripInput",
+        "possibleTypes": null,
+        "specifiedByURL": null,
+      },
+      {
+        "enumValues": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "isOneOf": null,
+        "kind": "SCALAR",
+        "name": "URLPathTemplate",
         "possibleTypes": null,
         "specifiedByURL": null,
       },
@@ -5776,7 +5798,35 @@ exports[`OData TripPin should give correct response for example queries: example
       "FirstName": "April",
       "Gender": "Female",
       "LastName": "Cline",
-      "Trips": [],
+      "Trips": [
+        {
+          "Description": "Trip in US",
+        },
+        {
+          "Description": "Trip from Shanghai to Beijing",
+        },
+        {
+          "Description": "Happy honeymoon trip",
+        },
+        {
+          "Description": "Business trip to OData",
+        },
+        {
+          "Description": "Travel trip in US",
+        },
+        {
+          "Description": "Study music in Europe",
+        },
+        {
+          "Description": "Conference talk about ODatan",
+        },
+        {
+          "Description": "Vocation at hometown",
+        },
+        {
+          "Description": "Business trip for tech training",
+        },
+      ],
       "UserName": "aprilcline",
     },
   },
