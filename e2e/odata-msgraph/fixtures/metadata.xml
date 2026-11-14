@@ -1,8 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Minimal microsoft.graph slice for Connectors e2e (me + users). -->
+<!--
+  Minimal microsoft.graph slice for Connectors e2e covering the Mesh v0
+  examples/odata-microsoft example-queries:
+  - fetchRecentEmails (me + messages)
+  - fetchGroupsAndMembers (groups + members)
+  - fetchFilesFromOneDrive (me + drives + root/children)
+
+  Note: members is Collection(user) (not abstract directoryObject) so the same
+  composed SDL runs on Hive and Apollo Router without abstract-type join issues.
+-->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
     <Schema Namespace="microsoft.graph" Alias="graph" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="emailAddress">
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="address" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="recipient">
+        <Property Name="emailAddress" Type="microsoft.graph.emailAddress" />
+      </ComplexType>
+      <ComplexType Name="quota">
+        <Property Name="used" Type="Edm.Int64" />
+        <Property Name="remaining" Type="Edm.Int64" />
+      </ComplexType>
+
       <EntityType Name="user" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
@@ -10,9 +31,57 @@
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="displayName" Type="Edm.String" />
         <Property Name="mail" Type="Edm.String" />
+        <Property Name="officeLocation" Type="Edm.String" />
+        <NavigationProperty Name="messages" Type="Collection(microsoft.graph.message)" />
+        <NavigationProperty Name="drives" Type="Collection(microsoft.graph.drive)" />
       </EntityType>
+
+      <EntityType Name="message">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="subject" Type="Edm.String" />
+        <Property Name="isRead" Type="Edm.Boolean" />
+        <Property Name="from" Type="microsoft.graph.recipient" />
+      </EntityType>
+
+      <EntityType Name="group">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="displayName" Type="Edm.String" />
+        <Property Name="description" Type="Edm.String" />
+        <NavigationProperty Name="members" Type="Collection(microsoft.graph.user)" />
+      </EntityType>
+
+      <EntityType Name="driveItem">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="size" Type="Edm.Int64" />
+        <Property Name="lastModifiedDateTime" Type="Edm.DateTimeOffset" />
+        <Property Name="webUrl" Type="Edm.String" />
+        <NavigationProperty Name="children" Type="Collection(microsoft.graph.driveItem)" />
+      </EntityType>
+
+      <EntityType Name="drive">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="quota" Type="microsoft.graph.quota" />
+        <NavigationProperty Name="root" Type="microsoft.graph.driveItem" ContainsTarget="true" />
+      </EntityType>
+
       <EntityContainer Name="GraphService">
         <EntitySet Name="users" EntityType="microsoft.graph.user" />
+        <EntitySet Name="groups" EntityType="microsoft.graph.group" />
+        <EntitySet Name="drives" EntityType="microsoft.graph.drive" />
+        <EntitySet Name="messages" EntityType="microsoft.graph.message" />
         <Singleton Name="me" Type="microsoft.graph.user" />
       </EntityContainer>
     </Schema>

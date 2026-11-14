@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Microsoft Graph Connectors composes Connectors from fixture $metadata 1`] = `
+exports[`Microsoft Graph Connectors composes Connectors from fixture $metadata (v0 example surface) 1`] = `
 "schema @link(url: "https://specs.apollo.dev/link/v1.0") @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION) @link(url: "https://specs.apollo.dev/inaccessible/v0.2", for: SECURITY) @link(url: "https://specs.apollo.dev/connect/v0.4", for: EXECUTION) @link(url: "https://the-guild.dev/graphql/mesh/spec/v1.0", import: ["@transport"]) @transport(kind: "rest", subgraph: "MicrosoftGraph", location: "http://127.0.0.1:<Graph_port>", options: {odata: {batch: "json", expandNavProps: true}}) @join__directive(graphs: [MICROSOFT_GRAPH], name: "link", args: {url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]}) @join__directive(graphs: [MICROSOFT_GRAPH], name: "source", args: {name: "MicrosoftGraph", http: {baseURL: "http://127.0.0.1:<Graph_port>", headers: [{name: "Accept", value: "application/json;odata.metadata=minimal"}, {name: "Authorization", value: "Bearer {$env.MSGRAPH_ACCESS_TOKEN}"}]}, errors: {message: "error.message"}}) {
   query: Query
   mutation: Mutation
@@ -46,28 +46,120 @@ The \`JSON\` scalar type represents JSON values as specified by [ECMA-404](http:
 """
 scalar JSON @join__type(graph: MICROSOFT_GRAPH) @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-type user @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/"}, selection: "id displayName mail rest: $ _odataId: $->get(\\"@odata.id\\")"}) {
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt @join__type(graph: MICROSOFT_GRAPH)
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`date-time\` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime @join__type(graph: MICROSOFT_GRAPH)
+
+type user @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/"}, selection: "id displayName mail officeLocation rest: $ _odataId: $->get(\\"@odata.id\\")"}) {
   id: String!
   displayName: String
   mail: String
+  officeLocation: String
+  messages(queryOptions: QueryOptions): [message] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/messages", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\") }"})
+  messagesById(id: ID): message @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/messages/{$args.id}/"}, selection: "id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\")"})
+  drives(queryOptions: QueryOptions): [drive] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/drives", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id quota { used remaining } _odataId: $->get(\\"@odata.id\\") }"})
+  drivesById(id: ID): drive @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/drives/{$args.id}/"}, selection: "id quota { used remaining } _odataId: $->get(\\"@odata.id\\")"})
   rest: JSON
   """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
+type message @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/messages/{$this.id}/"}, selection: "id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\")"}) {
+  id: String!
+  subject: String
+  isRead: Boolean
+  from: recipient
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
+  _odataId: String @inaccessible
+}
+
+type group @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/"}, selection: "id displayName description _odataId: $->get(\\"@odata.id\\")"}) {
+  id: String!
+  displayName: String
+  description: String
+  members(queryOptions: QueryOptions): [user] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/members", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id displayName mail officeLocation rest: $ _odataId: $->get(\\"@odata.id\\") }"})
+  membersById(id: ID): user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/members/{$args.id}/"}, selection: "id displayName mail officeLocation rest: $ _odataId: $->get(\\"@odata.id\\")"})
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
+  _odataId: String @inaccessible
+}
+
+type driveItem @join__type(graph: MICROSOFT_GRAPH, key: "id") {
+  id: String!
+  name: String
+  size: BigInt
+  lastModifiedDateTime: DateTime
+  webUrl: String
+  children(queryOptions: QueryOptions): [driveItem] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "{$this._odataId}/children", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id name size lastModifiedDateTime webUrl _odataId: $->get(\\"@odata.id\\") }"})
+  childrenById(id: ID): driveItem @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "{$this._odataId}/children/{$args.id}/"}, selection: "id name size lastModifiedDateTime webUrl _odataId: $->get(\\"@odata.id\\")"})
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
+  _odataId: String @inaccessible
+}
+
+type drive @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/drives/{$this.id}/"}, selection: "id quota { used remaining } _odataId: $->get(\\"@odata.id\\")"}) {
+  id: String!
+  quota: quota
+  root: driveItem @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/drives/{$this.id}/root"}, selection: "id name size lastModifiedDateTime webUrl _odataId: $->get(\\"@odata.id\\")"})
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
+  _odataId: String @inaccessible
+}
+
+type emailAddress @join__type(graph: MICROSOFT_GRAPH) {
+  name: String
+  address: String
+}
+
+type recipient @join__type(graph: MICROSOFT_GRAPH) {
+  emailAddress: emailAddress
+}
+
+type quota @join__type(graph: MICROSOFT_GRAPH) {
+  used: BigInt
+  remaining: BigInt
+}
+
 type Query @join__type(graph: MICROSOFT_GRAPH) {
-  me: user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/me"}, selection: "id displayName mail rest: $ _odataId: $->get(\\"@odata.id\\")"})
-  users(queryOptions: QueryOptions): [user] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id displayName mail rest: $ _odataId: $->get(\\"@odata.id\\") }"})
-  usersByid(id: String!): user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$args.id}/"}, selection: "id displayName mail rest: $ _odataId: $->get(\\"@odata.id\\")", entity: true})
+  me: user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/me"}, selection: "id displayName mail officeLocation rest: $ _odataId: $->get(\\"@odata.id\\")"})
+  users(queryOptions: QueryOptions): [user] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id displayName mail officeLocation rest: $ _odataId: $->get(\\"@odata.id\\") }"})
+  usersByid(id: String!): user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$args.id}/"}, selection: "id displayName mail officeLocation rest: $ _odataId: $->get(\\"@odata.id\\")", entity: true})
   usersCount(queryOptions: QueryOptions): Int @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$"})
+  groups(queryOptions: QueryOptions): [group] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id displayName description _odataId: $->get(\\"@odata.id\\") }"})
+  groupsByid(id: String!): group @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$args.id}/"}, selection: "id displayName description _odataId: $->get(\\"@odata.id\\")", entity: true})
+  groupsCount(queryOptions: QueryOptions): Int @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$"})
+  drives(queryOptions: QueryOptions): [drive] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/drives", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id quota { used remaining } _odataId: $->get(\\"@odata.id\\") }"})
+  drivesByid(id: String!): drive @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/drives/{$args.id}/"}, selection: "id quota { used remaining } _odataId: $->get(\\"@odata.id\\")", entity: true})
+  drivesCount(queryOptions: QueryOptions): Int @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/drives/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$"})
+  messages(queryOptions: QueryOptions): [message] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/messages", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\") }"})
+  messagesByid(id: String!): message @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/messages/{$args.id}/"}, selection: "id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\")", entity: true})
+  messagesCount(queryOptions: QueryOptions): Int @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/messages/$count", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$"})
 }
 
 type Mutation @join__type(graph: MICROSOFT_GRAPH) {
-  users(queryOptions: QueryOptions): [user] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id displayName mail rest: $ _odataId: $->get(\\"@odata.id\\") }"})
-  usersByid(id: String!): user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$args.id}/"}, selection: "id displayName mail rest: $ _odataId: $->get(\\"@odata.id\\")", entity: true})
-  createusers(input: userInput): user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {POST: "/users", body: "$args.input"}, selection: "id displayName mail rest: $ _odataId: $->get(\\"@odata.id\\")"})
+  users(queryOptions: QueryOptions): [user] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id displayName mail officeLocation rest: $ _odataId: $->get(\\"@odata.id\\") }"})
+  usersByid(id: String!): user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$args.id}/"}, selection: "id displayName mail officeLocation rest: $ _odataId: $->get(\\"@odata.id\\")", entity: true})
+  createusers(input: userInput): user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {POST: "/users", body: "$args.input"}, selection: "id displayName mail officeLocation rest: $ _odataId: $->get(\\"@odata.id\\")"})
   deleteusersByid(id: String!): JSON @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {DELETE: "/users/{$args.id}/"}, selection: "$"})
-  updateusersByid(id: String!, input: userUpdateInput): user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {PATCH: "/users/{$args.id}/", body: "$args.input"}, selection: "id displayName mail rest: $ _odataId: $->get(\\"@odata.id\\")"})
+  updateusersByid(id: String!, input: userUpdateInput): user @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {PATCH: "/users/{$args.id}/", body: "$args.input"}, selection: "id displayName mail officeLocation rest: $ _odataId: $->get(\\"@odata.id\\")"})
+  groups(queryOptions: QueryOptions): [group] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id displayName description _odataId: $->get(\\"@odata.id\\") }"})
+  groupsByid(id: String!): group @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$args.id}/"}, selection: "id displayName description _odataId: $->get(\\"@odata.id\\")", entity: true})
+  creategroups(input: groupInput): group @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {POST: "/groups", body: "$args.input"}, selection: "id displayName description _odataId: $->get(\\"@odata.id\\")"})
+  deletegroupsByid(id: String!): JSON @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {DELETE: "/groups/{$args.id}/"}, selection: "$"})
+  updategroupsByid(id: String!, input: groupUpdateInput): group @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {PATCH: "/groups/{$args.id}/", body: "$args.input"}, selection: "id displayName description _odataId: $->get(\\"@odata.id\\")"})
+  drives(queryOptions: QueryOptions): [drive] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/drives", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id quota { used remaining } _odataId: $->get(\\"@odata.id\\") }"})
+  drivesByid(id: String!): drive @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/drives/{$args.id}/"}, selection: "id quota { used remaining } _odataId: $->get(\\"@odata.id\\")", entity: true})
+  createdrives(input: driveInput): drive @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {POST: "/drives", body: "$args.input"}, selection: "id quota { used remaining } _odataId: $->get(\\"@odata.id\\")"})
+  deletedrivesByid(id: String!): JSON @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {DELETE: "/drives/{$args.id}/"}, selection: "$"})
+  updatedrivesByid(id: String!, input: driveUpdateInput): drive @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {PATCH: "/drives/{$args.id}/", body: "$args.input"}, selection: "id quota { used remaining } _odataId: $->get(\\"@odata.id\\")"})
+  messages(queryOptions: QueryOptions): [message] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/messages", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\") }"})
+  messagesByid(id: String!): message @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/messages/{$args.id}/"}, selection: "id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\")", entity: true})
+  createmessages(input: messageInput): message @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {POST: "/messages", body: "$args.input"}, selection: "id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\")"})
+  deletemessagesByid(id: String!): JSON @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {DELETE: "/messages/{$args.id}/"}, selection: "$"})
+  updatemessagesByid(id: String!, input: messageUpdateInput): message @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {PATCH: "/messages/{$args.id}/", body: "$args.input"}, selection: "id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\")"})
 }
 
 enum InlineCount @join__type(graph: MICROSOFT_GRAPH) {
@@ -109,6 +201,7 @@ input userInput @join__type(graph: MICROSOFT_GRAPH) {
   id: String!
   displayName: String
   mail: String
+  officeLocation: String
   rest: JSON
 }
 
@@ -116,7 +209,58 @@ input userUpdateInput @join__type(graph: MICROSOFT_GRAPH) {
   id: String
   displayName: String
   mail: String
+  officeLocation: String
   rest: JSON
+}
+
+input groupInput @join__type(graph: MICROSOFT_GRAPH) {
+  id: String!
+  displayName: String
+  description: String
+}
+
+input groupUpdateInput @join__type(graph: MICROSOFT_GRAPH) {
+  id: String
+  displayName: String
+  description: String
+}
+
+input driveInput @join__type(graph: MICROSOFT_GRAPH) {
+  id: String!
+  quota: quotaInput
+}
+
+input quotaInput @join__type(graph: MICROSOFT_GRAPH) {
+  used: BigInt
+  remaining: BigInt
+}
+
+input driveUpdateInput @join__type(graph: MICROSOFT_GRAPH) {
+  id: String
+  quota: quotaInput
+}
+
+input messageInput @join__type(graph: MICROSOFT_GRAPH) {
+  id: String!
+  subject: String
+  isRead: Boolean
+  from: recipientInput
+}
+
+input recipientInput @join__type(graph: MICROSOFT_GRAPH) {
+  emailAddress: emailAddressInput
+}
+
+input emailAddressInput @join__type(graph: MICROSOFT_GRAPH) {
+  name: String
+  address: String
+}
+
+input messageUpdateInput @join__type(graph: MICROSOFT_GRAPH) {
+  id: String
+  subject: String
+  isRead: Boolean
+  from: recipientInput
 }
 
 scalar TransportOptions
@@ -128,23 +272,204 @@ directive @join__directive(graphs: [join__Graph!], name: String!, args: join__Di
 scalar join__DirectiveArguments"
 `;
 
-exports[`Microsoft Graph Connectors execute with apollo-router GetMe via mock Graph 1`] = `
+exports[`Microsoft Graph Connectors execute with apollo-router fetchFilesFromOneDrive (v0 example-query) 1`] = `
+{
+  "data": {
+    "me": {
+      "drives": [
+        {
+          "quota": {
+            "remaining": 10485760,
+            "used": 1024,
+          },
+          "root": {
+            "children": null,
+          },
+        },
+      ],
+    },
+  },
+  "errors": [
+    {
+      "extensions": {
+        "code": "CONNECTOR_FETCH",
+        "connector": {
+          "coordinate": "MicrosoftGraph:driveItem.children[0]",
+        },
+        "http": {
+          "status": 404,
+        },
+        "service": "MicrosoftGraph",
+      },
+      "message": "Not found: /children",
+      "path": [
+        "me",
+        "drives",
+        0,
+        "root",
+        "children",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Microsoft Graph Connectors execute with apollo-router fetchGroupsAndMembers (v0 example-query) 1`] = `
+{
+  "data": {
+    "groups": [
+      {
+        "description": "Natural philosophers",
+        "displayName": "Royal Society",
+        "members": [
+          {
+            "id": "user-ada",
+          },
+          {
+            "id": "user-charles",
+          },
+        ],
+      },
+    ],
+  },
+}
+`;
+
+exports[`Microsoft Graph Connectors execute with apollo-router fetchRecentEmails (v0 example-query) 1`] = `
 {
   "data": {
     "me": {
       "displayName": "Ada Lovelace",
-      "id": "user-ada",
+      "messages": [
+        {
+          "from": {
+            "emailAddress": {
+              "address": "charles@example.com",
+            },
+          },
+          "isRead": false,
+          "subject": "Analytical Engine notes",
+        },
+        {
+          "from": {
+            "emailAddress": {
+              "address": "mary@example.com",
+            },
+          },
+          "isRead": true,
+          "subject": "Punch card revisions",
+        },
+        {
+          "from": {
+            "emailAddress": {
+              "address": "michael@example.com",
+            },
+          },
+          "isRead": true,
+          "subject": "Dinner next week?",
+        },
+      ],
+      "officeLocation": "London",
     },
   },
 }
 `;
 
-exports[`Microsoft Graph Connectors execute with hive GetMe via mock Graph 1`] = `
+exports[`Microsoft Graph Connectors execute with hive fetchFilesFromOneDrive (v0 example-query) 1`] = `
+{
+  "data": {
+    "me": {
+      "drives": [
+        {
+          "quota": {
+            "remaining": 10485760,
+            "used": 1024,
+          },
+          "root": {
+            "children": [
+              {
+                "lastModifiedDateTime": "2024-02-01T12:00:00.000Z",
+                "name": "notes.txt",
+                "size": 42,
+                "webUrl": "https://example.com/drive/notes.txt",
+              },
+              {
+                "lastModifiedDateTime": "2024-02-02T12:00:00.000Z",
+                "name": "diagrams",
+                "size": 0,
+                "webUrl": "https://example.com/drive/diagrams",
+              },
+              {
+                "lastModifiedDateTime": "2024-02-03T12:00:00.000Z",
+                "name": "readme.md",
+                "size": 128,
+                "webUrl": "https://example.com/drive/readme.md",
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`Microsoft Graph Connectors execute with hive fetchGroupsAndMembers (v0 example-query) 1`] = `
+{
+  "data": {
+    "groups": [
+      {
+        "description": "Natural philosophers",
+        "displayName": "Royal Society",
+        "members": [
+          {
+            "id": "user-ada",
+          },
+          {
+            "id": "user-charles",
+          },
+        ],
+      },
+    ],
+  },
+}
+`;
+
+exports[`Microsoft Graph Connectors execute with hive fetchRecentEmails (v0 example-query) 1`] = `
 {
   "data": {
     "me": {
       "displayName": "Ada Lovelace",
-      "id": "user-ada",
+      "messages": [
+        {
+          "from": {
+            "emailAddress": {
+              "address": "charles@example.com",
+            },
+          },
+          "isRead": false,
+          "subject": "Analytical Engine notes",
+        },
+        {
+          "from": {
+            "emailAddress": {
+              "address": "mary@example.com",
+            },
+          },
+          "isRead": true,
+          "subject": "Punch card revisions",
+        },
+        {
+          "from": {
+            "emailAddress": {
+              "address": "michael@example.com",
+            },
+          },
+          "isRead": true,
+          "subject": "Dinner next week?",
+        },
+      ],
+      "officeLocation": "London",
     },
   },
 }
