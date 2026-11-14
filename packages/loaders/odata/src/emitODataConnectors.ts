@@ -14,7 +14,7 @@ import {
   ODATA_ERROR_MAPPING,
   ODATA_QUERY_OPTIONS_QUERY_PARAMS,
   SourceDirective,
-} from './connectDirectives.js';
+} from './odataConnectors.js';
 import type { EntityTypeExtensions } from './types.js';
 
 /** Mesh `{env.X}` / `{args.X}` → Connectors `{$env.X}` / `{$args.X}`. */
