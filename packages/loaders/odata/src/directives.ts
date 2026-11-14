@@ -4,15 +4,11 @@ import {
   GraphQLDirective,
   GraphQLList,
   GraphQLString,
-  type GraphQLSchema,
 } from 'graphql';
-import type { MeshFetch } from '@graphql-mesh/types';
 import {
   TransportDirective,
   type TransportDirectiveArgs as SharedTransportDirectiveArgs,
 } from '@graphql-mesh/utils';
-import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { createAbstractTypeResolver } from './resolvers/abstractTypeResolver.js';
 
 export { TransportDirective };
 
@@ -332,41 +328,3 @@ export interface DirectiveArgsMap {
   [key: string]: unknown;
 }
 
-export interface ProcessDirectivesArgs {
-  schema: GraphQLSchema;
-  /** @deprecated Unused — Connectors handle HTTP. Kept for call-site compat. */
-  fetchFn?: MeshFetch;
-}
-
-/**
- * Wire `@abstractType` → `resolveType` from `@odata.type`.
- * All HTTP (CRUD / nav / bound / unbound) is Federation `@connect` via transport-rest.
- */
-export function processDirectives({ schema }: ProcessDirectivesArgs) {
-  const firstDir = <T>(value: T | T[] | null | undefined): T | undefined => {
-    if (value == null) {
-      return undefined;
-    }
-    return Array.isArray(value) ? value[0] : value;
-  };
-
-  return mapSchema(schema, {
-    [MapperKind.ABSTRACT_TYPE]: type => {
-      const typeDirectives = getDirectiveExtensions<DirectiveArgsMap>(type);
-      const abstractTypeDirective = firstDir(typeDirectives?.abstractType);
-      if (abstractTypeDirective) {
-        const typePrototype = Object.getPrototypeOf(type);
-        return new typePrototype.constructor({
-          ...type.toConfig(),
-          resolveType: createAbstractTypeResolver({
-            entityTypeName: abstractTypeDirective.entityTypeName,
-            isAbstract: abstractTypeDirective.isAbstract,
-            aliasNamespaceMap: new Map(abstractTypeDirective.aliasNamespaceMap ?? []),
-            multipleSchemas: abstractTypeDirective.multipleSchemas ?? false,
-            namespaces: new Set(abstractTypeDirective.namespaces ?? []),
-          }),
-        });
-      }
-    },
-  });
-}

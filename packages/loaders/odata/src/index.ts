@@ -41,7 +41,6 @@ import {
   EntitySetDirective,
   NavPropDirective,
   PluralNavDirective,
-  processDirectives as processODataResidualDirectives,
   SingletonDirective,
   SingularNavDirective,
   UnboundActionDirective,
@@ -1076,18 +1075,15 @@ export async function loadGraphQLSchemaFromOData(
   name: string,
   opts: LoadGraphQLSchemaFromODataOpts,
 ) {
-  let schema = await loadNonExecutableGraphQLSchemaFromOData(name, opts);
-  const { processDirectives: processConnectDirectives } =
-    await import('@graphql-mesh/transport-rest');
-  schema = processConnectDirectives(schema, {
+  const schema = await loadNonExecutableGraphQLSchemaFromOData(name, opts);
+  // transport-rest wires `@connect` + OData `@abstractType` resolveType.
+  const { processDirectives } = await import('@graphql-mesh/transport-rest');
+  return processDirectives(schema, {
     globalFetch: opts.fetchFn,
     log: opts.log,
   });
-  // `@abstractType` → resolveType from `@odata.type` (HTTP is `@connect`)
-  return processODataResidualDirectives({ schema });
 }
 
-export { processODataResidualDirectives };
 export { processDirectives } from '@graphql-mesh/transport-rest';
 
 export const getSubgraphExecutor: TransportGetSubgraphExecutor<RESTTransportOptions> = opts => {

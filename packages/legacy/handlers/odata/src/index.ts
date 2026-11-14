@@ -12,7 +12,6 @@ import type {
 import {
   loadNonExecutableGraphQLSchemaFromOData,
   processDirectives,
-  processODataResidualDirectives,
 } from '@omnigraph/odata';
 
 export default class ODataHandler implements MeshHandler {
@@ -54,11 +53,11 @@ export default class ODataHandler implements MeshHandler {
         expandNavProps: this.config.expandNavProps,
       }),
     );
+    // transport-rest: `@connect` + OData `@abstractType` resolveType.
     schema = processDirectives(schema, {
       globalFetch: fetchFn,
       log: this.log,
     });
-    schema = processODataResidualDirectives({ schema });
     return {
       schema,
     };

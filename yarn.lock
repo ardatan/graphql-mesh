@@ -9906,6 +9906,7 @@ __metadata:
     graphql-fields: "npm:^2.0.3"
     graphql-scalars: "npm:^2.0.1"
     http-string-parser: "npm:^0.0.6"
+    pascal-case: "npm:^3.1.2"
     qs: "npm:^6.16.1"
     tslib: "npm:^2.4.0"
     url-join: "npm:4.0.1"

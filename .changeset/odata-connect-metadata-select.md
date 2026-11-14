@@ -11,6 +11,6 @@ OData subgraphs now emit Federation Connectors (`@source` / `@connect` / `@key`)
 - Apollo Router runs the same SDL as plain Connectors (fuller payloads, same GraphQL results).
 - **BREAKING:** `@graphql-mesh/transport-odata` is removed. OData runs on `@graphql-mesh/transport-rest` only (Gateway resolves `kind: "rest"`).
 
-Bound function/action Mesh directives are still emitted for a follow-up Connectors mapping.
+`@abstractType` → `resolveType` (from `@odata.type`) is wired inside `transport-rest` `processDirectives`, so Hive rehydration no longer needs a separate OData residual pass (`processODataResidualDirectives` removed).
 
 Also hardens MS Graph `$metadata` load / compose: safe enum member names (`null` → `_null`), resilient base-type field merges, no shared interface/object directive bags (so `@connect` / `@shareable` stay off interfaces), empty Input placeholders, and `e2e/odata-msgraph` (fixture metadata + mock Graph, hive + apollo-router GetMe in CI; live `$metadata`/`me` remains in the unit suite with a token).

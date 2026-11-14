@@ -21,6 +21,7 @@ import {
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
+import { processODataAbstractTypeDirectives } from './odataAbstractType.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
@@ -94,6 +95,8 @@ export function processDirectives(
     batch: odataOpts?.batch,
     endpoint: typeof globalOptions.endpoint === 'string' ? globalOptions.endpoint : undefined,
   });
+  // OData `@abstractType` → resolveType from `@odata.type` (Hive rehydration).
+  schema = processODataAbstractTypeDirectives(schema);
   if (typeof globalOptions.operationHeaders === 'string') {
     globalOptions.operationHeaders = JSON.parse(globalOptions.operationHeaders);
   }
