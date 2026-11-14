@@ -1471,23 +1471,31 @@ function buildBody(
   }
 }
 
+/** OData-only Connectors runtime opts (mirrors `@transport(options: { odata: … })`). */
+export type ConnectODataOptions = {
+  /** `$expand` selected nav and prefer embedded values (Hive-only). */
+  expandNavProps?: boolean;
+  /** Coalesce sibling `@connect` HTTP into `POST /$batch`. */
+  batch?: ODataBatchMode;
+  /** Service root for `/$batch` (transport location / source baseURL). */
+  endpoint?: string;
+  /** Shared DataLoader fetch — usually created by `processConnectDirectives`. */
+  batchFetch?: ReturnType<typeof createODataBatchFetch>;
+};
+
+export type ConnectFieldResolverOptions = {
+  globalFetch?: MeshFetch;
+  log?: HiveLogger;
+  timeout?: number;
+  queryStringOptions?: MeshQsOptions;
+  odata?: ConnectODataOptions;
+};
+
 export function addConnectFieldResolver(
   schema: GraphQLSchema,
   field: GraphQLField<any, any>,
   connectArgs: ConnectArgs,
-  opts: {
-    globalFetch?: MeshFetch;
-    log?: HiveLogger;
-    timeout?: number;
-    queryStringOptions?: MeshQsOptions;
-    /** Legacy OData: `$expand` selected nav and prefer embedded values (Hive-only). */
-    expandNavProps?: boolean;
-    /** Legacy OData: coalesce Connectors HTTP into `POST /$batch`. */
-    batch?: ODataBatchMode;
-    /** OData service root for `/$batch` (transport location / source baseURL). */
-    endpoint?: string;
-    odataBatchFetch?: ReturnType<typeof createODataBatchFetch>;
-  } = {},
+  opts: ConnectFieldResolverOptions = {},
 ) {
   const log = opts.log || new Logger({ prefix: 'connect' });
   const sources = getSourceMap(schema);
@@ -1496,8 +1504,8 @@ export function addConnectFieldResolver(
   // Schema/field qs + timeout come from `@transport(options:)` / serve-time entry.
   const queryStringOptions: MeshQsOptions = { ...opts.queryStringOptions };
   const timeout = opts.timeout;
-  const expandNavProps = Boolean(opts.expandNavProps);
-  const odataBatchFetch = opts.odataBatchFetch;
+  const expandNavProps = Boolean(opts.odata?.expandNavProps);
+  const odataBatchFetch = opts.odata?.batchFetch;
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // Prefer parent-expanded OData nav (legacy expandNavProps): when `$expand` already
@@ -2129,21 +2137,12 @@ function attachResponseMetadata(
 
 export function processConnectDirectives(
   schema: GraphQLSchema,
-  opts: {
-    globalFetch?: MeshFetch;
-    log?: HiveLogger;
-    timeout?: number;
-    queryStringOptions?: MeshQsOptions;
-    expandNavProps?: boolean;
-    batch?: ODataBatchMode;
-    endpoint?: string;
-    /** Shared across all fields so sibling @connect calls coalesce into one $batch. */
-    odataBatchFetch?: ReturnType<typeof createODataBatchFetch>;
-  } = {},
+  opts: ConnectFieldResolverOptions = {},
 ) {
-  const batchMode = opts.batch;
+  const odata = opts.odata;
+  const batchMode = odata?.batch;
   const batchEndpoint =
-    opts.endpoint ||
+    odata?.endpoint ||
     (() => {
       const sources = getSourceMap(schema);
       for (const source of sources.values()) {
@@ -2154,8 +2153,8 @@ export function processConnectDirectives(
       return undefined;
     })();
   // Single factory for the whole schema — per-field factories would not coalesce.
-  const odataBatchFetch =
-    opts.odataBatchFetch ||
+  const batchFetch =
+    odata?.batchFetch ||
     (batchMode && batchMode !== 'none' && batchEndpoint
       ? createODataBatchFetch({
           fetchFn: (url, init, ctx, inf) =>
@@ -2164,7 +2163,10 @@ export function processConnectDirectives(
           batchMode,
         })
       : undefined);
-  const fieldOpts = { ...opts, odataBatchFetch };
+  const fieldOpts: ConnectFieldResolverOptions = {
+    ...opts,
+    odata: odata || batchFetch ? { ...odata, batchFetch } : undefined,
+  };
 
   const queryType = schema.getQueryType();
   const typeMap = schema.getTypeMap();

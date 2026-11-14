@@ -105,7 +105,7 @@ describe('OData expandNavProps request counts', () => {
   it('without expandNavProps: parent + each nav = 3 HTTP requests', async () => {
     const urls: string[] = [];
     const schema = processConnectDirectives(buildSchema(sdl), {
-      expandNavProps: false,
+      odata: { expandNavProps: false },
       globalFetch: (async (url: string) => {
         urls.push(String(url));
         if (String(url).includes('/Friends')) {
@@ -128,7 +128,7 @@ describe('OData expandNavProps request counts', () => {
   it('with expandNavProps: single parent HTTP ($expand) — no nav round-trips', async () => {
     const urls: string[] = [];
     const schema = processConnectDirectives(buildSchema(sdl), {
-      expandNavProps: true,
+      odata: { expandNavProps: true },
       globalFetch: (async (url: string) => {
         urls.push(String(url));
         return Response.json(mockPersonPayload());
@@ -201,9 +201,11 @@ describe('OData $batch json coalescing', () => {
     const urls: string[] = [];
     let batchRequestCount = 0;
     const schema = processConnectDirectives(buildSchema(sdl), {
-      expandNavProps: false,
-      batch: 'json',
-      endpoint: 'https://odata.example.com',
+      odata: {
+        expandNavProps: false,
+        batch: 'json',
+        endpoint: 'https://odata.example.com',
+      },
       globalFetch: (async (url: string, init?: RequestInit) => {
         urls.push(String(url));
         if (String(url).includes('/$batch')) {

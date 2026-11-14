@@ -90,10 +90,12 @@ export function processDirectives(
     log,
     timeout: globalOptions.timeout,
     queryStringOptions: globalOptions.queryStringOptions,
-    // OData stamps these under `@transport(options: { odata: … })`.
-    expandNavProps: Boolean(odataOpts?.expandNavProps),
-    batch: odataOpts?.batch,
-    endpoint: typeof globalOptions.endpoint === 'string' ? globalOptions.endpoint : undefined,
+    // Mirror `@transport(options: { odata: … })` under connect opts.
+    odata: {
+      expandNavProps: Boolean(odataOpts?.expandNavProps),
+      batch: odataOpts?.batch,
+      endpoint: typeof globalOptions.endpoint === 'string' ? globalOptions.endpoint : undefined,
+    },
   });
   // OData `@abstractType` → resolveType from `@odata.type` (Hive rehydration).
   schema = processODataAbstractTypeDirectives(schema);

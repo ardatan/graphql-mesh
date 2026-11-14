@@ -289,7 +289,7 @@ describe('Connect OData $select / $expand', () => {
 
     const urls: string[] = [];
     const schema = processConnectDirectives(buildSchema(sdl), {
-      expandNavProps: true,
+      odata: { expandNavProps: true },
       globalFetch: (async (url: string) => {
         urls.push(String(url));
         return Response.json({
