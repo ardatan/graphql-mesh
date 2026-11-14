@@ -180,23 +180,9 @@ function collectInlineFragment(
   );
 }
 
-function getODataNavigationFields(parentType: GraphQLObjectType): Set<string> | undefined {
-  const ext = parentType.extensions as
-    | {
-        odataEntityInfo?: { navigationFields?: string[] };
-        directives?: { entityInfo?: Array<{ navigationFields?: string[] }> };
-      }
-    | undefined;
-  const fromExt = ext?.odataEntityInfo?.navigationFields;
-  const fromDir = ext?.directives?.entityInfo?.[0]?.navigationFields;
-  const list = fromExt || fromDir;
-  return list?.length ? new Set(list) : undefined;
-}
-
 /** Bound ops / by-id accessors / `_odataId` are not OData `$select` / `$expand` properties. */
 function isODataStructuralField(
   fieldDef: GraphQLField<any, any>,
-  parentType: GraphQLObjectType | undefined,
   expandNavProps: boolean,
 ): boolean {
   if (fieldDef.name === '_odataId') {
@@ -208,13 +194,10 @@ function isODataStructuralField(
   }
   // Field-level `@connect` nav: only `$expand` when `expandNavProps` is on.
   // Apollo SDL stays unchanged — Router never runs this projection path.
+  // Nav vs bound-op: entity `@key` target + non-callable path (no Mesh `@entityInfo`).
   if (dirs.connect?.length) {
     if (!expandNavProps) {
       return false;
-    }
-    const navFields = parentType ? getODataNavigationFields(parentType) : undefined;
-    if (navFields?.has(fieldDef.name)) {
-      return true;
     }
     return isODataExpandableField(fieldDef) && !connectPathLooksLikeCallable(dirs.connect);
   }
@@ -281,7 +264,7 @@ function collectField(
     return;
   }
   const fieldDef = parentType.getFields()[field.name.value];
-  if (!fieldDef || !isODataStructuralField(fieldDef, parentType, expandNavProps)) {
+  if (!fieldDef || !isODataStructuralField(fieldDef, expandNavProps)) {
     return;
   }
   const odataName =
@@ -356,16 +339,6 @@ export function buildODataSelectExpand(
         if (f) out.select.add(f);
       }
     }
-  }
-  const entityInfo = getDirectiveExtensions(returnType as any)?.entityInfo?.[0];
-  if (entityInfo?.identifierFieldName) {
-    out.select.add(entityInfo.identifierFieldName);
-  }
-  // Also read loader-kept `extensions.odataEntityInfo` (SDL strips `@entityInfo`).
-  const extInfo = (returnType.extensions as { odataEntityInfo?: { identifierFieldName?: string } })
-    ?.odataEntityInfo;
-  if (extInfo?.identifierFieldName) {
-    out.select.add(extInfo.identifierFieldName);
   }
   return {
     select: [...out.select],
@@ -448,7 +421,7 @@ export function attachExpandedNavFromRaw(
       if (sel.kind !== Kind.FIELD) continue;
       const fieldDef = returnType.getFields()[sel.name.value];
       if (!fieldDef) continue;
-      if (!isODataStructuralField(fieldDef, returnType, true)) continue;
+      if (!isODataStructuralField(fieldDef, true)) continue;
       if (!isODataExpandableField(fieldDef)) continue;
       navNames.push(sel.alias?.value || sel.name.value);
     }

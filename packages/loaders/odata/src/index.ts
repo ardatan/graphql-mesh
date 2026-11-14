@@ -1034,25 +1034,16 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
   });
 
   const schema = schemaComposer.buildSchema();
+  const odataOpts: { batch?: typeof batch; expandNavProps?: boolean } = {};
+  if (batch != null) odataOpts.batch = batch;
+  if (expandNavProps != null) odataOpts.expandNavProps = expandNavProps;
   applyODataConnectSchemaExtensions(
     schema,
     connectMeta,
     name,
     endpoint,
-    typeof operationHeaders === 'object' && operationHeaders ? operationHeaders : undefined,
+    Object.keys(odataOpts).length ? odataOpts : undefined,
   );
-  // Nest OData-only knobs under `options.odata` so they don't collide with REST
-  // `timeout` / `queryParams` on the shared transport-rest entry.
-  const schemaExtensions: any = (schema.extensions ||= {});
-  const directiveExtensions = (schemaExtensions.directives ||= {});
-  if (directiveExtensions.transport && typeof directiveExtensions.transport === 'object') {
-    const odataOpts: { batch?: typeof batch; expandNavProps?: boolean } = {};
-    if (batch != null) odataOpts.batch = batch;
-    if (expandNavProps != null) odataOpts.expandNavProps = expandNavProps;
-    if (Object.keys(odataOpts).length) {
-      directiveExtensions.transport.options = { odata: odataOpts };
-    }
-  }
   eventEmitterSet.forEach(ee => ee.removeAllListeners());
   eventEmitterSet.clear();
 

@@ -57,7 +57,7 @@ function entitySelection(
   visited.add(typeName);
 
   const extBag = (entityTC.getExtensions() as any) || {};
-  const entityInfo = (extBag.directives?.entityInfo || extBag.odataEntityInfo) as
+  const entityInfo = extBag.directives?.entityInfo as
     { actualFields?: string[]; navigationFields?: string[] } | undefined;
   const navigationFields = new Set(entityInfo?.navigationFields || []);
 
@@ -272,7 +272,7 @@ export function emitODataConnectors(
     }
     const otc = tc as ObjectTypeComposer | InterfaceTypeComposer;
     const earlyExt = (otc.getExtensions() as any) || {};
-    const entityInfo = (earlyExt.directives?.entityInfo || earlyExt.odataEntityInfo) as
+    const entityInfo = earlyExt.directives?.entityInfo as
       { identifierFieldName?: string } | undefined;
     if (!entityInfo?.identifierFieldName) continue;
     if (otc.hasField(ODATA_ID_FIELD)) continue;
@@ -561,7 +561,7 @@ export function emitODataConnectors(
       continue;
     }
     const extensions = (tc as ObjectTypeComposer).getExtensions() as any;
-    const entityInfo = (extensions?.directives?.entityInfo || extensions?.odataEntityInfo) as
+    const entityInfo = extensions?.directives?.entityInfo as
       EntityTypeExtensions['directives']['entityInfo'] | undefined;
     if (!entityInfo) {
       continue;
@@ -719,8 +719,8 @@ export function emitODataConnectors(
     }
   }
 
-  // `@entityInfo` is loader metadata — keep on extensions for any in-process readers,
-  // but strip from SDL (`@key` already carries the identifier for Hive `$select`).
+  // `@entityInfo` is emit-time only — strip from extensions + SDL (`@key` + `@connect`
+  // heuristics cover Hive `$select` / `$expand`; no `odataEntityInfo` bridge).
   for (const tc of schemaComposer.types.values()) {
     const typeName = (tc as any).getTypeName?.();
     if (typeof typeName !== 'string') continue;
@@ -730,18 +730,15 @@ export function emitODataConnectors(
     const typed = tc as ObjectTypeComposer | InterfaceTypeComposer;
     const ext = typed.getExtensions() as any;
     if (ext?.directives?.entityInfo) {
-      ext.odataEntityInfo = ext.directives.entityInfo;
       delete ext.directives.entityInfo;
     }
     typed.setDirectives([...(typed.getDirectives() || [])].filter(d => d.name !== 'entityInfo'));
   }
-  // Also strip from input types that carried entityInfo.
   for (const tc of schemaComposer.types.values()) {
     if ((tc as any)?.constructor?.name !== 'InputTypeComposer') continue;
     const typed = tc as any;
     const ext = typed.getExtensions?.() as any;
     if (ext?.directives?.entityInfo) {
-      ext.odataEntityInfo = ext.directives.entityInfo;
       delete ext.directives.entityInfo;
     }
     if (typeof typed.setDirectives === 'function') {
@@ -752,7 +749,6 @@ export function emitODataConnectors(
   }
 
   // Drop Mesh directive definitions with no remaining usages.
-  // `@entityInfo` / `@resolveRoot` are not in public SDL (runtime / `rest: $`).
   // Abstract OData types need no `@abstractType` — resolveType reads `@odata.type`.
   const stillUsed = new Set<string>();
   for (const tc of schemaComposer.types.values()) {
@@ -835,20 +831,24 @@ export function applyODataConnectSchemaExtensions(
   meta: ODataConnectSchemaMeta,
   subgraphName: string,
   endpoint: string,
-  operationHeaders?: Record<string, string>,
+  odataOpts?: {
+    batch?: 'none' | 'json' | 'multipart';
+    expandNavProps?: boolean;
+  },
 ) {
   const schemaExtensions: any = (schema.extensions ||= {});
   const directiveExtensions = (schemaExtensions.directives ||= {});
   directiveExtensions.source = [meta.source];
   directiveExtensions.link = [...(directiveExtensions.link || []), ...meta.link];
-  // Hive TransportEntry: rest — Connectors execution (no @graphql-mesh/transport-odata).
-  directiveExtensions.transport = {
-    kind: 'rest',
-    subgraph: subgraphName,
-    location: endpoint,
-    headers: Object.entries({
-      Accept: ODATA_ACCEPT_METADATA,
-      ...(operationHeaders || {}),
-    }),
-  };
+  // `@source` carries baseURL + Accept. Emit Mesh `@transport` only when Hive needs
+  // OData-specific `options.odata` (batch / expandNavProps). Otherwise compose injects
+  // a minimal `kind: rest` entry from `@source` for connectors subgraphs.
+  if (odataOpts && Object.keys(odataOpts).length) {
+    directiveExtensions.transport = {
+      kind: 'rest',
+      subgraph: subgraphName,
+      location: endpoint,
+      options: { odata: odataOpts },
+    };
+  }
 }
