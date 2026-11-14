@@ -33,7 +33,7 @@ type Person @key(fields: "UserName") @connect(source: "TripPin", http: {GET: "/P
   GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips(userName='{$args.userName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt _odataId: $->get(\\"@odata.id\\") }", errors: {message: "error.message"})
   UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @connect(source: "TripPin", http: {GET: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName(lastName='{$args.lastName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @connect(source: "TripPin", http: {POST: "/People/{$this.UserName}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip", body: "$args"}, selection: "$", errors: {message: "error.message"})
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -123,7 +123,7 @@ scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/fi
 type Airline @key(fields: "AirlineCode") @connect(source: "TripPin", http: {GET: "/Airlines/{$this.AirlineCode}/"}, selection: "AirlineCode Name _odataId: $->get(\\"@odata.id\\")", errors: {message: "error.message"}) {
   AirlineCode: String!
   Name: String
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -132,7 +132,7 @@ type Airport @key(fields: "IcaoCode") @connect(source: "TripPin", http: {GET: "/
   IcaoCode: String!
   IataCode: String
   Location: AirportLocation
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -148,7 +148,7 @@ type Trip @key(fields: "TripId") {
   PlanItems(queryOptions: QueryOptions): [PlanItem] @connect(source: "TripPin", http: {GET: "{$this._odataId}/PlanItems", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { PlanItemId ConfirmationCode StartsAt EndsAt Duration _odataId: $->get(\\"@odata.id\\") }", errors: {message: "error.message"})
   PlanItemsById(id: ID): PlanItem @connect(source: "TripPin", http: {GET: "{$this._odataId}/PlanItems/{$args.id}/"}, selection: "PlanItemId ConfirmationCode StartsAt EndsAt Duration _odataId: $->get(\\"@odata.id\\")", errors: {message: "error.message"})
   GetInvolvedPeople(trip: TripInput): [Person] @connect(source: "TripPin", http: {GET: "{$this._odataId}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { UserName FirstName LastName MiddleName Gender Age Emails AddressInfo { Address City { Name CountryRegion Region } } HomeAddress { Address City { Name CountryRegion Region } } FavoriteFeature Features _odataId: $->get(\\"@odata.id\\") }", errors: {message: "error.message"})
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -179,7 +179,7 @@ type PlanItem @key(fields: "PlanItemId") {
   StartsAt: DateTime!
   EndsAt: DateTime!
   Duration: ISO8601Duration!
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -213,7 +213,7 @@ type Event @key(fields: "PlanItemId") {
   StartsAt: DateTime!
   EndsAt: DateTime!
   Duration: ISO8601Duration!
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -224,7 +224,7 @@ type PublicTransportation @key(fields: "PlanItemId") {
   StartsAt: DateTime!
   EndsAt: DateTime!
   Duration: ISO8601Duration!
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -239,7 +239,7 @@ type Flight @key(fields: "PlanItemId") {
   StartsAt: DateTime!
   EndsAt: DateTime!
   Duration: ISO8601Duration!
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -267,7 +267,7 @@ type Employee @key(fields: "UserName") {
   GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @connect(source: "TripPin", http: {GET: "{$this._odataId}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips(userName='{$args.userName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt _odataId: $->get(\\"@odata.id\\") }", errors: {message: "error.message"})
   UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @connect(source: "TripPin", http: {GET: "{$this._odataId}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName(lastName='{$args.lastName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @connect(source: "TripPin", http: {POST: "{$this._odataId}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip", body: "$args"}, selection: "$", errors: {message: "error.message"})
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -296,7 +296,7 @@ type Manager @key(fields: "UserName") {
   GetFriendsTrips(person: PersonInput, userName: String!): [Trip] @connect(source: "TripPin", http: {GET: "{$this._odataId}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips(userName='{$args.userName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { TripId ShareId Name Budget Description Tags StartsAt EndsAt _odataId: $->get(\\"@odata.id\\") }", errors: {message: "error.message"})
   UpdatePersonLastName(person: PersonInput, lastName: String!): Boolean @connect(source: "TripPin", http: {GET: "{$this._odataId}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.UpdatePersonLastName(lastName='{$args.lastName}')", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$", errors: {message: "error.message"})
   ShareTrip(personInstance: PersonInput, userName: String!, tripId: Int!): JSON @connect(source: "TripPin", http: {POST: "{$this._odataId}/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip", body: "$args"}, selection: "$", errors: {message: "error.message"})
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -464,7 +464,7 @@ directive @link(url: String!, import: [String]) repeatable on SCHEMA
 type Person @key(fields: "UserName") @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/"}, selection: "UserName _odataId: $->get(\\"@odata.id\\")", errors: {message: "error.message"}) {
   UserName: String!
   SendMessage(UserName: String!, Message: String!): JSON @connect(source: "SampleService", http: {POST: "/People/{$this.UserName}/Sample.Service.SendMessage", body: "$args"}, selection: "$", errors: {message: "error.message"})
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -592,7 +592,7 @@ type Person @key(fields: "UserName") @connect(source: "SampleService", http: {GE
   Messages(queryOptions: QueryOptions): [Message] @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/Messages", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { Id Contents _odataId: $->get(\\"@odata.id\\") }", errors: {message: "error.message"})
   MessagesById(id: ID): Message @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/Messages/{$args.id}/"}, selection: "Id Contents _odataId: $->get(\\"@odata.id\\")", errors: {message: "error.message"})
   GetAllMessages(bindingParameter: [PersonInput]): [Message] @connect(source: "SampleService", http: {GET: "/People/{$this.UserName}/Sample.Service.GetAllMessages", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { Id Contents _odataId: $->get(\\"@odata.id\\") }", errors: {message: "error.message"})
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 
@@ -648,7 +648,7 @@ input PersonInput {
 type Message @key(fields: "Id") {
   Id: String!
   Contents: String!
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 

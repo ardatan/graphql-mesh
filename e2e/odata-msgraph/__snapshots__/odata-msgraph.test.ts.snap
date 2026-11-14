@@ -53,7 +53,7 @@ type user @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs
   displayName: String
   mail: String
   rest: JSON
-  """OData @odata.id (inaccessible; used by nested @connect follow-ups)"""
+  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
   _odataId: String @inaccessible
 }
 

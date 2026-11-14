@@ -690,6 +690,47 @@ export function preserveODataEntityMetadata(selected: any, raw: any): any {
   return selected;
 }
 
+function stripTrailingSlash(url: string): string {
+  return url.replace(/\/+$/, '');
+}
+
+/**
+ * Ensure `_odataId` is set for nested OData `@connect` paths when the upstream
+ * omitted `@odata.id` (`odata.metadata=minimal`).
+ */
+export function ensureODataIdField(selected: any, raw: any, requestOriginPath: string): any {
+  if (selected == null || typeof selected !== 'object') {
+    return selected;
+  }
+  if (Array.isArray(selected)) {
+    const rawItems = Array.isArray(raw)
+      ? raw
+      : Array.isArray((raw as { value?: unknown })?.value)
+        ? (raw as { value: unknown[] }).value
+        : null;
+    return selected.map((item, i) =>
+      ensureODataIdField(item, rawItems?.[i], requestOriginPath),
+    );
+  }
+  const record = selected as Record<string, unknown>;
+  if (record._odataId == null || record._odataId === '') {
+    const fromRaw =
+      (typeof record['@odata.id'] === 'string' && record['@odata.id']) ||
+      (raw && typeof raw === 'object' && !Array.isArray(raw)
+        ? (raw as Record<string, unknown>)['@odata.id']
+        : undefined);
+    const id =
+      (typeof fromRaw === 'string' && fromRaw) ||
+      (requestOriginPath ? stripTrailingSlash(requestOriginPath) : '');
+    if (id) {
+      record._odataId = stripTrailingSlash(String(id));
+    }
+  } else if (typeof record._odataId === 'string') {
+    record._odataId = stripTrailingSlash(record._odataId);
+  }
+  return selected;
+}
+
 /**
  * Minimal selection evaluator:
  * - `id name` field picks
@@ -1484,16 +1525,21 @@ export function addConnectFieldResolver(
     // Absolute URLs from `$this._odataId` (OData nested follow-ups) must not be
     // percent-encoded — encoding would turn `https://…` into `https%3A%2F%2F…`.
     const pathUnencoded = resolveTemplate(picked.path, vars, { encodeValues: false });
+    // `{$this._odataId}/Nav` when `@odata.id` has a trailing slash → `…//Nav`.
+    // Collapse those (keep `https://`).
+    const collapseExtraSlashes = (u: string) => u.replace(/([^:])\/{2,}/g, '$1/');
     let fullPath: string;
     if (/^https?:\/\//i.test(pathUnencoded)) {
-      fullPath = pathUnencoded;
+      fullPath = collapseExtraSlashes(pathUnencoded);
     } else {
       // Path templates percent-encode expression values; baseURL / headers do not.
       const path = resolveTemplate(picked.path, vars, { encodeValues: true });
       // Absolute `@odata.id` (and other absolute connector URLs) skip baseURL join.
       // Match Mesh httpOperation (`urlJoin(base, path)`): empty base keeps relative paths
       // so test mocks like `fetch('pets/1')` keep working.
-      fullPath = /^https?:\/\//i.test(path) ? path : urlJoin(baseURL || '', path) || path;
+      fullPath = /^https?:\/\//i.test(path)
+        ? collapseExtraSlashes(path)
+        : urlJoin(baseURL || '', path) || path;
     }
 
     const resolveArg = (argName: string, value: any) => {
@@ -1772,6 +1818,9 @@ export function addConnectFieldResolver(
     // `@pluralNav` / `@boundFunction` resolvers can build follow-up URLs after a
     // non-`$` Connectors selection drops those control properties.
     selected = preserveODataEntityMetadata(selected, responseData);
+    // OData `odata.metadata=minimal` often omits `@odata.id`. Fill inaccessible
+    // `_odataId` from the request URL so nested `{$this._odataId}/Nav` connects work.
+    selected = ensureODataIdField(selected, responseData, requestUrlForMeta.originPath);
     // Fill Mesh-only `_response` fields Apollo selection cannot express.
     selected = fillExposeResponseMetadata(selected, {
       url: requestUrlForMeta.originPath,

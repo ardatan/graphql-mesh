@@ -80,7 +80,7 @@ function entitySelection(
     ) {
       continue;
     }
-    // Nested-only entity follow-ups use `$this._odataId` (absolute `@odata.id`).
+    // Nested-only entities use `$this._odataId` (absolute `@odata.id`).
     if (fieldName === '_odataId') {
       lines.push('_odataId: $->get("@odata.id")');
       continue;
@@ -226,7 +226,7 @@ const MESH_DIRECTIVES_REPLACED_BY_CONNECT = [
   'unboundAction',
 ] as const;
 
-/** Internal GraphQL field holding OData `@odata.id` for nested `@connect` follow-ups. */
+/** Internal GraphQL field holding OData `@odata.id` for nested `@connect` absolute URLs. */
 const ODATA_ID_FIELD = '_odataId';
 
 export type ODataConnectSchemaMeta = {
@@ -243,9 +243,9 @@ export type ODataConnectSchemaMeta = {
  * and switch the subgraph to `transport-rest` (Hive `$select` via Accept odata.metadata).
  *
  * Navigation / bound ops:
- * - Entity-set types → Apollo pattern `GET: /EntitySet/{$this.key}/Nav`
- * - Nested-only entities → `GET: {$this._odataId}/Nav` (absolute `@odata.id`; Hive
- *   skips percent-encoding for absolute URLs; Router dual-run is best-effort)
+ * - Types with an entity set → `/EntitySet/{$this.key}/Nav` (Apollo OData pattern)
+ * - Nested-only types → `{$this._odataId}/Nav` (Hive fills `_odataId` from the
+ *   request URL when `odata.metadata=minimal` omits `@odata.id`)
  */
 export function emitODataConnectors(
   schemaComposer: SchemaComposer,
@@ -279,7 +279,7 @@ export function emitODataConnectors(
     otc.addFields({
       [ODATA_ID_FIELD]: {
         type: 'String',
-        description: 'OData @odata.id (inaccessible; used by nested @connect follow-ups)',
+        description: 'OData @odata.id (inaccessible; absolute URL for nested @connect paths)',
         extensions: {
           directives: { inaccessible: true },
         },
@@ -579,7 +579,8 @@ export function emitODataConnectors(
     const entitySetName = entitySetByType.get(typeName);
 
     // Field-level `@connect` for nav + bound ops.
-    // Prefer entity-set relative paths (Router-safe); else `$this._odataId` (Hive-safe).
+    // Prefer entity-set relative paths (Apollo OData pattern). Nested-only types use
+    // `{$this._odataId}` (Hive synthesizes id from the parent request URL).
     if (isObject) {
       const basePath = entitySetName
         ? `/${entitySetName}/{$this.${identifierFieldName}}`

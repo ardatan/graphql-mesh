@@ -114,6 +114,10 @@ export const KeyDirective = new GraphQLDirective({
 export const CONNECT_LINK_URL = 'https://specs.apollo.dev/connect/v0.4';
 export const FEDERATION_LINK_URL = 'https://specs.apollo.dev/federation/v2.6';
 
+/**
+ * `minimal` — TripPin’s `/Trips` nav returns 500 with `odata.metadata=full`.
+ * Hive synthesizes `_odataId` from the request URL when `@odata.id` is omitted.
+ */
 export const ODATA_ACCEPT_METADATA = 'application/json;odata.metadata=minimal';
 
 /**
