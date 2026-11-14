@@ -1,20 +1,9 @@
-import {
-  isEnumType,
-  isInterfaceType,
-  isUnionType,
-  type GraphQLSchema,
-  type GraphQLTypeResolver,
-} from 'graphql';
+import { isEnumType, type GraphQLTypeResolver } from 'graphql';
 import { pascalCase } from 'pascal-case';
-import { getDirectiveExtensions } from '@graphql-tools/utils';
 
 /**
- * Wire `@abstractType` → `resolveType` from OData `@odata.type`.
- * Kept in transport-rest so Hive `getSubgraphExecutor` rehydrates it without a
- * separate OData residual processDirectives pass.
- *
- * Mutates the given schema in place (same contract as the rest of
- * `processDirectives`) and returns it.
+ * OData abstract-type resolveType: map `@odata.type` → GraphQL type name.
+ * Wired from `processDirectives` when a type carries `@abstractType`.
  */
 
 const SCALARS = new Map<string, string>([
@@ -114,41 +103,4 @@ export function createODataAbstractTypeResolver(opts: {
     }
     return opts.isAbstract ? `T${opts.entityTypeName}` : opts.entityTypeName;
   };
-}
-
-type AbstractTypeDirectiveArgs = {
-  entityTypeName: string;
-  isAbstract: boolean;
-  aliasNamespaceMap: [string, string][];
-  multipleSchemas: boolean;
-  namespaces: string[];
-};
-
-/** Attach `resolveType` for every `@abstractType` interface/union in the schema. */
-export function processODataAbstractTypeDirectives(schema: GraphQLSchema): GraphQLSchema {
-  const firstDir = <T>(value: T | T[] | null | undefined): T | undefined => {
-    if (value == null) return undefined;
-    return Array.isArray(value) ? value[0] : value;
-  };
-
-  for (const type of Object.values(schema.getTypeMap())) {
-    if (!isInterfaceType(type) && !isUnionType(type)) {
-      continue;
-    }
-    const typeDirectives = getDirectiveExtensions<{ abstractType?: AbstractTypeDirectiveArgs }>(
-      type,
-    );
-    const abstractTypeDirective = firstDir(typeDirectives?.abstractType);
-    if (!abstractTypeDirective) {
-      continue;
-    }
-    type.resolveType = createODataAbstractTypeResolver({
-      entityTypeName: abstractTypeDirective.entityTypeName,
-      isAbstract: abstractTypeDirective.isAbstract,
-      aliasNamespaceMap: new Map(abstractTypeDirective.aliasNamespaceMap ?? []),
-      multipleSchemas: abstractTypeDirective.multipleSchemas ?? false,
-      namespaces: new Set(abstractTypeDirective.namespaces ?? []),
-    });
-  }
-  return schema;
 }

@@ -2,6 +2,7 @@ import type { GraphQLField, GraphQLSchema } from 'graphql';
 import {
   getNamedType,
   isEnumType,
+  isInterfaceType,
   isIntrospectionType,
   isListType,
   isNonNullType,
@@ -21,10 +22,23 @@ import {
 import { getDirective, getDirectiveExtensions } from '@graphql-tools/utils';
 import { processConnectDirectives } from './connect.js';
 import { getTypeResolverForAbstractType } from './getTypeResolverForAbstractType.js';
-import { processODataAbstractTypeDirectives } from './odataAbstractType.js';
+import { createODataAbstractTypeResolver } from './odataAbstractType.js';
 import { processPubSubOperationAnnotations } from './pubsubOperation.js';
 import { addExecutionLogicToScalar, processScalarType } from './scalars.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
+
+type ODataAbstractTypeDirectiveArgs = {
+  entityTypeName: string;
+  isAbstract: boolean;
+  aliasNamespaceMap: [string, string][];
+  multipleSchemas: boolean;
+  namespaces: string[];
+};
+
+function firstDirectiveArg<T>(value: T | T[] | null | undefined): T | undefined {
+  if (value == null) return undefined;
+  return Array.isArray(value) ? value[0] : value;
+}
 
 export interface ProcessDirectiveArgs {
   pubsub?: PubSub;
@@ -129,16 +143,28 @@ export function processDirectives(
     if (isScalarType(type)) {
       processScalarType(type);
     }
-    // `@discriminator` on interfaces/unions is baked into `@connect(selection:)` as
-    // `... $.field->match(...)` / `__typename: $status->match(...)` and stripped —
-    // no Mesh interface resolveType installer.
-    if (isUnionType(type)) {
-      // resolveType: prefer `__typename` from Connectors selection; structural /
-      // scalar fallback for non-Connectors / `$` passthrough unions.
-      type.resolveType = getTypeResolverForAbstractType({
-        possibleTypes: type.getTypes(),
-        serviceName: currDirective?.subgraph,
-      });
+    // Abstract resolveType: OData `@abstractType` (from `@odata.type`) wins;
+    // otherwise unions get structural / `__typename` fallback. OpenAPI
+    // `@discriminator` is baked into `@connect(selection:)` and stripped.
+    if (isInterfaceType(type) || isUnionType(type)) {
+      const abstractType = firstDirectiveArg(
+        getDirectiveExtensions<{ abstractType?: ODataAbstractTypeDirectiveArgs }>(type)
+          ?.abstractType,
+      );
+      if (abstractType) {
+        type.resolveType = createODataAbstractTypeResolver({
+          entityTypeName: abstractType.entityTypeName,
+          isAbstract: abstractType.isAbstract,
+          aliasNamespaceMap: new Map(abstractType.aliasNamespaceMap ?? []),
+          multipleSchemas: abstractType.multipleSchemas ?? false,
+          namespaces: new Set(abstractType.namespaces ?? []),
+        });
+      } else if (isUnionType(type)) {
+        type.resolveType = getTypeResolverForAbstractType({
+          possibleTypes: type.getTypes(),
+          serviceName: currDirective?.subgraph,
+        });
+      }
     }
     if (isEnumType(type)) {
       const directiveAnnotations = getDefDirectives(schema, type);
@@ -178,10 +204,6 @@ export function processDirectives(
       }
     }
   }
-  // OData `@abstractType` → resolveType from `@odata.type` (transport rehydration).
-  // After the generic union resolveType pass so `@abstractType` wins on interfaces.
-  // In-place — callers historically ignore the return and keep the same schema ref.
-  processODataAbstractTypeDirectives(schema);
   return schema;
 }
 
