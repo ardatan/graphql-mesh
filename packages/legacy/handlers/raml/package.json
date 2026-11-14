@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/raml",
-  "version": "0.112.6",
+  "version": "0.113.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -37,10 +37,10 @@
   "dependencies": {
     "@graphql-hive/logger": "^1.1.1",
     "@graphql-hive/pubsub": "^2.2.1",
-    "@graphql-mesh/store": "^0.107.3",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
-    "@omnigraph/raml": "^0.112.6",
+    "@graphql-mesh/store": "^0.108.0",
+    "@graphql-mesh/types": "^0.108.0",
+    "@graphql-mesh/utils": "^0.108.0",
+    "@omnigraph/raml": "^0.113.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

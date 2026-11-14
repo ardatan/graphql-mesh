@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-soap",
-  "version": "0.13.3",
+  "version": "0.14.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,11 +36,11 @@
   },
   "dependencies": {
     "@graphql-hive/logger": "^1.1.1",
-    "@graphql-mesh/cross-helpers": "^0.4.18",
-    "@graphql-mesh/string-interpolation": "^0.5.18",
+    "@graphql-mesh/cross-helpers": "^0.4.19",
+    "@graphql-mesh/string-interpolation": "^0.6.0",
     "@graphql-mesh/transport-common": "^1.1.1",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-mesh/types": "^0.108.0",
+    "@graphql-mesh/utils": "^0.108.0",
     "@graphql-tools/executor": "^4.1.7",
     "@graphql-tools/utils": "^13.2.2",
     "@whatwg-node/fetch": "^0.12.1",
