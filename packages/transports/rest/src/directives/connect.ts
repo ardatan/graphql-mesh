@@ -1509,8 +1509,7 @@ export function addConnectFieldResolver(
   const odataBatchFetch = opts.odata?.batchFetch;
   // Prefer-embedded: expandNavProps + literal `@source` Accept `odata.metadata=…`.
   // Schema-static — no per-call header resolve / empty arg stubs.
-  const preferEmbeddedNav =
-    expandNavProps && hasODataMetadataAcceptHeader(source?.http?.headers);
+  const preferEmbeddedNav = expandNavProps && hasODataMetadataAcceptHeader(source?.http?.headers);
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // When `$expand` already put this field on `root`, skip the field-level HTTP trip.

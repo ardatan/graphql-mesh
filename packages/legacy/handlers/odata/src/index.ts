@@ -9,10 +9,7 @@ import type {
   MeshSource,
   YamlConfig,
 } from '@graphql-mesh/types';
-import {
-  loadNonExecutableGraphQLSchemaFromOData,
-  processDirectives,
-} from '@omnigraph/odata';
+import { loadNonExecutableGraphQLSchemaFromOData, processDirectives } from '@omnigraph/odata';
 
 export default class ODataHandler implements MeshHandler {
   private name: string;

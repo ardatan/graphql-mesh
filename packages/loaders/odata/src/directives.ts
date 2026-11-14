@@ -327,4 +327,3 @@ export interface DirectiveArgsMap {
   transport?: TransportDirectiveArgs;
   [key: string]: unknown;
 }
-

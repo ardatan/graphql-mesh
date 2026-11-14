@@ -1,10 +1,6 @@
-import {
-  isEnumType,
-  type GraphQLSchema,
-  type GraphQLTypeResolver,
-} from 'graphql';
-import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { isEnumType, type GraphQLSchema, type GraphQLTypeResolver } from 'graphql';
 import { pascalCase } from 'pascal-case';
+import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
 /**
  * Wire `@abstractType` → `resolveType` from OData `@odata.type`.

@@ -56,9 +56,9 @@ describe('odataConnectProfile helpers', () => {
       ]),
     ).toBe(true);
     expect(hasODataMetadataAcceptHeader([{ name: 'Accept', from: 'accept' }])).toBe(false);
-    expect(
-      hasODataMetadataAcceptHeader([{ name: 'Accept', value: 'application/json' }]),
-    ).toBe(false);
+    expect(hasODataMetadataAcceptHeader([{ name: 'Accept', value: 'application/json' }])).toBe(
+      false,
+    );
   });
 
   it('maps selection aliases to OData property names', () => {
