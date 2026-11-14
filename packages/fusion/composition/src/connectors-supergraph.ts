@@ -28,18 +28,28 @@ const CONNECT_INPUT_TYPES = new Set([
   'BatchSettings',
 ]);
 
+/** Owned by `@link(url: connect/v0.4)` — must not remain as `scalar X @join__type`. */
+function isConnectLinkedScalarName(name: string): boolean {
+  return (
+    name === 'JSONSelection' ||
+    name === 'URLPathTemplate' ||
+    // Mesh may prefix per-subgraph: `SubgraphBJSONSelection`
+    name.endsWith('JSONSelection') ||
+    name.endsWith('URLPathTemplate')
+  );
+}
+
 /**
- * Finalize a Mesh Guild connectors supergraph into the Rover-shaped
- * `@join__directive(name: "connect"|"source")` form.
+ * Finalize a Mesh connectors supergraph into `@join__directive(name:
+ * "connect"|"source")` form.
  *
- * That is the canonical Mesh connectors supergraph consumed as-is by both
- * Apollo Router and Hive Gateway. Raw `@connect` / `@source` are rewritten
- * (Router rejects them when the connect `@link` is `for: EXECUTION` without
- * imports). Mesh directives (`@transport`, `@length`, `@meshSource`, …) are
- * kept — Router accepts them when defined/linked, and Hive needs `@transport`
- * to select the REST transport.
+ * Canonical SDL for connectors runtimes (Hive Gateway and Apollo Router).
+ * Raw `@connect` / `@source` are rewritten to join metadata (Router rejects
+ * them when the connect `@link` is `for: EXECUTION` without imports). Mesh
+ * directives (`@transport`, `@length`, `@meshSource`, …) are kept — Hive
+ * needs `@transport` to select the REST transport.
  */
-export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): string {
+export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
   if (!supergraphSdl.includes('specs.apollo.dev/connect')) {
     return supergraphSdl;
   }
@@ -76,7 +86,7 @@ export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): strin
             continue;
           }
           if (url?.startsWith('https://specs.apollo.dev/connect')) {
-            // Rover: @link(url: connect/v0.4, for: EXECUTION) — no import list
+            // Connectors EXECUTION link — no import list (join__directive carries defs)
             kept.push({
               kind: Kind.DIRECTIVE,
               name: { kind: Kind.NAME, value: 'link' },
@@ -129,6 +139,13 @@ export function toApolloRouterConnectorsSupergraph(supergraphSdl: string): strin
     },
     InputObjectTypeDefinition(node) {
       if (CONNECT_INPUT_TYPES.has(node.name.value)) {
+        return null;
+      }
+      return node;
+    },
+    ScalarTypeDefinition(node) {
+      // Drop linked connect scalars — Router resolves them via `@link(connect/v0.4)`.
+      if (isConnectLinkedScalarName(node.name.value)) {
         return null;
       }
       return node;

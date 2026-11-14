@@ -3,6 +3,7 @@
   "value": [
     {
       "@odata.type": "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Trip",
+      "@odata.id": "https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips/0",
       "TripId": 0,
       "ShareId": "9d9b2fa0-efbf-490e-a5e3-bac8f7d47354",
       "Name": "Trip in US",

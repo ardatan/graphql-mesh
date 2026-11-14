@@ -25,6 +25,24 @@ evaluation as-is.
 4. Configure App Id and redirect URIs in the AppConfiguration of build/index.html
 5. Run `npm start` and go to `localhost:4000`
 
+### Connectors tests
+
+**E2E** (fixture metadata + mock Graph, hive + apollo-router — always runs in CI):
+
+```bash
+yarn test:e2e e2e/odata-msgraph
+```
+
+**Unit** (live `$metadata` smoke + optional live `me`):
+
+```bash
+export MSGRAPH_ACCESS_TOKEN='…' # or GRAPH_ACCESS_TOKEN — optional for live `me`
+yarn test packages/loaders/odata/tests/msgraph-connectors.test.ts
+```
+
+`$metadata` is public. Live `me { id displayName }` in the unit suite runs only when a token is set
+(and asserts Hive `$select` on the upstream URL).
+
 ## Sample requests
 
 #### Fetch recent emails

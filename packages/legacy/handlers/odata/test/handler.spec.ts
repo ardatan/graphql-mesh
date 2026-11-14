@@ -1,4 +1,4 @@
-import { GraphQLInterfaceType, parse, type ExecutionResult } from 'graphql';
+import { GraphQLObjectType, parse, type ExecutionResult } from 'graphql';
 import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
@@ -35,6 +35,9 @@ describe('odata', () => {
       validate: false,
     });
     resetMocks();
+  });
+  afterEach(async () => {
+    await pubsub.dispose();
   });
   it('should create a GraphQL schema from a simple OData endpoint', async () => {
     addMock(
@@ -123,7 +126,8 @@ describe('odata', () => {
     const source = await handler.getMeshSource({
       fetchFn: mockFetch,
     });
-    const personType = source.schema.getType('IPerson') as GraphQLInterfaceType;
+    // Non-abstract OData entities are concrete objects (no synthetic IPerson).
+    const personType = source.schema.getType('Person') as GraphQLObjectType;
     const getFriendsTripsFunction = personType.getFields().GetFriendsTrips;
     expect(getFriendsTripsFunction.args).toHaveLength(2);
     const personArg = getFriendsTripsFunction.args.find(arg => arg.name === 'person');
@@ -138,7 +142,9 @@ describe('odata', () => {
       'https://services.odata.org/TripPinRESTierService/$metadata',
       async () => new MockResponse(TripPinMetadata),
     );
-    const correctUrl = 'https://services.odata.org/TripPinRESTierService/People';
+    // Concrete Person (no IPerson) enables $select from the GraphQL selection set.
+    const correctUrl =
+      'https://services.odata.org/TripPinRESTierService/People?$select=UserName,FirstName';
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -177,7 +183,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(decodeURIComponent(sentRequest!.url)).toBe(correctUrl);
   });
   it('should generate correct HTTP request for requesting a single Entity by ID', async () => {
     using cache = new InMemoryLRUCache();
@@ -185,7 +191,7 @@ describe('odata', () => {
       'https://services.odata.org/TripPinRESTierService/$metadata',
       async () => new MockResponse(TripPinMetadata),
     );
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People/SOMEID/`;
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People/SOMEID/?$select=UserName,FirstName`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -223,7 +229,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(decodeURIComponent(sentRequest!.url)).toBe(correctUrl);
   });
   it('should generate correct HTTP request for requesting a complex property', async () => {
     addMock(
@@ -280,14 +286,15 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(decodeURIComponent(sentRequest!.url)).toBe(correctUrl);
   });
   it('should generate correct HTTP request for query options', async () => {
     addMock(
       'https://services.odata.org/TripPinRESTierService/$metadata',
       async () => new MockResponse(TripPinMetadata),
     );
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/People?$filter=FirstName eq 'Scott'`;
+    // URLSearchParams encodes spaces as `+`.
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/People?$filter=FirstName+eq+'Scott'&$select=UserName,FirstName`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -545,7 +552,8 @@ describe('odata', () => {
       'https://services.odata.org/TripPinRESTierService/$metadata',
       async () => new MockResponse(TripPinMetadata),
     );
-    const correctUrl = `https://services.odata.org/TripPinRESTierService/GetNearestAirport(lat = 33, lon = -118)?$select=IcaoCode,Name`;
+    // Connectors unbound emit: no spaces around `=` (legacy Mesh used `lat = 33`).
+    const correctUrl = `https://services.odata.org/TripPinRESTierService/GetNearestAirport(lat=33,lon=-118)?$select=IcaoCode,Name`;
     const correctMethod = 'GET';
     let sentRequest: Request;
     addMock(correctUrl, async request => {
@@ -600,11 +608,15 @@ describe('odata', () => {
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips/0/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople?$select=UserName`;
     const correctMethod = 'GET';
     let sentRequest: Request;
-    addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, async () => {
-      return new MockResponse(JSON.stringify(PersonMockData));
-    });
+    const personLoader = async () => new MockResponse(JSON.stringify(PersonMockData));
+    addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, personLoader);
     addMock(
-      `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips?$filter=TripId eq 0&$select=TripId`,
+      `https://services.odata.org/TripPinRESTierService/People/russellwhyte/?$select=UserName`,
+      personLoader,
+    );
+    // Connectors queryParams percent-encode spaces as `+` / `%20`.
+    addMock(
+      `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Trips?$filter=TripId+eq+0&$select=TripId`,
       async () => {
         return new MockResponse(JSON.stringify(TripMockData));
       },
@@ -654,7 +666,7 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url).toBe(correctUrl);
+    expect(decodeURIComponent(sentRequest!.url)).toBe(correctUrl);
   });
   it('should generate correct HTTP request for invoking bound functions with arguments', async () => {
     addMock(
@@ -664,9 +676,12 @@ describe('odata', () => {
     const correctUrl = `https://services.odata.org/TripPinRESTierService/People/russellwhyte/Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetFriendsTrips(userName='ronaldmundy')?$select=TripId,Name`;
     const correctMethod = 'GET';
     let sentRequest: Request;
-    addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, async () => {
-      return new MockResponse(JSON.stringify(PersonMockData));
-    });
+    const personLoader = async () => new MockResponse(JSON.stringify(PersonMockData));
+    addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, personLoader);
+    addMock(
+      `https://services.odata.org/TripPinRESTierService/People/russellwhyte/?$select=UserName`,
+      personLoader,
+    );
     addMock(correctUrl, async request => {
       sentRequest = request;
       return new MockResponse(
@@ -710,7 +725,10 @@ describe('odata', () => {
 
     expect(graphqlResult.errors).toBeFalsy();
     expect(sentRequest!.method).toBe(correctMethod);
-    expect(sentRequest!.url.replace(/'/g, '%27')).toBe(correctUrl.replace(/'/g, '%27')); // apostrophe gets percent-encoded
+    // Connectors encode `$` / `,` in the query string; compare decoded forms.
+    expect(decodeURIComponent(sentRequest!.url.replace(/\+/g, ' '))).toBe(
+      decodeURIComponent(correctUrl.replace(/\+/g, ' ')),
+    );
   });
   it('should generate correct HTTP request for invoking unbound actions', async () => {
     addMock(
@@ -767,9 +785,12 @@ describe('odata', () => {
       tripId: 0,
     };
     let sentRequest: Request;
-    addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, async () => {
-      return new MockResponse(JSON.stringify(PersonMockData));
-    });
+    const personLoader = async () => new MockResponse(JSON.stringify(PersonMockData));
+    addMock(`https://services.odata.org/TripPinRESTierService/People/russellwhyte/`, personLoader);
+    addMock(
+      `https://services.odata.org/TripPinRESTierService/People/russellwhyte/?$select=UserName`,
+      personLoader,
+    );
     addMock(correctUrl, async request => {
       sentRequest = request;
       return new MockResponse(JSON.stringify(true));
@@ -820,9 +841,9 @@ describe('odata', () => {
       Message: 'hello',
     };
     let sentRequest: Request;
-    addMock(`https://sample.service.com/People/alice/?$select=UserName`, async () => {
-      return new MockResponse(JSON.stringify(SimplePersonMockData));
-    });
+    const personLoader = async () => new MockResponse(JSON.stringify(SimplePersonMockData));
+    addMock(`https://sample.service.com/People/alice/`, personLoader);
+    addMock(`https://sample.service.com/People/alice/?$select=UserName`, personLoader);
     addMock(correctUrl, async request => {
       sentRequest = request;
       return new MockResponse(JSON.stringify(true));

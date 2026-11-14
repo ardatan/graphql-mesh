@@ -2,13 +2,13 @@ import { buildSchema, print } from 'graphql';
 import {
   composeSubgraphs,
   entityKeyFieldsFromHttpPath,
+  finalizeConnectorsSupergraph,
   formatEntityStubSelection,
   getAnnotatedSubgraphs,
   inferEntityRefFromParentFkNames,
   isFederationConnectorsSubgraph,
   liftExtraSchemaDefinitionDirectives,
   parseEntityStubTypesFromSelection,
-  toApolloRouterConnectorsSupergraph,
 } from '../src/index.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
 
@@ -195,7 +195,7 @@ describe('Federation Connectors composition', () => {
     expect(result.errors).toBeUndefined();
     const sdl = result.supergraphSdl!;
     expect(sdl).not.toContain('extraSchemaDefinitionDirective');
-    // Canonical Mesh connectors SG is Apollo Router form — same SDL for Hive + Router.
+    // Canonical Mesh connectors SG — same SDL for Hive Gateway + Apollo Router.
     expect(sdl).toMatch(/@join__directive\([^)]*name: "source"/);
     expect(sdl).toMatch(/@join__directive\([^)]*name: "connect"/);
     expect(sdl).toContain('specs.apollo.dev/join/v0.5');
@@ -322,14 +322,60 @@ describe('Federation Connectors composition', () => {
     expect(sdl).not.toMatch(/@connect\(/);
   });
 
-  it('toApolloRouterConnectorsSupergraph is idempotent on composed connectors SG', () => {
+  it('finalizeConnectorsSupergraph is idempotent on composed connectors SG', () => {
     const result = composeSubgraphs([{ name: 'Wiki', schema: connectorsSchema }]);
     expect(result.errors).toBeUndefined();
     const meshSdl = result.supergraphSdl!;
     expect(meshSdl).toMatch(/@join__directive\([^)]*name: "connect"/);
-    const again = toApolloRouterConnectorsSupergraph(meshSdl);
+    const again = finalizeConnectorsSupergraph(meshSdl);
     // Already finalized — early-return when no raw @connect remains
     expect(again).toBe(meshSdl);
+  });
+
+  it('strips linked connect scalars so they do not leak as join__type', () => {
+    const withLinkedScalars = buildSchema(/* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+        @source(name: "rest", http: { baseURL: "https://api.example.com" }) {
+        query: Query
+      }
+
+      directive @link(url: String!, import: [String]) repeatable on SCHEMA
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @connect(
+        source: String
+        http: ConnectHTTP
+        selection: JSONSelection!
+        entity: Boolean
+      ) repeatable on FIELD_DEFINITION
+
+      scalar JSONSelection
+      scalar URLPathTemplate
+
+      input ConnectHTTP {
+        GET: URLPathTemplate
+        body: JSONSelection
+      }
+      input SourceHTTP {
+        baseURL: String!
+      }
+
+      type Query {
+        user(id: ID!): User
+          @connect(source: "rest", http: { GET: "/users/{$args.id}" }, selection: "id")
+      }
+      type User {
+        id: ID!
+      }
+    `);
+    const result = composeSubgraphs([{ name: 'REST', schema: withLinkedScalars }]);
+    expect(result.errors).toBeUndefined();
+    const sdl = result.supergraphSdl!;
+    expect(sdl).not.toMatch(/\bscalar JSONSelection\b/);
+    expect(sdl).not.toMatch(/\bscalar URLPathTemplate\b/);
+    expect(sdl).not.toMatch(/\bscalar \w*JSONSelection\b/);
+    expect(sdl).not.toMatch(/\bscalar \w*URLPathTemplate\b/);
+    expect(sdl).toMatch(/@join__directive\([\s\S]*name: "connect"/);
   });
 
   it('emits type-level @connect with $this when keyArg !== keyField (Apollo entity pattern)', () => {

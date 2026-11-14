@@ -50,9 +50,10 @@ export default class ODataHandler implements MeshHandler {
         expandNavProps: this.config.expandNavProps,
       }),
     );
-    schema = processDirectives({
-      schema,
-      fetchFn,
+    // transport-rest: `@connect` + abstract resolveType (incl. `@odata.type`).
+    schema = processDirectives(schema, {
+      globalFetch: fetchFn,
+      log: this.log,
     });
     return {
       schema,

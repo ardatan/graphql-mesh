@@ -8,9 +8,9 @@ exports[`JSON Schema Example should generate correct schema 1`] = `
 
 directive @example(subgraph: String, value: ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
 
-directive @connect(source: String, http: ConnectHttp, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+directive @connect(source: String, http: ConnectHttp, selection: JsonSelection!, entity: Boolean, errors: ConnectorErrors, isSuccess: JsonSelection) repeatable on FIELD_DEFINITION | OBJECT
 
-directive @source(name: String!, http: SourceHttp!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+directive @source(name: String!, http: SourceHttp!, errors: ConnectorErrors, isSuccess: JsonSelection) repeatable on SCHEMA
 
 directive @link(url: String!, import: [String]) repeatable on SCHEMA
 
@@ -70,16 +70,21 @@ scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/fi
 scalar ObjMap
 
 input ConnectHttp {
-  get: String
-  head: String
-  post: String
-  put: String
-  patch: String
-  delete: String
+  get: UrlPathTemplate
+  head: UrlPathTemplate
+  post: UrlPathTemplate
+  put: UrlPathTemplate
+  patch: UrlPathTemplate
+  delete: UrlPathTemplate
   headers: [HttpHeaderMapping!]
-  body: String
-  queryParams: String
+  body: JsonSelection
+  queryParams: JsonSelection
 }
+
+"""
+A URL path with optional parameters, mapping to GraphQL fields or arguments
+"""
+scalar UrlPathTemplate
 
 input HttpHeaderMapping {
   name: String!
@@ -87,16 +92,17 @@ input HttpHeaderMapping {
   from: String
 }
 
+"""A custom syntax for mapping JSON data to GraphQL schema"""
+scalar JsonSelection
+
 input ConnectorErrors {
-  message: String
-  extensions: String
+  message: JsonSelection
+  extensions: JsonSelection
 }
 
 input SourceHttp {
   baseUrl: String!
   headers: [HttpHeaderMapping!]
-  queryParams: String
-  errors: ConnectorErrors
-  isSuccess: String
+  queryParams: JsonSelection
 }"
 `;
