@@ -1,20 +1,18 @@
 ---
-'@graphql-mesh/transport-rest': minor
 '@omnigraph/odata': minor
-'@graphql-mesh/fusion-composition': patch
+'@graphql-mesh/odata': minor
+'@graphql-mesh/transport-rest': minor
+'@graphql-mesh/fusion-composition': minor
+'@graphql-mesh/utils': patch
+'@omnigraph/json-schema': patch
 ---
 
-OData subgraphs now emit Federation Connectors (`@source` / `@connect` / `@key`) instead of Mesh `@transport(kind: "odata")` + `@entitySet*`.
+**Breaking (0.x):** OData subgraphs emit Federation Connectors (`@source` / `@connect` / `@key`) and run on `@graphql-mesh/transport-rest` (`kind: "rest"`). `@graphql-mesh/transport-odata` and Mesh OData field/HTTP resolvers (`@entitySet*`, `@pluralNav`, `@boundFunction`, …) are removed.
 
-- Loader sets `Accept: application/json;odata.metadata=minimal` on `@source` (dual-runtime signal).
-- Hive `transport-rest` detects that Accept value and appends `$select` / `$expand` from the GraphQL selection.
-- Apollo Router runs the same SDL as plain Connectors (fuller payloads, same GraphQL results).
-- **BREAKING:** `@graphql-mesh/transport-odata` is removed. OData runs on `@graphql-mesh/transport-rest` only (Gateway resolves `kind: "rest"`).
-
-Abstract OData types no longer emit `@abstractType`. `transport-rest` `processDirectives` installs a shared abstract `resolveType` that reads `__typename` or OData `@odata.type` (Hive rehydration; no residual Mesh pass).
-
-No `extensions.odataEntityInfo` bridge — Hive `$select` / `$expand` uses `@key` + `@connect` heuristics. Mesh `@transport` is emitted only when OData `options.odata` (`batch` / `expandNavProps`) is set; otherwise compose injects a minimal `kind: rest` entry from `@source` (same pattern as json-schema Connectors).
-
-Shared Connectors defs use spec scalars `JSONSelection` / `URLPathTemplate`; composition strips them from the finalized supergraph so they do not leak as `scalar … @join__type` (Router owns them via `@link(connect/v0.4)`).
-
-Also hardens MS Graph `$metadata` load / compose: safe enum member names (`null` → `_null`), resilient base-type field merges, no shared interface/object directive bags (so `@connect` / `@shareable` stay off interfaces), empty Input placeholders, and `e2e/odata-msgraph` (fixture metadata + mock Graph, hive + apollo-router GetMe in CI; live `$metadata`/`me` remains in the unit suite with a token).
+- `@source` sets `Accept: application/json;odata.metadata=minimal`. Hive appends `$select` / `$expand` from the GraphQL selection; Apollo Router runs the same SDL as plain Connectors.
+- Entity-set nav: `/EntitySet/{$this.key}/Nav`; nested-only: `{$this._odataId}/Nav` (`_odataId` from `@odata.id`, `@inaccessible`).
+- Abstract types: no `@abstractType` — `processDirectives` resolveType reads `@odata.type` (plus `__typename` / structural fallback).
+- No `extensions.odataEntityInfo`. `$select` / `$expand` uses `@key` + `@connect` heuristics.
+- Mesh `@transport` only when `options.odata` is set (`batch` / `expandNavProps`); otherwise `@source` alone and compose injects a minimal `kind: rest` entry.
+- Shared connect/v0.4 defs (`JSONSelection` / `URLPathTemplate`) live in `transport-rest`; composition strips those scalars from the finalized supergraph.
+- MS Graph: safer enum names, resilient base-type merges, `e2e/odata-msgraph` (fixture + hive/apollo-router); TripPin e2e covers entity-set nav on both runners.
