@@ -3,6 +3,7 @@ import { Response } from '@whatwg-node/fetch';
 import { processConnectDirectives } from '../src/directives/connect.js';
 import {
   buildConnectPropertyNameMap,
+  hasODataMetadataAcceptHeader,
   isODataMetadataAccept,
 } from '../src/directives/odataConnectProfile.js';
 
@@ -46,6 +47,18 @@ describe('odataConnectProfile helpers', () => {
       }),
     ).toBe(true);
     expect(isODataMetadataAccept({ accept: 'application/json' })).toBe(false);
+  });
+
+  it('detects literal Accept odata.metadata on header mappings', () => {
+    expect(
+      hasODataMetadataAcceptHeader([
+        { name: 'Accept', value: 'application/json;odata.metadata=minimal' },
+      ]),
+    ).toBe(true);
+    expect(hasODataMetadataAcceptHeader([{ name: 'Accept', from: 'accept' }])).toBe(false);
+    expect(
+      hasODataMetadataAcceptHeader([{ name: 'Accept', value: 'application/json' }]),
+    ).toBe(false);
   });
 
   it('maps selection aliases to OData property names', () => {

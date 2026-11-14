@@ -36,6 +36,29 @@ export function isODataMetadataAccept(headers: Record<string, string>): boolean 
 }
 
 /**
+ * Schema-time check: `@source` / `@connect` header mappings with a literal
+ * `Accept: …;odata.metadata=…` (the dual-runtime signal). Ignores `from:`
+ * passthroughs — those are not the OData stamp.
+ */
+export function hasODataMetadataAcceptHeader(
+  mappings?: Array<{ name: string; value?: string; from?: string }> | null,
+): boolean {
+  if (!mappings?.length) {
+    return false;
+  }
+  for (const mapping of mappings) {
+    if (
+      mapping.name.toLowerCase() === 'accept' &&
+      typeof mapping.value === 'string' &&
+      ODATA_METADATA_ACCEPT_RE.test(mapping.value)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Map GraphQL response field names → OData/JSON property names from a Connectors
  * `selection` (simple `alias: prop` lines only; nested blocks inherit GraphQL names).
  */

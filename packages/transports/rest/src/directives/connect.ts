@@ -31,6 +31,7 @@ import { createODataBatchFetch, type ODataBatchMode } from './odataBatch.js';
 import {
   appendODataSelectExpand,
   attachExpandedNavFromRaw,
+  hasODataMetadataAcceptHeader,
   isODataMetadataAccept,
 } from './odataConnectProfile.js';
 import { rebuildOpenInputObjects } from './odataOpenInput.js';
@@ -1506,21 +1507,10 @@ export function addConnectFieldResolver(
   const timeout = opts.timeout;
   const expandNavProps = Boolean(opts.odata?.expandNavProps);
   const odataBatchFetch = opts.odata?.batchFetch;
-  // Prefer-embedded gate is schema-static (expandNavProps + `@source` Accept
-  // `odata.metadata=…`). Probe once here so every resolver call only checks root.
-  const preferEmbeddedNav = (() => {
-    if (!expandNavProps || !source?.http?.headers) {
-      return false;
-    }
-    const probe: Record<string, string> = {};
-    applyHeaders(probe, source.http.headers, {
-      args: {},
-      thisValue: {},
-      env: process.env,
-      context: {},
-    });
-    return isODataMetadataAccept(probe);
-  })();
+  // Prefer-embedded: expandNavProps + literal `@source` Accept `odata.metadata=…`.
+  // Schema-static — no per-call header resolve / empty arg stubs.
+  const preferEmbeddedNav =
+    expandNavProps && hasODataMetadataAcceptHeader(source?.http?.headers);
 
   field.resolve = async (root, args, context, info: GraphQLResolveInfo) => {
     // When `$expand` already put this field on `root`, skip the field-level HTTP trip.
