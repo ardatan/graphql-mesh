@@ -37,13 +37,48 @@ yarn test:e2e e2e/odata-msgraph
 
 ```bash
 export MSGRAPH_LIVE=1
-export MSGRAPH_ACCESS_TOKEN='…' # delegated Bearer (or GRAPH_ACCESS_TOKEN)
+export MSGRAPH_ACCESS_TOKEN='…' # short-lived; prefer CI refresh secrets below
 yarn test:e2e e2e/odata-msgraph
 ```
 
-CI runs the live suite via `.github/workflows/odata-msgraph-live.yml` when OData/Connectors paths
-change, if the `MSGRAPH_ACCESS_TOKEN` repository secret is set. Without the secret the live describe
-is skipped.
+#### One-time setup so CI refreshes the token for you
+
+You do **not** paste a new access token every run. Store a refresh token once; the
+`odata-msgraph-live` workflow exchanges it for an access token on each job.
+
+1. **Entra ID → App registrations → New registration** (public client is fine).
+2. **Authentication** → “Allow public client flows” = **Yes** (for device-code helper).
+3. **API permissions** (delegated) + admin consent:
+   - `User.Read`, `Mail.Read`, `Group.Read.All`, `Files.Read`, `offline_access`
+4. Use a dedicated test user (mailbox / OneDrive / groups available; MFA/CA exception if needed).
+5. Mint a refresh token once:
+
+```bash
+export MSGRAPH_TENANT_ID='<directory-tenant-id>'
+export MSGRAPH_CLIENT_ID='<app-client-id>'
+# optional for confidential apps:
+# export MSGRAPH_CLIENT_SECRET='…'
+node e2e/odata-msgraph/scripts/get-refresh-token.mjs
+```
+
+Follow the device-code prompt, then copy the printed values.
+
+6. **GitHub → repo Settings → Secrets and variables → Actions** — add:
+
+| Secret                  | Required | Notes                                       |
+| ----------------------- | -------- | ------------------------------------------- |
+| `MSGRAPH_TENANT_ID`     | yes\*    | Directory (tenant) ID                       |
+| `MSGRAPH_CLIENT_ID`     | yes\*    | Application (client) ID                     |
+| `MSGRAPH_REFRESH_TOKEN` | yes\*    | From the helper script                      |
+| `MSGRAPH_CLIENT_SECRET` | no       | Only if the app is confidential             |
+| `MSGRAPH_ACCESS_TOKEN`  | no       | Fallback only (~1h); prefer refresh secrets |
+
+\*Required for automatic refresh. If none are set, the live suite skips (job stays green).
+
+Workflow: `.github/workflows/odata-msgraph-live.yml` (path-filtered + `workflow_dispatch`).
+
+If Microsoft rotates/revokes the refresh token, re-run the helper and update
+`MSGRAPH_REFRESH_TOKEN`.
 
 Schema note: live execute keeps the e2e fixture metadata (example-query surface) so Apollo Router
 accepts the supergraph; the HTTP endpoint is real Graph. Full public `$metadata` includes abstract
