@@ -10170,6 +10170,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/transport-rest@workspace:packages/transports/rest"
   dependencies:
+    "@apollo/subgraph": "npm:^2.15.1"
     "@graphql-hive/logger": "npm:^1.1.1"
     "@graphql-hive/pubsub": "npm:^2.2.1"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
