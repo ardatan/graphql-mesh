@@ -95,7 +95,7 @@ export function splitSoapEndpoint(endpoint: string | undefined): {
       path: `${url.pathname}${url.search}` || '/',
     };
   } catch {
-    // Relative / template endpoint — leave as path with empty base.
+    // Relative / template endpoint - leave as path with empty base.
     return { baseURL: '', path: endpoint };
   }
 }
@@ -132,10 +132,6 @@ function getOrAssignPrefix(
   return prefix;
 }
 
-function indent(level: number): string {
-  return '  '.repeat(level);
-}
-
 function quoteKey(key: string): string {
   return `"${key.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 }
@@ -144,7 +140,7 @@ function literalExpr(value: unknown): string {
   return `$(${JSON.stringify(value)})`;
 }
 
-/** `{context.USER_NAME}` / `{env.FOO}` → `$context.USER_NAME` / `$env.FOO` for Connectors. */
+/** `{context.USER_NAME}` / `{env.FOO}` -> `$context.USER_NAME` / `$env.FOO` for Connectors. */
 function meshInterpolatorToConnectExpr(value: unknown): string | null {
   if (typeof value !== 'string') return null;
   const match = value.trim().match(/^\{(context|env|args|this)\.([^}]+)\}$/);
@@ -152,7 +148,12 @@ function meshInterpolatorToConnectExpr(value: unknown): string | null {
   return `$${match[1]}.${match[2]}`;
 }
 
-function formatStaticXmlTree(value: unknown, level: number): string {
+/**
+ * Compact JSONSelection object (spaces, no newlines).
+ * Newlines are optional sugar for Connectors; printing them as `\n` in SDL is noise
+ * (same stance as OpenAPI connectAnnotations).
+ */
+function formatStaticXmlTree(value: unknown): string {
   const interpolated = meshInterpolatorToConnectExpr(value);
   if (interpolated) {
     return interpolated;
@@ -161,18 +162,18 @@ function formatStaticXmlTree(value: unknown, level: number): string {
     return literalExpr(value);
   }
   if (Array.isArray(value)) {
-    // FXP repeated elements — emit first shape only for static config headers.
-    return value.length ? formatStaticXmlTree(value[0], level) : literalExpr(null);
+    // FXP repeated elements - emit first shape only for static config headers.
+    return value.length ? formatStaticXmlTree(value[0]) : literalExpr(null);
   }
   const entries = Object.entries(value as Record<string, unknown>);
   if (entries.length === 0) {
     return '{}';
   }
-  const lines = entries.map(([k, v]) => {
+  const fields = entries.map(([k, v]) => {
     const key = /[:\s"]/.test(k) ? quoteKey(k) : k;
-    return `${indent(level + 1)}${key}: ${formatStaticXmlTree(v, level + 1)}`;
+    return `${key}: ${formatStaticXmlTree(v)}`;
   });
-  return `{\n${lines.join('\n')}\n${indent(level)}}`;
+  return `{ ${fields.join(' ')} }`;
 }
 
 export interface SoapConnectEmitInput {
@@ -193,45 +194,39 @@ export interface SoapConnectEmitInput {
 /**
  * Build `@connect` http.body JSONSelection: full FXP `"soap:Envelope"` tree.
  * Prefixed element keys are quoted so JSONSelection treats colons as part of the name.
+ * Emitted compact (spaces, no newlines) so printed SDL does not fill with `\n` escapes.
  *
- * Prefix assignment mirrors legacy `transport-soap` executor:
- * - Pre-seed binding NS → `body` / `bodyAlias` so single-NS WSDLs keep the `body:` wire prefix.
+ * Prefix assignment mirrors the old soap executor:
+ * - Pre-seed binding NS as `body` / `bodyAlias` so single-NS WSDLs keep the `body:` wire prefix.
  * - Pre-seed soapHeaders alias so it is not stolen by deriveXmlPrefix.
- * - Only emit `xmlns:*` for prefixes that appear on Header/Body elements (lazy, like the executor).
+ * - Only emit `xmlns:*` for prefixes that appear on Header/Body elements (lazy).
  *
  * soapHeaders vs WSDL header args: config is seeded first; colliding GraphQL args are
  * spread over the static defaults (`...$args.X`) so present args win and omitted args
  * leave the defaults (spread of null/undefined is a no-op in applySelection).
  */
-/** Flatten a `{ … }` static tree into indented field lines (no outer braces). */
-function staticTreeInnerLines(value: unknown, level: number): string[] {
-  const nested = formatStaticXmlTree(value, level);
+/** Flatten a `{ ... }` static tree into field entries (no outer braces). */
+function staticTreeInnerFields(value: unknown): string[] {
+  const nested = formatStaticXmlTree(value);
   if (!(nested.startsWith('{') && nested.endsWith('}'))) {
-    return [`${indent(level)}${nested}`];
+    return [nested];
   }
-  return nested
-    .slice(1, -1)
-    .split('\n')
-    .map(l => l.trimEnd())
-    .filter(l => l.trim().length > 0);
+  const inner = nested.slice(1, -1).trim();
+  return inner ? [inner] : [];
 }
 
 /**
  * soapHeaders default object with optional GraphQL arg overlay.
  * Spread of null/undefined `$args.X` is a no-op in applySelection, matching
- * legacy executor "only overwrite when arg carries a real value".
+ * "only overwrite when arg carries a real value".
  */
 function formatHeaderWithOptionalArg(
   elementKey: string,
   staticValue: unknown,
   argName: string,
-  level: number,
 ): string {
-  const inner = [
-    ...staticTreeInnerLines(staticValue, level + 1),
-    `${indent(level + 1)}...$args.${argName}`,
-  ].join('\n');
-  return `${indent(level)}${quoteKey(elementKey)}: {\n${inner}\n${indent(level)}}`;
+  const parts = [...staticTreeInnerFields(staticValue), `...$args.${argName}`];
+  return `${quoteKey(elementKey)}: { ${parts.join(' ')} }`;
 }
 
 export function buildSoapConnectBody(input: SoapConnectEmitInput): string {
@@ -251,8 +246,8 @@ export function buildSoapConnectBody(input: SoapConnectEmitInput): string {
   }
 
   const headerArgSet = new Set(input.headerArgNames ?? []);
-  const bodyLines: string[] = [];
-  const headerLines: string[] = [];
+  const bodyFields: string[] = [];
+  const headerFields: string[] = [];
   const usedPrefixes = new Set<string>();
   const markPrefix = (prefix: string | null) => {
     if (prefix) usedPrefixes.add(prefix);
@@ -264,19 +259,18 @@ export function buildSoapConnectBody(input: SoapConnectEmitInput): string {
       : [];
   const soapHeaderKeys = new Set(soapHeaderEntries.map(([k]) => k));
 
-  let hdrAlias: string | null = null;
   if (soapHeaderEntries.length) {
     const hdrNs = input.soapHeaders!.namespace;
-    hdrAlias = hdrNs
+    const hdrAlias = hdrNs
       ? getOrAssignPrefix(hdrNs, assigned, input.soapHeaders!.alias ?? 'header')
       : (input.soapHeaders!.alias ?? 'header');
     markPrefix(hdrAlias);
     for (const [k, v] of soapHeaderEntries) {
       const elementKey = `${hdrAlias}:${k}`;
       if (headerArgSet.has(k) && input.argNames.includes(k)) {
-        headerLines.push(formatHeaderWithOptionalArg(elementKey, v, k, 4));
+        headerFields.push(formatHeaderWithOptionalArg(elementKey, v, k));
       } else {
-        headerLines.push(`${indent(4)}${quoteKey(elementKey)}: ${formatStaticXmlTree(v, 4)}`);
+        headerFields.push(`${quoteKey(elementKey)}: ${formatStaticXmlTree(v)}`);
       }
     }
   }
@@ -296,33 +290,27 @@ export function buildSoapConnectBody(input: SoapConnectEmitInput): string {
       if (soapHeaderKeys.has(argName)) {
         continue;
       }
-      headerLines.push(`${indent(4)}${quoteKey(elementKey)}: $args.${argName}`);
+      headerFields.push(`${quoteKey(elementKey)}: $args.${argName}`);
     } else {
-      bodyLines.push(`${indent(4)}${quoteKey(elementKey)}: $args.${argName}`);
+      bodyFields.push(`${quoteKey(elementKey)}: $args.${argName}`);
     }
   }
 
-  const xmlnsLines = [`${indent(3)}${quoteKey('xmlns:soap')}: ${literalExpr(input.soapNamespace)}`];
+  const xmlnsFields = [`${quoteKey('xmlns:soap')}: ${literalExpr(input.soapNamespace)}`];
   for (const [nsUri, prefix] of assigned) {
     if (!usedPrefixes.has(prefix)) continue;
-    xmlnsLines.push(`${indent(3)}${quoteKey(`xmlns:${prefix}`)}: ${literalExpr(nsUri)}`);
+    xmlnsFields.push(`${quoteKey(`xmlns:${prefix}`)}: ${literalExpr(nsUri)}`);
   }
 
-  const envelopeChildren: string[] = [
-    `${indent(2)}attributes: {\n${xmlnsLines.join('\n')}\n${indent(2)}}`,
-  ];
-  if (headerLines.length) {
-    envelopeChildren.push(
-      `${indent(2)}${quoteKey('soap:Header')}: {\n${headerLines.join('\n')}\n${indent(2)}}`,
-    );
+  const envelopeChildren: string[] = [`attributes: { ${xmlnsFields.join(' ')} }`];
+  if (headerFields.length) {
+    envelopeChildren.push(`${quoteKey('soap:Header')}: { ${headerFields.join(' ')} }`);
   }
   envelopeChildren.push(
-    `${indent(2)}${quoteKey('soap:Body')}: {\n${
-      bodyLines.length ? bodyLines.join('\n') : `${indent(3)}`
-    }\n${indent(2)}}`,
+    `${quoteKey('soap:Body')}: {${bodyFields.length ? ` ${bodyFields.join(' ')} ` : ' '}}`,
   );
 
-  return `${quoteKey('soap:Envelope')}: {\n${envelopeChildren.join('\n')}\n${indent(1)}}`;
+  return `${quoteKey('soap:Envelope')}: { ${envelopeChildren.join(' ')} }`;
 }
 
 /** Response selection: GraphQL return type is the SOAP response element (same as legacy executor). */
