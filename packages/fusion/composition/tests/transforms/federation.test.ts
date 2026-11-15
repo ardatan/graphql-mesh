@@ -1,6 +1,11 @@
-import { buildSchema } from 'graphql';
+import { buildSchema, print } from 'graphql';
 import { createSchema } from 'graphql-yoga';
-import { createFederationTransform, type SubgraphConfig } from '@graphql-mesh/fusion-composition';
+import {
+  composeSubgraphs,
+  createFederationTransform,
+  getAnnotatedSubgraphs,
+  type SubgraphConfig,
+} from '@graphql-mesh/fusion-composition';
 import { TransformValidationError } from '../../src/transforms/utils';
 import { composeAndGetExecutor } from './utils';
 
@@ -190,5 +195,66 @@ describe('Federation', () => {
         /Invalid operation type "invalid" in resolveReference config/,
       );
     });
+  });
+
+  it('virtualConnect emits entity:true @connect instead of Mesh @merge', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        author(id: ID!): Author
+      }
+      type Author {
+        id: ID!
+        name: String!
+      }
+    `);
+    const annotated = getAnnotatedSubgraphs([
+      {
+        name: 'authors',
+        schema,
+        transforms: [
+          createFederationTransform({
+            Author: {
+              key: {
+                fields: 'id',
+                resolveReference: {
+                  fieldName: 'author',
+                  keyArg: 'id',
+                  virtualConnect: true,
+                },
+              },
+            },
+          }),
+        ],
+      },
+    ]);
+    const sdl = print(annotated[0].typeDefs);
+    expect(sdl).toMatch(/author\(id:[\s\S]*entity:\s*true/);
+    expect(sdl).toMatch(/id:\s*\$args\.id/);
+    expect(sdl).not.toMatch(/@merge\(/);
+    expect(sdl).toMatch(/specs\.apollo\.dev\/connect\/v0\.4/);
+
+    const composed = composeSubgraphs([
+      {
+        name: 'authors',
+        schema,
+        transforms: [
+          createFederationTransform({
+            Author: {
+              key: {
+                fields: 'id',
+                resolveReference: {
+                  fieldName: 'author',
+                  keyArg: 'id',
+                  virtualConnect: true,
+                },
+              },
+            },
+          }),
+        ],
+      },
+    ]);
+    expect(composed.errors).toBeUndefined();
+    expect(composed.supergraphSdl).not.toMatch(/@merge\(/);
+    expect(composed.supergraphSdl).toMatch(/entity:\s*true/);
   });
 });

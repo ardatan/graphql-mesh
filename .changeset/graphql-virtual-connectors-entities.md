@@ -3,8 +3,12 @@
 '@graphql-mesh/fusion-composition': patch
 ---
 
-Federation Connectors entity stubs from a GraphQL peer no longer need Mesh `@merge`.
+Federation Connectors entity stubs and GraphQL virtual-connect entity transforms.
 
-`transport-rest` repairs bare Federation-extracted `Query._entities` (field present, no resolver) so Hive can plan `_entities` against a Connectors owner when a GraphQL catalog only returns a key stub. `finalizeConnectorsSupergraph` attributes type-level `@connect` by `source` name before the first `@join__type`, so extension graphs listed first do not steal the owner connector.
+`transport-rest` repairs bare Federation-extracted `Query._entities` so Hive can plan against a Connectors owner when a GraphQL catalog only returns a key stub.
 
-E2E `graphql-virtual-connectors`: GraphQL Federation catalog stubs `Product` + `isFeatured`; OpenAPI Connectors owns `getProduct(id:)` with `entity: true` + JSONSelection; Hive and Apollo Router both fill `name` / `price` with no Mesh `@merge`.
+`createFederationTransform` accepts `resolveReference.virtualConnect: true` to emit an Apollo virtual `@connect(entity: true)` (selection from `$args` only, no `http:`) instead of Mesh `@merge`. Compose re-detects connect/v0.4 after transforms and stamps rest transport. Virtual connect cannot call a GraphQL HTTP upstream; use real Federation `_entities` or an HTTP-backed `@connect` when entity fields must be fetched.
+
+E2E:
+- `graphql-virtual-connectors`: GraphQL catalog stub + OpenAPI Connectors owner (dual-run, no `@merge`).
+- `graphql-virtual-transforms`: type-merging without `additionalTypeDefs`/`@resolveTo` — virtualConnect vs Federation authors.
