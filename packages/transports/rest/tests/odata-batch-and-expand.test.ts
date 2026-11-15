@@ -733,6 +733,95 @@ describe('prefer-embedded completes _odataId for already-mapped nav', () => {
     expect(urls).toHaveLength(1);
   });
 
+  it('marks nested nav under hand-written `$.person` root wrappers', async () => {
+    // `$.person { orders: Orders { … } }` must unwrap like `$.value` so nestedMappedSelections
+    // records `orders` (not `person`); otherwise rematch can null already-mapped fields.
+    const sdl = /* GraphQL */ `
+      ${CONNECTOR_DIRECTIVES}
+
+      schema
+        @source(
+          name: "api"
+          http: {
+            baseURL: "https://odata.example.com"
+            headers: [{ name: "Accept", value: "${ODATA_ACCEPT}" }]
+          }
+        ) {
+        query: Query
+      }
+
+      type Query {
+        person(id: String!): Person
+          @connect(
+            source: "api"
+            http: { GET: "/People/{$args.id}" }
+            selection: """
+              $.person {
+                id
+                orders: Orders {
+                  id
+                  name: Name
+                }
+              }
+            """
+          )
+      }
+
+      type Person @key(fields: "id") {
+        id: String
+        orders: [Order]
+          @connect(
+            source: "api"
+            http: { GET: "/People/{$this.id}/Orders" }
+            selection: "$.value { id name: Name }"
+          )
+      }
+
+      type Order @key(fields: "id") {
+        id: String
+        name: String
+      }
+    `;
+
+    const urls: string[] = [];
+    const schema = processConnectDirectives(buildSchema(sdl), {
+      odata: { expandNavProps: true },
+      globalFetch: (async (url: string) => {
+        urls.push(String(url));
+        return Response.json({
+          person: {
+            id: 'p1',
+            Orders: [{ id: 'o1', Name: 'One' }],
+          },
+        });
+      }) as any,
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          person(id: "p1") {
+            id
+            orders {
+              id
+              name
+            }
+          }
+        }
+      `),
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      person: {
+        id: 'p1',
+        orders: [{ id: 'o1', name: 'One' }],
+      },
+    });
+    expect(urls).toHaveLength(1);
+  });
+
   it('keeps parent-mapped nested orders without rematch wiping name', async () => {
     // Explicit `orders: Orders { id name: Name }` must stay marked so rematch is skipped.
     const sdl = /* GraphQL */ `

@@ -1648,31 +1648,45 @@ const ODATA_SELECTION_APPLIED = Symbol.for('@graphql-mesh/odata.selectionApplied
 /** Identity / bare path — applySelection returns raw; do not tag nested pass-through. */
 function isRawPassThroughSelection(selection: string): boolean {
   const t = selection.trim();
-  return !t || t === '$' || t === '$root' || t === '$.value';
+  if (!t || t === '$' || t === '$root') {
+    return true;
+  }
+  // Bare `$.value` / `$.person` with no `{ … }` mapping block.
+  return /^\$(\.[A-Za-z_][\w]*)+$/.test(t);
 }
 
 /**
- * Body of `$.value { … }` when that wraps the whole selection; otherwise null.
- * Used so list results mark each item with the entity body, not the `$.value` wrapper.
+ * Body of a root `$.name { … }` wrapper when that wraps the whole selection.
+ * Covers OData `$.value { … }` and hand-written roots like `$.person { … }` so
+ * nestedMappedSelections sees `orders`, not the wrapper name `person`.
  */
-function dollarValueSelectionBody(selection: string): string | null {
+function dollarRootSelectionBody(selection: string): string | null {
   const trimmed = selection.trim();
-  const m = /^\$\.value\s*\{/.exec(trimmed);
+  const m = /^\$\.([A-Za-z_][\w]*)\s*\{/.exec(trimmed);
   if (!m) return null;
   const open = trimmed.indexOf('{', m.index);
   if (open < 0) return null;
   let depth = 0;
+  let close = -1;
   for (let i = open; i < trimmed.length; i++) {
     const c = trimmed[i];
     if (c === '{') depth++;
     else if (c === '}') {
       depth--;
       if (depth === 0) {
-        return trimmed.slice(open + 1, i);
+        close = i;
+        break;
       }
     }
   }
-  return trimmed.slice(open + 1);
+  if (close < 0) {
+    return trimmed.slice(open + 1);
+  }
+  // Only unwrap when this `{ … }` is the whole selection (root wrapper).
+  if (trimmed.slice(close + 1).trim() !== '') {
+    return null;
+  }
+  return trimmed.slice(open + 1, close);
 }
 
 /**
@@ -1682,7 +1696,7 @@ function dollarValueSelectionBody(selection: string): string | null {
  */
 function nestedMappedSelections(selection: string): Map<string, string> {
   const map = new Map<string, string>();
-  const body = dollarValueSelectionBody(selection) ?? selection.trim();
+  const body = dollarRootSelectionBody(selection) ?? selection.trim();
   let i = 0;
   while (i < body.length) {
     while (i < body.length && /\s/.test(body[i]!)) i++;
@@ -1731,9 +1745,10 @@ function markSelectionApplied(value: unknown, selection = ''): unknown {
     return value;
   }
 
-  const valueBody = dollarValueSelectionBody(trimmed);
+  const rootBody = dollarRootSelectionBody(trimmed);
   if (Array.isArray(value)) {
-    const itemSelection = valueBody ?? trimmed;
+    // `$.value { … }` list mapping — mark each item with the entity body.
+    const itemSelection = rootBody ?? trimmed;
     for (const item of value) {
       markSelectionApplied(item, itemSelection);
     }
@@ -1746,7 +1761,7 @@ function markSelectionApplied(value: unknown, selection = ''): unknown {
     configurable: true,
   });
 
-  const nested = nestedMappedSelections(valueBody ?? trimmed);
+  const nested = nestedMappedSelections(rootBody ?? trimmed);
   const obj = value as Record<string, unknown>;
   for (const [fieldName, subSelection] of nested) {
     if (Object.prototype.hasOwnProperty.call(obj, fieldName)) {
