@@ -10,8 +10,10 @@ import {
   liftExtraSchemaDefinitionDirectives,
   parseEntityStubTypesFromSelection,
 } from '../src/index.js';
+import { createNamingConventionTransform } from '../src/transforms/naming-convention.js';
 import { createPrefixTransform } from '../src/transforms/prefix.js';
 import { createRenameTransform } from '../src/transforms/rename.js';
+import { camelCase } from 'change-case';
 
 describe('Federation Connectors composition', () => {
   const connectorsSchema = buildSchema(/* GraphQL */ `
@@ -92,6 +94,34 @@ describe('Federation Connectors composition', () => {
         `),
       ),
     ).toBe(false);
+  });
+
+  it('auto-type-merging GraphQL @merge also dual-emits virtual @connect (no flag)', () => {
+    const vaccination = buildSchema(/* GraphQL */ `
+      type Query {
+        pet_by_id(id: ID!): Pet
+      }
+      type Pet {
+        id: ID!
+        vaccinated: Boolean!
+      }
+    `);
+    const composed = composeSubgraphs([
+      { name: 'petstore', schema: connectorsSchema },
+      {
+        name: 'vaccination',
+        url: 'http://vaccination/graphql',
+        schema: vaccination,
+        transforms: [createNamingConventionTransform({ fieldNames: camelCase })],
+      },
+    ]);
+    expect(composed.errors).toBeUndefined();
+    const petById =
+      composed.supergraphSdl?.match(/petById\([\s\S]*?\):\s*Pet[^\n]*/)?.[0] || '';
+    expect(petById).toMatch(/@merge\(subgraph:\s*"vaccination"/);
+    expect(petById).toMatch(/name:\s*"connect"/);
+    expect(petById).toMatch(/entity:\s*true/);
+    expect(composed.supergraphSdl).toMatch(/@meshSource\(/);
   });
 
   it('does not add Mesh @transport or stitching @source for connectors subgraphs', () => {

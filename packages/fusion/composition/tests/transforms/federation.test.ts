@@ -197,7 +197,7 @@ describe('Federation', () => {
     });
   });
 
-  it('virtualConnect dual-emits @connect(entity:true) alongside Mesh @merge (no rest flip)', () => {
+  it('resolveReference dual-emits @merge + virtual @connect(entity:true) with no flag', () => {
     const schema = buildSchema(/* GraphQL */ `
       type Query {
         author(id: ID!): Author
@@ -220,7 +220,6 @@ describe('Federation', () => {
                 resolveReference: {
                   fieldName: 'author',
                   keyArg: 'id',
-                  virtualConnect: true,
                 },
               },
             },
@@ -233,7 +232,6 @@ describe('Federation', () => {
     expect(sdl).toMatch(/id:\s*\$args\.id/);
     expect(sdl).toMatch(/@merge\(/);
     expect(sdl).toMatch(/specs\.apollo\.dev\/connect\/v0\.4/);
-    // Virtual-only must not be classified as HTTP Connectors (no rest transport flip).
     expect(sdl).not.toMatch(/kind:\s*"rest"/);
 
     const composed = composeSubgraphs([
@@ -249,7 +247,6 @@ describe('Federation', () => {
                 resolveReference: {
                   fieldName: 'author',
                   keyArg: 'id',
-                  virtualConnect: true,
                 },
               },
             },

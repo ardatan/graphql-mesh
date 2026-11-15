@@ -27,7 +27,9 @@ import {
 import type { ServiceDefinition } from '@theguild/federation-composition';
 import { composeServices } from '@theguild/federation-composition';
 import {
+  attachVirtualEntityConnect,
   ensureNonResolvableKeysForEntityStubs,
+  ensureVirtualConnectLink,
   hasEquivalentTypeConnect,
   toTypeLevelEntityConnect,
 } from './connect-entity.js';
@@ -223,12 +225,13 @@ export function getAnnotatedSubgraphs(
     }
 
     let mergeDirectiveUsed = false;
+    let virtualConnectUsed = false;
     // Stitching source is only for non-connectors transforms. Connectors transforms
     // rewrite `@connect` selection/http instead of adding Mesh source annotations.
     const sourceDirectiveUsed = !isConnectorsSubgraph && transforms?.length > 0;
-    // When Connectors *or* virtual connect `@link` are in the composition, alias to
-    // `@meshSource` so Apollo Router does not parse Mesh stitching `@source` as
-    // Connectors SCHEMA `@source`.
+    // When Connectors *or* a connect `@link` (incl. federation dual-annotation) are in
+    // the composition, alias to `@meshSource` so Apollo Router does not parse Mesh
+    // stitching `@source` as Connectors SCHEMA `@source`.
     const aliasMeshSource =
       sourceDirectiveUsed && (compositionHasConnectors || compositionHasConnectLink);
     const meshSourceDirectiveName = aliasMeshSource ? 'meshSource' : 'source';
@@ -511,6 +514,12 @@ export function getAnnotatedSubgraphs(
             if (directiveExtensions.merge) {
               mergeDirectiveUsed = true;
             }
+            if (
+              Array.isArray(directiveExtensions.connect) &&
+              directiveExtensions.connect.some((c: { http?: unknown }) => c?.http == null)
+            ) {
+              virtualConnectUsed = true;
+            }
             return {
               ...fieldConfig,
               extensions: {
@@ -522,6 +531,9 @@ export function getAnnotatedSubgraphs(
           }
         },
       });
+    }
+    if (virtualConnectUsed) {
+      transformedSubgraph = ensureVirtualConnectLink(transformedSubgraph);
     }
     // HTTP Connectors added during transforms (e.g. loader emit) → rest transport.
     // Virtual-only `@connect` (no http) must NOT flip GraphQL subgraphs to rest.
@@ -952,12 +964,17 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
             return;
           }
-          // Non-Connectors subgraphs still use Mesh `@merge` for type merging.
+          // Non-Connectors: Mesh `@merge` for Hive + virtual `@connect` for Router.
           directiveExtensions.merge ||= [];
           directiveExtensions.merge.push({
             subgraph: subgraphName,
             keyField: fieldName,
             keyArg: argName,
+          });
+          attachVirtualEntityConnect(directiveExtensions, {
+            keyField: fieldName,
+            keyArg: argName,
+            returnType: getNamedType(queryFieldConfig.type),
           });
         };
         switch (queryFieldNameSnakeCase) {

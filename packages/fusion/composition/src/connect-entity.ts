@@ -1,9 +1,14 @@
 import {
+  DirectiveLocation,
   getNamedType,
+  GraphQLBoolean,
+  GraphQLDirective,
+  GraphQLNonNull,
   GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
   isInterfaceType,
   isObjectType,
-  type GraphQLSchema,
 } from 'graphql';
 import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/utils';
 
@@ -25,6 +30,96 @@ import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/ut
  */
 
 const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
+
+/**
+ * Ensure connect/v0.4 `@link` + `@connect` directive def so Federation can
+ * `@composeDirective` virtual `@connect` into the supergraph for Apollo Router.
+ * Does not imply HTTP Connectors / rest transport.
+ */
+export function ensureVirtualConnectLink(schema: GraphQLSchema): GraphQLSchema {
+  const schemaDirectives = getDirectiveExtensions(schema) || {};
+  const linkDirectives = (schemaDirectives.link ||= []);
+  if (
+    !linkDirectives.some(
+      (l: { url?: string }) =>
+        typeof l?.url === 'string' && l.url.startsWith('https://specs.apollo.dev/connect'),
+    )
+  ) {
+    linkDirectives.push({
+      url: 'https://specs.apollo.dev/connect/v0.4',
+      import: ['@connect', '@source'],
+    });
+  }
+  const extensions: Record<string, unknown> = (schema.extensions ||= {});
+  extensions.directives = schemaDirectives;
+  if (schema.getDirective('connect')) {
+    return schema;
+  }
+  const schemaConfig = schema.toConfig();
+  const next = new GraphQLSchema({
+    ...schemaConfig,
+    directives: [
+      ...schemaConfig.directives,
+      new GraphQLDirective({
+        name: 'connect',
+        locations: [DirectiveLocation.FIELD_DEFINITION, DirectiveLocation.OBJECT],
+        args: {
+          source: { type: GraphQLString },
+          selection: { type: new GraphQLNonNull(GraphQLString) },
+          entity: { type: GraphQLBoolean },
+        },
+        isRepeatable: true,
+      }),
+    ],
+  });
+  const rebuiltExtensions: Record<string, unknown> = (next.extensions ||= {});
+  rebuiltExtensions.directives = schemaDirectives;
+  return next;
+}
+
+/** True when any `@connect` on the field has an `http:` transport. */
+export function connectHasHttp(connects: unknown): boolean {
+  return (
+    Array.isArray(connects) && connects.some((c: { http?: unknown }) => c != null && c.http != null)
+  );
+}
+
+/**
+ * Dual-annotate a Mesh `@merge` owner field with a requestless virtual `@connect`
+ * for Apollo Router. Caller still adds Mesh `@merge` for Hive.
+ */
+export function attachVirtualEntityConnect(
+  fieldDirectives: Record<string, any>,
+  opts: { keyField: string; keyArg: string; returnType?: unknown },
+): void {
+  const keyField = opts.keyField || 'id';
+  const keyArg = opts.keyArg || keyField;
+  if (!fieldDirectives.connect?.length) {
+    fieldDirectives.connect = [
+      {
+        selection: `${keyField}: $args.${keyArg}`,
+      },
+    ];
+  }
+  if (keyArg !== keyField && opts.returnType && isObjectType(opts.returnType as any)) {
+    const returnNamedType = opts.returnType as import('graphql').GraphQLObjectType;
+    const typeDirectives = getDirectiveExtensions(returnNamedType) || {};
+    typeDirectives.connect ||= [];
+    for (const connectArgs of fieldDirectives.connect) {
+      const typeConnect = toTypeLevelEntityConnect(connectArgs, keyArg, keyField);
+      if (!hasEquivalentTypeConnect(typeDirectives.connect, typeConnect)) {
+        typeDirectives.connect.push(typeConnect);
+      }
+    }
+    const typeExtensions: Record<string, unknown> = (returnNamedType.extensions ||= {});
+    typeExtensions.directives = typeDirectives;
+  } else {
+    fieldDirectives.connect = fieldDirectives.connect.map((connectArgs: any) => ({
+      ...connectArgs,
+      entity: true,
+    }));
+  }
+}
 
 /** Marker for Connectors entity-stub `__typename: $("…")` fragments (linear scan). */
 const ENTITY_STUB_TYPENAME_MARKER = '__typename: $("';

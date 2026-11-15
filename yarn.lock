@@ -5182,19 +5182,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@e2e/graphql-virtual-transforms@workspace:e2e/graphql-virtual-transforms":
-  version: 0.0.0-use.local
-  resolution: "@e2e/graphql-virtual-transforms@workspace:e2e/graphql-virtual-transforms"
-  dependencies:
-    "@apollo/server": "npm:^5.5.1"
-    "@apollo/subgraph": "npm:^2.15.1"
-    "@graphql-hive/gateway": "npm:^2.15.7"
-    "@graphql-mesh/compose-cli": "workspace:*"
-    graphql: "npm:16.14.0"
-    graphql-yoga: "npm:^5.18.0"
-  languageName: unknown
-  linkType: soft
-
 "@e2e/grpc-multiple@workspace:e2e/grpc-multiple":
   version: 0.0.0-use.local
   resolution: "@e2e/grpc-multiple@workspace:e2e/grpc-multiple"
@@ -29751,7 +29738,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-yoga@npm:^5.18.0, graphql-yoga@npm:^5.21.1":
+"graphql-yoga@npm:^5.21.1":
   version: 5.24.6
   resolution: "graphql-yoga@npm:5.24.6"
   dependencies:
