@@ -6,10 +6,14 @@ import {
   isNonNullType,
   isObjectType,
   isSpecifiedScalarType,
+  Kind,
   parse,
+  visit,
 } from 'graphql';
 import type {
+  ConstDirectiveNode,
   DirectiveNode,
+  DocumentNode,
   GraphQLArgumentConfig,
   GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
@@ -613,19 +617,16 @@ export function getAnnotatedSubgraphs(
         importedDirectives.push('@source');
       }
     }
-    // Preserve Apollo `@connect` through federation via `@composeDirective`
-    // (HTTP Connectors *and* virtual-only dual annotation for Router).
+    // Apollo/Rover recognize connect/v0.4 via `@link` alone — annotated subgraphs
+    // must **not** stamp `@composeDirective(name: "@connect")`. Guild composition
+    // still needs that stamp to emit `@join__directive` for `@connect`; we add it
+    // only inside `composeAnnotatedSubgraphs` (see `withGuildConnectComposeDirective`).
     // When Mesh stitching `@source` is also in the composition, drop `@source` from the
     // connect `@link` import so Guild does not clash (args stay in extras; post-process
     // restores `@source` on the connect `@link` after lifting SCHEMA directives).
-    if (hasVirtualOrHttpConnect) {
+    if (hasVirtualOrHttpConnect && compositionHasMeshStitchingSource) {
       const schemaDirectives = getDirectiveExtensions(transformedSubgraph) || {};
-      const composeDirectives = (schemaDirectives.composeDirective =
-        schemaDirectives.composeDirective?.filter(Boolean) || []);
-      if (!composeDirectives.some((dir: { name?: string }) => dir.name === '@connect')) {
-        composeDirectives.push({ name: '@connect' });
-      }
-      if (compositionHasMeshStitchingSource && Array.isArray(schemaDirectives.link)) {
+      if (Array.isArray(schemaDirectives.link)) {
         schemaDirectives.link = schemaDirectives.link.map(
           (link: { url?: string; import?: any[] }) => {
             if (
@@ -650,10 +651,9 @@ export function getAnnotatedSubgraphs(
             return link;
           },
         );
+        const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
+        extensions.directives = schemaDirectives;
       }
-      const extensions: Record<string, unknown> = (transformedSubgraph.extensions ||= {});
-      extensions.directives = schemaDirectives;
-      transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@composeDirective']);
     }
     const fieldMapper: FieldMapper = (fieldConfig, fieldName) => {
       const fieldDirectives = getDirectiveExtensions(fieldConfig);
@@ -886,7 +886,13 @@ export function composeSubgraphs(
 }
 
 export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[]) {
-  const composedSupergraphSdl = composeServices(annotatedSubgraphs);
+  // Keep annotated subgraphs Apollo-like (no `@composeDirective` for `@connect`).
+  // Guild's composer has no connect special-case, so stamp it only for this call.
+  const forGuildCompose = annotatedSubgraphs.map(sg => ({
+    ...sg,
+    typeDefs: withGuildConnectComposeDirective(sg.typeDefs),
+  }));
+  const composedSupergraphSdl = composeServices(forGuildCompose);
   const rawSupergraphSdl = composedSupergraphSdl.supergraphSdl?.trim();
   // Lift SCHEMA extras, then rewrite Connectors to `@join__directive` metadata
   // so the same Mesh supergraph runs on Hive Gateway and Apollo Router
@@ -899,6 +905,156 @@ export function composeAnnotatedSubgraphs(annotatedSubgraphs: ServiceDefinition[
     supergraphSdl: lifted ? finalizeConnectorsSupergraph(lifted) : lifted,
     annotatedSubgraphs,
   };
+}
+
+/**
+ * Guild federation-composition has no Apollo connect/v0.4 special case: without
+ * `@composeDirective(name: "@connect")` it drops field/type `@connect` before
+ * the supergraph is built. Apollo/Rover do **not** put that stamp on subgraph
+ * SDL — so annotated Mesh subgraphs stay clean, and we only add it for Guild.
+ */
+function withGuildConnectComposeDirective(typeDefs: DocumentNode): DocumentNode {
+  let hasConnectLink = false;
+  let hasConnectComposeDirective = false;
+  let hasComposeDirectiveImport = false;
+
+  visit(typeDefs, {
+    SchemaDefinition(node) {
+      inspectSchemaDirectives(node.directives);
+    },
+    SchemaExtension(node) {
+      inspectSchemaDirectives(node.directives);
+    },
+  });
+
+  function inspectSchemaDirectives(directives: readonly ConstDirectiveNode[] | undefined) {
+    for (const dir of directives || []) {
+      if (dir.name.value === 'link') {
+        const urlArg = dir.arguments?.find(a => a.name.value === 'url');
+        const url =
+          urlArg?.value.kind === Kind.STRING ? urlArg.value.value : undefined;
+        if (url?.startsWith('https://specs.apollo.dev/connect')) {
+          hasConnectLink = true;
+        }
+        if (url?.startsWith('https://specs.apollo.dev/federation')) {
+          const importArg = dir.arguments?.find(a => a.name.value === 'import');
+          if (importArg?.value.kind === Kind.LIST) {
+            for (const v of importArg.value.values) {
+              if (v.kind === Kind.STRING && v.value === '@composeDirective') {
+                hasComposeDirectiveImport = true;
+              }
+            }
+          }
+        }
+      }
+      if (dir.name.value === 'composeDirective') {
+        const nameArg = dir.arguments?.find(a => a.name.value === 'name');
+        if (nameArg?.value.kind === Kind.STRING && nameArg.value.value === '@connect') {
+          hasConnectComposeDirective = true;
+        }
+      }
+    }
+  }
+
+  if (!hasConnectLink || hasConnectComposeDirective) {
+    return typeDefs;
+  }
+
+  const composeConnectDir: ConstDirectiveNode = {
+    kind: Kind.DIRECTIVE,
+    name: { kind: Kind.NAME, value: 'composeDirective' },
+    arguments: [
+      {
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: 'name' },
+        value: { kind: Kind.STRING, value: '@connect' },
+      },
+    ],
+  };
+
+  let stamped = false;
+  const stamp = (node: {
+    directives?: readonly ConstDirectiveNode[];
+  }) => {
+    if (stamped) {
+      return node;
+    }
+    stamped = true;
+    return {
+      ...node,
+      directives: [
+        ...ensureFederationComposeDirectiveImport(node.directives, hasComposeDirectiveImport),
+        composeConnectDir,
+      ],
+    };
+  };
+
+  return visit(typeDefs, {
+    SchemaDefinition(node) {
+      return stamp(node);
+    },
+    SchemaExtension(node) {
+      return stamp(node);
+    },
+  });
+}
+
+function ensureFederationComposeDirectiveImport(
+  directives: readonly ConstDirectiveNode[] | undefined,
+  alreadyImported: boolean,
+): ConstDirectiveNode[] {
+  const list = [...(directives || [])];
+  if (alreadyImported) {
+    return list;
+  }
+  return list.map(dir => {
+    if (dir.name.value !== 'link') {
+      return dir;
+    }
+    const urlArg = dir.arguments?.find(a => a.name.value === 'url');
+    const url = urlArg?.value.kind === Kind.STRING ? urlArg.value.value : undefined;
+    if (!url?.startsWith('https://specs.apollo.dev/federation')) {
+      return dir;
+    }
+    const importArg = dir.arguments?.find(a => a.name.value === 'import');
+    if (!importArg || importArg.value.kind !== Kind.LIST) {
+      return {
+        ...dir,
+        arguments: [
+          ...(dir.arguments || []).filter(a => a.name.value !== 'import'),
+          {
+            kind: Kind.ARGUMENT,
+            name: { kind: Kind.NAME, value: 'import' },
+            value: {
+              kind: Kind.LIST,
+              values: [{ kind: Kind.STRING, value: '@composeDirective' }],
+            },
+          },
+        ],
+      };
+    }
+    const already = importArg.value.values.some(
+      v => v.kind === Kind.STRING && v.value === '@composeDirective',
+    );
+    if (already) {
+      return dir;
+    }
+    return {
+      ...dir,
+      arguments: (dir.arguments || []).map(a => {
+        if (a.name.value !== 'import' || a.value.kind !== Kind.LIST) {
+          return a;
+        }
+        return {
+          ...a,
+          value: {
+            ...a.value,
+            values: [...a.value.values, { kind: Kind.STRING, value: '@composeDirective' }],
+          },
+        };
+      }),
+    };
+  });
 }
 
 function addAnnotationsForSemanticConventions({

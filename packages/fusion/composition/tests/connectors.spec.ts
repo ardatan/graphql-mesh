@@ -124,6 +124,10 @@ describe('Federation Connectors composition', () => {
     expect(composed.supergraphSdl).toMatch(/@meshSource\(/);
     // is_vaccinated → isVaccinated: Mesh @meshSource + virtual `$this.is_vaccinated`
     expect(composed.supergraphSdl).toMatch(/isVaccinated[\s\S]*\$this\.is_vaccinated/);
+    // Annotated subgraphs stay Apollo-like (no composeDirective for @connect).
+    for (const sg of composed.annotatedSubgraphs || []) {
+      expect(print(sg.typeDefs)).not.toMatch(/@composeDirective\(name:\s*"@connect"\)/);
+    }
   });
 
   it('does not add Mesh @transport or stitching @source for connectors subgraphs', () => {
@@ -149,6 +153,8 @@ describe('Federation Connectors composition', () => {
     expect(sdl).toMatch(/import:\s*\[[^\]]*@source/);
     expect(sdl).toContain('specs.apollo.dev/connect/v0.4');
     expect(sdl).toContain('@connect');
+    // Apollo/Rover do not `@composeDirective` `@connect` — annotated SDL matches that.
+    expect(sdl).not.toMatch(/@composeDirective\(name:\s*"@connect"\)/);
   });
 
   it('keeps Apollo @source on schema extensions path', () => {

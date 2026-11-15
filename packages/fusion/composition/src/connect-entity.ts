@@ -32,9 +32,9 @@ import { getDirectiveExtensions, MapperKind, mapSchema } from '@graphql-tools/ut
 const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 
 /**
- * Ensure connect/v0.4 `@link` + `@connect` directive def so Federation can
- * `@composeDirective` virtual `@connect` into the supergraph for Apollo Router.
- * Does not imply HTTP Connectors / rest transport.
+ * Ensure connect/v0.4 `@link` + `@connect` directive def (Apollo style: `@link`
+ * alone; no `@composeDirective` for `@connect`). Does not imply HTTP Connectors
+ * / rest transport.
  */
 export function ensureVirtualConnectLink(schema: GraphQLSchema): GraphQLSchema {
   const schemaDirectives = getDirectiveExtensions(schema) || {};
