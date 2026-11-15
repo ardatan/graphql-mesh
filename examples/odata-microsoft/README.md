@@ -33,9 +33,9 @@ Fixture metadata + local Graph mock (Hive Gateway + Apollo Router, v0 `example-q
 yarn test:e2e e2e/odata-msgraph
 ```
 
-Live `graph.microsoft.com` CI is not used (personal Microsoft accounts lack the Mail /
-OneDrive / admin-consent surface those example queries need). Point `examples/odata-microsoft`
-at a work/school tenant locally if you want real Graph traffic.
+Live `graph.microsoft.com` CI is not used (personal Microsoft accounts lack the Mail / OneDrive /
+admin-consent surface those example queries need). Point `examples/odata-microsoft` at a work/school
+tenant locally if you want real Graph traffic.
 
 ## Sample requests
 

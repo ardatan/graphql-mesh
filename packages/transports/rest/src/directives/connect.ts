@@ -1645,23 +1645,118 @@ function navArgsRequireDedicatedFetch(args: Record<string, unknown> | null | und
 /** Marks a mapped Connectors selection result so prefer-embedded can skip rematch. */
 const ODATA_SELECTION_APPLIED = Symbol.for('@graphql-mesh/odata.selectionApplied');
 
-function markSelectionApplied(value: unknown): unknown {
+/** Identity / bare path — applySelection returns raw; do not tag nested pass-through. */
+function isRawPassThroughSelection(selection: string): boolean {
+  const t = selection.trim();
+  return !t || t === '$' || t === '$root' || t === '$.value';
+}
+
+/**
+ * Body of `$.value { … }` when that wraps the whole selection; otherwise null.
+ * Used so list results mark each item with the entity body, not the `$.value` wrapper.
+ */
+function dollarValueSelectionBody(selection: string): string | null {
+  const trimmed = selection.trim();
+  const m = /^\$\.value\s*\{/.exec(trimmed);
+  if (!m) return null;
+  const open = trimmed.indexOf('{', m.index);
+  if (open < 0) return null;
+  let depth = 0;
+  for (let i = open; i < trimmed.length; i++) {
+    const c = trimmed[i];
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) {
+        return trimmed.slice(open + 1, i);
+      }
+    }
+  }
+  return trimmed.slice(open + 1);
+}
+
+/**
+ * Fields at this selection level that have an explicit `{ … }` subselection
+ * (actually mapped). Pass-through paths like `Orders` / `orders: Orders` without
+ * braces are omitted so raw expand children stay unmarked for nav rematch.
+ */
+function nestedMappedSelections(selection: string): Map<string, string> {
+  const map = new Map<string, string>();
+  const body = dollarValueSelectionBody(selection) ?? selection.trim();
+  let i = 0;
+  while (i < body.length) {
+    while (i < body.length && /\s/.test(body[i]!)) i++;
+    if (i >= body.length) break;
+    const rest = body.slice(i);
+    // `orders: Orders { … }` or `Orders { … }` or `orders { … }`
+    const m = /^([A-Za-z_][\w]*)\s*(?::\s*[A-Za-z_][\w]*)?\s*\{/.exec(rest);
+    if (!m) {
+      i++;
+      continue;
+    }
+    const gqlName = m[1]!;
+    const open = i + m[0].length - 1;
+    let depth = 0;
+    let close = -1;
+    for (let j = open; j < body.length; j++) {
+      const c = body[j];
+      if (c === '{') depth++;
+      else if (c === '}') {
+        depth--;
+        if (depth === 0) {
+          close = j;
+          break;
+        }
+      }
+    }
+    if (close < 0) break;
+    map.set(gqlName, body.slice(open + 1, close));
+    i = close + 1;
+  }
+  return map;
+}
+
+/**
+ * Mark values a selection actually mapped. Raw `$` pass-through is left unmarked
+ * so prefer-embedded can still run nav selections like `$.value { id name: Name }`.
+ * Explicit nested mappings (`orders: Orders { id name: Name }`) stay marked so
+ * rematch does not wipe already-mapped fields.
+ */
+function markSelectionApplied(value: unknown, selection = ''): unknown {
   if (value == null || typeof value !== 'object') {
     return value;
   }
+  const trimmed = selection.trim();
+  if (isRawPassThroughSelection(trimmed)) {
+    return value;
+  }
+
+  const valueBody = dollarValueSelectionBody(trimmed);
   if (Array.isArray(value)) {
+    const itemSelection = valueBody ?? trimmed;
     for (const item of value) {
-      markSelectionApplied(item);
+      markSelectionApplied(item, itemSelection);
     }
     return value;
   }
+
   Object.defineProperty(value, ODATA_SELECTION_APPLIED, {
     value: true,
     enumerable: false,
     configurable: true,
   });
-  for (const child of Object.values(value as Record<string, unknown>)) {
-    markSelectionApplied(child);
+
+  const nested = nestedMappedSelections(valueBody ?? trimmed);
+  const obj = value as Record<string, unknown>;
+  for (const [fieldName, subSelection] of nested) {
+    if (Object.prototype.hasOwnProperty.call(obj, fieldName)) {
+      markSelectionApplied(obj[fieldName], subSelection);
+      continue;
+    }
+    const found = Object.keys(obj).find(k => k.toLowerCase() === fieldName.toLowerCase());
+    if (found) {
+      markSelectionApplied(obj[found], subSelection);
+    }
   }
   return value;
 }
@@ -1842,7 +1937,7 @@ export function addConnectFieldResolver(
         mapped = applySelection(selection, embedded, extras);
       }
       return ensureODataIdField(
-        markSelectionApplied(mapped),
+        markSelectionApplied(mapped, selection),
         embedded,
         navCollectionBase,
       );
@@ -2185,8 +2280,10 @@ export function addConnectFieldResolver(
       throw buildConnectorError(responseData);
     }
 
+    const selectionText = connectArgs.selection || '$';
     let selected = markSelectionApplied(
-      applySelection(connectArgs.selection || '$', responseData, selectionExtras),
+      applySelection(selectionText, responseData, selectionExtras),
+      selectionText,
     );
     // Normalize after selection so mappings like `$.products { id }` (object → array) work.
     const isListReturnType = isListTypeOrNonNullListType(field.type);
