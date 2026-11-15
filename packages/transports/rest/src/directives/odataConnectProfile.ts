@@ -15,6 +15,7 @@ import {
   type GraphQLResolveInfo,
   type InlineFragmentNode,
   type SelectionNode,
+  type ValueNode,
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 
@@ -545,10 +546,7 @@ function expandOptionsFromFieldArgs(field: FieldNode, info: GraphQLResolveInfo):
 }
 
 /** Resolve a GraphQL value node for `$expand` options; null = unresolved variable. */
-function graphqlValueToExpandLiteral(
-  value: import('graphql').ValueNode,
-  info: GraphQLResolveInfo,
-): string | null {
+function graphqlValueToExpandLiteral(value: ValueNode, info: GraphQLResolveInfo): string | null {
   if (value.kind === Kind.INT || value.kind === Kind.FLOAT) {
     return String(value.value);
   }

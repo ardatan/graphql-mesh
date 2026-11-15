@@ -157,7 +157,7 @@ function shouldSkipPathEncode(path: string, skipEncode?: (path: string) => boole
     return true;
   }
   // `_odataId` holds a full URL / entity id path — must not be percent-encoded.
-  return /^(this|root)\._odataId\b/.test(path) || /^(this|root)\[['\"]_odataId['\"]\]/.test(path);
+  return /^(this|root)\._odataId\b/.test(path) || /^(this|root)\[['"]_odataId['"]\]/.test(path);
 }
 
 function resolveTemplate(
