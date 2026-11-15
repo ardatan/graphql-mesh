@@ -189,18 +189,22 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     allTypes?.forEach((typeObj: any) => {
       const entityTypeName = buildName({ schemaNamespace, name: typeObj.attributes.Name });
       const isOpenType = typeObj.attributes.OpenType === 'true';
-      const isAbstract = typeObj.attributes.Abstract === 'true';
+      // `Abstract="true"` is not modeled as a GraphQL interface (Apollo Router Connectors
+      // expand drops interfaces while leaving `implements`). Abstract + concrete types are
+      // both objects; BaseType merge copies fields onto subtypes.
       const eventEmitter = new EventEmitter();
       eventEmitter.setMaxListeners(Infinity);
       eventEmitterSet.add(eventEmitter);
-      // Share `entityInfo` + `eventEmitter` across interface/object/input, but give each
-      // TC its own `odata` bag — otherwise object stamps must not leak onto interfaces.
+      // Share `entityInfo` + `eventEmitter` across object/input, but give each
+      // TC its own `odata` bag — otherwise object stamps must not leak.
       const entityInfo = {
         actualFields: [] as string[],
         navigationFields: [] as string[],
         isOpenType,
         identifierFieldName: undefined as string | undefined,
         identifierFieldTypeRef: undefined as string | undefined,
+        // Full `@odata.type` string Graph returns for this entity (Router `__typename` match).
+        odataTypeName: `#${schemaNamespace}.${typeObj.attributes.Name}` as string | undefined,
       };
       const outputExtensions: EntityTypeExtensions = {
         odata: {
@@ -216,32 +220,17 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           eventEmitter,
         } as any,
       });
-      // Connectors / Apollo Router: only emit a GraphQL interface for *abstract*
-      // OData entity types. Non-abstract bases (TripPin `Person` with Manager/Employee
-      // children) used to get a synthetic `IPerson` + `Person implements IPerson`, which
-      // forced an e2e-only supergraph rewrite for Router. Emit concrete objects only so
-      // Hive and Router run the same composed SDL.
-      let abstractType: InterfaceTypeComposer | undefined;
-      if (isAbstract) {
-        // No `@abstractType` directive — transport-rest resolveType reads `@odata.type`.
-        const abstractExtensions: EntityTypeExtensions = {
-          odata: {
-            entityInfo,
-          },
-          eventEmitter,
-        };
-        abstractType = schemaComposer.createInterfaceTC({
-          name: entityTypeName,
-          extensions: abstractExtensions as any,
-        });
-      }
+      // Abstract OData entities → plain GraphQL objects (not interfaces).
+      // Apollo Router Connectors expand drops interface defs while leaving
+      // `implements` on objects ("does not refer to an existing interface").
+      // Concrete subtypes copy base fields via BaseType merge; they do not
+      // `implements` the abstract type. Navs typed as the abstract name still work.
       const outputType = schemaComposer.createObjectTC({
-        name: isAbstract ? `T${entityTypeName}` : entityTypeName,
+        name: entityTypeName,
         extensions: outputExtensions as any,
-        interfaces: abstractType ? [abstractType] : [],
+        interfaces: [],
       });
 
-      abstractType?.setInputTypeComposer(inputType);
       outputType.setInputTypeComposer(inputType);
 
       const propertyRefObj = typeObj.Key && typeObj.Key[0].PropertyRef[0];
@@ -283,9 +272,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           }),
           extensions: { propertyObj },
         };
-        abstractType?.addFields({
-          [propertyName]: field,
-        });
         outputType.addFields({
           [propertyName]: field,
         });
@@ -347,10 +333,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               } as any,
             },
           };
-          abstractType?.addFields({
-            [navigationPropertyName]: pluralField,
-            [`${navigationPropertyName}ById`]: singularField,
-          });
           outputType.addFields({
             [navigationPropertyName]: pluralField,
             [`${navigationPropertyName}ById`]: singularField,
@@ -378,9 +360,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
               } as any,
             },
           };
-          abstractType?.addFields({
-            [navigationPropertyName]: field,
-          });
           outputType.addFields({
             [navigationPropertyName]: field,
           });
@@ -399,9 +378,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           type: 'JSON' as const,
           resolve: (root: unknown) => root,
         };
-        abstractType?.addFields({
-          rest: restField,
-        });
         outputType.addFields({
           rest: restField,
         });
@@ -734,7 +710,6 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         name: typeObj.attributes.Name,
       });
       const inputType = getTCByTypeNames(typeName + 'Input') as InputTypeComposer | null;
-      const abstractType = getTCByTypeNames('I' + typeName, typeName) as InterfaceTypeComposer;
       const outputType = getTCByTypeNames('T' + typeName, typeName) as ObjectTypeComposer;
       if (!outputType) {
         log.warn(`OData: skip base-type merge for missing output type ${typeName}`);
@@ -763,14 +738,10 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         baseTypeName + 'Input',
         pascalCase(baseTypeRef.replace(/\./g, '_')) + 'Input',
       ) as InputTypeComposer | null;
-      const baseAbstractType = getTCByTypeNames(
-        'I' + baseTypeName,
-        baseTypeName,
-      ) as InterfaceTypeComposer;
       const baseOutputType = getTCByTypeNames(
         'T' + baseTypeName,
         baseTypeName,
-      ) as ObjectTypeComposer;
+      ) as ObjectTypeComposer | null;
       if (!baseOutputType?.getExtensions) {
         log.warn(
           `OData: skip base-type merge for ${typeName}; missing base ${baseTypeRef} (${baseTypeName})`,
@@ -795,12 +766,8 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         entityInfo.identifierFieldTypeRef =
           baseEntityInfo.identifierFieldTypeRef || entityInfo.identifierFieldTypeRef;
         entityInfo.actualFields.unshift(...(baseEntityInfo.actualFields || []));
-        abstractType?.addFields(baseAbstractType?.getFields());
+        // Field copy only — no GraphQL `implements` (Router Connectors expand bug).
         outputType.addFields(baseOutputType.getFields());
-        if (baseAbstractType instanceof InterfaceTypeComposer) {
-          // abstractType.addInterface(baseAbstractType.getTypeName());
-          outputType.addInterface(baseAbstractType.getTypeName());
-        }
         eventEmitter.emit('onFieldChange');
       };
       baseEventEmitter.on('onFieldChange', baseEventEmitterListener);

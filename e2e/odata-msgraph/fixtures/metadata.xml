@@ -6,8 +6,8 @@
   - fetchGroupsAndMembers (groups + members)
   - fetchFilesFromOneDrive (me + drives + root/children)
 
-  Note: members is Collection(user) (not abstract directoryObject) so the same
-  composed SDL runs on Hive and Apollo Router without abstract-type join issues.
+  Includes abstract directoryObject (as in public Graph $metadata). Loader emits
+  it as a plain GraphQL object (Router-safe); subtypes copy fields via BaseType.
 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
@@ -24,12 +24,15 @@
         <Property Name="remaining" Type="Edm.Int64" />
       </ComplexType>
 
-      <EntityType Name="user" OpenType="true">
+      <EntityType Name="directoryObject" Abstract="true" OpenType="true">
         <Key>
           <PropertyRef Name="id" />
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
         <Property Name="displayName" Type="Edm.String" />
+      </EntityType>
+
+      <EntityType Name="user" BaseType="microsoft.graph.directoryObject" OpenType="true">
         <Property Name="mail" Type="Edm.String" />
         <Property Name="officeLocation" Type="Edm.String" />
         <NavigationProperty Name="messages" Type="Collection(microsoft.graph.message)" />
@@ -46,14 +49,9 @@
         <Property Name="from" Type="microsoft.graph.recipient" />
       </EntityType>
 
-      <EntityType Name="group">
-        <Key>
-          <PropertyRef Name="id" />
-        </Key>
-        <Property Name="id" Type="Edm.String" Nullable="false" />
-        <Property Name="displayName" Type="Edm.String" />
+      <EntityType Name="group" BaseType="microsoft.graph.directoryObject">
         <Property Name="description" Type="Edm.String" />
-        <NavigationProperty Name="members" Type="Collection(microsoft.graph.user)" />
+        <NavigationProperty Name="members" Type="Collection(microsoft.graph.directoryObject)" />
       </EntityType>
 
       <EntityType Name="driveItem">

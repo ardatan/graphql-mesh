@@ -39,6 +39,37 @@ function headersToConnectMappings(
 }
 
 /**
+ * Connectors abstract spread: map OData `@odata.type` → concrete `__typename`.
+ * Required by Apollo Router for interface/union selections (same pattern as OpenAPI
+ * `... $_type->match(...)`).
+ */
+function odataAbstractTypenameSpread(
+  schemaComposer: SchemaComposer,
+  memberTypeNames: string[],
+): string {
+  const arms: string[] = [];
+  for (const name of memberTypeNames) {
+    if (!schemaComposer.isObjectType(name)) continue;
+    let odataType = `#${name}`;
+    try {
+      const otc = schemaComposer.getOTC(name);
+      odataType =
+        ((otc.getExtensions() as any)?.odata?.entityInfo?.odataTypeName as string) || odataType;
+      const exclusive = entitySelection(schemaComposer, otc, new Set());
+      arms.push(
+        exclusive
+          ? `[${JSON.stringify(odataType)}, { __typename: ${JSON.stringify(name)}, ${exclusive} }]`
+          : `[${JSON.stringify(odataType)}, { __typename: ${JSON.stringify(name)} }]`,
+      );
+    } catch {
+      arms.push(`[${JSON.stringify(odataType)}, { __typename: ${JSON.stringify(name)} }]`);
+    }
+  }
+  if (!arms.length) return '';
+  return `... $->get("@odata.type")->match(${arms.join(', ')})`;
+}
+
+/**
  * Connectors JSONSelection for an OData entity/complex type.
  * Apollo Router requires object/list fields to use `{ … }` groups (bare names fail).
  * Skip fields with arguments (bound ops / queryOptions nav) — those get their own `@connect`.
@@ -53,6 +84,18 @@ function entitySelection(
   // (depth limits drop nested scalars with no lazy-fetch fallback).
   if (visited.has(typeName)) {
     return '';
+  }
+  // Unions: only `__typename` discriminator arms (no field bag on the union itself).
+  if (schemaComposer.isUnionType(typeName)) {
+    try {
+      const utc = schemaComposer.getUTC(typeName);
+      const members = (utc.getTypes?.() || [])
+        .map((t: any) => (typeof t === 'string' ? t : t.getTypeName?.()))
+        .filter((n: unknown): n is string => typeof n === 'string');
+      return odataAbstractTypenameSpread(schemaComposer, members);
+    } catch {
+      return '';
+    }
   }
   visited = new Set(visited);
   visited.add(typeName);
@@ -98,7 +141,11 @@ function entitySelection(
       continue;
     }
     let nested = '';
-    if (schemaComposer.isObjectType(named) || schemaComposer.isInterfaceType(named)) {
+    if (
+      schemaComposer.isObjectType(named) ||
+      schemaComposer.isInterfaceType(named) ||
+      schemaComposer.isUnionType(named)
+    ) {
       try {
         const childTC = schemaComposer.getAnyTC(named) as
           ObjectTypeComposer | InterfaceTypeComposer;
@@ -701,8 +748,7 @@ export function emitODataConnectors(
       });
     }
 
-    // `@connect` is OBJECT-only (Federation Connectors). Abstract OData types use
-    // interface `Foo` + object `TFoo` — put type-level connect on the object.
+    // `@connect` is OBJECT-only (Federation Connectors).
     if (isObject && !existing.some(d => d.name === 'connect') && entitySetName) {
       existing.push({
         name: 'connect',

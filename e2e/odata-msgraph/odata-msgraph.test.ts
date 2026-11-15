@@ -91,83 +91,94 @@ describe('Microsoft Graph Connectors', () => {
  * Real Microsoft Graph data through Hive Gateway and Apollo Router.
  * Opt in: `MSGRAPH_LIVE=1` + `MSGRAPH_ACCESS_TOKEN` (or `GRAPH_ACCESS_TOKEN`).
  * Path-filtered CI job sets these when the secret is present.
+ *
+ * `GRAPH_VERSION` mirrors example scripts (`v1.0` / `beta` → graph.microsoft.com/{version}).
  */
 describe('Microsoft Graph Connectors (live Graph)', () => {
   const maybe = LIVE ? describe : describe.skip;
+  const graphVersions = (process.env.GRAPH_VERSIONS || 'v1.0,beta')
+    .split(',')
+    .map(v => v.trim())
+    .filter(Boolean);
 
-  maybe.each(['hive', 'apollo-router'] as ServeRunner[])(
-    'execute v0 example-queries with %s → graph.microsoft.com',
-    runner => {
-      jest.setTimeout(300_000);
+  maybe.each(
+    graphVersions.flatMap(version =>
+      (['hive', 'apollo-router'] as ServeRunner[]).map(
+        runner => [version, runner] as [string, ServeRunner],
+      ),
+    ),
+  )('execute v0 example-queries with %s + %s → graph.microsoft.com', (graphVersion, runner) => {
+    jest.setTimeout(300_000);
 
-      async function executeLive(query: string) {
-        const composition = await compose({
-          output: 'graphql',
-          env: {
-            MSGRAPH_LIVE: '1',
-            MSGRAPH_ACCESS_TOKEN: LIVE_TOKEN,
-          },
-        });
-        const { execute } = await serve({
-          runner,
-          supergraph: composition.output,
-          env: {
-            MSGRAPH_LIVE: '1',
-            MSGRAPH_ACCESS_TOKEN: LIVE_TOKEN,
-          },
-        });
-        return execute({ query });
+    async function executeLive(query: string) {
+      const composition = await compose({
+        output: 'graphql',
+        env: {
+          MSGRAPH_LIVE: '1',
+          MSGRAPH_ACCESS_TOKEN: LIVE_TOKEN,
+          GRAPH_VERSION: graphVersion,
+        },
+      });
+      const { execute } = await serve({
+        runner,
+        supergraph: composition.output,
+        env: {
+          MSGRAPH_LIVE: '1',
+          MSGRAPH_ACCESS_TOKEN: LIVE_TOKEN,
+          GRAPH_VERSION: graphVersion,
+        },
+      });
+      return execute({ query });
+    }
+
+    it('fetchRecentEmails.graphql', async () => {
+      const result = await executeLive(fetchRecentEmails);
+      expect(result.errors).toBeUndefined();
+      const me = result.data?.me as Record<string, unknown> | undefined;
+      expect(me).toEqual(
+        expect.objectContaining({
+          displayName: expect.any(String),
+        }),
+      );
+      expect(Array.isArray(me?.messages)).toBe(true);
+      for (const msg of (me?.messages as any[]) || []) {
+        expect(msg).toEqual(
+          expect.objectContaining({
+            subject: expect.anything(),
+            isRead: expect.any(Boolean),
+          }),
+        );
       }
+    });
 
-      it('fetchRecentEmails.graphql', async () => {
-        const result = await executeLive(fetchRecentEmails);
-        expect(result.errors).toBeUndefined();
-        const me = result.data?.me as Record<string, unknown> | undefined;
-        expect(me).toEqual(
+    it('fetchGroupsAndMembers.graphql', async () => {
+      const result = await executeLive(fetchGroupsAndMembers);
+      expect(result.errors).toBeUndefined();
+      expect(Array.isArray(result.data?.groups)).toBe(true);
+      for (const group of (result.data?.groups as any[]) || []) {
+        expect(group).toEqual(
           expect.objectContaining({
             displayName: expect.any(String),
           }),
         );
-        expect(Array.isArray(me?.messages)).toBe(true);
-        for (const msg of (me?.messages as any[]) || []) {
-          expect(msg).toEqual(
-            expect.objectContaining({
-              subject: expect.anything(),
-              isRead: expect.any(Boolean),
-            }),
-          );
-        }
-      });
+        expect(Array.isArray(group.members)).toBe(true);
+      }
+    });
 
-      it('fetchGroupsAndMembers.graphql', async () => {
-        const result = await executeLive(fetchGroupsAndMembers);
-        expect(result.errors).toBeUndefined();
-        expect(Array.isArray(result.data?.groups)).toBe(true);
-        for (const group of (result.data?.groups as any[]) || []) {
-          expect(group).toEqual(
-            expect.objectContaining({
-              displayName: expect.any(String),
-            }),
-          );
-          expect(Array.isArray(group.members)).toBe(true);
-        }
-      });
-
-      it('fetchFilesFromOneDrive.graphql', async () => {
-        const result = await executeLive(fetchFilesFromOneDrive);
-        expect(result.errors).toBeUndefined();
-        const me = result.data?.me as Record<string, unknown> | undefined;
-        expect(Array.isArray(me?.drives)).toBe(true);
-        for (const drive of (me?.drives as any[]) || []) {
-          expect(drive?.quota).toEqual(
-            expect.objectContaining({
-              used: expect.anything(),
-              remaining: expect.anything(),
-            }),
-          );
-          expect(drive?.root?.children == null || Array.isArray(drive.root.children)).toBe(true);
-        }
-      });
-    },
-  );
+    it('fetchFilesFromOneDrive.graphql', async () => {
+      const result = await executeLive(fetchFilesFromOneDrive);
+      expect(result.errors).toBeUndefined();
+      const me = result.data?.me as Record<string, unknown> | undefined;
+      expect(Array.isArray(me?.drives)).toBe(true);
+      for (const drive of (me?.drives as any[]) || []) {
+        expect(drive?.quota).toEqual(
+          expect.objectContaining({
+            used: expect.anything(),
+            remaining: expect.anything(),
+          }),
+        );
+        expect(drive?.root?.children == null || Array.isArray(drive.root.children)).toBe(true);
+      }
+    });
+  });
 });

@@ -8,6 +8,11 @@ export interface ODataEntityInfo {
   identifierFieldName?: string;
   identifierFieldTypeRef?: string;
   isOpenType: boolean;
+  /**
+   * OData `@odata.type` payload value (e.g. `#microsoft.graph.user`).
+   * Used for Connectors `__typename` discriminator arms on abstract returns.
+   */
+  odataTypeName?: string;
 }
 
 /**

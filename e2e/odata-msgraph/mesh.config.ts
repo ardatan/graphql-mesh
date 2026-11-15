@@ -10,14 +10,14 @@ const opts = Opts(process.argv);
  * Default: fixture metadata + local mock (`services/Graph.ts`) — PR e2e.
  *
  * Live (`MSGRAPH_LIVE=1`): same fixture schema surface as the v0 example queries,
- * but `endpoint` is real `graph.microsoft.com`. Full live `$metadata` is ~1.8MB and
- * includes abstract `directoryObject` that Apollo Router rejects in join form; the
- * fixture keeps hive+apollo dual-runtime coverage while still exercising real Graph
- * data for `me` / `messages` / `groups` / `drives`.
+ * but `endpoint` is real `graph.microsoft.com/{GRAPH_VERSION}` (`v1.0` or `beta`,
+ * matching example `start` / `start:beta`). Fixture keeps the example-query type
+ * surface small; abstract OData bases are emitted as plain objects (Router-safe).
  */
 const live = process.env.MSGRAPH_LIVE === '1';
+const graphVersion = process.env.GRAPH_VERSION || 'v1.0';
 const endpoint = live
-  ? 'https://graph.microsoft.com/v1.0'
+  ? `https://graph.microsoft.com/${graphVersion}`
   : `http://127.0.0.1:${opts.getServicePort('Graph')}`;
 
 export const composeConfig = defineConfig({
