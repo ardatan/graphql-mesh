@@ -56,14 +56,6 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`da
 """
 scalar DateTime @join__type(graph: MICROSOFT_GRAPH)
 
-type directoryObject @join__type(graph: MICROSOFT_GRAPH, key: "id") {
-  id: String!
-  displayName: String
-  rest: JSON
-  """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
-  _odataId: String @inaccessible
-}
-
 type user @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/"}, selection: "mail officeLocation rest: $ id displayName _odataId: $->get(\\"@odata.id\\")"}) {
   id: String!
   mail: String
@@ -90,8 +82,8 @@ type message @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(gra
 type group @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/"}, selection: "description id displayName rest: $ _odataId: $->get(\\"@odata.id\\")"}) {
   id: String!
   description: String
-  members(queryOptions: QueryOptions): [directoryObject] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/members", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { id displayName rest: $ _odataId: $->get(\\"@odata.id\\") }"})
-  membersById(id: ID): directoryObject @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/members/{$args.id}/"}, selection: "id displayName rest: $ _odataId: $->get(\\"@odata.id\\")"})
+  members(queryOptions: QueryOptions): [directoryObject] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/members", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { ... $->get(\\"@odata.type\\")->match([\\"#microsoft.graph.group\\", { __typename: \\"group\\", id }], [\\"#microsoft.graph.user\\", { __typename: \\"user\\", id }], [@, { __typename: \\"group\\", id }]) }"})
+  membersById(id: ID): directoryObject @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/members/{$args.id}/"}, selection: "... $->get(\\"@odata.type\\")->match([\\"#microsoft.graph.group\\", { __typename: \\"group\\", id }], [\\"#microsoft.graph.user\\", { __typename: \\"user\\", id }], [@, { __typename: \\"group\\", id }])"})
   displayName: String
   rest: JSON
   """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
@@ -170,6 +162,11 @@ type Mutation @join__type(graph: MICROSOFT_GRAPH) {
   deletemessagesByid(id: String!): JSON @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {DELETE: "/messages/{$args.id}/"}, selection: "$"})
   updatemessagesByid(id: String!, input: messageUpdateInput): message @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {PATCH: "/messages/{$args.id}/", body: "$args.input"}, selection: "id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\")"})
 }
+
+"""
+OData abstract type directoryObject (union of concrete implementations)
+"""
+union directoryObject @join__type(graph: MICROSOFT_GRAPH) @join__unionMember(graph: MICROSOFT_GRAPH, member: "group") @join__unionMember(graph: MICROSOFT_GRAPH, member: "user") = group | user
 
 enum InlineCount @join__type(graph: MICROSOFT_GRAPH) {
   """

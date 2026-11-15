@@ -133,6 +133,13 @@ describe('Microsoft Graph Connectors (live Graph)', () => {
 
     it('fetchRecentEmails.graphql', async () => {
       const result = await executeLive(fetchRecentEmails);
+      // Soft-skip: mailbox needs delegated Mail.Read (+ admin consent) on the test user.
+      if (isLivePermissionOrLicenseGap(result, ['mail', 'mailbox', '403', 'accessdenied'])) {
+        console.warn(
+          `[odata-msgraph live ${graphVersion}/${runner}] fetchRecentEmails skipped — grant Mail.Read (admin consent) and ensure the test user has an Exchange Online mailbox. See examples/odata-microsoft/README.md`,
+        );
+        return;
+      }
       expect(result.errors).toBeUndefined();
       const me = result.data?.me as Record<string, unknown> | undefined;
       expect(me).toEqual(
@@ -167,6 +174,22 @@ describe('Microsoft Graph Connectors (live Graph)', () => {
 
     it('fetchFilesFromOneDrive.graphql', async () => {
       const result = await executeLive(fetchFilesFromOneDrive);
+      // Soft-skip: OneDrive/SharePoint needs Files.Read + M365/OneDrive license on the user.
+      if (
+        isLivePermissionOrLicenseGap(result, [
+          'sharepoint',
+          'onedrive',
+          'quota',
+          '403',
+          'accessdenied',
+          'license',
+        ])
+      ) {
+        console.warn(
+          `[odata-msgraph live ${graphVersion}/${runner}] fetchFilesFromOneDrive skipped — grant Files.Read and assign a Microsoft 365 / OneDrive license to the test user. See examples/odata-microsoft/README.md`,
+        );
+        return;
+      }
       expect(result.errors).toBeUndefined();
       const me = result.data?.me as Record<string, unknown> | undefined;
       expect(Array.isArray(me?.drives)).toBe(true);
@@ -182,3 +205,16 @@ describe('Microsoft Graph Connectors (live Graph)', () => {
     });
   });
 });
+
+/** Live Graph account gaps (perms / license) — not Connectors regressions. */
+function isLivePermissionOrLicenseGap(
+  result: { errors?: readonly { message?: string }[] | null; data?: unknown },
+  needles: string[],
+): boolean {
+  const messages = (result.errors || []).map(e => String(e?.message || '').toLowerCase());
+  if (!messages.length) {
+    // Empty mailbox / drives with a successful me is still a valid Graph answer — not a gap.
+    return false;
+  }
+  return messages.some(msg => needles.some(n => msg.includes(n.trim().toLowerCase())));
+}

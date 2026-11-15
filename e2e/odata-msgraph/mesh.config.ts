@@ -12,7 +12,8 @@ const opts = Opts(process.argv);
  * Live (`MSGRAPH_LIVE=1`): same fixture schema surface as the v0 example queries,
  * but `endpoint` is real `graph.microsoft.com/{GRAPH_VERSION}` (`v1.0` or `beta`,
  * matching example `start` / `start:beta`). Fixture keeps the example-query type
- * surface small; abstract OData bases are emitted as plain objects (Router-safe).
+ * surface small; abstract OData entity bases become unions discriminated by
+ * `@odata.type` → `__typename` (Router-safe; no interface `implements`).
  */
 const live = process.env.MSGRAPH_LIVE === '1';
 const graphVersion = process.env.GRAPH_VERSION || 'v1.0';

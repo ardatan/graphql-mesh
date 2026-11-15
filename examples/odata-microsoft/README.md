@@ -48,9 +48,12 @@ You do **not** paste a new access token every run. Store a refresh token once; t
 
 1. **Entra ID → App registrations → New registration** (public client is fine).
 2. **Authentication** → “Allow public client flows” = **Yes** (for device-code helper).
-3. **API permissions** (delegated) + admin consent:
+3. **API permissions** (delegated) + **admin consent** for the app:
    - `User.Read`, `Mail.Read`, `Group.Read.All`, `Files.Read`, `offline_access`
-4. Use a dedicated test user (mailbox / OneDrive / groups available; MFA/CA exception if needed).
+4. Use a dedicated test user that actually has the backing workload (MFA/CA exception if needed):
+   - **Mail** (`fetchRecentEmails`): Exchange Online mailbox + `Mail.Read` (403 / Access Denied → soft-skipped in live e2e until fixed)
+   - **OneDrive / SPO** (`fetchFilesFromOneDrive`): Microsoft 365 / OneDrive license so `/me/drives` returns quota (license / SPO gaps → soft-skipped)
+   - **Groups** (`fetchGroupsAndMembers`): `Group.Read.All` and at least one readable group
 5. Mint a refresh token once:
 
 ```bash

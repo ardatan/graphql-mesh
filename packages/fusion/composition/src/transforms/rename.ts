@@ -255,9 +255,11 @@ export function createRenameTransform(opts: RenameTransformConfig) {
       }
       // Do not rewrite `@connect(selection:)` with the connector field's own rename —
       // selection keys are response JSON paths, not GraphQL field names.
+      // Do rewrite `$args.*` (arg renames) and `__typename` literals (type renames).
+      const argRenameMap = new Map<string, string>();
+      let newArgs: GraphQLFieldConfigArgumentMap | undefined;
       if (argRenamers.length && 'args' in field && field.args) {
-        const newArgs: GraphQLFieldConfigArgumentMap = {};
-        const argRenameMap = new Map<string, string>();
+        newArgs = {};
         for (const argName in field.args) {
           let newArgName = argName;
           for (const renamer of argRenamers) {
@@ -274,30 +276,27 @@ export function createRenameTransform(opts: RenameTransformConfig) {
           }
           newArgs[newArgName] = field.args[argName];
         }
-        const rewrittenDirectives = rewriteConnectArgReferences(fieldDirectives, argRenameMap);
+      }
+      const rewrittenDirectives = rewriteConnectArgReferences(
+        fieldDirectives,
+        argRenameMap,
+        undefined,
+        typeRenameMap.size ? typeRenameMap : undefined,
+      );
+      if (rewrittenDirectives !== fieldDirectives || newArgs) {
+        const fieldExtensions: Record<string, any> = { ...(field.extensions || {}) };
         if (rewrittenDirectives !== fieldDirectives) {
-          const fieldExtensions: Record<string, any> = { ...(field.extensions || {}) };
           fieldExtensions.directives = rewrittenDirectives;
-          return [
-            newFieldName,
-            withOriginalKeyFallback(
-              {
-                ...field,
-                extensions: fieldExtensions,
-                args: newArgs,
-                astNode: undefined,
-              },
-              fieldName,
-              newFieldName,
-            ),
-          ];
         }
         return [
           newFieldName,
           withOriginalKeyFallback(
             {
               ...field,
-              args: newArgs,
+              ...(rewrittenDirectives !== fieldDirectives
+                ? { extensions: fieldExtensions, astNode: undefined }
+                : {}),
+              ...(newArgs ? { args: newArgs } : {}),
             },
             fieldName,
             newFieldName,
@@ -358,8 +357,14 @@ export function createRenameTypeTransform(
               renamedTypeMap.get(resolveTo.sourceTypeName) || resolveTo.sourceTypeName,
           }));
         }
+        const rewrittenDirectives = rewriteConnectArgReferences(
+          fieldDirectives,
+          new Map(),
+          undefined,
+          renamedTypeMap.size ? renamedTypeMap : undefined,
+        );
         const fieldExtensions: any = (field.extensions ||= {});
-        fieldExtensions.directives = fieldDirectives;
+        fieldExtensions.directives = rewrittenDirectives || fieldDirectives;
         return field;
       },
     });

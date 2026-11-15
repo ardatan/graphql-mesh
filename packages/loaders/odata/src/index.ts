@@ -29,7 +29,11 @@ import type { TransportGetSubgraphExecutor } from '@graphql-mesh/transport-commo
 import transportRest, { type RESTTransportOptions } from '@graphql-mesh/transport-rest';
 import type { ImportFn, MeshFetch } from '@graphql-mesh/types';
 import { defaultImportFn, readFileOrUrl } from '@graphql-mesh/utils';
-import { applyODataConnectSchemaExtensions, emitODataConnectors } from './emitODataConnectors.js';
+import {
+  applyODataConnectSchemaExtensions,
+  emitODataConnectors,
+  emitODataPolymorphicUnions,
+} from './emitODataConnectors.js';
 import type { EntityTypeExtensions } from './types.js';
 import { getTypeNameFromRef } from './utils/getTypeNameFromRef.js';
 import { QUERY_OPTIONS_FIELDS } from './utils/QueryOptionsFields.js';
@@ -104,6 +108,10 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
   const schemas = metadataJson.Edmx[0].DataServices[0].Schema;
   const multipleSchemas = schemas.length > 1;
   const namespaces = new Set<string>();
+  /** OData `Abstract="true"` entity/complex GraphQL names. */
+  const abstractTypeNames = new Set<string>();
+  /** BaseType parent → direct child GraphQL names (for polymorphic unions). */
+  const childrenByBase = new Map<string, Set<string>>();
 
   schemaComposer.createEnumTC({
     name: 'InlineCount',
@@ -189,9 +197,10 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
     allTypes?.forEach((typeObj: any) => {
       const entityTypeName = buildName({ schemaNamespace, name: typeObj.attributes.Name });
       const isOpenType = typeObj.attributes.OpenType === 'true';
-      // `Abstract="true"` is not modeled as a GraphQL interface (Apollo Router Connectors
-      // expand drops interfaces while leaving `implements`). Abstract + concrete types are
-      // both objects; BaseType merge copies fields onto subtypes.
+      const isAbstract = typeObj.attributes.Abstract === 'true';
+      if (isAbstract) {
+        abstractTypeNames.add(entityTypeName);
+      }
       const eventEmitter = new EventEmitter();
       eventEmitter.setMaxListeners(Infinity);
       eventEmitterSet.add(eventEmitter);
@@ -220,11 +229,9 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
           eventEmitter,
         } as any,
       });
-      // Abstract OData entities → plain GraphQL objects (not interfaces).
-      // Apollo Router Connectors expand drops interface defs while leaving
-      // `implements` on objects ("does not refer to an existing interface").
-      // Concrete subtypes copy base fields via BaseType merge; they do not
-      // `implements` the abstract type. Navs typed as the abstract name still work.
+      // Concrete GraphQL objects first. Polymorphism is restored later as unions
+      // (Router Connectors reject `implements` interface expand). BaseType merge
+      // copies fields onto subtypes; unions re-link Person→Manager / Location→AirportLocation.
       const outputType = schemaComposer.createObjectTC({
         name: entityTypeName,
         extensions: outputExtensions as any,
@@ -766,8 +773,14 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
         entityInfo.identifierFieldTypeRef =
           baseEntityInfo.identifierFieldTypeRef || entityInfo.identifierFieldTypeRef;
         entityInfo.actualFields.unshift(...(baseEntityInfo.actualFields || []));
-        // Field copy only — no GraphQL `implements` (Router Connectors expand bug).
+        // Field copy only — polymorphism via unions after all merges (not `implements`).
         outputType.addFields(baseOutputType.getFields());
+        let kids = childrenByBase.get(baseTypeName);
+        if (!kids) {
+          kids = new Set();
+          childrenByBase.set(baseTypeName, kids);
+        }
+        kids.add(typeName);
         eventEmitter.emit('onFieldChange');
       };
       baseEventEmitter.on('onFieldChange', baseEventEmitterListener);
@@ -962,6 +975,14 @@ export async function loadNonExecutableGraphQLSchemaFromOData(
       });
     }
   }
+
+  // Restore OData inheritance as GraphQL unions + `@odata.type`→`__typename` selections.
+  // (Interfaces/`implements` break Apollo Router Connectors expand.)
+  emitODataPolymorphicUnions(schemaComposer, {
+    abstractTypeNames,
+    childrenByBase,
+    log,
+  });
 
   // Federation Connectors surface — Hive runs via transport-rest (+ odata.metadata $select).
   const connectMeta = emitODataConnectors(schemaComposer, {

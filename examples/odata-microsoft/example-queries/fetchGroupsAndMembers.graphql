@@ -3,7 +3,12 @@ query fetchGroupsAndMembers {
     displayName
     description
     members {
-      id
+      ... on user {
+        id
+      }
+      ... on group {
+        id
+      }
     }
   }
 }

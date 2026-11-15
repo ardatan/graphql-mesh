@@ -103,15 +103,21 @@ export function withOriginalKeyFallback<T extends Record<string, any>>(
  * When `fieldRenameMap` is set, also rewrite selection aliases of the form
  * `newName: oldName` / leading `oldName` field picks so rename/prefix transforms
  * keep Connectors selection in sync with GraphQL field names.
+ *
+ * When `typeRenameMap` is set, rewrite `__typename: "Old"` / `__typename: $("Old")`
+ * in selections so prefix/rename/naming-convention keep polymorphic Connect arms valid.
  */
 export function rewriteConnectArgReferences(
   fieldDirectives: Record<string, any[]> | undefined,
   argRenameMap: Map<string, string>,
   fieldRenameMap?: Map<string, string>,
+  typeRenameMap?: Map<string, string>,
 ): Record<string, any[]> | undefined {
   if (
     !fieldDirectives?.connect?.length ||
-    (argRenameMap.size === 0 && (!fieldRenameMap || fieldRenameMap.size === 0))
+    (argRenameMap.size === 0 &&
+      (!fieldRenameMap || fieldRenameMap.size === 0) &&
+      (!typeRenameMap || typeRenameMap.size === 0))
   ) {
     return fieldDirectives;
   }
@@ -138,6 +144,18 @@ export function rewriteConnectArgReferences(
         out = out
           .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(\\s*[:{])`, 'g'), `$1${to}$2`)
           .replace(new RegExp(`(^|[\\n\\s])${escapeRegExp(from)}(?=\\s|$)`, 'g'), `$1${to}`);
+      }
+    }
+    if (typeRenameMap?.size) {
+      // Longer names first so `FooBar` is not partially rewritten by `Foo`.
+      const entries = [...typeRenameMap.entries()]
+        .filter(([from, to]) => from && to && from !== to)
+        .sort((a, b) => b[0].length - a[0].length);
+      for (const [from, to] of entries) {
+        const esc = escapeRegExp(from);
+        out = out
+          .replace(new RegExp(`__typename:\\s*\\$\\("${esc}"\\)`, 'g'), `__typename: $("${to}")`)
+          .replace(new RegExp(`__typename:\\s*"${esc}"`, 'g'), `__typename: "${to}"`);
       }
     }
     return out;

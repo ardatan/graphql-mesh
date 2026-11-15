@@ -120,6 +120,7 @@ export function createNamingConventionTransform(
       : config.fieldArgumentNames;
 
   const schemaMapper: SchemaMapper = {};
+  const typeRenameMap = new Map<string, string>();
   if (typeNamesFn) {
     schemaMapper[MapperKind.TYPE] = type => {
       if (
@@ -130,24 +131,27 @@ export function createNamingConventionTransform(
       ) {
         return type;
       }
+      const newName = typeNamesFn(type.name);
+      if (newName !== type.name) {
+        typeRenameMap.set(type.name, newName);
+      }
       return new (Object.getPrototypeOf(type).constructor)({
         ...type.toConfig(),
-        name: typeNamesFn(type.name),
+        name: newName,
       });
     };
   }
-  if (fieldNamesFn || fieldArgumentNamesFn || enumValuesFn) {
+  if (fieldNamesFn || fieldArgumentNamesFn || enumValuesFn || typeNamesFn) {
     schemaMapper[MapperKind.FIELD] = (fieldConfig, fieldName, typeName) => {
       // Keep Connectors HTTP method / baseURL field names intact.
       const newFieldName = CONNECTORS_INPUT_TYPES.has(typeName)
         ? fieldName
         : fieldNamesFn?.(fieldName) || fieldName;
-      if (!fieldArgumentNamesFn && !enumValuesFn) {
-        return [newFieldName, withOriginalKeyFallback(fieldConfig, fieldName, newFieldName)];
-      }
+      const fieldDirectives = getDirectiveExtensions(fieldConfig);
+      const argRenameMap = new Map<string, string>();
+      let newArgs: GraphQLFieldConfigArgumentMap | undefined;
       if ('args' in fieldConfig && fieldConfig.args && (fieldArgumentNamesFn || enumValuesFn)) {
-        const newArgs: GraphQLFieldConfigArgumentMap = {};
-        const argRenameMap = new Map<string, string>();
+        newArgs = {};
         for (const argName in fieldConfig.args) {
           const newArgName = fieldArgumentNamesFn?.(argName) || argName;
           if (newArgName !== argName) {
@@ -169,31 +173,27 @@ export function createNamingConventionTransform(
             defaultValue: newDefaultValue,
           };
         }
-        const fieldDirectives = getDirectiveExtensions(fieldConfig);
-        const rewrittenDirectives = rewriteConnectArgReferences(fieldDirectives, argRenameMap);
+      }
+      const rewrittenDirectives = rewriteConnectArgReferences(
+        fieldDirectives,
+        argRenameMap,
+        undefined,
+        typeRenameMap.size ? typeRenameMap : undefined,
+      );
+      if (rewrittenDirectives !== fieldDirectives || newArgs) {
+        const fieldExtensions: Record<string, any> = { ...(fieldConfig.extensions || {}) };
         if (rewrittenDirectives !== fieldDirectives) {
-          const fieldExtensions: Record<string, any> = { ...(fieldConfig.extensions || {}) };
           fieldExtensions.directives = rewrittenDirectives;
-          return [
-            newFieldName,
-            withOriginalKeyFallback(
-              {
-                ...fieldConfig,
-                extensions: fieldExtensions,
-                args: newArgs,
-                astNode: undefined,
-              },
-              fieldName,
-              newFieldName,
-            ),
-          ];
         }
         return [
           newFieldName,
           withOriginalKeyFallback(
             {
               ...fieldConfig,
-              args: newArgs,
+              ...(rewrittenDirectives !== fieldDirectives
+                ? { extensions: fieldExtensions, astNode: undefined }
+                : {}),
+              ...(newArgs ? { args: newArgs } : {}),
             },
             fieldName,
             newFieldName,
@@ -235,6 +235,26 @@ export function createNamingConventionTransform(
     };
   }
   return function namingConventionTransform(schema: GraphQLSchema) {
+    // Precompute before mapSchema so FIELD rewrites see the full type map
+    // (TYPE/FIELD visit order is not guaranteed for `__typename` Connect arms).
+    typeRenameMap.clear();
+    if (typeNamesFn) {
+      for (const type of Object.values(schema.getTypeMap())) {
+        if (type.name.startsWith('__')) continue;
+        if (
+          isSpecifiedScalarType(type) ||
+          isFromGraphQLScalars(type.name) ||
+          CONNECTORS_INPUT_TYPES.has(type.name) ||
+          CONNECTORS_LINKED_SCALARS.has(type.name)
+        ) {
+          continue;
+        }
+        const newName = typeNamesFn(type.name);
+        if (newName !== type.name) {
+          typeRenameMap.set(type.name, newName);
+        }
+      }
+    }
     const connectors = schemaUsesConnect(schema);
     let next = mapSchema(schema, schemaMapper);
     if (enumValuesFn && !connectors && !next.getDirective('enum')) {

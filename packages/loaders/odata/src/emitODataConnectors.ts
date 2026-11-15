@@ -4,7 +4,9 @@ import type {
   ObjectTypeComposer,
   ObjectTypeComposerFieldConfig,
   SchemaComposer,
+  UnionTypeComposer,
 } from 'graphql-compose';
+import type { Logger } from '@graphql-hive/logger';
 import {
   CONNECT_LINK_URL,
   ConnectDirective,
@@ -38,14 +40,64 @@ function headersToConnectMappings(
   }));
 }
 
+/** Build `{ __typename: "T", …fields }` for one union match arm / default. */
+function odataTypenameSelectionObject(
+  schemaComposer: SchemaComposer,
+  name: string,
+  visited: Set<string>,
+): string {
+  let exclusive = '';
+  try {
+    const otc = schemaComposer.getOTC(name);
+    exclusive = entitySelection(schemaComposer, otc, visited);
+  } catch {
+    exclusive = '';
+  }
+  // `@key` field only inside match arms. Multi-field object literals (and nested
+  // groups / `_odataId: $->get("@odata.id")`) → Router v2.19 `nom::Eof`.
+  // Additional fields are filled via type-level `@connect` entity follow-up when
+  // the gateway supports it; Hive maps scalars from the same JSON when present.
+  let keyField: string | undefined;
+  try {
+    keyField = (
+      (schemaComposer.getOTC(name).getExtensions() as any)?.odata?.entityInfo
+        ?.identifierFieldName as string | undefined
+    );
+  } catch {
+    keyField = undefined;
+  }
+  if (!keyField && exclusive) {
+    let body = exclusive;
+    for (let i = 0; i < 8; i++) {
+      const next = body.replace(/\b\w+\s*\{[^{}]*\}/g, ' ');
+      if (next === body) break;
+      body = next;
+    }
+    keyField = body
+      .replace(/\b_odataId\s*:\s*\S+/g, ' ')
+      .replace(/\brest\s*:\s*\S+/g, ' ')
+      .trim()
+      .split(/\s+/)
+      .find(Boolean);
+  }
+  void visited;
+  return keyField
+    ? `{ __typename: ${JSON.stringify(name)}, ${keyField} }`
+    : `{ __typename: ${JSON.stringify(name)} }`;
+}
+
 /**
  * Connectors abstract spread: map OData `@odata.type` → concrete `__typename`.
  * Required by Apollo Router for interface/union selections (same pattern as OpenAPI
  * `... $_type->match(...)`).
+ *
+ * When `defaultTypeName` is set, missing `@odata.type` (common for the declared
+ * base type under `odata.metadata=minimal`) falls back via `[@, { … }]`.
  */
 function odataAbstractTypenameSpread(
   schemaComposer: SchemaComposer,
   memberTypeNames: string[],
+  defaultTypeName?: string,
 ): string {
   const arms: string[] = [];
   for (const name of memberTypeNames) {
@@ -55,17 +107,23 @@ function odataAbstractTypenameSpread(
       const otc = schemaComposer.getOTC(name);
       odataType =
         ((otc.getExtensions() as any)?.odata?.entityInfo?.odataTypeName as string) || odataType;
-      const exclusive = entitySelection(schemaComposer, otc, new Set());
-      arms.push(
-        exclusive
-          ? `[${JSON.stringify(odataType)}, { __typename: ${JSON.stringify(name)}, ${exclusive} }]`
-          : `[${JSON.stringify(odataType)}, { __typename: ${JSON.stringify(name)} }]`,
-      );
     } catch {
-      arms.push(`[${JSON.stringify(odataType)}, { __typename: ${JSON.stringify(name)} }]`);
+      // keep `#name` fallback
     }
+    arms.push(
+      `[${JSON.stringify(odataType)}, ${odataTypenameSelectionObject(schemaComposer, name, new Set())}]`,
+    );
   }
   if (!arms.length) return '';
+  const def =
+    defaultTypeName &&
+    memberTypeNames.includes(defaultTypeName) &&
+    schemaComposer.isObjectType(defaultTypeName)
+      ? defaultTypeName
+      : undefined;
+  if (def) {
+    return `... $->get("@odata.type")->match(${arms.join(', ')}, [@, ${odataTypenameSelectionObject(schemaComposer, def, new Set())}])`;
+  }
   return `... $->get("@odata.type")->match(${arms.join(', ')})`;
 }
 
@@ -92,7 +150,10 @@ function entitySelection(
       const members = (utc.getTypes?.() || [])
         .map((t: any) => (typeof t === 'string' ? t : t.getTypeName?.()))
         .filter((n: unknown): n is string => typeof n === 'string');
-      return odataAbstractTypenameSpread(schemaComposer, members);
+      const defaultTypename = (utc.getExtensions() as any)?.odata?.defaultTypename as
+        | string
+        | undefined;
+      return odataAbstractTypenameSpread(schemaComposer, members, defaultTypename);
     } catch {
       return '';
     }
@@ -194,6 +255,23 @@ function selectionForFieldReturnType(
   }
   if (named === 'Int' || named === 'Float' || named === 'Boolean') {
     return '$.value';
+  }
+  // Unions: `@odata.type`→`__typename` match (no field bag on the union itself).
+  if (schemaComposer.isUnionType(named)) {
+    try {
+      const utc = schemaComposer.getUTC(named);
+      const members = (utc.getTypes?.() || [])
+        .map((t: any) => (typeof t === 'string' ? t : t.getTypeName?.()))
+        .filter((n: unknown): n is string => typeof n === 'string');
+      const defaultTypename = (utc.getExtensions() as any)?.odata?.defaultTypename as
+        | string
+        | undefined;
+      const spread = odataAbstractTypenameSpread(schemaComposer, members, defaultTypename);
+      if (!spread) return '$';
+      return isList ? `$.value { ${spread} }` : spread;
+    } catch {
+      return '$';
+    }
   }
   let entityTC: ObjectTypeComposer | InterfaceTypeComposer | undefined;
   try {
@@ -408,7 +486,11 @@ export function emitODataConnectors(
             },
             selection: entityTC ? entitySelection(schemaComposer, entityTC) || '$' : '$',
             // Apollo Router rejects `entity: true` on Mutation (`ENTITY_NOT_ON_ROOT_QUERY`).
-            entity: rootName === 'Query',
+            // Unions have no key fields — `entity: true` on `IPerson` etc. fails resolvable-key creation.
+            entity:
+              rootName === 'Query' &&
+              Boolean(returnTypeName) &&
+              schemaComposer.isObjectType(returnTypeName),
           }),
         );
         continue;
@@ -837,6 +919,180 @@ export function emitODataConnectors(
       },
     ],
   };
+}
+
+/**
+ * Restore OData inheritance as GraphQL unions (Router Connectors reject interface
+ * `implements` expand). Call after BaseType field merge, before {@link emitODataConnectors}.
+ *
+ * - Abstract base → union with the same name = transitive concrete descendants
+ * - Non-abstract base with children → `I{Base} = Base | …descendants`; rewrite
+ *   output fields typed as `Base` → `I{Base}`
+ */
+export function emitODataPolymorphicUnions(
+  schemaComposer: SchemaComposer,
+  opts: {
+    abstractTypeNames: Set<string>;
+    childrenByBase: Map<string, Set<string>>;
+    log?: Logger;
+  },
+): void {
+  const { abstractTypeNames, childrenByBase, log } = opts;
+
+  function transitiveDescendants(base: string): Set<string> {
+    const out = new Set<string>();
+    const stack = [...(childrenByBase.get(base) || [])];
+    while (stack.length) {
+      const n = stack.pop()!;
+      if (out.has(n)) continue;
+      out.add(n);
+      for (const c of childrenByBase.get(n) || []) {
+        stack.push(c);
+      }
+    }
+    return out;
+  }
+
+  function typeNameTokenRe(name: string): RegExp {
+    const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Avoid lookbehind for broader TS/downlevel targets: prefix captured in $1.
+    return new RegExp(`(^|[^A-Za-z0-9_])(${esc})(?![A-Za-z0-9_])`);
+  }
+
+  function rewriteTypeName(typeStr: string, from: string, to: string): string {
+    return typeStr.replace(typeNameTokenRe(from), `$1${to}`);
+  }
+
+  /** Rebind output fields (and roots) that reference `fromType` to `toType`. */
+  function rewriteOutputFields(fromType: string, toType: string) {
+    const re = typeNameTokenRe(fromType);
+    for (const tc of schemaComposer.types.values()) {
+      const typeName = (tc as any).getTypeName?.();
+      if (typeof typeName !== 'string') continue;
+      if (!schemaComposer.isObjectType(typeName) && !schemaComposer.isInterfaceType(typeName)) {
+        continue;
+      }
+      const otc = tc as ObjectTypeComposer | InterfaceTypeComposer;
+      for (const fieldName of otc.getFieldNames()) {
+        const field = otc.getField(fieldName);
+        const typeStr = fieldTypeNameString(field);
+        if (!re.test(typeStr)) continue;
+        // Always set a string type so graphql-compose re-resolves (important when
+        // replacing an abstract object with a same-named union).
+        otc.setField(fieldName, {
+          ...field,
+          type: rewriteTypeName(typeStr, fromType, toType),
+        });
+      }
+    }
+  }
+
+  function isKeyedOrAbstractEntity(typeName: string): boolean {
+    if (abstractTypeNames.has(typeName)) return true;
+    try {
+      if (!schemaComposer.isObjectType(typeName)) return false;
+      const otc = schemaComposer.getOTC(typeName);
+      return Boolean(
+        (otc.getExtensions() as any)?.odata?.entityInfo?.identifierFieldName,
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  /** Skip PlanItem-style trees without a dedicated entity set — typename-only
+   *  match arms empty their fields under Router Connectors expand. */
+  function hasEntitySetOrAbstract(typeName: string): boolean {
+    if (abstractTypeNames.has(typeName)) return true;
+    try {
+      const otc = schemaComposer.getOTC(typeName);
+      // Type-level `@connect` is stamped later; approximate via identifier +
+      // Query root fields returning this type or I{type}.
+      const id = (otc.getExtensions() as any)?.odata?.entityInfo?.identifierFieldName;
+      if (!id) return false;
+      for (const fieldName of schemaComposer.Query.getFieldNames()) {
+        const t = fieldTypeNameString(schemaComposer.Query.getField(fieldName));
+        if (t.includes(typeName)) return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  const bases = new Set<string>([...childrenByBase.keys(), ...abstractTypeNames]);
+  for (const base of bases) {
+    const descendants = transitiveDescendants(base);
+    if (!descendants.size) continue;
+
+    // Complex-type inheritance (e.g. Location → AirportLocation) stays as field
+    // merge only — unions would force fragments on every `AddressInfo { Address }`.
+    if (!isKeyedOrAbstractEntity(base)) {
+      continue;
+    }
+    // Avoid IPlanItem until match arms can carry full selections on Router.
+    if (!hasEntitySetOrAbstract(base) && !abstractTypeNames.has(base)) {
+      continue;
+    }
+
+    const isAbstract = abstractTypeNames.has(base);
+    const members: string[] = [];
+    if (!isAbstract && schemaComposer.isObjectType(base)) {
+      members.push(base);
+    }
+    for (const d of [...descendants].sort()) {
+      if (schemaComposer.isObjectType(d) && !members.includes(d)) {
+        members.push(d);
+      }
+    }
+    // Need ≥2 members, or a single concrete child of an abstract base.
+    if (members.length < 2 && !(isAbstract && members.length === 1)) {
+      continue;
+    }
+
+    const unionName = isAbstract ? base : `I${base}`;
+    if (!isAbstract && schemaComposer.has(unionName)) {
+      log?.warn?.(`OData: skip polymorphic union ${unionName}; name already exists`);
+      continue;
+    }
+    if (isAbstract && schemaComposer.isUnionType(base)) {
+      continue;
+    }
+
+    const defaultTypename =
+      !isAbstract && members.includes(base) ? base : members[0];
+
+    let abstractOrphan: string | undefined;
+    if (isAbstract && schemaComposer.isObjectType(base)) {
+      // ListComposer wrappers keep the abstract OTC alive after `delete(name)`.
+      // Rename it out of the way, create the union under the public name, rebind
+      // fields to the union, then drop the orphan.
+      const otc = schemaComposer.getOTC(base);
+      abstractOrphan = `__ODataAbstract_${base}`;
+      schemaComposer.delete(base);
+      otc.setTypeName(abstractOrphan);
+      schemaComposer.set(abstractOrphan, otc);
+    }
+
+    schemaComposer.createUnionTC({
+      name: unionName,
+      types: members,
+      description: isAbstract
+        ? `OData abstract type ${base} (union of concrete implementations)`
+        : `OData polymorphic ${base} (union of ${base} and subtypes)`,
+      extensions: {
+        odata: { defaultTypename },
+      },
+    });
+
+    if (abstractOrphan) {
+      rewriteOutputFields(abstractOrphan, unionName);
+      schemaComposer.delete(abstractOrphan);
+    }
+
+    // Non-abstract: Person → IPerson. Abstract: string refs → union (same name).
+    rewriteOutputFields(base, unionName);
+  }
 }
 
 export function applyODataConnectSchemaExtensions(
