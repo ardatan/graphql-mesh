@@ -1,4 +1,5 @@
-import type { GraphQLScalarType } from 'graphql';
+import type { GraphQLScalarType, ValueNode } from 'graphql';
+import { Kind } from 'graphql';
 import { resolvers as scalarResolvers } from 'graphql-scalars';
 import { ObjMapScalar } from '@graphql-mesh/transport-common';
 import { processLengthAnnotations } from './length.js';
@@ -6,9 +7,50 @@ import { processRegExpAnnotations } from './regexp.js';
 import { processTypeScriptAnnotations } from './typescriptAnnotations.js';
 import { getDirectiveAnnotations } from './utils.js';
 
+/**
+ * XSD `xs:date` allows an optional timezone (`2017-03-10+00:00`, `2017-03-10Z`).
+ * GraphQL Date (RFC 3339 full-date) only accepts `YYYY-MM-DD`. Strip the zone so
+ * SOAP/XML responses serialize without INTERNAL_SERVER_ERROR.
+ */
+const XSD_DATE_WITH_TZ = /^(-?\d{4}-\d{2}-\d{2})(Z|[+-]\d{2}:\d{2})$/;
+
+export function coerceXsdDateString(value: unknown): unknown {
+  if (typeof value === 'string') {
+    const match = XSD_DATE_WITH_TZ.exec(value);
+    if (match) {
+      return match[1];
+    }
+  }
+  return value;
+}
+
+function withXsdDateCoercion(scalar: GraphQLScalarType): GraphQLScalarType {
+  return {
+    ...scalar,
+    serialize(value: unknown) {
+      return scalar.serialize(coerceXsdDateString(value));
+    },
+    parseValue(value: unknown) {
+      return scalar.parseValue(coerceXsdDateString(value));
+    },
+    parseLiteral(ast: ValueNode, variables?: Record<string, unknown> | null) {
+      if (ast.kind === Kind.STRING) {
+        const coerced = coerceXsdDateString(ast.value);
+        if (coerced !== ast.value) {
+          return scalar.parseValue(coerced);
+        }
+      }
+      return scalar.parseLiteral(ast, variables);
+    },
+  } as GraphQLScalarType;
+}
+
 export function processScalarType(type: GraphQLScalarType) {
   if (type.name in scalarResolvers) {
-    const actualScalar = scalarResolvers[type.name];
+    let actualScalar = scalarResolvers[type.name] as GraphQLScalarType;
+    if (type.name === 'Date') {
+      actualScalar = withXsdDateCoercion(actualScalar);
+    }
     addExecutionLogicToScalar(type, actualScalar);
   }
   if (type.name === 'ObjMap') {

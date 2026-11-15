@@ -231,6 +231,65 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
     expect(parsed.Envelope.Body.Empty).toBeNull();
   });
 
+  it('coerces XSD xs:date with timezone to GraphQL Date YYYY-MM-DD', async () => {
+    // Imposter / InterSystems SOAP returns DOB as e.g. 2017-03-10+00:00.
+    // GraphQL Date rejects the zone; processDirectives must strip it.
+    const fetchImpl = async () =>
+      new Response(
+        `<?xml version="1.0"?><Envelope><Body><Person><DOB>2017-03-10+00:00</DOB><Name>Ada</Name></Person></Body></Envelope>`,
+        { status: 200, headers: { 'content-type': 'text/xml' } },
+      );
+
+    const sdl = /* GraphQL */ `
+      schema @source(name: "xmlApi", http: { baseURL: "http://localhost" }) {
+        query: Query
+      }
+
+      scalar Date
+
+      type Query {
+        person: Person
+          @connect(
+            source: "xmlApi"
+            http: {
+              POST: "/person"
+              headers: [{ name: "Content-Type", value: "text/xml" }]
+              body: """
+              Request: { id: $("1") }
+              """
+            }
+            selection: """
+            dob: Envelope.Body.Person.DOB
+            name: Envelope.Body.Person.Name
+            """
+          )
+      }
+
+      type Person {
+        dob: Date
+        name: String
+      }
+    `;
+
+    const schema = processDirectives(buildSchema(`${CONNECTOR_DIRECTIVES}\n${sdl}`), {
+      globalFetch: fetchImpl as any,
+    });
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          person {
+            dob
+            name
+          }
+        }
+      `),
+    });
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ person: { dob: '2017-03-10', name: 'Ada' } });
+  });
+
   it('wraps a single nested XML element into a GraphQL list field', async () => {
     // Legacy soapDefaultResolver: one sibling for an unbounded element must still
     // satisfy [T]. processDirectives installs the pluralization (not connect-only).
