@@ -133,7 +133,9 @@ function markXmlDerived<T>(value: T): T {
 /** True when `value` is an object/array node from `xmlToJsObject`. */
 export function isXmlDerived(value: unknown): boolean {
   return (
-    value != null && typeof value === 'object' && Boolean((value as Record<symbol, unknown>)[XML_DERIVED])
+    value != null &&
+    typeof value === 'object' &&
+    Boolean((value as Record<symbol, unknown>)[XML_DERIVED])
   );
 }
 

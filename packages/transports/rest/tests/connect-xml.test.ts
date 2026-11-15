@@ -364,17 +364,9 @@ describe('Federation Connectors — XML / SOAP-shaped bodies', () => {
       }
       type Query {
         enabled: Boolean
-          @connect(
-            source: "xmlApi"
-            http: { GET: "/enabled" }
-            selection: "$.Root.Enabled"
-          )
+          @connect(source: "xmlApi", http: { GET: "/enabled" }, selection: "$.Root.Enabled")
         flags: [Boolean!]
-          @connect(
-            source: "xmlApi"
-            http: { GET: "/flags" }
-            selection: "$.Root.Flag"
-          )
+          @connect(source: "xmlApi", http: { GET: "/flags" }, selection: "$.Root.Flag")
       }
     `;
     const schema = processDirectives(buildSchema(`${CONNECTOR_DIRECTIVES}\n${sdl}`), {
