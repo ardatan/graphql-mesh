@@ -248,6 +248,18 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
     });
   }
 
+  // Stable schema directive order for snapshots / consumers:
+  // @link* → Mesh (@transport, …) → join link → join source → other joins.
+  // Lift may emit owned `@source` as join__directive before `@transport`; normalize here.
+  nextDoc = visit(nextDoc, {
+    SchemaDefinition(node) {
+      return { ...node, directives: canonicalizeSchemaDirectives(node.directives) };
+    },
+    SchemaExtension(node) {
+      return { ...node, directives: canonicalizeSchemaDirectives(node.directives) };
+    },
+  });
+
   if (
     !nextDoc.definitions.some(
       d => d.kind === Kind.DIRECTIVE_DEFINITION && d.name.value === 'join__directive',
@@ -261,6 +273,48 @@ export function finalizeConnectorsSupergraph(supergraphSdl: string): string {
   }
 
   return print(nextDoc).trim();
+}
+
+function canonicalizeSchemaDirectives(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): ConstDirectiveNode[] {
+  if (!directives?.length) {
+    return [];
+  }
+  const links: ConstDirectiveNode[] = [];
+  const mesh: ConstDirectiveNode[] = [];
+  const joinLinks: ConstDirectiveNode[] = [];
+  const joinSources: ConstDirectiveNode[] = [];
+  const otherJoins: ConstDirectiveNode[] = [];
+  const other: ConstDirectiveNode[] = [];
+  for (const dir of directives) {
+    if (dir.name.value === 'link') {
+      links.push(dir);
+      continue;
+    }
+    if (dir.name.value === 'join__directive') {
+      const name = getStringArg(dir, 'name');
+      if (name === 'link') {
+        joinLinks.push(dir);
+      } else if (name === 'source') {
+        joinSources.push(dir);
+      } else {
+        otherJoins.push(dir);
+      }
+      continue;
+    }
+    if (
+      dir.name.value === 'transport' ||
+      dir.name.value === 'pubsubOperation' ||
+      dir.name.value === 'meshSource' ||
+      dir.name.value === 'merge'
+    ) {
+      mesh.push(dir);
+      continue;
+    }
+    other.push(dir);
+  }
+  return [...links, ...mesh, ...other, ...joinLinks, ...joinSources, ...otherJoins];
 }
 
 function readJoinGraphMap(document: DocumentNode): Map<string, string> {
