@@ -844,12 +844,14 @@ describe('Federation Connectors composition', () => {
       }
 
       type Query @join__type(graph: PRODUCTS) @join__type(graph: INVENTORY) {
-        product(id: ID!): Product
-          @join__field(graph: PRODUCTS)
-          @connect(source: "api", http: { GET: "/products/{$args.id}" }, selection: "id name")
+        # stock first so the shared source cache holds INVENTORY before Product's
+        # type-level @connect is attributed — exercises preferSoleJoinType.
         stock(id: ID!): Stock
           @join__field(graph: INVENTORY)
           @connect(source: "api", http: { GET: "/stock/{$args.id}" }, selection: "id qty")
+        product(id: ID!): Product
+          @join__field(graph: PRODUCTS)
+          @connect(source: "api", http: { GET: "/products/{$args.id}" }, selection: "id name")
       }
 
       type Product
