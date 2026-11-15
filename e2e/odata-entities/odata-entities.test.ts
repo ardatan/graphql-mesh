@@ -3,18 +3,16 @@ import { createTenv, type ServeRunner, type Service } from '@e2e/tenv';
 const { compose, serve, service } = createTenv(__dirname);
 
 describe('OData Federation entities without @merge', () => {
-  let odata: Service;
   let catalog: Service;
 
   beforeAll(async () => {
-    odata = await service('OData');
     catalog = await service('catalog');
   });
 
-  it('composes OData entity:true + catalog stub without Mesh @merge', async () => {
+  it('composes live TripPin entity:true + catalog stub without Mesh @merge', async () => {
     const { result } = await compose({
       output: 'graphql',
-      services: [odata, catalog],
+      services: [catalog],
       maskServicePorts: true,
     });
     expect(result).toMatchSnapshot();
@@ -28,6 +26,7 @@ describe('OData Federation entities without @merge', () => {
     expect(result).not.toMatch(
       /type Airline[\s\S]*@join__directive\(graphs: \[CATALOG\], name: "connect"/,
     );
+    // Nested-only Trip: key present but not resolvable (no root entity set).
     expect(result).toMatch(
       /type Trip[\s\S]*@join__type\(graph: TRIPPIN,\s*key: "TripId",\s*resolvable: false\)/,
     );
@@ -36,10 +35,10 @@ describe('OData Federation entities without @merge', () => {
   });
 
   describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {
-    it('resolves Airline stub fields from OData owner', async () => {
+    it('resolves Airline stub fields from live TripPin', async () => {
       const composition = await compose({
         output: 'graphql',
-        services: [odata, catalog],
+        services: [catalog],
       });
       const { execute } = await serve({
         runner,
@@ -53,7 +52,7 @@ describe('OData Federation entities without @merge', () => {
               isFeatured
               Name
             }
-            AirlinesByAirlineCode(AirlineCode: "UA") {
+            AirlinesByAirlineCode(AirlineCode: "FM") {
               AirlineCode
               Name
             }
@@ -68,8 +67,8 @@ describe('OData Federation entities without @merge', () => {
           Name: 'American Airlines',
         },
         AirlinesByAirlineCode: {
-          AirlineCode: 'UA',
-          Name: 'United Airlines',
+          AirlineCode: 'FM',
+          Name: 'Shanghai Airline',
         },
       });
     });
