@@ -801,11 +801,12 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     // Apollo: header vars are always arrays (fetch Headers.get → single joined string).
     return value == null ? undefined : [value];
   }
-  if (path.startsWith('$(') && path.endsWith(')')) {
-    try {
-      return JSON.parse(path.slice(2, -1));
-    } catch {
-      return path.slice(2, -1);
+  // `$("lit")` / `$(123)` / `$($->get("k") ?? "default")` — expression wrapper.
+  // Method chains after `$()` (e.g. `…->match`) are handled via split below.
+  if (path.startsWith('$(')) {
+    const closed = findBalancedParenClose(path, 1);
+    if (closed === path.length - 1) {
+      return evalConnectorsDollarParen(path.slice(2, closed), root, extras);
     }
   }
   // Method calls: `$status->match(...)`, `$->map(@->match(...))`, `$->entries`,
@@ -898,6 +899,84 @@ function evalPath(path: string, root: any, extras: ConnectSelectionExtras): any 
     cur = cur[part];
   }
   return cur;
+}
+
+/** Index of the `)` that closes `s[openIdx]` (`(`), or -1. */
+function findBalancedParenClose(s: string, openIdx: number): number {
+  let depth = 0;
+  for (let i = openIdx; i < s.length; i++) {
+    const c = s[i];
+    if (c === '"' || c === "'") {
+      const q = c;
+      i++;
+      while (i < s.length && s[i] !== q) {
+        if (s[i] === '\\') i++;
+        i++;
+      }
+      continue;
+    }
+    if (c === '(') depth++;
+    else if (c === ')') {
+      depth--;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
+}
+
+/**
+ * Connectors `$()` body: JSON literal, path/`->` expr, or `a ?? b` / `a ?! b`
+ * (Apollo nullish coalescing — required before `->match` when `get` may be None).
+ */
+function evalConnectorsDollarParen(
+  inner: string,
+  root: any,
+  extras: ConnectSelectionExtras,
+): any {
+  const trimmed = inner.trim();
+  if (!trimmed) return undefined;
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    // not a JSON literal
+  }
+  // Top-level `??` / `?!` (Apollo: `??` coalesces null|None; `?!` only None).
+  let depth = 0;
+  for (let i = 0; i < trimmed.length; i++) {
+    const c = trimmed[i];
+    if (c === '"' || c === "'") {
+      const q = c;
+      i++;
+      while (i < trimmed.length && trimmed[i] !== q) {
+        if (trimmed[i] === '\\') i++;
+        i++;
+      }
+      continue;
+    }
+    if (c === '(' || c === '[' || c === '{') depth++;
+    else if (c === ')' || c === ']' || c === '}') depth--;
+    else if (depth === 0 && c === '?') {
+      const op = trimmed.slice(i, i + 2);
+      if (op === '??' || op === '?!') {
+        const left = evalPath(trimmed.slice(0, i).trim(), root, extras);
+        const rightRaw = trimmed.slice(i + 2).trim();
+        const right = evalConnectorsDollarParen(rightRaw, root, extras);
+        if (op === '??') {
+          return left == null ? right : left;
+        }
+        // `?!` — only missing/None (undefined), not JSON null.
+        return left === undefined ? right : left;
+      }
+    }
+  }
+  if (
+    trimmed.startsWith('$') ||
+    trimmed.includes('->') ||
+    /^[A-Za-z_]/.test(trimmed)
+  ) {
+    return evalPath(trimmed, root, extras);
+  }
+  return trimmed;
 }
 
 /**
@@ -1168,58 +1247,46 @@ function readSelectionIdent(s: string, start: number): { value: string; end: num
     return { value, end: i };
   }
   // `$status->match([200, "User"], …)`, `$["patent-id"]`, `$.foo["bar"]->match(...)`,
-  // `$("literal")` / `$('literal')` Connectors string/number literals.
+  // `$("literal")` / `$($->get("k") ?? "default")->match(...)` (balanced `$()` + chains).
   if (s[i] === '$') {
     i++;
-    // `$("…")` / `$('…')` / `$(123)` / `$(true)` — consume before path segments.
+    // `$()` — balanced (nested get/match / `??` inside).
     if (s[i] === '(') {
-      i++;
-      if (s[i] === '"' || s[i] === "'") {
-        const quote = s[i++];
-        while (i < s.length && s[i] !== quote) {
-          if (s[i] === '\\' && i + 1 < s.length) i += 2;
-          else i++;
-        }
-        if (s[i] === quote) i++;
-      } else {
-        while (i < s.length && s[i] !== ')') i++;
+      const close = findBalancedParenClose(s, i);
+      if (close < 0) {
+        return { value: s.slice(start), end: s.length };
       }
-      if (s[i] === ')') i++;
-      return { value: s.slice(start, i), end: i };
-    }
-    // Don't consume the `-` of `->` into the path segment.
-    while (i < s.length && /[A-Za-z0-9_.]/.test(s[i])) i++;
-    // Bracket accessors: `["key"]` / `['key']` / `[0]`
-    while (s[i] === '[') {
-      i++;
-      if (s[i] === '"' || s[i] === "'") {
-        const quote = s[i++];
-        while (i < s.length && s[i] !== quote) {
-          if (s[i] === '\\' && i + 1 < s.length) i += 2;
-          else i++;
-        }
-        if (s[i] === quote) i++;
-      } else {
-        while (i < s.length && s[i] !== ']') i++;
-      }
-      if (s[i] === ']') i++;
+      i = close + 1;
+    } else {
+      // Don't consume the `-` of `->` into the path segment.
       while (i < s.length && /[A-Za-z0-9_.]/.test(s[i])) i++;
+      // Bracket accessors: `["key"]` / `['key']` / `[0]`
+      while (s[i] === '[') {
+        i++;
+        if (s[i] === '"' || s[i] === "'") {
+          const quote = s[i++];
+          while (i < s.length && s[i] !== quote) {
+            if (s[i] === '\\' && i + 1 < s.length) i += 2;
+            else i++;
+          }
+          if (s[i] === quote) i++;
+        } else {
+          while (i < s.length && s[i] !== ']') i++;
+        }
+        if (s[i] === ']') i++;
+        while (i < s.length && /[A-Za-z0-9_.]/.test(s[i])) i++;
+      }
     }
     while (s.slice(i, i + 2) === '->') {
       i += 2;
       while (i < s.length && /[A-Za-z0-9_]/.test(s[i])) i++;
       if (s[i] === '(') {
-        let depth = 0;
-        for (; i < s.length; i++) {
-          if (s[i] === '(') depth++;
-          else if (s[i] === ')') {
-            depth--;
-            if (depth === 0) {
-              i++;
-              break;
-            }
-          }
+        const close = findBalancedParenClose(s, i);
+        if (close < 0) {
+          i = s.length;
+          break;
         }
+        i = close + 1;
       }
     }
     return { value: s.slice(start, i), end: i };

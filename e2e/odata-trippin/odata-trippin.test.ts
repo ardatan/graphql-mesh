@@ -2,35 +2,43 @@ import { createTenv, type ServeRunner } from '@e2e/tenv';
 
 const { compose, serve } = createTenv(__dirname);
 
-// IPerson union requires inline fragments. Connect match arms currently emit the
-// `@key` field only (Router JSONSelection rejects large object-literal arms).
+// IPerson union: full field bags in match arms (same HTTP JSON — no key-stub
+// re-fetch). Missing `@odata.type` (odata.metadata=minimal) uses
+// `$($->get("@odata.type") ?? "#…")->match` so Apollo does not None-short-circuit.
 const getMeQuery = /* GraphQL */ `
   query GetMe {
     Me {
       ... on Person {
         UserName
+        FirstName
       }
       ... on Manager {
         UserName
+        FirstName
         Budget
       }
       ... on Employee {
         UserName
+        FirstName
         Cost
       }
     }
     PeopleByUserName(UserName: "russellwhyte") {
       ... on Person {
         UserName
+        FirstName
         Friends(queryOptions: { top: 2 }) {
           ... on Person {
             UserName
+            FirstName
           }
           ... on Manager {
             UserName
+            FirstName
           }
           ... on Employee {
             UserName
+            FirstName
           }
         }
         Trips(queryOptions: { top: 1 }) {
@@ -40,15 +48,19 @@ const getMeQuery = /* GraphQL */ `
       }
       ... on Manager {
         UserName
+        FirstName
         Friends(queryOptions: { top: 2 }) {
           ... on Person {
             UserName
+            FirstName
           }
           ... on Manager {
             UserName
+            FirstName
           }
           ... on Employee {
             UserName
+            FirstName
           }
         }
         Trips(queryOptions: { top: 1 }) {
@@ -58,15 +70,19 @@ const getMeQuery = /* GraphQL */ `
       }
       ... on Employee {
         UserName
+        FirstName
         Friends(queryOptions: { top: 2 }) {
           ... on Person {
             UserName
+            FirstName
           }
           ... on Manager {
             UserName
+            FirstName
           }
           ... on Employee {
             UserName
+            FirstName
           }
         }
         Trips(queryOptions: { top: 1 }) {
@@ -82,7 +98,12 @@ it('should compose the appropriate schema', async () => {
   const { result } = await compose();
   expect(result).toMatchSnapshot();
   expect(result).toMatch(/union IPerson/);
+  expect(result).toMatch(/union ILocation/);
+  expect(result).toMatch(/union IPlanItem/);
   expect(result).toMatch(/BossOffice/);
+  expect(result).toMatch(/\$\(\$->get\(/);
+  expect(result).toMatch(/\?\?/);
+  expect(result).toMatch(/entity:\s*true/);
 });
 
 describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', runner => {
@@ -92,23 +113,11 @@ describe.each(['hive', 'apollo-router'] as ServeRunner[])('execute with %s', run
       runner,
       supergraph: composition.output,
     });
-    let result: Awaited<ReturnType<typeof execute>>;
-    try {
-      result = await execute({ query: getMeQuery });
-    } catch (err) {
-      // Router may 500 on IPerson entity follow-up for non-key fields / nav while
-      // match arms are key-only (JSONSelection limit). Hive covers the path.
-      if (runner === 'apollo-router') {
-        console.warn(
-          `[odata-trippin apollo-router] execute skipped after runtime error: ${String(err).slice(0, 200)}`,
-        );
-        return;
-      }
-      throw err;
-    }
+    const result = await execute({ query: getMeQuery });
     expect(result.errors).toBeUndefined();
     const me = result.data?.Me as Record<string, unknown> | undefined;
     expect(me?.UserName).toEqual(expect.any(String));
+    expect(me?.FirstName).toEqual(expect.any(String));
     const person = result.data?.PeopleByUserName as Record<string, unknown> | undefined;
     expect(person?.UserName).toBe('russellwhyte');
     expect(Array.isArray(person?.Friends)).toBe(true);

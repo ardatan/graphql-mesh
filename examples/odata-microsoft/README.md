@@ -85,8 +85,8 @@ If Microsoft rotates/revokes the refresh token, re-run the helper and update
 
 Schema note: live execute keeps the e2e fixture metadata (example-query surface). The HTTP endpoint
 is real Graph (`GRAPH_VERSION=v1.0` or `beta`, same as `yarn start` / `yarn start:beta`). Abstract
-OData bases are emitted as plain GraphQL objects (not interfaces) so Hive and Apollo Router share
-one SDL — Router Connectors expand currently drops interface defs while leaving `implements`.
+OData bases and inheritance become GraphQL unions (`directoryObject`, `IPerson`, …) discriminated
+by `@odata.type` → `__typename` (Router-safe; interfaces/`implements` break Connectors expand).
 
 ## Sample requests
 

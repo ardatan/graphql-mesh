@@ -56,7 +56,7 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the \`da
 """
 scalar DateTime @join__type(graph: MICROSOFT_GRAPH)
 
-type user @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/"}, selection: "mail officeLocation rest: $ id displayName _odataId: $->get(\\"@odata.id\\")"}) {
+type user @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/users/{$this.id}/"}, selection: "mail officeLocation rest: $ id displayName _odataId: $->get(\\"@odata.id\\")", entity: true}) {
   id: String!
   mail: String
   officeLocation: String
@@ -70,7 +70,7 @@ type user @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs
   _odataId: String @inaccessible
 }
 
-type message @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/messages/{$this.id}/"}, selection: "id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\")"}) {
+type message @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/messages/{$this.id}/"}, selection: "id subject isRead from { emailAddress { name address } } _odataId: $->get(\\"@odata.id\\")", entity: true}) {
   id: String!
   subject: String
   isRead: Boolean
@@ -79,11 +79,11 @@ type message @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(gra
   _odataId: String @inaccessible
 }
 
-type group @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/"}, selection: "description id displayName rest: $ _odataId: $->get(\\"@odata.id\\")"}) {
+type group @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/"}, selection: "description id displayName rest: $ _odataId: $->get(\\"@odata.id\\")", entity: true}) {
   id: String!
   description: String
-  members(queryOptions: QueryOptions): [directoryObject] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/members", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { ... $->get(\\"@odata.type\\")->match([\\"#microsoft.graph.group\\", { __typename: \\"group\\", id }], [\\"#microsoft.graph.user\\", { __typename: \\"user\\", id }], [@, { __typename: \\"group\\", id }]) }"})
-  membersById(id: ID): directoryObject @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/members/{$args.id}/"}, selection: "... $->get(\\"@odata.type\\")->match([\\"#microsoft.graph.group\\", { __typename: \\"group\\", id }], [\\"#microsoft.graph.user\\", { __typename: \\"user\\", id }], [@, { __typename: \\"group\\", id }])"})
+  members(queryOptions: QueryOptions): [directoryObject] @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/members", queryParams: "{\\n  \\"$filter\\": $args.queryOptions.filter\\n  \\"$orderby\\": $args.queryOptions.orderby\\n  \\"$top\\": $args.queryOptions.top\\n  \\"$skip\\": $args.queryOptions.skip\\n  \\"$search\\": $args.queryOptions.search\\n  \\"$count\\": $args.queryOptions.count\\n  \\"$inlinecount\\": $args.queryOptions.inlinecount\\n}"}, selection: "$.value { ... $($->get(\\"@odata.type\\") ?? \\"#microsoft.graph.group\\")->match([\\"#microsoft.graph.group\\", { __typename: \\"group\\", description, id, displayName, rest: $, _odataId: $->get(\\"@odata.id\\") }], [\\"#microsoft.graph.user\\", { __typename: \\"user\\", mail, officeLocation, rest: $, id, displayName, _odataId: $->get(\\"@odata.id\\") }]) }"})
+  membersById(id: ID): directoryObject @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/groups/{$this.id}/members/{$args.id}/"}, selection: "... $($->get(\\"@odata.type\\") ?? \\"#microsoft.graph.group\\")->match([\\"#microsoft.graph.group\\", { __typename: \\"group\\", description, id, displayName, rest: $, _odataId: $->get(\\"@odata.id\\") }], [\\"#microsoft.graph.user\\", { __typename: \\"user\\", mail, officeLocation, rest: $, id, displayName, _odataId: $->get(\\"@odata.id\\") }])"})
   displayName: String
   rest: JSON
   """OData @odata.id (inaccessible; absolute URL for nested @connect paths)"""
@@ -102,7 +102,7 @@ type driveItem @join__type(graph: MICROSOFT_GRAPH, key: "id") {
   _odataId: String @inaccessible
 }
 
-type drive @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/drives/{$this.id}/"}, selection: "id quota { used remaining } _odataId: $->get(\\"@odata.id\\")"}) {
+type drive @join__type(graph: MICROSOFT_GRAPH, key: "id") @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/drives/{$this.id}/"}, selection: "id quota { used remaining } _odataId: $->get(\\"@odata.id\\")", entity: true}) {
   id: String!
   quota: quota
   root: driveItem @join__directive(graphs: [MICROSOFT_GRAPH], name: "connect", args: {source: "MicrosoftGraph", http: {GET: "/drives/{$this.id}/root"}, selection: "id name size lastModifiedDateTime webUrl _odataId: $->get(\\"@odata.id\\")"})

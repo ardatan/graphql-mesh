@@ -40,7 +40,147 @@ function headersToConnectMappings(
   }));
 }
 
-/** Build `{ __typename: "T", …fields }` for one union match arm / default. */
+/**
+ * Connectors LitObject rule is all-commas XOR all-whitespace inside one `{…}`.
+ * `entitySelection` emits whitespace-separated picks (`UserName FirstName` /
+ * `AddressInfo { Address }`). Mixing that with `__typename: "T", …` (comma) is a
+ * parse error → Router `nom::Eof`. Rewrite the bag to comma-separated form.
+ */
+function toConnectorsCommaObjectBody(selection: string): string {
+  const s = selection.trim();
+  if (!s) return '';
+  const parts: string[] = [];
+  let i = 0;
+  const isIdentStart = (c: string) => /[A-Za-z_]/.test(c);
+  const isIdent = (c: string) => /[A-Za-z0-9_]/.test(c);
+  /** Skip balanced `(…)` / `{…}` / `[…]` / quoted strings from `i`. */
+  const skipBalanced = (open: string, close: string): void => {
+    let depth = 0;
+    for (; i < s.length; i++) {
+      const c = s[i];
+      if (c === '"' || c === "'") {
+        const q = c;
+        i++;
+        while (i < s.length && s[i] !== q) {
+          if (s[i] === '\\') i++;
+          i++;
+        }
+        continue;
+      }
+      if (c === open) depth++;
+      else if (c === close) {
+        depth--;
+        if (depth === 0) {
+          i++;
+          return;
+        }
+      }
+    }
+  };
+  while (i < s.length) {
+    while (i < s.length && /\s/.test(s[i])) i++;
+    if (i >= s.length) break;
+    // Abstract spread: `... $->get("…")->match([…], …)` — keep as one part (already
+    // comma-safe inside match arrays; do not rewrite).
+    if (s.startsWith('...', i)) {
+      const start = i;
+      i += 3;
+      while (i < s.length && /\s/.test(s[i])) i++;
+      // Path / method chain until we leave the spread expression.
+      while (i < s.length) {
+        if (s[i] === '(') {
+          skipBalanced('(', ')');
+          continue;
+        }
+        if (s[i] === '[') {
+          skipBalanced('[', ']');
+          continue;
+        }
+        if (s[i] === '{') {
+          skipBalanced('{', '}');
+          continue;
+        }
+        if (/\s/.test(s[i])) {
+          let k = i;
+          while (k < s.length && /\s/.test(s[k])) k++;
+          // Next named field / another spread ends this spread expr.
+          if (k < s.length && (isIdentStart(s[k]) || s.startsWith('...', k))) break;
+          i = k;
+          continue;
+        }
+        i++;
+      }
+      parts.push(s.slice(start, i).trim());
+      continue;
+    }
+    if (!isIdentStart(s[i])) {
+      parts.push(s.slice(i).trim());
+      break;
+    }
+    let j = i + 1;
+    while (j < s.length && isIdent(s[j])) j++;
+    const name = s.slice(i, j);
+    i = j;
+    while (i < s.length && /\s/.test(s[i])) i++;
+    if (i < s.length && s[i] === ':') {
+      i++;
+      while (i < s.length && /\s/.test(s[i])) i++;
+      if (i < s.length && s[i] === '{') {
+        const start = i;
+        skipBalanced('{', '}');
+        const inner = toConnectorsCommaObjectBody(s.slice(start + 1, i - 1));
+        parts.push(`${name}: { ${inner} }`);
+      } else {
+        const start = i;
+        while (i < s.length) {
+          if (s[i] === '(') {
+            skipBalanced('(', ')');
+            continue;
+          }
+          if (s[i] === '[') {
+            skipBalanced('[', ']');
+            continue;
+          }
+          if (s[i] === '{') {
+            skipBalanced('{', '}');
+            continue;
+          }
+          if (/\s/.test(s[i])) {
+            let k = i;
+            while (k < s.length && /\s/.test(s[k])) k++;
+            if (k < s.length && (isIdentStart(s[k]) || s.startsWith('...', k))) break;
+            i = k;
+            continue;
+          }
+          i++;
+        }
+        parts.push(`${name}: ${s.slice(start, i).trim()}`);
+      }
+    } else if (i < s.length && s[i] === '{') {
+      const start = i;
+      skipBalanced('{', '}');
+      const inner = toConnectorsCommaObjectBody(s.slice(start + 1, i - 1));
+      // Path+subselection (maps list elements). Bare `{…}` would be a LitObject
+      // and collapse arrays → "Expected Iterable".
+      parts.push(`${name}: ${name} { ${inner} }`);
+    } else {
+      parts.push(name);
+    }
+  }
+  return parts.filter(Boolean).join(', ');
+}
+
+/**
+ * Build one union/interface match arm object with the **full** field bag from the
+ * same HTTP JSON (old OData transport style — no key-stub re-fetch).
+ *
+ * Apollo can still type-merge via `@key` + type-level `@connect(entity: true)` when
+ * a payload is only a reference; Hive transport should likewise avoid extra hops
+ * when the parent response already carried the entity body (`expandNavProps` / batch).
+ *
+ * LitObject arms must be all-commas (`toConnectorsCommaObjectBody`); list-shaped
+ * nested fields use `path: path { … }` so Router does not see LitObject-vs-Iterable.
+ */
 function odataTypenameSelectionObject(
   schemaComposer: SchemaComposer,
   name: string,
@@ -53,36 +193,9 @@ function odataTypenameSelectionObject(
   } catch {
     exclusive = '';
   }
-  // `@key` field only inside match arms. Multi-field object literals (and nested
-  // groups / `_odataId: $->get("@odata.id")`) → Router v2.19 `nom::Eof`.
-  // Additional fields are filled via type-level `@connect` entity follow-up when
-  // the gateway supports it; Hive maps scalars from the same JSON when present.
-  let keyField: string | undefined;
-  try {
-    keyField = (
-      (schemaComposer.getOTC(name).getExtensions() as any)?.odata?.entityInfo
-        ?.identifierFieldName as string | undefined
-    );
-  } catch {
-    keyField = undefined;
-  }
-  if (!keyField && exclusive) {
-    let body = exclusive;
-    for (let i = 0; i < 8; i++) {
-      const next = body.replace(/\b\w+\s*\{[^{}]*\}/g, ' ');
-      if (next === body) break;
-      body = next;
-    }
-    keyField = body
-      .replace(/\b_odataId\s*:\s*\S+/g, ' ')
-      .replace(/\brest\s*:\s*\S+/g, ' ')
-      .trim()
-      .split(/\s+/)
-      .find(Boolean);
-  }
-  void visited;
-  return keyField
-    ? `{ __typename: ${JSON.stringify(name)}, ${keyField} }`
+  const body = toConnectorsCommaObjectBody(exclusive);
+  return body
+    ? `{ __typename: ${JSON.stringify(name)}, ${body} }`
     : `{ __typename: ${JSON.stringify(name)} }`;
 }
 
@@ -91,8 +204,10 @@ function odataTypenameSelectionObject(
  * Required by Apollo Router for interface/union selections (same pattern as OpenAPI
  * `... $_type->match(...)`).
  *
- * When `defaultTypeName` is set, missing `@odata.type` (common for the declared
- * base type under `odata.metadata=minimal`) falls back via `[@, { … }]`.
+ * When `defaultTypeName` is set, missing `@odata.type` (common under
+ * `odata.metadata=minimal`) must use nullish coalescing **before** `->match`:
+ * Router treats a missing `get` as `None` and short-circuits the whole path, so
+ * a trailing `[@, …]` arm never runs. Hive implements the same `??` shape.
  */
 function odataAbstractTypenameSpread(
   schemaComposer: SchemaComposer,
@@ -100,6 +215,7 @@ function odataAbstractTypenameSpread(
   defaultTypeName?: string,
 ): string {
   const arms: string[] = [];
+  let defaultODataType: string | undefined;
   for (const name of memberTypeNames) {
     if (!schemaComposer.isObjectType(name)) continue;
     let odataType = `#${name}`;
@@ -110,21 +226,19 @@ function odataAbstractTypenameSpread(
     } catch {
       // keep `#name` fallback
     }
+    if (defaultTypeName && name === defaultTypeName) {
+      defaultODataType = odataType;
+    }
     arms.push(
       `[${JSON.stringify(odataType)}, ${odataTypenameSelectionObject(schemaComposer, name, new Set())}]`,
     );
   }
   if (!arms.length) return '';
-  const def =
-    defaultTypeName &&
-    memberTypeNames.includes(defaultTypeName) &&
-    schemaComposer.isObjectType(defaultTypeName)
-      ? defaultTypeName
-      : undefined;
-  if (def) {
-    return `... $->get("@odata.type")->match(${arms.join(', ')}, [@, ${odataTypenameSelectionObject(schemaComposer, def, new Set())}])`;
-  }
-  return `... $->get("@odata.type")->match(${arms.join(', ')})`;
+  const disc =
+    defaultODataType != null
+      ? `$($->get("@odata.type") ?? ${JSON.stringify(defaultODataType)})`
+      : `$->get("@odata.type")`;
+  return `... ${disc}->match(${arms.join(', ')})`;
 }
 
 /**
@@ -630,12 +744,22 @@ export function emitODataConnectors(
       }
     };
     setOnce(typeName);
-    // PeopleByUserName returns `IPerson` — also stamp concrete `Person` + implementers.
+    // PeopleByUserName returns `IPerson` — stamp concrete members (Person/Manager/…).
+    if (schemaComposer.isUnionType(typeName)) {
+      try {
+        const members = schemaComposer.getUTC(typeName).getTypes?.() || [];
+        for (const m of members) {
+          const n = typeof m === 'string' ? m : (m as any).getTypeName?.();
+          if (typeof n === 'string') setOnce(n);
+        }
+      } catch {
+        // ignore
+      }
+    }
     if (typeName.startsWith('I') && schemaComposer.isObjectType(typeName.slice(1))) {
       setOnce(typeName.slice(1));
     }
     if (schemaComposer.isInterfaceType(typeName)) {
-      // Stamp object types that declare this interface (People → Person/Manager/…).
       for (const other of schemaComposer.types.values()) {
         const otherName = (other as any).getTypeName?.();
         if (typeof otherName !== 'string' || !schemaComposer.isObjectType(otherName)) continue;
@@ -658,6 +782,15 @@ export function emitODataConnectors(
     const connect = (qField.extensions as any)?.directives?.connect;
     const returnName = qField.type.getTypeName().replace(/[[\]!]/g, '');
     const getPath = connect?.http?.GET as string | undefined;
+    // Entity-set by-id (`/People/{$args.UserName}/`) — including union returns that
+    // omit `entity: true`. Do NOT stamp bare `/FunctionImport` paths (e.g.
+    // GetPersonWithMostFriends) as entity sets.
+    if (getPath) {
+      const byId = getPath.match(/^\/([^/]+)\/\{\$args\./);
+      if (byId) {
+        rememberEntitySet(returnName, byId[1]);
+      }
+    }
     if (connect?.entity && getPath) {
       const match = getPath.match(/^\/([^/]+)\//);
       if (match) {
@@ -831,6 +964,7 @@ export function emitODataConnectors(
     }
 
     // `@connect` is OBJECT-only (Federation Connectors).
+    // `entity: true` lets Router/Hive fill stubs from union match arms via `@key`.
     if (isObject && !existing.some(d => d.name === 'connect') && entitySetName) {
       existing.push({
         name: 'connect',
@@ -840,6 +974,7 @@ export function emitODataConnectors(
             GET: `/${entitySetName}/{$this.${identifierFieldName}}/`,
           },
           selection: entitySelection(schemaComposer, otc as any) || '$',
+          entity: true,
         }),
       });
     }
@@ -987,53 +1122,10 @@ export function emitODataPolymorphicUnions(
     }
   }
 
-  function isKeyedOrAbstractEntity(typeName: string): boolean {
-    if (abstractTypeNames.has(typeName)) return true;
-    try {
-      if (!schemaComposer.isObjectType(typeName)) return false;
-      const otc = schemaComposer.getOTC(typeName);
-      return Boolean(
-        (otc.getExtensions() as any)?.odata?.entityInfo?.identifierFieldName,
-      );
-    } catch {
-      return false;
-    }
-  }
-
-  /** Skip PlanItem-style trees without a dedicated entity set — typename-only
-   *  match arms empty their fields under Router Connectors expand. */
-  function hasEntitySetOrAbstract(typeName: string): boolean {
-    if (abstractTypeNames.has(typeName)) return true;
-    try {
-      const otc = schemaComposer.getOTC(typeName);
-      // Type-level `@connect` is stamped later; approximate via identifier +
-      // Query root fields returning this type or I{type}.
-      const id = (otc.getExtensions() as any)?.odata?.entityInfo?.identifierFieldName;
-      if (!id) return false;
-      for (const fieldName of schemaComposer.Query.getFieldNames()) {
-        const t = fieldTypeNameString(schemaComposer.Query.getField(fieldName));
-        if (t.includes(typeName)) return true;
-      }
-      return false;
-    } catch {
-      return false;
-    }
-  }
-
   const bases = new Set<string>([...childrenByBase.keys(), ...abstractTypeNames]);
   for (const base of bases) {
     const descendants = transitiveDescendants(base);
     if (!descendants.size) continue;
-
-    // Complex-type inheritance (e.g. Location → AirportLocation) stays as field
-    // merge only — unions would force fragments on every `AddressInfo { Address }`.
-    if (!isKeyedOrAbstractEntity(base)) {
-      continue;
-    }
-    // Avoid IPlanItem until match arms can carry full selections on Router.
-    if (!hasEntitySetOrAbstract(base) && !abstractTypeNames.has(base)) {
-      continue;
-    }
 
     const isAbstract = abstractTypeNames.has(base);
     const members: string[] = [];
